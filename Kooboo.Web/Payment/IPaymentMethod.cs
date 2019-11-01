@@ -24,7 +24,7 @@ namespace Kooboo.Web.Payment
 
         List<string> ExcludeCurrency { get; }
 
-        IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context);
+        IPaymentResponse MakePayment(PaymentRequest request, RenderContext context);
 
         PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context);
 

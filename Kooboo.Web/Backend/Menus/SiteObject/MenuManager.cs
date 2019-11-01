@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Kooboo.Api;
 
 namespace Kooboo.Web.Menus.ObjectMenu
 {
@@ -11,16 +12,16 @@ namespace Kooboo.Web.Menus.ObjectMenu
         //{
         //}
 
-        public static List<Kooboo.Api.ApiMethod> GetSiteMenuApiMethodByType(Type SiteObjectType)
+        public static List<Kooboo.Api.ApiMethod> GetSiteMenuApiMethodByType(Type siteObjectType)
         {
             List<Kooboo.Api.ApiMethod> result = new List<Kooboo.Api.ApiMethod>();
 
             var provider = GetApiProvider();
-            var name = SiteObjectType.Name;
+            var name = siteObjectType.Name;
 
             if (provider.List.ContainsKey(name))
             {
-                var allmethods = Lib.Reflection.TypeHelper.GetPublicMethods(SiteObjectType);
+                var allmethods = Lib.Reflection.TypeHelper.GetPublicMethods(siteObjectType);
 
                 foreach (var item in allmethods)
                 {
@@ -36,9 +37,8 @@ namespace Kooboo.Web.Menus.ObjectMenu
         {
             foreach (var item in Web.SystemStart.Middleware)
             {
-                if (item is Kooboo.Api.ApiMiddleware)
+                if (item is ApiMiddleware apimiddle)
                 {
-                    var apimiddle = item as Kooboo.Api.ApiMiddleware;
                     return apimiddle.ApiProvider;
                 }
             }

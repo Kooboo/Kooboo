@@ -40,9 +40,10 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("address", call.GetValue("address"));
-                dic.Add("folder", call.GetValue("folder"));
+                var dic = new Dictionary<string, string>
+                {
+                    {"address", call.GetValue("address")}, {"folder", call.GetValue("folder")}
+                };
                 return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.List), call.Context.User, dic);
             }
 
@@ -68,10 +69,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("address", call.GetValue("address"));
-                dic.Add("folder", call.GetValue("folder"));
-                dic.Add("messageId", call.GetValue("messageId"));
+                var dic = new Dictionary<string, string>
+                {
+                    {"address", call.GetValue("address")},
+                    {"folder", call.GetValue("folder")},
+                    {"messageId", call.GetValue("messageId")}
+                };
                 return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.More), call.Context.User, dic);
             }
 
@@ -127,8 +130,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("messageId", call.GetValue("messageId"));
+                var dic = new Dictionary<string, string> {{"messageId", call.GetValue("messageId")}};
                 return EmailForwardManager.Get<ContentViewModel>(this.ModelName, nameof(EmailMessageApi.Content), call.Context.User, dic);
             }
             int messageid = call.GetValue<int>("messageId");
@@ -236,8 +238,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
+                var dic = new Dictionary<string, string> {{"ids", call.GetValue("ids")}};
                 EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailMessageApi.Deletes), call.Context.User, dic);
                 return;
             }
@@ -257,8 +258,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("sourceId", call.GetValue("sourceId"));
+                var dic = new Dictionary<string, string> {{"sourceId", call.GetValue("sourceId")}};
                 return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.Forward), call.Context.User, dic);
             }
             int messageId = call.GetValue<int>("sourceId");
@@ -269,8 +269,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("sourceId", call.GetValue("sourceId"));
+                var dic = new Dictionary<string, string> {{"sourceId", call.GetValue("sourceId")}};
                 return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.Reply), call.Context.User, dic);
             }
 
@@ -282,9 +281,10 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
-                dic.Add("value", call.GetValue("value"));
+                var dic = new Dictionary<string, string>
+                {
+                    {"ids", call.GetValue("ids")}, {"value", call.GetValue("value")}
+                };
                 EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.MarkReads), call.Context.User, dic);
             }
 

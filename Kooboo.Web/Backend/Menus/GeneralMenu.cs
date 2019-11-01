@@ -13,25 +13,18 @@ namespace Kooboo.Web.Menus
 
         public int Order { get; set; }
 
-        private List<ICmsMenu> _Subitems;
+        private List<ICmsMenu> _subitems;
 
         public List<ICmsMenu> SubItems
         {
-            get
-            {
-                if (_Subitems == null)
-                {
-                    _Subitems = new List<ICmsMenu>();
-                }
-                return _Subitems;
-            }
+            get { return _subitems ?? (_subitems = new List<ICmsMenu>()); }
             set
             {
-                _Subitems = value;
+                _subitems = value;
             }
         }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
             return this.Name;
         }

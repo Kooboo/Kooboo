@@ -72,7 +72,7 @@ namespace Kooboo.Web.Api.Implementation
 
             Dictionary<Guid, long> keyblockPosition = new Dictionary<Guid, long>();
 
-            HashSet<long> DeletedBlock = new HashSet<long>();
+            HashSet<long> deletedBlock = new HashSet<long>();
 
             foreach (var item in logs)
             {
@@ -81,7 +81,7 @@ namespace Kooboo.Web.Api.Implementation
                 if (item.EditType == IndexedDB.EditType.Delete)
                 {
                     blockposition = item.OldBlockPosition;
-                    DeletedBlock.Add(blockposition);
+                    deletedBlock.Add(blockposition);
 
                     storesize.CanClean = true;
                 }
@@ -112,7 +112,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (item.Value > 0)
                 {
-                    if (!DeletedBlock.Contains(item.Value))
+                    if (!deletedBlock.Contains(item.Value))
                     {
                         var itemsize = repo.Store.getLength(item.Value);
                         storesize.ItemLength += itemsize;
@@ -143,32 +143,12 @@ namespace Kooboo.Web.Api.Implementation
 
         public string DiskSize
         {
-            get
-            {
-                if (this.Disk > 0)
-                {
-                    return Lib.Utilities.CalculateUtility.GetSizeString(this.Disk);
-                }
-                else
-                {
-                    return "N/A";
-                }
-            }
+            get { return this.Disk > 0 ? Lib.Utilities.CalculateUtility.GetSizeString(this.Disk) : "N/A"; }
         }
 
         public string ItemSize
         {
-            get
-            {
-                if (this.ItemLength > 0)
-                {
-                    return Lib.Utilities.CalculateUtility.GetSizeString(this.ItemLength);
-                }
-                else
-                {
-                    return "N/A";
-                }
-            }
+            get { return this.ItemLength > 0 ? Lib.Utilities.CalculateUtility.GetSizeString(this.ItemLength) : "N/A"; }
         }
     }
 }

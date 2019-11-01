@@ -104,18 +104,15 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in GlobalDb.Domains.ListByUser(call.Context.User))
             {
-                DomainSummaryViewModel model = new DomainSummaryViewModel();
-                model.Id = item.Id;
-                model.DomainName = item.DomainName;
+                DomainSummaryViewModel model = new DomainSummaryViewModel
+                {
+                    Id = item.Id,
+                    DomainName = item.DomainName,
+                    Expires = AppSettings.IsOnlineServer
+                        ? item.ExpirationDate.ToLongDateString()
+                        : Data.Language.Hardcoded.GetValue("Never", call.Context)
+                };
 
-                if (AppSettings.IsOnlineServer)
-                {
-                    model.Expires = item.ExpirationDate.ToLongDateString();
-                }
-                else
-                {
-                    model.Expires = Data.Language.Hardcoded.GetValue("Never", call.Context);
-                }
                 var bindings = GlobalDb.Bindings.GetByDomain(item.Id);
                 model.Records = bindings.Count(o => o.OrganizationId == call.Context.User.CurrentOrgId); model.Sites = bindings.Select(o => o.WebSiteId).Distinct().Count();
 
@@ -149,10 +146,10 @@ namespace Kooboo.Web.Api.Implementation
                 var site = Kooboo.Data.GlobalDb.WebSites.Get(item.WebSiteId);
                 if (site != null)
                 {
-                    DomainBindingViewModel model = new DomainBindingViewModel();
-                    model.Id = item.Id;
-                    model.SubDomain = item.SubDomain;
-                    model.WebSiteName = site.Name;
+                    DomainBindingViewModel model = new DomainBindingViewModel
+                    {
+                        Id = item.Id, SubDomain = item.SubDomain, WebSiteName = site.Name
+                    };
                     result.Add(model);
                 }
             }
@@ -165,9 +162,9 @@ namespace Kooboo.Web.Api.Implementation
             DeleteDomain(call, call.ObjectId);
         }
 
-        public virtual void DeleteDomain(ApiCall call, Guid Id)
+        public virtual void DeleteDomain(ApiCall call, Guid id)
         {
-            var domain = GlobalDb.Domains.Get(Id);
+            var domain = GlobalDb.Domains.Get(id);
             if (domain != null)
             {
                 var bindings = GlobalDb.Bindings.GetByDomain(domain.DomainName);
@@ -199,7 +196,7 @@ namespace Kooboo.Web.Api.Implementation
                 //throw;
             }
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {

@@ -130,8 +130,7 @@ namespace Kooboo.Web.Menus
                             var sidebaritems = SubMenus(typeof(ISideBarMenu));
                             foreach (var item in sidebaritems)
                             {
-                                var sidebaritem = item as ISideBarMenu;
-                                if (sidebaritem != null)
+                                if (item is ISideBarMenu sidebaritem)
                                 {
                                     _sidebarmenus.Add(sidebaritem);
                                 }

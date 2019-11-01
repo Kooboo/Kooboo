@@ -57,8 +57,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (value == null)
                 {
-                    var instance = Activator.CreateInstance(item.Value) as ISiteSetting;
-                    if (instance != null)
+                    if (Activator.CreateInstance(item.Value) is ISiteSetting instance)
                     {
                         result.Add(new CoreSettingViewModel() { Name = instance.Name });
                     }

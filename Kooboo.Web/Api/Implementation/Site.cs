@@ -45,10 +45,12 @@ namespace Kooboo.Web.Api.Implementation
 
         public Dictionary<string, string> Types(ApiCall call)
         {
-            Dictionary<string, string> types = new Dictionary<string, string>();
-            types.Add("p", Data.Language.Hardcoded.GetValue("public", call.Context));
-            types.Add("o", Data.Language.Hardcoded.GetValue("private", call.Context));
-            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));
+            Dictionary<string, string> types = new Dictionary<string, string>
+            {
+                {"p", Data.Language.Hardcoded.GetValue("public", call.Context)},
+                {"o", Data.Language.Hardcoded.GetValue("private", call.Context)},
+                {"m", Data.Language.Hardcoded.GetValue("member", call.Context)}
+            };
             return types;
         }
 
@@ -61,9 +63,7 @@ namespace Kooboo.Web.Api.Implementation
                 strid = request.GetValue("id");
             }
 
-            Guid SiteId = default(Guid);
-
-            if (Guid.TryParse(strid, out SiteId))
+            if (Guid.TryParse(strid, out var SiteId))
             {
                 var site = GlobalDb.WebSites.Get(SiteId);
                 if (site != null)
@@ -81,7 +81,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (site.EnableMultilingual)
                     {
-                        if (site.Culture != null && site.Culture.Count() > 0)
+                        if (site.Culture != null && site.Culture.Any())
                         {
                             foreach (var item in site.Culture)
                             {
@@ -135,20 +135,23 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var sitedb = item.SiteDb();
 
-                SiteSummaryViewModel summary = new SiteSummaryViewModel();
-                summary.SiteId = item.Id;
-                summary.SiteName = item.Name;
-                summary.SiteDisplayName = item.DisplayName;
-                summary.PageCount = sitedb.Pages.Count();
-                summary.ImageCount = sitedb.Images.Count();
+                SiteSummaryViewModel summary = new SiteSummaryViewModel
+                {
+                    SiteId = item.Id,
+                    SiteName = item.Name,
+                    SiteDisplayName = item.DisplayName,
+                    PageCount = sitedb.Pages.Count(),
+                    ImageCount = sitedb.Images.Count(),
+                    Online = item.Published,
+                    Visitors = sitedb.VisitorLog.QueryDescending(o => true)
+                        .EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-12)).Count()
+                };
                 // if user has not right to access the site. present the preview link.
 
-                summary.Online = item.Published;
-                summary.Visitors = sitedb.VisitorLog.QueryDescending(o => true).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-12)).Count();
 
                 var alltask = sitedb.TransferTasks.All();
 
-                if (alltask != null && alltask.Count() > 0)
+                if (alltask != null && alltask.Any())
                 {
                     foreach (var ttask in alltask.Where(o => o.done == false))
                     {
@@ -180,8 +183,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var allbytes = System.IO.File.ReadAllBytes(path);
 
-                BinaryResponse response = new BinaryResponse();
-                response.ContentType = "application/zip";
+                BinaryResponse response = new BinaryResponse {ContentType = "application/zip"};
                 response.Headers.Add("Content-Disposition", $"attachment;filename={site.Name}.zip");
                 response.BinaryBytes = allbytes;
                 return response;
@@ -209,8 +211,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var allbytes = System.IO.File.ReadAllBytes(path);
 
-                BinaryResponse response = new BinaryResponse();
-                response.ContentType = "application/zip";
+                BinaryResponse response = new BinaryResponse {ContentType = "application/zip"};
                 response.Headers.Add("Content-Disposition", $"attachment;filename={site.Name}.zip");
                 response.BinaryBytes = allbytes;
                 return response;
@@ -220,30 +221,61 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<ExportStoreNameViewModel> ExportStoreNames(ApiCall call)
         {
-            List<ExportStoreNameViewModel> names = new List<ExportStoreNameViewModel>();
-            names.Add(new ExportStoreNameViewModel() { Name = "Page", DisplayName = Hardcoded.GetValue("Page", call.Context) });
-            names.Add(new ExportStoreNameViewModel() { Name = "View", DisplayName = Hardcoded.GetValue("View", call.Context) });
-            names.Add(new ExportStoreNameViewModel() { Name = "Layout", DisplayName = Hardcoded.GetValue("Layout", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Image", DisplayName = Hardcoded.GetValue("Image", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Script", DisplayName = Hardcoded.GetValue("Script", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Style", DisplayName = Hardcoded.GetValue("Style", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "TextContent", DisplayName = Hardcoded.GetValue("TextContent", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "ContentType", DisplayName = Hardcoded.GetValue("ContentType", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "ContentFolder", DisplayName = Hardcoded.GetValue("ContentFolder", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "HtmlBlock", DisplayName = Hardcoded.GetValue("HtmlBlock", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Label", DisplayName = Hardcoded.GetValue("Label", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Menu", DisplayName = Hardcoded.GetValue("Menu", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context) });
+            List<ExportStoreNameViewModel> names = new List<ExportStoreNameViewModel>
+            {
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Page", DisplayName = Hardcoded.GetValue("Page", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "View", DisplayName = Hardcoded.GetValue("View", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Layout", DisplayName = Hardcoded.GetValue("Layout", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Image", DisplayName = Hardcoded.GetValue("Image", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Script", DisplayName = Hardcoded.GetValue("Script", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Style", DisplayName = Hardcoded.GetValue("Style", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "TextContent", DisplayName = Hardcoded.GetValue("TextContent", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "ContentType", DisplayName = Hardcoded.GetValue("ContentType", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "ContentFolder", DisplayName = Hardcoded.GetValue("ContentFolder", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "HtmlBlock", DisplayName = Hardcoded.GetValue("HtmlBlock", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Label", DisplayName = Hardcoded.GetValue("Label", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Menu", DisplayName = Hardcoded.GetValue("Menu", call.Context)
+                },
+                new ExportStoreNameViewModel()
+                {
+                    Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context)
+                }
+            };
 
             return names;
         }
@@ -258,9 +290,9 @@ namespace Kooboo.Web.Api.Implementation
             Data.GlobalDb.WebSites.AddOrUpdate(site);
         }
 
-        public void Preview(ApiCall call, Guid SiteId)
+        public void Preview(ApiCall call, Guid siteId)
         {
-            var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            var site = Kooboo.Data.GlobalDb.WebSites.Get(siteId);
             if (site != null)
             {
                 var baseurl = site.BaseUrl();
@@ -277,8 +309,7 @@ namespace Kooboo.Web.Api.Implementation
             string strsiteid = call.GetValue("siteid");
             if (!string.IsNullOrEmpty(strsiteid))
             {
-                Guid siteid;
-                if (System.Guid.TryParse(strsiteid, out siteid))
+                if (System.Guid.TryParse(strsiteid, out var siteid))
                 {
                     return GlobalDb.WebSites.Get(siteid);
                 }
@@ -336,16 +367,16 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool Delete(ApiCall call)
         {
-            Guid SiteId = call.GetGuidValue("SiteId");
+            Guid siteId = call.GetGuidValue("SiteId");
 
-            if (SiteId == default(Guid) && call.ObjectId != default(Guid))
+            if (siteId == default(Guid) && call.ObjectId != default(Guid))
             {
-                SiteId = call.ObjectId;
+                siteId = call.ObjectId;
             }
 
-            if (SiteId != default(Guid))
+            if (siteId != default(Guid))
             {
-                WebSiteService.Delete(SiteId, call.Context.User);
+                WebSiteService.Delete(siteId, call.Context.User);
                 return true;
             }
             return false;
@@ -361,7 +392,7 @@ namespace Kooboo.Web.Api.Implementation
 
             List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {
@@ -374,10 +405,12 @@ namespace Kooboo.Web.Api.Implementation
 
         public SiteDiskSyncViewModel DiskSyncGet(ApiCall apiCall)
         {
-            SiteDiskSyncViewModel model = new SiteDiskSyncViewModel();
-            model.Folder = apiCall.WebSite.SiteDb().WebSite.DiskSyncFolder;
+            SiteDiskSyncViewModel model = new SiteDiskSyncViewModel
+            {
+                Folder = apiCall.WebSite.SiteDb().WebSite.DiskSyncFolder,
+                EnableDiskSync = apiCall.WebSite.SiteDb().WebSite.EnableDiskSync
+            };
 
-            model.EnableDiskSync = apiCall.WebSite.SiteDb().WebSite.EnableDiskSync;
 
             if (model.EnableDiskSync)
             {
@@ -392,9 +425,9 @@ namespace Kooboo.Web.Api.Implementation
         {
             Data.Models.WebSite website = null;
 
-            Guid SiteId = call.GetGuidValue("SiteId");
-            website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
-            if (SiteId == default(Guid) || website == null)
+            Guid siteId = call.GetGuidValue("SiteId");
+            website = Kooboo.Data.GlobalDb.WebSites.Get(siteId);
+            if (siteId == default(Guid) || website == null)
             {
                 return;
             }
@@ -429,9 +462,9 @@ namespace Kooboo.Web.Api.Implementation
             string fulldomain = call.GetValue("FullDomain");
             if (string.IsNullOrEmpty(fulldomain))
             {
-                string RootDomain = call.GetValue("RootDomain");
-                string SubDomain = call.GetValue("SubDomain");
-                fulldomain = SubDomain + "." + RootDomain;
+                string rootDomain = call.GetValue("RootDomain");
+                string subDomain = call.GetValue("SubDomain");
+                fulldomain = subDomain + "." + rootDomain;
             }
             string sitename = call.GetValue("SiteName");
 
@@ -447,15 +480,15 @@ namespace Kooboo.Web.Api.Implementation
         [Kooboo.Attributes.RequireParameters("rootdomain")]
         public bool CheckDomainBindingAvailable(ApiCall call)
         {
-            string RootDomain = call.GetValue("RootDomain");
+            string rootDomain = call.GetValue("RootDomain");
             string subdomain = call.GetValue("SubDomain");
 
-            if (!string.IsNullOrEmpty(subdomain) && subdomain.ToLower() == "local" && RootDomain.ToLower() == "kooboo")
+            if (!string.IsNullOrEmpty(subdomain) && subdomain.ToLower() == "local" && rootDomain.ToLower() == "kooboo")
             {
                 return false;
             }
 
-            var bindings = GlobalDb.Bindings.GetByDomain(RootDomain);
+            var bindings = GlobalDb.Bindings.GetByDomain(rootDomain);
             foreach (var item in bindings)
             {
                 if (Lib.Helper.StringHelper.IsSameValue(item.SubDomain, subdomain))
@@ -470,35 +503,35 @@ namespace Kooboo.Web.Api.Implementation
         {
             var formresult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
 
-            if (formresult.Files.Count() == 0)
+            if (formresult.Files.Count == 0)
             {
                 return default(Guid);
             }
 
-            string RootDomain = null;
-            string SubDomain = null;
-            string SiteName = null;
+            string rootDomain = null;
+            string subDomain = null;
+            string siteName = null;
             if (formresult.FormData.ContainsKey("RootDomain"))
             {
-                RootDomain = formresult.FormData["RootDomain"];
+                rootDomain = formresult.FormData["RootDomain"];
             }
             if (formresult.FormData.ContainsKey("SubDomain"))
             {
-                SubDomain = formresult.FormData["SubDomain"];
+                subDomain = formresult.FormData["SubDomain"];
             }
             if (formresult.FormData.ContainsKey("SiteName"))
             {
-                SiteName = formresult.FormData["SiteName"];
+                siteName = formresult.FormData["SiteName"];
             }
 
-            if (string.IsNullOrEmpty(SiteName) || string.IsNullOrEmpty(RootDomain))
+            if (string.IsNullOrEmpty(siteName) || string.IsNullOrEmpty(rootDomain))
             {
                 return default(Guid);
             }
 
-            string fulldomain = string.IsNullOrEmpty(SubDomain) ? RootDomain : SubDomain + "." + RootDomain;
+            string fulldomain = string.IsNullOrEmpty(subDomain) ? rootDomain : subDomain + "." + rootDomain;
 
-            var newsite = ImportExport.ImportZip(new MemoryStream(formresult.Files[0].Bytes), call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
+            var newsite = ImportExport.ImportZip(new MemoryStream(formresult.Files[0].Bytes), call.Context.User.CurrentOrgId, siteName, fulldomain, call.Context.User.Id);
 
             return newsite.Id;
         }
@@ -511,9 +544,9 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool IsSubdomainAvailable(ApiCall apiCall)
         {
-            string RootDomain = apiCall.GetValue("RootDomain");
-            string SubDomain = apiCall.GetValue("SubDomain");
-            string fulldomain = SubDomain + "." + RootDomain;
+            string rootDomain = apiCall.GetValue("RootDomain");
+            string subDomain = apiCall.GetValue("SubDomain");
+            string fulldomain = subDomain + "." + rootDomain;
 
             var site = Kooboo.Data.GlobalDb.Bindings.GetByFullDomain(fulldomain);
             return site == null;
@@ -524,8 +557,7 @@ namespace Kooboo.Web.Api.Implementation
             string strsiteid = call.GetValue("siteid");
             if (!string.IsNullOrEmpty(strsiteid))
             {
-                Guid siteid;
-                if (System.Guid.TryParse(strsiteid, out siteid))
+                if (System.Guid.TryParse(strsiteid, out var siteid))
                 {
                     var site = GlobalDb.WebSites.Get(siteid);
                     if (site != null)
@@ -543,10 +575,19 @@ namespace Kooboo.Web.Api.Implementation
             var orgid = call.Context.User.CurrentOrgId;
             var websiteid = call.GetValue<Guid>("SiteId");
 
-            List<DataCenter> temp = new List<DataCenter>();
-            temp.Add(new DataCenter() { Name = "CN", DisplayName = "China", IsCompleted = true, IsSelected = true, IsRoot = true });
-            temp.Add(new DataCenter() { Name = "HK", DisplayName = "HongKong", IsCompleted = false, IsSelected = false });
-            temp.Add(new DataCenter() { Name = "US", DisplayName = "America", IsCompleted = false, IsSelected = false });
+            List<DataCenter> temp = new List<DataCenter>
+            {
+                new DataCenter()
+                {
+                    Name = "CN",
+                    DisplayName = "China",
+                    IsCompleted = true,
+                    IsSelected = true,
+                    IsRoot = true
+                },
+                new DataCenter() {Name = "HK", DisplayName = "HongKong", IsCompleted = false, IsSelected = false},
+                new DataCenter() {Name = "US", DisplayName = "America", IsCompleted = false, IsSelected = false}
+            };
             return temp;
         }
     }

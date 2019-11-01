@@ -31,16 +31,16 @@ namespace Kooboo.Web.Payment
             return new PaymentStatusResponse();
         }
 
-        public abstract IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context);
+        public abstract IPaymentResponse MakePayment(PaymentRequest request, RenderContext context);
 
         public TSetting GetSetting(RenderContext context)
         {
             return PaymentManager.GetPaymentSetting<TSetting>(context);
         }
 
-        public PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
+        public PaymentRequest GetRequest(Guid paymentRequestId, RenderContext context)
         {
-            return PaymentManager.GetRequest(PaymentRequestId, context);
+            return PaymentManager.GetRequest(paymentRequestId, context);
         }
 
         public void UpdateRequest(PaymentRequest request, RenderContext context)
@@ -48,24 +48,20 @@ namespace Kooboo.Web.Payment
             PaymentManager.SaveRequest(request, context);
         }
 
-        public string GetCallbackUrl(string MethodName, RenderContext context)
+        public string GetCallbackUrl(string methodName, RenderContext context)
         {
-            return PaymentManager.GetCallbackUrl(this, MethodName, context);
+            return PaymentManager.GetCallbackUrl(this, methodName, context);
         }
 
-        public string EnsureHttpUrl(string AbsOrRelativeUrl, RenderContext context)
+        public string EnsureHttpUrl(string absOrRelativeUrl, RenderContext context)
         {
-            return PaymentManager.EnsureHttp(AbsOrRelativeUrl, context);
+            return PaymentManager.EnsureHttp(absOrRelativeUrl, context);
         }
 
         public virtual bool CanUse(RenderContext context)
         {
             var setting = this.GetSetting(context);
-            if (setting != null)
-            {
-                return true;
-            }
-            return false;
+            return setting != null;
         }
     }
 }

@@ -36,14 +36,16 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.Labels.All())
             {
-                LabelItemViewModel model = new LabelItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.LastModified = item.LastModified;
-                model.Values = item.Values;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Labels.GetUsedBy(item.Id));
+                LabelItemViewModel model = new LabelItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenamehash,
+                    LastModified = item.LastModified,
+                    Values = item.Values,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Labels.GetUsedBy(item.Id))
+                };
                 result.Add(model);
             }
             return result.ToList<object>();

@@ -36,37 +36,37 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public virtual MetaResponse Login(string UserName, string Password, ApiCall apiCall)
+        public virtual MetaResponse Login(string userName, string password, ApiCall apiCall)
         {
-            if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(UserName, apiCall.Context.Request.IP))
+            if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(userName, apiCall.Context.Request.IP))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("user or ip temporarily lockout", apiCall.Context));
             }
 
-            var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, Password);
+            var user = Kooboo.Data.GlobalDb.Users.Validate(userName, password);
 
             if (user == null)
             {
-                Data.Service.UserLoginProtection.AddLoginFail(UserName, apiCall.Context.Request.IP);
+                Data.Service.UserLoginProtection.AddLoginFail(userName, apiCall.Context.Request.IP);
             }
             else
             {
-                Data.Service.UserLoginProtection.AddLoginOk(UserName, apiCall.Context.Request.IP);
+                Data.Service.UserLoginProtection.AddLoginOk(userName, apiCall.Context.Request.IP);
             }
 
             if (user != null)
             {
                 string remember = apiCall.GetValue("remember");
 
-                bool SameSiteRedirect = false;
+                bool sameSiteRedirect = false;
                 string type = apiCall.GetValue("type");
                 if (type != null && type == "site")
                 {
-                    SameSiteRedirect = true;
+                    sameSiteRedirect = true;
                 }
 #if DEBUG
                 {
-                    SameSiteRedirect = true;
+                    sameSiteRedirect = true;
                 }
 #endif
 
@@ -97,11 +97,10 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 int days = isRemember ? 60 : 0;
-                var response = new MetaResponse();
+                var response = new MetaResponse {Success = true};
 
-                response.Success = true;
 
-                string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, SameSiteRedirect);
+                string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, sameSiteRedirect);
 
                 if (isRemember)
                 {
@@ -111,8 +110,8 @@ namespace Kooboo.Web.Api.Implementation
                 // resposne redirect url. for online and local version...
                 return response;
             }
-            var noresponse = new MetaResponse();
-            noresponse.Success = false;
+
+            var noresponse = new MetaResponse {Success = false};
             noresponse.Messages.Add(Data.Language.Hardcoded.GetValue("User name or password not valid", apiCall.Context));
             return noresponse;
         }
@@ -123,21 +122,21 @@ namespace Kooboo.Web.Api.Implementation
             return Lib.Helper.UrlHelper.Combine(currentrequesturl, "/_admin/sites");
         }
 
-        public virtual MetaResponse Register(string UserName, string Password, string email, ApiCall apiCall)
+        public virtual MetaResponse Register(string userName, string password, string email, ApiCall apiCall)
         {
-            if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Username or password not provided", apiCall.Context));
             }
-            UserName = Lib.Helper.StringHelper.ToValidUserNames(UserName);
-            var currentuser = Kooboo.Data.GlobalDb.Users.Get(UserName);
+            userName = Lib.Helper.StringHelper.ToValidUserNames(userName);
+            var currentuser = Kooboo.Data.GlobalDb.Users.Get(userName);
             if (currentuser != null)
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("user exists", apiCall.Context));
             }
             var user = new User();
-            user.UserName = UserName;
-            user.Password = Password;
+            user.UserName = userName;
+            user.Password = password;
             user.EmailAddress = email;
             string acceptlang = apiCall.Context.Request.Headers["Accept-Language"];
             user.Language = Kooboo.Data.Language.LanguageSetting.GetByAcceptLangHeader(acceptlang);
@@ -244,16 +243,15 @@ namespace Kooboo.Web.Api.Implementation
             return user;
         }
 
-        public MetaResponse ChangePassword(string UserName, string OldPassword, string NewPassword, ApiCall call)
+        public MetaResponse ChangePassword(string userName, string oldPassword, string newPassword, ApiCall call)
         {
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Default User can not reset password", call.Context));
             }
 
-            bool isSuccess = GlobalDb.Users.ChangePassword(UserName, OldPassword, NewPassword);
-            MetaResponse response = new MetaResponse();
-            response.Success = isSuccess;
+            bool isSuccess = GlobalDb.Users.ChangePassword(userName, oldPassword, newPassword);
+            MetaResponse response = new MetaResponse {Success = isSuccess};
             return response;
         }
 
@@ -269,13 +267,12 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Data.Language.LanguageSetting.CmsLangs;
         }
 
-        public virtual string ForgotPassword(string Email, ApiCall call)
+        public virtual string ForgotPassword(string email, ApiCall call)
         {
-            string serverulr = GlobalDb.Users.GetServerUrl(Email);
+            string serverulr = GlobalDb.Users.GetServerUrl(email);
 
             string url = serverulr + "/_api/User/ForgotPassword";
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Email", Email);
+            Dictionary<string, string> para = new Dictionary<string, string> {{"Email", email}};
             return Lib.Helper.HttpHelper.Get<string>(url, para);
         }
 
@@ -308,11 +305,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             name = Lib.Helper.StringHelper.ToValidUserNames(name);
             var user = Kooboo.Data.GlobalDb.Users.Get(name);
-            if (user != null)
-            {
-                return false;
-            }
-            return true;
+            return user == null;
         }
 
         public bool IsUniqueEmail(string email, ApiCall call)

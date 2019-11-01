@@ -21,14 +21,16 @@ namespace Kooboo.Web.Api.Implementation
             var style = call.WebSite.SiteDb().Styles.Get(call.ObjectId);
             if (style != null)
             {
-                var model = new StyleViewModel();
-                model.Id = style.Id;
-                model.Name = style.Name;
-                model.Body = style.Body;
-                model.DisplayName = style.DisplayName;
-                model.FullUrl = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), style);
+                var model = new StyleViewModel
+                {
+                    Id = style.Id,
+                    Name = style.Name,
+                    Body = style.Body,
+                    DisplayName = style.DisplayName,
+                    FullUrl = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), style),
+                    Extension = style.Extension
+                };
 
-                model.Extension = style.Extension;
 
                 if (model.Extension != null && model.Extension != "css" && model.Extension != ".css")
                 {
@@ -56,9 +58,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.Styles.GetExternals().OrderBy(o => o.Name))
             {
-                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item);
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenameHash;
+                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item)
+                {
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id), StoreNameHash = storenameHash
+                };
                 result.Add(model);
             }
 
@@ -81,13 +84,15 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var info = ObjectService.GetObjectInfo(sitedb, item);
 
-                InlineItemViewModel newitem = new InlineItemViewModel();
-                newitem.Id = item.Id;
-                newitem.Name = string.IsNullOrEmpty(item.KoobooOpenTag) ? item.RuleText : item.KoobooOpenTag;
-                newitem.OwnerName = info.DisplayName;
-                newitem.OwnerType = info.ModelType.Name;
-                newitem.LastModified = item.LastModified;
-                newitem.Source = item.RuleText;
+                InlineItemViewModel newitem = new InlineItemViewModel
+                {
+                    Id = item.Id,
+                    Name = string.IsNullOrEmpty(item.KoobooOpenTag) ? item.RuleText : item.KoobooOpenTag,
+                    OwnerName = info.DisplayName,
+                    OwnerType = info.ModelType.Name,
+                    LastModified = item.LastModified,
+                    Source = item.RuleText
+                };
                 result.Add(newitem);
             }
 
@@ -176,10 +181,7 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
 
-                Style newstyle = new Style();
-                newstyle.Name = name;
-                newstyle.Body = body;
-                newstyle.Extension = extension;
+                Style newstyle = new Style {Name = name, Body = body, Extension = extension};
 
                 if (source != null)
                 {
@@ -224,9 +226,9 @@ namespace Kooboo.Web.Api.Implementation
             return GetCssRuleViews(call.WebSite.SiteDb(), call.ObjectId);
         }
 
-        public List<CssRuleViewModel> GetCssRuleViews(SiteDb SiteDb, Guid ParentStyleId)
+        public List<CssRuleViewModel> GetCssRuleViews(SiteDb siteDb, Guid parentStyleId)
         {
-            var allrules = SiteDb.CssRules.Query.Where(o => o.ParentStyleId == ParentStyleId).SelectAll();
+            var allrules = siteDb.CssRules.Query.Where(o => o.ParentStyleId == parentStyleId).SelectAll();
 
             var current = allrules.Where(o => o.ParentCssRuleId == default(Guid)).ToList();
 
@@ -242,17 +244,15 @@ namespace Kooboo.Web.Api.Implementation
                 var ruleType = item.ruleType;
                 if (item.ruleType == RuleType.ImportRule)
                 {
-                    CssRuleViewModel rule = new CssRuleViewModel();
-                    rule.Selector = item.CssText;
-                    rule.RuleType = ruleType;
-                    rule.Id = item.Id;
+                    CssRuleViewModel rule = new CssRuleViewModel
+                    {
+                        Selector = item.CssText, RuleType = ruleType, Id = item.Id
+                    };
                     result.Add(rule);
                 }
                 else if (item.ruleType == RuleType.MediaRule)
                 {
-                    CssRuleViewModel rule = new CssRuleViewModel();
-                    rule.Selector = item.SelectorText;
-                    rule.RuleType = ruleType;
+                    CssRuleViewModel rule = new CssRuleViewModel {Selector = item.SelectorText, RuleType = ruleType};
                     List<CmsCssRule> subrules = allrules.Where(o => o.ParentCssRuleId == item.Id).ToList();
                     rule.Rules = SetGetCssRule(allrules, subrules);
                     rule.Id = item.Id;
@@ -261,8 +261,7 @@ namespace Kooboo.Web.Api.Implementation
                 else
                 {
                     // style rule or font face rule.
-                    CssRuleViewModel rule = new CssRuleViewModel();
-                    rule.RuleType = ruleType;
+                    CssRuleViewModel rule = new CssRuleViewModel {RuleType = ruleType};
                     List<DeclarationViewModel> subdeclarations = new List<DeclarationViewModel>();
 
                     var cssdecls = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(item.RuleText);
@@ -291,17 +290,15 @@ namespace Kooboo.Web.Api.Implementation
                 var ruleType = item.ruleType;
                 if (item.ruleType == RuleType.ImportRule)
                 {
-                    CssRuleViewModel rule = new CssRuleViewModel();
-                    rule.Selector = item.CssText;
-                    rule.RuleType = ruleType;
-                    rule.Id = item.Id;
+                    CssRuleViewModel rule = new CssRuleViewModel
+                    {
+                        Selector = item.CssText, RuleType = ruleType, Id = item.Id
+                    };
                     rules.Add(rule);
                 }
                 else if (item.ruleType == RuleType.MediaRule)
                 {
-                    CssRuleViewModel rule = new CssRuleViewModel();
-                    rule.Selector = item.SelectorText;
-                    rule.RuleType = ruleType;
+                    CssRuleViewModel rule = new CssRuleViewModel {Selector = item.SelectorText, RuleType = ruleType};
                     List<CmsCssRule> subrules = website.SiteDb().CssRules.Query.Where(o => o.ParentCssRuleId == item.Id).SelectAll();
 
                     rule.Rules = this.GetCssRuleList(subrules, website);
@@ -312,8 +309,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     // style rule or font face rule.
 
-                    CssRuleViewModel rule = new CssRuleViewModel();
-                    rule.RuleType = ruleType;
+                    CssRuleViewModel rule = new CssRuleViewModel {RuleType = ruleType};
                     List<DeclarationViewModel> subdeclarations = new List<DeclarationViewModel>();
 
                     var cssdecls = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(item.RuleText);
@@ -335,9 +331,9 @@ namespace Kooboo.Web.Api.Implementation
 
         public void UpdateRules(ApiCall call)
         {
-            Guid StyleId = call.ObjectId;
+            Guid styleId = call.ObjectId;
             var json = call.Context.Request.Body;
-            if (string.IsNullOrEmpty(json) || StyleId == default(Guid))
+            if (string.IsNullOrEmpty(json) || styleId == default(Guid))
             {
                 return;
             }
@@ -348,7 +344,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 model = Lib.Helper.JsonHelper.Deserialize<UpdateStyleRuleViewModel>(json);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -396,7 +392,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (changes.Count > 0)
             {
-                call.WebSite.SiteDb().CssRules.UpdateStyle(changes, StyleId);
+                call.WebSite.SiteDb().CssRules.UpdateStyle(changes, styleId);
             }
         }
 
@@ -515,8 +511,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<string> GetExtensions(ApiCall call)
         {
-            HashSet<string> result = new HashSet<string>();
-            result.Add("css");
+            HashSet<string> result = new HashSet<string> {"css"};
 
             var list = Kooboo.Sites.Engine.Manager.GetStyle();
 

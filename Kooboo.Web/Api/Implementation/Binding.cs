@@ -61,7 +61,7 @@ namespace Kooboo.Web.Api.Implementation
                 //throw;
             }
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {
@@ -76,25 +76,25 @@ namespace Kooboo.Web.Api.Implementation
         public virtual void Post(ApiCall call)
         {
             string subdomain = call.GetValue("subdomain");
-            string RootDomain = call.GetValue("rootdomain");
-            Guid SiteId = call.GetGuidValue("SiteId");
+            string rootDomain = call.GetValue("rootdomain");
+            Guid siteId = call.GetGuidValue("SiteId");
             int port = (int)call.GetLongValue("Port");
 
-            if (string.IsNullOrEmpty(RootDomain))
+            if (string.IsNullOrEmpty(rootDomain))
             {
                 return;
             }
 
-            bool DefaultBinding = call.GetBoolValue("DefaultBinding");
+            bool defaultBinding = call.GetBoolValue("DefaultBinding");
 
-            if (SiteId != default(Guid))
+            if (siteId != default(Guid))
             {
                 if (port <= 0)
                 {
-                    DefaultBinding = false;
+                    defaultBinding = false;
                 }
 
-                if (!DefaultBinding)
+                if (!defaultBinding)
                 {
                     port = 0;
                 }
@@ -107,28 +107,28 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
 
-                if (DefaultBinding && port > 0)
+                if (defaultBinding && port > 0)
                 {
-                    GlobalDb.Bindings.AddOrUpdate(null, null, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+                    GlobalDb.Bindings.AddOrUpdate(null, null, siteId, call.Context.User.CurrentOrgId, defaultBinding, port);
                 }
                 else
                 {
-                    var domain = GlobalDb.Domains.Get(RootDomain);
+                    var domain = GlobalDb.Domains.Get(rootDomain);
                     if (domain.OrganizationId != default(Guid) && AppSettings.IsOnlineServer && domain.OrganizationId != call.Context.User.CurrentOrgId)
                     {
                         throw new Exception(Data.Language.Hardcoded.GetValue("Domain does not owned by current user", call.Context));
                     }
 
-                    GlobalDb.Bindings.AddOrUpdate(RootDomain, subdomain, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+                    GlobalDb.Bindings.AddOrUpdate(rootDomain, subdomain, siteId, call.Context.User.CurrentOrgId, defaultBinding, port);
                 }
             }
         }
 
-        public List<BindingViewModel> ListBySite(Guid SiteId, ApiCall call)
+        public List<BindingViewModel> ListBySite(Guid siteId, ApiCall call)
         {
             List<BindingViewModel> result = new List<BindingViewModel>();
 
-            var list = GlobalDb.Bindings.GetByWebSite(SiteId);
+            var list = GlobalDb.Bindings.GetByWebSite(siteId);
 
             foreach (var item in list)
             {
@@ -150,11 +150,13 @@ namespace Kooboo.Web.Api.Implementation
                 List<BindingInfo> bindinginfos = new List<BindingInfo>();
                 foreach (var item in bindings)
                 {
-                    BindingInfo info = new BindingInfo();
-                    info.Id = item.Id;
-                    info.FullName = item.FullName;
-                    info.SubDomain = item.SubDomain;
-                    info.OrganizationId = item.OrganizationId;
+                    BindingInfo info = new BindingInfo
+                    {
+                        Id = item.Id,
+                        FullName = item.FullName,
+                        SubDomain = item.SubDomain,
+                        OrganizationId = item.OrganizationId
+                    };
 
                     if (item.Port > 0 && item.Port != 80)
                     {
@@ -174,16 +176,16 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-        public bool VerifySsl(string rootDomain, string Subdomain, ApiCall call)
+        public bool VerifySsl(string rootDomain, string subdomain, ApiCall call)
         {
             string fullname = null;
             if (rootDomain.StartsWith("."))
             {
-                fullname = Subdomain + rootDomain;
+                fullname = subdomain + rootDomain;
             }
             else
             {
-                fullname = Subdomain + "." + rootDomain;
+                fullname = subdomain + "." + rootDomain;
             }
 
             var ok = Kooboo.Data.SSL.SslService.EnsureCheck(fullname);
@@ -197,32 +199,32 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public void SetSsl(string rootDomain, string Subdomain, ApiCall call)
+        public void SetSsl(string rootDomain, string subdomain, ApiCall call)
         {
             string fullname = null;
             if (rootDomain.StartsWith("."))
             {
-                fullname = Subdomain + rootDomain;
+                fullname = subdomain + rootDomain;
             }
             else
             {
-                fullname = Subdomain + "." + rootDomain;
+                fullname = subdomain + "." + rootDomain;
             }
 
-            Guid Orgid = default(Guid);
+            Guid orgid = default(Guid);
 
             if (call.Context.WebSite != null)
             {
-                Orgid = call.Context.WebSite.OrganizationId;
+                orgid = call.Context.WebSite.OrganizationId;
             }
             else
             {
                 if (call.Context.User != null)
                 {
-                    Orgid = call.Context.User.CurrentOrgId;
+                    orgid = call.Context.User.CurrentOrgId;
                 }
             }
-            Kooboo.Data.SSL.SslService.SetSsl(fullname, Orgid);
+            Kooboo.Data.SSL.SslService.SetSsl(fullname, orgid);
         }
 
         public List<SiteBindingViewModel> SiteBinding(ApiCall call)

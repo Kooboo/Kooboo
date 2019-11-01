@@ -19,17 +19,17 @@ namespace Kooboo.Web.Api.Implementation
     {
         public List<DataSourceViewModel> ListDataSource(ApiCall call)
         {
-            return FilterOut(allmethods(call), call.WebSite);
+            return FilterOut(Allmethods(call), call.WebSite);
         }
 
         public List<DataSourceViewModel> CenterList(ApiCall call)
         {
-            return FilterOut(allmethods(call), call.WebSite);
+            return FilterOut(Allmethods(call), call.WebSite);
         }
 
         public List<DataSourceViewModel> Public(ApiCall call)
         {
-            var all = FilterOut(allmethods(call), call.WebSite);
+            var all = FilterOut(Allmethods(call), call.WebSite);
             foreach (var item in all)
             {
                 item.Methods.RemoveAll(o => !o.IsGlobal && !o.IsPublic);
@@ -40,7 +40,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<DataSourceViewModel> Private(ApiCall apiCall)
         {
-            var all = FilterOut(allmethods(apiCall), apiCall.WebSite);
+            var all = FilterOut(Allmethods(apiCall), apiCall.WebSite);
             foreach (var item in all)
             {
                 item.Methods.RemoveAll(o => o.IsGlobal || o.IsPublic);
@@ -49,7 +49,7 @@ namespace Kooboo.Web.Api.Implementation
             return all;
         }
 
-        private List<DataSourceViewModel> allmethods(ApiCall call)
+        private List<DataSourceViewModel> Allmethods(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             var globalSettings = GlobalDb.DataMethodSettings.All();
@@ -81,7 +81,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-            var all = FilterOut(allmethods(call), call.WebSite);
+            var all = FilterOut(Allmethods(call), call.WebSite);
 
             List<Guid> privateMethodIds = new List<Guid>();
             if (viewid != default(Guid))
@@ -89,7 +89,7 @@ namespace Kooboo.Web.Api.Implementation
                 var allviewmethods = call.WebSite.SiteDb().ViewDataMethods.FlatListByView(viewid);
                 privateMethodIds = allviewmethods.Select(o => o.MethodId).ToList();
             }
-            List<DataSourceViewModel> SourceRemove = new List<DataSourceViewModel>();
+            List<DataSourceViewModel> sourceRemove = new List<DataSourceViewModel>();
 
             foreach (var item in all)
             {
@@ -102,11 +102,11 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (item.Methods.Count() == 0)
                 {
-                    SourceRemove.Add(item);
+                    sourceRemove.Add(item);
                 }
             }
 
-            foreach (var item in SourceRemove)
+            foreach (var item in sourceRemove)
             {
                 all.Remove(item);
             }
@@ -400,7 +400,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     var viewdatamethod = siteDb.ViewDataMethods.Query.Where(o => o.MethodId == method.Id).SelectAll();
 
-                    if (viewdatamethod != null && viewdatamethod.Count() > 0)
+                    if (viewdatamethod != null && viewdatamethod.Any())
                     {
                         method.Relations.Add("View", viewdatamethod.Count());
                     }

@@ -60,13 +60,15 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items)
             {
-                RouteItemViewModel model = new RouteItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.ResourceType = ConstTypeContainer.GetName(item.DestinationConstType);
-                model.ObjectId = item.objectId;
-                model.LastModified = item.LastModified;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Routes.GetUsedBy(item.Id));
+                RouteItemViewModel model = new RouteItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    ResourceType = ConstTypeContainer.GetName(item.DestinationConstType),
+                    ObjectId = item.objectId,
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Routes.GetUsedBy(item.Id))
+                };
                 model.PreviewUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, model.Name);
                 list.Add(model);
             }
@@ -96,13 +98,15 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items)
             {
-                ExternalResourceItemViewModel model = new ExternalResourceItemViewModel();
-                model.Id = item.Id;
-                model.FullUrl = item.FullUrl;
-                model.ResourceType = ConstTypeContainer.GetName(item.DestinationObjectType);
-                model.LastModified = item.LastModified;
+                ExternalResourceItemViewModel model = new ExternalResourceItemViewModel
+                {
+                    Id = item.Id,
+                    FullUrl = item.FullUrl,
+                    ResourceType = ConstTypeContainer.GetName(item.DestinationObjectType),
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.ExternalResource.GetUsedBy(item.Id))
+                };
 
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.ExternalResource.GetUsedBy(item.Id));
 
                 list.Add(model);
             }
@@ -148,48 +152,47 @@ namespace Kooboo.Web.Api.Implementation
                 repo = sitedb.ExternalResource;
             }
 
-            foreach (var id in objectids)
-            {
-                var siteobject = repo.Get(id);
-                if (siteobject != null)
+            if (objectids != null)
+                foreach (var id in objectids)
                 {
-                    string oldurl = null;
-                    if (siteobject is Route)
+                    var siteobject = repo?.Get(id);
+                    if (siteobject != null)
                     {
-                        var routeobject = siteobject as Route;
-                        oldurl = routeobject.Name;
-                    }
-                    else
-                    {
-                        var external = siteobject as ExternalResource;
-                        oldurl = external.FullUrl;
-                    }
-
-                    var referredby = sitedb.Relations.GetReferredByRelations(id);
-
-                    foreach (var by in referredby)
-                    {
-                        var repofrom = sitedb.GetRepository(by.ConstTypeX);
-                        if (repofrom != null)
+                        string oldurl = null;
+                        if (siteobject is Route routeobject)
                         {
-                            Sites.Helper.ChangeHelper.DeleteUrl(sitedb, repofrom, by.objectXId, oldurl);
+                            oldurl = routeobject.Name;
                         }
-                    }
+                        else
+                        {
+                            var external = siteobject as ExternalResource;
+                            oldurl = external?.FullUrl;
+                        }
 
-                    if (siteobject is Route)
-                    {
-                        var route = siteobject as Route;
-                        if (route.objectId == default(Guid))
+                        var referredby = sitedb.Relations.GetReferredByRelations(id);
+
+                        foreach (var by in referredby)
+                        {
+                            var repofrom = sitedb.GetRepository(@by.ConstTypeX);
+                            if (repofrom != null)
+                            {
+                                Sites.Helper.ChangeHelper.DeleteUrl(sitedb, repofrom, @by.objectXId, oldurl);
+                            }
+                        }
+
+                        if (siteobject is Route route)
+                        {
+                            if (route.objectId == default(Guid))
+                            {
+                                repo.Delete(route.Id);
+                            }
+                        }
+                        else
                         {
                             repo.Delete(siteobject.Id);
                         }
                     }
-                    else
-                    {
-                        repo.Delete(siteobject.Id);
-                    }
                 }
-            }
         }
 
         private RouteUpdate UpdateRoute(ApiCall call)

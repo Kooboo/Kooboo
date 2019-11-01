@@ -45,6 +45,6 @@ namespace Kooboo.Web.ViewModel
 
         public List<ViewDataMethod> DataSources { get; set; }
 
-        /// public List<FormBinding> FormBindings { get; set; }
+        // public List<FormBinding> FormBindings { get; set; }
     }
 }

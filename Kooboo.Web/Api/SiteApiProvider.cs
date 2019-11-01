@@ -84,17 +84,13 @@ namespace Kooboo.Web.Api
             AddApi(List, instance);
         }
 
-        public IApi Get(string ModelName)
+        public IApi Get(string modelName)
         {
-            if (string.IsNullOrEmpty(ModelName))
+            if (string.IsNullOrEmpty(modelName))
             {
                 return null;
             }
-            if (List.ContainsKey(ModelName))
-            {
-                return List[ModelName];
-            }
-            return null;
+            return List.ContainsKey(modelName) ? List[modelName] : null;
         }
     }
 }

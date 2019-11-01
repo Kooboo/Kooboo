@@ -19,8 +19,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             string data = call.GetValue("Data");
             string strRootId = call.GetValue("RootId");
-            Guid RootId;
-            if (!System.Guid.TryParse(strRootId, out RootId))
+            if (!System.Guid.TryParse(strRootId, out var RootId))
             {
                 List<string> message = new List<string>();
                 message.Add("rootid is not a valid guid");
@@ -35,8 +34,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             catch (Exception ex)
             {
-                List<string> message = new List<string>();
-                message.Add(ex.Message);
+                List<string> message = new List<string> {ex.Message};
                 return new JsonResponse { Success = false, Messages = message };
             }
         }
@@ -46,9 +44,8 @@ namespace Kooboo.Web.Api.Implementation
         {
             Guid id = call.ObjectId;
             string strroot = call.GetValue("RootId");
-            Guid RootId = default(Guid);
 
-            if (System.Guid.TryParse(strroot, out RootId))
+            if (System.Guid.TryParse(strroot, out var RootId))
             {
                 var root = call.WebSite.SiteDb().Menus.Get(RootId);
 
@@ -72,11 +69,10 @@ namespace Kooboo.Web.Api.Implementation
         {
             Guid id = call.ObjectId;
             string strroot = call.GetValue("RootId");
-            Guid RootId = default(Guid);
 
-            if (System.Guid.TryParse(strroot, out RootId))
+            if (System.Guid.TryParse(strroot, out var rootId))
             {
-                var root = call.WebSite.SiteDb().Menus.Get(RootId);
+                var root = call.WebSite.SiteDb().Menus.Get(rootId);
 
                 var sub = GetSubMenu(root, id);
 
@@ -105,11 +101,10 @@ namespace Kooboo.Web.Api.Implementation
 
             Guid id = call.ObjectId;
             string strroot = call.GetValue("RootId");
-            Guid RootId = default(Guid);
 
-            if (System.Guid.TryParse(strroot, out RootId))
+            if (System.Guid.TryParse(strroot, out var rootId))
             {
-                var root = call.WebSite.SiteDb().Menus.Get(RootId);
+                var root = call.WebSite.SiteDb().Menus.Get(rootId);
 
                 var sub = GetSubMenu(root, id);
 
@@ -130,13 +125,13 @@ namespace Kooboo.Web.Api.Implementation
         {
             Guid id = call.ObjectId;
             string strroot = call.GetValue("RootId");
-            Guid RootId = call.GetGuidValue("rootid");
+            call.GetGuidValue("rootid");
 
-            Dictionary<string, string> Values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, string> values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            if (System.Guid.TryParse(strroot, out RootId))
+            if (System.Guid.TryParse(strroot, out var rootId))
             {
-                var root = call.WebSite.SiteDb().Menus.Get(RootId);
+                var root = call.WebSite.SiteDb().Menus.Get(rootId);
 
                 var sub = GetSubMenu(root, id);
 
@@ -150,17 +145,17 @@ namespace Kooboo.Web.Api.Implementation
                             itemvalue = sub.Values[item];
                         }
 
-                        Values[item] = itemvalue;
+                        values[item] = itemvalue;
                     }
 
-                    var defaultvalue = Values[call.WebSite.DefaultCulture];
+                    var defaultvalue = values[call.WebSite.DefaultCulture];
                     if (string.IsNullOrEmpty(defaultvalue) && !string.IsNullOrEmpty(sub.Name))
                     {
-                        Values[call.WebSite.DefaultCulture] = sub.Name;
+                        values[call.WebSite.DefaultCulture] = sub.Name;
                     }
                 }
             }
-            return Values;
+            return values;
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId", "Values")]
@@ -168,12 +163,12 @@ namespace Kooboo.Web.Api.Implementation
         {
             Guid id = call.ObjectId;
             string strroot = call.GetValue("RootId");
-            Guid RootId = call.GetGuidValue("rootid");
+            call.GetGuidValue("rootid");
             string values = call.GetValue("Values");
 
-            if (System.Guid.TryParse(strroot, out RootId))
+            if (System.Guid.TryParse(strroot, out var rootId))
             {
-                var root = call.WebSite.SiteDb().Menus.Get(RootId);
+                var root = call.WebSite.SiteDb().Menus.Get(rootId);
 
                 var sub = GetSubMenu(root, id);
 
@@ -200,16 +195,18 @@ namespace Kooboo.Web.Api.Implementation
         {
             List<MainMenuItemViewModel> result = new List<MainMenuItemViewModel>();
             var sitedb = call.WebSite.SiteDb();
-            int StoreNameHash = Lib.Security.Hash.ComputeInt(sitedb.Menus.StoreName);
+            int storeNameHash = Lib.Security.Hash.ComputeInt(sitedb.Menus.StoreName);
             foreach (var item in sitedb.Menus.All())
             {
-                MainMenuItemViewModel model = new MainMenuItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = StoreNameHash;
-                model.LastModified = item.LastModified;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Menus.GetUsedBy(item.Id));
+                MainMenuItemViewModel model = new MainMenuItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storeNameHash,
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Menus.GetUsedBy(item.Id))
+                };
                 result.Add(model);
             }
             return result.ToList<object>();
@@ -218,19 +215,18 @@ namespace Kooboo.Web.Api.Implementation
         [Kooboo.Attributes.RequireParameters("Name")]
         public Menu Create(ApiCall call)
         {
-            string Name = call.GetValue("Name");
+            string name = call.GetValue("Name");
             var sitedb = call.WebSite.SiteDb();
 
-            if (!string.IsNullOrEmpty(Name))
+            if (!string.IsNullOrEmpty(name))
             {
-                var old = sitedb.Menus.GetByNameOrId(Name);
+                var old = sitedb.Menus.GetByNameOrId(name);
                 if (old != null)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("Name already exists", call.Context));
                 }
 
-                var menu = new Menu();
-                menu.Name = Name;
+                var menu = new Menu {Name = name};
                 sitedb.Menus.AddOrUpdate(menu);
                 return menu;
             }
@@ -245,44 +241,42 @@ namespace Kooboo.Web.Api.Implementation
         [Kooboo.Attributes.RequireParameters("ParentId", "RootId", "Name", "Url")]
         public Menu CreateSub(ApiCall call)
         {
-            Guid ParentId = call.GetGuidValue("ParentId");
-            Guid RootId = call.GetGuidValue("RootId");
+            Guid parentId = call.GetGuidValue("ParentId");
+            Guid rootId = call.GetGuidValue("RootId");
 
-            if (ParentId != default(Guid) && RootId != default(Guid))
+            if (parentId != default(Guid) && rootId != default(Guid))
             {
-                var root = call.WebSite.SiteDb().Menus.Get(RootId);
+                var root = call.WebSite.SiteDb().Menus.Get(rootId);
                 if (root != null)
                 {
-                    var parentmenu = GetSubMenu(root, ParentId);
+                    var parentmenu = GetSubMenu(root, parentId);
                     if (parentmenu != null)
                     {
-                        string Name = call.GetValue("Name");
-                        string Url = call.GetValue("Url");
-                        var Submenu = new Menu();
-                        Submenu.ParentId = ParentId;
-                        Submenu.Name = Name;
-                        Submenu.Values.Add(call.WebSite.DefaultCulture, Name);
-                        Submenu.RootId = RootId;
-                        Submenu.Url = Url;
-                        parentmenu.children.Insert(0, Submenu);
+                        string name = call.GetValue("Name");
+                        string url = call.GetValue("Url");
+                        var submenu = new Menu {ParentId = parentId, Name = name};
+                        submenu.Values.Add(call.WebSite.DefaultCulture, name);
+                        submenu.RootId = rootId;
+                        submenu.Url = url;
+                        parentmenu.children.Insert(0, submenu);
                         call.WebSite.SiteDb().Menus.AddOrUpdate(root, call.Context.User.Id);
-                        return Submenu;
+                        return submenu;
                     }
                 }
             }
             return null;
         }
 
-        private Menu GetSubMenu(Menu Menu, Guid SubId)
+        private Menu GetSubMenu(Menu menu, Guid subId)
         {
-            if (Menu.Id == SubId)
+            if (menu.Id == subId)
             {
-                return Menu;
+                return menu;
             }
 
-            foreach (var item in Menu.children)
+            foreach (var item in menu.children)
             {
-                var result = GetSubMenu(item, SubId);
+                var result = GetSubMenu(item, subId);
                 if (result != null)
                 {
                     return result;
@@ -310,21 +304,21 @@ namespace Kooboo.Web.Api.Implementation
 
             if (menu != null)
             {
-                List<SiteMenuItemViewModel> FlatList = new List<SiteMenuItemViewModel>();
-                MakeFlat(menu, FlatList, menu.Id, call.WebSite);
-                return FlatList;
+                List<SiteMenuItemViewModel> flatList = new List<SiteMenuItemViewModel>();
+                MakeFlat(menu, flatList, menu.Id, call.WebSite);
+                return flatList;
             }
             return null;
         }
 
-        private SiteMenuItemViewModel MakeFlat(Menu topmenu, List<SiteMenuItemViewModel> result, Guid RootId, WebSite site)
+        private SiteMenuItemViewModel MakeFlat(Menu topmenu, List<SiteMenuItemViewModel> result, Guid rootId, WebSite site)
         {
             var menuview = ToViewModel(topmenu, site);
-            menuview.RootId = RootId;
+            menuview.RootId = rootId;
             result.Add(menuview);
             foreach (var item in topmenu.children)
             {
-                var subitem = MakeFlat(item, result, RootId, site);
+                var subitem = MakeFlat(item, result, rootId, site);
                 menuview.Children.Add(subitem);
             }
 
@@ -337,21 +331,18 @@ namespace Kooboo.Web.Api.Implementation
             string strrootid = call.GetValue("rootid");
             string strid = call.GetValue("id");
 
-            Guid RootId;
-            Guid Id;
-
-            if (Guid.TryParse(strrootid, out RootId) && Guid.TryParse(strid, out Id))
+            if (Guid.TryParse(strrootid, out var rootId) && Guid.TryParse(strid, out var id))
             {
-                if (Id == RootId)
+                if (id == rootId)
                 {
-                    call.WebSite.SiteDb().Menus.Delete(Id, call.Context.User.Id);
+                    call.WebSite.SiteDb().Menus.Delete(id, call.Context.User.Id);
                 }
                 else
                 {
-                    var rootmenu = call.WebSite.SiteDb().Menus.Get(RootId);
+                    var rootmenu = call.WebSite.SiteDb().Menus.Get(rootId);
                     if (rootmenu != null)
                     {
-                        RemoveSubItem(rootmenu, Id);
+                        RemoveSubItem(rootmenu, id);
                     }
                     call.WebSite.SiteDb().Menus.AddOrUpdate(rootmenu, call.Context.User.Id);
                 }
@@ -360,9 +351,9 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-        private bool RemoveSubItem(Menu menu, Guid SubId)
+        private bool RemoveSubItem(Menu menu, Guid subId)
         {
-            Menu founditem = menu.children.Find(o => o.Id == SubId);
+            Menu founditem = menu.children.Find(o => o.Id == subId);
             if (founditem != null)
             {
                 menu.children.Remove(founditem);
@@ -372,7 +363,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 foreach (var item in menu.children)
                 {
-                    if (RemoveSubItem(item, SubId))
+                    if (RemoveSubItem(item, subId))
                     {
                         return true;
                     }
@@ -384,16 +375,18 @@ namespace Kooboo.Web.Api.Implementation
 
         private SiteMenuItemViewModel ToViewModel(Menu menu, WebSite site)
         {
-            SiteMenuItemViewModel item = new SiteMenuItemViewModel();
+            SiteMenuItemViewModel item = new SiteMenuItemViewModel
+            {
+                Id = menu.Id,
+                ParentId = menu.ParentId,
+                RootId = menu.RootId,
+                SubItemContainer = menu.SubItemContainer,
+                SubItemTemplate = menu.SubItemTemplate,
+                Template = menu.Template,
+                Name = Kooboo.Sites.Helper.MenuHelper.GetName(menu, site.DefaultCulture),
+                Url = menu.Url
+            };
 
-            item.Id = menu.Id;
-            item.ParentId = menu.ParentId;
-            item.RootId = menu.RootId;
-            item.SubItemContainer = menu.SubItemContainer;
-            item.SubItemTemplate = menu.SubItemTemplate;
-            item.Template = menu.Template;
-            item.Name = Kooboo.Sites.Helper.MenuHelper.GetName(menu, site.DefaultCulture);
-            item.Url = menu.Url;
             return item;
         }
 

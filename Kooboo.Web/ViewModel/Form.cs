@@ -107,14 +107,7 @@ namespace Kooboo.Web.ViewModel
         [Kooboo.IndexedDB.CustomAttributes.KoobooKeyIgnoreCase]
         public Dictionary<string, string> Setting
         {
-            get
-            {
-                if (_setting == null)
-                {
-                    _setting = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _setting;
-            }
+            get { return _setting ?? (_setting = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _setting = value; }
         }
 

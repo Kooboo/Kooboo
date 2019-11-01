@@ -8,6 +8,6 @@ namespace Kooboo.Web.Payment
     {
         void Save(PaymentRequest request, RenderContext context);
 
-        PaymentRequest Get(Guid PaymentRequestId, RenderContext context);
+        PaymentRequest Get(Guid paymentRequestId, RenderContext context);
     }
 }

@@ -12,9 +12,9 @@ namespace Kooboo.Web.JQL
 {
     public static class CodeGeneration
     {
-        public static string DatabaseAddScript(WebSite Site, string tablename)
+        public static string DatabaseAddScript(WebSite site, string tablename)
         {
-            var fields = GetDatabaseFields(Site, tablename);
+            var fields = GetDatabaseFields(site, tablename);
             if (fields != null && fields.Any())
             {
                 return GetDatabaseAdd(tablename, fields);
@@ -22,9 +22,9 @@ namespace Kooboo.Web.JQL
             return null;
         }
 
-        public static string DatabaseUpdateScript(WebSite Site, string tablename)
+        public static string DatabaseUpdateScript(WebSite site, string tablename)
         {
-            var fields = GetDatabaseFields(Site, tablename);
+            var fields = GetDatabaseFields(site, tablename);
             if (fields != null && fields.Any())
             {
                 return GetDatabaseUpdate(tablename, fields);
@@ -32,14 +32,14 @@ namespace Kooboo.Web.JQL
             return null;
         }
 
-        public static string DatabaseDeleteScript(WebSite Site, string tablename)
+        public static string DatabaseDeleteScript(WebSite site, string tablename)
         {
             string js = "var id=k.request.id; \r\n";
             js += "k.database." + tablename + ".delete(id);\r\n";
             return js;
         }
 
-        public static string DatabaseGetScript(WebSite Site, string tablename)
+        public static string DatabaseGetScript(WebSite site, string tablename)
         {
             string js = "var id = k.request.id; \r\n";
             js += " var obj = k.database." + tablename + ".get(id);\r\n";
@@ -47,7 +47,7 @@ namespace Kooboo.Web.JQL
             return js;
         }
 
-        public static string DatabaseListScript(WebSite Site, string tablename)
+        public static string DatabaseListScript(WebSite site, string tablename)
         {
             string js = " var list = k.database." + tablename + ".all();\r\n";
             js += "if (list) {  k.response.json(list); }; ";
@@ -87,9 +87,9 @@ namespace Kooboo.Web.JQL
             return js;
         }
 
-        internal static string GetDatabaseDelete(string tablename, string NameOrId)
+        internal static string GetDatabaseDelete(string tablename, string nameOrId)
         {
-            string js = "k.database." + tablename + ".delete(" + NameOrId + ");\r\n";
+            string js = "k.database." + tablename + ".delete(" + nameOrId + ");\r\n";
             return js;
         }
 
@@ -107,42 +107,40 @@ namespace Kooboo.Web.JQL
         }
 
 
-        public static void GenerateDatabase(WebSite website, string TableName, List<string> actions)
+        public static void GenerateDatabase(WebSite website, string tableName, List<string> actions)
         {
             foreach (var item in actions)
             {
-                GenerateDatabase(website, TableName, item);
+                GenerateDatabase(website, tableName, item);
             }
         }
 
-        public static void GenerateDatabase(WebSite website, string TableName, string item)
+        public static void GenerateDatabase(WebSite website, string tableName, string item)
         {
             var sitedb = website.SiteDb();
             string scriptbody = null;
-            if (item == "add")
+            switch (item)
             {
-                scriptbody = DatabaseAddScript(website, TableName);
-            }
-            else if (item == "update")
-            {
-                scriptbody = DatabaseUpdateScript(website, TableName);
-            }
-            else if (item == "get")
-            {
-                scriptbody = DatabaseGetScript(website, TableName);
-            }
-            else if (item == "delete")
-            {
-                scriptbody = DatabaseDeleteScript(website, TableName);
-            }
-            else if (item == "list")
-            {
-                scriptbody = DatabaseListScript(website, TableName);
+                case "add":
+                    scriptbody = DatabaseAddScript(website, tableName);
+                    break;
+                case "update":
+                    scriptbody = DatabaseUpdateScript(website, tableName);
+                    break;
+                case "get":
+                    scriptbody = DatabaseGetScript(website, tableName);
+                    break;
+                case "delete":
+                    scriptbody = DatabaseDeleteScript(website, tableName);
+                    break;
+                case "list":
+                    scriptbody = DatabaseListScript(website, tableName);
+                    break;
             }
 
             if (scriptbody != null)
             {
-                AddDatabaseApi_code(sitedb, TableName, item, scriptbody);
+                AddDatabaseApi_code(sitedb, tableName, item, scriptbody);
             }
         }
 
@@ -150,9 +148,7 @@ namespace Kooboo.Web.JQL
         {
             string url = "/dbapi/" + tableName + "/" + actionName;
 
-            Code code = new Code();
-            code.Name = "dbapi_" + tableName + "_" + actionName;
-            code.Body = codebody;
+            Code code = new Code {Name = "dbapi_" + tableName + "_" + actionName, Body = codebody};
 
             var oldcode = sitedb.Code.Get(code.Id);
             if (oldcode != null)
@@ -173,10 +169,10 @@ namespace Kooboo.Web.JQL
 
             sitedb.Code.AddOrUpdate(code);
 
-            var route = new Kooboo.Sites.Routing.Route();
-            route.Name = url;
-            route.objectId = code.Id;
-            route.DestinationConstType = ConstObjectType.Code;
+            var route = new Kooboo.Sites.Routing.Route
+            {
+                Name = url, objectId = code.Id, DestinationConstType = ConstObjectType.Code
+            };
             sitedb.Routes.AddOrUpdate(route);
 
         }
@@ -195,25 +191,23 @@ namespace Kooboo.Web.JQL
             var sitedb = website.SiteDb();
 
             string scriptbody = null;
-            if (item == "add")
+            switch (item)
             {
-                scriptbody = TextContentAddScript(website, folderName);
-            }
-            else if (item == "update")
-            {
-                scriptbody = TextContentUpdateScript(website, folderName);
-            }
-            else if (item == "get")
-            {
-                scriptbody = TextContentGetScript(website, folderName);
-            }
-            else if (item == "delete")
-            {
-                scriptbody = TextContentDeleteScript(website, folderName);
-            }
-            else if (item == "list")
-            {
-                scriptbody = TextContentListScript(website, folderName);
+                case "add":
+                    scriptbody = TextContentAddScript(website, folderName);
+                    break;
+                case "update":
+                    scriptbody = TextContentUpdateScript(website, folderName);
+                    break;
+                case "get":
+                    scriptbody = TextContentGetScript(website, folderName);
+                    break;
+                case "delete":
+                    scriptbody = TextContentDeleteScript(website, folderName);
+                    break;
+                case "list":
+                    scriptbody = TextContentListScript(website, folderName);
+                    break;
             }
 
             if (scriptbody != null)
@@ -228,9 +222,7 @@ namespace Kooboo.Web.JQL
         {
             string url = "/textapi/" + folderName + "/" + actionName;
 
-            Code code = new Code();
-            code.Name = "textapi_" + folderName + "_" + actionName;
-            code.Body = codebody;
+            Code code = new Code {Name = "textapi_" + folderName + "_" + actionName, Body = codebody};
 
             var oldcode = sitedb.Code.Get(code.Id);
             if (oldcode != null)
@@ -251,17 +243,17 @@ namespace Kooboo.Web.JQL
 
             sitedb.Code.AddOrUpdate(code);
 
-            var route = new Kooboo.Sites.Routing.Route();
-            route.Name = url;
-            route.objectId = code.Id;
-            route.DestinationConstType = ConstObjectType.Code;
+            var route = new Kooboo.Sites.Routing.Route
+            {
+                Name = url, objectId = code.Id, DestinationConstType = ConstObjectType.Code
+            };
             sitedb.Routes.AddOrUpdate(route);
         }
 
 
-        public static string TextContentAddScript(WebSite Site, string folderName)
+        public static string TextContentAddScript(WebSite site, string folderName)
         {
-            var fields = GetTextContentFields(Site, folderName);
+            var fields = GetTextContentFields(site, folderName);
             if (fields != null && fields.Any())
             {
                 string js = "var obj={}; \r\n";
@@ -278,9 +270,9 @@ namespace Kooboo.Web.JQL
             return null;
         }
 
-        public static string TextContentUpdateScript(WebSite Site, string tablename)
+        public static string TextContentUpdateScript(WebSite site, string tablename)
         {
-            var fields = GetTextContentFields(Site, tablename);
+            var fields = GetTextContentFields(site, tablename);
             if (fields != null && fields.Any())
             {
 
@@ -321,14 +313,14 @@ namespace Kooboo.Web.JQL
             return js;
         }
 
-        public static string TextContentDeleteScript(WebSite Site, string tablename)
+        public static string TextContentDeleteScript(WebSite site, string tablename)
         {
             string js = JsKey();
             js += "k.site.textContents.delete(id);\r\n";
             return js;
         }
 
-        public static string TextContentGetScript(WebSite Site, string tablename)
+        public static string TextContentGetScript(WebSite site, string tablename)
         {
             string js = JsKey();
 
@@ -337,7 +329,7 @@ namespace Kooboo.Web.JQL
             return js;
         }
 
-        public static string TextContentListScript(WebSite Site, string folderName)
+        public static string TextContentListScript(WebSite site, string folderName)
         {
 
             string js = " var list = k.site.textContents.findAll(\"folder=='" + folderName + "'\");\r\n";

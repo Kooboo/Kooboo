@@ -29,9 +29,7 @@ namespace Kooboo.Web.Spa
             {
                 if (_startPageNames == null)
                 {
-                    _startPageNames = new List<string>();
-                    _startPageNames.Add("index");
-                    _startPageNames.Add("default");
+                    _startPageNames = new List<string> {"index", "default"};
                 }
                 return _startPageNames;
             }
@@ -52,14 +50,14 @@ namespace Kooboo.Web.Spa
             return null;
         }
 
-        private string FindFile(string FullPath, List<string> extensions)
+        private string FindFile(string fullPath, List<string> extensions)
         {
-            if (System.IO.File.Exists(FullPath))
+            if (System.IO.File.Exists(fullPath))
             {
-                return FullPath;
+                return fullPath;
             }
 
-            var fileinfo = new System.IO.FileInfo(FullPath);
+            var fileinfo = new System.IO.FileInfo(fullPath);
 
             if (fileinfo.Directory.Exists)
             {
@@ -85,7 +83,7 @@ namespace Kooboo.Web.Spa
                     }
                 }
             }
-            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);
+            return Kooboo.Render.Controller.ModuleFile.FindFile(fullPath);
         }
 
         private string ExtendViewSearch(string root, string relative, List<string> searchfolders, List<string> extensions)
@@ -103,40 +101,35 @@ namespace Kooboo.Web.Spa
             return null;
         }
 
-        private string FindFileSearch(RenderContext context, string RelativeUrl, List<string> searchfolders, List<string> extensions)
+        private string FindFileSearch(RenderContext context, string relativeUrl, List<string> searchfolders, List<string> extensions)
         {
-            RelativeUrl = CleanQuestionMark(RelativeUrl);
+            relativeUrl = CleanQuestionMark(relativeUrl);
             string root = GetRoot(context);
             string route = null;
-            if (RelativeUrl.StartsWith("/") || RelativeUrl.StartsWith("\\"))
+            if (relativeUrl.StartsWith("/") || relativeUrl.StartsWith("\\"))
             {
-                RelativeUrl = RelativeUrl.Substring(1);
+                relativeUrl = relativeUrl.Substring(1);
             }
-            route = "/" + RelativeUrl;
+            route = "/" + relativeUrl;
 
             string fullpath = RenderHelper.CombinePath(root, route);
-            string Filename = FindFile(fullpath, extensions);
-            if ((searchfolders == null) || (!string.IsNullOrEmpty(Filename)))
+            string filename = FindFile(fullpath, extensions);
+            if ((searchfolders == null) || (!string.IsNullOrEmpty(filename)))
             {
-                return Filename;
+                return filename;
             }
 
             return ExtendViewSearch(root, route, searchfolders, extensions);
         }
 
-        public byte[] GetBinary(RenderContext context, string RelativeUrl)
+        public byte[] GetBinary(RenderContext context, string relativeUrl)
         {
-            string FileName = FindFileSearch(context, RelativeUrl, null, null);
+            string fileName = FindFileSearch(context, relativeUrl, null, null);
 
-            if (!string.IsNullOrEmpty(FileName))
-            {
-                return GetBinary(context, option, RelativeUrl, FileName);
-                //return System.IO.File.ReadAllBytes(FileName);
-            }
-            return null;
+            return !string.IsNullOrEmpty(fileName) ? GetBinary(context, option, relativeUrl, fileName) : null;
         }
 
-        private string SearchRoute(RenderContext context, string RelativeUrl)
+        private string SearchRoute(RenderContext context, string relativeUrl)
         {
             string root = option.GetDiskRoot(context);
             if (!string.IsNullOrEmpty(option.StartPath))
@@ -147,13 +140,13 @@ namespace Kooboo.Web.Spa
             string result = null;
 
             bool isDirectory = false;
-            if (RelativeUrl.EndsWith("/"))
+            if (relativeUrl.EndsWith("/"))
             {
                 isDirectory = true;
             }
             else
             {
-                string diskpath = RenderHelper.CombinePath(root, RelativeUrl);
+                string diskpath = RenderHelper.CombinePath(root, relativeUrl);
                 isDirectory = System.IO.Directory.Exists(diskpath);
             }
 
@@ -161,7 +154,7 @@ namespace Kooboo.Web.Spa
             {
                 foreach (var item in this.StartPageNames)
                 {
-                    string relativeurl = RenderHelper.CombinePath(RelativeUrl, item);
+                    string relativeurl = RenderHelper.CombinePath(relativeUrl, item);
                     string fullpath = RenderHelper.CombinePath(root, relativeurl);
 
                     result = FindFile(fullpath, option.Extensions);
@@ -176,85 +169,80 @@ namespace Kooboo.Web.Spa
             }
             else
             {
-                string fullpath = RenderHelper.CombinePath(root, RelativeUrl);
+                string fullpath = RenderHelper.CombinePath(root, relativeUrl);
 
                 result = FindFile(fullpath, option.Extensions);
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
-                    result = ExtendViewSearch(root, RelativeUrl, option.ViewFolders, option.Extensions);
+                    result = ExtendViewSearch(root, relativeUrl, option.ViewFolders, option.Extensions);
                 }
             }
 
             return result;
         }
 
-        public string GetString(RenderContext context, string RelativeUrl)
+        public string GetString(RenderContext context, string relativeUrl)
         {
-            RelativeUrl = CleanQuestionMark(RelativeUrl);
+            relativeUrl = CleanQuestionMark(relativeUrl);
 
-            string fullfilename = SearchRoute(context, RelativeUrl);
+            string fullfilename = SearchRoute(context, relativeUrl);
 
             if (!string.IsNullOrEmpty(fullfilename))
             {
-                return GetText(context, option, RelativeUrl, fullfilename);
+                return GetText(context, option, relativeUrl, fullfilename);
             }
             return null;
         }
 
-        public string GetLayout(RenderContext context, string RelativeUrl)
+        public string GetLayout(RenderContext context, string relativeUrl)
         {
-            string FileName = FindFileSearch(context, RelativeUrl, option.LayoutFolders, null);
-            if (!string.IsNullOrEmpty(FileName))
-            {
-                return GetText(context, option, RelativeUrl, FileName);
-                // return System.IO.File.ReadAllText(FileName);
-            }
-            return null;
+            string fileName = FindFileSearch(context, relativeUrl, option.LayoutFolders, null);
+            return !string.IsNullOrEmpty(fileName) ? GetText(context, option, relativeUrl, fileName) : null;
         }
 
-        private string CleanQuestionMark(string RelativeUrl)
+        private string CleanQuestionMark(string relativeUrl)
         {
-            if (!string.IsNullOrEmpty(RelativeUrl))
+            if (!string.IsNullOrEmpty(relativeUrl))
             {
-                int markindex = RelativeUrl.IndexOf("?");
+                int markindex = relativeUrl.IndexOf("?");
 
                 if (markindex > -1)
                 {
-                    return RelativeUrl.Substring(0, markindex);
+                    return relativeUrl.Substring(0, markindex);
                 }
             }
-            return RelativeUrl;
+            return relativeUrl;
         }
 
-        private static byte[] GetBinary(RenderContext context, SpaRenderOption option, string RelativeUrl, string FullFileName)
+        private static byte[] GetBinary(RenderContext context, SpaRenderOption option, string relativeUrl, string fullFileName)
         {
             byte[] result = null;
 #if DEBUG
             {
-                result = System.IO.File.ReadAllBytes(FullFileName);
+                result = System.IO.File.ReadAllBytes(fullFileName);
             }
 #endif
             if (result == null)
             {
-                Guid key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(RelativeUrl);
+                Guid key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(relativeUrl);
                 result = Kooboo.Data.Cache.RenderCache.GetBinary(key);
                 if (result == null)
                 {
-                    result = System.IO.File.ReadAllBytes(FullFileName);
+                    result = System.IO.File.ReadAllBytes(fullFileName);
                     Kooboo.Data.Cache.RenderCache.SetBinary(key, result);
                 }
             }
             return result;
         }
 
-        private static string GetText(RenderContext context, SpaRenderOption option, string RelativeUrl, string FullFileName)
+        private static string GetText(RenderContext context, SpaRenderOption option, string relativeUrl, string fullFileName)
         {
-            Guid key = Lib.Security.Hash.ComputeGuidIgnoreCase(FullFileName);
+            Guid key = Lib.Security.Hash.ComputeGuidIgnoreCase(fullFileName);
             string text = null;
 #if DEBUG
             {
-                text = System.IO.File.ReadAllText(FullFileName);
+                text = System.IO.File.ReadAllText(fullFileName);
                 key = Lib.Security.Hash.ComputeGuidIgnoreCase(text);
             }
 #endif
@@ -266,7 +254,7 @@ namespace Kooboo.Web.Spa
                 {
                     if (text == null)
                     {
-                        text = File.ReadAllText(FullFileName);
+                        text = File.ReadAllText(fullFileName);
                     }
                     htmlbody = Kooboo.Data.Cache.MultiLingualRender.SetGetHtml(context, key, text);
                 }
@@ -276,20 +264,16 @@ namespace Kooboo.Web.Spa
             {
                 if (text == null)
                 {
-                    text = Kooboo.Data.Cache.RenderCache.GetHtml(key);
-                    if (text == null)
-                    {
-                        text = File.ReadAllText(FullFileName);
-                    }
+                    text = Kooboo.Data.Cache.RenderCache.GetHtml(key) ?? File.ReadAllText(fullFileName);
                     Kooboo.Data.Cache.RenderCache.SetHtml(key, text);
                 }
                 return text;
             }
         }
 
-        public Stream GetStream(RenderContext context, string RelativeUrl)
+        public Stream GetStream(RenderContext context, string relativeUrl)
         {
-            var binary = GetBinary(context, RelativeUrl);
+            var binary = GetBinary(context, relativeUrl);
             if (binary != null)
             {
                 return new System.IO.MemoryStream(binary);

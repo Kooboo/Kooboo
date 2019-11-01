@@ -14,14 +14,7 @@ namespace Kooboo.Web.Backend
         {
             if (context.User == null)
             {
-                if (method.ClassInstance == null || !(method.ClassInstance is IApiPermissionString))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return method.ClassInstance == null || !(method.ClassInstance is IApiPermissionString);
             }
 
             if (context.User.IsAdmin)
@@ -30,54 +23,34 @@ namespace Kooboo.Web.Backend
             }
             else
             {
-                string PermissionString = null;
+                string permissionString = null;
 
-                if (method.ClassInstance != null)
+                if (method.ClassInstance is IPermissionControl)
                 {
-                    if (method.ClassInstance is IPermissionControl)
+                    if (method.ClassInstance is IApiPermissionString permissionclass)
                     {
-                        if (method.ClassInstance is IApiPermissionString)
+                        if (permissionclass != null)
                         {
-                            var permissionclass = method.ClassInstance as IApiPermissionString;
-                            if (permissionclass != null)
-                            {
-                                PermissionString = permissionclass.Permission;
-                            }
+                            permissionString = permissionclass.Permission;
                         }
-                        else
+                    }
+                    else
+                    {
+                        var instancetype = method.ClassInstance.GetType();
+
+                        var type = GetPerminssionLinkUndertype(instancetype);
+
+                        if (type != null)
                         {
-                            var instancetype = method.ClassInstance.GetType();
-
-                            var type = GetPerminssionLinkUndertype(instancetype);
-
-                            if (type != null)
+                            if (Activator.CreateInstance(type) is ICmsMenu menuinstance)
                             {
-                                var menuinstance = Activator.CreateInstance(type) as ICmsMenu;
-                                if (menuinstance != null)
-                                {
-                                    PermissionString = MenuManager.GetPermissionString(menuinstance);
-                                }
+                                permissionString = MenuManager.GetPermissionString(menuinstance);
                             }
                         }
                     }
                 }
-                else
-                {
-                    //if (method.DeclareType != null)
-                    //{
-                    //    var instance = Activator.CreateInstance(method.DeclareType);
-                    //    if (instance != null && instance is IApiPermissionString)
-                    //    {
-                    //        var permissionclass = instance as IApiPermissionString;
-                    //        if (permissionclass != null)
-                    //        {
-                    //            PermissionString = permissionclass.Permission;
-                    //        }
-                    //    }
-                    //}
-                }
 
-                if (string.IsNullOrWhiteSpace(PermissionString))
+                if (string.IsNullOrWhiteSpace(permissionString))
                 {
                     return true;
                 }
@@ -85,25 +58,16 @@ namespace Kooboo.Web.Backend
                 {
                     var role = SiteUserService.GetRolePermission(context);
 
-                    if (role == null)
-                    {
-                        return false;
-                    }
-                    return Kooboo.Sites.Authorization.PermissionService.HasPermission(PermissionString, role.Tree);
+                    return role != null && Kooboo.Sites.Authorization.PermissionService.HasPermission(permissionString, role.Tree);
                 }
             }
         }
 
-        public static Type GetPerminssionLinkUndertype(Type ApiClassType)
+        public static Type GetPerminssionLinkUndertype(Type apiClassType)
         {
-            var interfaces = ApiClassType.GetInterfaces().Where(o => o.IsGenericType && o.GetGenericTypeDefinition() == PermissionLinkType);
+            var interfaces = apiClassType.GetInterfaces().Where(o => o.IsGenericType && o.GetGenericTypeDefinition() == PermissionLinkType);
 
-            if (interfaces.Any())
-            {
-                return interfaces.First().GetGenericArguments().First();
-            }
-
-            return null;
+            return interfaces.Any() ? interfaces.First().GetGenericArguments().First() : null;
         }
     }
 }

@@ -8,14 +8,14 @@ namespace Kooboo.Sites.Authorization
 {
     public static class PermissionService
     {
-        public static bool HasPermission(PermissionTree tree, params string[] HierarchyRights)
+        public static bool HasPermission(PermissionTree tree, params string[] hierarchyRights)
         {
-            return HasPermission(HierarchyRights, tree);
+            return HasPermission(hierarchyRights, tree);
         }
 
-        public static bool HasPermission(string[] HierarchyRights, PermissionTree tree)
+        public static bool HasPermission(string[] hierarchyRights, PermissionTree tree)
         {
-            foreach (var item in HierarchyRights)
+            foreach (var item in hierarchyRights)
             {
                 if (tree.RootAccess)
                 {
@@ -65,9 +65,9 @@ namespace Kooboo.Sites.Authorization
             return result;
         }
 
-        private static void SetDisplayName(List<PermissionViewModel> Subitems, RenderContext context)
+        private static void SetDisplayName(List<PermissionViewModel> subitems, RenderContext context)
         {
-            foreach (var item in Subitems)
+            foreach (var item in subitems)
             {
                 item.DisplayName = Data.Language.LanguageProvider.GetValue(item.Name, context);
 
@@ -79,9 +79,9 @@ namespace Kooboo.Sites.Authorization
         }
 
         // single rights without \\
-        public static void AppendToModel(PermissionViewModel model, List<string> SingleRights)
+        public static void AppendToModel(PermissionViewModel model, List<string> singleRights)
         {
-            foreach (var item in SingleRights)
+            foreach (var item in singleRights)
             {
                 if (model.Selected)
                 {
@@ -111,11 +111,11 @@ namespace Kooboo.Sites.Authorization
             return GetSubStrings(model.SubItems);
         }
 
-        private static List<string> GetSubStrings(List<PermissionViewModel> SubModels)
+        private static List<string> GetSubStrings(List<PermissionViewModel> subModels)
         {
             List<string> result = new List<string>();
 
-            foreach (var item in SubModels)
+            foreach (var item in subModels)
             {
                 string root = item.Name;
 

@@ -48,21 +48,21 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     return ProcessApiResponse<T>(strResult);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //TODO: log exception
             }
             return default(T);
         }
 
-        public static T Post<T>(string url, Dictionary<string, string> Headers, byte[] postBytes)
+        public static T Post<T>(string url, Dictionary<string, string> headers, byte[] postBytes)
         {
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);
                 client.Headers.Add("Content-Type", "multipart/form-data");
 
-                AddHeader(client.Headers, Headers);
+                AddHeader(client.Headers, headers);
 
                 try
                 {
@@ -70,7 +70,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
                     return ProcessApiResponse<T>(Encoding.UTF8.GetString(responseData));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
                 return default(T);
@@ -89,7 +89,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     return client.UploadData(url, "POST", data);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //TODO: log exception
             }

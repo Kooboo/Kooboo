@@ -32,13 +32,15 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var info = ObjectService.GetObjectInfo(sitedb, item);
 
-                InlineItemViewModel newitem = new InlineItemViewModel();
-                newitem.Id = item.Id;
-                newitem.Name = string.IsNullOrEmpty(item.KoobooOpenTag) ? item.RuleText : item.KoobooOpenTag;
-                newitem.OwnerName = info.DisplayName;
-                newitem.OwnerType = info.ModelType.Name;
-                newitem.LastModified = item.LastModified;
-                newitem.Source = item.RuleText;
+                InlineItemViewModel newitem = new InlineItemViewModel
+                {
+                    Id = item.Id,
+                    Name = string.IsNullOrEmpty(item.KoobooOpenTag) ? item.RuleText : item.KoobooOpenTag,
+                    OwnerName = info.DisplayName,
+                    OwnerType = info.ModelType.Name,
+                    LastModified = item.LastModified,
+                    Source = item.RuleText
+                };
                 result.Add(newitem);
             }
 
@@ -74,10 +76,12 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return null;
             }
-            InlineStyleViewModel model = new InlineStyleViewModel();
-            model.Id = call.ObjectId;
 
-            model.Declarations = CssService.ParseDeclarationBlock(item.CssText, call.ObjectId);
+            InlineStyleViewModel model = new InlineStyleViewModel
+            {
+                Id = call.ObjectId, Declarations = CssService.ParseDeclarationBlock(item.CssText, call.ObjectId)
+            };
+
 
             return model;
         }

@@ -106,8 +106,7 @@ namespace Kooboo.Web.Api
         {
             lock (_locker)
             {
-                var instance = Activator.CreateInstance(apitype) as IApi;
-                if (instance != null)
+                if (Activator.CreateInstance(apitype) is IApi instance)
                 {
                     var currentlist = List;
                     AddApi(currentlist, instance);
@@ -115,11 +114,11 @@ namespace Kooboo.Web.Api
             }
         }
 
-        public static IApi GetApi(string ModelName)
+        public static IApi GetApi(string modelName)
         {
-            if (!string.IsNullOrEmpty(ModelName) && List.ContainsKey(ModelName))
+            if (!string.IsNullOrEmpty(modelName) && List.ContainsKey(modelName))
             {
-                return List[ModelName];
+                return List[modelName];
             }
             return null;
         }

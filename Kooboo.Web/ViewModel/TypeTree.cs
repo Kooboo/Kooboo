@@ -31,14 +31,7 @@ namespace Kooboo.Web.ViewModel
 
         public List<TypeTree> Children
         {
-            get
-            {
-                if (_children == null)
-                {
-                    _children = new List<TypeTree>();
-                }
-                return _children;
-            }
+            get { return _children ?? (_children = new List<TypeTree>()); }
             set { _children = value; }
         }
 

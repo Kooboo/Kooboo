@@ -37,13 +37,9 @@ namespace Kooboo.Web.Cache
             return newid;
         }
 
-        public static string GetPath(Guid Id)
+        public static string GetPath(Guid id)
         {
-            if (DownloadPath.ContainsKey(Id))
-            {
-                return DownloadPath[Id];
-            }
-            return null;
+            return DownloadPath.ContainsKey(id) ? DownloadPath[id] : null;
         }
     }
 }

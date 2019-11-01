@@ -42,31 +42,26 @@ namespace Kooboo.Web.Api.Implementation
 
             string sitebaseurl = call.WebSite.BaseUrl();
 
-            string PreviewTemplate = Sites.Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", ConstObjectType.ResourceGroup.ToString());
+            string previewTemplate = Sites.Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", ConstObjectType.ResourceGroup.ToString());
 
-            var StyleGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Style).SelectAll();
+            var styleGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Style).SelectAll();
 
             List<ResourceGroupViewModel> result = new List<ResourceGroupViewModel>();
-            foreach (var item in StyleGroup)
+            foreach (var item in styleGroup)
             {
-                ResourceGroupViewModel newitem = new ResourceGroupViewModel();
-                newitem.Name = item.Name;
-                newitem.Id = item.Id;
-                newitem.Type = item.Type;
-                newitem.LastModified = item.LastModified;
-                newitem.ChildrenCount = item.Children.Count();
+                ResourceGroupViewModel newitem = new ResourceGroupViewModel
+                {
+                    Name = item.Name,
+                    Id = item.Id,
+                    Type = item.Type,
+                    LastModified = item.LastModified,
+                    ChildrenCount = item.Children.Count()
+                };
 
                 var usedby = sitedb.ResourceGroups.GetUsedBy(item.Id);
                 newitem.References = Sites.Helper.RelationHelper.Sum(usedby);
                 var route = sitedb.Routes.GetByObjectId(item.Id);
-                if (route != null)
-                {
-                    newitem.RelativeUrl = route.Name;
-                }
-                else
-                {
-                    newitem.RelativeUrl = PreviewTemplate.Replace("{nameorid}", item.Name);
-                }
+                newitem.RelativeUrl = route != null ? route.Name : previewTemplate.Replace("{nameorid}", item.Name);
                 newitem.PreviewUrl = Lib.Helper.UrlHelper.Combine(sitebaseurl, newitem.RelativeUrl);
                 result.Add(newitem);
             }
@@ -79,32 +74,27 @@ namespace Kooboo.Web.Api.Implementation
 
             string sitebaseurl = apiCall.WebSite.BaseUrl();
 
-            string PreviewTemplate = Sites.Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", ConstObjectType.ResourceGroup.ToString());
+            string previewTemplate = Sites.Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", ConstObjectType.ResourceGroup.ToString());
 
-            var ScriptGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Script).SelectAll();
+            var scriptGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Script).SelectAll();
 
             List<ResourceGroupViewModel> result = new List<ResourceGroupViewModel>();
-            foreach (var item in ScriptGroup)
+            foreach (var item in scriptGroup)
             {
-                ResourceGroupViewModel newitem = new ResourceGroupViewModel();
-                newitem.Name = item.Name;
-                newitem.Id = item.Id;
-                newitem.Type = item.Type;
-                newitem.LastModified = item.LastModified;
-                newitem.ChildrenCount = item.Children.Count();
+                ResourceGroupViewModel newitem = new ResourceGroupViewModel
+                {
+                    Name = item.Name,
+                    Id = item.Id,
+                    Type = item.Type,
+                    LastModified = item.LastModified,
+                    ChildrenCount = item.Children.Count()
+                };
 
                 var usedby = sitedb.ResourceGroups.GetUsedBy(item.Id);
                 newitem.References = Sites.Helper.RelationHelper.Sum(usedby);
 
                 var route = sitedb.Routes.GetByObjectId(item.Id);
-                if (route != null)
-                {
-                    newitem.RelativeUrl = route.Name;
-                }
-                else
-                {
-                    newitem.RelativeUrl = PreviewTemplate.Replace("{nameorid}", item.Name);
-                }
+                newitem.RelativeUrl = route != null ? route.Name : previewTemplate.Replace("{nameorid}", item.Name);
                 newitem.PreviewUrl = Lib.Helper.UrlHelper.Combine(sitebaseurl, newitem.RelativeUrl);
                 result.Add(newitem);
             }
@@ -119,13 +109,15 @@ namespace Kooboo.Web.Api.Implementation
             var group = sitedb.ResourceGroups.Query.Where(o => o.Id == groupid).FirstOrDefault();
             if (group != null)
             {
-                ResourceGroupViewModel newitem = new ResourceGroupViewModel();
-                newitem.Name = group.Name;
-                newitem.Id = group.Id;
-                newitem.Type = group.Type;
-                newitem.TypeName = group.Type == ConstObjectType.Script ? "Script" : "Style";
-                newitem.LastModified = group.LastModified;
-                newitem.ChildrenCount = group.Children.Count();
+                ResourceGroupViewModel newitem = new ResourceGroupViewModel
+                {
+                    Name = @group.Name,
+                    Id = @group.Id,
+                    Type = @group.Type,
+                    TypeName = @group.Type == ConstObjectType.Script ? "Script" : "Style",
+                    LastModified = @group.LastModified,
+                    ChildrenCount = @group.Children.Count()
+                };
                 foreach (var subitem in group.Children)
                 {
                     var sub = new ResourceGroupItem
@@ -223,7 +215,7 @@ namespace Kooboo.Web.Api.Implementation
                 //throw;
             }
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {

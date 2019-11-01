@@ -22,17 +22,16 @@ namespace Kooboo.Web.DashBoard.Resource
             return Data.Language.Hardcoded.GetValue("Resource", context);
         }
 
-        public IDashBoardResponse Render(RenderContext Context)
+        public IDashBoardResponse Render(RenderContext context)
         {
             var model = new SiteResourceViewModel();
-            var sitedb = Context.WebSite.SiteDb();
+            var sitedb = context.WebSite.SiteDb();
             model.Images = sitedb.Images.Count();
             model.Contents = sitedb.TextContent.Count();
             model.Pages = sitedb.Pages.Count();
             model.Views = sitedb.Views.Count();
 
-            var result = new DashBoardResponseModel();
-            result.Model = model;
+            var result = new DashBoardResponseModel {Model = model};
             return result;
         }
     }

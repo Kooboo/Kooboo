@@ -39,9 +39,9 @@ namespace Kooboo.Web.Menus
             return null;
         }
 
-        private static string GetApiName(Type ApiType)
+        private static string GetApiName(Type apiType)
         {
-            var method = ApiType.GetProperty("ModelName").GetGetMethod();
+            var method = apiType.GetProperty("ModelName")?.GetGetMethod();
             var dynamicMethod = new DynamicMethod("meide", typeof(string),
                                                   Type.EmptyTypes);
             var generator = dynamicMethod.GetILGenerator();

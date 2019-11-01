@@ -69,8 +69,7 @@ namespace Kooboo.Web.Api.Implementation
         public TemplateDetailViewModel Get(ApiCall call)
         {
             string Url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/template/Get2");
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("id", call.ObjectId.ToString());
+            Dictionary<string, string> para = new Dictionary<string, string> {{"id", call.ObjectId.ToString()}};
             var detail = HttpHelper.Get<TemplateDetailViewModel>(Url, para);
 
             detail.LastModified = DateTime.SpecifyKind(detail.LastModified, DateTimeKind.Utc);
@@ -82,8 +81,10 @@ namespace Kooboo.Web.Api.Implementation
 
         public PagedListViewModel<TemplateItemViewModel> Private(ApiCall call)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("OrganizationId", call.Context.User.CurrentOrgId.ToString());
+            Dictionary<string, string> para = new Dictionary<string, string>
+            {
+                {"OrganizationId", call.Context.User.CurrentOrgId.ToString()}
+            };
 
             int pagenr = ApiHelper.GetPageNr(call);
             int pagesize = ApiHelper.GetPageSize(call);
@@ -97,19 +98,18 @@ namespace Kooboo.Web.Api.Implementation
                 para.Add("PageSize", pagesize.ToString());
             }
 
-            string Url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Private2");
+            string url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Private2");
 
-            Url = UrlHelper.AppendQueryString(Url, para);
+            url = UrlHelper.AppendQueryString(url, para);
 
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url, para);
+            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(url, para);
             SetThumbnailUrl(pagedlist.List);
             return pagedlist;
         }
 
         public PagedListViewModel<TemplateItemViewModel> Personal(ApiCall call)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Id", call.Context.User.Id.ToString());
+            Dictionary<string, string> para = new Dictionary<string, string> {{"Id", call.Context.User.Id.ToString()}};
 
             int pagenr = ApiHelper.GetPageNr(call);
             int pagesize = ApiHelper.GetPageSize(call);
@@ -123,18 +123,17 @@ namespace Kooboo.Web.Api.Implementation
                 para.Add("PageSize", pagesize.ToString());
             }
 
-            string Url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Personal2");
+            string url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Personal2");
 
-            Url = UrlHelper.AppendQueryString(Url, para);
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url, para);
+            url = UrlHelper.AppendQueryString(url, para);
+            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(url, para);
             SetThumbnailUrl(pagedlist.List);
             return pagedlist;
         }
 
         public PagedListViewModel<TemplateItemViewModel> Search(ApiCall call)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Keyword", call.GetValue("keyword"));
+            Dictionary<string, string> para = new Dictionary<string, string> {{"Keyword", call.GetValue("keyword")}};
 
             int pagenr = ApiHelper.GetPageNr(call);
             int pagesize = ApiHelper.GetPageSize(call);
@@ -148,9 +147,9 @@ namespace Kooboo.Web.Api.Implementation
                 para.Add("PageSize", pagesize.ToString());
             }
 
-            string Url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Search2");
-            Url = UrlHelper.AppendQueryString(Url, para);
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url, para);
+            string url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Search2");
+            url = UrlHelper.AppendQueryString(url, para);
+            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(url, para);
             SetThumbnailUrl(pagedlist.List);
             return pagedlist;
         }
@@ -158,7 +157,7 @@ namespace Kooboo.Web.Api.Implementation
         protected string GetStartRelativeUrl(Data.Models.WebSite site)
         {
             var startpages = site.StartPages();
-            if (startpages != null && startpages.Count() > 0)
+            if (startpages != null && startpages.Any())
             {
                 foreach (var item in startpages)
                 {
@@ -173,7 +172,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var allpages = site.SiteDb().Pages.All();
 
-            if (allpages != null && allpages.Count() > 0)
+            if (allpages != null && allpages.Any())
             {
                 foreach (var item in allpages)
                 {
@@ -186,7 +185,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-            if (allpages != null && allpages.Count() > 0)
+            if (allpages != null && allpages.Any())
             {
                 foreach (var item in allpages)
                 {
@@ -256,10 +255,10 @@ namespace Kooboo.Web.Api.Implementation
             var siteDb = call.WebSite.SiteDb();
             if (siteDb == null)
             {
-                Guid SiteId = call.GetGuidValue("SiteId");
+                Guid siteId = call.GetGuidValue("SiteId");
 
-                var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
-                siteDb = website != null ? website.SiteDb() : null;
+                var website = Kooboo.Data.GlobalDb.WebSites.Get(siteId);
+                siteDb = website?.SiteDb();
             }
             return siteDb;
         }
@@ -311,13 +310,14 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in formResult.Files)
             {
-                TemplateUserImages image = new TemplateUserImages();
-                image.FileName = item.FileName;
-                image.Base64 = Convert.ToBase64String(item.Bytes);
+                TemplateUserImages image = new TemplateUserImages
+                {
+                    FileName = item.FileName, Base64 = Convert.ToBase64String(item.Bytes)
+                };
                 data.Images.Add(image);
             }
 
-            if (data.Images.Count() > 0)
+            if (data.Images.Any())
             {
                 if (formResult.FormData.ContainsKey("defaultimg"))
                 {
@@ -337,7 +337,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual void Share(ApiCall call)
         {
-            SiteDb siteDb = call.WebSite != null ? call.WebSite.SiteDb() : null;
+            SiteDb siteDb = call.WebSite?.SiteDb();
             if (siteDb == null)
             { return; }
 
@@ -379,13 +379,12 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual void ShareBatch(ApiCall call)
         {
-            SiteDb siteDb = call.WebSite != null ? call.WebSite.SiteDb() : null;
+            SiteDb siteDb = call.WebSite?.SiteDb();
 
             var formreader = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
             if (siteDb == null)
             {
-                Guid siteId;
-                if (!Guid.TryParse(formreader.FormData["SiteId"], out siteId))
+                if (!Guid.TryParse(formreader.FormData["SiteId"], out var siteId))
                 {
                     return;
                 }
@@ -436,15 +435,13 @@ namespace Kooboo.Web.Api.Implementation
         {
             var formResult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
 
-            TemplateUpdateModel update = new TemplateUpdateModel();
+            TemplateUpdateModel update = new TemplateUpdateModel {UserId = call.Context.User.Id};
 
-            update.UserId = call.Context.User.Id;
 
             if (formResult.FormData.ContainsKey("id"))
             {
                 string strid = formResult.FormData["id"];
-                Guid id;
-                if (System.Guid.TryParse(strid, out id))
+                if (System.Guid.TryParse(strid, out var id))
                 {
                     update.Id = id;
                 }
@@ -485,27 +482,20 @@ namespace Kooboo.Web.Api.Implementation
                 bool isprivate = false;
                 bool.TryParse(strisprivae, out isprivate);
 
-                if (isprivate)
-                {
-                    update.OrganizationId = call.Context.User.CurrentOrgId;
-                }
-                else
-                {
-                    update.OrganizationId = default(Guid);
-                }
+                update.OrganizationId = isprivate ? call.Context.User.CurrentOrgId : default(Guid);
             }
 
             foreach (var item in formResult.Files)
             {
                 string contenttype = item.ContentType;
-                if (contenttype == null) { contenttype = "image"; }
-                else { contenttype = contenttype.ToLower(); }
+                contenttype = contenttype == null ? "image" : contenttype.ToLower();
 
                 if (contenttype.Contains("image"))
                 {
-                    TemplateUserImages image = new TemplateUserImages();
-                    image.FileName = item.FileName;
-                    image.Base64 = Convert.ToBase64String(item.Bytes);
+                    TemplateUserImages image = new TemplateUserImages
+                    {
+                        FileName = item.FileName, Base64 = Convert.ToBase64String(item.Bytes)
+                    };
                     update.NewImages.Add(image);
                 }
                 else if (contenttype.Contains("zip"))
@@ -526,7 +516,7 @@ namespace Kooboo.Web.Api.Implementation
                 update.NewDefault = defaultimage;
             }
 
-            if (update.NewImages.Count() > 0)
+            if (update.NewImages.Any())
             {
                 if (formResult.FormData.ContainsKey("defaultfile"))
                 {
@@ -546,9 +536,9 @@ namespace Kooboo.Web.Api.Implementation
 
             var allbytes = converter.ToBytes(update);
 
-            string Url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/receiver/updatetemplate");
+            string url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/receiver/updatetemplate");
 
-            var response = HttpHelper.PostData(Url, null, allbytes);
+            var response = HttpHelper.PostData(url, null, allbytes);
 
             if (!response)
             {
@@ -560,37 +550,38 @@ namespace Kooboo.Web.Api.Implementation
         {
             var packageid = call.ObjectId;
             var userid = call.Context.User.Id;
-            string Url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Delete2");
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("userid", userid.ToString());
-            para.Add("packageid", packageid.ToString());
+            string url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Delete2");
+            Dictionary<string, string> para = new Dictionary<string, string>
+            {
+                {"userid", userid.ToString()}, {"packageid", packageid.ToString()}
+            };
 
-            var ok = HttpHelper.Post<bool>(Url, para);
+            var ok = HttpHelper.Post<bool>(url, para);
             return;
         }
 
         [Kooboo.Attributes.RequireParameters("SiteName", "RootDomain", "SubDomain", "DownloadCode")]
         public Guid Use(ApiCall call)
         {
-            string SiteName = call.GetValue("SiteName");
-            if (!Data.GlobalDb.WebSites.CheckNameAvailable(SiteName, call.Context.User.CurrentOrgId))
+            string siteName = call.GetValue("SiteName");
+            if (!Data.GlobalDb.WebSites.CheckNameAvailable(siteName, call.Context.User.CurrentOrgId))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("SiteName is taken", call.Context));
             }
 
-            string RootDomain = call.GetValue("RootDomain");
-            string SubDomain = call.GetValue("SubDomain");
+            string rootDomain = call.GetValue("RootDomain");
+            string subDomain = call.GetValue("SubDomain");
 
-            string FullDomain = RootDomain;
-            if (!string.IsNullOrEmpty(SubDomain))
+            string fullDomain = rootDomain;
+            if (!string.IsNullOrEmpty(subDomain))
             {
-                if (FullDomain.StartsWith("."))
+                if (fullDomain.StartsWith("."))
                 {
-                    FullDomain = SubDomain + FullDomain;
+                    fullDomain = subDomain + fullDomain;
                 }
                 else
                 {
-                    FullDomain = SubDomain + "." + FullDomain;
+                    fullDomain = subDomain + "." + fullDomain;
                 }
             }
 
@@ -610,7 +601,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             MemoryStream memory = new MemoryStream(download);
-            var newsite = ImportExport.ImportZip(memory, call.Context.User.CurrentOrgId, SiteName, FullDomain, call.Context.User.Id);
+            var newsite = ImportExport.ImportZip(memory, call.Context.User.CurrentOrgId, siteName, fullDomain, call.Context.User.Id);
             return newsite.Id;
         }
     }

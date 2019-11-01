@@ -77,8 +77,10 @@ namespace Kooboo.Web.Api.Implementation
             List<CmsMenuViewModel> menus = new List<CmsMenuViewModel>();
 
             var featureheadline = Hardcoded.GetValue("Feature", call.Context);
-            var feature = new CmsMenuViewModel("feature", featureheadline);
-            feature.Items = MenuContainer.FeatureMenus.Select(o => new CmsMenuViewModel(o, call.Context)).ToList();
+            var feature = new CmsMenuViewModel("feature", featureheadline)
+            {
+                Items = MenuContainer.FeatureMenus.Select(o => new CmsMenuViewModel(o, call.Context)).ToList()
+            };
 
             MenuManager.VerifySortSideBar(feature.Items, call.Context);
 

@@ -34,11 +34,7 @@ namespace Kooboo.Web.Api.Implementation
             var sitedb = call.WebSite.SiteDb();
             var code = sitedb.Code.Get(id);
 
-            if (code == null)
-            {
-                return null;
-            }
-            return Kooboo.Sites.Scripting.Manager.GetSetting(call.Context.WebSite, code);
+            return code == null ? null : Kooboo.Sites.Scripting.Manager.GetSetting(call.Context.WebSite, code);
         }
 
         public virtual void Post(string eventName, List<IFElseRule> rules, ApiCall call)
@@ -51,10 +47,7 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in rules)
             {
-                BusinessRule rule = new BusinessRule();
-                rule.EventType = eventtype;
-                rule.Rule = item;
-                rule.Id = item.Id;
+                BusinessRule rule = new BusinessRule {EventType = eventtype, Rule = item, Id = item.Id};
                 sitedb.Rules.AddOrUpdate(rule);
             }
         }

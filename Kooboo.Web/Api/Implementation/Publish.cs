@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Interface;
@@ -78,10 +78,9 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             var user = call.Context.User;
-            Guid OrganizationId = Service.UserService.GuessOrgId(user, remoteurl);
+            Guid organizationId = Service.UserService.GuessOrgId(user, remoteurl);
             string username = user.UserName;
             string password = Data.Service.UserLoginService.GetUserPassword(user);
-
 
             if (!remoteurl.ToLower().StartsWith("http"))
             {
@@ -93,16 +92,12 @@ namespace Kooboo.Web.Api.Implementation
                 remoteurl = remoteurl + "/";
             }
 
-
-            remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + OrganizationId.ToString();
+            remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + organizationId.ToString();
 
             List<SimpleSiteItemViewModel> model = Kooboo.Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
 
             return model;
         }
-
-
-
 
         public List<SyncItemViewModel> List(ApiCall call)
         {
@@ -114,11 +109,13 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in list)
             {
-                SyncItemViewModel model = new SyncItemViewModel();
-                model.Id = item.Id;
-                model.RemoteServerUrl = item.RemoteServerUrl;
-                model.RemoteSiteName = item.RemoteSiteName;
-                model.Difference = sitedb.Synchronization.QueueCount(item.Id);
+                SyncItemViewModel model = new SyncItemViewModel
+                {
+                    Id = item.Id,
+                    RemoteServerUrl = item.RemoteServerUrl,
+                    RemoteSiteName = item.RemoteSiteName,
+                    Difference = sitedb.Synchronization.QueueCount(item.Id)
+                };
                 result.Add(model);
             }
             return result;
@@ -138,8 +135,8 @@ namespace Kooboo.Web.Api.Implementation
 
             if (website != null)
             {
-                ///TODO: if remotesiteId == default(guid), call to create remote site id... 
-                // url... /_api/site/create, FullDomain, SiteName.... 
+                //TODO: if remotesiteId == default(guid), call to create remote site id...
+                // url... /_api/site/create, FullDomain, SiteName....
 
                 if (!setting.RemoteServerUrl.ToLower().StartsWith("http"))
                 {
@@ -148,15 +145,16 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (setting.RemoteWebSiteId == default(Guid))
                 {
-                    string FullDomain = call.GetValue("FullDomain");
-                    string SiteName = call.GetValue("SiteName");
+                    string fullDomain = call.GetValue("FullDomain");
+                    string siteName = call.GetValue("SiteName");
 
-                    if (!string.IsNullOrEmpty(FullDomain) && !string.IsNullOrEmpty(SiteName))
+                    if (!string.IsNullOrEmpty(fullDomain) && !string.IsNullOrEmpty(siteName))
                     {
                         string url = setting.RemoteServerUrl + "/_api/site/create";
-                        Dictionary<string, string> para = new Dictionary<string, string>();
-                        para.Add("FullDomain", FullDomain);
-                        para.Add("SiteName", SiteName);
+                        Dictionary<string, string> para = new Dictionary<string, string>
+                        {
+                            {"FullDomain", fullDomain}, {"SiteName", siteName}
+                        };
 
                         var newsite = Lib.Helper.HttpHelper.Get<WebSite>(url, para, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
 
@@ -195,7 +193,7 @@ namespace Kooboo.Web.Api.Implementation
                 //throw;
             }
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {
@@ -228,7 +226,6 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (item.IsTable)
                 {
-
                     var table = Data.DB.GetTable(kdb, item.TableName);
                     if (table != null)
                     {
@@ -248,7 +245,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-
                     var siteojbect = ObjectService.GetSiteObject(sitedb, item);
                     if (siteojbect == null)
                     {
@@ -263,10 +259,10 @@ namespace Kooboo.Web.Api.Implementation
                         KoobooType = siteojbect.ConstType,
                         ChangeType = changetype,
                         LastModified = siteojbect.LastModified,
-                        LogId = item.Id
+                        LogId = item.Id,
+                        Size = CalculateUtility.GetSizeString(ObjectService.GetSize(siteojbect))
                     };
 
-                    viewmodel.Size = CalculateUtility.GetSizeString(ObjectService.GetSize(siteojbect));
 
                     if (siteojbect.ConstType == ConstObjectType.Image)
                     {
@@ -275,7 +271,6 @@ namespace Kooboo.Web.Api.Implementation
 
                     result.Add(viewmodel);
                 }
-
             }
 
             return result;
@@ -306,14 +301,14 @@ namespace Kooboo.Web.Api.Implementation
 
             List<long> ids = new List<long>();
 
-            bool DirectSubmit = false;
+            bool directSubmit = false;
 
             try
             {
                 ids = Lib.Helper.JsonHelper.Deserialize<List<long>>(json);
                 if (ids.Count() < 5)
                 {
-                    DirectSubmit = true;
+                    directSubmit = true;
                 }
             }
             catch (Exception ex)
@@ -327,19 +322,20 @@ namespace Kooboo.Web.Api.Implementation
             string username = call.Context.User.UserName;
             string password = Data.Service.UserLoginService.GetUserPassword(call.Context.User);
 
-
             foreach (var item in ids)
             {
                 var eachsync = SyncService.Prepare(sitedb, item);
-                PostSyncObject postobject = new PostSyncObject();
-                postobject.SyncObject = eachsync;
-                postobject.RemoteSiteId = setting.RemoteWebSiteId;
-                postobject.RemoteUrl = serveapiurl;
-                postobject.UserName = username;
-                postobject.Password = password;
+                PostSyncObject postobject = new PostSyncObject
+                {
+                    SyncObject = eachsync,
+                    RemoteSiteId = setting.RemoteWebSiteId,
+                    RemoteUrl = serveapiurl,
+                    UserName = username,
+                    Password = password
+                };
                 postobject.RemoteSiteId = setting.RemoteWebSiteId;
 
-                if (DirectSubmit)
+                if (directSubmit)
                 {
                     if (!executor.Execute(sitedb, Lib.Helper.JsonHelper.Serialize(postobject)))
                     {
@@ -361,7 +357,7 @@ namespace Kooboo.Web.Api.Implementation
                 System.Threading.Tasks.Task.Run(() => Sites.TaskQueue.QueueManager.Execute(call.WebSite.Id));
             }
         }
-         
+
         public PullResult Pull(Guid id, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -387,9 +383,10 @@ namespace Kooboo.Web.Api.Implementation
             }
             serveapiurl = Kooboo.Lib.Helper.UrlHelper.Combine(serveapiurl, ApiSendToLocalUrl);
 
-            Dictionary<string, string> query = new Dictionary<string, string>();
-            query.Add("SiteId", setting.RemoteWebSiteId.ToString());
-            query.Add("LastId", currentRemoteVersion.ToString());
+            Dictionary<string, string> query = new Dictionary<string, string>
+            {
+                {"SiteId", setting.RemoteWebSiteId.ToString()}, {"LastId", currentRemoteVersion.ToString()}
+            };
 
             var syncobject = Kooboo.Lib.Helper.HttpHelper.Get<SyncObject>(serveapiurl, query, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
 
@@ -408,16 +405,15 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-
         private void verifysite(string removeservrerurl, Guid remotesiteid, string username, string password)
         {
-            string ApiSendToLocalUrl = "/_api/publish/CheckSite?SiteId=" + remotesiteid.ToString();
+            string apiSendToLocalUrl = "/_api/publish/CheckSite?SiteId=" + remotesiteid.ToString();
 
             if (!removeservrerurl.ToLower().StartsWith("http"))
             {
                 removeservrerurl = "http://" + removeservrerurl;
             }
-            string fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(removeservrerurl, ApiSendToLocalUrl);
+            string fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(removeservrerurl, apiSendToLocalUrl);
 
             try
             {
@@ -427,15 +423,15 @@ namespace Kooboo.Web.Api.Implementation
                     throw new Exception(model.Message);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-        public CheckResponse CheckSite(Guid SiteId, ApiCall call)
+        public CheckResponse CheckSite(Guid siteId, ApiCall call)
         {
-            var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            var site = Kooboo.Data.GlobalDb.WebSites.Get(siteId);
 
             var res = new CheckResponse();
 
@@ -453,10 +449,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         // [Kooboo.Attributes.RequireParameters("SiteId", "LastId")]
-        public SyncObject SendToClient(long LastId, Guid SiteId,  ApiCall call)
+        public SyncObject SendToClient(long lastId, Guid siteId, ApiCall call)
         {
-              return PullRequest.PullNext(call.WebSite.SiteDb(), LastId);
-          
+            return PullRequest.PullNext(call.WebSite.SiteDb(), lastId);
         }
 
         //[Kooboo.Attributes.RequireParameters("logid")]
@@ -532,18 +527,19 @@ namespace Kooboo.Web.Api.Implementation
 
                             var name = Kooboo.Sites.Service.LogService.GetTableDisplayName(sitedb, log, call.Context, logdata);
 
-                            SyncLogItemViewModel logitem = new SyncLogItemViewModel();
-                            logitem.Name = name;
+                            SyncLogItemViewModel logitem = new SyncLogItemViewModel
+                            {
+                                Name = name,
+                                ObjectType = Data.Language.Hardcoded.GetValue("Table", call.Context),
+                                LastModified = log.UpdateTime,
+                                LogId = log.Id,
+                                ChangeType = changetype
+                            };
 
-                            logitem.ObjectType = Data.Language.Hardcoded.GetValue("Table", call.Context);
-                            logitem.LastModified = log.UpdateTime;
-                            logitem.LogId = log.Id;
-                            logitem.ChangeType = changetype;
 
                             result.Add(logitem);
                         }
                     }
-
                     else
                     {
                         var repo = sitedb.GetRepository(item.StoreName);
@@ -553,7 +549,7 @@ namespace Kooboo.Web.Api.Implementation
                             var siteobject = repo.GetByLog(log);
 
                             SyncLogItemViewModel logitem = new SyncLogItemViewModel();
-                            var info = ObjectService.GetObjectInfo(sitedb, siteobject as ISiteObject);
+                            var info = ObjectService.GetObjectInfo(sitedb, siteobject);
                             logitem.Name = info.Name;
                             logitem.Size = Lib.Utilities.CalculateUtility.GetSizeString(info.Size);
                             logitem.ObjectType = repo.StoreName;
@@ -571,4 +567,3 @@ namespace Kooboo.Web.Api.Implementation
         }
     }
 }
-

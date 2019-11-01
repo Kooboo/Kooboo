@@ -24,10 +24,9 @@ namespace Kooboo.Web.Menus
                 this.Url = menu.Url;
                 this.DisplayName = menu.GetDisplayName(context);
 
-                Guid WebSiteId = default(Guid);
-                if (menu is IHeaderMenu)
+                Guid webSiteId = default(Guid);
+                if (menu is IHeaderMenu topmenu)
                 {
-                    var topmenu = menu as IHeaderMenu;
                     this.BadgeIcon = topmenu.BadgeIcon;
                     this.Name = this.DisplayName;
                 }
@@ -35,11 +34,11 @@ namespace Kooboo.Web.Menus
                 {
                     if (context.WebSite != null)
                     {
-                        WebSiteId = context.WebSite.Id;
+                        webSiteId = context.WebSite.Id;
                     }
                 }
 
-                this.Url = appendSiteId(this.Url, WebSiteId);
+                this.Url = appendSiteId(this.Url, webSiteId);
 
                 List<ICmsMenu> subitems = null;
                 if (menu is IDynamicMenu)
@@ -76,7 +75,7 @@ namespace Kooboo.Web.Menus
             this.DisplayName = displayname;
         }
 
-        private string appendSiteId(string relativeUrl, Guid SiteId)
+        private string appendSiteId(string relativeUrl, Guid siteId)
         {
             if (string.IsNullOrWhiteSpace(relativeUrl))
             {
@@ -89,9 +88,9 @@ namespace Kooboo.Web.Menus
             }
 
             Dictionary<string, string> para = new Dictionary<string, string>();
-            if (SiteId != default(Guid))
+            if (siteId != default(Guid))
             {
-                para.Add("SiteId", SiteId.ToString());
+                para.Add("SiteId", siteId.ToString());
             }
             return Kooboo.Lib.Helper.UrlHelper.AppendQueryString("/_Admin/" + relativeUrl, para);
         }
@@ -112,14 +111,7 @@ namespace Kooboo.Web.Menus
 
         public List<CmsMenuViewModel> Items
         {
-            get
-            {
-                if (_items == null)
-                {
-                    _items = new List<CmsMenuViewModel>();
-                }
-                return _items;
-            }
+            get { return _items ?? (_items = new List<CmsMenuViewModel>()); }
             set
             {
                 _items = value;
@@ -130,12 +122,7 @@ namespace Kooboo.Web.Menus
         {
             get
             {
-                if (_items == null)
-                {
-                    return false;
-                }
-
-                return _items.Any();
+                return _items != null && _items.Any();
             }
         }
     }

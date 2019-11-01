@@ -18,15 +18,17 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.Routes.All())
             {
-                RouteItemViewModel model = new RouteItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.ResourceType = ConstTypeContainer.GetName(item.DestinationConstType);
-                model.ObjectId = item.objectId;
+                RouteItemViewModel model = new RouteItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    ResourceType = ConstTypeContainer.GetName(item.DestinationConstType),
+                    ObjectId = item.objectId,
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Routes.GetUsedBy(item.Id))
+                };
 
-                model.LastModified = item.LastModified;
 
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Routes.GetUsedBy(item.Id));
 
                 result.Add(model);
             }

@@ -8,43 +8,43 @@ namespace Kooboo.Web.Spa
 {
     public class SpaRenderOption
     {
-        private Func<Kooboo.Data.Context.RenderContext, string> _GetDbPath;
+        private Func<Kooboo.Data.Context.RenderContext, string> _getDbPath;
 
         public Func<Kooboo.Data.Context.RenderContext, string> GetDbPath
         {
             get
             {
-                return _GetDbPath == null ? DefaultOptions.DefaultGetDbPath : _GetDbPath;
+                return _getDbPath ?? DefaultOptions.DefaultGetDbPath;
             }
             set
             {
-                _GetDbPath = value;
+                _getDbPath = value;
             }
         }
 
-        private Func<Kooboo.Data.Context.RenderContext, string> _GetRoot;
+        private Func<Kooboo.Data.Context.RenderContext, string> _getRoot;
 
         public Func<Kooboo.Data.Context.RenderContext, string> GetDiskRoot
         {
             get
             {
-                return _GetRoot == null ? DefaultOptions.DefaultGetRoot : _GetRoot;
+                return _getRoot ?? DefaultOptions.DefaultGetRoot;
             }
             set
             {
-                _GetRoot = value;
+                _getRoot = value;
             }
         }
 
-        public bool ShouldTryHandle(Kooboo.Data.Context.RenderContext context, SpaRenderOption Options)
+        public bool ShouldTryHandle(Kooboo.Data.Context.RenderContext context, SpaRenderOption options)
         {
-            if (string.IsNullOrEmpty(Options.Prefix))
+            if (string.IsNullOrEmpty(options.Prefix))
             {
                 return true;
             }
-            string RelativeUrl = context.Request.RawRelativeUrl;
+            string relativeUrl = context.Request.RawRelativeUrl;
 
-            if (RelativeUrl.ToLower().StartsWith(Options.Prefix.ToLower()))
+            if (relativeUrl.ToLower().StartsWith(options.Prefix.ToLower()))
             {
                 return true;
             }
@@ -73,89 +73,89 @@ namespace Kooboo.Web.Spa
             }
         }
 
-        private string _Extension;
+        private string _extension;
 
         public string Extension
         {
             get
             {
-                if (string.IsNullOrEmpty(_Extension))
+                if (string.IsNullOrEmpty(_extension))
                 {
-                    _Extension = GetAppSetting("Extension");
-                    if (string.IsNullOrEmpty(_Extension))
+                    _extension = GetAppSetting("Extension");
+                    if (string.IsNullOrEmpty(_extension))
                     {
-                        _Extension = DefaultOptions.DefaultExtension;
+                        _extension = DefaultOptions.DefaultExtension;
                     }
                 }
-                return _Extension;
+                return _extension;
             }
             set
             {
-                _Extension = value;
+                _extension = value;
             }
         }
 
-        private List<string> _Extensions;
+        private List<string> _extensions;
 
         internal List<string> Extensions
         {
             get
             {
-                if (_Extensions == null)
+                if (_extensions == null)
                 {
-                    _Extensions = new List<string>();
+                    _extensions = new List<string>();
                     foreach (var item in Extension.Split(',').ToList())
                     {
                         if (!string.IsNullOrEmpty(item))
                         {
-                            _Extensions.Add(item.Trim());
+                            _extensions.Add(item.Trim());
                         }
                     }
                 }
-                return _Extensions;
+                return _extensions;
             }
         }
 
-        private string _ViewFolder;
+        private string _viewFolder;
 
         public string ViewFolder
         {
             get
             {
-                if (string.IsNullOrEmpty(_ViewFolder))
+                if (string.IsNullOrEmpty(_viewFolder))
                 {
-                    _ViewFolder = GetAppSetting("ViewFolder");
-                    if (string.IsNullOrWhiteSpace(_ViewFolder))
+                    _viewFolder = GetAppSetting("ViewFolder");
+                    if (string.IsNullOrWhiteSpace(_viewFolder))
                     {
-                        _ViewFolder = DefaultOptions.DefaultViewFolder;
+                        _viewFolder = DefaultOptions.DefaultViewFolder;
                     }
                 }
-                return _ViewFolder;
+                return _viewFolder;
             }
             set
             {
-                _ViewFolder = value;
+                _viewFolder = value;
             }
         }
 
-        private List<string> _ViewFolders;
+        private List<string> _viewFolders;
 
         internal List<string> ViewFolders
         {
             get
             {
-                if (_ViewFolders == null)
+                if (_viewFolders == null)
                 {
-                    _ViewFolders = new List<string>();
+                    _viewFolders = new List<string>();
                     foreach (var item in ViewFolder.Split(',').ToList())
                     {
                         if (!string.IsNullOrEmpty(item))
                         {
-                            _ViewFolders.Add(item.Trim());
+                            _viewFolders.Add(item.Trim());
                         }
                     }
                 }
-                return _ViewFolders;
+                return _viewFolders;
             }
         }
 
@@ -201,9 +201,9 @@ namespace Kooboo.Web.Spa
 
         public string Prefix { get; set; }
 
-        private string GetAppSetting(string Name)
+        private string GetAppSetting(string name)
         {
-            return System.Configuration.ConfigurationManager.AppSettings.Get(Name);
+            return System.Configuration.ConfigurationManager.AppSettings.Get(name);
         }
 
         public Dictionary<string, object> InitData { get; set; }
@@ -221,14 +221,14 @@ namespace Kooboo.Web.Spa
 
         public static string DefaultGetRoot(Kooboo.Data.Context.RenderContext request)
         {
-            string ExecutingFolder = AppDomain.CurrentDomain.BaseDirectory;
-            return System.IO.Path.Combine(ExecutingFolder, @"..\");
+            string executingFolder = AppDomain.CurrentDomain.BaseDirectory;
+            return System.IO.Path.Combine(executingFolder, @"..\");
         }
 
         public static string DefaultGetDbPath(Kooboo.Data.Context.RenderContext request)
         {
-            string ExecutingFolder = AppDomain.CurrentDomain.BaseDirectory;
-            return System.IO.Path.Combine(ExecutingFolder, @"..\_renderdata");
+            string executingFolder = AppDomain.CurrentDomain.BaseDirectory;
+            return System.IO.Path.Combine(executingFolder, @"..\_renderdata");
         }
     }
 }

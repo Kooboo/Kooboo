@@ -20,11 +20,13 @@ namespace Kooboo.Web.Api.Implementation
             List<ContentTypeItemViewModel> result = new List<ContentTypeItemViewModel>();
             foreach (var item in all)
             {
-                ContentTypeItemViewModel model = new ContentTypeItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.PropertyCount = item.Properties.Count();
-                model.LastModified = item.LastModified;
+                ContentTypeItemViewModel model = new ContentTypeItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    PropertyCount = item.Properties.Count(),
+                    LastModified = item.LastModified
+                };
                 result.Add(model);
             }
             return result.ToList<object>();
@@ -122,12 +124,13 @@ namespace Kooboo.Web.Api.Implementation
             if (call.ObjectId == default(Guid))
             {
                 // new...
-                ContentType contentType = new ContentType();
-                contentType.Properties = new List<ContentProperty>{
-                            SystemFields.UserKey,
-                            SystemFields.Online,
-                            SystemFields.Sequence,
-                        };
+                ContentType contentType = new ContentType
+                {
+                    Properties = new List<ContentProperty>
+                    {
+                        SystemFields.UserKey, SystemFields.Online, SystemFields.Sequence,
+                    }
+                };
                 return contentType;
             }
             else

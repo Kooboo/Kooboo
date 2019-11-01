@@ -12,26 +12,23 @@ namespace Kooboo.Web.Api
         private static Dictionary<string, List<Parameter>> cache = new Dictionary<string, List<Parameter>>(StringComparer.OrdinalIgnoreCase);
 
         [Obsolete]
-        public static List<Kooboo.Api.Parameter> GetParameters(string ObjectType, string Method)
+        public static List<Kooboo.Api.Parameter> GetParameters(string objectType, string method)
         {
             var apiProvider = GetApiProvider();
-            return GetParameters(ObjectType, Method, apiProvider);
+            return GetParameters(objectType, method, apiProvider);
         }
 
-        public static ApiMethod GetApiMethod(string ObjectType, string Method)
+        public static ApiMethod GetApiMethod(string objectType, string method)
         {
             var apiProvider = GetApiProvider();
 
-            var apiobject = apiProvider.Get(ObjectType);
+            var apiobject = apiProvider.Get(objectType);
 
             if (apiobject != null)
             {
-                var apimethod = ApiMethodManager.Get(apiobject, Method);
+                var apimethod = ApiMethodManager.Get(apiobject, method);
 
-                if (apimethod != null)
-                {
-                    apimethod.Parameters.RemoveAll(o => o.ClrType == typeof(ApiCall));
-                }
+                apimethod?.Parameters.RemoveAll(o => o.ClrType == typeof(ApiCall));
                 return apimethod;
             }
             return null;
@@ -46,38 +43,27 @@ namespace Kooboo.Web.Api
             }
             var sep = "/\\_".ToCharArray();
             var parts = route.Split(sep, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length >= 2)
-            {
-                return GetParameters(parts[0], parts[1]);
-            }
-            else
-            {
-                return null;
-            }
+            return parts.Length >= 2 ? GetParameters(parts[0], parts[1]) : null;
         }
 
         [Obsolete]
-        public static List<Kooboo.Api.Parameter> GetParameters(string ObjectType, string Method, IApiProvider ApiProvider = null)
+        public static List<Kooboo.Api.Parameter> GetParameters(string objectType, string method, IApiProvider apiProvider = null)
         {
-            string cachekey = ObjectType + Method;
+            string cachekey = objectType + method;
             if (cache.ContainsKey(cachekey))
             {
                 return cache[cachekey];
             }
 
-            if (ApiProvider == null)
+            if (apiProvider == null)
             {
-                ApiProvider = GetApiProvider();
-            }
-            if (ApiProvider == null)
-            {
-                return null;
+                apiProvider = GetApiProvider();
             }
 
-            var api = ApiProvider.Get(ObjectType);
+            var api = apiProvider?.Get(objectType);
             if (api != null)
             {
-                var para = GetParameters(api.GetType(), Method);
+                var para = GetParameters(api.GetType(), method);
 
                 cache[cachekey] = para;
                 return para;
@@ -120,9 +106,8 @@ namespace Kooboo.Web.Api
         {
             foreach (var item in Kooboo.Web.SystemStart.Middleware)
             {
-                if (item is ApiMiddleware)
+                if (item is ApiMiddleware api)
                 {
-                    var api = item as ApiMiddleware;
                     return api.ApiProvider;
                 }
             }

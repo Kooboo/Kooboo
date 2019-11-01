@@ -45,11 +45,13 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.Forms.GetExternals().OrderBy(o => o.Name))
             {
-                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item);
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenameHash;
+                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item)
+                {
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenameHash,
+                    Type = item.FormType.ToString()
+                };
 
-                model.Type = item.FormType.ToString();
 
                 result.Add(model);
             }
@@ -70,15 +72,17 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items)
             {
-                FormListItemViewModel model = new FormListItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.ValueCount = sitedb.FormValues.Query.Where(o => o.FormId == item.Id).Count();
-                model.Source = item.Source;
-                model.IsEmbedded = isEmbedded;
-                model.References = item.References;
-                model.FormType = item.Type;
+                FormListItemViewModel model = new FormListItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    LastModified = item.LastModified,
+                    ValueCount = sitedb.FormValues.Query.Where(o => o.FormId == item.Id).Count(),
+                    Source = item.Source,
+                    IsEmbedded = isEmbedded,
+                    References = item.References,
+                    FormType = item.Type
+                };
                 formlist.Add(model);
             }
             return formlist;
@@ -229,7 +233,7 @@ namespace Kooboo.Web.Api.Implementation
             if (!string.IsNullOrEmpty(result.FormSubmitter))
             {
                 // set default value.
-                if (result.Setting != null && result.Setting.Count() > 0)
+                if (result.Setting != null && result.Setting.Any())
                 {
                     var available = result.AvailableSubmitters.Find(o => o.Name == result.FormSubmitter);
                     if (available != null)
@@ -348,7 +352,7 @@ namespace Kooboo.Web.Api.Implementation
                     if (!string.IsNullOrEmpty(edit.FormSubmitter))
                     {
                         // set default value.
-                        if (edit.Setting != null && edit.Setting.Count() > 0)
+                        if (edit.Setting != null && edit.Setting.Any())
                         {
                             var available = edit.AvailableSubmitters.Find(o => o.Name == edit.FormSubmitter);
                             if (available != null)
@@ -413,7 +417,7 @@ namespace Kooboo.Web.Api.Implementation
 
             List<Guid> ids = Kooboo.Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {
@@ -434,7 +438,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {

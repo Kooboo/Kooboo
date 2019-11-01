@@ -49,8 +49,7 @@ namespace Kooboo.Web.Api.Implementation
                 fullpath = fullpath.TrimEnd('/');
             }
 
-            Folder folder = new Folder(ConstObjectType.Image);
-            folder.FullPath = fullpath;
+            Folder folder = new Folder(ConstObjectType.Image) {FullPath = fullpath};
 
             sitedb.Folders.AddOrUpdate(folder);
 
@@ -73,13 +72,15 @@ namespace Kooboo.Web.Api.Implementation
                 path = "/";
             }
 
-            MediaLibraryViewModel model = new MediaLibraryViewModel();
+            MediaLibraryViewModel model = new MediaLibraryViewModel
+            {
+                Folders = GetFolders(call.WebSite.SiteDb(), path),
+                Files = GetFiles(call.WebSite.SiteDb(), path),
+                CrumbPath = PathService.GetCrumbPath(path)
+            };
 
-            model.Folders = GetFolders(call.WebSite.SiteDb(), path);
 
-            model.Files = GetFiles(call.WebSite.SiteDb(), path);
 
-            model.CrumbPath = PathService.GetCrumbPath(path);
 
             return model;
         }
@@ -92,11 +93,12 @@ namespace Kooboo.Web.Api.Implementation
             var lower = by.ToLower();
             if (lower == "page" || lower == "view" || lower == "layout" || lower == "textcontent" || lower == "style" || lower == "htmlblock")
             {
-                MediaLibraryViewModel model = new MediaLibraryViewModel();
+                MediaLibraryViewModel model = new MediaLibraryViewModel
+                {
+                    Files = GetFilesBy(call.WebSite.SiteDb(), @by), CrumbPath = PathService.GetCrumbPath("/")
+                };
 
-                model.Files = GetFilesBy(call.WebSite.SiteDb(), by);
 
-                model.CrumbPath = PathService.GetCrumbPath("/");
 
                 return model;
             }
@@ -117,11 +119,13 @@ namespace Kooboo.Web.Api.Implementation
                 int pagesize = ApiHelper.GetPageSize(call, 50);
                 int pagenr = ApiHelper.GetPageNr(call);
 
-                MediaPagedViewModel model = new MediaPagedViewModel();
+                MediaPagedViewModel model = new MediaPagedViewModel
+                {
+                    Files = GetPagedFilesBy(call.WebSite.SiteDb(), @by, pagesize, pagenr),
+                    CrumbPath = PathService.GetCrumbPath("/")
+                };
 
-                model.Files = GetPagedFilesBy(call.WebSite.SiteDb(), by, pagesize, pagenr);
 
-                model.CrumbPath = PathService.GetCrumbPath("/");
 
                 return model;
             }
@@ -142,37 +146,41 @@ namespace Kooboo.Web.Api.Implementation
             int pagesize = ApiHelper.GetPageSize(call, 50);
             int pagenr = ApiHelper.GetPageNr(call);
 
-            MediaPagedViewModel model = new MediaPagedViewModel();
+            MediaPagedViewModel model = new MediaPagedViewModel
+            {
+                Folders = GetFolders(call.WebSite.SiteDb(), path),
+                Files = GetPagedFiles(call.WebSite.SiteDb(), path, pagesize, pagenr),
+                CrumbPath = PathService.GetCrumbPath(path)
+            };
 
-            model.Folders = GetFolders(call.WebSite.SiteDb(), path);
 
-            model.Files = GetPagedFiles(call.WebSite.SiteDb(), path, pagesize, pagenr);
 
-            model.CrumbPath = PathService.GetCrumbPath(path);
 
             return model;
         }
 
         private List<ImageFolderViewModel> GetFolders(SiteDb siteDb, string path)
         {
-            var SubFolders = siteDb.Folders.GetSubFolders(path, ConstObjectType.Image);
+            var subFolders = siteDb.Folders.GetSubFolders(path, ConstObjectType.Image);
 
-            List<ImageFolderViewModel> Result = new List<ImageFolderViewModel>();
+            List<ImageFolderViewModel> result = new List<ImageFolderViewModel>();
 
-            foreach (var item in SubFolders)
+            foreach (var item in subFolders)
             {
-                ImageFolderViewModel model = new ImageFolderViewModel();
+                ImageFolderViewModel model = new ImageFolderViewModel
+                {
+                    Name = item.Segment,
+                    FullPath = item.FullPath,
+                    Count = siteDb.Folders.GetFolderObjects<Image>(item.FullPath, true, false).Count +
+                            siteDb.Folders.GetSubFolders(item.FullPath, ConstObjectType.Image).Count,
+                    LastModified = PathService.GetLastModified(siteDb, item.FullPath, ConstObjectType.Image)
+                };
                 // model.Id = path;
-                model.Name = item.Segment;
-                model.FullPath = item.FullPath;
-                model.Count = siteDb.Folders.GetFolderObjects<Image>(item.FullPath, true, false).Count +
-                                siteDb.Folders.GetSubFolders(item.FullPath, ConstObjectType.Image).Count;
-                model.LastModified = PathService.GetLastModified(siteDb, item.FullPath, ConstObjectType.Image);
 
-                Result.Add(model);
+                result.Add(model);
             }
 
-            return Result;
+            return result;
         }
 
         private List<MediaFileViewModel> GetFiles(SiteDb siteDb, string path)
@@ -181,20 +189,22 @@ namespace Kooboo.Web.Api.Implementation
 
             List<Image> images = siteDb.Folders.GetFolderObjects<Image>(path, true);
 
-            List<MediaFileViewModel> Result = new List<MediaFileViewModel>();
+            List<MediaFileViewModel> result = new List<MediaFileViewModel>();
 
             foreach (var item in images)
             {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
+                MediaFileViewModel model = new MediaFileViewModel
+                {
+                    Id = item.Id,
+                    Height = item.Height,
+                    Width = item.Width,
+                    Size = item.Size,
+                    Name = item.Name,
+                    LastModified = item.LastModified,
+                    Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id),
+                    Url = ObjectService.GetObjectRelativeUrl(siteDb, item),
+                    IsImage = true
+                };
                 model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
 
                 var usedby = siteDb.Images.GetUsedBy(item.Id);
@@ -208,46 +218,48 @@ namespace Kooboo.Web.Api.Implementation
                                       }, value => value.Count());
                 }
 
-                Result.Add(model);
+                result.Add(model);
             }
-            return Result;
+            return result;
         }
 
         // public PagedListViewModel<MediaFileViewModel> Files { get; set; }
 
-        private PagedListViewModel<MediaFileViewModel> GetPagedFiles(SiteDb siteDb, string path, int PageSize, int PageNumber)
+        private PagedListViewModel<MediaFileViewModel> GetPagedFiles(SiteDb siteDb, string path, int pageSize, int pageNumber)
         {
             string baseurl = siteDb.WebSite.BaseUrl();
 
             List<Image> images = siteDb.Folders.GetFolderObjects<Image>(path, true);
 
             int totalskip = 0;
-            if (PageNumber > 1)
+            if (pageNumber > 1)
             {
-                totalskip = (PageNumber - 1) * PageSize;
+                totalskip = (pageNumber - 1) * pageSize;
             }
 
-            PagedListViewModel<MediaFileViewModel> Result = new PagedListViewModel<MediaFileViewModel>();
+            PagedListViewModel<MediaFileViewModel> result = new PagedListViewModel<MediaFileViewModel>();
 
-            Result.TotalCount = images.Count();
-            Result.TotalPages = ApiHelper.GetPageCount(Result.TotalCount, PageSize);
-            Result.PageSize = PageSize;
-            Result.PageNr = PageNumber;
+            result.TotalCount = images.Count();
+            result.TotalPages = ApiHelper.GetPageCount(result.TotalCount, pageSize);
+            result.PageSize = pageSize;
+            result.PageNr = pageNumber;
 
             List<MediaFileViewModel> pagedlist = new List<MediaFileViewModel>();
 
-            foreach (var item in images.Skip(totalskip).Take(PageSize))
+            foreach (var item in images.Skip(totalskip).Take(pageSize))
             {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
+                MediaFileViewModel model = new MediaFileViewModel
+                {
+                    Id = item.Id,
+                    Height = item.Height,
+                    Width = item.Width,
+                    Size = item.Size,
+                    Name = item.Name,
+                    LastModified = item.LastModified,
+                    Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id),
+                    Url = ObjectService.GetObjectRelativeUrl(siteDb, item),
+                    IsImage = true
+                };
                 model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
 
                 var usedby = siteDb.Images.GetUsedBy(item.Id);
@@ -263,8 +275,8 @@ namespace Kooboo.Web.Api.Implementation
 
                 pagedlist.Add(model);
             }
-            Result.List = pagedlist;
-            return Result;
+            result.List = pagedlist;
+            return result;
         }
 
         private List<MediaFileViewModel> GetFilesBy(SiteDb siteDb, string by)
@@ -275,20 +287,22 @@ namespace Kooboo.Web.Api.Implementation
 
             var images = siteDb.Images.ListUsedBy(consttype);
 
-            List<MediaFileViewModel> Result = new List<MediaFileViewModel>();
+            List<MediaFileViewModel> result = new List<MediaFileViewModel>();
 
             foreach (var item in images)
             {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
+                MediaFileViewModel model = new MediaFileViewModel
+                {
+                    Id = item.Id,
+                    Height = item.Height,
+                    Width = item.Width,
+                    Size = item.Size,
+                    Name = item.Name,
+                    LastModified = item.LastModified,
+                    Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id),
+                    Url = ObjectService.GetObjectRelativeUrl(siteDb, item),
+                    IsImage = true
+                };
                 model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
 
                 var usedby = siteDb.Images.GetUsedBy(item.Id);
@@ -302,9 +316,9 @@ namespace Kooboo.Web.Api.Implementation
                                       }, value => value.Count());
                 }
 
-                Result.Add(model);
+                result.Add(model);
             }
-            return Result;
+            return result;
         }
 
         private PagedListViewModel<MediaFileViewModel> GetPagedFilesBy(SiteDb siteDb, string by, int PageSize, int PageNumber)
@@ -321,27 +335,29 @@ namespace Kooboo.Web.Api.Implementation
                 totalskip = (PageNumber - 1) * PageSize;
             }
 
-            PagedListViewModel<MediaFileViewModel> Result = new PagedListViewModel<MediaFileViewModel>();
+            PagedListViewModel<MediaFileViewModel> result = new PagedListViewModel<MediaFileViewModel>();
 
-            Result.TotalCount = images.Count();
-            Result.TotalPages = ApiHelper.GetPageCount(Result.TotalCount, PageSize);
-            Result.PageSize = PageSize;
-            Result.PageNr = PageNumber;
+            result.TotalCount = images.Count();
+            result.TotalPages = ApiHelper.GetPageCount(result.TotalCount, PageSize);
+            result.PageSize = PageSize;
+            result.PageNr = PageNumber;
 
             List<MediaFileViewModel> list = new List<MediaFileViewModel>();
 
             foreach (var item in images.Skip(totalskip).Take(PageSize))
             {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
+                MediaFileViewModel model = new MediaFileViewModel
+                {
+                    Id = item.Id,
+                    Height = item.Height,
+                    Width = item.Width,
+                    Size = item.Size,
+                    Name = item.Name,
+                    LastModified = item.LastModified,
+                    Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id),
+                    Url = ObjectService.GetObjectRelativeUrl(siteDb, item),
+                    IsImage = true
+                };
                 model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
 
                 var usedby = siteDb.Images.GetUsedBy(item.Id);
@@ -358,17 +374,17 @@ namespace Kooboo.Web.Api.Implementation
                 list.Add(model);
             }
 
-            Result.List = list;
-            return Result;
+            result.List = list;
+            return result;
         }
 
         public void DeleteFolders(ApiCall call)
         {
             string jsonvalue = call.Context.Request.Body;
 
-            List<string> FolderFullPaths = Lib.Helper.JsonHelper.Deserialize<List<string>>(jsonvalue);
+            List<string> folderFullPaths = Lib.Helper.JsonHelper.Deserialize<List<string>>(jsonvalue);
 
-            foreach (var item in FolderFullPaths)
+            foreach (var item in folderFullPaths)
             {
                 call.WebSite.SiteDb().Folders.Delete(item, ConstObjectType.Image, call.Context.User.Id);
             }
@@ -378,9 +394,9 @@ namespace Kooboo.Web.Api.Implementation
         {
             string jsonvalue = call.Context.Request.Body;
 
-            List<Guid> ImageIds = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(jsonvalue);
+            List<Guid> imageIds = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(jsonvalue);
 
-            foreach (var item in ImageIds)
+            foreach (var item in imageIds)
             {
                 call.WebSite.SiteDb().Images.Delete(item, call.Context.User.Id);
             }
@@ -393,12 +409,16 @@ namespace Kooboo.Web.Api.Implementation
 
             if (image != null)
             {
-                ImageViewModel model = new ImageViewModel();
-                model.Name = image.Name;
-                model.Url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), image);
+                ImageViewModel model = new ImageViewModel
+                {
+                    Name = image.Name,
+                    Url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), image)
+                };
 
-                Dictionary<string, string> query = new Dictionary<string, string>();
-                query.Add("SiteId", call.WebSite.Id.ToString());
+                Dictionary<string, string> query = new Dictionary<string, string>
+                {
+                    {"SiteId", call.WebSite.Id.ToString()}
+                };
                 model.SiteUrl = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(model.Url, query);
                 model.Id = image.Id;
                 model.Alt = image.Alt;

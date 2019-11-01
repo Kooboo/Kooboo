@@ -120,22 +120,17 @@ namespace Kooboo.Web.Api.Implementation
                 // url = Kooboo.Data.Helper.AccountUrlHelper.UserPublish("Add");
             }
 
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("UserId", call.Context.User.Id.ToString());
-            para.Add("Name", call.GetValue("Name"));
-            para.Add("Id", id.ToString());
-            para.Add("ServerUrl", call.GetValue("ServerUrl"));
+            Dictionary<string, string> para = new Dictionary<string, string>
+            {
+                {"UserId", call.Context.User.Id.ToString()},
+                {"Name", call.GetValue("Name")},
+                {"Id", id.ToString()},
+                {"ServerUrl", call.GetValue("ServerUrl")}
+            };
 
             bool ok = Lib.Helper.HttpHelper.Post<bool>(url, para, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
 
-            if (ok)
-            {
-                return id;
-            }
-            else
-            {
-                return default(Guid);
-            }
+            return ok ? id : default(Guid);
         }
     }
 }

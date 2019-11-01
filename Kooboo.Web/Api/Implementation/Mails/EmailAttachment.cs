@@ -61,9 +61,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             if (bytes != null && bytes.Length > 0)
             {
-                var response = new BinaryResponse();
+                var response = new BinaryResponse
+                {
+                    ContentType =
+                        Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(filename)
+                };
 
-                response.ContentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(filename);
                 response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
                 response.BinaryBytes = bytes;
                 return response;
@@ -100,8 +103,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 var bytes = EmailForwardManager.Post(this.ModelName, method, call.Context.User, null, null);
 
                 filename = !string.IsNullOrEmpty(filename) ? System.Web.HttpUtility.UrlEncode(filename) : "attachment.zip";
-                var response = new BinaryResponse();
-                response.ContentType = "application/zip";
+                var response = new BinaryResponse {ContentType = "application/zip"};
                 response.Headers.Add("Content-Disposition", $"filename={filename}");
                 response.BinaryBytes = bytes;
                 return response;
@@ -117,9 +119,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     var bytes = Kooboo.Mail.Utility.MessageUtility.GetFileBinary(content, filename);
                     if (bytes != null && bytes.Length > 0)
                     {
-                        var response = new BinaryResponse();
+                        var response = new BinaryResponse
+                        {
+                            ContentType =
+                                Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(filename)
+                        };
 
-                        response.ContentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(filename);
                         response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
                         response.BinaryBytes = bytes;
                         return response;
@@ -128,8 +133,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 else
                 {
                     var bytes = Mail.Utility.MessageUtility.GenerateAllAttachmentZip(content);
-                    var response = new BinaryResponse();
-                    response.ContentType = "application/zip";
+                    var response = new BinaryResponse {ContentType = "application/zip"};
                     response.Headers.Add("Content-Disposition", $"filename=attachment.zip");
                     response.BinaryBytes = bytes;
                     return response;
@@ -172,8 +176,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("filename", filename);
+                var dic = new Dictionary<string, string> {{"filename", filename}};
                 EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailAttachmentApi.DeleteAttachment), call.Context.User, dic);
                 return;
             }

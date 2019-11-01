@@ -15,14 +15,7 @@ namespace Kooboo.Web.ViewModel
 
         public Dictionary<string, object> Values
         {
-            get
-            {
-                if (_values == null)
-                {
-                    _values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _values;
-            }
+            get { return _values ?? (_values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
             set
             {
                 _values = value;

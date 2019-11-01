@@ -45,9 +45,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (item.objectId != default(Guid))
                 {
-                    LinkItem linkitem = new LinkItem();
-                    linkitem.Url = item.Name;
-                    linkitem.Parameters = item.Parameters.Keys.ToList();
+                    LinkItem linkitem = new LinkItem {Url = item.Name, Parameters = item.Parameters.Keys.ToList()};
                     model.Pages.Add(linkitem);
                 }
             }
@@ -56,8 +54,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in allviews)
             {
-                LinkItem linkitem = new LinkItem();
-                linkitem.Url = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), item);
+                LinkItem linkitem = new LinkItem
+                {
+                    Url = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), item)
+                };
                 //  linkitem.Parameters = Sites.Routing.PageRoute.GetViewParameters(call.SiteDb, item.Id);
                 model.Views.Add(linkitem);
             }

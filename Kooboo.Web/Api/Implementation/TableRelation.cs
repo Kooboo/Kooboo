@@ -7,7 +7,6 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -15,7 +14,7 @@ namespace Kooboo.Web.Api.Implementation
     {
         public List<TableFieldsViewModel> getTablesAndFields(ApiCall call)
         {
-            List<TableFieldsViewModel> Result = new List<TableFieldsViewModel>();
+            List<TableFieldsViewModel> result = new List<TableFieldsViewModel>();
 
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
             var tablelist = db.GetTables();
@@ -27,9 +26,8 @@ namespace Kooboo.Web.Api.Implementation
                     var table = Data.DB.GetTable(db, item);
                     if (table != null)
                     {
-                        TableFieldsViewModel model = new TableFieldsViewModel();
+                        TableFieldsViewModel model = new TableFieldsViewModel {Name = table.Name};
 
-                        model.Name = table.Name;
                         foreach (var col in table.Setting.Columns)
                         {
                             if (!col.IsSystem)
@@ -37,12 +35,12 @@ namespace Kooboo.Web.Api.Implementation
                                 model.Fields.Add(col.Name);
                             }
                         }
-                        Result.Add(model);
+                        result.Add(model);
                     }
                 }
             }
 
-            return Result;
+            return result;
         }
 
         public override Guid Post(ApiCall call)
@@ -52,23 +50,41 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<RelationTypeViewModel> GetRelationTypes(ApiCall call)
         {
-            List<RelationTypeViewModel> Result = _GetRelationTypes(call);
+            List<RelationTypeViewModel> result = _GetRelationTypes(call);
 
-            return Result;
+            return result;
         }
 
         private List<RelationTypeViewModel> _GetRelationTypes(ApiCall call)
         {
-            List<RelationTypeViewModel> Result = new List<RelationTypeViewModel>();
+            List<RelationTypeViewModel> result = new List<RelationTypeViewModel>
+            {
+                new RelationTypeViewModel()
+                {
+                    Type = EnumTableRelation.OneOne.ToString(),
+                    DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("OneOne", call.Context)
+                },
+                new RelationTypeViewModel()
+                {
+                    Type = EnumTableRelation.OneMany.ToString(),
+                    DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("OneMany", call.Context)
+                },
+                new RelationTypeViewModel()
+                {
+                    Type = EnumTableRelation.ManyMany.ToString(),
+                    DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("ManyMany", call.Context)
+                },
+                new RelationTypeViewModel()
+                {
+                    Type = EnumTableRelation.ManyOne.ToString(),
+                    DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("ManyOne", call.Context)
+                }
+            };
 
-            Result.Add(new RelationTypeViewModel() { Type = EnumTableRelation.OneOne.ToString(), DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("OneOne", call.Context) });
 
-            Result.Add(new RelationTypeViewModel() { Type = EnumTableRelation.OneMany.ToString(), DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("OneMany", call.Context) });
 
-            Result.Add(new RelationTypeViewModel() { Type = EnumTableRelation.ManyMany.ToString(), DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("ManyMany", call.Context) });
 
-            Result.Add(new RelationTypeViewModel() { Type = EnumTableRelation.ManyOne.ToString(), DisplayName = Kooboo.Data.Language.Hardcoded.GetValue("ManyOne", call.Context) });
-            return Result;
+            return result;
         }
 
         public override List<object> List(ApiCall call)
@@ -99,7 +115,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 result.Add(model);
-
             }
 
             return result.ToList<object>();
@@ -127,7 +142,6 @@ namespace Kooboo.Web.Api.Implementation
 
         public string FieldA { get; set; }
 
-
         public string TableB { get; set; }
 
         public string FieldB { get; set; }
@@ -136,10 +150,7 @@ namespace Kooboo.Web.Api.Implementation
         public EnumTableRelation Relation { get; set; }
 
         public string relationName { get; set; }
-
     }
-
-
 
     public class RelationTypeViewModel
     {
@@ -153,23 +164,14 @@ namespace Kooboo.Web.Api.Implementation
         public string Name { get; set; }
 
         public List<string> Fields { get; set; } = new List<string>();
-
     }
 }
-
-
-
-
-
-
-
 
 //getTableRelationTypes
 //[{
 //  type: '',
 //  displayName: ''
 //}]
-
 
 //AddRelation
 //{
@@ -180,7 +182,6 @@ namespace Kooboo.Web.Api.Implementation
 //  fieldB: '',
 //  relationType: ''
 //}
-
 
 //RelationList
 //[{

@@ -10,18 +10,18 @@ namespace Kooboo.Web.Spa
     {
         private static object _locker = new object();
 
-        private static Dictionary<Guid, List<IRenderTask>> RenderPlans = new Dictionary<Guid, List<IRenderTask>>();
+        private static Dictionary<Guid, List<IRenderTask>> _renderPlans = new Dictionary<Guid, List<IRenderTask>>();
 
-        public static List<IRenderTask> GetOrAddRenderPlan(Guid UniqueObjectId, Func<List<IRenderTask>> EvaluatePlan)
+        public static List<IRenderTask> GetOrAddRenderPlan(Guid uniqueObjectId, Func<List<IRenderTask>> evaluatePlan)
         {
             lock (_locker)
             {
-                if (!RenderPlans.ContainsKey(UniqueObjectId))
+                if (!_renderPlans.ContainsKey(uniqueObjectId))
                 {
-                    var plan = EvaluatePlan();
-                    RenderPlans[UniqueObjectId] = plan;
+                    var plan = evaluatePlan();
+                    _renderPlans[uniqueObjectId] = plan;
                 }
-                return RenderPlans[UniqueObjectId];
+                return _renderPlans[uniqueObjectId];
             }
         }
     }

@@ -42,7 +42,7 @@ namespace Kooboo.Web.Service
             return Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
         }
 
-        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool SameSiteRedirect)
+        public static string GetRedirectUrl(RenderContext context, User user, string currentRequestUrl, string returnUrl, bool sameSiteRedirect)
         {
             if (!string.IsNullOrWhiteSpace(returnUrl))
             {
@@ -58,11 +58,11 @@ namespace Kooboo.Web.Service
 
             string baseurl = currentRequestUrl;
 
-            if (!string.IsNullOrWhiteSpace(User.TempRedirectUrl))
+            if (!string.IsNullOrWhiteSpace(user.TempRedirectUrl))
             {
-                if (Data.AppSettings.IsOnlineServer && !SameSiteRedirect)
+                if (Data.AppSettings.IsOnlineServer && !sameSiteRedirect)
                 {
-                    baseurl = User.TempRedirectUrl;
+                    baseurl = user.TempRedirectUrl;
                 }
             }
 
@@ -70,7 +70,7 @@ namespace Kooboo.Web.Service
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                context.User = User;
+                context.User = user;
                 url = Kooboo.Data.Service.StartService.AfterLoginPage(context);
             }
             else
@@ -87,9 +87,9 @@ namespace Kooboo.Web.Service
             return fullurl;
         }
 
-        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool SameSiteRedirect)
+        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool sameSiteRedirect)
         {
-            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, SameSiteRedirect);
+            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, sameSiteRedirect);
 
             string token = GetToken(user);
 
@@ -123,8 +123,7 @@ namespace Kooboo.Web.Service
                 if (index > -1)
                 {
                     redirecturl = redirecturl.Substring(0, index);
-                    int serverid;
-                    if (!string.IsNullOrWhiteSpace(redirecturl) && int.TryParse(redirecturl, out serverid))
+                    if (!string.IsNullOrWhiteSpace(redirecturl) && int.TryParse(redirecturl, out var serverid))
                     {
                         return serverid;
                     }

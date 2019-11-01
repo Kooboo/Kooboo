@@ -68,19 +68,19 @@ namespace Kooboo.Web.ViewModel
         {
         }
 
-        public JobViewModel(ScheduleItem<Job> ScheduleJob)
+        public JobViewModel(ScheduleItem<Job> scheduleJob)
         {
-            Description = ScheduleJob.Item.Description;
-            StartTime = ScheduleJob.ScheduleTime;
+            Description = scheduleJob.Item.Description;
+            StartTime = scheduleJob.ScheduleTime;
             IsRepeat = false;
-            JobName = ScheduleJob.Item.JobName;
-            this.CodeId = ScheduleJob.Item.CodeId;
-            this.DayInt = ScheduleJob.DayInt;
-            this.BlockPosition = ScheduleJob.BlockPosition;
-            this.SecondOfDay = ScheduleJob.SecondOfDay;
-            this.Script = ScheduleJob.Item.Script;
+            JobName = scheduleJob.Item.JobName;
+            this.CodeId = scheduleJob.Item.CodeId;
+            this.DayInt = scheduleJob.DayInt;
+            this.BlockPosition = scheduleJob.BlockPosition;
+            this.SecondOfDay = scheduleJob.SecondOfDay;
+            this.Script = scheduleJob.Item.Script;
 
-            this.Id = ScheduleJob.Item.Id;
+            this.Id = scheduleJob.Item.Id;
         }
 
         public JobViewModel(RepeatItem<Job> repeatjob)

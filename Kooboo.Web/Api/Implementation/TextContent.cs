@@ -33,11 +33,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             string stronline = ExtraValue(updatemodel, "online");
-            bool online = true;
-            if (!string.IsNullOrEmpty(stronline) && stronline.ToLower() == "false")
-            {
-                online = false;
-            }
+            bool online = !(!string.IsNullOrEmpty(stronline) && stronline.ToLower() == "false");
 
             int sequence = 0;
             var strsequence = ExtraValue(updatemodel, "sequence");
@@ -69,7 +65,7 @@ namespace Kooboo.Web.Api.Implementation
 
             newcontent.Online = online;
             newcontent.Order = sequence;
-            newcontent.Embedded = updatemodel.Embedded;
+            newcontent.Embedded = updatemodel?.Embedded;
 
             foreach (var item in contenttype.Properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
             {
@@ -107,27 +103,29 @@ namespace Kooboo.Web.Api.Implementation
         [Attributes.RequireParameters("FolderId")]
         public List<ContentFieldViewModel> GetFields(ApiCall call)
         {
-            Guid FolderId = call.GetGuidValue("FolderId");
+            Guid folderId = call.GetGuidValue("FolderId");
 
-            if (FolderId != default(Guid))
+            if (folderId != default(Guid))
             {
-                var contenttype = call.WebSite.SiteDb().ContentTypes.GetByFolder(FolderId);
+                var contenttype = call.WebSite.SiteDb().ContentTypes.GetByFolder(folderId);
                 List<ContentFieldViewModel> result = new List<ContentFieldViewModel>();
 
                 foreach (var item in contenttype.Properties)
                 {
                     if (item.Editable)
                     {
-                        ContentFieldViewModel model = new ContentFieldViewModel();
-                        model.Name = item.Name;
-                        model.Validations = item.Validations;
-                        model.ControlType = item.ControlType;
-                        model.ToolTip = item.Tooltip;
-                        model.Order = item.Order;
+                        ContentFieldViewModel model = new ContentFieldViewModel
+                        {
+                            Name = item.Name,
+                            Validations = item.Validations,
+                            ControlType = item.ControlType,
+                            ToolTip = item.Tooltip,
+                            Order = item.Order,
+                            IsMultilingual = item.MultipleLanguage,
+                            MultipleValue = item.MultipleValue,
+                            selectionOptions = item.selectionOptions
+                        };
                         // model.Value = content.GetValue(item.Name);
-                        model.IsMultilingual = item.MultipleLanguage;
-                        model.MultipleValue = item.MultipleValue;
-                        model.selectionOptions = item.selectionOptions;
                         result.Add(model);
                     }
                 }
@@ -136,25 +134,26 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-        public PagedListViewModel<TextContentViewModel> ByFolder(Guid FolderId, ApiCall call)
+        public PagedListViewModel<TextContentViewModel> ByFolder(Guid folderId, ApiCall call)
         {
             int pagesize = ApiHelper.GetPageSize(call, 50);
             int pagenr = ApiHelper.GetPageNr(call);
 
             string language = Kooboo.Data.Language.LanguageSetting.GetCmsSiteLangCode(call.Context, call.WebSite);
 
-            PagedListViewModel<TextContentViewModel> model = new PagedListViewModel<TextContentViewModel>();
-            model.PageNr = pagenr;
-            model.PageSize = pagesize;
+            PagedListViewModel<TextContentViewModel> model = new PagedListViewModel<TextContentViewModel>
+            {
+                PageNr = pagenr, PageSize = pagesize
+            };
 
-            var textContents = call.WebSite.SiteDb().TextContent.Query.Where(it => it.FolderId == FolderId).SelectAll();
+            var textContents = call.WebSite.SiteDb().TextContent.Query.Where(it => it.FolderId == folderId).SelectAll();
 
             model.TotalCount = textContents.Count();
             model.TotalPages = ApiHelper.GetPageCount(model.TotalCount, model.PageSize);
 
             var list = textContents.OrderByDescending(o => o.LastModified).Skip(model.PageNr * model.PageSize - model.PageSize).Take(model.PageSize).ToList();
 
-            var contenttype = call.Context.WebSite.SiteDb().ContentTypes.GetByFolder(FolderId);
+            var contenttype = call.Context.WebSite.SiteDb().ContentTypes.GetByFolder(folderId);
 
             model.List = new List<TextContentViewModel>();
             foreach (var item in list)
@@ -181,8 +180,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 var ids = sitedb.ContentCategories.Query.Where(o => o.ContentId == textContentId && o.CategoryFolder == item.FolderId).SelectAll().Select(o => o.CategoryId).ToList();
 
-                CategoryContentViewModel model = new CategoryContentViewModel();
-                model.CategoryFolder = categoryfolder;
+                CategoryContentViewModel model = new CategoryContentViewModel {CategoryFolder = categoryfolder};
 
                 var contents = sitedb.TextContent.Query.
                             Where(it => it.FolderId == item.FolderId)
@@ -199,12 +197,12 @@ namespace Kooboo.Web.Api.Implementation
             return categories;
         }
 
-        private List<ContentFieldViewModel> GetProperties(ApiCall call, Guid FolderId)
+        private List<ContentFieldViewModel> GetProperties(ApiCall call, Guid folderId)
         {
             var culture = call.WebSite.DefaultCulture;
 
             List<ContentFieldViewModel> result = new List<ContentFieldViewModel>();
-            var contenttype = call.WebSite.SiteDb().ContentTypes.GetByFolder(FolderId);
+            var contenttype = call.WebSite.SiteDb().ContentTypes.GetByFolder(folderId);
 
             bool online = true;
             TextContent textcontentnew = null;
@@ -221,13 +219,15 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     if (item.Editable)
                     {
-                        ContentFieldViewModel model = new ContentFieldViewModel();
-                        model.Name = item.Name;
-                        model.DisplayName = item.DisplayName;
-                        model.Validations = item.Validations;
-                        model.ControlType = item.ControlType;
-                        model.ToolTip = item.Tooltip;
-                        model.Order = item.Order;
+                        ContentFieldViewModel model = new ContentFieldViewModel
+                        {
+                            Name = item.Name,
+                            DisplayName = item.DisplayName,
+                            Validations = item.Validations,
+                            ControlType = item.ControlType,
+                            ToolTip = item.Tooltip,
+                            Order = item.Order
+                        };
 
                         if (item.MultipleLanguage)
                         {
@@ -261,16 +261,18 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     if (item.Editable)
                     {
-                        ContentFieldViewModel model = new ContentFieldViewModel();
-                        model.Name = item.Name;
-                        model.Validations = item.Validations;
-                        model.ControlType = item.ControlType;
-                        model.DisplayName = item.DisplayName;
-                        model.IsMultilingual = item.MultipleLanguage;
-                        model.ToolTip = item.Tooltip;
-                        model.Order = item.Order;
-                        model.selectionOptions = item.selectionOptions;
-                        model.MultipleValue = item.MultipleValue;
+                        ContentFieldViewModel model = new ContentFieldViewModel
+                        {
+                            Name = item.Name,
+                            Validations = item.Validations,
+                            ControlType = item.ControlType,
+                            DisplayName = item.DisplayName,
+                            IsMultilingual = item.MultipleLanguage,
+                            ToolTip = item.Tooltip,
+                            Order = item.Order,
+                            selectionOptions = item.selectionOptions,
+                            MultipleValue = item.MultipleValue
+                        };
 
                         if (item.MultipleLanguage)
                         {
@@ -290,7 +292,7 @@ namespace Kooboo.Web.Api.Implementation
                         else
                         {
                             var itemvalue = textcontentnew.GetValue(model.Name, culture);
-                            model.Values[culture] = itemvalue != null ? itemvalue.ToString() : null;
+                            model.Values[culture] = itemvalue?.ToString();
                         }
                         result.Add(model);
                     }
@@ -311,17 +313,21 @@ namespace Kooboo.Web.Api.Implementation
 
         public ContentEditViewModel GetEdit(ApiCall call)
         {
-            Guid FolderId = GetFolderId(call);
-            if (FolderId == default(Guid))
+            Guid folderId = GetFolderId(call);
+            if (folderId == default(Guid))
             {
                 return null;
             }
-            ContentEditViewModel model = new ContentEditViewModel();
-            model.FolderId = FolderId;
-            model.Properties = GetProperties(call, FolderId).OrderBy(o => o.Order).ToList();
 
-            model.Categories = GetCategoryInfo(call, FolderId, call.ObjectId, call.Context.Culture);
-            model.Embedded = Sites.Helper.ContentHelper.GetEmbedContents(call.WebSite.SiteDb(), FolderId, call.ObjectId, call.Context.Culture);
+            ContentEditViewModel model = new ContentEditViewModel
+            {
+                FolderId = folderId,
+                Properties = GetProperties(call, folderId).OrderBy(o => o.Order).ToList(),
+                Categories = GetCategoryInfo(call, folderId, call.ObjectId, call.Context.Culture),
+                Embedded = Sites.Helper.ContentHelper.GetEmbedContents(call.WebSite.SiteDb(), folderId, call.ObjectId,
+                    call.Context.Culture)
+            };
+
             return model;
         }
 
@@ -342,13 +348,13 @@ namespace Kooboo.Web.Api.Implementation
             return folderId;
         }
 
-        public string ExtraValue(LangTextContentViewModel updatemodel, string FieldName)
+        public string ExtraValue(LangTextContentViewModel updatemodel, string fieldName)
         {
-            if (string.IsNullOrWhiteSpace(FieldName))
+            if (string.IsNullOrWhiteSpace(fieldName))
             {
                 return null;
             }
-            FieldName = FieldName.ToLower();
+            fieldName = fieldName.ToLower();
 
             string key = null;
 
@@ -356,7 +362,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 foreach (var fielditem in langitem.Value)
                 {
-                    if (fielditem.Key.ToLower() == FieldName)
+                    if (fielditem.Key.ToLower() == fieldName)
                     {
                         key = fielditem.Value;
                         break;
@@ -373,7 +379,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     foreach (var fielditem in langitem.Value)
                     {
-                        if (fielditem.Key.ToLower() == FieldName)
+                        if (fielditem.Key.ToLower() == fieldName)
                         {
                             keysToRemove.Add(fielditem.Key);
                         }
@@ -388,11 +394,11 @@ namespace Kooboo.Web.Api.Implementation
             return key;
         }
 
-        public PagedListViewModel<TextContentViewModel> Search(Guid FolderId, string Keyword, ApiCall call)
+        public PagedListViewModel<TextContentViewModel> Search(Guid folderId, string keyword, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
-            if (string.IsNullOrWhiteSpace(Keyword) || FolderId == default(Guid))
+            if (string.IsNullOrWhiteSpace(keyword) || folderId == default(Guid))
             {
                 return new PagedListViewModel<TextContentViewModel>();
             }
@@ -402,20 +408,21 @@ namespace Kooboo.Web.Api.Implementation
 
             string language = string.IsNullOrEmpty(call.Context.Culture) ? call.WebSite.DefaultCulture : call.Context.Culture;
 
-            PagedListViewModel<TextContentViewModel> model = new PagedListViewModel<TextContentViewModel>();
-            model.PageNr = pagenr;
-            model.PageSize = pagesize;
+            PagedListViewModel<TextContentViewModel> model = new PagedListViewModel<TextContentViewModel>
+            {
+                PageNr = pagenr, PageSize = pagesize
+            };
 
-            var all = sitedb.TextContent.Query.Where(o => o.FolderId == FolderId).SelectAll();
+            var all = sitedb.TextContent.Query.Where(o => o.FolderId == folderId).SelectAll();
 
-            var textContents = all.Where(o => o.Body.IndexOf(Keyword, StringComparison.OrdinalIgnoreCase) > -1).OrderByDescending(o => o.LastModified);
+            var textContents = all.Where(o => o.Body.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) > -1).OrderByDescending(o => o.LastModified);
 
             model.TotalCount = textContents.Count();
             model.TotalPages = ApiHelper.GetPageCount(model.TotalCount, model.PageSize);
 
             var list = textContents.OrderByDescending(o => o.LastModified).Skip(model.PageNr * model.PageSize - model.PageSize).Take(model.PageSize).ToList();
 
-            var contenttype = call.Context.WebSite.SiteDb().ContentTypes.GetByFolder(FolderId);
+            var contenttype = call.Context.WebSite.SiteDb().ContentTypes.GetByFolder(folderId);
 
             model.List = new List<TextContentViewModel>();
             foreach (var item in list)

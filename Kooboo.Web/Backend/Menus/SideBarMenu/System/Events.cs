@@ -20,25 +20,25 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Hardcoded.GetValue("Events", Context);
+            return Hardcoded.GetValue("Events", context);
         }
 
         public List<ICmsMenu> ShowSubItems(RenderContext context)
         {
-            List<ICmsMenu> Result = new List<ICmsMenu>();
+            List<ICmsMenu> Result = new List<ICmsMenu>
+            {
+                new GeneralMenu() {Name = Hardcoded.GetValue("Overview", context), Url = "Events"}
+            };
 
-            Result.Add(new GeneralMenu() { Name = Hardcoded.GetValue("Overview", context), Url = "Events" });
 
             var names = Enum.GetNames(typeof(Kooboo.Sites.FrontEvent.enumEventType));
 
             List<GroupEvent> groupnames = new List<GroupEvent>();
             foreach (var item in names)
             {
-                GroupEvent eventname = new GroupEvent();
-                eventname.name = item;
-                eventname.group = GetEventGroup(item);
+                GroupEvent eventname = new GroupEvent {name = item, @group = GetEventGroup(item)};
                 groupnames.Add(eventname);
             }
 

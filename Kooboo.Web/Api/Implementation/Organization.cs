@@ -41,8 +41,10 @@ namespace Kooboo.Web.Api
 
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
-                List<Organization> org = new List<Organization>();
-                org.Add(new Organization() { AdminUser = user.Id, Name = user.UserName });
+                List<Organization> org = new List<Organization>
+                {
+                    new Organization() {AdminUser = user.Id, Name = user.UserName}
+                };
                 return org;
             }
 
@@ -53,8 +55,7 @@ namespace Kooboo.Web.Api
         {
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
-                List<User> users = new List<User>();
-                users.Add(call.Context.User);
+                List<User> users = new List<User> {call.Context.User};
             }
 
             var org = GlobalDb.Organization.GetByUser(call.Context.User.Id);

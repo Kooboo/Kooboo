@@ -15,12 +15,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var sitedb = call.Context.WebSite.SiteDb();
 
-            var allusers = Kooboo.Data.GlobalDb.Organization.Users(call.Context.User.CurrentOrgId);
-
-            if (allusers == null)
-            {
-                allusers = new List<Data.Models.User>();
-            }
+            var allusers = Kooboo.Data.GlobalDb.Organization.Users(call.Context.User.CurrentOrgId) ?? new List<Data.Models.User>();
 
             var org = Kooboo.Data.GlobalDb.Organization.Get(call.Context.User.CurrentOrgId);
 
@@ -35,10 +30,8 @@ namespace Kooboo.Web.Api.Implementation
                     var find = currentusers.Find(o => o.UserId == item.Id);
                     if (find == null)
                     {
-                        SiteUserViewModel model = new SiteUserViewModel();
+                        SiteUserViewModel model = new SiteUserViewModel {UserId = item.Id, UserName = item.UserName};
 
-                        model.UserId = item.Id;
-                        model.UserName = item.UserName;
 
                         result.Add(model);
                     }
@@ -57,10 +50,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in users)
             {
-                SiteUserViewModel model = new SiteUserViewModel();
-                model.UserId = item.Id;
-                model.UserName = item.Name;
-                model.Role = item.SiteRole;
+                SiteUserViewModel model = new SiteUserViewModel
+                {
+                    UserId = item.Id, UserName = item.Name, Role = item.SiteRole
+                };
                 result.Add(model);
             }
 
@@ -78,23 +71,23 @@ namespace Kooboo.Web.Api.Implementation
             return all.Select(o => o.Name).ToList();
         }
 
-        public void AddUser(Guid UserId, string role, ApiCall call)
+        public void AddUser(Guid userId, string role, ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
 
-            var user = Kooboo.Data.GlobalDb.Users.Get(UserId);
+            var user = Kooboo.Data.GlobalDb.Users.Get(userId);
 
             if (user != null)
             {
-                sitedb.SiteUser.AddOrUpdate(new Sites.Models.SiteUser() { UserId = UserId, SiteRole = role, Name = user.UserName });
+                sitedb.SiteUser.AddOrUpdate(new Sites.Models.SiteUser() { UserId = userId, SiteRole = role, Name = user.UserName });
             }
         }
 
-        public void DeleteUsers(Guid UserId, ApiCall call)
+        public void DeleteUsers(Guid userId, ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
 
-            sitedb.SiteUser.Delete(UserId);
+            sitedb.SiteUser.Delete(userId);
         }
     }
 

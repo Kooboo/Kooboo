@@ -41,9 +41,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (item.Key != this.ModelName)
                 {
-                    ApiViewModel model = new ApiViewModel();
-                    model.Name = item.Key;
-                    model.Url = "/_api/help/list/" + item.Key;
+                    ApiViewModel model = new ApiViewModel {Name = item.Key, Url = "/_api/help/list/" + item.Key};
 
                     result.Add(model);
                 }
@@ -68,14 +66,13 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in allmethods)
             {
-                ApiMethodViewModel model = new ApiMethodViewModel();
-                model.Name = item.Name;
+                ApiMethodViewModel model = new ApiMethodViewModel {Name = item.Name};
 
                 var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.RequireParameters));
                 if (requirepara != null)
                 {
-                    var RequiredParas = requirepara as Attributes.RequireParameters;
-                    model.Parameters = RequiredParas.Parameters;
+                    var requiredParas = requirepara as Attributes.RequireParameters;
+                    model.Parameters = requiredParas.Parameters;
                 }
 
                 var requiremodel = item.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
@@ -135,8 +132,8 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-                    var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(returnType);
-                    model.ResponseModel = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                    var sampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(returnType);
+                    model.ResponseModel = Lib.Helper.JsonHelper.Serialize(sampleResponseData);
                 }
 
                 methods.Add(model);

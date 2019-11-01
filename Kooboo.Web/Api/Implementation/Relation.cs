@@ -78,7 +78,7 @@ namespace Kooboo.Web.Api.Implementation
             return usedby;
         }
 
-        private List<UsedByRelation> PageRelation(SiteDb sitedb, string by, Guid PageId)
+        private List<UsedByRelation> PageRelation(SiteDb sitedb, string by, Guid pageId)
         {
             string baseurl = sitedb.WebSite.BaseUrl();
 
@@ -86,7 +86,7 @@ namespace Kooboo.Web.Api.Implementation
 
             List<UsedByRelation> result = new List<UsedByRelation>();
 
-            var relations = sitedb.Relations.GetRelations(PageId, consttype);
+            var relations = sitedb.Relations.GetRelations(pageId, consttype);
 
             foreach (var item in relations)
             {
@@ -94,9 +94,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (objectinfo != null)
                 {
-                    UsedByRelation relation = new UsedByRelation();
-                    relation.Name = objectinfo.DisplayName;
-                    relation.Url = objectinfo.Url;
+                    UsedByRelation relation = new UsedByRelation {Name = objectinfo.DisplayName, Url = objectinfo.Url};
                     if (!string.IsNullOrEmpty(relation.Url))
                     {
                         relation.Url = Lib.Helper.UrlHelper.Combine(baseurl, relation.Url);

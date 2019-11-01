@@ -49,10 +49,10 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (item.Name.ToLower() != "online")
                 {
-                    ColumnViewModel model = new ColumnViewModel();
-                    model.Name = item.Name;
-                    model.DisplayName = item.DisplayName;
-                    model.DataType = item.DataType;
+                    ColumnViewModel model = new ColumnViewModel
+                    {
+                        Name = item.Name, DisplayName = item.DisplayName, DataType = item.DataType
+                    };
                     result.Add(model);
                 }
             }
@@ -61,10 +61,12 @@ namespace Kooboo.Web.Api.Implementation
 
             if (lastmodified == null)
             {
-                ColumnViewModel model = new ColumnViewModel();
-                model.Name = SystemFields.LastModified.Name;
-                model.DisplayName = SystemFields.LastModified.DisplayName;
-                model.DataType = SystemFields.LastModified.DataType;
+                ColumnViewModel model = new ColumnViewModel
+                {
+                    Name = SystemFields.LastModified.Name,
+                    DisplayName = SystemFields.LastModified.DisplayName,
+                    DataType = SystemFields.LastModified.DataType
+                };
                 result.Insert(0, model);
             }
 
@@ -76,12 +78,14 @@ namespace Kooboo.Web.Api.Implementation
         {
             CreateContentFolderViewModel model = call.Context.Request.Model as CreateContentFolderViewModel;
 
-            ContentFolder folder = new ContentFolder();
-            folder.Name = model.Name;
-            folder.ContentTypeId = model.ContentTypeId;
-            folder.DisplayName = model.DisplayName;
-            folder.Embedded = model.Embedded;
-            folder.Category = model.Category;
+            ContentFolder folder = new ContentFolder
+            {
+                Name = model.Name,
+                ContentTypeId = model.ContentTypeId,
+                DisplayName = model.DisplayName,
+                Embedded = model.Embedded,
+                Category = model.Category
+            };
 
             if (model.Id != default(Guid))
             {

@@ -38,14 +38,7 @@ namespace Kooboo.Web.ViewModel
 
         public List<MenuItem> Items
         {
-            get
-            {
-                if (_items == null)
-                {
-                    _items = new List<MenuItem>();
-                }
-                return _items;
-            }
+            get { return _items ?? (_items = new List<MenuItem>()); }
             set
             {
                 _items = value;

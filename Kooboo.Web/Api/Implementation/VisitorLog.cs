@@ -99,8 +99,7 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in imagelogs.GroupBy(o => o.ImageId))
             {
                 string url = item.First().Url;
-                ImageLogItemViewModel model = new ImageLogItemViewModel();
-                model.Name = url;
+                ImageLogItemViewModel model = new ImageLogItemViewModel {Name = url};
                 model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Name);
                 model.Size = item.First().Size;
                 model.Count = item.Count();
@@ -122,10 +121,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in allitems.GroupBy(o => o.Id))
             {
-                ErrorSummaryViewModel model = new ErrorSummaryViewModel();
-                model.Id = item.Key;
-                model.Count = item.Count();
-                model.Url = item.First().Url;
+                ErrorSummaryViewModel model = new ErrorSummaryViewModel
+                {
+                    Id = item.Key, Count = item.Count(), Url = item.First().Url
+                };
                 try
                 {
                     model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);

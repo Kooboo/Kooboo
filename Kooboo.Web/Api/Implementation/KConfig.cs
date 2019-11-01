@@ -34,9 +34,8 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var kconfig = obj as KConfig;
 
-                var model = new KConfigEditModel(kconfig);
+                var model = new KConfigEditModel(kconfig) {Id = kconfig.Id.ToString()};
 
-                model.Id = kconfig.Id.ToString();
 
                 if (kconfig.TagName == "img")
                 {
@@ -57,17 +56,19 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.KConfig.All())
             {
-                KConfigItemViewModel model = new KConfigItemViewModel();
-                model.Id = item.Id;
-                model.TagName = item.TagName;
-                model.TagHtml = item.TagHtml;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.LastModified = item.LastModified;
-                model.Binding = item.Binding;
+                KConfigItemViewModel model = new KConfigItemViewModel
+                {
+                    Id = item.Id,
+                    TagName = item.TagName,
+                    TagHtml = item.TagHtml,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenamehash,
+                    LastModified = item.LastModified,
+                    Binding = item.Binding,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.KConfig.GetUsedBy(item.Id))
+                };
 
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.KConfig.GetUsedBy(item.Id));
                 result.Add(model);
             }
             return result.ToList<object>();

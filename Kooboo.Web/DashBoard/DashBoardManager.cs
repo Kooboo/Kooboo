@@ -21,8 +21,7 @@ namespace Kooboo.Web.DashBoard
 
             foreach (var item in types)
             {
-                var instance = Activator.CreateInstance(item) as IDashBoard;
-                if (instance != null)
+                if (Activator.CreateInstance(item) is IDashBoard instance)
                 {
                     List.Add(instance);
                 }
@@ -103,13 +102,13 @@ namespace Kooboo.Web.DashBoard
                     }
                 }
 
-                /// search all views...
+                // search all views...
                 string name = dashboard.GetType().Name + ".html";
                 var basedir = AppDomain.CurrentDomain.BaseDirectory;
 
                 var files = System.IO.Directory.GetFiles(basedir, name, SearchOption.AllDirectories);
 
-                if (files != null && files.Count() > 0)
+                if (files != null && files.Any())
                 {
                     foreach (var item in files)
                     {
@@ -128,15 +127,13 @@ namespace Kooboo.Web.DashBoard
             foreach (var item in List)
             {
                 var result = item.Render(context);
-                if (result is DashBoardResponseHtml)
+                if (result is DashBoardResponseHtml html)
                 {
-                    var html = result as DashBoardResponseHtml;
                     string itemresult = ItemTemplate.Replace("{title}", item.DisplayName(context)).Replace("{body}", html.Body);
                     results.Add(itemresult);
                 }
-                else if (result is DashBoardResponseModel)
+                else if (result is DashBoardResponseModel modelresponse)
                 {
-                    var modelresponse = result as DashBoardResponseModel;
                     var viewsource = GetViewSource(modelresponse, item);
                     string body = Kooboo.Sites.Render.RenderHelper.ModelBind(modelresponse.Model, viewsource);
 
@@ -153,14 +150,12 @@ namespace Kooboo.Web.DashBoard
             foreach (var item in List)
             {
                 var result = item.Render(context);
-                if (result is DashBoardResponseHtml)
+                if (result is DashBoardResponseHtml html)
                 {
-                    var html = result as DashBoardResponseHtml;
                     results.Add(new ViewModel.DashBoardItemHtml { Title = item.DisplayName(context), Body = html.Body, Link = html.Link });
                 }
-                else if (result is DashBoardResponseModel)
+                else if (result is DashBoardResponseModel modelresponse)
                 {
-                    var modelresponse = result as DashBoardResponseModel;
                     var viewsource = GetViewSource(modelresponse, item);
                     string body = Kooboo.Sites.Render.RenderHelper.ModelBind(modelresponse.Model, viewsource);
                     results.Add(new ViewModel.DashBoardItemHtml() { Title = item.DisplayName(context), Body = body, Link = modelresponse.Link });

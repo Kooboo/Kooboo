@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
@@ -104,13 +104,11 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     list.Add(model);
                 }
-
             }
 
             result.List = list;
 
             return result;
-
         }
 
         public int PageCount(ApiCall apiCall)
@@ -129,23 +127,23 @@ namespace Kooboo.Web.Api.Implementation
         public List<ItemVersionViewModel> Versions(ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
-            Guid KeyHash = call.GetValue<Guid>("KeyHash");
-            int StoreNameHash = call.GetValue<int>("StoreNameHash");
-            int TableNameHash = call.GetValue<int>("TableNameHash");
+            Guid keyHash = call.GetValue<Guid>("KeyHash");
+            int storeNameHash = call.GetValue<int>("StoreNameHash");
+            int tableNameHash = call.GetValue<int>("TableNameHash");
 
-            if (KeyHash == default(Guid) || (StoreNameHash == 0 && TableNameHash == 0))
+            if (keyHash == default(Guid) || (storeNameHash == 0 && tableNameHash == 0))
             {
                 return null;
             }
 
             List<LogEntry> logs = null;
-            if (StoreNameHash == 0)
+            if (storeNameHash == 0)
             {
-                logs = sitedb.Log.Store.Where(o => o.KeyHash == KeyHash && o.TableNameHash == TableNameHash).SelectAll();
+                logs = sitedb.Log.Store.Where(o => o.KeyHash == keyHash && o.TableNameHash == tableNameHash).SelectAll();
             }
             else
             {
-                logs = sitedb.Log.Store.Where(o => o.KeyHash == KeyHash && o.StoreNameHash == StoreNameHash).SelectAll();
+                logs = sitedb.Log.Store.Where(o => o.KeyHash == keyHash && o.StoreNameHash == storeNameHash).SelectAll();
             }
 
             List<ItemVersionViewModel> list = new List<ItemVersionViewModel>();
@@ -290,9 +288,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public bool Revert(long id, ApiCall apiCall)
-        { 
+        {
             Sites.Service.LogService.RollBack(apiCall.WebSite.SiteDb(), id);
-            return true; 
+            return true;
         }
 
         public bool Blame(ApiCall call)
@@ -303,7 +301,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             List<long> changes = Lib.Helper.JsonHelper.Deserialize<List<long>>(call.Context.Request.Body);
 
-            if (changes != null && changes.Count() > 0)
+            if (changes != null && changes.Any())
             {
                 Kooboo.Sites.Service.LogService.RollBack(call.WebSite.SiteDb(), changes);
                 return true;
@@ -312,7 +310,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public bool Restore(long id, ApiCall apicall)
-        { 
+        {
             if (id > -1)
             {
                 Kooboo.Sites.Service.LogService.RollBackFrom(apicall.WebSite.SiteDb(), id);
@@ -351,21 +349,20 @@ namespace Kooboo.Web.Api.Implementation
 
             string subdomain = call.GetValue("SubDomain");
             string rootdomain = call.GetValue("RootDomain");
-            string SiteName = call.GetValue("SiteName");
+            string siteName = call.GetValue("SiteName");
 
-            if (string.IsNullOrEmpty(rootdomain) || string.IsNullOrEmpty(SiteName))
+            if (string.IsNullOrEmpty(rootdomain) || string.IsNullOrEmpty(siteName))
             {
                 return false;
             }
 
             string fulldomain = subdomain + "." + rootdomain;
 
-            var newwebsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(website.OrganizationId, SiteName, fulldomain, call.Context.User.Id);
+            var newwebsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(website.OrganizationId, siteName, fulldomain, call.Context.User.Id);
 
             Kooboo.Sites.Service.LogService.CheckOut(call.WebSite.SiteDb(), newwebsite.SiteDb(), id);
 
             return true;
-
         }
 
         public Guid ExportBatch(long id, ApiCall call)
@@ -387,7 +384,6 @@ namespace Kooboo.Web.Api.Implementation
 
                 return guid;
             }
-
         }
 
         public Guid ExportItems(List<long> ids, ApiCall call)
@@ -413,8 +409,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public Guid ExportItem(long id, ApiCall call)
         {
-            List<long> ids = new List<long>();
-            ids.Add(id);
+            List<long> ids = new List<long> {id};
             return ExportItems(ids, call);
         }
 
@@ -426,8 +421,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var allbytes = System.IO.File.ReadAllBytes(path);
 
-                BinaryResponse response = new BinaryResponse();
-                response.ContentType = "application/zip";
+                BinaryResponse response = new BinaryResponse {ContentType = "application/zip"};
                 response.Headers.Add("Content-Disposition", $"attachment;filename={site.Name}_part.zip");
                 response.BinaryBytes = allbytes;
                 return response;

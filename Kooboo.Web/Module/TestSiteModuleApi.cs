@@ -12,8 +12,10 @@ namespace Kooboo.Web.Modules
 
         public Dictionary<string, string> methodone(ApiCall call)
         {
-            Dictionary<string, string> response = new Dictionary<string, string>();
-            response.Add("callfrom", call.Context.Request.IP);
+            Dictionary<string, string> response = new Dictionary<string, string>
+            {
+                {"callfrom", call.Context.Request.IP}
+            };
             if (call.WebSite != null)
             {
                 response.Add("sitename", call.WebSite.Name);

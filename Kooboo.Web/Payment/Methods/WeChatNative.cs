@@ -20,17 +20,16 @@ namespace Kooboo.Web.Payment.Methods
         {
             get
             {
-                var list = new List<string>();
-                list.Add("CNY");
+                var list = new List<string> {"CNY"};
                 return list;
             }
         }
 
-        public override IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context)
+        public override IPaymentResponse MakePayment(PaymentRequest request, RenderContext context)
         {
             WxPayData data = new WxPayData();
 
-            var setting = this.GetSetting(Context);
+            var setting = this.GetSetting(context);
             if (setting == null)
             {
                 return null;
@@ -66,7 +65,7 @@ namespace Kooboo.Web.Payment.Methods
             //异步通知url未设置，则使用配置文件中的url
             // string notifurl = Manager.GetCallbackUrl(this, "Notify", site);
 
-            string notifurl = this.GetCallbackUrl(nameof(Notify), Context);
+            string notifurl = this.GetCallbackUrl(nameof(Notify), context);
 
             data.SetValue("notify_url", notifurl); //异步通知url
 
@@ -86,16 +85,11 @@ namespace Kooboo.Web.Payment.Methods
         {
             string postdata = context.Request.Body;
 
-            var result = new PaymentCallback();
+            var result = new PaymentCallback
+            {
+                RawData = context.Request.Method == "GET" ? context.Request.RawRelativeUrl : postdata
+            };
 
-            if (context.Request.Method == "GET")
-            {
-                result.RawData = context.Request.RawRelativeUrl;
-            }
-            else
-            {
-                result.RawData = postdata;
-            }
 
             WxPayData data = new WxPayData();
             try
@@ -111,9 +105,7 @@ namespace Kooboo.Web.Payment.Methods
                 // Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
                 // page.Response.Write(res.ToXml());
                 // page.Response.End();
-                var response = new PlainResponse();
-                response.ContentType = "Application/Xml";
-                response.Content = res.ToXml();
+                var response = new PlainResponse {ContentType = "Application/Xml", Content = res.ToXml()};
                 result.CallbackResponse = response;
                 return result;
             }
@@ -132,25 +124,19 @@ namespace Kooboo.Web.Payment.Methods
                 // page.Response.Write(res.ToXml());
                 // page.Response.End();
 
-                var response = new PlainResponse();
-                response.ContentType = "Application/Xml";
-                response.Content = res.ToXml();
+                var response = new PlainResponse {ContentType = "Application/Xml", Content = res.ToXml()};
                 result.CallbackResponse = response;
                 return result;
             }
 
             var obj = data.GetValue("out_trade_no");
 
-            Guid RequestId;
-
-            if (obj == null || !System.Guid.TryParse(obj.ToString(), out RequestId))
+            if (obj == null || !System.Guid.TryParse(obj.ToString(), out var RequestId))
             {
                 WxPayData res = new WxPayData();
                 res.SetValue("return_code", "FAIL");
                 res.SetValue("return_msg", "订单查询失败");
-                var response = new PlainResponse();
-                response.ContentType = "Application/Xml";
-                response.Content = res.ToXml();
+                var response = new PlainResponse {ContentType = "Application/Xml", Content = res.ToXml()};
                 result.CallbackResponse = response;
                 return result;
             }
@@ -159,9 +145,7 @@ namespace Kooboo.Web.Payment.Methods
                 WxPayData res = new WxPayData();
                 res.SetValue("return_code", "SUCCESS");
                 res.SetValue("return_msg", "OK");
-                var response = new PlainResponse();
-                response.ContentType = "Application/Xml";
-                response.Content = res.ToXml();
+                var response = new PlainResponse {ContentType = "Application/Xml", Content = res.ToXml()};
 
                 result.CallbackResponse = response;
 
@@ -169,26 +153,26 @@ namespace Kooboo.Web.Payment.Methods
 
                 var objcode = data.GetValue("result_code");
 
-                bool IsPaid = false;
-                bool IsCancel = false;
+                bool isPaid = false;
+                bool isCancel = false;
 
                 if (objcode != null)
                 {
                     string code = objcode.ToString().ToUpper();
                     if (code == "SUCCESS")
                     {
-                        IsPaid = true;
+                        isPaid = true;
                     }
 
                     if (code == "FAIL")
                     {
-                        IsCancel = true;
+                        isCancel = true;
                     }
                     //业务结果 result_code 是 String(16)	SUCCESS SUCCESS/ FAIL
                 }
 
-                result.IsPaid = IsPaid;
-                result.IsCancel = IsCancel;
+                result.IsPaid = isPaid;
+                result.IsCancel = isCancel;
                 return result;
             }
         }
@@ -196,8 +180,7 @@ namespace Kooboo.Web.Payment.Methods
         [Obsolete]
         public IPaymentResponse GetPaymentStatus(RenderContext context)
         {
-            Guid paymentRequestId;
-            if (Guid.TryParse(context.Request.GetValue("paymentRequestId"), out paymentRequestId))
+            if (Guid.TryParse(context.Request.GetValue("paymentRequestId"), out var paymentRequestId))
             {
                 var request = this.GetRequest(paymentRequestId, context);
                 if (request != null)
@@ -226,13 +209,13 @@ namespace Kooboo.Web.Payment.Methods
                 data.SetValue("out_trade_no", request.Id.ToString("N"));
                 var response = WxPayApi.OrderQuery(data, setting);
 
-                var trade_state = response.GetValue("trade_state");
+                var tradeState = response.GetValue("trade_state");
                 //trade_state:SUCCESS,REFUND,NOTPAY,CLOSED,REVOKED,USERPAYING,PAYERROR
 
-                if (trade_state != null)
+                if (tradeState != null)
                 {
                     result.HasResult = true;
-                    var code = trade_state.ToString().ToUpper();
+                    var code = tradeState.ToString().ToUpper();
                     if (code == "SUCCESS")
                     {
                         result.IsPaid = true;
@@ -243,8 +226,9 @@ namespace Kooboo.Web.Payment.Methods
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
 
             return result;

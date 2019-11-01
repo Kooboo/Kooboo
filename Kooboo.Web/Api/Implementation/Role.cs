@@ -64,9 +64,10 @@ namespace Kooboo.Web.Api.Implementation
         public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
         {
             var permission = Kooboo.Sites.Authorization.PermissionService.ExtractPermissionFromModel(model);
-            Kooboo.Sites.Authorization.Model.RolePermission role = new Sites.Authorization.Model.RolePermission();
-            role.Name = model.Name;
-            role.Permission = permission;
+            Kooboo.Sites.Authorization.Model.RolePermission role = new Sites.Authorization.Model.RolePermission
+            {
+                Name = model.Name, Permission = permission
+            };
 
             var sitedb = call.WebSite.SiteDb();
             sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role, call.Context.User.Id);
@@ -98,7 +99,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {

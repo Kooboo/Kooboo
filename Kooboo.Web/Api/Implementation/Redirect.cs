@@ -89,7 +89,7 @@ namespace Kooboo.Web.Api.Implementation
             url += "&pageUrl=" + System.Net.WebUtility.UrlEncode(fullpageurl);
 
             url = Lib.Helper.UrlHelper.Combine(baseurl, url);
-            /// /_Admin/Sites/Edit?SiteId=55b15904-3725-6cd8-9dfe-c58c52e7861f&pageId=5b4335d3-becc-4831-97d0-57adbc065cfd&pageUrl=http%3A%2F%2Fsss.kooboo%3A82%2Fsdfsdfsd&accessToken=ycc0xnXIkEinKo_G851TwQ
+            // /_Admin/Sites/Edit?SiteId=55b15904-3725-6cd8-9dfe-c58c52e7861f&pageId=5b4335d3-becc-4831-97d0-57adbc065cfd&pageUrl=http%3A%2F%2Fsss.kooboo%3A82%2Fsdfsdfsd&accessToken=ycc0xnXIkEinKo_G851TwQ
             //var url = "/"
             MetaResponse res = new MetaResponse();
             res.Redirect(url);
@@ -107,8 +107,7 @@ namespace Kooboo.Web.Api.Implementation
             agent = agent.ToLower();
 
             string[] mobiles =
-          new[]
-              {
+            {
                     "midp", "j2me", "avant", "docomo",
                     "novarra", "palmos", "palmsource",
                     "240x320", "opwv", "chtml",
@@ -128,7 +127,7 @@ namespace Kooboo.Web.Api.Implementation
                     "sgh", "gradi", "jb", "dddi",
                     "moto", "iphone","ipad","ipod","android",
                     "webos","windows phone","symbianos"
-              };
+            };
 
             foreach (var item in mobiles)
             {

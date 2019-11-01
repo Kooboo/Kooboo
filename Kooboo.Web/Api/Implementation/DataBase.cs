@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -47,7 +47,7 @@ namespace Kooboo.Web.Api.Implementation
             var dbtable = Kooboo.Data.DB.GetOrCreateTable(db, table);
 
             string sortfield = call.GetValue("sort", "orderby", "order");
-            // verify sortfield. 
+            // verify sortfield.
 
             if (sortfield != null)
             {
@@ -67,10 +67,9 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-
             var pager = ApiHelper.GetPager(call, 30);
 
-            PagedListViewModel<List<DataValue>> result = new PagedListViewModel<List<DataValue>>(); 
+            PagedListViewModel<List<DataValue>> result = new PagedListViewModel<List<DataValue>>();
 
             int totalcount = (int)dbtable.length;
 
@@ -94,7 +93,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var items = query.Skip(totalskip).Take(pager.PageSize).ToList();
 
-            if (items != null && items.Count() > 0)
+            if (items != null && items.Any())
             {
                 result.List = ConvertDataValue(items);
             }
@@ -124,7 +123,6 @@ namespace Kooboo.Web.Api.Implementation
             public string key { get; set; }
 
             public object value { get; set; }
-
         }
 
         public void CreateTable(string name, ApiCall call)
@@ -146,13 +144,11 @@ namespace Kooboo.Web.Api.Implementation
             repo.DeleteTable(ids, call.Context.User.Id);
         }
 
-
         public bool IsUniqueTableName(string name, ApiCall call)
         {
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
 
             return repo.isUniqueName(name);
-
         }
 
         public List<string> AvailableControlTypes(ApiCall call)
@@ -175,28 +171,36 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in dbTable.Setting.Columns)
             {
-
                 if (item.IsSystem && item.Name == IndexedDB.Dynamic.Constants.DefaultIdFieldName)
                 {
                     continue;
                 }
 
+                DbTableColumn model = new DbTableColumn
+                {
+                    Name = item.Name,
+                    IsIncremental = item.IsIncremental,
+                    IsUnique = item.IsUnique,
+                    IsIndex = item.IsIndex,
+                    IsPrimaryKey = item.IsPrimaryKey,
+                    Seed = item.Seed,
+                    Scale = item.Increment,
+                    IsSystem = item.IsSystem,
+                    DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType),
+                    ControlType = item.ControlType,
+                    Setting = item.Setting,
+                    Length = item.Length
+                };
 
-                DbTableColumn model = new DbTableColumn() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
-                model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
 
-                model.ControlType = item.ControlType;
-                model.Setting = item.Setting;
-
-                model.Length = item.Length;
 
                 result.Add(model);
             }
             return result;
         }
 
-        public List<DatabaseItemEdit> GetEdit(string tablename, string Id, ApiCall call)
+        public List<DatabaseItemEdit> GetEdit(string tablename, string id, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
@@ -204,16 +208,26 @@ namespace Kooboo.Web.Api.Implementation
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
 
-            var obj = dbTable.Get(Id);
+            var obj = dbTable.Get(id);
 
             foreach (var item in dbTable.Setting.Columns)
             {
-                DatabaseItemEdit model = new DatabaseItemEdit() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
+                DatabaseItemEdit model = new DatabaseItemEdit
+                {
+                    Name = item.Name,
+                    IsIncremental = item.IsIncremental,
+                    IsUnique = item.IsUnique,
+                    IsIndex = item.IsIndex,
+                    IsPrimaryKey = item.IsPrimaryKey,
+                    Seed = item.Seed,
+                    Scale = item.Increment,
+                    IsSystem = item.IsSystem,
+                    DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType),
+                    ControlType = item.ControlType,
+                    Setting = item.Setting
+                };
 
-                model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
 
-                model.ControlType = item.ControlType;
-                model.Setting = item.Setting;
 
                 // get value
                 if (obj != null && obj.ContainsKey(model.Name))
@@ -225,7 +239,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             return result;
         }
-
 
         public Guid UpdateData(string tablename, Guid id, List<DatabaseItemEdit> Values, ApiCall call)
         {
@@ -300,15 +313,10 @@ namespace Kooboo.Web.Api.Implementation
 
         public void UpdateColumn(string tablename, List<DbTableColumn> columns, ApiCall call)
         {
-            DatabaseTable table = new DatabaseTable();
-            table.Name = tablename;
-            table.Columns = columns;
+            DatabaseTable table = new DatabaseTable {Name = tablename, Columns = columns};
             var sitedb = call.Context.WebSite.SiteDb();
             var repo = sitedb.GetSiteRepository<DatabaseTableRepository>();
             repo.AddOrUpdate(table, call.Context.User.Id);
         }
-
     }
-
-
 }

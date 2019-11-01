@@ -59,7 +59,7 @@ namespace Kooboo.Web.Menus
                 {
                     if (item.HasSubItem)
                     {
-                        bool HasNonHideItem = false;
+                        bool hasNonHideItem = false;
                         foreach (var submenu in item.Items)
                         {
                             var subPermission = GetPermissionString(submenu);
@@ -70,7 +70,7 @@ namespace Kooboo.Web.Menus
                             var subHasPermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(subPermission, role.Tree);
                             if (subHasPermission)
                             {
-                                HasNonHideItem = true;
+                                hasNonHideItem = true;
                             }
                             else
                             {
@@ -78,7 +78,7 @@ namespace Kooboo.Web.Menus
                             }
                         }
 
-                        if (!HasNonHideItem)
+                        if (!hasNonHideItem)
                         {
                             item.Hide = true;
                         }
@@ -124,14 +124,7 @@ namespace Kooboo.Web.Menus
                 return null;
             }
 
-            if (menu.CmsMenu != null)
-            {
-                return Kooboo.Sites.Authorization.MenuService.GetPermissionString(menu.CmsMenu);
-            }
-            else
-            {
-                return menu.Name;
-            }
+            return menu.CmsMenu != null ? Kooboo.Sites.Authorization.MenuService.GetPermissionString(menu.CmsMenu) : menu.Name;
         }
 
         public static void RemoveItems(List<CmsMenuViewModel> list)

@@ -4,6 +4,7 @@ using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Jint.Parser.Ast;
 
 namespace Kooboo.Web.JsTest
 {
@@ -103,29 +104,28 @@ namespace Kooboo.Web.JsTest
 
         public static HashSet<string> ListAllTestFiles(RenderContext context, JsTestOption option, string folder)
         {
-            HashSet<string> Result = new HashSet<string>();
+            HashSet<string> result = new HashSet<string>();
 
-            HashSet<string> Folders;
+            HashSet<string> folders;
             if (string.IsNullOrEmpty(folder))
             {
-                Folders = ListTestFolders(context, option);
+                folders = ListTestFolders(context, option);
             }
             else
             {
-                Folders = new HashSet<string>();
-                Folders.Add(folder);
+                folders = new HashSet<string> {folder};
             }
 
-            foreach (var item in Folders)
+            foreach (var item in folders)
             {
                 var folderfiles = ListFolderFiles(context, option, item);
                 foreach (var file in folderfiles)
                 {
                     string jsfile = Lib.Helper.IOHelper.CombinePath(file.Folder, file.file);
-                    Result.Add(jsfile);
+                    result.Add(jsfile);
                 }
             }
-            return Result;
+            return result;
         }
 
         public static HashSet<string> ListFileFunctions(RenderContext context, JsTestOption option, string folder, string file)
@@ -151,11 +151,11 @@ namespace Kooboo.Web.JsTest
             return new HashSet<string>();
         }
 
-        public static int CountTest(RenderContext context, JsTestOption option, List<string> Folders)
+        public static int CountTest(RenderContext context, JsTestOption option, List<string> folders)
         {
             int count = 0;
 
-            foreach (var item in Folders)
+            foreach (var item in folders)
             {
                 count += CountTest(context, option, item);
             }
@@ -202,21 +202,21 @@ namespace Kooboo.Web.JsTest
             return false;
         }
 
-        public static JsTestCommand ParseCommand(string RelativeUrl)
+        public static JsTestCommand ParseCommand(string relativeUrl)
         {
             var result = new JsTestCommand();
 
-            if (string.IsNullOrEmpty(RelativeUrl) || RelativeUrl == "/" || RelativeUrl == "\\")
+            if (string.IsNullOrEmpty(relativeUrl) || relativeUrl == "/" || relativeUrl == "\\")
             {
                 result.Command = JsTestCommand.JsCommand.view;
             }
-            else if (IsJsFile(RelativeUrl))
+            else if (IsJsFile(relativeUrl))
             {
                 result.IsJs = true;
-                result.JsPath = RelativeUrl;
+                result.JsPath = relativeUrl;
             }
 
-            string querystring = RelativeUrl;
+            string querystring = relativeUrl;
             if (querystring.IndexOf("?") > -1)
             {
                 querystring = querystring.Substring(querystring.IndexOf("?") + 1);
@@ -255,11 +255,11 @@ namespace Kooboo.Web.JsTest
             var approot = Kooboo.Data.AppSettings.RootPath;
             string root = Lib.Helper.IOHelper.CombinePath(approot, _defaultFolder);
             root = Lib.Helper.IOHelper.CombinePath(root, "kbtest");
-            string FullFileName = Lib.Helper.IOHelper.CombinePath(root, "start.html");
+            string fullFileName = Lib.Helper.IOHelper.CombinePath(root, "start.html");
 
-            if (System.IO.File.Exists(FullFileName))
+            if (System.IO.File.Exists(fullFileName))
             {
-                string html = System.IO.File.ReadAllText(FullFileName);
+                string html = System.IO.File.ReadAllText(fullFileName);
                 return html.Replace("{home}", option.RequestPrefix);
             }
             return null;
@@ -270,13 +270,9 @@ namespace Kooboo.Web.JsTest
             var approot = Kooboo.Data.AppSettings.RootPath;
             string root = Lib.Helper.IOHelper.CombinePath(approot, _defaultFolder);
             root = Lib.Helper.IOHelper.CombinePath(root, "kbtest");
-            string FullFileName = Lib.Helper.IOHelper.CombinePath(root, "info.html");
+            string fullFileName = Lib.Helper.IOHelper.CombinePath(root, "info.html");
 
-            if (System.IO.File.Exists(FullFileName))
-            {
-                return System.IO.File.ReadAllText(FullFileName);
-            }
-            return null;
+            return System.IO.File.Exists(fullFileName) ? System.IO.File.ReadAllText(fullFileName) : null;
         }
 
         public static HashSet<string> GetReferenceJs(RenderContext context, JsTestOption option, string folder)
@@ -407,7 +403,7 @@ namespace Kooboo.Web.JsTest
 
             var prog = parser.Parse(requireJsBlock);
 
-            if (prog != null && prog.Body.Count() > 0)
+            if (prog != null && prog.Body.Any())
             {
                 var item = prog.Body.First();
 
@@ -417,15 +413,12 @@ namespace Kooboo.Web.JsTest
 
                     if (expres.Expression is Jint.Parser.Ast.CallExpression)
                     {
-                        var call = expres.Expression as Jint.Parser.Ast.CallExpression;
-                        if (call != null && call.Arguments.Count() == 2)
+                        if (expres.Expression is CallExpression call && call.Arguments.Count() == 2)
                         {
                             var requireargu = call.Arguments[1];
 
-                            if (requireargu != null && requireargu is Jint.Parser.Ast.FunctionExpression)
+                            if (requireargu != null && requireargu is FunctionExpression requireFunc)
                             {
-                                var requireFunc = requireargu as Jint.Parser.Ast.FunctionExpression;
-
                                 if (requireFunc != null)
                                 {
                                     return requireFunc.FunctionDeclarations.ToList();

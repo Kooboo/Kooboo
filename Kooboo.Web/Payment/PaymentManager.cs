@@ -141,7 +141,7 @@ namespace Kooboo.Web.Payment
             {
                 baseurl = context.Request.Port == 80 || context.Request.Port == 443
                         ? context.Request.Host
-                        : string.Format("{0}:{1}", context.Request.Host, context.Request.Port);
+                        : $"{context.Request.Host}:{context.Request.Port}";
                 baseurl = context.Request.Scheme + "://" + baseurl;
             }
             return baseurl;
@@ -162,10 +162,10 @@ namespace Kooboo.Web.Payment
             return Lib.Helper.UrlHelper.Combine(baseurl, url);
         }
 
-        public static string GetCallbackUrl(IPaymentMethod method, string MethodName, RenderContext context)
+        public static string GetCallbackUrl(IPaymentMethod method, string methodName, RenderContext context)
         {
             var baseurl = GetBaseUrl(context);
-            return baseurl + "/_api/paymentcallback/" + method.Name + "_" + MethodName;
+            return baseurl + "/_api/paymentcallback/" + method.Name + "_" + methodName;
         }
 
         public static void CallBack(PaymentCallback callback, RenderContext context)
@@ -184,11 +184,11 @@ namespace Kooboo.Web.Payment
             }
         }
 
-        public static PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
+        public static PaymentRequest GetRequest(Guid paymentRequestId, RenderContext context)
         {
             foreach (var item in PaymentContainer.RequestStore)
             {
-                var result = item.Get(PaymentRequestId, context);
+                var result = item.Get(paymentRequestId, context);
                 if (result != null)
                 {
                     return result;
@@ -216,17 +216,17 @@ namespace Kooboo.Web.Payment
         {
             string typename = input.GetType().Name;
 
-            defaultSettings[typename] = input;
+            DefaultSettings[typename] = input;
         }
 
-        private static Dictionary<string, IPaymentSetting> defaultSettings { get; set; } = new Dictionary<string, IPaymentSetting>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, IPaymentSetting> DefaultSettings { get; set; } = new Dictionary<string, IPaymentSetting>(StringComparer.OrdinalIgnoreCase);
 
         private static T GetDefaultSetting<T>()
         {
             var name = typeof(T).Name;
-            if (defaultSettings.ContainsKey(name))
+            if (DefaultSettings.ContainsKey(name))
             {
-                var setting = defaultSettings[name];
+                var setting = DefaultSettings[name];
                 return (T)setting;
             }
             return default(T);

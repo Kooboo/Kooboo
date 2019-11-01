@@ -19,11 +19,11 @@ namespace Kooboo.Web.Backend.Menus.SideBarMenu.Contents
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Hardcoded.GetValue("Files", Context);
+            return Hardcoded.GetValue("Files", context);
         }
     }
 }
 
-///new MenuItem { Name = Hardcoded.GetValue("Files", context), Url = AdminUrl("Storage/Files", siteDb) },
+//new MenuItem { Name = Hardcoded.GetValue("Files", context), Url = AdminUrl("Storage/Files", siteDb) },

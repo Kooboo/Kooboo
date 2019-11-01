@@ -36,15 +36,16 @@ namespace Kooboo.Web.Api.Implementation
 
         public SystemVersion Version(ApiCall call)
         {
-            Guid SiteId = call.GetValue<Guid>("SiteId");
+            Guid siteId = call.GetValue<Guid>("SiteId");
 
-            SystemVersion version = new SystemVersion();
-            version.Admin = Data.AppSettings.Version.ToString();
-            version.SiteVersions = new Dictionary<Guid, string>();
-
-            if (SiteId != default(Guid))
+            SystemVersion version = new SystemVersion
             {
-                var site = Data.GlobalDb.WebSites.Get(SiteId);
+                Admin = Data.AppSettings.Version.ToString(), SiteVersions = new Dictionary<Guid, string>()
+            };
+
+            if (siteId != default(Guid))
+            {
+                var site = Data.GlobalDb.WebSites.Get(siteId);
                 if (site == null || site.OrganizationId != call.Context.User.CurrentOrgId)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("User does not own website", call.Context));
@@ -75,11 +76,12 @@ namespace Kooboo.Web.Api.Implementation
 
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            foreach (var item in urls)
-            {
-                var jsstring = GetString(item);
-                result.Add(item, jsstring);
-            }
+            if (urls != null)
+                foreach (var item in urls)
+                {
+                    var jsstring = GetString(item);
+                    result.Add(item, jsstring);
+                }
 
             return result;
         }

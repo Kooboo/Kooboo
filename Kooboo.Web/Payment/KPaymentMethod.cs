@@ -25,8 +25,7 @@ namespace Kooboo.Web.Payment
             if (requestId == null)
             {
                 string strid = requestId.ToString();
-                Guid id;
-                if (System.Guid.TryParse(strid, out id))
+                if (System.Guid.TryParse(strid, out var id))
                 {
                     var request = Kooboo.Web.Payment.PaymentManager.GetRequest(id, Context);
 
@@ -75,32 +74,32 @@ namespace Kooboo.Web.Payment
             return request;
         }
 
-        public T GetValue<T>(System.Collections.IDictionary idict, IDictionary<string, object> Dynamic, params string[] fieldnames)
+        public T GetValue<T>(System.Collections.IDictionary idict, IDictionary<string, object> dynamic, params string[] fieldnames)
         {
             var type = typeof(T);
 
-            object Value = null;
+            object value = null;
 
             foreach (var item in fieldnames)
             {
                 if (idict != null)
                 {
-                    Value = Accessor.GetValueIDict(idict, item, type);
+                    value = Accessor.GetValueIDict(idict, item, type);
                 }
-                else if (Dynamic != null)
+                else if (dynamic != null)
                 {
-                    Value = Accessor.GetValue(Dynamic, item, type);
+                    value = Accessor.GetValue(dynamic, item, type);
                 }
 
-                if (Value != null)
+                if (value != null)
                 {
                     break;
                 }
             }
 
-            if (Value != null)
+            if (value != null)
             {
-                return (T)Value;
+                return (T)value;
             }
 
             return default(T);

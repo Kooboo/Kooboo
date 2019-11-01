@@ -19,9 +19,9 @@ namespace Kooboo.Web.Menus.SideBarMenu.Contents
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Hardcoded.GetValue("Contents", Context);
+            return Hardcoded.GetValue("Contents", context);
         }
 
         public bool Show(RenderContext context)
@@ -44,9 +44,10 @@ namespace Kooboo.Web.Menus.SideBarMenu.Contents
 
             foreach (var item in folders)
             {
-                var model = new GeneralMenu();
-                model.Name = item.DisplayName;
-                model.Url = "Contents/TextContentsByFolder?folder=" + item.Id.ToString();
+                var model = new GeneralMenu
+                {
+                    Name = item.DisplayName, Url = "Contents/TextContentsByFolder?folder=" + item.Id.ToString()
+                };
 
                 result.Add(model);
             }

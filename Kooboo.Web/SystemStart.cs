@@ -91,20 +91,17 @@ namespace Kooboo.Web
                     {
                         if (_middlewares == null)
                         {
-                            _middlewares = new List<IKoobooMiddleWare>();
-                            _middlewares.Add(new FrontRequest.KoobooMiddleware());
-                            _middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
-
-                            _middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
-
-                            _middlewares.Add(new RenderMiddleWare(KoobooBackEndViewOption()));
-
-                            _middlewares.Add(new JsTestMiddleWare(KoobooJsTestOption()));
-                            _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
-
-                            _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
-
-                            _middlewares.Add(new EndMiddleWare());
+                            _middlewares = new List<IKoobooMiddleWare>
+                            {
+                                new FrontRequest.KoobooMiddleware(),
+                                new ApiMiddleware(new SiteApiProvider()),
+                                new SpaMiddleWare(KoobooSpaViewOption()),
+                                new RenderMiddleWare(KoobooBackEndViewOption()),
+                                new JsTestMiddleWare(KoobooJsTestOption()),
+                                new RenderMiddleWare(KoobooLolcaServerOption()),
+                                new DefaultStartMiddleWare(KoobooBackEndViewOption()),
+                                new EndMiddleWare()
+                            };
                         }
                     }
                 }
@@ -135,14 +132,16 @@ namespace Kooboo.Web
 
         private static RenderOption KoobooBackEndViewOption()
         {
-            RenderOption option = new RenderOption();
-            option.GetDiskRoot = GetRoot;
-            option.StartPath = "/_admin";
-            option.ViewFolder = "view";
-            option.LayoutFolder = "_layout";
-            option.RequireUser = true;
-            option.LoginPage = "/_admin/account/login";
-            option.PageAfterLogin = "/_Admin/Sites";
+            RenderOption option = new RenderOption
+            {
+                GetDiskRoot = GetRoot,
+                StartPath = "/_admin",
+                ViewFolder = "view",
+                LayoutFolder = "_layout",
+                RequireUser = true,
+                LoginPage = "/_admin/account/login",
+                PageAfterLogin = "/_Admin/Sites"
+            };
             option.RequireUserIgnorePath.Add("/_admin/account");
             option.RequireUserIgnorePath.Add("/_admin/scripts");
             option.RequireUserIgnorePath.Add("/_admin/styles");
@@ -180,12 +179,14 @@ namespace Kooboo.Web
 
         private static SpaRenderOption KoobooSpaViewOption()
         {
-            SpaRenderOption option = new SpaRenderOption();
-            option.GetDiskRoot = GetRoot;
-            option.StartPath = "/_admin";
-            option.Prefix = "/_spa";
-            option.ViewFolder = "view";
-            option.LayoutFolder = "_layout";
+            SpaRenderOption option = new SpaRenderOption
+            {
+                GetDiskRoot = GetRoot,
+                StartPath = "/_admin",
+                Prefix = "/_spa",
+                ViewFolder = "view",
+                LayoutFolder = "_layout"
+            };
 
             Dictionary<string, object> data = new Dictionary<string, object>();
             var value = Kooboo.Data.Language.LanguageSetting.CmsLangs;
@@ -211,36 +212,29 @@ namespace Kooboo.Web
 
         private static string LocalServerRoot(RenderContext context)
         {
-            if (context.WebSite != null)
-            {
-                return context.WebSite.LocalRootPath;
-            }
-            return null;
+            return context.WebSite?.LocalRootPath;
         }
 
-        public static bool LocalserverTryShouldHandle(RenderContext Context, RenderOption Options)
+        public static bool LocalserverTryShouldHandle(RenderContext context, RenderOption options)
         {
-            if (Context.WebSite != null && !string.IsNullOrEmpty(Context.WebSite.LocalRootPath))
-            {
-                return true;
-            }
-            return false;
+            return context.WebSite != null && !string.IsNullOrEmpty(context.WebSite.LocalRootPath);
         }
 
         private static RenderOption KoobooLolcaServerOption()
         {
-            RenderOption option = new RenderOption();
-            option.GetDiskRoot = LocalServerRoot;
-            option.ShouldTryHandle = LocalserverTryShouldHandle;
-            option.ViewFolder = "view";
-            option.LayoutFolder = "_layout";
+            RenderOption option = new RenderOption
+            {
+                GetDiskRoot = LocalServerRoot,
+                ShouldTryHandle = LocalserverTryShouldHandle,
+                ViewFolder = "view",
+                LayoutFolder = "_layout"
+            };
             return option;
         }
 
         private static JsTestOption KoobooJsTestOption()
         {
-            JsTestOption option = new JsTestOption();
-            option.RequestPrefix = "/_jstest";
+            JsTestOption option = new JsTestOption {RequestPrefix = "/_jstest"};
             option.AssertJs.Add("expect.js");
             option.AssertJs.Add("mock.js");
             return option;
@@ -256,10 +250,8 @@ namespace Kooboo.Web
                 {
                     foreach (var item in Middleware)
                     {
-                        if (item is Kooboo.Api.ApiMiddleware)
+                        if (item is ApiMiddleware apimiddle)
                         {
-                            var apimiddle = item as Kooboo.Api.ApiMiddleware;
-
                             _apiprovider = apimiddle.ApiProvider;
                         }
                     }

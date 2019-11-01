@@ -9,34 +9,43 @@ namespace Kooboo.Web.Backend.Events.Hanlders
     {
         public void Handle(BindingChange theEvent, RenderContext context)
         {
-            if (theEvent.ChangeType == ChangeType.Add)
+            switch (theEvent.ChangeType)
             {
-                if (theEvent.Binding.Port > 0)
+                case ChangeType.Add:
                 {
-                    SystemStart.StartNewWebServer(theEvent.Binding.Port);
-                }
-            }
-            else if (theEvent.ChangeType == ChangeType.Update)
-            {
-                if (theEvent.OldBinding.Port != theEvent.Binding.Port)
-                {
-                    if (theEvent.OldBinding.Port > 0)
-                    {
-                        //SystemStart.Stop(theEvent.OldBinding.Port);
-                    }
-
                     if (theEvent.Binding.Port > 0)
                     {
                         SystemStart.StartNewWebServer(theEvent.Binding.Port);
                     }
+
+                    break;
                 }
-            }
-            else
-            {
-                // it is a deletion.
-                if (theEvent.Binding.Port > 0)
+                case ChangeType.Update:
                 {
-                    // SystemStart.Stop(theEvent.binding.Port);
+                    if (theEvent.OldBinding.Port != theEvent.Binding.Port)
+                    {
+                        if (theEvent.OldBinding.Port > 0)
+                        {
+                            //SystemStart.Stop(theEvent.OldBinding.Port);
+                        }
+
+                        if (theEvent.Binding.Port > 0)
+                        {
+                            SystemStart.StartNewWebServer(theEvent.Binding.Port);
+                        }
+                    }
+
+                    break;
+                }
+                default:
+                {
+                    // it is a deletion.
+                    if (theEvent.Binding.Port > 0)
+                    {
+                        // SystemStart.Stop(theEvent.binding.Port);
+                    }
+
+                    break;
                 }
             }
         }

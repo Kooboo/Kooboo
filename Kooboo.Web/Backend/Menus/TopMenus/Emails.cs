@@ -25,14 +25,7 @@ namespace Kooboo.Web.Menus
 
         public List<ICmsMenu> SubItems
         {
-            get
-            {
-                if (_items == null)
-                {
-                    _items = new List<ICmsMenu>();
-                }
-                return _items;
-            }
+            get { return _items ?? (_items = new List<ICmsMenu>()); }
             set { }
         }
 
@@ -42,9 +35,9 @@ namespace Kooboo.Web.Menus
 
         public ICmsMenu ParentMenu { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("Emails", Context);
+            return Data.Language.Hardcoded.GetValue("Emails", context);
         }
     }
 }

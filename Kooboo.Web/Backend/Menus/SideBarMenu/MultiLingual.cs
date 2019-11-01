@@ -20,9 +20,9 @@ namespace Kooboo.Web.Menus.SideBarMenu
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Hardcoded.GetValue("Multilingual", Context);
+            return Hardcoded.GetValue("Multilingual", context);
         }
 
         public bool Show(RenderContext context)
@@ -58,9 +58,11 @@ namespace Kooboo.Web.Menus.SideBarMenu
 
                 foreach (var folder in folders)
                 {
-                    var folderMenu = new GeneralMenu();
-                    folderMenu.Name = folder.DisplayName;
-                    folderMenu.Url = "Multilingual/TextContentsByFolder?folder=" + folder.Id.ToString() + "&lang=" + item;
+                    var folderMenu = new GeneralMenu
+                    {
+                        Name = folder.DisplayName,
+                        Url = "Multilingual/TextContentsByFolder?folder=" + folder.Id.ToString() + "&lang=" + item
+                    };
                     contents.SubItems.Add(folderMenu);
                 }
 

@@ -17,15 +17,15 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireUser => true;
 
-        public List<string> StartSession(Guid CodeId, ApiCall call)
+        public List<string> StartSession(Guid codeId, ApiCall call)
         {
-            if (CodeId != default(Guid))
+            if (codeId != default(Guid))
             {
-                var code = call.WebSite.SiteDb().Code.Get(CodeId);
+                var code = call.WebSite.SiteDb().Code.Get(codeId);
 
                 if (code != null && !string.IsNullOrEmpty(code.Body))
                 {
-                    var sesssion = Kooboo.Sites.ScriptDebugger.SessionManager.CreateSession(call.Context, CodeId);
+                    var sesssion = Kooboo.Sites.ScriptDebugger.SessionManager.CreateSession(call.Context, codeId);
 
                     return code.Body.Split("\n".ToCharArray()).ToList();
                 }
@@ -33,17 +33,17 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-        public void StopSession(Guid CodeId, ApiCall call)
+        public void StopSession(Guid codeId, ApiCall call)
         {
-            if (CodeId != default(Guid))
+            if (codeId != default(Guid))
             {
-                Kooboo.Sites.ScriptDebugger.SessionManager.RemoveSession(call.Context, CodeId, call.Context.Request.IP);
+                Kooboo.Sites.ScriptDebugger.SessionManager.RemoveSession(call.Context, codeId, call.Context.Request.IP);
             }
         }
 
-        public void SetBreakPoints(Guid CodeId, List<int> Points, ApiCall call)
+        public void SetBreakPoints(Guid codeId, List<int> points, ApiCall call)
         {
-            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, CodeId);
+            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, codeId);
 
             if (session != null)
             {
@@ -53,7 +53,7 @@ namespace Kooboo.Web.Api.Implementation
                     List<int> toremove = new List<int>();
                     foreach (var item in session.JsEngine.BreakPoints)
                     {
-                        if (!Points.Any(o => o == item.Line))
+                        if (!points.Any(o => o == item.Line))
                         {
                             toremove.Add(item.Line);
                         }
@@ -61,7 +61,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     session.JsEngine.BreakPoints.RemoveAll(o => toremove.Contains(o.Line));
 
-                    foreach (var item in Points)
+                    foreach (var item in points)
                     {
                         var find = session.JsEngine.BreakPoints.Find(o => o.Line == item);
                         if (find == null)
@@ -75,7 +75,7 @@ namespace Kooboo.Web.Api.Implementation
                     List<int> toremove = new List<int>();
                     foreach (var item in session.BreakLines)
                     {
-                        if (!Points.Any(o => o == item))
+                        if (!points.Any(o => o == item))
                         {
                             toremove.Add(item);
                         }
@@ -83,7 +83,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     session.BreakLines.RemoveAll(o => toremove.Contains(o));
 
-                    foreach (var item in Points)
+                    foreach (var item in points)
                     {
                         if (!session.BreakLines.Contains(item))
                         {
@@ -100,9 +100,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         // get the break point info..... only return one for one break.
-        public Kooboo.Sites.ScriptDebugger.DebugInfo GetInfo(Guid CodeId, ApiCall call)
+        public Kooboo.Sites.ScriptDebugger.DebugInfo GetInfo(Guid codeId, ApiCall call)
         {
-            var session = SessionManager.GetDebugSession(call.Context, CodeId);
+            var session = SessionManager.GetDebugSession(call.Context, codeId);
 
             if (session == null)
             {
@@ -134,42 +134,41 @@ namespace Kooboo.Web.Api.Implementation
             return new Sites.ScriptDebugger.DebugInfo() { HasValue = false };
         }
 
-        public void Step(Guid CodeId, string action, ApiCall call)
+        public void Step(Guid codeId, string action, ApiCall call)
         {
-            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, CodeId);
+            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, codeId);
             if (session != null & !string.IsNullOrEmpty(action))
             {
                 string lower = action.ToLower();
-                if (lower == "into")
+                switch (lower)
                 {
-                    session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.Into };
-                }
-                else if (lower == "out")
-                {
-                    session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.Out };
-                }
-                else if (lower == "over")
-                {
-                    session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.Over };
-                }
-                else if (lower == "none")
-                {
-                    session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.None };
+                    case "into":
+                        session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.Into };
+                        break;
+                    case "out":
+                        session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.Out };
+                        break;
+                    case "over":
+                        session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.Over };
+                        break;
+                    case "none":
+                        session.Action = new Sites.ScriptDebugger.ClientAction() { StepMode = Jint.Runtime.Debugger.StepMode.None };
+                        break;
                 }
             }
         }
 
         [Obsolete]
-        public object GetValue(Guid CodeId, string FullName, ApiCall call)
+        public object GetValue(Guid codeId, string fullName, ApiCall call)
         {
-            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, CodeId);
-            if (session == null || session.JsEngine == null)
+            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, codeId);
+            if (session?.JsEngine == null)
             {
                 return "undefined";
             }
             else
             {
-                var value = Lib.Helper.JintHelper.GetGebuggerValue(session.JsEngine, FullName);
+                var value = Lib.Helper.JintHelper.GetGebuggerValue(session.JsEngine, fullName);
 
                 if (value == null)
                 {
@@ -177,7 +176,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-                    if (value.GetType().IsValueType || value.GetType() == typeof(string))
+                    if (value.GetType().IsValueType || value is string)
                     {
                         return value.ToString();
                     }
@@ -189,28 +188,20 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public ExeResult Execute(Guid CodeId, string JsStatement, ApiCall call)
+        public ExeResult Execute(Guid codeId, string jsStatement, ApiCall call)
         {
-            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, CodeId);
+            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, codeId);
             ExeResult result = new ExeResult();
 
-            if (session != null && session.JsEngine != null)
+            if (session?.JsEngine != null)
             {
-                if (Lib.Helper.JintHelper.IsMemberExpression(JsStatement))
+                if (Lib.Helper.JintHelper.IsMemberExpression(jsStatement))
                 {
-                    object value;
                     try
                     {
-                        value = Lib.Helper.JintHelper.GetGebuggerValue(session.JsEngine, JsStatement);
+                        var value = Lib.Helper.JintHelper.GetGebuggerValue(session.JsEngine, jsStatement);
                         result.Success = true;
-                        if (value == null)
-                        {
-                            result.Model = "undefined";
-                        }
-                        else
-                        {
-                            result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
-                        }
+                        result.Model = value == null ? "undefined" : Kooboo.Sites.Scripting.Manager.GetString(value);
                     }
                     catch (Exception ex)
                     {
@@ -218,13 +209,13 @@ namespace Kooboo.Web.Api.Implementation
                         result.Model = ex.Message;
                     }
                 }
-                else if (Lib.Helper.JintHelper.IsAssignmentExpression(JsStatement))
+                else if (Lib.Helper.JintHelper.IsAssignmentExpression(jsStatement))
                 {
                     try
                     {
-                        session.JsEngine.Execute(JsStatement);
+                        session.JsEngine.Execute(jsStatement);
                         result.Success = true;
-                        var value = Lib.Helper.JintHelper.GetAssignmentValue(JsStatement);
+                        var value = Lib.Helper.JintHelper.GetAssignmentValue(jsStatement);
                         result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
                     }
                     catch (Exception ex)
@@ -237,7 +228,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     try
                     {
-                        session.JsEngine.Execute(JsStatement);
+                        session.JsEngine.Execute(jsStatement);
                         result.Success = true;
                     }
                     catch (Exception ex)
@@ -262,9 +253,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         // call to get the update variables after exe code.
-        public Kooboo.Sites.ScriptDebugger.DebugVariables GetVariables(Guid CodeId, ApiCall call)
+        public Kooboo.Sites.ScriptDebugger.DebugVariables GetVariables(Guid codeId, ApiCall call)
         {
-            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, CodeId);
+            var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, codeId);
 
             if (session != null || session.JsEngine != null)
             {

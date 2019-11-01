@@ -7,17 +7,17 @@ namespace Kooboo.Web.Spa
 {
     public class RenderHelper
     {
-        public static UrlFileType GetFileType(string url, string ContentType = "")
+        public static UrlFileType GetFileType(string url, string contentType = "")
         {
             if (string.IsNullOrWhiteSpace(url))
             {
                 return UrlFileType.Unknow;
             }
             string cleanurl = url.ToLower();
-            int QuestionMark = url.IndexOf("?");
-            if (QuestionMark > 0)
+            int questionMark = url.IndexOf("?");
+            if (questionMark > 0)
             {
-                cleanurl = url.Substring(0, QuestionMark);
+                cleanurl = url.Substring(0, questionMark);
             }
             cleanurl = cleanurl.Trim('\t', '\r', '\n');
             string extension = System.IO.Path.GetExtension(cleanurl);
@@ -59,23 +59,23 @@ namespace Kooboo.Web.Spa
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(ContentType))
+            if (!string.IsNullOrWhiteSpace(contentType))
             {
-                ContentType = ContentType.ToLower();
+                contentType = contentType.ToLower();
 
-                if (ContentType.Contains("image"))
+                if (contentType.Contains("image"))
                 {
                     return UrlFileType.Image;
                 }
 
-                if (ContentType.Contains("text"))
+                if (contentType.Contains("text"))
                 {
-                    if (ContentType.Contains("css") || ContentType.Contains("style"))
+                    if (contentType.Contains("css") || contentType.Contains("style"))
                     {
                         return UrlFileType.Style;
                     }
 
-                    if (ContentType.Contains("script"))
+                    if (contentType.Contains("script"))
                     {
                         return UrlFileType.JavaScript;
                     }
@@ -84,7 +84,7 @@ namespace Kooboo.Web.Spa
                         return UrlFileType.Html;
                     }
                 }
-                else if (ContentType.Contains("application"))
+                else if (contentType.Contains("application"))
                 {
                     return UrlFileType.File;
                 }
@@ -126,32 +126,32 @@ namespace Kooboo.Web.Spa
             return UrlFileType.File;
         }
 
-        public static string CombinePath(string Root, string RelativeUrl)
+        public static string CombinePath(string root, string relativeUrl)
         {
-            if (string.IsNullOrEmpty(RelativeUrl))
+            if (string.IsNullOrEmpty(relativeUrl))
             {
-                return Root;
+                return root;
             }
-            return Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl);
+            return Lib.Compatible.CompatibleManager.Instance.System.CombinePath(root, relativeUrl);
         }
 
-        public static string GetRelativeUrl(Uri AbsoluteUri, SpaRenderOption option)
+        public static string GetRelativeUrl(Uri absoluteUri, SpaRenderOption option)
         {
-            string RawRelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(AbsoluteUri);
-            return GetRelativeUrl(RawRelativeUrl, option);
+            string rawRelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(absoluteUri);
+            return GetRelativeUrl(rawRelativeUrl, option);
         }
 
-        public static string GetRelativeUrl(string RawRelativeUrl, SpaRenderOption option)
+        public static string GetRelativeUrl(string rawRelativeUrl, SpaRenderOption option)
         {
-            string RelativeUrl = RemoveQuestionMark(RawRelativeUrl);
+            string relativeUrl = RemoveQuestionMark(rawRelativeUrl);
             if (!string.IsNullOrEmpty(option.Prefix))
             {
-                if (RelativeUrl.ToLower().StartsWith(option.Prefix))
+                if (relativeUrl.ToLower().StartsWith(option.Prefix))
                 {
-                    RelativeUrl = RelativeUrl.Substring(option.Prefix.Length);
+                    relativeUrl = relativeUrl.Substring(option.Prefix.Length);
                 }
             }
-            return RelativeUrl;
+            return relativeUrl;
         }
 
         public static string RemoveQuestionMark(string input)
@@ -161,11 +161,7 @@ namespace Kooboo.Web.Spa
                 return input;
             }
             int mark = input.IndexOf("?");
-            if (mark > 0)
-            {
-                return input.Substring(0, mark);
-            }
-            return input;
+            return mark > 0 ? input.Substring(0, mark) : input;
         }
     }
 

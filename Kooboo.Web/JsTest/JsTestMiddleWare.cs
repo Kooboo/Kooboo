@@ -28,28 +28,28 @@ namespace Kooboo.Web.JsTest
                 await Next.Invoke(context); return;
             }
 
-            var Response = RenderEngine.Render(context, this.options);
+            var response = RenderEngine.Render(context, this.options);
 
-            if (Response != null)
+            if (response != null)
             {
-                context.Response.ContentType = Response.ContentType;
+                context.Response.ContentType = response.ContentType;
 
                 context.Response.StatusCode = 200;
-                if (Response.Stream != null)
+                if (response.Stream != null)
                 {
                     MemoryStream memory = new MemoryStream();
-                    Response.Stream.CopyTo(memory);
+                    response.Stream.CopyTo(memory);
                     context.Response.Body = memory.ToArray();
                     return;
                 }
-                else if (Response.BinaryBytes != null)
+                else if (response.BinaryBytes != null)
                 {
-                    context.Response.Body = Response.BinaryBytes;
+                    context.Response.Body = response.BinaryBytes;
                     return;
                 }
-                else if (!string.IsNullOrEmpty(Response.Body))
+                else if (!string.IsNullOrEmpty(response.Body))
                 {
-                    context.Response.Body = System.Text.Encoding.UTF8.GetBytes(Response.Body);
+                    context.Response.Body = System.Text.Encoding.UTF8.GetBytes(response.Body);
                     return;
                 }
             }

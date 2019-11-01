@@ -7,7 +7,7 @@ namespace Kooboo.Web.Payment
 {
     public class SitePaymentRequestStore : IPaymentRequestStore
     {
-        public PaymentRequest Get(Guid PaymentRequestId, RenderContext context)
+        public PaymentRequest Get(Guid paymentRequestId, RenderContext context)
         {
             if (context.WebSite != null && context.WebSite.OrganizationId != default(Guid))
             {
@@ -15,7 +15,7 @@ namespace Kooboo.Web.Payment
                 if (sitedb != null)
                 {
                     var repo = sitedb.GetSiteRepository<SitePaymentRequestRepository>();
-                    return repo.Get(PaymentRequestId);
+                    return repo.Get(paymentRequestId);
                 }
             }
             return null;

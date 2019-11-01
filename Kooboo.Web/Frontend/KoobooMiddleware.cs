@@ -127,9 +127,9 @@ namespace Kooboo.Web.FrontRequest
             await Next.Invoke(context);
         }
 
-        private static bool CheckIsBackEndOrImageUrl(string Relativeurl)
+        private static bool CheckIsBackEndOrImageUrl(string relativeurl)
         {
-            string relativeUrl = Relativeurl.ToLower();
+            string relativeUrl = relativeurl.ToLower();
 
             if (relativeUrl.StartsWith("/_api/") ||
                 relativeUrl.StartsWith("/_admin/") ||
@@ -214,7 +214,7 @@ namespace Kooboo.Web.FrontRequest
                     frontContext.Log.TimeSpan = (endtime - frontContext.StartTime).TotalMilliseconds;
 
                     frontContext.Log.StatusCode = Convert.ToInt16(frontContext.RenderContext.Response.StatusCode);
-                    frontContext.Log.ObjectId = frontContext.Route != null ? frontContext.Route.objectId : default(Guid);
+                    frontContext.Log.ObjectId = frontContext.Route?.objectId ?? default(Guid);
                     if (frontContext.RenderContext.Response.Body != null)
                     {
                         frontContext.Log.Size = frontContext.RenderContext.Response.Body.Length;
@@ -224,10 +224,12 @@ namespace Kooboo.Web.FrontRequest
 
                 if (frontContext.RenderContext.Response.StatusCode != 200)
                 {
-                    var log = new Data.Models.SiteErrorLog();
-                    log.ClientIP = frontContext.RenderContext.Request.IP;
-                    log.Url = frontContext.RenderContext.Request.RawRelativeUrl;
-                    log.StatusCode = frontContext.RenderContext.Response.StatusCode;
+                    var log = new Data.Models.SiteErrorLog
+                    {
+                        ClientIP = frontContext.RenderContext.Request.IP,
+                        Url = frontContext.RenderContext.Request.RawRelativeUrl,
+                        StatusCode = frontContext.RenderContext.Response.StatusCode
+                    };
                     frontContext.SiteDb.ErrorLog.Add(log);
                 }
             }

@@ -50,9 +50,9 @@ namespace Kooboo.Web.Service
             string weekname = _GetWeekName(weektime);
 
             var filename = weekname + ".log";
-            string FullFileName = System.IO.Path.Combine(LogFolder, filename);
+            string fullFileName = System.IO.Path.Combine(LogFolder, filename);
 
-            return GlobalDatabase.GetSequence<AdminLog>(FullFileName) as Sequence<AdminLog>;
+            return GlobalDatabase.GetSequence<AdminLog>(fullFileName) as Sequence<AdminLog>;
         }
 
         private static int GetWeekOfYear(DateTime datetime)
@@ -105,10 +105,9 @@ namespace Kooboo.Web.Service
 
         public static void AddAdminLog(Kooboo.Data.Context.RenderContext context, RenderRespnose response)
         {
-            if (response != null && response.ContentType != null && response.ContentType.ToLower().Contains("html"))
+            if (response?.ContentType != null && response.ContentType.ToLower().Contains("html"))
             {
-                BackendLog model = new BackendLog();
-                model.IP = context.Request.IP;
+                BackendLog model = new BackendLog {IP = context.Request.IP};
                 if (context.User != null)
                 {
                     model.UserId = context.User.Id;
@@ -168,9 +167,7 @@ namespace Kooboo.Web.Service
         {
             if (response != null)
             {
-                BackendLog model = new BackendLog();
-                model.IsApi = true;
-                model.IP = context.Request.IP;
+                BackendLog model = new BackendLog {IsApi = true, IP = context.Request.IP};
                 if (context.User != null)
                 {
                     model.UserId = context.User.Id;
@@ -225,19 +222,19 @@ namespace Kooboo.Web.Service
             }
         }
 
-        public static List<BackendLog> ListByUser(Guid UserId, DateTime weektime)
+        public static List<BackendLog> ListByUser(Guid userId, DateTime weektime)
         {
             var logbyweek = LogByWeek<BackendLog>(weektime);
             var all = logbyweek.AllItemList();
-            return all.Where(o => o.UserId == UserId).ToList();
+            return all.Where(o => o.UserId == userId).ToList();
         }
 
-        public static List<BackendLog> ListByUser(string UserName, DateTime weektime)
+        public static List<BackendLog> ListByUser(string userName, DateTime weektime)
         {
             Guid userId = default(Guid);
-            if (!string.IsNullOrEmpty(UserName))
+            if (!string.IsNullOrEmpty(userName))
             {
-                userId = Lib.Security.Hash.ComputeGuidIgnoreCase(UserName);
+                userId = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
             }
             return ListByUser(userId, weektime);
         }
@@ -263,10 +260,10 @@ namespace Kooboo.Web.Service
             return result;
         }
 
-        public static Dictionary<string, int> UrlSum(Guid UserId, DateTime weektime)
+        public static Dictionary<string, int> UrlSum(Guid userId, DateTime weektime)
         {
             var logbyweek = LogByWeek<BackendLog>(weektime);
-            var all = logbyweek.AllItemList().Where(o => o.UserId == UserId).ToList();
+            var all = logbyweek.AllItemList().Where(o => o.UserId == userId).ToList();
 
             Dictionary<string, int> tempresult = new Dictionary<string, int>();
 
@@ -297,9 +294,9 @@ namespace Kooboo.Web.Service
             return result;
         }
 
-        public static string GetLastPath(Guid UserId)
+        public static string GetLastPath(Guid userId)
         {
-            var find = LastPath.Get(UserId);
+            var find = LastPath.Get(userId);
             if (find != null && find.ContainsKey("Path"))
             {
                 var obj = find["Path"];

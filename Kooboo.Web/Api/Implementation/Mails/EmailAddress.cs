@@ -131,8 +131,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             if (EmailForwardManager.RequireForward(apiCall.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", idsJson);
+                var dic = new Dictionary<string, string> {{"ids", idsJson}};
                 EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.Deletes), apiCall.Context.User, dic);
                 return;
             }
@@ -150,8 +149,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("addressId", call.GetValue("addressId"));
+                var dic = new Dictionary<string, string> {{"addressId", call.GetValue("addressId")}};
                 return EmailForwardManager.Get<List<string>>(this.ModelName, nameof(EmailAddressApi.MemberList), call.Context.User, dic);
             }
 
@@ -166,8 +164,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("addressId", call.GetValue("addressId"));
+                var dic = new Dictionary<string, string> {{"addressId", call.GetValue("addressId")}};
                 var json = Kooboo.Lib.Helper.JsonHelper.Serialize(call.Context.Request.Model);
                 return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAddressApi.MemberPost), call.Context.User, json, dic);
             }
@@ -193,9 +190,10 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("addressId", call.GetValue("addressId"));
-                dic.Add("memberAddress", call.GetValue("memberAddress"));
+                var dic = new Dictionary<string, string>
+                {
+                    {"addressId", call.GetValue("addressId")}, {"memberAddress", call.GetValue("memberAddress")}
+                };
                 EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.MemberDelete), call.Context.User, dic);
                 return;
             }
@@ -211,9 +209,10 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("id", call.GetValue("id"));
-                dic.Add("forwardAddress", call.GetValue("forwardAddress"));
+                var dic = new Dictionary<string, string>
+                {
+                    {"id", call.GetValue("id")}, {"forwardAddress", call.GetValue("forwardAddress")}
+                };
                 EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.UpdateForward), call.Context.User, dic);
                 return;
             }

@@ -20,9 +20,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.Scripts.GetExternals().OrderBy(o => o.Name))
             {
-                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item);
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenameHash;
+                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item)
+                {
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id), StoreNameHash = storenameHash
+                };
                 result.Add(model);
             }
 
@@ -117,10 +118,7 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
 
-                Script newscript = new Script();
-                newscript.Name = name;
-                newscript.Body = body;
-                newscript.Extension = extension;
+                Script newscript = new Script {Name = name, Body = body, Extension = extension};
                 call.WebSite.SiteDb().Routes.AddOrUpdate(url, newscript, call.Context.User.Id);
                 call.WebSite.SiteDb().Scripts.AddOrUpdate(newscript, true, true, call.Context.User.Id);
                 return newscript.Id;
@@ -194,8 +192,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<string> GetExtensions(ApiCall call)
         {
-            HashSet<string> result = new HashSet<string>();
-            result.Add("js");
+            HashSet<string> result = new HashSet<string> {"js"};
 
             var list = Kooboo.Sites.Engine.Manager.GetScript();
 

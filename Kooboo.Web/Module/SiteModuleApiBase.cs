@@ -31,10 +31,7 @@ namespace Kooboo.Module
 
         public void SetSetting<T>(T setting) where T : ISiteSetting
         {
-            if (SiteDb != null)
-            {
-                SiteDb.CoreSetting.AddOrUpdate(setting);
-            }
+            SiteDb?.CoreSetting.AddOrUpdate(setting);
         }
     }
 }

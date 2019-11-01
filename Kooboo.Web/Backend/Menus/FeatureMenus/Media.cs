@@ -17,9 +17,9 @@ namespace Kooboo.Web.Menus.FeatureMenus
 
         //public bool UrlSiteId => true;
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Kooboo.Data.Language.Hardcoded.GetValue("Media library", Context);
+            return Kooboo.Data.Language.Hardcoded.GetValue("Media library", context);
         }
     }
 

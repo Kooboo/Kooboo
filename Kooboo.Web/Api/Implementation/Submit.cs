@@ -37,9 +37,9 @@ namespace Kooboo.Web.Api.Implementation
         {
             // in the format of /_api/submit/form/xxxyyssss;
             var sitedb = call.WebSite.SiteDb();
-            Guid FormId = Lib.Security.ShortGuid.Decode(call.Command.Value);
+            Guid formId = Lib.Security.ShortGuid.Decode(call.Command.Value);
 
-            var formsetting = sitedb.FormSetting.GetByFormId(FormId);
+            var formsetting = sitedb.FormSetting.GetByFormId(formId);
 
             if (formsetting != null && !string.IsNullOrEmpty(formsetting.FormSubmitter))
             {
@@ -51,8 +51,7 @@ namespace Kooboo.Web.Api.Implementation
                     return new NoResponse();
                 }
 
-                MetaResponse response = new MetaResponse();
-                response.Success = true;
+                MetaResponse response = new MetaResponse {Success = true};
 
                 if (!formsetting.AllowAjax && !string.IsNullOrEmpty(formsetting.RedirectUrl))
                 {
@@ -73,7 +72,7 @@ namespace Kooboo.Web.Api.Implementation
                             }
                             else
                             {
-                                var form = sitedb.Forms.Get(FormId);
+                                var form = sitedb.Forms.Get(formId);
                                 url = Kooboo.Sites.Service.ObjectService.GetObjectFullUrl(call.Context.WebSite, form.OwnerObjectId);
                             }
                         }

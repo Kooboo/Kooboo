@@ -66,13 +66,15 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.Layouts.All())
             {
-                LayoutItemViewModel model = new LayoutItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.LastModified = item.LastModified;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Layouts.GetUsedBy(item.Id));
+                LayoutItemViewModel model = new LayoutItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenamehash,
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Layouts.GetUsedBy(item.Id))
+                };
                 result.Add(model);
             }
             return result.ToList<object>();
@@ -95,13 +97,15 @@ namespace Kooboo.Web.Api.Implementation
 
                 int storenamehash = Lib.Security.Hash.ComputeInt(call.WebSite.SiteDb().Layouts.StoreName);
 
-                LayoutItemViewModel model = new LayoutItemViewModel();
-                model.Id = newlayout.Id;
-                model.Name = newlayout.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(newlayout.Id);
-                model.StoreNameHash = storenamehash;
-                model.LastModified = newlayout.LastModified;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Layouts.GetUsedBy(newlayout.Id));
+                LayoutItemViewModel model = new LayoutItemViewModel
+                {
+                    Id = newlayout.Id,
+                    Name = newlayout.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(newlayout.Id),
+                    StoreNameHash = storenamehash,
+                    LastModified = newlayout.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Layouts.GetUsedBy(newlayout.Id))
+                };
 
                 return model;
             }
@@ -119,7 +123,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {

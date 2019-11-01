@@ -138,7 +138,7 @@ namespace Kooboo.Web.Api
             }
             List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {

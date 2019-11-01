@@ -37,8 +37,7 @@ namespace Kooboo.Module
 
             if (type != null)
             {
-                var instance = CreateInstance(type, call.Context) as ISiteModuleApi;
-                if (instance != null)
+                if (CreateInstance(type, call.Context) is ISiteModuleApi instance)
                 {
                     method = GetMethod(instance, call.Command.Method, call);
                     if (method != null)
@@ -54,8 +53,7 @@ namespace Kooboo.Module
 
                 if (commandtype != null)
                 {
-                    var instance = CreateInstance(commandtype, call.Context) as ISiteModuleApi;
-                    if (instance != null)
+                    if (CreateInstance(commandtype, call.Context) is ISiteModuleApi instance)
                     {
                         method = GetMethod(instance, call.Command.Value, call);
                         if (method != null)
@@ -149,7 +147,7 @@ namespace Kooboo.Module
                 return;
             }
             var objtype = obj.GetType();
-            /// fix SiteRepositoryBase.
+            // fix SiteRepositoryBase.
             if (IsSubclassSiteRepository(objtype))
             {
                 //assign the site DB and init method...
@@ -184,33 +182,34 @@ namespace Kooboo.Module
             return false;
         }
 
-        public static ApiMethod GetMethod(ISiteModuleApi instance, string MethodName, ApiCall call)
+        public static ApiMethod GetMethod(ISiteModuleApi instance, string methodName, ApiCall call)
         {
             if (instance == null)
             {
                 return null;
             }
 
-            if (instance is SiteModuleApiBase)
+            if (instance is SiteModuleApiBase basemodule)
             {
-                var basemodule = instance as SiteModuleApiBase;
                 basemodule.Context = call.Context;
                 basemodule.SiteDb = call.Context.WebSite.SiteDb();
             }
 
-            var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
+            var methodinfo = GetMethodInfo(instance.GetType(), methodName);
 
             if (methodinfo == null)
             {
                 return null;
             }
 
-            ApiMethod newmethod = new ApiMethod();
-            newmethod.MethodName = methodinfo.Name;
-            newmethod.ClassInstance = instance;
-            newmethod.ReturnType = methodinfo.ReturnType;
-            newmethod.DeclareType = instance.GetType();
-            newmethod.IsVoid = methodinfo.ReturnType == typeof(void);
+            ApiMethod newmethod = new ApiMethod
+            {
+                MethodName = methodinfo.Name,
+                ClassInstance = instance,
+                ReturnType = methodinfo.ReturnType,
+                DeclareType = instance.GetType(),
+                IsVoid = methodinfo.ReturnType == typeof(void)
+            };
 
             if (newmethod.IsVoid)
             {

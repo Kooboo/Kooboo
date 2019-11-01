@@ -113,9 +113,9 @@ namespace Kooboo.Web.Api.Implementation
             string fulldomain = call.GetValue("FullDomain");
             if (string.IsNullOrEmpty(fulldomain))
             {
-                string RootDomain = call.GetValue("RootDomain");
-                string SubDomain = call.GetValue("SubDomain");
-                fulldomain = SubDomain + "." + RootDomain;
+                string rootDomain = call.GetValue("RootDomain");
+                string subDomain = call.GetValue("SubDomain");
+                fulldomain = subDomain + "." + rootDomain;
             }
             string sitename = call.GetValue("SiteName");
 
@@ -127,7 +127,7 @@ namespace Kooboo.Web.Api.Implementation
             string urlstring = call.GetValue("Urls");
             List<string> urls = Lib.Helper.JsonHelper.Deserialize<List<string>>(urlstring);
 
-            if (urls != null && urls.Count() > 0)
+            if (urls != null && urls.Any())
             {
                 var first = urls.First();
 
@@ -157,9 +157,9 @@ namespace Kooboo.Web.Api.Implementation
         [Kooboo.Attributes.RequireParameters("RootDomain", "SubDomain", "SiteName", "url")]
         public virtual TransferResponse ByLevel(ApiCall call)
         {
-            string RootDomain = call.GetValue("RootDomain");
-            string SubDomain = call.GetValue("SubDomain");
-            string fulldomain = SubDomain + "." + RootDomain;
+            string rootDomain = call.GetValue("RootDomain");
+            string subDomain = call.GetValue("SubDomain");
+            string fulldomain = subDomain + "." + rootDomain;
 
             string sitename = call.GetValue("SiteName");
 
@@ -195,15 +195,12 @@ namespace Kooboo.Web.Api.Implementation
             string strTotalPages = call.GetValue("TotalPages");
             string strDepth = call.GetValue("Depth");
 
-            int totalpages = 0;
-            int depth = 0;
-
-            if (string.IsNullOrEmpty(strTotalPages) || !int.TryParse(strTotalPages, out totalpages))
+            if (string.IsNullOrEmpty(strTotalPages) || !int.TryParse(strTotalPages, out var totalpages))
             {
                 totalpages = 10;
             }
 
-            if (string.IsNullOrEmpty(strDepth) || !int.TryParse(strDepth, out depth))
+            if (string.IsNullOrEmpty(strDepth) || !int.TryParse(strDepth, out var depth))
             {
                 depth = 2;
             }
@@ -242,8 +239,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             int pagenumber = 10;
-            int setpage = 0;
-            if (int.TryParse(strpage, out setpage))
+            if (int.TryParse(strpage, out var setpage))
             {
                 pagenumber = setpage;
             }
@@ -318,7 +314,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var tasks = siteDb.TransferTasks.Store.FullScan(o => o.done == false && o.CreationDate > DateTime.UtcNow.AddMinutes(-2)).SelectAll();
 
-            if (tasks != null && tasks.Count() > 0)
+            if (tasks != null && tasks.Any())
             {
                 response.Done = false;
             }

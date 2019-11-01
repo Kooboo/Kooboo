@@ -18,13 +18,15 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.ExternalResource.All())
             {
-                ExternalResourceItemViewModel model = new ExternalResourceItemViewModel();
-                model.Id = item.Id;
-                model.FullUrl = item.FullUrl;
-                model.ResourceType = ConstTypeContainer.GetName(item.DestinationObjectType);
-                model.LastModified = item.LastModified;
+                ExternalResourceItemViewModel model = new ExternalResourceItemViewModel
+                {
+                    Id = item.Id,
+                    FullUrl = item.FullUrl,
+                    ResourceType = ConstTypeContainer.GetName(item.DestinationObjectType),
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.ExternalResource.GetUsedBy(item.Id))
+                };
 
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.ExternalResource.GetUsedBy(item.Id));
 
                 result.Add(model);
             }

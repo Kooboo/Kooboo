@@ -18,11 +18,11 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Hardcoded.GetValue("Forms", Context);
+            return Hardcoded.GetValue("Forms", context);
         }
     }
 }
 
-///  new MenuItem { Name = Hardcoded.GetValue("Forms", context), Url = AdminUrl("Development/Forms", siteDb),  ActionRights = Sites.Authorization.Actions.Developments.Forms },
+//  new MenuItem { Name = Hardcoded.GetValue("Forms", context), Url = AdminUrl("Development/Forms", siteDb),  ActionRights = Sites.Authorization.Actions.Developments.Forms },

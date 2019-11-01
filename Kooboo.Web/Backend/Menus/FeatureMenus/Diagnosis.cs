@@ -15,9 +15,9 @@ namespace Kooboo.Web.Menus.FeatureMenus
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Kooboo.Data.Language.Hardcoded.GetValue("Diagnosis", Context);
+            return Kooboo.Data.Language.Hardcoded.GetValue("Diagnosis", context);
         }
     }
 }

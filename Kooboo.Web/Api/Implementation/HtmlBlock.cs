@@ -40,9 +40,7 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 string name = apiCall.GetValue("name");
-                HtmlBlock newblock = new HtmlBlock();
-                newblock.Name = name;
-                newblock.Values = values;
+                HtmlBlock newblock = new HtmlBlock {Name = name, Values = values};
 
                 apiCall.WebSite.SiteDb().HtmlBlocks.AddOrUpdate(newblock, apiCall.Context.User.Id);
 
@@ -62,14 +60,16 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in sitedb.HtmlBlocks.All())
             {
-                HtmlBlockItemViewModel model = new HtmlBlockItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.LastModified = item.LastModified;
-                model.Values = item.Values;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.HtmlBlocks.GetUsedBy(item.Id));
+                HtmlBlockItemViewModel model = new HtmlBlockItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenamehash,
+                    LastModified = item.LastModified,
+                    Values = item.Values,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.HtmlBlocks.GetUsedBy(item.Id))
+                };
                 result.Add(model);
             }
             return result.ToList<object>();

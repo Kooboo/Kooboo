@@ -45,9 +45,8 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                CodeEditViewModel model = new CodeEditViewModel();
+                CodeEditViewModel model = new CodeEditViewModel {Config = configSample()};
 
-                model.Config = configSample();
 
                 if (codetype != null && codetype.ToLower() != "all")
                 {
@@ -154,10 +153,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var sitedb = call.WebSite.SiteDb();
 
-            Code code = new Code();
-            code.Name = model.Name;
-            code.Config = model.Config;
-            code.Body = model.Body;
+            Code code = new Code {Name = model.Name, Config = model.Config, Body = model.Body};
 
             if (HasScriptTag(code.Body))
             {
@@ -188,13 +184,10 @@ namespace Kooboo.Web.Api.Implementation
                         if (siteobjecttype != null)
                         {
                             var repo = sitedb.GetSiteRepositoryByModelType(siteobjecttype);
-                            if (repo != null)
+                            var obj = repo?.Get(route.objectId);
+                            if (obj != null)
                             {
-                                var obj = repo.Get(route.objectId);
-                                if (obj != null)
-                                {
-                                    throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
-                                }
+                                throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
                             }
                         }
                     }
@@ -237,10 +230,10 @@ namespace Kooboo.Web.Api.Implementation
                 string url = model.Url;
                 if (!string.IsNullOrEmpty(url))
                 {
-                    var route = new Kooboo.Sites.Routing.Route();
-                    route.Name = url;
-                    route.objectId = code.Id;
-                    route.DestinationConstType = ConstObjectType.Code;
+                    var route = new Kooboo.Sites.Routing.Route
+                    {
+                        Name = url, objectId = code.Id, DestinationConstType = ConstObjectType.Code
+                    };
                     sitedb.Routes.AddOrUpdate(route);
                 }
                 else

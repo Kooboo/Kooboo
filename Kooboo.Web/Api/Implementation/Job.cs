@@ -126,34 +126,32 @@ namespace Kooboo.Web.Api.Implementation
         public List<JobLog> Logs(ApiCall call)
         {
             string success = call.GetValue("success");
-            bool IsSuccess = false;
-            if (!string.IsNullOrEmpty(success) && success.ToLower() == "true" || success.ToLower() == "yes")
-            {
-                IsSuccess = true;
-            }
+            bool isSuccess = !string.IsNullOrEmpty(success) && success.ToLower() == "true" || success.ToLower() == "yes";
 
-            return GlobalDb.JobLog().GetByWebSiteId(call.Context.WebSite.Id, IsSuccess, 100);
+            return GlobalDb.JobLog().GetByWebSiteId(call.Context.WebSite.Id, isSuccess, 100);
         }
 
         public void Post(JobEditViewModel model, ApiCall call)
         {
             //JobEditViewModel model = call.Context.Request.Model as JobEditViewModel;
 
-            Job newjob = new Job();
+            Job newjob = new Job
+            {
+                Description = model.Description,
+                JobName = model.Name,
+                WebSiteId = call.Context.WebSite.Id,
+                Script = model.Script,
+                CodeId = model.CodeId
+            };
 
-            newjob.Description = model.Description;
-            newjob.JobName = model.Name;
-            newjob.WebSiteId = call.Context.WebSite.Id;
-            newjob.Script = model.Script;
-            newjob.CodeId = model.CodeId;
 
             // add a new job.
             if (model.IsRepeat)
             {
-                RepeatItem<Job> repeatjob = new RepeatItem<Job>();
-                repeatjob.Item = newjob;
-                repeatjob.StartTime = model.StartTime;
-                repeatjob.FrequenceUnit = model.FrequenceUnit;
+                RepeatItem<Job> repeatjob = new RepeatItem<Job>
+                {
+                    Item = newjob, StartTime = model.StartTime, FrequenceUnit = model.FrequenceUnit
+                };
 
                 switch (model.Frequence.ToLower())
                 {
@@ -277,9 +275,11 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                List<JobConfig> result = new List<JobConfig>();
-                result.Add(new JobConfig() { Name = Hardcoded.GetValue("sample", Context), ControlType = "input" });
-                result.Add(new JobConfig() { Name = Hardcoded.GetValue("doit", Context), ControlType = "CheckBox" });
+                List<JobConfig> result = new List<JobConfig>
+                {
+                    new JobConfig() {Name = Hardcoded.GetValue("sample", Context), ControlType = "input"},
+                    new JobConfig() {Name = Hardcoded.GetValue("doit", Context), ControlType = "CheckBox"}
+                };
 
                 return result;
             }
@@ -289,8 +289,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                Dictionary<string, Type> config = new Dictionary<string, Type>();
-                config.Add("key", typeof(string));
+                Dictionary<string, Type> config = new Dictionary<string, Type> {{"key", typeof(string)}};
                 return config;
             }
         }
@@ -311,7 +310,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public void Execute(Guid WebSiteId, Dictionary<string, object> Config)
+        public void Execute(Guid webSiteId, Dictionary<string, object> config)
         {
             return;
         }

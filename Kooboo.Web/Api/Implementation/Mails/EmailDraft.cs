@@ -48,8 +48,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             int messageid = call.GetValue<int>("messageId");
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("messageid", messageid.ToString());
+                var dic = new Dictionary<string, string> {{"messageid", messageid.ToString()}};
                 return EmailForwardManager.Get<Kooboo.Mail.ViewModel.ComposeViewModel>(this.ModelName, nameof(EmailDraft.Compose), call.Context.User, dic);
             }
 

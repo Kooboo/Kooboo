@@ -58,9 +58,10 @@ namespace Kooboo.Web.Api.Implementation
             var dlls = new List<Dll>();
             foreach (var item in formresult.Files)
             {
-                Dll newdll = new Dll();
-                newdll.AssemblyName = Path.GetFileNameWithoutExtension(item.FileName);
-                newdll.Content = item.Bytes;
+                Dll newdll = new Dll
+                {
+                    AssemblyName = Path.GetFileNameWithoutExtension(item.FileName), Content = item.Bytes
+                };
 
                 var path = Path.Combine(tempDir, newdll.AssemblyName + ".dll");
                 File.WriteAllBytes(path, newdll.Content);
@@ -146,7 +147,7 @@ namespace Kooboo.Web.Api.Implementation
                 //throw;
             }
 
-            if (ids != null && ids.Count() > 0)
+            if (ids != null && ids.Any())
             {
                 foreach (var item in ids)
                 {
@@ -161,12 +162,14 @@ namespace Kooboo.Web.Api.Implementation
             var tree = new TypeTree();
             foreach (var dll in dlls)
             {
-                var asmNode = new TypeTree();
-                asmNode.Id = "asm-" + dll.AssemblyName;
-                asmNode.Name = dll.AssemblyName;
-                asmNode.Text = dll.AssemblyName + " (" + dll.AssemblyVersion + ")";
-                asmNode.Icon = "fa fa-folder";
-                asmNode.NodeType = NodeType.Assembly;
+                var asmNode = new TypeTree
+                {
+                    Id = "asm-" + dll.AssemblyName,
+                    Name = dll.AssemblyName,
+                    Text = dll.AssemblyName + " (" + dll.AssemblyVersion + ")",
+                    Icon = "fa fa-folder",
+                    NodeType = NodeType.Assembly
+                };
 
                 var types = Assembly.Load(dll.Content).GetExportedTypes();
 
@@ -187,7 +190,7 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var group in types.GroupBy(x => x.Namespace).OrderBy(x => x.Key))
             {
-                var NameSpaceNode = new TypeTree
+                var nameSpaceNode = new TypeTree
                 {
                     Name = group.Key,
                     Text = group.Key,
@@ -249,13 +252,13 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (typeNode.Children.Count > 0)
                     {
-                        NameSpaceNode.AddChild(typeNode);
+                        nameSpaceNode.AddChild(typeNode);
                     }
                 }
 
-                if (NameSpaceNode.Children.Count > 0)
+                if (nameSpaceNode.Children.Count > 0)
                 {
-                    root.AddChild(NameSpaceNode);
+                    root.AddChild(nameSpaceNode);
                 }
             }
             return root;
@@ -304,39 +307,41 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var type in model)
             {
-                Type ClrType = TypeCache.GetType(type.FullName);
-                bool IsThirdParty = !TypeHelper.HasInterface(ClrType, typeof(IDataSource));
+                Type clrType = TypeCache.GetType(type.FullName);
+                bool isThirdParty = !TypeHelper.HasInterface(clrType, typeof(IDataSource));
 
-                List<MethodInfo> TypeMethods = Lib.Reflection.TypeHelper.GetPublicMethods(ClrType).ToList();
+                List<MethodInfo> typeMethods = Lib.Reflection.TypeHelper.GetPublicMethods(clrType).ToList();
 
-                if (ClrType != null)
+                if (clrType != null)
                 {
                     foreach (var item in type.SelectedMethods)
                     {
-                        DataMethodSetting MethodSetting = new DataMethodSetting();
-                        MethodSetting.IsThirdPartyType = IsThirdParty;
-                        MethodSetting.MethodSignatureHash = item.MethodHash;
-                        MethodSetting.IsGlobal = true;
-                        MethodSetting.DeclareType = ClrType.FullName;
-                        MethodSetting.MethodName = item.Name;
-                        MethodSetting.OriginalMethodName = item.Name;
+                        DataMethodSetting methodSetting = new DataMethodSetting
+                        {
+                            IsThirdPartyType = isThirdParty,
+                            MethodSignatureHash = item.MethodHash,
+                            IsGlobal = true,
+                            DeclareType = clrType.FullName,
+                            MethodName = item.Name,
+                            OriginalMethodName = item.Name
+                        };
 
-                        var methodinfo = TypeHelper.GetRightMethodInfo(TypeMethods, item.Name, item.MethodHash);
+                        var methodinfo = TypeHelper.GetRightMethodInfo(typeMethods, item.Name, item.MethodHash);
                         if (methodinfo == null)
                         {
                             continue;
                         }
-                        MethodSetting.IsStatic = methodinfo.IsStatic;
-                        MethodSetting.IsVoid = (methodinfo.ReturnType == typeof(void));
-                        MethodSetting.Parameters = DataSourceHelper.GetMethodParametes(methodinfo);
-                        MethodSetting.ReturnType = methodinfo.ReturnType.FullName;
+                        methodSetting.IsStatic = methodinfo.IsStatic;
+                        methodSetting.IsVoid = (methodinfo.ReturnType == typeof(void));
+                        methodSetting.Parameters = DataSourceHelper.GetMethodParametes(methodinfo);
+                        methodSetting.ReturnType = methodinfo.ReturnType.FullName;
 
-                        if (MethodSetting.Parameters.Count > 0)
+                        if (methodSetting.Parameters.Count > 0)
                         {
-                            MethodSetting.ParameterBinding = DataSourceHelper.GetDefaultBinding(MethodSetting.Parameters);
+                            methodSetting.ParameterBinding = DataSourceHelper.GetDefaultBinding(methodSetting.Parameters);
                         }
 
-                        GlobalDb.DataMethodSettings.AddOrUpdate(MethodSetting);
+                        GlobalDb.DataMethodSettings.AddOrUpdate(methodSetting);
                     }
                 }
             }
@@ -366,9 +371,7 @@ namespace Kooboo.Web.Api.Implementation
 
         private static string AssemblyQualifiedNameWithoutVersion(Type type)
         {
-            if (type.AssemblyQualifiedName == null)
-                return null;
-            return RemoveAssemblyVersion.Replace(type.AssemblyQualifiedName, String.Empty);
+            return type.AssemblyQualifiedName == null ? null : RemoveAssemblyVersion.Replace(type.AssemblyQualifiedName, String.Empty);
         }
     }
 }

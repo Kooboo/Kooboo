@@ -18,18 +18,18 @@ namespace Kooboo.Web.DashBoard.TopPages
             }
         }
 
-        public string DisplayName(RenderContext Context)
+        public string DisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("Top Pages", Context);
+            return Data.Language.Hardcoded.GetValue("Top Pages", context);
         }
 
-        public IDashBoardResponse Render(RenderContext Context)
+        public IDashBoardResponse Render(RenderContext context)
         {
             DashBoardResponseModel model = new DashBoardResponseModel();
-            var sitedb = Context.WebSite.SiteDb();
+            var sitedb = context.WebSite.SiteDb();
             model.Model = Kooboo.Sites.Service.VisitorLogService.TopPages(sitedb).OrderByDescending(o => o.Count).Take(3);
 
-            model.Link = "/_Admin/System/VisitorLogs?SiteId=" + Context.WebSite.Id.ToString() + "#TopPages";
+            model.Link = "/_Admin/System/VisitorLogs?SiteId=" + context.WebSite.Id.ToString() + "#TopPages";
             return model;
         }
     }

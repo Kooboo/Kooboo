@@ -10,6 +10,7 @@ using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kooboo.Dom;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -20,13 +21,14 @@ namespace Kooboo.Web.Api.Implementation
             var view = call.WebSite.SiteDb().Views.Get(call.ObjectId);
             if (view == null)
             {
-                view = new View();
-                view.Body = DefaultView();
+                view = new View {Body = DefaultView()};
             }
 
-            ViewViewModel viewmodel = new ViewViewModel() { Name = view.Name, Body = view.Body };
+            ViewViewModel viewmodel = new ViewViewModel
+            {
+                Name = view.Name, Body = view.Body, DummyLayout = GetDummary(call.WebSite)
+            };
 
-            viewmodel.DummyLayout = GetDummary(call.WebSite);
 
             var layouts = call.WebSite.SiteDb().Layouts.All();
             foreach (var item in layouts)
@@ -49,11 +51,17 @@ namespace Kooboo.Web.Api.Implementation
             {
                 string url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, item);
                 string previewurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
-                ViewItem model = new ViewItem() { Name = item.Name, Id = item.Id, LastModified = item.LastModified, Preview = previewurl };
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Views.GetUsedBy(item.Id));
-                model.DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == item.Id).Count();
+                ViewItem model = new ViewItem
+                {
+                    Name = item.Name,
+                    Id = item.Id,
+                    LastModified = item.LastModified,
+                    Preview = previewurl,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenamehash,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Views.GetUsedBy(item.Id)),
+                    DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == item.Id).Count()
+                };
                 result.Add(model);
             }
             return result.ToList<object>();
@@ -105,9 +113,9 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in element.childNodes.item)
             {
-                if (item is Dom.Element)
+                if (item is Element element1)
                 {
-                    GetPosition(item as Dom.Element, ref positions);
+                    GetPosition(element1, ref positions);
                 }
             }
         }
@@ -235,12 +243,18 @@ namespace Kooboo.Web.Api.Implementation
                 string url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, newview);
                 string previewurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
 
-                ViewItem model = new ViewItem() { Name = newview.Name, Id = newview.Id, LastModified = newview.LastModified, Preview = previewurl };
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(newview.Id);
-                model.StoreNameHash = storenamehash;
+                ViewItem model = new ViewItem
+                {
+                    Name = newview.Name,
+                    Id = newview.Id,
+                    LastModified = newview.LastModified,
+                    Preview = previewurl,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(newview.Id),
+                    StoreNameHash = storenamehash,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Views.GetUsedBy(newview.Id)),
+                    DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == newview.Id).Count()
+                };
 
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Views.GetUsedBy(newview.Id));
-                model.DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == newview.Id).Count();
 
                 return model;
             }

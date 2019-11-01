@@ -39,9 +39,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("updates")]
-        public void Update(Guid PageId, ApiCall call)
+        public void Update(Guid pageId, ApiCall call)
         {
-            var page = call.WebSite.SiteDb().Pages.Get(PageId);
+            var page = call.WebSite.SiteDb().Pages.Get(pageId);
             if (page == null)
             {
                 return;
@@ -62,8 +62,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 string editortype = item.editorType;
                 var modeltype = EditorContainer.GetModelType(editortype);
-                var updatemodel = ((JObject)item).ToObject(modeltype) as IInlineModel;
-                if (updatemodel != null)
+                if (((JObject)item).ToObject(modeltype) is IInlineModel updatemodel)
                 {
                     updatemodels.Add(updatemodel);
                 }

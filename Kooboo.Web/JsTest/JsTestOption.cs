@@ -11,26 +11,22 @@ namespace Kooboo.Web.JsTest
     {
         public string GetDiskRoot(RenderContext request)
         {
-            if (request != null && request.WebSite != null && !string.IsNullOrEmpty(request.WebSite.LocalRootPath))
+            if (request?.WebSite != null && !string.IsNullOrEmpty(request.WebSite.LocalRootPath))
             {
                 return request.WebSite.LocalRootPath;
             }
             return AppSettings.RootPath;
         }
 
-        public bool ShouldTryHandle(Kooboo.Data.Context.RenderContext context, JsTestOption Options)
+        public bool ShouldTryHandle(Kooboo.Data.Context.RenderContext context, JsTestOption options)
         {
-            if (string.IsNullOrEmpty(Options.RequestPrefix))
+            if (string.IsNullOrEmpty(options.RequestPrefix))
             {
                 return true;
             }
-            string RelativeUrl = context.Request.RawRelativeUrl;
+            string relativeUrl = context.Request.RawRelativeUrl;
 
-            if (RelativeUrl.ToLower().StartsWith(Options.RequestPrefix.ToLower()))
-            {
-                return true;
-            }
-            return false;
+            return relativeUrl.ToLower().StartsWith(options.RequestPrefix.ToLower());
         }
 
         public string FolderPath(RenderContext context)

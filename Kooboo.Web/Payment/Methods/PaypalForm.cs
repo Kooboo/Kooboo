@@ -25,32 +25,34 @@ namespace Kooboo.Web.Payment.Methods
             {
                 if (_currency == null)
                 {
-                    _currency = new List<string>();
-                    _currency.Add("AUD");
-                    _currency.Add("BRL");
-                    _currency.Add("CAD");
-                    _currency.Add("CZK");
-                    _currency.Add("DKK");
-                    _currency.Add("EUR");
-                    _currency.Add("HKD");
-                    _currency.Add("HUF");
-                    _currency.Add("INR");
-                    _currency.Add("ILS");
-                    _currency.Add("JPY");
-                    _currency.Add("MYR");
-                    _currency.Add("MXN");
-                    _currency.Add("NOK");
-                    _currency.Add("NZD");
-                    _currency.Add("PHP");
-                    _currency.Add("PLN");
-                    _currency.Add("GBP");
-                    _currency.Add("RUB");
-                    _currency.Add("SGD");
-                    _currency.Add("SEK");
-                    _currency.Add("CHF");
-                    _currency.Add("TWD");
-                    _currency.Add("THB");
-                    _currency.Add("USD");
+                    _currency = new List<string>
+                    {
+                        "AUD",
+                        "BRL",
+                        "CAD",
+                        "CZK",
+                        "DKK",
+                        "EUR",
+                        "HKD",
+                        "HUF",
+                        "INR",
+                        "ILS",
+                        "JPY",
+                        "MYR",
+                        "MXN",
+                        "NOK",
+                        "NZD",
+                        "PHP",
+                        "PLN",
+                        "GBP",
+                        "RUB",
+                        "SGD",
+                        "SEK",
+                        "CHF",
+                        "TWD",
+                        "THB",
+                        "USD"
+                    };
                 }
                 return _currency;
             }
@@ -95,9 +97,8 @@ namespace Kooboo.Web.Payment.Methods
             PaymentCallback result = new PaymentCallback();
 
             var strrequestid = context.Request.Get("paymentRequestId");
-            Guid requestId;
 
-            if (System.Guid.TryParse(strrequestid, out requestId))
+            if (System.Guid.TryParse(strrequestid, out var requestId))
             {
                 var request = this.GetRequest(requestId, context);
                 if (request != null)
@@ -145,7 +146,7 @@ namespace Kooboo.Web.Payment.Methods
 
                         ////rm
                         // Optional
-                        ///Return method.The FORM METHOD used to send data to the URL specified by the return variable.
+                        //Return method.The FORM METHOD used to send data to the URL specified by the return variable.
 
                         //Valid value is:
 
@@ -159,9 +160,7 @@ namespace Kooboo.Web.Payment.Methods
                         formhtml += "<input type = 'submit' name = 'submit' id='submit' style='display: none' value='please wait ...' />\r\n";
                         formhtml += "<script>document.getElementById('submit').click() </script></form>";
 
-                        var response = new PlainResponse();
-                        response.ContentType = "text/html";
-                        response.Content = formhtml;
+                        var response = new PlainResponse {ContentType = "text/html", Content = formhtml};
 
                         result.CallbackResponse = response;
 
@@ -170,9 +169,7 @@ namespace Kooboo.Web.Payment.Methods
                 }
             }
 
-            var errorresponse = new PlainResponse();
-            errorresponse.ContentType = "Application/Json";
-            errorresponse.Content = "application error";
+            var errorresponse = new PlainResponse {ContentType = "Application/Json", Content = "application error"};
             result.CallbackResponse = errorresponse;
             return result;
         }
@@ -205,8 +202,7 @@ namespace Kooboo.Web.Payment.Methods
             if (ValidateResponse(context))
             {
                 var strPaymentRequestId = context.Request.GetValue("item_number");
-                Guid paymentRequestId;
-                if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
+                if (Guid.TryParse(strPaymentRequestId, out var paymentRequestId))
                 {
                     var paymentRequest = this.GetRequest(paymentRequestId, context);
                     var setting = this.GetSetting(context);
@@ -215,8 +211,7 @@ namespace Kooboo.Web.Payment.Methods
                         return null;
                     }
 
-                    decimal mcGross = 0;//total amount
-                    decimal.TryParse(context.Request.Get("mc_gross"), out mcGross);
+                    decimal.TryParse(context.Request.Get("mc_gross"), out var mcGross);
                     var currency = context.Request.Get("mc_currency");
                     var paymentStatus = context.Request.Get("payment_status");
                     var email = context.Request.Get("receiver_email");

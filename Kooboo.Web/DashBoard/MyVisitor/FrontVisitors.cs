@@ -22,13 +22,13 @@ namespace Kooboo.Web.DashBoard.MyVisitor
             }
         }
 
-        public IDashBoardResponse Render(RenderContext Context)
+        public IDashBoardResponse Render(RenderContext context)
         {
-            var sitedb = Context.WebSite.SiteDb();
+            var sitedb = context.WebSite.SiteDb();
             var logs = sitedb.VisitorLog.AllItemList();
 
             SiteVisitorModel model = new SiteVisitorModel();
-            if (logs.Count() > 0)
+            if (logs.Any())
             {
                 model.Total = logs.Count();
                 model.Ips = logs.GroupBy(o => o.ClientIP).Count();

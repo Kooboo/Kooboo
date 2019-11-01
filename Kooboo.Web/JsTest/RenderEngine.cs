@@ -12,20 +12,20 @@ namespace Kooboo.Web.JsTest
 {
     public class RenderEngine
     {
-        public static string ParseRelativeUrl(string RawRelativeUrl, JsTestOption option)
+        public static string ParseRelativeUrl(string rawRelativeUrl, JsTestOption option)
         {
-            string RelativeUrl = RawRelativeUrl;
+            string relativeUrl = rawRelativeUrl;
             if (!string.IsNullOrEmpty(option.RequestPrefix))
             {
-                if (RelativeUrl.ToLower().StartsWith(option.RequestPrefix))
+                if (relativeUrl.ToLower().StartsWith(option.RequestPrefix))
                 {
-                    RelativeUrl = RelativeUrl.Substring(option.RequestPrefix.Length);
+                    relativeUrl = relativeUrl.Substring(option.RequestPrefix.Length);
                 }
             }
-            return RelativeUrl;
+            return relativeUrl;
         }
 
-        private static string GenerateUrl(JsTestOption option, JsTest.JsTestCommand.JsCommand command, string Folder, string File, string function = null)
+        private static string GenerateUrl(JsTestOption option, JsTest.JsTestCommand.JsCommand command, string folder, string file, string function = null)
         {
             string url = option.RequestPrefix + "/exe";
 
@@ -37,14 +37,14 @@ namespace Kooboo.Web.JsTest
                 para.Add("command", cmdname);
             }
 
-            if (!string.IsNullOrEmpty(Folder))
+            if (!string.IsNullOrEmpty(folder))
             {
-                para.Add("folder", Folder);
+                para.Add("folder", folder);
             }
 
-            if (!string.IsNullOrEmpty(File))
+            if (!string.IsNullOrEmpty(file))
             {
-                para.Add("file", File);
+                para.Add("file", file);
             }
 
             if (!string.IsNullOrEmpty(function))
@@ -55,7 +55,7 @@ namespace Kooboo.Web.JsTest
             return Lib.Helper.UrlHelper.AppendQueryString(url, para);
         }
 
-        private static string GeneratejsFile(JsTestOption option, string FileName, JsTest.JsTestCommand.JsCommand command = JsTestCommand.JsCommand.view, string function = null)
+        private static string GeneratejsFile(JsTestOption option, string fileName, JsTest.JsTestCommand.JsCommand command = JsTestCommand.JsCommand.view, string function = null)
         {
             string prefix = option.RequestPrefix;
             if (!prefix.EndsWith("/") && !prefix.EndsWith("\\"))
@@ -63,12 +63,12 @@ namespace Kooboo.Web.JsTest
                 prefix = prefix + "/";
             }
 
-            if (FileName.StartsWith("/") || FileName.StartsWith("\\"))
+            if (fileName.StartsWith("/") || fileName.StartsWith("\\"))
             {
-                FileName = FileName.Substring(1);
+                fileName = fileName.Substring(1);
             }
 
-            string name = Lib.Helper.UrlHelper.Combine(prefix, FileName);
+            string name = Lib.Helper.UrlHelper.Combine(prefix, fileName);
 
             name += "?command=" + command.ToString();
             if (!string.IsNullOrEmpty(function))
@@ -79,18 +79,18 @@ namespace Kooboo.Web.JsTest
             return name;
         }
 
-        public static RenderRespnose Render(RenderContext Context, JsTestOption option)
+        public static RenderRespnose Render(RenderContext context, JsTestOption option)
         {
-            string root = option.GetDiskRoot(Context);
+            string root = option.GetDiskRoot(context);
 
-            string relativeurl = RenderEngine.ParseRelativeUrl(Context.Request.RawRelativeUrl, option);
+            string relativeurl = RenderEngine.ParseRelativeUrl(context.Request.RawRelativeUrl, option);
             RenderRespnose response = new RenderRespnose();
 
             var command = JsTestHelper.ParseCommand(relativeurl);
 
             if (command.IsJs)
             {
-                RenderJs(Context, option, root, response, command);
+                RenderJs(context, option, root, response, command);
             }
             else
             {
@@ -98,25 +98,25 @@ namespace Kooboo.Web.JsTest
 
                 if (command.Command == JsTestCommand.JsCommand.view)
                 {
-                    RenderTestView(Context, option, response, command);
+                    RenderTestView(context, option, response, command);
                 }
                 else if (command.Command == JsTestCommand.JsCommand.run)
                 {
-                    RenderTestRun(Context, option, response, command);
+                    RenderTestRun(context, option, response, command);
                 }
             }
             return response;
         }
 
-        private static void RenderTestRun(RenderContext Context, JsTestOption option, RenderRespnose response, JsTestCommand command)
+        private static void RenderTestRun(RenderContext context, JsTestOption option, RenderRespnose response, JsTestCommand command)
         {
-            var starthtml = JsTestHelper.GetStartHtml(Context, option);
+            var starthtml = JsTestHelper.GetStartHtml(context, option);
             string html = "<div>";
 
             html += "\r\n<script src='/_admin/kbtest/expect.js'></script>";
             html += "\r\n<script src='/_admin/kbtest/mock.js'></script>";
 
-            var references = JsTestHelper.GetReferenceJs(Context, option, command.Folder);
+            var references = JsTestHelper.GetReferenceJs(context, option, command.Folder);
 
             foreach (var item in references)
             {
@@ -126,7 +126,7 @@ namespace Kooboo.Web.JsTest
             if (string.IsNullOrEmpty(command.Folder) || command.Folder == "\\" || command.Folder == "/")
             {
                 // run all.
-                var allfiles = JsTestHelper.ListAllTestFiles(Context, option, null);
+                var allfiles = JsTestHelper.ListAllTestFiles(context, option, null);
                 foreach (var file in allfiles)
                 {
                     string fileurl = GeneratejsFile(option, file, JsTestCommand.JsCommand.run);
@@ -136,7 +136,7 @@ namespace Kooboo.Web.JsTest
             else if (string.IsNullOrEmpty(command.File))
             {
                 // run folder.
-                var allfiles = JsTestHelper.ListAllTestFiles(Context, option, command.Folder);
+                var allfiles = JsTestHelper.ListAllTestFiles(context, option, command.Folder);
                 foreach (var file in allfiles)
                 {
                     string fileurl = GeneratejsFile(option, file, JsTestCommand.JsCommand.run);
@@ -169,23 +169,23 @@ namespace Kooboo.Web.JsTest
             response.Body = starthtml.Replace(JsTestHelper.PlaceHolder, html);
         }
 
-        public static void RenderTestView(RenderContext Context, JsTestOption option, RenderRespnose response, JsTestCommand command)
+        public static void RenderTestView(RenderContext context, JsTestOption option, RenderRespnose response, JsTestCommand command)
         {
             if (string.IsNullOrEmpty(command.Folder) || command.Folder == "\\" || command.Folder == "/")
             {
                 // find the start html.
-                var starthtml = JsTestHelper.GetStartHtml(Context, option);
+                var starthtml = JsTestHelper.GetStartHtml(context, option);
                 string url = GenerateUrl(option, JsTestCommand.JsCommand.run, null, null);
 
-                var folders = JsTestHelper.ListTestFolders(Context, option);
-                var count = JsTestHelper.CountTest(Context, option, folders.ToList());
+                var folders = JsTestHelper.ListTestFolders(context, option);
+                var count = JsTestHelper.CountTest(context, option, folders.ToList());
                 string html = "<h3><a href='" + url + "'>run all tests</a>  (" + count.ToString() + " tests)</h3>\r\n";
 
                 html += "<ul>";
                 foreach (var item in folders)
                 {
-                    var files = JsTestHelper.ListAllTestFiles(Context, option, item);
-                    int testcount = JsTestHelper.CountTest(Context, option, item);
+                    var files = JsTestHelper.ListAllTestFiles(context, option, item);
+                    int testcount = JsTestHelper.CountTest(context, option, item);
 
                     if (testcount > 0)
                     {
@@ -207,7 +207,7 @@ namespace Kooboo.Web.JsTest
 
                 string output = starthtml.Replace(JsTestHelper.PlaceHolder, html);
 
-                string info = JsTestHelper.GetInfoHtml(Context, option);
+                string info = JsTestHelper.GetInfoHtml(context, option);
 
                 output = output.Replace("<div id=\"information\"></div>", info);
 
@@ -218,11 +218,11 @@ namespace Kooboo.Web.JsTest
                 if (string.IsNullOrEmpty(command.File))
                 {
                     // view folder...
-                    var starthtml = JsTestHelper.GetStartHtml(Context, option);
+                    var starthtml = JsTestHelper.GetStartHtml(context, option);
 
-                    var files = JsTestHelper.ListFolderFiles(Context, option, command.Folder);
+                    var files = JsTestHelper.ListFolderFiles(context, option, command.Folder);
 
-                    var count = JsTestHelper.CountTest(Context, option, command.Folder);
+                    var count = JsTestHelper.CountTest(context, option, command.Folder);
 
                     string url = GenerateUrl(option, JsTestCommand.JsCommand.run, command.Folder, null);
                     string html = "<h3><a href='" + url + "'>run all tests</a>  (" + count.ToString() + " tests)</h3>\r\n";
@@ -231,7 +231,7 @@ namespace Kooboo.Web.JsTest
 
                     foreach (var item in files)
                     {
-                        var functions = JsTestHelper.ListFileFunctions(Context, option, item.Folder, item.file);
+                        var functions = JsTestHelper.ListFileFunctions(context, option, item.Folder, item.file);
 
                         html += "<li>";
 
@@ -252,10 +252,10 @@ namespace Kooboo.Web.JsTest
                 else
                 {
                     //view file.
-                    var starthtml = JsTestHelper.GetStartHtml(Context, option);
+                    var starthtml = JsTestHelper.GetStartHtml(context, option);
                     string url = GenerateUrl(option, JsTestCommand.JsCommand.run, command.Folder, command.File);
 
-                    var functions = JsTestHelper.ListFileFunctions(Context, option, command.Folder, command.File);
+                    var functions = JsTestHelper.ListFileFunctions(context, option, command.Folder, command.File);
 
                     string html = "<h3><a href='" + url + "'>run all tests</a>  (" + functions.Count.ToString() + " tests)</h3>\r\n";
 
@@ -272,7 +272,7 @@ namespace Kooboo.Web.JsTest
             }
         }
 
-        public static void RenderJs(RenderContext Context, JsTestOption option, string root, RenderRespnose response, JsTestCommand command)
+        public static void RenderJs(RenderContext context, JsTestOption option, string root, RenderRespnose response, JsTestCommand command)
         {
             response.ContentType = "application/javascript";
 
@@ -291,7 +291,7 @@ namespace Kooboo.Web.JsTest
                 }
 
                 string fullname = root;
-                string prepath = option.FolderPath(Context);
+                string prepath = option.FolderPath(context);
 
                 if (!string.IsNullOrEmpty(prepath))
                 {
@@ -330,14 +330,14 @@ namespace Kooboo.Web.JsTest
 
                         // TODO: Render the k commands.
                         var alltext = IOHelper.ReadAllText(fullname);
-                        alltext = RenderServerSide(alltext, root, Context, baserelarive);
+                        alltext = RenderServerSide(alltext, root, context, baserelarive);
 
                         response.Body = RenderJs(option, alltext, command.Function, retryurl);
                     }
                     else
                     {
                         var alltext = IOHelper.ReadAllText(fullname);
-                        alltext = RenderServerSide(alltext, root, Context, baserelarive);
+                        alltext = RenderServerSide(alltext, root, context, baserelarive);
 
                         response.Body = alltext;
                     }
@@ -345,46 +345,46 @@ namespace Kooboo.Web.JsTest
             }
         }
 
-        private static string GetRelative(string Prepath, string Path)
+        private static string GetRelative(string prepath, string path)
         {
-            if (string.IsNullOrWhiteSpace(Path))
+            if (string.IsNullOrWhiteSpace(path))
             {
                 return "/";
             }
 
-            Path = Path.Replace("\\", "/");
+            path = path.Replace("\\", "/");
 
-            int questionmark = Path.IndexOf("?");
+            int questionmark = path.IndexOf("?");
             if (questionmark > -1)
             {
-                Path = Path.Substring(0, questionmark);
+                path = path.Substring(0, questionmark);
             }
 
-            if (Path.StartsWith("/"))
+            if (path.StartsWith("/"))
             {
-                Path = Path.Substring(1);
+                path = path.Substring(1);
             }
 
-            if (string.IsNullOrWhiteSpace(Prepath))
+            if (string.IsNullOrWhiteSpace(prepath))
             {
-                Prepath = "/";
+                prepath = "/";
             }
-            if (!Prepath.EndsWith("/"))
+            if (!prepath.EndsWith("/"))
             {
-                Prepath = Prepath + "/";
-            }
-
-            if (!string.IsNullOrWhiteSpace(Prepath))
-            {
-                Path = Lib.Helper.UrlHelper.Combine(Prepath, Path);
+                prepath += "/";
             }
 
-            if (!Path.StartsWith("/"))
+            if (!string.IsNullOrWhiteSpace(prepath))
             {
-                Path = "/" + Path;
+                path = Lib.Helper.UrlHelper.Combine(prepath, path);
             }
 
-            return Path;
+            if (!path.StartsWith("/"))
+            {
+                path = "/" + path;
+            }
+
+            return path;
         }
 
         public static string RenderJs(JsTestOption option, string js, string function, string retryurl)
@@ -407,11 +407,11 @@ namespace Kooboo.Web.JsTest
             }
         }
 
-        public static string RenderBlockRun(string jsBlock, string function, string RawUrl)
+        public static string RenderBlockRun(string jsBlock, string function, string rawUrl)
         {
             if (Lib.Helper.JintHelper.IsRequireJs(jsBlock))
             {
-                return RenderRequireJsBlockRun(jsBlock, function, RawUrl);
+                return RenderRequireJsBlockRun(jsBlock, function, rawUrl);
             }
 
             if (string.IsNullOrEmpty(function))
@@ -422,7 +422,7 @@ namespace Kooboo.Web.JsTest
 
                 foreach (var item in functionnames)
                 {
-                    string retryUrl = RawUrl + "&function=" + item;
+                    string retryUrl = rawUrl + "&function=" + item;
                     append += "\r\ntry{" + item + "(); appendPass(\"" + item + "\"); } catch(ex) { appendFailed(\"" + item + "\", \"" + retryUrl + "\"); };";
                 }
 
@@ -438,7 +438,7 @@ namespace Kooboo.Web.JsTest
             }
         }
 
-        public static string RenderRequireJsBlockRun(string jsBlock, string function, string RawUrl)
+        public static string RenderRequireJsBlockRun(string jsBlock, string function, string rawUrl)
         {
             string append = string.Empty;
 
@@ -455,7 +455,7 @@ namespace Kooboo.Web.JsTest
                 }
                 foreach (var item in names)
                 {
-                    string retryUrl = RawUrl + "&function=" + item;
+                    string retryUrl = rawUrl + "&function=" + item;
                     append += "\r\ntry{" + item + "(); appendPass(\"" + item + "\"); } catch(ex) { appendFailed(\"" + item + "\", \"" + retryUrl + "\"); };";
                 }
             }
@@ -467,7 +467,7 @@ namespace Kooboo.Web.JsTest
             return Lib.Helper.JintHelper.AppendRequireJsBlock(jsBlock, append, allfunctions);
         }
 
-        public static string RenderServerSide(string source, string rootfolder, RenderContext context, string BaseRelativeUrl)
+        public static string RenderServerSide(string source, string rootfolder, RenderContext context, string baseRelativeUrl)
         {
             Func<RenderContext, string> rootfun = (contextx) =>
                 {
@@ -476,8 +476,7 @@ namespace Kooboo.Web.JsTest
 
             var tasks = Kooboo.Render.ServerSide.ServerEngine.GetJsRenderPlan(source);
 
-            RenderOption option = new RenderOption();
-            option.GetDiskRoot = rootfun;
+            RenderOption option = new RenderOption {GetDiskRoot = rootfun};
 
             CommandDiskSourceProvider sourceprvoider = new CommandDiskSourceProvider(option);
 
@@ -485,7 +484,7 @@ namespace Kooboo.Web.JsTest
 
             foreach (var task in tasks)
             {
-                result += task.Render(sourceprvoider, option, context, BaseRelativeUrl);
+                result += task.Render(sourceprvoider, option, context, baseRelativeUrl);
             }
             return result;
         }

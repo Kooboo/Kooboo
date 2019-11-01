@@ -55,37 +55,42 @@ namespace Kooboo.Web.Api.Implementation
 
             ClusterEditViewModel viewmodel = new ClusterEditViewModel() { EnableCluster = call.WebSite.EnableCluster };
 
-            bool IsSlave = false;
+            bool isSlave = false;
             //if (!Kooboo.Data.AppSettings.Global.IsOnlineServer)
             //{
             foreach (var item in sitedb.SiteCluster.All())
             {
                 if (item.IsRoot)
                 {
-                    IsSlave = true;
+                    isSlave = true;
                 }
-                DataCenter dc = new DataCenter();
-                dc.Name = item.DataCenter;
-                dc.DisplayName = item.Name;
-                dc.Ip = item.ServerIp;
-                dc.Port = item.Port;
-                dc.IsSelected = item.IsSelected;
+
+                DataCenter dc = new DataCenter
+                {
+                    Name = item.DataCenter,
+                    DisplayName = item.Name,
+                    Ip = item.ServerIp,
+                    Port = item.Port,
+                    IsSelected = item.IsSelected
+                };
                 viewmodel.DataCenter.Add(dc);
             }
 
             if (!viewmodel.DataCenter.Any(o => o.IsRoot))
             {
-                DataCenter dc = new DataCenter();
-                dc.Name = Data.Language.Hardcoded.GetValue("Root", call.Context);
-                dc.DisplayName = Data.Language.Hardcoded.GetValue("Root", call.Context);
-                dc.Ip = "127.0.0.1";
-                dc.Port = Data.AppSettings.CurrentUsedPort;
-                dc.IsSelected = true;
-                dc.IsRoot = true;
+                DataCenter dc = new DataCenter
+                {
+                    Name = Data.Language.Hardcoded.GetValue("Root", call.Context),
+                    DisplayName = Data.Language.Hardcoded.GetValue("Root", call.Context),
+                    Ip = "127.0.0.1",
+                    Port = Data.AppSettings.CurrentUsedPort,
+                    IsSelected = true,
+                    IsRoot = true
+                };
                 viewmodel.DataCenter.Add(dc);
             }
 
-            viewmodel.IsSlave = IsSlave;
+            viewmodel.IsSlave = isSlave;
 
             return viewmodel;
             //}
@@ -119,17 +124,18 @@ namespace Kooboo.Web.Api.Implementation
 
             ClusterEditViewModel viewmodel = new ClusterEditViewModel();
 
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("SiteId", call.GetValue("SiteId"));
-            para.Add("OrganizationId", user.CurrentOrgId.ToString());
+            Dictionary<string, string> para = new Dictionary<string, string>
+            {
+                {"SiteId", call.GetValue("SiteId")}, {"OrganizationId", user.CurrentOrgId.ToString()}
+            };
 
             var datacenterlist = Lib.Helper.HttpHelper.Get<List<DataCenter>>(Kooboo.Data.Account.Url.Cluster.GetDataCenter, para, user.UserName, user.PasswordHash.ToString());
 
             viewmodel.DataCenter = datacenterlist;
 
-            viewmodel.EnableCluster = datacenterlist.Where(o => o.IsSelected).Count() >= 2;
+            viewmodel.EnableCluster = datacenterlist.Count(o => o.IsSelected) >= 2;
 
-            viewmodel.EnableLocationRedirect = datacenterlist.Where(o => !string.IsNullOrWhiteSpace(o.PrimaryDomain)).Any();
+            viewmodel.EnableLocationRedirect = datacenterlist.Any(o => !string.IsNullOrWhiteSpace(o.PrimaryDomain));
 
             if (viewmodel.EnableLocationRedirect)
             {
@@ -187,7 +193,7 @@ namespace Kooboo.Web.Api.Implementation
                 if (result != null)
                 {
                 }
-                /// var errro;
+                // var errro;
             }
             else
             {
@@ -199,13 +205,15 @@ namespace Kooboo.Web.Api.Implementation
                     if (!item.IsRoot)
                     {
                         // can not contains itself...
-                        SiteCluster cluster = new SiteCluster();
-                        cluster.ServerIp = item.Ip;
-                        cluster.Port = item.Port;
-                        cluster.Name = item.DisplayName;
-                        cluster.DataCenter = item.Name;
-                        cluster.IsRoot = item.IsRoot;
-                        cluster.IsSelected = item.IsSelected;
+                        SiteCluster cluster = new SiteCluster
+                        {
+                            ServerIp = item.Ip,
+                            Port = item.Port,
+                            Name = item.DisplayName,
+                            DataCenter = item.Name,
+                            IsRoot = item.IsRoot,
+                            IsSelected = item.IsSelected
+                        };
                         updates.Add(cluster);
                     }
                 }
@@ -232,9 +240,9 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        private WebSite InitWebSite(string RemoteIp, Guid SiteId, int port = 80)
+        private WebSite InitWebSite(string remoteIp, Guid siteId, int port = 80)
         {
-            string modelurl = Sites.Sync.SiteClusterSync.ClusterUrl.SiteModel(RemoteIp, port) + "?siteid=" + SiteId.ToString();
+            string modelurl = Sites.Sync.SiteClusterSync.ClusterUrl.SiteModel(remoteIp, port) + "?siteid=" + siteId.ToString();
 
             var model = Lib.Helper.HttpHelper.Get<ClusterSiteEditModel>(modelurl);
             if (model == null)
@@ -246,23 +254,23 @@ namespace Kooboo.Web.Api.Implementation
                 var site = Kooboo.Sites.Sync.SiteClusterSync.SiteSetting.AddOrUpdate(model);
                 // add the site cluster...
                 var sitedb = site.SiteDb();
-                sitedb.SiteCluster.AddOrUpdate(new SiteCluster() { IsRoot = true, ServerIp = RemoteIp, Name = site.Name });
+                sitedb.SiteCluster.AddOrUpdate(new SiteCluster() { IsRoot = true, ServerIp = remoteIp, Name = site.Name });
                 return site;
             }
         }
 
         // receive the site object...
-        public bool Receive(Guid SiteId, ApiCall call)
+        public bool Receive(Guid siteId, ApiCall call)
         {
             var converter = new IndexedDB.Serializer.Simple.SimpleConverter<SyncObject>();
             SyncObject sync = converter.FromBytes(call.Context.Request.PostData);
 
             //must do the user validation here...
-            var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            var website = Kooboo.Data.GlobalDb.WebSites.Get(siteId);
 
             if (website == null)
             {
-                website = InitWebSite(call.Context.Request.IP, SiteId, sync.SenderPort);
+                website = InitWebSite(call.Context.Request.IP, siteId, sync.SenderPort);
             }
 
             var sitedb = website.SiteDb();

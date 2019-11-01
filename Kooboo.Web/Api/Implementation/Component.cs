@@ -66,16 +66,14 @@ namespace Kooboo.Web.Api.Implementation
 
             if (tag.ToLower() == "layout")
             {
-                List<ComponentInfo> Models = new List<ComponentInfo>();
+                List<ComponentInfo> models = new List<ComponentInfo>();
                 var alllayout = sitedb.Layouts.All();
                 foreach (var item in alllayout)
                 {
-                    ComponentInfo comp = new ComponentInfo();
-                    comp.Id = item.Id;
-                    comp.Name = item.Name;
-                    Models.Add(comp);
+                    ComponentInfo comp = new ComponentInfo {Id = item.Id, Name = item.Name};
+                    models.Add(comp);
                 }
-                return Models;
+                return models;
             }
             else
             {
@@ -97,10 +95,10 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                string NameOrId = call.GetValue("id", "NameOrId");
-                if (!string.IsNullOrEmpty(NameOrId))
+                string nameOrId = call.GetValue("id", "NameOrId");
+                if (!string.IsNullOrEmpty(nameOrId))
                 {
-                    return Manager.Preview(call.Context.WebSite.SiteDb(), tag, NameOrId);
+                    return Manager.Preview(call.Context.WebSite.SiteDb(), tag, nameOrId);
                 }
             }
             return null;

@@ -43,18 +43,14 @@ namespace Kooboo.Module
             }
         }
 
-        public static Type GetType(string ModelName)
+        public static Type GetType(string modelName)
         {
-            if (List.ContainsKey(ModelName))
-            {
-                return List[ModelName];
-            }
-            return null;
+            return List.ContainsKey(modelName) ? List[modelName] : null;
         }
 
-        public static string GetNameProperty(Type objType, string PropertyName)
+        public static string GetNameProperty(Type objType, string propertyName)
         {
-            var method = objType.GetProperty(PropertyName).GetGetMethod();
+            var method = objType.GetProperty(propertyName)?.GetGetMethod();
             var dynamicMethod = new DynamicMethod("meide", typeof(string),
                                                   Type.EmptyTypes);
             var generator = dynamicMethod.GetILGenerator();

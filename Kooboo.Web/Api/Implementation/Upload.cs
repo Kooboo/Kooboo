@@ -66,18 +66,18 @@ namespace Kooboo.Web.Api
         {
             var result = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
 
-            string Folder = result.FormData.ContainsKey("Folder") ? result.FormData["Folder"] : "";
+            string folder = result.FormData.ContainsKey("Folder") ? result.FormData["Folder"] : "";
 
-            if (!Folder.EndsWith("/") && !Folder.EndsWith("\\"))
+            if (!folder.EndsWith("/") && !folder.EndsWith("\\"))
             {
-                Folder = Folder + "/";
+                folder += "/";
             }
 
             foreach (var item in result.Files)
             {
                 string filename = StringHelper.ToValidFileName(item.FileName);
 
-                filename = UrlHelper.Combine(Folder, filename);
+                filename = UrlHelper.Combine(folder, filename);
 
                 call.WebSite.SiteDb().Images.UploadImage(item.Bytes, filename, call.Context.User.Id);
             }
@@ -89,18 +89,18 @@ namespace Kooboo.Web.Api
         {
             var result = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
 
-            string Folder = result.FormData["Folder"];
+            string folder = result.FormData["Folder"];
 
-            if (!Folder.EndsWith("/") && !Folder.EndsWith("\\"))
+            if (!folder.EndsWith("/") && !folder.EndsWith("\\"))
             {
-                Folder = Folder + "/";
+                folder = folder + "/";
             }
 
             foreach (var item in result.Files)
             {
                 string filename = StringHelper.ToValidFileName(item.FileName);
 
-                filename = UrlHelper.Combine(Folder, filename);
+                filename = UrlHelper.Combine(folder, filename);
 
                 call.WebSite.SiteDb().Files.Upload(item.Bytes, filename, call.Context.User.Id);
             }

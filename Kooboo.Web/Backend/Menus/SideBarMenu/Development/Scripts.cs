@@ -18,9 +18,9 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
 
         public List<ICmsMenu> SubItems { get; set; }
 
-        public string GetDisplayName(RenderContext Context)
+        public string GetDisplayName(RenderContext context)
         {
-            return Hardcoded.GetValue("Scripts", Context);
+            return Hardcoded.GetValue("Scripts", context);
         }
     }
 }
