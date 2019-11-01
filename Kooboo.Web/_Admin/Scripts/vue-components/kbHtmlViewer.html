@@ -1,0 +1,17 @@
+<div class="kb-code-viewer">
+    <h6 class="title" data-bind="text: Kooboo.text.component.htmlViewer.code + ':'"></h6>
+    <div class="kb-html-tree">
+        <div data-bind="component: {
+        name: 'kb-html-tree',
+        params: {
+            rootElem: rootElem(),
+            elem: elem(),
+            depth: 1
+        }
+    }"></div>
+    </div>
+    <div data-bind="component: { name: 'kb-html-path', params: {
+        rootElem: rootElem(),
+        elem: elem()
+    } }"></div>
+</div>

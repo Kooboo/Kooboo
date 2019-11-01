@@ -1,0 +1,150 @@
+<style>
+    .bx-wrapper .bx-prev {
+        background: url("/_Admin/Scripts/lib/bxSlider/images/controls.png") no-repeat 0 -32px;
+    }
+    
+    .bx-wrapper .bx-next {
+        background: url("/_Admin/Scripts/lib/bxSlider/images/controls.png") no-repeat -43px -32px;
+    }
+</style>
+<div class="modal fade" data-bind="modal: isShow" data-backdrop="static" data-keyboard="false">
+    <!-- ko if: data() -->
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: data().name"></h4>
+            </div>
+            <div class="modal-body template-info">
+                <div class="row">
+                    <!--ko ifnot: selected-->
+                    <div class="col-md-8">
+                        <ul data-bind="foreach: { data: data().images }" class="bxslider">
+                            <li><img data-bind="attr: { src: $data }"></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.common.author"></span>
+                                <!-- ko text: data().userName -->
+                                <!-- /ko -->
+                            </li>
+                            <!-- ko if: data().link -->
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.common.link"></span>
+                                <a href="#" class="text-break" data-bind="attr: { href: data().link }, text: data().link" target="_blank"></a>
+                            </li>
+                            <!-- /ko -->
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.common.description"></span>
+                                <!-- ko text: data().description || Kooboo.text.site.template.noDescription -->
+                                <!-- /ko -->
+                            </li>
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.component.templateModal.downloads"></span>
+                                <!-- ko text: data().downloadCount -->
+                                <!-- /ko -->
+                            </li>
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.common.size"></span>
+                                <!-- ko text: data().size -->
+                                <!-- /ko -->
+                            </li>
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.common.lastModified"></span>
+                                <!-- ko text: data().lastModified -->
+                                <!-- /ko -->
+                            </li>
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.component.templateModal.dynamicContent"></span>
+                                <div class="margin-top-5">
+                                    <!-- ko if: data().allDynamicCount -->
+                                    <!-- ko if: data().layoutCount -->
+                                    <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('layout') }, text: data().layoutCount + ' ' + Kooboo.text.component.table.layout"></label>
+                                    <!-- /ko -->
+                                    <!-- ko if: data().menuCount -->
+                                    <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('menu') }, text: data().menuCount + ' ' + Kooboo.text.component.table.menu"></label>
+                                    <!-- /ko -->
+                                    <!-- ko if: data().pageCount -->
+                                    <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('page') }, text: data().pageCount + ' ' + Kooboo.text.component.table.page"></label>
+                                    <!-- /ko -->
+                                    <!-- ko if: data().viewCount -->
+                                    <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('view') }, text: data().viewCount + ' ' + Kooboo.text.component.table.view"></label>
+                                    <!-- /ko -->
+                                    <!-- ko if: data().imageCount -->
+                                    <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('image') }, text: data().imageCount + ' ' + Kooboo.text.component.table.image"></label>
+                                    <!-- /ko -->
+                                    <!-- ko if: data().contentCount -->
+                                    <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('textcontent') }, text: data().contentCount + ' ' + Kooboo.text.component.table.textcontent"></label>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+
+                                    <!-- ko ifnot: data().allDynamicCount -->
+                                    <!-- ko text: Kooboo.text.site.template.noDynamic -->
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="title" data-bind="text: Kooboo.text.common.tags"></span>
+                                <div class="margin-top-5">
+                                    <!-- ko if: data().tags -->
+                                    <!-- ko foreach: { data: data().tags.split(','), as: 'tag' } -->
+                                    <label class="label label-sm gray kb-table-label-refer" data-bind="text: tag"></label>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+
+                                    <!-- ko ifnot: data().tags -->
+                                    <!-- ko text: Kooboo.text.site.template.noTag -->
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--/ko-->
+                    <!--ko if: selected-->
+                    <div class="col-md-10 col-md-offset-1">
+                        <fieldset class="form-horizontal">
+                            <div class="note note-info">
+                                <p data-bind="text: Kooboo.text.component.templateModal.hint"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="SiteName" data-bind="text: Kooboo.text.component.templateModal.siteName"></label>
+                                <div class="col-md-10">
+                                    <input data-bind="value: siteName, error: siteName" type="text" class="form-control input-medium" name="SiteName" placeholder="Site name">
+                                    <span class="help-block" data-bind="text: Kooboo.text.component.templateModal.siteNameHint"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="SubDomain" class="col-md-2 control-label" data-bind="text: Kooboo.text.component.table.domain"></label>
+                                <div class="col-md-10">
+                                    <div class="form-inline">
+                                        <input data-bind="textInput: subDomain, error: subDomain" type="text" class="input-medium form-control" placeholder="SubDomain" />
+                                        <div class="form-group">
+                                            <select data-bind="options: domains, value: rootDomain, optionsText: 'displayText', optionsValue: 'value'" class="form-control"></select>
+                                        </div>
+                                    </div>
+                                    <span class="help-block" data-bind="text: Kooboo.text.component.templateModal.domainHint"></span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--/ko-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- ko ifnot: selected -->
+                <button data-bind="click: onUse, text: Kooboo.text.component.templateModal.useThisTemplate" class="btn green"></button>
+                <a data-bind="text: Kooboo.text.common.preview, attr: { href: data() && data().previewUrl }" class="btn btn-default" target="_blank"></a>
+                <!-- /ko -->
+                <!-- ko if: selected -->
+                <button data-bind="click: onImport, text: Kooboo.text.common.import" class="btn green"></button>
+                <button data-bind="click: onUnuse, text: Kooboo.text.common.back" class="btn gray"></button>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+</div>

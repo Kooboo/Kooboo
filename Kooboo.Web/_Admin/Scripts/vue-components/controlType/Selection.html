@@ -1,0 +1,20 @@
+<div class="form-group">
+    <!-- ko if:isMultilingual -->
+    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted':  disabled }" class="control-label col-md-3"></label>
+    <!-- /ko -->
+
+    <!-- ko if:!isMultilingual() -->
+    <label data-bind="text: fieldName(), css: { 'text-muted':  disabled }" class="control-label col-md-3"></label>
+    <!-- /ko -->
+
+    <div class="col-md-9" style="position: relative;">
+        <select class="form-control" data-bind="options: options, optionsText: 'key', optionsValue: 'value', value: fieldValue, disable:  disabled, textError: fieldValue"></select>
+
+        <span data-bind="textError: fieldValue" style="position: absolute;">&nbsp;</span>
+
+        <!-- ko if: !!tooltip() -->
+        <span class="help-block" data-bind="text:tooltip"></span>
+        <!-- /ko -->
+
+    </div>
+</div>
