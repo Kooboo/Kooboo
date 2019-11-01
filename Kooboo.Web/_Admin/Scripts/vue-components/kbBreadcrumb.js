@@ -2,9 +2,9 @@
   var current = _.startCase(location.pathname.split("/").reverse()[0]),
     multiLang = Kooboo.getQueryString("lang");
 
-  Vue.Component("kb-breadcrumb", {
+  Vue.component("kb-breadcrumb", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/kbBreadcrumb.html"
+      "/_Admin/Scripts/vue-components/kbBreadcrumb.html"
     ),
     props: {
       breads: Array //[{name:"",url:""}]
