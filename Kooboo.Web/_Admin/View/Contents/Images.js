@@ -1,4 +1,4 @@
-$(function() {
+(function() {
   var self;
   var vm = new Vue({
     el: "#app",
@@ -496,4 +496,4 @@ $(function() {
       vm.curImgType == "all" && vm.onChoosingFolder("/");
     }
   });
-});
+})();
