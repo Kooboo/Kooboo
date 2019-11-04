@@ -348,3 +348,8 @@ blockquote footer,
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+/* vue */
+[v-cloak] {
+    display: none;
+}
