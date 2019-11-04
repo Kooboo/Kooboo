@@ -20,7 +20,7 @@
           </li>
         </ul>
       </div>
-      <a class="btn green navbar-btn" @click="showImportModal">Import</a>
+      <a class="btn green navbar-btn" @click="showImportModal=true">Import</a>
       <a
         class="btn green navbar-btn"
         data-bind="click: onShowCopyModal, visible: showCopyBtn"
@@ -34,8 +34,9 @@
       <a
         href="javascript:;"
         class="btn btn-default navbar-btn pull-right"
-        data-bind="tooltip: Kooboo.text.tooltip.pageRouterManager, tooltipPlacement: 'left', click: onShowRouterManager"
         style="margin-right:0"
+        v-kb-tooltip:left="Kooboo.text.tooltip.pageRouterManager"
+        @click="onShowRouterManager"
         ><i class="fa fa-gear"></i
       ></a>
     </div>
@@ -44,18 +45,19 @@
     class="modal fade"
     data-backdrop="static"
     data-keyboard="false"
+    v-kb-modal="showImportModal"
     ref="importModal"
   >
-    <form>
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">
-              <i class="fa fa-close"></i>
-            </button>
-            <h4 class="modal-title">Import</h4>
-          </div>
-          <div class="modal-body">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <i class="fa fa-close"></i>
+          </button>
+          <h4 class="modal-title">Import</h4>
+        </div>
+        <div class="modal-body">
+          <form>
             <div class="form-horizontal">
               <div class="form-group">
                 <label class="control-label col-md-3">From</label>
@@ -132,19 +134,19 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn green"
-              v-show="importForm.from=='url'"
-              @click="onImportSubmit"
-              >Start</button
-            >
-            <button class="btn gray" data-dismiss="modal">Cancel</button>
-          </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn green"
+            v-show="importForm.from=='url'"
+            @click="onImportSubmit"
+            >Start</button
+          >
+          <button class="btn gray" data-dismiss="modal">Cancel</button>
         </div>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
@@ -344,7 +346,8 @@
           siteId: Kooboo.getQueryString("SiteId"),
           pageUrl: "1", // self.importPageUrl(),
           name: "" // self.importBasePath()
-        }
+        },
+        showImportModal: false
       };
     },
     validations: {
@@ -395,10 +398,12 @@
       });
     },
     methods: {
-      showImportModal: function() {
-        $(this.$refs.importModal).modal("show");
+      onImportSubmit: function(e) {
+        this.validate(this.importForm, {
+          pageUrl: [{ required: true, message: "aa" }]
+        });
       },
-      onImportSubmit: function() {}
+      onShowRouterManager() {}
     }
   });
 </script>
