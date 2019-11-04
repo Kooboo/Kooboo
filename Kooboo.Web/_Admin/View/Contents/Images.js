@@ -81,7 +81,8 @@ $(function() {
       isAsc: false,
       selectedFiles: [],
       newFolderModal: false,
-      showError: false
+      showError: false,
+      folderName: ""
     },
     beforeCreate: function() {
       self = this;
@@ -341,6 +342,38 @@ $(function() {
             upload();
           }
         }
+      },
+      onCreateFolder: function() {
+        self.folderName = "";
+        self.newFolderModal = true;
+      },
+      onNewFolderModalReset: function() {
+        self.newFolderModal = false;
+        self.folderName = "";
+        self.showError = false;
+      },
+      onNewFolderModalSubmit: function() {
+        // if (self.folderName.isValid()) {
+          var isExistFolder = _.find(self.folders, function(folder) {
+            return self.folderName == folder.name;
+          });
+
+          if (isExistFolder) {
+            self.onNewFolderModalReset();
+          } else {
+            Kooboo.Media.createFolder({
+              path: self.crumbPath[self.crumbPath.length - 1].fullPath,
+              name: self.folderName
+            }).then(function(res) {
+              if (res.success) {
+                self.folders.push(new folderModel(res.model));
+                self.onNewFolderModalReset();
+              }
+            });
+          }
+        // } else {
+        //   self.showError(true);
+        // }
       }
     },
     computed: {
@@ -374,7 +407,7 @@ $(function() {
           self.onChoosingFolder(self.currentPath, page);
         } else {
           Kooboo.Media.getPagedListBy({
-            by: self.curImgType, // type 
+            by: self.curImgType, // type
             pageNr: page
           }).then(function(res) {
             if (res.success) {
@@ -422,70 +455,34 @@ $(function() {
 
   var mediaViewModel = function() {
     // Create Folder
-
-    this.folderName = ko.validateField({
-      required: Kooboo.text.validation.required,
-      localUnique: {
-        compare: function() {
-          var list = [];
-          _.forEach(self.folders(), function(folder) {
-            list.push(folder.name());
-          });
-          list.push(self.folderName());
-          return list;
-        },
-        message: Kooboo.text.validation.taken
-      },
-      stringlength: {
-        min: 1,
-        max: 64,
-        message:
-          Kooboo.text.validation.minLength +
-          1 +
-          ", " +
-          Kooboo.text.validation.maxLength +
-          64
-      },
-      regex: {
-        pattern: /^([a-zA-Z\w\-\.])*$/,
-        message: Kooboo.text.validation.folderNameInvalid
-      }
-    });
-
-    this.onCreateFolder = function() {
-      self.folderName("");
-      self.newFolderModal(true);
-    };
-
-    this.onNewFolderModalReset = function() {
-      self.newFolderModal(false);
-      self.folderName("");
-      self.showError(false);
-    };
-
-    this.onNewFolderModalSubmit = function() {
-      if (self.folderName.isValid()) {
-        var isExistFolder = _.find(self.folders, function(folder) {
-          return self.folderName() == folder.name();
-        });
-
-        if (isExistFolder) {
-          self.onNewFolderModalReset();
-        } else {
-          Kooboo.Media.createFolder({
-            path: self.crumbPath()[self.crumbPath().length - 1].fullPath,
-            name: self.folderName()
-          }).then(function(res) {
-            if (res.success) {
-              self.folders.push(new folderModel(res.model));
-              self.onNewFolderModalReset();
-            }
-          });
-        }
-      } else {
-        self.showError(true);
-      }
-    };
+    // this.folderName = ko.validateField({
+    //   required: Kooboo.text.validation.required,
+    //   localUnique: {
+    //     compare: function() {
+    //       var list = [];
+    //       _.forEach(self.folders(), function(folder) {
+    //         list.push(folder.name());
+    //       });
+    //       list.push(self.folderName());
+    //       return list;
+    //     },
+    //     message: Kooboo.text.validation.taken
+    //   },
+    //   stringlength: {
+    //     min: 1,
+    //     max: 64,
+    //     message:
+    //       Kooboo.text.validation.minLength +
+    //       1 +
+    //       ", " +
+    //       Kooboo.text.validation.maxLength +
+    //       64
+    //   },
+    //   regex: {
+    //     pattern: /^([a-zA-Z\w\-\.])*$/,
+    //     message: Kooboo.text.validation.folderNameInvalid
+    //   }
+    // });
   };
 
   vm.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");

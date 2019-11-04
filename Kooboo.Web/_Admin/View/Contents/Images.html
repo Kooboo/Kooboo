@@ -35,7 +35,7 @@
   </ul>
   <div class="navbar navbar-default" :v-show="curImgType == 'all'">
     <div class="container-fluid">
-      <a data-bind="click: onCreateFolder" class="btn green navbar-btn"
+      <a @click="onCreateFolder" class="btn green navbar-btn"
         >New folder</a
       >
       <a class="btn green navbar-btn btn-file">
@@ -242,7 +242,7 @@
   <kb-pager :page-nr="pager.pageNr" :total-pages="pager.totalPages"></kb-pager>
 
   <div
-    data-bind="modal: newFolderModal"
+    v-kb-modal="newFolderModal"
     class="modal fade"
     data-backdrop="static"
     data-keyboard="false"
@@ -250,7 +250,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button data-bind="click: onNewFolderModalReset" class="close"
+          <button @click="onNewFolderModalReset" class="close"
             ><i class="fa fa-close"></i
           ></button>
           <h4 class="modal-title">New folder</h4>
@@ -262,18 +262,19 @@
               <div class="col-md-9">
                 <input
                   type="text"
-                  data-bind="value: folderName, error: folderName"
+                  v-model="folderName"
                   class="form-control"
                 />
+                <!-- data-bind="value: folderName, error: folderName" -->
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button data-bind="click: onNewFolderModalSubmit" class="btn green"
+          <button @click="onNewFolderModalSubmit" class="btn green"
             >Save</button
           >
-          <button data-bind="click: onNewFolderModalReset" class="btn gray"
+          <button @click="onNewFolderModalReset" class="btn gray"
             >Cancel</button
           >
         </div>
