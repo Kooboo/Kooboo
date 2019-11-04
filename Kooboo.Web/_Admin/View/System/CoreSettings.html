@@ -1,81 +1,94 @@
 <!-- #layout name=blank-->
 <style>
-    .setting-list p.form-control-static {
-        word-wrap: break-word;
-        min-height: 0;
-    }
-    
-    .setting-list {
-        padding: 0;
-        list-style: none;
-    }
-    
-    .setting-list li {
-        padding: 15px 0;
-        border-bottom: 1px solid #eeeeee;
-    }
-    
-    .setting-list li:last-child {
-        border-bottom: 0;
-    }
+  .setting-list p.form-control-static {
+    word-wrap: break-word;
+    min-height: 0;
+  }
+
+  .setting-list {
+    padding: 0;
+    list-style: none;
+  }
+
+  .setting-list li {
+    padding: 15px 0;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .setting-list li:last-child {
+    border-bottom: 0;
+  }
 </style>
-<div class="page-header">
+<div id="app" v-cloak>
+  <div class="page-header">
     <h1 class="title">Config</h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'SITES'
-},{
-    name: 'DASHBOARD'
-},{
-    name: 'Core settings'
-}] }"></div>
-<div class="row">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="row">
     <div class="col-md-6 col-sm-12">
-        <ul class="setting-list clearfix" data-bind="foreach: { data: settings, as: 'setting' }">
-            <li class="item clearfix">
-                <div class="col-md-3">
-                    <label class="control-label" data-bind="text: setting.name"></label>
-                </div>
-                <div class="col-md-6">
-                    <p class="form-control-stataic" data-bind="text: setting.value"></p>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn blue" data-bind="click: $parent.onEdit.bind(this, setting.name)">Edit</button>
-                </div>
-            </li>
-        </ul>
+      <ul class="setting-list clearfix">
+        <li
+          class="item clearfix"
+          v-for="(setting, index) in settings"
+          :key="index"
+        >
+          <div class="col-md-3">
+            <label class="control-label">{{ setting.name }}</label>
+          </div>
+          <div class="col-md-6">
+            <p class="form-control-stataic">{{ setting.value }}</p>
+          </div>
+          <div class="col-md-3">
+            <button class="btn blue" @click="onEdit(setting.name)">Edit</button>
+          </div>
+        </li>
+      </ul>
     </div>
-</div>
-<div class="modal fade" data-bind="modal: showModal" data-backdrop="static" data-keyboard="false">
+  </div>
+  <div
+    class="modal fade"
+    v-kb-modal="showModal"
+    data-backdrop="static"
+    data-keyboard="false"
+  >
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close" data-bind="click: onClose"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Edit</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-horizontal" data-bind="foreach: { data: fields, as: 'field' }">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" data-bind="text: field.name"></label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" data-bind="value: field.value">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn blue" data-bind="click: onSave">Save</button>
-                <button class="btn gray" data-bind="click: onClose">Cancel</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" @click="onClose"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">Edit</h4>
         </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="form-group" v-for="(field,index) in fields" :key="index">
+              <label
+                class="col-md-3 control-label"
+              >{{ field.name }}</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="field.value"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn blue" @click="onSave">Save</button>
+          <button class="btn gray" @click="onClose">Cancel</button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/SPA.js",
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+      "/_Admin/Scripts/SPA.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/System/CoreSettings.js"></script>
