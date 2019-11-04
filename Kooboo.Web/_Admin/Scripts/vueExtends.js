@@ -1,9 +1,29 @@
 Vue.prototype.Kooboo = Kooboo;
 
-// kb-tooltip
-(function() {
-  Vue.directive("kb-tooltip", {});
-})();
+// #region <kb-tooltip>
+Vue.directive("kb-tooltip", function(el, binding) {
+  let trigger = [];
+  if (binding.modifiers.focus) trigger.push("focus");
+  if (binding.modifiers.hover) trigger.push("hover");
+  if (binding.modifiers.click) trigger.push("click");
+  if (binding.modifiers.manual) trigger.push("manual");
+  trigger = trigger.join(" ");
+
+  $(el).tooltip({
+    title: binding.value,
+    placement: binding.arg,
+    trigger: trigger || "hover",
+    html: binding.modifiers.html,
+    template: binding.modifiers.error
+      ? `<div class="tooltip error" role="tooltip" style="z-index:199999">
+              <div class="tooltip-arrow"></div>
+              <div class="tooltip-inner"></div>
+            </div>`
+      : undefined,
+    container: "body"
+  });
+});
+// #endregion </kb-tooltip>
 
 //#region <kb-upload>
 Vue.directive("kb-upload", {
