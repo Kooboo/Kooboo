@@ -98,6 +98,9 @@
           }
         });
       });
+    },
+    beforeDestory: function() {
+      self = null;
     }
   });
 })();
