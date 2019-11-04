@@ -129,3 +129,38 @@ $(function() {
   });
 });
 //#endregion </kb-upload>
+
+//#region <kb-modal>
+$(function() {
+  Vue.directive("kb-modal", {
+    bind: function(element, binding, vnode) {
+      $(element).on("hidden.bs.modal", function() {
+        vnode.context[binding.expression] = false; // sync binding.value = false;
+        if ($("body").find(".modal.in").length) {
+          if (!$("body").hasClass("modal-open")) {
+            $("body").addClass("modal-open");
+          }
+        }
+      });
+      $(element).on("show.bs.modal", function() {
+        setTimeout(function() {
+          if (
+            $(element).hasClass("media-dialog") ||
+            $(element).hasClass("category-dialog")
+          ) {
+            $(".modal-backdrop:last").css("z-index", 200001);
+          }
+        }, 80);
+      });
+      $(element).on("shown.bs.modal", function() {
+        Kooboo.EventBus.publish("ko/binding/modal/shown", {
+          elem: element
+        });
+      });
+    },
+    update: function(element, binding) {
+      $(element).modal(binding.value ? "show" : "hide");
+    }
+  });
+});
+//#endregion </kb-modal>
