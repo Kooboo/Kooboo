@@ -22,36 +22,38 @@
                 <th class="table-action">{{ Kooboo.text.common.edit }}</th>
               </tr>
             </thead>
-            <tbody v-if="!loading && relations.length">
-              <tr v-for="$data in relations" :key="$data.url">
-                <td>
-                  <a
-                    :href="$data.url"
-                    v-kb-tooltip:right="Kooboo.text.common.preview"
-                    target="_blank"
-                    >{{ $data.name }}</a
-                  >
-                </td>
-                <td>{{ $data.remark || "-" }}</td>
-                <td>
-                  <a
-                    v-show="!!getRelationEditUrl($data)"
-                    :href="getRelationEditUrl($data)"
-                    target="_blank"
-                    class="btn btn-xs blue"
-                    ><i class="fa fa-pencil"></i
-                  ></a>
-                </td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td colspan="100" class="text-center">{{
-                  Kooboo.text.common.empty
-                }}</td>
-              </tr>
-            </tbody>
-            <tfoot v-show="loading">
+            <template v-if="!loading">
+              <tbody v-if="relations.length">
+                <tr v-for="$data in relations" :key="$data.url">
+                  <td>
+                    <a
+                      :href="$data.url"
+                      v-kb-tooltip:right="Kooboo.text.common.preview"
+                      target="_blank"
+                      >{{ $data.name }}</a
+                    >
+                  </td>
+                  <td>{{ $data.remark || "-" }}</td>
+                  <td>
+                    <a
+                      v-show="!!getRelationEditUrl($data)"
+                      :href="getRelationEditUrl($data)"
+                      target="_blank"
+                      class="btn btn-xs blue"
+                      ><i class="fa fa-pencil"></i
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td colspan="100" class="text-center">{{
+                    Kooboo.text.common.empty
+                  }}</td>
+                </tr>
+              </tbody>
+            </template>
+            <tfoot v-else>
               <tr>
                 <td colspan="100" class="text-center">
                   <i class="fa fa-spinner fa-spin"></i>

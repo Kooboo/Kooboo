@@ -436,6 +436,9 @@
           });
         }
       });
+    },
+    beforeDestory: function() {
+      self = null;
     }
   });
 
