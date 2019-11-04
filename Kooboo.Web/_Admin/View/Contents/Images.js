@@ -15,6 +15,30 @@ $(function() {
         }
       ],
       curType: "list",
+      uploadSetting: {
+        allowMultiple: true,
+        acceptTypes: [
+          "image/bmp",
+          "image/x-windows-bmp",
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "image/svg+xml",
+          "image/x-icon"
+        ],
+        acceptSuffix: [
+          "bmp",
+          "png",
+          "jpg",
+          "jpeg",
+          "gif",
+          "svg",
+          "ico",
+          "webp"
+        ],
+        callback: (data, files) => self.uploadImage(data, files)
+      },
       pager: {},
       currentPath: undefined,
       imgTypes: [
@@ -350,7 +374,7 @@ $(function() {
           self.onChoosingFolder(self.currentPath, page);
         } else {
           Kooboo.Media.getPagedListBy({
-            by: type,
+            by: self.curImgType, // type 
             pageNr: page
           }).then(function(res) {
             if (res.success) {
@@ -371,7 +395,7 @@ $(function() {
               self.pager = res.model.files;
 
               self.crumbPath = res.model.crumbPath;
-              self.curImgType = type;
+              // self.curImgType = type;
 
               self.reorder();
               location.hash = "";
