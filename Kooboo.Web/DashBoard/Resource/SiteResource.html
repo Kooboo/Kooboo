@@ -1,59 +1,65 @@
 ﻿<div class="row" id="site-resource">
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <a href="javascript:;" data-bind="click: SPAClick.bind(this, 'page')">
-            <div class="number" k-content="model.Pages"></div>
-        </a>
-        <small class="text-muted" data-bind="text: Kooboo.text.common.Pages"></small>
-    </div>
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <a href="javascript:;" data-bind="click: SPAClick.bind(this, 'image')">
-            <div class="number" k-content="model.Images"></div>
-        </a>
-        <small class="text-muted" data-bind="text: Kooboo.text.common.Images"></small>
-    </div>
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <a href="javascript:;" data-bind="click: SPAClick.bind(this, 'view')">
-            <div class="number" k-content="model.Views"></div>
-        </a>
-        <small class="text-muted" data-bind="text: Kooboo.text.common.Views"></small>
-    </div>
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <a href="javascript:;" data-bind="click: SPAClick.bind(this, 'content')">
-            <div class="number" k-content="model.Contents"></div>
-        </a>
-        <small class="text-muted" data-bind="text: Kooboo.text.common.Contents"></small>
-    </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <a href="javascript:;" @click.prevent="SPAClick('page')">
+      <div class="number" k-content="model.Pages"></div>
+    </a>
+    <small class="text-muted">{{ Kooboo.text.common.Pages }}</small>
+  </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <a href="javascript:;" @click.prevent="SPAClick('image')">
+      <div class="number" k-content="model.Images"></div>
+    </a>
+    <small class="text-muted">{{ Kooboo.text.common.Images }}</small>
+  </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <a href="javascript:;" @click.prevent="SPAClick('view')">
+      <div class="number" k-content="model.Views"></div>
+    </a>
+    <small class="text-muted">{{ Kooboo.text.common.Views }}</small>
+  </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <a href="javascript:;" @click.prevent="SPAClick('content')">
+      <div class="number" k-content="model.Contents"></div>
+    </a>
+    <small class="text-muted">{{ Kooboo.text.common.Contents }}</small>
+  </div>
 </div>
 <script>
-    $(function() {
-        var resModel = function() {
-            var self = this;
-            this.SPAClick = _.debounce(function(type, m, e) {
-                e.preventDefault();
-                switch (type) {
-                    case "page":
-                        m.url = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
-                        break;
-                    case "image":
-                        m.url = Kooboo.Route.Get(Kooboo.Route.Image.ListPage);
-                        break;
-                    case "view":
-                        m.url = Kooboo.Route.Get(Kooboo.Route.View.ListPage);
-                        break;
-                    case "content":
-                        m.url = Kooboo.Route.Get(Kooboo.Route.TextContent.ListPage);
-                        break;
-                }
-                var path = (m.url.toLowerCase().indexOf("?siteid=") > -1) ? m.url.toLowerCase().split("?siteid=")[0] : m.url;
-                if (location.pathname.toLowerCase() !== path ||
-                    !Kooboo.isSameURLParams(Kooboo.getURLParams(m.url), Kooboo.getURLParams(location.search))) {
-                    Kooboo.SPA.getView(m.url);
-                }
-            }, 100);
-        }
-
-        var vm = new resModel();
-
-        ko.applyBindings(vm, document.getElementById("site-resource"));
-    })
+  $(function() {
+    new Vue({
+      el: "#site-resource",
+      methods: {
+        SPAClick: _.debounce(function(type) {
+          var m = {};
+          switch (type) {
+            case "page":
+              m.url = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
+              break;
+            case "image":
+              m.url = Kooboo.Route.Get(Kooboo.Route.Image.ListPage);
+              break;
+            case "view":
+              m.url = Kooboo.Route.Get(Kooboo.Route.View.ListPage);
+              break;
+            case "content":
+              m.url = Kooboo.Route.Get(Kooboo.Route.TextContent.ListPage);
+              break;
+          }
+          var path =
+            m.url.toLowerCase().indexOf("?siteid=") > -1
+              ? m.url.toLowerCase().split("?siteid=")[0]
+              : m.url;
+          if (
+            location.pathname.toLowerCase() !== path ||
+            !Kooboo.isSameURLParams(
+              Kooboo.getURLParams(m.url),
+              Kooboo.getURLParams(location.search)
+            )
+          ) {
+            Kooboo.SPA.getView(m.url);
+          }
+        }, 100)
+      }
+    });
+  });
 </script>

@@ -1,6 +1,6 @@
 $(function() {
   var self;
-  var vm = new Vue({
+  new Vue({
     el: "#app",
     data: function() {
       return {
@@ -82,8 +82,37 @@ $(function() {
         isAsc: false,
         selectedFiles: [],
         newFolderModal: false,
-        showError: false,
-        folderName: ""
+        folderForm: {
+          name: ""
+        },
+        folderRules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              validate: function(value) {
+                return !_.some(self.folders, { name: value });
+              },
+              message: Kooboo.text.validation.taken
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              pattern: /^([a-zA-Z\w\-\.])*$/,
+              message: Kooboo.text.validation.folderNameInvalid
+            }
+          ]
+        }
       };
     },
     beforeCreate: function() {
@@ -346,27 +375,20 @@ $(function() {
         }
       },
       onCreateFolder: function() {
-        self.folderName = "";
+        self.folderForm.name = "";
         self.newFolderModal = true;
       },
       onNewFolderModalReset: function() {
         self.newFolderModal = false;
-        self.folderName = "";
-        self.showError = false;
+        self.folderForm.name = "";
+        self.$refs.folderForm.clearValid();
       },
       onNewFolderModalSubmit: function() {
-        // TODO: validate folder name
-        // if (self.folderName.isValid()) {
-        var isExistFolder = _.find(self.folders, function(folder) {
-          return self.folderName == folder.name;
-        });
-
-        if (isExistFolder) {
-          self.onNewFolderModalReset();
-        } else {
+        var isValid = self.$refs.folderForm.validate();
+        if (isValid) {
           Kooboo.Media.createFolder({
             path: self.crumbPath[self.crumbPath.length - 1].fullPath,
-            name: self.folderName
+            name: self.folderForm.name
           }).then(function(res) {
             if (res.success) {
               self.folders.push(new folderModel(res.model));
@@ -374,9 +396,6 @@ $(function() {
             }
           });
         }
-        // } else {
-        //   self.showError(true);
-        // }
       }
     },
     computed: {
@@ -405,6 +424,7 @@ $(function() {
       }
     },
     mounted: function() {
+      self.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
       Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
         if (self.curImgType == "all") {
           self.onChoosingFolder(self.currentPath, page);
@@ -439,6 +459,15 @@ $(function() {
           });
         }
       });
+      Kooboo.EventBus.subscribe("window/popstate", function() {
+        $(".modal").modal("hide");
+        if (location.hash) {
+          var path = location.hash.split("#")[1];
+          self.onChoosingFolder(path);
+        } else {
+          self.curImgType == "all" && self.onChoosingFolder("/");
+        }
+      });
     },
     beforeDestory: function() {
       self = null;
@@ -458,48 +487,4 @@ $(function() {
     folder.selected = false;
     return folder;
   };
-
-  var mediaViewModel = function() {
-    // Create Folder
-    // this.folderName = ko.validateField({
-    //   required: Kooboo.text.validation.required,
-    //   localUnique: {
-    //     compare: function() {
-    //       var list = [];
-    //       _.forEach(self.folders(), function(folder) {
-    //         list.push(folder.name());
-    //       });
-    //       list.push(self.folderName());
-    //       return list;
-    //     },
-    //     message: Kooboo.text.validation.taken
-    //   },
-    //   stringlength: {
-    //     min: 1,
-    //     max: 64,
-    //     message:
-    //       Kooboo.text.validation.minLength +
-    //       1 +
-    //       ", " +
-    //       Kooboo.text.validation.maxLength +
-    //       64
-    //   },
-    //   regex: {
-    //     pattern: /^([a-zA-Z\w\-\.])*$/,
-    //     message: Kooboo.text.validation.folderNameInvalid
-    //   }
-    // });
-  };
-
-  vm.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
-
-  Kooboo.EventBus.subscribe("window/popstate", function() {
-    $(".modal").modal("hide");
-    if (location.hash) {
-      var path = location.hash.split("#")[1];
-      vm.onChoosingFolder(path);
-    } else {
-      vm.curImgType == "all" && vm.onChoosingFolder("/");
-    }
-  });
 });
