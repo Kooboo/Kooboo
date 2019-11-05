@@ -87,10 +87,12 @@ $(function() {
           name: ""
         },
         folderRules: {
-          name: {
-            required: true,
-            message: 'test'
-          }
+          name: [
+            {
+              required: true,
+              message: "test"
+            }
+          ]
         }
       };
     },
@@ -363,8 +365,8 @@ $(function() {
         self.showError = false;
       },
       onNewFolderModalSubmit: function() {
-        var test = self.$refs.folderForm.validate();
-        console.log(test);
+        var isValid = self.$refs.folderForm.validate();
+        console.log(isValid, self.folderForm);
         return;
         // TODO: validate folder name
         // if (self.folderForm.name.isValid()) {
