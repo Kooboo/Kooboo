@@ -7,20 +7,20 @@
     validateRulesHandle: function(rules, value) {
       var temp;
       if (rules instanceof Array) {
-        temp = [];
+        temp = {};
         rules.forEach(function(rule) {
           var validateName = rule.name;
-          temp.push(self[validateName](rule.rule).validate(value));
+          temp[validateName] = this[validateName](rule.rule).validate(value);
         });
       } else {
         var rule = rules;
         var validateName = rule.name;
-        temp = self[validateName](rule.rule).validate(value);
+        temp = this[validateName](rule.rule).validate(value);
       }
       return temp;
     },
 
-    validateaValuesHandle: function(rules, values, isMulti) {
+    validateValuesHandle: function(rules, values, isMulti) {
       var result;
       if (isMulti) {
         result = {};
@@ -39,7 +39,7 @@
       var self = Validate;
       return {
         validate: function(values, isMulti) {
-          return self.validateaValuesHandle(rules, values, isMulti);
+          return self.validateValuesHandle(rules, values, isMulti);
         }
       };
     },
