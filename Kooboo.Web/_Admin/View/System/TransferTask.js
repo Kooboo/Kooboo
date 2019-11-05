@@ -26,11 +26,9 @@
       ];
       this.getTableData();
     },
+
     methods: {
-      selectedAllHandle: function(event) {
-        console.log(event);
-      },
-      selectedChange: function(event) {
+      selectChangeHandle: function(event){
         console.log(event);
       },
       getTableData: function() {

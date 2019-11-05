@@ -14,7 +14,7 @@
     </div>
   </div>
   <kb-table
-    :options="{showSelect:true}"
+    :show-select="true"
     :data="tableData"
     :selected.sync="tableDataSelectedRows"
   >
@@ -37,8 +37,8 @@
       "/_Admin/Scripts/lib/echarts.min.js",
       "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-      "/_Admin/Scripts/vue-components/kb-table/kb-table.js"
+      "/_Admin/Scripts/vue-components/kbTable.js"
     ]);
   })();
 </script>
-<script src="/_Admin/View/System/TransferTask-copy.js"></script>
+<script src="/_Admin/View/System/TransferTask.js"></script>
