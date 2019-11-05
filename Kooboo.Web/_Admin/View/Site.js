@@ -1,33 +1,34 @@
 $(function() {
-    var siteViewModel = function() {
-
-        var self = this;
-
-        this.widgets = ko.observableArray();
-
-        this.afterRender = function() {
-            waterfall('.block-dashboard-stat')
+  new Vue({
+    el: "#app",
+    data: function() {
+      return {
+        widgets: []
+      };
+    },
+    mounted: function() {
+      var self = this;
+      Kooboo.Dashboard.getItems().then(function(res) {
+        if (res.success) {
+          res.model.forEach(function(item ,index ) {
+            self.widgets.push(item);
+          });
+          self.$nextTick(function() {
+            waterfall(".block-dashboard-stat");
+            waterfall(".block-dashboard-stat"); // twice to fix bugs
+          });
         }
-
-        Kooboo.Dashboard.getItems().then(function(res) {
-
-            if (res.success) {
-                res.model.forEach(function(item, idx) {
-                    self.widgets.push(item);
-                })
-            }
-        })
-    }
-
-    var vm = new siteViewModel();
-
-    ko.applyBindings(vm, document.getElementById('main'));
-
-    $(window).on('resize', function() {
+      });
+      $(window).on("resize.dashboard", function() {
         try {
-            waterfall('.block-dashboard-stat')
+          waterfall(".block-dashboard-stat");
         } catch (e) {
-            // console.error(e);
+          // console.error(e);
         }
-    })
-})
+      });
+    },
+    beforeDestory: function() {
+      $(window).off("resize.dashboard");
+    }
+  });
+});
