@@ -1,8 +1,12 @@
 <table class="table table-striped table-hover">
   <thead>
     <tr>
-      <th v-if="options.showSelect" class="table-checkbox">
-        <input type="checkbox" :checked="data.length == selected.length" />
+      <th v-if="showSelect" class="table-checkbox">
+        <input
+          type="checkbox"
+          @input="selectedAll"
+          :checked="data.length == selected.length"
+        />
       </th>
       <template v-for="(item, index) in slots">
         <th
@@ -19,7 +23,7 @@
   </thead>
   <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" @click="selectRow(row)">
-      <td v-if="options.showSelect" class="table-checkbox">
+      <td v-if="showSelect" class="table-checkbox">
         <input type="checkbox" :checked="itemIsSelected(row)" />
       </td>
       <template v-for="(item, index) in slots">
