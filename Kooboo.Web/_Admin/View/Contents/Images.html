@@ -33,7 +33,7 @@
       <a href="javascript:;">{{ $data.displayName }}</a>
     </li>
   </ul>
-  <div class="navbar navbar-default" :v-show="curImgType == 'all'">
+  <div class="navbar navbar-default" v-show="curImgType == 'all'">
     <div class="container-fluid">
       <a @click="onCreateFolder" class="btn green navbar-btn"
         >New folder</a

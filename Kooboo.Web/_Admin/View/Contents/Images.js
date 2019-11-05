@@ -1,6 +1,6 @@
 $(function() {
   var self;
-  var vm = new Vue({
+  new Vue({
     el: "#app",
     data: function() {
       return {
@@ -405,6 +405,7 @@ $(function() {
       }
     },
     mounted: function() {
+      self.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
       Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
         if (self.curImgType == "all") {
           self.onChoosingFolder(self.currentPath, page);
@@ -437,6 +438,15 @@ $(function() {
               location.hash = "";
             }
           });
+        }
+      });
+      Kooboo.EventBus.subscribe("window/popstate", function() {
+        $(".modal").modal("hide");
+        if (location.hash) {
+          var path = location.hash.split("#")[1];
+          self.onChoosingFolder(path);
+        } else {
+          self.curImgType == "all" && self.onChoosingFolder("/");
         }
       });
     },
@@ -490,16 +500,4 @@ $(function() {
     //   }
     // });
   };
-
-  vm.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
-
-  Kooboo.EventBus.subscribe("window/popstate", function() {
-    $(".modal").modal("hide");
-    if (location.hash) {
-      var path = location.hash.split("#")[1];
-      vm.onChoosingFolder(path);
-    } else {
-      vm.curImgType == "all" && vm.onChoosingFolder("/");
-    }
-  });
 });
