@@ -206,3 +206,16 @@ Vue.directive("kb-modal", {
   }
 });
 //#endregion </kb-modal>
+
+//#region <kb-html>
+Vue.directive("kb-html", {
+  inserted: function(element, binding) {
+    $(element).html(binding.value);
+  },
+  componentUpdated: function(element, binding) {
+    if (binding.value !== binding.oldValue) {
+      $(element).html(binding.value);
+    }
+  }
+});
+//#endregion </kb-html>

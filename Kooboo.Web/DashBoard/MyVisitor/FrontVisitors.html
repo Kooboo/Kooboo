@@ -1,23 +1,27 @@
 ﻿<div class="row" id="visitors">
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <div class="number" k-content="model.Total"></div>
-        <small class="text-muted" data-bind="text: Kooboo.text.dashboard.total"></small>
-    </div>
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <div class="number" k-content="model.Ips"></div>
-        <small class="text-muted" data-bind="text: Kooboo.text.dashboard.IPs"></small>
-    </div>
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <div class="number" k-content="model.Pages"></div>
-        <small class="text-muted" data-bind="text: Kooboo.text.dashboard.Pages"></small>
-    </div>
-    <div class="item col-md-3 col-sm-6 col-xs-6">
-        <div class="number" k-content="model.AvgSize"></div>
-        <small class="text-muted" data-bind="text: Kooboo.text.dashboard.avgSize + '(KB)'"></small>
-    </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <div class="number" k-content="model.Total"></div>
+    <small class="text-muted">{{ Kooboo.text.dashboard.total }}</small>
+  </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <div class="number" k-content="model.Ips"></div>
+    <small class="text-muted">{{ Kooboo.text.dashboard.IPs }}</small>
+  </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <div class="number" k-content="model.Pages"></div>
+    <small class="text-muted">{{ Kooboo.text.dashboard.Pages }}</small>
+  </div>
+  <div class="item col-md-3 col-sm-6 col-xs-6">
+    <div class="number" k-content="model.AvgSize"></div>
+    <small class="text-muted">{{
+      Kooboo.text.dashboard.avgSize + "(KB)"
+    }}</small>
+  </div>
 </div>
 <script>
-    $(function() {
-        ko.applyBindings({}, document.getElementById("visitors"));
-    })
+  $(function() {
+    new Vue({
+      el: "#visitors"
+    });
+  });
 </script>
