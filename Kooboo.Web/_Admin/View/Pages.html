@@ -57,6 +57,19 @@
           <h4 class="modal-title">Import</h4>
         </div>
         <div class="modal-body">
+          <kb-form :model="importForm" :rules="importFormRules" ref="f1">
+            <kb-form-item prop="pageUrl">
+              <label class="control-label col-md-3">Page URL</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Input page URL"
+                  v-model="importForm.pageUrl"
+                />
+              </div>
+            </kb-form-item>
+          </kb-form>
           <form>
             <div class="form-horizontal">
               <div class="form-group">
@@ -85,7 +98,6 @@
                     type="text"
                     class="form-control"
                     placeholder="Input page URL"
-                    v-model.trim="$v.importForm.pageUrl.$model"
                   />
                 </div>
               </div>
@@ -310,21 +322,18 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+      "/_Admin/Scripts/vue-components/kbForm.js",
       "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/components/kbTable.js",
       "/_Admin/Scripts/components/kbRelationModal.js",
-      "/_Admin/Scripts/lib/jquery.qrcode.min.js",
-      "/_Admin/Scripts/lib/vuelidate/vuelidate.min.js",
-      "/_Admin/Scripts/lib/vuelidate/validators.min.js"
+      "/_Admin/Scripts/lib/jquery.qrcode.min.js"
     ]);
   })();
 </script>
 <script src="/_Admin/View/Pages.js"></script>
 
 <script>
-  Vue.use(vuelidate.default);
-
   new Vue({
     el: "#app",
     data: function() {
@@ -347,16 +356,11 @@
           pageUrl: "1", // self.importPageUrl(),
           name: "" // self.importBasePath()
         },
+        importFormRules: {
+          pageUrl: [{ required: "", message: "aa" }]
+        },
         showImportModal: false
       };
-    },
-    validations: {
-      importForm: {
-        pageUrl: {
-          required: validators.required,
-          url: validators.url
-        }
-      }
     },
     computed: {
       createNewPageUrl: function() {
@@ -399,11 +403,14 @@
     },
     methods: {
       onImportSubmit: function(e) {
-        this.validate(this.importForm, {
-          pageUrl: [{ required: true, message: "aa" }]
-        });
+        this.$refs.f1.validate();
       },
       onShowRouterManager() {}
+    },
+    watch: {
+      showImportModal: function() {
+        this.$refs.f1.clearValid();
+      }
     }
   });
 </script>
