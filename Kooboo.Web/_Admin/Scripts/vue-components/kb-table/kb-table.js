@@ -17,7 +17,7 @@
       "/_Admin/Scripts/vue-components/kb-table/kb-table.html"
     ),
     props: {
-      options: Object,
+      showSelect: Boolean,
       data: {
         type: Array,
         default: []
@@ -25,11 +25,6 @@
       selected: {
         type: Array,
         default: []
-      }
-    },
-    watch: {
-      selected: function(value) {
-        this.selectedChange();
       }
     },
     data: function() {
