@@ -82,7 +82,6 @@ $(function() {
         isAsc: false,
         selectedFiles: [],
         newFolderModal: false,
-        showError: false,
         folderForm: {
           name: ""
         },
@@ -90,7 +89,27 @@ $(function() {
           name: [
             {
               required: true,
-              message: "test"
+              message: Kooboo.text.validation.required
+            },
+            {
+              validate: function(value) {
+                return !_.some(self.folders, { name: value });
+              },
+              message: Kooboo.text.validation.taken
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              pattern: /^([a-zA-Z\w\-\.])*$/,
+              message: Kooboo.text.validation.folderNameInvalid
             }
           ]
         }
@@ -362,21 +381,11 @@ $(function() {
       onNewFolderModalReset: function() {
         self.newFolderModal = false;
         self.folderForm.name = "";
-        self.showError = false;
+        self.$refs.folderForm.clearValid();
       },
       onNewFolderModalSubmit: function() {
         var isValid = self.$refs.folderForm.validate();
-        console.log(isValid, self.folderForm);
-        return;
-        // TODO: validate folder name
-        // if (self.folderForm.name.isValid()) {
-        var isExistFolder = _.find(self.folders, function(folder) {
-          return self.folderForm.name == folderForm.name;
-        });
-
-        if (isExistFolder) {
-          self.onNewFolderModalReset();
-        } else {
+        if (isValid) {
           Kooboo.Media.createFolder({
             path: self.crumbPath[self.crumbPath.length - 1].fullPath,
             name: self.folderForm.name
@@ -387,9 +396,6 @@ $(function() {
             }
           });
         }
-        // } else {
-        //   self.showError(true);
-        // }
       }
     },
     computed: {
@@ -480,37 +486,5 @@ $(function() {
     folder.type = "folder";
     folder.selected = false;
     return folder;
-  };
-
-  var mediaViewModel = function() {
-    // Create Folder
-    // this.folderName = ko.validateField({
-    //   required: Kooboo.text.validation.required,
-    //   localUnique: {
-    //     compare: function() {
-    //       var list = [];
-    //       _.forEach(self.folders(), function(folder) {
-    //         list.push(folderForm.name());
-    //       });
-    //       list.push(self.folderForm.name());
-    //       return list;
-    //     },
-    //     message: Kooboo.text.validation.taken
-    //   },
-    //   stringlength: {
-    //     min: 1,
-    //     max: 64,
-    //     message:
-    //       Kooboo.text.validation.minLength +
-    //       1 +
-    //       ", " +
-    //       Kooboo.text.validation.maxLength +
-    //       64
-    //   },
-    //   regex: {
-    //     pattern: /^([a-zA-Z\w\-\.])*$/,
-    //     message: Kooboo.text.validation.folderNameInvalid
-    //   }
-    // });
   };
 });

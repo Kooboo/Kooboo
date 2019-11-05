@@ -258,7 +258,7 @@
             <kb-form-item prop="name">
               <label class="col-md-3 control-label">Name</label>
               <div class="col-md-9">
-                <input type="text" v-model="folderForm.name" class="form-control" />
+                <input type="text" v-model="folderForm.name" class="form-control" @keydown.enter="onNewFolderModalSubmit" />
               </div>
             </kb-form-item>
           </kb-form>
