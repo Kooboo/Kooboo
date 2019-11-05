@@ -156,7 +156,7 @@
             <template v-if="Object.keys(file.references).length > 0">
               <a
                 v-for="refer in Object.keys(file.references)"
-                @click.stop="getRelation(file)"
+                @click.stop="getRelation(file, refer)"
                 :style="{ background: Kooboo.getLabelColor(refer) }"
                 href="javascript:;"
                 class="label label-sm kb-table-label-refer"
@@ -282,18 +282,13 @@
     </div>
   </div>
 
-  <div data-bind="component: { name: 'kb-relation-modal' }"></div>
+  <kb-relation-modal></kb-relation-modal>
 </div>
-<style>
-  [v-cloak] {
-    display: none;
-  }
-</style>
 <script>
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-      "/_Admin/Scripts/components/kbRelationModal.js",
+      "/_Admin/Scripts/vue-components/kbRelationModal.js",
       "/_Admin/Scripts/vue-components/kbPager.js"
     ]);
   })();

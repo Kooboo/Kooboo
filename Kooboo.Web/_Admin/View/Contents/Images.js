@@ -2,87 +2,89 @@ $(function() {
   var self;
   var vm = new Vue({
     el: "#app",
-    data: {
-      breads: [
-        {
-          name: "SITES"
-        },
-        {
-          name: "DASHBOARD"
-        },
-        {
-          name: Kooboo.text.common.mediaLibrary
-        }
-      ],
-      curType: "list",
-      uploadSetting: {
-        allowMultiple: true,
-        acceptTypes: [
-          "image/bmp",
-          "image/x-windows-bmp",
-          "image/png",
-          "image/jpeg",
-          "image/gif",
-          "image/webp",
-          "image/svg+xml",
-          "image/x-icon"
+    data: function() {
+      return {
+        breads: [
+          {
+            name: "SITES"
+          },
+          {
+            name: "DASHBOARD"
+          },
+          {
+            name: Kooboo.text.common.mediaLibrary
+          }
         ],
-        acceptSuffix: [
-          "bmp",
-          "png",
-          "jpg",
-          "jpeg",
-          "gif",
-          "svg",
-          "ico",
-          "webp"
+        curType: "list",
+        uploadSetting: {
+          allowMultiple: true,
+          acceptTypes: [
+            "image/bmp",
+            "image/x-windows-bmp",
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp",
+            "image/svg+xml",
+            "image/x-icon"
+          ],
+          acceptSuffix: [
+            "bmp",
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "svg",
+            "ico",
+            "webp"
+          ],
+          callback: self.uploadImage
+        },
+        pager: {},
+        currentPath: undefined,
+        imgTypes: [
+          {
+            displayName: Kooboo.text.site.images.all,
+            value: "all"
+          },
+          {
+            displayName: Kooboo.text.site.images.page,
+            value: "page"
+          },
+          {
+            displayName: Kooboo.text.site.images.style,
+            value: "style"
+          },
+          {
+            displayName: Kooboo.text.site.images.view,
+            value: "view"
+          },
+          {
+            displayName: Kooboo.text.site.images.layout,
+            value: "layout"
+          },
+          {
+            displayName: Kooboo.text.common.HTMLblock,
+            value: "HTMLBlock"
+          },
+          {
+            displayName: Kooboo.text.site.images.content,
+            value: "TextContent"
+          }
         ],
-        callback: (data, files) => self.uploadImage(data, files)
-      },
-      pager: {},
-      currentPath: undefined,
-      imgTypes: [
-        {
-          displayName: Kooboo.text.site.images.all,
-          value: "all"
-        },
-        {
-          displayName: Kooboo.text.site.images.page,
-          value: "page"
-        },
-        {
-          displayName: Kooboo.text.site.images.style,
-          value: "style"
-        },
-        {
-          displayName: Kooboo.text.site.images.view,
-          value: "view"
-        },
-        {
-          displayName: Kooboo.text.site.images.layout,
-          value: "layout"
-        },
-        {
-          displayName: Kooboo.text.common.HTMLblock,
-          value: "HTMLBlock"
-        },
-        {
-          displayName: Kooboo.text.site.images.content,
-          value: "TextContent"
-        }
-      ],
-      curImgType: "all",
-      crumbPath: [],
-      folders: [],
-      _folders: [],
-      files: [],
-      _files: [],
-      currentSort: "url",
-      isAsc: false,
-      selectedFiles: [],
-      newFolderModal: false,
-      showError: false,
-      folderName: ""
+        curImgType: "all",
+        crumbPath: [],
+        folders: [],
+        _folders: [],
+        files: [],
+        _files: [],
+        currentSort: "url",
+        isAsc: false,
+        selectedFiles: [],
+        newFolderModal: false,
+        showError: false,
+        folderName: ""
+      };
     },
     beforeCreate: function() {
       self = this;
@@ -353,24 +355,25 @@ $(function() {
         self.showError = false;
       },
       onNewFolderModalSubmit: function() {
+        // TODO: validate folder name
         // if (self.folderName.isValid()) {
-          var isExistFolder = _.find(self.folders, function(folder) {
-            return self.folderName == folder.name;
-          });
+        var isExistFolder = _.find(self.folders, function(folder) {
+          return self.folderName == folder.name;
+        });
 
-          if (isExistFolder) {
-            self.onNewFolderModalReset();
-          } else {
-            Kooboo.Media.createFolder({
-              path: self.crumbPath[self.crumbPath.length - 1].fullPath,
-              name: self.folderName
-            }).then(function(res) {
-              if (res.success) {
-                self.folders.push(new folderModel(res.model));
-                self.onNewFolderModalReset();
-              }
-            });
-          }
+        if (isExistFolder) {
+          self.onNewFolderModalReset();
+        } else {
+          Kooboo.Media.createFolder({
+            path: self.crumbPath[self.crumbPath.length - 1].fullPath,
+            name: self.folderName
+          }).then(function(res) {
+            if (res.success) {
+              self.folders.push(new folderModel(res.model));
+              self.onNewFolderModalReset();
+            }
+          });
+        }
         // } else {
         //   self.showError(true);
         // }
@@ -436,6 +439,9 @@ $(function() {
           });
         }
       });
+    },
+    beforeDestory: function() {
+      self = null;
     }
   });
 
