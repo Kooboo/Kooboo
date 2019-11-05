@@ -10,12 +10,14 @@ $(function() {
       var self = this;
       Kooboo.Dashboard.getItems().then(function(res) {
         if (res.success) {
-          res.model.forEach(function(item ,index ) {
+          res.model.forEach(function(item, index) {
             self.widgets.push(item);
           });
           self.$nextTick(function() {
-            waterfall(".block-dashboard-stat");
-            waterfall(".block-dashboard-stat"); // twice to fix bugs
+            // twice to fix bugs
+            for (var i = 0; i < 2; i++) {
+              waterfall(".block-dashboard-stat");
+            }
           });
         }
       });
