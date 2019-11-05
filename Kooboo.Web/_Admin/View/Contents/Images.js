@@ -83,7 +83,15 @@ $(function() {
         selectedFiles: [],
         newFolderModal: false,
         showError: false,
-        folderName: ""
+        folderForm: {
+          name: ""
+        },
+        folderRules: {
+          name: {
+            required: true,
+            message: 'test'
+          }
+        }
       };
     },
     beforeCreate: function() {
@@ -346,19 +354,22 @@ $(function() {
         }
       },
       onCreateFolder: function() {
-        self.folderName = "";
+        self.folderForm.name = "";
         self.newFolderModal = true;
       },
       onNewFolderModalReset: function() {
         self.newFolderModal = false;
-        self.folderName = "";
+        self.folderForm.name = "";
         self.showError = false;
       },
       onNewFolderModalSubmit: function() {
+        var test = self.$refs.folderForm.validate();
+        console.log(test);
+        return;
         // TODO: validate folder name
-        // if (self.folderName.isValid()) {
+        // if (self.folderForm.name.isValid()) {
         var isExistFolder = _.find(self.folders, function(folder) {
-          return self.folderName == folder.name;
+          return self.folderForm.name == folderForm.name;
         });
 
         if (isExistFolder) {
@@ -366,7 +377,7 @@ $(function() {
         } else {
           Kooboo.Media.createFolder({
             path: self.crumbPath[self.crumbPath.length - 1].fullPath,
-            name: self.folderName
+            name: self.folderForm.name
           }).then(function(res) {
             if (res.success) {
               self.folders.push(new folderModel(res.model));
@@ -477,9 +488,9 @@ $(function() {
     //     compare: function() {
     //       var list = [];
     //       _.forEach(self.folders(), function(folder) {
-    //         list.push(folder.name());
+    //         list.push(folderForm.name());
     //       });
-    //       list.push(self.folderName());
+    //       list.push(self.folderForm.name());
     //       return list;
     //     },
     //     message: Kooboo.text.validation.taken

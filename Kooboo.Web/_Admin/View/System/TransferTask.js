@@ -1,44 +1,70 @@
 (function() {
-  var transferTaskModel = function() {
-    var self = this;
-
-    this.getList = function() {
-      Kooboo.TransferTask.getList().then(function(res) {
-        if (res.success) {
-          var docs = res.model.map(function(item) {
-            var date = new Date(item.lastModified);
-            return {
-              id: item.id,
-              url: item.fullStartUrl,
-              date: date.toDefaultLangString()
-            };
-          });
-
-          self.tableData({
-            docs: docs,
-            columns: [
+  new Vue({
+    el: "#app",
+    data: function() {
+      return {
+        text: {
+          transferTask: Kooboo.text.common.TransferTask,
+          sites: Kooboo.text.component.breadCrumb.sites,
+          dashboard: Kooboo.text.component.breadCrumb.dashboard
+        },
+        tableData: [],
+        tableDataSelectedRows: []
+      };
+    },
+    created: function() {
+      this.breads = [
+        {
+          name: this.text.sites
+        },
+        {
+          name: this.text.dashboard
+        },
+        {
+          name: this.text.transferTask
+        }
+      ];
+      this.getTableData();
+    },
+    methods: {
+      selectedAllHandle: function(event) {
+        console.log(event);
+      },
+      selectedChange: function(event) {
+        console.log(event);
+      },
+      getTableData: function() {
+        var vm = this;
+        Kooboo.TransferTask.getList().then(function(res) {
+          if (res.success) {
+            res.model = [
               {
-                displayName: Kooboo.text.common.URL,
-                fieldName: "url",
-                type: "text"
+                id: 1,
+                fullStartUrl: "url 1",
+                lastModified: "October 13, 1975 11:13:00"
               },
               {
-                displayName: Kooboo.text.common.lastModified,
-                fieldName: "date",
-                type: "text"
+                id: 2,
+                fullStartUrl: "url 2",
+                lastModified: "October 13, 1975 11:13:00"
+              },
+              {
+                id: 3,
+                fullStartUrl: "url 3",
+                lastModified: "October 13, 1975 11:13:00"
               }
-            ],
-            actions: [],
-            kbType: Kooboo.TransferTask.name
-          });
-        }
-      });
-    };
-    this.getList();
-  };
-
-  transferTaskModel.prototype = new Kooboo.tableModel(Kooboo.TransferTask.name);
-  var vm = new transferTaskModel();
-
-  ko.applyBindings(vm, document.getElementById("main"));
+            ];
+            vm.tableData = res.model.map(function(item) {
+              var date = new Date(item.lastModified);
+              return {
+                id: item.id,
+                url: item.fullStartUrl,
+                date: date.toDefaultLangString()
+              };
+            });
+          }
+        });
+      }
+    }
+  });
 })();

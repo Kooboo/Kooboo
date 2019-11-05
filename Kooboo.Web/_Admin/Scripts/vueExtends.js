@@ -1,27 +1,56 @@
 Vue.prototype.Kooboo = Kooboo;
 
 // #region <kb-tooltip>
-Vue.directive("kb-tooltip", function(el, binding) {
-  let trigger = [];
-  if (binding.modifiers.focus) trigger.push("focus");
-  if (binding.modifiers.hover) trigger.push("hover");
-  if (binding.modifiers.click) trigger.push("click");
-  if (binding.modifiers.manual) trigger.push("manual");
-  trigger = trigger.join(" ");
+Vue.directive("kb-tooltip", {
+  bind: function(el, binding) {
+    let trigger = [];
+    if (binding.modifiers.focus) trigger.push("focus");
+    if (binding.modifiers.hover) trigger.push("hover");
+    if (binding.modifiers.click) trigger.push("click");
+    if (binding.modifiers.manual) trigger.push("manual");
+    trigger = trigger.join(" ");
 
-  $(el).tooltip({
-    title: binding.value,
-    placement: binding.arg,
-    trigger: trigger || "hover",
-    html: binding.modifiers.html,
-    template: binding.modifiers.error
-      ? `<div class="tooltip error" role="tooltip" style="z-index:199999">
-              <div class="tooltip-arrow"></div>
-              <div class="tooltip-inner"></div>
-            </div>`
-      : undefined,
-    container: "body"
-  });
+    $(el).tooltip({
+      title: binding.value,
+      placement: binding.arg,
+      trigger: trigger || "hover",
+      html: binding.modifiers.html,
+      template: binding.modifiers.error
+        ? `<div class="tooltip error" role="tooltip" style="z-index:199999">
+                <div class="tooltip-arrow"></div>
+                <div class="tooltip-inner"></div>
+              </div>`
+        : undefined,
+      container: "body"
+    });
+  },
+  inserted: function(el, binding) {
+    if (binding.modifiers.manual) {
+      setTimeout(function() {
+        $(el).tooltip("show");
+      });
+    }
+  },
+  update: function(el, binding) {
+    if (binding.value == binding.oldValue) return;
+    const $el = $(el);
+    if (binding.value) {
+      $el.attr("title", binding.value).tooltip("fixTitle");
+      var data = $el.data("bs.tooltip");
+      if (
+        data.inState.hover ||
+        data.inState.focus ||
+        data.inState.click ||
+        binding.modifiers.manual
+      )
+        $el.tooltip("show");
+    } else {
+      $el.tooltip("hide");
+    }
+  },
+  unbind: function(el) {
+    $(el).tooltip("destroy");
+  }
 });
 // #endregion </kb-tooltip>
 
