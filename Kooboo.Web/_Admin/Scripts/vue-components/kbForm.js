@@ -1,6 +1,6 @@
 (function() {
   var _rules = {
-    required: function(value, message) {
+    required: function(value) {
       if (
         value == undefined ||
         value == null ||
@@ -49,10 +49,10 @@
     methods: {
       validate: function() {
         this.outsideCalled = true;
-        this._validate();
+        return this._validate();
       },
       clearValid: function() {
-        for (let i = 0; i < this.formItems.length; i++) {
+        for (var i = 0; i < this.formItems.length; i++) {
           const item = this.formItems[i];
           item.valid = true;
           item.msg = "";
@@ -61,7 +61,7 @@
       },
       _validate: function() {
         var valid = true;
-        for (let i = 0; i < this.formItems.length; i++) {
+        for (var i = 0; i < this.formItems.length; i++) {
           const item = this.formItems[i];
 
           if (
@@ -72,7 +72,7 @@
             continue;
           }
 
-          let result = this.validField(
+          var result = this.validField(
             this.model[item.prop],
             this.rules[item.prop]
           );
@@ -85,7 +85,7 @@
       },
       validField: function(prop, rules) {
         var result = { valid: true, msg: "" };
-        for (let i = 0; i < rules.length; i++) {
+        for (var i = 0; i < rules.length; i++) {
           const item = rules[i];
           for (const key in _rules) {
             if (item.hasOwnProperty(key)) {

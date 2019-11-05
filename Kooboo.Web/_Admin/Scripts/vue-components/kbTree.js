@@ -2,7 +2,7 @@
 (function() {
     Vue.component("kb-tree", {
         template: Kooboo.getTemplate(
-            "/_Admin/Scripts/vue-components/kb-tree/kb-tree.html"
+            "/_Admin/Scripts/vue-components/kb-tree/kbTree.html"
         ),
         props: {
             nodes: {type: Array}
@@ -71,7 +71,7 @@
                         }
                     })
                 });
-            },
+            }
         }
     });
 })();
