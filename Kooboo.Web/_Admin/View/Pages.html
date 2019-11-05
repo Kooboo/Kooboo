@@ -57,8 +57,32 @@
           <h4 class="modal-title">Import</h4>
         </div>
         <div class="modal-body">
-          <kb-form :model="importForm" :rules="importFormRules" ref="f1">
-            <kb-form-item prop="pageUrl">
+          <kb-form
+            :model="importForm"
+            :rules="importFormRules"
+            ref="importForm"
+          >
+            <kb-form-item>
+              <label class="control-label col-md-3">From</label>
+              <div class="col-md-9">
+                <label class="radio-inline">
+                  <input
+                    type="radio"
+                    value="url"
+                    v-model="importForm.from"
+                  />URL</label
+                >
+                <label class="radio-inline">
+                  <input
+                    type="radio"
+                    value="file"
+                    v-model="importForm.from"
+                  />File</label
+                >
+              </div>
+            </kb-form-item>
+
+            <kb-form-item v-show="importForm.from=='url'" prop="pageUrl">
               <label class="control-label col-md-3">Page URL</label>
               <div class="col-md-9">
                 <input
@@ -69,56 +93,26 @@
                 />
               </div>
             </kb-form-item>
-          </kb-form>
-          <form>
-            <div class="form-horizontal">
-              <div class="form-group">
-                <label class="control-label col-md-3">From</label>
-                <div class="col-md-9">
-                  <label class="radio-inline">
-                    <input
-                      type="radio"
-                      value="url"
-                      v-model="importForm.from"
-                    />URL</label
-                  >
-                  <label class="radio-inline">
-                    <input
-                      type="radio"
-                      value="file"
-                      v-model="importForm.from"
-                    />File</label
-                  >
-                </div>
+
+            <kb-form-item v-show="importForm.from=='url'" prop="name">
+              <label class="control-label col-md-3">URL</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Input page path"
+                  v-model="importForm.name"
+                />
               </div>
-              <div class="form-group" v-show="importForm.from=='url'">
-                <label class="control-label col-md-3">Page URL</label>
-                <div class="col-md-9">
+            </kb-form-item>
+
+            <kb-form-item v-show="importForm.from=='file'">
+              <label class="control-label col-md-3">File</label>
+              <div class="col-md-9">
+                <a class="btn btn-default btn-file">
                   <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Input page URL"
-                  />
-                </div>
-              </div>
-              <div class="form-group" v-show="importForm.from=='url'">
-                <label class="control-label col-md-3">URL</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    class="form-control"
-                    data-bind="textInput: importBasePath, error: importBasePath"
-                    placeholder="Input page path"
-                  />
-                </div>
-              </div>
-              <div class="form-group" v-show="importForm.from=='file'">
-                <label class="control-label col-md-3">File</label>
-                <div class="col-md-9">
-                  <a class="btn btn-default btn-file">
-                    <input
-                      type="file"
-                      data-bind="upload: {
+                    type="file"
+                    data-bind="upload: {
                                         allowMultiple: false,
                                         acceptTypes: [
                                             'application/pdf',
@@ -139,14 +133,13 @@
                                         acceptSuffix: ['html', 'htm', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip'],
                                         callback: uploadFile
                                     }"
-                    />
-                    <span>Select file</span>
-                  </a>
-                  <span>Support types: HTML, PDF, Word, Excel, PPT, ZIP</span>
-                </div>
+                  />
+                  <span>Select file</span>
+                </a>
+                <span>Support types: HTML, PDF, Word, Excel, PPT, ZIP</span>
               </div>
-            </div>
-          </form>
+            </kb-form-item>
+          </kb-form>
         </div>
         <div class="modal-footer">
           <button
@@ -353,11 +346,34 @@
         importForm: {
           from: "url",
           siteId: Kooboo.getQueryString("SiteId"),
-          pageUrl: "1", // self.importPageUrl(),
+          pageUrl: "", // self.importPageUrl(),
           name: "" // self.importBasePath()
         },
         importFormRules: {
-          pageUrl: [{ required: "", message: "aa" }]
+          pageUrl: [
+            { required: Kooboo.text.validation.required },
+            {
+              pattern: /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+              message: Kooboo.text.validation.urlInvalid
+            }
+          ],
+          name: [
+            { required: Kooboo.text.validation.required },
+            {
+              pattern: /^[^\s|\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\=|\||\[|\]|\;|\:|\"|\'|\,|\<|\>|\?]*$/,
+              message: Kooboo.text.validation.urlInvalid
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            }
+          ]
         },
         showImportModal: false
       };
@@ -403,13 +419,13 @@
     },
     methods: {
       onImportSubmit: function(e) {
-        this.$refs.f1.validate();
+        this.$refs.importForm.validate();
       },
       onShowRouterManager() {}
     },
     watch: {
-      showImportModal: function() {
-        this.$refs.f1.clearValid();
+      showImportModal: function(value) {
+        if (!value) this.$refs.importForm.clearValid();
       }
     }
   });

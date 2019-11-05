@@ -1,6 +1,6 @@
 (function() {
   var _rules = {
-    required: function(value) {
+    required: function(value, message) {
       if (
         value == undefined ||
         value == null ||
@@ -16,14 +16,14 @@
     min: function(value, min) {
       if (typeof value == "number") {
         return value >= min;
-      } else if (value instanceof String) {
+      } else if (value.length != undefined) {
         return value.length >= min;
       }
     },
     max: function(value, max) {
       if (typeof value == "number") {
         return value <= max;
-      } else if (value instanceof String) {
+      } else if (value.length != undefined) {
         return value.length <= max;
       }
     },
@@ -60,6 +60,7 @@
         this.outsideCalled = false;
       },
       _validate: function() {
+        var valid = true;
         for (let i = 0; i < this.formItems.length; i++) {
           const item = this.formItems[i];
 
@@ -76,9 +77,11 @@
             this.rules[item.prop]
           );
 
+          if (!result.valid) valid = false;
           item.valid = result.valid;
           item.msg = result.msg;
         }
+        return valid;
       },
       validField: function(prop, rules) {
         var result = { valid: true, msg: "" };
@@ -88,7 +91,7 @@
             if (item.hasOwnProperty(key)) {
               if (!_rules[key](prop, item[key])) {
                 result.valid = false;
-                result.msg = item.message;
+                result.msg = item.message || item[key];
                 return result;
               }
             }
@@ -120,7 +123,7 @@
 
   Vue.component("kb-form-item", {
     template: `
-    <div class="form-group" :class="{'has-error':!valid}" ref="formGroup" v-kb-tooltip:right.manual.error="msg">
+    <div class="form-group" :class="{'has-error':!valid}" v-kb-tooltip:right.manual.error="msg">
         <slot></slot>
     </div>`,
     props: {
