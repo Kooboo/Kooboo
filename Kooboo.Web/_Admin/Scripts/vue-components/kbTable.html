@@ -1,229 +1,44 @@
-<div class="table-responsive">
-    <table data-bind="css: tableClass">
-        <thead>
-            <tr>
-                <!-- ko ifnot: unselectable -->
-                <th class="table-checkbox">
-                    <input data-bind="checked: allSelected, enable: enableAllSelected" type="checkbox" />
-                </th>
-                <!-- /ko -->
-                <!-- ko foreach: columns -->
-                <th data-bind="text: $data.displayName, css: $data.showClass"></th>
-                <!-- /ko -->
-                <!-- ko if: tableActions().length -->
-                <th data-bind="attr: { colspan: tableActions().length }" class="table-action"></th>
-                <!-- /ko -->
-            </tr>
-        </thead>
-        <!-- ko if: docs().length -->
-        <tbody data-bind="foreach: { data: docs, as: 'doc', afterRender: afterTableRendered }">
-            <tr data-bind="click: $parent.onSelectCurrentDoc">
-                <!-- ko ifnot: $parent.unselectable -->
-                <td>
-                    <input data-bind="checked: doc.selected, click: doc.onSelect, value: doc.id, attr: { disabled:  doc.unselectable }" type="checkbox">
-                </td>
-                <!-- /ko -->
-
-                <!-- ko foreach: { data: $parent.columns, as: 'col' } -->
-
-                <!-- ko if: col.type == 'text' -->
-                <td data-bind="text: doc[col.fieldName]"></td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'summary' -->
-                <td class="summary">
-                    <a href="javascript:;" data-bind="click: doc[col.fieldName].url && $component.linkTo.bind(doc, doc[col.fieldName].url(), doc[col.fieldName]['newWindow']), clickBubble: false">
-                        <p data-bind="text: doc[col.fieldName].title, css: doc[col.fieldName].class,"></p>
-                        <p data-bind="text: doc[col.fieldName].description"></p>
-                    </a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'communication-article' -->
-                <td class="summary">
-                    <a href="javascript:;" data-bind="click: $component.communicate.bind(doc, doc[col.fieldName].url, { id: doc.id() }), clickBubble: false">
-                        <p data-bind="text: doc[col.fieldName].title, css: doc[col.fieldName].class,"></p>
-                        <p data-bind="text: doc[col.fieldName].description"></p>
-                    </a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'img' -->
-                <td>
-                    <img data-bind="visible: doc[col.fieldName].src, attr: { src: doc[col.fieldName].src }">
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'thumbnail' -->
-                <td class="table-thumbnail">
-                    <!-- ko if: doc[col.fieldName].src -->
-                    <a data-bind="click: $component.linkTo.bind(doc, doc[col.fieldName].previewUrl(), doc[col.fieldName]['newWindow']), clickBubble: false" style="cursor: pointer">
-                        <div class="thumbnail-fixed">
-                            <div class="img-wrap"></div>
-                            <img data-bind="attr: { src: doc[col.fieldName].src }">
-                        </div>
-                    </a>
-                    <!-- /ko -->
-                    <!-- ko if: !doc[col.fieldName].src() -->
-                    <div style="text-align: center">-</div>
-                    <!-- /ko -->
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'icon' -->
-                <td style="width: 20px">
-                    <i data-bind="css: doc[col.fieldName].class, attr: { title: doc[col.fieldName].title ? doc[col.fieldName].title : '' }" class="fa"></i>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'icon-text' -->
-                <td data-bind="attr: { title: doc[col.fieldName].title() ? (doc[col.fieldName].title() + ' - ' + doc[col.fieldName].text()) : doc[col.fieldName].text() }">
-                    <i data-bind="css: doc[col.fieldName].iconClass" class="fa"></i>
-                    <!-- ko text: doc[col.fieldName].text -->
-                    <!-- /ko -->
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'badge' -->
-                <td>
-                    <span data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class" class="badge"></span>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'link-badge' -->
-                <td>
-                    <a data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class, click: $component.linkTo.bind(doc, doc[col.fieldName].url(), doc[col.fieldName]['newWindow']), clickBubble: false" class="badge"></a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'label' -->
-                <td>
-                    <span data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class, style: { background: doc[col.fieldName].bgColor }, tooltip: doc[col.fieldName].tooltip" class="label"></span>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'array' -->
-                <td>
-                    <!-- ko foreach: { data: doc[col.fieldName].data, as: 'cell' } -->
-                    <a href="javascript:;" data-bind="text: cell, css: doc[col.fieldName].class"></a>
-                    <!-- /ko -->
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'link' -->
-                <!-- ko if: doc[col.fieldName] -->
-                <td>
-                    <a data-bind="text: doc[col.fieldName].text, attr: { title: doc[col.fieldName].title ? doc[col.fieldName].title : '' }, click: $component.linkTo.bind(doc, doc[col.fieldName].url(), doc[col.fieldName]['newWindow']), clickBubble: false" style="cursor: pointer"></a>
-                </td>
-                <!-- /ko -->
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'communication-link' -->
-                <td>
-                    <a data-bind="text: doc[col.fieldName].text, click: $component.communicate.bind(doc, doc[col.fieldName].url, doc.id()), clickBubble: false" href="javascript:;"></a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'communication-badge' -->
-                <td>
-                    <!-- ko if: doc[col.fieldName].text() == "NO_VALUE" -->
-                    <span>-</span>
-                    <!-- /ko -->
-                    <!-- ko ifnot: doc[col.fieldName].text() == "NO_VALUE" -->
-                    <a data-bind="click: $component.communicate.bind(doc, doc[col.fieldName].url, doc.id()), clickBubble: false, text: doc[col.fieldName].text, css: doc[col.fieldName].class" class="badge"></a>
-                    <!-- /ko -->
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'communication-label' -->
-                <td>
-                    <a class="label" data-bind="text: doc[col.fieldName].text, click: $component.communicate.bind(doc, doc[col.fieldName].url, doc.id()), clickBubble: false, css: doc[col.fieldName].class" href="javascript:;"></a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'btn' -->
-                <td>
-                    <a data-bind="text: col.displayName, click: $component.linkTo.bind(doc, doc[col.fieldName].url()), clickBubble: false" class="btn btn-sm blue"></a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'communication-icon-btn' -->
-                <td>
-                    <a href="javascript:;" data-bind="css: doc[col.fieldName].class ? doc[col.fieldName].class : 'blue', click: $component.communicate.bind(doc, doc[col.fieldName].url, doc.id())" class="btn">
-                    </a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'communication-refer' -->
-                <td data-bind="foreach: doc[col.fieldName + 'Types']">
-                    <a class="label label-sm kb-table-label-refer" data-bind="text: doc[col.fieldName][$data]() + ' ' + Kooboo.text.component.table[$data.toLowerCase()], click: $component.communicate.bind(doc, doc[col.fieldName+'Comm'], { id: doc.id(), by: $data, type: $component.kbType() }), clickBubble: false, style: { background: Kooboo.getLabelColor($data) }"></a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'editable' -->
-                <td data-bind="css: doc[col.fieldName].showClass">
-                    <a data-bind="text: doc[col.fieldName].value, attr: { 'data-url': doc[col.fieldName].updateUrl, 'data-culture': doc[col.fieldName].culture, 'data-pk': 0 }, clickBubble: false" data-inline-edit="true" href="javascript:;"></a>
-                </td>
-                <!-- /ko -->
-
-                <!-- ko if: col.type == 'progressor' -->
-                <!-- ko if: doc[col.fieldName] -->
-                <td data-bind="component: {
-                    name: 'kb-upload-progressor', 
-                    params: {
-                        percentage: doc[col.fieldName].value()
-                    } 
-                }" colspan="50"></td>
-                <!-- /ko -->
-                <!-- /ko -->
-
-                <!-- /ko -->
-
-                <!-- ko if: $parent.tableActions().length -->
-                <!-- ko foreach: { data: $parent.tableActions, as: 'action' } -->
-                <td class="table-action">
-
-                    <!-- ko if: action.type == "link-icon" -->
-                    <!-- ko if: doc[action.fieldName] -->
-                    <a data-bind="css: doc[action.fieldName].class ? doc[action.fieldName].class : 'blue', attr: { title: doc[action.fieldName].title }, click: $component.linkTo.bind(doc, doc[action.fieldName].url(), doc[action.fieldName]['newWindow']), clickBubble: false"
-                        class="btn btn-xs">
-                        <i data-bind="css: doc[action.fieldName].iconClass" class="fa"></i>
-                    </a>
-                    <!-- /ko -->
-                    <!-- /ko -->
-
-                    <!-- ko if: action.type == "link-btn" -->
-                    <!-- ko if: doc[action.fieldName] -->
-                    <a data-bind="text: doc[action.fieldName].text, click: $component.linkTo.bind(doc, doc[action.fieldName].url(), doc[action.fieldName]['newWindow']), css: doc[action.fieldName].class ? doc[action.fieldName].class : 'blue' ,clickBubble: false" class="btn btn-sm"></a>
-                    <!-- /ko -->
-                    <!-- /ko -->
-
-                    <!-- ko if: action.type == "communication-btn" -->
-                    <!-- ko if: doc[action.fieldName] -->
-                    <a data-bind="text: doc[action.fieldName].text, click: $component.communicate.bind(doc, doc[action.fieldName].url, { id: doc.id() }), css: doc[action.fieldName].class? doc[action.fieldName].class : 'blue' ,clickBubble: false" class="btn btn-sm"></a>
-                    <!-- /ko -->
-                    <!-- /ko -->
-
-                    <!-- ko if: action.type == "communication-icon-btn" -->
-                    <!-- ko if: doc[action.fieldName] -->
-                    <a data-bind="click: $component.communicate.bind(doc, doc[action.fieldName].url, { id: doc.id() }), css: doc[action.fieldName].class? doc[action.fieldName].class : 'blue' ,clickBubble: false, attr: { title: doc[action.fieldName].title }" class="btn btn-xs">
-                        <i class="fa" data-bind="css: doc[action.fieldName].iconClass"></i>
-                    </a>
-                    <!-- /ko -->
-                    <!-- /ko -->
-
-                </td>
-                <!-- /ko -->
-                <!-- /ko -->
-            </tr>
-        </tbody>
-        <!-- /ko -->
-        <!-- ko ifnot: docs().length -->
-        <tbody>
-            <tr>
-                <td colspan="100" class="text-center" data-bind="text: Kooboo.text.common.empty, attr: { colspan: columns().length + tableActions().length + (unselectable() ? 0 : 1)}"></td>
-            </tr>
-        </tbody>
-        <!-- /ko -->
-    </table>
-</div>
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th v-if="showSelect" class="table-checkbox">
+            <input
+                    type="checkbox"
+                    @input="selectedAll"
+                    :checked="data.length == selected.length"
+            />
+        </th>
+        <template v-for="(item, index) in slots">
+            <th
+                    :key="index"
+                    v-if="item.componentInstance"
+                    :style="{ width: item.componentInstance.width }"
+            >
+                <template>
+                    {{ item.componentInstance.label }}
+                </template>
+            </th>
+        </template>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="(row, rowIndex) in data" :key="rowIndex" @click="selectRow(row)">
+        <td v-if="showSelect" class="table-checkbox">
+            <input type="checkbox" :checked="itemIsSelected(row)" />
+        </td>
+        <template v-for="(item, index) in slots">
+            <td v-if="item.componentInstance" :key="index">
+                <template v-if="item.componentInstance.prop">
+                    {{ row[item.componentInstance.prop] }}
+                </template>
+                <template v-else>
+                    <kb-table-column
+                            :customSlot="item.componentInstance.$scopedSlots.default(row)"
+                    ></kb-table-column>
+                </template>
+            </td>
+        </template>
+    </tr>
+    </tbody>
+    <slot></slot>
+</table>
