@@ -6,8 +6,14 @@
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a class="btn green navbar-btn" :href="createNewPageUrl">New page</a>
-      <a class="btn green navbar-btn" :href="createNewConntentPageUrl"
+      <a
+        class="btn green navbar-btn"
+        :href="Kooboo.Route.Get(Kooboo.Route.Page.EditPage)"
+        >New page</a
+      >
+      <a
+        class="btn green navbar-btn"
+        :href="Kooboo.Route.Get(Kooboo.Route.Page.EditRichText)"
         >New rich text page</a
       >
       <div class="btn-group navbar-btn">
@@ -23,6 +29,7 @@
       <a class="btn green navbar-btn" @click="showImportModal=true">Import</a>
       <a
         class="btn green navbar-btn"
+        @click="showCopyModal=true"
         data-bind="click: onShowCopyModal, visible: showCopyBtn"
         >Copy</a
       >
@@ -36,11 +43,97 @@
         class="btn btn-default navbar-btn pull-right"
         style="margin-right:0"
         v-kb-tooltip:left="Kooboo.text.tooltip.pageRouterManager"
-        @click="onShowRouterManager"
+        @click="showRouterManagerModal=true"
         ><i class="fa fa-gear"></i
       ></a>
     </div>
   </div>
+
+  <kb-table v-if="model.pages" showSelect :selected.sync="selectedRows">
+    <kb-table-column width="40px">
+      <template v-slot="row">
+        <i class="fa fa-home fa-lg" v-show="row.startPage"></i>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.common.name" prop="name">
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.site.page.linked">
+      <template v-slot="row">
+        <span class="badge badge-primary">
+          {{ row.linked }}
+        </span>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.site.page.online">
+      <template v-slot="row">
+        <span :class="onlineClass(row.online)">
+          {{ row.online ? Kooboo.text.online.yes : Kooboo.text.online.no }}
+        </span>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.site.page.references">
+      <template v-slot="row">
+        <a
+          class="label label-sm kb-table-label-refer"
+          :style="{
+                background: Kooboo.getLabelColor(item.key.toLowerCase())
+              }"
+          v-for="(item, index) in conventObjectToList(row.relations)"
+          :key="index"
+          @click.stop="relationClick(item.key, row.id, Kooboo.Page.name)"
+        >
+          {{
+                `${item.value} ${
+                  Kooboo.text.component.table[item.key.toLowerCase()]
+                }`
+          }}
+        </a>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.common.lastModified">
+      <template v-slot="row">
+        <span>
+          {{ new Date(row.lastModified).toDefaultLangString() }}
+        </span>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.common.preview">
+      <template v-slot="row">
+        <kb-button class="btn-link" :href="row.previewUrl" target="_blank">
+          {{ row.path }}
+        </kb-button>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column align="right">
+      <template v-slot="row">
+        <kb-button class="blue" @click="settingClick(row)">{{
+          Kooboo.text.common.setting
+        }}</kb-button>
+        <kb-button class="btn-primary" :href="row.inlineUrl" target="_blank">{{
+          Kooboo.text.site.page.design
+        }}</kb-button>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column width="10px">
+      <template v-slot="row">
+        <kb-button
+          v-if="!isLocal()"
+          class="btn-default btn-xs"
+          icon="fa fa-qrcode"
+          @click.stop="qrCodeClick(row.previewUrl)"
+        ></kb-button>
+      </template>
+    </kb-table-column>
+  </kb-table>
+
   <div
     class="modal fade"
     data-backdrop="static"
@@ -51,15 +144,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">
+          <button type="button" class="close" @click="onHideImportModal">
             <i class="fa fa-close"></i>
           </button>
           <h4 class="modal-title">Import</h4>
         </div>
         <div class="modal-body">
           <kb-form
-            :model="importForm"
-            :rules="importFormRules"
+            :model="importModel"
+            :rules="importModelRules"
             ref="importForm"
           >
             <kb-form-item>
@@ -69,70 +162,51 @@
                   <input
                     type="radio"
                     value="url"
-                    v-model="importForm.from"
+                    v-model="importFrom"
                   />URL</label
                 >
                 <label class="radio-inline">
                   <input
                     type="radio"
                     value="file"
-                    v-model="importForm.from"
+                    v-model="importFrom"
                   />File</label
                 >
               </div>
             </kb-form-item>
 
-            <kb-form-item v-show="importForm.from=='url'" prop="pageUrl">
+            <kb-form-item v-show="importFrom=='url'" prop="pageUrl">
               <label class="control-label col-md-3">Page URL</label>
               <div class="col-md-9">
                 <input
                   type="text"
                   class="form-control"
                   placeholder="Input page URL"
-                  v-model="importForm.pageUrl"
+                  v-model="importModel.pageUrl"
                 />
               </div>
             </kb-form-item>
 
-            <kb-form-item v-show="importForm.from=='url'" prop="name">
+            <kb-form-item v-show="importFrom=='url'" prop="name">
               <label class="control-label col-md-3">URL</label>
               <div class="col-md-9">
                 <input
                   type="text"
                   class="form-control"
                   placeholder="Input page path"
-                  v-model="importForm.name"
+                  v-model="importModel.name"
                 />
               </div>
             </kb-form-item>
 
-            <kb-form-item v-show="importForm.from=='file'">
+            <kb-form-item v-show="importFrom=='file'">
               <label class="control-label col-md-3">File</label>
               <div class="col-md-9">
                 <a class="btn btn-default btn-file">
                   <input
                     type="file"
-                    data-bind="upload: {
-                                        allowMultiple: false,
-                                        acceptTypes: [
-                                            'application/pdf',
-                                            'application/msword', 
-                                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                                            'application/vnd.ms-word.document.macroEnabled.12',
-                                            'application/msexcel', 
-                                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                            'application/vnd.ms-powerpoint', 
-                                            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                                            'application/x-rar-compressed', 
-                                            'application/octet-stream',
-                                            'application/x-zip-compressed',
-                                            'application/zip',
-                                            'application/octet-stream',
-                                            'text/html'
-                                        ],
-                                        acceptSuffix: ['html', 'htm', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip'],
-                                        callback: uploadFile
-                                    }"
+                    :accept="accept"
+                    @input="selectedFile($event.target.files)"
                   />
                   <span>Select file</span>
                 </a>
@@ -144,11 +218,169 @@
         <div class="modal-footer">
           <button
             class="btn green"
-            v-show="importForm.from=='url'"
+            v-show="importFrom=='url'"
             @click="onImportSubmit"
             >Start</button
           >
+          <button class="btn gray" @click="onHideImportModal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="showCopyModal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <i class="fa fa-close"></i>
+          </button>
+          <h4 class="modal-title">{{
+            Kooboo.text.site.page.copyPage + ": "
+          }}</h4>
+        </div>
+        <div class="modal-body">
+          <kb-form :model="copyModel" :rules="copyModelRules" ref="copyForm">
+            <kb-form-item prop="name">
+              <label class="control-label col-md-3">Name</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="copyModel.name"
+                />
+              </div>
+            </kb-form-item>
+            <kb-form-item prop="url">
+              <label class="control-label col-md-3">URL</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="copyModel.url"
+                />
+              </div>
+            </kb-form-item>
+          </kb-form>
+        </div>
+        <div class="modal-footer">
+          <button @click="onStartCopy" class="btn green">Start</button>
           <button class="btn gray" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="showRouterManagerModal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" @click="showRouterManagerModal = false">
+            <i class="fa fa-close"></i>
+          </button>
+          <h4 class="modal-title">Route setting</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="alert alert-info alert-dismissable">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <i class="fa fa-close"></i>
+              </button>
+              <strong>Redirect routes</strong>
+              <p>
+                Set the redirect pages for default home page, 404 and error
+                pages
+              </p>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-3">Home page</label>
+              <div class="col-md-9">
+                <select v-model="routerModel.startPage" class="form-control">
+                  <option
+                    v-for="(item,index) in indexRouterSelection"
+                    :key="index"
+                    :value="item.id"
+                    >{{ item.path }}</option
+                  >
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-3">404 page</label>
+              <div class="col-md-9">
+                <select v-model="routerModel.notFound" class="form-control">
+                  <option
+                    v-for="(item,index) in routerSelection"
+                    :key="index"
+                    :value="item.id"
+                    >{{ item.path }}</option
+                  >
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-3">Error page</label>
+              <div class="col-md-9">
+                <select v-model="routerModel.error" class="form-control">
+                  <option
+                    v-for="(item,index) in routerSelection"
+                    :key="index"
+                    :value="item.id"
+                    >{{ item.path }}</option
+                  >
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn green" @click="saveRouterManager">Save</button>
+          <button class="btn gray" @click="showRouterManagerModal = false"
+            >Cancel</button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="showQRCodeModal"
+  >
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" @click="showQRCodeModal=false">
+            <i class="fa fa-close"></i>
+          </button>
+          <h4 class="modal-title">{{
+            Kooboo.text.site.page.previewInMobile
+          }}</h4>
+        </div>
+        <div class="modal-body">
+          <div id="qr-code" style="text-align:center"></div>
+        </div>
+        <div class="modal-footer">
+          <button @click="showQRCodeModal=false">{{
+            Kooboo.text.common.OK
+          }}</button>
         </div>
       </div>
     </div>
@@ -157,156 +389,8 @@
 
 <div data-bind="component: { name: 'kb-table', params: tableData }"></div>
 
-<div
-  data-bind="modal: showRouterManager"
-  class="modal fade"
-  data-backdrop="static"
-  data-keyboard="false"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="close" data-bind="click: hideRouterManager">
-          <i class="fa fa-close"></i>
-        </button>
-        <h4 class="modal-title">Route setting</h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-horizontal">
-          <div class="alert alert-info alert-dismissable">
-            <button
-              type="button"
-              class="close"
-              data-dismiss="alert"
-              aria-label="Close"
-            >
-              <i class="fa fa-close"></i>
-            </button>
-            <strong>Redirect routes</strong>
-            <p>
-              Set the redirect pages for default home page, 404 and error pages
-            </p>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">Home page</label>
-            <div class="col-md-9">
-              <select
-                data-bind="value: defaultPage, options: IndexRouterSelection, optionsValue: 'id', optionsText: 'path'"
-                class="form-control"
-              ></select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">404 page</label>
-            <div class="col-md-9">
-              <select
-                data-bind="value: notFoundPage, options: RouterSelection, optionsValue: 'id', optionsText: 'path'"
-                class="form-control"
-              ></select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">Error page</label>
-            <div class="col-md-9">
-              <select
-                data-bind="value: errorPage, options: RouterSelection, optionsValue: 'id', optionsText: 'path'"
-                class="form-control"
-              ></select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn green" data-bind="click: saveRouterManager">
-          Save
-        </button>
-        <button class="btn gray" data-bind="click: hideRouterManager">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 <div data-bind="component: { name: 'kb-relation-modal' }"></div>
-<div
-  data-bind="modal: copyModal"
-  class="modal fade"
-  data-backdrop="static"
-  data-keyboard="false"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="close" data-bind="click: onHideCopyModal">
-          <i class="fa fa-close"></i>
-        </button>
-        <h4
-          class="modal-title"
-          data-bind="text: Kooboo.text.site.page.copyPage + ': ' + copyPage().name"
-        ></h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-horizontal">
-          <div class="form-group">
-            <label class="control-label col-md-3">Name</label>
-            <div class="col-md-9">
-              <input
-                type="text"
-                data-bind="value: copyName, error: copyName"
-                class="form-control"
-              />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">URL</label>
-            <div class="col-md-9">
-              <input
-                type="text"
-                data-bind="value: copyRoute, error: copyRoute"
-                class="form-control"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button data-bind="click: onStartCopy" class="btn green">Start</button>
-        <button data-bind="click: onHideCopyModal" class="btn gray">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<div
-  data-bind="modal: showQRCodeModal"
-  class="modal fade"
-  data-backdrop="static"
-  data-keyboard="false"
->
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="close" data-bind="click: hideQRCodeModal">
-          <i class="fa fa-close"></i>
-        </button>
-        <h4
-          class="modal-title"
-          data-bind="text: Kooboo.text.site.page.previewInMobile"
-        ></h4>
-      </div>
-      <div class="modal-body">
-        <div id="qr-code" style="text-align:center"></div>
-      </div>
-      <div class="modal-footer">
-        <button
-          data-bind="click: hideQRCodeModal, text: Kooboo.text.common.OK"
-          class="btn btn-default"
-        ></button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <div k-if="kooboosetting.IsLocal=true">
   <input type="hidden" name="local" id="isLocalKooboo" />
 </div>
@@ -316,6 +400,7 @@
       "/_Admin/Scripts/components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbForm.js",
+      "/_Admin/Scripts/vue-components/kb-table.js",
       "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/components/kbTable.js",
@@ -343,13 +428,46 @@
           }
         ],
         model: {},
-        importForm: {
-          from: "url",
+        selectedRows: [],
+        importFrom: "url",
+        importModel: {
           siteId: Kooboo.getQueryString("SiteId"),
-          pageUrl: "", // self.importPageUrl(),
-          name: "" // self.importBasePath()
+          pageUrl: "",
+          name: ""
         },
-        importFormRules: {
+        copyModel: {
+          id: "",
+          name: "",
+          url: ""
+        },
+        routerModel: {
+          startPage: "",
+          notFound: "",
+          error: ""
+        },
+        copyModelRules: {
+          name: [
+            { required: Kooboo.text.validation.required },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            }
+          ],
+          url: [
+            { required: Kooboo.text.validation.required },
+            {
+              pattern: /^[^\s|\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\=|\||\[|\]|\;|\:|\"|\'|\,|\<|\>|\?]*$/,
+              message: Kooboo.text.validation.urlInvalid
+            }
+          ]
+        },
+        importModelRules: {
           pageUrl: [
             { required: Kooboo.text.validation.required },
             {
@@ -375,16 +493,29 @@
             }
           ]
         },
-        showImportModal: false
+        showImportModal: false,
+        showCopyModal: false,
+        showRouterManagerModal: false,
+        showQRCodeModal: false,
+        accept: [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.ms-word.document.macroEnabled.12",
+          "application/msexcel",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.ms-powerpoint",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "application/x-rar-compressed",
+          "application/octet-stream",
+          "application/x-zip-compressed",
+          "application/zip",
+          "application/octet-stream",
+          "text/html"
+        ]
       };
     },
     computed: {
-      createNewPageUrl: function() {
-        return Kooboo.Route.Get(Kooboo.Route.Page.EditPage);
-      },
-      createNewConntentPageUrl: function() {
-        return Kooboo.Route.Get(Kooboo.Route.Page.EditRichText);
-      },
       layouts: function() {
         var list = [];
 
@@ -407,6 +538,23 @@
         }
 
         return list;
+      },
+      routerSelection: function() {
+        var arr = [
+          {
+            id: Kooboo.Guid.Empty,
+            path: Kooboo.text.site.page.systemDefault
+          }
+        ];
+
+        if (this.model.pages) {
+          arr = arr.concat(this.model.pages);
+        }
+
+        return arr;
+      },
+      indexRouterSelection: function() {
+        return this.model.pages || [];
       }
     },
     mounted: function() {
@@ -418,14 +566,79 @@
       });
     },
     methods: {
-      onImportSubmit: function(e) {
-        this.$refs.importForm.validate();
+      onHideImportModal: function() {
+        this.showImportModal = false;
+        this.$refs.importForm.clearValid();
       },
-      onShowRouterManager() {}
+      onImportSubmit: function() {
+        if (this.$refs.importForm.validate()) {
+          var me = this;
+          Kooboo.Transfer.singlePage(this.importModel).then(function(res) {
+            if (res.success) {
+              me.model.pages.push(res.model);
+              me.showImportModal = false;
+            }
+          });
+        }
+      },
+      saveRouterManager: function() {
+        var me = this;
+        Kooboo.Page.defaultRouteUpdate(this.routerModel).then(function(res) {
+          if (res.success) {
+            Kooboo.Page.getAll().then(function(res) {
+              if (res.success) {
+                window.info.show(Kooboo.text.info.update.success, true);
+                me.model.pages = res.model.pages;
+                me.showRouterManagerModal = false;
+              }
+            });
+          }
+        });
+      },
+      selectedFile: function(files) {
+        if (files.length) {
+          var formdata = new FormData();
+          var me = this;
+          formdata.append("file", files[0]);
+          Kooboo.Page.ConvertFile(formdata).then(function(res) {
+            if (res.success) {
+              Kooboo.Page.getAll().then(function(res) {
+                if (res.success) {
+                  window.info.show(Kooboo.text.info.upload.success, true);
+                  me.model.pages = res.model.pages;
+                  me.showImportModal = false;
+                }
+              });
+            }
+          });
+        }
+      },
+      onStartCopy: function() {
+        if (this.$refs.copyForm.validate()) {
+          var me = this;
+          Kooboo.Page.Copy(this.copyModel).then(function(res) {
+            if (res.success) {
+              me.model.pages.push(res.model);
+              window.info.show(Kooboo.text.info.copy.success, true);
+            } else {
+              window.info.show(Kooboo.text.info.copy.fail, false);
+            }
+          });
+        }
+      }
     },
     watch: {
-      showImportModal: function(value) {
-        if (!value) this.$refs.importForm.clearValid();
+      importFrom: function(value) {
+        if (value == "file") this.$refs.importForm.clearValid();
+      },
+      showRouterManagerModal: function(value) {
+        if (!value) return;
+        var me = this;
+        Kooboo.Page.getDefaultRoute().then(function(res) {
+          if (res.success) {
+            me.routerModel = res.model;
+          }
+        });
       }
     }
   });
