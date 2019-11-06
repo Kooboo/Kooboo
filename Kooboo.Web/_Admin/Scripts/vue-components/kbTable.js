@@ -8,7 +8,7 @@
       width: String,
       customSlot: Array,
       align: String,
-      className: String | Array
+      headClass: String | Array
     },
     render: function(h) {
       return h("div", this.customSlot);
