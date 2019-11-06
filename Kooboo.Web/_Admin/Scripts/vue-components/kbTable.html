@@ -13,6 +13,8 @@
           :key="index"
           v-if="item.componentInstance"
           :style="{ width: item.componentInstance.width }"
+          v-bind="item.componentInstance.$attrs"
+          :class="item.componentInstance.className"
         >
           <template>
             {{ item.componentInstance.label }}
