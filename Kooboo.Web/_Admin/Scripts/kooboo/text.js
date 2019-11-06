@@ -175,6 +175,11 @@
       chooseAction: "Choose action"
     },
 
+    account: {
+      sendResetEmailTip:
+        "After submiting your request, we will send you a verification mail, please check in time"
+    },
+
     online: {
       yes: "online_YES",
       no: "online_NO"
@@ -909,7 +914,8 @@
         position: "Position",
         copyPage: "Copy page",
         fromLayout: "From layout",
-        previewInMobile: "Preview in mobile"
+        previewInMobile: "Preview in mobile",
+        redirectRoutesTip:"Set the redirect pages for default home page, 404 and error pages"
       },
       layout: {
         copyLayout: "Copy layout"

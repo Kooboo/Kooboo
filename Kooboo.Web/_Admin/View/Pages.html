@@ -3,7 +3,9 @@
   <div class="page-header">
     <h1 class="title">Pages</h1>
   </div>
+
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+
   <div class="navbar navbar-default">
     <div class="container-fluid">
       <a
@@ -30,12 +32,13 @@
       <a
         class="btn green navbar-btn"
         @click="showCopyModal=true"
-        data-bind="click: onShowCopyModal, visible: showCopyBtn"
+        v-show="selectedRows.length==1"
         >Copy</a
       >
       <a
-        data-bind="visible: showDeleteBtn, click: onDelete"
         class="btn red navbar-btn"
+        v-show="selectedRows.length>0"
+        @click="onDelete"
         >Delete</a
       >
       <a
@@ -49,7 +52,12 @@
     </div>
   </div>
 
-  <kb-table v-if="model.pages" showSelect :selected.sync="selectedRows">
+  <kb-table
+    v-if="model.pages"
+    :data="model.pages"
+    show-select
+    :selected.sync="selectedRows"
+  >
     <kb-table-column width="40px">
       <template v-slot="row">
         <i class="fa fa-home fa-lg" v-show="row.startPage"></i>
@@ -84,12 +92,12 @@
               }"
           v-for="(item, index) in conventObjectToList(row.relations)"
           :key="index"
-          @click.stop="relationClick(item.key, row.id, Kooboo.Page.name)"
+          @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Page.name)"
         >
           {{
-                `${item.value} ${
-                  Kooboo.text.component.table[item.key.toLowerCase()]
-                }`
+            item.value +
+              " " +
+              Kooboo.text.component.table[item.key.toLowerCase()]
           }}
         </a>
       </template>
@@ -105,31 +113,36 @@
 
     <kb-table-column :label="Kooboo.text.common.preview">
       <template v-slot="row">
-        <kb-button class="btn-link" :href="row.previewUrl" target="_blank">
+        <a :href="row.previewUrl" @click.stop="" target="_blank">
           {{ row.path }}
-        </kb-button>
+        </a>
       </template>
     </kb-table-column>
 
     <kb-table-column align="right">
       <template v-slot="row">
-        <kb-button class="blue" @click="settingClick(row)">{{
+        <a class="btn blue" @click.stop="settingClick(row)">{{
           Kooboo.text.common.setting
-        }}</kb-button>
-        <kb-button class="btn-primary" :href="row.inlineUrl" target="_blank">{{
-          Kooboo.text.site.page.design
-        }}</kb-button>
+        }}</a>
+        <a
+          class="btn btn-primary"
+          @click.stop=""
+          :href="row.inlineUrl"
+          target="_blank"
+          >{{ Kooboo.text.site.page.design }}</a
+        >
       </template>
     </kb-table-column>
 
     <kb-table-column width="10px">
       <template v-slot="row">
-        <kb-button
-          v-if="!isLocal()"
+        <a
+          v-if="!$refs.isLocal"
           class="btn-default btn-xs"
-          icon="fa fa-qrcode"
-          @click.stop="qrCodeClick(row.previewUrl)"
-        ></kb-button>
+          @click.stop="onShowQrCode(row.previewUrl)"
+        >
+          <i class="fa fa-qrcode"></i>
+        </a>
       </template>
     </kb-table-column>
   </kb-table>
@@ -240,9 +253,7 @@
           <button type="button" class="close" data-dismiss="modal">
             <i class="fa fa-close"></i>
           </button>
-          <h4 class="modal-title">{{
-            Kooboo.text.site.page.copyPage + ": "
-          }}</h4>
+          <h4 class="modal-title">{{ copyModalTitle }}</h4>
         </div>
         <div class="modal-body">
           <kb-form :model="copyModel" :rules="copyModelRules" ref="copyForm">
@@ -302,10 +313,7 @@
                 <i class="fa fa-close"></i>
               </button>
               <strong>Redirect routes</strong>
-              <p>
-                Set the redirect pages for default home page, 404 and error
-                pages
-              </p>
+              <p>{{ Kooboo.text.site.page.redirectRoutesTip }}</p>
             </div>
             <div class="form-group">
               <label class="control-label col-md-3">Home page</label>
@@ -385,33 +393,20 @@
       </div>
     </div>
   </div>
+  <kb-relation-modal></kb-relation-modal>
+  <div k-if="kooboosetting.IsLocal=true" ref="isLocal"> </div>
 </div>
 
-<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
-
-<div data-bind="component: { name: 'kb-relation-modal' }"></div>
-
-<div k-if="kooboosetting.IsLocal=true">
-  <input type="hidden" name="local" id="isLocalKooboo" />
-</div>
 <script>
-  (function() {
-    Kooboo.loadJS([
-      "/_Admin/Scripts/components/kbBreadcrumb.js",
-      "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-      "/_Admin/Scripts/vue-components/kbForm.js",
-      "/_Admin/Scripts/vue-components/kb-table.js",
-      "/_Admin/Scripts/tableModel.js",
-      "/_Admin/Scripts/kooboo/Guid.js",
-      "/_Admin/Scripts/components/kbTable.js",
-      "/_Admin/Scripts/components/kbRelationModal.js",
-      "/_Admin/Scripts/lib/jquery.qrcode.min.js"
-    ]);
-  })();
-</script>
-<script src="/_Admin/View/Pages.js"></script>
+  Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+    "/_Admin/Scripts/vue-components/kbForm.js",
+    "/_Admin/Scripts/vue-components/kbTable.js",
+    "/_Admin/Scripts/vue-components/kbRelationModal.js",
+    "/_Admin/Scripts/kooboo/Guid.js",
+    "/_Admin/Scripts/lib/jquery.qrcode.min.js"
+  ]);
 
-<script>
   new Vue({
     el: "#app",
     data: function() {
@@ -497,6 +492,7 @@
         showCopyModal: false,
         showRouterManagerModal: false,
         showQRCodeModal: false,
+        showRelationModal: false,
         accept: [
           "application/pdf",
           "application/msword",
@@ -555,6 +551,13 @@
       },
       indexRouterSelection: function() {
         return this.model.pages || [];
+      },
+      copyModalTitle: function() {
+        var text = Kooboo.text.site.page.copyPage + ": ";
+        if (this.selectedRows.length == 1) {
+          text += this.selectedRows[0].name;
+        }
+        return text;
       }
     },
     mounted: function() {
@@ -620,11 +623,84 @@
             if (res.success) {
               me.model.pages.push(res.model);
               window.info.show(Kooboo.text.info.copy.success, true);
+              me.showCopyModal = false;
             } else {
               window.info.show(Kooboo.text.info.copy.fail, false);
             }
           });
         }
+      },
+      conventObjectToList: function(obj) {
+        let list = [];
+        for (var key in obj) {
+          list.push({ key: key, value: obj[key] });
+        }
+        return list;
+      },
+      onlineClass: function(isOnline) {
+        let list = ["label", "label-sm"];
+        list.push(isOnline ? "label-success" : "label-default");
+        return list;
+      },
+      settingClick: function(row) {
+        let url =
+          row.layoutId == Kooboo.Guid.Empty
+            ? Kooboo.Route.Get(
+                Kooboo.Route.Page[
+                  row.type == "Normal" ? "EditPage" : "EditRichText"
+                ],
+                {
+                  Id: row.id
+                }
+              )
+            : Kooboo.Route.Get(Kooboo.Route.Page.EditLayout, {
+                Id: row.id,
+                layoutId: row.layoutId
+              });
+        location.href = url;
+      },
+      onShowQrCode: function(url) {
+        $("#qr-code")
+          .empty()
+          .qrcode(url);
+        this.showQRCodeModal = true;
+      },
+      onShowRelationModal: function(by, id, type) {
+        Kooboo.EventBus.publish("kb/relation/modal/show", {
+          by: by,
+          type: type,
+          id: id
+        });
+      },
+      onDelete: function() {
+        var me = this;
+        var haveRelations = this.selectedRows.some(function(s) {
+          return s.relations && Object.keys(s.relations).length;
+        });
+
+        var confirmStr = haveRelations
+          ? Kooboo.text.confirm.deleteItemsWithRef
+          : Kooboo.text.confirm.deleteItems;
+
+        var ids = this.selectedRows.map(function(m) {
+          return m.id;
+        });
+
+        if (!confirm(confirmStr)) return;
+
+        Kooboo[Kooboo.Page.name]
+          .Deletes({
+            ids: ids
+          })
+          .then(function(res) {
+            if (res.success) {
+              Kooboo.Page.getAll().then(function(res) {
+                if (res.success) {
+                  me.model.pages = res.model.pages;
+                }
+              });
+            }
+          });
       }
     },
     watch: {
@@ -639,6 +715,31 @@
             me.routerModel = res.model;
           }
         });
+      },
+      showCopyModal: function(value) {
+        if (value) {
+          if (this.selectedRows && this.selectedRows.length != 1) return;
+          let row = this.selectedRows[0];
+          this.copyModel.id = row.id;
+          let pageName = row.name || "";
+          if (pageName.indexOf(".") > -1) {
+            let _temp = pageName.split(".");
+            _temp[0] = _temp[0] + "_Copy";
+            pageName = _temp.join(".");
+          } else {
+            pageName += "_Copy";
+          }
+          this.copyModel.name = pageName;
+          this.copyModel.url = "/" + pageName;
+        } else {
+          this.$refs.copyForm.clearValid();
+        }
+      },
+      model: {
+        deep: true,
+        handler: function() {
+          this.selectedRows = [];
+        }
       }
     }
   });
