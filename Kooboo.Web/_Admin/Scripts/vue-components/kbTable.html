@@ -14,7 +14,7 @@
           v-if="item.componentInstance"
           :style="{ width: item.componentInstance.width }"
           v-bind="item.componentInstance.$attrs"
-          :class="item.componentInstance.className"
+          :class="item.componentInstance.headClass"
         >
           <template>
             {{ item.componentInstance.label }}

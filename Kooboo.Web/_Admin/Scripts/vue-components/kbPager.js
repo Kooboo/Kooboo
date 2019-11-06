@@ -80,6 +80,7 @@
     },
     methods: {
       changePage: function(page) {
+        this.$emit('change', page.target);
         Kooboo.EventBus.publish("kb/pager/change", page.target);
       }
     }

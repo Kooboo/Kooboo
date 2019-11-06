@@ -396,36 +396,8 @@ $(function() {
             }
           });
         }
-      }
-    },
-    computed: {
-      selectAll: {
-        get: function() {
-          var allLength = self.folders.length + self.files.length;
-          if (allLength === 0) {
-            return false;
-          }
-          return self.selectedFiles.length == allLength;
-        },
-        set: function(checked) {
-          self.selectedFiles = [];
-          _.forEach(self.folders, function(folder) {
-            folder.selected = checked;
-            checked && self.selectedFiles.push(folder);
-          });
-          _.forEach(self.files, function(file) {
-            file.selected = checked;
-            checked && self.selectedFiles.push(file);
-          });
-        }
       },
-      showDeleteBtn: function() {
-        return this.selectedFiles.length;
-      }
-    },
-    mounted: function() {
-      self.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
-      Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
+      changePage: function(page) {
         if (self.curImgType == "all") {
           self.onChoosingFolder(self.currentPath, page);
         } else {
@@ -458,7 +430,35 @@ $(function() {
             }
           });
         }
-      });
+      }
+    },
+    computed: {
+      selectAll: {
+        get: function() {
+          var allLength = self.folders.length + self.files.length;
+          if (allLength === 0) {
+            return false;
+          }
+          return self.selectedFiles.length == allLength;
+        },
+        set: function(checked) {
+          self.selectedFiles = [];
+          _.forEach(self.folders, function(folder) {
+            folder.selected = checked;
+            checked && self.selectedFiles.push(folder);
+          });
+          _.forEach(self.files, function(file) {
+            file.selected = checked;
+            checked && self.selectedFiles.push(file);
+          });
+        }
+      },
+      showDeleteBtn: function() {
+        return this.selectedFiles.length;
+      }
+    },
+    mounted: function() {
+      self.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
       Kooboo.EventBus.subscribe("window/popstate", function() {
         $(".modal").modal("hide");
         if (location.hash) {
