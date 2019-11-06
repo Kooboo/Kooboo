@@ -7,7 +7,8 @@
       prop: String,
       width: String,
       customSlot: Array,
-      align: String
+      align: String,
+      className: String | Array
     },
     render: function(h) {
       return h("div", this.customSlot);
@@ -25,7 +26,9 @@
       },
       selected: {
         type: Array,
-        default: []
+        default: function() {
+          return [];
+        }
       }
     },
     data: function() {
