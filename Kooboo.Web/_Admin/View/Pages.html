@@ -313,10 +313,7 @@
                 <i class="fa fa-close"></i>
               </button>
               <strong>Redirect routes</strong>
-              <p>
-                Set the redirect pages for default home page, 404 and error
-                pages
-              </p>
+              <p>{{ Kooboo.text.site.page.redirectRoutesTip }}</p>
             </div>
             <div class="form-group">
               <label class="control-label col-md-3">Home page</label>
@@ -401,19 +398,15 @@
 </div>
 
 <script>
-  (function() {
-    Kooboo.loadJS([
-      "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-      "/_Admin/Scripts/vue-components/kbForm.js",
-      "/_Admin/Scripts/vue-components/kbTable.js",
-      "/_Admin/Scripts/vue-components/kbRelationModal.js",
-      "/_Admin/Scripts/kooboo/Guid.js",
-      "/_Admin/Scripts/lib/jquery.qrcode.min.js"
-    ]);
-  })();
-</script>
+  Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+    "/_Admin/Scripts/vue-components/kbForm.js",
+    "/_Admin/Scripts/vue-components/kbTable.js",
+    "/_Admin/Scripts/vue-components/kbRelationModal.js",
+    "/_Admin/Scripts/kooboo/Guid.js",
+    "/_Admin/Scripts/lib/jquery.qrcode.min.js"
+  ]);
 
-<script>
   new Vue({
     el: "#app",
     data: function() {
