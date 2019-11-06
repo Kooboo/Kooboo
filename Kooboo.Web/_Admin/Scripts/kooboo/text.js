@@ -177,7 +177,8 @@
 
     account: {
       sendResetEmailTip:
-        "After submiting your request, we will send you a verification mail, please check in time"
+        "After submiting your request, we will send you a verification mail, please check in time",
+      youAreNotAdmin: "You are not administrator of current organization, you do not have access to organization profile."
     },
 
     online: {
@@ -915,7 +916,8 @@
         copyPage: "Copy page",
         fromLayout: "From layout",
         previewInMobile: "Preview in mobile",
-        redirectRoutesTip:"Set the redirect pages for default home page, 404 and error pages"
+        redirectRoutesTip:
+          "Set the redirect pages for default home page, 404 and error pages"
       },
       layout: {
         copyLayout: "Copy layout"
