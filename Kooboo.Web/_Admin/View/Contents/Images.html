@@ -237,8 +237,11 @@
     </div>
   </div>
 
-  <kb-pager :page-nr="pager.pageNr" :total-pages="pager.totalPages"></kb-pager>
-
+  <kb-pager
+    :page-nr="pager.pageNr"
+    :total-pages="pager.totalPages"
+    @change="changePage"
+  ></kb-pager>
   <div
     v-kb-modal="newFolderModal"
     class="modal fade"
@@ -258,7 +261,12 @@
             <kb-form-item prop="name">
               <label class="col-md-3 control-label">Name</label>
               <div class="col-md-9">
-                <input type="text" v-model="folderForm.name" class="form-control" @keydown.enter="onNewFolderModalSubmit" />
+                <input
+                  type="text"
+                  v-model="folderForm.name"
+                  class="form-control"
+                  @keydown.enter="onNewFolderModalSubmit"
+                />
               </div>
             </kb-form-item>
           </kb-form>

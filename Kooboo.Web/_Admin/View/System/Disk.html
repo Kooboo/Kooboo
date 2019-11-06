@@ -71,11 +71,10 @@
           :show-select="false"
           style="margin-bottom: -30px;"
         >
-          <kb-table-column :label="Kooboo.text.common.name">
-            <template v-slot="row">
-              {{ row.name }}
-            </template>
-          </kb-table-column>
+          <kb-table-column
+            :label="Kooboo.text.common.name"
+            prop="name"
+          ></kb-table-column>
           <kb-table-column :label="Kooboo.text.site.disk.count">
             <template v-slot="row">
               <span class="badge" :class="row.itemCount.class">{{
@@ -83,14 +82,14 @@
               }}</span>
             </template>
           </kb-table-column>
-          <kb-table-column :label="Kooboo.text.common.size">
-            <template v-slot="row">
-              {{ row.size }}
-            </template>
-          </kb-table-column>
+          <kb-table-column
+            :label="Kooboo.text.common.size"
+            prop="size"
+          ></kb-table-column>
           <kb-table-column head-class="table-action" colspan="1">
             <template v-slot="row">
-              <a @click.prevent = "showLog(row)"
+              <a
+                @click.prevent="showLog(row)"
                 class="btn btn-sm"
                 :class="[row.log.class ? row.log.class : 'blue']"
                 >{{ row.log.text }}</a
