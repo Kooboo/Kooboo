@@ -32,25 +32,41 @@ $(function() {
             name: Kooboo.text.common.Settings
           }
         ],
-        cultures: [],
-        defaultCulture: "",
-        customSettingArray: [], //  Kooboo.objToArr(data.customSettings)
-        siteTypes: "",
-        siteType: "", // data.siteType
+        siteTypes: [],
+        clusters: [],
+        langs: [],
+        domains: [],
+
         uploadModal: false,
         showExportModal: false,
         remoteSiteList: [],
         langModalShow: false,
-        langs: [],
         langKeys: [],
         editingLangs: [],
-        domains: [],
+
         showSiteMirrorConfigModal: false,
         isSlaveSite: false,
-        clusters: [],
         _clusters: [],
         showError: false,
-        showCustomServerModal: false
+        showCustomServerModal: false,
+        diskSyncFolder: "",
+
+        model: {
+          displayName: "",
+          siteType: "",
+          enableVisitorLog: false,
+          enableConstraintFixOnSave: false,
+          enableFrontEvents: false,
+          enableDiskSync: false,
+          enableMultilingual: false,
+          enableSitePath: false,
+          defaultCulture: "",
+          sitePath: {},
+          autoDetectCulture: false,
+          forceSSL: false,
+          customSettingArray: []
+          // enableLocationRedirect: false
+        }
       };
     },
     beforeCreate: function() {
@@ -63,24 +79,39 @@ $(function() {
           Kooboo.Site.Langs(),
           Kooboo.Site.getTypes()
         ).then(function(cultureLists, defaultCulture, siteTypes) {
-          //   var model = response.model,
-          //     viewModel = new SettingsViewModel(model);
-
-          //   viewModel.cultures(cultureLists[0].model);
-          //   viewModel.siteTypes(Kooboo.objToArr(siteTypes[0].model));
-          //   for (var cul in defaultCulture[0].model.cultures) {
-          //     viewModel.langs.push(
-          //       new Language({
-          //         key: cul,
-          //         value: defaultCulture[0].model.cultures[cul]
-          //       })
-          //     );
-          //   }
-
-          //   viewModel.defaultCulture(defaultCulture[0].model.default);
-
-          //   ko.applyBindings(viewModel, document.getElementById("main"));
+          var model = response.model;
+          console.log(model);
+          // automapping
+          _.keys(self.model).forEach(function(key) {
+            if (model[key] !== void 0 || model[key] !== null) {
+              self.model[key] = model[key];
+            }
+          });
+          self.model.customSettingArray = Kooboo.objToArr(model.customSettings);
+          self.siteTypes = Kooboo.objToArr(siteTypes[0].model);
+          self.cultures = cultureLists[0].model;
+          for (var cul in defaultCulture[0].model.cultures) {
+            self.langs.push({
+              key: cul,
+              value: defaultCulture[0].model.cultures[cul]
+            });
+          }
+          self.langs.forEach(function(lang) {
+            self.model.sitePath[lang.key] =
+              model.sitePath[lang.key] || lang.key;
+          });
+          self.model.defaultCulture = defaultCulture[0].model.default;
         });
+      });
+      Kooboo.Domain.getList().then(function(res) {
+        if (res.success) {
+          res.model.forEach(function(r) {
+            self.domains.push({
+              name: "." + r.domainName,
+              value: r.domainName
+            });
+          });
+        }
       });
     },
     computed: {
@@ -92,16 +123,14 @@ $(function() {
       }
     },
     methods: {
-      addCustomSetting: function(m) {
-        // click.prevent
+      addCustomSetting: function() {
         self.customSettingArray.push({
           key: null,
           value: null
         });
       },
       removeCustomSetting: function(m) {
-        // click.prevent
-        self.customSettingArray.remove(m);
+        self.customSettingArray = _.without(self.customSettingArray, m);
       },
       onShowUploadModal: function() {
         self.uploadModal = true;
@@ -125,47 +154,59 @@ $(function() {
         self.showExportModal = true;
       },
       save: function() {
-        var keys = [
-          "displayName",
-          "siteType",
-          "enableConstraintFixOnSave",
-          "enableDiskSync",
-          "enableFrontEvents",
-          "forceSSL",
-          "enableMultilingual",
-          "enableSitePath",
-          "enableVisitorLog",
-          "sitePath",
-          "autoDetectCulture",
-          "diskSyncFolder"
-        ];
-        var newData = {};
-        _.forEach(keys, function(k) {
-          newData[k] = ko.mapping.toJS(self[k]);
-        });
+        // var keys = [
+        //   "displayName",
+        //   "siteType",
+        //   "enableConstraintFixOnSave",
+        //   "enableDiskSync",
+        //   "enableFrontEvents",
+        //   "forceSSL",
+        //   "enableMultilingual",
+        //   "enableSitePath",
+        //   "enableVisitorLog",
+        //   "sitePath",
+        //   "autoDetectCulture",
+        //   "diskSyncFolder"
+        // ];
+        // var newData = {};
+        // _.forEach(keys, function(k) {
+        //   newData[k] = ko.mapping.toJS(self[k]);
+        // });
 
-        var sitePathValueElements = $("[name^='SitePath.']");
-        _.forEach(sitePathValueElements, function(el) {
-          var id = $(el)
-            .attr("name")
-            .split(".")[1];
-          newData["sitePath"][id] = $(el).val();
-        });
+        // var sitePathValueElements = $("[name^='SitePath.']");
+        // _.forEach(sitePathValueElements, function(el) {
+        //   var id = $(el)
+        //     .attr("name")
+        //     .split(".")[1];
+        //   newData["sitePath"][id] = $(el).val();
+        // });
 
+        // var customSettings = {};
+        // _.forEach(self.customSettingArray, function(s) {
+        //   s.key && (customSettings[s.key] = s.value);
+        // });
+
+        // newData["customSettings"] = customSettings;
+        // newData["culture"] = Kooboo.arrToObj(self.langs);
+        // newData["defaultCulture"] = self.defaultCulture;
+
+        // if (!newData.enableMultilingual) {
+        //   self.enableSitePath = false;
+        //   newData.enableSitePath = false;
+        // }
+        var newData = _.cloneDeep(self.model);
         var customSettings = {};
-        _.forEach(self.customSettingArray(), function(s) {
+        _.forEach(newData.customSettingArray, function(s) {
           s.key && (customSettings[s.key] = s.value);
         });
 
         newData["customSettings"] = customSettings;
-        newData["culture"] = Kooboo.arrToObj(ko.mapping.toJS(self.langs()));
-        newData["defaultCulture"] = self.defaultCulture();
+        // newData["culture"] = Kooboo.arrToObj(self.langs);
 
         if (!newData.enableMultilingual) {
-          self.enableSitePath(false);
+          self.model.enableSitePath = false;
           newData.enableSitePath = false;
         }
-
         Kooboo.Site.post(newData).then(function(res) {
           if (res.success) {
             window.info.show(Kooboo.text.info.save.success, true);
@@ -487,30 +528,27 @@ $(function() {
   };
 
   function Language(lang) {
-    var self = this;
+    // this.showError = ko.observable(false);
 
-    ko.mapping.fromJS(lang, {}, self);
+    // this.key = ko.validateField(lang.key, {
+    //   required: Kooboo.text.validation.required
+    // });
 
-    this.showError = ko.observable(false);
+    // this.key.subscribe(function(lang) {
+    //   self.focus(true);
+    //   self.value(self.cultures[lang] && self.cultures[lang]());
+    // });
 
-    this.key = ko.validateField(lang.key, {
-      required: Kooboo.text.validation.required
-    });
+    // this.value = ko.validateField(lang.value, {
+    //   required: Kooboo.text.validation.required
+    // });
 
-    this.key.subscribe(function(lang) {
-      self.focus(true);
-      self.value(self.cultures[lang] && self.cultures[lang]());
-    });
+    // this.isValid = function() {
+    //   return self.key.isValid() && self.value.isValid();
+    // };
 
-    this.value = ko.validateField(lang.value, {
-      required: Kooboo.text.validation.required
-    });
-
-    this.isValid = function() {
-      return self.key.isValid() && self.value.isValid();
-    };
-
-    this.focus = ko.observable(!!lang.focus);
+    // this.focus = ko.observable(!!lang.focus);
+    return lang;
   }
 
   var clusterModel = function(info) {
