@@ -66,7 +66,38 @@
     </div>
     <div class="panel-body">
       <div class="row item" style="margin-top: -15px;">
-        <kb-table :data="tableData" style="margin-bottom: -30px;"></kb-table>
+        <kb-table
+          :data="tableData"
+          :show-select="false"
+          style="margin-bottom: -30px;"
+        >
+          <kb-table-column :label="Kooboo.text.common.name">
+            <template v-slot="row">
+              {{ row.name }}
+            </template>
+          </kb-table-column>
+          <kb-table-column :label="Kooboo.text.site.disk.count">
+            <template v-slot="row">
+              <span class="badge" :class="row.itemCount.class">{{
+                row.itemCount.text
+              }}</span>
+            </template>
+          </kb-table-column>
+          <kb-table-column :label="Kooboo.text.common.size">
+            <template v-slot="row">
+              {{ row.size }}
+            </template>
+          </kb-table-column>
+          <kb-table-column class-name="table-action" colspan="1">
+            <template v-slot="row">
+              <a @click.prevent = "showLog(row)"
+                class="btn btn-sm"
+                :class="[row.log.class ? row.log.class : 'blue']"
+                >{{ row.log.text }}</a
+              >
+            </template>
+          </kb-table-column>
+        </kb-table>
       </div>
     </div>
   </div>
@@ -116,11 +147,9 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/lib/echarts.min.js",
-      // "/_Admin/Scripts/kobindings.sortable.js",
-      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/vue-components/kbTable.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-      "/_Admin/Scripts/lib/jquery-ui-customized.js",
-      "/_Admin/Scripts/tableModel.js"
+      "/_Admin/Scripts/lib/jquery-ui-customized.js"
     ]);
   })();
 </script>
