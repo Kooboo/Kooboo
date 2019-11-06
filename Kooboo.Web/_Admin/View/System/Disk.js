@@ -1,5 +1,6 @@
 $(function() {
   var self;
+  var chart;
   new Vue({
     el: "#app",
     data: function() {
@@ -26,21 +27,12 @@ $(function() {
       self = this;
     },
     mounted: function() {
-      Kooboo.EventBus.subscribe(
-        "kb/table/rendered",
-        _.throttle(function() {
-          chart.resize();
-        }, 200)
-      );
-      Kooboo.EventBus.subscribe("kb/disk/item/log", function(data) {
-        Kooboo.Disk.getSize({
-          storeName: data.id
-        }).then(function(res) {
-          self.logData = res.model;
-          self.showLogModal = true;
-        });
-      });
       this.initChart();
+      this.$nextTick(function() {
+        setTimeout(function() {
+          chart.resize();
+        }, 200);
+      });
     },
     methods: {
       clearLogs: function() {
@@ -94,8 +86,8 @@ $(function() {
         self.showLogModal = false;
       },
       initChart: function() {
-        var chart = echarts.init(document.getElementById("chart")),
-          chartOption = {};
+        (chart = echarts.init(document.getElementById("chart"))),
+          (chartOption = {});
         Kooboo.Disk.getList().then(function(res) {
           if (res.success) {
             var docs = [],
@@ -168,8 +160,7 @@ $(function() {
                 },
                 log: {
                   text: "Log",
-                  class: "blue",
-                  url: "kb/disk/item/log"
+                  class: "blue"
                 }
               });
 
@@ -184,36 +175,7 @@ $(function() {
 
             self.totalSize = res.model.totalSize;
             self.sizeArray = sizeArray;
-
-            // TODO: <kb-table>
-            self.tableData = {
-              unselectable: true,
-              docs: docs,
-              columns: [
-                {
-                  displayName: Kooboo.text.common.name,
-                  fieldName: "name",
-                  type: "text"
-                },
-                {
-                  displayName: Kooboo.text.site.disk.count,
-                  fieldName: "itemCount",
-                  type: "badge"
-                },
-                {
-                  displayName: Kooboo.text.common.size,
-                  fieldName: "size",
-                  type: "text"
-                }
-              ],
-              tableActions: [
-                {
-                  fieldName: "log",
-                  type: "communication-btn"
-                }
-              ],
-              kbType: Kooboo.Disk.name
-            };
+            self.tableData = docs;
           }
         });
         $(window).on(
@@ -222,6 +184,14 @@ $(function() {
             chart && chart.resize();
           }, 100)
         );
+      },
+      showLog: function(data) {
+        Kooboo.Disk.getSize({
+          storeName: data.id
+        }).then(function(res) {
+          self.logData = res.model;
+          self.showLogModal = true;
+        });
       }
     },
     computed: {
@@ -235,6 +205,4 @@ $(function() {
       self = null;
     }
   });
-  // diskModel.prototype = new Kooboo.tableModel(Kooboo.Disk.name);
-  // var vm = new diskModel();
 });
