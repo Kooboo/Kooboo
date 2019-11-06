@@ -79,8 +79,12 @@
               }}</span>
             </template>
           </kb-table-column>
-          <kb-table-column :label="Kooboo.text.common.size" prop="size"></kb-table-column>
-          <kb-table-column class-name="table-action" colspan="1">
+          <kb-table-column :label="Kooboo.text.common.size">
+            <template v-slot="row">
+              {{ row.size }}
+            </template>
+          </kb-table-column>
+          <kb-table-column head-class="table-action" colspan="1">
             <template v-slot="row">
               <a @click.prevent = "showLog(row)"
                 class="btn btn-sm"
