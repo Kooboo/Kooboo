@@ -1,7 +1,7 @@
 (function() {
   Vue.component("kb-switch", {
     template:
-      '<input type="checkbox" :data-off-label="offText" />',
+      '<input type="checkbox" />',
     props: {
       value: Boolean,
       onText: {
