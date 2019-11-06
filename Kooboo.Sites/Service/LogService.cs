@@ -217,7 +217,7 @@ namespace Kooboo.Sites.Service
                 if (currentable != null)
                 {
                     var table = newkdb.GetTable(item);
-                    if (table !=null)
+                    if (table != null)
                     {
                         currentable.CheckOut(LatestLogId, table, SelfInclude, false);
                     } 
