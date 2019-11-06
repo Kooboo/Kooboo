@@ -33,7 +33,8 @@
   };
 
   Vue.component("kb-form", {
-    template: `<div :class="{'form-horizontal':align=='horizontal'}"><slot></slot></div>`,
+    template:
+      "<div :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
     props: {
       align: {
         type: String,
@@ -53,7 +54,7 @@
       },
       clearValid: function() {
         for (var i = 0; i < this.formItems.length; i++) {
-          const item = this.formItems[i];
+          var item = this.formItems[i];
           item.valid = true;
           item.msg = "";
         }
@@ -62,7 +63,7 @@
       _validate: function() {
         var valid = true;
         for (var i = 0; i < this.formItems.length; i++) {
-          const item = this.formItems[i];
+          var item = this.formItems[i];
 
           if (
             !item.prop ||
@@ -86,8 +87,8 @@
       validField: function(prop, rules) {
         var result = { valid: true, msg: "" };
         for (var i = 0; i < rules.length; i++) {
-          const item = rules[i];
-          for (const key in _rules) {
+          var item = rules[i];
+          for (var key in _rules) {
             if (item.hasOwnProperty(key)) {
               if (!_rules[key](prop, item[key])) {
                 result.valid = false;
@@ -122,10 +123,8 @@
   });
 
   Vue.component("kb-form-item", {
-    template: `
-    <div class="form-group" :class="{'has-error':!valid}" v-kb-tooltip:right.manual.error="msg">
-        <slot></slot>
-    </div>`,
+    template:
+      "<div class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg'><slot></slot></div>",
     props: {
       prop: String
     },
