@@ -118,11 +118,7 @@
     "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
     "/_Admin/Scripts/vue-components/kbForm.js",
     "/_Admin/Scripts/vue-components/kbTable.js",
-    "/_Admin/Scripts/vue-components/kbRelationModal.js",
-    "/_Admin/Scripts/components/kbTable.js",
-    "/_Admin/Scripts/components/kbRelationModal.js",
-    "/_Admin/Scripts/components/kbBreadcrumb.js",
-    "/_Admin/Scripts/tableModel.js"
+    "/_Admin/Scripts/vue-components/kbRelationModal.js"
   ]);
 
   new Vue({
@@ -271,6 +267,7 @@
     },
     watch: {
       showCopyModal: function(value) {
+        this.$refs.copyForm.clearValid();
         if (value && this.selectedRows.length == 1) {
           this.copyModel.id = this.selectedRows[0].id;
           this.copyModel.name = this.selectedRows[0].name + "_Copy";
@@ -279,4 +276,3 @@
     }
   });
 </script>
-<script src="/_Admin/View/Development/Layouts.js"></script>
