@@ -92,23 +92,18 @@ $(function() {
       this.getDomainsData();
       this.getDomainData();
       this.getsiteNameData();
-      this.initEventBus();
-    },
-    watch: {
-      tableDataSelectedRows: function(value) {}
     },
     methods: {
       getsiteNameData: function() {
         Kooboo.Site.getName().then(function(res) {
-          if (res.success) self.siteName = res.model;
+          if (res.success) {
+            self.siteName = res.model;
+          }
         });
       },
       getDomainsData: function() {
         Kooboo.Binding.listBySite().then(function(data) {
-          console.log(data.model);
           self.domainsData = data.model;
-          self.domainsData[0].enableSsl = true;
-          console.log(self.domainsData);
         });
       },
       showDialog: function() {
@@ -186,44 +181,45 @@ $(function() {
 
         return !!find;
       },
-      initEventBus: function() {
-        Kooboo.EventBus.subscribe("kb/domain/enable/domain", function(doc) {
-          var find = self.domainsData.find(function(domain) {
-            return domain.id == doc.id;
-          });
-
-          if (find) {
-            var domain = self.rootDomain().find(function(domain) {
-              return domain.id == find.domainId;
-            });
-
-            if (domain) {
-              var rootDomain = domain.domainName,
-                subDomain = find.subDomain;
-
-              Kooboo.Binding.verifySSL({
-                rootDomain: rootDomain,
-                subDomain: subDomain
-              }).then(function(res) {
-                if (res.success) {
-                  Kooboo.Binding.setSSL({
-                    rootDomain: rootDomain,
-                    subDomain: subDomain
-                  }).then(function(resp) {
-                    if (resp.success) {
-                      getList();
-                      window.info.done(Kooboo.text.info.enable.success);
-                    } else {
-                      window.info.fail(Kooboo.text.info.enable.failed);
-                    }
-                  });
-                }
-              });
-            } else {
-              window.info.fail(Kooboo.text.info.domainMissing);
-            }
-          }
+      startSSLHandle: function(event, id) {
+        //Prevent the event of the target element from bubbling to the parent element
+        event.stopPropagation();
+        this.changeSSl(id);
+      },
+      changeSSl: function(id) {
+        var find = self.domainsData.find(function(domain) {
+          return domain.id == id;
         });
+
+        if (find) {
+          var domain = self.rootDomain.find(function(domain) {
+            return domain.id == find.domainId;
+          });
+          if (domain) {
+            var rootDomain = domain.domainName,
+              subDomain = find.subDomain;
+            Kooboo.Binding.verifySSL({
+              rootDomain: rootDomain,
+              subDomain: subDomain
+            }).then(function(res) {
+              if (res.success) {
+                Kooboo.Binding.setSSL({
+                  rootDomain: rootDomain,
+                  subDomain: subDomain
+                }).then(function(resp) {
+                  if (resp.success) {
+                    getList();
+                    window.info.done(Kooboo.text.info.enable.success);
+                  } else {
+                    window.info.fail(Kooboo.text.info.enable.failed);
+                  }
+                });
+              }
+            });
+          } else {
+            window.info.fail(Kooboo.text.info.domainMissing);
+          }
+        }
       }
     }
   });
