@@ -29,6 +29,14 @@
     },
     validate: function(value, validate) {
       return validate(value);
+    },
+    remote: function(value, params) {
+      var res = $.ajax(params.url, {
+        type: params.type || "get",
+        data: params.data(),
+        async: false
+      });
+      return res.responseJSON.success;
     }
   };
 
@@ -50,7 +58,7 @@
     methods: {
       validate: function() {
         this.outsideCalled = true;
-        return this._validate();
+        return this._validate(true);
       },
       clearValid: function() {
         for (var i = 0; i < this.formItems.length; i++) {
@@ -60,7 +68,7 @@
         }
         this.outsideCalled = false;
       },
-      _validate: function() {
+      _validate: function(outsideCall) {
         var valid = true;
         for (var i = 0; i < this.formItems.length; i++) {
           var item = this.formItems[i];
@@ -73,10 +81,14 @@
             continue;
           }
 
-          var result = this.validField(
-            this.model[item.prop],
-            this.rules[item.prop]
-          );
+          var rules = this.rules[item.prop];
+          if (!outsideCall) {
+            rules = rules.filter(function(f) {
+              return !f.remote;
+            });
+          }
+
+          var result = this.validField(this.model[item.prop], rules);
 
           if (!result.valid) valid = false;
           item.valid = result.valid;
