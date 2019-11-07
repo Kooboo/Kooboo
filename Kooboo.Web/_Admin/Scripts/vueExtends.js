@@ -219,3 +219,14 @@ Vue.directive("kb-html", {
   }
 });
 //#endregion </kb-html>
+
+//#region <kb-collapsein>
+Vue.directive("kb-collapsein", {
+  bind: function(element, binding) {
+    $(element).addClass("collapse");
+  },
+  update: function(element, binding) {
+    $(element).collapse(binding.value ? "show" : "hide");
+  }
+});
+//#endregion </kb-html>
