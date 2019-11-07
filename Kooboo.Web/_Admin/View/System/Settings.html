@@ -19,7 +19,7 @@
     border-bottom: 0;
   }
 </style>
-<div id="app">
+<div id="app" v-cloak>
   <div class="page-header">
     <h1 class="title">Settings</h1>
   </div>
@@ -156,7 +156,10 @@
           </div>
           <div class="form-group">
             <label class="control-label">Default Language</label>
-            <select v-model="model.defaultCulture" class="form-control input-large">
+            <select
+              v-model="model.defaultCulture"
+              class="form-control input-large"
+            >
               <option v-for="option in langs" :value="option.key">
                 {{ option.value }}
               </option>
@@ -229,7 +232,11 @@
       </div>
       <div class="col-md-9">
         <div class="input-groups">
-          <div class="input-group" v-for="(setting, index) in customSettingArray" :key="index">
+          <div
+            class="input-group"
+            v-for="(setting, index) in customSettingArray"
+            :key="index"
+          >
             <input
               type="text"
               v-model="setting.key"
@@ -245,7 +252,8 @@
             />
             <span class="input-group-btn">
               <a
-                @click.prevent="removeCustomSetting(setting)" v-kb-tooltip:right="Kooboo.text.common.remove" 
+                @click.prevent="removeCustomSetting(setting)"
+                v-kb-tooltip:right="Kooboo.text.common.remove"
                 class="btn btn-default"
                 href="javascript:;"
               >
@@ -254,7 +262,8 @@
             </span>
           </div>
           <a
-            @click.prevent="addCustomSetting" v-kb-tooltip:right="Kooboo.text.tooltip.add"
+            @click.prevent="addCustomSetting"
+            v-kb-tooltip:right="Kooboo.text.tooltip.add"
             class="btn dark"
             href="javascript:;"
             ><i class="fa fa-plus"></i
@@ -279,7 +288,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button data-bind="click: onAddLangModalHide" class="close"
+          <button @click="onAddLangModalHide" class="close"
             ><i class="fa fa-close"></i
           ></button>
           <h4 class="modal-title">Configuration</h4>
@@ -288,19 +297,21 @@
           <div class="form-horizontal">
             <div class="form-group margin-top-10">
               <div class="col-md-12 input-groups">
-                <!-- ko foreach: { data: editingLangs, as: 'lang' } -->
-                <div class="input-group">
+                <div v-for="(lang, index) in editingLangs" class="input-group">
                   <input
                     type="text"
                     class="form-control input-medium"
+                    v-kb-typeahead="{source: culturesKey, defaultShow: true, items: 10 }"
+                    v-model="lang.key"
                     data-bind="typeahead: $parent.culturesKey, name: lang.key, value: lang.key, error: lang.key, defaultShow: true, items: 10, errorPlacement: 'left'"
                     placeholder="Language code"
+                    @blur="changeLang($event.target, lang)"
                   />
                   <span class="input-group-addon">:</span>
                   <input
                     type="text"
                     class="form-control input-medium"
-                    data-bind="value: lang.value, hasFocus: lang.focus"
+                    v-model="lang.value"
                     placeholder="Language name"
                   />
                   <span
@@ -310,15 +321,16 @@
                     <a
                       class="btn btn-default"
                       href="javascript:;"
-                      data-bind="click: $parent.removeEditingLang.bind(this, lang), tooltip: Kooboo.text.common.remove"
+                      @click="removeEditingLang(lang)"
+                      v-kb-tooltip="Kooboo.text.common.remove"
                       ><i class="fa fa-minus"></i
                     ></a>
                   </span>
                 </div>
-                <!-- /ko -->
                 <a
                   class="btn dark"
-                  data-bind="click: addNewLang, tooltip: Kooboo.text.tooltip.add"
+                  @click="addNewLang"
+                  v-kb-tooltip="Kooboo.text.tooltip.add"
                   ><i class="fa fa-plus"></i
                 ></a>
               </div>
@@ -326,12 +338,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button data-bind="click: onAddLangModalSave" class="btn green"
-            >Save</button
-          >
-          <button data-bind="click: onAddLangModalHide" class="btn gray"
-            >Cancel</button
-          >
+          <button @click="onAddLangModalSave" class="btn green">Save</button>
+          <button @click="onAddLangModalHide" class="btn gray">Cancel</button>
         </div>
       </div>
     </div>
@@ -437,10 +445,7 @@
                     >
                   </div>
                   <!-- ko foreach: _clusters -->
-                  <div
-                    class="form-group"
-                    v-kb-collapsein="$data.isSelected"
-                  >
+                  <div class="form-group" v-kb-collapsein="$data.isSelected">
                     <label
                       class="col-md-3 control-label"
                       data-bind="text: $data.displayName"
@@ -623,11 +628,11 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/lib/clipboard.min.js",
-      "/_Admin/Scripts/kobindings.typeahead.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/SPA.js",
       "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
+      "/_Admin/Scripts/vue-components/kbTypeahead.js",
       "/_Admin/Scripts/vue-components/kbExportModal.js",
       "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
       "/_Admin/Scripts/vue-components/kbSwitch.js"

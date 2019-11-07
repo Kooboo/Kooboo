@@ -1,21 +1,4 @@
 $(function() {
-  if ($.fn.bootstrapSwitch) {
-    $.fn.bootstrapSwitch.defaults.onText = Kooboo.text.common.yes;
-    $.fn.bootstrapSwitch.defaults.offText = Kooboo.text.common.no;
-  }
-
-  var copyPath = new Clipboard("#copy_sync_path");
-
-  copyPath.on("success", function(e) {
-    $(e.trigger)
-      .attr("title", Kooboo.text.tooltip.copied)
-      .tooltip("fixTitle")
-      .tooltip("show");
-    setTimeout(function() {
-      $(e.trigger).tooltip("destroy");
-    }, 2000);
-  });
-
   var self;
   new Vue({
     el: "#app",
@@ -80,7 +63,7 @@ $(function() {
           Kooboo.Site.getTypes()
         ).then(function(cultureLists, defaultCulture, siteTypes) {
           var model = response.model;
-          console.log(model);
+          // console.log(model);
           // automapping
           _.keys(self.model).forEach(function(key) {
             if (model[key] !== void 0 || model[key] !== null) {
@@ -113,10 +96,21 @@ $(function() {
           });
         }
       });
+
+      var copyPath = new Clipboard("#copy_sync_path");
+      copyPath.on("success", function(e) {
+        $(e.trigger)
+          .attr("title", Kooboo.text.tooltip.copied)
+          .tooltip("fixTitle")
+          .tooltip("show");
+        setTimeout(function() {
+          $(e.trigger).tooltip("destroy");
+        }, 2000);
+      });
     },
     computed: {
       culturesKey: function() {
-        var cs = Kooboo.objToArr(cultures);
+        var cs = Kooboo.objToArr(self.cultures);
         return _.map(cs, function(c) {
           return c.key;
         });
@@ -180,56 +174,58 @@ $(function() {
       },
       onAddLangModalShow: function() {
         _.forEach(self.langs, function(lang) {
-          self.editingLangs.push(
-            new Language({
-              key: lang.key(),
-              value: lang.value(),
-              cultures: self.cultures()
-            })
-          );
+          self.editingLangs.push({
+            key: lang.key,
+            value: lang.value,
+            cultures: self.cultures
+          });
         });
-        self.langModalShow(true);
+        self.langModalShow = true;
+      },
+      changeLang: function(target, lang) {
+        lang.value = self.cultures[lang.key] && self.cultures[lang.key];
+        $(target)
+          .siblings("input:first")
+          .focus();
       },
       removeLang: function(lang) {
         self.langs = _.without(self.langs, lang);
       },
       removeEditingLang: function(lang) {
-        lang.showError(false);
-        self.editingLangs.remove(lang);
+        lang.showError = false;
+        self.editingLangs = _.without(self.editingLangs, lang);
       },
       onAddLangModalHide: function() {
-        _.forEach(self.editingLangs(), function(lang) {
-          lang.showError(false);
+        _.forEach(self.editingLangs, function(lang) {
+          lang.showError = false;
         });
-        self.editingLangs([]);
-        self.langModalShow(false);
+        self.editingLangs = [];
+        self.langModalShow = false;
       },
       onAddLangModalSave: function() {
         var ableToSave = true;
-        _.forEach(self.editingLangs(), function(lang) {
-          if (!lang.isValid()) {
-            lang.showError(true);
-            ableToSave = false;
-          }
-        });
+        // _.forEach(self.editingLangs(), function(lang) {
+        //   if (!lang.isValid()) {
+        //     lang.showError(true);
+        //     ableToSave = false;
+        //   }
+        // });
 
         if (ableToSave) {
           var langs = [];
-          _.forEach(self.editingLangs(), function(lang) {
+          _.forEach(self.editingLangs, function(lang) {
             langs.push(lang);
           });
-          self.langs(langs);
+          self.langs = langs;
           self.onAddLangModalHide();
         }
       },
       addNewLang: function() {
-        self.editingLangs.push(
-          new Language({
-            key: "",
-            value: "",
-            cultures: self.cultures()
-          })
-        );
+        self.editingLangs.push({
+          key: "",
+          value: "",
+          cultures: self.cultures
+        });
       },
       onShowSiteMirrorConfigModal: function() {
         self.showSiteMirrorConfigModal = true;
@@ -424,57 +420,6 @@ $(function() {
         self.customServerDisplayName.isValid()
       );
     };
-
-    $("#enable_visitor_log")
-      .bootstrapSwitch("state", self.enableVisitorLog())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.enableVisitorLog(data);
-      });
-    $("#enable_constraint_fix_on_save")
-      .bootstrapSwitch("state", self.enableConstraintFixOnSave())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.enableConstraintFixOnSave(data);
-      });
-    $("#enable_front_events")
-      .bootstrapSwitch("state", self.enableFrontEvents())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.enableFrontEvents(data);
-      });
-    $("#enable_force_ssl")
-      .bootstrapSwitch("state", self.forceSSL())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.forceSSL(data);
-      });
-    $("#enable_disk_sync")
-      .bootstrapSwitch("state", self.enableDiskSync())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.enableDiskSync(data);
-      });
-    $("#enable_multilingual")
-      .bootstrapSwitch("state", self.enableMultilingual())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.enableMultilingual(data);
-        if (!data) {
-          self.enableSitePath(false);
-          $("#enable_site_path").bootstrapSwitch("destroy", true);
-          $("#enable_site_path")
-            .bootstrapSwitch("state", false)
-            .on("switchChange.bootstrapSwitch", function(e, data) {
-              self.enableSitePath(data);
-            });
-        }
-      });
-    $("#enable_site_path")
-      .bootstrapSwitch("state", self.enableSitePath())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.enableSitePath(data);
-      });
-    $("#enable_auto_detect_culture")
-      .bootstrapSwitch("state", self.autoDetectCulture())
-      .on("switchChange.bootstrapSwitch", function(e, data) {
-        self.autoDetectCulture(data);
-      });
-
     this.enableLocationRedirect = ko.observable(false);
 
     Kooboo.Domain.getList().then(function(res) {
