@@ -1,187 +1,503 @@
 <!-- #layout name=default -->
 <div id="main" class="offset-top">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="page-header">
-                    <h1 class="title">Profile</h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="page-header">
+          <h1 class="title">Profile</h1>
+        </div>
+        <ul class="nav nav-tabs">
+          <li
+            v-for="(item,index) in tabs"
+            :key="index"
+            :class="{active:item.value==currentTab}"
+            @click="currentTab=item.value"
+          >
+            <a href="javascript:;">{{ item.displayName }}</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <section
+            :class="{active:currentTab=='Account',in:currentTab=='Account'}"
+            class="tab-pane fade"
+          >
+            <kb-form
+              class="margin-top-20"
+              :model="accountModel"
+              :rules="accountModelRules"
+              ref="accountForm"
+            >
+              <kb-form-item>
+                <label class="control-label col-md-3">Username</label>
+                <div class="col-md-9">
+                  <p class="form-control-static">{{ user.userName }}</p>
                 </div>
-                <ul class="nav nav-tabs" data-bind="foreach: { data: tabs, as: 'tab' }">
-                    <li data-bind="css: { active: $parent.curType() == tab.value }, click: $parent.changeType.bind(this, tab.value)">
-                        <a href="javascript:;" data-bind="text: tab.displayName"></a>
+              </kb-form-item>
+              <kb-form-item prop="emailAddress">
+                <label class="control-label col-md-3">Email</label>
+                <div class="col-md-9">
+                  <p v-if="user.emailAddress" class="form-control-static">{{
+                    user.emailAddress
+                  }}</p>
+                  <input
+                    v-else
+                    type="text"
+                    class="form-control input-large"
+                    v-model="accountModel.emailAddress"
+                  />
+                </div>
+              </kb-form-item>
+              <kb-form-item>
+                <label class="control-label col-md-3">Language</label>
+                <div class="col-md-9">
+                  <select
+                    v-model="accountModel.language"
+                    class="form-control input-large"
+                  >
+                    <option
+                      v-for="(item,index) in languageOptions"
+                      :key="index"
+                      :value="item.key"
+                      >{{ item.value }}</option
+                    >
+                  </select>
+                </div>
+              </kb-form-item>
+              <kb-form-item>
+                <div class="col-md-9 col-md-offset-3">
+                  <button @click="saveUser" class="btn green">Save</button>
+                </div>
+              </kb-form-item>
+            </kb-form>
+          </section>
+
+          <section
+            :class="{active:currentTab=='Password',in:currentTab=='Password'}"
+            class="tab-pane fade"
+          >
+            <kb-form
+              class="margin-top-20"
+              :model="passwordModel"
+              :rules="passwordModelRules"
+              ref="passwordForm"
+            >
+              <kb-form-item prop="oldPassword">
+                <label class="control-label col-md-3">Old password</label>
+                <div class="col-md-9">
+                  <input
+                    type="password"
+                    class="form-control input-large"
+                    v-model="passwordModel.oldPassword"
+                  />
+                </div>
+              </kb-form-item>
+              <kb-form-item prop="newPassword">
+                <label class="control-label col-md-3">New password</label>
+                <div class="col-md-9">
+                  <input
+                    type="password"
+                    class="form-control input-large"
+                    v-model="passwordModel.newPassword"
+                  />
+                </div>
+              </kb-form-item>
+              <kb-form-item prop="confirmPassword">
+                <label class="control-label col-md-3">Confirm password</label>
+                <div class="col-md-9">
+                  <input
+                    type="password"
+                    class="form-control input-large"
+                    v-model="passwordModel.confirmPassword"
+                  />
+                </div>
+              </kb-form-item>
+              <kb-form-item>
+                <div class="col-md-9 col-md-offset-3">
+                  <button @click="savePassword" class="btn green">Save</button>
+                </div>
+              </kb-form-item>
+            </kb-form>
+          </section>
+
+          <section
+            :class="{active:currentTab=='Organization',in:currentTab=='Organization'}"
+            class="tab-pane fade"
+          >
+            <kb-form class="margin-top-20">
+              <kb-form-item>
+                <label class="control-label col-md-3"
+                  >Current organization</label
+                >
+                <div class="col-md-9">
+                  <p class="form-control-static">{{ organization.name }}</p>
+                </div>
+              </kb-form-item>
+              <kb-form-item>
+                <label class="control-label col-md-3">Is Admin</label>
+                <div class="col-md-9">
+                  <p class="form-control-static">{{
+                    Kooboo.text.common[user.isAdmin ? "yes" : "no"]
+                  }}</p>
+                  <span v-if="!user.isAdmin" class="help-block">{{
+                    Kooboo.text.account.youAreNotAdmin
+                  }}</span>
+                </div>
+              </kb-form-item>
+              <kb-form-item>
+                <label class="control-label col-md-3"
+                  >Switch organization</label
+                >
+                <div class="col-md-9">
+                  <select
+                    data-bind="options: organizationOptions, optionsText: 'name', optionsValue: 'id', value: organization"
+                    class="form-control input-large"
+                    v-model="organizationModel.organizationId"
+                  >
+                    <option
+                      v-for="(item,index) in organizationOptions"
+                      :key="index"
+                      :value="item.id"
+                      >{{ item.name }}</option
+                    >
+                  </select>
+                </div>
+              </kb-form-item>
+              <kb-form-item>
+                <div class="col-md-9 col-md-offset-3">
+                  <button @click="saveOrganization" class="btn green"
+                    >Switch</button
+                  >
+                </div>
+              </kb-form-item>
+            </kb-form>
+          </section>
+
+          <section
+            :class="{active:currentTab=='Users',in:currentTab=='Users'}"
+            class="tab-pane fade"
+          >
+            <kb-form
+              class="margin-top-20"
+              :model="userModel"
+              :rules="userModelRules"
+              ref="userForm"
+            >
+              <kb-form-item>
+                <label class="control-label col-md-3">Organization name</label>
+                <div class="col-md-9">
+                  <p class="form-control-static">{{ organization.name }}</p>
+                </div>
+              </kb-form-item>
+              <kb-form-item class="form-group">
+                <label class="control-label col-md-3">Users</label>
+                <div class="col-md-9">
+                  <ul data-bind="foreach: organizationUsers">
+                    <li v-for="(item,index) in users" :key="index">
+                      <span data-bind="text: $data">{{ item }}</span>
+                      <template v-if="item!==organization.name">
+                        <a
+                          href="javascript:;"
+                          title="Remove"
+                          @click="deleteUser(item)"
+                        >
+                          <i class="fa fa-close"></i>
+                        </a>
+                      </template>
                     </li>
-                </ul>
-                <div class="tab-content">
-                    <section data-bind="css: { active: curType() == 'Account', in: curType() == 'Account' }" class="tab-pane fade">
-                        <div class="form-horizontal margin-top-20">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Username</label>
-                                <div class="col-md-9">
-                                    <p data-bind="text: username" class="form-control-static"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Email</label>
-                                <div class="col-md-9">
-                                    <!-- ko if: email -->
-                                    <p data-bind="text: email" class="form-control-static"></p>
-                                    <!-- /ko -->
-                                    <!-- ko ifnot: email -->
-                                    <input type="text" class="form-control input-large" data-bind="value: newEmail, error: newEmail">
-                                    <!-- /ko -->
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Language</label>
-                                <div class="col-md-9">
-                                    <select data-bind="options: languageOptions, optionsText: 'value', optionsValue: 'key', value: language" class="form-control input-large"></select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <button data-bind="click: saveUser" class="btn green">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section data-bind="css: { active: curType() == 'Password', in: curType() == 'Password' }" class="tab-pane fade">
-                        <div class="form-horizontal margin-top-20">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Old password</label>
-                                <div class="col-md-9">
-                                    <input type="password" data-bind="value: oldPassword, error: oldPassword" class="form-control input-large">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">New password</label>
-                                <div class="col-md-9">
-                                    <input type="password" data-bind="value: newPassword, error: newPassword" class="form-control input-large">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Confirm password</label>
-                                <div class="col-md-9">
-                                    <input type="password" data-bind="value: confirmPassword, error: confirmPassword" class="form-control input-large">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <button data-bind="click: savePassword" class="btn green">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section data-bind="css: { active: curType() == 'Organization', in: curType() == 'Organization' }" class="tab-pane fade">
-                        <div class="form-horizontal margin-top-20">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Current organization</label>
-                                <div class="col-md-9">
-                                    <p data-bind="text: organizationName" class="form-control-static"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Is Admin</label>
-                                <div class="col-md-9">
-                                    <p data-bind="text: Kooboo.text.common[isAdmin()?'yes':'no']" class="form-control-static"></p>
-                                    <span data-bind="visible: !isAdmin()" class="help-block">You are not administrator of current organization, you do not have access to organization profile.</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Switch organization</label>
-                                <div class="col-md-9">
-                                    <select data-bind="options: organizationOptions, optionsText: 'name', optionsValue: 'id', value: organization" class="form-control input-large"></select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <button data-bind="click: saveOrganization" class="btn green">Switch</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-
-
-
-
-
-                    <section data-bind="css: { active: curType() == 'Users', in: curType() == 'Users' }" class="tab-pane fade">
-                        <div class="form-horizontal margin-top-20">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Organization name</label>
-                                <div class="col-md-9">
-                                    <p data-bind="text: organizationName" class="form-control-static"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Users</label>
-                                <div class="col-md-9">
-                                    <ul data-bind="foreach: organizationUsers">
-                                        <li>
-                                            <span data-bind="text: $data"></span>
-                                            <!-- ko if: $parent.deletableUser($data) -->
-                                            <a href="javascript:;" data-bind="click: $parent.deleteUser.bind(this, $data)" title="Remove">
-                                                <i class="fa fa-close"></i>
-                                            </a>
-                                            <!-- /ko -->
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Add user</label>
-                                <div class="col-md-9">
-                                    <input type="text" data-bind="value: newUser, error: newUser" class="form-control input-large" placeholder="Enter user name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <button data-bind="click: addNewUser" class="btn green">Add</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                  </ul>
                 </div>
-            </div>
+              </kb-form-item>
+              <kb-form-item class="form-group" prop="userName">
+                <label class="control-label col-md-3">Add user</label>
+                <div class="col-md-9">
+                  <input
+                    type="text"
+                    class="form-control input-large"
+                    placeholder="Enter user name"
+                    v-model="userModel.userName"
+                  />
+                </div>
+              </kb-form-item>
+              <kb-form-item class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                  <button @click="addNewUser" class="btn green">Add</button>
+                </div>
+              </kb-form-item>
+            </kb-form>
+          </section>
         </div>
+      </div>
     </div>
-    <div data-bind="modal: paymentModal" class="modal fade" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button data-bind="click: userConfirmPaymentStatus.bind(this, 'cancel')" class="close"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">Payment</h4>
-                </div>
-                <div class="modal-body">
-                    <div id="qr-code" style="text-align:center"></div>
-                </div>
-                <div class="modal-footer">
-                    <button data-bind="click: userConfirmPaymentStatus.bind(this, 'success')" class="btn green">Payment success</button>
-                    <button data-bind="click: userConfirmPaymentStatus.bind(this, 'fail')" class="btn red">Payment failure</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div data-bind="modal: paypalModal" class="modal fade" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width:470px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button data-bind="click: cancelPaypal.bind(this)" class="close"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">Payment</h4>
-                </div>
-                <div class="modal-body">
-                    <iframe id="paypalIframe" style="border: none;width:100%;height:550px"></iframe>
-                </div>
-
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
-<!-- <script src="https://www.paypalobjects.com/api/checkout.js" data-version-4></script> -->
-<!--<script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.min.js"></script>-->
+
 <script>
-    (function() {
-        Kooboo.loadJS(["/_Admin/Scripts/lib/jquery.qrcode.min.js"])
-    })()
+  Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/kbForm.js",
+    "/_Admin/Scripts/lib/jquery.qrcode.min.js"
+  ]);
+
+  new Vue({
+    el: "#main",
+    data: function() {
+      var me = this;
+      return {
+        user: {},
+        organization: {},
+        users: [],
+        usersInit: false,
+        currentTab: "Account",
+        languageOptions: [],
+        organizationOptions: [],
+        organizationInit: false,
+        accountModel: {
+          username: "",
+          language: "",
+          emailAddress: ""
+        },
+        accountModelRules: {
+          emailAddress: [
+            {
+              required: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              message: Kooboo.text.validation.emailInvalid
+            },
+            {
+              remote: {
+                url: Kooboo.User.isUniqueEmail(),
+                data: function() {
+                  return {
+                    name: me.accountModel.emailAddress
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
+        passwordModel: {
+          userName: "",
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: ""
+        },
+        passwordModelRules: {
+          oldPassword: [
+            { required: Kooboo.text.validation.required },
+            {
+              min: 1,
+              max: 30,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                30
+            }
+          ],
+          newPassword: [
+            { required: Kooboo.text.validation.required },
+            {
+              min: 1,
+              max: 30,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                30
+            }
+          ],
+          confirmPassword: [
+            { required: Kooboo.text.validation.required },
+            {
+              validate: function(value) {
+                return value == me.passwordModel.newPassword;
+              },
+              message: Kooboo.text.validation.notEqual
+            }
+          ]
+        },
+        organizationModel: {
+          organizationId: ""
+        },
+        userModel: {
+          organizationId: "",
+          userName: ""
+        },
+        userModelRules: {
+          userName: [{ required: Kooboo.text.validation.required }]
+        }
+      };
+    },
+    mounted: function() {
+      var me = this;
+      Kooboo.User.get().then(function(res) {
+        if (res.success) {
+          me.user = res.model;
+          me.accountModel.username = res.model.userName;
+          me.passwordModel.username = res.model.userName;
+          me.accountModel.language = res.model.language;
+          me.accountModel.emailAddress = res.model.emailAddress;
+        }
+      });
+      Kooboo.User.getCulture().then(function(res) {
+        if (res.success) {
+          me.languageOptions = Kooboo.objToArr(res.model);
+        }
+      });
+    },
+    computed: {
+      tabs: function() {
+        var tabs = [
+          {
+            displayName: Kooboo.text.site.profile.Account,
+            value: "Account"
+          },
+          {
+            displayName: Kooboo.text.site.profile.Password,
+            value: "Password"
+          },
+          {
+            displayName: Kooboo.text.site.profile.Organization,
+            value: "Organization"
+          }
+        ];
+        if (this.user.isAdmin) {
+          tabs.push({
+            displayName: Kooboo.text.site.profile.Users,
+            value: "Users"
+          });
+        }
+        return tabs;
+      }
+    },
+    methods: {
+      saveUser: function() {
+        var valid = true;
+        var me = this;
+
+        if (!this.user.emailAddress) {
+          valid = this.$refs.accountForm.validate();
+        }
+
+        if (valid) {
+          Kooboo.User.updateProfile(this.accountModel).then(function(res) {
+            window.info.show(
+              Kooboo.text.info.update[res.success ? "success" : "fail"],
+              res.success
+            );
+            if (res.success && me.user.language != me.accountModel.language) {
+              setTimeout(function() {
+                location.reload();
+              }, 300);
+            }
+          });
+        }
+      },
+      savePassword: function() {
+        if (this.$refs.passwordForm.validate()) {
+          var me = this;
+          Kooboo.User.changePassword(this.passwordModel).then(function(res) {
+            me.passwordModel.oldPassword = "";
+            me.passwordModel.newPassword = "";
+            me.passwordModel.confirmPassword = "";
+            this.$refs.passwordForm.clearvalid();
+
+            window.info.show(
+              Kooboo.text.info.update[res.success ? "success" : "fail"],
+              res.success
+            );
+          });
+        }
+      },
+      saveOrganization: function() {
+        let me = this;
+        Kooboo.Organization.changeUserOrg(this.organizationModel).then(function(
+          res
+        ) {
+          window.info.show(
+            Kooboo.text.info.update[res.success ? "success" : "fail"],
+            res.success
+          );
+
+          if (res.success) {
+            localStorage.clear();
+            location.href =
+              res.model.redirectUrl || Kooboo.Route.User.LoginPage;
+          }
+        });
+      },
+      deleteUser: function(user) {
+        var me = this;
+        Kooboo.Organization.deleteUser({
+          organizationId: this.organization.id,
+          userName: user
+        }).then(function(res) {
+          if (res.success) {
+            me.users = me.users.filter(function(f) {
+              return f != user;
+            });
+          }
+        });
+      },
+      addNewUser: function() {
+        if (this.$refs.userForm.validate()) {
+          var me = this;
+          Kooboo.Organization.addUser(this.userModel).then(function(res) {
+            if (res.success) {
+              me.users.push(me.userModel.userName);
+              me.userModel.userName = "";
+              me.$refs.userForm.clearValid();
+              window.info.done(Kooboo.text.info.update.success);
+            }
+          });
+        }
+      }
+    },
+    watch: {
+      currentTab: function(value, old) {
+        var me = this;
+        if (old == "Account") this.$refs.accountForm.clearValid();
+        if (old == "Password") this.$refs.passwordForm.clearValid();
+        if (old == "Users") this.$refs.userForm.clearValid();
+
+        if (value == "Organization" && !this.organizationInit) {
+          Kooboo.Organization.getOrganizations().then(function(res) {
+            if (res.success) {
+              me.organizationOptions = res.model;
+              Kooboo.Organization.getOrg().then(function(r) {
+                if (r.success) {
+                  me.organization = r.model;
+                  me.organizationModel.organizationId = r.model.id;
+                  me.organizationInit = true;
+                }
+              });
+            }
+          });
+        }
+
+        if (value == "Users" && !this.usersInit) {
+          Kooboo.Organization.getOrg().then(function(res) {
+            if (res.success) {
+              me.organization = res.model;
+              me.userModel.organizationId = res.model.id;
+              Kooboo.Organization.getUsers({
+                organizationId: res.model.id
+              }).then(function(r) {
+                if (r.success) {
+                  me.users = r.model.map(function(o) {
+                    return o.userName;
+                  });
+                  me.usersInit = true;
+                }
+              });
+            }
+          });
+        }
+      }
+    }
+  });
 </script>
-<script src="/_Admin/View/Account/Profile.js"></script>

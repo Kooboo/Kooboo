@@ -1,81 +1,191 @@
 <!-- #layout name=blank-->
-<div class="page-header">
-    <h1 class="title"><span>Site binding</span>: <strong data-bind="text: siteName"></strong></h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'SITES'
-},{
-    name: 'DASHBOARD'
-},{
-    name: Kooboo.text.common.Domains
-}]}"></div>
-<div class="navbar navbar-default">
-    <div class="container-fluid">
-        <a class="btn green navbar-btn" data-bind="click: showDialog" data-toggle="modal"><span>New binding</span></a>
-        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
-    </div>
-</div>
-<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
 
-<div data-bind="modal: modalShow" class="modal fade" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form>
-                <div class="modal-header">
-                    <button data-bind="click: cancelDialog" type="button" class="close"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">New binding</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="siteName">Binding to</label>
-                            <div class="col-md-9" k-if="kooboosetting.IsLocal = true">
-                                <label class="radio-inline">
-                                    <input type="radio" value="domain" data-bind="checked: defaultBinding"><span>Domain</span>
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" value="port" data-bind="checked: defaultBinding"><span>Port</span>
-                                </label>
-                            </div>
-                            <div class="col-md-9" k-if="kooboosetting.IsLocal = false">
-                                <div class="input-group" data-bind="error: subdomain">
-                                    <input data-bind="value: subdomain" class="form-control" id="SubDomain" name="SubDomain" placeholder="example: www" type="text">
-                                    <span class="input-group-addon">.</span>
-                                    <select data-bind="options: rootDomain, optionsText: 'domainName', optionsValue: 'domainName', value: root" class="form-control" name="RootDomain"></select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group" k-if="kooboosetting.IsLocal = true">
-                            <div class="col-md-9 col-md-offset-3">
-                                <!-- ko if: defaultBinding() == 'domain' -->
-                                <div class="input-group" data-bind="error: subdomain">
-                                    <input data-bind="value: subdomain" class="form-control" id="SubDomain" name="SubDomain" placeholder="example: www" type="text">
-                                    <span class="input-group-addon">.</span>
-                                    <select data-bind="options: rootDomain, optionsText: 'domainName', optionsValue: 'domainName', value: root" class="form-control" name="RootDomain"></select>
-                                </div>
-                                <!-- /ko -->
-                                <!-- ko if: defaultBinding() == 'port' -->
-                                <input data-bind="value: port, error: port, event: { keydown: Kooboo.event.input.positiveIntegerOnly }" class="form-control" placeholder="example: 81" type="number" min="0">
-                                <!-- /ko -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button data-bind="click: save" class="btn green">Add</button>
-                    <button data-bind="click: cancelDialog" class="btn gray">Cancel</button>
-                </div>
-            </form>
-        </div>
+<div id="app">
+  <div class="page-header">
+    <h1 class="title">
+      <span>Site binding</span>: <strong>{{ siteName }}</strong>
+    </h1>
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="navbar navbar-default">
+    <div class="container-fluid">
+      <a class="btn green navbar-btn" @click="showDialog" data-toggle="modal"
+        ><span>New binding</span></a
+      >
+      <a
+        v-if="tableDataSelected.length > 0"
+        @click="onDelete"
+        class="btn red navbar-btn"
+        >Delete</a
+      >
     </div>
+  </div>
+
+  <kb-table
+    :show-select="true"
+    :data="domainsData"
+    :selected.sync="tableDataSelected"
+  >
+    <kb-table-column :label="Kooboo.text.site.domain.name">
+      <template v-slot="row">
+        <a>{{ row.fullName }}</a>
+      </template>
+    </kb-table-column>
+    <kb-table-column :label="Kooboo.text.site.domain.sslEnabled">
+      <template v-slot="row">
+        <a
+          :class="row.enableSsl?'label label-sm  green':'label label-sm  gray'  "
+        >
+          {{
+            row.enableSsl ? Kooboo.text.common.yes : Kooboo.text.common.no
+          }}</a
+        >
+      </template>
+    </kb-table-column>
+    <kb-table-column :head-class="'table-action'">
+      <template v-slot="row">
+        <a
+          @click="startSSLHandle($event,row.id)"
+          :class="row.enableSsl?'btn btn-sm gray disabled':'btn btn-sm blue'"
+        >
+          {{
+            row.enableSsl
+              ? Kooboo.text.common.enabled
+              : Kooboo.text.common.enable
+          }}</a
+        >
+      </template>
+    </kb-table-column>
+  </kb-table>
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="modalShow"
+  >
+    <!--v-if="modalShow" function is destroy component and directive-->
+    <div class="modal-dialog" v-if="modalShow">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button @click="cancelDialog" type="button" class="close">
+            <i class="fa fa-close"></i>
+          </button>
+          <h4 class="modal-title">New binding</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="col-md-3 control-label">Binding to</label>
+              <div class="col-md-9" k-if="kooboosetting.IsLocal = true">
+                <label class="radio-inline">
+                  <input
+                    type="radio"
+                    value="domain"
+                    :checked="defaultBinding ==='domain'"
+                    @input="defaultBindingCheckboxHandle"
+                  /><span>Domain</span>
+                </label>
+                <label class="radio-inline">
+                  <input
+                    type="radio"
+                    value="port"
+                    :checked="defaultBinding ==='port'"
+                    @input="defaultBindingCheckboxHandle"
+                  /><span>Port</span>
+                </label>
+              </div>
+              <div class="col-md-9" k-if="kooboosetting.IsLocal = false">
+                <kb-form :model="formModel" :rules="formRules" align="inline">
+                  <kb-form-item
+                    prop="domain"
+                    v-if="defaultBinding === 'domain'"
+                  >
+                    <div class="input-group">
+                      <input
+                        v-model="subdomain"
+                        class="form-control"
+                        name="SubDomain"
+                        placeholder="example: www"
+                        type="text"
+                      />
+                      <span class="input-group-addon">.</span>
+                      <select
+                        class="form-control"
+                        name="RootDomain"
+                        v-for="domain in rootDomain"
+                      >
+                        <option>{{ domain.domainName }}</option>
+                      </select>
+                    </div>
+                  </kb-form-item>
+                </kb-form>
+              </div>
+            </div>
+            <div class="form-group" k-if="kooboosetting.IsLocal = true">
+              <div class="col-md-9 col-md-offset-3">
+                <kb-form
+                  :model="formModel"
+                  :rules="formRules"
+                  align="inline"
+                  ref="form"
+                >
+                  <kb-form-item
+                    prop="domain"
+                    v-if="defaultBinding === 'domain'"
+                  >
+                    <div class="input-group">
+                      <input
+                        v-model="formModel.domain"
+                        class="form-control"
+                        name="SubDomain"
+                        placeholder="example: www"
+                        type="text"
+                      />
+                      <span class="input-group-addon">.</span>
+                      <select
+                        v-model="formModel.root"
+                        class="form-control"
+                        name="RootDomain"
+                        v-for="domain in rootDomain"
+                      >
+                        <option>{{ domain.domainName }}</option>
+                      </select>
+                    </div>
+                  </kb-form-item>
+
+                  <kb-form-item prop="port" v-if="defaultBinding === 'port'">
+                    <input
+                      :value="formModel.port"
+                      @input="formModel.port= Number($event.target.value)"
+                      class="form-control"
+                      placeholder="example: 81"
+                      type="number"
+                      min="0"
+                    />
+                  </kb-form-item>
+                </kb-form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click=" onSave" class="btn green">Add</button>
+          <button @click="cancelDialog" class="btn gray">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/tableModel.js",
+      "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+      "/_Admin/Scripts/vue-components/kbTable.js",
+      "/_Admin/Scripts/vue-components/kbForm.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/System/Domains.js"></script>

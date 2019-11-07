@@ -90,7 +90,7 @@
           :style="{
                 background: Kooboo.getLabelColor(item.key.toLowerCase())
               }"
-          v-for="(item, index) in conventObjectToList(row.relations)"
+          v-for="(item, index) in Kooboo.objToArr(row.relations)"
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Page.name)"
         >
@@ -410,6 +410,7 @@
   new Vue({
     el: "#app",
     data: function() {
+      var me = this;
       return {
         breads: [
           {
@@ -452,6 +453,17 @@
                 ", " +
                 Kooboo.text.validation.maxLength +
                 64
+            },
+            {
+              remote: {
+                url: Kooboo.Page.isUniqueName(),
+                data: function() {
+                  return {
+                    name: me.copyModel.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ],
           url: [
@@ -630,13 +642,6 @@
           });
         }
       },
-      conventObjectToList: function(obj) {
-        let list = [];
-        for (var key in obj) {
-          list.push({ key: key, value: obj[key] });
-        }
-        return list;
-      },
       onlineClass: function(isOnline) {
         let list = ["label", "label-sm"];
         list.push(isOnline ? "label-success" : "label-default");
@@ -733,12 +738,6 @@
           this.copyModel.url = "/" + pageName;
         } else {
           this.$refs.copyForm.clearValid();
-        }
-      },
-      model: {
-        deep: true,
-        handler: function() {
-          this.selectedRows = [];
         }
       }
     }

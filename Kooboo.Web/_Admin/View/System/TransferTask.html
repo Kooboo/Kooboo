@@ -6,8 +6,8 @@
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a
-        data-bind="visible: showDeleteBtn, click: onDelete"
+      <a v-if="tableDataSelected.length > 0"
+        @click="onDelete"
         class="btn red navbar-btn"
         >Delete</a
       >
@@ -16,7 +16,7 @@
   <kb-table
     :show-select="true"
     :data="tableData"
-    :selected.sync="tableDataSelectedRows"
+    :selected.sync="tableDataSelected"
   >
     <kb-table-column :label="Kooboo.text.common.URL">
       <template v-slot="row">

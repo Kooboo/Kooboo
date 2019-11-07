@@ -63,6 +63,11 @@
           return i === item;
         });
       }
+    },
+    watch: {
+      data: function() {
+        this.$emit("update:selected", []);
+      }
     }
   });
 })();

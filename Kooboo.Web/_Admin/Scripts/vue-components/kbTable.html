@@ -4,8 +4,9 @@
       <th v-if="showSelect" class="table-checkbox">
         <input
           type="checkbox"
+          :disabled="data.length <= 0"
           @input="selectedAll"
-          :checked="data.length == selected.length"
+          :checked="data.length == selected.length && data.length > 0"
         />
       </th>
       <template v-for="(item, index) in slots">
@@ -23,7 +24,7 @@
       </template>
     </tr>
   </thead>
-  <tbody>
+  <tbody v-if="data.length > 0">
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" @click="selectRow(row)">
       <td v-if="showSelect" class="table-checkbox">
         <input type="checkbox" :checked="itemIsSelected(row)" />
@@ -44,6 +45,11 @@
           </template>
         </td>
       </template>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr v-if="data.length <= 0">
+      <td :colspan="100" class="text-center">{{ Kooboo.text.common.empty }}</td>
     </tr>
   </tbody>
   <slot></slot>
