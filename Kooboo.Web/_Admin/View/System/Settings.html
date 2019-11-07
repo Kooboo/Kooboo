@@ -229,7 +229,7 @@
       </div>
       <div class="col-md-9">
         <div class="input-groups">
-          <div class="input-group" v-for="(setting, index) in model.customSettingArray" :key="index">
+          <div class="input-group" v-for="(setting, index) in customSettingArray" :key="index">
             <input
               type="text"
               v-model="setting.key"
@@ -505,7 +505,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button data-bind="click: onHideUploadModal" class="close"
+          <button @click="onHideUploadModal" class="close"
             ><i class="fa fa-close"></i
           ></button>
           <h4 class="modal-title">Import</h4>
@@ -521,7 +521,7 @@
                 <a class="btn btn-default btn-file">
                   <input
                     type="file"
-                    data-bind="upload: {
+                    v-kb-upload="{
                                     allowMultiple: false,
                                     acceptTypes: [
                                         'application/zip',
@@ -541,16 +541,14 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button data-bind="click: onHideUploadModal" class="btn btn-default"
+          <button @click="onHideUploadModal" class="btn btn-default"
             >Close</button
           >
         </div>
       </div>
     </div>
   </div>
-  <div
-    data-bind="component: { name: 'kb-export-modal', params: { isShow: showExportModal }}"
-  ></div>
+  <kb-export-modal :is-show.sync="showExportModal"></kb-export-modal>
   <div
     v-kb-modal="showCustomServerModal"
     class="modal fade"
@@ -630,7 +628,7 @@
       "/_Admin/Scripts/SPA.js",
       "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
-      "/_Admin/Scripts/components/kbExportModal.js",
+      "/_Admin/Scripts/vue-components/kbExportModal.js",
       "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
       "/_Admin/Scripts/vue-components/kbSwitch.js"
     ]);

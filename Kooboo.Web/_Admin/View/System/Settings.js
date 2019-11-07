@@ -36,20 +36,19 @@ $(function() {
         clusters: [],
         langs: [],
         domains: [],
-
+        editingLangs: [],
+        customSettingArray: [],
+        langModalShow: false,
         uploadModal: false,
         showExportModal: false,
-        remoteSiteList: [],
-        langModalShow: false,
-        langKeys: [],
-        editingLangs: [],
 
+        remoteSiteList: [],
+        langKeys: [],
         showSiteMirrorConfigModal: false,
         isSlaveSite: false,
         _clusters: [],
         showError: false,
         showCustomServerModal: false,
-        diskSyncFolder: "",
 
         model: {
           displayName: "",
@@ -64,8 +63,9 @@ $(function() {
           sitePath: {},
           autoDetectCulture: false,
           forceSSL: false,
-          customSettingArray: []
-          // enableLocationRedirect: false
+          customSettings: {},
+          enableLocationRedirect: false,
+          diskSyncFolder: ""
         }
       };
     },
@@ -87,7 +87,7 @@ $(function() {
               self.model[key] = model[key];
             }
           });
-          self.model.customSettingArray = Kooboo.objToArr(model.customSettings);
+          self.customSettingArray = Kooboo.objToArr(model.customSettings);
           self.siteTypes = Kooboo.objToArr(siteTypes[0].model);
           self.cultures = cultureLists[0].model;
           for (var cul in defaultCulture[0].model.cultures) {
@@ -154,59 +154,21 @@ $(function() {
         self.showExportModal = true;
       },
       save: function() {
-        // var keys = [
-        //   "displayName",
-        //   "siteType",
-        //   "enableConstraintFixOnSave",
-        //   "enableDiskSync",
-        //   "enableFrontEvents",
-        //   "forceSSL",
-        //   "enableMultilingual",
-        //   "enableSitePath",
-        //   "enableVisitorLog",
-        //   "sitePath",
-        //   "autoDetectCulture",
-        //   "diskSyncFolder"
-        // ];
-        // var newData = {};
-        // _.forEach(keys, function(k) {
-        //   newData[k] = ko.mapping.toJS(self[k]);
-        // });
-
-        // var sitePathValueElements = $("[name^='SitePath.']");
-        // _.forEach(sitePathValueElements, function(el) {
-        //   var id = $(el)
-        //     .attr("name")
-        //     .split(".")[1];
-        //   newData["sitePath"][id] = $(el).val();
-        // });
-
-        // var customSettings = {};
-        // _.forEach(self.customSettingArray, function(s) {
-        //   s.key && (customSettings[s.key] = s.value);
-        // });
-
-        // newData["customSettings"] = customSettings;
-        // newData["culture"] = Kooboo.arrToObj(self.langs);
-        // newData["defaultCulture"] = self.defaultCulture;
-
-        // if (!newData.enableMultilingual) {
-        //   self.enableSitePath = false;
-        //   newData.enableSitePath = false;
-        // }
         var newData = _.cloneDeep(self.model);
+
         var customSettings = {};
-        _.forEach(newData.customSettingArray, function(s) {
+        _.forEach(self.customSettingArray, function(s) {
           s.key && (customSettings[s.key] = s.value);
         });
 
         newData["customSettings"] = customSettings;
-        // newData["culture"] = Kooboo.arrToObj(self.langs);
+        newData["culture"] = Kooboo.arrToObj(self.langs);
 
         if (!newData.enableMultilingual) {
           self.model.enableSitePath = false;
           newData.enableSitePath = false;
         }
+        // console.log(newData);
         Kooboo.Site.post(newData).then(function(res) {
           if (res.success) {
             window.info.show(Kooboo.text.info.save.success, true);
@@ -217,7 +179,7 @@ $(function() {
         });
       },
       onAddLangModalShow: function() {
-        _.forEach(self.langs(), function(lang) {
+        _.forEach(self.langs, function(lang) {
           self.editingLangs.push(
             new Language({
               key: lang.key(),
@@ -229,7 +191,7 @@ $(function() {
         self.langModalShow(true);
       },
       removeLang: function(lang) {
-        self.langs.remove(lang);
+        self.langs = _.without(self.langs, lang);
       },
       removeEditingLang: function(lang) {
         lang.showError(false);
