@@ -1,18 +1,21 @@
 (function() {
-  var event = new Event("input", { bubbles: true });
-  Vue.directive("kb-typeahead", {
-    bind: main,
-    update: main,
-    unbind: function() {
-      event = null;
+  function createNewEvent(eventName) {
+    var ev;
+    if (typeof Event === "function") {
+      ev = new Event(eventName, { bubbles: true });
+    } else {
+      // less than IE11
+      ev = document.createEvent("Event");
+      ev.initEvent(eventName, true, true);
     }
-  });
-  function main(element, binding) {
+    return ev;
+  }
+  Vue.directive("kb-typeahead", function(element, binding) {
+    var event = new createNewEvent("input");
     var $element = $(element);
     var source = binding.value.source;
     var items = binding.value.items || 4;
     var showHintOnFocus = binding.value.defaultShow && true;
-
     //   var highlighter = function(item) {
     //     var matchSpan = '<span style="color: blue;font-weight:bold">';
     //     var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
@@ -45,5 +48,5 @@
     if (source && source.length) {
       $element.attr("autocomplete", "off").typeahead(options);
     }
-  }
+  });
 })();
