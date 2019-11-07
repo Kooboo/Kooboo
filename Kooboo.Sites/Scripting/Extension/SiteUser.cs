@@ -34,6 +34,5 @@ namespace Kooboo.Sites.Scripting.Extension
         {
             return username + " sample"; 
         }
-
     }
 }

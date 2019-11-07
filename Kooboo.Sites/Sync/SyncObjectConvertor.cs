@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Sync
             SyncObj.ObjectId = SiteObject.Id;
             SyncObj.ObjectConstType = SiteObject.ConstType;
 
-            SyncObj.JsonData = Lib.Helper.JsonHelper.Serialize(SiteObject);
+            SyncObj.JsonData = Lib.Helper.JsonHelper.SerializeCaseSensitive(SiteObject);
 
             return SyncObj;
         }
@@ -57,7 +57,7 @@ namespace Kooboo.Sites.Sync
             SyncObj.TableName = tablename;
             SyncObj.TableColName = colName;
             SyncObj.ObjectId = id;
-            SyncObj.JsonData = Lib.Helper.JsonHelper.Serialize(tableData);
+            SyncObj.JsonData = Lib.Helper.JsonHelper.SerializeCaseSensitive(tableData);
             return SyncObj;
         }
 

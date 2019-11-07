@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Models;
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
@@ -74,10 +73,7 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = false };
                 result.Messages.AddRange(errors);
                 return result;
-            }
-
-
-            // ValidateKModel() 
+            } 
             try
             {
                 return ExecuteMethod(call, apimethod);

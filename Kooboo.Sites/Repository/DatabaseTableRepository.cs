@@ -24,6 +24,8 @@ namespace Kooboo.Sites.Repository
 
         public override bool AddOrUpdate(DatabaseTable value, Guid UserId)
         {
+             VerifyData(value.Columns); 
+
             var ok = base.AddOrUpdate(value, UserId);
 
             if (ok)
@@ -153,5 +155,23 @@ namespace Kooboo.Sites.Repository
         {
             return this.Get(name) == null;
         }
+
+        public void VerifyData(List<DbTableColumn> columns)
+        {
+            var finds = columns.FindAll(o =>o.IsPrimaryKey || o.IsIndex);
+            
+            if (finds !=null)
+            {
+                foreach (var item in finds)
+                {
+                    if (item.DataType !=null && item.DataType.ToLower().Contains("date"))
+                    {
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Does not support index on date time column")); 
+                    }
+                }
+            }
+
+        }
+      
     }
 }

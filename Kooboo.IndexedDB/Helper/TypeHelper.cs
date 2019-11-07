@@ -3,8 +3,10 @@
 using Kooboo.IndexedDB.CustomAttributes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -105,6 +107,18 @@ namespace Kooboo.IndexedDB.Helper
             }
             return false;
 
+        }
+
+
+        public static T DeepCopy<T>(T input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(ms, input);
+                ms.Position = 0;
+                return (T)formatter.Deserialize(ms);
+            }
         }
 
     }

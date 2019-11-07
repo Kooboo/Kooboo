@@ -56,7 +56,7 @@ namespace Kooboo.Web.Api.Implementation
                 orgid = user.CurrentOrgId;
             }
 
-            var sites = Kooboo.Sites.Service.WebSiteService.RemoteListByUser(user.Id, orgid);
+            var sites = WebSiteService.RemoteListByUser(user.Id, orgid);
 
             List<SimpleSiteItemViewModel> result = new List<SimpleSiteItemViewModel>();
 
@@ -93,15 +93,12 @@ namespace Kooboo.Web.Api.Implementation
                 remoteurl = remoteurl + "/";
             }
 
-
             remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + OrganizationId.ToString();
 
-            List<SimpleSiteItemViewModel> model = Kooboo.Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
+            List<SimpleSiteItemViewModel> model = Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
 
             return model;
         }
-
-
 
 
         public List<SyncItemViewModel> List(ApiCall call)
@@ -278,7 +275,7 @@ namespace Kooboo.Web.Api.Implementation
 
             }
 
-            return result;
+            return result.OrderBy(o=>o.LogId).ToList();
         }
 
         [Kooboo.Attributes.RequireParameters("id", "logids")]
@@ -361,12 +358,11 @@ namespace Kooboo.Web.Api.Implementation
                 System.Threading.Tasks.Task.Run(() => Sites.TaskQueue.QueueManager.Execute(call.WebSite.Id));
             }
         }
-
-        [Kooboo.Attributes.RequireParameters("id")]
-        public PullResult Pull(ApiCall call)
+         
+        public PullResult Pull(Guid id, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
-            var setting = sitedb.SyncSettings.Get(call.ObjectId);
+            var setting = sitedb.SyncSettings.Get(id);
             if (setting == null)
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context));
@@ -453,21 +449,14 @@ namespace Kooboo.Web.Api.Implementation
             return res;
         }
 
-        [Kooboo.Attributes.RequireParameters("SiteId", "LastId")]
-        public SyncObject SendToClient(ApiCall call)
-        {// TODO: validate user has access to this site. 
-            string strLogId = call.GetValue("LastId");
-
-            long lastlogid = -1;
-
-            if (long.TryParse(strLogId, out lastlogid))
-            {
-                return PullRequest.PullNext(call.WebSite.SiteDb(), lastlogid);
-            }
-            return null;
+        // [Kooboo.Attributes.RequireParameters("SiteId", "LastId")]
+        public SyncObject SendToClient(long LastId, Guid SiteId,  ApiCall call)
+        {
+              return PullRequest.PullNext(call.WebSite.SiteDb(), LastId);
+          
         }
 
-        [Kooboo.Attributes.RequireParameters("logid")]
+        //[Kooboo.Attributes.RequireParameters("logid")]
         public long VersionNumber(ApiCall call)
         {
             return call.WebSite.SiteDb().Log.Store.LastKey;

@@ -37,6 +37,10 @@ namespace Kooboo.IndexedDB.Query
         /// <returns></returns>
         public virtual bool isMatch(byte[] columnbytes)
         {
+            if (columnbytes == null)
+            {
+                return false;
+            }
             if (this.DataType == typeof(DateTime))
             {
                 columnbytes = ConvertDatetimeBytes(columnbytes);

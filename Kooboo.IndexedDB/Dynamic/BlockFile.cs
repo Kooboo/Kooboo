@@ -89,9 +89,7 @@ namespace Kooboo.IndexedDB.Dynamic
             Stream.Position = blockposition + 2;
 
             Stream.Write(counter, 0, 4);
-
-            // Stream.Position = blockposition + 6;  
-
+            
             Stream.Position = blockposition + 10;
             Stream.Write(bytes, 0, bytes.Length);
 
@@ -124,14 +122,14 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 if (len == int.MaxValue)
                 {
-                    byte[] header = GetPartial(position, relativePos + 10, 8);   
+                    byte[] header = GetPartial(position, relativePos + 10, 8);
                     int counter = BitConverter.ToInt32(header, 4);
-                    return GetPartial(position, relativePos + 10 + 8, counter); 
+                    return GetPartial(position, relativePos + 10 + 8, counter);
                 }
                 else
                 {
                     return GetPartial(position, relativePos + 10 + 8, len);
-                } 
+                }
             }
             else
             {
@@ -140,11 +138,22 @@ namespace Kooboo.IndexedDB.Dynamic
             return null;
         }
 
-        public void UpdateCol(long position, int relativeposition, int length, byte[] values)
+        public bool UpdateCol(long position, int relativeposition, int length, byte[] values)
         {
-            this.Stream.Position = position + 10 + relativeposition + 8;
+            var currentbytes = this.GetCol(position, relativeposition, length);
 
+            var hashone = Helper.KeyHelper.ComputeGuid(currentbytes);
+
+            var hashnew = Helper.KeyHelper.ComputeGuid(values); 
+
+            if (hashone == hashnew)
+            {
+                return false;
+            }
+
+            this.Stream.Position = position + 10 + relativeposition + 8;
             this.Stream.Write(values, 0, length);
+            return true;
         }
 
         #endregion

@@ -273,7 +273,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             foreach (var item in RepeatTaskList)
             {
-                items.Add(DeepCopy<RepeatItem<TValue>>(item));
+                items.Add(Helper.TypeHelper.DeepCopy<RepeatItem<TValue>>(item));
             }
             return items;
         }
@@ -284,7 +284,7 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 if (item.id == id)
                 {
-                    return DeepCopy<RepeatItem<TValue>>(item); 
+                    return Helper.TypeHelper.DeepCopy<RepeatItem<TValue>>(item); 
                 }
             }
 
@@ -293,7 +293,7 @@ namespace Kooboo.IndexedDB.Schedule
             if (record != null)
             {
                 this.RepeatTaskList.Add(record);
-                return DeepCopy<RepeatItem<TValue>>(record); 
+                return Helper.TypeHelper.DeepCopy<RepeatItem<TValue>>(record); 
             }
 
             return null; 
@@ -310,7 +310,7 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 if (item.NextExecute <= DateTime.Now)
                 {
-                    RepeatItem<TValue> one = DeepCopy<RepeatItem<TValue>>(item);
+                    RepeatItem<TValue> one = Helper.TypeHelper.DeepCopy<RepeatItem<TValue>>(item);
                     items.Add(one);
                 }
             }
@@ -334,7 +334,7 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 if (item.NextExecute <= DateTime.Now)
                 {
-                    RepeatItem<TValue> one = DeepCopy<RepeatItem<TValue>>(item);                    
+                    RepeatItem<TValue> one = Helper.TypeHelper.DeepCopy<RepeatItem<TValue>>(item);                    
                     UpdateExecuteTime(one);
                     return one;
                 }
@@ -686,19 +686,7 @@ namespace Kooboo.IndexedDB.Schedule
 
         }
 
-        public static T DeepCopy<T>(T input)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(ms, input);
-                ms.Position = 0;
-                return (T)formatter.Deserialize(ms);
-            }
-        }
-
-
-        public void DelSelf()
+       public void DelSelf()
         {
             lock (_object)
             {

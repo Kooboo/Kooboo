@@ -59,6 +59,7 @@ namespace Kooboo.IndexedDB
                 entry.Id = GetNewLogId(this.Store.OwnerDatabase.Name);
             }
             this.Store.add(entry.Id, entry);
+            this.Store.Close();
         }
 
         public void DelSelf()
@@ -151,15 +152,15 @@ namespace Kooboo.IndexedDB
             return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
         }
 
-        public List<LogEntry> GetByTableNameAndKey(string TableName,Guid Id, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByTableNameAndKey(string TableName, Guid Id, int take, int skip = 0, bool ascending = false)
         {
             var keys = ObjectContainer.GuidConverter.ToByte(Id);
-            return GetByTableNameAndKey(TableName, keys, take, skip, ascending); 
+            return GetByTableNameAndKey(TableName, keys, take, skip, ascending);
         }
 
         public List<LogEntry> GetByTableNameAndKey(string TableName, byte[] Keys, int take, int skip = 0, bool ascending = false)
         {
-             Guid HashKey = LogEntry.ToHashGuid(Keys);
+            Guid HashKey = LogEntry.ToHashGuid(Keys);
             int namehash = TableName.GetHashCode32();
             if (ascending)
             {
@@ -174,7 +175,7 @@ namespace Kooboo.IndexedDB
         public LogEntry GetLastLogByTableNameAndKey(string TableName, Guid Id)
         {
             var keys = ObjectContainer.GuidConverter.ToByte(Id);
-            return GetLastLogByTableNameAndKey(TableName, keys); 
+            return GetLastLogByTableNameAndKey(TableName, keys);
         }
 
         public LogEntry GetLastLogByTableNameAndKey(string TableName, byte[] Keys)
@@ -189,7 +190,7 @@ namespace Kooboo.IndexedDB
         {
 
             Guid HashKey = LogEntry.ToHashGuid(current.KeyBytes);
-     
+
             return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == HashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
         }
 
