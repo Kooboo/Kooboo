@@ -136,11 +136,11 @@
                 class="form-control input-large"
                 style="display: inline-table;"
               >
-                <li v-for="lang in langs" :key="lang.value">
+                <li v-for="lang in langs">
                   {{ lang.value }}
                   <a
                     href="javascript:;"
-                    @click="removeLang"
+                    @click="removeLang(lang)"
                     v-kb-tooltip="Kooboo.text.common.remove"
                     ><i class="fa fa-remove"></i
                   ></a>
@@ -181,7 +181,7 @@
           <kb-switch v-model="model.enableSitePath"></kb-switch>
         </div>
         <div v-kb-collapsein="model.enableSitePath">
-          <div class="form-group" v-for="lang in langs" :key="lang.key">
+          <div class="form-group" v-for="lang in langs">
             <label class="control-label">{{ lang.key }}</label>
             <input
               type="text"
@@ -204,7 +204,7 @@
         </div>
       </div>
     </li>
-    <!--<li class="item clearfix">
+    <!--<li class="item clearfix" k-if="false">
         <div class="col-md-3">
             <label class="control-label">Site mirror</label>
             <p class="form-control-static"></p>
@@ -297,13 +297,13 @@
           <div class="form-horizontal">
             <div class="form-group margin-top-10">
               <div class="col-md-12 input-groups">
-                <div v-for="(lang, index) in editingLangs" class="input-group">
+                <div v-for="(lang, index) in editingLangs" class="input-group" :class="{'has-error' : lang.valueError || lang.keyError }">
                   <input
                     type="text"
                     class="form-control input-medium"
                     v-kb-typeahead="{source: culturesKey, defaultShow: true, items: 10 }"
                     v-model="lang.key"
-                    data-bind="typeahead: $parent.culturesKey, name: lang.key, value: lang.key, error: lang.key, defaultShow: true, items: 10, errorPlacement: 'left'"
+                    v-kb-tooltip:left.manual.error="lang.keyError"
                     placeholder="Language code"
                     @blur="changeLang($event.target, lang)"
                   />
@@ -316,7 +316,7 @@
                   />
                   <span
                     class="input-group-btn"
-                    data-bind="error: lang.value, errorPlacement: 'right'"
+                    v-kb-tooltip:right.manual.error="lang.valueError"
                   >
                     <a
                       class="btn btn-default"
@@ -345,6 +345,7 @@
     </div>
   </div>
   <div
+    k-if="false"
     v-kb-modal="showSiteMirrorConfigModal"
     class="modal fade"
     data-backdrop="static"
@@ -630,7 +631,6 @@
       "/_Admin/Scripts/lib/clipboard.min.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/SPA.js",
-      "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
       "/_Admin/Scripts/vue-components/kbTypeahead.js",
       "/_Admin/Scripts/vue-components/kbExportModal.js",
