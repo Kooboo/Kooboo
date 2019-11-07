@@ -195,9 +195,9 @@ namespace Kooboo.Mail.Smtp
             if (Interlocked.Exchange(ref _disposing, 1) == 0)
             {
                 _cancellationTokenSource.Cancel();
-                _client.Close();
                 _reader.Dispose();
                 _writer.Dispose();
+                _client.Close();
             }
         }
 
