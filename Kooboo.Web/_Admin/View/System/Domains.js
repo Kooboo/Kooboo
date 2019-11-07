@@ -15,8 +15,7 @@ $(function() {
         domainsData: [],
         rootDomain: [],
         defaultBinding: "domain",
-        tableDataSelectedRows: [],
-        isSelectedDocsContainsRef: false,
+        tableDataSelected: [],
         formModel: {
           domain: "",
           port: 81,
@@ -125,24 +124,24 @@ $(function() {
           });
         }
       },
-      onDelete: function() {
-        var confirmMessage;
-        if (this.getIsSelectedDocsContainsRef(this.domainsData)) {
-          confirmMessage = Kooboo.text.confirm.deleteItemsWithRef;
-        } else {
-          confirmMessage = Kooboo.text.confirm.deleteItems;
+      getConfirmMessage: function(doc) {
+        if (doc.relations) {
+          var reorderedKeys = _.sortBy(Object.keys(doc.relations));
+          doc.relationsTypes = reorderedKeys;
         }
+        var find = _.find(doc, function(item) {
+          return item.relations && Object.keys(item.relations).length;
+        });
 
-        if (confirm(confirmMessage)) {
-          var haveRelations = this.tableDataSelectedRows.some(function(s) {
-            return s.relations && Object.keys(s.relations).length;
-          });
-
-          var confirmStr = haveRelations
-            ? Kooboo.text.confirm.deleteItemsWithRef
-            : Kooboo.text.confirm.deleteItems;
-
-          var ids = this.tableDataSelectedRows.map(function(m) {
+        if (!!find) {
+          return Kooboo.text.confirm.deleteItemsWithRef;
+        } else {
+          return Kooboo.text.confirm.deleteItems;
+        }
+      },
+      onDelete: function() {
+        if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
+          var ids = this.tableDataSelected.map(function(m) {
             return m.id;
           });
 
@@ -161,6 +160,7 @@ $(function() {
             });
         }
       },
+
       defaultBindingCheckboxHandle: function(event) {
         this.defaultBinding = event.target.value;
       },
@@ -168,18 +168,6 @@ $(function() {
         Kooboo.Domain.getList().then(function(res) {
           self.rootDomain = res.model;
         });
-      },
-
-      getIsSelectedDocsContainsRef: function(doc) {
-        if (doc.relations) {
-          var reorderedKeys = _.sortBy(Object.keys(doc.relations));
-          doc.relationsTypes = reorderedKeys;
-        }
-        var find = _.find(doc, function(item) {
-          return item.relations && Object.keys(item.relations).length;
-        });
-
-        return !!find;
       },
       startSSLHandle: function(event, id) {
         //Prevent the event of the target element from bubbling to the parent element

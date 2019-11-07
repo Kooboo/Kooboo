@@ -13,7 +13,7 @@
         ><span>New binding</span></a
       >
       <a
-        v-if="tableDataSelectedRows.length > 0"
+        v-if="tableDataSelected.length > 0"
         @click="onDelete"
         class="btn red navbar-btn"
         >Delete</a
@@ -24,7 +24,7 @@
   <kb-table
     :show-select="true"
     :data="domainsData"
-    :selected.sync="tableDataSelectedRows"
+    :selected.sync="tableDataSelected"
   >
     <kb-table-column :label="Kooboo.text.site.domain.name">
       <template v-slot="row">
