@@ -18,6 +18,7 @@ namespace Kooboo.Mail.Smtp
         private StreamReader _reader;
         private StreamWriter _writer;
         private SmtpServer _server;
+        private bool _disposed;
 
         private CancellationTokenSource _cancellationTokenSource;
         private long _timeoutTimestamp = Int64.MaxValue;    // To check connection alive timeout
@@ -86,7 +87,7 @@ namespace Kooboo.Mail.Smtp
 
                     if (response.Close)
                     {
-                        _client.Close();
+                        Dispose();
                         break;
                     }
 
@@ -98,7 +99,7 @@ namespace Kooboo.Mail.Smtp
                         if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts))
                         {
                             await _writer.WriteLineAsync("550 you have no enough credit to send emails");
-                            _client.Close();
+                            Dispose();
                             break;
                         }
 
@@ -155,28 +156,22 @@ namespace Kooboo.Mail.Smtp
             }
             catch (Exception ex)
             {
-                exception = ex;
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
-            }
-            finally
-            {
-                _server._connectionManager.RemoveConnection(Id);
-            }
-
-            if (exception != null)
-            {
-                // 有异常一定要关闭session
                 try
                 {
                     if (_client.Connected)
                     {
                         await _writer.WriteLineAsync("550 Internal Server Error");
-                        _client.Close();
                     }
                 }
                 catch
                 {
                 }
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
+            }
+            finally
+            {
+                _server._connectionManager.RemoveConnection(Id);
+                Dispose();
             }
         }
 
