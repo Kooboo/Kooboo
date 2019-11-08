@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -33,7 +35,6 @@ namespace Kooboo.Lib.Reflection
 
             var path =  AppDomain.CurrentDomain.BaseDirectory;
             dlls = LoadKoobooDlls(dlls, path);
-
             // load dll from modules or dll. 
             List<string> subfolders = new List<string>();
             subfolders.Add("dll");
@@ -66,6 +67,40 @@ namespace Kooboo.Lib.Reflection
                 }
             } 
             return dlls; 
+        }
+
+        public static List<Assembly> LoadExtensionDll(string extensiondlls)
+        {
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (!string.IsNullOrEmpty(extensiondlls))
+            {
+                var extensionList= extensiondlls.Split(',').ToList().Distinct().ToList();
+                foreach (var dll in extensionList)
+                {
+                    try
+                    {
+                        var filename = dll.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                            ? dll
+                            : string.Format("{0}.dll", dll);
+
+                        var filepath = Path.Combine(path, filename);
+                        if(File.Exists(filepath))
+                        {
+                            var assembly = Assembly.LoadFile(filepath);
+                            if (assembly != null && !AllAssemblies.Exists(ass=>ass.FullName.Equals(assembly.FullName)))
+                            {
+                                AllAssemblies.Add(assembly);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
+            return AllAssemblies;
         }
 
         public static List<Assembly> LoadKoobooDlls(List<Assembly> dlls,string path)
@@ -182,6 +217,20 @@ namespace Kooboo.Lib.Reflection
             }
 
             return typelist;
+        }
+
+        public static Type LoadTypeByFullClassName(string fullClassName)
+        {
+            foreach (var item in AllAssemblies)
+            {
+                var type = item.GetType(fullClassName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            return null;
         }
 
     }

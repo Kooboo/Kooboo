@@ -4,6 +4,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
+using Kooboo.Sites.Scripting.KscriptConfig;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -23,7 +24,6 @@ namespace Kooboo.Sites.Scripting
                         if (_list == null)
                         {
                             _list = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-
                             foreach (var item in Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IkScript)))
                             {
                                 var instance = Activator.CreateInstance(item) as IkScript;
@@ -34,6 +34,12 @@ namespace Kooboo.Sites.Scripting
                                 }
 
                             }
+
+                            foreach(var item in ExtensionKscriptConfigContainer.List)
+                            {
+                                _list[item.Key] = item.Value;
+                            }
+
                         }
                     }
 
@@ -43,7 +49,7 @@ namespace Kooboo.Sites.Scripting
 
         }
 
-        public static IkScript Get(string name, RenderContext context)
+        public static object Get(string name, RenderContext context)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -52,18 +58,25 @@ namespace Kooboo.Sites.Scripting
             if (List.ContainsKey(name))
             {
                 var type = List[name];
-                var instance = Activator.CreateInstance(type) as IkScript;
+                var instance = Activator.CreateInstance(type);
 
                 if (instance !=null)
                 {
-                    instance.context = context;
-                    return instance; 
+                    var kscriptInstance = instance as IkScript;
+                    if (kscriptInstance!=null)
+                    {
+                        kscriptInstance.context = context;
+                        return instance;
+                    }
+
+                    return instance;
+                    
                 } 
             }
             return null;
         }
 
-        public static void Set(IkScript script)
+        public static void Set(object script)
         {
 
         }
