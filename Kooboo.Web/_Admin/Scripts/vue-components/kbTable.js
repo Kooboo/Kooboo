@@ -65,8 +65,8 @@
       }
     },
     watch: {
-      data: function() {
-        this.$emit("update:selected", []);
+      data: function(value) {
+        this.$emit("change", value);
       }
     }
   });
