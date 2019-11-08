@@ -18,21 +18,12 @@ $(function() {
         siteTypes: [],
         clusters: [],
         langs: [],
-        domains: [],
+        startValidLang: false,
         editingLangs: [],
         customSettingArray: [],
         langModalShow: false,
         uploadModal: false,
         showExportModal: false,
-
-        remoteSiteList: [],
-        langKeys: [],
-        showSiteMirrorConfigModal: false,
-        isSlaveSite: false,
-        _clusters: [],
-        showError: false,
-        showCustomServerModal: false,
-
         model: {
           displayName: "",
           siteType: "",
@@ -49,7 +40,16 @@ $(function() {
           customSettings: {},
           enableLocationRedirect: false,
           diskSyncFolder: ""
-        }
+        },
+
+        domains: [],
+        remoteSiteList: [],
+        langKeys: [],
+        showSiteMirrorConfigModal: false,
+        isSlaveSite: false,
+        _clusters: [],
+        showError: false,
+        showCustomServerModal: false
       };
     },
     beforeCreate: function() {
@@ -86,16 +86,16 @@ $(function() {
           self.model.defaultCulture = defaultCulture[0].model.default;
         });
       });
-      Kooboo.Domain.getList().then(function(res) {
-        if (res.success) {
-          res.model.forEach(function(r) {
-            self.domains.push({
-              name: "." + r.domainName,
-              value: r.domainName
-            });
-          });
-        }
-      });
+      // Kooboo.Domain.getList().then(function(res) {
+      //   if (res.success) {
+      //     res.model.forEach(function(r) {
+      //       self.domains.push({
+      //         name: "." + r.domainName,
+      //         value: r.domainName
+      //       });
+      //     });
+      //   }
+      // });
 
       var copyPath = new Clipboard("#copy_sync_path");
       copyPath.on("success", function(e) {
@@ -114,6 +114,16 @@ $(function() {
         return _.map(cs, function(c) {
           return c.key;
         });
+      }
+    },
+    watch: {
+      langs(val) {
+        var hasLang = _.some(val, function(item) {
+          return item.key === self.model.defaultCulture;
+        });
+        if (val.length > 0 && !hasLang) {
+          self.model.defaultCulture = val[0].key;
+        }
       }
     },
     methods: {
@@ -172,17 +182,23 @@ $(function() {
           }
         });
       },
+
+      //#region langs modal
       onAddLangModalShow: function() {
+        self.startValidLang = false;
         _.forEach(self.langs, function(lang) {
           self.editingLangs.push({
             key: lang.key,
             value: lang.value,
-            cultures: self.cultures
+            error: {
+              key: "",
+              value: ""
+            }
           });
         });
         self.langModalShow = true;
       },
-      changeLang: function(target, lang) {
+      editLang: function(target, lang) {
         lang.value = self.cultures[lang.key] && self.cultures[lang.key];
         $(target)
           .siblings("input:first")
@@ -192,26 +208,55 @@ $(function() {
         self.langs = _.without(self.langs, lang);
       },
       removeEditingLang: function(lang) {
-        lang.showError = false;
+        this.clearValidLang(lang);
         self.editingLangs = _.without(self.editingLangs, lang);
       },
       onAddLangModalHide: function() {
-        _.forEach(self.editingLangs, function(lang) {
-          lang.showError = false;
-        });
+        this.clearValidLang();
         self.editingLangs = [];
         self.langModalShow = false;
       },
-      onAddLangModalSave: function() {
+      clearValidLang: function(lang) {
+        var _langs;
+        if (lang) {
+          _langs = [lang];
+        } else {
+          _langs = self.editingLangs;
+        }
+        _.forEach(_langs, function(lang) {
+          lang.error = {};
+        });
+      },
+      validateLangModal: function(lang) {
+        if (!self.startValidLang) {
+          return;
+        }
         var ableToSave = true;
-        // _.forEach(self.editingLangs(), function(lang) {
-        //   if (!lang.isValid()) {
-        //     lang.showError(true);
-        //     ableToSave = false;
-        //   }
-        // });
-
-        if (ableToSave) {
+        var _langs;
+        if (lang) {
+          _langs = [lang];
+        } else {
+          _langs = self.editingLangs;
+        }
+        _.forEach(_langs, function(lang) {
+          if (!lang.key) {
+            lang.error.key = Kooboo.text.validation.required;
+            ableToSave = false;
+          } else {
+            lang.error.key = "";
+          }
+          if (!lang.value) {
+            lang.error.value = Kooboo.text.validation.required;
+            ableToSave = false;
+          } else {
+            lang.error.value = "";
+          }
+        });
+        return ableToSave;
+      },
+      onAddLangModalSave: function() {
+        self.startValidLang = true;
+        if (this.validateLangModal()) {
           var langs = [];
           _.forEach(self.editingLangs, function(lang) {
             langs.push(lang);
@@ -224,286 +269,270 @@ $(function() {
         self.editingLangs.push({
           key: "",
           value: "",
-          cultures: self.cultures
-        });
-      },
-      onShowSiteMirrorConfigModal: function() {
-        self.showSiteMirrorConfigModal = true;
-
-        Kooboo.Cluster.get().then(function(res) {
-          if (res.success) {
-            if (res.model.isSlave) {
-              self.isSlaveSite(true);
-            } else {
-              self.isSlaveSite(false);
-              self.enableCluster(res.model.enableCluster);
-              $("#enable_cluster")
-                .bootstrapSwitch("state", self.enableCluster())
-                .on("switchChange.bootstrapSwitch", function(e, data) {
-                  self.enableCluster(data);
-                });
-              self.enableLocationRedirect(res.model.enableLocationRedirect);
-              $("#enable_location_redirect")
-                .bootstrapSwitch("state", self.enableLocationRedirect())
-                .on("switchChange.bootstrapSwitch", function(e, data) {
-                  self.enableLocationRedirect(data);
-                });
-
-              res.model.dataCenter.forEach(function(dc) {
-                var find = _.find(res.model.locationRedirect, function(lr) {
-                  return lr.name == dc.name;
-                });
-
-                dc.rootDomain = find ? find.rootDomain : "";
-                dc.subDomain = find ? find.subDomain : "";
-
-                self._clusters.push(new clusterModel(dc));
-              });
-            }
+          error: {
+            key: "",
+            value: ""
           }
         });
-      },
-      onClearLocalCache: function() {
-        localStorage.clear();
-        window.info.done(Kooboo.text.info.delete.success);
-      },
-      hideSiteMirrorConfigModal: function() {
-        self._clusters().forEach(function(cls) {
-          cls.showError(false);
-        });
-        self._clusters([]);
-        self.enableCluster(false);
-        self.enableLocationRedirect(false);
-        $("#enable_cluster").bootstrapSwitch("destroy", true);
-        $("#enable_cluster").bootstrapSwitch("state", false);
-        $("#enable_location_redirect").bootstrapSwitch("destroy", true);
-        $("#enable_location_redirect").bootstrapSwitch("state", false);
-        self.showSiteMirrorConfigModal(false);
-      },
-      saveSiteMirrorConfigModal: function() {
-        var allClusterValid = true;
-
-        if (self.enableLocationRedirect()) {
-          self._clusters().forEach(function(cls) {
-            if (!cls.isValid()) {
-              allClusterValid = false;
-            }
-          });
-        }
-
-        if (allClusterValid) {
-          var saveData = {
-            dataCenter: [],
-            locationRedirect: []
-          };
-
-          saveData.enableCluster = self.enableCluster();
-          saveData.enableLocationRedirect = self.enableLocationRedirect();
-
-          self._clusters().forEach(function(cluster) {
-            saveData.dataCenter.push({
-              name: cluster.name(),
-              ip: cluster.ip(),
-              port: cluster.port(),
-              displayName: cluster.displayName(),
-              isSelected: cluster.isSelected(),
-              isCompleted: cluster.isCompleted(),
-              isRoot: cluster.isRoot()
-            });
-
-            if (cluster.isSelected() && self.enableLocationRedirect()) {
-              self.locationRedirect = self.enableLocationRedirect();
-              saveData.locationRedirect.push({
-                name: cluster.name(),
-                subDomain: cluster.subDomain(),
-                rootDomain: cluster.rootDomain()
-              });
-            }
-          });
-
-          Kooboo.Cluster.post(saveData).then(function(res) {
-            if (res.success) {
-              self.hideSiteMirrorConfigModal();
-              window.info.done(Kooboo.text.info.update.success);
-            } else {
-              window.info.fail(Kooboo.text.info.update.fail);
-            }
-          });
-        } else {
-          self._clusters().forEach(function(cls) {
-            cls.showError(true);
-          });
-        }
-      },
-      resetCustomerModal: function() {
-        self.customServerName("");
-        self.customServerIP("");
-        self.customServerPort(80);
-        self.customServerDisplayName("");
-        self.showError(false);
-      },
-      addCustomServer: function() {
-        self.showCustomServerModal(true);
-      },
-      removeCustomCluster: function(m) {
-        self._clusters.remove(m);
-      },
-      onHideCustomServerModal: function() {
-        self.showCustomServerModal(false);
-        self.resetCustomerModal();
-      },
-      onSaveCustomServer: function() {
-        if (self.isCustomServerValid()) {
-          Kooboo.Cluster.isValidateCustomServer({
-            ip: self.customServerIP(),
-            port: self.customServerPort(),
-            name: self.customServerName()
-          }).then(function(res) {
-            if (res.success) {
-              self._clusters.push(
-                new clusterModel({
-                  displayName: self.customServerDisplayName(),
-                  ip: self.customServerIP(),
-                  port: self.customServerPort(),
-                  isCompleted: false,
-                  isRoot: false,
-                  isSelected: false,
-                  name: self.customServerName(),
-                  isCustom: true,
-                  rootDomain: "",
-                  subDomain: ""
-                })
-              );
-              self.onHideCustomServerModal();
-            }
-          });
-        } else {
-          self.showError(true);
-        }
       }
+      //#endregion
+
+      //#region Site mirror config is  no need for now
+      //, onShowSiteMirrorConfigModal: function() {
+      //   self.showSiteMirrorConfigModal = true;
+
+      //   Kooboo.Cluster.get().then(function(res) {
+      //     if (res.success) {
+      //       if (res.model.isSlave) {
+      //         self.isSlaveSite(true);
+      //       } else {
+      //         self.isSlaveSite(false);
+      //         self.enableCluster(res.model.enableCluster);
+      //         $("#enable_cluster")
+      //           .bootstrapSwitch("state", self.enableCluster())
+      //           .on("switchChange.bootstrapSwitch", function(e, data) {
+      //             self.enableCluster(data);
+      //           });
+      //         self.enableLocationRedirect(res.model.enableLocationRedirect);
+      //         $("#enable_location_redirect")
+      //           .bootstrapSwitch("state", self.enableLocationRedirect())
+      //           .on("switchChange.bootstrapSwitch", function(e, data) {
+      //             self.enableLocationRedirect(data);
+      //           });
+
+      //         res.model.dataCenter.forEach(function(dc) {
+      //           var find = _.find(res.model.locationRedirect, function(lr) {
+      //             return lr.name == dc.name;
+      //           });
+
+      //           dc.rootDomain = find ? find.rootDomain : "";
+      //           dc.subDomain = find ? find.subDomain : "";
+
+      //           self._clusters.push(new clusterModel(dc));
+      //         });
+      //       }
+      //     }
+      //   });
+      // },
+      // onClearLocalCache: function() {
+      //   localStorage.clear();
+      //   window.info.done(Kooboo.text.info.delete.success);
+      // },
+      // hideSiteMirrorConfigModal: function() {
+      //   self._clusters().forEach(function(cls) {
+      //     cls.showError(false);
+      //   });
+      //   self._clusters([]);
+      //   self.enableCluster(false);
+      //   self.enableLocationRedirect(false);
+      //   $("#enable_cluster").bootstrapSwitch("destroy", true);
+      //   $("#enable_cluster").bootstrapSwitch("state", false);
+      //   $("#enable_location_redirect").bootstrapSwitch("destroy", true);
+      //   $("#enable_location_redirect").bootstrapSwitch("state", false);
+      //   self.showSiteMirrorConfigModal(false);
+      // },
+      // saveSiteMirrorConfigModal: function() {
+      //   var allClusterValid = true;
+
+      //   if (self.enableLocationRedirect()) {
+      //     self._clusters().forEach(function(cls) {
+      //       if (!cls.isValid()) {
+      //         allClusterValid = false;
+      //       }
+      //     });
+      //   }
+
+      //   if (allClusterValid) {
+      //     var saveData = {
+      //       dataCenter: [],
+      //       locationRedirect: []
+      //     };
+
+      //     saveData.enableCluster = self.enableCluster();
+      //     saveData.enableLocationRedirect = self.enableLocationRedirect();
+
+      //     self._clusters().forEach(function(cluster) {
+      //       saveData.dataCenter.push({
+      //         name: cluster.name(),
+      //         ip: cluster.ip(),
+      //         port: cluster.port(),
+      //         displayName: cluster.displayName(),
+      //         isSelected: cluster.isSelected(),
+      //         isCompleted: cluster.isCompleted(),
+      //         isRoot: cluster.isRoot()
+      //       });
+
+      //       if (cluster.isSelected() && self.enableLocationRedirect()) {
+      //         self.locationRedirect = self.enableLocationRedirect();
+      //         saveData.locationRedirect.push({
+      //           name: cluster.name(),
+      //           subDomain: cluster.subDomain(),
+      //           rootDomain: cluster.rootDomain()
+      //         });
+      //       }
+      //     });
+
+      //     Kooboo.Cluster.post(saveData).then(function(res) {
+      //       if (res.success) {
+      //         self.hideSiteMirrorConfigModal();
+      //         window.info.done(Kooboo.text.info.update.success);
+      //       } else {
+      //         window.info.fail(Kooboo.text.info.update.fail);
+      //       }
+      //     });
+      //   } else {
+      //     self._clusters().forEach(function(cls) {
+      //       cls.showError(true);
+      //     });
+      //   }
+      // },
+      // resetCustomerModal: function() {
+      //   self.customServerName("");
+      //   self.customServerIP("");
+      //   self.customServerPort(80);
+      //   self.customServerDisplayName("");
+      //   self.showError(false);
+      // },
+      // addCustomServer: function() {
+      //   self.showCustomServerModal(true);
+      // },
+      // removeCustomCluster: function(m) {
+      //   self._clusters.remove(m);
+      // },
+      // onHideCustomServerModal: function() {
+      //   self.showCustomServerModal(false);
+      //   self.resetCustomerModal();
+      // },
+      // onSaveCustomServer: function() {
+      //   if (self.isCustomServerValid()) {
+      //     Kooboo.Cluster.isValidateCustomServer({
+      //       ip: self.customServerIP(),
+      //       port: self.customServerPort(),
+      //       name: self.customServerName()
+      //     }).then(function(res) {
+      //       if (res.success) {
+      //         self._clusters.push(
+      //           new clusterModel({
+      //             displayName: self.customServerDisplayName(),
+      //             ip: self.customServerIP(),
+      //             port: self.customServerPort(),
+      //             isCompleted: false,
+      //             isRoot: false,
+      //             isSelected: false,
+      //             name: self.customServerName(),
+      //             isCustom: true,
+      //             rootDomain: "",
+      //             subDomain: ""
+      //           })
+      //         );
+      //         self.onHideCustomServerModal();
+      //       }
+      //     });
+      //   } else {
+      //     self.showError(true);
+      //   }
+      // }
+      //#endregion Site mirror
     }
   });
 
-  var SettingsViewModel = function(data) {
-    var self = this;
+  ////  Site mirror config is  no need for now
+  // var SettingsViewModel = function(data) {
+  //   var self = this;
 
-    var sitePaths = data.sitePath;
-    self.getSitePath = function(id) {
-      return sitePaths[id] || id;
-    };
+  //   var sitePaths = data.sitePath;
+  //   self.getSitePath = function(id) {
+  //     return sitePaths[id] || id;
+  //   };
 
-    this.customServerName = ko.validateField({
-      required: ""
-    });
+  //   this.customServerName = ko.validateField({
+  //     required: ""
+  //   });
 
-    this.customServerIP = ko.validateField({
-      required: "",
-      regex: {
-        pattern: /^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})+(:([0-9]{1,5}))?$/,
-        message: Kooboo.text.validation.noValidIP
-      }
-    });
+  //   this.customServerIP = ko.validateField({
+  //     required: "",
+  //     regex: {
+  //       pattern: /^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})+(:([0-9]{1,5}))?$/,
+  //       message: Kooboo.text.validation.noValidIP
+  //     }
+  //   });
 
-    this.customServerPort = ko.validateField(80, {
-      required: ""
-    });
+  //   this.customServerPort = ko.validateField(80, {
+  //     required: ""
+  //   });
 
-    this.customServerDisplayName = ko.validateField({
-      required: ""
-    });
+  //   this.customServerDisplayName = ko.validateField({
+  //     required: ""
+  //   });
 
-    this.isCustomServerValid = function() {
-      return (
-        self.customServerName.isValid() &&
-        self.customServerIP.isValid() &&
-        self.customServerPort.isValid() &&
-        self.customServerDisplayName.isValid()
-      );
-    };
-    this.enableLocationRedirect = ko.observable(false);
+  //   this.isCustomServerValid = function() {
+  //     return (
+  //       self.customServerName.isValid() &&
+  //       self.customServerIP.isValid() &&
+  //       self.customServerPort.isValid() &&
+  //       self.customServerDisplayName.isValid()
+  //     );
+  //   };
+  //   this.enableLocationRedirect = ko.observable(false);
 
-    Kooboo.Domain.getList().then(function(res) {
-      if (res.success) {
-        res.model.forEach(function(r) {
-          self.domains.push({
-            name: "." + r.domainName,
-            value: r.domainName
-          });
-        });
-      }
-    });
-  };
+  //   Kooboo.Domain.getList().then(function(res) {
+  //     if (res.success) {
+  //       res.model.forEach(function(r) {
+  //         self.domains.push({
+  //           name: "." + r.domainName,
+  //           value: r.domainName
+  //         });
+  //       });
+  //     }
+  //   });
+  // };
 
-  function Language(lang) {
-    // this.showError = ko.observable(false);
+  // var clusterModel = function(info) {
+  //   var self = this;
 
-    // this.key = ko.validateField(lang.key, {
-    //   required: Kooboo.text.validation.required
-    // });
+  //   ko.mapping.fromJS(info, {}, self);
 
-    // this.key.subscribe(function(lang) {
-    //   self.focus(true);
-    //   self.value(self.cultures[lang] && self.cultures[lang]());
-    // });
+  //   this.disabled = ko.observable(info.isSelected && !info.isComplete);
 
-    // this.value = ko.validateField(lang.value, {
-    //   required: Kooboo.text.validation.required
-    // });
+  //   this.changeStatus = function(m, e) {
+  //     if (!self.disabled()) {
+  //       self.isSelected(!self.isSelected());
+  //     } else {
+  //       e.preventDefault();
+  //     }
+  //   };
 
-    // this.isValid = function() {
-    //   return self.key.isValid() && self.value.isValid();
-    // };
+  //   this.isCustom = ko.observable(!!info.isCustom);
 
-    // this.focus = ko.observable(!!lang.focus);
-    return lang;
-  }
+  //   this.showError = ko.observable(false);
 
-  var clusterModel = function(info) {
-    var self = this;
+  //   this.subDomain = ko.validateField(info.subDomain, {
+  //     required: Kooboo.text.validation.required,
+  //     remote: {
+  //       url: Kooboo.Site.CheckDomainBindingAvailable(),
+  //       message: Kooboo.text.validation.taken,
+  //       type: "get",
+  //       data: {
+  //         subDomain: function() {
+  //           return self.subDomain();
+  //         },
+  //         rootDomain: function() {
+  //           return self.rootDomain();
+  //         }
+  //       }
+  //     }
+  //   });
 
-    ko.mapping.fromJS(info, {}, self);
+  //   this.rootDomain.subscribe(function() {
+  //     self.subDomain.valueHasMutated();
+  //   });
 
-    this.disabled = ko.observable(info.isSelected && !info.isComplete);
-
-    this.changeStatus = function(m, e) {
-      if (!self.disabled()) {
-        self.isSelected(!self.isSelected());
-      } else {
-        e.preventDefault();
-      }
-    };
-
-    this.isCustom = ko.observable(!!info.isCustom);
-
-    this.showError = ko.observable(false);
-
-    this.subDomain = ko.validateField(info.subDomain, {
-      required: Kooboo.text.validation.required,
-      remote: {
-        url: Kooboo.Site.CheckDomainBindingAvailable(),
-        message: Kooboo.text.validation.taken,
-        type: "get",
-        data: {
-          subDomain: function() {
-            return self.subDomain();
-          },
-          rootDomain: function() {
-            return self.rootDomain();
-          }
-        }
-      }
-    });
-
-    this.rootDomain.subscribe(function() {
-      self.subDomain.valueHasMutated();
-    });
-
-    this.isValid = function() {
-      if (self.isSelected()) {
-        return self.subDomain.isValid();
-      } else {
-        return true;
-      }
-    };
-  };
+  //   this.isValid = function() {
+  //     if (self.isSelected()) {
+  //       return self.subDomain.isValid();
+  //     } else {
+  //       return true;
+  //     }
+  //   };
+  // };
 });
