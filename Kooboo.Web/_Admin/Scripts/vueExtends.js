@@ -224,6 +224,7 @@ Vue.directive("kb-html", {
 Vue.directive("kb-collapsein", {
   bind: function(element, binding) {
     $(element).addClass("collapse");
+    $(element).collapse(binding.value ? "show" : "hide");
   },
   update: function(element, binding) {
     $(element).collapse(binding.value ? "show" : "hide");
