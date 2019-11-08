@@ -41,7 +41,7 @@ $(function() {
           enableLocationRedirect: false,
           diskSyncFolder: ""
         },
-
+        loading: true,
         domains: [],
         remoteSiteList: [],
         langKeys: [],
@@ -62,6 +62,7 @@ $(function() {
           Kooboo.Site.Langs(),
           Kooboo.Site.getTypes()
         ).then(function(cultureLists, defaultCulture, siteTypes) {
+          self.loading = false;
           var model = response.model;
           // console.log(model);
           // automapping
