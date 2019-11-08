@@ -231,3 +231,27 @@ Vue.directive("kb-collapsein", {
   }
 });
 //#endregion </kb-html>
+
+// #region <kb-sortable>
+Vue.directive("kb-sortable", function(el, binding, vnode) {
+  var sortables = el.getElementsByClassName("sortable");
+  for (let i = 0; i < sortables.length; i++) {
+    const element = sortables[i];
+    element.__index = i;
+  }
+  $(el).sortable({
+    handle: ".sortable",
+    update: function(ev, ui) {
+      var cloneList = binding.value.map(function(m) {
+        return m;
+      });
+      sortables = document.getElementsByClassName("sortable");
+      for (let j = 0; j < sortables.length; j++) {
+        const element = sortables[j];
+        binding.value[j] = cloneList[element.__index];
+      }
+      binding.value.splice(0, 0);
+    }
+  });
+});
+// #endregion </kb-sortable>
