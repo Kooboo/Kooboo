@@ -18,21 +18,12 @@ $(function() {
         siteTypes: [],
         clusters: [],
         langs: [],
-        domains: [],
+        startValidLang: false,
         editingLangs: [],
         customSettingArray: [],
         langModalShow: false,
         uploadModal: false,
         showExportModal: false,
-
-        remoteSiteList: [],
-        langKeys: [],
-        showSiteMirrorConfigModal: false,
-        isSlaveSite: false,
-        _clusters: [],
-        showError: false,
-        showCustomServerModal: false,
-
         model: {
           displayName: "",
           siteType: "",
@@ -49,7 +40,16 @@ $(function() {
           customSettings: {},
           enableLocationRedirect: false,
           diskSyncFolder: ""
-        }
+        },
+
+        domains: [],
+        remoteSiteList: [],
+        langKeys: [],
+        showSiteMirrorConfigModal: false,
+        isSlaveSite: false,
+        _clusters: [],
+        showError: false,
+        showCustomServerModal: false
       };
     },
     beforeCreate: function() {
@@ -86,16 +86,16 @@ $(function() {
           self.model.defaultCulture = defaultCulture[0].model.default;
         });
       });
-      Kooboo.Domain.getList().then(function(res) {
-        if (res.success) {
-          res.model.forEach(function(r) {
-            self.domains.push({
-              name: "." + r.domainName,
-              value: r.domainName
-            });
-          });
-        }
-      });
+      // Kooboo.Domain.getList().then(function(res) {
+      //   if (res.success) {
+      //     res.model.forEach(function(r) {
+      //       self.domains.push({
+      //         name: "." + r.domainName,
+      //         value: r.domainName
+      //       });
+      //     });
+      //   }
+      // });
 
       var copyPath = new Clipboard("#copy_sync_path");
       copyPath.on("success", function(e) {
@@ -182,19 +182,23 @@ $(function() {
           }
         });
       },
+
+      //#region langs modal
       onAddLangModalShow: function() {
+        self.startValidLang = false;
         _.forEach(self.langs, function(lang) {
           self.editingLangs.push({
             key: lang.key,
-            keyError: "",
             value: lang.value,
-            valueError: "",
-            cultures: self.cultures
+            error: {
+              key: "",
+              value: ""
+            }
           });
         });
         self.langModalShow = true;
       },
-      changeLang: function(target, lang) {
+      editLang: function(target, lang) {
         lang.value = self.cultures[lang.key] && self.cultures[lang.key];
         $(target)
           .siblings("input:first")
@@ -204,31 +208,55 @@ $(function() {
         self.langs = _.without(self.langs, lang);
       },
       removeEditingLang: function(lang) {
-        lang.showError = false;
+        this.clearValidLang(lang);
         self.editingLangs = _.without(self.editingLangs, lang);
       },
       onAddLangModalHide: function() {
-        _.forEach(self.editingLangs, function(lang) {
-          lang.keyError = "";
-          lang.valueError = "";
-        });
+        this.clearValidLang();
         self.editingLangs = [];
         self.langModalShow = false;
       },
-      onAddLangModalSave: function() {
+      clearValidLang: function(lang) {
+        var _langs;
+        if (lang) {
+          _langs = [lang];
+        } else {
+          _langs = self.editingLangs;
+        }
+        _.forEach(_langs, function(lang) {
+          lang.error = {};
+        });
+      },
+      validateLangModal: function(lang) {
+        if (!self.startValidLang) {
+          return;
+        }
         var ableToSave = true;
-        _.forEach(self.editingLangs, function(lang) {
+        var _langs;
+        if (lang) {
+          _langs = [lang];
+        } else {
+          _langs = self.editingLangs;
+        }
+        _.forEach(_langs, function(lang) {
           if (!lang.key) {
-            lang.keyError = Kooboo.text.validation.required;
+            lang.error.key = Kooboo.text.validation.required;
             ableToSave = false;
+          } else {
+            lang.error.key = "";
           }
           if (!lang.value) {
-            lang.valueError = Kooboo.text.validation.required;
+            lang.error.value = Kooboo.text.validation.required;
             ableToSave = false;
+          } else {
+            lang.error.value = "";
           }
         });
-
-        if (ableToSave) {
+        return ableToSave;
+      },
+      onAddLangModalSave: function() {
+        self.startValidLang = true;
+        if (this.validateLangModal()) {
           var langs = [];
           _.forEach(self.editingLangs, function(lang) {
             langs.push(lang);
@@ -240,13 +268,16 @@ $(function() {
       addNewLang: function() {
         self.editingLangs.push({
           key: "",
-          keyError:"",
           value: "",
-          valueError: "",
-          cultures: self.cultures
+          error: {
+            key: "",
+            value: ""
+          }
         });
       }
-      ////  Site mirror config is  no need for now
+      //#endregion
+
+      //#region Site mirror config is  no need for now
       //, onShowSiteMirrorConfigModal: function() {
       //   self.showSiteMirrorConfigModal = true;
 
@@ -401,6 +432,7 @@ $(function() {
       //     self.showError(true);
       //   }
       // }
+      //#endregion Site mirror
     }
   });
 

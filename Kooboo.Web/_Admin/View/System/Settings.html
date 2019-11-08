@@ -297,15 +297,19 @@
           <div class="form-horizontal">
             <div class="form-group margin-top-10">
               <div class="col-md-12 input-groups">
-                <div v-for="(lang, index) in editingLangs" class="input-group" :class="{'has-error' : lang.valueError || lang.keyError }">
+                <div
+                  v-for="(lang, index) in editingLangs"
+                  class="input-group"
+                  :class="{'has-error' : lang.error.value || lang.error.key }"
+                >
                   <input
                     type="text"
                     class="form-control input-medium"
                     v-kb-typeahead="{source: culturesKey, defaultShow: true, items: 10 }"
                     v-model="lang.key"
-                    v-kb-tooltip:left.manual.error="lang.keyError"
+                    v-kb-tooltip:left.manual.error="lang.error.key"
                     placeholder="Language code"
-                    @blur="changeLang($event.target, lang)"
+                    @blur="editLang($event.target, lang);validateLangModal(lang)"
                   />
                   <span class="input-group-addon">:</span>
                   <input
@@ -313,10 +317,11 @@
                     class="form-control input-medium"
                     v-model="lang.value"
                     placeholder="Language name"
+                    @blur="validateLangModal(lang)"
                   />
                   <span
                     class="input-group-btn"
-                    v-kb-tooltip:right.manual.error="lang.valueError"
+                    v-kb-tooltip:right.manual.error="lang.error.value"
                   >
                     <a
                       class="btn btn-default"
