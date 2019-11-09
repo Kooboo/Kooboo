@@ -369,24 +369,21 @@ $(function() {
       }
     },
     watch: {
-      week: {
-        handler: function(week) {
-          if (self.curLogType !== "Graphs") {
-            if (week) {
-              !Kooboo.VisitorLog.hasOwnProperty(self.curLogType) &&
-                (self.curLogType = "All");
+      week: function(week) {
+        if (self.curLogType !== "Graphs") {
+          if (week) {
+            !Kooboo.VisitorLog.hasOwnProperty(self.curLogType) &&
+              (self.curLogType = "All");
 
-              Kooboo.VisitorLog[self.curLogType]({
-                weekname: week
-              }).then(function(res) {
-                res.success && self.handleData(res.model, self.curLogType);
-              });
-            }
-          } else {
-            self.changeLogType("Graphs");
+            Kooboo.VisitorLog[self.curLogType]({
+              weekname: week
+            }).then(function(res) {
+              res.success && self.handleData(res.model, self.curLogType);
+            });
           }
-        },
-        immediate: true
+        } else {
+          self.changeLogType("Graphs");
+        }
       }
     },
     beforeDestory: function() {
