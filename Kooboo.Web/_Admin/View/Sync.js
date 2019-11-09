@@ -1,6 +1,8 @@
 $(function() {
+  Kooboo.loadJS(["/_Admin/Scripts/validate.js"]);
+  var validate = new Validate();
+  validate.registerAll(ValidateRuleResolves);
   var self;
-
   new Vue({
     el: "#app",
     data: function() {
@@ -107,22 +109,62 @@ $(function() {
         self.ableAddNewServer = true;
       },
 
+      validateServerManage: function() {},
       saveEditableServers: function(event, row) {
-        Kooboo.UserPublish.updateServer({
-          id: row.id,
+        var patternString =
+          "^((https|http)?://)?" +
+          "(([0-9]{1,3}.){3}[0-9]{1,3}" + // IP形式的URL- 199.194.52.184
+          "|" + // 允许IP和DOMAIN（域名）
+          "([0-9a-z_!~*'()-]+.)*" + // 域名- www.
+          "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]." + // 二级域名
+          "[a-z]{2,6})" + // first level domain- .com or .museum
+          "(:[0-9]{1,4})?"; // 端口- :80
+
+        var pattern = new RegExp(patternString);
+        var keyOptions = {
+          name: [
+            { name: "required", message: Kooboo.text.validation.required }
+          ],
+          serverUrl: [
+            { name: "required", message: Kooboo.text.validation.required },
+            {
+              name: "pattern",
+              pattern: pattern,
+              message: Kooboo.text.validation.urlInvalid
+            }
+          ]
+        };
+        var keyValues = {
           name: row.name,
           serverUrl: row.serverUrl
-        }).then(function(res) {
-          if (res.success) {
-            Kooboo.EventBus.publish("server/list/refresh/needed");
-            window.info.done(Kooboo.text.info.update.success);
-            row.editable = false;
-            self.$forceUpdate();
-            self.ableAddNewServer = true;
-          } else {
-            window.info.fail(Kooboo.text.info.update.fail);
-          }
-        });
+        };
+        var result = validate.setKeyRules(keyOptions).validate(keyValues);
+        row.validateModel.name = {
+          hasError: result.name.hasError,
+          message: result.name.message
+        };
+        row.validateModel.serverUrl = {
+          hasError: result.serverUrl.hasError,
+          message: result.serverUrl.message
+        };
+        this.$forceUpdate();
+        if (!validate.hasError(result)) {
+          Kooboo.UserPublish.updateServer({
+            id: row.id,
+            name: row.name,
+            serverUrl: row.serverUrl
+          }).then(function(res) {
+            if (res.success) {
+              Kooboo.EventBus.publish("server/list/refresh/needed");
+              window.info.done(Kooboo.text.info.update.success);
+              row.editable = false;
+              self.$forceUpdate();
+              self.ableAddNewServer = true;
+            } else {
+              window.info.fail(Kooboo.text.info.update.fail);
+            }
+          });
+        }
       },
       addNewAbleServersHandle: function() {
         var newServer = {
@@ -237,8 +279,6 @@ $(function() {
         this.isShowModal = false;
       },
       createRemoteSite: function() {
-        //需要验证
-        console.log(this.$refs.createSiteForm);
         var validateStatus = this.$refs.createSiteForm.validate();
 
         //add new Site to avaliableSites
@@ -291,6 +331,10 @@ $(function() {
             self.allServers = res.model;
 
             self.editableServers = self.allServers.filter(function(item) {
+              item.validateModel = {
+                name: { hasError: false, message: "" },
+                serverUrl: { hasError: false, message: "" }
+              };
               return !item.reserved;
             });
             self.isShowModal = true;
