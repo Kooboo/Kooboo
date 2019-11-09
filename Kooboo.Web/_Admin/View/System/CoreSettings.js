@@ -3,6 +3,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      self = this;
       return {
         breads: [
           {
@@ -64,9 +65,6 @@ $(function() {
     },
     mounted: function() {
       this.getList();
-    },
-    beforeCreate: function() {
-      self = this;
     },
     beforeDestory: function() {
       self = null;

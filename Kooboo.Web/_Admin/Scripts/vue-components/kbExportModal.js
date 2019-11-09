@@ -10,14 +10,12 @@
       siteId: String
     },
     data: function() {
+      self = this;
       return {
         exportType: "complete",
         exportContents: [],
         selectedContent: []
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     mounted: function() {
       Kooboo.Site.getExportStoreNames().then(function(res) {

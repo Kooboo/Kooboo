@@ -1,17 +1,12 @@
 (function() {
-  function createNewEvent(eventName) {
-    var ev;
-    if (typeof Event === "function") {
-      ev = new Event(eventName, { bubbles: true });
-    } else {
-      // less than IE11
-      ev = document.createEvent("Event");
-      ev.initEvent(eventName, true, true);
-    }
-    return ev;
+  function trigger(el, type) {
+    // copy from vue.js line 8578
+    var e = document.createEvent("HTMLEvents");
+    e.initEvent(type, true, true);
+    el.dispatchEvent(e);
   }
+
   Vue.directive("kb-typeahead", function(element, binding) {
-    var event = new createNewEvent("input");
     var $element = $(element);
     var source = binding.value.source;
     var items = binding.value.items || 4;
@@ -31,7 +26,7 @@
       items: items,
       updater: function(item) {
         element.value = item;
-        element.dispatchEvent(event);
+        trigger(element, "input");
         return item;
       },
       minLength: 0,
