@@ -34,13 +34,15 @@
     },
     data: function() {
       return {
-        slots: []
+        slots: [],
+        mounted: false
       };
     },
     mounted: function() {
       this.slots = this.$slots.default.map(function(i) {
         return Vue.observable(i);
       });
+      this.mounted = true;
     },
     methods: {
       selectedAll: function(e) {
