@@ -3,6 +3,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      self = this;
       return {
         breads: [
           {
@@ -43,9 +44,6 @@ $(function() {
         showJobDialog: false,
         scheduleJobCode: []
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     mounted: function() {
       self.getList();

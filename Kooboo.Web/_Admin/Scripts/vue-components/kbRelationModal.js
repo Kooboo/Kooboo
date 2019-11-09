@@ -4,10 +4,8 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/kbRelationModal.html"
     ),
-    beforeCreate: function() {
-      self = this;
-    },
     data: function() {
+      self = this;
       return {
         isShow: false,
         by: "",

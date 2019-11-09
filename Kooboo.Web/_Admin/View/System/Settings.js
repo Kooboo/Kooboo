@@ -3,6 +3,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      self = this;
       return {
         breads: [
           {
@@ -51,9 +52,6 @@ $(function() {
         showError: false,
         showCustomServerModal: false
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     mounted: function() {
       Kooboo.Site.Get().then(function(response) {

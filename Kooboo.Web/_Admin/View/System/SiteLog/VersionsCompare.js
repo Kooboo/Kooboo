@@ -3,6 +3,7 @@ $(function() {
   new Vue({
     el: "#main",
     data: function() {
+      self = this;
       return {
         dataType: "",
         title1: "",
@@ -12,9 +13,6 @@ $(function() {
         source1: "",
         source2: ""
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     methods: {
       compare: function() {

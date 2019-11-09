@@ -3,6 +3,7 @@ $(function() {
   var vm = new Vue({
     el: "#main",
     data: function() {
+      self = this;
       return {
         filename: "",
         link: "",
@@ -40,9 +41,6 @@ $(function() {
         rotate: 0,
         isImageChange: false
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     methods: {
       toggleMode: function() {

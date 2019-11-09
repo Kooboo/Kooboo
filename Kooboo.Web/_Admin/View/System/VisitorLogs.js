@@ -76,6 +76,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      self = this;
       return {
         breads: [
           {
@@ -126,9 +127,6 @@ $(function() {
         tableData: [],
         isOnlineServer: false
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     mounted: function() {
       Kooboo.VisitorLog.getWeekNames().then(function(res) {
