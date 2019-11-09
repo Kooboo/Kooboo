@@ -3,6 +3,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      self = this;
       return {
         breads: [
           {
@@ -102,9 +103,6 @@ $(function() {
             return "javascript:;";
         }
       }
-    },
-    beforeCreate: function() {
-      self = this;
     },
     beforeDestory: function() {
       self = null;
