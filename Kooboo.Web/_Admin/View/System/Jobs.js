@@ -17,9 +17,10 @@ $(function() {
         ],
         jobName: "",
         startTime: "",
+        startDate: moment().format("YYYY-MM-DD HH:mm"),
         repeat: false,
         frequenceUnit: 0,
-        frequence: "",
+        frequence: "Second",
         script: "",
         selectedJobs: [],
         tabTypes: [
@@ -178,44 +179,24 @@ $(function() {
           }
         });
       },
-      onDelete: function() { // TODO
-        if (self.kbType()) {
-          var confirmStr = self.isSelectedDocsContainsRef()
-            ? Kooboo.text.confirm.deleteItemsWithRef
-            : Kooboo.text.confirm.deleteItems;
-          if (confirm(confirmStr)) {
-            var ids = self.getSelectedId();
-            Kooboo[self.kbType()]
-              .Deletes({
-                ids: JSON.stringify(ids)
-              })
-              .then(function(res) {
-                if (res.success) {
-                  _.forEach(ids, function(id) {
-                    var doc = _.findLast(self.docs(), function(doc) {
-                      return doc.id() === id;
-                    });
+      onDelete: function() {
+        // TODO: Check this
+        if (confirm(Kooboo.text.confirm.deleteItems)) {
+          var ids = self.selectedJobs.map(function(job) {
+            return job.id;
+          });
 
-                    self.docs.remove(doc);
-
-                    var _idx = _.findIndex(params.docs, function(d) {
-                      return d.id == doc.id();
-                    });
-                    params.docs.splice(_idx, 1);
-                  });
-
-                  self.selectedDocs.removeAll();
-
-                  Kooboo.EventBus.publish("kb/table/delete/finish", {
-                    ids: ids
-                  });
-
-                  window.info.show(Kooboo.text.info.delete.success, true);
-                }
+          Kooboo.Job.Deletes({
+            ids: JSON.stringify(ids)
+          }).then(function(res) {
+            if (res.success) {
+              self.tableData = _.filter(self.tableData, function(row) {
+                return ids.indexOf(row.id) === -1;
               });
-          }
-        } else {
-          console.warn("kbType not defined.");
+              self.selectedJobs = [];
+              window.info.show(Kooboo.text.info.delete.success, true);
+            }
+          });
         }
       }
     },
