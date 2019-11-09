@@ -30,10 +30,12 @@
         });
     },
     update: function(element, binding) {
-      var options = {};
-      if (binding.value) {
-        _.extend(options, defaultOptions, binding.value);
-      }
+      // if (!_.isEqual(binding.value, binding.oldValue)) {
+      //   var options = {};
+      //   if (binding.value) {
+      //     _.extend(options, defaultOptions, binding.value);
+      //   }
+      // }
       $(element).datetimepicker("update");
     }
   });
