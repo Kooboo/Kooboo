@@ -8,7 +8,8 @@
       width: String,
       customSlot: Array,
       align: String,
-      headClass: String | Array
+      headClass: String | Array,
+      bodyClass: String | Array
     },
     render: function(h) {
       return h("div", this.customSlot);
@@ -65,8 +66,8 @@
       }
     },
     watch: {
-      data: function() {
-        this.$emit("update:selected", []);
+      data: function(value) {
+        this.$emit("change", value);
       }
     }
   });
