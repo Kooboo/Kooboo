@@ -1,49 +1,445 @@
 <!-- #layout name=blank-->
-<div class="page-header">
+<div id="app">
+  <div class="page-header">
     <h1 class="title">Code</h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'SITES'
-},{
-    name: 'DASHBOARD'
-},{
-    name: Kooboo.text.common.Code
-}]}"></div>
-<div class="navbar navbar-default">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="navbar navbar-default">
     <div class="container-fluid">
-        <a data-bind="attr: { href: codeCreateUrl }, text: createBtnText, visible: curType() !== 'all'" class="btn green navbar-btn"></a>
-        <div class="btn-group navbar-btn" data-bind="visible: curType() == 'all'">
-            <button class="btn green dropdown-toggle" type="button" data-toggle="dropdown"><span>Create</span> <i class="fa fa-angle-down"></i></button>
-            <ul class="dropdown-menu" role="menu" data-bind="foreach: codeTypes">
-                <!-- ko if: $data.editUrl -->
-                <li>
-                    <a data-bind="text: $data.displayName, attr: { href: $data.editUrl }"></a>
-                </li>
-                <!-- /ko -->
-            </ul>
-        </div>
-        <a data-bind="visible: ['api','all'].indexOf(curType()) > -1, click: onShowApiModal" class="btn navbar-btn green">API Generator</a>
-        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+      <a
+        class="btn green navbar-btn"
+        :href="codeCreateUrl"
+        v-show="currentTab!== 'all'"
+        >{{ createBtnText }}</a
+      >
+      <div class="btn-group navbar-btn" v-show="currentTab == 'all'">
+        <button
+          class="btn green dropdown-toggle"
+          type="button"
+          data-toggle="dropdown"
+          ><span>Create</span> <i class="fa fa-angle-down"></i
+        ></button>
+        <ul class="dropdown-menu" role="menu">
+          <template v-for="(item,index) in codeTypes">
+            <li :key="index" v-if="item.editUrl">
+              <a :href="item.editUrl">{{ item.displayName }}</a>
+            </li>
+          </template>
+        </ul>
+      </div>
+      <a
+        v-show="['api','all'].indexOf(currentTab) > -1"
+        @click="showApiModal=true"
+        class="btn navbar-btn green"
+        >API Generator</a
+      >
+      <a
+        v-show="selectedRows.length"
+        @click="onDelete"
+        class="btn red navbar-btn"
+        >Delete</a
+      >
     </div>
-</div>
-<ul data-bind="foreach: codeTypes" class="nav nav-tabs">
-    <li data-bind="css: { 'active': $parent.curType() == $data.value }, click: $parent.changeCodeType.bind(this, $data.value)">
-        <a href="javascript:;" data-bind="text: $data.displayName"></a>
+  </div>
+  <ul class="nav nav-tabs">
+    <li
+      v-for="item in codeTypes"
+      :key="item.value"
+      :class="{active:item.value==currentTab}"
+    >
+      <a href="javascript:;" @click="onTabClick(item.value)">{{
+        item.displayName
+      }}</a>
     </li>
-</ul>
-<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
-<div data-bind="component: { name: 'kb-relation-modal' }"></div>
-<kb-api-generation-modal params='isShow: showAPIGenerationModal'></kb-api-generation-modal>
+  </ul>
+  <kb-table :data="model" show-select :selected.sync="selectedRows">
+    <kb-table-column :label="Kooboo.text.common.name" prop="name">
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.site.code.codeType">
+      <template v-slot="row">
+        <span class="label label-sm label-success">
+          {{ row.codeType }}
+        </span>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.common.usedBy">
+      <template v-slot="row">
+        <a
+          class="label label-sm kb-table-label-refer"
+          :style="{
+                              background: Kooboo.getLabelColor(item.key.toLowerCase())
+                            }"
+          v-for="(item, index) in Kooboo.objToArr(row.references)"
+          :key="index"
+          @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Code.name)"
+        >
+          {{
+            item.value +
+              " " +
+              Kooboo.text.component.table[item.key.toLowerCase()]
+          }}
+        </a>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.common.preview">
+      <template v-slot="row">
+        <a :href="row.previewUrl" target="_blank">
+          {{ row.previewUrl }}
+        </a>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column :label="Kooboo.text.common.lastModified">
+      <template v-slot="row">
+        <span>
+          {{ new Date(row.lastModified).toDefaultLangString() }}
+        </span>
+      </template>
+    </kb-table-column>
+
+    <kb-table-column align="right" width="200px">
+      <template v-slot="row">
+        <a class="btn btn-sm blue" :href="getEditUrl(row)">
+          {{ Kooboo.text.common.edit }}
+        </a>
+        <a class="btn btn-sm blue" :href="getDebugUrl(row.id)" target="_blank">
+          {{ Kooboo.text.common.Debug }}
+        </a>
+      </template>
+    </kb-table-column>
+  </kb-table>
+  <kb-relation-modal></kb-relation-modal>
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="showApiModal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">API Generation</h4>
+        </div>
+        <div class="modal-body" v-if="showApiModal">
+          <div class="row">
+            <div class="wizard">
+              <div class="wrapper">
+                <span
+                  v-for="(item,index) in steps"
+                  :class="{active:index==currentStepIndex}"
+                  >{{ item }}<b></b
+                ></span>
+              </div>
+            </div>
+          </div>
+          <div v-show="currentStepIndex==0">
+            <table class="table table-hover">
+              <tbody>
+                <template v-for="(type,index) in types">
+                  <tr :key="index">
+                    <td>
+                      <span class="table-tree-indent"></span>
+                      <span class="table-tree-toggle"
+                        ><i class="fa fa-caret-down"></i
+                      ></span>
+                      <a href="javascript:;">{{ type.displayName }}</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                  <tr
+                    v-for="(item,i) in type.items"
+                    @click="item.selected=!item.selected"
+                    :key="index+'_'+i"
+                  >
+                    <td>
+                      <span class="table-tree-indent" style="width:22px"></span>
+                      <input type="checkbox" v-model="item.selected" />
+                      <a href="javascript:;">{{ item.name }}</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <div v-show="currentStepIndex==1">
+            <div class="row">
+              <template v-for="(type,index) in types">
+                <template v-for="(item,i) in type.items">
+                  <div
+                    class="col-sm-12 col-md-4"
+                    v-if="item.selected"
+                    :key="index+'-'+i"
+                  >
+                    <div class="thumbnail">
+                      <div class="caption">
+                        <h3>{{ item.name }}</h3>
+                        <div>
+                          <div
+                            class="form-group"
+                            v-for="(action,aIndex) in item.actions"
+                          >
+                            <div class="checkbox">
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  v-model="action.selected"
+                                />
+                                {{ action.type }}
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
+          <div v-show="currentStepIndex==2">
+            <template v-for="(type,index) in types">
+              <template v-for="(item,i) in type.items">
+                <div class="media" v-if="item.selected" :key="index+'-'+i">
+                  <div class="media-body">
+                    <h4 class="media-heading">{{ item.name }}</h4>
+                    <p
+                      >{{item.actions.filter(function(act){ return act.selected }).map(function(act){return act.type }).join(' / ')}}</p
+                    >
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+        </div>
+        <div class="modal-footer ">
+          <button
+            class="btn green "
+            v-if="currentStepIndex==1||currentStepIndex==2"
+            @click="currentStepIndex--"
+            >{{ Kooboo.text.common.previous }}</button
+          >
+          <button
+            class="btn green "
+            v-if="currentStepIndex==0||currentStepIndex==1"
+            @click="currentStepIndex++"
+            >{{ Kooboo.text.common.next }}</button
+          >
+          <button
+            class="btn blue "
+            v-if="currentStepIndex==2"
+            @click="onConfirm"
+            >{{ Kooboo.text.common.save }}</button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/components/kbRelationModal.js",
-            "/_Admin/Scripts/components/kbAPIGenerationModal.js",
-        ]);
-    })()
+  Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+    "/_Admin/Scripts/vue-components/kbForm.js",
+    "/_Admin/Scripts/vue-components/kbTable.js",
+    "/_Admin/Scripts/vue-components/kbRelationModal.js"
+  ]);
+
+  new Vue({
+    el: "#app",
+    data: function() {
+      return {
+        breads: [
+          {
+            name: "SITES"
+          },
+          {
+            name: "DASHBOARD"
+          },
+          {
+            name: Kooboo.text.common.Code
+          }
+        ],
+        currentTab: "all",
+        codeTypes: [],
+        showApiModal: false,
+        selectedRows: [],
+        model: [],
+        currentStepIndex: 0,
+        steps: [
+          Kooboo.text.common.chooseObject,
+          Kooboo.text.common.chooseAction,
+          Kooboo.text.common.confirm
+        ],
+        types: []
+      };
+    },
+    mounted: function() {
+      var me = this;
+      Kooboo.Code.getCodeType().then(function(res) {
+        if (res.success) {
+          var types = Kooboo.objToArr(res.model, "value", "displayName");
+          types = _.orderBy(types, [
+            function(o) {
+              return o.value;
+            }
+          ]);
+          types.forEach(function(type) {
+            type.editUrl = Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
+              codeType: type.value
+            });
+          });
+          types.splice(0, 0, {
+            displayName: Kooboo.text.common.all,
+            value: "all"
+          });
+          me.codeTypes = types;
+          me.onTabClick(me.currentTab);
+        }
+      });
+    },
+    computed: {
+      codeCreateUrl: function() {
+        return Kooboo.Route.Get(
+          Kooboo.Route.Code.EditPage,
+          this.currentTab !== "all"
+            ? {
+                codeType: this.currentTab
+              }
+            : null
+        );
+      },
+      createBtnText: function() {
+        var me = this;
+        var result = Kooboo.text.common.create + " ";
+        var type = me.codeTypes.find(function(f) {
+          return f.value == me.currentTab;
+        });
+        if (type) result += type.displayName;
+        return result;
+      }
+    },
+    methods: {
+      onDelete: function() {
+        var me = this;
+        var haveRelations = this.selectedRows.some(function(s) {
+          return s.relations && Object.keys(s.relations).length;
+        });
+
+        var confirmStr = haveRelations
+          ? Kooboo.text.confirm.deleteItemsWithRef
+          : Kooboo.text.confirm.deleteItems;
+
+        var ids = this.selectedRows.map(function(m) {
+          return m.id;
+        });
+
+        if (!confirm(confirmStr)) return;
+        Kooboo[Kooboo.Code.name]
+          .Deletes({
+            ids: ids
+          })
+          .then(function(res) {
+            if (res.success) {
+              me.onTabClick(me.currentTab);
+            }
+          });
+      },
+      onTabClick: function(type) {
+        var me = this;
+        Kooboo.Code.getListByType({
+          codeType: type
+        }).then(function(res) {
+          if (res.success) {
+            me.model = res.model;
+            me.currentTab = type;
+          }
+        });
+      },
+      onShowRelationModal: function(by, id, type) {
+        Kooboo.EventBus.publish("kb/relation/modal/show", {
+          by: by,
+          type: type,
+          id: id
+        });
+      },
+      getEditUrl: function(item) {
+        return Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
+          id: item.id,
+          codeType: item.codeType
+        });
+      },
+      getDebugUrl: function(id) {
+        return Kooboo.Route.Get(Kooboo.Route.Code.DebugPage, {
+          id: id
+        });
+      },
+      onConfirm: function() {
+        var list = [];
+        var me = this;
+        me.types.forEach(function(type) {
+          type.items.forEach(function(item) {
+            if (item.selected) {
+              var model = {
+                type: type.name,
+                name: item.name,
+                actions: item.actions
+                  .filter(function(action) {
+                    return action.selected;
+                  })
+                  .map(function(action) {
+                    return action.type;
+                  })
+              };
+
+              model.actions.length && list.push(model);
+            }
+          });
+        });
+
+        Kooboo.APIGeneration.Generate({
+          updateModel: list
+        }).then(function(res) {
+          if (res.success) {
+            window.info.done("Generate successful");
+            me.showApiModal = false;
+            me.onTabClick(me.currentTab);
+          }
+        });
+      }
+    },
+    watch: {
+      showApiModal: function() {
+        var me = this;
+        Kooboo.APIGeneration.getObjects().then(function(res) {
+          if (res.success) {
+            var list = _.groupBy(res.model, "type");
+            me.types = Kooboo.objToArr(list).map(function(data) {
+              return {
+                name: data.key,
+                displayName: data.value.length
+                  ? data.value[0].typeDisplayName
+                  : data.key,
+                items: data.value.map(function(item) {
+                  item.selected = false;
+                  item.actions = item.actions.map(function(action) {
+                    return {
+                      selected: false,
+                      type: action
+                    };
+                  });
+                  return item;
+                })
+              };
+            });
+          }
+        });
+      }
+    }
+  });
 </script>
-<script src="/_Admin/View/Development/Code.js"></script>
