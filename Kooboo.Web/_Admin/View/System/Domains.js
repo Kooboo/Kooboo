@@ -17,17 +17,12 @@ $(function() {
         defaultBinding: "domain",
         tableDataSelected: [],
         formModel: {
-          domain: "",
+          subdomain: "",
           port: 81,
           root: ""
         },
-        routerModel: {
-          startPage: "",
-          notFound: "",
-          error: ""
-        },
         formRules: {
-          domain: [
+          subdomain: [
             {
               pattern: /^([A-Za-z][\w\-\.]*)*$/,
               message: Kooboo.text.validation.objectNameRegex
@@ -49,15 +44,26 @@ $(function() {
                 });
                 if (
                   exist.indexOf(
-                    self.formModel.domain + "." + self.formModel.root
+                    self.formModel.subdomain + "." + self.formModel.root
                   ) > -1
                 ) {
                   return false;
                 }
-
                 return true;
               },
-              message: "The domain already exists"
+              message: Kooboo.text.validation.taken
+            },
+            {
+              remote: {
+                url: Kooboo.Site.CheckDomainBindingAvailable(),
+                data: function() {
+                  return {
+                    SubDomain: self.formModel.subdomain,
+                    RootDomain: self.formModel.root
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ],
           port: [
@@ -114,7 +120,7 @@ $(function() {
       onSave: function() {
         if (this.$refs.form.validate()) {
           Kooboo.Binding.post({
-            subdomain: self.formModel.domain,
+            subdomain: self.formModel.subdomain,
             rootdomain: self.formModel.root,
             port: self.formModel.port + "",
             defaultBinding: self.defaultBinding === "port"
@@ -167,6 +173,9 @@ $(function() {
       getDomainData: function() {
         Kooboo.Domain.getList().then(function(res) {
           self.rootDomain = res.model;
+          if (self.rootDomain.length > 0) {
+            self.formModel.root = self.rootDomain[0].domainName;
+          }
         });
       },
       startSSLHandle: function(event, id) {
@@ -176,12 +185,12 @@ $(function() {
       },
       changeSSl: function(id) {
         var find = self.domainsData.find(function(domain) {
-          return domain.id == id;
+          return domain.id === id;
         });
 
         if (find) {
           var domain = self.rootDomain.find(function(domain) {
-            return domain.id == find.domainId;
+            return domain.id === find.domainId;
           });
           if (domain) {
             var rootDomain = domain.domainName,
