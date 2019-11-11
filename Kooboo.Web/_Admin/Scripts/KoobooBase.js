@@ -2247,14 +2247,16 @@
     return result;
   };
   Kooboo.validate = function(model, ruleModel) {
-    result = {};
+    var result = {};
+    var hasError = false;
     for (var key in model) {
       var prop = model[key];
       var rules = ruleModel[key];
       if (rules) {
         result[key] = Kooboo.validField(prop, rules);
+        if (!result[key].valid) hasError = true;
       }
     }
-    return result;
+    return { result: result, hasError: hasError };
   };
 })(window);
