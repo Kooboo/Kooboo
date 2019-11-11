@@ -5,61 +5,85 @@
     data: function() {
       self = this;
       return {
-        showError: false,
         showEditModal: false,
-        cacheData: "",
-        currentRole: "",
-        tree: null
+        cacheData: [],
+        tree: null,
+        breads: [
+          {
+            name: "SITES"
+          },
+          {
+            name: "DASHBOARD"
+          },
+          {
+            name: Kooboo.text.common.Roles
+          }
+        ],
+        tableData: [],
+        selected: [],
+        roleForm: {
+          name: ""
+        },
+        roleRules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              remote: {
+                url: Kooboo.Role.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.roleForm.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
+        isEdit: false
       };
     },
     mounted: function() {
       this.getList();
-
-      Kooboo.EventBus.subscribe("kb/setting/role/edit", function(data) {
-        let currentRole = self.cacheData().find(function(item) {
-          return item.id == data.id;
-        });
-
-        self.currentRole(currentRole);
-        self.roleName(currentRole.name);
-
-        var treeData = self.getPermissionTree(currentRole.subItems);
-        self.renderTree(treeData);
-        self.showEditModal(true);
-      });
     },
     methods: {
       onCreate: function() {
+        self.isEdit = false;
         Kooboo.Role.getEdit().then(function(res) {
           if (res.success) {
-            self.currentRole(null);
-            self.showEditModal(true);
+            self.roleForm.name = "";
+            self.showEditModal = true;
             var treeData = self.getPermissionTree(res.model.subItems);
             self.renderTree(treeData);
           }
         });
       },
+      onEdit: function(data) {
+        self.isEdit = true;
+        let currentRole = self.cacheData.find(function(item) {
+          return item.id == data.id;
+        });
+
+        self.roleForm.name = currentRole.name;
+        var treeData = self.getPermissionTree(currentRole.subItems);
+        self.renderTree(treeData);
+        self.showEditModal = true;
+      },
       onSaveRole: function() {
         // debugger;
-        var permissions = self.getTreePermission(
-          $("#permission-area")
-            .jstree(true)
-            .get_json()
-        );
+        var isValid = self.isEdit || self.$refs.roleForm.validate();
+        if (isValid) {
+          var permissions = self.getTreePermission(
+            $("#permission-area")
+              .jstree(true)
+              .get_json()
+          );
 
-        if (!self.currentRole()) {
-          if (self.roleName.isValid()) {
-            update();
-          } else {
-            self.showError(true);
-          }
-        } else {
-          update();
-        }
-
-        function update() {
           Kooboo.Role.post({
-            name: self.roleName(),
+            name: self.roleForm.name,
             selected: false,
             subItems: permissions
           }).then(function(res) {
@@ -74,43 +98,28 @@
         $(permissionArea).attr("id", "permission-area");
         $("#area").empty();
         $("#area").append(permissionArea);
-        this.showError(false);
-        this.roleName("");
-        this.showEditModal(false);
+        this.roleForm.name = "";
+        self.$refs.roleForm.clearValid();
+        this.showEditModal = false;
       },
       getList: function() {
         Kooboo.Role.getList().then(function(res) {
           if (res.success) {
-            self.cacheData(res.model);
-            self.tableData({
-              docs: res.model.map(function(item) {
-                return {
-                  id: item.id,
-                  name: {
-                    class: "label-sm blue",
-                    text: item.name
-                  },
-                  edit: {
-                    text: Kooboo.text.common.edit,
-                    url: "kb/setting/role/edit"
-                  }
-                };
-              }),
-              columns: [
-                {
-                  displayName: "Role Name",
-                  fieldName: "name",
-                  type: "label"
+            self.cacheData = res.model;
+            var docs = res.model.map(function(item) {
+              return {
+                id: item.id,
+                name: {
+                  class: "label-sm blue",
+                  text: item.name
+                },
+                edit: {
+                  text: Kooboo.text.common.edit,
+                  url: "kb/setting/role/edit"
                 }
-              ],
-              tableActions: [
-                {
-                  fieldName: "edit",
-                  type: "communication-btn"
-                }
-              ],
-              kbType: Kooboo.Role.name
+              };
             });
+            self.tableData = docs;
           }
         });
       },
@@ -156,24 +165,25 @@
             data: treeData
           }
         });
+      },
+      onDelete: function() {
+        if (confirm(Kooboo.text.confirm.deleteItems)) {
+          var ids = self.selected.map(function(row) {
+            return row.id;
+          });
+          Kooboo.Role.Deletes({
+            ids: JSON.stringify(ids)
+          }).then(function(res) {
+            if (res.success) {
+              self.tableData = _.filter(self.tableData, function(row) {
+                return ids.indexOf(row.id) === -1;
+              });
+              self.selected = [];
+              window.info.show(Kooboo.text.info.delete.success, true);
+            }
+          });
+        }
       }
     }
   });
-  
-  var Roles = function() {
-    var self = this;
-    this.roleName = ko.validateField({
-      required: Kooboo.text.validation.required,
-      remote: {
-        url: Kooboo.Role.isUniqueName(),
-        message: Kooboo.text.validation.taken,
-        type: "get",
-        data: {
-          name: function() {
-            return self.roleName();
-          }
-        }
-      }
-    });
-  };
-});
+})();

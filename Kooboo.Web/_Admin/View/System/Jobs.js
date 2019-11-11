@@ -178,7 +178,6 @@ $(function() {
         });
       },
       onDelete: function() {
-        // TODO: Check this
         if (confirm(Kooboo.text.confirm.deleteItems)) {
           var ids = self.selectedJobs.map(function(job) {
             return job.id;
