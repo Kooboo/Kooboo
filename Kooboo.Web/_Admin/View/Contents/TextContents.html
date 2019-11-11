@@ -12,11 +12,7 @@
       <a @click="newFolder" class="btn green navbar-btn btn-folder"
         >New folder</a
       >
-      <a
-        v-if="selected.length > 1"
-        ,
-        @click="onDelete"
-        class="btn red navbar-btn"
+      <a v-if="selected.length > 1" @click="onDelete" class="btn red navbar-btn"
         >Delete</a
       >
     </div>
@@ -48,7 +44,7 @@
       <template v-slot="row">
         <a
           :class="['btn btn-sm', row.edit.class || 'blue' ]"
-          @click.stop="Kooboo.EventBus.publish(row.edit.url, { id: row.id })"
+          @click.stop="editFolder(row)"
         >
           {{ row.edit.text }}
         </a>
@@ -56,7 +52,7 @@
     </kb-table-column>
   </kb-table>
   <kb-relation-modal></kb-relation-modal>
-  <folder-editor params="allFolders: folders"></folder-editor>
+  <kb-folder-editor :folders="folders" :visible.sync="newFolderModalShow" @after-edit="afterEdit" :id="currentId"></folder-editor>
 </div>
 
 <script>
