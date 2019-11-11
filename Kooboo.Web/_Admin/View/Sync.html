@@ -13,8 +13,6 @@
                class="btn red navbar-btn">Delete</a>
         </div>
     </div>
-
-
     <kb-table
             :show-select="true"
             :data="tableData"
@@ -135,13 +133,18 @@
                             <kb-table-column :label="'Server name'">
                                 <template v-slot="row">
                                     <div v-if='!row.editable'>{{ !row.editable && row.name}}</div>
-                                    <input v-else v-model="row.name" type="text" class="form-control">
+                                    <input v-else v-model="row.name" type="text" class="form-control"
+                                           :class="{'has-error':row.validateModel.name.hasError }"
+                                           v-kb-tooltip:bottom.manual.error='row.validateModel.name.message'
+                                    >
                                 </template>
                             </kb-table-column>
-                            <kb-table-column :label="'Server address'">
+                            <kb-table-column :label="'Server address'" >
                                 <template v-slot="row">
                                     <div v-if='!row.editable'>{{ !row.editable && row.serverUrl }}</div>
-                                    <input v-else v-model="row.serverUrl" type="text" class="form-control">
+                                    <input v-else v-model="row.serverUrl" type="text" class="form-control"
+                                           :class="{'has-error':row.validateModel.serverUrl.hasError}"
+                                           v-kb-tooltip:bottom.manual.error='row.validateModel.serverUrl.message'>
                                 </template>
                             </kb-table-column>
                             <kb-table-column>

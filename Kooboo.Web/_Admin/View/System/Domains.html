@@ -130,12 +130,12 @@
                   ref="form"
                 >
                   <kb-form-item
-                    prop="domain"
+                    prop="subdomain"
                     v-if="defaultBinding === 'domain'"
                   >
                     <div class="input-group">
                       <input
-                        v-model="formModel.domain"
+                        v-model="formModel.subdomain"
                         class="form-control"
                         name="SubDomain"
                         placeholder="example: www"
@@ -146,9 +146,9 @@
                         v-model="formModel.root"
                         class="form-control"
                         name="RootDomain"
-                        v-for="domain in rootDomain"
+                        v-for="item in rootDomain"
                       >
-                        <option>{{ domain.domainName }}</option>
+                        <option>{{ item.domainName }}</option>
                       </select>
                     </div>
                   </kb-form-item>
@@ -180,8 +180,6 @@
 <script>
   (function() {
     Kooboo.loadJS([
-      "/_Admin/Scripts/components/kbTable.js",
-      "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbTable.js",
       "/_Admin/Scripts/vue-components/kbForm.js"
