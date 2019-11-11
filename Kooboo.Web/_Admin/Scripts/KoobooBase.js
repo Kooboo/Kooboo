@@ -2248,9 +2248,9 @@
   };
   Kooboo.validate = function(model, ruleModel) {
     result = {};
-    for (const key in model) {
-      const prop = model[key];
-      const rules = ruleModel[key];
+    for (var key in model) {
+      var prop = model[key];
+      var rules = ruleModel[key];
       if (rules) {
         result[key] = Kooboo.validField(prop, rules);
       }
