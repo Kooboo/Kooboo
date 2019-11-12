@@ -65,59 +65,35 @@
           categoryFolders: [],
           embeddedFolders: []
         },
+        folderRules: {
+          alias: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
+            },
+            {
+              validate: function(value) {
+                return (
+                  _.filter(
+                    _.concat(
+                      self.relationForm.categoryFolders,
+                      self.relationForm.embeddedFolders
+                    ),
+                    { alias: value }
+                  ).length < 2
+                );
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         relationFormRules: {
-          "categoryFolders[]": {
-            alias: [
-              {
-                required: true,
-                message: Kooboo.text.validation.required
-              },
-              {
-                pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-                message: Kooboo.text.validation.objectNameRegex
-              },
-              {
-                validate: function(value) {
-                  return (
-                    _.filter(
-                      _.concat(
-                        self.relationForm.categoryFolders,
-                        self.relationForm.embeddedFolders
-                      ),
-                      { alias: value }
-                    ).length < 2
-                  );
-                },
-                message: Kooboo.text.validation.taken
-              }
-            ]
-          },
-          "EmbeddedFolders[]": {
-            alias: [
-              {
-                required: true,
-                message: Kooboo.text.validation.required
-              },
-              {
-                pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-                message: Kooboo.text.validation.objectNameRegex
-              },
-              {
-                validate: function(value) {
-                  return (
-                    _.filter(
-                      _.concat(
-                        self.relationForm.categoryFolders,
-                        self.relationForm.embeddedFolders
-                      ),
-                      { alias: value }
-                    ).length < 2
-                  );
-                },
-                message: Kooboo.text.validation.taken
-              }
-            ]
-          }
+          "categoryFolders[]": self.folderRules,
+          "EmbeddedFolders[]": self.folderRules
         }
       };
     },
