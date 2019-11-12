@@ -9,7 +9,11 @@
       customSlot: Array,
       align: String,
       headClass: String | Array,
-      bodyClass: String | Array
+      bodyClass: String | Array,
+      if: {
+        type: Boolean,
+        default: true
+      }
     },
     render: function(h) {
       return h("div", this.customSlot);
@@ -34,15 +38,11 @@
     },
     data: function() {
       return {
-        slots: [],
-        mounted: false
+        slots: []
       };
     },
     mounted: function() {
-      this.slots = this.$slots.default.map(function(i) {
-        return Vue.observable(i);
-      });
-      this.mounted = true;
+      this.slots = this.$slots.default;
     },
     methods: {
       selectedAll: function(e) {
