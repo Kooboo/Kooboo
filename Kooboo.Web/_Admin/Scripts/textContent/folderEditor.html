@@ -198,42 +198,54 @@
                 }}</label>
                 <div class="col-md-9">
                   <div class="input-groups">
-                    <div
-                      class="input-group"
+                    <kb-form-item
                       v-for="($data, $index) in relationForm.embeddedFolders"
+                      :prop="'embeddedFolders['+ $index +'].alias'"
                       :key="$index"
                     >
-                      <select class="form-control key" v-model="$data.folderId">
-                        <option
-                          v-for="item in availableFolders($data.folderId)"
-                          :value="item.id"
+                      <template v-slot="{ error }">
+                        <div
+                          class="input-group"
+                          :class="{'has-error': !!error}"
+                          v-kb-tooltip:right.manual.error="error"
+                          :data-container="'.embedded-error-container-' + $index"
                         >
-                          {{ item.displayName }}
-                        </option>
-                      </select>
-                      <span class="input-group-addon"></span>
-                      <span class="input-group-btn">
-                        <a
-                          class="btn btn-default"
-                          href="javascript:;"
-                          @click="removeEmbeddedFolders($data)"
-                          v-kb-tooltip="Kooboo.text.common.remove"
-                        >
-                          <i class="fa fa-minus"></i>
-                        </a>
-                      </span>
-                      <input
-                        class="form-control"
-                        :placeholder="Kooboo.text.component.folderEditor.alias"
-                        v-model="$data.alias"
-                        type="text"
-                      />
-                      <div
-                        class="error-container"
-                        :class="'embedded-error-container-' + $index"
-                        style="position: absolute; width: 150%"
-                      ></div>
-                    </div>
+                          <select
+                            class="form-control key"
+                            v-model="$data.folderId"
+                          >
+                            <option
+                              v-for="item in availableFolders($data.folderId)"
+                              :value="item.id"
+                            >
+                              {{ item.displayName }}
+                            </option>
+                          </select>
+                          <span class="input-group-addon"></span>
+                          <span class="input-group-btn">
+                            <a
+                              class="btn btn-default"
+                              href="javascript:;"
+                              @click="removeEmbeddedFolders($data)"
+                              v-kb-tooltip="Kooboo.text.common.remove"
+                            >
+                              <i class="fa fa-minus"></i>
+                            </a>
+                          </span>
+                          <input
+                            class="form-control"
+                            :placeholder="Kooboo.text.component.folderEditor.alias"
+                            v-model="$data.alias"
+                            type="text"
+                          />
+                          <div
+                            class="error-container"
+                            :class="'embedded-error-container-' + $index"
+                            style="position: absolute; width: 150%"
+                          ></div>
+                        </div>
+                      </template>
+                    </kb-form-item>
                     <a
                       v-if="ableToAddRelationFolder"
                       class="btn dark"
