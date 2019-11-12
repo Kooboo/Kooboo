@@ -3,7 +3,7 @@ Vue.prototype.Kooboo = Kooboo;
 // #region <kb-tooltip>
 Vue.directive("kb-tooltip", {
   bind: function(el, binding) {
-    let trigger = [];
+    var trigger = [];
     if (binding.modifiers.focus) trigger.push("focus");
     if (binding.modifiers.hover) trigger.push("hover");
     if (binding.modifiers.click) trigger.push("click");
@@ -18,7 +18,7 @@ Vue.directive("kb-tooltip", {
       template: binding.modifiers.error
         ? '<div class="tooltip error" role="tooltip" style="z-index:199999"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
         : undefined,
-      container: $el.data('container') || "body"
+      container: $el.data("container") || "body"
     });
   },
   inserted: function(el, binding) {
@@ -238,14 +238,14 @@ Vue.directive("kb-sortable", function(el, binding) {
     handle: ".sortable",
     start: function() {
       var sortables = el.getElementsByClassName("sortable");
-      for (let i = 0; i < sortables.length; i++) {
+      for (var i = 0; i < sortables.length; i++) {
         sortables[i].__data_item = binding.value[i];
       }
     },
     update: function() {
       var newList = [];
       var sortables = document.getElementsByClassName("sortable");
-      for (let j = 0; j < sortables.length; j++) {
+      for (var j = 0; j < sortables.length; j++) {
         newList.push(sortables[j].__data_item);
       }
       binding.value.splice(0, binding.value.length);
@@ -256,5 +256,16 @@ Vue.directive("kb-sortable", function(el, binding) {
       });
     }
   });
+});
+Vue.filter("ellipsis", function(value, len, str) {
+  if (len && typeof len === "number") {
+    if (str && typeof str === "string") {
+      return value.substr(0, len) + str;
+    } else {
+      return value.substr(0, len) + "...";
+    }
+  } else {
+    return value.substr(0, 8) + "...";
+  }
 });
 // #endregion </kb-sortable>
