@@ -12,7 +12,7 @@
       <template v-for="(item, index) in slots">
         <th
           :key="index"
-          v-if="item.componentInstance"
+          v-if="item.componentInstance&&item.componentInstance.if"
           :style="{ width: item.componentInstance.width }"
           v-bind="item.componentInstance.$attrs"
           :class="item.componentInstance.headClass"
@@ -31,7 +31,7 @@
       </td>
       <template v-for="(item, index) in slots">
         <td
-          v-if="item.componentInstance"
+          v-if="item.componentInstance&&item.componentInstance.if"
           :key="index"
           :style="{ textAlign: item.componentInstance.align }"
           :class="item.componentInstance.bodyClass"
@@ -53,5 +53,7 @@
       <td :colspan="100" class="text-center">{{ Kooboo.text.common.empty }}</td>
     </tr>
   </tbody>
-  <slot v-if="!mounted"></slot>
+  <div v-show="false">
+    <slot></slot>
+  </div>
 </table>
