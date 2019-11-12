@@ -17,7 +17,12 @@
           v-bind="item.componentInstance.$attrs"
           :class="item.componentInstance.headClass"
         >
-          <template>
+          <template v-if="item.componentInstance.$slots.head">
+            <kb-table-column
+              :customSlot="item.componentInstance.$slots.head"
+            ></kb-table-column>
+          </template>
+          <template v-else>
             {{ item.componentInstance.label }}
           </template>
         </th>
@@ -55,5 +60,6 @@
   </tbody>
   <div v-show="false">
     <slot></slot>
+    <slot v-slot:head></slot>
   </div>
 </table>
