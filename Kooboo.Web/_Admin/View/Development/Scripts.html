@@ -249,26 +249,24 @@
             <div class="navbar navbar-default">
               <div class="container-fluid">
                 <div class="navbar-form navbar-left">
-                  <div class="form-group">
-                    <select
-                      class="form-control"
-                      v-model="selectedOption"
-                      :style="{width:'200px'}"
+                  <select
+                    class="form-control"
+                    v-model="selectedOption"
+                    :style="{width:'200px'}"
+                  >
+                    <option
+                      v-for="(item,index) in availableOptions"
+                      :key="index"
+                      :value="item.routeId"
+                      >{{ item.name }}</option
                     >
-                      <option
-                        v-for="(item,index) in availableOptions"
-                        :key="index"
-                        :value="item.routeId"
-                        >{{ item.name }}</option
-                      >
-                    </select>
-                    <button
-                      class="btn blue"
-                      :disabled="!availableOptions.length"
-                      @click="addGroupItem"
-                      >Add</button
-                    >
-                  </div>
+                  </select>
+                  <button
+                    class="btn blue"
+                    :disabled="!availableOptions.length"
+                    @click="addGroupItem"
+                    >Add</button
+                  >
                 </div>
               </div>
             </div>
@@ -327,13 +325,7 @@
     "/_Admin/Scripts/vue-components/kbTable.js",
     "/_Admin/Scripts/vue-components/kbRelationModal.js",
     "/_Admin/Scripts/kooboo/Guid.js",
-    "/_Admin/Scripts/kobindings.sortable.js",
-    "/_Admin/Scripts/components/kbUploadProgressor.js",
-    "/_Admin/Scripts/components/kbTable.js",
-    "/_Admin/Scripts/components/kbRelationModal.js",
-    "/_Admin/Scripts/components/kbBreadcrumb.js",
-    "/_Admin/Scripts/lib/jquery-ui-customized.js",
-    "/_Admin/Scripts/tableModel.js"
+    "/_Admin/Scripts/lib/jquery-ui-customized.js"
   ]);
 
   new Vue({
@@ -352,7 +344,6 @@
             name: Kooboo.text.common.Scripts
           }
         ],
-        model: [],
         externalModel: [],
         embeddedModel: [],
         groupsModel: [],
@@ -394,11 +385,12 @@
         var me = this;
         return me.externalModel.filter(function(f) {
           return !me.groupModel.children.some(function(s) {
-            return s == f;
+            return s.routeId == f.routeId;
           });
         });
       },
       groupModelRules: function() {
+        var me = this;
         var rules = {
           name: [
             { required: Kooboo.text.validation.required },
@@ -596,7 +588,7 @@
             function(res) {
               if (res.success) {
                 me.showGroupModal = false;
-                me.onTabClick(me.currentTab);
+                me.onTabClick("Group");
               }
             }
           );

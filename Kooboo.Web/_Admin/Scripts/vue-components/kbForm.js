@@ -1,45 +1,4 @@
 (function() {
-  var _rules = {
-    required: function(value) {
-      if (
-        value == undefined ||
-        value == null ||
-        (typeof value == "number" && Number.isNaN(value)) ||
-        (typeof value == "string" && value.trim() == "")
-      ) {
-        return false;
-      } else return true;
-    },
-    pattern: function(value, pattern) {
-      return pattern.test(value);
-    },
-    min: function(value, min) {
-      if (typeof value == "number") {
-        return value >= min;
-      } else if (value.length != undefined) {
-        return value.length >= min;
-      }
-    },
-    max: function(value, max) {
-      if (typeof value == "number") {
-        return value <= max;
-      } else if (value.length != undefined) {
-        return value.length <= max;
-      }
-    },
-    validate: function(value, validate) {
-      return validate(value);
-    },
-    remote: function(value, params) {
-      var res = $.ajax(params.url, {
-        type: params.type || "get",
-        data: params.data(),
-        async: false
-      });
-      return res.responseJSON.success;
-    }
-  };
-
   Vue.component("kb-form", {
     template:
       "<div :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
@@ -88,29 +47,13 @@
             });
           }
 
-          var result = this.validField(this.model[item.prop], rules);
+          var result = Kooboo.validField(this.model[item.prop], rules);
 
           if (!result.valid) valid = false;
           item.valid = result.valid;
           item.msg = result.msg;
         }
         return valid;
-      },
-      validField: function(prop, rules) {
-        var result = { valid: true, msg: "" };
-        for (var i = 0; i < rules.length; i++) {
-          var item = rules[i];
-          for (var key in _rules) {
-            if (item.hasOwnProperty(key)) {
-              if (!_rules[key](prop, item[key])) {
-                result.valid = false;
-                result.msg = item.message || item[key];
-                return result;
-              }
-            }
-          }
-        }
-        return result;
       }
     },
     data: function() {
