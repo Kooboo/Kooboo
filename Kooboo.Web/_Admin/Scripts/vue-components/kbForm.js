@@ -1,7 +1,7 @@
 (function() {
   Vue.component("kb-form", {
     template:
-      "<div :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
+      "<div v-if=\"simple\"><slot></slot></div><div v-else :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
     props: {
       align: {
         type: String,
@@ -12,7 +12,8 @@
       autoValidate: {
         type: Boolean,
         default: true
-      }
+      },
+      simple: Boolean
     },
     methods: {
       validate: function() {
@@ -31,23 +32,38 @@
         var valid = true;
         for (var i = 0; i < this.formItems.length; i++) {
           var item = this.formItems[i];
+          var model = this.model[item.prop];
+          var rules = this.rules[item.prop];
 
-          if (
-            !item.prop ||
-            this.model[item.prop] == undefined ||
-            this.rules[item.prop] == undefined
-          ) {
+          // object array fields
+          if (item.prop.indexOf("[") !== -1) {
+            var arrayProp = item.prop.split(/[\[\]\.]/);
+            // using correctly
+            if (arrayProp.length === 4) {
+              var objRule = this.rules[arrayProp[0] + "[]"];
+              if (objRule) {
+                rules = objRule[arrayProp[3]];
+                var arrModel = this.model[arrayProp[0]];
+                if (arrModel) {
+                  var objModel = arrModel[arrayProp[1]];
+                  if (objModel) {
+                    model = objModel[arrayProp[3]];
+                  }
+                }
+              }
+            }
+          }
+
+          if (!item.prop || model == undefined || rules == undefined) {
             continue;
           }
 
-          var rules = this.rules[item.prop];
           if (!outsideCall) {
             rules = rules.filter(function(f) {
               return !f.remote;
             });
           }
-
-          var result = Kooboo.validField(this.model[item.prop], rules);
+          var result = Kooboo.validField(model, rules);
 
           if (!result.valid) valid = false;
           item.valid = result.valid;
@@ -79,9 +95,10 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg'><slot></slot></div>",
+      "<div v-if=\"kbForm.simple\"><slot :error=\"msg\"></slot></div><div v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
     props: {
-      prop: String
+      prop: String,
+      errorContainer: String
     },
     inject: ["kbForm"],
     data: function() {
