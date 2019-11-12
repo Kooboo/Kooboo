@@ -61,10 +61,40 @@
           ]
         },
         relationForm: {
+          name: "",
           categoryFolders: [],
           embeddedFolders: []
         },
-        relationFormRules: {}
+        folderRules: {
+          alias: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
+            },
+            {
+              validate: function(value) {
+                return (
+                  _.filter(
+                    _.concat(
+                      self.relationForm.categoryFolders,
+                      self.relationForm.embeddedFolders
+                    ),
+                    { alias: value }
+                  ).length < 2
+                );
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
+        relationFormRules: {
+          "categoryFolders[]": self.folderRules,
+          "EmbeddedFolders[]": self.folderRules
+        }
       };
     },
     mounted: function() {
@@ -82,7 +112,22 @@
         );
       },
       contentTypeName: function() {
-        return (_.find(self.contentTypes, { id: self.basicForm.contentTypeId }) || {})["name"];
+        return (_.find(self.contentTypes, {
+          id: self.basicForm.contentTypeId
+        }) || {})["name"];
+      },
+      aliasNames: function() {
+        var names = [];
+        _.forEach(
+          _.concat(
+            self.relationForm.categoryFolders,
+            self.relationForm.embeddedFolders
+          ),
+          function(folder) {
+            folder.alias && names.push(folder.alias);
+          }
+        );
+        return names;
       }
     },
     methods: {
@@ -120,33 +165,33 @@
                 .hasClass("active")
             ) {
               $("a[href=#tab_basic]").tab("show");
-              $('.error-container').hide();
+              var $errorContainer = $("#tab_basic .error-container");
+              $errorContainer.hide();
               setTimeout(function() {
-                $('.error-container').show();
-                $('.has-error[data-container]').tooltip('show');
+                $errorContainer.show();
+                $("#tab_basic .has-error[data-container]").tooltip("show");
               }, 300);
             }
             return false;
           }
         }
-
-        // if (self.isCatogoryAliasError() || self.isEmbeddedAliasError()) {
-        //   if (
-        //     !$("a[href=#tab_relation]")
-        //       .parent()
-        //       .hasClass("active")
-        //   ) {
-        //     $("a[href=#tab_relation]").tab("show");
-        //     setTimeout(function() {
-        //       self.showRelationFolderError();
-        //     }, 300);
-        //   } else {
-        //     self.showRelationFolderError();
-        //   }
-
-        //   return false;
-        // }
-
+        var isRelationValid = self.$refs.relationForm.validate();
+        if (!isRelationValid) {
+          if (
+            !$("a[href=#tab_relation]")
+              .parent()
+              .hasClass("active")
+          ) {
+            $("a[href=#tab_relation]").tab("show");
+            var $errorContainer = $("#tab_relation .error-container");
+            $errorContainer.hide();
+            setTimeout(function() {
+              $errorContainer.show();
+              $("#tab_relation .has-error[data-container]").tooltip("show");
+            }, 300);
+          }
+          return false;
+        }
         var postData = {};
         if (!self.id) {
           postData.id = Kooboo.Guid.Empty;
@@ -239,16 +284,6 @@
           self.relationForm.embeddedFolders = [];
           self.ableToAddRelationFolder = self.folders.length;
         }
-      },
-      getAliasNames: function() {
-        var names = [];
-        _.forEach(
-          _.concat(self.relationForm.categoryFolders, self.relationForm.embeddedFolders),
-          function(folder) {
-            folder.alias && names.push(folder.alias);
-          }
-        );
-        return names;
       }
     },
     watch: {
@@ -269,108 +304,4 @@
     this.alias = (opt && opt.alias) || "";
     this.enableMultiple = !this.multiple;
   }
-
-  var viewModel = function(params) {
-    this.isValid = function() {
-      if (self.isNew()) {
-        return (
-          self.name.isValid() &&
-          self.contentTypeId.isValid() &&
-          !self.isCatogoryAliasError() &&
-          !self.isEmbeddedAliasError()
-        );
-      } else {
-        return (
-          self.contentTypeId.isValid() &&
-          !self.isCatogoryAliasError() &&
-          !self.isEmbeddedAliasError()
-        );
-      }
-    };
-
-    this.isCatogoryAliasError = function() {
-      var hasCategoryAliasError = self.categoryFolders().some(function(o) {
-        return !o.alias.isValid();
-      });
-      return hasCategoryAliasError;
-    };
-
-    this.isEmbeddedAliasError = function() {
-      var hasEmbeddedAliasError = self.embeddedFolders().some(function(o) {
-        return !o.alias.isValid();
-      });
-      return hasEmbeddedAliasError;
-    };
-
-    this.showRelationFolderError = function() {
-      _.forEach(
-        _.concat(self.categoryFolders(), self.embeddedFolders()),
-        function(folder) {
-          folder.showError(true);
-        }
-      );
-    };
-
-    function CategoryFolder(opt) {
-      var _this = this;
-      this.folderId = (opt && opt.folderId) || "";
-      this.multiple = (opt && opt.multiple) || false;
-      this.alias = ko.validateField(opt && opt.alias, {
-        required: Kooboo.text.validation.required,
-        regex: {
-          pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-          message: Kooboo.text.validation.objectNameRegex
-        },
-        localUnique: {
-          compare: function() {
-            return self.getAliasNames();
-          },
-          message: Kooboo.text.validation.taken
-        }
-      });
-      this.enableMultiple = ko.observable(!_this.multiple);
-      this.alias.subscribe(function() {
-        _.forEach(
-          _.concat(self.categoryFolders(), self.embeddedFolders()),
-          function(folder) {
-            folder.folderId !== _this.folderId &&
-              folder.showError() &&
-              !folder.alias.isValid() &&
-              folder.alias.valueHasMutated();
-          }
-        );
-      });
-      this.showError = ko.observable(false);
-    }
-
-    function EmbeddedFolder(opt) {
-      var _this = this;
-      this.folderId = (opt && opt.folderId) || "";
-      this.alias = ko.validateField(opt && opt.alias, {
-        required: Kooboo.text.validation.required,
-        regex: {
-          pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-          message: Kooboo.text.validation.objectNameRegex
-        },
-        localUnique: {
-          compare: function() {
-            return self.getAliasNames();
-          },
-          message: Kooboo.text.validation.taken
-        }
-      });
-      this.alias.subscribe(function() {
-        _.forEach(
-          _.concat(self.categoryFolders(), self.embeddedFolders()),
-          function(folder) {
-            folder.folderId !== _this.folderId &&
-              folder.showError() &&
-              !folder.alias.isValid() &&
-              folder.alias.valueHasMutated();
-          }
-        );
-      });
-      this.showError = ko.observable(false);
-    }
-  };
 })();
