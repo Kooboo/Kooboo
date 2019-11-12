@@ -32,7 +32,7 @@
           <input type="hidden" name="Id" id="Id" v-model="id" />
           <section class="tab-pane fade active in" id="tab_basic">
             <kb-form :model="basicForm" :rules="basicFormRules" ref="basicForm">
-              <kb-form-item prop="name">
+              <kb-form-item prop="name" error-container=".name-error-container">
                 <label class="control-label col-md-3">{{
                   Kooboo.text.common.name
                 }}</label>
@@ -49,6 +49,7 @@
                       name="Name"
                       type="text"
                     />
+                    <div class="error-container name-error-container" style="position: absolute; width: 150%"></div>
                   </template>
                 </div>
               </kb-form-item>
@@ -66,7 +67,7 @@
                   />
                 </div>
               </kb-form-item>
-              <kb-form-item prop="contentTypeId">
+              <kb-form-item prop="contentTypeId" error-container=".content-type-error-container">
                 <label class="control-label col-md-3">{{
                   Kooboo.text.common.ContentType
                 }}</label>
@@ -84,6 +85,7 @@
                       </option>
                     </select>
                   </template>
+                  <div class="error-container content-type-error-container" style="position: absolute; width: 150%"></div>
                 </div>
               </kb-form-item>
             </kb-form>
@@ -188,7 +190,7 @@
                       </span>
                       <input
                         class="form-control"
-                        :placehoder="Kooboo.text.component.folderEditor.alias"
+                        :placeholder="Kooboo.text.component.folderEditor.alias"
                         v-model="$data.alias"
                         type="text"
                       />

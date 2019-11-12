@@ -114,18 +114,17 @@
         if (self.isNew) {
           var isBasicValid = self.$refs.basicForm.validate();
           if (!isBasicValid) {
-            self.$refs.basicForm.clearValid();
             if (
               !$("a[href=#tab_basic]")
                 .parent()
                 .hasClass("active")
             ) {
               $("a[href=#tab_basic]").tab("show");
+              $('.error-container').hide();
               setTimeout(function() {
-                self.$refs.basicForm.validate();
+                $('.error-container').show();
+                $('.has-error[data-container]').tooltip('show');
               }, 300);
-            } else {
-              self.$refs.basicForm.validate();
             }
             return false;
           }

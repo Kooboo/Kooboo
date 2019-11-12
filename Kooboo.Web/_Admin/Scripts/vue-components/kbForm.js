@@ -79,9 +79,10 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg'><slot></slot></div>",
+      "<div class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
     props: {
-      prop: String
+      prop: String,
+      errorContainer: String
     },
     inject: ["kbForm"],
     data: function() {
