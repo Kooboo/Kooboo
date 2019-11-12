@@ -15,11 +15,11 @@
       return {
         contentTypes: [],
         ableToAddRelationFolder: true,
-        isTree: "",
         basicForm: {
           name: "",
           displayName: "",
-          contentTypeId: ""
+          contentTypeId: "",
+          isTree: ""
         },
         basicFormRules: {
           name: [
@@ -75,14 +75,14 @@
         return !self.id;
       },
       hasContentType: function() {
-        var cid = self.contentTypeId,
+        var cid = self.basicForm.contentTypeId,
           id = self.id;
         return (
           cid && cid !== Kooboo.Guid.Empty && id && id !== Kooboo.Guid.Empty
         );
       },
       contentTypeName: function() {
-        return (_.find(contentTypes, { id: self.contentTypeId }) || {})["name"];
+        return (_.find(self.contentTypes, { id: self.basicForm.contentTypeId }) || {})["name"];
       }
     },
     methods: {
@@ -187,7 +187,7 @@
         return availableFolders;
       },
       reset: function() {
-        self.name = "";
+        self.basicForm.name = "";
         // _.forEach(
         //   _.concat(self.categoryFolders(), self.embeddedFolders()),
         //   function(folder) {
@@ -213,21 +213,20 @@
         });
       },
       init: function() {
-        if (self.id) {
+        if (!self.isNew) {
           var model = _.find(self.folders, { id: self.id }) || {},
             folderIds = [];
           self.basicForm.name = model.name;
-          // self.isTree(model["isTree"]);
+          self.basicForm.isTree = model.isTree;
           self.basicForm.displayName = model.displayName;
           self.basicForm.contentTypeId = model.contentTypeId;
           self.relationForm.categoryFolders = [];
-
-          model["category"].forEach(function(o) {
+          model.category.forEach(function(o) {
             self.relationForm.categoryFolders.push(new Folder(o));
             folderIds.push(o.folderId);
           });
           self.relationForm.embeddedFolders = [];
-          model["embedded"].forEach(function(o) {
+          model.embedded.forEach(function(o) {
             self.relationForm.embeddedFolders.push(new Folder(o));
             folderIds.push(o.folderId);
           });
@@ -239,7 +238,7 @@
           self.ableToAddRelationFolder = availableFolders.length > 1;
         } else {
           self.basicForm.name = "";
-          self.isTree = "";
+          self.basicForm.isTree = "";
           self.basicForm.displayName = "";
           self.basicForm.contentTypeId = "";
           self.relationForm.categoryFolders = [];
@@ -250,9 +249,9 @@
       getAliasNames: function() {
         var names = [];
         _.forEach(
-          _.concat(self.categoryFolders(), self.embeddedFolders()),
+          _.concat(self.relationForm.categoryFolders, self.relationForm.embeddedFolders),
           function(folder) {
-            folder.alias() && names.push(folder.alias());
+            folder.alias && names.push(folder.alias);
           }
         );
         return names;
@@ -273,7 +272,7 @@
   function Folder(opt) {
     this.folderId = (opt && opt.folderId) || "";
     this.multiple = (opt && opt.multiple) || false;
-    this.alias = "";
+    this.alias = (opt && opt.alias) || "";
     this.enableMultiple = !this.multiple;
   }
 

@@ -38,8 +38,8 @@
                 }}</label>
                 <div class="col-md-9">
                   <template v-if="!isNew">
-                    <input type="hidden" v-model="name" name="Name" />
-                    <p class="form-control-static">{{ name }}</p>
+                    <input type="hidden" v-model="basicForm.name" name="Name" />
+                    <p class="form-control-static">{{ basicForm.name }}</p>
                   </template>
                   <template v-else>
                     <input

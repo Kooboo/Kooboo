@@ -27,9 +27,6 @@ $(function() {
     },
     mounted: function() {
       self.getList();
-      Kooboo.EventBus.subscribe("kb/table/delete/finish", function() {
-        Kooboo.EventBus.publish("kb/sidebar/refresh");
-      });
       // $("#J_NewFolder").on("show.bs.modal", function() {
       //   var $folder = $(
       //       'table.table > tbody input:checkbox:checked[data-check-model="folders"]'
@@ -79,11 +76,38 @@ $(function() {
         this.newFolderModalShow = true;
         this.currentId = row.id;
       },
-      afterEdit: function() {
-        self.getList();
+      refreshSidebar: function() {
         Kooboo.EventBus.publish("kb/sidebar/refresh");
       },
-      onDelete: function() {}
+      afterEdit: function() {
+        self.getList();
+        self.refreshSidebar();
+      },
+      onDelete: function() {
+        var hasRel = _.some(self.selected, function(doc) {
+          return doc.relations && Object.keys(doc.relations).length;
+        });
+        var confirmStr = hasRel
+          ? Kooboo.text.confirm.deleteItemsWithRef
+          : Kooboo.text.confirm.deleteItems;
+        if (confirm(confirmStr)) {
+          var ids = self.selected.map(function(row) {
+            return row.id;
+          });
+          Kooboo.ContentFolder.Deletes({
+            ids: JSON.stringify(ids)
+          }).then(function(res) {
+            if (res.success) {
+              self.tableData = _.filter(self.tableData, function(row) {
+                return ids.indexOf(row.id) === -1;
+              });
+              self.selected = [];
+              window.info.show(Kooboo.text.info.delete.success, true);
+              self.refreshSidebar();
+            }
+          });
+        }
+      }
     }
   });
 });

@@ -12,7 +12,7 @@
       <a @click="newFolder" class="btn green navbar-btn btn-folder"
         >New folder</a
       >
-      <a v-if="selected.length > 1" @click="onDelete" class="btn red navbar-btn"
+      <a v-if="selected.length > 0" @click="onDelete" class="btn red navbar-btn"
         >Delete</a
       >
     </div>
