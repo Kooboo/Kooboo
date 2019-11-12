@@ -111,8 +111,8 @@
         self.ableToAddRelationFolder = true;
       },
       submit: function(form) {
-        var isBasicValid = self.$refs.basicForm.validate();
         if (self.isNew) {
+          var isBasicValid = self.$refs.basicForm.validate();
           if (!isBasicValid) {
             self.$refs.basicForm.clearValid();
             if (
@@ -187,13 +187,8 @@
         return availableFolders;
       },
       reset: function() {
+        self.$refs.basicForm.clearValid();
         self.basicForm.name = "";
-        // _.forEach(
-        //   _.concat(self.categoryFolders(), self.embeddedFolders()),
-        //   function(folder) {
-        //     folder.showError(false);
-        //   }
-        // );
         self.relationForm.categoryFolders = [];
         self.relationForm.embeddedFolders = [];
         self.$emit("update:visible", false);
