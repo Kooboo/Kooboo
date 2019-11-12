@@ -9,8 +9,8 @@ Vue.directive("kb-tooltip", {
     if (binding.modifiers.click) trigger.push("click");
     if (binding.modifiers.manual) trigger.push("manual");
     trigger = trigger.join(" ");
-
-    $(el).tooltip({
+    var $el = $(el);
+    $el.tooltip({
       title: binding.value,
       placement: binding.arg,
       trigger: trigger || "hover",
@@ -18,7 +18,7 @@ Vue.directive("kb-tooltip", {
       template: binding.modifiers.error
         ? '<div class="tooltip error" role="tooltip" style="z-index:199999"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
         : undefined,
-      container: "body"
+      container: $(el).data('container') || "body"
     });
   },
   inserted: function(el, binding) {
@@ -30,7 +30,7 @@ Vue.directive("kb-tooltip", {
   },
   update: function(el, binding) {
     if (binding.value == binding.oldValue) return;
-    const $el = $(el);
+    var $el = $(el);
     if (binding.value) {
       $el.attr("title", binding.value).tooltip("fixTitle");
       var data = $el.data("bs.tooltip");
