@@ -13,6 +13,7 @@
     data: function() {
       self = this;
       return {
+        currentTab: "basic",
         contentTypes: [],
         ableToAddRelationFolder: true,
         basicForm: {
@@ -61,11 +62,45 @@
           ]
         },
         relationForm: {
-          name: "",
           categoryFolders: [],
           embeddedFolders: []
         },
-        folderRules: {
+        relationFormRules: {
+          "categoryFolders[]": self.folderRules(),
+          "embeddedFolders[]": self.folderRules()
+        }
+      };
+    },
+    mounted: function() {
+      self.getTypeList();
+    },
+    computed: {
+      isNew: function() {
+        return !self.id;
+      },
+      hasContentType: function() {
+        var cid = self.basicForm.contentTypeId,
+          id = self.id;
+        return (
+          cid && cid !== Kooboo.Guid.Empty && id && id !== Kooboo.Guid.Empty
+        );
+      },
+      contentTypeName: function() {
+        contentTypeName = "";
+        if (this.hasContentType) {
+          var contentType = _.find(self.contentTypes, {
+            id: self.basicForm.contentTypeId
+          });
+          if (contentType) {
+            contentTypeName = contentType.name;
+          }
+        }
+        return contentTypeName;
+      }
+    },
+    methods: {
+      folderRules: function() {
+        return {
           alias: [
             {
               required: true,
@@ -90,47 +125,12 @@
               message: Kooboo.text.validation.taken
             }
           ]
-        },
-        relationFormRules: {
-          "categoryFolders[]": self.folderRules,
-          "EmbeddedFolders[]": self.folderRules
-        }
-      };
-    },
-    mounted: function() {
-      self.getTypeList();
-    },
-    computed: {
-      isNew: function() {
-        return !self.id;
+        };
       },
-      hasContentType: function() {
-        var cid = self.basicForm.contentTypeId,
-          id = self.id;
-        return (
-          cid && cid !== Kooboo.Guid.Empty && id && id !== Kooboo.Guid.Empty
-        );
+      changeTab: function(tab) {
+        self.currentTab = tab;
+        $("a[href=#tab_" + tab + "]").tab("show");
       },
-      contentTypeName: function() {
-        return (_.find(self.contentTypes, {
-          id: self.basicForm.contentTypeId
-        }) || {})["name"];
-      },
-      aliasNames: function() {
-        var names = [];
-        _.forEach(
-          _.concat(
-            self.relationForm.categoryFolders,
-            self.relationForm.embeddedFolders
-          ),
-          function(folder) {
-            folder.alias && names.push(folder.alias);
-          }
-        );
-        return names;
-      }
-    },
-    methods: {
       addCategoryFolders: function(e) {
         var newFolder = new Folder();
         self.relationForm.categoryFolders.push(newFolder);
@@ -155,40 +155,29 @@
         );
         self.ableToAddRelationFolder = true;
       },
+      showErrorTab(tab) {
+        self.changeTab(tab);
+        var $errorContainer = $("#tab_" + tab + " .error-container");
+        $errorContainer.hide();
+        setTimeout(function() {
+          $errorContainer.show();
+          $("#tab_" + tab + " .has-error[data-container]").tooltip("show");
+        }, 300);
+      },
       submit: function(form) {
         if (self.isNew) {
           var isBasicValid = self.$refs.basicForm.validate();
           if (!isBasicValid) {
-            if (
-              !$("a[href=#tab_basic]")
-                .parent()
-                .hasClass("active")
-            ) {
-              $("a[href=#tab_basic]").tab("show");
-              var $errorContainer = $("#tab_basic .error-container");
-              $errorContainer.hide();
-              setTimeout(function() {
-                $errorContainer.show();
-                $("#tab_basic .has-error[data-container]").tooltip("show");
-              }, 300);
+            if (self.currentTab != "basic") {
+              self.showErrorTab("basic");
             }
             return false;
           }
         }
         var isRelationValid = self.$refs.relationForm.validate();
         if (!isRelationValid) {
-          if (
-            !$("a[href=#tab_relation]")
-              .parent()
-              .hasClass("active")
-          ) {
-            $("a[href=#tab_relation]").tab("show");
-            var $errorContainer = $("#tab_relation .error-container");
-            $errorContainer.hide();
-            setTimeout(function() {
-              $errorContainer.show();
-              $("#tab_relation .has-error[data-container]").tooltip("show");
-            }, 300);
+          if (self.currentTab != "relation") {
+            self.showErrorTab("relation");
           }
           return false;
         }
@@ -232,11 +221,14 @@
       },
       reset: function() {
         self.$refs.basicForm.clearValid();
+        self.$refs.relationForm.clearValid();
+
         self.basicForm.name = "";
+        self.basicForm.contentTypeId = "";
         self.relationForm.categoryFolders = [];
         self.relationForm.embeddedFolders = [];
         self.$emit("update:visible", false);
-        $("a[href=#tab_basic]").tab("show");
+        self.changeTab("basic");
       },
       getTypeList: function() {
         Kooboo.ContentType.getList().then(function(res) {

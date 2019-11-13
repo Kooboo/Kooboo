@@ -1,7 +1,7 @@
 <!-- #layout name=blank-->
 <div id="app">
   <div class="page-header">
-    <h1 class="title" data-bind="text: Kooboo.text.common.Contents"></h1>
+    <h1 class="title">{{ Kooboo.text.common.Contents }}</h1>
   </div>
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
@@ -62,10 +62,8 @@
       "/_Admin/Scripts/vue-components/kbTable.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbRelationModal.js",
-      "/_Admin/Scripts/textContent/folderEditor.js",
-      "/_Admin/Scripts/lib/select2.min.js"
+      "/_Admin/Scripts/textContent/folderEditor.js"
     ]);
-    Kooboo.loadCSS(["/_Admin/Styles/select2/select2.css"]);
   })();
 </script>
 <script src="/_Admin/View/Contents/TextContents.js"></script>
