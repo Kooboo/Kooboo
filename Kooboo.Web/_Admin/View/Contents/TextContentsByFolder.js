@@ -125,13 +125,7 @@ $(function() {
         self.tableData = self.dataMapping(data.list);
       },
       onDelete: function() {
-        var hasRel = _.some(self.selected, function(doc) {
-          return doc.relations && Object.keys(doc.relations).length;
-        });
-        var confirmStr = hasRel
-          ? Kooboo.text.confirm.deleteItemsWithRef
-          : Kooboo.text.confirm.deleteItems;
-        if (confirm(confirmStr)) {
+        if (confirm(Kooboo.text.confirm.deleteItems)) {
           var ids = self.selected.map(function(row) {
             return row.id;
           });
