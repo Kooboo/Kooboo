@@ -36,18 +36,18 @@
           var rules = this.rules[item.prop];
 
           // object array fields
-          if (item.prop.indexOf("[") !== -1) {
-            var arrayProp = item.prop.split(/[\[\]\.]/);
+          if (item.prop.lastIndexOf("]") !== -1) {
+            var arrayProp = item.prop.match(/\w+/g);
             // using correctly
-            if (arrayProp.length === 4) {
+            if (arrayProp.length === 3) {
               var objRule = this.rules[arrayProp[0] + "[]"];
               if (objRule) {
-                rules = objRule[arrayProp[3]];
+                rules = objRule[arrayProp[2]];
                 var arrModel = this.model[arrayProp[0]];
                 if (arrModel) {
                   var objModel = arrModel[arrayProp[1]];
                   if (objModel) {
-                    model = objModel[arrayProp[3]];
+                    model = objModel[arrayProp[2]];
                   }
                 }
               }

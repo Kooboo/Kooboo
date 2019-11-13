@@ -18,18 +18,17 @@
       <div class="modal-body">
         <ul class="nav nav-tabs">
           <li class="active">
-            <a data-toggle="tab" href="#tab_basic">{{
+            <a data-toggle="tab" href="#tab_basic" @click="changeTab('basic')">{{
               Kooboo.text.component.folderEditor.basicInfo
             }}</a>
           </li>
           <li>
-            <a data-toggle="tab" href="#tab_relation">{{
+            <a data-toggle="tab" href="#tab_relation" @click="changeTab('relation')">{{
               Kooboo.text.component.folderEditor.relationFolders
             }}</a>
           </li>
         </ul>
         <div class="tab-content margin-top-20">
-          <input type="hidden" name="Id" id="Id" v-model="id" />
           <section class="tab-pane fade active in" id="tab_basic">
             <kb-form :model="basicForm" :rules="basicFormRules" ref="basicForm">
               <kb-form-item prop="name" error-container=".name-error-container">
@@ -37,10 +36,7 @@
                   Kooboo.text.common.name
                 }}</label>
                 <div class="col-md-9">
-                  <template v-if="!isNew">
-                    <input type="hidden" v-model="basicForm.name" name="Name" />
-                    <p class="form-control-static">{{ basicForm.name }}</p>
-                  </template>
+                <p v-if="!isNew" class="form-control-static">{{ basicForm.name }}</p>
                   <template v-else>
                     <input
                       class="form-control"
