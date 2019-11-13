@@ -13,20 +13,21 @@
       <li
         v-for="$data in formatCultures"
         :key="$data.key"
-        class="{ disabled: $data.key == default }"
+        class="{ disabled: $data.key == defaultCulture }"
       >
         <a href="javascript:;">
           <label
-            :class="{ disabled: $data.key == default }"
+            :class="{ disabled: $data.key == defaultCulture }"
             class="checkbox-inline"
           >
             <input
               type="checkbox"
               v-model="$data.selected"
-              :disabled="$data.key == default"
+              :disabled="$data.key == defaultCulture"
+              @change="changeSelected($data)"
             />
             {{ $data.value }}
-            <span v-if="$data.key == default">{{
+            <span v-if="$data.key == defaultCulture">{{
               Kooboo.text.component.multilingualselector.default
             }}</span>
           </label>

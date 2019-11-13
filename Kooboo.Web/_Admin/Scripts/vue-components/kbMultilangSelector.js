@@ -9,11 +9,12 @@
      *      aaet: "Afar (Ethiopia)",
      *      enus: "English"
      *  },
-     *  default: "enus",
+     *  defaultCulture: "enus"，
+     *  selected: []
      */
     props: {
       cultures: Object,
-      default: String,
+      defaultCulture: String,
       selected: Array
     },
     data: function() {
@@ -21,78 +22,66 @@
       return {};
     },
     mounted: function() {
-      Kooboo.EventBus.subscribe("kb/multilang/change", function(target) {
-        var lang = _.findLast(self.cultures(), function(lang) {
-          return lang.key() == target.name;
-        });
-
-        lang && lang.selected(target.selected);
-      });
-
       Kooboo.EventBus.subscribe("kb/multilang/get", function() {
-        _.forEach(self.cultures(), function(cul) {
-          cul.selected() &&
+        _.forEach(self.cultures, function(cul) {
+          cul.selected &&
             Kooboo.EventBus.publish("kb/multilang/change", {
-              name: cul.key(),
-              fullName: cul.value(),
+              name: cul.key,
+              fullName: cul.value,
               selected: true
             });
         });
       });
+    },
+    methods: {
+      changeSelected(culture) {
+        /* publish language-change event */
+        var _cultrue = {
+          name: culture.key,
+          fullName: culture.value,
+          selected: culture.selected
+        };
+        Kooboo.EventBus.publish("kb/multilang/change", _cultrue);
+        self.$emit("change", _cultrue);
+        if (self.selected) {
+          var selectedCultures = _.clone(self.selected);
+          if (selectedCultures.length == 0) {
+            selectedCultures = [self.defaultCulture];
+          }
+          if (selectedCultures.indexOf(culture.key) !== -1) {
+            if (!culture.selected) {
+              selectedCultures = _.without(selectedCultures, culture.key);
+            }
+          } else {
+            if (culture.selected) {
+              selectedCultures.push(culture.key);
+            }
+          }
+          self.$emit("update:selected", selectedCultures);
+        }
+      }
     },
     computed: {
       formatCultures() {
         var _culturesArr = Kooboo.objToArr(self.cultures) || [],
           _cultures = [];
         var defaultCultureIdx = _.findIndex(_culturesArr, function(c) {
-          return c.key == self.default;
+          return c.key == self.defaultCulture;
         });
         if (defaultCultureIdx > -1) {
-          _cultures.push(_culturesArr[defaultCultureIdx]);
+          var culture = _culturesArr[defaultCultureIdx];
+          culture.selected = true;
+          _cultures.push(culture);
           _culturesArr.splice(defaultCultureIdx, 1);
         }
         _.forEach(_culturesArr, function(culture) {
-          culture.selected = culture.key === self.default;
+          culture.selected = !!(
+            self.selected && self.selected.indexOf(culture.key) !== -1
+          );
           _cultures.push(culture);
         });
         return _cultures;
       }
     }
   });
-
-  var x = {
-    viewModel: function(params) {
-      /*
-       * params:{
-       *  cultures: {
-       *      aaet: "Afar (Ethiopia)",
-       *      enus: "English"
-       *  },
-       *  default: "enus",
-       *  defaultName: "English"
-       * }
-       */
-
-      var self = this;
-
-      this.cultures = ko.observableArray(_cultures);
-    },
-    template: template
-  };
-
-  var cultureModel = function(cul, culList) {
-    var self = this;
-
-    ko.mapping.fromJS(cul, {}, self);
-
-    self.selected = ko.observable(self.key() == culList.defaultCulture());
-    self.selected.subscribe(function(selected) {
-      /* publish language-change event */
-      Kooboo.EventBus.publish("kb/multilang/change", {
-        name: self.key(),
-        fullName: self.value(),
-        selected: selected
-      });
-    });
-  };
 })();
