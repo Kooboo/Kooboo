@@ -19,7 +19,6 @@
     },
     data: function() {
       self = this;
-      return {};
     },
     mounted: function() {
       Kooboo.EventBus.subscribe("kb/multilang/get", function() {
@@ -82,6 +81,9 @@
         });
         return _cultures;
       }
+    },
+    beforeDestroy: function() {
+      self = null;
     }
   });
 })();
