@@ -95,7 +95,7 @@
                 v-for="refer in Object.keys(file.relations)"
                 href="javascript:;"
                 class="label label-sm kb-table-label-refer"
-                @click.stop="getRelation(file)"
+                @click.stop="getRelation(file.id,refer)"
                 :style="{background:Kooboo.getLabelColor(refer)}"
                 >{{
                   file.relations[refer] +
@@ -170,15 +170,13 @@
     </div>
   </div>
 
-  <div data-bind="component: { name: 'kb-relation-modal' }"></div>
+  <kb-relation-modal></kb-relation-modal>
 </div>
 
 <script>
   Kooboo.loadJS([
     "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-    "/_Admin/Scripts/components/kbRelationModal.js",
-    "/_Admin/Scripts/components/kbBreadcrumb.js",
-    "/_Admin/Scripts/tableModel.js"
+    "/_Admin/Scripts/vue-components/kbRelationModal.js"
   ]);
 
   new Vue({
@@ -259,6 +257,13 @@
             upload();
           }
         }
+      },
+      getRelation: function(id, by) {
+        Kooboo.EventBus.publish("kb/relation/modal/show", {
+          id: id,
+          by: by,
+          type: "CmsFile"
+        });
       },
       onDelete: function() {
         var me = this;
