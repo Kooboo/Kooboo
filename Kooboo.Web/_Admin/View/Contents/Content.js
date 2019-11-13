@@ -66,7 +66,9 @@ $(function() {
         contentTypeName: "",
         startValidating: false,
         validationPassed: true,
-        contentValues: {}
+        contentValues: {},
+        // test
+        selectedCulture: []
       };
     },
     mounted: function() {
@@ -512,6 +514,10 @@ $(function() {
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
+      },
+      // Vue test
+      changeCulure: function(culture) {
+          console.log(culture);
       }
     },
     watch: {
@@ -527,6 +533,10 @@ $(function() {
             }
           });
         }
+      },
+      // test
+      selectedCulture: function(val) {
+          console.log(val)
       }
     }
   });

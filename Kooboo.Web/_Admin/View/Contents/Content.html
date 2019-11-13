@@ -35,10 +35,14 @@
             >
               <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
                 <div class="form-group clearfix">
-                  <div
-                    v-show="!isMultiContent && contentMode == 'normal'"
-                    data-bind="component: { name: 'kb-multilang-selector', params: siteLangs }"
-                  ></div>
+                  <kb-multilang-selector
+                    v-if="!isMultiContent && contentMode == 'normal'"
+                    :cultures="siteLangs.cultures"
+                    :default-culture="siteLangs.default"
+                    @change="changeCulure"
+                    :selected.sync="selectedCulture"
+                  >
+                  </kb-multilang-selector>
                 </div>
               </div>
               <div
@@ -552,7 +556,7 @@
 <script>
   (function() {
     Kooboo.loadJS([
-      "/_Admin/Scripts/components/kbMultilangSelector.js",
+      "/_Admin/Scripts/vue-components/kbMultilangSelector.js",
       "/_Admin/Scripts/components/kbFieldEditor.js",
       "/_Admin/Scripts/components/kbFieldPanel.js",
 
