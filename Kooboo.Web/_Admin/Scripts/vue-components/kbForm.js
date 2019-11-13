@@ -1,40 +1,7 @@
 (function() {
-  var _rules = {
-    required: function(value) {
-      if (
-        value == undefined ||
-        value == null ||
-        (typeof value == "number" && Number.isNaN(value)) ||
-        (typeof value == "string" && value.trim() == "")
-      ) {
-        return false;
-      } else return true;
-    },
-    pattern: function(value, pattern) {
-      return pattern.test(value);
-    },
-    min: function(value, min) {
-      if (typeof value == "number") {
-        return value >= min;
-      } else if (value.length != undefined) {
-        return value.length >= min;
-      }
-    },
-    max: function(value, max) {
-      if (typeof value == "number") {
-        return value <= max;
-      } else if (value.length != undefined) {
-        return value.length <= max;
-      }
-    },
-    validate: function(value, validate) {
-      return validate(value);
-    }
-  };
-
   Vue.component("kb-form", {
     template:
-      "<div :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
+      "<div v-if=\"simple\"><slot></slot></div><div v-else :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
     props: {
       align: {
         type: String,
@@ -45,12 +12,13 @@
       autoValidate: {
         type: Boolean,
         default: true
-      }
+      },
+      simple: Boolean
     },
     methods: {
       validate: function() {
         this.outsideCalled = true;
-        return this._validate();
+        return this._validate(true);
       },
       clearValid: function() {
         for (var i = 0; i < this.formItems.length; i++) {
@@ -60,45 +28,48 @@
         }
         this.outsideCalled = false;
       },
-      _validate: function() {
+      _validate: function(outsideCall) {
         var valid = true;
         for (var i = 0; i < this.formItems.length; i++) {
           var item = this.formItems[i];
+          var model = this.model[item.prop];
+          var rules = this.rules[item.prop];
 
-          if (
-            !item.prop ||
-            this.model[item.prop] == undefined ||
-            this.rules[item.prop] == undefined
-          ) {
+          // object array fields
+          if (item.prop.lastIndexOf("]") !== -1) {
+            var arrayProp = item.prop.match(/\w+/g);
+            // using correctly
+            if (arrayProp.length === 3) {
+              var objRule = this.rules[arrayProp[0] + "[]"];
+              if (objRule) {
+                rules = objRule[arrayProp[2]];
+                var arrModel = this.model[arrayProp[0]];
+                if (arrModel) {
+                  var objModel = arrModel[arrayProp[1]];
+                  if (objModel) {
+                    model = objModel[arrayProp[2]];
+                  }
+                }
+              }
+            }
+          }
+
+          if (!item.prop || model == undefined || rules == undefined) {
             continue;
           }
 
-          var result = this.validField(
-            this.model[item.prop],
-            this.rules[item.prop]
-          );
+          if (!outsideCall) {
+            rules = rules.filter(function(f) {
+              return !f.remote;
+            });
+          }
+          var result = Kooboo.validField(model, rules);
 
           if (!result.valid) valid = false;
           item.valid = result.valid;
           item.msg = result.msg;
         }
         return valid;
-      },
-      validField: function(prop, rules) {
-        var result = { valid: true, msg: "" };
-        for (var i = 0; i < rules.length; i++) {
-          var item = rules[i];
-          for (var key in _rules) {
-            if (item.hasOwnProperty(key)) {
-              if (!_rules[key](prop, item[key])) {
-                result.valid = false;
-                result.msg = item.message || item[key];
-                return result;
-              }
-            }
-          }
-        }
-        return result;
       }
     },
     data: function() {
@@ -124,9 +95,10 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg'><slot></slot></div>",
+      "<div v-if=\"kbForm.simple\"><slot :error=\"msg\"></slot></div><div v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
     props: {
-      prop: String
+      prop: String,
+      errorContainer: String
     },
     inject: ["kbForm"],
     data: function() {

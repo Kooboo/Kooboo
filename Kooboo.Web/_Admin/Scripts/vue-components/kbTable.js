@@ -8,7 +8,12 @@
       width: String,
       customSlot: Array,
       align: String,
-      headClass: String | Array
+      headClass: String | Array,
+      bodyClass: String | Array,
+      if: {
+        type: Boolean,
+        default: true
+      }
     },
     render: function(h) {
       return h("div", this.customSlot);
@@ -37,9 +42,7 @@
       };
     },
     mounted: function() {
-      this.slots = this.$slots.default.map(function(i) {
-        return Vue.observable(i);
-      });
+      this.slots = this.$slots.default;
     },
     methods: {
       selectedAll: function(e) {
@@ -62,6 +65,11 @@
         return this.selected.some(function(i) {
           return i === item;
         });
+      }
+    },
+    watch: {
+      data: function(value) {
+        this.$emit("change", value);
       }
     }
   });

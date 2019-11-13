@@ -4,6 +4,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      self = this;
       return {
         breads: [
           {
@@ -22,9 +23,6 @@ $(function() {
         showLogModal: false,
         tableData: []
       };
-    },
-    beforeCreate: function() {
-      self = this;
     },
     mounted: function() {
       this.initChart();

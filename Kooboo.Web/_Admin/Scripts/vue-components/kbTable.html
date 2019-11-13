@@ -4,35 +4,42 @@
       <th v-if="showSelect" class="table-checkbox">
         <input
           type="checkbox"
+          :disabled="data.length <= 0"
           @input="selectedAll"
-          :checked="data.length == selected.length"
+          :checked="data.length == selected.length && data.length > 0"
         />
       </th>
       <template v-for="(item, index) in slots">
         <th
           :key="index"
-          v-if="item.componentInstance"
+          v-if="item.componentInstance&&item.componentInstance.if"
           :style="{ width: item.componentInstance.width }"
           v-bind="item.componentInstance.$attrs"
           :class="item.componentInstance.headClass"
         >
-          <template>
+          <template v-if="item.componentInstance.$slots.head">
+            <kb-table-column
+              :customSlot="item.componentInstance.$slots.head"
+            ></kb-table-column>
+          </template>
+          <template v-else>
             {{ item.componentInstance.label }}
           </template>
         </th>
       </template>
     </tr>
   </thead>
-  <tbody>
+  <tbody v-if="data.length > 0">
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" @click="selectRow(row)">
       <td v-if="showSelect" class="table-checkbox">
         <input type="checkbox" :checked="itemIsSelected(row)" />
       </td>
       <template v-for="(item, index) in slots">
         <td
-          v-if="item.componentInstance"
+          v-if="item.componentInstance&&item.componentInstance.if"
           :key="index"
           :style="{ textAlign: item.componentInstance.align }"
+          :class="item.componentInstance.bodyClass"
         >
           <template v-if="item.componentInstance.prop">
             {{ row[item.componentInstance.prop] }}
@@ -46,5 +53,13 @@
       </template>
     </tr>
   </tbody>
-  <slot></slot>
+  <tbody v-else>
+    <tr>
+      <td :colspan="100" class="text-center">{{ Kooboo.text.common.empty }}</td>
+    </tr>
+  </tbody>
+  <div v-show="false">
+    <slot></slot>
+    <slot v-slot:head></slot>
+  </div>
 </table>

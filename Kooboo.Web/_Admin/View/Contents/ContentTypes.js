@@ -1,51 +1,70 @@
 $(function() {
-    var ContentType = function() {
-        var self = this;
-        this.tableData = ko.observable({});
-        this.createNewContentType = Kooboo.Route.Get(Kooboo.Route.ContentType.DetailPage);
+    var self;
+    new Vue({
+        el: "#app",
+        data: function() {
+            return {
+                breads: [
+                    {
+                        name: Kooboo.text.component.breadCrumb.sites
+                    },
+                    {
+                        name: Kooboo.text.component.breadCrumb.dashboard
+                    },
+                    {
+                        name: Kooboo.text.common.ContentTypes
+                    }
+                ],
+                tableData: [],
+                tableDataSelected: [],
+                showCreateModel: false,
+                createNewContentTypeUrl: Kooboo.Route.Get(
+                    Kooboo.Route.ContentType.DetailPage
+                )
+            };
+        },
+        created: function() {
+            self = this;
+            self.getTableData();
+        },
+        methods: {
+            getTableData: function() {
+                Kooboo.ContentType.getList().then(function(res) {
+                    self.tableData = res.model;
+                });
+            },
+            onCreate: function() {},
+            getConfirmMessage: function(doc) {
+                if (doc.relations) {
+                    doc.relationsTypes = _.sortBy(Object.keys(doc.relations));
+                }
+                var find = _.find(doc, function(item) {
+                    return item.relations && Object.keys(item.relations).length;
+                });
 
-        function dataMapping(data) {
-            var d = [];
-            data.forEach(function(item) {
-                var ob = {};
-                ob.name = {
-                    text: item.name,
-                    url: Kooboo.Route.Get(Kooboo.Route.ContentType.DetailPage, {
-                        id: item.id
-                    })
-                };
-                ob.field = {
-                    text: item.propertyCount,
-                    class: "blue"
-                };
-                ob.id = item.id;
-                d.push(ob);
-            })
-            return d
-        }
-
-        Kooboo.ContentType.getList().then(function(data) {
-            var ob = {
-                columns: [{
-                    displayName: Kooboo.text.common.name,
-                    fieldName: "name",
-                    type: "link"
-                }, {
-                    displayName: Kooboo.text.site.contentType.fields,
-                    fieldName: "field",
-                    type: "badge"
-                }],
-                kbType: "ContentType"
+                if (!!find) {
+                    return Kooboo.text.confirm.deleteItemsWithRef;
+                } else {
+                    return Kooboo.text.confirm.deleteItems;
+                }
+            },
+            onDelete: function() {
+                if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
+                    var ids = this.tableDataSelected.map(function(m) {
+                        return m.id;
+                    });
+                    Kooboo.ContentType.Deletes({
+                        ids: ids
+                    }).then(function(res) {
+                        if (res.success) {
+                            window.info.done(Kooboo.text.info.enable.success);
+                            self.getTableData();
+                        } else {
+                            window.info.fail(Kooboo.text.info.enable.failed);
+                        }
+                    });
+                }
             }
-            ob.docs = dataMapping(data.model)
-            self.tableData(ob);
-        })
-
-        Kooboo.EventBus.subscribe("kb/table/delete/finish", function() {
-            Kooboo.EventBus.publish("kb/sidebar/refresh");
-        })
-    }
-
-    ContentType.prototype = new Kooboo.tableModel(Kooboo.Page.name);
-    ko.applyBindings(new ContentType, document.getElementById("main"));
-})
+        }
+    });
+});

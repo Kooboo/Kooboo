@@ -3,14 +3,14 @@ Vue.prototype.Kooboo = Kooboo;
 // #region <kb-tooltip>
 Vue.directive("kb-tooltip", {
   bind: function(el, binding) {
-    let trigger = [];
+    var trigger = [];
     if (binding.modifiers.focus) trigger.push("focus");
     if (binding.modifiers.hover) trigger.push("hover");
     if (binding.modifiers.click) trigger.push("click");
     if (binding.modifiers.manual) trigger.push("manual");
     trigger = trigger.join(" ");
-
-    $(el).tooltip({
+    var $el = $(el);
+    $el.tooltip({
       title: binding.value,
       placement: binding.arg,
       trigger: trigger || "hover",
@@ -18,7 +18,7 @@ Vue.directive("kb-tooltip", {
       template: binding.modifiers.error
         ? '<div class="tooltip error" role="tooltip" style="z-index:199999"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
         : undefined,
-      container: "body"
+      container: $el.data("container") || "body"
     });
   },
   inserted: function(el, binding) {
@@ -30,7 +30,7 @@ Vue.directive("kb-tooltip", {
   },
   update: function(el, binding) {
     if (binding.value == binding.oldValue) return;
-    const $el = $(el);
+    var $el = $(el);
     if (binding.value) {
       $el.attr("title", binding.value).tooltip("fixTitle");
       var data = $el.data("bs.tooltip");
@@ -224,9 +224,48 @@ Vue.directive("kb-html", {
 Vue.directive("kb-collapsein", {
   bind: function(element, binding) {
     $(element).addClass("collapse");
+    $(element).collapse(binding.value ? "show" : "hide");
   },
   update: function(element, binding) {
     $(element).collapse(binding.value ? "show" : "hide");
   }
 });
 //#endregion </kb-html>
+
+// #region <kb-sortable>
+Vue.directive("kb-sortable", function(el, binding) {
+  $(el).sortable({
+    handle: ".sortable",
+    start: function() {
+      var sortables = el.getElementsByClassName("sortable");
+      for (var i = 0; i < sortables.length; i++) {
+        sortables[i].__data_item = binding.value[i];
+      }
+    },
+    update: function() {
+      var newList = [];
+      var sortables = document.getElementsByClassName("sortable");
+      for (var j = 0; j < sortables.length; j++) {
+        newList.push(sortables[j].__data_item);
+      }
+      binding.value.splice(0, binding.value.length);
+      setTimeout(function() {
+        newList.forEach(function(item) {
+          binding.value.push(item);
+        });
+      });
+    }
+  });
+});
+Vue.filter("ellipsis", function(value, len, str) {
+  if (len && typeof len === "number") {
+    if (str && typeof str === "string") {
+      return value.substr(0, len) + str;
+    } else {
+      return value.substr(0, len) + "...";
+    }
+  } else {
+    return value.substr(0, 8) + "...";
+  }
+});
+// #endregion </kb-sortable>
