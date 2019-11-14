@@ -330,7 +330,7 @@ namespace Kooboo.Sites.Service
                     url = GetImageNonSrcUrl(item);
                 }
 
-                if (!string.IsNullOrWhiteSpace(url))
+                if (!string.IsNullOrWhiteSpace(url)&&Kooboo.Lib.Helper.UrlHelper.IsImage(url))
                 {
                     result.Add(item, url);
                 }
