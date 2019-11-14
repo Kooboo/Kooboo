@@ -14,8 +14,8 @@
      */
     props: {
       cultures: Object,
-      defaultCulture: String,
-      selected: Array
+      defaultCulture: String
+      // ,selected: Array
     },
     data: function() {
       self = this;
@@ -43,22 +43,22 @@
         };
         Kooboo.EventBus.publish("kb/multilang/change", _cultrue);
         self.$emit("change", _cultrue);
-        if (self.selected) {
-          var selectedCultures = _.clone(self.selected);
-          if (selectedCultures.length == 0) {
-            selectedCultures = [self.defaultCulture];
-          }
-          if (selectedCultures.indexOf(culture.key) !== -1) {
-            if (!culture.selected) {
-              selectedCultures = _.without(selectedCultures, culture.key);
-            }
-          } else {
-            if (culture.selected) {
-              selectedCultures.push(culture.key);
-            }
-          }
-          self.$emit("update:selected", selectedCultures);
-        }
+        // if (self.selected) {
+        //   var selectedCultures = _.clone(self.selected);
+        //   if (selectedCultures.length == 0) {
+        //     selectedCultures = [self.defaultCulture];
+        //   }
+        //   if (selectedCultures.indexOf(culture.key) !== -1) {
+        //     if (!culture.selected) {
+        //       selectedCultures = _.without(selectedCultures, culture.key);
+        //     }
+        //   } else {
+        //     if (culture.selected) {
+        //       selectedCultures.push(culture.key);
+        //     }
+        //   }
+        //   self.$emit("update:selected", selectedCultures);
+        // }
       }
     },
     computed: {
@@ -75,13 +75,14 @@
           _culturesArr.splice(defaultCultureIdx, 1);
         }
         _.forEach(_culturesArr, function(culture) {
-          culture.selected = !!(
-            self.selected && self.selected.indexOf(culture.key) !== -1
-          );
+          culture.selected = false; // !!(self.selected && self.selected.indexOf(culture.key) !== -1);
           _cultures.push(culture);
         });
         return _cultures;
       }
+    },
+    beforeDestroy: function() {
+      self = null;
     }
   });
 })();
