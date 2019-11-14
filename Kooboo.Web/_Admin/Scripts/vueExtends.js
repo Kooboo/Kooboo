@@ -241,8 +241,8 @@ Vue.directive("kb-collapsein", {
   Vue.directive("kb-richeditor", {
     bind: function(element, binding, vnode) {
       // Get custom configuration object from the 'wysiwygConfig' binding, more settings here... http://www.tinymce.com/wiki.php/Configuration
-      var options = binding.editorConfig ? binding.editorConfig : {},
-        isMailEditor = binding.mailConfig ? binding.mailConfig : false,
+      var options = binding.value.editorConfig ? binding.value.editorConfig : {},
+        isMailEditor = binding.value.mailConfig ? binding.value.mailConfig : false,
         // Set up a minimal default configuration
         defaults = {
           language: languageManager.getTinyMceLanguage(), // params needed
@@ -277,6 +277,8 @@ Vue.directive("kb-collapsein", {
               } else {
                 binding.value.value = editor.getContent();
               }
+              // element.value = binding.value.value;
+              // Kooboo.trigger(element, 'input');
             });
 
             editor.on("NodeChange", function(e) {
