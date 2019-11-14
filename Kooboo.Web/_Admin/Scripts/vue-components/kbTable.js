@@ -42,7 +42,7 @@
       };
     },
     mounted: function() {
-      this.slots = this.$slots.default;
+      if (this.$slots.default) this.slots = this.$slots.default;
     },
     methods: {
       selectedAll: function(e) {
@@ -69,6 +69,12 @@
     },
     watch: {
       data: function(value) {
+        this.$nextTick(function() {
+          if (this.$slots.default) {
+            this.slots = this.$slots.default;
+          }
+        });
+
         this.$emit("change", value);
       }
     }
