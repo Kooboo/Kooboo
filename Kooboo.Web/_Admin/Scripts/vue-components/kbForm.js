@@ -35,6 +35,10 @@
           var model = this.model[item.prop];
           var rules = this.rules[item.prop];
 
+          if (!item.prop || model == undefined || rules == undefined) {
+            continue;
+          }
+
           // object array fields
           if (item.prop.lastIndexOf("]") !== -1) {
             var arrayProp = item.prop.match(/\w+/g);
@@ -52,10 +56,6 @@
                 }
               }
             }
-          }
-
-          if (!item.prop || model == undefined || rules == undefined) {
-            continue;
           }
 
           if (!outsideCall) {

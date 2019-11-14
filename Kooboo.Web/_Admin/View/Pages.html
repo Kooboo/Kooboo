@@ -643,12 +643,12 @@
         }
       },
       onlineClass: function(isOnline) {
-        let list = ["label", "label-sm"];
+        var list = ["label", "label-sm"];
         list.push(isOnline ? "label-success" : "label-default");
         return list;
       },
       settingClick: function(row) {
-        let url =
+        var url =
           row.layoutId == Kooboo.Guid.Empty
             ? Kooboo.Route.Get(
                 Kooboo.Route.Page[
@@ -724,11 +724,11 @@
       showCopyModal: function(value) {
         if (value) {
           if (this.selectedRows && this.selectedRows.length != 1) return;
-          let row = this.selectedRows[0];
+          var row = this.selectedRows[0];
           this.copyModel.id = row.id;
-          let pageName = row.name || "";
+          var pageName = row.name || "";
           if (pageName.indexOf(".") > -1) {
-            let _temp = pageName.split(".");
+            var _temp = pageName.split(".");
             _temp[0] = _temp[0] + "_Copy";
             pageName = _temp.join(".");
           } else {
