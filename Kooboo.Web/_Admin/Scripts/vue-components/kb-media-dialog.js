@@ -19,7 +19,31 @@
         onAdd: null,
         context: {},
         curType: "list",
-        selectedFiles: []
+        selectedFiles: [],
+        uploadSetting: {
+          allowMultiple: true,
+          acceptTypes: [
+            "image/bmp",
+            "image/x-windows-bmp",
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp",
+            "image/svg+xml",
+            "image/x-icon"
+          ],
+          acceptSuffix: [
+            "bmp",
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "svg",
+            "ico",
+            "webp"
+          ],
+          callback: self.uploadMedia
+        }
       };
     },
     methods: {
@@ -130,7 +154,7 @@
 
   var fileModel = function(file) {
     file.thumbnail = file.thumbnail + "&timestamp=" + +new Date();
-    self.selected = false;
+    file.selected = false;
     return file;
     // self.onSelect = function() {
     //   self.selected(!self.selected());
