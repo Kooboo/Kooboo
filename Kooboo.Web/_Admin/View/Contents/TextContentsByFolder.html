@@ -21,6 +21,12 @@
       </div>
     </div>
   </div>
+  <kb-form simple :model="formModel" :rules="formRules" ref="form">
+    <kb-form-item :prop='field.name + "_" + field.lang'>
+      <kb-control-textbox :field="field"></kb-control-textbox>
+    </kb-form-item>
+  </kb-form>
+
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
     <div class="container-fluid">
@@ -90,7 +96,9 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/vue-components/kbTable.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
-      "/_Admin/Scripts/vue-components/kbPager.js"
+      "/_Admin/Scripts/vue-components/kbPager.js",
+      "/_Admin/Scripts/vue-components/controlType/TextBox.js",
+      "/_Admin/Scripts/vue-components/kbForm.js"
     ]);
   })();
 </script>

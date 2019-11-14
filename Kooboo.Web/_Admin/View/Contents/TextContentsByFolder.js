@@ -18,10 +18,44 @@ $(function() {
         searchKey: "",
         cacheData: null,
         isSearching: false,
-        defaultColumnName: ""
+        defaultColumnName: "",
+        field: {
+          controlType: "TextBox",
+          disabled: false,
+          displayName: "WorkName",
+          fieldName: "工作名称",
+          fieldValue: "啊手动阀",
+          isMultilingual: true,
+          isMultilingualSite: true,
+          isShow: true,
+          lang: "zh",
+          multipleValue: false,
+          name: "WorkName",
+          selectionOptions: "[]",
+          tooltip: null,
+          validations: '[{"type":"required"}]',
+          values: { zh: "啊手动阀", en: "嘻嘻嘻", hi: "啊手动阀" }
+        },
+        formModel: {},
+        formRules: {}
       };
     },
     mounted: function() {
+      this.formRules = {
+          [self.field.name + "_" + self.field.lang]: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            }
+          ]
+      };
+      this.formModel = {
+        [self.field.name + "_" + self.field.lang]: self.field.fieldValue
+      };
+
+      setInterval(()=>{
+        console.log(this.$refs.form.validate())
+      }, 2000);
       Kooboo.TextContent.getByFolder().then(function(res) {
         if (res.success) {
           self.cacheData = res.model;
