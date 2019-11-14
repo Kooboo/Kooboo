@@ -97,6 +97,11 @@
       errorContainer: String
     },
     inject: ["kbForm"],
+    provide: function() { 
+      return {
+        kbFormItem: this
+      };
+    },
     data: function() {
       return {
         valid: true,
