@@ -21,10 +21,21 @@
       </div>
     </div>
   </div>
+  <textarea
+      class="tiny-mce"
+      data-isTinyMce="true"
+      id="dddd"
+      v-kb-richeditor="editor"
+    ></textarea>
+{{ editor.value }}
   <kb-form simple :model="formModel" :rules="formRules" ref="form">
-    <kb-form-item :prop='field.name + "_" + field.lang'>
+    <!-- <kb-form-item :prop='field.name + "_" + field.lang'>
       <kb-control-textbox :field="field"></kb-control-textbox>
+    </kb-form-item> -->
+    <kb-form-item :prop='field.name + "_" + field.lang'>
+      <kb-control-richeditor :field="field"></kb-control-richeditor>
     </kb-form-item>
+    <div>{{ formModel[field.name + "_" + field.lang] }}</div>
   </kb-form>
 
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
@@ -97,7 +108,10 @@
       "/_Admin/Scripts/vue-components/kbTable.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbPager.js",
+      "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
+        "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
       "/_Admin/Scripts/vue-components/controlType/TextBox.js",
+      "/_Admin/Scripts/vue-components/controlType/RichEditor.js",
       "/_Admin/Scripts/vue-components/kbForm.js"
     ]);
   })();

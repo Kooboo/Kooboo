@@ -20,6 +20,7 @@ $(function() {
         isSearching: false,
         defaultColumnName: "",
         field: {
+          _id: "test",
           controlType: "TextBox",
           disabled: false,
           displayName: "WorkName",
@@ -37,7 +38,11 @@ $(function() {
           values: { zh: "啊手动阀", en: "嘻嘻嘻", hi: "啊手动阀" }
         },
         formModel: {},
-        formRules: {}
+        formRules: {},
+        editor: {
+          value: '',
+          editorConfig: { readonly: true } 
+        }
       };
     },
     mounted: function() {
