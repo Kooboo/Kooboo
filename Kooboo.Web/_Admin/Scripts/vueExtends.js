@@ -432,6 +432,9 @@ Vue.directive("kb-sortable", function(el, binding) {
     }
   });
 });
+// #endregion </kb-sortable>
+
+// #region {{ | ellipsis}}
 Vue.filter("ellipsis", function(value, len, str) {
   console.log(value);
   if (len && typeof len === "number") {
@@ -444,11 +447,15 @@ Vue.filter("ellipsis", function(value, len, str) {
     return value.substr(0, 8 - 2) + "...";
   }
 });
+// #endregion
+// #region {{ | camelCase}}
 Vue.filter("camelCase", function(value) {
   return _.camelCase(value);
 });
+// #endregion
 
-//动态盒子和插槽，用来插入vnode，或者获取盒子内slot template
+// #region <kb-container>
+//动态盒子和插槽，用来插入vnode，或者获取盒子内slot
 Vue.component("kb-container", {
   props: {
     tag: {
@@ -466,10 +473,17 @@ Vue.component("kb-container", {
       return h(tag, [vm.vNodes]);
     } else {
       if (vm.$scopedSlots.default) {
-        return h(tag, vm.$scopedSlots.default(""));
+        return h(tag, {}, vm.$scopedSlots.default(""));
       } else {
-        return h(tag, "");
+        return h(tag, { class: "kb-container-bank" }, "");
       }
+    }
+  },
+  mounted: function() {
+    //clear kb-container-bank
+    var els = document.getElementsByClassName("kb-container-bank");
+    for (var i = 0; i < els.length; i++) {
+      els[i].parentNode.removeChild(els[i]);
     }
   },
   methods: {
@@ -493,4 +507,6 @@ Vue.component("kb-container", {
     }
   }
 });
-// #endregion </kb-sortable>
+// #endregion </kb-container>
+
+
