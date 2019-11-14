@@ -114,11 +114,11 @@
                       :prop="'categoryFolders['+ $index +'].alias'"
                       :key="$index"
                     >
-                      <template v-slot="{ error }">
+                      <template v-slot="error">
                         <div
                           class="input-group"
-                          :class="{'has-error': !!error}"
-                          v-kb-tooltip:right.manual.error="error"
+                          :class="{'has-error': !!error.error}"
+                          v-kb-tooltip:right.manual.error="error.error"
                           :data-container="'.category-error-container-' + $index"
                         >
                           <select
@@ -199,11 +199,11 @@
                       :prop="'embeddedFolders['+ $index +'].alias'"
                       :key="$index"
                     >
-                      <template v-slot="{ error }">
+                      <template v-slot="error">
                         <div
                           class="input-group"
-                          :class="{'has-error': !!error}"
-                          v-kb-tooltip:right.manual.error="error"
+                          :class="{'has-error': !!error.error}"
+                          v-kb-tooltip:right.manual.error="error.error"
                           :data-container="'.embedded-error-container-' + $index"
                         >
                           <select
