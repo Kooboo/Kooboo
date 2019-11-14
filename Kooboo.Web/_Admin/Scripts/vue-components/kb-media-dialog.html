@@ -131,7 +131,7 @@
                   -
                 </template>
               </td>
-              <td>{{ Kooboo.bytesToSize($data.size()) || "-" }}</td>
+              <td>{{ Kooboo.bytesToSize($data.size) || "-" }}</td>
               <td>{{ localDate($data.lastModified) }}</td>
             </tr>
             <tr v-if="folders.length + files.length == 0">
@@ -165,7 +165,7 @@
               v-for="$data in files"
               :key="$data.id"
               @click="onChoosingFile($data)"
-              class="{ 'grid-img': $data.isImage, active: $data.selected }"
+              :class="{ 'grid-img': $data.isImage, active: $data.selected }"
               class="grid-item"
             >
               <a href="javascript:;">
@@ -195,7 +195,7 @@
         </a>
         <button
           @click="save"
-          :disabled="selectedFiles.length > 0"
+          :disabled="selectedFiles.length == 0"
           class="btn green"
           >{{ Kooboo.text.common.choose }}</button
         >
