@@ -74,6 +74,7 @@
             this.slots = this.$slots.default;
           }
         });
+        this.$emit("update:selected", []);
 
         this.$emit("change", value);
       }
