@@ -73,6 +73,40 @@ $(function() {
     },
     mounted: function() {
       self.refreshSidebar(true);
+
+      Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(ctx) {
+        Kooboo.Media.getList().then(function(res) {
+          if (res.success) {
+            res.model["show"] = true;
+            res.model["context"] = ctx;
+            res.model["onAdd"] = function(selected) {
+              ctx.settings.file_browser_callback(
+                ctx.field_name,
+                selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
+                ctx.type,
+                ctx.win,
+                true
+              );
+            };
+            self.mediaDialogData = res.model;
+          }
+        });
+      });
+
+      Kooboo.EventBus.subscribe("ko/binding/sorted", function() {
+        self.saveContentFields(function() {
+          self.refreshContent();
+        });
+      });
+
+      // TEST
+      // Kooboo.EventBus.publish("ko/style/list/pickimage/show", {
+      //   settings: {},
+      //   field_name: "image",
+      //   type: "image",
+      //   win: window,
+      //   from: "RICHEDITOR"
+      // });
     },
     computed: {
       isAbleToCreateType: function() {
@@ -517,7 +551,7 @@ $(function() {
       },
       // Vue test
       changeCulure: function(culture) {
-          console.log(culture);
+        console.log(culture);
       }
     },
     watch: {
@@ -536,7 +570,7 @@ $(function() {
       },
       // test
       selectedCulture: function(val) {
-          console.log(val)
+        console.log(val);
       }
     }
   });
@@ -591,31 +625,6 @@ $(function() {
         },
         message: Kooboo.text.validation.taken
       }
-    });
-
-    Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(ctx) {
-      Kooboo.Media.getList().then(function(res) {
-        if (res.success) {
-          res.model["show"] = true;
-          res.model["context"] = ctx;
-          res.model["onAdd"] = function(selected) {
-            ctx.settings.file_browser_callback(
-              ctx.field_name,
-              selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
-              ctx.type,
-              ctx.win,
-              true
-            );
-          };
-          self.mediaDialogData(res.model);
-        }
-      });
-    });
-
-    Kooboo.EventBus.subscribe("ko/binding/sorted", function() {
-      self.saveContentFields(function() {
-        self.refreshContent();
-      });
     });
   };
 

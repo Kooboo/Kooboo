@@ -5,7 +5,7 @@
       "/_Admin/Scripts/vue-components/kb-media-dialog.html"
     ),
     props: {
-      mediaData: Object,
+      data: Object,
       multiple: Boolean
     },
     data: function() {
@@ -17,7 +17,7 @@
         files: [],
         loading: true,
         onAdd: null,
-        context: {},
+        context: null,
         curType: "list",
         selectedFiles: [],
         uploadSetting: {
@@ -52,10 +52,10 @@
         self.files = [];
         self.crumbPath = [];
         self.context = null;
-        self.mediaData = null;
         self.mediaDialog = false;
         self.selectedFiles = [];
         self.loading = true;
+        self.$emit("update:data", null);
       },
       changeType: function(type) {
         self.curType = type;
@@ -78,13 +78,14 @@
         });
       },
       onChoosingFile: function(file) {
+        var currentSelectedStatus = file.selected;
         if (!self.multiple) {
           _.forEach(self.files, function(_f) {
             _f.selected = false;
           });
           self.selectedFiles = [];
         }
-        file.selected = !file.selected;
+        file.selected = !currentSelectedStatus;
         if (file.selected) {
           self.selectedFiles.push(file);
         } else {
@@ -96,12 +97,13 @@
         return d.toDefaultLangString();
       },
       save: function() {
+        var data = self.selectedFiles;
+        var result = self.multiple ? data : data[0];
+        // console.log(result)
         if (self.onAdd && typeof self.onAdd == "function") {
-          var data = self.selectedFiles;
-          self.onAdd(self.multiple ? data : data[0]);
-        } else {
-          console.warn("Uninitialize function: MediaDialog.onAdd");
+          self.onAdd(result);
         }
+        self.$emit("on-add", result);
         self.onHideMediaDialog();
       },
       upload: function(data) {
@@ -125,40 +127,30 @@
         }
       }
     },
+    watch: {
+      data: function(data) {
+        if (data && data.show) {
+          self.mediaDialog = true;
+          self.loading = false;
+          self.crumbPath = data.crumbPath;
+          self.folders = data.folders;
+          self.context = data.context;
+          self.files = [];
+          data.files.forEach(function(f) {
+            self.files.push(fileModel(f));
+          });
+          self.onAdd = data.onAdd;
+        }
+      }
+    },
     beforeDestroy: function() {
       self = null;
     }
   });
 
-  var viewModel = function(params) {
-    var self = this;
-
-    this.mediaData.subscribe(function(data) {
-      self.mediaDialog(true);
-      if (data && data.show) {
-        self.loading(false);
-        self.crumbPath(data.crumbPath);
-        self.folders(data.folders);
-        self.context(data.context);
-        self.files([]);
-        data.files.forEach(function(f) {
-          self.files.push(fileModel(f));
-        });
-
-        self.onAdd = data.onAdd;
-      }
-    });
-
-    this.selectedFiles.subscribe(function(selected) {});
-  };
-
   var fileModel = function(file) {
     file.thumbnail = file.thumbnail + "&timestamp=" + +new Date();
     file.selected = false;
     return file;
-    // self.onSelect = function() {
-    //   self.selected(!self.selected());
-    //   return true;
-    // };
   };
 })();
