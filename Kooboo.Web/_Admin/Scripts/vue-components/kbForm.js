@@ -32,32 +32,28 @@
         var valid = true;
         for (var i = 0; i < this.formItems.length; i++) {
           var item = this.formItems[i];
-          var model = this.model[item.prop];
-          var rules = this.rules[item.prop];
-
-          if (!item.prop || model == undefined || rules == undefined) {
+          if (!item.prop) {
             continue;
           }
-
-          // object array fields
-          if (item.prop.lastIndexOf("]") !== -1) {
+          var model = this.model[item.prop];
+          var rules = this.rules[item.prop];
+          // if it's object array fields
+          if (
+            model == undefined &&
+            rules == undefined &&
+            item.prop.indexOf("].") !== -1
+          ) {
             var arrayProp = item.prop.match(/\w+/g);
-            // using correctly
-            if (arrayProp.length === 3) {
-              var objRule = this.rules[arrayProp[0] + "[]"];
-              if (objRule) {
-                rules = objRule[arrayProp[2]];
-                var arrModel = this.model[arrayProp[0]];
-                if (arrModel) {
-                  var objModel = arrModel[arrayProp[1]];
-                  if (objModel) {
-                    model = objModel[arrayProp[2]];
-                  }
-                }
-              }
+            rules = this.rules[arrayProp[0] + "[]"][arrayProp[2]];
+            var objModel = this.model[arrayProp[0]][arrayProp[1]];
+            if (objModel) {
+              model = objModel[arrayProp[2]];
             }
           }
 
+          if (model == undefined || rules == undefined) {
+            continue;
+          }
           if (!outsideCall) {
             rules = rules.filter(function(f) {
               return !f.remote;
