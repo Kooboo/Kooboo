@@ -258,14 +258,64 @@ Vue.directive("kb-sortable", function(el, binding) {
   });
 });
 Vue.filter("ellipsis", function(value, len, str) {
+  console.log(value);
   if (len && typeof len === "number") {
     if (str && typeof str === "string") {
-      return value.substr(0, len) + str;
+      return value.substr(0, len - 2) + str;
     } else {
-      return value.substr(0, len) + "...";
+      return value.substr(0, len - 2) + "...";
     }
   } else {
-    return value.substr(0, 8) + "...";
+    return value.substr(0, 8 - 2) + "...";
+  }
+});
+Vue.filter("camelCase", function(value) {
+  return _.camelCase(value);
+});
+
+//动态盒子和插槽，用来插入vnode，或者获取盒子内slot template
+Vue.component("kb-container", {
+  props: {
+    tag: {
+      type: String
+    },
+    vNodes: {}
+  },
+  render: function(h) {
+    var vm = this;
+    var tag = "div";
+    if (vm.tag && typeof vm.tag === "string") {
+      tag = vm.tag;
+    }
+    if (vm.vNodes) {
+      return h(tag, [vm.vNodes]);
+    } else {
+      if (vm.$scopedSlots.default) {
+        return h(tag, vm.$scopedSlots.default(""));
+      } else {
+        return h(tag, "");
+      }
+    }
+  },
+  methods: {
+    getSlot: function(name) {
+      return this.$slots[name];
+    },
+    getScopedSlot: function(name) {
+      return this.$scopedSlots[name];
+    },
+    getSlots: function() {
+      var vm = this;
+      var temp = {};
+      var keys = Object.keys(vm.$scopedSlots);
+      keys.forEach(function(key) {
+        temp[key] = {
+          slot: vm.getSlot(key),
+          scopedSlot: vm.getScopedSlot(key)
+        };
+      });
+      return temp;
+    }
   }
 });
 // #endregion </kb-sortable>
