@@ -1,38 +1,55 @@
 (function() {
-    Kooboo.loadJS([
-        "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
-        "/_Admin/Scripts/kobindings.datePicker.js"
-    ])
+  Kooboo.loadJS([
+    "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
+    "/_Admin/Scripts/vue-components/kbDatetimepicker.js"
+  ]);
+  // TODO: check
+  Vue.component("kb-control-datetime", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/vue-components/controlType/DateTime.html"
+    ),
+    props: {
+      field: Object
+    },
+    inject: ["kbFormItem"]
+  });
+})();
 
-    var template = Kooboo.getTemplate("/_Admin/Scripts/components/controlType/DateTime.html");
+// (function() {
+//     Kooboo.loadJS([
+//         "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
+//         "/_Admin/Scripts/kobindings.datePicker.js"
+//     ])
 
-    ko.components.register("date-time", {
-        viewModel: function(params) {
-            var self = this;
-            _.assign(this, params);
+//     var template = Kooboo.getTemplate("/_Admin/Scripts/components/controlType/DateTime.html");
 
-            this.showValue = ko.observable(this.fieldValue() ? convertToTime(new Date(this.fieldValue())) : "");
-            this.showValue.extend({ validate: this.validateRules });
-            this.showValue.subscribe(function(v) {
-                var d = new Date(v);
-                self.fieldValue(d.toISOString());
-            })
+//     ko.components.register("date-time", {
+//         viewModel: function(params) {
+//             var self = this;
+//             _.assign(this, params);
 
-            this.preventInput = function(m, e) {
-                e.preventDefault();
-            }
+//             this.showValue = ko.observable(this.fieldValue() ? convertToTime(new Date(this.fieldValue())) : "");
+//             this.showValue.extend({ validate: this.validateRules });
+//             this.showValue.subscribe(function(v) {
+//                 var d = new Date(v);
+//                 self.fieldValue(d.toISOString());
+//             })
 
-            function convertToTime(date) {
-                var y = date.getFullYear(),
-                    m = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1),
-                    d = date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
-                    dateStr = y + "-" + m + "-" + d,
-                    hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
-                    mm = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
-                    timeStr = hh + ":" + mm;
-                return dateStr + " " + timeStr;
-            }
-        },
-        template: template
-    })
-})()
+//             this.preventInput = function(m, e) {
+//                 e.preventDefault();
+//             }
+
+//             function convertToTime(date) {
+//                 var y = date.getFullYear(),
+//                     m = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1),
+//                     d = date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
+//                     dateStr = y + "-" + m + "-" + d,
+//                     hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
+//                     mm = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
+//                     timeStr = hh + ":" + mm;
+//                 return dateStr + " " + timeStr;
+//             }
+//         },
+//         template: template
+//     })
+// })()
