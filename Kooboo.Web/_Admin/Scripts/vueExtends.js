@@ -277,8 +277,6 @@ Vue.directive("kb-collapsein", {
               } else {
                 binding.value.value = editor.getContent();
               }
-              // element.value = binding.value.value;
-              // Kooboo.trigger(element, 'input');
             });
 
             editor.on("NodeChange", function(e) {
