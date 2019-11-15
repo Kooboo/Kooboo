@@ -1,10 +1,11 @@
 (function() {
-    var template = Kooboo.getTemplate("/_Admin/Scripts/components/controlType/CheckBox.html");
-
-    ko.components.register("checkbox", {
-        viewModel: function(params) {
-            _.assign(this, params);
-        },
-        template: template
-    })
-})()
+  Vue.component("kb-control-checkbox", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/vue-components/controlType/CheckBox.html"
+    ),
+    props: {
+      field: Object
+    },
+    inject: ["kbFormItem"]
+  });
+})();
