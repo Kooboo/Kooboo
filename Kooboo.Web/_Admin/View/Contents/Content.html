@@ -100,7 +100,14 @@
                 class="col-md-11 margin-bottom-25 form-horizontal"
                 style="padding-top: 20px;"
               >
-                <div
+                <kb-field-panel
+                  :fields="fields"
+                  :categories="categories"
+                  :embedded="embedded"
+                  :values="contentValues"
+                  :site-langs="siteLangs"
+                ></kb-field-panel>
+                <!-- <div
                   data-bind="component: { name: 'kb-field-panel', params: {
                                     fields: fields,
                                     categories: categories,
@@ -110,7 +117,7 @@
                                     values: contentValues,
                                     siteLangs: siteLangs
                                 }}"
-                ></div>
+                ></div> -->
               </div>
               <div
                 class="container-fluid"
@@ -217,47 +224,37 @@
                                 ><i class="glyphicon glyphicon-list"></i
                               ></span>
                             </td>
-                            <td :title="$data.name">{{
-                              $data.name.length > 8
-                                ? $data.name.substr(0, 7) + "…"
-                                : $data.name
-                            }}</td>
-                            <td :title="$data.displayName">{{
-                              $data.displayName.length > 8
-                                ? $data.displayName.substr(0, 7) + "…"
-                                : $data.displayName
-                            }}</td>
+                            <td :title="$data.name"
+                              >{{ $data.name.length > 8 ? $data.name.substr(0,
+                              7) + "…" : $data.name }}</td
+                            >
+                            <td :title="$data.displayName"
+                              >{{ $data.displayName.length > 8 ?
+                              $data.displayName.substr(0, 7) + "…" :
+                              $data.displayName }}</td
+                            >
                             <td class="table-action hover-hide">
                               <span
                                 :class="$data.multipleLanguage ? 'green' : 'label-default'"
                                 class="label label-sm pull-right"
-                                >{{
-                                  Kooboo.text.common[
-                                    $data.multipleLanguage ? "yes" : "no"
-                                  ]
-                                }}</span
+                                >{{ Kooboo.text.common[ $data.multipleLanguage ?
+                                "yes" : "no" ] }}</span
                               >
                             </td>
                             <td class="table-action hover-hide">
                               <span
                                 :class="$data.isSummaryField ? 'green' : 'label-default'"
                                 class="label label-sm pull-right"
-                                >{{
-                                  Kooboo.text.common[
-                                    $data.isSummaryField ? "yes" : "no"
-                                  ]
-                                }}</span
+                                >{{ Kooboo.text.common[ $data.isSummaryField ?
+                                "yes" : "no" ] }}</span
                               >
                             </td>
                             <td class="table-action hover-hide">
                               <span
                                 class="$data.editable ? 'green' : 'label-default'"
                                 class="label label-sm pull-right"
-                                >{{
-                                  Kooboo.text.common[
-                                    $data.editable ? "yes" : "no"
-                                  ]
-                                }}</span
+                                >{{ Kooboo.text.common[ $data.editable ? "yes" :
+                                "no" ] }}</span
                               >
                             </td>
                             <td class="table-action hover-show"></td>
@@ -316,42 +313,33 @@
                             <template v-if="$data.isSystemField">
                               <td class="table-sortable"></td>
                               <td>{{ $data.name }}</td>
-                              <td>{{
-                                $data.displayName.length > 9
-                                  ? $data.displayName.substr(0, 8) + "..."
-                                  : $data.displayName
-                              }}</td>
+                              <td
+                                >{{ $data.displayName.length > 9 ?
+                                $data.displayName.substr(0, 8) + "..." :
+                                $data.displayName }}</td
+                              >
                               <td class="table-action hover-hide">
                                 <span
                                   :class="$data.multipleLanguage ? 'green' : 'label-default'"
                                   class="label label-sm pull-right"
-                                  >{{
-                                    Kooboo.text.common[
-                                      $data.multipleLanguage ? "yes" : "no"
-                                    ]
-                                  }}</span
+                                  >{{ Kooboo.text.common[ $data.multipleLanguage
+                                  ? "yes" : "no" ] }}</span
                                 >
                               </td>
                               <td class="table-action hover-hide">
                                 <span
                                   :class="$data.isSummaryField ? 'green' : 'label-default'"
                                   class="label label-sm pull-right"
-                                  >{{
-                                    Kooboo.text.common[
-                                      $data.isSummaryField ? "yes" : "no"
-                                    ]
-                                  }}</span
+                                  >{{ Kooboo.text.common[ $data.isSummaryField ?
+                                  "yes" : "no" ] }}</span
                                 >
                               </td>
                               <td class="table-action hover-hide">
                                 <span
                                   :class="$data.editable ? 'green' : 'label-default'"
                                   class="label label-sm pull-right"
-                                  >{{
-                                    Kooboo.text.common[
-                                      $data.editable ? "yes" : "no"
-                                    ]
-                                  }}</span
+                                  >{{ Kooboo.text.common[ $data.editable ? "yes"
+                                  : "no" ] }}</span
                                 >
                               </td>
                               <td
@@ -397,10 +385,9 @@
                       </div>
                       <p v-else class="form-control-static">No folder</p>
                     </template>
-                    <p
-                      v-else
-                      class="form-control-static"
-                    >{{ choosedFolder.displayName }}</p>
+                    <p v-else class="form-control-static"
+                      >{{ choosedFolder.displayName }}</p
+                    >
                   </div>
                 </div>
               </div>
@@ -559,7 +546,7 @@
       "/_Admin/Scripts/vue-components/kb-media-dialog.js",
 
       "/_Admin/Scripts/components/kbFieldEditor.js",
-      "/_Admin/Scripts/components/kbFieldPanel.js",
+      "/_Admin/Scripts/vue-components/kbFieldPanel.js",
 
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/kooboo/Guid.js",

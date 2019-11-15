@@ -1,11 +1,4 @@
 (function() {
-  Kooboo.loadJS([
-    "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
-    "/_Admin/Scripts/vue-components/kbSwitch.js"
-  ]);
-  Kooboo.loadCSS([
-    "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
-  ]);
   // TODO: check
   Vue.component("kb-control-switch", {
     template: Kooboo.getTemplate(

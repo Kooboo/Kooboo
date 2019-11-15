@@ -42,7 +42,7 @@ $(function() {
         _contentType: "",
         mediaDialogData: {},
         fields: [],
-        siteLangs: [],
+        siteLangs: null,
         categories: [],
         embedded: [],
         choosedEmbedded: [],

@@ -1,13 +1,6 @@
 <div>
   <div class="form-group" :class="{'has-error': !kbFormItem.valid}">
     <label
-      v-if="field.isMultilingual"
-      :class="{ 'text-muted': field.disabled }"
-      class="control-label col-md-3"
-      >{{ field.fieldName + " (" + field.lang + ")" }}</label
-    >
-    <label
-      v-else
       :class="{ 'text-muted': field.disabled }"
       class="control-label col-md-3"
       >{{ field.fieldName }}</label
@@ -44,6 +37,6 @@
   </div>
   <kb-file-dialog
     :data="fileDialogData"
-    :multiple="field.enableMultiple"
+    :multiple="field.isMultipleValue"
   ></kb-file-dialog>
 </div>

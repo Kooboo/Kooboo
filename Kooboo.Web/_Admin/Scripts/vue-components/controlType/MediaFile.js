@@ -22,7 +22,7 @@
         },
         function(fieldValue) {
           if (fieldValue) {
-            if (self.field.enableMultiple) {
+            if (self.field.isMultipleValue) {
               self.pics = fieldValue.map(function(p) {
                 return {
                   thumbnail: p + "?SiteId=" + Kooboo.getQueryString("SiteId"),
@@ -52,7 +52,7 @@
             res.model["show"] = true;
             res.model["context"] = self;
             res.model["onAdd"] = function(selected) {
-              if (self.field.enableMultiple) {
+              if (self.field.isMultipleValue) {
                 _.forEach(selected, function(sel) {
                   if (!_.some(self.pics, { url: sel.url })) {
                     self.pics.push({
@@ -80,7 +80,7 @@
     },
     watch: {
       pics: function(value) {
-        if (self.field.enableMultiple) {
+        if (self.field.isMultipleValue) {
           self.kbFormItem.kbForm.model[self.kbFormItem.prop] = value.map(
             function(v) {
               return v.url;
