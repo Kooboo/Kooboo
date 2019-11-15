@@ -39,12 +39,6 @@
               </li>
             </ul>
           </div>
-          <input
-            v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
-            type="hidden"
-            class="kb-media-grid-value"
-          />
-
           <span v-if="!field.disabled">
             <a @click="selectFile" class="btn blue kb-media-grid-causer">{{
               Kooboo.text.common.selectFile
@@ -60,6 +54,6 @@
   </div>
   <kb-media-dialog
     :data="mediaDialogData"
-    :multiple="field.multipleValue"
+    :multiple="field.enableMultiple"
   ></kb-media-dialog>
 </div>
