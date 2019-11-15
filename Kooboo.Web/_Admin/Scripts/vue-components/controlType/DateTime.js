@@ -1,9 +1,4 @@
 (function() {
-  Kooboo.loadJS([
-    "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
-    "/_Admin/Scripts/vue-components/kbDatetimepicker.js"
-  ]);
-  // TODO: check
   Vue.component("kb-control-datetime", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/controlType/DateTime.html"
@@ -11,45 +6,33 @@
     props: {
       field: Object
     },
-    inject: ["kbFormItem"]
+    data: function() {
+      return {
+        formattedDate: ""
+      };
+    },
+    inject: ["kbFormItem"],
+    mounted: function() {
+      var unwatch = this.$watch(
+        function() {
+          return this.kbFormItem.kbForm.model[this.kbFormItem.prop];
+        },
+        function(fieldValue) {
+          if (fieldValue) {
+            this.formattedDate = moment(fieldValue)
+              .utc()
+              .format("YYYY-MM-DD HH:mm");
+            unwatch && unwatch();
+          }
+        },
+        { immediate: true }
+      );
+    },
+    watch: {
+      formattedDate(val) {
+        var d = new Date(val);
+        this.kbFormItem.kbForm.model[this.kbFormItem.prop] = d.toISOString();
+      }
+    }
   });
 })();
-
-// (function() {
-//     Kooboo.loadJS([
-//         "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
-//         "/_Admin/Scripts/kobindings.datePicker.js"
-//     ])
-
-//     var template = Kooboo.getTemplate("/_Admin/Scripts/components/controlType/DateTime.html");
-
-//     ko.components.register("date-time", {
-//         viewModel: function(params) {
-//             var self = this;
-//             _.assign(this, params);
-
-//             this.showValue = ko.observable(this.fieldValue() ? convertToTime(new Date(this.fieldValue())) : "");
-//             this.showValue.extend({ validate: this.validateRules });
-//             this.showValue.subscribe(function(v) {
-//                 var d = new Date(v);
-//                 self.fieldValue(d.toISOString());
-//             })
-
-//             this.preventInput = function(m, e) {
-//                 e.preventDefault();
-//             }
-
-//             function convertToTime(date) {
-//                 var y = date.getFullYear(),
-//                     m = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1),
-//                     d = date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
-//                     dateStr = y + "-" + m + "-" + d,
-//                     hh = date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
-//                     mm = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
-//                     timeStr = hh + ":" + mm;
-//                 return dateStr + " " + timeStr;
-//             }
-//         },
-//         template: template
-//     })
-// })()

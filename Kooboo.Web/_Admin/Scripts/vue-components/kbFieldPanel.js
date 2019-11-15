@@ -5,12 +5,14 @@
     "/_Admin/Scripts/lib/jstree.min.js",
     "/_Admin/Scripts/lib/moment.min.js",
     "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+    "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
 
     "/_Admin/Scripts/tableModel.js",
     "/_Admin/Scripts/viewEditor/components/modal.js",
     "/_Admin/Scripts/textContent/embeddedDialog.js",
     "/_Admin/Scripts/vue-components/kbTable.js",
     "/_Admin/Scripts/vue-components/kbForm.js",
+    "/_Admin/Scripts/vue-components/kbDatetimepicker.js",
 
     "/_Admin/Scripts/vue-components/controlType/TextBox.js",
     "/_Admin/Scripts/vue-components/controlType/TextArea.js",
