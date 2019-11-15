@@ -41,7 +41,7 @@ $(function() {
         formRules: {},
         editor: {
           value: '',
-          editorConfig: { readonly: true } 
+          editorConfig: { readonly: false } 
         }
       };
     },
@@ -54,6 +54,9 @@ $(function() {
             }
           ]
       };
+      setTimeout(()=>{
+        this.editor.value = "<h1>Welcome</h1>";
+      }, 2000);
       this.formModel = {
         [self.field.name + "_" + self.field.lang]: self.field.fieldValue
       };
