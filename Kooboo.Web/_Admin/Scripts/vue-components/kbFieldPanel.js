@@ -55,6 +55,13 @@
       };
     },
     mounted: function() {
+      Kooboo.EventBus.subscribe("kb/multilang/change", function(lang) {
+        if (lang.selected) {
+          self.currentLangs.push(lang.name);
+        } else {
+          self.currentLangs = _.without(self.currentLangs, lang.name);
+        }
+      });
       if (!this.siteLangs) {
         self.$watch("siteLangs", function(langs) {
           if (langs) {
@@ -90,7 +97,7 @@
     },
     watch: {
       fields: function(val) {
-        if (!val) {
+        if (!val || val.length === 0) {
           return [];
         }
         var defaultLang = self.siteLangs.default;
@@ -133,6 +140,7 @@
             var field = {
               _id: Kooboo.getRandomId(),
               lang: v.lang,
+              name: item.name,
               fieldName:
                 item.isMultilingual && self.multilingualSite
                   ? item.displayName + " (" + v.lang + ")"

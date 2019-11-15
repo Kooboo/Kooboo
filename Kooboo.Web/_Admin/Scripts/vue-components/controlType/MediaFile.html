@@ -5,7 +5,6 @@
       class="control-label col-md-3"
       >{{ field.fieldName }}</label
     >
-
     <div class="col-md-9">
       <div class="row">
         <div class="col-md-10 kb-files-picker">
@@ -33,16 +32,16 @@
             </ul>
           </div>
           <span v-if="!field.disabled">
-            <a @click="selectFile" class="btn blue kb-media-grid-causer">{{
-              Kooboo.text.common.selectFile
-            }}</a>
+            <a @click="selectFile" class="btn blue kb-media-grid-causer"
+              >{{ Kooboo.text.common.selectFile }}</a
+            >
           </span>
         </div>
       </div>
       <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
-      <span v-if="!kbFormItem.valid" class="help-block kb-text-error">{{
-        kbFormItem.msg
-      }}</span>
+      <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+        >{{ kbFormItem.msg }}</span
+      >
     </div>
   </div>
   <kb-media-dialog

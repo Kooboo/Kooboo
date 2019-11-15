@@ -13,10 +13,9 @@
       type="text"
       class="form-control"
     />
-
     <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
-    <span v-if="!kbFormItem.valid" class="help-block kb-text-error">{{
-      kbFormItem.msg
-    }}</span>
+    <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+      >{{ kbFormItem.msg }}</span
+    >
   </div>
 </div>

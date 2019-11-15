@@ -67,8 +67,6 @@ $(function() {
         startValidating: false,
         validationPassed: true,
         contentValues: {},
-        // test
-        selectedCulture: []
       };
     },
     mounted: function() {
@@ -487,7 +485,6 @@ $(function() {
           var typeRes = r1[0],
             folderRes = r2[0],
             langRes = r3[0];
-
           if (typeRes.success && folderRes.success && langRes.success) {
             URLFolderCheck(folderRes.model);
 
@@ -549,10 +546,6 @@ $(function() {
           JSON.stringify(this.isPanelHidden)
         );
       },
-      // Vue test
-      changeCulure: function(culture) {
-        console.log(culture);
-      }
     },
     watch: {
       _contentType(typeId) {
