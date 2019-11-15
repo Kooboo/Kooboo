@@ -1,38 +1,49 @@
-<div class="form-group">
-    <!-- ko if:isMultilingual -->
-    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
-    <!-- ko if:!isMultilingual() -->
-    <label data-bind="text: fieldName(), css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
+<div>
+  <div class="form-group" :class="{'has-error': !kbFormItem.valid}">
+    <label
+      v-if="field.isMultilingual"
+      :class="{ 'text-muted': field.disabled }"
+      class="control-label col-md-3"
+      >{{ field.fieldName + " (" + field.lang + ")" }}</label
+    >
+    <label
+      v-else
+      :class="{ 'text-muted': field.disabled }"
+      class="control-label col-md-3"
+      >{{ field.fieldName }}</label
+    >
     <div class="col-md-9">
-        <div class="row" data-bind="textError: fieldValue">
-            <div class="col-md-10 kb-files-picker">
-                <div class="file-list">
-                    <ul data-bind="foreach:files, visible:files().length">
-                        <li>
-                            <span data-bind="text: $data.url"></span>
-                            <!-- ko if: !$parent.disabled() -->
-                            <a href="javascript:;" data-bind="click: $parent.removeFile.bind($parent, $data)">
-                                <i class="fa fa-remove"></i>
-                            </a>
-                            <!-- /ko -->
-                        </li>
-                    </ul>
-                </div>
-        
-                <input data-bind="value: fieldValue" type="hidden" class="kb-file-grid-value">
-
-                <span data-bind="visible: !disabled()">
-                        <a data-bind="click: selectFile, text: Kooboo.text.common.selectFile" class="btn blue kb-file-grid-causer"></a>
-                    </span>
-            </div>
+      <div class="row">
+        <div class="col-md-10 kb-files-picker">
+          <div class="file-list">
+            <ul v-if="files.length">
+              <li v-for="(file, index) in files" :key="index">
+                <span>{{ file.url }}</span>
+                <a
+                  v-if="!field.disabled"
+                  href="javascript:;"
+                  @click="removeFile(file)"
+                >
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <span v-if="!field.disabled">
+            <a @click="selectFile" class="btn blue kb-file-grid-causer"
+              >{{ Kooboo.text.common.selectFile }}</a
+            >
+          </span>
         </div>
-        <!-- ko if: !!tooltip() -->
-        <span class="help-block" data-bind="text:tooltip"></span>
-        <!-- /ko -->
+      </div>
+      <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
+      <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+        >{{ kbFormItem.msg }}</span
+      >
     </div>
+  </div>
+  <kb-file-dialog
+    :data="fileDialogData"
+    :multiple="field.enableMultiple"
+  ></kb-file-dialog>
 </div>
-<kb-file-dialog params="data: fileDialogData, multiple: enableMultiple"></kb-file-dialog>

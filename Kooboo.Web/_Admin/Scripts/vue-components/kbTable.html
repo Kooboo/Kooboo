@@ -46,6 +46,7 @@
           </template>
           <template v-else>
             <kb-table-column
+              :key="rowIndex+'_'+index"
               :customSlot="item.componentInstance.$scopedSlots.default(row)"
             ></kb-table-column>
           </template>
@@ -59,7 +60,6 @@
     </tr>
   </tbody>
   <div v-show="false">
-    <slot></slot>
     <slot v-slot:head></slot>
   </div>
 </table>

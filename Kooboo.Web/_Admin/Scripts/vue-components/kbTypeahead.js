@@ -1,11 +1,4 @@
 (function() {
-  function trigger(el, type) {
-    // copy from vue.js line 8578
-    var e = document.createEvent("HTMLEvents");
-    e.initEvent(type, true, true);
-    el.dispatchEvent(e);
-  }
-
   Vue.directive("kb-typeahead", function(element, binding) {
     var $element = $(element);
     var source = binding.value.source;
@@ -26,7 +19,7 @@
       items: items,
       updater: function(item) {
         element.value = item;
-        trigger(element, "input");
+        Kooboo.trigger(element, "input");
         return item;
       },
       minLength: 0,
