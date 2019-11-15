@@ -1,10 +1,4 @@
 (function() {
-  function trigger(el, type) {
-    // copy from vue.js line 8578
-    var e = document.createEvent("HTMLEvents");
-    e.initEvent(type, true, true);
-    el.dispatchEvent(e);
-  }
   var defaultOptions = {
     autoclose: true,
     format: "yyyy-mm-dd hh:ii",
@@ -26,7 +20,7 @@
             .utc()
             .format("YYYY-MM-DD HH:mm");
           element.value = selectedDate;
-          trigger(element, "input");
+          Kooboo.trigger(element, "input");
         });
     },
     update: function(element, binding) {

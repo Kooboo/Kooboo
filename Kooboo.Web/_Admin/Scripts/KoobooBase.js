@@ -2259,4 +2259,9 @@
     }
     return { result: result, hasError: hasError };
   };
+  Kooboo.trigger = function(el, type) {
+    var e = document.createEvent("HTMLEvents");
+    e.initEvent(type, true, true);
+    el.dispatchEvent(e);
+  };
 })(window);
