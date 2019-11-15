@@ -16,8 +16,8 @@ Vue.directive("kb-tooltip", {
       trigger: trigger || "hover",
       html: binding.modifiers.html,
       template: binding.modifiers.error
-        ? '<div class="tooltip error" role="tooltip" style="z-index:199999"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-        : undefined,
+        ? '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+        : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
       container: $el.data("container") || "body"
     });
   },
@@ -241,8 +241,12 @@ Vue.directive("kb-collapsein", {
   Vue.directive("kb-richeditor", {
     bind: function(element, binding, vnode) {
       // Get custom configuration object from the 'wysiwygConfig' binding, more settings here... http://www.tinymce.com/wiki.php/Configuration
-      var options = binding.value.editorConfig ? binding.value.editorConfig : {},
-        isMailEditor = binding.value.mailConfig ? binding.value.mailConfig : false,
+      var options = binding.value.editorConfig
+          ? binding.value.editorConfig
+          : {},
+        isMailEditor = binding.value.mailConfig
+          ? binding.value.mailConfig
+          : false,
         // Set up a minimal default configuration
         defaults = {
           language: languageManager.getTinyMceLanguage(), // params needed
@@ -508,5 +512,3 @@ Vue.component("kb-container", {
   }
 });
 // #endregion </kb-container>
-
-
