@@ -37,32 +37,96 @@ $(function() {
           validations: '[{"type":"required"}]',
           values: { zh: "啊手动阀", en: "嘻嘻嘻", hi: "啊手动阀" }
         },
+        fieldCheckbox: {
+          controlType: "CheckBox",
+          disabled: false,
+          fieldName: "test2",
+          fieldValue: [],
+          isMultilingual: false,
+          isMultilingualSite: true,
+          isShow: true,
+          lang: "zh",
+          multipleValue: true,
+          name: "test2",
+          options: [
+            { key: "test54", value: "5" },
+            { key: "ye6t", value: "4" },
+            { key: "test33", value: "345" }
+          ],
+          tooltip: null,
+          validations: '[{"type":"required"},{"type":"minChecked","value":"2"}'
+        },
+        fieldSwitch: {
+          controlType: "Switch",
+          disabled: false,
+          fieldName: "switchd",
+          fieldValue: true,
+          isMultilingual: false,
+          isMultilingualSite: true,
+          isShow: true,
+          lang: "zh",
+          multipleValue: false,
+          name: "switchd",
+          selectionOptions: "[]",
+          tooltip: null,
+          validations: "[]",
+          values: { zh: null }
+        },
+        fieldMedia: {
+          controlType: "MediaFile",
+          disabled: false,
+          fieldName: "WorkImage",
+          fieldValue: ["/nitro/images/work_6.jpg"],
+          isMultilingual: false,
+          isMultilingualSite: true,
+          isShow: true,
+          lang: "zh",
+          enableMultiple: true,
+          name: "WorkImage",
+          selectionOptions: "[]",
+          tooltip: null,
+          validations: "[]",
+          values: { zh: "/nitro/images/work_6.jpg" }
+        },
         formModel: {},
         formRules: {},
         editor: {
-          value: '',
-          editorConfig: { readonly: false } 
+          value: "",
+          editorConfig: { readonly: false }
         }
       };
     },
     mounted: function() {
       this.formRules = {
-          [self.field.name + "_" + self.field.lang]: [
-            {
-              required: true,
-              message: Kooboo.text.validation.required
-            }
-          ]
+        [self.field.name + "_" + self.field.lang]: [
+          {
+            required: true,
+            message: Kooboo.text.validation.required
+          }
+        ],
+        [self.fieldCheckbox.name + "_" + self.fieldCheckbox.lang]: [
+          {
+            required: true,
+            message: Kooboo.text.validation.required
+          }
+        ]
       };
-      setTimeout(()=>{
-        this.editor.value = "<h1>Welcome</h1>";
-      }, 2000);
       this.formModel = {
-        [self.field.name + "_" + self.field.lang]: self.field.fieldValue
+        [self.field.name + "_" + self.field.lang]: self.field.fieldValue,
+        [self.fieldCheckbox.name + "_" + self.fieldCheckbox.lang]: self
+          .fieldCheckbox.fieldValue,
+        [self.fieldSwitch.name + "_" + self.fieldSwitch.lang]: self.fieldSwitch
+          .fieldValue,
+        [self.fieldMedia.name + "_" + self.fieldMedia.lang]: self.fieldMedia
+          .fieldValue
       };
 
-      setInterval(()=>{
-        console.log(this.$refs.form.validate())
+      setTimeout(() => {
+        this.editor.value = "<h1>Welcome</h1>";
+      }, 2000);
+
+      setInterval(() => {
+        console.log(this.$refs.form.validate());
       }, 2000);
       Kooboo.TextContent.getByFolder().then(function(res) {
         if (res.success) {

@@ -21,21 +21,41 @@
       </div>
     </div>
   </div>
-  <textarea
+  <!-- <textarea
       class="tiny-mce"
       data-isTinyMce="true"
       id="dddd"
       v-kb-richeditor="editor"
-    ></textarea>
+    ></textarea> -->
 {{ editor.value }}
   <kb-form simple :model="formModel" :rules="formRules" ref="form">
-    <!-- <kb-form-item :prop='field.name + "_" + field.lang'>
-      <kb-control-textbox :field="field"></kb-control-textbox>
-    </kb-form-item> -->
+    
     <kb-form-item :prop='field.name + "_" + field.lang'>
-      <kb-control-richeditor :field="field"></kb-control-richeditor>
+      <kb-control-textbox :field="field"></kb-control-textbox>
     </kb-form-item>
-    <div>{{ formModel[field.name + "_" + field.lang] }}</div>
+
+    <!-- <kb-form-item :prop='fieldMedia.name + "_" + fieldMedia.lang'>
+        <kb-control-mediafile :field="fieldMedia"></kb-control-mediafile>
+      </kb-form-item> -->
+      <kb-form-item :prop='fieldMedia.name + "_" + fieldMedia.lang'>
+        <kb-control-file :field="fieldMedia"></kb-control-file>
+      </kb-form-item>
+    <!-- <kb-form-item :prop='field.name + "_" + field.lang'>
+      <kb-control-richeditor :field="field"></kb-control-richeditor>
+    </kb-form-item> -->
+<!-- 
+    <kb-form-item :prop='fieldCheckbox.name + "_" + fieldCheckbox.lang'>
+        <kb-control-checkbox :field="fieldCheckbox"></kb-control-checkbox>
+      </kb-form-item> -->
+      
+    <kb-form-item :prop='fieldCheckbox.name + "_" + fieldCheckbox.lang'>
+        <kb-control-radiobox :field="fieldCheckbox"></kb-control-radiobox>
+      </kb-form-item>
+
+      <kb-form-item :prop='fieldSwitch.name + "_" + fieldSwitch.lang'>
+          <kb-control-switch :field="fieldSwitch"></kb-control-switch>
+        </kb-form-item>
+    <div>{{ formModel }}</div>
   </kb-form>
 
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
@@ -106,12 +126,19 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/vue-components/kbTable.js",
+      "/_Admin/Scripts/vue-components/kb-media-dialog.js",
+      "/_Admin/Scripts/vue-components/kb-file-dialog.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/vue-components/kbPager.js",
       "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
         "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
       "/_Admin/Scripts/vue-components/controlType/TextBox.js",
+      "/_Admin/Scripts/vue-components/controlType/CheckBox.js",
+      "/_Admin/Scripts/vue-components/controlType/RadioBox.js",
       "/_Admin/Scripts/vue-components/controlType/RichEditor.js",
+      "/_Admin/Scripts/vue-components/controlType/Switch.js",
+      "/_Admin/Scripts/vue-components/controlType/MediaFile.js",
+      "/_Admin/Scripts/vue-components/controlType/File.js",
       "/_Admin/Scripts/vue-components/kbForm.js"
     ]);
   })();

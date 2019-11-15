@@ -118,6 +118,7 @@
                                 return self.currentLangs().indexOf(v.lang) > -1;
                             })
                         })
+                        console.log(fieldItem)
                     })
                 })
 

@@ -12,7 +12,7 @@
       self = this;
       return {
         files: [],
-        mediaDialogData: null
+        fileDialogData: null
       };
     },
     mounted: function() {
@@ -70,7 +70,7 @@
                 ];
               }
             };
-            self.mediaDialogData = res.model;
+            self.fileDialogData = res.model;
           }
         });
       },

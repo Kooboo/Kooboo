@@ -43,6 +43,7 @@
     </div>
   </div>
   <kb-file-dialog
-    params="data: fileDialogData, multiple: enableMultiple"
+    :data="fileDialogData"
+    :multiple="field.enableMultiple"
   ></kb-file-dialog>
 </div>
