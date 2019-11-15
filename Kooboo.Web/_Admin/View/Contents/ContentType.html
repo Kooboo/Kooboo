@@ -2,120 +2,123 @@
 <div id="main">
     <div class="page-header">
         <div>
-            <div data-bind="if: isNewContentType">
-                <h1 class="title" data-bind="text: Kooboo.text.common.ContentType + ': '"></h1>
+            <div  v-if="isNewContentType">
+                <h1 class="title">{{ Kooboo.text.common.ContentType + ': '}}</h1>
                 <div class="form-group pull-left">
-                    <input class="form-control input-medium" data-bind="value: name, error: name" />
+                    <input class="form-control input-medium"/>
                 </div>
             </div>
 
-            <h1 data-bind="if: !isNewContentType" class="title"><span>Content type</span>: <strong data-bind="text:name"></strong></h1>
+            <h1 v-if="!isNewContentType" class="title"><span>Content type</span>: <strong >{{titleName}}</strong></h1>
         </div>
     </div>
     <div class="navbar navbar-default">
         <div class="container-fluid">
-            <a class="btn green navbar-btn" href="javascript:;" data-bind="click: onAddField">New field</a>
+            <a class="btn green navbar-btn" href="javascript:;" @click="onAddField">New field</a>
         </div>
     </div>
     <table class="table table-striped table-hover">
         <thead>
-            <tr>
-                <th class="table-sortable"></th>
-                <th>Name</th>
-                <th class="table-short">Display name</th>
-                <th class="table-short">Control type</th>
-                <th class="table-short">Multiple language</th>
-                <th class="table-short">Summary field</th>
-                <th class="table-short">User editable</th>
-                <th class="table-action"></th>
-            </tr>
+        <tr>
+            <th class="table-sortable"></th>
+            <th>Name</th>
+            <th class="table-short">Display name</th>
+            <th class="table-short">Control type</th>
+            <th class="table-short">Multiple language</th>
+            <th class="table-short">Summary field</th>
+            <th class="table-short">User editable</th>
+            <th class="table-action"></th>
+        </tr>
         </thead>
-        <tbody class="ui-sortable" data-bind="sortable: fields">
-            <tr data-bind="if: !isSystemField()">
-                <td class="table-sortable"><span class="sortable"><i class="glyphicon glyphicon-list"></i></span></td>
-                <td>
-                    <a href="javascript:;" data-bind="text: name, click: $root.onEditField.bind(this)"></a>
-                </td>
-                <td data-bind="text: displayName().length > 10 ? (displayName().substr(0,8) + '...') : displayName(), attr: { title: displayName() }"></td>
-                <td data-bind="text: Kooboo.text.component.controlType[_.camelCase(controlType())]"></td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[multipleLanguage() ? 'yes' : 'no'], css: {'label-default': !multipleLanguage(), 'green': multipleLanguage()}" class="label label-sm"></span>
-                </td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[isSummaryField() ? 'yes' : 'no'], css: { green: isSummaryField(), 'label-default': !isSummaryField() }" class="label label-sm label-default"></span>
-                </td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[editable() ? 'yes' : 'no'], css: { green: editable(), 'label-default': !editable() }" class="label label-sm"></span>
-                </td>
+        <tbody class="ui-sortable" v-kb-sortable="tableData">
+        <tr v-for="(item, index) in editableProperties">
+            <td class="table-sortable"><span class="sortable"><i class="glyphicon glyphicon-list"></i></span></td>
+            <td>
+                <a href="javascript:;" @click="onEdit($event,item)">{{item.name}}</a>
+            </td>
+            <td :title="item.displayName">
+                {{item.displayName.length > 10 ? item.displayName.substr(0,8) + '...' : item.displayName}}
+            </td>
+            <td >{{Kooboo.text.component.controlType[_.camelCase(item.controlType)]}}</td>
+            <td>
+                <span :class="item.multipleLanguage? 'label label-sm green': 'label label-sm label-default'">
+                    {{item.multipleLanguage ? Kooboo.text.common.yes : Kooboo.text.common.no}}
+                </span>
+            </td>
+            <td>
+                <span :class="item.isSummaryField?'label label-sm green':'label label-sm label-default'">
+                {{item.isSummaryField ? Kooboo.text.common.yes : Kooboo.text.common.no}}
+                </span>
+            </td>
+            <td>
+                <span :class="item.editable?'label label-sm green':'label label-sm label-default'">
+                     {{item.editable ? Kooboo.text.common.yes : Kooboo.text.common.no}}
+                </span>
+            </td>
 
-                <td class="table-action">
-                    <a class="btn btn-xs red" href="javascript:;" data-bind="click: $root.removeField.bind($root, $data)">Remove</a>
-                </td>
-            </tr>
+            <td class="table-action">
+                <a class="btn btn-xs red" href="javascript:;" @click="removeItem($event,index,item)">Remove</a>
+            </td>
+
+        </tr>
         </tbody>
-        <tfoot>
-            <tr class="action-row">
-                <td colspan="100">
-                    <a data-bind="click:toggleSystemFields" href="javascript:;">
-                        <i data-bind="css:{'fa-chevron-down':!showSystemFields(),'fa-chevron-up':showSystemFields()}, tooltip: Kooboo.text.site.contentType.showSystemField, tooltipPlacement: 'right'" class="fa fa-chevron-down"></i>
-                    </a>
-                </td>
-            </tr>
-            <!-- ko if: showSystemFields -->
-            <!-- ko foreach: systemField -->
-            <tr data-bind="" class="lighten">
-                <td class="table-sortable"></td>
-                <td>
-                    <a href="javascript:;" data-bind="text: name, click: $root.onEditField.bind(this)"></a>
-                </td>
-                <td data-bind="text: displayName"></td>
-                <td data-bind="text: Kooboo.text.component.fieldEditor[controlType()]"></td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[multipleLanguage() ? 'yes' : 'no'], css: {'label-default': !multipleLanguage(), 'green': multipleLanguage()}" class="label label-sm"></span>
-                </td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[isSummaryField() ? 'yes' : 'no'], css: { green: isSummaryField(), 'label-default': !isSummaryField() }" class="label label-sm label-default"></span>
-                </td>
-                <td>
-                    <span data-bind="text:  Kooboo.text.common[editable() ? 'yes' : 'no'], css: { green: editable(), 'label-default': !editable() }" class="label label-sm"></span>
-                </td>
-                <td class="table-action"></td>
-            </tr>
-            <!-- /ko -->
-            <!-- /ko -->
+        <tfoot >
+        <tr class="action-row">
+            <td colspan="100"><!---->
+                <a @click="toggleSystemFields" href="javascript:;">
+                    <i v-kb-tooltip:right="Kooboo.text.site.contentType.showSystemField"
+                            :class="showSystemField?'fa fa-chevron-down':'fa fa-chevron-down'"></i>
+                </a>
+            </td>
+        </tr>
+        <tr v-for="item in unEditableProperties" v-if="showSystemField">
+            <td class="table-sortable"></td>
+            <td>
+                <a href="javascript:;" @click="onEdit($event,item)">{{item.name}}</a>
+            </td>
+            <td :title="item.displayName">
+                {{item.displayName.length > 10 ? item.displayName.substr(0,8) + '...' : item.displayName}}
+            </td>
+            <td >{{Kooboo.text.component.controlType[_.camelCase(item.controlType)]}}</td>
+            <td>
+                <span :class="item.multipleLanguage? 'label label-sm green': 'label label-sm label-default'">
+                    {{item.multipleLanguage ? Kooboo.text.common.yes : Kooboo.text.common.no}}
+                </span>
+            </td>
+            <td>
+                <span :class="item.isSummaryField?'label label-sm green':'label label-sm label-default'">
+                {{item.isSummaryField ? Kooboo.text.common.yes : Kooboo.text.common.no}}
+                </span>
+            </td>
+            <td>
+                <span :class="item.editable?'label label-sm green':'label label-sm label-default'">
+                     {{item.editable ? Kooboo.text.common.yes : Kooboo.text.common.no}}
+                </span>
+            </td>
+        </tr>
         </tfoot>
     </table>
-
-    <div class="page-buttons">
-        <button data-bind="click: onSave" class="btn green">Save</button>
-        <a data-bind="attr: { href: contentTypesPageUrl }" class="btn gray">Cancel</a>
+    <div
+            class="modal fade"
+            data-backdrop="static"
+            data-keyboard="false"
+            v-kb-modal="modalVisible"
+    >
+        <!--v-if="modalShow" function is destroy component and directive-->
+            <kb-field-editor v-if="modalVisible" :close-handle="onModalClose" :data="editingItemData" :options="fieldEditorOptions"></kb-field-editor>
     </div>
-
-    <div data-bind="component: { name: 'kb-field-editor', params: {
-        onShow: onFieldModalShow,
-        onSave: onFieldSave,
-        data: fieldData,
-        options: {
-            controlTypes: ['textbox','textarea','richeditor','selection','checkbox','radiobox','switch','mediafile','file','datetime','number'],
-            modifiedField: 'isSummaryField',
-            modifiedFieldText: Kooboo.text.component.fieldEditor.summaryField,
-            showMultilingualOption: true,
-            showPreviewPanel: true,
-            getFieldNames: getFieldNames
-        }
-    }}"></div>
+    <div class="page-buttons">
+        <button @click="onSave" class="btn green">Save</button>
+        <a :href="contentTypesPageUrl" class="btn gray">Cancel</a>
+    </div>
 </div>
-
-<script>
-    Kooboo.fieldEditor = {};
-</script>
-<script>
+    <script>
     (function() {
         Kooboo.loadJS([
             "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/kobindings.sortable.js",
+            "/_Admin/Scripts/vue-components/kbTable.js",
             "/_Admin/Scripts/lib/jquery-ui-customized.js",
-            "/_Admin/Scripts/components/kbFieldEditor.js"
+            "/_Admin/Scripts/vue-components/kbFieldEditor.js"
         ])
     })()
 </script>

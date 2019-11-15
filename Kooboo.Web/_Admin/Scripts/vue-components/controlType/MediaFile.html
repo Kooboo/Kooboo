@@ -1,45 +1,51 @@
-<div class="form-group">
-    <!-- ko if:isMultilingual -->
-    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
-    <!-- ko if:!isMultilingual() -->
-    <label data-bind="text: fieldName(), css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
+<div>
+  <div class="form-group" :class="{'has-error': !kbFormItem.valid}">
+    <label
+      :class="{ 'text-muted': field.disabled }"
+      class="control-label col-md-3"
+      >{{ field.fieldName }}</label
+    >
     <div class="col-md-9">
-        <div class="row" data-bind="textError: fieldValue">
-            <div class="col-md-10 kb-files-picker">
-                <!-- ko if: pics().length>0 -->
-                <div class="file-list">
-                    <ul>
-                        <!-- ko foreach: pics -->
-                        <li>
-                            <div class="fileinput-new thumbnail">
-                                <img data-bind="attr:{src:$data.thumbnail}" alt="No Image [120x120]" style="width: 120px; height: 120px;" src="" data-holder-rendered="true">
-                            </div>
-                            <!-- ko text: $data.url -->
-                            <!-- /ko -->
-                            <!-- ko if: !$parent.disabled() -->
-                            <a data-bind="attr: { title: Kooboo.text.common.remove}, click: $parent.removePic.bind($parent, $data)" href="javascript:;">
-                                <i class="fa fa-remove"></i>
-                            </a>
-                            <!-- /ko -->
-                        </li>
-                        <!-- /ko -->
-                    </ul>
+      <div class="row">
+        <div class="col-md-10 kb-files-picker">
+          <div class="file-list" v-if="pics.length>0">
+            <ul>
+              <li v-for="(pic, index) in pics" :key="index">
+                <div class="fileinput-new thumbnail">
+                  <img
+                    :src="pic.thumbnail"
+                    alt="No Image [120x120]"
+                    style="width: 120px; height: 120px;"
+                    data-holder-rendered="true"
+                  />
                 </div>
-                <!-- /ko -->
-                <input data-bind="value: fieldValue" type="hidden" class="kb-media-grid-value">
-
-                <span data-bind="visible: !disabled()">
-                        <a data-bind="click: selectFile, text: Kooboo.text.common.selectFile" class="btn blue kb-media-grid-causer"></a>
-                    </span>
-            </div>
+                {{ pic.url }}
+                <a
+                  v-if="!field.disabled"
+                  :title="Kooboo.text.common.remove"
+                  @click="removePic(pic)"
+                  href="javascript:;"
+                >
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <span v-if="!field.disabled">
+            <a @click="selectFile" class="btn blue kb-media-grid-causer"
+              >{{ Kooboo.text.common.selectFile }}</a
+            >
+          </span>
         </div>
-        <!-- ko if: !!tooltip() -->
-        <span class="help-block" data-bind="text:tooltip"></span>
-        <!-- /ko -->
+      </div>
+      <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
+      <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+        >{{ kbFormItem.msg }}</span
+      >
     </div>
+  </div>
+  <kb-media-dialog
+    :data="mediaDialogData"
+    :multiple="field.isMultipleValue"
+  ></kb-media-dialog>
 </div>
-<kb-media-dialog params="data: mediaDialogData, multiple: enableMultiple"></kb-media-dialog>
