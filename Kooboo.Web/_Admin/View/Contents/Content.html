@@ -1,59 +1,112 @@
 <!-- #layout name=default -->
 <style>
-    table.table .field-head .hover-hide,
-    table.table tfoot .hover-hide,
-    table.table tbody .field-control .hover-hide,
-    table.table:hover .field-head .hover-show,
-    table.table:hover tfoot .hover-show,
-    table.table:hover tbody .field-control .hover-show {
-        display: table-cell;
-    }
-    
-    table.table .field-head .hover-show,
-    table.table tfoot .hover-show,
-    table.table tbody .field-control .hover-show,
-    table.table:hover .field-head .hover-hide,
-    table.table:hover tfoot .hover-hide,
-    table.table:hover tbody .field-control .hover-hide {
-        display: none;
-    }
-    
-    tbody .field-control td {
-        height: 33px;
-    }
+  table.table .field-head .hover-hide,
+  table.table tfoot .hover-hide,
+  table.table tbody .field-control .hover-hide,
+  table.table:hover .field-head .hover-show,
+  table.table:hover tfoot .hover-show,
+  table.table:hover tbody .field-control .hover-show {
+    display: table-cell;
+  }
+
+  table.table .field-head .hover-show,
+  table.table tfoot .hover-show,
+  table.table tbody .field-control .hover-show,
+  table.table:hover .field-head .hover-hide,
+  table.table:hover tfoot .hover-hide,
+  table.table:hover tbody .field-control .hover-hide {
+    display: none;
+  }
+
+  tbody .field-control td {
+    height: 33px;
+  }
 </style>
-<div id="main" class="fixed">
-    <div class="block-fullpage with-buttons" style="bottom:0;top:46px;">
-        <div class="block-visual-editor default">
-            <div class="tabs-bottom" style="padding-bottom: 53px;">
-                <div class="tab-content">
-                    <section class="tab-pane active">
-                        <div class="kb-editor" style="overflow-x: hidden; overflow-y: auto;" data-bind="css: { 'full-size': isPanelHidden }">
-                            <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
-                                <div class="form-group clearfix">
-                                    <div data-bind="component: { name: 'kb-multilang-selector', params: siteLangs }, visible: !isMultiContent() && contentMode() == 'normal'"></div>
-                                </div>
-                            </div>
-                            <div class="container-fluid" data-bind="visible: contentMode() == 'fieldRequired'">
-                                <div class="col-md-10 col-md-offset-1" style="margin-top: 60px;">
-                                    <div class="jumbotron kb-hint">
-                                        <h2>Continue</h2>
-                                        <p>Click the "New field" below to create first content field for your content type.</p>
-                                        <p><a class="btn blue" href="javascript:;" data-bind="click: onCreateField">New field</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container-fluid" data-bind="visible: contentMode() == 'folderRequired'">
-                                <div class="col-md-10 col-md-offset-1" style="margin-top: 60px;">
-                                    <div class="jumbotron kb-hint">
-                                        <h2>Continue</h2>
-                                        <p>Click the "New folder" below to create a folder saving this type of contents.</p>
-                                        <p><a class="btn blue" href="javascript:;" data-bind="click: onCreateFolder">New folder</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div data-bind="visible: contentMode() == 'normal'" class="col-md-11 margin-bottom-25 form-horizontal" style="padding-top: 20px;">
-                                <div data-bind="component: { name: 'kb-field-panel', params: {
+<div id="main" class="fixed" v-cloak>
+  <div class="block-fullpage with-buttons" style="bottom:0;top:46px;">
+    <div class="block-visual-editor default">
+      <div class="tabs-bottom" style="padding-bottom: 53px;">
+        <div class="tab-content">
+          <section class="tab-pane active">
+            <div
+              class="kb-editor"
+              style="overflow-x: hidden; overflow-y: auto;"
+              :class="{ 'full-size': isPanelHidden }"
+            >
+              <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
+                <div class="form-group clearfix">
+                  <kb-multilang-selector
+                    v-if="!isMultiContent && contentMode == 'normal'"
+                    :cultures="siteLangs.cultures"
+                    :default-culture="siteLangs.default"
+                  >
+                  </kb-multilang-selector>
+                </div>
+              </div>
+              <div
+                class="container-fluid"
+                v-show="contentMode == 'fieldRequired'"
+              >
+                <div
+                  class="col-md-10 col-md-offset-1"
+                  style="margin-top: 60px;"
+                >
+                  <div class="jumbotron kb-hint">
+                    <h2>Continue</h2>
+                    <p
+                      >Click the "New field" below to create first content field
+                      for your content type.</p
+                    >
+                    <p
+                      ><a
+                        class="btn blue"
+                        href="javascript:;"
+                        @click="onCreateField"
+                        >New field</a
+                      ></p
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                class="container-fluid"
+                v-show="contentMode == 'folderRequired'"
+              >
+                <div
+                  class="col-md-10 col-md-offset-1"
+                  style="margin-top: 60px;"
+                >
+                  <div class="jumbotron kb-hint">
+                    <h2>Continue</h2>
+                    <p
+                      >Click the "New folder" below to create a folder saving
+                      this type of contents.</p
+                    >
+                    <p
+                      ><a
+                        class="btn blue"
+                        href="javascript:;"
+                        @click="onCreateFolder"
+                        >New folder</a
+                      ></p
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                v-show="contentMode == 'normal'"
+                class="col-md-11 margin-bottom-25 form-horizontal"
+                style="padding-top: 20px;"
+              >
+                <kb-field-panel
+                  :fields="fields"
+                  :categories="categories"
+                  :embedded="embedded"
+                  :values="contentValues"
+                  :site-langs="siteLangs"
+                ></kb-field-panel>
+                <!-- <div
+                  data-bind="component: { name: 'kb-field-panel', params: {
                                     fields: fields,
                                     categories: categories,
                                     embedded: embedded,
@@ -61,226 +114,408 @@
                                     validationPassed: validationPassed,
                                     values: contentValues,
                                     siteLangs: siteLangs
-                                }}"></div>
-                            </div>
-                            <div class="container-fluid" data-bind="visible: contentMode() == 'contentTypeRequired'">
-                                <div class="col-md-10 col-md-offset-1" style="margin-top:100px;">
-                                    <div class="jumbotron kb-hint">
-                                        <h2>Create your content</h2>
-                                        <p>Currently you don't have content type yet. You can click button below to continue.</p>
-                                        <p><a class="btn blue" href="javascript:;" data-bind="click: createContentType">Create a type</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kb-panel-gripper-container" data-bind="css: { 'panel-hidden': isPanelHidden }, visible: !isMultiContent()">
-                            <a href="javascript:;" class="kb-panel-gripper hidden-xs" data-bind="click: togglePanel">
-                                <i data-bind="css: { 'fa-caret-left': isPanelHidden(), 'fa-caret-right': !isPanelHidden() }" class="fa"></i>
-                            </a>
-                            <div class="kb-panel">
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <label class="control-label">Content type</label>
-                                        <div data-bind="css: { 'form-inline': !hasFolder() }">
-                                            <select data-bind="options: contentTypes, optionsText: 'name', optionsValue: 'id', value: contentType, event: { change: contentTypeChanged.bind(this, contentType()) }, attr: { disabled: hasFolder }, css: { 'input-large': !hasFolder() }" class="form-control"></select>
-                                            <select data-bind="options: contentTypes, optionsText: 'name', optionsValue: 'id', value: _contentType" class="form-control hide"></select>
-                                            <!-- ko if: !hasFolder() -->
-                                            <button class="btn btn-default pull-right" data-bind="click: createContentType, tooltip: Kooboo.text.common.add">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                            <!-- /ko -->
-                                        </div>
-                                        <!-- ko if: !contentType() -->
-                                        <span class="help-block">Create a new content type to continue.</span>
-                                        <!-- /ko -->
-                                    </div>
-
-                                    <!-- ko if: contentType() -->
-                                    <div class="form-group margin-bottom-25" data-bind="visible: !allowModify()">
-                                        <button class="btn btn-default btn-block" data-bind="click: onAllowModify">Edit content type</button>
-                                    </div>
-                                    <!-- /ko -->
-
-                                    <div class="form-group" data-bind="collapsein: allowModify">
-                                        <table class="table table-hover table-condensed">
-                                            <thead>
-                                                <tr class="field-head">
-                                                    <th class="table-sortable"></th>
-                                                    <th>Name</th>
-                                                    <th>Display</th>
-                                                    <th class="table-action hover-hide">Multilingual</th>
-                                                    <th class="table-action hover-hide">Summary field</th>
-                                                    <th class="table-action hover-hide">Editable</th>
-                                                    <th colspan="3" class="table-action hover-show"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody data-bind="sortable: typeProperties">
-                                                <tr class="field-control" data-bind="if: !$data.isSystemField()">
-                                                    <td class="table-sortable">
-                                                        <!-- ko if: !$parent.isMultiContent() -->
-                                                        <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-                                                        <!-- /ko -->
-                                                    </td>
-                                                    <td data-bind="text: $data.name().length > 8 ? $data.name().substr(0,7)+'…' : $data.name(), attr: { title: $data.name() }"></td>
-                                                    <td data-bind="text: $data.displayName().length > 8 ? $data.displayName().substr(0,7)+'…' : $data.displayName(), attr: { title: $data.displayName() }"></td>
-                                                    <td class="table-action hover-hide">
-                                                        <span data-bind="text: Kooboo.text.common[$data.multipleLanguage() ? 'yes' : 'no'], css: {'label-default': !$data.multipleLanguage(), 'green': $data.multipleLanguage()}" class="label label-sm pull-right"></span>
-                                                    </td>
-                                                    <td class="table-action hover-hide">
-                                                        <span data-bind="text: Kooboo.text.common[$data.isSummaryField() ? 'yes' : 'no'], css: {'label-default': !$data.isSummaryField(), 'green': $data.isSummaryField()}" class="label label-sm pull-right"></span>
-                                                    </td>
-                                                    <td class="table-action hover-hide">
-                                                        <span data-bind="text: Kooboo.text.common[$data.editable() ? 'yes' : 'no'], css: {'label-default': !$data.editable(), 'green': $data.editable()}" class="label label-sm pull-right"></span>
-                                                    </td>
-                                                    <td class="table-action hover-show"></td>
-                                                    <td class="table-action hover-show"><a class="btn btn-xs blue" data-bind="click: $parent.editProperty, tooltip: Kooboo.text.common.edit"><i class="fa fa-pencil"></i></a></td>
-                                                    <td class="table-action hover-show">
-                                                        <!-- ko if: !$data.isSystemField() -->
-                                                        <a class="btn btn-xs red" data-bind="click: $parent.deleteProperty, tooltip: Kooboo.text.common.delete"><i class="fa fa-close"></i></a>
-                                                        <!-- /ko -->
-                                                        <!-- ko if: $data.isSystemField() -->
-                                                        <a class="btn btn-xs red disabled" disabled data-bind="tooltip: Kooboo.text.site.contentType.systemFieldUndeletable"><i class="fa fa-close"></i></a>
-                                                        <!-- /ko -->
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr class="action-row">
-                                                    <td colspan="100" data-bind="tooltip: Kooboo.text.site.contentType.showSystemField, tooltipPlacement: 'left'">
-                                                        <a href="javascript:;" data-bind="click: toggleAllFields" style="padding-top:0; padding-bottom:0;">
-                                                            <i data-bind="css:{'fa-chevron-down':!allFieldsShow(),'fa-chevron-up':allFieldsShow()}" class="fa fa-chevron-down"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <!-- ko if: allFieldsShow -->
-                                                <!-- ko foreach: typeProperties -->
-                                                <tr class="field-control">
-                                                    <!-- ko if: $data.isSystemField() -->
-                                                    <td class="table-sortable"></td>
-                                                    <td data-bind="text: $data.name()"></td>
-                                                    <td data-bind="text: $data.displayName().length > 9 ? $data.displayName().substr(0,8)+'...' : $data.displayName()"></td>
-                                                    <td class="table-action hover-hide">
-                                                        <span data-bind="text: Kooboo.text.common[$data.multipleLanguage() ? 'yes' : 'no'], css: {'label-default': !$data.multipleLanguage(), 'green': $data.multipleLanguage()}" class="label label-sm pull-right"></span>
-                                                    </td>
-                                                    <td class="table-action hover-hide">
-                                                        <span data-bind="text: Kooboo.text.common[$data.isSummaryField() ? 'yes' : 'no'], css: {'label-default': !$data.isSummaryField(), 'green': $data.isSummaryField()}" class="label label-sm pull-right"></span>
-                                                    </td>
-                                                    <td class="table-action hover-hide">
-                                                        <span data-bind="text: Kooboo.text.common[$data.editable() ? 'yes' : 'no'], css: {'label-default': !$data.editable(), 'green': $data.editable()}" class="label label-sm pull-right"></span>
-                                                    </td>
-                                                    <td class="table-action hover-show" colspan="2"></td>
-                                                    <td class="table-action hover-show"><a class="btn btn-xs blue" data-bind="click: $parent.editProperty, tooltip: Kooboo.text.common.edit"><i class="fa fa-pencil"></i></a></td>
-                                                    <!-- /ko -->
-                                                </tr>
-                                                <!-- /ko -->
-                                                <!-- /ko -->
-                                            </tfoot>
-                                        </table>
-                                        <!-- ko if: !isMultiContent() && ['normal','fieldRequired'].indexOf(contentMode()) > -1 -->
-                                        <button class="btn btn-block blue margin-bottom-25" data-bind="click: onCreateField"><i class="fa fa-plus"></i> <span>New field</span></button>
-                                        <!-- /ko -->
-                                    </div>
-                                    <div class="form-group">
-                                        <hr>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="">Save to folder</label>
-                                        <!-- ko if: !hasFolder() -->
-                                        <!-- ko if: avaliableFolders().length -->
-                                        <div class="form-inline">
-                                            <select data-bind="options: avaliableFolders, optionsText: 'displayName', optionsValue: 'id', value: choosedFolderId, event: { change: choosedFolderChange }" class="form-control input-large"></select>
-                                            <button class="btn btn-default pull-right" data-bind="click: onCreateFolder, tooltip: Kooboo.text.common.add"><i class="fa fa-plus"></i></button>
-                                        </div>
-                                        <!-- /ko -->
-                                        <!-- ko if: !avaliableFolders().length -->
-                                        <p class="form-control-static">No folder</p>
-                                        <!-- /ko -->
-                                        <!-- /ko -->
-                                        <!-- ko if: hasFolder -->
-                                        <p class="form-control-static" data-bind="text: choosedFolder().displayName"></p>
-                                        <!-- /ko -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                                }}"
+                ></div> -->
+              </div>
+              <div
+                class="container-fluid"
+                v-show="contentMode == 'contentTypeRequired'"
+              >
+                <div
+                  class="col-md-10 col-md-offset-1"
+                  style="margin-top:100px;"
+                >
+                  <div class="jumbotron kb-hint">
+                    <h2>Create your content</h2>
+                    <p
+                      >Currently you don't have content type yet. You can click
+                      button below to continue.</p
+                    >
+                    <p
+                      ><a
+                        class="btn blue"
+                        href="javascript:;"
+                        @click="createContentType"
+                        >Create a type</a
+                      ></p
+                    >
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="modal fade" data-bind="modal: showContentTypeModal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" data-bind="click: onContentTypeModalHide"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">Content Type</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Type name</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" data-bind="value: contentTypeName, error: contentTypeName">
-                            </div>
-                        </div>
+            <div
+              class="kb-panel-gripper-container"
+              v-show="!isMultiContent"
+              :class="{'panel-hidden': isPanelHidden }"
+            >
+              <a
+                href="javascript:;"
+                class="kb-panel-gripper hidden-xs"
+                @click="togglePanel"
+              >
+                <i
+                  :class="isPanelHidden ? 'fa-caret-left' : 'fa-caret-right'"
+                  class="fa"
+                ></i>
+              </a>
+              <div class="kb-panel">
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label class="control-label">Content type</label>
+                    <div :class="{ 'form-inline': !hasFolder }">
+                      <select
+                        data-bind="options: contentTypes, optionsText: 'name', optionsValue: 'id', value: contentType, event: { change: contentTypeChanged.bind(this, contentType()) }, attr: { disabled: hasFolder }, css: { 'input-large': !hasFolder() }"
+                        class="form-control"
+                      ></select>
+                      <select
+                        data-bind="options: contentTypes, optionsText: 'name', optionsValue: 'id', value: _contentType"
+                        class="form-control hide"
+                      ></select>
+                      <button
+                        v-if="hasFolder"
+                        class="btn btn-default pull-right"
+                        data-bind="click: createContentType, tooltip: Kooboo.text.common.add"
+                      >
+                        <i class="fa fa-plus"></i>
+                      </button>
                     </div>
+                    <span v-if="!contentType" class="help-block"
+                      >Create a new content type to continue.</span
+                    >
+                  </div>
+
+                  <div
+                    v-if="contentType"
+                    class="form-group margin-bottom-25"
+                    v-show="!allowModify"
+                  >
+                    <button
+                      class="btn btn-default btn-block"
+                      @click="onAllowModify"
+                      >Edit content type</button
+                    >
+                  </div>
+
+                  <div class="form-group" v-kb-collapsein="allowModify">
+                    <table class="table table-hover table-condensed">
+                      <thead>
+                        <tr class="field-head">
+                          <th class="table-sortable"></th>
+                          <th>Name</th>
+                          <th>Display</th>
+                          <th class="table-action hover-hide">Multilingual</th>
+                          <th class="table-action hover-hide">Summary field</th>
+                          <th class="table-action hover-hide">Editable</th>
+                          <th colspan="3" class="table-action hover-show"></th>
+                        </tr>
+                      </thead>
+                      <!-- <tbody data-bind="sortable: typeProperties"> TODO: sortable-->
+                      <tbody>
+                        <template v-if="!$data.isSystemField">
+                          <tr
+                            class="field-control"
+                            v-for="($data, $index) in typeProperties"
+                            :key="$index"
+                          >
+                            <td class="table-sortable">
+                              <span v-if="!isMultiContent" class="sortable"
+                                ><i class="glyphicon glyphicon-list"></i
+                              ></span>
+                            </td>
+                            <td :title="$data.name"
+                              >{{ $data.name.length > 8 ? $data.name.substr(0,
+                              7) + "…" : $data.name }}</td
+                            >
+                            <td :title="$data.displayName"
+                              >{{ $data.displayName.length > 8 ?
+                              $data.displayName.substr(0, 7) + "…" :
+                              $data.displayName }}</td
+                            >
+                            <td class="table-action hover-hide">
+                              <span
+                                :class="$data.multipleLanguage ? 'green' : 'label-default'"
+                                class="label label-sm pull-right"
+                                >{{ Kooboo.text.common[ $data.multipleLanguage ?
+                                "yes" : "no" ] }}</span
+                              >
+                            </td>
+                            <td class="table-action hover-hide">
+                              <span
+                                :class="$data.isSummaryField ? 'green' : 'label-default'"
+                                class="label label-sm pull-right"
+                                >{{ Kooboo.text.common[ $data.isSummaryField ?
+                                "yes" : "no" ] }}</span
+                              >
+                            </td>
+                            <td class="table-action hover-hide">
+                              <span
+                                class="$data.editable ? 'green' : 'label-default'"
+                                class="label label-sm pull-right"
+                                >{{ Kooboo.text.common[ $data.editable ? "yes" :
+                                "no" ] }}</span
+                              >
+                            </td>
+                            <td class="table-action hover-show"></td>
+                            <td class="table-action hover-show"
+                              ><a
+                                class="btn btn-xs blue"
+                                @click="editProperty"
+                                v-kb-tooltip="Kooboo.text.common.edit"
+                                ><i class="fa fa-pencil"></i></a
+                            ></td>
+                            <td class="table-action hover-show">
+                              <a
+                                v-if="!$data.isSystemField"
+                                class="btn btn-xs red"
+                                @click="deleteProperty"
+                                v-kb-tooltip="Kooboo.text.common.delete"
+                                ><i class="fa fa-close"></i
+                              ></a>
+
+                              <a
+                                v-else
+                                class="btn btn-xs red disabled"
+                                disabled
+                                v-kb-tooltip="Kooboo.text.site.contentType.systemFieldUndeletable"
+                                ><i class="fa fa-close"></i
+                              ></a>
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                      <tfoot>
+                        <tr class="action-row">
+                          <td
+                            colspan="100"
+                            v-kb-tooltip:left="Kooboo.text.site.contentType.showSystemField"
+                          >
+                            <a
+                              href="javascript:;"
+                              @click="toggleAllFields"
+                              style="padding-top:0; padding-bottom:0;"
+                            >
+                              <i
+                                class="fa"
+                                :class="allFieldsShow ? 'fa-chevron-up' : 'fa-chevron-down'"
+                              ></i>
+                            </a>
+                          </td>
+                        </tr>
+
+                        <template v-if="allFieldsShow">
+                          <tr
+                            class="field-control"
+                            v-for="($data, $index) in typeProperties"
+                            :key="$index"
+                          >
+                            <template v-if="$data.isSystemField">
+                              <td class="table-sortable"></td>
+                              <td>{{ $data.name }}</td>
+                              <td
+                                >{{ $data.displayName.length > 9 ?
+                                $data.displayName.substr(0, 8) + "..." :
+                                $data.displayName }}</td
+                              >
+                              <td class="table-action hover-hide">
+                                <span
+                                  :class="$data.multipleLanguage ? 'green' : 'label-default'"
+                                  class="label label-sm pull-right"
+                                  >{{ Kooboo.text.common[ $data.multipleLanguage
+                                  ? "yes" : "no" ] }}</span
+                                >
+                              </td>
+                              <td class="table-action hover-hide">
+                                <span
+                                  :class="$data.isSummaryField ? 'green' : 'label-default'"
+                                  class="label label-sm pull-right"
+                                  >{{ Kooboo.text.common[ $data.isSummaryField ?
+                                  "yes" : "no" ] }}</span
+                                >
+                              </td>
+                              <td class="table-action hover-hide">
+                                <span
+                                  :class="$data.editable ? 'green' : 'label-default'"
+                                  class="label label-sm pull-right"
+                                  >{{ Kooboo.text.common[ $data.editable ? "yes"
+                                  : "no" ] }}</span
+                                >
+                              </td>
+                              <td
+                                class="table-action hover-show"
+                                colspan="2"
+                              ></td>
+                              <td class="table-action hover-show"
+                                ><a
+                                  class="btn btn-xs blue"
+                                  @click="editProperty"
+                                  v-kb-tooltip="Kooboo.text.common.edit"
+                                  ><i class="fa fa-pencil"></i></a
+                              ></td>
+                            </template>
+                          </tr>
+                        </template>
+                      </tfoot>
+                    </table>
+                    <button
+                      v-if="!isMultiContent && ['normal','fieldRequired'].indexOf(contentMode) > -1"
+                      class="btn btn-block blue margin-bottom-25"
+                      @click="onCreateField"
+                      ><i class="fa fa-plus"></i> <span>New field</span></button
+                    >
+                  </div>
+                  <div class="form-group">
+                    <hr />
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label" for="">Save to folder</label>
+                    <template v-if="!hasFolder">
+                      <div v-if="avaliableFolders.length" class="form-inline">
+                        <select
+                          data-bind="options: avaliableFolders, optionsText: 'displayName', optionsValue: 'id', value: choosedFolderId, event: { change: choosedFolderChange }"
+                          class="form-control input-large"
+                        ></select>
+                        <button
+                          class="btn btn-default pull-right"
+                          @click="onCreateFolder"
+                          v-kb-tooltip="Kooboo.text.common.add"
+                          ><i class="fa fa-plus"></i
+                        ></button>
+                      </div>
+                      <p v-else class="form-control-static">No folder</p>
+                    </template>
+                    <p v-else class="form-control-static"
+                      >{{ choosedFolder.displayName }}</p
+                    >
+                  </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn green" data-bind="click: onCreateNewContentType">Save</button>
-                    <button class="btn gray" data-bind="click: onContentTypeModalHide">Cancel</button>
-                </div>
+              </div>
             </div>
+          </section>
         </div>
+      </div>
     </div>
-    <div class="modal fade" data-bind="modal: showFolderModal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" data-bind="click: onHideFolderModal"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">New Folder</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Name</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" data-bind="value: newFolderName, error: newFolderName">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Display name</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" data-bind="value: newFolderDisplayName">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Content type</label>
-                            <div class="col-md-9">
-                                <select class="form-control" data-bind="value: newFolderContentTypeId, 
+  </div>
+  <div
+    class="modal fade"
+    data-bind="modal: showContentTypeModal"
+    data-backdrop="static"
+    data-keyboard="false"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-bind="click: onContentTypeModalHide"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">Content Type</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-md-3">Type name</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  data-bind="value: contentTypeName, error: contentTypeName"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn green" data-bind="click: onCreateNewContentType"
+            >Save</button
+          >
+          <button class="btn gray" data-bind="click: onContentTypeModalHide"
+            >Cancel</button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal fade"
+    data-bind="modal: showFolderModal"
+    data-backdrop="static"
+    data-keyboard="false"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-bind="click: onHideFolderModal"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">New Folder</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-md-3">Name</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  data-bind="value: newFolderName, error: newFolderName"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-3">Display name</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  class="form-control"
+                  data-bind="value: newFolderDisplayName"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-3">Content type</label>
+              <div class="col-md-9">
+                <select
+                  class="form-control"
+                  data-bind="value: newFolderContentTypeId, 
                                 options: contentTypes, 
                                 optionsText: 'name', 
                                 optionsValue: 'id', 
                                 optionsCaption: Kooboo.text.component.folderEditor.chooseItemBelow, 
-                                error: newFolderContentTypeId"></select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn green" data-bind="click: onCreateNewFolder">Save</button>
-                    <button class="btn gray" data-bind="click: onHideFolderModal">Cancel</button>
-                </div>
+                                error: newFolderContentTypeId"
+                ></select>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="modal-footer">
+          <button class="btn green" data-bind="click: onCreateNewFolder"
+            >Save</button
+          >
+          <button class="btn gray" data-bind="click: onHideFolderModal"
+            >Cancel</button
+          >
+        </div>
+      </div>
     </div>
-    <div class="page-buttons">
-        <a href="javascript:;" class="btn green" data-bind="visible: isNewContent, click: onContentSaveAndCreate">Save &amp; Create</a>
-        <a href="javascript:;" class="btn green" data-bind="visible: isNewContent, click: onContentSaveAndReturn">Save</a>
-        <a href="javascript:;" class="btn green" data-bind="visible: !isNewContent(), click: onContentSave">Save</a>
-        <a href="javascript:;" class="btn green" data-bind="visible: !isNewContent(), click: onContentSaveAndReturn">Save &amp; Return</a>
-        <a href="javascript:;" class="btn gray" data-bind="click: userCancel">Return</a>
-    </div>
-    <div data-bind="component: { name: 'kb-field-editor', params: {
+  </div>
+  <div class="page-buttons">
+    <template v-if="isNewContent">
+      <a href="javascript:;" class="btn green" @click="onContentSaveAndCreate"
+        >Save &amp; Create</a
+      >
+      <a href="javascript:;" class="btn green" @click="onContentSaveAndReturn"
+        >Save</a
+      >
+    </template>
+    <template v-else>
+      <a href="javascript:;" class="btn green" @click="onContentSave">Save</a>
+      <a href="javascript:;" class="btn green" @click="onContentSaveAndReturn"
+        >Save &amp; Return</a
+      >
+    </template>
+    <a href="javascript:;" class="btn gray" @click="userCancel">Return</a>
+  </div>
+  <div
+    data-bind="component: { name: 'kb-field-editor', params: {
         onShow: onFieldModalShow,
         onSave: onFieldSave,
         data: fieldData,
@@ -292,27 +527,30 @@
             showPreviewPanel: true,
             getFieldNames: getFieldNames
         }
-    }}"></div>
-    <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+    }}"
+  ></div>
+  <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
 <script>
-    window.__gl = {};
-    Kooboo.viewEditor = {
-        component: {}
-    };
+  window.__gl = {};
+  Kooboo.viewEditor = {
+    component: {}
+  };
 </script>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbMultilangSelector.js",
-            "/_Admin/Scripts/components/kbFieldEditor.js",
-            "/_Admin/Scripts/components/kbFieldPanel.js",
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/vue-components/kbMultilangSelector.js",
+      "/_Admin/Scripts/vue-components/kb-media-dialog.js",
 
-            "/_Admin/Scripts/lib/jquery-ui-customized.js",
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/lib/moment.min.js",
-            "/_Admin/Scripts/kobindings.sortable.js",
-        ])
-    })()
+      "/_Admin/Scripts/components/kbFieldEditor.js",
+      "/_Admin/Scripts/vue-components/kbFieldPanel.js",
+
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/lib/moment.min.js",
+      "/_Admin/Scripts/kobindings.sortable.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Contents/Content.js"></script>
