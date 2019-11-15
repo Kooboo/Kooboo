@@ -1,171 +1,136 @@
-<!-- ko if: fields().length -->
-<div data-bind="foreach: fields" class="col-md-11 margin-bottom-25 form-horizontal">
-    <div class="margin-bottom-15" data-bind="visible: isShow">
+<div>
+  <kb-form
+    simple
+    v-if="mappedFields.length"
+    class="col-md-11 margin-bottom-25 form-horizontal"
+    :model="model"
+    :rules="rules"
+  >
+    <kb-form-item
+      simple
+      class="margin-bottom-15"
+      v-for="(field, index) in mappedFields"
+      :key="index"
+      :prop="field.prop"
+      v-show="isShow(field)"
+    >
+      <component :is="field.controlName" :field="field"></component>
+    </kb-form-item>
+  </kb-form>
+  <template v-else>
+    No field Yet
+  </template>
 
-        <!-- ko if: controlType() == 'TextBox' -->
-        <!-- ko component: {    
-            name:'text-box',
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'TextArea' -->
-        <!-- ko component: {
-            name: "text-area",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'RichEditor' || controlType() == 'Tinymce' -->
-        <!-- ko component: {
-            name: "rich-editor",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'Selection' -->
-        <!-- ko component: {
-            name: "selection",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'CheckBox' -->
-        <!-- ko component: {
-            name: "checkbox",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'RadioBox' -->
-        <!-- ko component: {
-            name: "radiobox",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'Boolean' || controlType() == 'Switch' -->
-        <!-- ko component: {
-            name: "switch",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'MediaFile' -->
-        <!-- ko component: {
-            name: "media-file",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'File' -->
-        <!-- ko component: {
-            name: "file",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'DateTime' -->
-        <!-- ko component: {
-            name: "date-time",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko if: controlType() == 'Number' -->
-        <!-- ko component: {
-            name: "number",
-            params: $data
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
-    </div>
-</div>
-<!-- /ko -->
-<!-- ko if: !fields().length -->
-No field Yet
-<!-- /ko -->
-
-<div class="col-md-11 form-horizontal">
+  <div class="col-md-11 form-horizontal" k-if="false">
     <!-- CATEGORY START -->
     <div data-bind="visible: categories().length && !isMultiContent()">
-        <!-- ko foreach: categories -->
-        <div class="form-group margin-bottom-10">
-            <label class="col-md-3 control-label" data-bind="text: display"></label>
-            <div class="col-md-9">
-                <div class="file-list">
-                    <ul data-bind="foreach:contents,visible:contents().length">
-                        <li>
-                            <!-- ko text:values[Object.keys(values)[0]] -->
-                            <!--/ko-->
-                            <a href="javascript:;" data-toggle="tooltip" title="Remove" data-bind="click:$parent.remove">
-                                <i class="fa fa-remove"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <span class="btn btn-file green" data-bind="click: onShowCategoryDialog, text: Kooboo.text.common.select"></span>
-                </div>
-            </div>
+      <!-- ko foreach: categories -->
+      <div class="form-group margin-bottom-10">
+        <label class="col-md-3 control-label" data-bind="text: display"></label>
+        <div class="col-md-9">
+          <div class="file-list">
+            <ul data-bind="foreach:contents,visible:contents().length">
+              <li>
+                <!-- ko text:values[Object.keys(values)[0]] -->
+                <!--/ko-->
+                <a
+                  href="javascript:;"
+                  data-toggle="tooltip"
+                  title="Remove"
+                  data-bind="click:$parent.remove"
+                >
+                  <i class="fa fa-remove"></i>
+                </a>
+              </li>
+            </ul>
+            <span
+              class="btn btn-file green"
+              data-bind="click: onShowCategoryDialog, text: Kooboo.text.common.select"
+            ></span>
+          </div>
         </div>
-        <!-- /ko -->
+      </div>
+      <!-- /ko -->
     </div>
-    <div class="modal category-dialog" data-backdrop="static" data-bind="modal: showCategoryDialog" style="z-index: 200002">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-bind="click: onHideCategoryDialog"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title" data-bind="text: Kooboo.text.component.fieldPanel.categories"></h4>
+    <div
+      class="modal category-dialog"
+      data-backdrop="static"
+      data-bind="modal: showCategoryDialog"
+      style="z-index: 200002"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-bind="click: onHideCategoryDialog"
+              ><i class="fa fa-close"></i
+            ></button>
+            <h4
+              class="modal-title"
+              data-bind="text: Kooboo.text.component.fieldPanel.categories"
+            ></h4>
+          </div>
+          <div class="modal-body">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <div class="col-md-12">
+                    <div id="categoryTree"></div>
+                  </div>
                 </div>
-                <div class="modal-body">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <div id="categoryTree"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button data-bind="click: onSaveCategory, text: Kooboo.text.common.save" type="button" class="btn green"></button>
-                    <button data-bind="click: onHideCategoryDialog, text: Kooboo.text.common.cancel" type="button" class="btn gray"></button>
-                </div>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              data-bind="click: onSaveCategory, text: Kooboo.text.common.save"
+              type="button"
+              class="btn green"
+            ></button>
+            <button
+              data-bind="click: onHideCategoryDialog, text: Kooboo.text.common.cancel"
+              type="button"
+              class="btn gray"
+            ></button>
+          </div>
         </div>
+      </div>
     </div>
     <!-- CATEGROIES END -->
 
     <!-- EMBEDDED START -->
     <div data-bind="visible: embedded().length && !isMultiContent()">
-        <!-- ko foreach: embedded -->
-        <div class="form-group margin-bottom-10">
-            <label class="col-md-3 control-label" data-bind="text: $data.alias || embeddedFolder.name"></label>
-            <div class="col-md-9">
-                <div class="file-list">
-                    <span class="btn btn-file green" data-bind="click: $parent.addEmbedded.bind($root, $data)">Edit</span>
-                    <span>
-                    <a class="btn btn-default disabled" href="#"><span>Embedded count</span>:&nbsp;
-                    <!-- ko text: contents.length-->
-                    <!-- /ko -->
-                    </a>
-                    </span>
-                </div>
-            </div>
+      <!-- ko foreach: embedded -->
+      <div class="form-group margin-bottom-10">
+        <label
+          class="col-md-3 control-label"
+          data-bind="text: $data.alias || embeddedFolder.name"
+        ></label>
+        <div class="col-md-9">
+          <div class="file-list">
+            <span
+              class="btn btn-file green"
+              data-bind="click: $parent.addEmbedded.bind($root, $data)"
+              >Edit</span
+            >
+            <span>
+              <a class="btn btn-default disabled" href="#"
+                ><span>Embedded count</span>:&nbsp;
+                <!-- ko text: contents.length-->
+                <!-- /ko -->
+              </a>
+            </span>
+          </div>
         </div>
-        <!-- /ko -->
+      </div>
+      <!-- /ko -->
     </div>
 
-    <embedded-dialog params="choosedEmbedded: currentEmbedded"></embedded-dialog>
+    <embedded-dialog
+      params="choosedEmbedded: currentEmbedded"
+    ></embedded-dialog>
     <!-- EMBEDDED END -->
+  </div>
 </div>

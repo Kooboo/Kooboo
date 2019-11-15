@@ -1,23 +1,10 @@
 <div class="form-group" :class="{'has-error': !kbFormItem.valid}">
   <label
-    v-if="field.isMultilingual"
-    :class="{ 'text-muted': field.disabled }"
-    class="control-label col-md-3"
-    >{{ field.fieldName + " (" + field.lang + ")" }}</label
-  >
-  <label
-    v-else
     :class="{ 'text-muted': field.disabled }"
     class="control-label col-md-3"
     >{{ field.fieldName }}</label
   >
   <div class="col-md-9" style="position: relative">
-    <input
-      v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
-      :disabled="field.disabled"
-      type="text"
-      class="form-control"
-    />
     <label
       class="checkbox-inline"
       v-for="(option, index) in field.options"
@@ -31,8 +18,8 @@
       <span>{{ option.key }}</span>
     </label>
     <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
-    <span v-if="!kbFormItem.valid" class="help-block kb-text-error">{{
-      kbFormItem.msg
-    }}</span>
+    <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+      >{{ kbFormItem.msg }}</span
+    >
   </div>
 </div>
