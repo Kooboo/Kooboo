@@ -44,18 +44,34 @@
     props: {
       siteLangs: Object,
       fields: Array,
-      values: Object
+      values: Object,
+      categories: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      },
+      embedded: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      }
     },
     data: function() {
       self = this;
       return {
         isMultiContent: !!LANG,
         mappedFields: [],
-        categories: [],
-        embedded: [],
         currentLangs: [],
         model: {},
-        rules: {}
+        rules: {},
+        // category
+        currentCategory: null,
+        choosedCategory: [],
+        showCategoryDialog: false,
+        // embedded
+        currentEmbedded: null
       };
     },
     mounted: function() {
@@ -184,6 +200,67 @@
           }
         });
         return rules;
+      },
+      // category
+      onShowCategoryDialog: function(category) {
+        Kooboo.TextContent.getByFolder({
+          folderId: category.categoryFolder.id,
+          pageSize: 99999
+        }).then(function(res) {
+          self.currentCategory = category;
+          self.showCategoryDialog = true;
+          var list = res.model["list"];
+          list.forEach(function(item) {
+            item.text = item.values[Object.keys(list[0].values)[0]];
+          });
+          var choosed = _.cloneDeep(category.contents);
+          var jsTreeData = list.map(function(o) {
+            var selected = choosed.some(function(choosed) {
+              return choosed.id === o.id;
+            });
+            o.state = {};
+            o.state.selected = selected;
+            return o;
+          });
+          $("#categoryTree")
+            .jstree({
+              plugins: ["types", "checkbox"],
+              types: {
+                default: {
+                  icon: "fa fa-file icon-state-warning"
+                }
+              },
+              core: {
+                strings: { "Loading ...": Kooboo.text.common.loading + " ..." },
+                data: jsTreeData,
+                multiple: category.multipleChoice
+              }
+            })
+            .on("changed.jstree", function(e, data) {
+              var selectedCategoryId = data.selected;
+              var choosedCate = list.filter(function(o) {
+                return selectedCategoryId.indexOf(o.id) > -1;
+              });
+              self.choosedCategory = choosedCate;
+            });
+        });
+      },
+      removeCategory: function(category, content) {
+        category.contents = _.without(category.contents, content);
+      },
+      onSaveCategory: function() {
+        self.currentCategory.contents = self.choosedCategory;
+        self.onHideCategoryDialog();
+      },
+      onHideCategoryDialog: function() {
+        $.jstree.reference("#categoryTree").destroy();
+        self.showCategoryDialog = false;
+        self.currentCategory = null;
+      },
+      // embedded
+      addEmbedded: function(choosedEmbedded) {
+        self.currentEmbedded = choosedEmbedded;
+        $("#embeddedDialog").modal("show");
       }
     },
     watch: {
