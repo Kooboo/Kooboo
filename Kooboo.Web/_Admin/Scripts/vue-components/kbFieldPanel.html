@@ -5,9 +5,9 @@
     class="col-md-11 margin-bottom-25 form-horizontal"
     :model="model"
     :rules="rules"
+    ref="panelForm"
   >
     <kb-form-item
-      simple
       class="margin-bottom-15"
       v-for="(field, index) in mappedFields"
       :key="index"

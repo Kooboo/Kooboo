@@ -16,34 +16,27 @@
       };
     },
     mounted: function() {
-      var unwatch = self.$watch(
-        function() {
-          return this.kbFormItem.kbForm.model[self.kbFormItem.prop];
-        },
-        function(fieldValue) {
-          if (fieldValue) {
-            if (self.field.isMultipleValue) {
-              self.pics = fieldValue.map(function(p) {
-                return {
-                  thumbnail: p + "?SiteId=" + Kooboo.getQueryString("SiteId"),
-                  url: p
-                };
-              });
-            } else {
-              self.pics = [
-                {
-                  thumbnail:
-                    fieldValue + "?SiteId=" + Kooboo.getQueryString("SiteId"),
-                  url: fieldValue
-                }
-              ];
+      var fieldValue = this.kbFormItem.kbForm.model[self.kbFormItem.prop];
+      if (fieldValue) {
+        if (self.field.isMultipleValue) {
+          self.pics = fieldValue.map(function(p) {
+            return {
+              thumbnail: p + "?SiteId=" + Kooboo.getQueryString("SiteId"),
+              url: p
+            };
+          });
+        } else {
+          self.pics = [
+            {
+              thumbnail:
+                fieldValue + "?SiteId=" + Kooboo.getQueryString("SiteId"),
+              url: fieldValue
             }
-            unwatch();
-          } else {
-            self.pics = [];
-          }
+          ];
         }
-      );
+      } else {
+        self.pics = [];
+      }
     },
     methods: {
       selectFile: function() {

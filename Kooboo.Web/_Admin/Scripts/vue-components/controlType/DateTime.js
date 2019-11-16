@@ -13,20 +13,10 @@
     },
     inject: ["kbFormItem"],
     mounted: function() {
-      var unwatch = this.$watch(
-        function() {
-          return this.kbFormItem.kbForm.model[this.kbFormItem.prop];
-        },
-        function(fieldValue) {
-          if (fieldValue) {
-            unwatch && unwatch();
-            this.formattedDate = moment(fieldValue)
-              .utc()
-              .format("YYYY-MM-DD HH:mm");
-          }
-        },
-        { immediate: true }
-      );
+      var fieldValue = this.kbFormItem.kbForm.model[this.kbFormItem.prop];
+      if (fieldValue) {
+        this.formattedDate = moment(fieldValue).format("YYYY-MM-DD HH:mm");
+      }
     },
     watch: {
       formattedDate(val) {
