@@ -1,7 +1,7 @@
 (function() {
   Vue.component("kb-form", {
     template:
-      "<div v-if=\"simple\"><slot></slot></div><div v-else :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
+      "<div v-if=\"simple\" ><slot></slot></div><div v-else :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
     props: {
       align: {
         type: String,
@@ -91,21 +91,30 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div v-if=\"kbForm.simple\"><slot :error=\"msg\"></slot></div><div v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
+      "<div v-if=\"kbForm.simple\" :data-valid-id='validId'><slot :error=\"msg\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
     props: {
       prop: String,
-      errorContainer: String
+      errorContainer: {
+        type: String,
+        default: function() {
+          this._validId = "_form" + new Date().getTime();
+          return "[data-valid-id='" + this._validId + "']";
+        }
+      }
     },
     inject: ["kbForm"],
-    provide: function() { 
+    provide: function() {
       return {
         kbFormItem: this
       };
     },
+    computed: {},
     data: function() {
+      var me = this;
       return {
         valid: true,
-        msg: ""
+        msg: "",
+        validId: me._validId
       };
     },
     mounted: function() {

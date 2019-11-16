@@ -16,8 +16,8 @@ Vue.directive("kb-tooltip", {
       trigger: trigger || "hover",
       html: binding.modifiers.html,
       template: binding.modifiers.error
-        ? '<div class="tooltip error" role="tooltip" style="z-index:199999"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-        : undefined,
+        ? '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+        : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
       container: $el.data("container") || "body"
     });
   },
