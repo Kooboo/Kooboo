@@ -22,13 +22,15 @@
   </template>
   <div class="col-md-11 form-horizontal">
     <!-- CATEGORY START -->
-    <div v-if="mappedCategories.length && !isMultiContent">
+    <div v-if="categories.length && !isMultiContent">
       <div
         class="form-group margin-bottom-10"
-        v-for="(category,index) in mappedCategories"
+        v-for="(category,index) in categories"
         :key="index"
       >
-        <label class="col-md-3 control-label">{{ category.display }}</label>
+        <label class="col-md-3 control-label"
+          >{{ category.alias || category.display }}</label
+        >
         <div class="col-md-9">
           <div class="file-list">
             <ul v-if="category.contents.length">
@@ -94,36 +96,33 @@
     <!-- CATEGROIES END -->
 
     <!-- EMBEDDED START -->
-    <div data-bind="visible: embedded().length && !isMultiContent()">
-      <!-- ko foreach: embedded -->
-      <div class="form-group margin-bottom-10">
-        <label
-          class="col-md-3 control-label"
-          data-bind="text: $data.alias || embeddedFolder.name"
-        ></label>
+    <div v-if="embedded.length && !isMultiContent">
+      <div
+        class="form-group margin-bottom-10"
+        v-for="($data, $index) in embedded"
+        :key="$index"
+      >
+        <label class="col-md-3 control-label"
+          >{{ $data.alias || $data.embeddedFolder.name }}</label
+        >
         <div class="col-md-9">
           <div class="file-list">
-            <span
-              class="btn btn-file green"
-              data-bind="click: $parent.addEmbedded.bind($root, $data)"
+            <span class="btn btn-file green" @click="addEmbedded($data)"
               >Edit</span
             >
             <span>
               <a class="btn btn-default disabled" href="#"
-                ><span>Embedded count</span>:&nbsp;
-                <!-- ko text: contents.length-->
-                <!-- /ko -->
+                ><span>Embedded count</span>:&nbsp; {{ $data.contents.length }}
               </a>
             </span>
           </div>
         </div>
       </div>
-      <!-- /ko -->
     </div>
 
-    <embedded-dialog
-      params="choosedEmbedded: currentEmbedded"
-    ></embedded-dialog>
+    <kb-embedded-dialog
+      :choosed-embedded="currentEmbedded"
+    ></kb-embedded-dialog>
     <!-- EMBEDDED END -->
   </div>
 </div>

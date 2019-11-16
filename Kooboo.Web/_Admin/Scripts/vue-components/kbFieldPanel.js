@@ -45,22 +45,33 @@
       siteLangs: Object,
       fields: Array,
       values: Object,
-      categories: Array
+      categories: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      },
+      embedded: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      }
     },
     data: function() {
       self = this;
       return {
         isMultiContent: !!LANG,
         mappedFields: [],
-        embedded: [],
         currentLangs: [],
         model: {},
         rules: {},
         // category
-        mappedCategories: [],
-        currentCategory: "",
+        currentCategory: null,
         choosedCategory: [],
-        showCategoryDialog: false
+        showCategoryDialog: false,
+        // embedded
+        currentEmbedded: null
       };
     },
     mounted: function() {
@@ -110,7 +121,7 @@
           });
 
           var categories = {};
-          self.mappedCategories.forEach(function(cate) {
+          self.categories.forEach(function(cate) {
             categories[cate.categoryFolder.id] = cate.contents.map(function(c) {
               return c.id;
             });
@@ -245,6 +256,11 @@
         $.jstree.reference("#categoryTree").destroy();
         self.showCategoryDialog = false;
         self.currentCategory = null;
+      },
+      // embedded
+      addEmbedded: function(choosedEmbedded) {
+        self.currentEmbedded = choosedEmbedded;
+        $("#embeddedDialog").modal("show");
       }
     },
     watch: {
@@ -326,20 +342,6 @@
         self.mappedFields = fields;
         self.model = model;
         self.rules = rules;
-      },
-      categories: function(categories) {
-        // category
-        if (categories && categories.length) {
-          self.mappedCategories = categories.map(function(opt) {
-            return {
-              alias: opt.alias,
-              contents: opt.contents,
-              display: opt.alias || opt.display,
-              multipleChoice: opt.multipleChoice,
-              categoryFolder: opt.categoryFolder
-            };
-          });
-        }
       }
     },
     beforeDestroy: function() {
