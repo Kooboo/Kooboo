@@ -220,6 +220,14 @@ Vue.directive("kb-html", {
 });
 //#endregion </kb-html>
 
+//#region <kb-focus>
+Vue.directive("kb-focus", {
+  inserted: function(element) {
+    element.focus();
+  }
+});
+//#endregion </kb-focus>
+
 //#region <kb-collapsein>
 Vue.directive("kb-collapsein", {
   bind: function(element, binding) {

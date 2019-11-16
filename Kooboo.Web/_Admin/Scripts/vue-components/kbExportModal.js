@@ -36,7 +36,7 @@
           cnt.selected = false;
         });
         self.selectedContent = [];
-        self.siteId && (self.siteId = null);
+        self.siteId && this.$emit("update:siteId", null);
       },
       onExport: function() {
         if (self.exportType == "complete") {
@@ -68,7 +68,7 @@
                       Stores: contents.join(",")
                     }
                   : {
-                      SiteId: params.siteId(),
+                      SiteId: self.siteId,
                       Stores: contents.join(",")
                     }
               )
