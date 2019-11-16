@@ -452,7 +452,6 @@ Vue.directive("kb-sortable", function(el, binding) {
 
 // #region {{ | ellipsis}}
 Vue.filter("ellipsis", function(value, len, str) {
-  console.log(value);
   if (len && typeof len === "number") {
     if (str && typeof str === "string") {
       return value.substr(0, len - 2) + str;
@@ -524,3 +523,107 @@ Vue.component("kb-container", {
   }
 });
 // #endregion </kb-container>
+
+// #region <kb-hint>
+Vue.directive("kb-hint", {
+  inserted: function(el, binding) {
+    var element = $(el);
+    var existShow = false;
+    var tipsOptions = {
+      title: "",
+      placement: "right",
+      trigger: "manual",
+      template:
+        '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+    };
+
+    if (binding.arg) {
+      tipsOptions.placement = binding.arg;
+    }
+
+    switch (typeof binding.value) {
+      case "string":
+        tipsOptions.title = binding.value;
+        break;
+      case "object":
+        if (binding.value.msg) {
+          tipsOptions.title = binding.value.msg;
+        }
+        if (binding.value.hasOwnProperty("show")) {
+          existShow = true;
+        }
+        if (binding.value.options) {
+          _.assign(tipsOptions, binding.value.options);
+        }
+        break;
+    }
+    element.tooltip(tipsOptions);
+    if (existShow) {
+      if (binding.value.show) {
+        element.tooltip("show");
+        if (!el.classList.contains("has-error")) {
+          el.classList.add("has-error");
+        }
+      } else {
+        element.tooltip("hide");
+        if (el.classList.contains("has-error")) {
+          el.classList.remove("has-error");
+        }
+      }
+    } else {
+      element.tooltip("show");
+      if (!el.classList.contains("has-error")) {
+        el.classList.add("has-error");
+      }
+    }
+  },
+  update: function(el, binding) {
+    var element = $(el);
+    var existShow = false;
+    var tipsOptions = element.data("bs.tooltip").options;
+
+    if (binding.arg) {
+      tipsOptions.placement = binding.arg;
+    }
+
+    switch (typeof binding.value) {
+      case "string":
+        tipsOptions.title = binding.value;
+        break;
+      case "object":
+        if (binding.value.options) {
+          _.assign(tipsOptions, binding.value.options);
+        }
+        if (binding.value.msg) {
+          tipsOptions.title = binding.value.msg;
+        }
+        if (binding.value.hasOwnProperty("show")) {
+          existShow = true;
+        }
+        break;
+    }
+    element.tooltip(tipsOptions);
+    if (existShow) {
+      if (binding.value.show) {
+        element.tooltip("show");
+        if (!el.classList.contains("has-error")) {
+          el.classList.add("has-error");
+        }
+      } else {
+        element.tooltip("hide");
+        if (el.classList.contains("has-error")) {
+          el.classList.remove("has-error");
+        }
+      }
+    } else {
+      element.tooltip("show");
+      if (!el.classList.contains("has-error")) {
+        el.classList.add("has-error");
+      }
+    }
+  },
+  unbind: function(el) {
+    $(el).tooltip("destroy");
+  }
+});
+// #endregion </kb-hint>

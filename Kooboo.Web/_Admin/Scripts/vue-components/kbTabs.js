@@ -19,6 +19,9 @@
     watch: {
       d_active: function(value) {
         this.$emit("update:active", value);
+      },
+      active: function(value) {
+        this.d_active = value;
       }
     },
     mounted: function() {
@@ -43,6 +46,7 @@
       },
       changeIndex: function(event, index) {
         this.d_active = index;
+        this.$emit('change',index)
       }
     }
   });
