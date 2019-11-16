@@ -874,7 +874,12 @@
     site: {
       sites: {
         takeOffline: "Take offline",
-        takeOnline: "Take online"
+        takeOnline: "Take online",
+        transferAWebsiteTip:"Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.",
+        templatesTip:"Share or use templates made by public users or from your organization private packages.",
+        createTip:"Create a blank new website, and use well defined elements to develop your website.",
+        importTip:"Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.",
+        createModalTip:"Create a blank new website, and use well defined elements to develop your website."
       },
       setting: {
         addNewLanguage: "Add new language",

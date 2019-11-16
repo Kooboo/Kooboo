@@ -91,7 +91,7 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div v-if=\"kbForm.simple\" :data-valid-id='validId'><slot :error=\"msg\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
+      "<div v-if=\"kbForm.simple\"><slot :error=\"msg\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
     props: {
       prop: String,
       errorContainer: {

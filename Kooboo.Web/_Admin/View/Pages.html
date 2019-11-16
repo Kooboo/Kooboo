@@ -94,11 +94,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Page.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -121,9 +118,9 @@
 
     <kb-table-column align="right">
       <template v-slot="row">
-        <a class="btn blue" @click.stop="settingClick(row)">{{
-          Kooboo.text.common.setting
-        }}</a>
+        <a class="btn blue" @click.stop="settingClick(row)"
+          >{{ Kooboo.text.common.setting }}</a
+        >
         <a
           class="btn btn-primary"
           @click.stop=""
@@ -378,17 +375,17 @@
           <button class="close" @click="showQRCodeModal=false">
             <i class="fa fa-close"></i>
           </button>
-          <h4 class="modal-title">{{
-            Kooboo.text.site.page.previewInMobile
-          }}</h4>
+          <h4 class="modal-title"
+            >{{ Kooboo.text.site.page.previewInMobile }}</h4
+          >
         </div>
         <div class="modal-body">
           <div id="qr-code" style="text-align:center"></div>
         </div>
         <div class="modal-footer">
-          <button @click="showQRCodeModal=false">{{
-            Kooboo.text.common.OK
-          }}</button>
+          <button @click="showQRCodeModal=false"
+            >{{ Kooboo.text.common.OK }}</button
+          >
         </div>
       </div>
     </div>
