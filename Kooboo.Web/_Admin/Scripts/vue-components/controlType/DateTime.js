@@ -19,10 +19,10 @@
         },
         function(fieldValue) {
           if (fieldValue) {
+            unwatch && unwatch();
             this.formattedDate = moment(fieldValue)
               .utc()
               .format("YYYY-MM-DD HH:mm");
-            unwatch && unwatch();
           }
         },
         { immediate: true }

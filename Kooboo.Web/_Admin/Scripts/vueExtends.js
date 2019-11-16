@@ -241,8 +241,12 @@ Vue.directive("kb-collapsein", {
   Vue.directive("kb-richeditor", {
     bind: function(element, binding, vnode) {
       // Get custom configuration object from the 'wysiwygConfig' binding, more settings here... http://www.tinymce.com/wiki.php/Configuration
-      var options = binding.value.editorConfig ? binding.value.editorConfig : {},
-        isMailEditor = binding.value.mailConfig ? binding.value.mailConfig : false,
+      var options = binding.value.editorConfig
+          ? binding.value.editorConfig
+          : {},
+        isMailEditor = binding.value.mailConfig
+          ? binding.value.mailConfig
+          : false,
         // Set up a minimal default configuration
         defaults = {
           language: languageManager.getTinyMceLanguage(), // params needed
@@ -269,14 +273,18 @@ Vue.directive("kb-collapsein", {
           autoresize_max_height: 600,
           setup: function(editor) {
             editor.on("change keyup nodechange", function(args) {
+              var content = "";
               if (SITE_ID) {
-                binding.value.value = editor
+                content = editor
                   .getContent()
                   .split(SITE_ID_STRING)
                   .join("");
               } else {
-                binding.value.value = editor.getContent();
+                content = editor.getContent();
               }
+              binding.value.value = content;
+              element.value = content;
+              Kooboo.trigger(element, "input");
             });
 
             editor.on("NodeChange", function(e) {
@@ -508,5 +516,3 @@ Vue.component("kb-container", {
   }
 });
 // #endregion </kb-container>
-
-

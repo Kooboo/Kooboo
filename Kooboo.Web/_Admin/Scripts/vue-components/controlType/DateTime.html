@@ -9,7 +9,8 @@
       v-model="formattedDate"
       :disabled="field.disabled"
       v-kb-datetimepicker
-      keydown.prevent
+      readonly
+      style="background: transparent;"
       type="text"
       class="form-control"
     />
