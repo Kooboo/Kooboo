@@ -273,14 +273,18 @@ Vue.directive("kb-collapsein", {
           autoresize_max_height: 600,
           setup: function(editor) {
             editor.on("change keyup nodechange", function(args) {
+              var content = "";
               if (SITE_ID) {
-                binding.value.value = editor
+                content = editor
                   .getContent()
                   .split(SITE_ID_STRING)
                   .join("");
               } else {
-                binding.value.value = editor.getContent();
+                content = editor.getContent();
               }
+              binding.value.value = content;
+              element.value = content;
+              Kooboo.trigger(element, "input");
             });
 
             editor.on("NodeChange", function(e) {

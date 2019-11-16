@@ -66,7 +66,7 @@ $(function() {
         contentTypeName: "",
         startValidating: false,
         validationPassed: true,
-        contentValues: {},
+        contentValues: {}
       };
     },
     mounted: function() {
@@ -96,15 +96,6 @@ $(function() {
           self.refreshContent();
         });
       });
-
-      // TEST
-      // Kooboo.EventBus.publish("ko/style/list/pickimage/show", {
-      //   settings: {},
-      //   field_name: "image",
-      //   type: "image",
-      //   win: window,
-      //   from: "RICHEDITOR"
-      // });
     },
     computed: {
       isAbleToCreateType: function() {
@@ -545,7 +536,7 @@ $(function() {
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
-      },
+      }
     },
     watch: {
       _contentType(typeId) {

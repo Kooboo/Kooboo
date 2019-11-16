@@ -8,9 +8,8 @@
   Vue.directive("kb-datetimepicker", {
     bind: function(element, binding) {
       var options = {};
-      if (binding.value) {
-        _.extend(options, defaultOptions, binding.value);
-      }
+      _.extend(options, defaultOptions, binding.value || {});
+
       $(element)
         .datetimepicker(options)
         .on("changeDate", function(e) {
@@ -25,10 +24,8 @@
     },
     update: function(element, binding) {
       // if (!_.isEqual(binding.value, binding.oldValue)) {
-      //   var options = {};
-      //   if (binding.value) {
-      //     _.extend(options, defaultOptions, binding.value);
-      //   }
+      // var options = {};
+      // _.extend(options, defaultOptions, binding.value || {});
       // }
       $(element).datetimepicker("update");
     }
