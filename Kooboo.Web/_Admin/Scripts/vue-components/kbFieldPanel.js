@@ -83,6 +83,9 @@
       }
     },
     methods: {
+      validate: function() {
+        return this.$refs.panelForm.validate();
+      },
       isShow: function(field) {
         return self.currentLangs.indexOf(field.lang) > -1;
       },
@@ -95,6 +98,53 @@
           return "kb-control-" + controlType.toLowerCase();
         }
         return "kb-control-textbox";
+      },
+      getFieldRules: function(validations) {
+        var rules = [];
+        validations.forEach(function(rule) {
+          var type = rule.type || rule.validateType,
+            msg = rule.msg || rule.errorMessage;
+
+          switch (type) {
+            case "required":
+              rules.push({
+                required: true,
+                message: msg || Kooboo.text.validation.required
+              });
+              break;
+            case "regex":
+              rules.push({
+                pattern: new RegExp(rule.pattern),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+            case "range":
+            case "stringLength":
+              rules.push({
+                min: Number(rule.min),
+                max: Number(rule.max),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+            case "min":
+            case "minLength":
+            case "minChecked":
+              rules.push({
+                min: Number(rule.value),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+            case "max":
+            case "maxLength":
+            case "maxChecked":
+              rules.push({
+                max: Number(rule.value),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+          }
+        });
+        return rules;
       }
     },
     watch: {
@@ -139,10 +189,10 @@
                 v.value = true;
               }
             }
+
             var field = {
               _id: Kooboo.getRandomId(),
               lang: v.lang,
-              name: item.name,
               fieldName:
                 item.isMultilingual && self.multilingualSite
                   ? item.displayName + " (" + v.lang + ")"
@@ -156,12 +206,20 @@
               ),
               isMultipleValue: item.multipleValue
             };
+            // fields
             fields.push(field);
+            // model
             model[field.prop] = item.multipleValue
               ? !v.value
                 ? []
                 : JSON.parse(v.value)
               : v.value;
+            // rules
+            var validations = JSON.parse(item.validations || "[]") || [];
+            var fieldRules = self.getFieldRules(validations);
+            if (fieldRules.length) {
+              rules[field.prop] = fieldRules;
+            }
           });
         });
         self.mappedFields = fields;
@@ -173,83 +231,4 @@
       self = null;
     }
   });
-
-  function Field(data) {
-    this._id = Kooboo.getRandomId();
-    this.name = data.name;
-    this.fieldName = data.displayName;
-    this.fieldValue = data.fieldValue;
-    this.prop = data.name + "_" + data.lang;
-    this.lang = data.lang;
-    this.controlType = data.controlType;
-
-    if (data.controlType == "Tinymce") {
-      this.controlName = "kb-control-richeditor";
-    } else if (data.controlType == "Boolean") {
-      this.controlName = "kb-control-switch";
-    } else if (data.controlType) {
-      this.controlName = "kb-control-" + data.controlType.toLowerCase();
-    } else {
-      this.controlName = "kb-control-textbox";
-    }
-
-    this.disabled = data.disabled;
-    this.tooltip = data.tooltip;
-    this.options = JSON.parse(data.options || data.selectionOptions || "[]");
-    this.isMultilingual = data.isMultilingual && data.isMultilingualSite;
-    this.isMultipleValue = data.multipleValue;
-
-    // var _validations = JSON.parse(data.validations || "[]") || [],
-    //   validateRules = {};
-
-    // this.validations = ko.observableArray(_validations);
-    // for (var i = 0, len = _validations.length; i < len; i++) {
-    //   var rule = _validations[i],
-    //     type = rule.type || rule.validateType,
-    //     msg = rule.msg || rule.errorMessage;
-
-    //   switch (type) {
-    //     case "required":
-    //       validateRules[type] = msg || Kooboo.text.validation.required;
-    //       break;
-    //     case "regex":
-    //       validateRules[type] = {
-    //         pattern: new RegExp(rule.pattern),
-    //         message: msg || Kooboo.text.validation.inputError
-    //       };
-    //       break;
-    //     case "range":
-    //       validateRules[type] = {
-    //         from: Number(rule.min),
-    //         to: Number(rule.max),
-    //         message: msg || Kooboo.text.validation.inputError
-    //       };
-    //       break;
-    //     case "stringLength":
-    //       validateRules["stringlength"] = {
-    //         min: parseInt(rule.min),
-    //         max: parseInt(rule.max),
-    //         message: msg || Kooboo.text.validation.inputError
-    //       };
-    //       break;
-    //     case "min":
-    //     case "max":
-    //     case "minLength":
-    //     case "maxLength":
-    //     case "minChecked":
-    //     case "maxChecked":
-    //       validateRules[type] = {
-    //         value: Number(rule.value),
-    //         message: msg || Kooboo.text.validation.inputError
-    //       };
-    //       break;
-    //   }
-    // }
-    // this.fieldValue.extend({ validate: validateRules });
-    // this.validateRules = validateRules;
-
-    // this.isValid = function() {
-    //   return this.fieldValue.isValid();
-    // };
-  }
 })();

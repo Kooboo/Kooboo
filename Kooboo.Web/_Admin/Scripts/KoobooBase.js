@@ -2196,7 +2196,8 @@
         value == undefined ||
         value == null ||
         (typeof value == "number" && Number.isNaN(value)) ||
-        (typeof value == "string" && value.trim() == "")
+        (typeof value == "string" && value.trim() == "") ||
+        (Array.isArray(value) && value.length === 0)
       ) {
         return false;
       } else return true;

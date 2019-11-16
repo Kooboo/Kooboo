@@ -39,8 +39,8 @@
           var rules = this.rules[item.prop];
           // if it's object array fields
           if (
-            model == undefined &&
-            rules == undefined &&
+            model === undefined &&
+            rules === undefined &&
             item.prop.indexOf("].") !== -1
           ) {
             var arrayProp = item.prop.match(/\w+/g);
@@ -51,7 +51,7 @@
             }
           }
 
-          if (model == undefined || rules == undefined) {
+          if (model === undefined || !rules) {
             continue;
           }
           if (!outsideCall) {
@@ -91,7 +91,7 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div v-if=\"kbForm.simple\" :data-valid-id='validId'><slot :error=\"msg\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
+      "<div v-if=\"kbForm.simple\"><slot :error=\"msg\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
     props: {
       prop: String,
       errorContainer: {
