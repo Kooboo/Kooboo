@@ -2196,7 +2196,8 @@
         value == undefined ||
         value == null ||
         (typeof value == "number" && Number.isNaN(value)) ||
-        (typeof value == "string" && value.trim() == "")
+        (typeof value == "string" && value.trim() == "") ||
+        (Array.isArray(value) && value.length === 0)
       ) {
         return false;
       } else return true;
@@ -2207,6 +2208,8 @@
     min: function(value, min) {
       if (typeof value == "number") {
         return value >= min;
+      } else if (value === null) {
+        return 0 >= min;
       } else if (value.length != undefined) {
         return value.length >= min;
       }
@@ -2214,6 +2217,8 @@
     max: function(value, max) {
       if (typeof value == "number") {
         return value <= max;
+      } else if (value === null) {
+        return 0 <= max;
       } else if (value.length != undefined) {
         return value.length <= max;
       }

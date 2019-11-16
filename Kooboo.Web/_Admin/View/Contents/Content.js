@@ -66,7 +66,7 @@ $(function() {
         contentTypeName: "",
         startValidating: false,
         validationPassed: true,
-        contentValues: {},
+        contentValues: {}
       };
     },
     mounted: function() {
@@ -96,39 +96,6 @@ $(function() {
           self.refreshContent();
         });
       });
-
-      // TEST
-      // Kooboo.EventBus.publish("ko/style/list/pickimage/show", {
-      //   settings: {},
-      //   field_name: "image",
-      //   type: "image",
-      //   win: window,
-      //   from: "RICHEDITOR"
-      // });
-    },
-    computed: {
-      isAbleToCreateType: function() {
-        // TODO
-        return false;
-        return self.contentTypeName.isValid();
-      },
-      isAbleToSaveTextContent: function() {
-        // TODO
-        return false;
-        if (!self.choosedFolderId()) {
-          return false;
-        } else {
-          var flag = true;
-          this.startValidating(true);
-          if (this.validationPassed()) {
-            flag = this.fields().length > 1;
-          } else {
-            flag = false;
-          }
-          this.startValidating(false);
-          return flag;
-        }
-      }
     },
     methods: {
       onAllowModify: function() {
@@ -367,7 +334,7 @@ $(function() {
         self.showContentTypeModal = false;
       },
       onCreateNewContentType: function() {
-        if (self.isAbleToCreateType) {
+        if (self.isAbleToCreateType()) {
           Kooboo.ContentType.get({
             id: Kooboo.Guid.Empty
           }).then(function(res) {
@@ -402,9 +369,21 @@ $(function() {
           embedded: self.contentValues.embedded || {}
         };
       },
+      isAbleToCreateType: function() {
+        // TODO
+        return false;
+        return self.contentTypeName.isValid();
+      },
+      isAbleToSaveTextContent: function() {
+        if (!self.choosedFolderId) {
+          return false;
+        } else {
+          return this.$refs.fieldPanel.validate();
+        }
+      },
       onSubmit: function(cb) {
-        if (self.isAbleToSaveTextContent) {
-          Kooboo.TextContent.langupdate(self.getSaveTextContent).then(function(
+        if (self.isAbleToSaveTextContent()) {
+          Kooboo.TextContent.langupdate(self.getSaveTextContent()).then(function(
             res
           ) {
             if (res.success) {
@@ -545,7 +524,7 @@ $(function() {
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
-      },
+      }
     },
     watch: {
       _contentType(typeId) {

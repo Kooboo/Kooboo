@@ -15,6 +15,7 @@
           type="radio"
           :value="option.value"
           v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
+          :disabled="field.disabled"
         />
         <span>{{ option.key }}</span>
       </label>

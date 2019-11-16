@@ -35,23 +35,23 @@
           if (!item.prop) {
             continue;
           }
-          var model = this.model[item.prop];
+          var value = this.model[item.prop];
           var rules = this.rules[item.prop];
           // if it's object array fields
           if (
-            model == undefined &&
-            rules == undefined &&
+            value === undefined &&
+            rules === undefined &&
             item.prop.indexOf("].") !== -1
           ) {
             var arrayProp = item.prop.match(/\w+/g);
             rules = this.rules[arrayProp[0] + "[]"][arrayProp[2]];
-            var objModel = this.model[arrayProp[0]][arrayProp[1]];
-            if (objModel) {
-              model = objModel[arrayProp[2]];
+            var objValue = this.model[arrayProp[0]][arrayProp[1]];
+            if (objValue) {
+              value = objValue[arrayProp[2]];
             }
           }
 
-          if (model == undefined || rules == undefined) {
+          if (value === undefined || rules == undefined) {
             continue;
           }
           if (!outsideCall) {
@@ -59,7 +59,7 @@
               return !f.remote;
             });
           }
-          var result = Kooboo.validField(model, rules);
+          var result = Kooboo.validField(value, rules);
 
           if (!result.valid) valid = false;
           item.valid = result.valid;
