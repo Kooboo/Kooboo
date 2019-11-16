@@ -2208,6 +2208,8 @@
     min: function(value, min) {
       if (typeof value == "number") {
         return value >= min;
+      } else if (value === null) {
+        return 0 >= min;
       } else if (value.length != undefined) {
         return value.length >= min;
       }
@@ -2215,6 +2217,8 @@
     max: function(value, max) {
       if (typeof value == "number") {
         return value <= max;
+      } else if (value === null) {
+        return 0 <= max;
       } else if (value.length != undefined) {
         return value.length <= max;
       }
