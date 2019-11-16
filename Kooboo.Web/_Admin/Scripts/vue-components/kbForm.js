@@ -51,7 +51,7 @@
             }
           }
 
-          if (model === undefined || !rules) {
+          if (model == undefined || rules == undefined) {
             continue;
           }
           if (!outsideCall) {

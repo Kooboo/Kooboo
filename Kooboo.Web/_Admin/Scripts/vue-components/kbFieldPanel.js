@@ -43,7 +43,8 @@
     ),
     props: {
       siteLangs: Object,
-      fields: Array
+      fields: Array,
+      values: Object
     },
     data: function() {
       self = this;
@@ -51,6 +52,7 @@
         isMultiContent: !!LANG,
         mappedFields: [],
         categories: [],
+        embedded: [],
         currentLangs: [],
         model: {},
         rules: {}
@@ -84,7 +86,44 @@
     },
     methods: {
       validate: function() {
-        return this.$refs.panelForm.validate();
+        var valid = this.$refs.panelForm.validate();
+        if (valid) {
+          var values = {},
+            groups = _.groupBy(self.mappedFields, function(f) {
+              return f.lang;
+            });
+          var langs = Object.keys(groups);
+          langs.forEach(function(key) {
+            values[key] = {};
+            groups[key].forEach(function(v) {
+              var fieldValue = self.model[v.prop];
+              if (v.isMultipleValue || $.isArray(fieldValue)) {
+                fieldValue = JSON.stringify(fieldValue);
+              }
+              values[key][v.name] = fieldValue;
+            });
+          });
+
+          var categories = {};
+          self.categories.forEach(function(cate) {
+            categories[cate.categoryFolder.id] = cate.contents.map(function(c) {
+              return c.id;
+            });
+          });
+          var embedded = {};
+          self.embedded.forEach(function(emb) {
+            embedded[emb.embeddedFolder.id] = emb.contents.map(function(e) {
+              return e.id;
+            });
+          });
+
+          this.$emit("update:values", {
+            fieldsValue: values,
+            categories: categories,
+            embedded: embedded
+          });
+        }
+        return valid;
       },
       isShow: function(field) {
         return self.currentLangs.indexOf(field.lang) > -1;
@@ -193,6 +232,7 @@
             var field = {
               _id: Kooboo.getRandomId(),
               lang: v.lang,
+              name: item.name,
               fieldName:
                 item.isMultilingual && self.multilingualSite
                   ? item.displayName + " (" + v.lang + ")"

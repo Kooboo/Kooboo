@@ -15,9 +15,7 @@
     mounted: function() {
       var fieldValue = this.kbFormItem.kbForm.model[this.kbFormItem.prop];
       if (fieldValue) {
-        this.formattedDate = moment(fieldValue)
-          .utc()
-          .format("YYYY-MM-DD HH:mm");
+        this.formattedDate = moment(fieldValue).format("YYYY-MM-DD HH:mm");
       }
     },
     watch: {
