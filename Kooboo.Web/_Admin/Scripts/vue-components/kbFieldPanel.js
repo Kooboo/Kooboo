@@ -94,6 +94,17 @@
         self.currentLangs.push(self.siteLangs.default);
       }
       LANG && self.currentLangs.push(LANG);
+
+      // Kooboo.EventBus.subscribe("kb/textContent/embedded/edit", function(
+      //   choosedEmbedded
+      // ) {
+      //   var embeddedFolderId = choosedEmbedded.embeddedFolder.id;
+      //   var index = _.findIndex(self.embedded, function(o) {
+      //     return o.embeddedFolder.id === embeddedFolderId;
+      //   });
+      //   self.embedded.splice(index, 1);
+      //   self.embedded.splice(index, 0, choosedEmbedded);
+      // });
     },
     computed: {
       multilingualSite: function() {
