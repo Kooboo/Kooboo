@@ -20,24 +20,27 @@
   <template v-else>
     No field Yet
   </template>
-
-  <div class="col-md-11 form-horizontal" k-if="false">
+  <div class="col-md-11 form-horizontal">
     <!-- CATEGORY START -->
-    <div data-bind="visible: categories().length && !isMultiContent()">
-      <!-- ko foreach: categories -->
-      <div class="form-group margin-bottom-10">
-        <label class="col-md-3 control-label" data-bind="text: display"></label>
+    <div v-if="categories.length && !isMultiContent">
+      <div
+        class="form-group margin-bottom-10"
+        v-for="(category,index) in categories"
+        :key="index"
+      >
+        <label class="col-md-3 control-label"
+          >{{ category.alias || category.display }}</label
+        >
         <div class="col-md-9">
           <div class="file-list">
-            <ul data-bind="foreach:contents,visible:contents().length">
-              <li>
-                <!-- ko text:values[Object.keys(values)[0]] -->
-                <!--/ko-->
+            <ul v-if="category.contents.length">
+              <li v-for="(content, cidx) in category.contents" :key="cidx">
+                {{ content.values[Object.keys(content.values)[0]]}}
                 <a
                   href="javascript:;"
                   data-toggle="tooltip"
                   title="Remove"
-                  data-bind="click:$parent.remove"
+                  @click="removeCategory(category, content)"
                 >
                   <i class="fa fa-remove"></i>
                 </a>
@@ -45,32 +48,28 @@
             </ul>
             <span
               class="btn btn-file green"
-              data-bind="click: onShowCategoryDialog, text: Kooboo.text.common.select"
-            ></span>
+              @click="onShowCategoryDialog(category)"
+              >{{ Kooboo.text.common.select }}</span
+            >
           </div>
         </div>
       </div>
-      <!-- /ko -->
     </div>
     <div
       class="modal category-dialog"
       data-backdrop="static"
-      data-bind="modal: showCategoryDialog"
+      v-kb-modal="showCategoryDialog"
       style="z-index: 200002"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button
-              type="button"
-              class="close"
-              data-bind="click: onHideCategoryDialog"
+            <button type="button" class="close" @click="onHideCategoryDialog"
               ><i class="fa fa-close"></i
             ></button>
-            <h4
-              class="modal-title"
-              data-bind="text: Kooboo.text.component.fieldPanel.categories"
-            ></h4>
+            <h4 class="modal-title"
+              >{{ Kooboo.text.component.fieldPanel.categories }}</h4
+            >
           </div>
           <div class="modal-body">
             <div class="panel panel-default">
@@ -84,16 +83,12 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              data-bind="click: onSaveCategory, text: Kooboo.text.common.save"
-              type="button"
-              class="btn green"
-            ></button>
-            <button
-              data-bind="click: onHideCategoryDialog, text: Kooboo.text.common.cancel"
-              type="button"
-              class="btn gray"
-            ></button>
+            <button @click="onSaveCategory" type="button" class="btn green"
+              >{{ Kooboo.text.common.save }}</button
+            >
+            <button @click="onHideCategoryDialog" type="button" class="btn gray"
+              >{{ Kooboo.text.common.cancel }}</button
+            >
           </div>
         </div>
       </div>
@@ -101,36 +96,33 @@
     <!-- CATEGROIES END -->
 
     <!-- EMBEDDED START -->
-    <div data-bind="visible: embedded().length && !isMultiContent()">
-      <!-- ko foreach: embedded -->
-      <div class="form-group margin-bottom-10">
-        <label
-          class="col-md-3 control-label"
-          data-bind="text: $data.alias || embeddedFolder.name"
-        ></label>
+    <div v-if="embedded.length && !isMultiContent">
+      <div
+        class="form-group margin-bottom-10"
+        v-for="($data, $index) in embedded"
+        :key="$index"
+      >
+        <label class="col-md-3 control-label"
+          >{{ $data.alias || $data.embeddedFolder.name }}</label
+        >
         <div class="col-md-9">
           <div class="file-list">
-            <span
-              class="btn btn-file green"
-              data-bind="click: $parent.addEmbedded.bind($root, $data)"
+            <span class="btn btn-file green" @click="addEmbedded($data)"
               >Edit</span
             >
             <span>
               <a class="btn btn-default disabled" href="#"
-                ><span>Embedded count</span>:&nbsp;
-                <!-- ko text: contents.length-->
-                <!-- /ko -->
+                ><span>Embedded count</span>:&nbsp; {{ $data.contents.length }}
               </a>
             </span>
           </div>
         </div>
       </div>
-      <!-- /ko -->
     </div>
 
-    <embedded-dialog
-      params="choosedEmbedded: currentEmbedded"
-    ></embedded-dialog>
+    <kb-embedded-dialog
+      :choosed-embedded="currentEmbedded"
+    ></kb-embedded-dialog>
     <!-- EMBEDDED END -->
   </div>
 </div>

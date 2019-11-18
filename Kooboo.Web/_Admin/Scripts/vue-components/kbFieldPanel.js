@@ -44,18 +44,34 @@
     props: {
       siteLangs: Object,
       fields: Array,
-      values: Object
+      values: Object,
+      categories: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      },
+      embedded: {
+        type: Array,
+        default: function() {
+          return [];
+        }
+      }
     },
     data: function() {
       self = this;
       return {
         isMultiContent: !!LANG,
         mappedFields: [],
-        categories: [],
-        embedded: [],
         currentLangs: [],
         model: {},
-        rules: {}
+        rules: {},
+        // category
+        currentCategory: null,
+        choosedCategory: [],
+        showCategoryDialog: false,
+        // embedded
+        currentEmbedded: null
       };
     },
     mounted: function() {
@@ -78,6 +94,17 @@
         self.currentLangs.push(self.siteLangs.default);
       }
       LANG && self.currentLangs.push(LANG);
+
+      // Kooboo.EventBus.subscribe("kb/textContent/embedded/edit", function(
+      //   choosedEmbedded
+      // ) {
+      //   var embeddedFolderId = choosedEmbedded.embeddedFolder.id;
+      //   var index = _.findIndex(self.embedded, function(o) {
+      //     return o.embeddedFolder.id === embeddedFolderId;
+      //   });
+      //   self.embedded.splice(index, 1);
+      //   self.embedded.splice(index, 0, choosedEmbedded);
+      // });
     },
     computed: {
       multilingualSite: function() {
@@ -129,12 +156,16 @@
         return self.currentLangs.indexOf(field.lang) > -1;
       },
       getControl: function(controlType) {
-        if (controlType == "Tinymce") {
-          return "kb-control-richeditor";
-        } else if (controlType == "Boolean") {
-          return "kb-control-switch";
-        } else if (controlType) {
-          return "kb-control-" + controlType.toLowerCase();
+        if (controlType) {
+          var type = controlType.toLowerCase();
+          switch (type) {
+            case "tinymce":
+              return "kb-control-richeditor";
+            case "boolean":
+              return "kb-control-switch";
+            default:
+              return "kb-control-" + controlType.toLowerCase();
+          }
         }
         return "kb-control-textbox";
       },
@@ -184,6 +215,67 @@
           }
         });
         return rules;
+      },
+      // category
+      onShowCategoryDialog: function(category) {
+        Kooboo.TextContent.getByFolder({
+          folderId: category.categoryFolder.id,
+          pageSize: 99999
+        }).then(function(res) {
+          self.currentCategory = category;
+          self.showCategoryDialog = true;
+          var list = res.model["list"];
+          list.forEach(function(item) {
+            item.text = item.values[Object.keys(list[0].values)[0]];
+          });
+          var choosed = _.cloneDeep(category.contents);
+          var jsTreeData = list.map(function(o) {
+            var selected = choosed.some(function(choosed) {
+              return choosed.id === o.id;
+            });
+            o.state = {};
+            o.state.selected = selected;
+            return o;
+          });
+          $("#categoryTree")
+            .jstree({
+              plugins: ["types", "checkbox"],
+              types: {
+                default: {
+                  icon: "fa fa-file icon-state-warning"
+                }
+              },
+              core: {
+                strings: { "Loading ...": Kooboo.text.common.loading + " ..." },
+                data: jsTreeData,
+                multiple: category.multipleChoice
+              }
+            })
+            .on("changed.jstree", function(e, data) {
+              var selectedCategoryId = data.selected;
+              var choosedCate = list.filter(function(o) {
+                return selectedCategoryId.indexOf(o.id) > -1;
+              });
+              self.choosedCategory = choosedCate;
+            });
+        });
+      },
+      removeCategory: function(category, content) {
+        category.contents = _.without(category.contents, content);
+      },
+      onSaveCategory: function() {
+        self.currentCategory.contents = self.choosedCategory;
+        self.onHideCategoryDialog();
+      },
+      onHideCategoryDialog: function() {
+        $.jstree.reference("#categoryTree").destroy();
+        self.showCategoryDialog = false;
+        self.currentCategory = null;
+      },
+      // embedded
+      addEmbedded: function(choosedEmbedded) {
+        self.currentEmbedded = choosedEmbedded;
+        $("#embeddedDialog").modal("show");
       }
     },
     watch: {

@@ -393,16 +393,18 @@ Vue.directive("kb-collapsein", {
       // Apply custom configuration over the defaults
       defaults = $.extend(defaults, options);
       // Ensure the valueAccessor's value has been applied to the underlying element, before instanciating the tinymce plugin
-
-      if (binding.value.value) {
+      if (binding.value.value || element.value) {
         var _tempParent = $("<div>");
-        $(_tempParent).append(binding.value.value);
+        $(_tempParent).append(binding.value.value || element.value);
         var imgDoms = $(_tempParent).find("img");
         imgDoms.each(function(idx, el) {
           $(el).attr("src", $(el).attr("src") + SITE_ID_STRING);
         });
-
-        $(element).text($(_tempParent).html());
+        var content = $(_tempParent).html();
+        $(element).text(content);
+        
+        element.value = content;
+        Kooboo.trigger(element, "input");
       }
       // Tinymce will not be able to calculate the textarea height without this delay
       setTimeout(function() {
@@ -452,7 +454,6 @@ Vue.directive("kb-sortable", function(el, binding) {
 
 // #region {{ | ellipsis}}
 Vue.filter("ellipsis", function(value, len, str) {
-  console.log(value);
   if (len && typeof len === "number") {
     if (str && typeof str === "string") {
       return value.substr(0, len - 2) + str;
@@ -524,3 +525,107 @@ Vue.component("kb-container", {
   }
 });
 // #endregion </kb-container>
+
+// #region <kb-hint>
+Vue.directive("kb-hint", {
+  inserted: function(el, binding) {
+    var element = $(el);
+    var existShow = false;
+    var tipsOptions = {
+      title: "",
+      placement: "right",
+      trigger: "manual",
+      template:
+        '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+    };
+
+    if (binding.arg) {
+      tipsOptions.placement = binding.arg;
+    }
+
+    switch (typeof binding.value) {
+      case "string":
+        tipsOptions.title = binding.value;
+        break;
+      case "object":
+        if (binding.value.msg) {
+          tipsOptions.title = binding.value.msg;
+        }
+        if (binding.value.hasOwnProperty("show")) {
+          existShow = true;
+        }
+        if (binding.value.options) {
+          _.assign(tipsOptions, binding.value.options);
+        }
+        break;
+    }
+    element.tooltip(tipsOptions);
+    if (existShow) {
+      if (binding.value.show) {
+        element.tooltip("show");
+        if (!el.classList.contains("has-error")) {
+          el.classList.add("has-error");
+        }
+      } else {
+        element.tooltip("hide");
+        if (el.classList.contains("has-error")) {
+          el.classList.remove("has-error");
+        }
+      }
+    } else {
+      element.tooltip("show");
+      if (!el.classList.contains("has-error")) {
+        el.classList.add("has-error");
+      }
+    }
+  },
+  update: function(el, binding) {
+    var element = $(el);
+    var existShow = false;
+    var tipsOptions = element.data("bs.tooltip").options;
+
+    if (binding.arg) {
+      tipsOptions.placement = binding.arg;
+    }
+
+    switch (typeof binding.value) {
+      case "string":
+        tipsOptions.title = binding.value;
+        break;
+      case "object":
+        if (binding.value.options) {
+          _.assign(tipsOptions, binding.value.options);
+        }
+        if (binding.value.msg) {
+          tipsOptions.title = binding.value.msg;
+        }
+        if (binding.value.hasOwnProperty("show")) {
+          existShow = true;
+        }
+        break;
+    }
+    element.tooltip(tipsOptions);
+    if (existShow) {
+      if (binding.value.show) {
+        element.tooltip("show");
+        if (!el.classList.contains("has-error")) {
+          el.classList.add("has-error");
+        }
+      } else {
+        element.tooltip("hide");
+        if (el.classList.contains("has-error")) {
+          el.classList.remove("has-error");
+        }
+      }
+    } else {
+      element.tooltip("show");
+      if (!el.classList.contains("has-error")) {
+        el.classList.add("has-error");
+      }
+    }
+  },
+  unbind: function(el) {
+    $(el).tooltip("destroy");
+  }
+});
+// #endregion </kb-hint>
