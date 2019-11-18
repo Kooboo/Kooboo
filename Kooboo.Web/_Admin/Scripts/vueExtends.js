@@ -40,7 +40,14 @@ Vue.directive("kb-tooltip", {
         data.inState.click ||
         binding.modifiers.manual
       )
-        $el.tooltip("show");
+        if (binding.modifiers.error) {
+          // fixed error tip position bug in long view
+          var bounding = el.getBoundingClientRect();
+          if (bounding.top < 0 || bounding.bottom > $(window).height()) {
+            el.scrollIntoView();
+          }
+        }
+      $el.tooltip("show");
     } else {
       $el.tooltip("hide");
     }
@@ -402,7 +409,7 @@ Vue.directive("kb-collapsein", {
         });
         var content = $(_tempParent).html();
         $(element).text(content);
-        
+
         element.value = content;
         Kooboo.trigger(element, "input");
       }
