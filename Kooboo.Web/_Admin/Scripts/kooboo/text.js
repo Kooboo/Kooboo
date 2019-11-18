@@ -178,7 +178,8 @@
     account: {
       sendResetEmailTip:
         "After submiting your request, we will send you a verification mail, please check in time",
-      youAreNotAdmin: "You are not administrator of current organization, you do not have access to organization profile."
+      youAreNotAdmin:
+        "You are not administrator of current organization, you do not have access to organization profile."
     },
 
     online: {
@@ -875,11 +876,18 @@
       sites: {
         takeOffline: "Take offline",
         takeOnline: "Take online",
-        transferAWebsiteTip:"Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.",
-        templatesTip:"Share or use templates made by public users or from your organization private packages.",
-        createTip:"Create a blank new website, and use well defined elements to develop your website.",
-        importTip:"Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.",
-        createModalTip:"Create a blank new website, and use well defined elements to develop your website."
+        transferAWebsiteTip:
+          "Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.",
+        templatesTip:
+          "Share or use templates made by public users or from your organization private packages.",
+        createTip:
+          "Create a blank new website, and use well defined elements to develop your website.",
+        importTip:
+          "Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.",
+        createModalTip:
+          "Create a blank new website, and use well defined elements to develop your website.",
+        onlineVersionCloneTip:
+          "* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more."
       },
       setting: {
         addNewLanguage: "Add new language",
