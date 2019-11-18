@@ -14,6 +14,10 @@
       self = this;
       return {
         currentTab: "basic",
+        showError: {
+          basic: true,
+          relation: true
+        },
         contentTypes: [],
         ableToAddRelationFolder: true,
         basicForm: {
@@ -128,8 +132,16 @@
         };
       },
       changeTab: function(tab) {
-        self.currentTab = tab;
-        $("a[href=#tab_" + tab + "]").tab("show");
+        if (tab !== self.currentTab) {
+          self.currentTab = tab;
+          $("a[href=#tab_" + tab + "]").tab("show");
+          for (var key in self.showError) {
+            self.showError[key] = false;
+          }
+          setTimeout(function() {
+            self.showError[tab] = true;
+          }, 300);
+        }
       },
       addCategoryFolders: function(e) {
         var newFolder = new Folder();
@@ -155,21 +167,12 @@
         );
         self.ableToAddRelationFolder = true;
       },
-      showErrorTab(tab) {
-        self.changeTab(tab);
-        var $errorContainer = $("#tab_" + tab + " .error-container");
-        $errorContainer.hide();
-        setTimeout(function() {
-          $errorContainer.show();
-          $("#tab_" + tab + " .has-error[data-container]").tooltip("show");
-        }, 300);
-      },
       submit: function(form) {
         if (self.isNew) {
           var isBasicValid = self.$refs.basicForm.validate();
           if (!isBasicValid) {
             if (self.currentTab != "basic") {
-              self.showErrorTab("basic");
+              self.changeTab("basic");
             }
             return false;
           }
@@ -177,7 +180,7 @@
         var isRelationValid = self.$refs.relationForm.validate();
         if (!isRelationValid) {
           if (self.currentTab != "relation") {
-            self.showErrorTab("relation");
+            self.changeTab("relation");
           }
           return false;
         }

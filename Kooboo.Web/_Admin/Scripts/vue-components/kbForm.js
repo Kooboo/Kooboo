@@ -1,7 +1,7 @@
 (function() {
   Vue.component("kb-form", {
     template:
-      "<div v-if=\"simple\" ><slot></slot></div><div v-else :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
+      "<div v-if=\"simple\"><slot></slot></div><div v-else :class=\"{'form-horizontal':align=='horizontal'}\"><slot></slot></div>",
     props: {
       align: {
         type: String,
@@ -13,7 +13,11 @@
         type: Boolean,
         default: true
       },
-      simple: Boolean
+      simple: Boolean,
+      errorVisible: {
+        type: Boolean,
+        default: true
+      }
     },
     methods: {
       validate: function() {
@@ -91,7 +95,7 @@
 
   Vue.component("kb-form-item", {
     template:
-      "<div v-if=\"kbForm.simple\"><slot :error=\"msg\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='msg' :data-container='errorContainer'><slot></slot></div>",
+      "<div v-if=\"kbForm.simple\"><slot :error=\"errorMessage\"></slot></div><div :data-valid-id='validId' v-else class='form-group' :class=\"{'has-error':!valid}\" v-kb-tooltip:right.manual.error='errorMessage' :data-container='errorContainer'><slot></slot></div>",
     props: {
       prop: String,
       errorContainer: {
@@ -108,7 +112,14 @@
         kbFormItem: this
       };
     },
-    computed: {},
+    computed: {
+      errorMessage: function() {
+        if (this.kbForm.errorVisible) {
+          return this.msg;
+        }
+        return "";
+      }
+    },
     data: function() {
       var me = this;
       return {
