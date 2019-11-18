@@ -393,16 +393,18 @@ Vue.directive("kb-collapsein", {
       // Apply custom configuration over the defaults
       defaults = $.extend(defaults, options);
       // Ensure the valueAccessor's value has been applied to the underlying element, before instanciating the tinymce plugin
-
-      if (binding.value.value) {
+      if (binding.value.value || element.value) {
         var _tempParent = $("<div>");
-        $(_tempParent).append(binding.value.value);
+        $(_tempParent).append(binding.value.value || element.value);
         var imgDoms = $(_tempParent).find("img");
         imgDoms.each(function(idx, el) {
           $(el).attr("src", $(el).attr("src") + SITE_ID_STRING);
         });
-
-        $(element).text($(_tempParent).html());
+        var content = $(_tempParent).html();
+        $(element).text(content);
+        
+        element.value = content;
+        Kooboo.trigger(element, "input");
       }
       // Tinymce will not be able to calculate the textarea height without this delay
       setTimeout(function() {
