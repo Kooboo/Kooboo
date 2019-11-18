@@ -662,7 +662,7 @@
           var pureNameArray = tempName.split("."),
             pureName =
               pureNameArray[pureNameArray.length - 2 + (isDouble ? 1 : 0)];
-          self.model.SiteName = pureName;
+          self.model.SiteName = pureName || "";
         }
       },
       "model.SiteName": function(value) {
