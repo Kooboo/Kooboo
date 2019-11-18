@@ -1,313 +1,626 @@
 ﻿<!-- #layout name=default -->
 <div id="main" class="sites">
-    <div class="page-header">
-        <h1 class="title">Sites Overview</h1>
-        <button data-bind="visible: siteList().length, click: activeBatch, css: { gray: batchManagementMode }" class="btn btn-default pull-right">
-            <i data-bind="css: { 'margin-right-5': batchManagementMode }" class="fa fa-gear"></i>
-            <span data-bind="visible: batchManagementMode">Cancel</span>
-        </button>
-        <button class="btn btn-info margin-right-10 pull-right" data-bind="visible: batchManagementMode() && (selectedSites().length < siteList().length), click: selectAllSites">Select all</button>
-        <button class="btn red margin-right-10 pull-right" data-bind="visible: selectedSites().length, click: deleteSites">Delete</button>
-        <button class="btn green margin-right-5 pull-right" data-bind="visible: selectedSites().length, click: batchExport">Batch export</button>
-    </div>
-    <div class="page-bar">
-        <ol class="breadcrumb">
-            <li class="active">Sites</li>
-        </ol>
-    </div>
-    <div data-bind="visible: siteList().length" class="clearfix">
-        <div class="col-sm-12 col-md-8 col-lg-9 row">
-            <div class="row" data-bind="foreach: siteList">
-                <div class="col-sm-12 col-md-6 col-lg-4">
-                    <div class="widget clickable" data-bind="css: { 'gray': !$data.online(), 'operating': $parent.batchManagementMode, 'selected': $data.selected }">
-                        <a data-bind="click: $parent.siteDetail.bind(this, $data)" href="javascript:;">
-                            <h6 class="title" data-bind="text: $data.siteDisplayName()"></h6>
-                            <div class="row">
-                                <div class="col-xs-4">
-                                    <!-- ko if:$data.inProgress() -->
-                                    <i class="fa fa-spinner fa-spin fa-3x"></i>
-                                    <!-- /ko -->
-                                    <!-- ko ifnot:$data.inProgress() -->
-                                    <i class="fa fa-bar-chart fa-3x"></i>
-                                    <!-- /ko -->
-                                </div>
-                                <div class="col-xs-8">
-                                    <ul class="list-unstyled pull-right">
-                                        <li>
-                                            <i class="icon-layers"></i> <span>Pages</span>:
-                                            <!-- ko text:$data.pageCount() -->
-                                            <!-- /ko -->
-                                        </li>
-                                        <li>
-                                            <i class="icon-picture"></i> <span>Images</span>:
-                                            <!-- ko text:$data.imageCount() -->
-                                            <!-- /ko -->
-                                        </li>
-                                        <li>
-                                            <i class="icon-user-follow"></i> <span>Visitors</span>:
-                                            <!-- ko text:$data.visitors() -->
-                                            <!-- /ko -->
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </a>
-                        <div data-bind="visible: !$parent.batchManagementMode()" class="setting btn-group">
-                            <i class="fa fa-chevron-circle-down" data-toggle="dropdown" title="Setting"></i>
-                            <ul role="menu" class="dropdown-menu pull-right">
-                                <!-- ko if:!$data.inProgress() -->
-                                <li><a data-bind="click: $parent.exportSite.bind(this, $data)" href="javascript:;">Export</a></li>
-                                <li><a data-bind="click: $parent.shareSite.bind(this, $data)" href="javascript:;">Share</a></li>
-                                <li>
-                                    <a data-bind="text:( $data.online() ? Kooboo.text.site.sites.takeOffline : Kooboo.text.site.sites.takeOnline), click: $parent.switchStatus" href="javascript:;"></a>
-                                </li>
-                                <!-- /ko -->
-                                <li k-if="kooboosetting.IsLocal=true"><a data-bind="click: $parent.onSyncFileDisk" href="javascript:;">Disk synchronize</a></li>
-                                <li><a data-bind="click: $parent.deleteSite, visible: !$data.inProgress()" href="javascript:;">Delete</a></li>
-                            </ul>
-                        </div>
-                        <div data-bind="visible: $parent.batchManagementMode()" class="setting" style="pointer-events: none;">
-                            <input type="checkbox" data-bind="checked: selected">
-                        </div>
-                    </div>
+  <div class="page-header">
+    <h1 class="title">Sites Overview</h1>
+    <button
+      class="btn btn-default pull-right"
+      v-if="sites.length"
+      :class="{gray:activeBatch}"
+      @click="activeBatch=!activeBatch"
+    >
+      <i :class="{'margin-right-5':activeBatch}" class="fa fa-gear"></i>
+      <span v-if="activeBatch">Cancel</span>
+    </button>
+    <button
+      class="btn btn-info margin-right-10 pull-right"
+      v-if="activeBatch&&selectedSites.length < sites.length"
+      @click="selectedSites=sites"
+      >Select all</button
+    >
+    <button
+      class="btn red margin-right-10 pull-right"
+      v-if="selectedSites.length"
+      @click="deleteSites"
+      >Delete</button
+    >
+    <button
+      class="btn green margin-right-5 pull-right"
+      v-if="selectedSites.length"
+      @click="batchExport"
+      >Batch export</button
+    >
+  </div>
+  <div class="page-bar">
+    <ol class="breadcrumb">
+      <li class="active">Sites</li>
+    </ol>
+  </div>
+  <div v-if="sites.length" class="clearfix">
+    <div class="col-sm-12 col-md-8 col-lg-9 row">
+      <div class="row">
+        <div
+          v-for="$data in sites"
+          :key="$data.siteId"
+          class="col-sm-12 col-md-6 col-lg-4"
+        >
+          <div
+            class="widget clickable"
+            :class="{gray:!$data.online,operating:activeBatch,selected:$data.selected}"
+          >
+            <a @click="siteDetail($data)" href="javascript:;">
+              <h6 class="title">{{$data.siteDisplayName }}</h6>
+              <div class="row">
+                <div class="col-xs-4">
+                  <i
+                    v-if="$data.inProgress"
+                    class="fa fa-spinner fa-spin fa-3x"
+                  ></i>
+                  <i v-else class="fa fa-bar-chart fa-3x"></i>
                 </div>
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3 pull-right">
-            <div class="row">
-                <ul class="nav nav-tabs nav-justified" id="create_site_tab" style="margin-bottom: 0">
-                    <li role="presentation" class="active"><a href="#Transfer">Transfer</a></li>
-                    <li role="presentation"><a href="#Templates">Templates</a></li>
-                    <li role="presentation"><a href="#Create">Create</a></li>
-                    <li role="presentation"><a href="#Import">Import</a></li>
-                </ul>
-                <div class="site-instruction tab-content" style="border: 1px solid #dddddd; border-top: 0">
-                    <div role="tabpanel" class="tab-pane fade in active" id="Transfer">
-                        <img class="center-block" src="/_Admin/Images/site-instru-transfer.png" />
-                        <h4 class="text-center">Transfer a website</h4>
-                        <p class="text-center">Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.</p>
-                        <div class="text-center margin-top-20">
-                            <a data-bind="click: SPAClick.bind(this, 'transfer')" class="btn green navbar-btn col-md-4 col-sm-3">Transfer</a>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="Templates">
-                        <img class="center-block" src="/_Admin/Images/site-instru-template.png" />
-                        <h4 class="text-center">Template</h4>
-                        <p class="text-center">Share or use templates made by public users or from your organization private packages.</p>
-                        <div class="text-center margin-top-20">
-                            <a data-bind="click: SPAClick.bind(this, 'template')" class="btn green navbar-btn col-md-5 col-sm-3">Pick</a><br>
-                            <a data-bind="click: showShareModal" class="btn green navbar-btn col-md-5 col-sm-3">Share</a>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="Create">
-                        <img class="center-block" src="/_Admin/Images/site-instru-create.png" />
-                        <h4 class="text-center">Create Blank Website</h4>
-                        <p class="text-center">Create a blank new website, and use well defined elements to develop your website.</p>
-                        <div class="text-center margin-top-20">
-                            <a data-bind="click: showCreateModal" class="btn green navbar-btn col-md-4 col-sm-3">Create</a>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="Import">
-                        <img class="center-block" src="/_Admin/Images/site-instru-import.png" />
-                        <h4 class="text-center">Import Website</h4>
-                        <p class="text-center">Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.</p>
-                        <div class="text-center margin-top-20">
-                            <a data-bind="click: SPAClick.bind(this, 'import')" class="btn green navbar-btn col-md-4 col-sm-3">Import</a>
-                        </div>
-                    </div>
+                <div class="col-xs-8">
+                  <ul class="list-unstyled pull-right">
+                    <li>
+                      <i class="icon-layers"></i> <span>Pages</span>:
+                      {{$data.pageCount}}
+                    </li>
+                    <li>
+                      <i class="icon-picture"></i> <span>Images</span>:
+                      {{$data.imageCount}}
+                    </li>
+                    <li>
+                      <i class="icon-user-follow"></i> <span>Visitors</span>:
+                      {{$data.visitors}}
+                    </li>
+                  </ul>
                 </div>
+              </div>
+            </a>
+            <div class="setting btn-group" v-if="!activeBatch">
+              <i
+                class="fa fa-chevron-circle-down"
+                data-toggle="dropdown"
+                title="Setting"
+              ></i>
+              <ul role="menu" class="dropdown-menu pull-right">
+                <template v-if="!$data.inProgress">
+                  <li
+                    ><a href="javascript:;" @click="exportSite($data.siteId)"
+                      >Export</a
+                    ></li
+                  >
+                  <li
+                    ><a @click="shareSite($data.siteId)" href="javascript:;"
+                      >Share</a
+                    ></li
+                  >
+                  <li>
+                    <a href="javascript:;" @click="switchStatus($data)"
+                      >{{$data.online ? Kooboo.text.site.sites.takeOffline :
+                      Kooboo.text.site.sites.takeOnline}}</a
+                    >
+                  </li>
+                </template>
+                <li k-if="kooboosetting.IsLocal=true"
+                  ><a @click="onSyncFileDisk($data)" href="javascript:;"
+                    >Disk synchronize</a
+                  ></li
+                >
+                <li
+                  ><a
+                    v-if="!$data.inProgress"
+                    @click="deleteSite($data)"
+                    href="javascript:;"
+                    >Delete</a
+                  ></li
+                >
+              </ul>
             </div>
+            <div
+              v-if="activeBatch"
+              class="setting"
+              style="pointer-events: none;"
+            >
+              <input type="checkbox" :checked="isSelected($data.siteId)" />
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div data-bind="visible: !siteList().length" class="clearfix">
-        <div class="col-md-3 site-instruction">
-            <img class="center-block" src="/_Admin/Images/site-instru-transfer.png" />
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3 pull-right">
+      <div class="row">
+        <ul
+          class="nav nav-tabs nav-justified"
+          id="create_site_tab"
+          style="margin-bottom: 0"
+        >
+          <li role="presentation" class="active"
+            ><a href="#Transfer" data-toggle="tab" aria-expanded="true"
+              >Transfer</a
+            ></li
+          >
+          <li role="presentation"
+            ><a href="#Templates" data-toggle="tab" aria-expanded="false"
+              >Templates</a
+            ></li
+          >
+          <li role="presentation"
+            ><a href="#Create" data-toggle="tab" aria-expanded="false"
+              >Create</a
+            ></li
+          >
+          <li role="presentation"
+            ><a href="#Import" data-toggle="tab" aria-expanded="false"
+              >Import</a
+            ></li
+          >
+        </ul>
+        <div
+          class="site-instruction tab-content"
+          style="border: 1px solid #dddddd; border-top: 0"
+        >
+          <div role="tabpanel" class="tab-pane fade in active" id="Transfer">
+            <img
+              class="center-block"
+              src="/_Admin/Images/site-instru-transfer.png"
+            />
             <h4 class="text-center">Transfer a website</h4>
-            <p class="text-center">Enter any website Url you like. Kooboo will download, reverse engine that website, and allows you to inline editing anything directly.</p>
+            <p class="text-center"
+              >{{Kooboo.text.site.sites.transferAWebsiteTip}}</p
+            >
             <div class="text-center margin-top-20">
-                <a data-bind="click: SPAClick.bind(this, 'transfer')" class="btn green navbar-btn col-md-4">Transfer</a>
+              <a
+                @click.prevent="SPAClick('transfer')"
+                class="btn green navbar-btn col-md-4 col-sm-3"
+                >Transfer</a
+              >
             </div>
-        </div>
-        <div class="col-md-3 site-instruction">
-            <img class="center-block" src="/_Admin/Images/site-instru-template.png" />
+          </div>
+          <div role="tabpanel" class="tab-pane fade" id="Templates">
+            <img
+              class="center-block"
+              src="/_Admin/Images/site-instru-template.png"
+            />
             <h4 class="text-center">Template</h4>
-            <p class="text-center">Share or use templates made by public users or from your organization private packages.</p>
+            <p class="text-center"> {{Kooboo.text.site.sites.templatesTip}}</p>
             <div class="text-center margin-top-20">
-                <a data-bind="click: SPAClick.bind(this, 'template')" class="btn green navbar-btn col-md-4">Pick</a>
+              <a
+                @click.prevent="SPAClick('template')"
+                class="btn green navbar-btn col-md-5 col-sm-3"
+                >Pick</a
+              ><br />
+              <a
+                @click="showShareModal=true"
+                class="btn green navbar-btn col-md-5 col-sm-3"
+                >Share</a
+              >
             </div>
-        </div>
-        <div class="col-md-3 site-instruction">
-            <img class="center-block" src="/_Admin/Images/site-instru-create.png" />
+          </div>
+          <div role="tabpanel" class="tab-pane fade" id="Create">
+            <img
+              class="center-block"
+              src="/_Admin/Images/site-instru-create.png"
+            />
             <h4 class="text-center">Create Blank Website</h4>
-            <p class="text-center">Create a blank new website, and use well defined elements to develop your website.</p>
+            <p class="text-center">{{Kooboo.text.site.sites.createTip}}</p>
             <div class="text-center margin-top-20">
-                <a data-bind="click: SPAClick.bind(this, 'create')" class="btn green navbar-btn col-md-4">Create</a>
+              <a
+                @click="SPAClick('create')"
+                class="btn green navbar-btn col-md-4 col-sm-3"
+                >Create</a
+              >
             </div>
-        </div>
-        <div class="col-md-3 site-instruction">
-            <img class="center-block" src="/_Admin/Images/site-instru-import.png" />
+          </div>
+          <div role="tabpanel" class="tab-pane fade" id="Import">
+            <img
+              class="center-block"
+              src="/_Admin/Images/site-instru-import.png"
+            />
             <h4 class="text-center">Import Website</h4>
-            <p class="text-center">Import a Kooboo site package, or standard Html package, Kooboo will convert it into a Kooboo site.</p>
+            <p class="text-center">{{Kooboo.text.site.sites.importTip}}</p>
             <div class="text-center margin-top-20">
-                <a data-bind="click: SPAClick.bind(this, 'import')" class="btn green navbar-btn col-md-4">Import</a>
+              <a
+                @click.prevent="SPAClick('import')"
+                class="btn green navbar-btn col-md-4 col-sm-3"
+                >Import</a
+              >
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+  <div v-if="!sites.length" class="clearfix">
+    <div class="col-md-3 site-instruction">
+      <img class="center-block" src="/_Admin/Images/site-instru-transfer.png" />
+      <h4 class="text-center">Transfer a website</h4>
+      <p class="text-center">{{Kooboo.text.site.sites.transferAWebsiteTip}}</p>
+      <div class="text-center margin-top-20">
+        <a @click="SPAClick('transfer')" class="btn green navbar-btn col-md-4"
+          >Transfer</a
+        >
+      </div>
+    </div>
+    <div class="col-md-3 site-instruction">
+      <img class="center-block" src="/_Admin/Images/site-instru-template.png" />
+      <h4 class="text-center">Template</h4>
+      <p class="text-center">{{Kooboo.text.site.sites.templatesTip}}</p>
+      <div class="text-center margin-top-20">
+        <a @click="SPAClick('template')" class="btn green navbar-btn col-md-4"
+          >Pick</a
+        >
+      </div>
+    </div>
+    <div class="col-md-3 site-instruction">
+      <img class="center-block" src="/_Admin/Images/site-instru-create.png" />
+      <h4 class="text-center">Create Blank Website</h4>
+      <p class="text-center">{{Kooboo.text.site.sites.createTip}}</p>
+      <div class="text-center margin-top-20">
+        <a @click="SPAClick('create')" class="btn green navbar-btn col-md-4"
+          >Create</a
+        >
+      </div>
+    </div>
+    <div class="col-md-3 site-instruction">
+      <img class="center-block" src="/_Admin/Images/site-instru-import.png" />
+      <h4 class="text-center">Import Website</h4>
+      <p class="text-center">{{Kooboo.text.site.sites.importTip}}</p>
+      <div class="text-center margin-top-20">
+        <a @click="SPAClick('import')" class="btn green navbar-btn col-md-4"
+          >Import</a
+        >
+      </div>
+    </div>
+  </div>
 
-    <div data-bind="modal: showSyncFileDiskModal" class="modal fade" data-backdrop="static" k-if="kooboosetting.IsLocal=true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button data-bind="click: resetSyncFileDiskModal" type="button" class="close"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">File synchronize</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Enable file sync</label>
-                            <div class="col-md-9">
-                                <input type="checkbox" id="sync-switch" data-bind="checked: hasSyncSwitch">
-                            </div>
-                        </div>
-                        <!-- ko if: syncEnabled -->
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Path</label>
-                            <div class="col-md-9">
-                                <input type="text" id="folder-path" class="form-control input-inline input-large" data-bind="textInput: folderPath">
-                                <button type="button" id="copy" data-clipboard-target="#folder-path" class="btn btn-link">Copy</button>
-                            </div>
-                        </div>
-                        <!-- /ko -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <!-- ko if: isSyncInfoChange -->
-                    <button data-bind="click: saveSync" class="btn green">Save</button>
-                    <!-- /ko -->
-                    <button data-bind="click: resetSyncFileDiskModal" class="btn btn-default">Close</button>
-                </div>
-            </div>
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    k-if="kooboosetting.IsLocal=true"
+    v-kb-modal="showSyncFileDiskModal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">File synchronize</h4>
         </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-md-3">Enable file sync</label>
+              <div class="col-md-9">
+                <kb-switch v-model="syncModel.EnableDiskSync"></kb-switch>
+              </div>
+            </div>
+            <div v-if="syncModel.EnableDiskSync" class="form-group">
+              <label class="control-label col-md-3">Path</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  id="folder-path"
+                  class="form-control input-inline input-large"
+                  v-model="syncModel.localPath"
+                />
+                <button
+                  type="button"
+                  id="copy"
+                  data-clipboard-target="#folder-path"
+                  class="btn btn-link"
+                  >Copy</button
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            v-if="showSyncModalSaveBtn"
+            class="btn green"
+            @click="saveSync"
+            >Save</button
+          >
+          <button data-dismiss="modal" class="btn btn-default">Close</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div data-bind="modal: shareSiteModal" class="modal fade" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button data-bind="click: hideShareSiteModal" class="close"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">Share site</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Choose site</label>
-                            <div class="col-md-9">
-                                <select data-bind="options: selectableSites, optionsText: 'name', optionsValue: 'id', value: selectedSiteId" class="form-control"></select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button data-bind="click: goSharing" class="btn green">Next</button>
-                    <button data-bind="click: hideShareSiteModal" class="btn gray">Cancel</button>
-                </div>
-            </div>
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="showShareModal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button data-dismiss="modal" class="close"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">Share site</h4>
         </div>
-    </div>
-    <div data-bind="component: { name: 'kb-export-modal', params: { isShow: showExportModal, siteId: selectedSiteId }}"></div>
-</div>
-<div id="create">
-    <div data-bind="modal: createSiteModal" class="modal fade" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button data-bind="click: hideCreateSiteModal" class="close"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">Create a new site</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="note note-info">
-                            <p>Create a blank new website, and use well defined elements to develop your website.</p>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="SiteName">Site name</label>
-                            <div class="col-md-10">
-                                <input data-bind="value: siteName, error: siteName" class="input-medium form-control" placeholder="Site name" type="text">
-                                <span class="help-block">Start with letters and no space allowed.</span>
-                            </div>
-                        </div>
-                        <div class="form-group margin-bottom-10">
-                            <label class="col-md-2 control-label" for="SubDomain">Domain</label>
-                            <div class="col-md-10">
-                                <div class="form-inline">
-                                    <input data-bind="value: subDomain" class="input-medium form-control" placeholder="SubDomain" type="text">
-                                    <select data-bind="options: domains, value: rootDomain, optionsValue: 'value', optionsText: 'displayName', error: subDomain" class="form-control"></select>
-                                </div>
-                                <span class="help-block">Give your site a domain that other people can access.</span>
-                            </div>
-                        </div>
-                        <!-- <div class="form-group margin-bottom-15">
-                              <div class="col-md-10 col-md-offset-2">
-                                  <label class="checkbox-inline"><input type="checkbox" data-bind="checked: allowRemote"> <span>Clone from remote</span></label>
-                              </div>
-                          </div>-->
-                    </div>
-                    <!--<div data-bind="visible: allowRemote" class="form-horizontal">
-                        <form action="" method="post" id="remote-login">
-                            <div class="form-group">
-                                <label class="control-label col-md-2">Server</label>
-                                <div class="col-md-10">
-                                    <select data-bind="value: server" class="form-control relate-show" name="Server" data-kb-show=".servers">
-                                        <option value="http://www.kooboo.cn">kooboo.cn</option>
-                                        <option value="">My own server</option>
-                                    </select>
-                                    <input data-bind="textInput: customServer, error: customServer, visible: !server()" type="text" name="CustomServer" class="form-control margin-top-10 servers" placeholder="http://www.mykooboosite.com" />
-                                </div>
-                            </div>
-                            <div data-bind="collapsein: remoteSitesAvaliable" class="form-group">
-                                <label class="control-label col-md-2 ">Site name</label>
-                                <div class="col-md-10">
-                                    <select data-bind="options: remoteSites, optionsText: 'name', optionsValue: 'id', value: remoteSiteId" class="form-control" id="siteSelect" name="RemoteSiteId"></select>
-                                </div>
-                            </div>
-                            <div class="form-group collapse save margin-bottom-20">
-                                <div class="col-md-10 col-md-offset-2">
-                                    <button data-bind="click: post" class="btn blue" type="button">Save & Go to the synchronization page</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>-->
-                </div>
-                <div class="modal-footer">
-                    <!-- ko if: createWithRemote -->
-                    <button data-bind="click: onCreateWithRemote" class="btn green">Create</button>
-                    <!-- /ko -->
-                    <!-- ko ifnot: createWithRemote -->
-                    <!-- ko if: allowRemote -->
-                    <button data-bind="click: login" class="btn blue" type="button">Next</button>
-                    <!-- /ko -->
-                    <!-- ko ifnot: allowRemote -->
-                    <button data-bind="click: onCreateSubmit" class="btn green">Create</button>
-                    <!-- /ko -->
-                    <!-- /ko -->
-                    <button data-bind="click: hideCreateSiteModal" class="btn gray">Cancel</button>
-                </div>
+        <div class="modal-body">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-md-3">Choose site</label>
+              <div class="col-md-9">
+                <select v-model="selectedSiteId" class="form-control">
+                  <option
+                    v-for="site in sites"
+                    :key="site.siteId"
+                    :value="site.siteId"
+                    >{{site.siteDisplayName}}</option
+                  >
+                </select>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="modal-footer">
+          <button @click="shareSite(selectedSiteId)" class="btn green"
+            >Next</button
+          >
+          <button data-dismiss="modal" class="btn gray">Cancel</button>
+        </div>
+      </div>
     </div>
+  </div>
+  <kb-export-modal
+    :is-show.sync="showExportModal"
+    :site-id="selectedSiteId"
+  ></kb-export-modal>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/lib/clipboard.min.js",
-            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
-            "/_Admin/Scripts/components/kbExportModal.js",
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/SPA.js"
-        ])
-        Kooboo.loadCSS([
-            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/lib/clipboard.min.js",
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+      "/_Admin/Scripts/vue-components/kbExportModal.js",
+      "/_Admin/Scripts/SPA.js",
+      "/_Admin/Scripts/vue-components/kbSwitch.js"
+    ]);
+    Kooboo.loadCSS([
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
+    ]);
+  })();
+
+  var self = new Vue({
+    el: "#main",
+    data: function() {
+      return {
+        sites: [],
+        selectedSites: [],
+        activeBatch: false,
+        showShareModal: false,
+        showExportModal: false,
+        showSyncFileDiskModal: false,
+        selectedSiteId: "",
+        backupSyncModel: {
+          SiteId: "",
+          localPath: "",
+          EnableDiskSync: ""
+        },
+        syncModel: {
+          SiteId: "",
+          localPath: "",
+          EnableDiskSync: false
+        }
+      };
+    },
+    mounted: function() {
+      this.loadSite();
+      var copyPath = new Clipboard("#copy");
+      copyPath.on("success", function(e) {
+        $(e.trigger)
+          .attr("title", Kooboo.text.tooltip.copied)
+          .tooltip("fixTitle")
+          .tooltip("show");
+        setTimeout(function() {
+          $(e.trigger).tooltip("destroy");
+        }, 2000);
+      });
+    },
+    computed: {
+      showSyncModalSaveBtn: function() {
+        return (
+          this.syncModel.localPath != this.backupSyncModel.localPath ||
+          this.syncModel.EnableDiskSync != this.backupSyncModel.EnableDiskSync
+        );
+      }
+    },
+    methods: {
+      loadSite: function() {
+        Kooboo.Site.getList().then(function(res) {
+          if (res.success) {
+            self.sites = res.model;
+            self.sites.forEach(function(i) {
+              if (!i.inProgress) return;
+              var interval = setInterval(function() {
+                Kooboo.Transfer.getTaskStatus({
+                  siteId: i.siteId
+                }).then(function(res) {
+                  if (res.success) {
+                    if (res.model && res.model.done) {
+                      clearInterval(interval);
+                      if (i) {
+                        i.inProgress = false;
+                        i.pageCount = res.model.pages;
+                        i.imageCount = res.model.images;
+                      }
+                    } else {
+                      if (i) {
+                        i.pageCount = res.model.pages;
+                        i.imageCount = res.model.images;
+                      }
+                    }
+                  }
+                });
+              }, 2000);
+            });
+          }
+        });
+      },
+      deleteSites: function() {
+        if (confirm(Kooboo.text.confirm.deleteItems)) {
+          var _ids = [];
+          _.forEach(this.selectedSites, function(site) {
+            _ids.push(site.siteId);
+          });
+          Kooboo.Site.Deletes({
+            ids: _ids
+          }).then(function(res) {
+            if (res.success) {
+              window.info.show(Kooboo.text.info.delete.success, true);
+              self.sites = self.sites.filter(function(f) {
+                return _ids.indexOf(f.siteId) == -1;
+              });
+
+              if (!self.sites.length) {
+                self.activeBatch = false;
+              }
+            } else {
+              window.info.show(Kooboo.text.info.delete.fail, false);
+            }
+          });
+        }
+      },
+      batchExport: function() {
+        _.forEach(self.selectedSites, function(site) {
+          setTimeout(function() {
+            window.open(
+              Kooboo.Route.Get(Kooboo.Site.ExportUrl(), {
+                SiteId: site.siteId
+              })
+            );
+          }, 1000);
+        });
+        self.activeBatch = false;
+      },
+      siteDetail: function(site) {
+        if (self.activeBatch) {
+          var exist = self.selectedSites.find(function(f) {
+            return f.siteId == site.siteId;
+          });
+          if (exist) {
+            self.selectedSites.splice(self.selectedSites.indexOf(exist), 1);
+          } else {
+            self.selectedSites.push(site);
+          }
+        } else {
+          if (!site.inProgress) {
+            location.href = self.siteUrl(site.siteId);
+          } else {
+            window.info.done(Kooboo.text.info.inProgress);
+          }
+        }
+      },
+      siteUrl: function(siteId) {
+        return Kooboo.Route.Get(Kooboo.Route.Site.DetailPage, {
+          SiteId: siteId
+        });
+      },
+      exportSite: function(id) {
+        self.showExportModal = true;
+        self.selectedSiteId = id;
+      },
+      shareSite: function(id) {
+        location.href = Kooboo.Route.Get(Kooboo.Route.Site.Share, {
+          SiteId: id
+        });
+      },
+      switchStatus: function(site) {
+        Kooboo.Site.SwitchStatus({
+          id: site.siteId
+        }).then(function(res) {
+          if (res.success) {
+            site.online = !site.online;
+          }
+        });
+      },
+      onSyncFileDisk: function(m) {
+        Kooboo.Site.getDiskSync({
+          SiteId: m.siteId
+        }).then(function(res) {
+          if (res.success) {
+            self.syncModel.SiteId = m.siteId;
+            self.syncModel.localPath = res.model.folder;
+            self.syncModel.EnableDiskSync = res.model.enableDiskSync;
+            self.backupSyncModel = JSON.parse(JSON.stringify(self.syncModel));
+            self.showSyncFileDiskModal = true;
+          }
+        });
+      },
+      saveSync: function() {
+        Kooboo.Site.updateDiskSync(self.syncModel).then(function(res) {
+          if (res.success) {
+            self.showSyncFileDiskModal = false;
+            window.info.show(Kooboo.text.info.update.success, true);
+          } else {
+            window.info.show(Kooboo.text.info.update.fail, false);
+          }
+        });
+      },
+      deleteSite: function(m) {
+        if (confirm(Kooboo.text.confirm.deleteItem)) {
+          Kooboo.Site.Delete({
+            Id: m.siteId
+          }).then(function(res) {
+            if (res.success) {
+              window.info.show(Kooboo.text.info.delete.success, true);
+              self.sites = self.sites.filter(function(f) {
+                return f.siteId != m.siteId;
+              });
+            } else {
+              window.info.show(Kooboo.text.info.delete.fail, false);
+            }
+          });
+        }
+      },
+      isSelected: function(id) {
+        return self.selectedSites.find(function(f) {
+          return f.siteId == id;
+        });
+      },
+      SPAClick: function(type) {
+        Kooboo.SPA.getView(getUrl(type), {
+          container: "[layout='default']"
+        });
+
+        function getUrl(type) {
+          var url;
+          switch (type) {
+            case "transfer":
+              url = Kooboo.Route.Site.TransferPage;
+              break;
+            case "template":
+              url = Kooboo.Route.Site.TemplatePage;
+              break;
+            case "create":
+              url = Kooboo.Route.Site.CreatePage;
+              break;
+            case "import":
+              url = Kooboo.Route.Site.ImportPage;
+              break;
+          }
+          return url;
+        }
+      }
+    },
+    watch: {
+      activeBatch: function(value) {
+        if (!value) {
+          self.selectedSites = [];
+        }
+      },
+      showShareModal: function(value) {
+        if (value) {
+          if (self.sites.length) {
+            self.selectedSiteId = self.sites[0].siteId;
+          }
+        }
+      }
+    }
+  });
 </script>
-<script src="/_Admin/View/Sites.js"></script>
