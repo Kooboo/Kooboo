@@ -106,17 +106,6 @@
                   :values.sync="contentValues"
                   :site-langs="siteLangs"
                 ></kb-field-panel>
-                <!-- <div
-                  data-bind="component: { name: 'kb-field-panel', params: {
-                                    fields: fields,
-                                    categories: categories,
-                                    embedded: embedded,
-                                    startValidating: startValidating,
-                                    validationPassed: validationPassed,
-                                    values: contentValues,
-                                    siteLangs: siteLangs
-                                }}"
-                ></div> -->
               </div>
               <div
                 class="container-fluid"
@@ -165,17 +154,21 @@
                     <label class="control-label">Content type</label>
                     <div :class="{ 'form-inline': !hasFolder }">
                       <select
-                        data-bind="options: contentTypes, optionsText: 'name', optionsValue: 'id', value: contentType, event: { change: contentTypeChanged.bind(this, contentType()) }, attr: { disabled: hasFolder }, css: { 'input-large': !hasFolder() }"
+                        :value="contentType"
+                        :disabled="hasFolder"
+                        :class="{'input-large': !hasFolder}"
+                        @change="contentTypeChanged"
                         class="form-control"
-                      ></select>
-                      <select
-                        data-bind="options: contentTypes, optionsText: 'name', optionsValue: 'id', value: _contentType"
-                        class="form-control hide"
-                      ></select>
+                      >
+                        <option v-for="item in contentTypes" :value="item.id">
+                          {{ item.name }}
+                        </option>
+                      </select>
                       <button
-                        v-if="hasFolder"
+                        v-if="!hasFolder"
                         class="btn btn-default pull-right"
-                        data-bind="click: createContentType, tooltip: Kooboo.text.common.add"
+                        v-kb-tooltip="Kooboo.text.common.add"
+                        @click="createContentType"
                       >
                         <i class="fa fa-plus"></i>
                       </button>
@@ -372,9 +365,16 @@
                     <template v-if="!hasFolder">
                       <div v-if="avaliableFolders.length" class="form-inline">
                         <select
-                          data-bind="options: avaliableFolders, optionsText: 'displayName', optionsValue: 'id', value: choosedFolderId, event: { change: choosedFolderChange }"
+                          v-model="choosedFolderId"
+                          @change.prevent="refreshContent"
                           class="form-control input-large"
-                        ></select>
+                        >
+                          <option
+                            v-for="item in avaliableFolders"
+                            :value="item.id"
+                            >{{ item.displayName }}</option
+                          >
+                        </select>
                         <button
                           class="btn btn-default pull-right"
                           @click="onCreateFolder"
@@ -398,37 +398,42 @@
   </div>
   <div
     class="modal fade"
-    data-bind="modal: showContentTypeModal"
+    v-kb-modal="showContentTypeModal"
     data-backdrop="static"
     data-keyboard="false"
   >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button class="close" data-bind="click: onContentTypeModalHide"
+          <button class="close" @click="onContentTypeModalHide"
             ><i class="fa fa-close"></i
           ></button>
           <h4 class="modal-title">Content Type</h4>
         </div>
         <div class="modal-body">
-          <div class="form-horizontal">
-            <div class="form-group">
-              <label class="control-label col-md-3">Type name</label>
+          <kb-form
+            :model="contentTypeForm"
+            :rules="contentTypeRules"
+            ref="contentTypeForm"
+          >
+            <kb-form-item prop="name">
+              <label class="col-md-3 control-label">Type name</label>
               <div class="col-md-9">
                 <input
                   type="text"
+                  v-model="contentTypeForm.name"
                   class="form-control"
-                  data-bind="value: contentTypeName, error: contentTypeName"
+                  @keydown.enter="onCreateNewContentType"
                 />
               </div>
-            </div>
-          </div>
+            </kb-form-item>
+          </kb-form>
         </div>
         <div class="modal-footer">
-          <button class="btn green" data-bind="click: onCreateNewContentType"
+          <button class="btn green" @click="onCreateNewContentType"
             >Save</button
           >
-          <button class="btn gray" data-bind="click: onContentTypeModalHide"
+          <button class="btn gray" @click="onContentTypeModalHide"
             >Cancel</button
           >
         </div>
