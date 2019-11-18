@@ -139,10 +139,10 @@
             type: "communication-link"
           });
           self.tableData = dataMapping(contents);
-          Kooboo.EventBus.publish(
-            "kb/textContent/embedded/edit",
-            self.choosedEmbedded
-          );
+          // Kooboo.EventBus.publish(
+          //   "kb/textContent/embedded/edit",
+          //   self.choosedEmbedded
+          // );
         }
       }
     },
