@@ -45,7 +45,7 @@ $(function() {
         siteLangs: null,
         categories: [],
         embedded: [],
-        choosedEmbedded: [],
+        choosedEmbedded: {},
         allowModify: false,
         allFolders: [],
         avaliableFolders: [],

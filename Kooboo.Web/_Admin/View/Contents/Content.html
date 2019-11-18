@@ -36,7 +36,7 @@
               <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
                 <div class="form-group clearfix">
                   <kb-multilang-selector
-                    v-if="!isMultiContent && contentMode == 'normal'"
+                    v-if="!isMultiContent && contentMode == 'normal' && siteLangs"
                     :cultures="siteLangs.cultures"
                     :default-culture="siteLangs.default"
                   >

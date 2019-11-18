@@ -156,12 +156,16 @@
         return self.currentLangs.indexOf(field.lang) > -1;
       },
       getControl: function(controlType) {
-        if (controlType == "Tinymce") {
-          return "kb-control-richeditor";
-        } else if (controlType == "Boolean") {
-          return "kb-control-switch";
-        } else if (controlType) {
-          return "kb-control-" + controlType.toLowerCase();
+        if (controlType) {
+          var type = controlType.toLowerCase();
+          switch (type) {
+            case "tinymce":
+              return "kb-control-richeditor";
+            case "boolean":
+              return "kb-control-switch";
+            default:
+              return "kb-control-" + controlType.toLowerCase();
+          }
         }
         return "kb-control-textbox";
       },
