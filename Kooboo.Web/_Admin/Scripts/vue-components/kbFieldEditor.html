@@ -4,20 +4,20 @@
                           :title="Kooboo.text.component.fieldEditor.title"></kb-dialog-header>
         <kb-dialog-content>
             <div>
-                <kb-tabs ref="kbTabs" :display-names="displayNames" :active.sync="tabIndex">
+                <kb-tabs ref="kbTabs" :active.sync="tabIndex">
                     <kb-container>
+                        <template #header>{{Kooboo.text.component.fieldEditor.basic}}</template>
                         <template #content>
                             <kb-form :model="d_data">
-                                <kb-form-item
-                                        :class="{'has-error':!validateModel.name.valid}"
-                                        v-kb-tooltip:right.manual.error="validateModel.name.msg">
+                                <kb-form-item style="position: relative"
+                                >
                                     <label class="col-md-3 control-label">{{Kooboo.text.common.name}}</label>
-                                    <div class="col-md-9" >
-                                        <div class="input-group" >
+                                    <div class="col-md-9">
+                                        <div class="input-group"
+                                             v-kb-hint:right="firstTabValidate.name.msg">
                                             <input v-if="isNewField"
                                                    v-model="d_data.name"
                                                    type="text" class="form-control key">
-
                                             <p v-else class="form-control-static key"
                                                style="word-break: break-word;">{{d_data.name}}</p>
                                             <template v-if="options.modifiedField">
@@ -57,45 +57,53 @@
                                 >
                                     <label class="col-md-3 control-label">{{Kooboo.text.component.fieldEditor.controlType}}</label>
                                     <div class="col-md-9">
-                                        <select class="form-control" v-model="d_data.controlType">
-                                            <option v-for="(item , index) in _controlTypes" :value="item.value">
+                                        <select v-if="controlTypesOptions.length > 1" class="form-control"
+                                                v-model="d_data.controlType">
+                                            <option v-for="(item , index) in controlTypesOptions" :value="item.value">
                                                 {{item.displayName}}
                                             </option>
                                         </select>
+                                        <p v-else class="form-control-static">{{Kooboo.text.component.controlType[_.camelCase(d_data.controlType)]}}</p>
                                     </div>
                                 </kb-form-item>
                                 <kb-form-item
-                                        v-if="['selection', 'checkbox', 'radiobox', 'fixedspec'].includes(d_data.controlType.toLowerCase())">
+                                        v-if="['selection','checkbox','radiobox','fixedspec'].includes(d_data.controlType.toLowerCase())">
                                     <label class="col-md-3 control-label"
                                            data-bind="text: Kooboo.text.component.fieldEditor.Options"></label>
                                     <div class="col-md-9">
                                         <div class="input-groups" id="selection-options">
 
-                                        <div v-for="(item,index) in d_data.selectionOptions" class="input-group"
-                                             :class="{'has-error':!validateModel.selectionOptions[index].key.valid || !validateModel.selectionOptions[index].value.valid}">
-                                                <input v-model="item.key"
-                                                        type="text" class="form-control key input-small"
-                                                       :placeholder="Kooboo.text.common.displayName"
-                                                       data-container="#selection-options"
-                                                       v-kb-tooltip:left.manual.error="validateModel.selectionOptions[index].key.msg"/>
+                                            <div v-for="(item,index) in d_data.selectionOptions" class="input-group">
+                                                <div>
+                                                    <input v-model="item.key"
+                                                           type="text" class="form-control key input-small"
+                                                           :placeholder="Kooboo.text.common.displayName"
+                                                           v-kb-hint:left="firstTabValidate.selectionOptions[index].key.msg"/>
+                                                </div>
+
                                                 <span class="input-group-addon">:</span>
-                                                <input v-model="item.value"
-                                                        type="text" class="form-control value input-small"
-                                                       :placeholder="Kooboo.text.common.value"
-                                                       />
-                                                <span class="input-group-btn"><a
-                                                        @click="removeOption($event, index)"
-                                                        href="javascript:;" class="btn btn-default"
-                                                        ><i
-                                                        class="fa fa-minus"
-                                                        data-container="#selection-options"
-                                                        v-kb-tooltip:right.manual.error="validateModel.selectionOptions[index].value.msg"></i></a></span>
+                                                <div>
+                                                    <input v-model="item.value"
+                                                           type="text" class="form-control value input-small"
+                                                           :placeholder="Kooboo.text.common.value"
+                                                    />
+
+                                                    <span class="input-group-btn"
+                                                          v-kb-hint:right="firstTabValidate.selectionOptions[index].value.msg"><a
+                                                            @click="removeOption($event, index)"
+                                                            href="javascript:;" class="btn btn-default"
+                                                    ><i
+                                                            class="fa fa-minus"
+                                                            data-container="#selection-options"
+                                                    ></i></a></span>
+                                                </div>
+
                                             </div>
                                         </div>
                                         <div>
                                             <div>
                                                 <a @click="addOption"
-                                                    href="javascript:;" class="btn dark"><i
+                                                   href="javascript:;" class="btn dark"><i
                                                         class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
@@ -105,7 +113,8 @@
                                     <div class="col-md-9 col-md-offset-3">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" v-model="d_data.multipleValue" :disabled="isNewField">
+                                                <input type="checkbox" v-model="d_data.getSelectionOptions"
+                                                       :disabled="isNewField">
                                                 <span>{{Kooboo.text.component.fieldEditor.enableMultiple}}</span>
                                             </label>
                                         </div>
@@ -118,8 +127,9 @@
                         </template>
                     </kb-container>
                     <kb-container>
+                        <template #header>{{Kooboo.text.component.fieldEditor.advanced}}</template>
                         <template #content>
-                            <kb-form :model="d_data" >
+                            <kb-form :model="d_data">
                                 <kb-form-item
                                 >
                                     <label class="control-label col-md-3">{{Kooboo.text.component.fieldEditor.tooltip}}</label>
@@ -132,7 +142,8 @@
                                     <div class="col-md-9 col-md-offset-3">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" v-model="d_data.multipleLanguage">
+                                                <input type="checkbox"
+                                                       v-model="d_data.hasOwnProperty('multilingual')? d_data.multilingual:d_data.multipleLanguage">
                                                 <span>{{Kooboo.text.component.fieldEditor.enableMultilingual}}</span>
                                             </label>
                                         </div>
@@ -146,18 +157,25 @@
                         </template>
                     </kb-container>
                     <kb-container>
+                        <template #header>
+                            <template v-if="!['boolean','switch','selection','fixedspec','dynamicspec'].includes(d_data.controlType.toLowerCase())">
+                                {{Kooboo.text.component.fieldEditor.validation}}
+                            </template>
+                        </template>
                         <template #content>
-                            <kb-field-validation :data="d_data"></kb-field-validation>
+                            <template v-if="!['boolean','switch','selection','fixedspec','dynamicspec'].includes(d_data.controlType.toLowerCase())">
+                                <kb-field-validation ref="fieldValidation" :data="d_data"
+                                                     :show-validate-error="showValidateError"></kb-field-validation>
+                            </template>
                         </template>
                     </kb-container>
-
 
                 </kb-tabs>
             </div>
         </kb-dialog-content>
         <kb-dialog-footer>
-            <button class="btn green" @click="onModalSave">Save</button>
-            <button class="btn gray" data-bind="click: onHide">Cancel</button>
+            <button class="btn green" @click="onSave">Save</button>
+            <button class="btn gray" @click="onCance">Cancel</button>
         </kb-dialog-footer>
         <template #preview>
             <div class="panel-heading">
@@ -167,7 +185,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-3">{{d_data.displayName || d_data.name}}</label>
                     <div class="col-md-9">
-                        <img :src="getControlTypeByValue(d_data.controlType).preview" style="max-width: 100%;">
+                        <img :src="findControlType(d_data.controlType).preview" style="max-width: 100%;">
                         <span class="help-block">{{d_data.tooltip}}</span>
                     </div>
                 </div>

@@ -13,10 +13,10 @@
             </div>
         </div>
     </div>
-    <!--validateItem-->
     <div v-if="validations && validations.length > 0" v-for="(item,index) in validations">
         <kb-field-validation-item :validate-model="validateModels[index]"
-                :item.sync="item" :show-validate="showValidate" :index="index"></kb-field-validation-item>
+                :item.sync="item" :show-validate-error="showValidateError" :index="index"
+        @remove="onRemove"></kb-field-validation-item>
 
     </div>
 </div>
