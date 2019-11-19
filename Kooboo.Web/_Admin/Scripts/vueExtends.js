@@ -453,7 +453,7 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
         newList.forEach(function(item) {
           binding.value.push(item);
         });
-        Kooboo.trigger(el, 'after-sort');
+        Kooboo.trigger(el, "after-sort");
       });
     }
   });
@@ -537,6 +537,10 @@ Vue.component("kb-container", {
 // #region <kb-hint>
 Vue.directive("kb-hint", {
   inserted: function(el, binding) {
+    var bounding = el.getBoundingClientRect();
+    if (bounding.top < 0 || bounding.bottom > $(window).height()) {
+      el.scrollIntoView();
+    }
     var element = $(el);
     var existShow = false;
     var tipsOptions = {
@@ -556,8 +560,12 @@ Vue.directive("kb-hint", {
         tipsOptions.title = binding.value;
         break;
       case "object":
-        if (binding.value.msg) {
-          tipsOptions.title = binding.value.msg;
+        if (binding.value.hasOwnProperty("msg")) {
+          if (binding.value.msg) {
+            tipsOptions.title = binding.value.msg;
+          } else {
+            tipsOptions.title = "";
+          }
         }
         if (binding.value.hasOwnProperty("show")) {
           existShow = true;
@@ -568,22 +576,29 @@ Vue.directive("kb-hint", {
         break;
     }
     element.tooltip(tipsOptions);
+
     if (existShow) {
       if (binding.value.show) {
         element.tooltip("show");
-        if (!el.classList.contains("has-error")) {
-          el.classList.add("has-error");
+        if (
+          !el.parentNode.classList.contains("has-error") &&
+          !(tipsOptions.title === "")
+        ) {
+          el.parentNode.classList.add("has-error");
         }
       } else {
         element.tooltip("hide");
-        if (el.classList.contains("has-error")) {
-          el.classList.remove("has-error");
+        if (el.parentNode.classList.contains("has-error")) {
+          el.parentNode.classList.remove("has-error");
         }
       }
     } else {
       element.tooltip("show");
-      if (!el.classList.contains("has-error")) {
-        el.classList.add("has-error");
+      if (
+        !el.parentNode.classList.contains("has-error") &&
+        !(tipsOptions.title === "")
+      ) {
+        el.parentNode.classList.add("has-error");
       }
     }
   },
@@ -591,11 +606,9 @@ Vue.directive("kb-hint", {
     var element = $(el);
     var existShow = false;
     var tipsOptions = element.data("bs.tooltip").options;
-
     if (binding.arg) {
       tipsOptions.placement = binding.arg;
     }
-
     switch (typeof binding.value) {
       case "string":
         tipsOptions.title = binding.value;
@@ -604,8 +617,12 @@ Vue.directive("kb-hint", {
         if (binding.value.options) {
           _.assign(tipsOptions, binding.value.options);
         }
-        if (binding.value.msg) {
-          tipsOptions.title = binding.value.msg;
+        if (binding.value.hasOwnProperty("msg")) {
+          if (binding.value.msg) {
+            tipsOptions.title = binding.value.msg;
+          } else {
+            tipsOptions.title = "";
+          }
         }
         if (binding.value.hasOwnProperty("show")) {
           existShow = true;
@@ -613,23 +630,36 @@ Vue.directive("kb-hint", {
         break;
     }
     element.tooltip(tipsOptions);
+    if (tipsOptions.title === "") {
+      element.attr("title", tipsOptions.title).tooltip("fixTitle");
+    }
     if (existShow) {
       if (binding.value.show) {
         element.tooltip("show");
-        if (!el.classList.contains("has-error")) {
-          el.classList.add("has-error");
+        if (
+          !el.parentNode.classList.contains("has-error") &&
+          !(tipsOptions.title === "")
+        ) {
+          el.parentNode.classList.add("has-error");
         }
       } else {
         element.tooltip("hide");
-        if (el.classList.contains("has-error")) {
-          el.classList.remove("has-error");
+        if (el.parentNode.classList.contains("has-error")) {
+          el.parentNode.classList.remove("has-error");
         }
       }
     } else {
       element.tooltip("show");
-      if (!el.classList.contains("has-error")) {
-        el.classList.add("has-error");
+      if (
+        !el.parentNode.classList.contains("has-error") &&
+        !(tipsOptions.title === "")
+      ) {
+        el.parentNode.classList.add("has-error");
       }
+    }
+    var bounding = el.getBoundingClientRect();
+    if (bounding.top < 0 || bounding.bottom > $(window).height()) {
+      el.scrollIntoView();
     }
   },
   unbind: function(el) {
