@@ -114,10 +114,27 @@ $(function() {
             }
           ]
         },
-
-        startValidating: false,
-        validationPassed: true,
-        contentValues: {}
+        contentValues: {},
+        fieldEditorOptions: {
+          controlTypes: [
+            "textbox",
+            "textarea",
+            "richeditor",
+            "selection",
+            "checkbox",
+            "radiobox",
+            "switch",
+            "mediafile",
+            "file",
+            "datetime",
+            "number"
+          ],
+          modifiedField: "isSummaryField",
+          modifiedFieldText: Kooboo.text.component.fieldEditor.summaryField,
+          showMultilingualOption: true,
+          showPreviewPanel: true,
+          getFieldNames: self.getFieldNames
+        }
       };
     },
     mounted: function() {
@@ -165,9 +182,10 @@ $(function() {
           self.getContentFields();
         }
       },
-      editProperty: function(m, e) {
+      editProperty: function(m, index) {
         self.isNewField = false;
         self.fieldData = m;
+        this.editingItemIndex = index;
         self.onFieldModalShow = true;
       },
       deleteProperty: function(m, e) {
@@ -568,6 +586,9 @@ $(function() {
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
+      },
+      onFieldEditorClose: function() {
+        this.onFieldModalShow = false;
       }
     },
     computed: {

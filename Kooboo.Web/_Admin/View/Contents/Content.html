@@ -203,7 +203,10 @@
                           <th colspan="3" class="table-action hover-show"></th>
                         </tr>
                       </thead>
-                      <tbody v-kb-sortable="userTypeProperties" @after-sort="afterSortProperty">
+                      <tbody
+                        v-kb-sortable="userTypeProperties"
+                        @after-sort="afterSortProperty"
+                      >
                         <tr
                           v-for="($data, $index) in userTypeProperties"
                           class="field-control"
@@ -251,7 +254,7 @@
                           <td class="table-action hover-show"
                             ><a
                               class="btn btn-xs blue"
-                              @click="editProperty($data)"
+                              @click="editProperty($data, $index)"
                               v-kb-tooltip="Kooboo.text.common.edit"
                               ><i class="fa fa-pencil"></i></a
                           ></td>
@@ -516,6 +519,26 @@
     <a href="javascript:;" class="btn gray" @click="userCancel">Return</a>
   </div>
   <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="onFieldModalShow"
+  >
+    <kb-field-editor
+      v-if="onFieldModalShow"
+      @on-save="onFieldSave"
+      :data="fieldData"
+      :options="fieldEditorOptions"
+      :close-handle="onFieldEditorClose"
+      :all-items="typeProperties"
+      :editing-index="0"
+    ></kb-field-editor>
+  </div>
+  <!-- :close-handle="onModalClose"
+:all-items="_.concat(notSystemProperties,systemProperties)"
+:editing-index="editingItemIndex" -->
+
+  <!-- <div
     data-bind="component: { name: 'kb-field-editor', params: {
         onShow: onFieldModalShow,
         onSave: onFieldSave,
@@ -529,7 +552,7 @@
             getFieldNames: getFieldNames
         }
     }}"
-  ></div>
+  ></div> -->
   <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
 <script>
@@ -543,7 +566,7 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/vue-components/kbMultilangSelector.js",
       "/_Admin/Scripts/vue-components/kbFieldPanel.js",
-      "/_Admin/Scripts/components/kbFieldEditor.js", // TODO: nj
+      "/_Admin/Scripts/vue-components/kbFieldEditor.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/kobindings.sortable.js"
