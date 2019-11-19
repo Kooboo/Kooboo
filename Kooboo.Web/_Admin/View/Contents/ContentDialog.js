@@ -119,7 +119,6 @@ $(function() {
     },
     beforeDestroy: function() {
       $(window).off("resize.dialog");
-      self = null;
     }
   });
 });

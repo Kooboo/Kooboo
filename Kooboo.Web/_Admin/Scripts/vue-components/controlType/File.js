@@ -85,9 +85,6 @@
             : null;
         }
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 })();

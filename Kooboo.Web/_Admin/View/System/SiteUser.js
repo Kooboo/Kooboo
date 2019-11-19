@@ -102,9 +102,6 @@ $(function() {
           });
         }
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 });

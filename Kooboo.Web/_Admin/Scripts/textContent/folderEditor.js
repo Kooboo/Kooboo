@@ -287,9 +287,6 @@
           self.init();
         }
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 

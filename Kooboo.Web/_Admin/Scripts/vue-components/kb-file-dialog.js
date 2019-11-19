@@ -123,9 +123,6 @@
           self.onAdd = data.onAdd;
         }
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 

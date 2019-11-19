@@ -80,9 +80,6 @@
         });
         return _cultures;
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 })();
