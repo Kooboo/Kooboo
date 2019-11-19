@@ -81,7 +81,7 @@ $(function() {
           ]
         },
         // Content Type
-        editingItemIndex: 0,
+        editingFieldIndex: 0,
         showContentTypeModal: false,
         contentTypeForm: {
           name: ""
@@ -186,7 +186,7 @@ $(function() {
       editProperty: function(m, index) {
         self.isNewField = false;
         self.fieldData = m;
-        this.editingItemIndex = index;
+        this.editingFieldIndex = index;
         self.onFieldModalShow = true;
       },
       deleteProperty: function(m, e) {

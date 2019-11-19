@@ -218,13 +218,10 @@
                             ></span>
                           </td>
                           <td :title="$data.name"
-                            >{{ $data.name.length > 8 ? $data.name.substr(0, 7)
-                            + "…" : $data.name }}</td
+                            >{{ $data.name | ellipsis(7) }}</td
                           >
                           <td :title="$data.displayName"
-                            >{{ $data.displayName.length > 8 ?
-                            $data.displayName.substr(0, 7) + "…" :
-                            $data.displayName }}</td
+                            >{{ $data.displayName | ellipsis(7) }}</td
                           >
                           <td class="table-action hover-hide">
                             <span
@@ -303,12 +300,8 @@
                             :key="$data.name"
                           >
                             <td class="table-sortable"></td>
-                            <td>{{ $data.name }}</td>
-                            <td
-                              >{{ $data.displayName.length > 9 ?
-                              $data.displayName.substr(0, 8) + "..." :
-                              $data.displayName }}</td
-                            >
+                            <td>{{ $data.name | ellipsis }}</td>
+                            <td>{{ $data.displayName | ellipsis }}</td>
                             <td class="table-action hover-hide">
                               <span
                                 :class="$data.multipleLanguage ? 'green' : 'label-default'"
@@ -337,13 +330,13 @@
                               class="table-action hover-show"
                               colspan="2"
                             ></td>
-                            <td class="table-action hover-show"
-                              ><a
+                            <td class="table-action hover-show">
+                              <!-- <a
                                 class="btn btn-xs blue"
-                                @click="editProperty"
+                                @click="editProperty($data, $index)"
                                 v-kb-tooltip="Kooboo.text.common.edit"
-                                ><i class="fa fa-pencil"></i></a
-                            ></td>
+                                ><i class="fa fa-pencil"></i></a> -->
+                            </td>
                           </tr>
                         </template>
                       </tfoot>
@@ -531,7 +524,7 @@
       :options="fieldEditorOptions"
       :close-handle="onFieldEditorClose"
       :all-items="typeProperties"
-      :editing-index="editingItemIndex"
+      :editing-index="editingFieldIndex"
     ></kb-field-editor>
   </div>
   <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>

@@ -462,15 +462,11 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
 
 // #region {{ | ellipsis}}
 Vue.filter("ellipsis", function(value, len, str) {
-  if (len && typeof len === "number") {
-    if (str && typeof str === "string") {
-      return value.substr(0, len - 2) + str;
-    } else {
-      return value.substr(0, len - 2) + "...";
-    }
-  } else {
-    return value.substr(0, 8 - 2) + "...";
+  len = len ? len : 8;
+  if (value && value.length > len) {
+    return value.substr(0, len) + (str ? str : "…");
   }
+  return value;
 });
 // #endregion
 // #region {{ | camelCase}}
