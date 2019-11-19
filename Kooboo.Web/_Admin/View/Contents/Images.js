@@ -116,18 +116,20 @@ $(function() {
         }
       };
     },
+    created: function() {
+      self.debouceChangeType = _.debounce(
+        function(type) {
+          self.curType = type;
+        },
+        300,
+        {
+          leading: true
+        }
+      );
+    },
     methods: {
       changeType: function(type) {
-        self.curType = type;
-        // _.debounce(
-        //   function (type) {
-        //     self.curType = type;
-        //   },
-        //   300,
-        //   {
-        //     leading: true
-        //   }
-        // )(type)
+        self.debouceChangeType(type);
       },
       changeImgType: function(type) {
         if (type !== self.curImgType) {
