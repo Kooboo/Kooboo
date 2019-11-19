@@ -104,9 +104,6 @@
           self.selectedContent = _.without(self.selectedContent, m);
         }
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 })();

@@ -24,10 +24,10 @@
         showValidateError: false,
         showValidateTab: true,
         showOptionsPanel: false,
-        showMultilvalue:false,
+        showMultilvalue: false,
         tabIndex: 0,
         isNewField: true,
-        type: '',
+        type: "",
         d_data: {
           name: "",
           displayName: "",
@@ -51,40 +51,55 @@
     created: function() {
       self = this;
       self.AllControlTypes = self.getControlTypes(self.options.controlTypes);
-        if (self.data && !self.options.isNewField) {
-        self.isNewField = false;
-        self.d_data = _.cloneDeep(self.data);
-        self.d_data.selectionOptions = [];
-        self.d_data.validations = JSON.parse(self.d_data.validations);
-        self.type = self.d_data.controlType.toLowerCase();
-        self.controlTypesOptions = self.getSameTypeControlType(self.findControlType(self.d_data.controlType));
-        } else {
-            self.controlTypesOptions = self.AllControlTypes
-        }
-        self.generateValidateModel();
+      if (!self.isNew()) {
+        try {
+            if(self.data.validations.length > 0) {
+                self.d_data.validations = JSON.parse(self.data.validations);
+            }
 
+        } catch (e) {
+          self.d_data.validations = [];
+        }
+        try {
+            if(self.data.selectionOptions.length > 0) {
+                self.d_data.selectionOptions = JSON.parse(self.data.selectionOptions);
+            }
+
+        } catch (e) {
+          self.d_data.selectionOptions = [];
+        }
+        self.controlTypesOptions = self.getSameTypeControlType(
+          self.findControlType(self.d_data.controlType)
+        );
+      } else {
+        self.controlTypesOptions = self.AllControlTypes;
+      }
+
+      self.generateValidateModel();
     },
     watch: {
       d_data: {
         handler: function(val, old) {
-            if(val.controlType === old.controlType){
-                self.controlTypesOptions = self.getSameTypeControlType(self.findControlType(self.d_data.controlType));
-            }
-            self.generateValidateModel();
+          if (val.controlType === old.controlType) {
+            self.controlTypesOptions = self.getSameTypeControlType(
+              self.findControlType(self.d_data.controlType)
+            );
+          }
+          self.generateValidateModel();
         },
         deep: true
       }
     },
     methods: {
-        getSameTypeControlType: function(item) {
-          var temp = [];
-          self.AllControlTypes.forEach(function(i) {
-              if (i.dataType === item.dataType) {
-                  temp.push(i)
-              }
-          });
-            return temp
-        },
+      getSameTypeControlType: function(item) {
+        var temp = [];
+        self.AllControlTypes.forEach(function(i) {
+          if (i.dataType === item.dataType) {
+            temp.push(i);
+          }
+        });
+        return temp;
+      },
       getControlTypes: function(types) {
         var _types = [];
         var CONTROL_TYPES = Kooboo.controlTypes;
@@ -97,6 +112,15 @@
         });
 
         return _types;
+      },
+      isNew: function() {
+        if (!self.data.name || self.data.name === "") {
+          self.isNewField = true;
+        } else {
+          self.isNewField = false;
+          _.assign(self.d_data, self.data);
+        }
+        return self.isNewField;
       },
       findControlType: function(value) {
         return self.AllControlTypes.find(function(item) {
@@ -178,37 +202,39 @@
           };
         });
         var threeTabValidation = self.$refs.fieldValidation.validate();
-
+        if (threeTabValidation.hasError) {
+          self.tabIndex = 2;
+        }
         if (firstTabHasError) {
           self.tabIndex = 0;
         }
-        if (threeTabValidation.hasError) {
-          self.tabIndex = 2;
-          self.showValidateError = true;
-        }
+        self.showValidateError = true;
         this.$forceUpdate();
-/*        var els = document.getElementsByClassName("has-error");
+        var els = document.getElementsByClassName("has-error");
         if (els.length > 0) {
           els[0].scrollIntoView();
-        }*/
+        }
         return !(firstTabHasError || threeTabValidation.hasError);
       },
       onSave: function() {
-            if(self.validate()){
-                var data = this.d_data;
-                data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
-                data.validations = JSON.stringify(this.d_data.validations);
-                if(data.displayName === ''){
-                    data.displayName = data.name;
-                }
-                var temp = {isNewField:self.isNewField ,data:data,editingIndex: self.editingIndex};
-                self.$emit('on-save', temp);
-                self.closeHandle()
-            }
-
+        if (self.validate()) {
+          var data = this.d_data;
+          data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
+          data.validations = JSON.stringify(this.d_data.validations);
+          if (data.displayName === "") {
+            data.displayName = data.name;
+          }
+          var temp = {
+            isNewField: self.isNewField,
+            data: data,
+            editingIndex: self.editingIndex
+          };
+          self.$emit("on-save", temp);
+          self.closeHandle();
+        }
       },
-      onCance: function () {
-            self.closeHandle()
+      onCancel: function() {
+        self.closeHandle();
       }
     }
   });

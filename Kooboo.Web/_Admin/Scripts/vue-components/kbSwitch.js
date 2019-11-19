@@ -25,9 +25,6 @@
       value: function(val) {
         $(this.$el).bootstrapSwitch("state", val, val);
       }
-    },
-    beforeDestroy: function() {
-      $(this.$el).bootstrapSwitch("destroy");
     }
   });
 })();

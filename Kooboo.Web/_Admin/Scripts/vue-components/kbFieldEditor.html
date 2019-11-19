@@ -14,7 +14,7 @@
                                     <label class="col-md-3 control-label">{{Kooboo.text.common.name}}</label>
                                     <div class="col-md-9">
                                         <div class="input-group"
-                                             v-kb-hint:right="firstTabValidate.name.msg">
+                                             v-kb-hint:right="{msg:firstTabValidate.name.msg,show:showValidateError}">
                                             <input v-if="isNewField"
                                                    v-model="d_data.name"
                                                    type="text" class="form-control key">
@@ -174,9 +174,9 @@
             </div>
         </kb-dialog-content>
         <kb-dialog-footer>
-            <button class="btn green" @click="onSave">Save</button>
-            <button class="btn gray" @click="onCance">Cancel</button>
-        </kb-dialog-footer>
+        <button class="btn green" @click="onSave">Save</button>
+        <button class="btn gray" @click="onCancel">Cancel</button>
+    </kb-dialog-footer>
         <template #preview>
             <div class="panel-heading">
                 <h6 class="panel-title">{{Kooboo.text.common.preview}}</h6>

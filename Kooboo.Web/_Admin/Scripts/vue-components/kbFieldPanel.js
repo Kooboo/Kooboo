@@ -283,6 +283,7 @@
         if (!val || val.length === 0) {
           return [];
         }
+        this.$refs.panelForm && this.$refs.panelForm.clearValid();
         var defaultLang = self.siteLangs.default;
         var d = _.cloneDeep(val);
         var fields = [];
@@ -358,9 +359,6 @@
         self.model = model;
         self.rules = rules;
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 })();

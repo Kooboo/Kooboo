@@ -145,10 +145,6 @@
           // );
         }
       }
-    },
-    beforeDestroy: function() {
-      self.modal = null;
-      self = null;
     }
   });
   function savedContentMapping(data) {
