@@ -81,6 +81,7 @@ $(function() {
           ]
         },
         // Content Type
+        editingFieldIndex: 0,
         showContentTypeModal: false,
         contentTypeForm: {
           name: ""
@@ -114,10 +115,27 @@ $(function() {
             }
           ]
         },
-
-        startValidating: false,
-        validationPassed: true,
-        contentValues: {}
+        contentValues: {},
+        fieldEditorOptions: {
+          controlTypes: [
+            "textbox",
+            "textarea",
+            "richeditor",
+            "selection",
+            "checkbox",
+            "radiobox",
+            "switch",
+            "mediafile",
+            "file",
+            "datetime",
+            "number"
+          ],
+          modifiedField: "isSummaryField",
+          modifiedFieldText: Kooboo.text.component.fieldEditor.summaryField,
+          showMultilingualOption: true,
+          showPreviewPanel: true,
+          getFieldNames: self.getFieldNames
+        }
       };
     },
     mounted: function() {
@@ -165,9 +183,10 @@ $(function() {
           self.getContentFields();
         }
       },
-      editProperty: function(m, e) {
+      editProperty: function(m, index) {
         self.isNewField = false;
         self.fieldData = m;
+        this.editingFieldIndex = index;
         self.onFieldModalShow = true;
       },
       deleteProperty: function(m, e) {
@@ -258,20 +277,16 @@ $(function() {
       },
       onCreateField: function() {
         self.isNewField = true;
-        self.fieldData = {};
+        self.fieldData = undefined;
         self.onFieldModalShow = true;
       },
       onFieldSave: function(fm) {
-        var _properties = _.cloneDeep(self.typeProperties),
-          idx = _.findIndex(_properties, function(p) {
-            return p.name == (self.isNewField ? "Online" : fm.name);
-          });
-
-        if (idx > -1) {
-          _properties.splice(idx, self.isNewField ? 0 : 1, fm);
-          self.typeProperties = _properties;
+        if (self.isNewField) {
+          self.typeProperties.push(fm.data);
+        } else {
+          self.typeProperties[fm.editingIndex] = fm.data;
+          self.typeProperties = self.typeProperties.slice();
         }
-
         self.saveContentFields(function() {
           self.refreshContent();
         });
@@ -568,6 +583,9 @@ $(function() {
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
+      },
+      onFieldEditorClose: function() {
+        this.onFieldModalShow = false;
       }
     },
     computed: {
@@ -595,10 +613,6 @@ $(function() {
             }
           });
         }
-      },
-      // test
-      selectedCulture: function(val) {
-        console.log(val);
       }
     }
   });

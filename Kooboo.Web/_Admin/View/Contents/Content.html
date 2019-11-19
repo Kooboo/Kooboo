@@ -203,7 +203,10 @@
                           <th colspan="3" class="table-action hover-show"></th>
                         </tr>
                       </thead>
-                      <tbody v-kb-sortable="userTypeProperties" @after-sort="afterSortProperty">
+                      <tbody
+                        v-kb-sortable="userTypeProperties"
+                        @after-sort="afterSortProperty"
+                      >
                         <tr
                           v-for="($data, $index) in userTypeProperties"
                           class="field-control"
@@ -215,13 +218,10 @@
                             ></span>
                           </td>
                           <td :title="$data.name"
-                            >{{ $data.name.length > 8 ? $data.name.substr(0, 7)
-                            + "…" : $data.name }}</td
+                            >{{ $data.name | ellipsis(7) }}</td
                           >
                           <td :title="$data.displayName"
-                            >{{ $data.displayName.length > 8 ?
-                            $data.displayName.substr(0, 7) + "…" :
-                            $data.displayName }}</td
+                            >{{ $data.displayName | ellipsis(7) }}</td
                           >
                           <td class="table-action hover-hide">
                             <span
@@ -251,7 +251,7 @@
                           <td class="table-action hover-show"
                             ><a
                               class="btn btn-xs blue"
-                              @click="editProperty($data)"
+                              @click="editProperty($data, $index)"
                               v-kb-tooltip="Kooboo.text.common.edit"
                               ><i class="fa fa-pencil"></i></a
                           ></td>
@@ -300,12 +300,8 @@
                             :key="$data.name"
                           >
                             <td class="table-sortable"></td>
-                            <td>{{ $data.name }}</td>
-                            <td
-                              >{{ $data.displayName.length > 9 ?
-                              $data.displayName.substr(0, 8) + "..." :
-                              $data.displayName }}</td
-                            >
+                            <td>{{ $data.name | ellipsis }}</td>
+                            <td>{{ $data.displayName | ellipsis }}</td>
                             <td class="table-action hover-hide">
                               <span
                                 :class="$data.multipleLanguage ? 'green' : 'label-default'"
@@ -334,13 +330,13 @@
                               class="table-action hover-show"
                               colspan="2"
                             ></td>
-                            <td class="table-action hover-show"
-                              ><a
+                            <td class="table-action hover-show">
+                              <!-- <a
                                 class="btn btn-xs blue"
-                                @click="editProperty"
+                                @click="editProperty($data, $index)"
                                 v-kb-tooltip="Kooboo.text.common.edit"
-                                ><i class="fa fa-pencil"></i></a
-                            ></td>
+                                ><i class="fa fa-pencil"></i></a> -->
+                            </td>
                           </tr>
                         </template>
                       </tfoot>
@@ -516,20 +512,21 @@
     <a href="javascript:;" class="btn gray" @click="userCancel">Return</a>
   </div>
   <div
-    data-bind="component: { name: 'kb-field-editor', params: {
-        onShow: onFieldModalShow,
-        onSave: onFieldSave,
-        data: fieldData,
-        options: {
-            controlTypes: ['textbox','textarea','richeditor','selection','checkbox','radiobox','switch','mediafile','file','datetime','number'],
-            modifiedField: 'isSummaryField',
-            modifiedFieldText: Kooboo.text.component.fieldEditor.summaryField,
-            showMultilingualOption: true,
-            showPreviewPanel: true,
-            getFieldNames: getFieldNames
-        }
-    }}"
-  ></div>
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="onFieldModalShow"
+  >
+    <kb-field-editor
+      v-if="onFieldModalShow"
+      @on-save="onFieldSave"
+      :data="fieldData"
+      :options="fieldEditorOptions"
+      :close-handle="onFieldEditorClose"
+      :all-items="typeProperties"
+      :editing-index="editingFieldIndex"
+    ></kb-field-editor>
+  </div>
   <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
 <script>
@@ -543,7 +540,7 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/vue-components/kbMultilangSelector.js",
       "/_Admin/Scripts/vue-components/kbFieldPanel.js",
-      "/_Admin/Scripts/components/kbFieldEditor.js", // TODO: nj
+      "/_Admin/Scripts/vue-components/kbFieldEditor.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/kobindings.sortable.js"
