@@ -531,28 +531,9 @@
       :options="fieldEditorOptions"
       :close-handle="onFieldEditorClose"
       :all-items="typeProperties"
-      :editing-index="0"
+      :editing-index="editingItemIndex"
     ></kb-field-editor>
   </div>
-  <!-- :close-handle="onModalClose"
-:all-items="_.concat(notSystemProperties,systemProperties)"
-:editing-index="editingItemIndex" -->
-
-  <!-- <div
-    data-bind="component: { name: 'kb-field-editor', params: {
-        onShow: onFieldModalShow,
-        onSave: onFieldSave,
-        data: fieldData,
-        options: {
-            controlTypes: ['textbox','textarea','richeditor','selection','checkbox','radiobox','switch','mediafile','file','datetime','number'],
-            modifiedField: 'isSummaryField',
-            modifiedFieldText: Kooboo.text.component.fieldEditor.summaryField,
-            showMultilingualOption: true,
-            showPreviewPanel: true,
-            getFieldNames: getFieldNames
-        }
-    }}"
-  ></div> -->
   <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
 <script>

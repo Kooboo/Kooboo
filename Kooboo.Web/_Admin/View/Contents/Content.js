@@ -81,6 +81,7 @@ $(function() {
           ]
         },
         // Content Type
+        editingItemIndex: 0,
         showContentTypeModal: false,
         contentTypeForm: {
           name: ""
@@ -276,20 +277,16 @@ $(function() {
       },
       onCreateField: function() {
         self.isNewField = true;
-        self.fieldData = {};
+        self.fieldData = undefined;
         self.onFieldModalShow = true;
       },
       onFieldSave: function(fm) {
-        var _properties = _.cloneDeep(self.typeProperties),
-          idx = _.findIndex(_properties, function(p) {
-            return p.name == (self.isNewField ? "Online" : fm.name);
-          });
-
-        if (idx > -1) {
-          _properties.splice(idx, self.isNewField ? 0 : 1, fm);
-          self.typeProperties = _properties;
+        if (self.isNewField) {
+          self.typeProperties.push(fm.data);
+        } else {
+          self.typeProperties[fm.editingIndex] = fm.data;
+          self.typeProperties = self.typeProperties.slice();
         }
-
         self.saveContentFields(function() {
           self.refreshContent();
         });
@@ -616,10 +613,6 @@ $(function() {
             }
           });
         }
-      },
-      // test
-      selectedCulture: function(val) {
-        console.log(val);
       }
     }
   });
