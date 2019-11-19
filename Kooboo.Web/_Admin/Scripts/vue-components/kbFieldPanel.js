@@ -359,9 +359,6 @@
         self.model = model;
         self.rules = rules;
       }
-    },
-    beforeDestroy: function() {
-      self = null;
     }
   });
 })();

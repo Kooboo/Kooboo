@@ -433,7 +433,7 @@ Vue.directive("kb-collapsein", {
 // #endregion </kb-richeditor>
 
 // #region <kb-sortable>
-Vue.directive("kb-sortable", function(el, binding) {
+Vue.directive("kb-sortable", function(el, binding, vnode) {
   $(el).sortable({
     handle: ".sortable",
     start: function() {
@@ -453,6 +453,7 @@ Vue.directive("kb-sortable", function(el, binding) {
         newList.forEach(function(item) {
           binding.value.push(item);
         });
+        Kooboo.trigger(el, 'after-sort');
       });
     }
   });

@@ -57,21 +57,41 @@ $(function() {
         isNewField: false,
         // New folder
         showFolderModal: false,
-        newFolderName: "",
-        newFolderDisplayName: "",
-        newFolderContentTypeId: "",
+        newFolder: {
+          name: "",
+          displayName: "",
+          contentTypeId: ""
+        },
+        newFolderRules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
+            }
+          ],
+          contentTypeId: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            }
+          ]
+        },
         // Content Type
         showContentTypeModal: false,
         contentTypeForm: {
-          name: "",
+          name: ""
         },
         contentTypeRules: {
-          name:[
+          name: [
             {
-            required: true,
-            message: Kooboo.text.validation.required,
-            }, 
-             {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
               min: 1,
               max: 64,
               message:
@@ -81,21 +101,19 @@ $(function() {
                 Kooboo.text.validation.maxLength +
                 64
             },
-             {
-              url: Kooboo.ContentType.isUniqueName(),
-              data: {
-                name: function() {
-                  return self.contentTypeName();
+            {
+              remote: {
+                url: Kooboo.ContentType.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.contentTypeForm.name
+                  };
                 }
-              },
-              validate: function(value) {
-
               },
               message: Kooboo.text.validation.taken
             }
           ]
         },
-        contentTypeName: "",
 
         startValidating: false,
         validationPassed: true,
@@ -123,12 +141,6 @@ $(function() {
           }
         });
       });
-
-      Kooboo.EventBus.subscribe("ko/binding/sorted", function() {
-        self.saveContentFields(function() {
-          self.refreshContent();
-        });
-      });
     },
     methods: {
       onAllowModify: function() {
@@ -147,7 +159,7 @@ $(function() {
           self.choosedFolder = null;
           self.choosedFolderId = null;
         } else {
-          if (!self.choosedFolderId && self.avaliableFolders[0]) {
+          if (self.avaliableFolders[0]) {
             self.choosedFolderId = self.avaliableFolders[0].id;
           }
           self.getContentFields();
@@ -165,6 +177,14 @@ $(function() {
             self.refreshContent();
           });
         }
+      },
+      afterSortProperty: function() {
+        self.typeProperties = self.userTypeProperties.concat(
+          self.systemTypeProperties
+        );
+        self.saveContentFields(function() {
+          self.refreshContent();
+        });
       },
       refreshContent: function() {
         var tempSaveData = self.getSaveTextContent();
@@ -283,28 +303,25 @@ $(function() {
       // New Folder
       onCreateFolder: function() {
         self.showFolderModal = true;
-        self.newFolderContentTypeId = self.contentType;
+        self.newFolder.contentTypeId = self.contentType;
       },
       onHideFolderModal: function() {
         self.showFolderModal = false;
-        self.newFolderName = "";
-
-        // TODO: nj
-        // self.showError(false);
+        self.newFolder.name = "";
+        self.newFolder.displayName = "";
+        self.newFolder.contentTypeId = "";
+        self.$refs.newFolderForm.clearValid();
       },
       isNewFolderValid: function() {
-        // TODO: nj
-        return (
-          self.newFolderName.isValid() && self.newFolderContentTypeId.isValid()
-        );
+        return self.$refs.newFolderForm.validate();
       },
       onCreateNewFolder: function() {
-        if (self.isNewFolderValid) {
+        if (self.isNewFolderValid()) {
           Kooboo.ContentFolder.post({
             id: Kooboo.Guid.Empty,
-            name: self.newFolderName,
-            displayName: self.newFolderDisplayName,
-            contentTypeId: self.newFolderContentTypeId,
+            name: self.newFolder.name,
+            displayName: self.newFolder.displayName,
+            contentTypeId: self.newFolder.contentTypeId,
             embedded: [],
             category: []
           }).then(function(res) {
@@ -324,8 +341,6 @@ $(function() {
               });
             }
           });
-        } else {
-          self.showError(true);
         }
       },
       getContentFields: function() {
@@ -360,10 +375,9 @@ $(function() {
         self.showContentTypeModal = true;
       },
       onContentTypeModalHide: function() {
-        // TODO: nj
-        // self.showError(false);
-        self.contentTypeName = "";
+        self.contentTypeForm.name = "";
         self.showContentTypeModal = false;
+        self.$refs.contentTypeForm.clearValid();
       },
       onCreateNewContentType: function() {
         if (self.isAbleToCreateType()) {
@@ -373,7 +387,7 @@ $(function() {
             if (res.success) {
               var data = res.model;
               data.id = Kooboo.Guid.Empty;
-              data.name = self.contentTypeName;
+              data.name = self.contentTypeForm.name;
               Kooboo.ContentType.save(data).then(function(re) {
                 if (re.success) {
                   window.info.done(Kooboo.text.info.save.success);
@@ -387,9 +401,6 @@ $(function() {
               });
             }
           });
-        } else {
-          // TODO
-          // self.showError(true);
         }
       },
       getSaveTextContent: function() {
@@ -402,16 +413,22 @@ $(function() {
         };
       },
       isAbleToCreateType: function() {
-        // TODO
-        return false;
-        return self.contentTypeName.isValid();
+        return self.$refs.contentTypeForm.validate();
       },
       isAbleToSaveTextContent: function() {
-        if (!self.choosedFolderId) {
+        if (!self.contentTypes.length) {
+          window.info.fail(Kooboo.text.site.textContent.createTypeFieldHint);
           return false;
-        } else {
-          return this.$refs.fieldPanel.validate();
         }
+        if (!self.choosedFolderId) {
+          window.info.fail(Kooboo.text.site.textContent.createFolderHint);
+          return false;
+        }
+        if (self.fields.length == 1) {
+          window.info.fail(Kooboo.text.site.textContent.saveWidthNoFieldHint);
+          return false;
+        }
+        return this.$refs.fieldPanel.validate();
       },
       onSubmit: function(cb) {
         if (self.isAbleToSaveTextContent()) {
@@ -424,14 +441,6 @@ $(function() {
               }
             }
           );
-        } else {
-          if (!self.contentTypes.length) {
-            window.info.fail(Kooboo.text.site.textContent.createTypeFieldHint);
-          } else if (!self.choosedFolderId) {
-            window.info.fail(Kooboo.text.site.textContent.createFolderHint);
-          } else if (self.fields.length == 1) {
-            window.info.fail(Kooboo.text.site.textContent.saveWidthNoFieldHint);
-          }
         }
       },
       onContentSave: function() {
@@ -540,10 +549,10 @@ $(function() {
                   }
                 });
               }
-            }
-
-            if (!self.contentType && self.contentTypes[0]) {
-              self.contentType = self.contentTypes[0].id;
+            } else {
+              if (self.contentTypes[0]) {
+                self.contentType = self.contentTypes[0].id;
+              }
             }
 
             if (initLoad) {
@@ -559,6 +568,18 @@ $(function() {
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
+      }
+    },
+    computed: {
+      userTypeProperties: function() {
+        return _.filter(self.typeProperties, function(prop) {
+          return !prop.isSystemField;
+        });
+      },
+      systemTypeProperties: function() {
+        return _.filter(self.typeProperties, function(prop) {
+          return prop.isSystemField;
+        });
       }
     },
     watch: {
@@ -593,51 +614,4 @@ $(function() {
       }
     }
   }
-
-  var TextContent = function() {
-    this.showError = ko.observable(false);
-
-    // New folder
-    this.newFolderName = ko.validateField({
-      required: "",
-      regex: {
-        pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-        message: Kooboo.text.validation.objectNameRegex
-      }
-    });
-    this.newFolderContentTypeId = ko.validateField({
-      required: ""
-    });
-
-    // Content Type
-
-    this.contentTypeName = ko.validateField({
-      required: Kooboo.text.validation.required,
-      stringlength: {
-        min: 1,
-        max: 64,
-        message:
-          Kooboo.text.validation.minLength +
-          1 +
-          ", " +
-          Kooboo.text.validation.maxLength +
-          64
-      },
-      remote: {
-        url: Kooboo.ContentType.isUniqueName(),
-        data: {
-          name: function() {
-            return self.contentTypeName();
-          }
-        },
-        message: Kooboo.text.validation.taken
-      }
-    });
-  };
-
-  // var vm = new TextContent();
-
-  // Kooboo.EventBus.subscribe("content/ready", function() {
-  //     ko.applyBindings(vm, document.getElementById("main"));
-  // })
 });
