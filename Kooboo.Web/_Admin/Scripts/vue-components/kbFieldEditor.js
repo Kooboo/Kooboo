@@ -178,19 +178,18 @@
           };
         });
         var threeTabValidation = self.$refs.fieldValidation.validate();
-
-        if (firstTabHasError) {
-          self.tabIndex = 0;
-        }
         if (threeTabValidation.hasError) {
           self.tabIndex = 2;
           self.showValidateError = true;
         }
+        if (firstTabHasError) {
+          self.tabIndex = 0;
+        }
         this.$forceUpdate();
-/*        var els = document.getElementsByClassName("has-error");
+        var els = document.getElementsByClassName("has-error");
         if (els.length > 0) {
           els[0].scrollIntoView();
-        }*/
+        }
         return !(firstTabHasError || threeTabValidation.hasError);
       },
       onSave: function() {
@@ -207,7 +206,7 @@
             }
 
       },
-      onCance: function () {
+      onCancel: function () {
             self.closeHandle()
       }
     }
