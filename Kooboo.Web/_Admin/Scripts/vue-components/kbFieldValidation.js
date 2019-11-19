@@ -6,18 +6,19 @@
       "/_Admin/Scripts/vue-components/kbFieldValidation.html"
     ),
     props: {
-      data: {}
+      data: {},
+      showValidateError: {default: false}
     },
     data: function() {
       return {
-        showValidate: false,
         validations: this.data.validations
-          ? JSON.parse(this.data.validations)
+          ? this.data.validations
           : [],
         hasError: false,
         options: [],
+        allOptions: [],
         selectedValue: undefined,
-        allOptions: {
+        defaultoptions: {
           required: {
             name: Kooboo.text.validationRule.required,
             type: "required",
@@ -74,9 +75,8 @@
     },
     created: function() {
       self = this;
-      self.options = self.getOptionsBytype(self.data.controlType);
-      self.shiftExistRule();
-
+      self.allOptions = self.getOptionsBytype(self.data.controlType);
+      self.getOptions();
       this.createValidateModels();
     },
     watch: {
@@ -84,6 +84,7 @@
         this.d_data = value;
       },
       validations: function(value) {
+        this.getOptions();
         this.createValidateModels();
       }
     },
@@ -102,7 +103,7 @@
       },
       getOptionsBytype: function(type) {
         var options = [];
-        var a = self.allOptions;
+        var a = self.defaultoptions;
         switch (type.toLowerCase()) {
           case "textbox":
           case "textarea":
@@ -130,29 +131,48 @@
         return options;
       },
       onAdd: function() {
-        this.validations.push(self.allOptions[self.selectedValue].default);
+        this.validations.push(self.defaultoptions[self.selectedValue].default);
       },
-      itemChange: function(e, item, index) {},
-      shiftExistRule: function() {
-        for (var i = 0; i < self.options.length; i++) {
-          var hasSame = false;
-          self.validations.forEach(function(rule) {
-            if (
-              self.options[i].type &&
-              rule.type &&
-              self.options[i].type === rule.type
-            ) {
-              self.options.splice(i, 1);
-              hasSame = true;
+      onRemove: function(index) {
+        this.validations.splice(index,1)
+      },
+      validate: function() {
+        var hasError = false;
+        self.validations.forEach(function(item,index) {
+          var model = {};
+          var keys = Object.keys(item);
+          keys.forEach(function(key) {
+            if (!(key === "type" || key === "msg" || key === "required"))
+            model[key] = Kooboo.validField(item[key], [{required: true, message: Kooboo.text.validation.required}]);
+            if(model[key] && model[key].hasOwnProperty('valid') && !model[key].valid) {
+              hasError = true;
             }
           });
-          if (hasSame) i--;
-        }
+          self.validateModels[index] = model;
+        });
+        return {hasError:hasError,result: self.validateModels};
+      },
+      getOptions: function() {
+        self.options = _.clone(self.allOptions);
+        var count = 0;
+        self.allOptions.forEach(function (item,index) {
+
+          self.validations.forEach(function(rule) {
+            if (
+                item.type &&
+                rule.type &&
+                item.type === rule.type
+            ) {
+              self.options.splice(index - count,1);
+              count ++
+            }
+          });
+        });
         if (self.options.length > 0 && self.options[0].type) {
           self.selectedValue = self.options[0].type;
         }
+        console.log(self.options);
       }
     }
   });
 })();
-

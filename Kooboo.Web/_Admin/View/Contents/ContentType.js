@@ -9,11 +9,11 @@ $(function() {
         tableData: [],
         tableDataSelected: [],
         showSystemField: false,
-        titleName: "",
+        name: "",
         contentTypeId: "",
         controlType: "",
-        editableProperties: [],
-        unEditableProperties: [],
+        notSystemProperties: [],
+        systemProperties: [],
         modalVisible: false,
         contentTypesPageUrl: Kooboo.Route.ContentType.ListPage,
         editingItemData: undefined,
@@ -56,17 +56,17 @@ $(function() {
           id: id
         }).then(function(res) {
           if (res.success) {
-            self.titleName = res.model.name;
+            self.name = res.model.name;
             var properties = res.model.properties.map(function(o) {
               if (o.controlType.toLowerCase() === "tinymce") {
                 o.controlType = "RichEditor";
               }
               return o;
             });
-            self.editableProperties = properties.filter(function(item) {
+            self.notSystemProperties = properties.filter(function(item) {
               return !item.isSystemField;
             });
-            self.unEditableProperties = properties.filter(function(item) {
+            self.systemProperties = properties.filter(function(item) {
               return item.isSystemField;
             });
           }
@@ -87,22 +87,50 @@ $(function() {
         }
       },
       removeItem: function(event, index, item) {
-        this.editableProperties.splice(index, 1);
+        this.notSystemProperties.splice(index, 1);
       },
-      onSave: function() {},
-      onAddField: function() {
+      onFieldEditorSave: function(event) {
+        if (event.isNewField) {
+          self.notSystemProperties.splice(0, 0, event.data);
+        } else {
+          if (event.editingIndex) {
+            self.notSystemProperties[event.editingIndex] = event.data;
+          }
+        }
+      },
+      onSave: function(data) {
+        var properties = _.concat(
+          self.notSystemProperties,
+          self.systemProperties
+        );
+        var data = {
+          id: self.contentTypeId,
+          name: self.name,
+          properties: properties
+        };
+        Kooboo.ContentType.save(data).then(function(res) {
+          if (res.success) {
+            location.href = self.contentTypesPageUrl;
+          }
+        });
+      },
+      onAdd: function() {
         this.editingItemData = undefined;
         this.modalVisible = true;
+        this.editingItemIndex = self.notSystemProperties.length;
       },
-      onCancel: function() {},
-      onEdit: function(event, item) {
-        this.modalVisible = true;
+      onCancel: function() {
+        location.href = self.contentTypesPageUrl;
+      },
+      onEdit: function(event, item, index) {
         this.editingItemData = item;
-        console.log(item);
+        this.editingItemIndex = index;
+        this.modalVisible = true;
       },
       onModalClose: function() {
         if (self.modalVisible) {
           self.modalVisible = false;
+          self.editingItemIndex = undefined;
         } else {
           self.modalVisible = true;
         }
