@@ -13,7 +13,7 @@
       var self = this;
       return {
         isShow: false,
-        data: {},
+        data: null,
         selected: false,
         domains: [],
         model: {
@@ -107,8 +107,11 @@
         this.isShow = value;
       },
       isShow: function(value) {
-        this.selected = false;
         this.$emit("input", value);
+        if (!value) {
+          this.selected = false;
+          this.data = null;
+        }
       },
       "model.siteName": function(value) {
         this.model.subDomain = value;

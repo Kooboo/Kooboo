@@ -887,7 +887,8 @@
         createModalTip:
           "Create a blank new website, and use well defined elements to develop your website.",
         onlineVersionCloneTip:
-          "* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more."
+          "* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.",
+          automatically:"System will add thumbnails automatically if user don't upload any thumbnail."
       },
       setting: {
         addNewLanguage: "Add new language",
