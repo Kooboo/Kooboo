@@ -1,5 +1,5 @@
 ﻿<!-- #layout name=default -->
-<div id="main" class="sites">
+<div id="main" class="sites" v-show="init">
   <div class="page-header">
     <h1 class="title">Sites Overview</h1>
     <button
@@ -406,7 +406,8 @@
           SiteId: "",
           localPath: "",
           EnableDiskSync: false
-        }
+        },
+        init: false
       };
     },
     mounted: function() {
@@ -435,6 +436,7 @@
         Kooboo.Site.getList().then(function(res) {
           if (res.success) {
             self.sites = res.model;
+            self.init = true;
             self.sites.forEach(function(i) {
               if (!i.inProgress) return;
               var interval = setInterval(function() {

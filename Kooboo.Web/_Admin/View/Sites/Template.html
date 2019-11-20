@@ -653,7 +653,12 @@
       removeFile: function(item, index) {
         var selected = self.editModel.images[self.editModel.defaultImg];
         self.editModel.images.splice(index, 1);
-        self.editModel.defaultImg = self.editModel.images.indexOf(selected);
+        if (index == self.editModel.defaultImg) {
+          if (index > 0) self.editModel.defaultImg = index - 1;
+          else self.editModel.defaultImg = 0;
+        } else {
+          self.editModel.defaultImg = self.editModel.images.indexOf(selected);
+        }
       },
       uploadImg: function(data, files) {
         files.forEach(function(f) {
