@@ -1,6 +1,6 @@
 ﻿(function() {
   var self;
-  var vm = Vue.component("events-ruletype-ifelse", {
+  var baseComponent = Vue.component("events-ruletype-ifelse", {
     template: "#RuleTemplate-IfElse",
     props: {
       rule: Object,
@@ -121,7 +121,7 @@
     }
   });
   Vue.component("events-ruletype-ifelse-summary", {
-    extends: vm,
+    extends: baseComponent,
     template: "#RuleSummaryTemplate-IfElse"
   });
 })();
