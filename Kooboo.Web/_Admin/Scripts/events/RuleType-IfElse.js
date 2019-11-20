@@ -12,18 +12,18 @@
     },
     methods: {
       editCondition: function(rule) {
-        root.conditionDialogShow(true);
-        root.conditionData(rule.if());
-        root.conditionRule(rule);
+        self.$root.conditionDialogShow = true;
+        self.$root.conditionData = rule.if;
+        self.$root.conditionRule = rule;
         
-        Kooboo.EventBus.subscribe("conditionUpdata", function(opt) {
-          var conditions = opt.conditions,
-            rule = opt.rule;
-          rule.if.removeAll();
-          $.each(conditions, function() {
-            rule.if.push(this);
-          });
-        });
+        // Kooboo.EventBus.subscribe("conditionUpdata", function(opt) {
+        //   var conditions = opt.conditions,
+        //     rule = opt.rule;
+        //   rule.if.removeAll();
+        //   $.each(conditions, function() {
+        //     rule.if.push(this);
+        //   });
+        // });
       },
       branchSummary: function(rules) {
         var html = "";
@@ -41,7 +41,6 @@
         }
         return html;
       },
-
       branchTooltip: function(rules) {
         // In this case, the detail is shown directly, so no need to have a tooltip
         if (
@@ -62,7 +61,6 @@
 
         return html;
       },
-
       renderTooltip: function(rule, level) {
         var html = '<div class="rule-summary">';
 
@@ -119,19 +117,6 @@
           });
         }
         return desc;
-      },
-      editCondition: function(rule) {
-        root.conditionDialogShow(true);
-        root.conditionData(rule.if());
-        root.conditionRule(rule);
-        Kooboo.EventBus.subscribe("conditionUpdata", function(opt) {
-          var conditions = opt.conditions,
-            rule = opt.rule;
-          rule.if.removeAll();
-          $.each(conditions, function() {
-            rule.if.push(this);
-          });
-        });
       }
     }
   });
