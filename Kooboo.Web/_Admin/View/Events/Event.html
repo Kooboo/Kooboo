@@ -47,9 +47,8 @@
       <button type="button" class="btn green" @click="save">Save</button>
     </div>
   </div>
-  <condition-dialog
-    params="modalShow: conditionDialogShow, conditionData: conditionData, conditionRule: conditionRule"
-  ></condition-dialog>
+  <kb-condition-dialog :modal-show.sync="conditionDialogShow" :condition-data="conditionData" :condition-rule="conditionRule"
+  ></kb-condition-dialog>
   <activity-dialog
     params="modalShow: activityDialogShow, activityData: activityData, onSave: saveActivity"
   ></activity-dialog>
