@@ -113,6 +113,9 @@ var MonacoEditorService =
         callback(content);
       });
     };
+    MonacoEditorService.prototype.format = function() {
+      self.editor.getAction("editor.action.formatDocument").run();
+    };
     MonacoEditorService.prototype.changeLanguage = function(language, model) {
       if (model) {
         monaco.editor.setModelLanguage(model, language);

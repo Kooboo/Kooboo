@@ -81,6 +81,9 @@
       },
       changeTheme: function(value) {
         self.monacoService.changeTheme(value);
+      },
+      formatCode: function() {
+        self.monacoService.format();
       }
     }
   });
