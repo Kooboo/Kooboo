@@ -1,50 +1,91 @@
-Vue.component("kb-code-editor", {
-  template: "<div ref='container' style='height:100%;'></div>",
-  props: {
-    lang: {
-      type: String,
-      default: "javascript"
+(function() {
+  Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/manacoService/manaco-service.js"
+  ]);
+  var monacoService = new MonacoEditorService();
+  var self;
+  Vue.component("kb-code-editor", {
+    template: "<div  ref='container' style='width:100%;height:100%'></div>",
+    props: {
+      lang: {
+        type: String,
+        require: true
+      },
+      autoSize: { default: false },
+      code: { type: String, require: true },
+      options: {}
     },
-    code: String,
-    option: Function
-  },
-  mounted: function() {
-    var loaderSrc = "https://unpkg.com/monaco-editor@0.18.1/min/vs/loader.js";
-    var loaderScript = document.querySelector("[src='" + loaderSrc + "']");
-    if (!loaderScript) {
-      var loaderScript = document.createElement("script");
-      loaderScript.onload = this.init;
-      loaderScript.src = loaderSrc;
-      loaderScript.type = "text/javascript";
-      document.head.appendChild(loaderScript);
-    } else this.init();
-  },
-  methods: {
-    init: function() {
-      var me = this;
-      require.config({
-        paths: { vs: "https://unpkg.com/monaco-editor@0.18.1/min/vs" }
-      });
-      window.MonacoEnvironment = {
-        getWorkerUrl: function(workerId, label) {
-          var encoded = encodeURIComponent(
-            "self.MonacoEnvironment = { baseUrl: 'https://unpkg.com/monaco-editor@0.18.1/min/' }; importScripts('https://unpkg.com/monaco-editor@0.18.1/min/vs/base/worker/workerMain.js');"
-          );
-          return "data:text/javascript;charset=utf-8," + encoded;
-        }
+    data: function() {
+      return {
+        isInit: false,
+        d_code: this.code,
+        isCreate: false,
+        monacoService: monacoService,
+        monaco: undefined,
+        model: undefined,
+        editor: undefined
       };
-
-      require(["vs/editor/editor.main"], function() {
-        var el = me.$refs.container;
-        if (this.option) {
-          this.option(el, monaco);
-        } else {
-          monaco.editor.create(el, {
-            value: me.code,
-            language: me.lang
-          });
+    },
+    watch: {
+      d_code: function(value) {
+        this.$emit("update:code", value);
+      },
+      code: function(value, old) {
+        if (value !== old && value !== self.d_code) {
+          if (this.model) {
+            self.monacoService.changeValue(value, this.model);
+          }
         }
-      });
+      },
+      lang: function(value) {
+        if (this.model) {
+          self.monacoService.changeLanguage(value, this.model);
+        }
+      }
+    },
+    created: function() {
+      self = this;
+    },
+    mounted: function() {
+      if (!self.isInit) {
+        monacoService.init(function(monaco) {
+          self.monaco = monaco;
+          var options = {};
+          if (self.options) {
+            options = self.options;
+          }
+          if (self.autoSize) {
+            options.automaticLayout = true;
+          }
+          var temp = self.monacoService.create(
+            self.$refs.container,
+            self.d_code || self.code,
+            self.lang,
+            options
+          );
+          self.editor = temp.editor;
+          self.model = temp.model;
+          self.isInit = true;
+          self.isCreate = true;
+          self.monacoService.onModelContentChange(self.model, function(
+            content
+          ) {
+            self.d_code = content;
+          });
+        });
+      }
+    },
+    methods: {
+      setAutosize: function(value) {
+        self.monacoService.setAutosize(value);
+      },
+      changeTheme: function(value) {
+        self.monacoService.changeTheme(value);
+      },
+      formatCode: function() {
+        self.monacoService.format();
+      }
     }
-  }
-});
+  });
+})();
+
