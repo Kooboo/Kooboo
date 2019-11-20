@@ -33,7 +33,6 @@ $(function() {
                     self.tableData = res.model;
                 });
             },
-            onCreate: function() {},
             getConfirmMessage: function(doc) {
                 if (doc.relations) {
                     doc.relationsTypes = _.sortBy(Object.keys(doc.relations));
@@ -47,6 +46,11 @@ $(function() {
                 } else {
                     return Kooboo.text.confirm.deleteItems;
                 }
+            },
+            getDetailUrl: function(id){
+               return  Kooboo.Route.Get(Kooboo.Route.ContentType.DetailPage, {
+                    id: id
+                })
             },
             onDelete: function() {
                 if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
