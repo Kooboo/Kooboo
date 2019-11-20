@@ -1,5 +1,5 @@
 <!-- #layout name=default -->
-<div id="main" class="with-button">
+<div id="main" class="with-button" v-cloak>
   <div class="page-header">
     <h1 class="title">HTML block</h1>
     <kb-multilang-selector
@@ -57,7 +57,7 @@
     <button @click="onSubmit" class="btn green">Save</button>
     <a :href="cancelUrl" class="btn gray">Cancel</a>
   </div>
-  <kb-media-dialog data.sync="mediaDialogData"></kb-media-dialog>
+  <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
 
 <script>
