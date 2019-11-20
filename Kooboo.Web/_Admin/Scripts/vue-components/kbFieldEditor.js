@@ -33,7 +33,7 @@
           displayName: "",
           controlType: "TextBox",
           isSummaryField: false,
-          multipleLanguage: false,
+          multipleLanguage: undefined,
           editable: true,
           order: 0,
           tooltip: "",
