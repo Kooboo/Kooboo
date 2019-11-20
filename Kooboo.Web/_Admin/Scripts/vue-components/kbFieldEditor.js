@@ -114,11 +114,16 @@
         return _types;
       },
       isNew: function() {
-        if (!self.data.name || self.data.name === "") {
+        if (!self.data || !self.data.name || self.data.name === "") {
           self.isNewField = true;
         } else {
           self.isNewField = false;
-          _.assign(self.d_data, self.data);
+          var data = {};
+          if(self.data) {
+            data = self.data
+          }
+
+          _.assign(self.d_data, data);
         }
         return self.isNewField;
       },
