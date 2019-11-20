@@ -24,9 +24,9 @@
   >
     <kb-table-column :label=" Kooboo.text.common.name">
       <template v-slot="row">
-        <a href="javascript:;">
+        <a :href=" getDetailUrl(row.id)">
           {{ row.name }}
-        </a>
+        </a>s
       </template>
     </kb-table-column>
     <kb-table-column :label="Kooboo.text.site.contentType.fields">
