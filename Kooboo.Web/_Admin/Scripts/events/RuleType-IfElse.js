@@ -15,15 +15,15 @@
         self.$root.conditionDialogShow = true;
         self.$root.conditionData = rule.if;
         self.$root.conditionRule = rule;
-        
-        // Kooboo.EventBus.subscribe("conditionUpdata", function(opt) {
-        //   var conditions = opt.conditions,
-        //     rule = opt.rule;
-        //   rule.if.removeAll();
-        //   $.each(conditions, function() {
-        //     rule.if.push(this);
-        //   });
-        // });
+
+        Kooboo.EventBus.subscribe("conditionUpdata", function(opt) {
+          var conditions = opt.conditions,
+            rule = opt.rule;
+          rule.if = [];
+          $.each(conditions, function() {
+            rule.if.push(this);
+          });
+        });
       },
       branchSummary: function(rules) {
         var html = "";

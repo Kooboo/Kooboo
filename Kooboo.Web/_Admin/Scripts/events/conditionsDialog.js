@@ -29,82 +29,73 @@
     },
     methods: {
       addCondition: function() {
-        self.conditions.push(new Condition());
+        self.conditions.push(self.mapCondition());
       },
-      removeCondition: function(condition) {
-        self.conditions = _.without(self.conditions, condition);
+      removeCondition: function(index) {
+        self.conditions.splice(index, 1);
       },
       J_Submit: function() {
         Kooboo.EventBus.publish("conditionUpdata", {
           conditions: self.conditions,
           rule: self.conditionRule
         });
+        // self.$emit(self.conditions);
         self.J_Cancel();
       },
       J_Cancel: function() {
         self.$emit("update:modalShow", false);
+      },
+      mapCondition(opt) {
+        var condition = {
+          left: (opt && opt.left) || "",
+          operators: [],
+          operator: (opt && opt.operator) || "",
+          controlType: (opt && opt.controlType) || "",
+          right: (opt && opt.right) || "",
+          selectionValues: (opt && opt.right) || ""
+        };
+        self.changeLeft(condition);
+        return condition;
+      },
+      changeLeft(condition) {
+        if (!condition.left) {
+          condition.left = self.parameters[0].name;
+        }
+        var p = _.find(self.parameters, function(pa) {
+          return pa.name === condition.left;
+        });
+        if (p) {
+          condition.controlType = p.controlType;
+          if (p.controlType === "Selection") {
+            condition.selectionValues = p.selectionValues;
+            if (!condition.right) {
+              condition.right = condition.selectionValues[0].key;
+            }
+          } else {
+            condition.selectionValues = "";
+          }
+          condition.operators = p.operator;
+          if (!condition.operator) {
+            condition.operator = condition.operators[0];
+          }
+        }
+      }
+    },
+    computed: {
+      visibleConditionData: function() {
+        return self.modalShow ? self.conditionData : null;
       }
     },
     watch: {
-      conditionData: function(val) {
-        var conditions = [];
-        val.forEach(function(condition) {
-          conditions.push(new Condition(condition));
-        });
-        self.conditions = conditions;
-      },
-      conditions: {
-        handler: function(val, oldVal) {
-          if (!val.length) {
-            return;
-          }
-          val.forEach(function(conditon, index) {
-            var selectionValues = conditon.selectionValues;
-            if (selectionValues) {
-              conditon.availableValues = [];
-              for (var key in selectionValues) {
-                conditon.availableValues.push({
-                  key: key,
-                  value: selectionValues[key]
-                });
-              }
-            }
-
-            var p = self.parameters.filter(function(pa) {
-              return pa.name === conditon.left;
-            })[0];
-            conditon.controlType = p.controlType;
-            if (p.controlType === "Selection") {
-              conditon.selectionValues = p.selectionValues;
-            } else {
-              conditon.selectionValues = "";
-            }
-            conditon.operators = p.operator;
-            console.log(conditon);
+      visibleConditionData: function(val) {
+        if (val) {
+          var conditions = [];
+          val.forEach(function(condition) {
+            conditions.push(self.mapCondition(condition));
           });
-        },
-        deep: true
+          self.conditions = conditions;
+        }
       }
     }
   });
-  function Condition(opt) {
-    var _this = this;
-    this.left = (opt && opt.left) || "";
-    this.operators = [];
-    this.operator = (opt && opt.operator) || "";
-    this.controlType = (opt && opt.controlType) || "";
-    this.right = (opt && opt.right) || "";
-    this.selectionValues = (opt && opt.right) || "";
-    this.availableValues = [];
-    if (this.left) {
-      var p = self.parameters.filter(function(pa) {
-        return pa.name === _this.left;
-      })[0];
-      if (p.controlType === "Selection") {
-        _this.controlType = p.controlType;
-        _this.selectionValues = p.selectionValues;
-      }
-      _this.operators = p.operator;
-    }
-  }
 })();

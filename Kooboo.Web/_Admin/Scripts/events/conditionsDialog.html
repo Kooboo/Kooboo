@@ -30,7 +30,7 @@
                 >
                 <a
                   class="pull-right btn btn-xs dark"
-                  @click="removeCondition"
+                  @click="removeCondition($index)"
                   href="javascript:;"
                   ><i class="fa fa-minus"></i
                 ></a>
@@ -38,7 +38,11 @@
               <div class="panel-body input-rules">
                 <div class="input-rule">
                   <div class="input-group">
-                    <select class="form-control key" v-model="$data.left">
+                    <select
+                      class="form-control key"
+                      v-model="$data.left"
+                      @change="changeLeft($data)"
+                    >
                       <option v-for="item in parameters"
                         >{{ item.name }}</option
                       >
@@ -48,7 +52,9 @@
                       class="form-control comparison"
                       v-model="$data.operator"
                     >
-                      <option v-for="item in $data.operators">{{ item }}</option>
+                      <option v-for="item in $data.operators"
+                        >{{ item }}</option
+                      >
                     </select>
                     <span class="input-group-addon separator">&nbsp;</span>
 
@@ -57,7 +63,7 @@
                       class="form-control"
                       v-model="$data.right"
                     >
-                      <option v-for="item in availableValues" :value="item.key"
+                      <option v-for="item in selectionValues" :value="item.key"
                         >{{ item.value }}</option
                       >
                     </select>
