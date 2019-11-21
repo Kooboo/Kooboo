@@ -55,7 +55,7 @@
   <kb-activity-dialog
     :modal-show.sync="activityDialogShow"
     :activity-data="activityData"
-    @onSave="saveActivity"
+    @on-save="saveActivity"
   ></kb-activity-dialog>
 </div>
 
@@ -183,11 +183,11 @@
       <span class="label blue" v-html="conditionsSummary(rule, '[' + Kooboo.text.component.event.noCondition + ']')"></span>
      <template v-if="rule.then.length > 0">
       <span>THEN</span>
-      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.then)" v-kb-tooltip="branchTooltip(rule.then)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.then)" v-kb-tooltip.html="branchTooltip(rule.then)"></span>
      </template>
      <template v-if="rule.else.length > 0">
       <span>ELSE</span>
-      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.else)" v-kb-tooltip="branchTooltip(rule.else)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.else)" v-kb-tooltip.html="branchTooltip(rule.else)"></span>
      </template>
   </div>
 </script>
@@ -215,11 +215,11 @@
       </div>
       <div class="list-group-wrapper J_Detail" v-show="rule.expanded">
           <ul class="list-group" v-if="rule.activity.length > 0" data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }">
-              <li class="list-group-item">
+              <li class="list-group-item" v-for="($data, $index) in rule.activity" :key="$index">
                   <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-                  <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity($data, $parent.activity)"><i class="fa fa-minus"></i></a>
-                  <a class="btn btn-xs pull-right blue margin-right-10" href="javascript:;" @click="$root.editActivity.bind($parent, $data)"><i class="fa fa-pencil"></i></a>
-                  <span class="text">{{ rule.name }}</span>
+                  <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity(rule.activity, $index)"><i class="fa fa-minus"></i></a>
+                  <a class="btn btn-xs pull-right blue margin-right-10" href="javascript:;" @click.prevent="$root.editActivity($data, $index)"><i class="fa fa-pencil"></i></a>
+                  <span class="text">{{ $data.name }}</span>
               </li>
           </ul>
           <div class="btn-group">
@@ -241,7 +241,7 @@
 <script type="text/x-template" id="RuleSummaryTemplate-Do">
   <div class="summary-text">
       <span>DO</span>
-      <span class="label blue" data-toggle="expand-rule" v-html="activitiesSummary(rule)" v-kb-tooltip="activitiesTooltip(rule)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="activitiesSummary(rule)" v-kb-tooltip.html="activitiesTooltip(rule)"></span>
   </div>
 </script>
 <script src="/_Admin/View/Events/Event.js"></script>

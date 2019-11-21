@@ -1,5 +1,6 @@
 ﻿(function() {
   Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/kbForm.js",
     "/_Admin/Scripts/vue-components/controlType/TextBox.js",
     "/_Admin/Scripts/vue-components/controlType/Selection.js",
     "/_Admin/Scripts/vue-components/controlType/CheckBox.js"
@@ -9,7 +10,7 @@
     template: Kooboo.getTemplate("/_Admin/Scripts/events/activityDialog.html"),
     props: {
       modalShow: Boolean,
-      activityData: Array
+      activityData: Object
     },
     data: function() {
       self = this;
@@ -18,42 +19,93 @@
         settings: [],
         container: [],
         cacheData: {},
-        mode: ""
+        mode: "",
+        model: {},
+        rules: {}
       };
     },
     methods: {
       submit: function() {
-        var data = self.cacheData(),
-          values = {};
-        self.settings().forEach(function(setting) {
-          values[setting.name()] = setting.fieldValue();
-          var orig = _.find(data.settings, function(s) {
-            return s.name == setting.name();
+        if (self.$refs.form.validate()) {
+          var data = self.cacheData,
+            values = {};
+          self.settings.forEach(function(setting) {
+            values[setting.name] = self.model[setting.prop];
+            // var orig = _.find(data.settings, function(s) {
+            //   return s.name == setting.name;
+            // });
+            // orig && (orig.defaultValue = self.model[setting.prop]);
           });
-          orig && (orig.defaultValue = setting.fieldValue());
-        });
-        data.values = values;
-        self.$emit("onSave", data);
-        self.close();
+          data.values = values;
+          self.$emit("on-save", data);
+          self.close();
 
-        // console.log(params);
-        // console.log(self.container);
-        // //transfer setting from [{name:xx, values:xx, controlType: "textBox", defaultValue: "", values:""}] to {key: value, key: value}
-        // var o = {}
-        // self.setting().forEach(function(setting) {
-        //     o[setting.name()] = setting.values;
-        // })
-        // self.activity.setting = o;
-        // if (params.activityData().mode === "edit") {
-        //     var index = params.activityData().index;
-        //     self.container.splice(index, 1, self.activity);
-        // } else {
-        //     self.container.push(self.activity);
-        // }
-        // self.close()
+          // console.log(params);
+          // console.log(self.container);
+          // //transfer setting from [{name:xx, values:xx, controlType: "textBox", defaultValue: "", values:""}] to {key: value, key: value}
+          // var o = {}
+          // self.setting().forEach(function(setting) {
+          //     o[setting.name()] = setting.values;
+          // })
+          // self.activity.setting = o;
+          // if (params.activityData().mode === "edit") {
+          //     var index = params.activityData().index;
+          //     self.container.splice(index, 1, self.activity);
+          // } else {
+          //     self.container.push(self.activity);
+          // }
+          // self.close()
+        }
       },
       close: function() {
         self.$emit("update:modalShow", false);
+      },
+      getFieldRules: function(validations) {
+        var rules = [];
+        validations.forEach(function(rule) {
+          var type = rule.type || rule.validateType,
+            msg = rule.msg || rule.errorMessage;
+
+          switch (type) {
+            case "required":
+              rules.push({
+                required: true,
+                message: msg || Kooboo.text.validation.required
+              });
+              break;
+            case "regex":
+              rules.push({
+                pattern: new RegExp(rule.pattern),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+            case "range":
+            case "stringLength":
+              rules.push({
+                min: Number(rule.min),
+                max: Number(rule.max),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+            case "min":
+            case "minLength":
+            case "minChecked":
+              rules.push({
+                min: Number(rule.value),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+            case "max":
+            case "maxLength":
+            case "maxChecked":
+              rules.push({
+                max: Number(rule.value),
+                message: msg || Kooboo.text.validation.inputError
+              });
+              break;
+          }
+        });
+        return rules;
       }
     },
     computed: {
@@ -71,6 +123,9 @@
         self.name = data.name;
         self.mode = data.mode;
         self.cacheData = data;
+        var fields = [];
+        var model = {};
+        var rules = {};
         data.settings.forEach(function(setting) {
           setting.displayName = setting.displayName || setting.name;
           setting.fieldValue = setting.defaultValue;
@@ -89,96 +144,43 @@
               })
             );
           }
+          var field = new Field(setting);
+
+          // fields
+          fields.push(field);
+          // model
+          model[field.prop] = field.fieldValue;
+          // rules
+          var validations = JSON.parse(data.validations || "[]") || [];
+          var fieldRules = self.getFieldRules(validations);
+          if (fieldRules.length) {
+            rules[field.prop] = fieldRules;
+          }
         });
-        self.settings = data.settings.map(function(setting) {
-          return new Field(setting);
-        });
+        self.settings = fields;
+        self.model = model;
+        self.rules = rules;
       }
     }
   });
   function Field(data) {
-    this._id = ko.observable(Kooboo.getRandomId());
-
-    this.showError = ko.observable(false);
-
+    this._id = Kooboo.getRandomId();
+    this.showError = false;
     this.isShow = data.isShow;
-
-    this.name = ko.observable(data.name);
-
-    this.fieldName = ko.observable(data.displayName);
-
-    this.fieldValue = ko.observable(data.fieldValue);
-
-    this.lang = ko.observable(data.lang);
-
-    this.controlType = ko.observable(data.controlType);
-
-    this.disabled = ko.observable(data.disabled);
-
-    this.tooltip = ko.observable(data.tooltip);
-
-    this.options = ko.observableArray(
-      JSON.parse(data.options || data.selectionOptions || "[]")
-    );
-
-    this.isMultilingual = ko.observable(
-      data.isMultilingual && data.isMultilingualSite
-    );
-
-    this.isMultipleValue = ko.observable(data.multipleValue);
-
-    var _validations = JSON.parse(data.validations || "[]"),
-      validateRules = {};
-    this.validations = ko.observableArray(_validations);
-    for (var i = 0, len = _validations.length; i < len; i++) {
-      var rule = _validations[i],
-        type = rule.type || rule.validateType,
-        msg = rule.msg || rule.errorMessage;
-
-      switch (type) {
-        case "required":
-          validateRules[type] = msg || Kooboo.text.validation.required;
-          break;
-        case "regex":
-          validateRules[type] = {
-            pattern: new RegExp(rule.pattern),
-            message: msg || Kooboo.text.validation.inputError
-          };
-          break;
-        case "range":
-          validateRules[type] = {
-            from: Number(rule.min),
-            to: Number(rule.max),
-            message: msg || Kooboo.text.validation.inputError
-          };
-          break;
-        case "stringLength":
-          validateRules["stringlength"] = {
-            min: parseInt(rule.min),
-            max: parseInt(rule.max),
-            message: msg || Kooboo.text.validation.inputError
-          };
-          break;
-        case "min":
-        case "max":
-        case "minLength":
-        case "maxLength":
-        case "minChecked":
-        case "maxChecked":
-          validateRules[type] = {
-            value: Number(rule.value),
-            message: msg || Kooboo.text.validation.inputError
-          };
-          break;
-      }
-    }
-    this.fieldValue.extend({ validate: validateRules });
-    this.validateRules = validateRules;
-
-    this.isValid = function() {
-      return this.fieldValue.isValid();
-    };
+    this.name = data.name;
+    this.prop = this.name;
+    this.fieldName = data.displayName;
+    this.fieldValue = data.fieldValue;
+    this.lang = data.lang;
+    this.controlType = data.controlType;
+    this.controlName = "kb-control-" + data.controlType.toLowerCase();
+    this.disabled = data.disabled;
+    this.tooltip = data.tooltip;
+    this.options = JSON.parse(data.options || data.selectionOptions || "[]");
+    this.isMultilingual = data.isMultilingual && data.isMultilingualSite;
+    this.isMultipleValue = data.multipleValue;
   }
+
   function getValue(setting, name) {
     var keys = Object.keys(setting).map(function(key) {
         return key.toLowerCase();

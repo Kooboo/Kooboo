@@ -145,7 +145,7 @@ $(function() {
               mode: "add",
               settings: res.model
             };
-            
+
             if (cb && typeof cb == "function") {
               cb(self.activityData);
             } else {
@@ -156,11 +156,10 @@ $(function() {
       },
       saveActivity: function(values, parentRule) {
         parentRule =
-          parentRule &&
-          (parentRule.hasOwnProperty("which") ? null : parentRule);
+          parentRule && (parentRule.which !== undefined ? null : parentRule);
         var currentRule = parentRule || self.currentRule;
 
-        if (!currentRule.hasOwnProperty("activity")) {
+        if (!currentRule.activity) {
           currentRule.activity = [];
         }
 
@@ -171,17 +170,17 @@ $(function() {
           currentRule.activity.splice(idx, 1, values);
         }
       },
-      editActivity: function(rule, m, e) {
+      editActivity: function(m, index) {
         m.mode = "edit";
-        m.index = rule.activity.indexOf(m);
+        m.index = index;
         self.activityDialogShow = true;
         self.activityData = m;
       },
-      removeActivity: function(container, activity) {
+      removeActivity: function(activities, index) {
         if (!confirm(Kooboo.text.confirm.deleteItem)) {
           return false;
         }
-        container = _.without(container, activity);
+        activities.splice(index, 1);
       },
       save: function() {
         var rules = self.rules;
@@ -233,14 +232,14 @@ $(function() {
       },
       loadActivities: function(id, activities, parentRule) {
         if (activities && activities.length) {
-          var currentRule = self.addRule(parentRule, "Do", {
+          var currentRule = self.addRule(parentRule, DO, {
             activity: [],
             expanded: false,
-            ruleType: "Do",
+            ruleType: DO,
             id: id
           });
           activities.forEach(function(activity) {
-            var findActivity = availableCodes.find(function(code) {
+            var findActivity = self.availableCodes.find(function(code) {
               return code.id == activity.codeId;
             });
 
@@ -254,7 +253,7 @@ $(function() {
                 function(data) {
                   self.saveActivity(
                     _.extend(data, { setting: activity.setting }),
-                    self.currentRule
+                    currentRule
                   );
                   activity.setting &&
                     Object.keys(activity.setting).forEach(function(key) {

@@ -70,7 +70,7 @@
           ")</div>";
         html += '<div><span class="tag">THEN</span></div>';
 
-        if (rule.then.length > 0) {
+        if(rule.then && rule.then.length > 0) {
           $.each(rule.then, function(i) {
             if (i > 0) {
               html += '<hr class="rule-divider"/>';
@@ -81,7 +81,7 @@
           html += "<div>[" + Kooboo.text.component.event.noActivity + "]</div>";
         }
 
-        if (rule["else"].length > 0) {
+        if (rule.else && rule.else.length > 0) {
           html += '<div><span class="tag">ELSE</span></div>';
           $.each(rule["else"], function(i) {
             if (i > 0) {
@@ -96,7 +96,7 @@
         return html;
       },
       conditionsSummary: function(rule, emptyText) {
-        if (rule.if.length === 0) {
+        if (!rule.if || rule.if.length === 0) {
           return emptyText || Kooboo.text.component.events.editCondition;
         }
         var desc = "";

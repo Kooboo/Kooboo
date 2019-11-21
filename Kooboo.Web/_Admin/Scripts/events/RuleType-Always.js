@@ -28,13 +28,12 @@
         if (rule.activity.length <= 1) {
           return "";
         }
-        return window.RuleTypes["Do"].renderTooltip(rule, 0);
+        return self.renderTooltip(rule, 0);
       },
       renderTooltip: function(rule, level) {
         var html = '<div class="rule-summary">';
         $.each(rule.activity, function(i) {
-          html +=
-            '<div><span class="label blue">' + this.name + "</span></div>";
+          html += "<div>" + this.name + "</div>";
         });
         html += "</div>";
         return html;
