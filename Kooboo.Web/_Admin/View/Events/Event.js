@@ -105,7 +105,7 @@ $(function() {
           }
         }
         rule.ruleType = type;
-        if (rule.RuleType === DO) {
+        if (rule.ruleType === DO) {
           rule.component = "events-ruletype-always";
         } else {
           rule.component = "events-ruletype-ifelse";
@@ -145,7 +145,7 @@ $(function() {
               mode: "add",
               settings: res.model
             };
-
+            
             if (cb && typeof cb == "function") {
               cb(self.activityData);
             } else {
@@ -300,7 +300,6 @@ $(function() {
         dataDemapping(rule.then);
         dataDemapping(rule.else);
       } else {
-        console.log(rule);
         rule.do = rule.activity.map(function(act) {
           return {
             codeId: act.id,

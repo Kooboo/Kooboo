@@ -88,13 +88,14 @@
     },
     watch: {
       visibleConditionData: function(val) {
-        if (val) {
-          var conditions = [];
-          val.forEach(function(condition) {
-            conditions.push(self.mapCondition(condition));
-          });
-          self.conditions = conditions;
+        if (!val) {
+          return;
         }
+        var conditions = [];
+        val.forEach(function(condition) {
+          conditions.push(self.mapCondition(condition));
+        });
+        self.conditions = conditions;
       }
     }
   });

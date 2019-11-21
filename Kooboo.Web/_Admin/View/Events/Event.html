@@ -47,11 +47,16 @@
       <button type="button" class="btn green" @click="save">Save</button>
     </div>
   </div>
-  <kb-condition-dialog :modal-show.sync="conditionDialogShow" :condition-data="conditionData" :condition-rule="conditionRule"
+  <kb-condition-dialog
+    :modal-show.sync="conditionDialogShow"
+    :condition-data="conditionData"
+    :condition-rule="conditionRule"
   ></kb-condition-dialog>
-  <activity-dialog
-    params="modalShow: activityDialogShow, activityData: activityData, onSave: saveActivity"
-  ></activity-dialog>
+  <kb-activity-dialog
+    :modal-show.sync="activityDialogShow"
+    :activity-data="activityData"
+    @onSave="saveActivity"
+  ></kb-activity-dialog>
 </div>
 
 <script>
@@ -190,37 +195,45 @@
   <div class="panel panel-default J_Rule">
       <div class="panel-heading">
           <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-          <a class="btn btn-xs btn-link pull-left margin-right-10" data-bind="click: $root.toggleRule">
-              <i class="fa fa-chevron-right" data-bind="css: { 'fa-chevron-right': !expanded(), 'fa-chevron-down': expanded }"></i>
-          </a>
-          <a class="btn btn-xs dark pull-right" data-bind="click: $root.removeRule" href="javascript:;"><i class="fa fa-minus"></i></a>
-          <div data-bind="visible: !expanded(), template: { name: 'RuleSummaryTemplate-' + ruleType(), data: $data }"></div>
+          <a
+          class="btn btn-xs btn-link pull-left margin-right-10"
+          @click="$root.toggleRule(rule)"
+        >
+          <i
+            class="fa fa-chevron-right"
+            :class="[rule.expanded ? 'fa-chevron-down' : 'fa-chevron-right']"
+          ></i>
+        </a>
+
+        <a
+        class="btn btn-xs dark pull-right"
+        @click="$root.removeRule(rule, rules, ruleIndex)"
+        href="javascript:;"
+        ><i class="fa fa-minus"></i
+      ></a>
+      <component v-show="!rule.expanded" :is="rule.component+'-summary'" :rule="rule" :rules="rules"></component>
       </div>
-      <div class="list-group-wrapper J_Detail" data-bind="visible: expanded">
-          <ul class="list-group" data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }, visible: activity().length > 0">
+      <div class="list-group-wrapper J_Detail" v-show="rule.expanded">
+          <ul class="list-group" v-if="rule.activity.length > 0" data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }">
               <li class="list-group-item">
                   <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-                  <a class="btn btn-xs pull-right gray" href="#" data-bind="click: $root.removeActivity.bind($data, $parent.activity)"><i class="fa fa-minus"></i></a>
-                  <a class="btn btn-xs pull-right blue margin-right-10" href="#" data-bind="click: $root.editActivity.bind(this, $parent, $data)"><i class="fa fa-pencil"></i></a>
-                  <span class="text" data-bind="text: name"></span>
+                  <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity($data, $parent.activity)"><i class="fa fa-minus"></i></a>
+                  <a class="btn btn-xs pull-right blue margin-right-10" href="javascript:;" @click="$root.editActivity.bind($parent, $data)"><i class="fa fa-pencil"></i></a>
+                  <span class="text">{{ rule.name }}</span>
               </li>
           </ul>
           <div class="btn-group">
               <button type="button" class="btn btn-xs blue dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
-              <!-- ko if: $root.availableCodes.length > 0 -->
-              <ul class="dropdown-menu" data-bind="foreach: $root.availableCodes">
-                  <li>
-                      <a href="#" data-bind="text: displayName, click: $root.addActivity.bind(this, $parent, $data);"></a>
+              <ul v-if="$root.availableCodes.length > 0" class="dropdown-menu">
+                  <li v-for="($data, $index) in $root.availableCodes" :key="$index">
+                      <a href="javascript:;" @click.prevent="$root.addActivity(rule, $data)">{{ $data.displayName }}</a>
                   </li>
               </ul>
-              <!-- /ko -->
-              <!-- ko if: $root.availableCodes.length == 0 -->
-              <ul class="dropdown-menu">
+              <ul v-else class="dropdown-menu">
                   <li>
-                      <a data-bind="click: $root.createCode, text: Kooboo.text.site.code.noActivityAndCreate" href="javascript:;"></a>
+                      <a @click="$root.createCode" href="javascript:;">{{ Kooboo.text.site.code.noActivityAndCreate }}</a>
                   </li>
               </ul>
-              <!-- /ko -->
           </div>
       </div>
   </div>
@@ -228,7 +241,7 @@
 <script type="text/x-template" id="RuleSummaryTemplate-Do">
   <div class="summary-text">
       <span>DO</span>
-      <span class="label blue" data-toggle="expand-rule" data-bind="html: window.RuleTypes['Do'].activitiesSummary($data), tooltip: window.RuleTypes['Do'].activitiesTooltip($data)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="activitiesSummary(rule)" v-kb-tooltip="activitiesTooltip(rule)"></span>
   </div>
 </script>
 <script src="/_Admin/View/Events/Event.js"></script>
