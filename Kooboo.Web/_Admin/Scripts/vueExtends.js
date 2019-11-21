@@ -434,17 +434,23 @@ Vue.directive("kb-collapsein", {
 
 // #region <kb-sortable>
 Vue.directive("kb-sortable", function(el, binding, vnode) {
+  var $el = $(el);
+  var sortElementSeletor = $el.data("sort-element");
   $(el).sortable({
     handle: ".sortable",
     start: function() {
-      var sortables = el.getElementsByClassName("sortable");
+      var sortables = sortElementSeletor
+        ? $el.find(sortElementSeletor).not(".ui-sortable-placeholder")
+        : el.getElementsByClassName("sortable");
       for (var i = 0; i < sortables.length; i++) {
         sortables[i].__data_item = binding.value[i];
       }
     },
     update: function() {
       var newList = [];
-      var sortables = document.getElementsByClassName("sortable");
+      var sortables = sortElementSeletor
+        ? $el.find(sortElementSeletor).not(".ui-sortable-placeholder")
+        : el.getElementsByClassName("sortable");
       for (var j = 0; j < sortables.length; j++) {
         newList.push(sortables[j].__data_item);
       }

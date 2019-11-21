@@ -96,8 +96,29 @@
     },
     methods: {
       getSameTypeControlType: function(item) {
-        self.d_data.validations = [];
-        if (item.dataType !== "Array") {
+        if(item.value ==='Selection' || item.value ==='Switch') {
+          self.d_data.validations = [];
+        } else {
+          try {
+            if (self.data.validations.length > 0) {
+              self.d_data.validations = JSON.parse(self.data.validations);
+            }
+          } catch (e) {
+            self.d_data.validations = [];
+          }
+        }
+
+        if (item.dataType == "Array") {
+          try {
+            if (self.data.selectionOptions.length > 0) {
+              self.d_data.selectionOptions = JSON.parse(
+                  self.data.selectionOptions
+              );
+            }
+          } catch (e) {
+            self.d_data.selectionOptions = [];
+          }
+        }else {
           self.d_data.selectionOptions = [];
         }
         if (item.dataType !== "Undefined") {
@@ -187,28 +208,31 @@
       },
       validate: function() {
         var firstTabHasError = false;
-        self.firstTabValidate.name = Kooboo.validField(self.d_data.name, [
-          { required: true, message: Kooboo.text.validation.required },
-          {
-            pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
-            message: Kooboo.text.validation.contentTypeNameRegex
-          },
-          {
-            validate: function(value) {
-              var status = true;
-              self.allItems.forEach(function(item, index) {
-                if (item.name === value && !(index === self.editingIndex)) {
-                  status = false;
-                }
-              });
-              return status;
+        if(self.isNewField){
+          self.firstTabValidate.name = Kooboo.validField(self.d_data.name, [
+            { required: true, message: Kooboo.text.validation.required },
+            {
+              pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.contentTypeNameRegex
             },
-            message: Kooboo.text.validation.taken
+            {
+              validate: function(value) {
+                var status = true;
+                self.allItems.forEach(function(item, index) {
+                  if (item.name === value && !(index === self.editingIndex)) {
+                    status = false;
+                  }
+                });
+                return status;
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]);
+          if (!self.firstTabValidate.name.valid) {
+            firstTabHasError = true;
           }
-        ]);
-        if (!self.firstTabValidate.name.valid) {
-          firstTabHasError = true;
         }
+
 
         self.d_data.selectionOptions.forEach(function(item, index) {
           var rule = [

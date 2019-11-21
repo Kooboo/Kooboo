@@ -1,44 +1,99 @@
-﻿<div id="J_ConditionDialog" data-bind="modal: modalShow" class="modal fade" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button data-bind="click: J_Cancel" type="button" class="close"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.component.conditionModal.title"></h4>
-            </div>
-            <div class="modal-body">
-                <div class="block-condition-editor J_ConditionEditor">
-                    <!-- ko foreach: { data: conditions } -->
-                    <span class="label label-sm blue" data-bind="visible: $index() > 0, text: Kooboo.text.logical.and"></span>
-                    <div class="panel panel-default item">
-                        <div class="panel-heading">
-                            <h4 class="panel-title"><span data-bind="text: Kooboo.text.component.conditionModal.condition"></span> <span data-bind="text: $index() + 1"></span></h4>
-                            <a class="pull-right btn btn-xs dark" data-bind="click: $parent.removeCondition" href="#"><i class="fa fa-minus"></i></a>
-                        </div>
-                        <div class="panel-body input-rules">
-                            <div class="input-rule">
-                                <div class="input-group">
-                                    <select class="form-control key" data-bind="options: $component.parameters, optionsText: 'name', optionsValue: 'name', value: left"></select>
-                                    <span class="input-group-addon separator">&nbsp;</span>
-                                    <select class="form-control comparison" data-bind="options: operators, value: operator"></select>
-                                    <span class="input-group-addon separator">&nbsp;</span>
-                                    <!-- ko if: controlType() === "Selection" -->
-                                    <select class="form-control" data-bind="options: availableValues, optionsText: 'value', optionsValue: 'key', value: right"></select>
-                                    <!-- /ko -->
-                                    <!-- ko ifnot: controlType() === "Selection" -->
-                                    <input class="form-control" type="text" data-bind="value: right, attr: { name: 'ConditionValueTextBox_' + $index() }" data-val="true" data-val-required="*" />
-                                    <!-- /ko -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /ko -->
-                    <a class="btn btn-default" data-bind="click: addCondition">+ <span data-bind="text: Kooboo.text.component.conditionModal.add"></span></a>
+﻿<div
+  id="J_ConditionDialog"
+  v-kb-modal="modalShow"
+  class="modal fade"
+  data-backdrop="static"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button @click="J_Cancel" type="button" class="close"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title"
+          >{{ Kooboo.text.component.conditionModal.title }}</h4
+        >
+      </div>
+      <div class="modal-body">
+        <div class="block-condition-editor J_ConditionEditor">
+          <template v-for="($data, $index) in conditions">
+            <span class="label label-sm blue" v-if="$index > 0"
+              >{{ Kooboo.text.logical.and }}</span
+            >
+            <div class="panel panel-default item">
+              <div class="panel-heading">
+                <h4 class="panel-title"
+                  ><span
+                    >{{ Kooboo.text.component.conditionModal.condition }}</span
+                  >
+                  <span>{{ $index + 1 }}</span></h4
+                >
+                <a
+                  class="pull-right btn btn-xs dark"
+                  @click="removeCondition($index)"
+                  href="javascript:;"
+                  ><i class="fa fa-minus"></i
+                ></a>
+              </div>
+              <div class="panel-body input-rules">
+                <div class="input-rule">
+                  <div class="input-group">
+                    <select
+                      class="form-control key"
+                      v-model="$data.left"
+                      @change="changeLeft($data)"
+                    >
+                      <option v-for="item in parameters"
+                        >{{ item.name }}</option
+                      >
+                    </select>
+                    <span class="input-group-addon separator">&nbsp;</span>
+                    <select
+                      class="form-control comparison"
+                      v-model="$data.operator"
+                    >
+                      <option v-for="item in $data.operators"
+                        >{{ item }}</option
+                      >
+                    </select>
+                    <span class="input-group-addon separator">&nbsp;</span>
+
+                    <select
+                      v-if="$data.controlType  === 'Selection'"
+                      class="form-control"
+                      v-model="$data.right"
+                    >
+                      <option v-for="item in selectionValues" :value="item.key"
+                        >{{ item.value }}</option
+                      >
+                    </select>
+                    <input
+                      v-else
+                      class="form-control"
+                      type="text"
+                      v-model="$data.right"
+                      :name="'ConditionValueTextBox_' + $index"
+                      data-val="true"
+                      data-val-required="*"
+                    />
+                  </div>
                 </div>
+              </div>
             </div>
-            <div class="modal-footer">
-                <a href="#" data-bind="click: J_Submit, text: Kooboo.text.common.save" class="btn green"></a>
-                <a href="#" data-bind="click: J_Cancel, text: Kooboo.text.common.cancel" class="btn gray"></a>
-            </div>
+          </template>
+          <a class="btn btn-default" @click="addCondition"
+            >+ <span>{{ Kooboo.text.component.conditionModal.add }}</span></a
+          >
         </div>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:;" @click.prevent="J_Submit" class="btn green"
+          >{{ Kooboo.text.common.save }}</a
+        >
+        <a href="javascript:;" @click.prevent="J_Cancel" class="btn gray"
+          >{{ Kooboo.text.common.cancel }}</a
+        >
+      </div>
     </div>
+  </div>
 </div>
