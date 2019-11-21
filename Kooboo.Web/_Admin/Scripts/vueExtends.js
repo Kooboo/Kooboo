@@ -534,13 +534,9 @@ Vue.component("kb-container", {
 
 // #region <kb-hint>
 Vue.directive("kb-hint", {
-  inserted: function(el, binding) {
-    var bounding = el.getBoundingClientRect();
-    if (bounding.top < 0 || bounding.bottom > $(window).height()) {
-      el.scrollIntoView();
-    }
+  update: function(el, binding) {
     var element = $(el);
-    var existShow = false;
+    var show = true;
     var tipsOptions = {
       title: "",
       placement: "right",
@@ -548,7 +544,9 @@ Vue.directive("kb-hint", {
       template:
         '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
     };
-
+    try {
+      tipsOptions = element.data("bs.tooltip").options;
+    } catch (e) {}
     if (binding.arg) {
       tipsOptions.placement = binding.arg;
     }
@@ -558,6 +556,9 @@ Vue.directive("kb-hint", {
         tipsOptions.title = binding.value;
         break;
       case "object":
+        if (binding.value.options) {
+          _.assign(tipsOptions, binding.value.options);
+        }
         if (binding.value.hasOwnProperty("msg")) {
           if (binding.value.msg) {
             tipsOptions.title = binding.value.msg;
@@ -565,99 +566,40 @@ Vue.directive("kb-hint", {
             tipsOptions.title = "";
           }
         }
-        if (binding.value.hasOwnProperty("show")) {
-          existShow = true;
-        }
-        if (binding.value.options) {
-          _.assign(tipsOptions, binding.value.options);
-        }
         break;
     }
     element.tooltip(tipsOptions);
-
-    if (existShow) {
-      if (binding.value.show) {
-        element.tooltip("show");
-        if (
-          !el.parentNode.classList.contains("has-error") &&
-          !(tipsOptions.title === "")
-        ) {
-          el.parentNode.classList.add("has-error");
-        }
-      } else {
-        element.tooltip("hide");
-        if (el.parentNode.classList.contains("has-error")) {
-          el.parentNode.classList.remove("has-error");
-        }
+    var hidetip = function() {
+      element.tooltip("hide");
+      if (el.parentNode.classList.contains("has-error")) {
+        el.parentNode.classList.remove("has-error");
       }
-    } else {
+    };
+    var showtip = function() {
       element.tooltip("show");
-      if (
-        !el.parentNode.classList.contains("has-error") &&
-        !(tipsOptions.title === "")
-      ) {
+      if (!el.parentNode.classList.contains("has-error")) {
         el.parentNode.classList.add("has-error");
       }
+    };
+    if (binding.value.show) {
+      show = true;
+    } else {
+      show = false;
     }
-  },
-  update: function(el, binding) {
-    var element = $(el);
-    var existShow = false;
-    var tipsOptions = element.data("bs.tooltip").options;
-    if (binding.arg) {
-      tipsOptions.placement = binding.arg;
-    }
-    switch (typeof binding.value) {
-      case "string":
-        tipsOptions.title = binding.value;
-        break;
-      case "object":
-        if (binding.value.options) {
-          _.assign(tipsOptions, binding.value.options);
-        }
-        if (binding.value.hasOwnProperty("msg")) {
-          if (binding.value.msg) {
-            tipsOptions.title = binding.value.msg;
-          } else {
-            tipsOptions.title = "";
-          }
-        }
-        if (binding.value.hasOwnProperty("show")) {
-          existShow = true;
-        }
-        break;
-    }
-    element.tooltip(tipsOptions);
-    if (tipsOptions.title === "") {
+    if (!tipsOptions.title || tipsOptions.title === "") {
+      show = false;
+    } else {
+      show = true;
       element.attr("title", tipsOptions.title).tooltip("fixTitle");
     }
-    if (existShow) {
-      if (binding.value.show) {
-        element.tooltip("show");
-        if (
-          !el.parentNode.classList.contains("has-error") &&
-          !(tipsOptions.title === "")
-        ) {
-          el.parentNode.classList.add("has-error");
-        }
-      } else {
-        element.tooltip("hide");
-        if (el.parentNode.classList.contains("has-error")) {
-          el.parentNode.classList.remove("has-error");
-        }
+    if (show) {
+      var bounding = el.getBoundingClientRect();
+      if (bounding.top < 0 || bounding.bottom > $(window).height()) {
+        el.scrollIntoView();
       }
+      showtip();
     } else {
-      element.tooltip("show");
-      if (
-        !el.parentNode.classList.contains("has-error") &&
-        !(tipsOptions.title === "")
-      ) {
-        el.parentNode.classList.add("has-error");
-      }
-    }
-    var bounding = el.getBoundingClientRect();
-    if (bounding.top < 0 || bounding.bottom > $(window).height()) {
-      el.scrollIntoView();
+      hidetip();
     }
   },
   unbind: function(el) {

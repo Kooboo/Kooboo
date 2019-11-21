@@ -1192,7 +1192,8 @@
       noAddressYet:
         "You don't have a address yet, please add a new address before composing a email.",
       attachments: " Attachment(s)",
-      noAddressFound: "No address found"
+      noAddressFound: "No address found",
+      wildcardTip:"Use * to represent any characters. * is required and only one * is allowed"
     },
 
     commerce: {

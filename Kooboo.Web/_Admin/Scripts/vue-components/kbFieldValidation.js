@@ -7,13 +7,11 @@
     ),
     props: {
       data: {},
-      showValidateError: {default: false}
+      showValidateError: { default: false }
     },
     data: function() {
       return {
-        validations: this.data.validations
-          ? this.data.validations
-          : [],
+        validations: this.data.validations ? this.data.validations : [],
         hasError: false,
         options: [],
         allOptions: [],
@@ -80,12 +78,19 @@
       this.createValidateModels();
     },
     watch: {
-      data: function(value) {
-        this.d_data = value;
+      data: {
+        handler: function(value) {
+          this.d_data = value;
+          self.validations = self.d_data.validations;
+        },
+        deep: true
       },
-      validations: function(value) {
-        this.getOptions();
-        this.createValidateModels();
+      validations: {
+        handler: function(value) {
+          self.getOptions();
+          self.createValidateModels();
+        },
+        deep: true
       }
     },
     methods: {
@@ -134,44 +139,45 @@
         this.validations.push(self.defaultoptions[self.selectedValue].default);
       },
       onRemove: function(index) {
-        this.validations.splice(index,1)
+        this.validations.splice(index, 1);
       },
       validate: function() {
         var hasError = false;
-        self.validations.forEach(function(item,index) {
+        self.validations.forEach(function(item, index) {
           var model = {};
           var keys = Object.keys(item);
           keys.forEach(function(key) {
             if (!(key === "type" || key === "msg" || key === "required"))
-            model[key] = Kooboo.validField(item[key], [{required: true, message: Kooboo.text.validation.required}]);
-            if(model[key] && model[key].hasOwnProperty('valid') && !model[key].valid) {
+              model[key] = Kooboo.validField(item[key], [
+                { required: true, message: Kooboo.text.validation.required }
+              ]);
+            if (
+              model[key] &&
+              model[key].hasOwnProperty("valid") &&
+              !model[key].valid
+            ) {
               hasError = true;
             }
           });
           self.validateModels[index] = model;
         });
-        return {hasError:hasError,result: self.validateModels};
+        this.$forceUpdate();
+        return { hasError: hasError, result: self.validateModels };
       },
       getOptions: function() {
         self.options = _.clone(self.allOptions);
         var count = 0;
-        self.allOptions.forEach(function (item,index) {
-
+        self.allOptions.forEach(function(item, index) {
           self.validations.forEach(function(rule) {
-            if (
-                item.type &&
-                rule.type &&
-                item.type === rule.type
-            ) {
-              self.options.splice(index - count,1);
-              count ++
+            if (item.type && rule.type && item.type === rule.type) {
+              self.options.splice(index - count, 1);
+              count++;
             }
           });
         });
         if (self.options.length > 0 && self.options[0].type) {
           self.selectedValue = self.options[0].type;
         }
-        console.log(self.options);
       }
     }
   });

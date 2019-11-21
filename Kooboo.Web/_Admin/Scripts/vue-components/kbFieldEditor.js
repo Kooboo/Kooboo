@@ -21,13 +21,13 @@
     },
     data: function() {
       return {
-        showValidateError: false,
         showValidateTab: true,
         showOptionsPanel: false,
         showMultilvalue: false,
         tabIndex: 0,
         isNewField: true,
-        type: "",
+        type: undefined,
+        addDisable: false,
         d_data: {
           name: "",
           displayName: "",
@@ -53,18 +53,18 @@
       self.AllControlTypes = self.getControlTypes(self.options.controlTypes);
       if (!self.isNew()) {
         try {
-            if(self.data.validations.length > 0) {
-                self.d_data.validations = JSON.parse(self.data.validations);
-            }
-
+          if (self.data.validations.length > 0) {
+            self.d_data.validations = JSON.parse(self.data.validations);
+          }
         } catch (e) {
           self.d_data.validations = [];
         }
         try {
-            if(self.data.selectionOptions.length > 0) {
-                self.d_data.selectionOptions = JSON.parse(self.data.selectionOptions);
-            }
-
+          if (self.data.selectionOptions.length > 0) {
+            self.d_data.selectionOptions = JSON.parse(
+              self.data.selectionOptions
+            );
+          }
         } catch (e) {
           self.d_data.selectionOptions = [];
         }
@@ -80,11 +80,15 @@
     watch: {
       d_data: {
         handler: function(val, old) {
-          if (val.controlType === old.controlType) {
+          if (self.type !== val.controlType) {
             self.controlTypesOptions = self.getSameTypeControlType(
               self.findControlType(self.d_data.controlType)
             );
+
+            self.type = val.controlType;
           }
+          self.addDisableHandler();
+
           self.generateValidateModel();
         },
         deep: true
@@ -92,12 +96,24 @@
     },
     methods: {
       getSameTypeControlType: function(item) {
+        self.d_data.validations = [];
+        if (item.dataType !== "Array") {
+          self.d_data.selectionOptions = [];
+        }
+        if (item.dataType !== "Undefined") {
+          delete self.d_data.multipleValue;
+        }
+
         var temp = [];
+
         self.AllControlTypes.forEach(function(i) {
-          if (i.dataType === item.dataType) {
+          if (i.dataType && i.dataType === item.dataType) {
             temp.push(i);
           }
         });
+        if (self.isNewField) {
+          return self.AllControlTypes;
+        }
         return temp;
       },
       getControlTypes: function(types) {
@@ -119,8 +135,8 @@
         } else {
           self.isNewField = false;
           var data = {};
-          if(self.data) {
-            data = self.data
+          if (self.data) {
+            data = self.data;
           }
 
           _.assign(self.d_data, data);
@@ -148,7 +164,9 @@
         }
       },
       addOption: function() {
-        self.d_data.selectionOptions.push({ key: "", value: "" });
+        if(!self.addDisable) {
+          self.d_data.selectionOptions.push({ key: "", value: "" });
+        }
       },
       removeOption: function(event, index) {
         self.d_data.selectionOptions.splice(index, 1);
@@ -200,25 +218,26 @@
           var key = Kooboo.validField(item.key, rule);
           var value = Kooboo.validField(item.value, rule);
           if (key.valid === false || value.valid === false)
-            firstTabHasError = true;
           self.firstTabValidate.selectionOptions[index] = {
             key: key,
             value: value
           };
         });
-        var threeTabValidation = self.$refs.fieldValidation.validate();
-        if (threeTabValidation.hasError) {
-          self.tabIndex = 2;
+        if(self.$refs.fieldValidation) {
+            var threeTabValidation = self.$refs.fieldValidation.validate();
+            if (threeTabValidation.hasError) {
+                self.tabIndex = 2;
+            }
         }
         if (firstTabHasError) {
           self.tabIndex = 0;
         }
-        self.showValidateError = true;
-        this.$forceUpdate();
         var els = document.getElementsByClassName("has-error");
         if (els.length > 0) {
           els[0].scrollIntoView();
         }
+          self.showValidateError = true;
+          this.$forceUpdate();
         return !(firstTabHasError || threeTabValidation.hasError);
       },
       onSave: function() {
@@ -237,6 +256,14 @@
           self.$emit("on-save", temp);
           self.closeHandle();
         }
+      },
+      addDisableHandler: function() {
+          self.addDisable = false;
+          self.d_data.selectionOptions.forEach(function (i) {
+            if(!i.key || !i.value || i.key === '' || i.value === '') {
+              self.addDisable = true
+            }
+          });
       },
       onCancel: function() {
         self.closeHandle();

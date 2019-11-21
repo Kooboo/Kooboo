@@ -16,7 +16,7 @@
   </div>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a class="btn green navbar-btn" href="javascript:;" @click="onAdd"
+      <a class="btn green navbar-btn"  @click.stop="onAdd"
         >New field</a
       >
     </div>
@@ -40,7 +40,7 @@
           ><span class="sortable"><i class="glyphicon glyphicon-list"></i></span
         ></td>
         <td>
-          <a href="javascript:;" @click="onEdit($event,item,index)"
+          <a  @click.stop="onEdit($event,item,index)"
             >{{item.name}}</a
           >
         </td>
@@ -78,8 +78,7 @@
         <td class="table-action">
           <a
             class="btn btn-xs red"
-            href="javascript:;"
-            @click="removeItem($event,index,item)"
+            @click.stop="removeItem($event,index,item)"
             >Remove</a
           >
         </td>
@@ -89,7 +88,7 @@
       <tr class="action-row">
         <td colspan="100"
           ><!---->
-          <a @click="toggleSystemFields" href="javascript:;">
+          <a @click.stop="toggleSystemFields">
             <i
               v-kb-tooltip:right="Kooboo.text.site.contentType.showSystemField"
               :class="showSystemField?'fa fa-chevron-down':'fa fa-chevron-down'"
@@ -100,7 +99,7 @@
       <tr v-for="item in systemProperties" v-if="showSystemField">
         <td class="table-sortable"></td>
         <td>
-          <a href="javascript:;" @click="onEdit($event,item)">{{item.name}}</a>
+          <a  @click.stop="">{{item.name}}</a>
         </td>
         <td :title="item.displayName">
           {{item.displayName.length > 10 ? item.displayName.substr(0,8) + '...'

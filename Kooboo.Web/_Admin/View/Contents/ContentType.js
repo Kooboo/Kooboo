@@ -90,8 +90,9 @@ $(function() {
         this.notSystemProperties.splice(index, 1);
       },
       onFieldEditorSave: function(event) {
+
         if (event.isNewField) {
-          self.notSystemProperties.splice(0, 0, event.data);
+          self.notSystemProperties.push(event.data);
         } else {
           if (event.editingIndex > -1) {
             self.notSystemProperties[event.editingIndex] = event.data;
