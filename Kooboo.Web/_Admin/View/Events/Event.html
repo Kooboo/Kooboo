@@ -200,8 +200,7 @@
       <component v-show="!rule.expanded" :is="rule.component+'-summary'" :rule="rule" :rules="rules"></component>
       </div>
       <div class="list-group-wrapper J_Detail" v-show="rule.expanded">
-            <!-- data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }" -->
-          <ul class="list-group" v-if="rule.activity.length > 0" v-kb-sortable="rule.activity">
+          <ul class="list-group" v-if="rule.activity.length > 0" v-kb-sortable="rule.activity"  data-sort-element="> li">
               <li class="list-group-item" v-for="($data, $index) in rule.activity" :key="$index">
                   <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
                   <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity(rule.activity, $index)"><i class="fa fa-minus"></i></a>
