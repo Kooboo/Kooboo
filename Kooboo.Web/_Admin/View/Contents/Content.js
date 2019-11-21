@@ -81,7 +81,7 @@ $(function() {
           ]
         },
         // Content Type
-        editingFieldIndex: 0,
+        editingFieldIndex: -1,
         showContentTypeModal: false,
         contentTypeForm: {
           name: ""
@@ -186,7 +186,7 @@ $(function() {
       editProperty: function(m, index) {
         self.isNewField = false;
         self.fieldData = m;
-        this.editingFieldIndex = index;
+        self.editingFieldIndex = index;
         self.onFieldModalShow = true;
       },
       deleteProperty: function(m, e) {
@@ -279,13 +279,16 @@ $(function() {
         self.isNewField = true;
         self.fieldData = undefined;
         self.onFieldModalShow = true;
+        self.editingFieldIndex = -1;
       },
       onFieldSave: function(fm) {
         if (self.isNewField) {
           self.typeProperties.push(fm.data);
         } else {
-          self.typeProperties[fm.editingIndex] = fm.data;
-          self.typeProperties = self.typeProperties.slice();
+          self.userTypeProperties[self.editingFieldIndex] = fm.data;
+          self.typeProperties = self.userTypeProperties.concat(
+            self.systemTypeProperties
+          );
         }
         self.saveContentFields(function() {
           self.refreshContent();
