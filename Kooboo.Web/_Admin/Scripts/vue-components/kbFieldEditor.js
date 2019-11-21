@@ -187,28 +187,31 @@
       },
       validate: function() {
         var firstTabHasError = false;
-        self.firstTabValidate.name = Kooboo.validField(self.d_data.name, [
-          { required: true, message: Kooboo.text.validation.required },
-          {
-            pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
-            message: Kooboo.text.validation.contentTypeNameRegex
-          },
-          {
-            validate: function(value) {
-              var status = true;
-              self.allItems.forEach(function(item, index) {
-                if (item.name === value && !(index === self.editingIndex)) {
-                  status = false;
-                }
-              });
-              return status;
+        if(self.isNewField){
+          self.firstTabValidate.name = Kooboo.validField(self.d_data.name, [
+            { required: true, message: Kooboo.text.validation.required },
+            {
+              pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.contentTypeNameRegex
             },
-            message: Kooboo.text.validation.taken
+            {
+              validate: function(value) {
+                var status = true;
+                self.allItems.forEach(function(item, index) {
+                  if (item.name === value && !(index === self.editingIndex)) {
+                    status = false;
+                  }
+                });
+                return status;
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]);
+          if (!self.firstTabValidate.name.valid) {
+            firstTabHasError = true;
           }
-        ]);
-        if (!self.firstTabValidate.name.valid) {
-          firstTabHasError = true;
         }
+
 
         self.d_data.selectionOptions.forEach(function(item, index) {
           var rule = [
