@@ -1,6 +1,6 @@
 <div class="panel panel-default panel-small">
     <div class="panel-heading">
-        <a href="javascript:;" class="btn btn-xs dark pull-right" @click="$emit('remove',index)"><i class="fa fa-minus"></i></a>
+        <a  class="btn btn-xs dark pull-right" @click.stop="$emit('remove',index)"><i class="fa fa-minus"></i></a>
         <h4 class="panel-title">{{Kooboo.text.validationRule[item.type]}}</h4>
     </div>
     <div class="panel-body" :id="'validation_panel_' + index">
@@ -21,19 +21,16 @@
             </div>
         </div>
         <div    v-if="['min','minLength','minChecked'].includes(item.type)"
-                v-kb-hint="{msg:validateModel.value.msg,show:showValidateError}"
                 class="form-group" >
-            <input v-model="item.value" type="number" class="form-control" placeholder="Minimal value"/>
+            <input v-kb-hint="{msg:validateModel.value.msg,show:showValidateError}" v-model="item.value" type="number" class="form-control" placeholder="Minimal value"/>
         </div>
         <div v-if="['max','maxLength','maxChecked'].includes(item.type)"
-                v-kb-hint="{msg:validateModel.value.msg,show:showValidateError}"
                 class="form-group" >
-            <input v-model="item.value" type="number" class="form-control" placeholder="Maximum value"/>
+            <input v-kb-hint="{msg:validateModel.value.msg,show:showValidateError}" v-model="item.value" type="number" class="form-control" placeholder="Maximum value"/>
         </div>
         <div  v-if="item.type ==='regex'"
-                v-kb-hint="{msg:validateModel.pattern.msg,show:showValidateError}"
                 class="form-group" >
-            <input v-model="item.pattern"
+            <input v-kb-hint="{msg:validateModel.pattern.msg,show:showValidateError}" v-model="item.pattern"
                    type="text"
                    class="form-control"
                    placeholder="Pattern"/>

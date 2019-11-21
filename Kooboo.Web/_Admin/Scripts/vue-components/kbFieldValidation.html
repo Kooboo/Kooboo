@@ -1,5 +1,5 @@
 <div>
-    <div class="form-horizontal margin-bottom-20">
+    <div class="form-horizontal margin-bottom-20" v-if="options.length > 0">
         <label>{{Kooboo.text.component.fieldEditor.selectValidationRules}}</label>
         <div class="form-group">
             <div class="col-md-10">
@@ -8,8 +8,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <a @click="onAdd"
-                        href="javascript:;" class="btn btn-block blue" >{{Kooboo.text.common.add}}</a>
+                <a @click.stop="onAdd"  class="btn btn-block blue" >{{Kooboo.text.common.add}}</a>
             </div>
         </div>
     </div>

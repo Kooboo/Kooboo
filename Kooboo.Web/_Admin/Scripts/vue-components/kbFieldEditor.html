@@ -14,7 +14,7 @@
                                     <label class="col-md-3 control-label">{{Kooboo.text.common.name}}</label>
                                     <div class="col-md-9">
                                         <div class="input-group"
-                                             v-kb-hint:right="{msg:firstTabValidate.name.msg,show:showValidateError}">
+                                             v-kb-hint:right="{msg:firstTabValidate.name.msg,show:true}">
                                             <input v-if="isNewField"
                                                    v-model="d_data.name"
                                                    type="text" class="form-control key">
@@ -48,7 +48,7 @@
                                     <div class="col-md-9 col-md-offset-3">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" :checked="d_data.editable"><span>{{Kooboo.text.component.fieldEditor.userEditable}}</span>
+                                                <input type="checkbox" v-model="d_data.editable"><span>{{Kooboo.text.component.fieldEditor.userEditable}}</span>
                                             </label>
                                         </div>
                                     </div>
@@ -90,8 +90,7 @@
 
                                                     <span class="input-group-btn"
                                                           v-kb-hint:right="firstTabValidate.selectionOptions[index].value.msg"><a
-                                                            @click="removeOption($event, index)"
-                                                            href="javascript:;" class="btn btn-default"
+                                                            @click.stop="removeOption($event, index)" class="btn btn-default"
                                                     ><i
                                                             class="fa fa-minus"
                                                             data-container="#selection-options"
@@ -102,8 +101,7 @@
                                         </div>
                                         <div>
                                             <div>
-                                                <a @click="addOption"
-                                                   href="javascript:;" class="btn dark"><i
+                                                <a @click.stop="addOption" :disabled="addDisable" class="btn dark"><i
                                                         class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
@@ -113,8 +111,8 @@
                                     <div class="col-md-9 col-md-offset-3">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" v-model="d_data.getSelectionOptions"
-                                                       :disabled="isNewField">
+                                                <input type="checkbox" v-model="d_data.multipleValue"
+                                                       :disabled="!isNewField">
                                                 <span>{{Kooboo.text.component.fieldEditor.enableMultiple}}</span>
                                             </label>
                                         </div>
@@ -143,7 +141,7 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox"
-                                                       v-model="d_data.hasOwnProperty('multilingual')? d_data.multilingual:d_data.multipleLanguage">
+                                                       v-model="d_data.multilingual !== undefined? d_data.multilingual:d_data.multipleLanguage">
                                                 <span>{{Kooboo.text.component.fieldEditor.enableMultilingual}}</span>
                                             </label>
                                         </div>
@@ -163,10 +161,8 @@
                             </template>
                         </template>
                         <template #content>
-                            <template v-if="!['boolean','switch','selection','fixedspec','dynamicspec'].includes(d_data.controlType.toLowerCase())">
-                                <kb-field-validation ref="fieldValidation" :data="d_data"
-                                                     :show-validate-error="showValidateError"></kb-field-validation>
-                            </template>
+                                <kb-field-validation  ref="fieldValidation" :data="d_data"
+                                                     :show-validate-error="tabIndex === 2"></kb-field-validation>
                         </template>
                     </kb-container>
 
