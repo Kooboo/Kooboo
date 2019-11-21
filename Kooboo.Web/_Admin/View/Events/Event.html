@@ -24,8 +24,11 @@
     <div class="blank-page-text" v-if="rules.length === 0">
       <p>You do not have any rules yet.</p>
     </div>
-    <div v-else>
-      <div v-for="(rule,index) in rules" :key="index">
+    <div v-else v-kb-sortable="rules" data-sort-element=".root-rules">
+      <div v-for="(rule,index) in rules" :key="index" class="root-rules">
+
+            <!-- <div data-bind="sortable: { data: rules, connectClass: 'root-rules', options: { handle: '.sortable' } }" data-rules-prop="rules"> -->
+
         <component
           :is="rule.component"
           :rule="rule"
@@ -34,15 +37,6 @@
         ></component>
       </div>
     </div>
-    <!-- <div
-      data-bind="sortable: { data: rules, connectClass: 'root-rules', options: { handle: '.sortable' } }"
-      data-rules-prop="rules"
-    >
-      <div
-        data-bind="template: { data: $data, name: 'RuleTemplate-' + ruleType() }"
-        class="top-level-rule-holder"
-      ></div>
-    </div> -->
     <div v-if="shouldShowSaveButton">
       <button type="button" class="btn green" @click="save">Save</button>
     </div>
@@ -69,18 +63,12 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
-      "/_Admin/Scripts/kobindings.sortable.js",
       "/_Admin/Scripts/events/RuleType-IfElse.js",
       "/_Admin/Scripts/events/RuleType-Always.js",
       "/_Admin/Scripts/events/activityDialog.js",
       "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
-      "/_Admin/Scripts/events/conditionsDialog.js",
-      "/_Admin/Scripts/tableModel.js",
-      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js"
-    ]);
-    Kooboo.loadCSS([
-      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
+      "/_Admin/Scripts/events/conditionsDialog.js"
     ]);
   })();
 </script>
@@ -123,9 +111,10 @@
           <label class="col-md-2">THEN</label>
           <div class="col-md-10">
             <div
-              data-bind="sortable: { data: then, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }"
-              data-rules-prop="then"
+            v-kb-sortable="rule.then"
             >
+            <!-- data-bind="sortable: { data: then, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }"
+            data-rules-prop="then" -->
               <div v-for="(then ,index) in rule.then" :key="index">
                 <component :is="then.component" :rule="then" :rules="rule.then"></component>
               </div>
@@ -149,8 +138,9 @@
         <div class="form-group">
           <label class="col-md-2">ELSE</label>
           <div class="col-md-10">
+                <!-- data-bind="sortable: { data: $data['else'], connectClass: $root.generateSortableConnectClass(), options: { handle: '.icon.drag' } }" -->
             <div
-              data-bind="sortable: { data: $data['else'], connectClass: $root.generateSortableConnectClass(), options: { handle: '.icon.drag' } }"
+            v-kb-sortable="rule.else"
               data-rules-prop="else"
             >
               <div v-for="(els ,index) in rule.else" :key="index">
@@ -214,7 +204,8 @@
       <component v-show="!rule.expanded" :is="rule.component+'-summary'" :rule="rule" :rules="rules"></component>
       </div>
       <div class="list-group-wrapper J_Detail" v-show="rule.expanded">
-          <ul class="list-group" v-if="rule.activity.length > 0" data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }">
+            <!-- data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }" -->
+          <ul class="list-group" v-if="rule.activity.length > 0" v-kb-sortable="rule.activity">
               <li class="list-group-item" v-for="($data, $index) in rule.activity" :key="$index">
                   <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
                   <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity(rule.activity, $index)"><i class="fa fa-minus"></i></a>
