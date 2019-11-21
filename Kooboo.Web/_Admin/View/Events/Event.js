@@ -1,5 +1,7 @@
 $(function() {
   var self;
+  var IFELSETHEN = "IF-ELSE-THEN";
+  var DO = "DO";
   new Vue({
     el: "#app",
     data: function() {
@@ -17,7 +19,7 @@ $(function() {
           }
         ],
         pageName: "",
-        ruleTypes: ["IF-ELSE-THEN", "DO"],
+        ruleTypes: [IFELSETHEN, DO],
         conditionDialogShow: false,
         conditionData: [],
         conditionRule: {},
@@ -86,12 +88,11 @@ $(function() {
       },
       addRule: function(rules, type, rule) {
         if (!rule) {
-          if (type === "DO") {
+          if (type === DO) {
             rule = {
               activity: [],
               expanded: false,
-              ruleType: "Do",
-              id: id
+              id: Kooboo.Guid.Empty
             };
           } else {
             rule = {
@@ -103,7 +104,8 @@ $(function() {
             };
           }
         }
-        if (type === "DO") {
+        rule.ruleType = type;
+        if (rule.RuleType === DO) {
           rule.component = "events-ruletype-always";
         } else {
           rule.component = "events-ruletype-ifelse";
@@ -204,9 +206,9 @@ $(function() {
               activities = rule.do;
 
             if (rule.do && !rule.do.length) {
-              type = "IfElse";
+              type = IFELSETHEN;
               currentRule = self.addRule(
-                parentRule || rules,
+                parentRule || self.rules,
                 type,
                 _.extend(rule, {
                   else: [],
@@ -220,7 +222,11 @@ $(function() {
               self.loadRules(thenCondition, currentRule.then);
               self.loadRules(elseCondition, currentRule.else);
             } else {
-              self.loadActivities(rule.id, activities, parentRule || rules);
+              self.loadActivities(
+                rule.id,
+                activities,
+                parentRule || self.rules
+              );
             }
           });
         }
@@ -280,8 +286,7 @@ $(function() {
       if (rule.hasOwnProperty("expanded")) {
         delete rule.expanded;
       }
-
-      if (rule.ruleType == "IfElse") {
+      if (rule.ruleType == IFELSETHEN) {
         delete rule.ruleType;
         rule.do = [];
         rule.if.forEach(function(cond, idx) {
@@ -295,6 +300,7 @@ $(function() {
         dataDemapping(rule.then);
         dataDemapping(rule.else);
       } else {
+        console.log(rule);
         rule.do = rule.activity.map(function(act) {
           return {
             codeId: act.id,
@@ -311,7 +317,4 @@ $(function() {
     });
     return rules;
   }
-  String.prototype.toCamelCase = function() {
-    return this[0].toLocaleLowerCase() + this.slice(1);
-  };
 });
