@@ -28,24 +28,24 @@
   >
     <kb-table-column :label="Kooboo.text.site.domain.name">
       <template v-slot="row">
-        <a>{{ row.fullName }}</a>
+        {{ row.fullName }}
       </template>
     </kb-table-column>
     <kb-table-column :label="Kooboo.text.site.domain.sslEnabled">
       <template v-slot="row">
-        <a
+        <span
           :class="row.enableSsl?'label label-sm  green':'label label-sm  gray'  "
         >
           {{
             row.enableSsl ? Kooboo.text.common.yes : Kooboo.text.common.no
-          }}</a
+          }}</span
         >
       </template>
     </kb-table-column>
     <kb-table-column :head-class="'table-action'">
       <template v-slot="row">
         <a
-          @click="startSSLHandle($event,row.id)"
+          @click.stop="startSSLHandle($event,row.id)"
           :class="row.enableSsl?'btn btn-sm gray disabled':'btn btn-sm blue'"
         >
           {{
@@ -63,7 +63,6 @@
     data-keyboard="false"
     v-kb-modal="modalShow"
   >
-    <!--v-if="modalShow" function is destroy component and directive-->
     <div class="modal-dialog" v-if="modalShow">
       <div class="modal-content">
         <div class="modal-header">
@@ -79,92 +78,99 @@
               <div class="col-md-9" k-if="kooboosetting.IsLocal = true">
                 <label class="radio-inline">
                   <input
-                    type="radio"
-                    value="domain"
-                    :checked="defaultBinding ==='domain'"
-                    @input="defaultBindingCheckboxHandle"
+                          type="radio"
+                          value="domain"
+                          :checked="defaultBinding ==='domain'"
+                          @input="defaultBindingCheckboxHandle"
                   /><span>Domain</span>
                 </label>
                 <label class="radio-inline">
                   <input
-                    type="radio"
-                    value="port"
-                    :checked="defaultBinding ==='port'"
-                    @input="defaultBindingCheckboxHandle"
+                          type="radio"
+                          value="port"
+                          :checked="defaultBinding ==='port'"
+                          @input="defaultBindingCheckboxHandle"
                   /><span>Port</span>
                 </label>
               </div>
-              <div class="col-md-9" k-if="kooboosetting.IsLocal = false">
-                <kb-form :model="formModel" :rules="formRules" align="inline">
-                  <kb-form-item
-                    prop="domain"
-                    v-if="defaultBinding === 'domain'"
-                  >
-                    <div class="input-group">
-                      <input
-                        v-model="subdomain"
-                        class="form-control"
-                        name="SubDomain"
-                        placeholder="example: www"
-                        type="text"
-                      />
-                      <span class="input-group-addon">.</span>
-                      <select
-                        class="form-control"
-                        name="RootDomain"
-                        v-for="domain in rootDomain"
-                      >
-                        <option>{{ domain.domainName }}</option>
-                      </select>
-                    </div>
-                  </kb-form-item>
-                </kb-form>
-              </div>
+
             </div>
             <div class="form-group" k-if="kooboosetting.IsLocal = true">
               <div class="col-md-9 col-md-offset-3">
                 <kb-form
-                  :model="formModel"
-                  :rules="formRules"
-                  align="inline"
-                  ref="form"
+                        :model="formModel"
+                        align="inline"
+                        ref="form"
                 >
                   <kb-form-item
-                    prop="subdomain"
-                    v-if="defaultBinding === 'domain'"
+                          v-if="defaultBinding === 'domain'"
                   >
-                    <div class="input-group">
-                      <input
-                        v-model="formModel.subdomain"
-                        class="form-control"
-                        name="SubDomain"
-                        placeholder="example: www"
-                        type="text"
-                      />
-                      <span class="input-group-addon">.</span>
-                      <select
-                        v-model="formModel.root"
-                        class="form-control"
-                        name="RootDomain"
-                        v-for="item in rootDomain"
-                      >
-                        <option>{{ item.domainName }}</option>
-                      </select>
+                    <div>
+                      <div class="input-group">
+
+                        <input
+                                v-model="formModel.subdomain"
+                                class="form-control"
+                                name="SubDomain"
+                                placeholder="example: www"
+                                type="text"
+                        />
+                        <span class="input-group-addon">.</span>
+                        <select v-kb-hint="validateModel.subdomain.msg"
+                                v-model="formModel.root"
+                                class="form-control"
+                                name="RootDomain"
+                                v-for="item in rootDomain"
+                        >
+                          <option >{{ item.domainName }}</option>
+                        </select>
+                      </div>
                     </div>
+
                   </kb-form-item>
 
-                  <kb-form-item prop="port" v-if="defaultBinding === 'port'">
-                    <input
-                      :value="formModel.port"
-                      @input="formModel.port= Number($event.target.value)"
-                      class="form-control"
-                      placeholder="example: 81"
-                      type="number"
-                      min="0"
-                    />
+                  <kb-form-item  v-if="defaultBinding === 'port'">
+                    <div>
+                      <div>
+                        <input  v-kb-hint="validateModel.port.msg"
+                                v-model.number="formModel.port"
+                                class="form-control"
+                                placeholder="example: 81"
+                                type="number"
+                                min="0"
+                        />
+                      </div>
+
+                    </div>
+
                   </kb-form-item>
                 </kb-form>
               </div>
+            </div>
+            <div class="col-md-9" k-if="kooboosetting.IsLocal = false">
+              <kb-form :model="formModel"  align="inline">
+                <kb-form-item
+                        v-if="defaultBinding === 'domain'"
+                >
+                  <div class="input-group">
+                    <input
+                            v-model="subdomain"
+                            class="form-control"
+                            name="SubDomain"
+                            placeholder="example: www"
+                            type="text"
+                    />
+                    <span class="input-group-addon">.</span>
+                    <select v-kb-hint="validateModel.subdomain.msg"
+                            class="form-control"
+                            name="RootDomain"
+                            v-for="domain in rootDomain"
+                    >
+                      <option>{{ domain.domainName }}</option>
+                    </select>
+                  </div>
+                </kb-form-item>
+              </kb-form>
             </div>
           </div>
         </div>
