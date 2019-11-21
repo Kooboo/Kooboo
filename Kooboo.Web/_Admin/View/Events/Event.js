@@ -74,13 +74,6 @@ $(function() {
       });
     },
     methods: {
-      generateSortableConnectClass: function() {
-        return (
-          "ko-container-" +
-          new Date().getTime() +
-          Math.round(Math.random() * 10000)
-        );
-      },
       createCode: function() {
         location.href = Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
           eventType: Kooboo.getQueryString("name")

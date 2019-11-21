@@ -24,11 +24,8 @@
     <div class="blank-page-text" v-if="rules.length === 0">
       <p>You do not have any rules yet.</p>
     </div>
-    <div v-else v-kb-sortable="rules" data-sort-element=".root-rules">
-      <div v-for="(rule,index) in rules" :key="index" class="root-rules">
-
-            <!-- <div data-bind="sortable: { data: rules, connectClass: 'root-rules', options: { handle: '.sortable' } }" data-rules-prop="rules"> -->
-
+    <div v-else v-kb-sortable="rules" data-sort-element="> div">
+      <div v-for="(rule,index) in rules" :key="index">
         <component
           :is="rule.component"
           :rule="rule"
@@ -112,9 +109,8 @@
           <div class="col-md-10">
             <div
             v-kb-sortable="rule.then"
+            data-sort-element="> div"
             >
-            <!-- data-bind="sortable: { data: then, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }"
-            data-rules-prop="then" -->
               <div v-for="(then ,index) in rule.then" :key="index">
                 <component :is="then.component" :rule="then" :rules="rule.then"></component>
               </div>
@@ -138,10 +134,10 @@
         <div class="form-group">
           <label class="col-md-2">ELSE</label>
           <div class="col-md-10">
-                <!-- data-bind="sortable: { data: $data['else'], connectClass: $root.generateSortableConnectClass(), options: { handle: '.icon.drag' } }" -->
             <div
             v-kb-sortable="rule.else"
               data-rules-prop="else"
+              data-sort-element="> div"
             >
               <div v-for="(els ,index) in rule.else" :key="index">
                 <component :is="els.component" :rule="els" :rules="rule.else"></component>

@@ -96,8 +96,29 @@
     },
     methods: {
       getSameTypeControlType: function(item) {
-        self.d_data.validations = [];
-        if (item.dataType !== "Array") {
+        if(item.value ==='Selection' || item.value ==='Switch') {
+          self.d_data.validations = [];
+        } else {
+          try {
+            if (self.data.validations.length > 0) {
+              self.d_data.validations = JSON.parse(self.data.validations);
+            }
+          } catch (e) {
+            self.d_data.validations = [];
+          }
+        }
+
+        if (item.dataType == "Array") {
+          try {
+            if (self.data.selectionOptions.length > 0) {
+              self.d_data.selectionOptions = JSON.parse(
+                  self.data.selectionOptions
+              );
+            }
+          } catch (e) {
+            self.d_data.selectionOptions = [];
+          }
+        }else {
           self.d_data.selectionOptions = [];
         }
         if (item.dataType !== "Undefined") {
