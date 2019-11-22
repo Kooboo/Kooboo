@@ -25,6 +25,7 @@ $(function() {
       self = this;
       return {
         id: "",
+        name: "",
         steps: [
           {
             displayName: Kooboo.text.component.fieldEditor.field,
@@ -112,7 +113,8 @@ $(function() {
         externalLink: "",
         availableSubmitters: "",
         formSubmitter: "",
-        settings: []
+        settings: [],
+        optionRowError: []
       };
     },
     mounted: function() {
@@ -157,7 +159,7 @@ $(function() {
               self.fields.push(fieldModel(field));
             });
           } else {
-            self.fields([]);
+            self.fields = [];
           }
 
           self.method = formRes.model.method || "post";
@@ -219,7 +221,6 @@ $(function() {
         };
         self._cacheField = newField;
         self.fields.push(fieldModel(newField));
-        console.log(self.fields)
       },
       onCreateContentForm: function() {
         Kooboo.ContentFolder.getList().then(function(res) {
@@ -322,7 +323,8 @@ $(function() {
       switchTab: function(field, m) {
         field.curTab = m.value;
       },
-      isFieldValid: function(field) {
+      isFieldValid: function(field, index) {
+        return self.$refs.basicForm[index].validate();
         //   var allValidationValid = true;
         //   self.validations().forEach(function(validation) {
         //     if (!validation.isValid()) {
@@ -349,10 +351,12 @@ $(function() {
 
         return true; // test
       },
-      clearFieldValid: function(field) {},
+      clearFieldValid: function(field, index) {
+        self.$refs.basicForm[index].clearValid();
+      },
       isAbleToAddNewField: function() {
         // var flag = false;
-  
+
         // self.fields().forEach(function(field) {
         //   if (field.configuring()) {
         //     if (!field.isValid()) {
@@ -360,18 +364,54 @@ $(function() {
         //     }
         //   }
         // });
-  
+
         // return flag;
         return true;
       },
-      onRemoveField: function(m, e) {
+      changeFieldType(field, index) {
+        self.clearFieldValid(field, index);
+        var type = field.type.toLowerCase();
+        if (["divider"].indexOf(type) > -1) {
+          field.isPlaceholderRequired = false;
+        } else if (
+          ["divider", "radiobox", "checkbox", "selection"].indexOf(type) > -1
+        ) {
+          field.needOptions = true;
+          field.isPlaceholderRequired = false;
+        } else {
+          field.needOptions = false;
+          field.isPlaceholderRequired = true;
+          field.options = [];
+        }
+        console.log(field)
+        // setValidationRules();
+      },
+      isAbleToAddOption: function(field) {
+        var flag = true;
+        field.model.options.forEach(function(opt) {
+          if (!opt.key || !opt.value) {
+            flag = false;
+            return flag;
+          }
+        });
+        return flag;
+      },
+      addOption: function(field) {
+        if (!self.isAbleToAddOption(field)) {
+          return;
+        }
+        field.options.push({
+          key: "",
+          value: ""
+        });
+      },
+      onRemoveField: function(index) {
         if (confirm(Kooboo.text.confirm.deleteItem)) {
-          m.showError(false);
-          self.fields.remove(m);
+          self.fields.splice(index, 1);
         }
       },
-      onSaveField: function(m, e) {
-        if (self.isFieldValid(m)) {
+      onSaveField: function(m, index) {
+        if (self.isFieldValid(m, index)) {
           m.configuring = false;
         }
       },
@@ -379,7 +419,7 @@ $(function() {
         m.configuring = false;
         self.clearFieldValid(m);
         if (!self._cacheField.isNew) {
-          // TODO: EDIT 
+          // TODO: EDIT
           var origId = m.id;
           self._cacheField.configuring = false;
           setTimeout(function() {
@@ -398,8 +438,7 @@ $(function() {
         }
       },
       onEditField: function(m, e) {
-        e.preventDefault();
-        var configuring = !!m.configuring();
+        var configuring = !!m.configuring;
 
         if (self.isAbleToUnconfigureAllField()) {
           self.unConfiguringAll();
@@ -527,11 +566,6 @@ $(function() {
       },
       onBack: function() {
         location.href = Kooboo.Route.Form.ListPage + "#External";
-      },
-      getAllFieldNames: function() {
-        return self.fields().map(function(field) {
-          return field.name();
-        });
       },
       getFormBody: function() {
         var html = "";
@@ -823,6 +857,46 @@ $(function() {
 
   function fieldModel(field) {
     field.id = Kooboo.getRandomId();
+    field.model = {
+      name: field.name,
+      options: field.options
+    };
+    field.rules = {
+      name: [
+        {
+          required: true,
+          message: Kooboo.text.validation.required
+        },
+        {
+          validate: function(val) {
+            return !_.some(self.fields, function(field) {
+              return val && val.toLowerCase() == field.name.toLowerCase();
+            });
+          },
+          message: Kooboo.text.validation.taken
+        }
+      ],
+      "options[]": {
+        key: [
+          {
+            required: true,
+            message: Kooboo.text.validation.required
+          }
+        ],
+        value: [
+          {
+            required: true,
+            message: Kooboo.text.validation.required
+          }
+        ],
+        __array: [
+          {
+            required: true,
+            message: Kooboo.text.validation.required
+          }
+        ]
+      }
+    };
     //#region validation
     // field.showError = ko.observable(false);
     // var validations = [];
@@ -1038,29 +1112,6 @@ $(function() {
     field.curTab = "basic";
     field.tabs = NORMAL_TABS;
 
-    // field.addOption = function() {
-    //   if (self.isAbleToAddOption()) {
-    //     self.options.push(
-    //       new optionModel({
-    //         key: "",
-    //         value: ""
-    //       })
-    //     );
-    //     self.options().forEach(function(opt) {
-    //       opt.showError(false);
-    //     });
-    //   }
-    //   self.optionsValid("Passed");
-    // };
-
-    // field.isAbleToAddOption = function() {
-    //   var flag = true;
-    //   self.options().forEach(function(opt) {
-    //     !opt.isValid() && (flag = false);
-    //   });
-    //   return flag;
-    // };
-
     // field.removeOption = function(m, e) {
     //   m.showError(false);
     //   self.options.remove(m);
@@ -1250,7 +1301,6 @@ $(function() {
       return self.choosedFolder.isValid();
     });
 
-
     this.styleContent.subscribe(function(content) {
       self.renderPreview();
     });
@@ -1273,25 +1323,4 @@ $(function() {
       }
     });
   };
-
-  function optionModel(data) {
-    var self = this;
-
-    this.key = ko.validateField(data.key, {
-      required: ""
-    });
-
-    this.value = ko.validateField(data.value, {
-      required: ""
-    });
-
-    this.isValid = function() {
-      return self.key.isValid() && self.value.isValid();
-    };
-
-    this.showError = ko.observable(false);
-  }
-
-  //   var vm = new KooFormViewModel();
-  //   ko.applyBindings(vm, document.getElementById("main"));
 });
