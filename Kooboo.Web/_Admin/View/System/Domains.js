@@ -78,7 +78,8 @@ $(function() {
               message: Kooboo.text.validation.portRange
             }
           ]
-        }
+        },
+        validateModel: undefined
       };
     },
     created: function() {
@@ -97,8 +98,20 @@ $(function() {
       this.getDomainsData();
       this.getDomainData();
       this.getsiteNameData();
+      self.createValidateModel()
     },
-    methods: {
+    watch:{
+      formModel:{handler:function () {
+          self.createValidateModel()
+        },deep:true},
+      defaultBinding:function () {
+        self.createValidateModel()
+      }
+    },
+    methods:{
+      createValidateModel:function() {
+        this.validateModel = {subdomain:{valid:true,msg:''},port:{valid:true,msg:''}};;
+      },
       getsiteNameData: function() {
         Kooboo.Site.getName().then(function(res) {
           if (res.success) {
@@ -118,7 +131,19 @@ $(function() {
         this.modalShow = false;
       },
       onSave: function() {
-        if (this.$refs.form.validate()) {
+        var valid = true;
+        if(self.defaultBinding === "domain") {
+          self.validateModel.subdomain = Kooboo.validField(self.formModel.subdomain,self.formRules.subdomain)
+          if(!self.validateModel.subdomain.valid) {
+            valid = false
+          }
+        }else if(self.defaultBinding === "port") {
+          self.validateModel.port= Kooboo.validField(self.formModel.port,self.formRules.port);
+          if(!self.validateModel.port.valid) {
+            valid = false
+          }
+        }
+        if (valid) {
           Kooboo.Binding.post({
             subdomain: self.formModel.subdomain,
             rootdomain: self.formModel.root,
@@ -132,8 +157,7 @@ $(function() {
       },
       getConfirmMessage: function(doc) {
         if (doc.relations) {
-          var reorderedKeys = _.sortBy(Object.keys(doc.relations));
-          doc.relationsTypes = reorderedKeys;
+          doc.relationsTypes = _.sortBy(Object.keys(doc.relations));
         }
         var find = _.find(doc, function(item) {
           return item.relations && Object.keys(item.relations).length;
@@ -205,7 +229,7 @@ $(function() {
                   subDomain: subDomain
                 }).then(function(resp) {
                   if (resp.success) {
-                    getList();
+                    self.getList();
                     window.info.done(Kooboo.text.info.enable.success);
                   } else {
                     window.info.fail(Kooboo.text.info.enable.failed);
