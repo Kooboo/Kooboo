@@ -52,6 +52,9 @@
       self = this;
       self.AllControlTypes = self.getControlTypes(self.options.controlTypes);
       if (!self.isNew()) {
+        if (self.d_data.controlType.toLowerCase() === "tinymce") {
+          self.d_data.controlType = "RichEditor";
+        }
         try {
           if (self.data.validations.length > 0) {
             self.d_data.validations = JSON.parse(self.data.validations);
@@ -96,7 +99,7 @@
     },
     methods: {
       getSameTypeControlType: function(item) {
-        if(item.value ==='Selection' || item.value ==='Switch') {
+        if (item.value === "Selection" || item.value === "Switch") {
           self.d_data.validations = [];
         } else {
           try {
@@ -108,17 +111,17 @@
           }
         }
 
-        if (item.dataType == "Array") {
+        if (item.dataType === "Array") {
           try {
             if (self.data.selectionOptions.length > 0) {
               self.d_data.selectionOptions = JSON.parse(
-                  self.data.selectionOptions
+                self.data.selectionOptions
               );
             }
           } catch (e) {
             self.d_data.selectionOptions = [];
           }
-        }else {
+        } else {
           self.d_data.selectionOptions = [];
         }
         if (item.dataType !== "Undefined") {
@@ -142,7 +145,7 @@
         var CONTROL_TYPES = Kooboo.controlTypes;
         types.forEach(function(t) {
           var _t = CONTROL_TYPES.find(function(c) {
-            return c.value.toLowerCase() == t;
+            return c.value.toLowerCase() === t;
           });
 
           _types.push(_t || { displayName: "NOT_FOUND" });
@@ -185,7 +188,7 @@
         }
       },
       addOption: function() {
-        if(!self.addDisable) {
+        if (!self.addDisable) {
           self.d_data.selectionOptions.push({ key: "", value: "" });
         }
       },
@@ -208,7 +211,7 @@
       },
       validate: function() {
         var firstTabHasError = false;
-        if(self.isNewField){
+        if (self.isNewField) {
           self.firstTabValidate.name = Kooboo.validField(self.d_data.name, [
             { required: true, message: Kooboo.text.validation.required },
             {
@@ -233,7 +236,6 @@
           }
         }
 
-
         self.d_data.selectionOptions.forEach(function(item, index) {
           var rule = [
             { required: true, message: Kooboo.text.validation.required }
@@ -242,16 +244,16 @@
           var key = Kooboo.validField(item.key, rule);
           var value = Kooboo.validField(item.value, rule);
           if (key.valid === false || value.valid === false)
-          self.firstTabValidate.selectionOptions[index] = {
-            key: key,
-            value: value
-          };
+            self.firstTabValidate.selectionOptions[index] = {
+              key: key,
+              value: value
+            };
         });
-        if(self.$refs.fieldValidation) {
-            var threeTabValidation = self.$refs.fieldValidation.validate();
-            if (threeTabValidation.hasError) {
-                self.tabIndex = 2;
-            }
+        if (self.$refs.fieldValidation) {
+          var threeTabValidation = self.$refs.fieldValidation.validate();
+          if (threeTabValidation.hasError) {
+            self.tabIndex = 2;
+          }
         }
         if (firstTabHasError) {
           self.tabIndex = 0;
@@ -260,8 +262,8 @@
         if (els.length > 0) {
           els[0].scrollIntoView();
         }
-          self.showValidateError = true;
-          this.$forceUpdate();
+        self.showValidateError = true;
+        this.$forceUpdate();
         return !(firstTabHasError || threeTabValidation.hasError);
       },
       onSave: function() {
@@ -282,12 +284,12 @@
         }
       },
       addDisableHandler: function() {
-          self.addDisable = false;
-          self.d_data.selectionOptions.forEach(function (i) {
-            if(!i.key || !i.value || i.key === '' || i.value === '') {
-              self.addDisable = true
-            }
-          });
+        self.addDisable = false;
+        self.d_data.selectionOptions.forEach(function(i) {
+          if (!i.key || !i.value || i.key === "" || i.value === "") {
+            self.addDisable = true;
+          }
+        });
       },
       onCancel: function() {
         self.closeHandle();
