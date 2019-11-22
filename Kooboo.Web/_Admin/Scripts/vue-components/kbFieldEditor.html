@@ -101,7 +101,8 @@
                                         </div>
                                         <div>
                                             <div>
-                                                <a @click.stop="addOption" :disabled="addDisable" class="btn dark"><i
+                                                <a      v-kb-hint:right="firstTabValidate.selectionOptionsNull.msg"
+                                                        @click.stop="addOption" :disabled="addDisable" class="btn dark"><i
                                                         class="fa fa-plus"></i></a>
                                             </div>
                                         </div>

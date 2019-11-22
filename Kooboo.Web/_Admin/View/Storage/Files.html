@@ -33,13 +33,13 @@
     <ol class="breadcrumb">
       <template v-for="(item,index) in crumbPath">
         <li :key="index" v-if="index != crumbPath.length-1">
-          <a href="javascript:;" @click="onChoosingFolder(item.fullPath)">{{
-            item.name
-          }}</a>
+          <a href="javascript:;" @click="onChoosingFolder(item.fullPath)"
+            >{{ item.name }}</a
+          >
         </li>
-        <li v-if="index == crumbPath.length-1" class="active" :key="index">{{
-          item.name
-        }}</li>
+        <li v-if="index == crumbPath.length-1" class="active" :key="index"
+          >{{ item.name }}</li
+        >
       </template>
     </ol>
   </div>
@@ -97,11 +97,8 @@
                 class="label label-sm kb-table-label-refer"
                 @click.stop="getRelation(file.id,refer)"
                 :style="{background:Kooboo.getLabelColor(refer)}"
-                >{{
-                  file.relations[refer] +
-                    " " +
-                    Kooboo.text.component.table[refer.toLowerCase()]
-                }}</a
+                >{{ file.relations[refer] + " " +
+                Kooboo.text.component.table[refer.toLowerCase()] }}</a
               >
             </template>
             <template v-else>
@@ -131,40 +128,38 @@
     </table>
   </div>
   <div
-    data-bind="modal: newFolderModal"
     class="modal fade"
     data-backdrop="static"
     data-keyboard="false"
+    v-kb-modal="showNewFolderModal"
   >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button data-bind="click: onNewFolderModalReset" class="close"
+          <button data-dismiss="modal" class="close"
             ><i class="fa fa-close"></i
           ></button>
           <h4 class="modal-title">New folder</h4>
         </div>
         <div class="modal-body">
-          <div class="form-horizontal">
-            <div class="form-group">
+          <kb-form :model="model" :rules="rules" ref="form">
+            <kb-form-item prop="folderName">
               <label class="col-md-3 control-label">Name</label>
               <div class="col-md-9">
                 <input
                   type="text"
-                  data-bind="value: folderName, error: folderName"
                   class="form-control"
+                  v-model="model.folderName"
                 />
               </div>
-            </div>
-          </div>
+            </kb-form-item>
+          </kb-form>
         </div>
         <div class="modal-footer">
-          <button data-bind="click: onNewFolderModalSubmit" class="btn green"
+          <button @click="onNewFolderModalSubmit" class="btn green"
             >Save</button
           >
-          <button data-bind="click: onNewFolderModalReset" class="btn gray"
-            >Cancel</button
-          >
+          <button data-dismiss="modal" class="btn gray">Cancel</button>
         </div>
       </div>
     </div>
@@ -176,12 +171,14 @@
 <script>
   Kooboo.loadJS([
     "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+    "/_Admin/Scripts/vue-components/kbForm.js",
     "/_Admin/Scripts/vue-components/kbRelationModal.js"
   ]);
 
   new Vue({
     el: "#app",
     data: function() {
+      var self = this;
       return {
         breads: [
           {
@@ -197,7 +194,37 @@
         showNewFolderModal: false,
         crumbPath: [],
         folders: [],
-        files: []
+        files: [],
+        model: {
+          folderName: ""
+        },
+        rules: {
+          folderName: [
+            { required: Kooboo.text.validation.required },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              pattern: /^([a-zA-Z\w\-\.])*$/,
+              message: Kooboo.text.validation.folderNameInvalid
+            },
+            {
+              validate: function(value) {
+                return self.folders.every(function(e) {
+                  return e.name != value.trim();
+                });
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        }
       };
     },
     mounted: function() {
@@ -237,6 +264,22 @@
       }
     },
     methods: {
+      onNewFolderModalSubmit: function() {
+        var self = this;
+        if (this.$refs.form.validate()) {
+          Kooboo.File.createFolder({
+            path: self.crumbPath[self.crumbPath.length - 1].fullPath,
+            name: self.model.folderName
+          }).then(function(res) {
+            if (res.success) {
+              self.onChoosingFolder(
+                location.hash ? location.hash.split("#")[1] : ""
+              );
+              self.showNewFolderModal = false;
+            }
+          });
+        }
+      },
       uploadFile: function(data, files) {
         var me = this;
         function upload() {
@@ -321,6 +364,13 @@
             location.hash = path;
           }
         });
+      }
+    },
+    watch: {
+      showNewFolderModal: function(value) {
+        if (!value) {
+          this.model.folderName = "";
+        }
       }
     }
   });

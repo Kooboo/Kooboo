@@ -48,21 +48,21 @@
                 $(container).empty();
                 kb.EventBus.keepEvents(["kb/sidebar/refresh"]);
                 kb.EventBus.reset();
-                ko.cleanNode($(container)[0]);
-                clearKoComponents();
+                // ko.cleanNode($(container)[0]);
+               // clearKoComponents();
                 $('.modal-backdrop').remove();
                 $(container).html(code);
                 kb.EventBus.publish("kb/sidebar/refresh");
             }
 
-            function clearKoComponents() {
-                var components = Object.keys(ko.components._allRegisteredComponents || ko.components.Bc);
-                components.forEach(function(key) {
-                    if (["sidebar", "sidebar-list"].indexOf(key) == -1) {
-                        ko.components.unregister(key);
-                    }
-                })
-            }
+            // function clearKoComponents() {
+            //     var components = Object.keys(ko.components._allRegisteredComponents || ko.components.Bc);
+            //     components.forEach(function(key) {
+            //         if (["sidebar", "sidebar-list"].indexOf(key) == -1) {
+            //             ko.components.unregister(key);
+            //         }
+            //     })
+            // }
         },
         beforeUnload: undefined
     }

@@ -611,3 +611,51 @@ Vue.directive("kb-hint", {
   }
 });
 // #endregion </kb-hint>
+
+//#region <kb-select2>
+Vue.directive("kb-select2", {
+  inserted: function(element, binding) {
+    $(element)
+      .select2({
+        tags: true,
+        language: {
+          noResults: function() {
+            return binding.value.noItemTip || "";
+          }
+        },
+        allowClear: true,
+        tokenSeparators: [",", " ", ";"],
+        data: binding.value.options
+      })
+      .on("change", function(e) {
+        var selected = [];
+        for (let i = 0; i < e.target.selectedOptions.length; i++) {
+          selected.push({
+            index: e.target.selectedOptions[i].index,
+            text: e.target.selectedOptions[i].text
+          });
+        }
+        binding.value.selected = selected;
+      })
+      .on("select2:closing", function() {
+        var possibleValue = $(element)
+          .parent()
+          .find(".select2-search__field")
+          .val();
+        if (possibleValue) {
+          if (possibleValue.indexOf(" ") == -1) {
+            var origValues = $(element).val() || [];
+            if (origValues.indexOf(possibleValue) == -1) {
+              origValues.push(possibleValue);
+              $(element).val(origValues).trigger("change");
+            }
+          }
+        }
+      });
+
+    $(element)
+      .val(binding.value.selected)
+      .trigger("change");
+  }
+});
+//#endregion </kb-select2>
