@@ -1,4 +1,4 @@
-﻿<!-- #layout name=blank-->
+﻿﻿﻿﻿<!-- #layout name=blank-->
 
 <div id="app">
     <div class="page-header">
@@ -7,7 +7,7 @@
     <kb-breadcrumb :breads="breads"></kb-breadcrumb>
     <div class="navbar navbar-default">
         <div class="container-fluid">
-            <a @click="showModalHandle" class="btn green navbar-btn">Create</a>
+            <a @click.stop="showModalHandle" class="btn green navbar-btn">Create</a>
             <a v-if="tableDataSelected.length > 0"
                @click="onDelete"
                class="btn red navbar-btn">Delete</a>
@@ -20,8 +20,7 @@
     >
         <kb-table-column :label="Kooboo.text.site.sync.remoteSite">
             <template v-slot="row">
-                <a @click="remoteSiteClickHandle($event, row.id)"
-                   href="javascript:;">
+                <a @click.stop="remoteSiteClickHandle($event, row.id)" style="cursor: pointer">
                     {{row.remoteSiteName}}
                 </a>
             </template>
@@ -133,18 +132,21 @@
                             <kb-table-column :label="'Server name'">
                                 <template v-slot="row">
                                     <div v-if='!row.editable'>{{ !row.editable && row.name}}</div>
-                                    <input v-else v-model="row.name" type="text" class="form-control"
-                                           :class="{'has-error':row.validateModel.name.hasError }"
-                                           v-kb-tooltip:bottom.manual.error='row.validateModel.name.message'
-                                    >
+                                    <div v-else>
+                                        <input  v-model="row.name" type="text" class="form-control"
+                                               v-kb-hint:bottom='row.validateModel.name.msg'
+                                        > 
+                                    </div>
+            
                                 </template>
                             </kb-table-column>
                             <kb-table-column :label="'Server address'" >
                                 <template v-slot="row">
                                     <div v-if='!row.editable'>{{ !row.editable && row.serverUrl }}</div>
-                                    <input v-else v-model="row.serverUrl" type="text" class="form-control"
-                                           :class="{'has-error':row.validateModel.serverUrl.hasError}"
-                                           v-kb-tooltip:bottom.manual.error='row.validateModel.serverUrl.message'>
+                                    <div v-else>
+                                        <input  v-model="row.serverUrl" type="text" class="form-control"
+                                               v-kb-hint:bottom='row.validateModel.serverUrl.msg'>
+                                    </div>
                                 </template>
                             </kb-table-column>
                             <kb-table-column>
@@ -243,8 +245,7 @@
             "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
             "/_Admin/Scripts/vue-components/kbTable.js",
             "/_Admin/Scripts/SPA.js",
-            "/_Admin/Scripts/vue-components/kbForm.js",
-            "/_Admin/Scripts/vueExtends.js"
+            "/_Admin/Scripts/vue-components/kbForm.js"
         ])
     })()
 </script>

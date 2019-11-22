@@ -1,7 +1,4 @@
 $(function() {
-  Kooboo.loadJS(["/_Admin/Scripts/validate.js"]);
-  var validate = new Validate();
-  validate.registerAll(ValidateRuleResolves);
   var self;
   new Vue({
     el: "#app",
@@ -81,12 +78,21 @@ $(function() {
         showCreateSiteModal: false,
         ableAddSite: false,
         selectedPushType: undefined,
-        avaliableRemoteDomain: []
+        avaliableRemoteDomain: [],
+        validateModel: []
       };
     },
     created: function() {
       self = this;
       this.getTableData();
+    },
+    watch: {
+      editableServers: {handler:function (value) {
+          self.validateModel = [];
+          value.forEach(function (item) {
+            item.validateModel={name:{msg:"",valid: true},serverUrl:{msg:"",valid: true}}
+          });
+      },deep:true}
     },
     methods: {
       getTableData: function() {
@@ -99,17 +105,17 @@ $(function() {
         this.$forceUpdate();
       },
       pushTypeRadioChange: function(event, pushType) {
-        this.selectedPushType = pushType;
+        self.selectedPushType = pushType;
       },
       cancelEditEditableServers: function(event, row) {
+        if(row.isNew){
+          delete row.isNew;
+          self.editableServers.pop();
+        }
         row.editable = false;
-        //The change of row  or this.editableServers`s children  not arouse kb-table`s view update
-        //unless The change of this.editableServers.length
         this.$forceUpdate();
         self.ableAddNewServer = true;
       },
-
-      validateServerManage: function() {},
       saveEditableServers: function(event, row) {
         var patternString =
           "^((https|http)?://)?" +
@@ -123,12 +129,11 @@ $(function() {
         var pattern = new RegExp(patternString);
         var keyOptions = {
           name: [
-            { name: "required", message: Kooboo.text.validation.required }
+            { required:true, message: Kooboo.text.validation.required }
           ],
           serverUrl: [
-            { name: "required", message: Kooboo.text.validation.required },
+            { required:true, message: Kooboo.text.validation.required },
             {
-              name: "pattern",
               pattern: pattern,
               message: Kooboo.text.validation.urlInvalid
             }
@@ -138,17 +143,10 @@ $(function() {
           name: row.name,
           serverUrl: row.serverUrl
         };
-        var result = validate.setKeyRules(keyOptions).validate(keyValues);
-        row.validateModel.name = {
-          hasError: result.name.hasError,
-          message: result.name.message
-        };
-        row.validateModel.serverUrl = {
-          hasError: result.serverUrl.hasError,
-          message: result.serverUrl.message
-        };
-        this.$forceUpdate();
-        if (!validate.hasError(result)) {
+      var validate = Kooboo.validate(keyValues, keyOptions);
+      row.validateModel = validate.result;
+      this.$forceUpdate();
+        if (!validate.hasError) {
           Kooboo.UserPublish.updateServer({
             id: row.id,
             name: row.name,
@@ -172,7 +170,8 @@ $(function() {
           name: "",
           serverUrl: "",
           reserved: false,
-          editable: true
+          editable: true,
+          isNew: true
         };
         self.editableServers.push(newServer);
         self.ableAddNewServer = false;
@@ -262,7 +261,6 @@ $(function() {
           remoteSiteName: self.selectedSite.name,
           pushType: self.selectedPushType.value
         };
-
         if (params.remoteWebSiteId === Kooboo.Guid.Empty) {
           params.siteName = self.remoteSiteModel.remoteSiteName;
           params.fullDomain =
@@ -280,7 +278,6 @@ $(function() {
       },
       createRemoteSite: function() {
         var validateStatus = this.$refs.createSiteForm.validate();
-
         //add new Site to avaliableSites
         if (validateStatus) {
           var newSite = {

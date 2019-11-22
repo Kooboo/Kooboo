@@ -81,6 +81,7 @@
       data: {
         handler: function(value) {
           this.d_data = value;
+          self.allOptions = self.getOptionsBytype(self.data.controlType);
           self.validations = self.d_data.validations;
         },
         deep: true
