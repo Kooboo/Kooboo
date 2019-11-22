@@ -26,15 +26,11 @@
           <kb-form-item>
             <label class="col-md-2 control-label">Tags</label>
             <div class="col-md-10">
-              <select id="select2_element" multiple class="form-control">
-                <option
-                  v-for="(item,index) in model.tags"
-                  :key="index"
-                  :value="item"
-                >
-                  {{item}}
-                </option>
-              </select>
+              <select
+                multiple
+                class="form-control"
+                v-kb-select2="tagSelect2"
+              ></select>
             </div>
           </kb-form-item>
           <kb-form-item>
@@ -139,15 +135,18 @@
         model: {
           siteName: "",
           isPrivate: false,
-          tags: [
-            Kooboo.text.site.share.corporation,
-            Kooboo.text.site.share.article,
-            Kooboo.text.site.share.category
-          ],
           description: "",
           link: "",
           images: [],
           defaultImg: 0
+        },
+        tagSelect2: {
+          options: [
+            Kooboo.text.site.share.corporation,
+            Kooboo.text.site.share.article,
+            Kooboo.text.site.share.category
+          ],
+          selected: []
         },
         rules: {
           siteName: [
@@ -168,11 +167,6 @@
         }
       });
       setTimeout(function() {
-        $("#select2_element").select2({
-          tags: true,
-          tokenSeparators: [",", " ", ";"]
-        });
-
         $(".autosize")
           .textareaAutoSize()
           .trigger("keyup");
@@ -187,10 +181,9 @@
           data.append("isPrivate", false);
           data.append(
             "tags",
-            $("#select2_element")
-              .select2("data")
-              .map(function(f) {
-                return f.text.trim();
+            self.tagSelect2.selected
+              .map(function(m) {
+                return m.text;
               })
               .join(",")
           );
