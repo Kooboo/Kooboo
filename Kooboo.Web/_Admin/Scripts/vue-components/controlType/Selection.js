@@ -6,6 +6,28 @@
     props: {
       field: Object
     },
-    inject: ["kbFormItem"]
+    inject: ["kbFormItem"],
+    mounted: function() {
+      // select the first option by default
+      var unwatch = this.$watch(
+        function() {
+          return this.kbFormItem.kbForm.model[this.kbFormItem.prop];
+        },
+        function(val) {
+          if (val !== null) {
+            unwatch && unwatch();
+          } else if (this.field.options[0]) {
+            this.kbFormItem.kbForm.model[
+              this.kbFormItem.prop
+            ] = this.field.options[0].value;
+            unwatch && unwatch();
+          }
+        },
+        {
+          immediate: true
+        }
+      );
+      this.kbFormItem.kbForm.model[this.kbFormItem.prop] && unwatch();
+    }
   });
 })();
