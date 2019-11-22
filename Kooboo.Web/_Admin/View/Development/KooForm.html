@@ -1,464 +1,748 @@
 <!-- #layout name=default -->
 <style>
-    .form-builder-container>.form-group {
-        padding: 15px 20px 20px;
-        margin-bottom: 0;
-        border: 1px solid transparent;
-        border-radius: 2px;
-        transition: .3s all;
-        position: relative;
-    }
-    
-    .form-builder-container>.form-group.editing,
-    .form-builder-container>.form-group:hover {
-        border: 1px dashed rgba(0, 0, 0, .13);
-        background: rgba(255, 255, 255, 0.5);
-    }
-    
-    .form-builder-container>.form-group span.sortable {
-        position: absolute;
-        cursor: move;
-        left: 0;
-        top: 50%;
-        margin-top: -17px;
-        display: none;
-    }
-    
-    .form-builder-container>.form-group.editing span.sortable {
-        display: none !important;
-    }
-    
-    .form-builder-container>.form-group:hover span.sortable {
-        display: inline-block;
-    }
-    
-    .form-builder-container>.form-group img {
-        max-width: 100%;
-    }
-    
-    .form-builder-container .config-panel {
-        margin-bottom: 0;
-    }
-    
-    .form-builder-field {
-        pointer-events: none;
-    }
-    
-    .form-builder-container button.close {
-        position: absolute;
-        top: 3px;
-        right: 4px;
-        display: none;
-    }
-    
-    .form-builder-container>.form-group.editing button.close {
-        display: none !important;
-    }
-    
-    .form-builder-container>.form-group:hover button.close {
-        display: block;
-    }
+  .form-builder-container > .form-group {
+    padding: 15px 20px 20px;
+    margin-bottom: 0;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    transition: 0.3s all;
+    position: relative;
+  }
+
+  .form-builder-container > .form-group.editing,
+  .form-builder-container > .form-group:hover {
+    border: 1px dashed rgba(0, 0, 0, 0.13);
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .form-builder-container > .form-group span.sortable {
+    position: absolute;
+    cursor: move;
+    left: 0;
+    top: 50%;
+    margin-top: -17px;
+    display: none;
+  }
+
+  .form-builder-container > .form-group.editing span.sortable {
+    display: none !important;
+  }
+
+  .form-builder-container > .form-group:hover span.sortable {
+    display: inline-block;
+  }
+
+  .form-builder-container > .form-group img {
+    max-width: 100%;
+  }
+
+  .form-builder-container .config-panel {
+    margin-bottom: 0;
+  }
+
+  .form-builder-field {
+    pointer-events: none;
+  }
+
+  .form-builder-container button.close {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    display: none;
+  }
+
+  .form-builder-container > .form-group.editing button.close {
+    display: none !important;
+  }
+
+  .form-builder-container > .form-group:hover button.close {
+    display: block;
+  }
 </style>
 <div id="main" class="fixed">
+  <div class="page-header">
+    <template v-if="isNewForm">
+      <h1 class="title pull-left">{{ Kooboo.text.common.Form + ': ' }}</h1>
+      <div class="form-group pull-left">
+        <input
+          type="text"
+          v-model="name"
+          placeholder="Name"
+          class="form-control input-medium"
+        />
+      </div>
+    </template>
+    <h1 v-else class="title pull-left">
+      <span>{{ Kooboo.text.common.Form + ': ' }}</span>
+      <strong :title="name">{{ name }}</strong>
+    </h1>
+  </div>
 
-    <div class="page-header">
-        <!-- ko if: isNewForm -->
-        <h1 class="title pull-left" data-bind="text: Kooboo.text.common.Form + ': '"></h1>
-        <div class="form-group pull-left">
-            <input type="text" data-bind="value: name, error: name" placeholder="Name" class="form-control input-medium">
+  <div class="block-fullpage with-buttons">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
+          <div class="wizard" style="margin-top: 40px;">
+            <div class="wrapper">
+              <a
+                v-for="($data, $index) in steps"
+                :key="$index"
+                href="javascript:;"
+                :class="{ active: $data.value == curStep }"
+                @click="changeStep($data)"
+              >
+                {{ $data.displayName }}
+                <b></b>
+              </a>
+            </div>
+          </div>
         </div>
-        <!-- /ko -->
-        <!-- ko ifnot: isNewForm -->
-        <h1 class="title pull-left">
-            <span data-bind="text: Kooboo.text.common.Form + ': '"></span>
-            <strong data-bind="text: name, attr:{ title: name }"></strong>
-        </h1>
-        <!-- /ko -->
+      </div>
     </div>
 
-    <div class="block-fullpage with-buttons">
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
-                    <div class="wizard" style="margin-top: 40px;">
-                        <div class="wrapper" data-bind="foreach: steps">
-                            <a href="javascript:;" data-bind="css: { active: $data.value == $parent.curStep() }, click: $parent.changeStep.bind(this)">
-                                <!-- ko text: $data.displayName -->
-                                <!-- /ko -->
-                                <b></b>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div
+      class="container-fluid"
+      v-if="fields.length == 0 && curStep == 'field'"
+    >
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
+          <div class="jumbotron kb-hint">
+            <h2>Form</h2>
+            <p
+              >Click the "New field" below to create first field for your form
+              or click the "New content form" to create a form for your content
+              folder.</p
+            >
+            <p>
+              <a class="btn blue" href="javascript:;" @click="onCreateField"
+                >New field</a
+              >
+              <a
+                class="btn blue"
+                href="javascript:;"
+                @click="onCreateContentForm"
+                >New content form</a
+              >
+            </p>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div class="container-fluid" data-bind="visible: fields().length == 0 && curStep() == 'field'">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
-                    <div class="jumbotron kb-hint">
-                        <h2>Form</h2>
-                        <p>Click the "New field" below to create first field for your form or click the "New content form" to create a form for your content folder.</p>
-                        <p>
-                            <a class="btn blue" href="javascript:;" data-bind="click: onCreateField">New field</a>
-                            <a class="btn blue" href="javascript:;" data-bind="click: onCreateContentForm">New content form</a>
-                        </p>
-                    </div>
+    <div
+      class="container-fluid"
+      v-show="fields.length !== 0 && curStep == 'field'"
+      style="margin-bottom: 100px;"
+    >
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
+          <div
+            class="jumbotron margin-bottom-20 form-builder-container"
+            v-kb-sortable="fields"
+            style="background: #f8f8f8;border: 1px solid #ddd;border-radius: 2px;padding: 18px 30px;"
+          >
+            <div
+              v-for="(field, fieldIndex) in fields"
+              :key="fieldIndex"
+              class="form-group"
+              :class="{ editing: field.configuring }"
+            >
+              <span class="sortable">
+                <i class="glyphicon glyphicon-list"></i>
+              </span>
+              <button
+                class="close"
+                @click="onRemoveField(field)"
+                v-kb-tooltip="Kooboo.text.common.remove"
+                ><i class="fa fa-close"></i
+              ></button>
+
+              <div @click="onEditField(field)" style="cursor: pointer;">
+                <label
+                  v-if="field.label && field.type !== 'SubmitAndReset'"
+                  class="control-label"
+                  >{{ field.label }}</label
+                >
+                <input
+                  v-if=" field.type == 'TextBox'"
+                  type="text"
+                  class="form-control form-builder-field"
+                  :placeholder="field.placeholder"
+                  :name="field.name"
+                />
+                <textarea
+                  v-else-if="field.type == 'TextArea'"
+                  type="text"
+                  class="form-control form-builder-field"
+                  data-bind="attr: { placeholder: field.placeholder }"
+                ></textarea>
+                <div v-else-if="field.type == 'CheckBox'">
+                  <template v-if="field.options.length">
+                    <label
+                      class="checkbox-inline form-builder-field"
+                      v-for="(option,index) in field.options"
+                      :key="index"
+                    >
+                      <input
+                        type="checkbox"
+                        :value="option.value"
+                        v-model="field.value"
+                      />
+                      {{ option.key }}
+                    </label>
+                  </template>
+                  <p v-else class="form-control-static"
+                    >Adding your options by using the add button below.</p
+                  >
                 </div>
-            </div>
-        </div>
 
-        <div class="container-fluid" data-bind="visible: fields().length !== 0 && curStep() == 'field'" style="margin-bottom: 100px;">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
-                    <div class="jumbotron margin-bottom-20 form-builder-container" data-bind="sortable: fields" style="background: #f8f8f8;border: 1px solid #ddd;border-radius: 2px;padding: 18px 30px;">
-                        <div class="form-group" data-bind="css: { editing: $data.configuring() }">
-                            <span class="sortable">
-                                <i class="glyphicon glyphicon-list"></i>
-                            </span>
-                            <button class="close" data-bind="click: $parent.onRemoveField.bind(this), tooltip: Kooboo.text.common.remove"><i class="fa fa-close"></i></button>
+                <div v-else-if="field.type == 'RadioBox'">
+                  <template v-if="field.options.length">
+                    <label
+                      class="radio-inline form-builder-field"
+                      v-for="(option,index) in field.options"
+                      :key="index"
+                    >
+                      <input type="radio" v-model="field.value" />
+                      {{ option.key }}
+                    </label>
+                  </template>
+                  <p v-else class="form-control-static"
+                    >Adding your options by using the add button below.</p
+                  >
+                </div>
 
-                            <div data-bind="click: $parent.onEditField.bind(this)" style="cursor: pointer;">
-                                <!-- ko if: $data.label() && $data.type() !== 'SubmitAndReset' -->
-                                <label class="control-label" data-bind="text: $data.label"></label>
-                                <!-- /ko -->
+                <select
+                  v-else-if="field.type == 'Selection'"
+                  class="form-control form-builder-field"
+                >
+                  <option
+                    v-for="(option,index) in field.options"
+                    :value="option.value"
+                    >{{ option.key }}</option
+                  >
+                </select>
 
-                                <!-- ko if: $data.type() == 'TextBox' -->
-                                <input type="text" class="form-control form-builder-field" data-bind="attr: { placeholder: $data.placeholder, name: $data.name }">
-                                <!-- /ko -->
+                <p
+                  v-else-if="field.type == 'PlainText'"
+                  class="form-control-static form-builder-field"
+                  >{{ field.placeholder }}</p
+                >
 
-                                <!-- ko if: $data.type() == 'TextArea' -->
-                                <textarea type="text" class="form-control form-builder-field" data-bind="attr: { placeholder: $data.placeholder }"></textarea>
-                                <!-- /ko -->
+                <hr v-else-if="field.type == 'Divider'" class="control-hr" />
 
-                                <!-- ko if: $data.type() == 'CheckBox' -->
-                                <div>
-                                    <!-- ko if: $data.options().length -->
-                                    <!-- ko foreach: $data.options -->
-                                    <label class="checkbox-inline form-builder-field">
-                                        <input type="checkbox" data-bind="value: $data.value">
-                                        <!-- ko text: $data.key -->
-                                        <!-- /ko -->
-                                    </label>
-                                    <!-- /ko -->
-                                    <!-- /ko -->
-                                    <!-- ko ifnot: $data.options().length -->
-                                    <p class="form-control-static">Adding your options by using the add button below.</p>
-                                    <!-- /ko -->
+                <input
+                  v-else-if="field.type == 'Password'"
+                  type="password"
+                  class="form-control form-builder-field"
+                  :placeholder="field.placeholder"
+                />
+
+                <input
+                  v-else-if="field.type == 'Email'"
+                  type="email"
+                  class="form-control form-builder-field"
+                  :placeholder="field.placeholder"
+                />
+
+                <input
+                  v-else-if="field.type == 'Number'"
+                  type="number"
+                  class="form-control form-builder-field"
+                  :placeholder="field.placeholder"
+                />
+
+                <button
+                  v-else-if="field.type == 'Submit'"
+                  type="submit"
+                  class="btn blue form-control form-builder-field"
+                  >{{ field.placeholder }}</button
+                >
+
+                <button
+                  v-else-if="field.type == 'Reset'"
+                  type="reset"
+                  class="btn btn-default form-control form-builder-field"
+                  >{{ field.placeholder }}</button
+                >
+                <div v-else-if="field.type == 'SubmitAndReset'" class="row">
+                  <div class="col-md-6">
+                    <button
+                      type="submit"
+                      class="btn blue form-control form-builder-field"
+                      >{{ field.label }}</button
+                    >
+                  </div>
+                  <div class="col-md-6">
+                    <button
+                      type="reset"
+                      class="btn btn-default form-control form-builder-field"
+                      >{{ field.placeholder }}</button
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Configure Area -->
+              <div
+                class="form-group margin-top-20"
+                v-kb-collapsein="field.configuring"
+              >
+                <div class="panel panel-default config-panel">
+                  <div class="panel-body">
+                    <div
+                      class="row"
+                      style="margin-top: -16px; margin-left: -16px; margin-right: -16px;"
+                    >
+                      <ul class="nav nav-tabs nav-justified">
+                        <li
+                          v-for="(item, index) in field.tabs"
+                          :key="index"
+                          :class="{ active: item.value == field.curTab }"
+                        >
+                          <a @click="switchTab(field, item)" href="javascript:;"
+                            >{{ item.displayName }}</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="form-group">
+                      <div class="tab-content">
+                        <div
+                          class="tab-pane"
+                          :class="{ active: field.curTab == 'basic' }"
+                        >
+                          <div class="form-group">
+                            <div class="row">
+                              <div class="col-md-12 margin-bottom-10">
+                                <label class="control-label">Type</label>
+                                <select
+                                  class="form-control"
+                                  v-model="field.type"
+                                >
+                                  <option
+                                    v-for="(option,index) in fieldTypes"
+                                    :value="option.value"
+                                  >
+                                    {{option.displayName}}
+                                  </option>
+                                </select>
+                              </div>
+                              <div
+                                v-if="['divider','plaintext','submit','reset','submitandreset'].indexOf(field.type.toLowerCase()) == -1"
+                                :class="field.isPlaceholderRequired ? 'col-md-4': 'col-md-6'"
+                              >
+                                <div class="form-group name-error-container">
+                                  <label class="control-label">name</label>
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    v-model="field.name"
+                                    :disabled="field.nameUnchangable"
+                                    :class="{ disabled: field.nameUnchangable }"
+                                    data-bind="errorPlacement: 'left', errorContainer: '.name-error-container'"
+                                  />
                                 </div>
-                                <!-- /ko -->
+                              </div>
+                              <div
+                                :class="field.isPlaceholderRequired ? 'col-md-4': 'col-md-6'"
+                              >
+                                <div class="form-group">
+                                  <label class="control-label"
+                                    >{{ field.type == 'SubmitAndReset' ?
+                                    Kooboo.text.site.form.submit :
+                                    Kooboo.text.common.Label }}</label
+                                  >
 
-                                <!-- ko if: $data.type() == 'RadioBox' -->
-                                <div>
-                                    <!-- ko if: $data.options().length -->
-                                    <!-- ko foreach: $data.options -->
-                                    <label class="radio-inline form-builder-field">
-                                        <input type="radio" data-bind="value: $data.value">
-                                        <!-- ko text: $data.key -->
-                                        <!-- /ko -->
-                                    </label>
-                                    <!-- /ko -->
-                                    <!-- /ko -->
-                                    <!-- ko ifnot: $data.options().length -->
-                                    <p class="form-control-static">Adding your options by using the add button below.</p>
-                                    <!-- /ko -->
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    v-model="field.label"
+                                  />
                                 </div>
-                                <!-- /ko -->
+                              </div>
+                              <div
+                                class="col-md-4"
+                                v-if="field.isPlaceholderRequired"
+                              >
+                                <div class="form-group">
+                                  <label class="control-label"
+                                    >{{ field.type == 'SubmitAndReset' ?
+                                    Kooboo.text.site.form.reset :
+                                    Kooboo.text.common.placeholder }}</label
+                                  >
 
-                                <!-- ko if: $data.type() == 'Selection' -->
-                                <select class="form-control form-builder-field" data-bind="options: $data.options, optionsText: 'key', optionsValue: 'value'"></select>
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'PlainText' -->
-                                <p class="form-control-static form-builder-field" data-bind="text: $data.placeholder"></p>
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'Divider' -->
-                                <hr class="control-hr">
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'Password' -->
-                                <input type="password" class="form-control form-builder-field" data-bind="attr: { placeholder: $data.placeholder }">
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'Email' -->
-                                <input type="email" class="form-control form-builder-field" data-bind="attr: { placeholder: $data.placeholder }">
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'Number' -->
-                                <input type="number" class="form-control form-builder-field" data-bind="attr: { placeholder: $data.placeholder }">
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'Submit' -->
-                                <button type="submit" class="btn blue form-control form-builder-field" data-bind="text: $data.placeholder"></button>
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'Reset' -->
-                                <button type="reset" class="btn btn-default form-control form-builder-field" data-bind="text: $data.placeholder"></button>
-                                <!-- /ko -->
-
-                                <!-- ko if: $data.type() == 'SubmitAndReset' -->
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <button type="submit" class="btn blue form-control form-builder-field" data-bind="text: $data.label"></button>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="reset" class="btn btn-default form-control form-builder-field" data-bind="text: $data.placeholder"></button>
-                                    </div>
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    v-model="field.placeholder"
+                                  />
                                 </div>
-                                <!-- /ko -->
+                              </div>
                             </div>
-
-                            <!-- Configure Area -->
-                            <div class="form-group margin-top-20" data-bind="collapsein: $data.configuring">
-                                <div class="panel panel-default config-panel">
-                                    <div class="panel-body">
-                                        <div class="row" style="margin-top: -16px; margin-left: -16px; margin-right: -16px;">
-                                            <ul class="nav nav-tabs nav-justified" data-bind="foreach: $data.tabs">
-                                                <li data-bind="css: { active: $data.value == $parent.curTab() }">
-                                                    <a data-bind="text: $data.displayName, click: $parent.switchTab.bind(this)" href="javascript:;"></a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="tab-content">
-                                                <div class="tab-pane" data-bind="css: { active: $data.curTab() == 'basic' }">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-md-12 margin-bottom-10">
-                                                                <label class="control-label">Type</label>
-                                                                <select class="form-control" data-bind="options: $parent.fieldTypes, value: $data.type, optionsText: 'displayName', optionsValue: 'value'"></select>
-                                                            </div>
-                                                            <div data-bind="visible: ['divider','plaintext','submit','reset','submitandreset'].indexOf(type().toLowerCase()) == -1, css: { 'col-md-4': $data.isPlaceholderRequired(), 'col-md-6': !$data.isPlaceholderRequired() }">
-                                                                <div class="form-group name-error-container">
-                                                                    <label class="control-label">name</label>
-                                                                    <input type="text" class="form-control" data-bind="value: $data.name, error: $data.name, errorPlacement: 'left', errorContainer: '.name-error-container', attr: { disabled: $data.nameUnchangable }, css: { disabled: $data.nameUnchangable }">
-                                                                </div>
-                                                            </div>
-                                                            <div data-bind="css: { 'col-md-4': $data.isPlaceholderRequired(), 'col-md-6': !$data.isPlaceholderRequired() }">
-                                                                <div class="form-group">
-                                                                    <label class="control-label" data-bind="text: (type() == 'SubmitAndReset' ? Kooboo.text.site.form.submit : Kooboo.text.common.Label)">Label</label>
-                                                                    <input type="text" class="form-control" data-bind="textInput: $data.label">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4" data-bind="visible: $data.isPlaceholderRequired">
-                                                                <div class="form-group">
-                                                                    <label class="control-label" data-bind="text: (type() == 'SubmitAndReset' ? Kooboo.text.site.form.reset : Kooboo.text.common.placeholder)">Placeholder</label>
-                                                                    <input type="text" class="form-control" data-bind="textInput: $data.placeholder">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group options-error-container" data-bind="visible: $data.needOptions">
-                                                        <label class="control-label" data-bind="error: optionsValid, errorPlacement: 'left', errorContainer: '.options-error-container'">Options</label>
-                                                        <div>
-                                                            <div class="input-groups" data-bind="foreach: $data.options">
-                                                                <div class="input-group" data-bind="attr: { id: 'input-group-' + $index() }">
-                                                                    <input type="text" class="form-control key input-medium" placeholder="Display" data-bind="value: $data.key, error: $data.key, errorPlacement: 'left', errorContainer: '#input-group-' + $index()">
-                                                                    <span class="input-group-addon">:</span>
-                                                                    <input type="text" class="form-control value input-medium" placeholder="Value" data-bind="value: $data.value, error: $data.value, errorPlacement: 'top', errorContainer: '#input-group-' + $index()">
-                                                                    <span class="input-group-btn"><a class="btn btn-default" href="javascript:;" data-bind="click: $parent.removeOption.bind(this)"><i class="fa fa-minus"></i></a></span>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <a class="btn dark" href="javascript:;" data-bind="click: addOption.bind(this), attr: { disabled: !isAbleToAddOption() }"><i class="fa fa-plus"></i></a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="tab-pane" data-bind="css: { active: $data.curTab() == 'validation' }">
-                                                    <div class="form-group">
-                                                        <label data-bind="text: Kooboo.text.component.fieldEditor.selectValidationRules"></label>
-                                                        <div class="row">
-                                                            <div class="col-md-9">
-                                                                <select class="form-control" data-bind="options: $data.avaliableRules, optionsText:'displayName',optionsValue: 'value', value: validateType"></select>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <a class="btn btn-block blue" href="javascript:;" data-bind="click: addValidation, text: Kooboo.text.common.add, css: { disabled: $data.avaliableRules().length == 0 }"></a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <form-validator params="data: $data.validations(), onRemove: $data.removeValidation"></form-validator>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-footer clearfix">
-                                        <div class="pull-right">
-                                            <a href="javascript:;" class="btn green" data-bind="click: $parent.onSaveField.bind(this)">Save</a>
-                                            <a href="javascript:;" class="btn btn-default" data-bind="click: $parent.onFieldCancel.bind(this)">Cancel</a>
-                                        </div>
-                                    </div>
+                          </div>
+                          <div
+                            class="form-group options-error-container"
+                            v-if="field.needOptions"
+                          >
+                            <label
+                              class="control-label"
+                              data-bind="error: optionsValid, errorPlacement: 'left', errorContainer: '.options-error-container'"
+                              >Options</label
+                            >
+                            <div>
+                              <div class="input-groups">
+                                <div
+                                  v-for="(option,index) in field.options"
+                                  :key="index"
+                                  class="input-group"
+                                  :id="'input-group-' + fieldIndex"
+                                >
+                                  <input
+                                    type="text"
+                                    class="form-control key input-medium"
+                                    placeholder="Display"
+                                    v-model="field.key"
+                                    data-bind="errorPlacement: 'left', errorContainer: '#input-group-' + fieldIndex()"
+                                  />
+                                  <span class="input-group-addon">:</span>
+                                  <input
+                                    type="text"
+                                    class="form-control value input-medium"
+                                    placeholder="Value"
+                                    v-model="field.value"
+                                    data-bind="error: field.value, errorPlacement: 'top', errorContainer: '#input-group-' + fieldIndex()"
+                                  />
+                                  <span class="input-group-btn"
+                                    ><a
+                                      class="btn btn-default"
+                                      href="javascript:;"
+                                      @click="removeOption(option)"
+                                      ><i class="fa fa-minus"></i></a
+                                  ></span>
                                 </div>
+                              </div>
+                              <div>
+                                <a
+                                  class="btn dark"
+                                  href="javascript:;"
+                                  @click="addOption(field)"
+                                  :disabled="!isAbleToAddOption()"
+                                  ><i class="fa fa-plus"></i
+                                ></a>
+                              </div>
                             </div>
+                          </div>
                         </div>
+                        <div
+                          class="tab-pane"
+                          :class="{ active: field.curTab == 'validation' }"
+                        >
+                          <div class="form-group">
+                            <label
+                              >{{
+                              Kooboo.text.component.fieldEditor.selectValidationRules
+                              }}</label
+                            >
+                            <div class="row">
+                              <div class="col-md-9">
+                                <select
+                                  class="form-control"
+                                  v-model="validateType"
+                                >
+                                  <option
+                                    v-for="option in field.avaliableRules"
+                                    :value="option.value"
+                                  >
+                                    {{ option.displayName }}
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="col-md-3">
+                                <a
+                                  class="btn btn-block blue"
+                                  href="javascript:;"
+                                  @click="addValidation"
+                                  :class="{ disabled: field.avaliableRules.length == 0 }"
+                                  >{{ Kooboo.text.common.add }}</a
+                                >
+                              </div>
+                            </div>
+                          </div>
+                          <!-- TODO:  -->
+                          <form-validator
+                            params="data: field.validations(), onRemove: field.removeValidation"
+                          ></form-validator>
+                        </div>
+                      </div>
                     </div>
-
-                    <a href="javascript:;" class="btn btn-block blue margin-bottom-20" data-bind="click: onCreateField, attr: { disabled: isAbleToAddNewField }, css: { disabled: isAbleToAddNewField }"><i class="fa fa-plus"></i> <span>New field</span></a>
+                  </div>
+                  <div class="panel-footer clearfix">
+                    <div class="pull-right">
+                      <a
+                        href="javascript:;"
+                        class="btn green"
+                        @click="onSaveField(field)"
+                        >Save</a
+                      >
+                      <a
+                        href="javascript:;"
+                        class="btn btn-default"
+                        @click="onFieldCancel(field, fieldIndex)"
+                        >Cancel</a
+                      >
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
+          <a
+            href="javascript:;"
+            class="btn btn-block blue margin-bottom-20"
+            @click="onCreateField"
+            :disabled="!isAbleToAddNewField()"
+            :class="{ disabled: !isAbleToAddNewField() }"
+            ><i class="fa fa-plus"></i> <span>New field</span></a
+          >
         </div>
+      </div>
+    </div>
 
-        <div class="container-fluid" data-bind="visible: curStep() == 'style'">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <textarea data-bind="codeMirror: { 
+    <div class="container-fluid" data-bind="visible: curStep() == 'style'">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
+          <div class="row">
+            <div class="col-md-6">
+              <textarea
+                data-bind="codeMirror: { 
                                 mode: 'css',
                                 value: styleContent,
                                 height: 500
-                            }" style="max-height:800px;height: 500px;"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <iframe src="about:blank" frameborder="0" id="preview" style="max-width: 100%; width: 100%; max-height: 500px;"></iframe>
-                        </div>
-                    </div>
-                </div>
+                            }"
+                style="max-height:800px;height: 500px;"
+              ></textarea>
             </div>
-        </div>
-
-        <div class="container-fluid" data-bind="visible: curStep() == 'setting'">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
-                    <div class="form-horizontal" style="margin-bottom: 100px;">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Submit method</label>
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label class="radio-inline">
-                                            <input type="radio" value="get" name="method" data-bind="checked: method">Get
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" value="post" name="method" data-bind="checked: method">Post
-                                        </label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label class="radio-inline">
-                                            <input type="checkbox" data-bind="checked: allowAjax" style="margin-right: 10px">Use AJAX
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group" data-bind="collapsein: allowAjax">
-                            <label class="control-label col-md-3">Success callback</label>
-                            <div class="col-md-9">
-                                <textarea data-bind="value: successCallback" class="form-control" placeholder="res"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group" data-bind="collapsein: allowAjax">
-                            <label class="control-label col-md-3">Failed callback</label>
-                            <div class="col-md-9">
-                                <textarea data-bind="value: failedCallback" class="form-control"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group" data-bind="visible: !allowAjax()">
-                            <label class="control-label col-md-3">Redirect to</label>
-                            <div class="col-md-9">
-                                <select data-bind="options: linkList, optionsValue: 'path', optionsText: 'name', value: redirect, css: { 'margin-bottom-10': showExternalLinkInput }" class="form-control"></select>
-                                <input type="text" data-bind="value: externalLink, visible: showExternalLinkInput" class="form-control" placeholder="External link address">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Submit location</label>
-                            <div class="col-md-9">
-                                <select data-bind="options: availableSubmitters, optionsValue: 'name', optionsText: 'name', value: formSubmitter" class="form-control"></select>
-                            </div>
-                        </div>
-
-                        <div class="form-group" data-bind="visible: choosedFolderName">
-                            <label class="control-label col-md-3">Submit to</label>
-                            <div class="col-md-9">
-                                <p class="form-control-static">
-                                    <span>Content folder</span> - <span data-bind="text: choosedFolderName"></span>
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- ko if: settings -->
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Setting</label>
-                            <div class="col-md-9">
-                                <div class="col-md-12">
-                                    <!-- ko foreach: settings -->
-                                    <div class="form-group">
-                                        <label data-bind="text: $data.name && Kooboo.text.component.table[$data.name.toLowerCase()]" class="control-label"></label>
-                                        <!-- ko if: $data.controlType == 'Selection' -->
-                                        <select data-bind="options: $data.selectionValues, optionsValue: 'key', optionsText: 'value', value: $data.defaultValue" class="form-control"></select>
-                                        <!-- /ko -->
-                                    </div>
-                                    <!-- /ko -->
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /ko -->
-                    </div>
-                </div>
+            <div class="col-md-6">
+              <iframe
+                src="about:blank"
+                frameborder="0"
+                id="preview"
+                style="max-width: 100%; width: 100%; max-height: 500px;"
+              ></iframe>
             </div>
+          </div>
         </div>
-
-        <div data-bind="modal: showContentFolderSelector" class="modal fade" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button class="close" data-bind="click: onHideContentFolderSelector"><i class="fa fa-close"></i></button>
-                        <h4 class="modal-title">Choose content folder</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Content folder</label>
-                                <div class="col-md-9">
-                                    <select class="form-control" data-bind="options: contentFolders, optionsText: 'name', optionsValue: 'id', value: choosedFolder"></select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="javascript:;" class="btn green" data-bind="click: onChooseContentFolder, attr: { disabled: !isChoosedFolderVaild() }">Choose</a>
-                        <a href="javascript:;" class="btn gray" data-bind="click: onHideContentFolderSelector">Cancel</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="page-buttons">
-        <div class="btn-group dropup">
-            <button data-bind="click: onSaveAndReturn" class="btn green" style="margin:0;">Save & Return</button>
-            <a class="btn green dropdown-toggle" data-toggle="dropdown" style="margin:0;min-width:auto;"><i class="fa fa-angle-up"></i></a>
-            <ul class="dropdown-menu" role="menu">
-                <li><a data-bind="click: onSave" href="javascript:;">Save</a></li>
-            </ul>
+
+    <div class="container-fluid" data-bind="visible: curStep() == 'setting'">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
+          <div class="form-horizontal" style="margin-bottom: 100px;">
+            <div class="form-group">
+              <label class="control-label col-md-3">Submit method</label>
+              <div class="col-md-9">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="radio-inline">
+                      <input
+                        type="radio"
+                        value="get"
+                        name="method"
+                        data-bind="checked: method"
+                      />Get
+                    </label>
+                    <label class="radio-inline">
+                      <input
+                        type="radio"
+                        value="post"
+                        name="method"
+                        data-bind="checked: method"
+                      />Post
+                    </label>
+                  </div>
+                  <div class="col-md-8">
+                    <label class="radio-inline">
+                      <input
+                        type="checkbox"
+                        data-bind="checked: allowAjax"
+                        style="margin-right: 10px"
+                      />Use AJAX
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" data-bind="collapsein: allowAjax">
+              <label class="control-label col-md-3">Success callback</label>
+              <div class="col-md-9">
+                <textarea
+                  data-bind="value: successCallback"
+                  class="form-control"
+                  placeholder="res"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-group" data-bind="collapsein: allowAjax">
+              <label class="control-label col-md-3">Failed callback</label>
+              <div class="col-md-9">
+                <textarea
+                  data-bind="value: failedCallback"
+                  class="form-control"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-group" data-bind="visible: !allowAjax()">
+              <label class="control-label col-md-3">Redirect to</label>
+              <div class="col-md-9">
+                <select
+                  data-bind="options: linkList, optionsValue: 'path', optionsText: 'name', value: redirect, css: { 'margin-bottom-10': showExternalLinkInput }"
+                  class="form-control"
+                ></select>
+                <input
+                  type="text"
+                  data-bind="value: externalLink, visible: showExternalLinkInput"
+                  class="form-control"
+                  placeholder="External link address"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-3">Submit location</label>
+              <div class="col-md-9">
+                <select
+                  data-bind="options: availableSubmitters, optionsValue: 'name', optionsText: 'name', value: formSubmitter"
+                  class="form-control"
+                ></select>
+              </div>
+            </div>
+
+            <div class="form-group" data-bind="visible: choosedFolderName">
+              <label class="control-label col-md-3">Submit to</label>
+              <div class="col-md-9">
+                <p class="form-control-static">
+                  <span>Content folder</span> -
+                  <span data-bind="text: choosedFolderName"></span>
+                </p>
+              </div>
+            </div>
+
+            <!-- ko if: settings -->
+            <div class="form-group">
+              <label class="control-label col-md-3">Setting</label>
+              <div class="col-md-9">
+                <div class="col-md-12">
+                  <!-- ko foreach: settings -->
+                  <div class="form-group">
+                    <label
+                      data-bind="text: $data.name && Kooboo.text.component.table[$data.name.toLowerCase()]"
+                      class="control-label"
+                    ></label>
+                    <!-- ko if: $data.controlType == 'Selection' -->
+                    <select
+                      data-bind="options: $data.selectionValues, optionsValue: 'key', optionsText: 'value', value: $data.defaultValue"
+                      class="form-control"
+                    ></select>
+                    <!-- /ko -->
+                  </div>
+                  <!-- /ko -->
+                </div>
+              </div>
+            </div>
+            <!-- /ko -->
+          </div>
         </div>
-        <a href="javascript:;" class="btn gray" data-bind="click: onBack">Cancel</a>
+      </div>
     </div>
+
+    <div
+      data-bind="modal: showContentFolderSelector"
+      class="modal fade"
+      data-backdrop="static"
+      data-keyboard="false"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" data-bind="click: onHideContentFolderSelector"
+              ><i class="fa fa-close"></i
+            ></button>
+            <h4 class="modal-title">Choose content folder</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-md-3">Content folder</label>
+                <div class="col-md-9">
+                  <select
+                    class="form-control"
+                    data-bind="options: contentFolders, optionsText: 'name', optionsValue: 'id', value: choosedFolder"
+                  ></select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a
+              href="javascript:;"
+              class="btn green"
+              data-bind="click: onChooseContentFolder, attr: { disabled: !isChoosedFolderVaild() }"
+              >Choose</a
+            >
+            <a
+              href="javascript:;"
+              class="btn gray"
+              data-bind="click: onHideContentFolderSelector"
+              >Cancel</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-buttons">
+    <div class="btn-group dropup">
+      <button
+        data-bind="click: onSaveAndReturn"
+        class="btn green"
+        style="margin:0;"
+        >Save & Return</button
+      >
+      <a
+        class="btn green dropdown-toggle"
+        data-toggle="dropdown"
+        style="margin:0;min-width:auto;"
+        ><i class="fa fa-angle-up"></i
+      ></a>
+      <ul class="dropdown-menu" role="menu">
+        <li><a data-bind="click: onSave" href="javascript:;">Save</a></li>
+      </ul>
+    </div>
+    <a href="javascript:;" class="btn gray" data-bind="click: onBack">Cancel</a>
+  </div>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/lib/jquery-ui-customized.js",
-            "/_Admin/Scripts/kobindings.sortable.js",
-            "/_Admin/Scripts/formEditor/validationModel.js",
-            "/_Admin/Scripts/formEditor/formValidator.js",
-            "/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js",
-            "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-            "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
-            "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
-            "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
-            "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
-            "/_Admin/Scripts/kobindings.codemirror.js"
-        ])
-        Kooboo.loadCSS([
-            "/_Admin/Scripts/lib/codemirror/lib/codemirror.css"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/kobindings.sortable.js",
+      "/_Admin/Scripts/formEditor/validationModel.js",
+      "/_Admin/Scripts/formEditor/formValidator.js",
+      "/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js",
+      "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
+      "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
+      "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
+      "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
+      "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
+      "/_Admin/Scripts/kobindings.codemirror.js"
+    ]);
+    Kooboo.loadCSS(["/_Admin/Scripts/lib/codemirror/lib/codemirror.css"]);
+  })();
 </script>
 <script src="/_Admin/View/Development/KooForm.js"></script>
