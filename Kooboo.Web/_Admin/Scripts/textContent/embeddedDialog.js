@@ -84,7 +84,7 @@
           var index = _.findIndex(self.choosedEmbedded.contents, function(o) {
             return o.id === textContentId;
           });
-          self.choosedEmbedded.splice(
+          self.choosedEmbedded.contents.splice(
             index,
             1,
             $.extend(
