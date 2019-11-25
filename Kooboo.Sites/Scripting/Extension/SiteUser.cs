@@ -2,13 +2,6 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using Kooboo.Sites.Scripting.Global;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Sites.Scripting.Extension
 {
@@ -36,5 +29,4 @@ namespace Kooboo.Sites.Scripting.Extension
             return username + " sample"; 
         }
     }
-
 }
