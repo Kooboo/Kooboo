@@ -229,8 +229,10 @@
                     }
                 }
                 if (self.d_data.selectionOptions.length < 1) {
-                    self.firstTabValidate.selectionOptionsNull = {valid: false, msg: Kooboo.text.validation.required}
-                    firstTabHasError = true;
+                    if(['selection','checkbox','radiobox','fixedspec'].includes(self.d_data.controlType.toLowerCase())) {
+                        self.firstTabValidate.selectionOptionsNull = {valid: false, msg: Kooboo.text.validation.required}
+                        firstTabHasError = true;
+                    }
                 } else {
                     self.d_data.selectionOptions.forEach(function (item, index) {
                         var rule = [
@@ -276,7 +278,7 @@
 
                     data.multilingual =  this.d_data.multilingual || this.d_data.multipleLanguage;
                     data.multipleLanguage =  data.multilingual;
-                    data.multipleValue = this.d_data.controlType().toLowerCase() === "checkbox"? true: this.d_data.isMultipleValue
+                    data.multipleValue = this.d_data.controlType.toLowerCase() === "checkbox"? true: this.d_data.isMultipleValue;
                     data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
                     data.validations = JSON.stringify(this.d_data.validations);
 
