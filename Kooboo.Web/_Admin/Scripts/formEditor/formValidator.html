@@ -4,6 +4,8 @@
   :model="model"
   :rules="rules"
   class="panel panel-default panel-small"
+  :error-visible="errorVisible"
+  v-if="model.validations.length"
 >
   <template v-for="(item,index) in model.validations">
     <div class="panel-heading">

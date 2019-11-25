@@ -519,6 +519,7 @@
                             :validations="field.validations"
                             :field-index="fieldIndex"
                             @remove="removeValidation(field, $event)"
+                            :error-visible="field.showError"
                           ></form-validator>
                         </div>
                         <!-- /validation form -->

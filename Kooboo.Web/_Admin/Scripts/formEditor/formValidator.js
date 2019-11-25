@@ -5,7 +5,8 @@
     ),
     props: {
       validations: Array,
-      fieldIndex: Number
+      fieldIndex: Number,
+      errorVisible: Boolean
     },
     data: function() {
       return {
@@ -47,6 +48,9 @@
         this.$emit("remove", index);
       },
       validate: function() {
+        if (!this.$refs.validationForm) {
+          return true;
+        }
         return this.$refs.validationForm.validate();
       }
     }

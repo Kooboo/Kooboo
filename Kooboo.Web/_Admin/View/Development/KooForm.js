@@ -378,21 +378,26 @@ $(function() {
       switchTab: function(field, m) {
         field.curTab = m.value;
       },
-      isFieldValid: function(field, index) {
+      focusErrorTab: function(errorTab, field, checkTab, isValid) {
+        if (checkTab && isValid === false && field.curTab !== errorTab) {
+          field.curTab = errorTab;
+          field.showError = false;
+          setTimeout(function() {
+            field.showError = true;
+          }, 200);
+        }
+      },
+      isFieldValid: function(field, index, checkTab) {
         var isValid = true;
         var $basicForm = self.$refs.basicForm;
         if ($basicForm && $basicForm[index]) {
           isValid = $basicForm[index].validate();
-          if (field.showError && isValid === false) {
-            field.curTab = "basic";
-          }
+          self.focusErrorTab("basic", field, checkTab, isValid);
           if (isValid === true) {
             var $validatioinForm = self.$refs.formValidator;
             if ($validatioinForm && self.$refs.formValidator[index]) {
               isValid = $validatioinForm[index].validate();
-              if (field.showError && isValid === false) {
-                field.curTab = "validation";
-              }
+              self.focusErrorTab("validation", field, checkTab, isValid);
             }
           }
         }
@@ -485,7 +490,7 @@ $(function() {
         }
       },
       onSaveField: function(m, index) {
-        if (self.isFieldValid(m, index)) {
+        if (self.isFieldValid(m, index, true)) {
           m.configuring = false;
         }
         m.showError = true;
