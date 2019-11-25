@@ -59,7 +59,7 @@
     display: block;
   }
 </style>
-<div id="main" class="fixed">
+<div id="main" class="fixed" v-cloak>
   <div class="page-header">
     <template v-if="isNewForm">
       <h1 class="title pull-left">{{ Kooboo.text.common.Form + ': ' }}</h1>
@@ -177,10 +177,10 @@
                   data-bind="attr: { placeholder: field.placeholder }"
                 ></textarea>
                 <div v-else-if="field.type == 'CheckBox'">
-                  <template v-if="field.options.length">
+                  <template v-if="field.model.options.length">
                     <label
                       class="checkbox-inline form-builder-field"
-                      v-for="(option,index) in field.options"
+                      v-for="(option,index) in field.model.options"
                       :key="index"
                     >
                       <input
@@ -197,10 +197,10 @@
                 </div>
 
                 <div v-else-if="field.type == 'RadioBox'">
-                  <template v-if="field.options.length">
+                  <template v-if="field.model.options.length">
                     <label
                       class="radio-inline form-builder-field"
-                      v-for="(option,index) in field.options"
+                      v-for="(option,index) in field.model.options"
                       :key="index"
                     >
                       <input type="radio" v-model="field.value" />
@@ -217,7 +217,7 @@
                   class="form-control form-builder-field"
                 >
                   <option
-                    v-for="(option,index) in field.options"
+                    v-for="(option,index) in field.model.options"
                     :value="option.value"
                     >{{ option.key }}</option
                   >
@@ -315,6 +315,7 @@
                           :class="{ active: field.curTab == 'basic' }"
                           :model="field.model"
                           :rules="field.rules"
+                          :error-visible="field.showError"
                         >
                           <div class="form-group">
                             <div class="row">
@@ -337,24 +338,22 @@
                                 v-if="['divider','plaintext','submit','reset','submitandreset'].indexOf(field.type.toLowerCase()) == -1"
                                 :class="field.isPlaceholderRequired ? 'col-md-4': 'col-md-6'"
                               >
-                                <kb-form-item prop="name">
-                                  <template v-slot="error">
-                                    <div
-                                      class="form-group"
-                                      :class="[{'has-error': !!error.error}, 'name-error-container' + fieldIndex]"
-                                    >
-                                      <label class="control-label">name</label>
-                                      <input
-                                        type="text"
-                                        class="form-control"
-                                        v-model="field.model.name"
-                                        :disabled="field.nameUnchangable"
-                                        :class="{ disabled: field.nameUnchangable }"
-                                        v-kb-tooltip:left.manual.error="error.error"
-                                        :data-container="'.name-error-container' + fieldIndex"
-                                      />
-                                    </div>
-                                  </template>
+                                <kb-form-item prop="name" v-slot="error">
+                                  <div
+                                    class="form-group"
+                                    :class="[{'has-error': !!error.error}, 'name-error-container' + fieldIndex]"
+                                  >
+                                    <label class="control-label">name</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      v-model="field.model.name"
+                                      :disabled="field.nameUnchangable"
+                                      :class="{ disabled: field.nameUnchangable }"
+                                      v-kb-tooltip:left.manual.error="error.error"
+                                      :data-container="'.name-error-container' + fieldIndex"
+                                    />
+                                  </div>
                                 </kb-form-item>
                               </div>
                               <div
@@ -394,27 +393,32 @@
                               </div>
                             </div>
                           </div>
-                          <div
-                            class="form-group options-error-container"
-                            v-if="field.needOptions"
-                          >
-                            <label
-                              class="control-label"
-                              data-bind="error: optionsValid, errorPlacement: 'left', errorContainer: '.options-error-container'"
-                              >Options</label
+                          <kb-form-item prop="options" v-slot="error">
+                            <div
+                              class="form-group options-error-container"
+                              v-if="field.needOptions"
+                              :class="{'has-error': !!error.error }"
+                              :id="'options-error-container-' + fieldIndex"
                             >
-                            <div>
-                              <div class="input-groups">
-                                <div
-                                  v-for="(option,index) in field.model.options"
-                                  :key="index"
-                                  class="input-group"
-                                  :id="'input-group-' + index + fieldIndex"
-                                >
-                                  <kb-form-item
-                                    :prop="'options['+ index +'].key'"
+                              <label
+                                class="control-label"
+                                v-kb-tooltip:left.manual.error="error.error"
+                                :data-container="'#options-error-container-' + fieldIndex"
+                                >Options</label
+                              >
+                              <div>
+                                <div class="input-groups">
+                                  <div
+                                    v-for="(option,index) in field.model.options"
+                                    :key="index"
+                                    class="input-group"
+                                    :id="'input-group-' + index + fieldIndex"
+                                    :class="{ 'has-error': field.optionRowErrors[index] && (field.optionRowErrors[index].key || field.optionRowErrors[index].value )}"
                                   >
-                                    <template v-slot="error">
+                                    <kb-form-item
+                                      :prop="'options['+ index +'].key'"
+                                      v-slot="error"
+                                    >
                                       <input
                                         type="text"
                                         class="form-control key input-medium"
@@ -423,13 +427,18 @@
                                         v-kb-tooltip:left.manual.error="error.error"
                                         :data-container="'#input-group-' + index + fieldIndex"
                                       />
-                                    </template>
-                                  </kb-form-item>
-                                  <span class="input-group-addon">:</span>
-                                  <kb-form-item
-                                    :prop="'options['+ index +'].value'"
-                                  >
-                                    <template v-slot="error">
+                                      <slot-bridge
+                                        :errors="field.optionRowErrors"
+                                        :index="index"
+                                        prop="key"
+                                        :error="error.error"
+                                      ></slot-bridge>
+                                    </kb-form-item>
+                                    <span class="input-group-addon">:</span>
+                                    <kb-form-item
+                                      :prop="'options['+ index +'].value'"
+                                      v-slot="error"
+                                    >
                                       <input
                                         type="text"
                                         class="form-control value input-medium"
@@ -438,28 +447,34 @@
                                         v-kb-tooltip:top.manual.error="error.error"
                                         :data-container="'#input-group-' + index + fieldIndex"
                                       />
-                                    </template>
-                                  </kb-form-item>
-                                  <span class="input-group-btn"
-                                    ><a
-                                      class="btn btn-default"
-                                      href="javascript:;"
-                                      @click="removeOption(option)"
-                                      ><i class="fa fa-minus"></i></a
-                                  ></span>
+                                      <slot-bridge
+                                        :errors="field.optionRowErrors"
+                                        :index="index"
+                                        prop="value"
+                                        :error="error.error"
+                                      ></slot-bridge>
+                                    </kb-form-item>
+                                    <span class="input-group-btn"
+                                      ><a
+                                        class="btn btn-default"
+                                        href="javascript:;"
+                                        @click="removeOption(field, index)"
+                                        ><i class="fa fa-minus"></i></a
+                                    ></span>
+                                  </div>
+                                </div>
+                                <div>
+                                  <a
+                                    class="btn dark"
+                                    href="javascript:;"
+                                    @click="addOption(field)"
+                                    :disabled="!isAbleToAddOption(field)"
+                                    ><i class="fa fa-plus"></i
+                                  ></a>
                                 </div>
                               </div>
-                              <div>
-                                <a
-                                  class="btn dark"
-                                  href="javascript:;"
-                                  @click="addOption(field)"
-                                  :disabled="!isAbleToAddOption(field)"
-                                  ><i class="fa fa-plus"></i
-                                ></a>
-                              </div>
                             </div>
-                          </div>
+                          </kb-form-item>
                         </kb-form>
                         <!-- <div
                           class="tab-pane"

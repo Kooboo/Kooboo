@@ -9,16 +9,66 @@ $(function() {
       value: "basic"
     },
     /*{
-               displayName: Kooboo.text.common.Style,
-               value: "style"
-           }, */
+      displayName: Kooboo.text.common.Style,
+      value: "style"
+    }, */
     {
       displayName: Kooboo.text.component.fieldEditor.validation,
       value: "validation"
     }
   ];
-
+  Vue.component("slot-bridge", {
+    props: ["errors", "index", "prop", "error"],
+    render: function() {
+      return null;
+    },
+    watch: {
+      error: function(val) {
+        this.errors[this.index] = this.errors[this.index] || {};
+        this.errors[this.index][this.prop] = val;
+        this.errors.splice();
+      }
+    }
+  });
   var self;
+  var nameRule = {
+    name: [
+      {
+        required: true,
+        message: Kooboo.text.validation.required
+      },
+      {
+        validate: function(val) {
+          return !_.some(self.fields, function(field) {
+            return val && val.toLowerCase() == field.name.toLowerCase();
+          });
+        },
+        message: Kooboo.text.validation.taken
+      }
+    ]
+  };
+  var optionRule = {
+    options: [
+      {
+        required: true,
+        message: Kooboo.text.validation.required
+      }
+    ],
+    "options[]": {
+      key: [
+        {
+          required: true,
+          message: Kooboo.text.validation.required
+        }
+      ],
+      value: [
+        {
+          required: true,
+          message: Kooboo.text.validation.required
+        }
+      ]
+    }
+  };
   new Vue({
     el: "#main",
     data: function() {
@@ -113,8 +163,7 @@ $(function() {
         externalLink: "",
         availableSubmitters: "",
         formSubmitter: "",
-        settings: [],
-        optionRowError: []
+        settings: []
       };
     },
     mounted: function() {
@@ -216,11 +265,17 @@ $(function() {
           validations: [],
           options: [],
           advanced: [],
-          configuring: true,
+          configuring: false,
           isNew: true
         };
-        self._cacheField = newField;
-        self.fields.push(fieldModel(newField));
+        var field = fieldModel(newField);
+        self.fields.push(field);
+        self._cacheField = field;
+        // make validate immediately
+        self.$nextTick(function() {
+          self.isFieldValid(field, self.fields.length - 1);
+          field.configuring = true;
+        });
       },
       onCreateContentForm: function() {
         Kooboo.ContentFolder.getList().then(function(res) {
@@ -324,67 +379,65 @@ $(function() {
         field.curTab = m.value;
       },
       isFieldValid: function(field, index) {
-        return self.$refs.basicForm[index].validate();
-        //   var allValidationValid = true;
-        //   self.validations().forEach(function(validation) {
-        //     if (!validation.isValid()) {
-        //       allValidationValid = false;
-        //     }
-        //   });
-        //   if (
-        //     ["divider", "plaintext", "submit", "reset", "submitandreset"].indexOf(
-        //       field.type.toLowerCase()
-        //     ) > -1
-        //   ) {
-        //     return allValidationValid;
-        //   } else if (
-        //     ["selection", "checkbox", "radiobox"].indexOf(
-        //       self.type.toLowerCase()
-        //     ) > -1
-        //   ) {
-        //     return (
-        //       self.name.isValid() && allValidationValid && self.allOptionsVaild()
-        //     );
-        //   } else {
-        //     return self.name.isValid() && allValidationValid;
-        //   }
+        var isValid = true;
+        var $basicForm = self.$refs.basicForm;
+        if ($basicForm && $basicForm[index]) {
+          isValid = $basicForm[index].validate();
+        }
+        return isValid;
 
-        return true; // test
-      },
-      clearFieldValid: function(field, index) {
-        self.$refs.basicForm[index].clearValid();
+        self.validations().forEach(function(validation) {
+          if (!validation.isValid()) {
+            allValidationValid = false;
+          }
+        });
+        if (
+          ["divider", "plaintext", "submit", "reset", "submitandreset"].indexOf(
+            field.type.toLowerCase()
+          ) > -1
+        ) {
+          return allValidationValid;
+        } else if (
+          ["selection", "checkbox", "radiobox"].indexOf(
+            self.type.toLowerCase()
+          ) > -1
+        ) {
+          return (
+            self.name.isValid() && allValidationValid && self.allOptionsVaild()
+          );
+        } else {
+          return self.name.isValid() && allValidationValid;
+        }
       },
       isAbleToAddNewField: function() {
-        // var flag = false;
-
-        // self.fields().forEach(function(field) {
-        //   if (field.configuring()) {
-        //     if (!field.isValid()) {
-        //       flag = true;
-        //     }
-        //   }
-        // });
-
-        // return flag;
-        return true;
+        return self.isAbleToUnconfigureAllField();
       },
-      changeFieldType(field, index) {
-        self.clearFieldValid(field, index);
+      changeFieldType(field) {
         var type = field.type.toLowerCase();
         if (["divider"].indexOf(type) > -1) {
           field.isPlaceholderRequired = false;
-        } else if (
-          ["divider", "radiobox", "checkbox", "selection"].indexOf(type) > -1
-        ) {
+        } else if (["radiobox", "checkbox", "selection"].indexOf(type) > -1) {
           field.needOptions = true;
           field.isPlaceholderRequired = false;
         } else {
           field.needOptions = false;
           field.isPlaceholderRequired = true;
-          field.options = [];
+          field.model.options = [];
         }
-        console.log(field)
-        // setValidationRules();
+
+        field.showError = false;
+        field.rules = {};
+        if (
+          ["divider", "plaintext", "submit", "reset", "submitandreset"].indexOf(
+            type
+          ) > -1
+        ) {
+          field.rules = {};
+        } else if (["selection", "checkbox", "radiobox"].indexOf(type) > -1) {
+          field.rules = _.extend({}, field.rules, nameRule, optionRule);
+        } else {
+          field.rules = _.extend({}, field.rules, nameRule);
+        }
       },
       isAbleToAddOption: function(field) {
         var flag = true;
@@ -400,10 +453,14 @@ $(function() {
         if (!self.isAbleToAddOption(field)) {
           return;
         }
-        field.options.push({
+        field.model.options.push({
           key: "",
           value: ""
         });
+      },
+      removeOption: function(field, index) {
+        field.model.options.splice(index, 1);
+        field.optionRowErrors[index] && field.optionRowErrors.splice(index, 1);
       },
       onRemoveField: function(index) {
         if (confirm(Kooboo.text.confirm.deleteItem)) {
@@ -414,22 +471,18 @@ $(function() {
         if (self.isFieldValid(m, index)) {
           m.configuring = false;
         }
+        m.showError = true;
       },
       onFieldCancel: function(m, index) {
         m.configuring = false;
-        self.clearFieldValid(m);
+        m.showError = false;
         if (!self._cacheField.isNew) {
-          // TODO: EDIT
-          var origId = m.id;
           self._cacheField.configuring = false;
           setTimeout(function() {
             var idx = _.findIndex(self.fields, function(field) {
               return field.id == m.id;
             });
-            self.fields = _.without(self.fields, m);
-            var fields = self.fields;
-            fields.splice(idx, 0, fieldModel(self._cacheField));
-            self.fields = fields;
+            self.fields.splice(idx, 1, self._cacheField);
           }, 310);
         } else {
           setTimeout(function() {
@@ -439,27 +492,26 @@ $(function() {
       },
       onEditField: function(m, e) {
         var configuring = !!m.configuring;
-
-        if (self.isAbleToUnconfigureAllField()) {
+        if (self.isAbleToUnconfigureAllField(true)) {
           self.unConfiguringAll();
-          m.configuring(!configuring);
-          m.isNew(false);
-          self._cacheField(m.configuring() ? ko.mapping.toJS(m) : null);
-        } else {
-          self.showFieldError();
+          m.configuring = !configuring;
+          m.isNew = false;
+          self._cacheField = m.configuring ? _.cloneDeep(m) : null;
         }
       },
-      isAbleToUnconfigureAllField: function() {
+      isAbleToUnconfigureAllField: function(showError) {
         var flag = true;
-
-        self.fields().forEach(function(field) {
-          if (field.configuring()) {
-            if (!field.isValid()) {
+        self.fields.forEach(function(field, index) {
+          if (field.configuring) {
+            if (!self.isFieldValid(field, index)) {
+              if (showError) {
+                field.showError = true;
+              }
               flag = false;
+              return false;
             }
           }
         });
-
         return flag;
       },
       unConfiguringAll: function() {
@@ -854,49 +906,17 @@ $(function() {
       }
     }
   });
-
   function fieldModel(field) {
     field.id = Kooboo.getRandomId();
     field.model = {
       name: field.name,
       options: field.options
     };
-    field.rules = {
-      name: [
-        {
-          required: true,
-          message: Kooboo.text.validation.required
-        },
-        {
-          validate: function(val) {
-            return !_.some(self.fields, function(field) {
-              return val && val.toLowerCase() == field.name.toLowerCase();
-            });
-          },
-          message: Kooboo.text.validation.taken
-        }
-      ],
-      "options[]": {
-        key: [
-          {
-            required: true,
-            message: Kooboo.text.validation.required
-          }
-        ],
-        value: [
-          {
-            required: true,
-            message: Kooboo.text.validation.required
-          }
-        ],
-        __array: [
-          {
-            required: true,
-            message: Kooboo.text.validation.required
-          }
-        ]
-      }
-    };
+    field.needOptions = false;
+    field.isPlaceholderRequired = true;
+    field.optionRowErrors = [];
+    self.changeFieldType(field);
+
     //#region validation
     // field.showError = ko.observable(false);
     // var validations = [];
@@ -975,17 +995,6 @@ $(function() {
     //   }
     // });
 
-    field.needOptions = false;
-    field.isPlaceholderRequired = true;
-
-    // field.name = ko.validateField(field.name, {
-    //   required: Kooboo.text.validation.required,
-    //   localUnique: {
-    //     compare: function() {
-    //       return vm.getAllFieldNames();
-    //     }
-    //   }
-    // });
     //#region validation2
 
     // field.optionsValid = ko.validateField({
@@ -1022,41 +1031,7 @@ $(function() {
     //   });
     // };
     //#endregion
-    if (["divider"].indexOf(field.type.toLowerCase()) > -1) {
-      self.isPlaceholderRequired = false;
-    } else if (
-      ["radiobox", "checkbox", "selection"].indexOf(field.type.toLowerCase()) >
-      -1
-    ) {
-      self.needOptions = true;
-      self.isPlaceholderRequired = false;
-    } else {
-      self.needOptions = false;
-      self.isPlaceholderRequired = true;
-      self.options = [];
-    }
 
-    // field.type.subscribe(function(type) {
-    //   // switch tabs if nesscessary
-    //   type = type.toLowerCase();
-    //   self.tabs(NORMAL_TABS);
-    //   self.showError(false);
-
-    //   if (["divider"].indexOf(type) > -1) {
-    //     self.isPlaceholderRequired(false);
-    //   } else if (
-    //     ["divider", "radiobox", "checkbox", "selection"].indexOf(type) > -1
-    //   ) {
-    //     self.needOptions(true);
-    //     self.isPlaceholderRequired(false);
-    //   } else {
-    //     self.needOptions(false);
-    //     self.isPlaceholderRequired(true);
-    //     self.options.removeAll();
-    //   }
-
-    //   setValidationRules();
-    // });
     //#region validation3
     field.avaliableRules = [];
     field.validateType = "";
