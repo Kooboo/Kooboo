@@ -383,6 +383,18 @@ $(function() {
         var $basicForm = self.$refs.basicForm;
         if ($basicForm && $basicForm[index]) {
           isValid = $basicForm[index].validate();
+          if (field.showError && isValid === false) {
+            field.curTab = "basic";
+          }
+          if (isValid === true) {
+            var $validatioinForm = self.$refs.formValidator;
+            if ($validatioinForm && self.$refs.formValidator[index]) {
+              isValid = $validatioinForm[index].validate();
+              if (field.showError && isValid === false) {
+                field.curTab = "validation";
+              }
+            }
+          }
         }
         return isValid;
 
@@ -438,6 +450,11 @@ $(function() {
         } else {
           field.rules = _.extend({}, field.rules, nameRule);
         }
+
+        // validation tab
+        self.$nextTick(function() {
+          self.setValidationRules(field, type);
+        });
       },
       isAbleToAddOption: function(field) {
         var flag = true;
@@ -518,6 +535,154 @@ $(function() {
         self.fields.forEach(function(field) {
           field.configuring = false;
         });
+      },
+      setValidationRules: function(field, type) {
+        type = type.toLowerCase();
+        var validationRules = [];
+        switch (type) {
+          case "textbox":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              },
+              {
+                displayName: Kooboo.text.validationRule.minLength,
+                value: "minLength"
+              },
+              {
+                displayName: Kooboo.text.validationRule.maxLength,
+                value: "maxLength"
+              },
+              {
+                displayName: Kooboo.text.validationRule.regex,
+                value: "regex"
+              }
+            ]);
+            break;
+          case "textarea":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              },
+              {
+                displayName: Kooboo.text.validationRule.minLength,
+                value: "minLength"
+              },
+              {
+                displayName: Kooboo.text.validationRule.maxLength,
+                value: "maxLength"
+              }
+            ]);
+            break;
+          case "number":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              },
+              {
+                displayName: Kooboo.text.validationRule.min,
+                value: "min"
+              },
+              {
+                displayName: Kooboo.text.validationRule.max,
+                value: "max"
+              }
+            ]);
+            break;
+          case "checkbox":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              },
+              {
+                displayName: Kooboo.text.validationRule.minChecked,
+                value: "minChecked"
+              },
+              {
+                displayName: Kooboo.text.validationRule.maxChecked,
+                value: "maxChecked"
+              }
+            ]);
+            break;
+          case "radiobox":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              }
+            ]);
+            break;
+          case "password":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              },
+              {
+                displayName: Kooboo.text.validationRule.minLength,
+                value: "minLength"
+              },
+              {
+                displayName: Kooboo.text.validationRule.maxLength,
+                value: "maxLength"
+              }
+            ]);
+            break;
+          case "email":
+            validationRules = validationRules.concat([
+              {
+                displayName: Kooboo.text.validationRule.required,
+                value: "required"
+              },
+              {
+                displayName: Kooboo.text.validationRule.email,
+                value: "email"
+              }
+            ]);
+            break;
+        }
+        var result = [];
+        validationRules.forEach(function(vr) {
+          var find = _.some(field.validations, function(va) {
+            return va.type.toLowerCase() == vr.value.toLowerCase();
+          });
+
+          !find && result.push(vr);
+        });
+
+        field.avaliableRules = result;
+
+        if (!field.validateType && field.avaliableRules.length) {
+          field.validateType = field.avaliableRules[0].value;
+        }
+
+        var newValidations = [];
+        field.validations.forEach(function(valid) {
+          var find = _.some(validationRules, function(rule) {
+            return rule.value == valid.type;
+          });
+          find && newValidations.push(valid);
+        });
+        field.validations = newValidations;
+      },
+      addValidation: function(field) {
+        var validate = {
+          type: field.validateType,
+          message: ""
+        };
+        validate[field.validateType] = "";
+
+        field.validations.push(validate);
+        field.validateType = "";
+        self.setValidationRules(field, field.type);
+      },
+      removeValidation: function(field, index) {
+        field.validations.splice(index, 1);
+        self.setValidationRules(field, field.type);
       },
       showFieldError: function() {
         self.fields().forEach(function(field) {
@@ -1034,54 +1199,7 @@ $(function() {
     //#region validation3
     field.avaliableRules = [];
     field.validateType = "";
-    field.addValidation = function() {
-      switch (self.validateType()) {
-        case "required":
-          self.validations.push(
-            new window.koobooForm.validationModel.required()
-          );
-          break;
-        case "min":
-          self.validations.push(new window.koobooForm.validationModel.min());
-          break;
-        case "max":
-          self.validations.push(new window.koobooForm.validationModel.max());
-          break;
-        case "minChecked":
-          self.validations.push(
-            new window.koobooForm.validationModel.minChecked()
-          );
-          break;
-        case "maxChecked":
-          self.validations.push(
-            new window.koobooForm.validationModel.maxChecked()
-          );
-          break;
-        case "minLength":
-          self.validations.push(
-            new window.koobooForm.validationModel.minStringLength()
-          );
-          break;
-        case "maxLength":
-          self.validations.push(
-            new window.koobooForm.validationModel.maxStringLength()
-          );
-          break;
-        case "regex":
-          self.validations.push(new window.koobooForm.validationModel.regex());
-          break;
-        case "email":
-          self.validations.push(new window.koobooForm.validationModel.email());
-          break;
-        // 相同验证
-      }
-      setValidationRules();
-    };
 
-    field.removeValidation = function(validation) {
-      self.validations.remove(validation);
-      setValidationRules();
-    };
     //#endregion
     field.curTab = "basic";
     field.tabs = NORMAL_TABS;
@@ -1093,139 +1211,6 @@ $(function() {
     // };
 
     // setValidationRules();
-
-    // function setValidationRules() {
-    //   var type = self.type().toLowerCase(),
-    //     validationRules = [];
-
-    //   switch (type) {
-    //     case "textbox":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.minLength,
-    //           value: "minLength"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.maxLength,
-    //           value: "maxLength"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.regex,
-    //           value: "regex"
-    //         }
-    //       ]);
-    //       break;
-    //     case "textarea":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.minLength,
-    //           value: "minLength"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.maxLength,
-    //           value: "maxLength"
-    //         }
-    //       ]);
-    //       break;
-    //     case "number":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.min,
-    //           value: "min"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.max,
-    //           value: "max"
-    //         }
-    //       ]);
-    //       break;
-    //     case "checkbox":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.minChecked,
-    //           value: "minChecked"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.maxChecked,
-    //           value: "maxChecked"
-    //         }
-    //       ]);
-    //       break;
-    //     case "radiobox":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         }
-    //       ]);
-    //       break;
-    //     case "password":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.minLength,
-    //           value: "minLength"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.maxLength,
-    //           value: "maxLength"
-    //         }
-    //       ]);
-    //       break;
-    //     case "email":
-    //       validationRules = validationRules.concat([
-    //         {
-    //           displayName: Kooboo.text.validationRule.required,
-    //           value: "required"
-    //         },
-    //         {
-    //           displayName: Kooboo.text.validationRule.email,
-    //           value: "email"
-    //         }
-    //       ]);
-    //       break;
-    //   }
-
-    //   var result = [];
-    //   validationRules.forEach(function(vr) {
-    //     var find = _.find(self.validations(), function(va) {
-    //       return va.type.toLowerCase() == vr.value.toLowerCase();
-    //     });
-
-    //     !find && result.push(vr);
-    //   });
-
-    //   self.avaliableRules(result);
-
-    //   var newValidations = [];
-    //   self.validations().forEach(function(valid) {
-    //     var find = _.find(validationRules, function(rule) {
-    //       return rule.value == valid.type;
-    //     });
-    //     find && newValidations.push(valid);
-    //   });
-    //   self.validations(newValidations);
-    // }
-
     return field;
   }
 });

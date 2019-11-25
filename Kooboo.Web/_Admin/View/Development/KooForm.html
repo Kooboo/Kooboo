@@ -308,6 +308,7 @@
                     </div>
                     <div class="form-group">
                       <div class="tab-content">
+                        <!-- basic form -->
                         <kb-form
                           simple
                           ref="basicForm"
@@ -476,7 +477,9 @@
                             </div>
                           </kb-form-item>
                         </kb-form>
-                        <!-- <div
+                        <!-- /basic form -->
+                        <!-- validation form -->
+                        <div
                           class="tab-pane"
                           :class="{ active: field.curTab == 'validation' }"
                         >
@@ -490,7 +493,7 @@
                               <div class="col-md-9">
                                 <select
                                   class="form-control"
-                                  v-model="validateType"
+                                  v-model="field.validateType"
                                 >
                                   <option
                                     v-for="option in field.avaliableRules"
@@ -504,18 +507,21 @@
                                 <a
                                   class="btn btn-block blue"
                                   href="javascript:;"
-                                  @click="addValidation"
+                                  @click="addValidation(field)"
                                   :class="{ disabled: field.avaliableRules.length == 0 }"
                                   >{{ Kooboo.text.common.add }}</a
                                 >
                               </div>
                             </div>
                           </div>
-
                           <form-validator
-                            params="data: field.validations(), onRemove: field.removeValidation"
+                            ref="formValidator"
+                            :validations="field.validations"
+                            :field-index="fieldIndex"
+                            @remove="removeValidation(field, $event)"
                           ></form-validator>
-                        </div> -->
+                        </div>
+                        <!-- /validation form -->
                       </div>
                     </div>
                   </div>
