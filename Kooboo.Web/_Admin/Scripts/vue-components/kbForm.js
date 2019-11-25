@@ -48,10 +48,13 @@
             item.prop.indexOf("].") !== -1
           ) {
             var arrayProp = item.prop.match(/\w+/g);
-            rules = this.rules[arrayProp[0] + "[]"][arrayProp[2]];
-            var objValue = this.model[arrayProp[0]][arrayProp[1]];
-            if (objValue) {
-              value = objValue[arrayProp[2]];
+            var objRule = this.rules[arrayProp[0] + "[]"];
+            if (objRule) {
+              rules = this.rules[arrayProp[0] + "[]"][arrayProp[2]];
+              var objValue = this.model[arrayProp[0]][arrayProp[1]];
+              if (objValue) {
+                value = objValue[arrayProp[2]];
+              }
             }
           }
 

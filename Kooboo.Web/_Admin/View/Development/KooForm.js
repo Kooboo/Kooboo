@@ -423,8 +423,8 @@ $(function() {
           field.needOptions = false;
           field.isPlaceholderRequired = true;
           field.model.options = [];
+          field.optionRowErrors = [];
         }
-
         field.showError = false;
         field.rules = {};
         if (
@@ -914,7 +914,6 @@ $(function() {
     };
     field.needOptions = false;
     field.isPlaceholderRequired = true;
-    field.optionRowErrors = [];
     self.changeFieldType(field);
 
     //#region validation
