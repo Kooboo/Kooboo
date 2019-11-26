@@ -49,7 +49,7 @@
         this.$emit("remove", index);
       },
       validate: function() {
-        if (!this.$refs.validationForm) {
+        if (!this.validations.length) {
           return true;
         }
         return this.$refs.validationForm.validate();

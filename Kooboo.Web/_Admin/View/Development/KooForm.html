@@ -530,6 +530,7 @@
                             </div>
                           </div>
                           <form-validator
+                            v-if="field.validations.length"
                             ref="formValidator"
                             :validations="field.validations"
                             :field-index="fieldIndex"

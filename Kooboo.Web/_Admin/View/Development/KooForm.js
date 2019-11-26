@@ -445,10 +445,10 @@ $(function() {
           isValid = $basicForm[index].validate();
           if (!isValid) {
             self.focusErrorTab("basic", field, checkTab);
-          } else {
-            var $validatioinForm = self.$refs.formValidator;
-            if ($validatioinForm && self.$refs.formValidator[index]) {
-              isValid = $validatioinForm[index].validate();
+          } else if (field.validations.length > 0) {
+            var $validationForm = self.$refs.formValidator;
+            if ($validationForm && self.$refs.formValidator[index]) {
+              isValid = $validationForm[index].validate();
               if (!isValid) {
                 self.focusErrorTab("validation", field, checkTab);
               }
@@ -735,19 +735,6 @@ $(function() {
       removeValidation: function(field, index) {
         field.validations.splice(index, 1);
         self.setValidationRules(field, field.type);
-      },
-      showFieldError: function() {
-        self.fields().forEach(function(field) {
-          if (field.configuring()) {
-            if (!field.isValid()) {
-              if (!field.name.isValid() || !field.allOptionsVaild()) {
-                field.showNameError();
-              } else {
-                field.showValidationError();
-              }
-            }
-          }
-        });
       },
       onSubmit: function(cb) {
         if (self.isFormValid()) {
@@ -1106,9 +1093,6 @@ $(function() {
         _doc.close();
 
         $iframe.css("height", _doc.body.scrollHeight + 50);
-      },
-      toggleStyleContent: function() {
-        self.showStyleContent = !self.showStyleContent;
       }
     },
     watch: {
@@ -1155,11 +1139,11 @@ $(function() {
     field.needOptions = false;
     field.optionRowErrors = [];
     field.isPlaceholderRequired = true;
-    self.changeFieldType(field);
     field.avaliableRules = [];
     field.validateType = "";
     field.curTab = "basic";
     field.tabs = NORMAL_TABS;
+    self.changeFieldType(field);
     return field;
   }
 });
