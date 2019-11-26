@@ -179,8 +179,8 @@ var MonacoEditorService =
           });
         }
       };
-      MonacoEditorService.prototype.format = function () {
-        monaco.editor.getAction("editor.action.formatDocument").run();
+      MonacoEditorService.prototype.format = function (editor) {
+        editor.getAction("editor.action.formatDocument").run();
       };
       MonacoEditorService.prototype.changeLanguage = function (language, model) {
         if (model) {

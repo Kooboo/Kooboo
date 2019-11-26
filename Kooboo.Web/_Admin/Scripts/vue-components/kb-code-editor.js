@@ -9,8 +9,9 @@
   monacoService.loader(function (Monaco) {
     state.loader = true;
     monaco = Monaco
+    monacoService.init();
   });
-  monacoService.init();
+
 
   Vue.component("kb-code-editor", {
     template: "<div  style='width:100%;height:100%'></div>",
@@ -29,7 +30,6 @@
         d_code: this.code,
         isCreate: false,
         monacoService: monacoService,
-        monaco: undefined,
         model: undefined,
         editor: undefined
       };
@@ -104,7 +104,7 @@
         monacoService.changeTheme(value);
       },
       formatCode: function () {
-        monacoService.format();
+        monacoService.format(this.editor);
       }
     }
   });
