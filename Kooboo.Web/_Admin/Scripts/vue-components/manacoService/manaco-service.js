@@ -13,6 +13,84 @@ var MonacoEditorService =
       this.require = undefined;
     }
 
+    MonacoEditorService.prototype.initCssformat = function(monaco) {
+      Kooboo.loadJS(["/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js"]);
+      var cssFormatter = function(monaco, beautyOption) {
+        if (monaco === void 0) {
+          monaco = window.monaco;
+        }
+
+        if (beautyOption === void 0) {
+          beautyOption = {};
+        }
+
+        if (!monaco) {
+          console.error(
+            "css-format-monaco: 'monaco' should be either declared on window or passed as first parameter"
+          );
+          return;
+        }
+
+        var documentProvider = {
+          provideDocumentFormattingEdits: function provideDocumentFormattingEdits(
+            model
+          ) {
+            var lineCount = model.getLineCount();
+            return [
+              {
+                range: new monaco.Range(
+                  1,
+                  1,
+                  lineCount,
+                  model.getLineMaxColumn(lineCount) + 1
+                ),
+                text: css_beautify(model.getValue(), beautyOption)
+              }
+            ];
+          }
+        };
+        var rangeProvider = {
+          provideDocumentRangeFormattingEdits: function provideDocumentRangeFormattingEdits(
+            model,
+            range
+          ) {
+            var fullLineRange = new monaco.Range(
+              range.startLineNumber,
+              1,
+              range.endLineNumber,
+              model.getLineMaxColumn(range.endLineNumber) + 1
+            );
+            var code = model.getValueInRange(fullLineRange);
+            return [
+              {
+                range: fullLineRange,
+                text: css_beautify(code, beautyOption)
+              }
+            ];
+          }
+        };
+        var disposeArr = ["css", "less", "scss"].map(function(language) {
+          return [
+            monaco.languages.registerDocumentFormattingEditProvider(
+              language,
+              documentProvider
+            ),
+            monaco.languages.registerDocumentRangeFormattingEditProvider(
+              language,
+              rangeProvider
+            )
+          ];
+        });
+        return function() {
+          disposeArr.forEach(function(arr) {
+            return arr.forEach(function(disposable) {
+              return disposable.dispose();
+            });
+          });
+        };
+      };
+      cssFormatter(monaco);
+    };
     MonacoEditorService.prototype.loader = function(initParameter) {
       var cdnUrl = "https://unpkg.com/monaco-editor@0.18.1/min/vs/loader.js";
       $.getScript(cdnUrl, function(response, status) {
@@ -47,6 +125,7 @@ var MonacoEditorService =
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (this.require && this.monaco && monaco) {
+        this.initCssformat(this.monaco || monaco);
         if (callback) {
           this.destroy();
           callback(monaco);
