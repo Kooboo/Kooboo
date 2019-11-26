@@ -61,20 +61,33 @@
 </style>
 <div id="main" class="fixed" v-cloak>
   <div class="page-header">
-    <template v-if="isNewForm">
+    <kb-form
+      v-if="isNewForm"
+      ref="nameForm"
+      simple
+      :rules="rules"
+      :model="model"
+    >
       <h1 class="title pull-left">{{ Kooboo.text.common.Form + ': ' }}</h1>
-      <div class="form-group pull-left">
+      <kb-form-item
+        class="form-group pull-left"
+        prop="name"
+        v-slot="error"
+        id="form-name-error-container"
+      >
         <input
           type="text"
-          v-model="name"
+          v-model="model.name"
           placeholder="Name"
           class="form-control input-medium"
+          v-kb-tooltip:right.manual.error="error.error"
+          data-container="#form-name-error-container"
         />
-      </div>
-    </template>
+      </kb-form-item>
+    </kb-form>
     <h1 v-else class="title pull-left">
       <span>{{ Kooboo.text.common.Form + ': ' }}</span>
-      <strong :title="name">{{ name }}</strong>
+      <strong :title="model.name">{{ model.name }}</strong>
     </h1>
   </div>
 
@@ -174,7 +187,7 @@
                   v-else-if="field.type == 'TextArea'"
                   type="text"
                   class="form-control form-builder-field"
-                  data-bind="attr: { placeholder: field.placeholder }"
+                  :placeholder="field.placeholder"
                 ></textarea>
                 <div v-else-if="field.type == 'CheckBox'">
                   <template v-if="field.model.options.length">
@@ -300,7 +313,9 @@
                           :key="index"
                           :class="{ active: item.value == field.curTab }"
                         >
-                          <a @click="switchTab(field, item)" href="javascript:;"
+                          <a
+                            @click="switchTab(field, item.value)"
+                            href="javascript:;"
                             >{{ item.displayName }}</a
                           >
                         </li>
@@ -515,6 +530,7 @@
                             </div>
                           </div>
                           <form-validator
+                            v-if="field.validations.length"
                             ref="formValidator"
                             :validations="field.validations"
                             :field-index="fieldIndex"
@@ -558,19 +574,18 @@
       </div>
     </div>
 
-    <div class="container-fluid" data-bind="visible: curStep() == 'style'">
+    <div class="container-fluid" v-show="curStep == 'style'">
       <div class="row">
         <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
           <div class="row">
             <div class="col-md-6">
-              <textarea
-                data-bind="codeMirror: { 
-                                mode: 'css',
-                                value: styleContent,
-                                height: 500
-                            }"
-                style="max-height:800px;height: 500px;"
-              ></textarea>
+              <kb-code-editor
+                ref="editor"
+                :auto-size="true"
+                :code.sync="styleContent"
+                style="max-height:800px; height: 500px;"
+                lang="css"
+              ></kb-code-editor>
             </div>
             <div class="col-md-6">
               <iframe
@@ -585,7 +600,7 @@
       </div>
     </div>
 
-    <div class="container-fluid" data-bind="visible: curStep() == 'setting'">
+    <div class="container-fluid" v-show="curStep == 'setting'">
       <div class="row">
         <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12">
           <div class="form-horizontal" style="margin-bottom: 100px;">
@@ -599,7 +614,7 @@
                         type="radio"
                         value="get"
                         name="method"
-                        data-bind="checked: method"
+                        v-model="method"
                       />Get
                     </label>
                     <label class="radio-inline">
@@ -607,7 +622,7 @@
                         type="radio"
                         value="post"
                         name="method"
-                        data-bind="checked: method"
+                        v-model="method"
                       />Post
                     </label>
                   </div>
@@ -615,7 +630,7 @@
                     <label class="radio-inline">
                       <input
                         type="checkbox"
-                        data-bind="checked: allowAjax"
+                        v-model="allowAjax"
                         style="margin-right: 10px"
                       />Use AJAX
                     </label>
@@ -624,37 +639,46 @@
               </div>
             </div>
 
-            <div class="form-group" data-bind="collapsein: allowAjax">
+            <div class="form-group" v-kb-collapsein="allowAjax">
               <label class="control-label col-md-3">Success callback</label>
               <div class="col-md-9">
                 <textarea
-                  data-bind="value: successCallback"
+                  v-model="successCallback"
                   class="form-control"
                   placeholder="res"
                 ></textarea>
               </div>
             </div>
 
-            <div class="form-group" data-bind="collapsein: allowAjax">
+            <div class="form-group" v-kb-collapsein="allowAjax">
               <label class="control-label col-md-3">Failed callback</label>
               <div class="col-md-9">
                 <textarea
-                  data-bind="value: failedCallback"
+                  v-model="failedCallback"
                   class="form-control"
                 ></textarea>
               </div>
             </div>
 
-            <div class="form-group" data-bind="visible: !allowAjax()">
+            <div class="form-group" v-show="!allowAjax">
               <label class="control-label col-md-3">Redirect to</label>
               <div class="col-md-9">
                 <select
-                  data-bind="options: linkList, optionsValue: 'path', optionsText: 'name', value: redirect, css: { 'margin-bottom-10': showExternalLinkInput }"
-                  class="form-control"
-                ></select>
+                  v-model="redirect"
+                  :class="{ 'margin-bottom-10': showExternalLinkInput }"
+                >
+                  <option
+                    v-for="(item,index) in linkList"
+                    :value="item.path"
+                    :key="item.path"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
                 <input
                   type="text"
-                  data-bind="value: externalLink, visible: showExternalLinkInput"
+                  v-show="showExternalLinkInput"
+                  v-model="externalLink"
                   class="form-control"
                   placeholder="External link address"
                 />
@@ -664,53 +688,64 @@
             <div class="form-group">
               <label class="control-label col-md-3">Submit location</label>
               <div class="col-md-9">
-                <select
-                  data-bind="options: availableSubmitters, optionsValue: 'name', optionsText: 'name', value: formSubmitter"
-                  class="form-control"
-                ></select>
+                <select v-model="formSubmitter" class="form-control">
+                  <option
+                    v-for="(item,index) in availableSubmitters"
+                    :value="item.name"
+                    :key="index"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
               </div>
             </div>
 
-            <div class="form-group" data-bind="visible: choosedFolderName">
+            <div class="form-group" v-show="choosedFolderName">
               <label class="control-label col-md-3">Submit to</label>
               <div class="col-md-9">
                 <p class="form-control-static">
                   <span>Content folder</span> -
-                  <span data-bind="text: choosedFolderName"></span>
+                  <span>{{ choosedFolderName }}</span>
                 </p>
               </div>
             </div>
-
-            <!-- ko if: settings -->
-            <div class="form-group">
+            <div class="form-group" v-if="settings && settings.length">
               <label class="control-label col-md-3">Setting</label>
               <div class="col-md-9">
                 <div class="col-md-12">
-                  <!-- ko foreach: settings -->
-                  <div class="form-group">
-                    <label
-                      data-bind="text: $data.name && Kooboo.text.component.table[$data.name.toLowerCase()]"
-                      class="control-label"
-                    ></label>
-                    <!-- ko if: $data.controlType == 'Selection' -->
+                  <div
+                    class="form-group"
+                    v-for="($data, $index) in settings"
+                    :key="$index"
+                  >
+                    <label class="control-label"
+                      >{{ $data.name &&
+                      Kooboo.text.component.table[$data.name.toLowerCase()] }}
+                    </label>
                     <select
-                      data-bind="options: $data.selectionValues, optionsValue: 'key', optionsText: 'value', value: $data.defaultValue"
+                      v-if="$data.controlType == 'Selection'"
+                      v-model="$data.defaultValue"
                       class="form-control"
-                    ></select>
-                    <!-- /ko -->
+                    >
+                      <option
+                        v-for="(item,index) in $data.selectionValues"
+                        :value="item.key"
+                        :key="index"
+                      >
+                        {{ item.value }}
+                      </option>
+                    </select>
                   </div>
-                  <!-- /ko -->
                 </div>
               </div>
             </div>
-            <!-- /ko -->
           </div>
         </div>
       </div>
     </div>
 
     <div
-      data-bind="modal: showContentFolderSelector"
+      v-kb-modal="showContentFolderSelector"
       class="modal fade"
       data-backdrop="static"
       data-keyboard="false"
@@ -718,7 +753,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button class="close" data-bind="click: onHideContentFolderSelector"
+            <button class="close" @click="onHideContentFolderSelector"
               ><i class="fa fa-close"></i
             ></button>
             <h4 class="modal-title">Choose content folder</h4>
@@ -728,10 +763,15 @@
               <div class="form-group">
                 <label class="control-label col-md-3">Content folder</label>
                 <div class="col-md-9">
-                  <select
-                    class="form-control"
-                    data-bind="options: contentFolders, optionsText: 'name', optionsValue: 'id', value: choosedFolder"
-                  ></select>
+                  <select class="form-control" v-model="choosedFolder">
+                    <option
+                      v-for="item in contentFolders"
+                      :value="item.id"
+                      :key="item.id"
+                    >
+                      {{item.name}}
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -740,13 +780,14 @@
             <a
               href="javascript:;"
               class="btn green"
-              data-bind="click: onChooseContentFolder, attr: { disabled: !isChoosedFolderVaild() }"
+              :disabled="!choosedFolder"
+              @click="onChooseContentFolder"
               >Choose</a
             >
             <a
               href="javascript:;"
               class="btn gray"
-              data-bind="click: onHideContentFolderSelector"
+              @click="onHideContentFolderSelector"
               >Cancel</a
             >
           </div>
@@ -756,10 +797,7 @@
   </div>
   <div class="page-buttons">
     <div class="btn-group dropup">
-      <button
-        data-bind="click: onSaveAndReturn"
-        class="btn green"
-        style="margin:0;"
+      <button @click="onSaveAndReturn" class="btn green" style="margin:0;"
         >Save & Return</button
       >
       <a
@@ -769,10 +807,10 @@
         ><i class="fa fa-angle-up"></i
       ></a>
       <ul class="dropdown-menu" role="menu">
-        <li><a data-bind="click: onSave" href="javascript:;">Save</a></li>
+        <li><a @click="onSave" href="javascript:;">Save</a></li>
       </ul>
     </div>
-    <a href="javascript:;" class="btn gray" data-bind="click: onBack">Cancel</a>
+    <a href="javascript:;" class="btn gray" @click="onBack">Cancel</a>
   </div>
 </div>
 <script>
@@ -780,18 +818,10 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
-      "/_Admin/Scripts/formEditor/validationModel.js",
       "/_Admin/Scripts/formEditor/formValidator.js",
-      "/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js",
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-      "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
-      "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
-      "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
-      "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
-      "/_Admin/Scripts/kobindings.codemirror.js",
-      "/_Admin/Scripts/vue-components/kbForm.js"
+      "/_Admin/Scripts/vue-components/kbForm.js",
+      "/_Admin/Scripts/vue-components/kb-code-editor.js"
     ]);
-    Kooboo.loadCSS(["/_Admin/Scripts/lib/codemirror/lib/codemirror.css"]);
   })();
 </script>
 <script src="/_Admin/View/Development/KooForm.js"></script>
