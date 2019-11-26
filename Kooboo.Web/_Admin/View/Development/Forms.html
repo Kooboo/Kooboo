@@ -258,7 +258,7 @@
             value: "Embedded"
           }
         ],
-        currentTab: "External",
+        currentTab: location.hash === '#Embedded' ? 'Embedded' : "External",
         model: [],
         selectedRows: [],
         showSettingModal: false,
@@ -280,7 +280,7 @@
     },
     mounted: function() {
       var me = this;
-      this.onTabClick("External");
+      this.onTabClick(me.currentTab);
       Kooboo.Page.getAll().then(function(res) {
         if (res.success) {
           me.pageList = res.model.pages;
