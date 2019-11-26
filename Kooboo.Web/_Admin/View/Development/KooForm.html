@@ -61,20 +61,27 @@
 </style>
 <div id="main" class="fixed" v-cloak>
   <div class="page-header">
-    <template v-if="isNewForm">
+    <kb-form v-if="isNewForm" ref="nameForm" simple :rules="rules" :model="model">
       <h1 class="title pull-left">{{ Kooboo.text.common.Form + ': ' }}</h1>
-      <div class="form-group pull-left">
+      <kb-form-item
+        class="form-group pull-left"
+        prop="name"
+        v-slot="error"
+        id="form-name-error-container"
+      >
         <input
           type="text"
-          v-model="name"
+          v-model="model.name"
           placeholder="Name"
           class="form-control input-medium"
+          v-kb-tooltip:right.manual.error="error.error"
+          data-container="#form-name-error-container"
         />
-      </div>
-    </template>
+      </kb-form-item>
+    </kb-form>
     <h1 v-else class="title pull-left">
       <span>{{ Kooboo.text.common.Form + ': ' }}</span>
-      <strong :title="name">{{ name }}</strong>
+      <strong :title="model.name">{{ model.name }}</strong>
     </h1>
   </div>
 
@@ -300,7 +307,9 @@
                           :key="index"
                           :class="{ active: item.value == field.curTab }"
                         >
-                          <a @click="switchTab(field, item)" href="javascript:;"
+                          <a
+                            @click="switchTab(field, item.value)"
+                            href="javascript:;"
                             >{{ item.displayName }}</a
                           >
                         </li>
@@ -756,10 +765,7 @@
   </div>
   <div class="page-buttons">
     <div class="btn-group dropup">
-      <button
-        data-bind="click: onSaveAndReturn"
-        class="btn green"
-        style="margin:0;"
+      <button @click="onSaveAndReturn" class="btn green" style="margin:0;"
         >Save & Return</button
       >
       <a
@@ -769,10 +775,10 @@
         ><i class="fa fa-angle-up"></i
       ></a>
       <ul class="dropdown-menu" role="menu">
-        <li><a data-bind="click: onSave" href="javascript:;">Save</a></li>
+        <li><a @click="onSave" href="javascript:;">Save</a></li>
       </ul>
     </div>
-    <a href="javascript:;" class="btn gray" data-bind="click: onBack">Cancel</a>
+    <a href="javascript:;" class="btn gray" @click="onBack">Cancel</a>
   </div>
 </div>
 <script>
@@ -780,7 +786,6 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
-      "/_Admin/Scripts/formEditor/validationModel.js",
       "/_Admin/Scripts/formEditor/formValidator.js",
       "/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js",
       "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",

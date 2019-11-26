@@ -76,6 +76,42 @@ $(function() {
       return {
         id: "",
         name: "",
+        model: {
+          name: ""
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              remote: {
+                url: Kooboo.Form.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.model.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         steps: [
           {
             displayName: Kooboo.text.component.fieldEditor.field,
@@ -193,7 +229,7 @@ $(function() {
           self.linkList = pageList.reverse();
 
           self.id = formRes.model.id;
-          self.name = formRes.model.name;
+          self.model.name = formRes.model.name;
           self.isNewForm = formRes.model.id == Kooboo.Guid.Empty;
           self.styleContent = css_beautify(
             formRes.model.style || DEFAULT_STYLE
@@ -204,7 +240,7 @@ $(function() {
             var fields = JSON.parse(formRes.model.fields);
             fields.forEach(function(field) {
               field.nameUnchangable = true;
-              // TODO: nj
+              field.configuring = false;
               self.fields.push(fieldModel(field));
             });
           } else {
@@ -375,16 +411,20 @@ $(function() {
           });
         }
       },
-      switchTab: function(field, m) {
-        field.curTab = m.value;
+      switchTab: function(field, tab) {
+        field.curTab = tab;
+        if (field.showError) {
+          self.$nextTick(function() {
+            field.showError = false;
+            setTimeout(function() {
+              field.showError = true;
+            }, 100);
+          });
+        }
       },
-      focusErrorTab: function(errorTab, field, checkTab, isValid) {
-        if (checkTab && isValid === false && field.curTab !== errorTab) {
-          field.curTab = errorTab;
-          field.showError = false;
-          setTimeout(function() {
-            field.showError = true;
-          }, 200);
+      focusErrorTab: function(errorTab, field, checkTab) {
+        if (checkTab && field.curTab !== errorTab) {
+          self.switchTab(field, errorTab);
         }
       },
       isFieldValid: function(field, index, checkTab) {
@@ -392,39 +432,19 @@ $(function() {
         var $basicForm = self.$refs.basicForm;
         if ($basicForm && $basicForm[index]) {
           isValid = $basicForm[index].validate();
-          self.focusErrorTab("basic", field, checkTab, isValid);
-          if (isValid === true) {
+          if (!isValid) {
+            self.focusErrorTab("basic", field, checkTab);
+          } else {
             var $validatioinForm = self.$refs.formValidator;
             if ($validatioinForm && self.$refs.formValidator[index]) {
               isValid = $validatioinForm[index].validate();
-              self.focusErrorTab("validation", field, checkTab, isValid);
+              if (!isValid) {
+                self.focusErrorTab("validation", field, checkTab);
+              }
             }
           }
         }
         return isValid;
-
-        self.validations().forEach(function(validation) {
-          if (!validation.isValid()) {
-            allValidationValid = false;
-          }
-        });
-        if (
-          ["divider", "plaintext", "submit", "reset", "submitandreset"].indexOf(
-            field.type.toLowerCase()
-          ) > -1
-        ) {
-          return allValidationValid;
-        } else if (
-          ["selection", "checkbox", "radiobox"].indexOf(
-            self.type.toLowerCase()
-          ) > -1
-        ) {
-          return (
-            self.name.isValid() && allValidationValid && self.allOptionsVaild()
-          );
-        } else {
-          return self.name.isValid() && allValidationValid;
-        }
       },
       isAbleToAddNewField: function() {
         return self.isAbleToUnconfigureAllField();
@@ -451,9 +471,18 @@ $(function() {
         ) {
           field.rules = {};
         } else if (["selection", "checkbox", "radiobox"].indexOf(type) > -1) {
-          field.rules = _.extend({}, field.rules, nameRule, optionRule);
+          field.rules = _.extend(
+            {},
+            field.rules,
+            field.nameUnchangable ? {} : nameRule,
+            optionRule
+          );
         } else {
-          field.rules = _.extend({}, field.rules, nameRule);
+          field.rules = _.extend(
+            {},
+            field.rules,
+            field.nameUnchangable ? {} : nameRule
+          );
         }
 
         // validation tab
@@ -660,9 +689,10 @@ $(function() {
         });
 
         field.avaliableRules = result;
-
-        if (!field.validateType && field.avaliableRules.length) {
+        if (field.avaliableRules.length) {
           field.validateType = field.avaliableRules[0].value;
+        } else {
+          field.validateType = "";
         }
 
         var newValidations = [];
@@ -679,11 +709,17 @@ $(function() {
           type: field.validateType,
           message: ""
         };
-        validate[field.validateType] = "";
-
+        if (["required", "email"].indexOf(field.validateType) === -1) {
+          validate[field.validateType] = "";
+        }
         field.validations.push(validate);
-        field.validateType = "";
         self.setValidationRules(field, field.type);
+        // make validate immediately
+        this.$nextTick(function() {
+          var error = field.showError;
+          field.showError = !error;
+          field.showError = error;
+        });
       },
       removeValidation: function(field, index) {
         field.validations.splice(index, 1);
@@ -705,47 +741,45 @@ $(function() {
       onSubmit: function(cb) {
         if (self.isFormValid()) {
           var data = {};
-
-          data.id = self.id();
-          data.name = self.name();
-          data.style = self.styleContent();
+          data.id = self.id;
+          data.name = self.model.name;
+          data.style = self.styleContent;
           data.body = self.getFormBody();
           data.isEmbedded = false;
-          var fields = ko.mapping.toJS(self.fields());
-          fields.forEach(function(field) {
-            field.hasOwnProperty("configuring") && delete field.configuring;
-            field.validations.forEach(function(valid) {
-              valid.hasOwnProperty("showError") && delete valid.showError;
-              valid.hasOwnProperty("isValid") && delete valid.isValid;
-            });
-            field.options.length &&
-              field.options.forEach(function(opt) {
-                delete opt.isValid;
-                delete opt.showError;
-              });
+          var fields = self.fields.map(function(field) {
+            return _.pick(field, [
+              "type",
+              "label",
+              "name",
+              "placeholder",
+              "validations",
+              "options",
+              "advanced",
+              "isNew"
+            ]);
           });
           data.fields = JSON.stringify(fields);
           data.enable = true;
-          data.method = self.method();
-          data.allowAjax = self.allowAjax();
+          data.method = self.method;
+          data.allowAjax = self.allowAjax;
           if (data.allowAjax) {
-            data.successCallback = self.successCallback();
-            data.failedCallback = self.failedCallback();
+            data.successCallback = self.successCallback;
+            data.failedCallback = self.failedCallback;
           }
-          data.redirectUrl = self.showExternalLinkInput()
-            ? self.externalLink()
-            : self.redirect();
+          data.redirectUrl = self.showExternalLinkInput
+            ? self.externalLink
+            : self.redirect;
 
-          if (self.choosedFolder()) {
+          if (self.choosedFolder) {
             data.formSubmitter = "ContentFolder";
             data.setting = {
-              ContentFolder: self.choosedFolder()
+              ContentFolder: self.choosedFolder
             };
           } else {
-            data.formSubmitter = self.formSubmitter();
+            data.formSubmitter = self.formSubmitter;
             var settings = {};
-            self.settings() &&
-              self.settings().forEach(function(setting) {
+            self.settings &&
+              self.settings.forEach(function(setting) {
                 settings[setting.name] = setting.defaultValue;
               });
             data.setting = settings;
@@ -758,14 +792,11 @@ $(function() {
               }
             }
           });
-        } else {
-          self.showError(true);
-          self.showFieldError();
         }
       },
       onSave: function() {
         self.onSubmit(function(id) {
-          if (self.id() == Kooboo.Guid.Empty) {
+          if (self.id == Kooboo.Guid.Empty) {
             location.href = Kooboo.Route.Get(Kooboo.Route.Form.KooFormPage, {
               id: id
             });
@@ -780,11 +811,12 @@ $(function() {
         });
       },
       isFormValid: function() {
-        if (self.isNewForm()) {
-          return self.isAbleToUnconfigureAllField() && self.name.isValid();
-        } else {
-          return self.isAbleToUnconfigureAllField();
+        var valid = self.isAbleToUnconfigureAllField(true);
+        if (self.isNewForm) {
+          var validName = self.$refs.nameForm.validate();
+          valid = valid && validName;
         }
+        return valid;
       },
       onBack: function() {
         location.href = Kooboo.Route.Form.ListPage + "#External";
@@ -792,34 +824,33 @@ $(function() {
       getFormBody: function() {
         var html = "";
 
-        html += "<style>" + self.styleContent() + "</style>";
+        html += "<style>" + self.styleContent + "</style>";
 
         var containerDOM = $("<div>");
-        self.fields().forEach(function(field) {
+        self.fields.forEach(function(field) {
+          field.name = field.model.name;
+          field.options = field.model.options;
+
           var groupDOM = $("<div>");
           $(groupDOM).addClass("form-group control-group");
 
-          if (
-            field.label &&
-            field.label() &&
-            field.type().toLowerCase() !== "submitandreset"
-          ) {
+          if (field.label && field.type.toLowerCase() !== "submitandreset") {
             var labelDOM = $("<label>");
             $(labelDOM)
-              .text(field.label())
+              .text(field.label)
               .addClass("control-label");
             $(groupDOM).append(labelDOM);
           }
 
           var tempDOM = null;
 
-          switch (field.type().toLowerCase()) {
+          switch (field.type.toLowerCase()) {
             case "textbox":
               var inputDOM = $("<input>");
               $(inputDOM)
                 .attr("type", "text")
-                .attr("name", field.name())
-                .attr("placeholder", field.placeholder())
+                .attr("name", field.name)
+                .attr("placeholder", field.placeholder)
                 .addClass("form-control");
               tempDOM = inputDOM;
               break;
@@ -827,8 +858,8 @@ $(function() {
               var inputDOM = $("<input>");
               $(inputDOM)
                 .attr("type", "email")
-                .attr("name", field.name())
-                .attr("placeholder", field.placeholder())
+                .attr("name", field.name)
+                .attr("placeholder", field.placeholder)
                 .addClass("form-control");
               tempDOM = inputDOM;
               break;
@@ -836,23 +867,23 @@ $(function() {
               var inputDOM = $("<input>");
               $(inputDOM)
                 .attr("type", "number")
-                .attr("name", field.name())
-                .attr("placeholder", field.placeholder())
+                .attr("name", field.name)
+                .attr("placeholder", field.placeholder)
                 .addClass("form-control");
               tempDOM = inputDOM;
               break;
             case "checkbox":
               var divDOM = $("<div>");
-              field.options().forEach(function(option) {
+              field.options.forEach(function(option) {
                 var checkboxLabelDOM = $("<label>");
                 var inputDOM = $("<input>");
                 $(inputDOM)
                   .attr("type", "checkbox")
-                  .attr("name", field.name())
-                  .attr("value", option.value());
+                  .attr("name", field.name)
+                  .attr("value", option.value);
 
                 var textDOM = $("<span>");
-                $(textDOM).text(option.key());
+                $(textDOM).text(option.key);
 
                 $(checkboxLabelDOM)
                   .addClass("checkbox-inline")
@@ -866,7 +897,7 @@ $(function() {
             case "plaintext":
               var plaintextDOM = $("<p>");
               $(plaintextDOM)
-                .text(field.placeholder())
+                .text(field.placeholder)
                 .addClass("form-control-static");
               tempDOM = plaintextDOM;
               break;
@@ -878,17 +909,17 @@ $(function() {
             case "radiobox":
               var inputDOM = $("<input>");
               var divDOM = $("<div>");
-              field.options().forEach(function(option) {
+              field.options.forEach(function(option) {
                 var radioboxLabelDOM = $("<label>");
 
                 var inputDOM = $("<input>");
                 $(inputDOM)
                   .attr("type", "radio")
-                  .attr("name", field.name())
-                  .attr("value", option.value());
+                  .attr("name", field.name)
+                  .attr("value", option.value);
 
                 var textDOM = $("<span>");
-                $(textDOM).text(option.key());
+                $(textDOM).text(option.key);
 
                 $(radioboxLabelDOM)
                   .addClass("radio-inline")
@@ -902,13 +933,13 @@ $(function() {
             case "selection":
               var selectDOM = $("<select>");
               $(selectDOM)
-                .attr("name", field.name())
+                .attr("name", field.name)
                 .addClass("form-control");
-              field.options().forEach(function(option) {
+              field.options.forEach(function(option) {
                 var optionDOM = $("<option>");
                 $(optionDOM)
-                  .attr("value", option.value())
-                  .text(option.key());
+                  .attr("value", option.value)
+                  .text(option.key);
                 $(selectDOM).append(optionDOM);
               });
               tempDOM = selectDOM;
@@ -916,8 +947,8 @@ $(function() {
             case "textarea":
               var textAreaDOM = $("<textarea>");
               $(textAreaDOM)
-                .attr("name", field.name())
-                .attr("placeholder", field.placeholder())
+                .attr("name", field.name)
+                .attr("placeholder", field.placeholder)
                 .addClass("form-control");
               tempDOM = textAreaDOM;
               break;
@@ -925,8 +956,8 @@ $(function() {
               var passwordDOM = $("<input>");
               $(passwordDOM)
                 .attr("type", "password")
-                .attr("name", field.name())
-                .attr("placeholder", field.placeholder())
+                .attr("name", field.name)
+                .attr("placeholder", field.placeholder)
                 .addClass("form-control");
               tempDOM = passwordDOM;
               break;
@@ -934,7 +965,7 @@ $(function() {
               var submitDOM = $("<button>");
               $(submitDOM)
                 .attr("type", "submit")
-                .text(field.placeholder())
+                .text(field.placeholder)
                 .addClass("btn submit-btn btn-block");
               tempDOM = submitDOM;
               break;
@@ -942,7 +973,7 @@ $(function() {
               var resetDOM = $("<button>");
               $(resetDOM)
                 .attr("type", "reset")
-                .text(field.placeholder())
+                .text(field.placeholder)
                 .addClass("btn reset-btn btn-block");
               tempDOM = resetDOM;
               break;
@@ -952,11 +983,11 @@ $(function() {
                 resetDOM = $("<button>");
               $(submitDOM)
                 .attr("type", "submit")
-                .text(field.label())
+                .text(field.label)
                 .addClass("btn submit-btn");
               $(resetDOM)
                 .attr("type", "reset")
-                .text(field.placeholder())
+                .text(field.placeholder)
                 .addClass("btn reset-btn");
               $(wrapperDOM)
                 .append(submitDOM)
@@ -971,7 +1002,7 @@ $(function() {
           $(errorContainerDOM).addClass("help-block");
           $(groupDOM).append(errorContainerDOM);
 
-          field.validations().forEach(function(validation) {
+          field.validations.forEach(function(validation) {
             var _dom = $(tempDOM).find("input, textarea").length
               ? $(tempDOM).find("input, textarea")
               : $(tempDOM);
@@ -980,35 +1011,32 @@ $(function() {
                 _dom
                   .first()
                   .attr("required", true)
-                  .attr(
-                    "data-validation-required-message",
-                    validation.message()
-                  );
+                  .attr("data-validation-required-message", validation.message);
                 break;
               case "min":
                 _dom
-                  .attr("min", validation.min())
-                  .attr("data-validation-min-message", validation.message());
+                  .attr("min", validation.min)
+                  .attr("data-validation-min-message", validation.message);
                 break;
               case "max":
                 _dom
-                  .attr("max", validation.max())
-                  .attr("data-validation-max-message", validation.message());
+                  .attr("max", validation.max)
+                  .attr("data-validation-max-message", validation.message);
                 break;
               case "minLength":
                 _dom
-                  .attr("minLength", validation.minLength())
+                  .attr("minLength", validation.minLength)
                   .attr(
                     "data-validation-minLength-message",
-                    validation.message()
+                    validation.message
                   );
                 break;
               case "maxLength":
                 _dom
-                  .attr("maxLength", validation.maxLength())
+                  .attr("maxLength", validation.maxLength)
                   .attr(
                     "data-validation-maxLength-message",
-                    validation.message()
+                    validation.message
                   );
                 break;
               case "minChecked":
@@ -1016,11 +1044,11 @@ $(function() {
                   .first()
                   .attr(
                     "data-validation-minchecked-minchecked",
-                    validation.minChecked()
+                    validation.minChecked
                   )
                   .attr(
                     "data-validation-minchecked-message",
-                    validation.message()
+                    validation.message
                   );
                 break;
               case "maxChecked":
@@ -1028,26 +1056,23 @@ $(function() {
                   .first()
                   .attr(
                     "data-validation-maxchecked-maxchecked",
-                    validation.maxChecked()
+                    validation.maxChecked
                   )
                   .attr(
                     "data-validation-maxchecked-message",
-                    validation.message()
+                    validation.message
                   );
                 break;
               case "email":
                 _dom
                   .find("input")
                   .attr("type", "email")
-                  .attr("data-validation-email-message", validation.message());
+                  .attr("data-validation-email-message", validation.message);
                 break;
               case "regex":
                 _dom
-                  .attr("pattern", validation.regex())
-                  .attr(
-                    "data-validation-pattern-message",
-                    validation.message()
-                  );
+                  .attr("pattern", validation.regex)
+                  .attr("data-validation-pattern-message", validation.message);
                 break;
             }
           });
@@ -1072,7 +1097,12 @@ $(function() {
         $iframe.css("height", _doc.body.scrollHeight + 50);
       },
       toggleStyleContent: function() {
-        self.showStyleContent = !self.showStyleContent();
+        self.showStyleContent = !self.showStyleContent;
+      }
+    },
+    watch: {
+      fields: function(fields) {
+        $(".wrapper").readOnly(!fields.length);
       }
     }
   });
@@ -1083,180 +1113,19 @@ $(function() {
       options: field.options
     };
     field.needOptions = false;
+    field.optionRowErrors = [];
     field.isPlaceholderRequired = true;
     self.changeFieldType(field);
-
-    //#region validation
-    // field.showError = ko.observable(false);
-    // var validations = [];
-    // self.validations.forEach(function(validation) {
-    //   var model = null;
-    //   switch (validation.type) {
-    //     case "required":
-    //       model = new window.koobooForm.validationModel.required({
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "min":
-    //       model = new window.koobooForm.validationModel.min({
-    //         min: validation.min(),
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "max":
-    //       model = new window.koobooForm.validationModel.max({
-    //         max: validation.max(),
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "range":
-    //       model = new window.koobooForm.validationModel.numberRange({
-    //         min: validation.min(),
-    //         max: validation.max(),
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "minLength":
-    //       model = new window.koobooForm.validationModel.minStringLength({
-    //         minLength: validation.minLength,
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "maxLength":
-    //       model = new window.koobooForm.validationModel.maxStringLength({
-    //         maxLength: validation.maxLength,
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "minChecked":
-    //       model = new window.koobooForm.validationModel.minChecked({
-    //         minChecked: validation.minChecked,
-    //         message: validation.message
-    //       });
-    //       break;
-    //     case "maxChecked":
-    //       model = new window.koobooForm.validationModel.maxChecked({
-    //         maxChecked: validation.maxChecked(),
-    //         message: validation.message()
-    //       });
-    //       break;
-    //     case "regex":
-    //       model = new window.koobooForm.validationModel.regex({
-    //         regex: validation.regex(),
-    //         message: validation.message()
-    //       });
-    //       break;
-    //     case "email":
-    //       model = new window.koobooForm.validationModel.email({
-    //         message: validation.message()
-    //       });
-    //       break;
-    //   }
-    //   model && validations.push(model);
-    // });
-
-    // self.validations(validations);
-    //#endregion
-
-    // field.configuring.subscribe(function(doing) {
-    //   if (!doing) {
-    //     self.curTab("basic");
-    //   }
-    // });
-
-    //#region validation2
-
-    // field.optionsValid = ko.validateField({
-    //   required: ""
-    // });
-
-    // field.allOptionsVaild = function() {
-    //   if (!self.options().length) {
-    //     self.optionsValid(null);
-    //     return false;
-    //   } else {
-    //     var optionsValidFlag = true;
-    //     self.options().forEach(function(option) {
-    //       if (!option.isValid()) {
-    //         optionsValidFlag = false;
-    //         option.showError(true);
-    //       }
-    //     });
-    //     return optionsValidFlag;
-    //   }
-    // };
-
-    // field.showNameError = function() {
-    //   self.curTab("basic");
-    //   self.showError(true);
-    // };
-
-    // field.showValidationError = function() {
-    //   self.curTab("validation");
-    //   self.validations().forEach(function(validation) {
-    //     if (!validation.isValid()) {
-    //       validation.showError(true);
-    //     }
-    //   });
-    // };
-    //#endregion
-
-    //#region validation3
     field.avaliableRules = [];
     field.validateType = "";
-
-    //#endregion
     field.curTab = "basic";
     field.tabs = NORMAL_TABS;
-
-    // field.removeOption = function(m, e) {
-    //   m.showError(false);
-    //   self.options.remove(m);
-    //   self.showError(false);
-    // };
-
-    // setValidationRules();
     return field;
   }
 });
 
 $(function() {
   var KooFormViewModel = function() {
-    var self = this;
-
-    this.name = ko.validateField({
-      required: Kooboo.text.validation.required,
-      regex: {
-        pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-        message: Kooboo.text.validation.objectNameRegex
-      },
-      stringlength: {
-        min: 1,
-        max: 64,
-        message:
-          Kooboo.text.validation.minLength +
-          1 +
-          ", " +
-          Kooboo.text.validation.maxLength +
-          64
-      },
-      remote: {
-        url: Kooboo.Form.isUniqueName(),
-        data: {
-          name: function() {
-            return self.name();
-          }
-        },
-        message: Kooboo.text.validation.taken
-      }
-    });
-
-    this.showError = ko.observable(false);
-
-    this.fields.subscribe(function(fields) {
-      $(".wrapper").readOnly(!fields.length);
-    });
-
     this.choosedFolder = ko.validateField({
       required: ""
     });

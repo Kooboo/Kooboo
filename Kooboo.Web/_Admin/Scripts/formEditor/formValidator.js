@@ -10,21 +10,22 @@
     },
     data: function() {
       return {
-        rules: {}
+        rules: {},
+        types: [
+          "message",
+          "min",
+          "max",
+          "minChecked",
+          "maxChecked",
+          "minLength",
+          "maxLength",
+          "regex"
+        ]
       };
     },
     created: function() {
       var validations = {};
-      [
-        "message",
-        "min",
-        "max",
-        "minChecked",
-        "maxChecked",
-        "minLength",
-        "maxLength",
-        "regex"
-      ].forEach(type => {
+      this.types.forEach(type => {
         validations[type] = [
           {
             required: true,

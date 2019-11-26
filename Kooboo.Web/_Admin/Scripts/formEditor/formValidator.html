@@ -21,7 +21,7 @@
     </div>
     <div class="panel-body">
       <kb-form-item
-        v-if="rules['validations[]'][item.type]"
+        v-if="types.indexOf(item.type) > -1"
         :prop="'validations[' + index + '].'+ item.type"
         v-slot="error"
         class="form-group"
