@@ -187,7 +187,7 @@
                   v-else-if="field.type == 'TextArea'"
                   type="text"
                   class="form-control form-builder-field"
-                  data-bind="attr: { placeholder: field.placeholder }"
+                  :placeholder="field.placeholder"
                 ></textarea>
                 <div v-else-if="field.type == 'CheckBox'">
                   <template v-if="field.model.options.length">
@@ -578,11 +578,12 @@
         <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
           <div class="row">
             <div class="col-md-6">
-              {{ styleContent }}
               <kb-code-editor
                 ref="editor"
+                :auto-size="true"
                 :code.sync="styleContent"
                 style="max-height:800px; height: 500px;"
+                lang="css"
               ></kb-code-editor>
             </div>
             <div class="col-md-6">
@@ -817,7 +818,6 @@
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/formEditor/formValidator.js",
-      "/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js",
       "/_Admin/Scripts/vue-components/kbForm.js",
       "/_Admin/Scripts/vue-components/kb-code-editor.js"
     ]);

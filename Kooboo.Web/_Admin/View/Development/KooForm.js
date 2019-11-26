@@ -238,9 +238,7 @@ $(function() {
           self.id = formRes.model.id;
           self.model.name = formRes.model.name;
           self.isNewForm = formRes.model.id == Kooboo.Guid.Empty;
-          self.styleContent = css_beautify(
-            formRes.model.style || DEFAULT_STYLE
-          );
+          self.styleContent = formRes.model.style || DEFAULT_STYLE;
           $(".wrapper").readOnly(true);
 
           if (formRes.model.fields) {
@@ -295,7 +293,6 @@ $(function() {
         if (m.value.toLowerCase() == "style") {
           self.$nextTick(function() {
             self.renderPreview();
-            // $(".CodeMirror")[0].CodeMirror.refresh();
           });
         }
       },
@@ -1152,7 +1149,7 @@ $(function() {
   function fieldModel(field) {
     field.id = Kooboo.getRandomId();
     field.model = {
-      name: field.name || '',
+      name: field.name || "",
       options: field.options || []
     };
     field.needOptions = false;
