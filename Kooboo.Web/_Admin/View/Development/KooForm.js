@@ -39,9 +39,11 @@ $(function() {
       },
       {
         validate: function(val) {
-          return !_.some(self.fields, function(field) {
-            return val && val.toLowerCase() == field.name.toLowerCase();
-          });
+          return (
+            _.filter(self.fields, function(field) {
+              return val && val.toLowerCase() == field.model.name.toLowerCase();
+            }).length < 2
+          );
         },
         message: Kooboo.text.validation.taken
       }
@@ -131,6 +133,7 @@ $(function() {
         fields: [],
         showContentFolderSelector: false,
         contentFolders: [],
+        choosedFolder: "",
         choosedFolderName: "",
         _cacheField: {},
         fieldTypes: [
@@ -192,7 +195,6 @@ $(function() {
         successCallback: "",
         failedCallback: "",
         linkList: [],
-        showExternalLinkInput: false,
         redirect: "",
         showStyleContent: false,
         styleContent: "",
@@ -201,6 +203,11 @@ $(function() {
         formSubmitter: "",
         settings: []
       };
+    },
+    computed: {
+      showExternalLinkInput: function() {
+        return this.redirect === EXTERNAL_LINK;
+      }
     },
     mounted: function() {
       $.when(
@@ -285,10 +292,11 @@ $(function() {
         if (m.value !== self.curStep) {
           self.curStep = m.value;
         }
-
-        if (m.value.toLowerCase == "style") {
-          self.renderPreview();
-          $(".CodeMirror")[0].CodeMirror.refresh();
+        if (m.value.toLowerCase() == "style") {
+          self.$nextTick(function() {
+            self.renderPreview();
+            // $(".CodeMirror")[0].CodeMirror.refresh();
+          });
         }
       },
       onCreateField: function() {
@@ -316,8 +324,15 @@ $(function() {
       onCreateContentForm: function() {
         Kooboo.ContentFolder.getList().then(function(res) {
           if (res.success) {
-            self.contentFolders(res.model);
-            self.showContentFolderSelector(true);
+            self.contentFolders = res.model;
+            if (
+              !self.choosedFolder &&
+              self.contentFolders &&
+              self.contentFolders.length
+            ) {
+              self.choosedFolder = self.contentFolders[0].id;
+            }
+            self.showContentFolderSelector = true;
           }
         });
       },
@@ -325,14 +340,14 @@ $(function() {
         self.showContentFolderSelector = false;
       },
       onChooseContentFolder: function() {
-        if (self.isChoosedFolderVaild()) {
-          var find = _.find(self.contentFolders(), function(folder) {
-            return folder.id == self.choosedFolder();
+        if (self.choosedFolder) {
+          var find = _.find(self.contentFolders, function(folder) {
+            return folder.id == self.choosedFolder;
           });
-          find && self.choosedFolderName(find.name);
+          find && (self.choosedFolderName = find.name);
 
           Kooboo.TextContent.getEdit({
-            folderId: self.choosedFolder()
+            folderId: self.choosedFolder
           }).then(function(res) {
             if (res.success) {
               var fields = [];
@@ -365,21 +380,21 @@ $(function() {
                     model.type = "Selection";
                     var _options = JSON.parse(prop.selectionOptions);
                     _options.forEach(function(opt) {
-                      model.options.push(new optionModel(opt));
+                      model.options.push(opt);
                     });
                     break;
                   case "checkbox":
                     model.type = "CheckBox";
                     var _options = JSON.parse(prop.selectionOptions);
                     _options.forEach(function(opt) {
-                      model.options.push(new optionModel(opt));
+                      model.options.push(opt);
                     });
                     break;
                   case "radiobox":
                     model.type = "RadioBox";
                     var _options = JSON.parse(prop.selectionOptions);
                     _options.forEach(function(opt) {
-                      model.options.push(new optionModel(opt));
+                      model.options.push(opt);
                     });
                     break;
                   case "number":
@@ -404,9 +419,8 @@ $(function() {
                 })
               );
 
-              self.fields(fields);
+              self.fields = fields;
               self.onHideContentFolderSelector();
-              self.showError(false);
             }
           });
         }
@@ -1102,15 +1116,44 @@ $(function() {
     },
     watch: {
       fields: function(fields) {
-        $(".wrapper").readOnly(!fields.length);
+        self.$nextTick(function() {
+          $(".wrapper").readOnly(!fields.length);
+        });
+      },
+      styleContent: function(content) {
+        self.$nextTick(function() {
+          self.renderPreview();
+        });
+      },
+      formSubmitter: function(name) {
+        if (name) {
+          var _submitter = _.findLast(self.availableSubmitters, function(as) {
+            return as.name == name;
+          });
+
+          if (_submitter.settings && _submitter.settings.length) {
+            _submitter.settings.forEach(function(item) {
+              if (
+                !item.defaultValue &&
+                item.selectionValues &&
+                item.selectionValues[0]
+              ) {
+                item.defaultValue = item.selectionValues[0].key;
+              }
+            });
+            self.settings = _submitter.settings;
+          } else {
+            self.settings = null;
+          }
+        }
       }
     }
   });
   function fieldModel(field) {
     field.id = Kooboo.getRandomId();
     field.model = {
-      name: field.name,
-      options: field.options
+      name: field.name || '',
+      options: field.options || []
     };
     field.needOptions = false;
     field.optionRowErrors = [];
@@ -1122,38 +1165,4 @@ $(function() {
     field.tabs = NORMAL_TABS;
     return field;
   }
-});
-
-$(function() {
-  var KooFormViewModel = function() {
-    this.choosedFolder = ko.validateField({
-      required: ""
-    });
-
-    this.isChoosedFolderVaild = ko.pureComputed(function() {
-      return self.choosedFolder.isValid();
-    });
-
-    this.styleContent.subscribe(function(content) {
-      self.renderPreview();
-    });
-
-    this.redirect.subscribe(function(val) {
-      self.showExternalLinkInput(val == EXTERNAL_LINK);
-    });
-
-    this.formSubmitter.subscribe(function(name) {
-      if (name) {
-        var _submitter = _.findLast(self.availableSubmitters(), function(as) {
-          return as.name == name;
-        });
-
-        if (_submitter.settings && _submitter.settings.length) {
-          self.settings(_submitter.settings);
-        } else {
-          self.settings(null);
-        }
-      }
-    });
-  };
 });
