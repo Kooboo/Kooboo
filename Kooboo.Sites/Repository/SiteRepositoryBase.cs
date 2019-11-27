@@ -896,8 +896,12 @@ namespace Kooboo.Sites.Repository
 
                 var exclitem = new ExclLogItem();
                 exclitem.Id = key;
-                exclitem.Log = item;
-                result.Add(exclitem);
+                exclitem.Log = item; 
+
+                if (result.Find(o=>o.Id == key)==null)
+                { 
+                    result.Add(exclitem);
+                }
             }
 
             return result;

@@ -22,17 +22,10 @@ $(function() {
       ]);
       switch (items.length) {
         case 1:
-          return Kooboo.Route.Get(Kooboo.Route.SiteLog.VersionsCompare, {
-            id1: items[0].id(),
-            id2: -1,
-            KeyHash: Kooboo.getQueryString("KeyHash"),
-            StoreNameHash: Kooboo.getQueryString("StoreNameHash"),
-            tableNameHash: Kooboo.getQueryString("tableNameHash")
-          });
         case 2:
           return Kooboo.Route.Get(Kooboo.Route.SiteLog.VersionsCompare, {
             id1: items[0].id(),
-            id2: items[1].id(),
+            id2: items.length == 1 ? -1 : items[1].id(),
             KeyHash: Kooboo.getQueryString("KeyHash"),
             StoreNameHash: Kooboo.getQueryString("StoreNameHash"),
             tableNameHash: Kooboo.getQueryString("tableNameHash")
