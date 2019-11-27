@@ -2,7 +2,7 @@
   var self;
   Vue.component("kb-html-path", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/htmlViewer/kbHtmlPath.html"
+      "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlPath.html"
     ),
     data: function() {
       self = this;
@@ -17,11 +17,11 @@
     methods: {
       changeElem: function(m) {
         Kooboo.EventBus.publish("kb/lighter/holder", m.elem);
-        self.$emit("change", m);
+        // self.$emit("change", m);
       },
       hoverElem: function(m) {
         Kooboo.EventBus.publish("kb/html/elem/hover", m.elem);
-        self.$emit("hover", m);
+        // self.$emit("hover", m);
       }
     },
     mounted: function() {
