@@ -57,12 +57,12 @@
     methods: {
       changeElem: function(m) {
         Kooboo.EventBus.publish("kb/lighter/holder", m.elem);
-        self.$emit("change", m);
+        self.$emit("change", m.elem);
       },
       hoverElem: function(m) {
         m.isHovered = true;
         Kooboo.EventBus.publish("kb/html/elem/hover", m.elem);
-        self.$emit("hover", m);
+        self.$emit("hover", m.elem);
       },
       unhoverElem: function(m) {
         m.isHovered = false;
