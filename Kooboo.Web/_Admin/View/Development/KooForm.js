@@ -460,7 +460,7 @@ $(function() {
       isAbleToAddNewField: function() {
         return self.isAbleToUnconfigureAllField();
       },
-      changeFieldType(field) {
+      changeFieldType: function(field) {
         var type = field.type.toLowerCase();
         if (["divider"].indexOf(type) > -1) {
           field.isPlaceholderRequired = false;
