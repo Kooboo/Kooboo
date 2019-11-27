@@ -60,6 +60,9 @@ $(function() {
                 value: ext
               };
             });
+            if(styleRes.model.extension && styleRes.model.extension[0] ==='.') {
+              styleRes.model.extension = styleRes.model.extension.slice(1);
+            }
             self.extension = styleRes.model.extension || extensionRes.model[0];
           }
         });
@@ -101,6 +104,11 @@ $(function() {
       },
       validate: function() {
         var nameRule = [
+          {
+            required: true,
+            message: Kooboo.text.validation.required
+
+          },
           {
             pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
             message: Kooboo.text.validation.objectNameRegex

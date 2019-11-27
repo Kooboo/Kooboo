@@ -10,21 +10,22 @@
     },
     data: function() {
       return {
-        rules: {}
+        rules: {},
+        types: [
+          "message",
+          "min",
+          "max",
+          "minChecked",
+          "maxChecked",
+          "minLength",
+          "maxLength",
+          "regex"
+        ]
       };
     },
     created: function() {
       var validations = {};
-      [
-        "message",
-        "min",
-        "max",
-        "minChecked",
-        "maxChecked",
-        "minLength",
-        "maxLength",
-        "regex"
-      ].forEach(type => {
+      this.types.forEach(type => {
         validations[type] = [
           {
             required: true,
@@ -48,7 +49,7 @@
         this.$emit("remove", index);
       },
       validate: function() {
-        if (!this.$refs.validationForm) {
+        if (!this.validations.length) {
           return true;
         }
         return this.$refs.validationForm.validate();
