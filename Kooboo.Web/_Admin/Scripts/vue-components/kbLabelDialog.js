@@ -37,10 +37,8 @@
       showInput: function() {
         return self.labelValue == KB_NEW_LABEL;
       },
-      computed: {
-        hasOnSave() {
-          return self.$listeners && self.$listeners.onSave;
-        }
+      hasOnSave() {
+        return self.$listeners && self.$listeners.onSave;
       }
     },
     mounted: function() {

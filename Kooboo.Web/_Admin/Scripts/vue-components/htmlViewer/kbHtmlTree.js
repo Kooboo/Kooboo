@@ -23,49 +23,53 @@
       "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlTree.html"
     ),
     props: {
-      elem: [HTMLElement, Array],
-      rootElem: HTMLElement,
+      elem: undefined,
+      rootElem: undefined,
       depth: Number
     },
     data: function() {
       self = this;
       return {
-        maxDepth: 5
+        maxDepth: 5,
+        tree: []
       };
     },
-    computed: {
-      tree: function() {
-        var tree = [];
-        if (self.elem) {
-          if (Array.isArray(self.elem)) {
-            tree = self.elem;
-          } else {
-            if (self.rootElem) {
-              if (
-                $.contains(self.rootElem, self.elem) ||
-                $(self.rootElem).is($(self.elem))
-              ) {
-                tree = [new elemModel(self.elem, self.depth)];
-              } else {
-                tree = [new elemModel(self.rootElem, self.depth)];
-              }
+    watch: {
+      elem: {
+        handler: function() {
+          var tree = [];
+          if (self.elem) {
+            if (Array.isArray(self.elem)) {
+              tree = self.elem;
             } else {
-              tree = [new elemModel(self.elem, self.depth)];
+              if (self.rootElem) {
+                if (
+                  $.contains(self.rootElem, self.elem) ||
+                  $(self.rootElem).is($(self.elem))
+                ) {
+                  tree = [new elemModel(self.elem, self.depth)];
+                } else {
+                  tree = [new elemModel(self.rootElem, self.depth)];
+                }
+              } else {
+                tree = [new elemModel(self.elem, self.depth)];
+              }
             }
           }
-        }
-        return tree;
+          self.tree = tree;
+        },
+        immediate: true
       }
     },
     methods: {
       changeElem: function(m) {
         Kooboo.EventBus.publish("kb/lighter/holder", m.elem);
-        self.$emit("change", m.elem);
+        // self.$emit("change", m.elem);
       },
       hoverElem: function(m) {
         m.isHovered = true;
         Kooboo.EventBus.publish("kb/html/elem/hover", m.elem);
-        self.$emit("hover", m.elem);
+        // self.$emit("hover", m.elem);
       },
       unhoverElem: function(m) {
         m.isHovered = false;
