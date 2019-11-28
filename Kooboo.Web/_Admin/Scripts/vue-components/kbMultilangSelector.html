@@ -1,4 +1,4 @@
-<div class="form-inline pull-right" v-if="formatCultures.length > 1">
+<div class="form-inline pull-right" v-if="innerCultures.length > 1">
   <div class="dropdown">
     <button
       class="btn btn-default dropdown-toggle"
@@ -11,7 +11,7 @@
     </button>
     <ul class="dropdown-menu pull-right" aria-labelledby="multi_lang">
       <li
-        v-for="$data in formatCultures"
+        v-for="$data in innerCultures"
         :key="$data.key"
         class="{ disabled: $data.key == defaultCulture }"
       >
