@@ -1,4 +1,12 @@
 (function() {
+  Kooboo.loadJS([
+    "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlTree.js",
+    "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlPath.js"
+  ]);
+  Kooboo.loadCSS([
+    "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlTree.css",
+    "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlPath.css"
+  ]);
   var self;
   Vue.component("kb-html-viewer", {
     template: Kooboo.getTemplate(
@@ -7,8 +15,8 @@
     data: function() {
       self = this;
       return {
-        elem: Object,
-        rootElem: Object
+        elem: undefined,
+        rootElem: undefined
       };
     },
     mounted: function() {
