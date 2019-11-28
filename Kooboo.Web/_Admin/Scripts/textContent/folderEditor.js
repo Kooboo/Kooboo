@@ -1,6 +1,5 @@
 ﻿(function() {
   Kooboo.loadJS(["/_Admin/Scripts/vue-components/kbForm.js"]);
-  var self;
   Vue.component("kb-folder-editor", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/textContent/folderEditor.html"
@@ -11,7 +10,7 @@
       id: String
     },
     data: function() {
-      self = this;
+      var self = this;
       return {
         currentTab: "basic",
         showError: {
@@ -76,13 +75,14 @@
       };
     },
     mounted: function() {
-      self.getTypeList();
+      this.getTypeList();
     },
     computed: {
       isNew: function() {
-        return !self.id;
+        return !this.id;
       },
       hasContentType: function() {
+        var self = this;
         var cid = self.basicForm.contentTypeId,
           id = self.id;
         return (
@@ -90,6 +90,7 @@
         );
       },
       contentTypeName: function() {
+        var self = this;
         contentTypeName = "";
         if (this.hasContentType) {
           var contentType = _.find(self.contentTypes, {
@@ -104,6 +105,7 @@
     },
     methods: {
       folderRules: function() {
+        var self = this;
         return {
           alias: [
             {
@@ -132,6 +134,7 @@
         };
       },
       changeTab: function(tab) {
+        var self = this;
         if (tab !== self.currentTab) {
           self.currentTab = tab;
           $("a[href=#tab_" + tab + "]").tab("show");
@@ -144,11 +147,13 @@
         }
       },
       addCategoryFolders: function(e) {
+        var self = this;
         var newFolder = new Folder();
         self.relationForm.categoryFolders.push(newFolder);
         newFolder.folderId = self.availableFolders()[0].id;
       },
       removeCategoryFolders: function(f) {
+        var self = this;
         self.relationForm.categoryFolders = _.without(
           self.relationForm.categoryFolders,
           f
@@ -156,11 +161,13 @@
         self.ableToAddRelationFolder = true;
       },
       addEmbeddedFolders: function(e) {
+        var self = this;
         var newFolder = new Folder();
         self.relationForm.embeddedFolders.push(newFolder);
         newFolder.folderId = self.availableFolders()[0].id;
       },
       removeEmbeddedFolders: function(f) {
+        var self = this;
         self.relationForm.embeddedFolders = _.without(
           self.relationForm.embeddedFolders,
           f
@@ -168,6 +175,7 @@
         self.ableToAddRelationFolder = true;
       },
       submit: function(form) {
+        var self = this;
         if (self.isNew) {
           var isBasicValid = self.$refs.basicForm.validate();
           if (!isBasicValid) {
@@ -202,6 +210,7 @@
         });
       },
       availableFolders: function(id) {
+        var self = this;
         var removeList = _.map(
           _.concat(
             self.relationForm.categoryFolders,
@@ -223,6 +232,7 @@
         return availableFolders;
       },
       reset: function() {
+        var self = this;
         self.$refs.basicForm.clearValid();
         self.$refs.relationForm.clearValid();
 
@@ -234,6 +244,7 @@
         self.changeTab("basic");
       },
       getTypeList: function() {
+        var self = this;
         Kooboo.ContentType.getList().then(function(res) {
           self.contentTypes = _.concat(
             [
@@ -247,6 +258,7 @@
         });
       },
       init: function() {
+        var self = this;
         if (!self.isNew) {
           var model = _.find(self.folders, { id: self.id }) || {},
             folderIds = [];
@@ -284,7 +296,7 @@
     watch: {
       visible: function(val) {
         if (val) {
-          self.init();
+          this.init();
         }
       }
     }

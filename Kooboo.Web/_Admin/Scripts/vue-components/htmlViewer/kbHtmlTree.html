@@ -19,7 +19,7 @@
       <kb-html-tree
         v-if="tag.depth <= maxDepth"
         :elem="tag.children"
-        :depth="depth+1"
+        :depth="tag.depth + 1"
       ></kb-html-tree>
     </template>
     <template v-else-if="!tag.isSelfClosed">

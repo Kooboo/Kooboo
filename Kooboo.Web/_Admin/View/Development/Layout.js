@@ -32,7 +32,6 @@ $(function() {
     mounted: function() {
       Kooboo.EventBus.subscribe("kb/lighter/holder", function(elem) {
         self.bindingPanel.elem = elem;
-
         if (elem !== elem.ownerDocument.body) {
           $(elem.ownerDocument.body).animate(
             {
@@ -221,9 +220,6 @@ $(function() {
         self.setHTML(self.layoutCode, function() {
           self._layoutCode = self.getHTML();
         });
-
-
-        console.log( self.bindingPanel)
       });
 
       // $(document).keydown(function(e) {
