@@ -12,7 +12,7 @@ $(function() {
     tal2attr = Kooboo.layoutEditor.utils.tal2attr,
     talParser = Kooboo.layoutEditor.utils.talParser,
     KBFrame = Kooboo.layoutEditor.component.KBFrame;
-  var self;
+  var self, kbFrame, helper;
   new Vue({
     el: "#main",
     data: function() {
@@ -26,12 +26,12 @@ $(function() {
         _htmlContent: "",
         isFormatted: false,
         curType: "preview",
-        bindingPanel: BindingPanel
+        bindingPanel: new BindingPanel()
       };
     },
     mounted: function() {
       Kooboo.EventBus.subscribe("kb/lighter/holder", function(elem) {
-        vm.bindingPanel().elem(elem);
+        self.bindingPanel.elem = elem;
 
         if (elem !== elem.ownerDocument.body) {
           $(elem.ownerDocument.body).animate(
@@ -129,12 +129,11 @@ $(function() {
         Kooboo.EventBus.publish("kb/frame/dom/update");
       });
 
-      var kbFrame = new KBFrame(document.getElementById("layout_iframe"), {
-          type: "layout"
-        }),
-        bindingPanel = new BindingPanel(),
-        positionKey = "k-placeholder",
-        omitTagKey = "k-omit";
+      (kbFrame = new KBFrame(document.getElementById("layout_iframe"), {
+        type: "layout"
+      })),
+        (positionKey = "k-placeholder"),
+        (omitTagKey = "k-omit");
 
       $(kbFrame).on("loaded", function() {
         $(window).trigger("resize");
@@ -158,11 +157,10 @@ $(function() {
         }
       );
 
+      helper = new Helper($(".kb-editor")[0]);
       $(window).on("resize", function() {
         helper.refresh();
       });
-
-      var helper = new Helper($(".kb-editor")[0]);
 
       $.when(
         Kooboo.Layout.Get({
@@ -223,6 +221,9 @@ $(function() {
         self.setHTML(self.layoutCode, function() {
           self._layoutCode = self.getHTML();
         });
+
+
+        console.log( self.bindingPanel)
       });
 
       // $(document).keydown(function(e) {
@@ -236,18 +237,19 @@ $(function() {
     methods: {
       formatCode: function() {
         self.isFormatted = true;
-        var formatted = html_beautify(self.layoutCode());
-        self.layoutCode(formatted);
+        // TODO: nj
+        // var formatted = html_beautify(self.layoutCode());
+        // self.layoutCode(formatted);
       },
       changeType: function(type) {
-        if (self.curType() !== type) {
-          self.curType(type);
+        if (self.curType !== type) {
+          self.curType = type;
 
           if (type == "code") {
             cm.setValue(self.getHTML());
             cm.refresh();
           } else {
-            var oldHtml = self.htmlContent(),
+            var oldHtml = self.htmlContent,
               newHtml = cm.getValue();
 
             if (oldHtml !== newHtml) {
@@ -257,13 +259,15 @@ $(function() {
         }
       },
       getHTML: function() {
+        // TODO: nj
+        return kbFrame.getHTML();
         return html_beautify(kbFrame.getHTML());
       },
       setHTML: function(html, callback) {
         BindingStore.clear();
 
         !kbFrame.hasResource() &&
-          kbFrame.setResource(self.bindingPanel().resources());
+          kbFrame.setResource(self.bindingPanel.resources);
         kbFrame.setContent(html, function() {
           setTimeout(function() {
             $(window).trigger("resize");
@@ -293,8 +297,8 @@ $(function() {
           );
 
           $(window).trigger("resize");
-          self.htmlContent(self.getHTML());
-          !self._htmlContent() && self._htmlContent(self.getHTML());
+          self.htmlContent = self.getHTML();
+          self._htmlContent = self._htmlContent || self.getHTML();
 
           if (callback) callback();
         });

@@ -8,10 +8,7 @@
       self = this;
       return {};
     },
-    props: {
-      elem: HTMLElement,
-      rootElem: HTMLElement
-    },
+    props: ['elem', 'rootElem'],
     methods: {
       changeElem: function(m) {
         Kooboo.EventBus.publish("kb/lighter/holder", m.elem);

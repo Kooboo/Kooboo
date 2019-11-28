@@ -1,5 +1,5 @@
 <!-- #layout name=default -->
-<div id="main" class="fixed">
+<div id="main" class="fixed" v-cloak>
   <div class="heander-panel">
     <div class="page-header">
       <button
@@ -43,12 +43,12 @@
                 <kb-html-viewer></kb-html-viewer>
                 <hr />
                 <div
-                  data-bind="visible: bindingPanel().showConvert() || bindingPanel().showPrepend() || bindingPanel().showAppend() || bindingPanel().showLabel()"
+                  v-if="bindingPanel.showConvert || bindingPanel.showPrepend || bindingPanel.showAppend || bindingPanel.showLabel"
                   class="form-group buttons"
                 >
                   <div class="clearfix">
                     <div
-                      data-bind="visible: bindingPanel().showConvert() || bindingPanel().showPrepend() || bindingPanel().showAppend()"
+                      v-if="bindingPanel.showConvert || bindingPanel.showPrepend || bindingPanel.showAppend"
                       class="btn-group"
                     >
                       <button
@@ -60,21 +60,24 @@
                         <li
                           ><a
                             href="javascript:;"
-                            data-bind="visible: bindingPanel().showConvert, click: bindingPanel().convert"
+                            v-if="bindingPanel.showConvert"
+                            @click="bindingPanel.convert"
                             >Convert to position</a
                           ></li
                         >
                         <li
                           ><a
                             href="javascript:;"
-                            data-bind="visible: bindingPanel().showPrepend, click: bindingPanel().prepend"
+                            v-if="bindingPanel.showPrepend"
+                            @click="bindingPanel.prepend"
                             >Prepend position</a
                           ></li
                         >
                         <li
                           ><a
                             href="javascript:;"
-                            data-bind="visible: bindingPanel().showAppend, click: bindingPanel().append"
+                            v-if="bindingPanel.showAppend"
+                            @click="bindingPanel.append"
                             >Append position</a
                           ></li
                         >
@@ -82,129 +85,135 @@
                     </div>
                     <a
                       href="javascript:;"
-                      data-bind="visible: bindingPanel().showLabel, click: bindingPanel().createLabel"
+                      v-if="bindingPanel.showLabel"
+                      @click="bindingPanel.createLabel"
                       class="btn blue"
                       >Label</a
                     >
                   </div>
                 </div>
-                <div
-                  data-bind="visible: bindingPanel().existList().length"
-                  class="form-group"
-                >
+                <div v-if="bindingPanel.existList.length" class="form-group">
                   <label>Existing binding</label>
                   <ul class="list-group">
-                    <!--ko foreach: bindingPanel().existList-->
-                    <!--ko if: $data.type == 'attr' || $data.type == 'append' || $data.type == 'prepend' || $data.type == 'ap/prepend'-->
-                    <li class="list-group-item">
+                    <li
+                      class="list-group-item"
+                      v-for="($data,index) in bindingPanel.existOthers"
+                      :key="index"
+                    >
                       <a
                         title="Remove"
                         href="javascript:"
                         class="btn gray btn-xs pull-right"
-                        data-bind="click:$root.bindingPanel().remove, tooltip: Kooboo.text.common.remove"
+                        @click="bindingPanel.remove"
+                        v-kb-tooltip="Kooboo.text.common.remove"
                         ><i class="fa fa-minus"></i
                       ></a>
                       <a
                         href="javascript:;"
                         class="btn blue btn-xs pull-right"
                         title="Edit"
-                        data-bind="click:$root.bindingPanel().edit,tooltip: Kooboo.text.common.edit"
+                        @click="bindingPanel.edit"
+                        v-kb-tooltip="Kooboo.text.common.edit"
                         ><i class="fa fa-pencil"></i
                       ></a>
                       <strong>Placeholder</strong>
-                      <!--ko text:name-->
-                      <!--/ko-->
+                      {{ $data.name }}
                     </li>
-                    <!--/ko-->
-                    <!--ko if:$data.type=='label'-->
-                    <li class="list-group-item">
+
+                    <li
+                      class="list-group-item"
+                      v-for="($data,index) in bindingPanel.existLabels"
+                      :key="index"
+                    >
                       <a
                         title="Remove"
                         href="javascript:"
                         class="btn gray btn-xs pull-right"
-                        data-bind="tooltip: Kooboo.text.common.remove,click:$root.bindingPanel().removeLabel"
+                        @click="bindingPanel.removeLabel"
+                        v-kb-tooltip="Kooboo.text.common.remove"
                         ><i class="fa fa-minus"></i
                       ></a>
                       <a
                         href="javascript:;"
                         class="btn blue btn-xs pull-right"
                         title="Edit"
-                        data-bind="click:$root.bindingPanel().edit,tooltip: Kooboo.text.common.edit"
+                        @click="bindingPanel.edit"
+                        v-kb-tooltip="Kooboo.text.common.edit"
                         ><i class="fa fa-pencil"></i
                       ></a>
                       <strong>Label</strong>
-                      <!--ko text:text-->
-                      <!--/ko-->
+                      {{ $data.text }}
                     </li>
-                    <!--/ko-->
-                    <!--/ko-->
                   </ul>
                 </div>
               </div>
               <div
                 class="panel panel-default"
-                data-bind="visible: bindingPanel().positionList().length"
+                v-if="bindingPanel.positionList.length"
               >
                 <div class="panel-heading">
                   <h3 class="panel-title">Placeholders</h3>
                 </div>
                 <ul class="list-group">
-                  <!--ko foreach: bindingPanel().positionList-->
                   <li
                     class="list-group-item"
-                    data-bind="attr:{class:selected()?'list-group-item bg-gray':'list-group-item'}, click: $root.bindingPanel().focusPosition"
+                    v-for="($data,index) in bindingPanel.positionList"
+                    :key="index"
+                    :class="$data.selected ? 'list-group-item bg-gray' : 'list-group-item'"
+                    @click="bindingPanel.focusPosition"
                   >
                     <a
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      data-bind="tooltip: Kooboo.text.common.remove, click:$root.bindingPanel().remove"
+                      v-kb-tooltip="Kooboo.text.common.remove"
+                      @click="bindingPanel.remove"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"
-                      data-bind="tooltip: Kooboo.text.common.edit, click:$root.bindingPanel().edit"
+                      v-kb-tooltip="Kooboo.text.common.edit"
+                      @click="bindingPanel.edit"
                       ><i class="fa fa-pencil"></i
                     ></a>
-                    <!--ko text:name-->
-                    <!--/ko-->
+                    {{ $data.name }}
                   </li>
-                  <!--/ko-->
                 </ul>
               </div>
               <div
                 class="panel panel-default"
-                data-bind="visible: bindingPanel().labelList().length"
+                v-if="bindingPanel.labelList.length"
               >
                 <div class="panel-heading">
                   <h3 class="panel-title">Label</h3>
                 </div>
                 <ul class="list-group">
-                  <!--ko foreach: bindingPanel().labelList-->
                   <li
                     class="list-group-item"
-                    data-bind="attr:{class:selected()?'list-group-item bg-gray':'list-group-item'}"
+                    v-for="($data, index) in bindingPanel.labelList"
+                    :key="index"
+                    :class="$data.selected ? 'list-group-item bg-gray' : 'list-group-item'"
                   >
                     <a
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      data-bind="tooltip: Kooboo.text.common.remove,click:$root.bindingPanel().removeLabel"
+                      v-kb-tooltip="Kooboo.text.common.remove"
+                      @click="bindingPanel.removeLabel"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
                       href="javascript:;"
                       class="btn blue btn-xs pull-right"
                       title="Edit"
-                      data-bind="click:$root.bindingPanel().edit,tooltip: Kooboo.text.common.edit"
+                      @click="bindingPanel.edit"
+                      v-kb-tooltip: Kooboo.text.common.edit"
                       ><i class="fa fa-pencil"></i
                     ></a>
-                    <!--ko text:text-->
-                    <!--/ko-->
+                    {{ $data.text }}
                   </li>
-                  <!--/ko-->
                 </ul>
               </div>
               <div class="panel panel-default">
@@ -213,11 +222,13 @@
                 </div>
                 <ul
                   class="list-group"
-                  data-bind="sortable: bindingPanel().styleList"
+                  data-bind="sortable: bindingPanel.styleList"
                 >
                   <li
+                    v-for="($data, index) in bindingPanel.styleList"
+                    :key="index"
                     class="list-group-item"
-                    data-bind="attr:{class:selected()?'list-group-item bg-gray':'list-group-item'}"
+                    :class="$data.selected ? 'list-group-item bg-gray' : 'list-group-item'"
                   >
                     <span class="sortable"
                       ><i class="glyphicon glyphicon-list"></i
@@ -226,26 +237,27 @@
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      data-bind="tooltip: Kooboo.text.common.remove,click:$root.bindingPanel().removeStyle"
+                      v-kb-tooltip="Kooboo.text.common.remove" 
+                      @click="bindingPanel.removeStyle"
                       ><i class="fa fa-minus"></i
                     ></a>
-                    <!-- ko if: text -->
                     <a
+                    v-if="$data.text"
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"
-                      data-bind="tooltip: Kooboo.text.common.edit,click:$root.bindingPanel().editJsCss"
+                      v-kb-tooltip="Kooboo.text.common.edit" 
+                      @click="bindingPanel.editJsCss"
                       ><i class="fa fa-pencil"></i
                     ></a>
-                    <!-- /ko -->
-                    <span data-bind="text:name" class="nowrap-text"></span>
+                    <span class="nowrap-text">{{ $data.name }}</span>
                   </li>
                 </ul>
                 <div class="panel-body">
                   <button
                     type="button"
                     class="btn blue btn-xs pull-right"
-                    data-bind="click: bindingPanel().createStyle"
+                    @click="bindingPanel.createStyle"
                     ><i class="fa fa-plus"></i
                   ></button>
                 </div>
@@ -260,12 +272,14 @@
                 <ul
                   class="list-group"
                   id="head-scripts"
-                  data-bind="sortable: bindingPanel().headScriptList, connect:'#body-scripts'"
+                  data-bind="sortable: bindingPanel.headScriptList, connect:'#body-scripts'"
                   style="min-height: 38px;"
                 >
                   <li
+                    v-for="($data, index) in bindingPanel.headScriptList"
+                    :key="index"
                     class="list-group-item"
-                    data-bind="css:{'bg-gray':selected}"
+                    :class="{'bg-gray': $data.selected}"
                   >
                     <span class="sortable"
                       ><i class="glyphicon glyphicon-list"></i
@@ -274,26 +288,27 @@
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      data-bind="tooltip: Kooboo.text.common.remove,click:$root.bindingPanel().removeScript"
+                      v-kb-tooltip="Kooboo.text.common.remove" 
+                      @click="bindingPanel.removeScript"
                       ><i class="fa fa-minus"></i
                     ></a>
-                    <!-- ko if: text -->
                     <a
+                      v-if="$data.text"
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"
-                      data-bind="tooltip: Kooboo.text.common.edit,click:$root.bindingPanel().editJsCss"
+                      v-kb-tooltip="Kooboo.text.common.edit" 
+                      @click="bindingPanel.editJsCss"
                       ><i class="fa fa-pencil"></i
                     ></a>
-                    <!-- /ko -->
-                    <span data-bind="text:name" class="nowrap-text"></span>
+                    <span class="nowrap-text">{{ $data.name }}</span>
                   </li>
                 </ul>
                 <div class="panel-body">
                   <button
                     type="button"
                     class="btn blue btn-xs pull-right"
-                    data-bind="click: bindingPanel().createScript.bind(this,true)"
+                    @click="bindingPanel.createScript(true)"
                     ><i class="fa fa-plus"></i
                   ></button>
                 </div>
@@ -303,12 +318,14 @@
                 <ul
                   class="list-group"
                   id="body-scripts"
-                  data-bind="sortable: bindingPanel().bodyScriptList,connect:'#head-scripts'"
+                  data-bind="sortable: bindingPanel.bodyScriptList,connect:'#head-scripts'"
                   style="min-height: 38px;"
                 >
                   <li
+                    v-for="($data, index) in bindingPanel.bodyScriptList"
+                   :key="index"
                     class="list-group-item"
-                    data-bind="css:{'bg-gray':selected}"
+                   :class="{'bg-gray': $data.selected}"
                   >
                     <span class="sortable"
                       ><i class="glyphicon glyphicon-list"></i
@@ -317,33 +334,36 @@
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      data-bind="tooltip: Kooboo.text.common.remove,click:$root.bindingPanel().removeScript"
+                      v-kb-tooltip="Kooboo.text.common.remove" 
+                      @click="bindingPanel.removeScript"
                       ><i class="fa fa-minus"></i
                     ></a>
-                    <!-- ko if: text -->
                     <a
+                     v-if="$data.text"
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"
-                      data-bind="tooltip: Kooboo.text.common.edit,click:$root.bindingPanel().editJsCss"
+                      v-kb-tooltip="Kooboo.text.common.edit"
+                      @click="bindingPanel.editJsCss"
                       ><i class="fa fa-pencil"></i
                     ></a>
-                    <!-- /ko -->
-                    <span data-bind="text:name" class="nowrap-text"></span>
+                    <span class="nowrap-text">
+                      {{ $data.name }}
+                    </span>
                   </li>
                 </ul>
                 <div class="panel-body">
                   <button
                     type="button"
                     class="btn blue btn-xs pull-right"
-                    data-bind="click: bindingPanel().createScript.bind(this,false)"
+                    @click="bindingPanel.createScript(false)"
                     ><i class="fa fa-plus"></i
                   ></button>
                 </div>
               </div>
             </div>
           </section>
-          <section class="{ 'active': curType == 'code' }" class="tab-pane">
+          <section class="{ active: curType == 'code' }" class="tab-pane">
             <kb-code-editor
               ref="editor"
               :auto-size="true"
@@ -406,7 +426,6 @@
       "/_Admin/Scripts/layoutEditor/utils/tal2attr.js",
       "/_Admin/Scripts/layoutEditor/utils/talBinder.js",
       "/_Admin/Scripts/layoutEditor/utils/talParser.js",
-      "/_Admin/Scripts/kobindings.sortable.js",
       "/_Admin/Scripts/tool/KoobooToolTemplateManager.js",
       "/_Admin/Scripts/tool/KoobooTool.js",
       "/_Admin/Scripts/components/Helper.js",
@@ -421,7 +440,7 @@
       "/_Admin/Scripts/vue-components/kbForm.js",
       "/_Admin/Scripts/vue-components/kb-code-editor.js",
       "/_Admin/Scripts/vue-components/kbHtmlViewer.js",
-      "/_Admin/Scripts/components/kbLabelDialog.js",
+      "/_Admin/Scripts/vue-components/kbLabelDialog.js",
       "/_Admin/Scripts/layoutEditor/components/style-script.js",
       "/_Admin/Scripts/layoutEditor/components/position.js",
       "/_Admin/Scripts/layoutEditor/components/KBFrame.js"

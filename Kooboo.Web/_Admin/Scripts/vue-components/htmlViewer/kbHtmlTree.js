@@ -23,8 +23,8 @@
       "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlTree.html"
     ),
     props: {
-      elem: [HTMLElement, Array],
-      rootElem: HTMLElement,
+      elem: undefined,
+      rootElem: undefined,
       depth: Number
     },
     data: function() {
@@ -60,12 +60,12 @@
     methods: {
       changeElem: function(m) {
         Kooboo.EventBus.publish("kb/lighter/holder", m.elem);
-        self.$emit("change", m.elem);
+        // self.$emit("change", m.elem);
       },
       hoverElem: function(m) {
         m.isHovered = true;
         Kooboo.EventBus.publish("kb/html/elem/hover", m.elem);
-        self.$emit("hover", m.elem);
+        // self.$emit("hover", m.elem);
       },
       unhoverElem: function(m) {
         m.isHovered = false;
