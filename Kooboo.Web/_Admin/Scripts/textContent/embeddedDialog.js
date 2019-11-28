@@ -2,7 +2,6 @@
   Kooboo.loadJS(["/_Admin/Scripts/vue-components/kbTable.js"]);
 
   var modal = Kooboo.viewEditor && Kooboo.viewEditor.component.modal;
-  var self;
   Vue.component("kb-embedded-dialog", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/textContent/embeddedDialog.html"
@@ -11,7 +10,6 @@
       choosedEmbedded: Object
     },
     data: function() {
-      self = this;
       return {
         modal: null,
         columns: [],
@@ -27,9 +25,11 @@
     },
     methods: {
       newTextContent: function() {
+        var self = this;
         self.modal = self.showContentDialog();
       },
       showContentDialog: function(contentId) {
+        var self = this;
         var model = null;
         var iframeUrl = "";
 
@@ -67,6 +67,7 @@
         $("#embeddedDialog").modal("hide");
       },
       saveIframe: function() {
+        var self = this;
         if (window.__gl) {
           if (!window.__gl.saveContentFinish) {
             window.__gl.saveContentFinish = self.saveContentFinishEvent;
@@ -77,6 +78,7 @@
         }
       },
       saveContentFinishEvent: function(fieldData, textContentId, folderId) {
+        var self = this;
         var existed = self.choosedEmbedded.contents.some(function(o) {
           return o.id === textContentId;
         });
@@ -105,9 +107,11 @@
         window.__gl = {};
       },
       onEdit: function(contentId) {
+        var self = this;
         self.modal = self.showContentDialog(contentId);
       },
       onDelete: function() {
+        var self = this;
         if (confirm(Kooboo.text.confirm.deleteItems)) {
           var ids = self.selected.map(function(row) {
             return row.id;
@@ -130,6 +134,7 @@
     },
     watch: {
       "choosedEmbedded.contents": function(contents) {
+        var self = this;
         if (contents) {
           self.columns = [];
           var columnName = getDefaultColumnName(contents);

@@ -1,5 +1,4 @@
 (function() {
-  var self;
   Vue.component("kb-media-dialog", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/kb-media-dialog.html"
@@ -9,7 +8,7 @@
       multiple: Boolean
     },
     data: function() {
-      self = this;
+      var self = this;
       return {
         mediaDialog: false,
         folders: [],
@@ -48,6 +47,7 @@
     },
     methods: {
       onHideMediaDialog: function() {
+        var self = this;
         self.folders = [];
         self.files = [];
         self.crumbPath = [];
@@ -58,9 +58,11 @@
         self.$emit("update:data", null);
       },
       changeType: function(type) {
+        var self = this;
         self.curType = type;
       },
       onChoosingFolder: function(path) {
+        var self = this;
         self.loading = true;
         Kooboo.Media.getDialogList({ path: path }).then(function(res) {
           if (res.success) {
@@ -78,6 +80,7 @@
         });
       },
       onChoosingFile: function(file) {
+        var self = this;
         var currentSelectedStatus = file.selected;
         if (!self.multiple) {
           _.forEach(self.files, function(_f) {
@@ -97,6 +100,7 @@
         return d.toDefaultLangString();
       },
       save: function() {
+        var self = this;
         var data = self.selectedFiles;
         var result = self.multiple ? data : data[0];
         // console.log(result)
@@ -107,6 +111,7 @@
         self.onHideMediaDialog();
       },
       upload: function(data) {
+        var self = this;
         var folders = _.cloneDeep(self.crumbPath);
         data.append("folder", folders.reverse()[0].fullPath);
         Kooboo.Upload.Images(data).then(function(res) {
@@ -116,6 +121,7 @@
         });
       },
       uploadMedia: function(data, files) {
+        var self = this;
         if (files.length) {
           if (!Kooboo.isFileNameExist(files, self.files)) {
             self.upload(data);
@@ -129,6 +135,7 @@
     },
     watch: {
       data: function(data) {
+        var self = this;
         if (data && data.show) {
           self.mediaDialog = true;
           self.loading = false;

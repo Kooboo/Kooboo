@@ -1,5 +1,4 @@
 (function() {
-  var self;
   Vue.component("kb-control-mediafile", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/controlType/MediaFile.html"
@@ -9,13 +8,13 @@
     },
     inject: ["kbFormItem"],
     data: function() {
-      self = this;
       return {
         pics: [],
         mediaDialogData: null
       };
     },
     mounted: function() {
+      var self = this;
       var fieldValue = this.kbFormItem.kbForm.model[self.kbFormItem.prop];
       if (fieldValue) {
         if (self.field.isMultipleValue) {
@@ -40,6 +39,7 @@
     },
     methods: {
       selectFile: function() {
+        var self = this;
         Kooboo.Media.getList().then(function(res) {
           if (res.success) {
             res.model["show"] = true;
@@ -68,11 +68,13 @@
         });
       },
       removePic: function(pic) {
+        var self = this;
         self.pics = _.without(self.pics, pic);
       }
     },
     watch: {
       pics: function(value) {
+        var self = this;
         if (self.field.isMultipleValue) {
           self.kbFormItem.kbForm.model[self.kbFormItem.prop] = value.map(
             function(v) {
