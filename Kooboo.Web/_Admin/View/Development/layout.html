@@ -104,7 +104,7 @@
                         title="Remove"
                         href="javascript:"
                         class="btn gray btn-xs pull-right"
-                        @click="bindingPanel.remove"
+                        @click="bindingPanel.remove($data)"
                         v-kb-tooltip="Kooboo.text.common.remove"
                         ><i class="fa fa-minus"></i
                       ></a>
@@ -112,7 +112,7 @@
                         href="javascript:;"
                         class="btn blue btn-xs pull-right"
                         title="Edit"
-                        @click="bindingPanel.edit"
+                        @click="bindingPanel.edit($data)"
                         v-kb-tooltip="Kooboo.text.common.edit"
                         ><i class="fa fa-pencil"></i
                       ></a>
@@ -129,7 +129,7 @@
                         title="Remove"
                         href="javascript:"
                         class="btn gray btn-xs pull-right"
-                        @click="bindingPanel.removeLabel"
+                        @click="bindingPanel.removeLabel($data)"
                         v-kb-tooltip="Kooboo.text.common.remove"
                         ><i class="fa fa-minus"></i
                       ></a>
@@ -138,7 +138,7 @@
                         class="btn blue btn-xs pull-right"
                         title="Edit"
                         @click="bindingPanel.edit"
-                        v-kb-tooltip="Kooboo.text.common.edit"
+                        v-kb-tooltip="Kooboo.text.common.edit($data)"
                         ><i class="fa fa-pencil"></i
                       ></a>
                       <strong>Label</strong>
@@ -167,7 +167,7 @@
                       href="javascript:;"
                       title="Remove"
                       v-kb-tooltip="Kooboo.text.common.remove"
-                      @click="bindingPanel.remove"
+                      @click="bindingPanel.remove($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
@@ -175,7 +175,7 @@
                       href="javascript:;"
                       title="Edit"
                       v-kb-tooltip="Kooboo.text.common.edit"
-                      @click="bindingPanel.edit"
+                      @click="bindingPanel.edit($data)"
                       ><i class="fa fa-pencil"></i
                     ></a>
                     {{ $data.name }}
@@ -201,15 +201,15 @@
                       href="javascript:;"
                       title="Remove"
                       v-kb-tooltip="Kooboo.text.common.remove"
-                      @click="bindingPanel.removeLabel"
+                      @click="bindingPanel.removeLabel($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
                       href="javascript:;"
                       class="btn blue btn-xs pull-right"
                       title="Edit"
-                      @click="bindingPanel.edit"
-                      v-kb-tooltip: Kooboo.text.common.edit"
+                      @click="bindingPanel.edit($data)"
+                      v-kb-tooltip="Kooboo.text.common.edit"
                       ><i class="fa fa-pencil"></i
                     ></a>
                     {{ $data.text }}
@@ -238,7 +238,7 @@
                       href="javascript:;"
                       title="Remove"
                       v-kb-tooltip="Kooboo.text.common.remove" 
-                      @click="bindingPanel.removeStyle"
+                      @click="bindingPanel.removeStyle($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
@@ -247,7 +247,7 @@
                       href="javascript:;"
                       title="Edit"
                       v-kb-tooltip="Kooboo.text.common.edit" 
-                      @click="bindingPanel.editJsCss"
+                      @click="bindingPanel.editJsCss($data)"
                       ><i class="fa fa-pencil"></i
                     ></a>
                     <span class="nowrap-text">{{ $data.name }}</span>
@@ -289,7 +289,7 @@
                       href="javascript:;"
                       title="Remove"
                       v-kb-tooltip="Kooboo.text.common.remove" 
-                      @click="bindingPanel.removeScript"
+                      @click="bindingPanel.removeScript($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
@@ -298,7 +298,7 @@
                       href="javascript:;"
                       title="Edit"
                       v-kb-tooltip="Kooboo.text.common.edit" 
-                      @click="bindingPanel.editJsCss"
+                      @click="bindingPanel.editJsCss($data)"
                       ><i class="fa fa-pencil"></i
                     ></a>
                     <span class="nowrap-text">{{ $data.name }}</span>
@@ -335,7 +335,7 @@
                       href="javascript:;"
                       title="Remove"
                       v-kb-tooltip="Kooboo.text.common.remove" 
-                      @click="bindingPanel.removeScript"
+                      @click="bindingPanel.removeScript($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
@@ -344,7 +344,7 @@
                       href="javascript:;"
                       title="Edit"
                       v-kb-tooltip="Kooboo.text.common.edit"
-                      @click="bindingPanel.editJsCss"
+                      @click="bindingPanel.editJsCss($data)"
                       ><i class="fa fa-pencil"></i
                     ></a>
                     <span class="nowrap-text">

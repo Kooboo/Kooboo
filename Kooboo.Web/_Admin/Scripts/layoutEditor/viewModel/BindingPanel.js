@@ -327,21 +327,17 @@
         });
       },
       edit: function(item) {
+        var result = {
+          id: item.id,
+          elem: item.elem,
+          type: item.type
+        };
         if (item.hasOwnProperty("name")) {
-          Kooboo.EventBus.publish("position/edit", {
-            id: item.id,
-            elem: item.elem,
-            name: item.name,
-            type: item.type
-          });
+          result.name = item.name;
         } else {
-          Kooboo.EventBus.publish("binding/edit", {
-            id: item.id,
-            elem: item.elem,
-            text: item.text,
-            type: item.type
-          });
+          result.text = item.text;
         }
+        Kooboo.EventBus.publish("position/edit", result);
       },
       remove: function(item) {
         Kooboo.EventBus.publish("position:remove", {

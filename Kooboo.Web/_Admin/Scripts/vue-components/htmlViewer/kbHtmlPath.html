@@ -3,16 +3,16 @@
     <a
       v-if="$index == path.length - 1"
       href="javascript:;"
-      @click="changeElem"
-      @mouseover="hoverElem"
+      @click.stop="changeElem($data)"
+      @mouseover.stop="hoverElem($data)"
       class="node active"
       >{{$data.text }}</a
     >
     <template v-else>
       <a
         href="javascript:;"
-        @click="changeElem"
-        @mouseover="hoverElem"
+        @click.stop="changeElem($data)"
+        @mouseover.stop="hoverElem($data)"
         class="node"
         >{{ $data.text }}</a
       >
