@@ -6,12 +6,11 @@
     ),
     data: function() {
       self = this;
-      return {};
+      return {
+        path: []
+      };
     },
-    props: {
-      elem: HTMLElement,
-      rootElem: HTMLElement
-    },
+    props: ["elem", "rootElem"],
     methods: {
       changeElem: function(m) {
         Kooboo.EventBus.publish("kb/lighter/holder", m.elem);
@@ -22,72 +21,75 @@
         // self.$emit("hover", m);
       }
     },
-    computed: {
-      path: function() {
-        var _pathList = [];
-        if (self.elem) {
-          if (self.rootElem) {
-            var parent = null;
-            if (
-              $.contains(self.rootElem, self.elem) ||
-              $(self.rootElem).is($(self.elem))
-            ) {
-              parent = self.elem;
-            } else {
-              parent = self.rootElem;
-            }
-            while (
-              $.contains(self.rootElem, parent) ||
-              $(self.rootElem).is($(parent))
-            ) {
-              var displayText = parent.tagName.toLowerCase();
+    watch: {
+      elem: {
+        handler: function() {
+          var _pathList = [];
+          if (self.elem) {
+            if (self.rootElem) {
+              var parent = null;
+              if (
+                $.contains(self.rootElem, self.elem) ||
+                $(self.rootElem).is($(self.elem))
+              ) {
+                parent = self.elem;
+              } else {
+                parent = self.rootElem;
+              }
+              while (
+                $.contains(self.rootElem, parent) ||
+                $(self.rootElem).is($(parent))
+              ) {
+                var displayText = parent.tagName.toLowerCase();
 
-              if ($(parent).attr("id")) {
-                displayText += "#" + $(parent).attr("id");
-              } else if ($(parent).attr("class")) {
-                if (
-                  $(parent)
-                    .attr("class")
-                    .indexOf(" ") == -1
-                ) {
-                  displayText += "." + $(parent).attr("class");
-                } else {
-                  displayText +=
-                    "." +
+                if ($(parent).attr("id")) {
+                  displayText += "#" + $(parent).attr("id");
+                } else if ($(parent).attr("class")) {
+                  if (
                     $(parent)
                       .attr("class")
-                      .split(" ")
-                      .join(".");
+                      .indexOf(" ") == -1
+                  ) {
+                    displayText += "." + $(parent).attr("class");
+                  } else {
+                    displayText +=
+                      "." +
+                      $(parent)
+                        .attr("class")
+                        .split(" ")
+                        .join(".");
+                  }
                 }
+                _pathList.push({
+                  text: displayText,
+                  elem: parent
+                });
+                parent = $(parent).parent()[0];
               }
-              _pathList.push({
-                text: displayText,
-                elem: parent
-              });
-              parent = $(parent).parent[0];
-            }
-          } else {
-            var parent = self.elem;
-            // TODO: to be reviewed
-            while (
-              window.viewEditor &&
-              $.contains(window.viewEditor.position.elem, parent)
-            ) {
-              var displayText = parent.tagName.toLowerCase();
-              if ($(parent).attr("id")) {
-                displayText += "#" + $(parent).attr("id");
-              } else if ($(parent).attr("class")) {
-                displayText += "." + $(parent).attr("class");
+            } else {
+              var parent = self.elem;
+              // TODO: to be reviewed
+              while (
+                window.viewEditor &&
+                $.contains(window.viewEditor.position.elem, parent)
+              ) {
+                var displayText = parent.tagName.toLowerCase();
+                if ($(parent).attr("id")) {
+                  displayText += "#" + $(parent).attr("id");
+                } else if ($(parent).attr("class")) {
+                  displayText += "." + $(parent).attr("class");
+                }
+                _pathList.push({
+                  text: displayText,
+                  elem: parent
+                });
+                parent = $(parent).parent[0];
               }
-              _pathList.push({
-                text: displayText,
-                elem: parent
-              });
-              parent = $(parent).parent[0];
             }
           }
-        }
-        return _pathList.reverse();
+          self.path = _pathList.reverse();
+        },
+        immediate: true
       }
     }
   });

@@ -2,9 +2,9 @@
   <li
     v-for="(tag,index) in tree"
     :key="index"
-    @click.stop="changeElem"
-    @mouseover.stop="hoverElem"
-    @mouseout.stop="unhoverElem"
+    @click.stop="changeElem(tag)"
+    @mouseover.stop="hoverElem(tag)"
+    @mouseout.stop="unhoverElem(tag)"
   >
     <span :class="{ hover: tag.isHovered }" class="code"
       >&lt;{{ tag.name }}<span
