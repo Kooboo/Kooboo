@@ -446,7 +446,7 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
         sortables[i].__data_item = binding.value[i];
       }
     },
-    update: function() {
+    update: function(ev, ui) {
       var newList = [];
       var sortables = sortElementSeletor
         ? $el.find(sortElementSeletor).not(".ui-sortable-placeholder")
@@ -459,8 +459,15 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
         newList.forEach(function(item) {
           binding.value.push(item);
         });
-        Kooboo.trigger(el, "after-sort");
       });
+      if (vnode.data.on) {
+        var targetIndex = $el.children().index(ui.item[0]);
+        setTimeout(function() {
+          Kooboo.trigger(el, "after-sort", {
+            targetIndex: targetIndex
+          });
+        });
+      }
     }
   });
 });
@@ -793,7 +800,7 @@ Vue.directive("kb-select2", {
       element.__bindingValue = binding.value;
       $(element).spectrum("set", color);
     },
-    unbind:function(element){
+    unbind: function(element) {
       $(element).spectrum("destroy");
     }
   });

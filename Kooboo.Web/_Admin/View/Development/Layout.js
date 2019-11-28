@@ -24,7 +24,6 @@ $(function() {
         _layoutCode: "",
         htmlContent: "",
         _htmlContent: "",
-        isFormatted: false,
         curType: "preview",
         bindingPanel: new BindingPanel()
       };
@@ -232,21 +231,20 @@ $(function() {
     },
     methods: {
       formatCode: function() {
-        self.isFormatted = true;
-        // TODO: nj
-        // var formatted = html_beautify(self.layoutCode());
-        // self.layoutCode(formatted);
+        this.$refs.editor.formatCode();
       },
       changeType: function(type) {
         if (self.curType !== type) {
           self.curType = type;
 
           if (type == "code") {
-            cm.setValue(self.getHTML());
-            cm.refresh();
+            self.layoutCode = self.getHTML();
+            self.$nextTick(function() {
+              self.formatCode();
+            });
           } else {
             var oldHtml = self.htmlContent,
-              newHtml = cm.getValue();
+              newHtml = self.layoutCode;
 
             if (oldHtml !== newHtml) {
               self.setHTML(newHtml);
@@ -255,9 +253,7 @@ $(function() {
         }
       },
       getHTML: function() {
-        // TODO: nj
         return kbFrame.getHTML();
-        return html_beautify(kbFrame.getHTML());
       },
       setHTML: function(html, callback) {
         BindingStore.clear();
@@ -306,7 +302,7 @@ $(function() {
       },
       onSave: function() {
         self.onSubmitLayout(function(id) {
-          if (self.isNewLayout()) {
+          if (self.isNewLayout) {
             location.href = Kooboo.Route.Get(Kooboo.Route.Layout.DetailPage, {
               Id: id
             });
@@ -316,7 +312,7 @@ $(function() {
         });
       },
       userCancel: function() {
-        if (self.isContentChanged()) {
+        if (self.isContentChanged) {
           if (confirm(Kooboo.text.confirm.beforeReturn)) {
             self.goBack();
           }
@@ -328,26 +324,26 @@ $(function() {
         return self.name.isValid();
       },
       getBodyHtml: function() {
-        if (self.isNewLayout()) {
-          return html_beautify(self.getHTML());
+        if (self.isNewLayout) {
+          return self.getHTML();
         } else {
-          if (self.isContentChanged()) {
-            return html_beautify(self.getHTML());
+          if (self.isContentChanged) {
+            return self.getHTML();
           } else {
-            return self._layoutCode();
+            return self._layoutCode;
           }
         }
       },
       onSubmitLayout: function(callback) {
         function doSubmit(body) {
           Kooboo.Layout.post({
-            id: self.layoutId(),
-            name: self.name(),
+            id: self.layoutId,
+            name: self.name,
             body: body
           }).then(function(res) {
             if (res.success) {
-              self._htmlContent(self.htmlContent());
-              self._layoutCode(self.layoutCode());
+              self._htmlContent = self.htmlContent;
+              self._layoutCode = self.layoutCode;
               if (typeof callback == "function") {
                 callback(res.model);
               }
@@ -358,8 +354,8 @@ $(function() {
         }
 
         function submit() {
-          if (self.curType() == "code") {
-            self.setHTML(cm.getValue(), function() {
+          if (self.curType == "code") {
+            self.setHTML(self.layoutCode, function() {
               setTimeout(function() {
                 var body = self.getBodyHtml();
                 doSubmit(body);
@@ -371,12 +367,9 @@ $(function() {
           }
         }
 
-        if (self.isNewLayout()) {
-          if (self.isValid()) {
-            submit();
-          } else {
-            self.showError(true);
-          }
+        if (self.isNewLayout) {
+          // todo: validate
+          submit();
         } else {
           submit();
         }

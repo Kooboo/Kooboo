@@ -50,8 +50,8 @@
   function publishSortEventToKbFrame(type, context) {
     Kooboo.EventBus.publish("kb/frame/resource/sort", {
       type: type,
-      targetIdx: context.targetIndex,
-      elem: context.viewModel.elem,
+      targetIdx: context.targetIdx,
+      elem: context.elem,
       list: context.list
     });
   }
@@ -122,11 +122,11 @@
           elem &&
           elem.tagName &&
           elem.tagName.toLowerCase() != positionKey &&
-          !self.positionList.first(function(it) {
+          !_.some(self.positionList, function(it) {
             var el = it.placeholder || it.elem;
             return el.contains(elem) || elem.contains(el);
           }) &&
-          !self.labelList.first(function(it) {
+          !_.some(self.labelList, function(it) {
             return it.elem.contains(elem);
           }) &&
           elem !== elem.ownerDocument.body
@@ -138,7 +138,7 @@
           elem &&
           elem.tagName &&
           elem.tagName.toLowerCase() != positionKey &&
-          !self.labelList.first(function(it) {
+          !_.find(self.labelList, function(it) {
             return it.elem.contains(elem);
           }) &&
           elem !== elem.ownerDocument.body
@@ -150,7 +150,7 @@
           elem &&
           elem.tagName &&
           elem.tagName.toLowerCase() != positionKey &&
-          !self.labelList.first(function(it) {
+          !_.some(self.labelList, function(it) {
             return it.elem.contains(elem);
           }) &&
           elem !== elem.ownerDocument.body
@@ -162,10 +162,10 @@
           elem &&
           elem.tagName &&
           elem.tagName.toLowerCase() != positionKey &&
-          !self.positionList.first(function(it) {
+          !_.some(self.positionList, function(it) {
             return (it.placeholder || it.elem).contains(elem);
           }) &&
-          !self.labelList.first(function(it) {
+          !_.some(self.labelList, function(it) {
             return elem.contains(it.elem) || it.elem.contains(elem);
           }) &&
           elem !== elem.ownerDocument.body &&
@@ -298,7 +298,7 @@
       },
       convert: function() {
         var elem = self.elem;
-        var foundItem = this.labelList.first(function(it) {
+        var foundItem = _.find(this.labelList, function(it) {
           if (it.elem != elem && elem.contains(it.elem)) {
             return it;
           }
@@ -353,6 +353,33 @@
           name: item.name,
           type: item.type
         });
+      },
+      headScriptSorted: function(e) {
+        var self = this;
+        var index =  e.data.targetIndex;
+        publishSortEventToKbFrame("script", {
+          targetIdx: index,
+          elem: self.headScriptList[index].elem,
+          list: self.headScriptList
+        });
+      },
+      bodyScriptSorted: function(e) {
+        var self = this;
+        var index =  e.data.targetIndex;
+        publishSortEventToKbFrame("script", {
+          targetIdx: index,
+          elem: self.bodyScriptList[index].elem,
+          list: self.bodyScriptList
+        });
+      },
+      styleSorted: function(e) {
+        var self = this;
+        var index =  e.data.targetIndex;
+        publishSortEventToKbFrame("style", {
+          targetIdx: index,
+          elem: self.styleList[index].elem,
+          list: self.styleList
+        });
       }
     },
     computed: {
@@ -394,18 +421,6 @@
       context.viewModel.head = false;
       context = _.assignIn(context, { list: sortedList });
       publishSortEventToKbFrame("script", context, "body");
-    };
-    this.headScriptList.onSorted = function(sortedList, context) {
-      context = _.assignIn(context, { list: sortedList });
-      publishSortEventToKbFrame("script", context);
-    };
-    this.bodyScriptList.onSorted = function(sortedList, context) {
-      context = _.assignIn(context, { list: sortedList });
-      publishSortEventToKbFrame("script", context);
-    };
-    this.styleList.onSorted = function(sortedList, context) {
-      context = _.assignIn(context, { list: sortedList });
-      publishSortEventToKbFrame("style", context);
     };
   }
 

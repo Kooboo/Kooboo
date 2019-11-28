@@ -20,7 +20,7 @@
     mounted: function() {
       var self = this;
       Kooboo.EventBus.subscribe("kb/html/previewer/select", function(elem) {
-        this.elem = elem;
+        self.elem = elem;
       });
       Kooboo.EventBus.subscribe("kb/html/previewer/hover", function(elem) {
         Kooboo.EventBus.publish("kb/html/tree/elem/hover", elem);
