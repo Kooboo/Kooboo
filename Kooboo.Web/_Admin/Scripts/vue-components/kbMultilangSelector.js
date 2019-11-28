@@ -1,5 +1,4 @@
 (function() {
-  var self;
   Vue.component("kb-multilang-selector", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/kbMultilangSelector.html"
@@ -19,11 +18,21 @@
     },
     data: function() {
       self = this;
-      return {};
+      return {
+        innerCultures: []
+      };
     },
     mounted: function() {
+      var self=this;
+      Kooboo.EventBus.subscribe("kb/multilang/change", function(target) {
+        var lang = _.findLast(self.innerCultures, function(lang) {
+          return lang.key == target.name;
+        });
+        lang && (lang.selected = target.selected);
+      });
+
       Kooboo.EventBus.subscribe("kb/multilang/get", function() {
-        _.forEach(self.cultures, function(cul) {
+        _.forEach(self.innerCultures, function(cul) {
           cul.selected &&
             Kooboo.EventBus.publish("kb/multilang/change", {
               name: cul.key,
@@ -35,6 +44,7 @@
     },
     methods: {
       changeSelected(culture) {
+        var self=this;
         /* publish language-change event */
         var _cultrue = {
           name: culture.key,
@@ -59,10 +69,9 @@
         //   }
         //   self.$emit("update:selected", selectedCultures);
         // }
-      }
-    },
-    computed: {
+      },
       formatCultures() {
+        var self=this;
         var _culturesArr = Kooboo.objToArr(self.cultures) || [],
           _cultures = [];
         var defaultCultureIdx = _.findIndex(_culturesArr, function(c) {
@@ -79,6 +88,14 @@
           _cultures.push(culture);
         });
         return _cultures;
+      }
+    },
+    watch: {
+      cultures: {
+        handler: function() {
+          this.innerCultures = this.formatCultures();
+        },
+        immediate: true
       }
     }
   });

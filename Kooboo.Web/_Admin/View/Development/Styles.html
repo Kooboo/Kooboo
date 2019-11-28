@@ -46,9 +46,9 @@
       :key="item.value"
       :class="{active:item.value==currentTab}"
     >
-      <a href="javascript:;" @click="onTabClick(item.value)">{{
-        item.displayName
-      }}</a>
+      <a href="javascript:;" @click="onTabClick(item.value)"
+        >{{ item.displayName }}</a
+      >
     </li>
   </ul>
   <kb-table
@@ -81,11 +81,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Style.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -135,11 +132,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Style.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -161,9 +155,9 @@
   >
     <kb-table-column :label="Kooboo.text.site.style.name">
       <template v-slot="row">
-        <a class="btn btn-link" @click.stop="showInlineModal=true">{{
-          row.name
-        }}</a>
+        <a class="btn btn-link" @click.stop="onShowInlineModal(row.id)"
+          >{{ row.name }}</a
+        >
       </template>
     </kb-table-column>
 
@@ -200,9 +194,9 @@
   >
     <kb-table-column :label="Kooboo.text.common.name">
       <template v-slot="row">
-        <a class="btn btn-link" @click.stop="editGroup(row.id)">{{
-          row.name
-        }}</a>
+        <a class="btn btn-link" @click.stop="editGroup(row.id)"
+          >{{ row.name }}</a
+        >
       </template>
     </kb-table-column>
 
@@ -230,11 +224,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.ResourceGroup.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -249,9 +240,9 @@
 
     <kb-table-column width="200px" align="right">
       <template v-slot="row">
-        <a class="btn blue" :href="row.previewUrl" target="_blank">{{
-          Kooboo.text.common.preview
-        }}</a>
+        <a class="btn blue" :href="row.previewUrl" target="_blank"
+          >{{ Kooboo.text.common.preview }}</a
+        >
       </template>
     </kb-table-column>
   </kb-table>
@@ -348,9 +339,9 @@
           </kb-form>
         </div>
         <div class="modal-footer">
-          <button class="btn green" @click="onGroupModalSubmit">{{
-            Kooboo.text.common[isGroupNew ? "create" : "save"]
-          }}</button>
+          <button class="btn green" @click="onGroupModalSubmit"
+            >{{ Kooboo.text.common[isGroupNew ? "create" : "save"] }}</button
+          >
           <button class="btn gray" data-dismiss="modal">Cancel</button>
         </div>
       </div>
@@ -374,11 +365,11 @@
         <div class="modal-body" v-if="showInlineModal">
           <div class="block-style-editor" style="overflow: inherit;">
             <div id="inline_ed">
-              <!-- <div
-                class="block-style-editor-v2"
-                data-bind="component: { name: 'kb-style-list', params: { rules: styleRules(), showRelationBtn: false, getRules: getStyleRules }}"
-              ></div> -->
-              <!-- TODO 后期换成vscode编辑器 -->
+              <kb-style-list
+                class="block-style-editor-v2 "
+                ref="styleList"
+                :rules="styleRules"
+              ></kb-style-list>
             </div>
           </div>
         </div>
@@ -389,7 +380,7 @@
       </div>
     </div>
   </div>
-  <!-- <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog> -->
+  <kb-media-dialog :data="mediaDialogData"></kb-media-dialog>
 </div>
 <script>
   Kooboo.styleEditor = {};
@@ -402,19 +393,12 @@
       "/_Admin/Scripts/vue-components/kbTable.js",
       "/_Admin/Scripts/vue-components/kbRelationModal.js",
       "/_Admin/Scripts/kooboo/Guid.js",
-      "/_Admin/Scripts/kobindings.sortable.js",
-      "/_Admin/Scripts/components/kbUploadProgressor.js",
-      "/_Admin/Scripts/components/kbTable.js",
-      "/_Admin/Scripts/components/kbRelationModal.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/styleEditor/components/kb-style-list.js",
-      "/_Admin/Scripts/components/kb-media-dialog.js",
-      "/_Admin/Scripts/components/kbBreadcrumb.js",
-      "/_Admin/Scripts/kobindings.spectrum.js",
+      "/_Admin/Scripts/vue-components/kb-media-dialog.js",
       "/_Admin/Scripts/styleEditor/CSSRule.js",
-      "/_Admin/Scripts/kobindings.typeahead.js",
+      "/_Admin/Scripts/vue-components/kbTypeahead.js",
       "/_Admin/Scripts/kooboo/Color.js",
-      "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
       "/_Admin/Scripts/lib/spectrum/spectrum-custom.js"
     ]);
@@ -468,14 +452,64 @@
           typeName: Kooboo.Style.name,
           children: []
         },
-        selectedOption: ""
+        selectedOption: "",
+        styleRules: [],
+        mediaDialogData: null
       };
     },
     mounted: function() {
+      var self = this;
       this.onTabClick("External");
+
+      Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(ctx) {
+        Kooboo.Media.getList().then(function(res) {
+          if (res.success) {
+            res.model["show"] = true;
+            res.model["context"] = ctx;
+            res.model["onAdd"] = function(selected) {
+              var _oldValue = ctx.value,
+                regex = _oldValue.match(/url\((\S+)\)/);
+
+              if (regex && regex.length) {
+                var newValue = _oldValue
+                  .split(regex[1])
+                  .join("'" + selected.url + "'");
+                ctx.value = newValue;
+              } else {
+                ctx.value = _oldValue + " url('" + selected.url + "')";
+              }
+            };
+            self.mediaDialogData = res.model;
+          }
+        });
+      });
     },
     methods: {
-      saveInlineModal: function() {},
+      saveInlineModal: function() {
+        var self = this;
+        setTimeout(function() {
+          var rule = self.$refs.styleList.styleRules[0];
+          var ruleText = "";
+          _.forEach(rule.declarations, function(dec) {
+            ruleText +=
+              dec.name +
+              ": " +
+              dec.value +
+              (dec.important ? " !important;" : ";");
+          });
+
+          Kooboo.CSSRule.updateInline({
+            id: rule.id,
+            ruleText: ruleText
+          }).then(function(res) {
+            if (res.success) {
+              self.onTabClick("Inline");
+              self.showInlineModal = false;
+            }
+          });
+        }, 1000);
+        $(".page-loading").show();
+      },
       getVersionsUrl: function(keyHash, storeNameHash) {
         return Kooboo.Route.Get(Kooboo.Route.SiteLog.LogVersions, {
           KeyHash: keyHash,
@@ -660,6 +694,23 @@
             }
           );
         }
+      },
+      newID: function() {
+        return Math.ceil(Math.random() * Math.pow(2, 53));
+      },
+      onShowInlineModal: function(id) {
+        var self = this;
+        Kooboo.CSSRule.getInline({
+          id: id
+        }).then(function(res) {
+          if (res.success) {
+            res.model.declarations.forEach(function(dec) {
+              dec.id = self.newID();
+            });
+            self.styleRules = [res.model];
+            self.showInlineModal = true;
+          }
+        });
       }
     },
     computed: {
@@ -711,6 +762,7 @@
         }
         return rules;
       }
-    }
+    },
+    watch: {}
   });
 </script>

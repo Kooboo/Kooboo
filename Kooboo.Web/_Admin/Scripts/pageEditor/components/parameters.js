@@ -1,52 +1,53 @@
-(function() {
-    var template = Kooboo.getTemplate("/_Admin/Scripts/pageEditor/components/parameters.html");
+Vue.component("kb-page-parameters", {
+  template: Kooboo.getTemplate(
+    "/_Admin/Scripts/pageEditor/components/parameters.html"
+  ),
+  props: {
+    parameters: Object
+  },
+  data: function() {
+    return {
+      defaultRouteValues: []
+    };
+  },
+  mounted: function() {
+    var self = this;
+    if (self.parameters) {
+      for (var name in self.parameters) {
+        self.defaultRouteValues.push({
+          name: name,
+          value: self.parameters[name]
+        });
+      }
+    }
 
-    ko.components.register("kb-page-parameters", {
-        viewModel: function(params) {
+    Kooboo.EventBus.subscribe("kb/page/save", function(res) {
+      res["parameters"] = {};
 
-            var self = this;
+      _.forEach(self.defaultRouteValues, function(drv) {
+        res["parameters"][drv.name] = drv.value;
+      });
 
-            this.defaultRouteValues = ko.observableArray();
-
-            this.addDefaultRouteValue = function() {
-                self.defaultRouteValues.push({
-                    name: ko.observable(),
-                    value: ko.observable()
-                });
-                Kooboo.EventBus.publish("kb/page/field/change", {
-                    type: "url"
-                })
-            }
-
-            this.removeDefaultRouteValue = function(routeValue) {
-                self.defaultRouteValues.remove(routeValue);
-                Kooboo.EventBus.publish("kb/page/field/change", {
-                    type: "url"
-                })
-            }
-
-            if (params) {
-
-                if (params.parameters) {
-                    for (var name in params.parameters) {
-                        self.defaultRouteValues.push({
-                            name: ko.observable(name),
-                            value: ko.observable(params.parameters[name])
-                        });
-                    }
-                }
-
-                Kooboo.EventBus.subscribe("kb/page/save", function(res) {
-                    res["parameters"] = {};
-
-                    _.forEach(self.defaultRouteValues(), function(drv) {
-                        res["parameters"][drv.name()] = drv.value();
-                    })
-
-                    Kooboo.EventBus.publish("kb/page/final/save", res);
-                })
-            }
-        },
-        template: template
-    })
-})()
+      Kooboo.EventBus.publish("kb/page/final/save", res);
+    });
+  },
+  methods: {
+    removeDefaultRouteValue: function(routeValue) {
+      this.defaultRouteValues = this.defaultRouteValues.filter(function(f) {
+        return f != routeValue;
+      });
+      Kooboo.EventBus.publish("kb/page/field/change", {
+        type: "url"
+      });
+    },
+    addDefaultRouteValue: function() {
+      this.defaultRouteValues.push({
+        name: "",
+        value: ""
+      });
+      Kooboo.EventBus.publish("kb/page/field/change", {
+        type: "url"
+      });
+    }
+  }
+});

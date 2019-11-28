@@ -1,30 +1,107 @@
-<ol data-bind="foreach: { data: styleRules, as: 'rule' }" class="code clearfix">
-    <li>
-        <span data-bind="text: rule.selector(), click: onShowSelectorInput, visible: !rule.showSelectorInput()" class="text selector start-tag"></span>
-        <input data-bind="value: rule.selector, visible: rule.showSelectorInput, hasFocus: rule.showSelectorInput, event: { blur: selectorInputBlur }" type="text" class="text selector start-tag highlight">
+<div>
+  <ol class="code clearfix">
+    <template v-for="rule in styleRules">
+      <li :key="rule.id">
+        <span
+          class="text selector start-tag"
+          @click="onShowSelectorInput(rule)"
+          v-if="!rule.showSelectorInput"
+          >{{rule.selector}}</span
+        >
+        <input
+          type="text"
+          v-kb-focus
+          class="text selector start-tag highlight"
+          v-if="rule.showSelectorInput"
+          v-model="rule.selector"
+          @blur="ruleBlur(rule)"
+        />
         <span class="separator">{</span>
-        <ul data-bind="foreach: { data: rule.declarations, as:'dec' }" class="css-property-list clearfix">
-            <li class="css-property-group" data-bind="css: { 'style-item-editing': dec.showDecValue }, event: { mouseover: dec.enableChangeBtns, mouseout: dec.disableChangesBtns }">
-                <span data-bind="text: dec.name(), click: dec.onShowDecName, visible: !dec.showDecName()" class="text attribute"></span>
-                <input type="text" data-bind="value: dec.name, typeahead: $component._propertyName, items: 6, defaultShow: false, visible: dec.showDecName, hasFocus: dec.showDecName, event: { blur: dec.decNameInputBlur, keyup: dec.switchToValueInput }, attr: { placeholder: Kooboo.text.component.styleEditor.declaration }"
-                    class="text attribute highlight input-small">
-                <span class="separator">:</span>
-                <span data-bind="text: dec.valueString() + ';', click: dec.onShowDecValue, visible: !dec.showDecValue(), css: { 'empty': dec.emptyValue }" class="text value"></span>
-                <input type="text" data-bind="value: dec.valueString, visible: dec.showDecValue, hasFocus: dec.showDecValue, event: { blur: dec.decValueInputBlur, keyup: handleValueInputKeyPress }, attr: { placeholder: Kooboo.text.component.styleEditor.value }" class="text value highlight input-small">
-                <span data-bind="visible: dec.showDecValue" class="separator">;</span>
-                <!-- ko if: dec.ableToShowChangeImgBtn() && !dec.showDecValue() -->
-                <a data-bind="click: dec.onPickImageBtnClick, text: Kooboo.text.component.styleEditor.pickImage" class="btn btn-xs blue pull-right"></a>
-                <!-- /ko -->
-                <!-- ko if: dec.ableToShowColorPicker -->
-                <input data-bind="spectrum: dec.valueString" type="text" class="pull-left" style="display:none;">
-                <!-- /ko -->
-            </li>
+        <ul class="css-property-list clearfix">
+          <li
+            v-for="dec in rule.declarations"
+            :key="dec.id"
+            class="css-property-group"
+            :class="{'style-item-editing': dec.showDecValue }"
+            @mouseover="dec.btns=true;$forceUpdate()"
+            @mouseout="dec.btns=false;$forceUpdate()"
+          >
+            <span
+              @click="dec.showDecName=true;$forceUpdate()"
+              v-if="!dec.showDecName"
+              class="text attribute"
+              >{{dec.name}}</span
+            >
+            <input
+              type="text"
+              v-kb-typeahead="{source:propertyName,items: 6, defaultShow: false}"
+              v-if="dec.showDecName"
+              v-kb-focus
+              @keyup.tab.enter="switchToValueInput(dec)"
+              @blur="decNameInputBlur(rule,dec)"
+              :placeholder="Kooboo.text.component.styleEditor.declaration"
+              class="text attribute highlight input-small"
+              v-model="dec.name"
+            />
+            <span class="separator">:</span>
+            <span
+              class="text value"
+              :class="{empty: !dec.value}"
+              v-if="!dec.showDecValue"
+              @click="dec.showDecValue=true;$forceUpdate()"
+              >{{dec.value + (dec.important ? " !important" : "")}};</span
+            >
+            <input
+              type="text"
+              class="text value highlight input-small"
+              v-if="dec.showDecValue"
+              v-kb-focus
+              @focus="appendImportant(dec)"
+              @blur="decValueInputBlur(dec)"
+              @keyup.enter.tab="dec.showDecValue=false;$forceUpdate()"
+              :placeholder="Kooboo.text.component.styleEditor.value"
+              v-model="dec.inputValue"
+            />
+            <span v-if="dec.showDecValue" class="separator">;</span>
+            <a
+              v-show="ableToShowChangeImgBtn(dec)&&!dec.showDecValue&&dec.btns"
+              @click="onPickImageBtnClick(dec)"
+              class="btn btn-xs blue pull-right"
+              >{{Kooboo.text.component.styleEditor.pickImage}}</a
+            >
+            <input
+              v-if="ableToShowColorPicker(dec)"
+              v-kb-spectrum="dec.value"
+              v-model="dec.value"
+              type="text"
+              class="pull-left"
+              style="display:none;"
+            />
+          </li>
         </ul>
-        <a data-bind="click: $parent.addDeclaration.bind(rule), attr: { title: Kooboo.text.component.styleEditor.addProperty }" class="action add-css-property editable" href="javascript:;"><i class="fa fa-plus-square"></i></a>
+        <a
+          class="action add-css-property editable"
+          href="javascript:;"
+          @click="addDeclaration(rule)"
+          :title="Kooboo.text.component.styleEditor.addProperty"
+          ><i class="fa fa-plus-square"></i
+        ></a>
         <span class="separator">}</span>
-        <!-- ko if: $parent.showRelationBtn -->
-        <a data-bind="click: rule.removeSelector, attr: { title: Kooboo.text.component.styleEditor.removeSelector }" href="javascript:;" class="action remove-selector"><i class="fa fa-minus-square icon-color-red"></i></a>
-        <a data-bind="click: $parent.showRelation.bind(rule, rule.id), text: Kooboo.text.component.styleEditor.showRelation" href="javascript:;" class="label label-info"></a>
-        <!-- /ko -->
-    </li>
-</ol>
+        <template v-if="showRelationBtn">
+          <a
+            href="javascript:;"
+            class="action remove-selector"
+            @click="removeSelector"
+            :title="Kooboo.text.component.styleEditor.removeSelector"
+            ><i class="fa fa-minus-square icon-color-red"></i
+          ></a>
+          <a
+            @click="showRelation(rule)"
+            :title="Kooboo.text.component.styleEditor.showRelation"
+            class="label label-info"
+          ></a>
+        </template>
+      </li>
+    </template>
+  </ol>
+</div>
