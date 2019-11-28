@@ -110,7 +110,7 @@ var MonacoEditorService =
               }
             };
             window.require(["vs/editor/editor.main"], function () {
-              debugger
+              // debugger
               monaco = window.monaco;
               self.isLoader = true;
               callback()
