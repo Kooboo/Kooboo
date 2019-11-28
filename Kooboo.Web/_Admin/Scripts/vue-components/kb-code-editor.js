@@ -61,7 +61,9 @@
         return state.loader;
       }
     },
-    created: function() {},
+    mounted: function() {
+      if (this.loader) this.render();
+    },
     methods: {
       render: function() {
         var self = this;
@@ -98,7 +100,7 @@
         monacoService.changeTheme(value);
       },
       formatCode: function(callback) {
-        monacoService.format(this.editor,callback);
+        monacoService.format(this.editor, callback);
       }
     }
   });
