@@ -152,7 +152,7 @@
               var scriptEntry = new Script({
                 id: Kooboo.Guid.NewGuid(),
                 elem: scriptTag,
-                head: !!self.appendHead(),
+                head: !!self.appendHead,
                 url: self.text.url,
                 displayName: self.text.name
               });
@@ -160,7 +160,7 @@
               Kooboo.EventBus.publish("kb/frame/resource/add", {
                 type: "script",
                 tag: $(scriptTag).clone()[0],
-                isAppendToHead: self.appendHead()
+                isAppendToHead: self.appendHead
               });
               break;
             case "style":
