@@ -7,21 +7,7 @@ $(function() {
       return {
         name: "",
         menuItems: [],
-        breads: [
-          {
-            name: Kooboo.text.component.breadCrumb.sites
-          },
-          {
-            name: Kooboo.text.component.breadCrumb.dashboard
-          },
-          {
-            name: Kooboo.text.common.Menus,
-            url: Kooboo.Route.Menu.ListPage
-          },
-          {
-            name: name
-          }
-        ],
+        breads: [],
         mark:{markAnchorText: "{anchortext}",
           markHref: "{href}",
           markSubItems: "{items}",
@@ -34,7 +20,7 @@ $(function() {
         showMultiLangModal: false,
         showTemplateModal: false,
         multiNames:undefined,
-        loading: undefined,
+        loading: true,
         CUR_MENU: undefined,
         menuWithNoChild: false,
         showCurrentTemplate: false,
@@ -42,9 +28,6 @@ $(function() {
         previewCode: undefined,
         subItemContainer: '',
         subItemTemplate:""
-
-
-
       };
     },
     created: function() {
@@ -52,7 +35,25 @@ $(function() {
       self.getData();
       self.initHelp();
     },
-    mounted: function() {},
+    watch:{
+      name:function (val) {
+        self.breads = [
+          {
+            name: Kooboo.text.component.breadCrumb.sites
+          },
+          {
+            name: Kooboo.text.component.breadCrumb.dashboard
+          },
+          {
+            name: Kooboo.text.common.Menus,
+            url: Kooboo.Route.Menu.ListPage
+          },
+          {
+            name: val
+          }
+        ];
+      }
+    },
     methods: {
       getData: function() {
         $.when(
@@ -87,7 +88,6 @@ $(function() {
             r3.model.pages.forEach(function(page) {
               self.pageList.push(page.path);
             });
-
             self.loading = false;
             self.$nextTick(function() {
               self.afterMenusRendered();
@@ -303,13 +303,13 @@ $(function() {
             url: item.newSub.url || "#"
           }).then(function(res) {
             if (res.success) {
+              item.addSubMenuing = false;
               self.getData();
               window.info.show(Kooboo.text.info.save.success, true);
             } else {
               window.info.show(Kooboo.text.info.save.fail, false);
             }
           });
-          item.addSubMenuing = false;
         } else {
           window.info.show(Kooboo.text.info.menuNameRequired, false);
         }
@@ -443,13 +443,18 @@ $(function() {
       onHideTemplateModal:function () {
         self.showTemplateModal = false;
         self.CUR_MENU = undefined;
+        self.subItemContainer = undefined;
+        self.subItemTemplate = undefined;
+        self.currentTemplate = undefined;
+        self.previewCode = undefined;
+        self.templatePreview = undefined;
+
       },
       onShowTemplateModal:function(event,item){
         self.CUR_MENU = item;
         var _find = _.findLast(self.menuItems, function(menu) {
           return menu.id === self.CUR_MENU.id;
         });
-
         self.subItemContainer = _find.subItemContainer || "";
         self.subItemTemplate = _find.subItemTemplate || "";
         self.currentTemplate = _find.template || "";
@@ -475,7 +480,19 @@ $(function() {
         self.showTemplateModal = true
       },
       onSaveTemplate:function () {
+        Kooboo.Menu.UpdateTemplate({
+          Id: self.CUR_MENU.id,
+          RootId: self.CUR_MENU.rootId,
+          SubItemContainer: self.subItemContainer,
+          SubItemTemplate: self.subItemTemplate,
+          Template: self.currentTemplate
+        }).then(function(res) {
 
+          if (res.success) {
+            self.getData()
+            self.onHideTemplateModal();
+          }
+        });
       },
       codeHelp:function (event,m) {
 
@@ -493,7 +510,6 @@ $(function() {
             break;
         }
         component.replace(m.value)
-
       }
     }
   });

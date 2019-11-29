@@ -60,10 +60,10 @@
                        class="btn btn-xs btn-default"><i class="fa fa-minus"></i></a>
                 </td>
                 <td>
-                    <a v-kb-tooltip:top="index === 0 ?'' : Kooboo.text.tooltip.moveUp"
+                    <a v-kb-tooltip:top="index === 1 ?'' : Kooboo.text.tooltip.moveUp"
                        v-if="isNotRoot(item)"
                        @click.stop="menuMoveUp($event,index,item)"
-                       :disabled = 'index === 0' class="btn btn-xs btn-default"><i class="fa fa-caret-up"></i></a>
+                       :disabled = 'index === 1' class="btn btn-xs btn-default"><i class="fa fa-caret-up"></i></a>
                 </td>
                 <td>
                     <a v-kb-tooltip:left="index === menuItems.length -1 ?'' : Kooboo.text.tooltip.moveDown"
@@ -101,19 +101,16 @@
 
             </template>
             </tbody>
-            <tfoot data-bind="visible: loading">
+            <tfoot v-if="loading">
             <tr>
                 <td colspan="100" class="text-center">
                     <i class="fa fa-spinner fa-spin"></i>
-                    <!-- ko text: Kooboo.text.common.loading -->
-                    <!-- /ko -->
+                    {{Kooboo.text.common.loading}}
                 </td>
             </tr>
             </tfoot>
         </table>
     </div>
-
-
     <div
             class="modal fade"
             data-backdrop="static"
@@ -142,7 +139,7 @@
                 </div>
                 <div class="modal-footer">
                     <button @click="onSaveMultiName" class="btn green">Save</button>
-                    <button  @click="hideMultiLangModal" class="btn gray">Cancel</button>
+                    <button @click="hideMultiLangModal" class="btn gray">Cancel</button>
                 </div>
             </div>
         </div>
