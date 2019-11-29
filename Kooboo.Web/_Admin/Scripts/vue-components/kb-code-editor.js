@@ -77,11 +77,11 @@
             options.automaticLayout = true;
           }
           var temp = monacoService.create(
-            self.$el,
-            self.d_code || self.code,
-            self.lang,
-            options,
-            path
+              self.$el,
+              self.d_code || self.code,
+              self.lang,
+              options,
+              path
           );
           self.editor = temp.editor;
           self.model = temp.model;
@@ -93,14 +93,14 @@
           });
         }
       },
-      setAutosize: function(value) {
-        monacoService.setAutosize(value);
-      },
       changeTheme: function(value) {
         monacoService.changeTheme(value);
       },
       formatCode: function(callback) {
         monacoService.format(this.editor, callback);
+      },
+      replace: function (text,range) {
+        monacoService.replace(this.editor,text,range);
       }
     }
   });

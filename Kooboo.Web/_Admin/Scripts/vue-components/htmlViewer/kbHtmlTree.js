@@ -17,7 +17,6 @@
     "track",
     "wbr"
   ];
-  var self;
   Vue.component("kb-html-tree", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlTree.html"
@@ -28,7 +27,6 @@
       depth: Number
     },
     data: function() {
-      self = this;
       return {
         maxDepth: 5,
         tree: []
@@ -37,6 +35,7 @@
     watch: {
       elem: {
         handler: function() {
+          var self = this;
           var tree = [];
           if (self.elem) {
             if (Array.isArray(self.elem)) {

@@ -30,7 +30,7 @@
     <div class="block-visual-editor default">
       <div class="tabs-bottom">
         <div class="tab-content">
-          <section class="{active: curType == 'preview'}" class="tab-pane">
+          <section :class="{active: curType == 'preview'}" class="tab-pane">
             <div class="kb-editor" style="overflow: hidden">
               <iframe
                 src="about:blank"
@@ -138,7 +138,7 @@
                         class="btn blue btn-xs pull-right"
                         title="Edit"
                         @click="bindingPanel.edit"
-                        v-kb-tooltip="Kooboo.text.common.edit($data)"
+                        v-kb-tooltip="Kooboo.text.common.edit"
                         ><i class="fa fa-pencil"></i
                       ></a>
                       <strong>Label</strong>
@@ -222,7 +222,8 @@
                 </div>
                 <ul
                   class="list-group"
-                  data-bind="sortable: bindingPanel.styleList"
+                  v-kb-sortable="bindingPanel.styleList"
+                  @after-sort="bindingPanel.styleSorted"
                 >
                   <li
                     v-for="($data, index) in bindingPanel.styleList"
@@ -272,7 +273,9 @@
                 <ul
                   class="list-group"
                   id="head-scripts"
-                  data-bind="sortable: bindingPanel.headScriptList, connect:'#body-scripts'"
+                  v-kb-sortable="bindingPanel.headScriptList"
+                  @after-sort="bindingPanel.headScriptSorted"
+                  connect='#head-scripts'
                   style="min-height: 38px;"
                 >
                   <li
@@ -318,7 +321,9 @@
                 <ul
                   class="list-group"
                   id="body-scripts"
-                  data-bind="sortable: bindingPanel.bodyScriptList,connect:'#head-scripts'"
+                  v-kb-sortable="bindingPanel.bodyScriptList"
+                  @after-sort="bindingPanel.bodyScriptSorted"
+                  connect='#head-scripts'
                   style="min-height: 38px;"
                 >
                   <li
@@ -363,7 +368,7 @@
               </div>
             </div>
           </section>
-          <section class="{ active: curType == 'code' }" class="tab-pane">
+          <section :class="{ active: curType == 'code' }" class="tab-pane">
             <kb-code-editor
               ref="editor"
               :auto-size="true"

@@ -67,12 +67,12 @@
                 <div class="tab-content">
                     <div class="tab-pane" :class="{'active': activeTab === 'code'}">
                         <div class="kb-editor">
-                            <kb-code-editor  ref="code" auto-size="true"  :code.sync="codeContent" :lang="lang"></kb-code-editor>
+                            <kb-code-editor  ref="code" :auto-size="true"  :code.sync="codeContent" :lang="lang"></kb-code-editor>
                         </div>
                     </div>
                     <div class="tab-pane" :class="{'active': activeTab === 'config'}">
                         <div class="kb-editor" >
-                            <kb-code-editor  ref="config"  auto-size="true"   :code.sync="configContent" :lang="lang"></kb-code-editor>
+                            <kb-code-editor  ref="config"  :auto-size="true"   :code.sync="configContent" :lang="lang"></kb-code-editor>
                         </div>
                     </div>
                 </div>

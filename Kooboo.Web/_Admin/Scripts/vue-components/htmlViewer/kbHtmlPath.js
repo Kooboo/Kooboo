@@ -1,11 +1,9 @@
 (function() {
-  var self;
   Vue.component("kb-html-path", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlPath.html"
     ),
     data: function() {
-      self = this;
       return {
         path: []
       };
@@ -24,6 +22,7 @@
     watch: {
       elem: {
         handler: function() {
+          var self = this;
           var _pathList = [];
           if (self.elem) {
             if (self.rootElem) {

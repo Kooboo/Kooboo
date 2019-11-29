@@ -17,13 +17,12 @@
       // ,selected: Array
     },
     data: function() {
-      var self = this;
       return {
         innerCultures: []
       };
     },
     mounted: function() {
-      var self=this;
+      var self = this;
       Kooboo.EventBus.subscribe("kb/multilang/change", function(target) {
         var lang = _.findLast(self.innerCultures, function(lang) {
           return lang.key == target.name;
@@ -44,7 +43,7 @@
     },
     methods: {
       changeSelected(culture) {
-        var self=this;
+        var self = this;
         /* publish language-change event */
         var _cultrue = {
           name: culture.key,
@@ -71,7 +70,7 @@
         // }
       },
       formatCultures() {
-        var self=this;
+        var self = this;
         var _culturesArr = Kooboo.objToArr(self.cultures) || [],
           _cultures = [];
         var defaultCultureIdx = _.findIndex(_culturesArr, function(c) {
