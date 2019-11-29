@@ -43,7 +43,7 @@
       Kooboo.EventBus.subscribe("position/edit", function(data) {
         self.id = data.id;
         self.elem = data.elem;
-        self.model.name = data.name;
+        self.model.name = data.name || "";
         self._name = data.name;
         self.type = data.type;
         self.isShow = true;
