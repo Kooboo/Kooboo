@@ -29,6 +29,8 @@ $(function() {
       };
     },
     mounted: function() {
+      helper = new Helper($(".kb-editor")[0]);
+
       Kooboo.EventBus.subscribe("kb/lighter/holder", function(elem) {
         self.bindingPanel.elem = elem;
         if (elem !== elem.ownerDocument.body) {
@@ -95,12 +97,12 @@ $(function() {
       });
 
       Kooboo.EventBus.subscribe("position/add", function(data) {
-        vm.attrPosition(data.elem, data.name, data.type, data.applyOmit);
+        self.attrPosition(data.elem, data.name, data.type, data.applyOmit);
         Kooboo.EventBus.publish("kb/html/previewer/select", $(data.elem)[0]);
       });
 
       Kooboo.EventBus.subscribe("position/update", function(data) {
-        vm.updatePosition(data.id, data.name, data.applyOmit);
+        self.updatePosition(data.id, data.name, data.applyOmit);
         Kooboo.EventBus.publish("kb/html/previewer/select", $(data.elem)[0]);
       });
 
@@ -155,7 +157,6 @@ $(function() {
         }
       );
 
-      helper = new Helper($(".kb-editor")[0]);
       $(window).on("resize", function() {
         helper.refresh();
       });
@@ -225,7 +226,7 @@ $(function() {
       //     if (e.keyCode == 83 && e.ctrlKey) {
       //         //Ctrl + S
       //         e.preventDefault();
-      //         vm.onSave();
+      //         self.onSave();
       //     }
       // })
     },
@@ -321,6 +322,7 @@ $(function() {
         }
       },
       isValid: function() {
+        // TODO: nj
         return self.name.isValid();
       },
       getBodyHtml: function() {
@@ -382,7 +384,6 @@ $(function() {
         self.scanAttrPositions(kbFrame.getDocumentElement());
       },
       scanAttrPositions: function(node) {
-        var self = this;
         $("[" + positionKey + "]", node).each(function(ix, it) {
           var name = $(it).attr(positionKey),
             position;
