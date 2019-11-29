@@ -354,27 +354,27 @@
           type: item.type
         });
       },
-      headScriptSorted: function(e) {
+      headScriptSorted: function(data) {
         var self = this;
-        var index =  e.data.targetIndex;
+        var index = data.targetIndex;
         publishSortEventToKbFrame("script", {
           targetIdx: index,
           elem: self.headScriptList[index].elem,
           list: self.headScriptList
         });
       },
-      bodyScriptSorted: function(e) {
+      bodyScriptSorted: function(data) {
         var self = this;
-        var index =  e.data.targetIndex;
+        var index = data.targetIndex;
         publishSortEventToKbFrame("script", {
           targetIdx: index,
           elem: self.bodyScriptList[index].elem,
           list: self.bodyScriptList
         });
       },
-      styleSorted: function(e) {
+      styleSorted: function(data) {
         var self = this;
-        var index =  e.data.targetIndex;
+        var index = data.targetIndex;
         publishSortEventToKbFrame("style", {
           targetIdx: index,
           elem: self.styleList[index].elem,
@@ -412,6 +412,7 @@
   });
 
   function BindingPanelOld() {
+    // TODO: cross sortable
     this.headScriptList.onReceive = function(sortedList, context) {
       context.viewModel.head = true;
       context = _.assignIn(context, { list: sortedList });

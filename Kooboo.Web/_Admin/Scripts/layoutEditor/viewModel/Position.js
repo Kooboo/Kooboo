@@ -18,6 +18,7 @@
     // });
     this.editName = this.editing ? self.name : "";
 
+    // TODO: editName logic
     // this.editName = this.editName.extend({
     //     validate: function(name) {
     //         if (_.isEmpty(_.trim(name))) {

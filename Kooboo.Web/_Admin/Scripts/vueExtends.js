@@ -438,29 +438,52 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
   var sourceIndex;
   $(el).sortable({
     handle: ".sortable",
+    connectWith: $el.data("sort-connect") || false,
     start: function(ev, ui) {
       sourceIndex = $el.children().index(ui.item[0]);
     },
     update: function(ev, ui) {
       var targetIndex = $el.children().index(ui.item[0]);
+      if (targetIndex === -1) {
+        return;
+      }
       var newList = [];
-      binding.value.forEach(function(item, index) {
-        if (index !== sourceIndex) {
-          if (index === targetIndex) {
-            var sourceItem = binding.value[sourceIndex];
-            if (sourceIndex < targetIndex) {
-              newList.push(item);
-              newList.push(sourceItem);
+      if (sourceIndex !== undefined) {
+        binding.value.forEach(function(item, index) {
+          if (index !== sourceIndex) {
+            if (index === targetIndex) {
+              var sourceItem = binding.value[sourceIndex];
+              if (sourceIndex < targetIndex) {
+                newList.push(item);
+                newList.push(sourceItem);
+              } else {
+                newList.push(sourceItem);
+                newList.push(item);
+              }
             } else {
-              newList.push(sourceItem);
               newList.push(item);
             }
-          } else {
-            newList.push(item);
           }
+        });
+      } else {
+        // from drop
+        sourceItem = $el.data("__drop_item__");
+        // hard code for "head"
+        if (sourceItem.hasOwnProperty("head")) {
+          sourceItem.head = !sourceItem.head;
         }
-      });
-      binding.value.splice(0, binding.value.length);
+        binding.value.forEach(function(item, index) {
+          if (targetIndex === index) {
+            newList.push(sourceItem);
+          }
+          newList.push(item);
+        });
+        if (targetIndex === binding.value.length) {
+          newList.push(sourceItem);
+        }
+      }
+
+      binding.value.splice(0);
       setTimeout(function() {
         newList.forEach(function(item) {
           binding.value.push(item);
@@ -474,6 +497,22 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
           }
         }
       });
+    },
+    remove: function(ev, ui) {
+      $($el.sortable("option").connectWith).data(
+        "__drop_item__",
+        binding.value[sourceIndex]
+      );
+
+      binding.value.splice(sourceIndex, 1);
+      if (vnode.data.on) {
+        var afterRemoveFn = vnode.data.on["after-remove"];
+        if (afterRemoveFn) {
+          afterRemoveFn({
+            sourceIndex: sourceIndex
+          });
+        }
+      }
     }
   });
 });

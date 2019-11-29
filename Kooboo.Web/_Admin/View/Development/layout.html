@@ -275,7 +275,7 @@
                   id="head-scripts"
                   v-kb-sortable="bindingPanel.headScriptList"
                   @after-sort="bindingPanel.headScriptSorted"
-                  connect='#head-scripts'
+                  data-sort-connect="#body-scripts"
                   style="min-height: 38px;"
                 >
                   <li
@@ -323,7 +323,7 @@
                   id="body-scripts"
                   v-kb-sortable="bindingPanel.bodyScriptList"
                   @after-sort="bindingPanel.bodyScriptSorted"
-                  connect='#head-scripts'
+                  data-sort-connect="#head-scripts"
                   style="min-height: 38px;"
                 >
                   <li
