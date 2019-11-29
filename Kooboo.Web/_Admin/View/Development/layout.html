@@ -43,12 +43,12 @@
                 <kb-html-viewer></kb-html-viewer>
                 <hr />
                 <div
-                  v-if="bindingPanel.showConvert() || bindingPanel.showPrepend() || bindingPanel.showAppend() || bindingPanel.showLabel()"
+                  v-if="bindingPanel.showConvert || bindingPanel.showPrepend || bindingPanel.showAppend || bindingPanel.showLabel"
                   class="form-group buttons"
                 >
                   <div class="clearfix">
                     <div
-                      v-if="bindingPanel.showConvert() || bindingPanel.showPrepend() || bindingPanel.showAppend()"
+                      v-if="bindingPanel.showConvert || bindingPanel.showPrepend || bindingPanel.showAppend"
                       class="btn-group"
                     >
                       <button
@@ -60,7 +60,7 @@
                         <li
                           ><a
                             href="javascript:;"
-                            v-if="bindingPanel.showConvert()"
+                            v-if="bindingPanel.showConvert"
                             @click="bindingPanel.convert"
                             >Convert to position</a
                           ></li
@@ -68,7 +68,7 @@
                         <li
                           ><a
                             href="javascript:;"
-                            v-if="bindingPanel.showPrepend()"
+                            v-if="bindingPanel.showPrepend"
                             @click="bindingPanel.prepend"
                             >Prepend position</a
                           ></li
@@ -76,7 +76,7 @@
                         <li
                           ><a
                             href="javascript:;"
-                            v-if="bindingPanel.showAppend()"
+                            v-if="bindingPanel.showAppend"
                             @click="bindingPanel.append"
                             >Append position</a
                           ></li
@@ -85,7 +85,7 @@
                     </div>
                     <a
                       href="javascript:;"
-                      v-if="bindingPanel.showLabel()"
+                      v-if="bindingPanel.showLabel"
                       @click="bindingPanel.createLabel"
                       class="btn blue"
                       >Label</a

@@ -116,62 +116,6 @@
           });
         }
       },
-      showConvert: function() {
-        var elem = self.elem;
-        return (
-          elem &&
-          elem.tagName &&
-          elem.tagName.toLowerCase() != positionKey &&
-          !_.some(self.positionList, function(it) {
-            var el = it.placeholder || it.elem;
-            return el.contains(elem) || elem.contains(el);
-          }) &&
-          !_.some(self.labelList, function(it) {
-            return it.elem.contains(elem);
-          }) &&
-          elem !== elem.ownerDocument.body
-        );
-      },
-      showPrepend: function() {
-        var elem = self.elem;
-        return (
-          elem &&
-          elem.tagName &&
-          elem.tagName.toLowerCase() != positionKey &&
-          !_.find(self.labelList, function(it) {
-            return it.elem.contains(elem);
-          }) &&
-          elem !== elem.ownerDocument.body
-        );
-      },
-      showAppend: function() {
-        var elem = self.elem;
-        return (
-          elem &&
-          elem.tagName &&
-          elem.tagName.toLowerCase() != positionKey &&
-          !_.some(self.labelList, function(it) {
-            return it.elem.contains(elem);
-          }) &&
-          elem !== elem.ownerDocument.body
-        );
-      },
-      showLabel: function() {
-        var elem = self.elem;
-        return (
-          elem &&
-          elem.tagName &&
-          elem.tagName.toLowerCase() != positionKey &&
-          !_.some(self.positionList, function(it) {
-            return (it.placeholder || it.elem).contains(elem);
-          }) &&
-          !_.some(self.labelList, function(it) {
-            return elem.contains(it.elem) || it.elem.contains(elem);
-          }) &&
-          elem !== elem.ownerDocument.body &&
-          !$("[" + positionKey + "]", $(elem)).length
-        );
-      },
       createLabel: function() {
         Kooboo.EventBus.publish("binding/edit", {
           type: "label",
@@ -383,6 +327,62 @@
       }
     },
     computed: {
+      showConvert: function() {
+        var elem = self.elem;
+        return (
+          elem &&
+          elem.tagName &&
+          elem.tagName.toLowerCase() != positionKey &&
+          !_.some(self.positionList, function(it) {
+            var el = it.placeholder || it.elem;
+            return el.contains(elem) || elem.contains(el);
+          }) &&
+          !_.some(self.labelList, function(it) {
+            return it.elem.contains(elem);
+          }) &&
+          elem !== elem.ownerDocument.body
+        );
+      },
+      showPrepend: function() {
+        var elem = self.elem;
+        return (
+          elem &&
+          elem.tagName &&
+          elem.tagName.toLowerCase() != positionKey &&
+          !_.find(self.labelList, function(it) {
+            return it.elem.contains(elem);
+          }) &&
+          elem !== elem.ownerDocument.body
+        );
+      },
+      showAppend: function() {
+        var elem = self.elem;
+        return (
+          elem &&
+          elem.tagName &&
+          elem.tagName.toLowerCase() != positionKey &&
+          !_.some(self.labelList, function(it) {
+            return it.elem.contains(elem);
+          }) &&
+          elem !== elem.ownerDocument.body
+        );
+      },
+      showLabel: function() {
+        var elem = self.elem;
+        return (
+          elem &&
+          elem.tagName &&
+          elem.tagName.toLowerCase() != positionKey &&
+          !_.some(self.positionList, function(it) {
+            return (it.placeholder || it.elem).contains(elem);
+          }) &&
+          !_.some(self.labelList, function(it) {
+            return elem.contains(it.elem) || it.elem.contains(elem);
+          }) &&
+          elem !== elem.ownerDocument.body &&
+          !$("[" + positionKey + "]", $(elem)).length
+        );
+      },
       resources: function() {
         var _res = {};
         _.forEach(Object.keys(self.styleResource), function(key) {
