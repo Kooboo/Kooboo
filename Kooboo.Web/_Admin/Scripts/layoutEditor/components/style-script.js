@@ -19,7 +19,6 @@
         id: "",
         elem: null,
         type: null,
-        showError: false,
         text: null,
         textError: "",
         isShow: false,
@@ -30,30 +29,37 @@
         files: null,
         groups: null,
         win: null,
-        isResourceExist: false,
+        isResourceExist: true,
         files: [],
         groups: []
       };
     },
+    computed: {
+      lang: function() {
+        if (this.type == "script") return "javascript";
+        if (this.type == "style") return "css";
+        return "html";
+      }
+    },
     mounted: function() {
       var self = this;
-      $("#inline-source-modal")
-        .on("shown.bs.modal", function() {
-          var node = document.getElementById("inline-script");
-          if (node) {
-            var cm = CodeMirror.fromTextArea(node, {
-              lineNumbers: true,
-              mode: "htmlmixed"
-            });
-            cm.on("change", function(c, obj) {
-              self.text(c.getValue());
-            });
-            $(node).data("cm", cm);
-          }
-        })
-        .on("hidden.bs.modal", function() {
-          self.reset();
-        });
+      // $("#inline-source-modal")
+      //   .on("shown.bs.modal", function() {
+      //     var node = document.getElementById("inline-script");
+      //     if (node) {
+      //       var cm = CodeMirror.fromTextArea(node, {
+      //         lineNumbers: true,
+      //         mode: "htmlmixed"
+      //       });
+      //       cm.on("change", function(c, obj) {
+      //         self.text(c.getValue());
+      //       });
+      //       $(node).data("cm", cm);
+      //     }
+      //   })
+      //   .on("hidden.bs.modal", function() {
+      //     self.reset();
+      //   });
 
       Kooboo.EventBus.subscribe("binding/edit", function(data) {
         if (bindingType.indexOf(data.type) > -1) {
@@ -120,16 +126,18 @@
           doc = doc.parentNode;
         }
         if (self.id) {
+          if (!self.text) return alert(Kooboo.text.validation.required);
           var old = BindingStore.byId(self.id);
           if (old) {
             old.text = self.text;
+            old.name = self.text;
             BindingStore.update(self.id, old);
           }
           self.elem.innerHTML = self.text;
           Kooboo.EventBus.publish("kb/frame/resource/update", {
             type: old.type,
             resTagId: $(old.elem).attr(ATTR_RES_TAG_ID),
-            content: value
+            content: self.text
           });
         } else {
           switch (self.type) {

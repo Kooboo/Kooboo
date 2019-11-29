@@ -95,7 +95,6 @@
                               v-for="(item,index) in bindingPanel.styleList"
                               :key="index"
                               class="list-group-item"
-                              :class="item.selected?'list-group-item bg-gray':'list-group-item'"
                             >
                               <span class="sortable"
                                 ><i class="glyphicon glyphicon-list"></i
@@ -152,12 +151,11 @@
                             id="head-scripts"
                             v-kb-sortable="bindingPanel.headScriptList"
                             style="min-height: 40px;"
-                            connect="#body-scripts"
+                            data-connect="#body-scripts"
                           >
                             <li
                               class="list-group-item"
                               v-for="(item,index) in bindingPanel.headScriptList"
-                              :class="{'bg-gray':item.selected}"
                             >
                               <span class="sortable"
                                 ><i class="glyphicon glyphicon-list"></i
@@ -176,7 +174,7 @@
                                 href="javascript:;"
                                 title="Edit"
                                 v-kb-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss"
+                                @click="editJsCss(item)"
                                 ><i class="fa fa-pencil"></i
                               ></a>
                               <span class="nowrap-text">{{item.name}}</span>
@@ -197,13 +195,12 @@
                             class="list-group"
                             id="body-scripts"
                             v-kb-sortable="bindingPanel.bodyScriptList"
-                            connect="#head-scripts"
+                            data-connect="#head-scripts"
                             style="min-height: 40px;"
                           >
                             <li
                               class="list-group-item"
                               v-for="(item,index) in bindingPanel.bodyScriptList"
-                              :class="{'bg-gray':selected}"
                             >
                               <span class="sortable"
                                 ><i class="glyphicon glyphicon-list"></i
@@ -212,8 +209,8 @@
                                 class="btn gray btn-xs pull-right margin-right-5"
                                 href="javascript:;"
                                 title="Remove"
-                                v-tooltip:top="Kooboo.text.common.remove"
-                                @click="removeScript"
+                                v-kb-tooltip:top="Kooboo.text.common.remove"
+                                @click="removeScript(item)"
                                 ><i class="fa fa-minus"></i
                               ></a>
                               <a
@@ -221,8 +218,8 @@
                                 class="btn blue btn-xs pull-right"
                                 href="javascript:;"
                                 title="Edit"
-                                v-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss"
+                                v-kb-tooltip:top="Kooboo.text.common.edit"
+                                @click="editJsCss(item)"
                                 ><i class="fa fa-pencil"></i
                               ></a>
                               <span class="nowrap-text">{{item.name}}</span>
@@ -506,6 +503,14 @@
             }
           }
         });
+
+        Kooboo.EventBus.subscribe("binding/remove", function(data) {
+          var item = BindingStore.byId(data.id);
+
+          if (item) {
+            BindingStore.remove(data.id);
+          }
+        });
       },
       methods: {
         onSaveAndReturn: function() {
@@ -594,7 +599,7 @@
           }
         },
         setHTML: function(html, callback) {
-          //   BindingStore.clear();
+          BindingStore.clear();
 
           !self.kbFrame.hasResource() &&
             self.kbFrame.setResource(self.bindingPanel.resources);
@@ -636,9 +641,15 @@
         formatCode: function(cb) {
           self.$refs.codeEditor.formatCode(cb);
         },
-        removeStyle: function() {},
-        editJsCss: function() {},
-        removeScript: function() {},
+        removeStyle: function(item) {
+          self.bindingPanel.removeStyle(item);
+        },
+        editJsCss: function(item) {
+          self.bindingPanel.editJsCss(item);
+        },
+        removeScript: function(item) {
+          self.bindingPanel.removeScript(item);
+        },
         createStyle: function() {
           self.bindingPanel.createStyle();
         },
