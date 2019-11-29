@@ -435,38 +435,77 @@ Vue.directive("kb-collapsein", {
 // #region <kb-sortable>
 Vue.directive("kb-sortable", function(el, binding, vnode) {
   var $el = $(el);
-  var sortElementSeletor = $el.data("sort-element");
+  var sourceIndex;
   $(el).sortable({
     handle: ".sortable",
-    start: function() {
-      var sortables = sortElementSeletor
-        ? $el.find(sortElementSeletor).not(".ui-sortable-placeholder")
-        : el.getElementsByClassName("sortable");
-      for (var i = 0; i < sortables.length; i++) {
-        sortables[i].__data_item = binding.value[i];
-      }
+    connectWith: $el.data("sort-connect") || false,
+    start: function(ev, ui) {
+      sourceIndex = $el.children().index(ui.item[0]);
     },
     update: function(ev, ui) {
-      var newList = [];
-      var sortables = sortElementSeletor
-        ? $el.find(sortElementSeletor).not(".ui-sortable-placeholder")
-        : el.getElementsByClassName("sortable");
-      for (var j = 0; j < sortables.length; j++) {
-        newList.push(sortables[j].__data_item);
+      var targetIndex = $el.children().index(ui.item[0]);
+      if (targetIndex === -1) {
+        return;
       }
-      binding.value.splice(0, binding.value.length);
+      var newList = [];
+      if (sourceIndex !== undefined) {
+        binding.value.forEach(function(item, index) {
+          if (index !== sourceIndex) {
+            if (index === targetIndex) {
+              var sourceItem = binding.value[sourceIndex];
+              if (sourceIndex < targetIndex) {
+                newList.push(item);
+                newList.push(sourceItem);
+              } else {
+                newList.push(sourceItem);
+                newList.push(item);
+              }
+            } else {
+              newList.push(item);
+            }
+          }
+        });
+      } else {
+        // from drop
+        sourceItem = $el.data("__drop_item__");
+        // hard code for "head"
+        if (sourceItem.hasOwnProperty("head")) {
+          sourceItem.head = !sourceItem.head;
+        }
+        binding.value.forEach(function(item, index) {
+          if (targetIndex === index) {
+            newList.push(sourceItem);
+          }
+          newList.push(item);
+        });
+        if (targetIndex === binding.value.length) {
+          newList.push(sourceItem);
+        }
+      }
+      binding.value.splice(0);
       setTimeout(function() {
         newList.forEach(function(item) {
           binding.value.push(item);
         });
+        if (vnode.data.on) {
+          var afterSortFn = vnode.data.on["after-sort"];
+          if (afterSortFn) {
+            afterSortFn({
+              targetIndex: targetIndex
+            });
+          }
+        }
       });
+    },
+    remove: function(ev, ui) {
+      var removeItem = binding.value[sourceIndex];
+      $($el.sortable("option").connectWith).data("__drop_item__", removeItem);
+      binding.value.splice(sourceIndex, 1);
       if (vnode.data.on) {
-        var targetIndex = $el.children().index(ui.item[0]);
-        setTimeout(function() {
-          Kooboo.trigger(el, "after-sort", {
-            targetIndex: targetIndex
-          });
-        });
+        var afterRemoveFn = vnode.data.on["after-remove"];
+        if (afterRemoveFn) {
+          afterRemoveFn(removeItem);
+        }
       }
     }
   });

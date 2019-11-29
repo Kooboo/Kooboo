@@ -7,7 +7,7 @@
     this.displayName = data.displayName;
     this.text = data.text;
     this.selected = false;
-    this.name =  _.trim(this.text || this.displayName).substr(0, 200);
+    this.name = _.trim(this.text || this.displayName).substr(0, 200);
   }
 
   if (Kooboo.layoutEditor) {

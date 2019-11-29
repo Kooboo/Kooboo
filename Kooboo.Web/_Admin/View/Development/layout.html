@@ -238,16 +238,16 @@
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      v-kb-tooltip="Kooboo.text.common.remove" 
+                      v-kb-tooltip="Kooboo.text.common.remove"
                       @click="bindingPanel.removeStyle($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
-                    v-if="$data.text"
+                      v-if="$data.text"
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"
-                      v-kb-tooltip="Kooboo.text.common.edit" 
+                      v-kb-tooltip="Kooboo.text.common.edit"
                       @click="bindingPanel.editJsCss($data)"
                       ><i class="fa fa-pencil"></i
                     ></a>
@@ -275,12 +275,12 @@
                   id="head-scripts"
                   v-kb-sortable="bindingPanel.headScriptList"
                   @after-sort="bindingPanel.headScriptSorted"
-                  connect='#head-scripts'
+                  data-sort-connect="#body-scripts"
                   style="min-height: 38px;"
                 >
                   <li
                     v-for="($data, index) in bindingPanel.headScriptList"
-                    :key="index"
+                    :key="$data.id"
                     class="list-group-item"
                     :class="{'bg-gray': $data.selected}"
                   >
@@ -291,7 +291,7 @@
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      v-kb-tooltip="Kooboo.text.common.remove" 
+                      v-kb-tooltip="Kooboo.text.common.remove"
                       @click="bindingPanel.removeScript($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
@@ -300,7 +300,7 @@
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"
-                      v-kb-tooltip="Kooboo.text.common.edit" 
+                      v-kb-tooltip="Kooboo.text.common.edit"
                       @click="bindingPanel.editJsCss($data)"
                       ><i class="fa fa-pencil"></i
                     ></a>
@@ -323,14 +323,14 @@
                   id="body-scripts"
                   v-kb-sortable="bindingPanel.bodyScriptList"
                   @after-sort="bindingPanel.bodyScriptSorted"
-                  connect='#head-scripts'
+                  data-sort-connect="#head-scripts"
                   style="min-height: 38px;"
                 >
                   <li
                     v-for="($data, index) in bindingPanel.bodyScriptList"
-                   :key="index"
+                    :key="$data.id"
                     class="list-group-item"
-                   :class="{'bg-gray': $data.selected}"
+                    :class="{'bg-gray': $data.selected}"
                   >
                     <span class="sortable"
                       ><i class="glyphicon glyphicon-list"></i
@@ -339,12 +339,12 @@
                       class="btn gray btn-xs pull-right"
                       href="javascript:;"
                       title="Remove"
-                      v-kb-tooltip="Kooboo.text.common.remove" 
+                      v-kb-tooltip="Kooboo.text.common.remove"
                       @click="bindingPanel.removeScript($data)"
                       ><i class="fa fa-minus"></i
                     ></a>
                     <a
-                     v-if="$data.text"
+                      v-if="$data.text"
                       class="btn blue btn-xs pull-right"
                       href="javascript:;"
                       title="Edit"

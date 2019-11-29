@@ -2264,12 +2264,9 @@
     }
     return { result: result, hasError: hasError };
   };
-  Kooboo.trigger = function(el, type, data) {
+  Kooboo.trigger = function(el, type) {
     var e = document.createEvent("HTMLEvents");
     e.initEvent(type, true, true);
-    if (data !== undefined) {
-      e.data = data;
-    }
     el.dispatchEvent(e);
   };
 })(window);
