@@ -43,12 +43,12 @@
                 <kb-html-viewer></kb-html-viewer>
                 <hr />
                 <div
-                  v-if="bindingPanel.showConvert || bindingPanel.showPrepend || bindingPanel.showAppend || bindingPanel.showLabel"
+                  v-if="bindingPanel.showConvert() || bindingPanel.showPrepend() || bindingPanel.showAppend() || bindingPanel.showLabel()"
                   class="form-group buttons"
                 >
                   <div class="clearfix">
                     <div
-                      v-if="bindingPanel.showConvert || bindingPanel.showPrepend || bindingPanel.showAppend"
+                      v-if="bindingPanel.showConvert() || bindingPanel.showPrepend() || bindingPanel.showAppend()"
                       class="btn-group"
                     >
                       <button
@@ -60,7 +60,7 @@
                         <li
                           ><a
                             href="javascript:;"
-                            v-if="bindingPanel.showConvert"
+                            v-if="bindingPanel.showConvert()"
                             @click="bindingPanel.convert"
                             >Convert to position</a
                           ></li
@@ -68,7 +68,7 @@
                         <li
                           ><a
                             href="javascript:;"
-                            v-if="bindingPanel.showPrepend"
+                            v-if="bindingPanel.showPrepend()"
                             @click="bindingPanel.prepend"
                             >Prepend position</a
                           ></li
@@ -76,7 +76,7 @@
                         <li
                           ><a
                             href="javascript:;"
-                            v-if="bindingPanel.showAppend"
+                            v-if="bindingPanel.showAppend()"
                             @click="bindingPanel.append"
                             >Append position</a
                           ></li
@@ -85,7 +85,7 @@
                     </div>
                     <a
                       href="javascript:;"
-                      v-if="bindingPanel.showLabel"
+                      v-if="bindingPanel.showLabel()"
                       @click="bindingPanel.createLabel"
                       class="btn blue"
                       >Label</a
@@ -434,6 +434,7 @@
       "/_Admin/Scripts/tool/KoobooToolTemplateManager.js",
       "/_Admin/Scripts/tool/KoobooTool.js",
       "/_Admin/Scripts/components/Helper.js",
+      "/_Admin/Scripts/vue-components/kbForm.js",
       "/_Admin/Scripts/layoutEditor/viewModel/Label.js",
       "/_Admin/Scripts/layoutEditor/viewModel/Style.js",
       "/_Admin/Scripts/layoutEditor/viewModel/Script.js",
@@ -442,7 +443,6 @@
       "/_Admin/Scripts/layoutEditor/stores/PositionStore.js",
       "/_Admin/Scripts/layoutEditor/viewModel/BindingPanel.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
-      "/_Admin/Scripts/vue-components/kbForm.js",
       "/_Admin/Scripts/vue-components/kb-code-editor.js",
       "/_Admin/Scripts/vue-components/kbHtmlViewer.js",
       "/_Admin/Scripts/vue-components/kbLabelDialog.js",
