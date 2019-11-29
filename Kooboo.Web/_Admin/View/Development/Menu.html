@@ -33,12 +33,23 @@
             <template v-for="(item,index) in menuItems">
             <tr  :class="className(item)">
                 <td>
-                    <a v-if="isNotRoot(item)" :data-url="item.UpdateText" :data-inline-edit="true" :data-id="item.id">{{item.name}}</a>
+                    <a v-if="isNotRoot(item)"
+                       style="cursor: pointer"
+                       :data-url="item.UpdateText" :data-inline-edit="true" :data-id="item.id">{{item.name}}</a>
                     <span v-else>{{item.name}}</span>
                 </td>
                 <td>
                     <a v-if="isNotRoot(item) && !item.urlEditing"
-                       @click.stop="editUrl($event,item)" class="menu-link">{{item.url}}</a>
+                       style="cursor: pointer"
+                       @click.stop="editUrl($event,item)"
+                       class="menu-link">{{item.url}}</a>
+                    <div v-if="item.urlEditing" class="col-md-8 row">
+                        <div class="col-md-8">
+                            <input v-model="item.tempEditingUrl" type="text" class="form-control" placeholder="Select value from below or type a new url">
+                        </div>
+                        <a @click.stop="updateLinkUrl($event, item)" class="btn btn-primary btn-sm" title="Save"><i class="fa fa-check"></i></a>
+                        <a @click.stop="cancelEditLink($event, item)" class="btn btn-default btn-sm" title="Cancel"><i class="fa fa-close"></i></a>
+                    </div>
                 </td>
                 <td>
                     <a v-if="isNotRoot(item) && isMultiLangMenu" v-kb-tooltip:left="Kooboo.text.tooltip.menu.multilingual"

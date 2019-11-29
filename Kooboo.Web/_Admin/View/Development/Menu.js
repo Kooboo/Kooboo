@@ -78,6 +78,10 @@ $(function() {
                 name: { valid: true, msg: "" },
                 url: { valid: true, msg: "" }
               };
+              item.UpdateText = Kooboo.Route.Get(Kooboo.Menu._getUrl("UpdateText"), {
+                Id:item.id,
+                RootId: item.rootId
+              });
               return item;
             });
             self.menuItems = temp;
@@ -125,10 +129,10 @@ $(function() {
           send: "always",
           success: function(res, newName) {
             var id = $(this).attr("data-id");
-            var _find = _.findLast(self.menuItems(), function(menu) {
-              return menu.id == id;
+            var _find = _.findLast(self.menuItems, function(menu) {
+              return menu.id === id;
             });
-            _find.name(newName);
+            _find.name = newName;
             self.updateRelatedMenu(_find);
             DataCache.removeRelatedData("menu");
           }
@@ -158,8 +162,30 @@ $(function() {
         item.urlEditing = false;
       },
       updateLinkUrl: function(event, item) {
-        item.url = item.tempEditingUrl;
-        item.urlEditing = false;
+        if (item.url !== item.tempEditingUrl) {
+          if(!item.tempEditingUrl) item.tempEditingUrl = '#';
+          item.url = item.tempEditingUrl;
+          Kooboo.Menu.UpdateUrl({
+            Id: item.id,
+            RootId: item.rootId,
+            url: item.url
+          }).then(function(res) {
+            if (res.success) {
+              item.urlEditing = false;
+              window.info.show(Kooboo.text.info.update.success, true);
+              var _find = _.findLast(self.menuItems, function(menu) {
+                return menu.id === item.id;
+              });
+              self.updateRelatedMenu(_find);
+            } else {
+              m.url(m._url());
+              window.info.show(Kooboo.text.info.update.fail, false);
+            }
+          })
+        } else {
+          self.cancelEditLink();
+        }
+
       },
       swapOrder: function(rootId, ida, idb) {
         Kooboo.Menu.Swap({
@@ -189,6 +215,29 @@ $(function() {
           });
         }
         return mum;
+      },
+      updateRelatedMenu: function(child) {
+        var parent = _.find(self.menuItems, function(me) {
+          return me.id === child.parentId;
+        });
+
+        if (parent) {
+          var siblings = _.filter(self.menuItems, function(me) {
+                return me.parentId === child.parentId;
+              }),
+              idxInSiblings = _.findIndex(siblings, function(sb) {
+                return sb.id === child.id;
+              });
+
+          siblings.splice(idxInSiblings, 1);
+          siblings.splice(idxInSiblings, 0, child);
+
+          parent.children = siblings;
+
+          self.updateRelatedMenu(parent);
+        } else {
+          return;
+        }
       },
       menuMoveUp: function(e, index, item) {
         var count = self.getAllChildrenMumber(self.menuItems[index - 1]);
@@ -489,7 +538,7 @@ $(function() {
         }).then(function(res) {
 
           if (res.success) {
-            self.getData()
+            self.getData();
             self.onHideTemplateModal();
           }
         });
