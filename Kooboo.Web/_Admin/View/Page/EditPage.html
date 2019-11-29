@@ -4,12 +4,15 @@
     <div class="page-header">
       <template v-if="isNewPage">
         <h1 class="title pull-left">{{Kooboo.text.common.Page + ': '}}</h1>
-        <div class="form-group pull-left">
+        <div class="form-group pull-left" :class="{'has-error':nameError}">
           <input
+            v-kb-tooltip:top.manual.error="nameError"
             type="text"
             placeholder="name"
             class="input-large form-control"
             v-model="name"
+            @input="valid"
+            @blur="nameInputBlur"
           />
         </div>
       </template>
@@ -62,7 +65,7 @@
                     <kb-page-html-meta
                       v-if="settings&&multiLangs"
                       :settings="settings"
-                      default-lang="multiLangs.default"
+                      :default-lang="multiLangs.default"
                     >
                     </kb-page-html-meta>
 
@@ -92,7 +95,6 @@
                               v-for="(item,index) in bindingPanel.styleList"
                               :key="index"
                               class="list-group-item"
-                              :class="item.selected?'list-group-item bg-gray':'list-group-item'"
                             >
                               <span class="sortable"
                                 ><i class="glyphicon glyphicon-list"></i
@@ -149,12 +151,11 @@
                             id="head-scripts"
                             v-kb-sortable="bindingPanel.headScriptList"
                             style="min-height: 40px;"
-                            connect="#body-scripts"
+                            data-connect="#body-scripts"
                           >
                             <li
                               class="list-group-item"
                               v-for="(item,index) in bindingPanel.headScriptList"
-                              :class="{'bg-gray':item.selected}"
                             >
                               <span class="sortable"
                                 ><i class="glyphicon glyphicon-list"></i
@@ -173,7 +174,7 @@
                                 href="javascript:;"
                                 title="Edit"
                                 v-kb-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss"
+                                @click="editJsCss(item)"
                                 ><i class="fa fa-pencil"></i
                               ></a>
                               <span class="nowrap-text">{{item.name}}</span>
@@ -194,13 +195,12 @@
                             class="list-group"
                             id="body-scripts"
                             v-kb-sortable="bindingPanel.bodyScriptList"
-                            connect="#head-scripts"
+                            data-connect="#head-scripts"
                             style="min-height: 40px;"
                           >
                             <li
                               class="list-group-item"
                               v-for="(item,index) in bindingPanel.bodyScriptList"
-                              :class="{'bg-gray':selected}"
                             >
                               <span class="sortable"
                                 ><i class="glyphicon glyphicon-list"></i
@@ -209,8 +209,8 @@
                                 class="btn gray btn-xs pull-right margin-right-5"
                                 href="javascript:;"
                                 title="Remove"
-                                v-tooltip:top="Kooboo.text.common.remove"
-                                @click="removeScript"
+                                v-kb-tooltip:top="Kooboo.text.common.remove"
+                                @click="removeScript(item)"
                                 ><i class="fa fa-minus"></i
                               ></a>
                               <a
@@ -218,8 +218,8 @@
                                 class="btn blue btn-xs pull-right"
                                 href="javascript:;"
                                 title="Edit"
-                                v-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss"
+                                v-kb-tooltip:top="Kooboo.text.common.edit"
+                                @click="editJsCss(item)"
                                 ><i class="fa fa-pencil"></i
                               ></a>
                               <span class="nowrap-text">{{item.name}}</span>
@@ -242,7 +242,12 @@
             </div>
           </section>
           <section class="tab-pane" :class="{active: curType == 'code'}">
-            <kb-code-editor :code.sync="pageContent"></kb-code-editor>
+            <kb-code-editor
+              :code.sync="pageContent"
+              auto-size
+              lang="html"
+              ref="codeEditor"
+            ></kb-code-editor>
           </section>
         </div>
         <ul class="nav nav-tabs">
@@ -301,13 +306,6 @@
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/kobindings.sortable.js",
-    //   "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-    //   "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
-    //   "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
-    //   "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
-    //   "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
-    //   "/_Admin/Scripts/kobindings.codemirror.js",
-    //   "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js",
       "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
       "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
       "/_Admin/Scripts/vue-components/kbTypeahead.js",
@@ -330,7 +328,6 @@
       "/_Admin/Scripts/layoutEditor/components/KBFrame.js"
     ]);
     Kooboo.loadCSS([
-    //   "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
       "/_Admin/Styles/bootstrap-editable/css/bootstrap-editable.css"
     ]);
   })();
@@ -348,20 +345,40 @@
           isNewPage: false,
           pageId: Kooboo.getQueryString("Id") || Guid.Empty,
           name: "",
+          nameError: "",
+          posted: false,
           bindingPanel: new BindingPanel(),
           multiLangs: null,
           pageContent: "",
-          ___pageContent: "",
-          cm: null,
+          backupPageContent: "",
           kbFrame: null,
           curType: "preview",
           settings: null,
-          isBodyChanged: false
+          isBodyChanged: false,
+          isTitleChanged: false,
+          isMetaChanged: false,
+          isUrlChanged: false,
+          isBodyChanged: false,
+          isSaveAndReturn: false
         };
+      },
+      computed: {
+        isContentChanged: function() {
+          var self = this;
+          return (
+            self.isTitleChanged ||
+            self.isMetaChanged ||
+            self.isUrlChanged ||
+            self.isBodyChanged ||
+            (self.curType == "code"
+              ? self.pageContent !== self.backupPageContent
+              : false)
+          );
+        }
       },
       mounted: function() {
         var self = this;
-        self.isNewPage = !!self.pageId;
+        self.isNewPage = self.pageId == Guid.Empty;
         self.kbFrame = new KBFrame(document.getElementById("page_iframe"), {
           type: "normal_page"
         });
@@ -431,63 +448,217 @@
 
           self.multiLangs = langs[0].model;
           self.pageContent = page.model.body || "";
-          self.__pageContent = self.pageContent;
           self.setHTML(self.pageContent, function() {
             self.name = page.model.name;
             self.settings = page.model;
-            // self.cm = $(".CodeMirror")[0].CodeMirror;
           });
+        });
+
+        Kooboo.EventBus.subscribe("kb/page/field/change", function(data) {
+          switch (data.type) {
+            case "title":
+              self.isTitleChanged = true;
+              break;
+            case "meta":
+              self.isMetaChanged = true;
+              break;
+            case "url":
+              self.isUrlChanged = true;
+              break;
+            case "resource":
+              self.isBodyChanged = true;
+              break;
+          }
+        });
+
+        Kooboo.EventBus.subscribe("kb/page/final/save", function(res) {
+          if (!res.errorCount || res.errorCount == 0) {
+            res["body"] =
+              self.curType == "preview"
+                ? self.kbFrame.getHTML()
+                : self.pageContent;
+            res["name"] = self.name;
+            res["id"] = self.pageId;
+            self.submitData = res;
+
+            if (self.isSaveAndReturn) {
+              self.onSubmit(function() {
+                self.goBack();
+              });
+            } else {
+              self.onSubmit(function(id) {
+                if (self.isNewPage) {
+                  location.href = Kooboo.Route.Get(Kooboo.Route.Page.EditPage, {
+                    id: id
+                  });
+                } else {
+                  self.isTitleChanged = false;
+                  self.isMetaChanged = false;
+                  self.isUrlChanged = false;
+                  self.isBodyChanged = false;
+                  self.nameError = "";
+                  window.info.show(Kooboo.text.info.save.success, true);
+                }
+              });
+            }
+          }
+        });
+
+        Kooboo.EventBus.subscribe("binding/remove", function(data) {
+          var item = BindingStore.byId(data.id);
+
+          if (item) {
+            BindingStore.remove(data.id);
+          }
         });
       },
       methods: {
-        onSaveAndReturn: function() {},
-        onSave: function() {},
+        onSaveAndReturn: function() {
+          self.isSaveAndReturn = true;
+          if (self.curType == "code") {
+            self.setHTML(self.pageContent, function() {
+              Kooboo.EventBus.publish(
+                "kb/page/title/set",
+                self.kbFrame.getTitle()
+              );
+              setTimeout(function() {
+                Kooboo.EventBus.publish("kb/page/save", {});
+              }, 250);
+            });
+          } else {
+            Kooboo.EventBus.publish("kb/page/save", {});
+          }
+        },
+        onSave: function() {
+          self.isSaveAndReturn = false;
+          if (self.curType() == "code") {
+            self.setHTML(self.pageContent, function() {
+              Kooboo.EventBus.publish(
+                "kb/page/title/set",
+                self.kbFrame.getTitle()
+              );
+              setTimeout(function() {
+                Kooboo.EventBus.publish("kb/page/save", {});
+              }, 250);
+            });
+          } else {
+            Kooboo.EventBus.publish("kb/page/save", {});
+          }
+        },
+        valid: function(isPosted) {
+          if (!self.posted || !self.isNewPage) return true;
+          var rules = [
+            { required: Kooboo.text.validation.required },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            }
+          ];
+          if (isPosted) {
+            rules.push({
+              remote: {
+                url: Kooboo.Page.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            });
+          }
+
+          var result = Kooboo.validField(self.name, rules);
+          self.nameError = result.msg;
+          return result.valid;
+        },
+        goBack: function() {
+          location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
+        },
+        onSubmit: function(cb) {
+          function submit() {
+            Kooboo.Page.post(JSON.stringify(self.submitData)).then(function(
+              res
+            ) {
+              if (res.success) {
+                if (typeof cb == "function") {
+                  cb(res.model);
+                }
+              }
+            });
+          }
+          self.posted = true;
+          if (self.valid(true)) {
+            submit();
+          }
+        },
         setHTML: function(html, callback) {
           BindingStore.clear();
+
           !self.kbFrame.hasResource() &&
             self.kbFrame.setResource(self.bindingPanel.resources);
+
           self.kbFrame.setContent(html, function() {
             self.bindingPanel.elem = self.kbFrame.getDocumentElement();
             if (callback) callback();
           });
         },
-        userCancel: function() {},
+        userCancel: function() {
+          if (self.isContentChanged) {
+            if (confirm(Kooboo.text.confirm.beforeReturn)) {
+              self.goBack();
+            }
+          } else {
+            self.goBack();
+          }
+        },
         changeType: function(type) {
           if (self.curType !== type) {
             if (type == "code") {
-              self.curType = type;
-              //   self.pageContent = self.getHTML();
-              self._pageContent = self.pageContent;
-              //   cm.refresh();
+              self.pageContent = self.kbFrame.getHTML();
+              self.formatCode(function() {
+                self.backupPageContent = self.pageContent;
+              });
             } else {
-              if (self.__pageContent !== self.pageContent) {
-                self.isBodyChanged = true;
-                // self.setHTML(self.pageContent, function() {
-                //   Kooboo.EventBus.publish(
-                //     "kb/page/title/set",
-                //     kbFrame.getTitle()
-                //   );
-                // });
+              if (self.backupPageContent != self.pageContent) {
+                self.setHTML(self.pageContent, function() {
+                  Kooboo.EventBus.publish(
+                    "kb/page/title/set",
+                    self.kbFrame.getTitle()
+                  );
+                });
               }
-              self.curType = type;
             }
+            self.curType = type;
           }
         },
-        formatCode: function() {},
-        removeStyle: function() {},
-        editJsCss: function() {},
-        removeScript: function() {},
+        formatCode: function(cb) {
+          self.$refs.codeEditor.formatCode(cb);
+        },
+        removeStyle: function(item) {
+          self.bindingPanel.removeStyle(item);
+        },
+        editJsCss: function(item) {
+          self.bindingPanel.editJsCss(item);
+        },
+        removeScript: function(item) {
+          self.bindingPanel.removeScript(item);
+        },
         createStyle: function() {
           self.bindingPanel.createStyle();
         },
         createScript: function(b) {
           self.bindingPanel.createScript(b);
-        }
-      },
-      watch: {
-        name: function(name) {
-          if (!name) return;
-          Kooboo.EventBus.publish("kb/page/url/route/set", name);
+        },
+        nameInputBlur: function() {
+          if (!self.name) return;
+          Kooboo.EventBus.publish("kb/page/url/route/set", self.name);
         }
       }
     });

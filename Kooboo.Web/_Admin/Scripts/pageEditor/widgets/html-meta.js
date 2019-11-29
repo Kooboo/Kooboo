@@ -434,7 +434,6 @@ Vue.component("kb-page-widget-meta", {
           meta.name = meta.httpequiv = "";
           meta.content = {};
         }
-
         Kooboo.EventBus.publish("kb/page/meta/save", meta);
         self.reset();
       } else {
@@ -462,6 +461,7 @@ Vue.component("kb-page-widget-meta", {
       }
     },
     httpEquiv: function(val) {
+      var self = this;
       if (val) {
         self.enableName = false;
         self.enableHttpEquiv = true;
@@ -472,6 +472,7 @@ Vue.component("kb-page-widget-meta", {
       }
     },
     charset: function(val) {
+      var self = this;
       if (val) {
         self.enableName = false;
         self.enableHttpEquiv = false;
