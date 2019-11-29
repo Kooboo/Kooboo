@@ -482,7 +482,6 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
           newList.push(sourceItem);
         }
       }
-
       binding.value.splice(0);
       setTimeout(function() {
         newList.forEach(function(item) {
@@ -499,18 +498,13 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
       });
     },
     remove: function(ev, ui) {
-      $($el.sortable("option").connectWith).data(
-        "__drop_item__",
-        binding.value[sourceIndex]
-      );
-
+      var removeItem = binding.value[sourceIndex];
+      $($el.sortable("option").connectWith).data("__drop_item__", removeItem);
       binding.value.splice(sourceIndex, 1);
       if (vnode.data.on) {
         var afterRemoveFn = vnode.data.on["after-remove"];
         if (afterRemoveFn) {
-          afterRemoveFn({
-            sourceIndex: sourceIndex
-          });
+          afterRemoveFn(removeItem);
         }
       }
     }

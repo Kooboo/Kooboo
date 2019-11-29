@@ -411,20 +411,6 @@
     }
   });
 
-  function BindingPanelOld() {
-    // TODO: cross sortable
-    this.headScriptList.onReceive = function(sortedList, context) {
-      context.viewModel.head = true;
-      context = _.assignIn(context, { list: sortedList });
-      publishSortEventToKbFrame("script", context, "head");
-    };
-    this.bodyScriptList.onReceive = function(sortedList, context) {
-      context.viewModel.head = false;
-      context = _.assignIn(context, { list: sortedList });
-      publishSortEventToKbFrame("script", context, "body");
-    };
-  }
-
   if (Kooboo.layoutEditor) {
     Kooboo.layoutEditor.viewModel.BindingPanel = BindingPanel;
   }
