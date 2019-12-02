@@ -14,7 +14,10 @@
           id="J_layouts"
           v-model="layoutPosition.layout"
         >
-          <option v-for="(item,index) in layoutPosition.layoutList" :value="item" :key="index"
+          <option
+            v-for="(item,index) in layoutPosition.layoutList"
+            :value="item"
+            :key="index"
             >{{ item.name }}</option
           >
         </select>
@@ -29,6 +32,7 @@
           <option
             v-for="(item, index) in layoutPosition.positionList"
             :key="index"
+            :value="item"
             >{{ item }}</option
           >
         </select>
@@ -866,7 +870,6 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/kooboo/declare.js",
-      "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js",
       "/_Admin/Scripts/viewEditor/stores/ActionStore.js",
       "/_Admin/Scripts/viewEditor/stores/DataStore.js",
       "/_Admin/Scripts/viewEditor/utils/k2attr.js",
@@ -898,8 +901,8 @@
       "/_Admin/Scripts/viewEditor/widgets/Position.js",
       "/_Admin/Scripts/viewEditor/components/modal.js",
       "/_Admin/Scripts/viewEditor/utils/fieldFilter.js",
-      "/_Admin/Scripts/components/kb-media-dialog.js",
-      "/_Admin/Scripts/components/kbLabelDialog.js",
+      "/_Admin/Scripts/vue-components/kb-media-dialog.js",
+      "/_Admin/Scripts/vue-components/kbLabelDialog.js",
       "/_Admin/Scripts/viewEditor/components/attribute.js",
       "/_Admin/Scripts/viewEditor/components/data.js",
       "/_Admin/Scripts/viewEditor/components/link.js",
@@ -911,10 +914,11 @@
       "/_Admin/Scripts/vue-components/kb-code-editor.js",
       "/_Admin/Scripts/vue-components/kbHtmlViewer.js",
       "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-      "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/layoutEditor/components/KBFrame.js"
     ]);
-    Kooboo.loadCSS(["/_Admin/Styles/jstree/style.min.css"]);
+    // Kooboo.loadCSS(["/_Admin/Styles/jstree/style.min.css",
+    // "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlTree.css",
+    // "/_Admin/Scripts/vue-components/htmlViewer/kbHtmlPath.css"]);
   })();
 </script>
 <script src="/_Admin/View/Development/View.js"></script>

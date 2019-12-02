@@ -672,6 +672,7 @@ $(function() {
           _.forEach(Object.keys(self.positions), function(position) {
             self.layoutPosition.positionList.push(position);
           });
+          self.layoutPosition.position = self.layoutPosition.positionList[0];
 
           self.load = false;
         }
