@@ -14,7 +14,7 @@
           id="J_layouts"
           v-model="layoutPosition.layout"
         >
-          <option v-for="(item,index) in layoutPosition.layoutList" :key="index"
+          <option v-for="(item,index) in layoutPosition.layoutList" :value="item" :key="index"
             >{{ item.name }}</option
           >
         </select>

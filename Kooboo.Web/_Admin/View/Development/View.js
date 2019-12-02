@@ -163,7 +163,7 @@ $(function() {
         viewRes = $.isArray(viewRes) ? viewRes[0] : viewRes;
         dataRes = $.isArray(dataRes) ? dataRes[0] : dataRes;
         layoutRes = $.isArray(layoutRes) ? layoutRes[0] : layoutRes;
-        self.name = viewRes.model.name;
+        self.model.name = viewRes.model.name;
         self.viewContent = viewRes.model.body || "";
         dummyLayout = viewRes.model.dummyLayout;
 
@@ -189,7 +189,7 @@ $(function() {
             links[key] = [];
             res.model[key].forEach(function(link) {
               var isSelf =
-                key == "views" && link.url == "/__kb/View/" + self.name;
+                key == "views" && link.url == "/__kb/View/" + self.model.name;
               links[key].push({
                 url: link.url,
                 displayText:
@@ -277,7 +277,7 @@ $(function() {
           pos.setHTML(html);
 
           if (pos.firstLoaded) {
-            self._viewContent(pos.getHTML());
+            self._viewContent = pos.getHTML();
             delete pos.firstLoaded;
           }
 
@@ -386,7 +386,7 @@ $(function() {
 
         var _data = {
           id: self.isNewView ? Kooboo.Guid.Empty : self.viewId,
-          name: self.name,
+          name: self.model.name,
           dataSources: actions,
           body:
             self.curType == "preview"
@@ -665,12 +665,12 @@ $(function() {
           self.bindingPanel.reset();
           self.elem = null;
 
-          layoutPosition.positionList.splice(0);
+          self.layoutPosition.positionList = [];
 
           self.scanPositions(kbFrame.getDocumentElement());
 
           _.forEach(Object.keys(self.positions), function(position) {
-            layoutPosition.positionList.push(position);
+            self.layoutPosition.positionList.push(position);
           });
 
           self.load = false;
