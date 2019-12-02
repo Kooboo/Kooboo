@@ -109,6 +109,7 @@
             type: bindingType
           };
           if (self.hasSave) {
+            result.bindingType = bindingType;
             self.$emit("save", result);
           } else {
             result.id = self.id;

@@ -59,28 +59,7 @@ $(function() {
             }
           ]
         },
-        bindingPanel: new BindingPanel({
-          onRemove: function(binding) {
-            if (pos) {
-              pos.unbind(binding.elem, binding.bindingType);
-              var bindings = pos.getBindings(binding.elem);
-
-              if (bindings.length) {
-                helper.rering(binding.elem);
-                var text = _.map(bindings, function(item) {
-                  var bindingType = item.bindingType;
-                  return bindingType[0].toUpperCase() + bindingType.slice(1);
-                }).join(",");
-                helper.unlabel(binding.elem);
-                helper.label(binding.elem, text);
-              } else {
-                helper.unring(binding.elem);
-                helper.unlabel(binding.elem);
-                DataContext.clear(binding.elem);
-              }
-            }
-          }
-        }),
+        bindingPanel: new BindingPanel(),
         dataSourcePanel: new DataSourcePanel(),
         layoutPosition: new LayoutPosition(),
         mediaDialogData: null,
@@ -89,6 +68,28 @@ $(function() {
         viewContent: "",
         load: false,
         positions: {}
+      };
+    },
+    created: function() {
+      self.bindingPanel.onRemove = function(binding) {
+        if (pos) {
+          pos.unbind(binding.elem, binding.bindingType);
+          var bindings = pos.getBindings(binding.elem);
+
+          if (bindings.length) {
+            helper.rering(binding.elem);
+            var text = _.map(bindings, function(item) {
+              var bindingType = item.bindingType;
+              return bindingType[0].toUpperCase() + bindingType.slice(1);
+            }).join(",");
+            helper.unlabel(binding.elem);
+            helper.label(binding.elem, text);
+          } else {
+            helper.unring(binding.elem);
+            helper.unlabel(binding.elem);
+            DataContext.clear(binding.elem);
+          }
+        }
       };
     },
     mounted: function() {
@@ -425,7 +426,7 @@ $(function() {
       },
       bindingSave: function(data) {
         var inst = self.bindingPanel.get(data.elem, data.bindingType);
-        bindingPanel[inst ? "update" : "add"](data);
+        self.bindingPanel[inst ? "update" : "add"](data);
         pos.bind(data);
         helper.ring(data.elem);
         var text = pos
@@ -596,7 +597,7 @@ $(function() {
           .each(function(i) {
             self.removeBindingsNonRecursive(this);
           });
-        self.elem(storedElem);
+        self.elem = storedElem;
       },
       removeBindingsNonRecursive: function(elem) {
         self.elem = elem;
@@ -649,11 +650,11 @@ $(function() {
     },
     watch: {
       viewId: function(id) {
-        dataSourcePanel &&
-          dataSourcePanel.setViewId(id ? id : Kooboo.Guid.Empty);
+        self.dataSourcePanel &&
+          self.dataSourcePanel.setViewId(id ? id : Kooboo.Guid.Empty);
       },
       elem: function(elem) {
-        self.bindingPanel.elem(elem);
+        self.bindingPanel.elem = elem;
       },
       load: function(load) {
         if (load) {

@@ -106,7 +106,7 @@
               </ul>
               <div class="tab-content">
                 <section id="binding_panel" class="tab-pane active">
-                  <div v-if="elem" class="kb-settings">
+                  <div v-show="elem" class="kb-settings">
                     <kb-html-viewer></kb-html-viewer>
                     <template
                       v-if="bindingPanel.showLabel || canChangeImg || canEditDom ||  canRemoveDom"
@@ -204,7 +204,7 @@
                       <label>Existing set</label>
                       <ul class="list-group">
                         <template
-                          v-for="($data, $index) in bindingPanel.create.existList"
+                          v-for="($data, $index) in bindingPanel.existList"
                         >
                           <li
                             v-if="$data.type == 'label'"
@@ -214,7 +214,7 @@
                               title="Remove"
                               href="javascript:"
                               class="btn gray btn-xs pull-right"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                               v-kb-tooltip="Kooboo.text.common.remove"
                             >
                               <i class="fa fa-minus"></i>
@@ -224,12 +224,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Label</strong>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
 
                           <li v-if="$data.type=='data'" class="list-group-item">
@@ -238,7 +238,7 @@
                               href="javascript:"
                               class="btn gray btn-xs pull-right"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -247,12 +247,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Data</strong>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                           <li
                             v-if="$data.type=='attribute'"
@@ -263,7 +263,7 @@
                               href="javascript:"
                               class="btn gray btn-xs pull-right"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -272,12 +272,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Attribute</strong>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
 
                           <li
@@ -289,7 +289,7 @@
                               href="javascript:"
                               class="btn gray btn-xs pull-right"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -298,12 +298,12 @@
                               href="javascript:;"
                               class="btn blue btn-xs pull-right"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Repeater</strong>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                           <li v-if="$data.type=='link'" class="list-group-item">
                             <a
@@ -311,7 +311,7 @@
                               class="btn gray btn-xs pull-right"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -320,12 +320,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Link to</strong>
-                            {{ href }}
+                            {{ $data.href }}
                           </li>
                           <li v-if="$data.type=='form'" class="list-group-item">
                             <a
@@ -333,7 +333,7 @@
                               class="btn gray btn-xs pull-right"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -342,12 +342,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Form</strong>
-                            {{ dataSourceMethodDisplay }}
+                            {{ $data.dataSourceMethodDisplay }}
                           </li>
                           <li
                             v-if="$data.type=='input'"
@@ -358,7 +358,7 @@
                               class="btn gray btn-xs pull-right"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -367,12 +367,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Input</strong>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                           <li
                             v-if="$data.type=='condition'"
@@ -383,7 +383,7 @@
                               href="javascript:"
                               class="btn gray btn-xs pull-right"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -392,12 +392,12 @@
                               class="btn blue btn-xs pull-right"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
                             <strong>Condition</strong>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                         </template>
                       </ul>
@@ -420,7 +420,7 @@
                           <li
                             v-for="($data, $index) in bindingPanel.labelList"
                             class="list-group-item"
-                            @click="focusBinding('label')"
+                            @click="focusBinding('label', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -440,7 +440,7 @@
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                         </ul>
                       </div>
@@ -462,7 +462,7 @@
                             v-for="($data, $index) in bindingPanel.repeatList"
                             :key="$index"
                             class="list-group-item"
-                            @click="focusBinding($data, 'repeat')"
+                            @click="focusBinding('repeat', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -482,7 +482,7 @@
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                         </ul>
                       </div>
@@ -500,17 +500,18 @@
                       </div>
                       <div class="panel-collapse collapse in" id="J_Collapse_2">
                         <ul class="list-group">
-                          <!--ko foreach: bindingPanel.dataList-->
                           <li
+                            v-for="($data, $index) in  bindingPanel.dataList"
+                            :key="$index"
                             class="list-group-item"
-                            @click="$root.focusBinding.bind($data, 'data')"
+                            @click="focusBinding('data', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
                               href="javascript:;"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -519,14 +520,12 @@
                               href="javascript:;"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            <!--ko text:text-->
-                            <!--/ko-->
+                            {{ $data.text }}
                           </li>
-                          <!--/ko-->
                         </ul>
                       </div>
                     </div>
@@ -543,17 +542,18 @@
                       </div>
                       <div class="panel-collapse collapse in" id="J_Collapse_4">
                         <ul class="list-group">
-                          <!--ko foreach: bindingPanel.linkList-->
                           <li
                             class="list-group-item"
-                            @click="$root.focusBinding.bind($data, 'link')"
+                            v-for="($data, $index) in bindingPanel.linkList"
+                            :key="$index"
+                            @click="focusBinding('link', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
                               href="javascript:;"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -562,14 +562,12 @@
                               href="javascript:;"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            <!--ko text:href-->
-                            <!--/ko-->
+                            {{ $data.href }}
                           </li>
-                          <!--/ko-->
                         </ul>
                       </div>
                     </div>
@@ -586,17 +584,18 @@
                       </div>
                       <div class="panel-collapse collapse in" id="J_Collapse_5">
                         <ul class="list-group">
-                          <!--ko foreach: bindingPanel.formList-->
                           <li
+                            v-for="($data, $index) in bindingPanel.formList"
+                            :key="$index"
                             class="list-group-item"
-                            @click="$root.focusBinding.bind($data, 'form')"
+                            @click="focusBinding('form', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
                               href="javascript:;"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -605,14 +604,12 @@
                               href="javascript:;"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            <!--ko text:dataSourceMethodDisplay-->
-                            <!--/ko-->
+                            {{ $data.dataSourceMethodDisplay }}
                           </li>
-                          <!--/ko-->
                         </ul>
                       </div>
                     </div>
@@ -629,17 +626,18 @@
                       </div>
                       <div class="panel-collapse collapse in" id="J_Collapse_6">
                         <ul class="list-group">
-                          <!--ko foreach: bindingPanel.inputList-->
                           <li
+                            v-for="($data, $index) in bindingPanel.inputList"
+                            :key="$index"
                             class="list-group-item"
-                            @click="$root.focusBinding.bind($data, 'input')"
+                            @click="focusBinding('input', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
                               href="javascript:;"
                               title="Remove"
                               v-kb-tooltip="Kooboo.text.common.remove"
-                              @click="bindingItemRemove"
+                              @click="bindingItemRemove($data)"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -648,14 +646,12 @@
                               href="javascript:;"
                               title="Edit"
                               v-kb-tooltip="Kooboo.text.common.edit"
-                              @click="bindingItemEdit"
+                              @click="bindingItemEdit($data)"
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            <!--ko text:text-->
-                            <!--/ko-->
+                            {{ $data.text }}
                           </li>
-                          <!--/ko-->
                         </ul>
                       </div>
                     </div>
@@ -676,7 +672,7 @@
                             v-for="($data, $index) in bindingPanel.attributeList"
                             :key="$index"
                             class="list-group-item"
-                            @click="focusBinding($data, 'data')"
+                            @click="focusBinding('data', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -696,7 +692,7 @@
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                         </ul>
                       </div>
@@ -718,7 +714,7 @@
                             v-for="($data, $index) in bindingPanel.conditionList"
                             :key="$index"
                             class="list-group-item"
-                            @click="focusBinding($data, 'data')"
+                            @click="focusBinding('data', $data)"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -738,7 +734,7 @@
                             >
                               <i class="fa fa-pencil"></i>
                             </a>
-                            {{ text }}
+                            {{ $data.text }}
                           </li>
                         </ul>
                       </div>
@@ -746,7 +742,6 @@
                   </div>
                 </section>
                 <section id="source_panel" class="tab-pane">
-                  <!-- TODO: nj -->
                   <ul class="list-group">
                     <data-source-item
                       v-for="($data, $index) in dataSourcePanel.actions"
@@ -757,7 +752,7 @@
                   <div class="buttons">
                     <a
                       href="javascript:;"
-                      @click="dataSourcePanel().add"
+                      @click="dataSourcePanel.add"
                       v-kb-tooltip="Kooboo.text.tooltip.add"
                       class="btn blue btn-xs pull-right"
                     >
