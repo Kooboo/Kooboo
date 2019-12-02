@@ -37,8 +37,8 @@
       showInput: function() {
         return self.labelValue == KB_NEW_LABEL;
       },
-      hasOnSave() {
-        return self.$listeners && self.$listeners.onSave;
+      hasSave() {
+        return self.$listeners && self.$listeners.save;
       }
     },
     mounted: function() {
@@ -108,8 +108,8 @@
             text: self.showInput ? self.model.text : self.labelValue,
             type: bindingType
           };
-          if (self.hasOnSave) {
-            self.$emit("on-save", result);
+          if (self.hasSave) {
+            self.$emit("save", result);
           } else {
             result.id = self.id;
             Kooboo.EventBus.publish("binding/save", result);
