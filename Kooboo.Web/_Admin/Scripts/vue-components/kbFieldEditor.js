@@ -34,7 +34,7 @@
                     displayName: "",
                     controlType: "TextBox",
                     isSummaryField: false,
-                    multipleLanguage: false,
+                    multipleLanguage: true,
                     editable: true,
                     order: 0,
                     tooltip: "",
