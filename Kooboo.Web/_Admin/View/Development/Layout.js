@@ -19,7 +19,42 @@ $(function() {
       self = this;
       return {
         layoutId: Kooboo.getQueryString("Id") || Guid.Empty,
-        name: "",
+        model: {
+          name: ""
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              remote: {
+                url: Kooboo.Layout.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.model.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         layoutCode: "",
         _layoutCode: "",
         htmlContent: "",
@@ -215,7 +250,7 @@ $(function() {
           scriptGroup: scriptGroupList
         };
 
-        self.name = layout.model.name;
+        self.model.name = layout.model.name;
         self.layoutCode = layout.model.body;
         self.setHTML(self.layoutCode, function() {
           self._layoutCode = self.getHTML();
@@ -321,10 +356,6 @@ $(function() {
           self.goBack();
         }
       },
-      isValid: function() {
-        // TODO: nj
-        return self.name.isValid();
-      },
       getBodyHtml: function() {
         if (self.isNewLayout) {
           return self.getHTML();
@@ -336,44 +367,41 @@ $(function() {
           }
         }
       },
-      onSubmitLayout: function(callback) {
-        function doSubmit(body) {
-          Kooboo.Layout.post({
-            id: self.layoutId,
-            name: self.name,
-            body: body
-          }).then(function(res) {
-            if (res.success) {
-              self._htmlContent = self.htmlContent;
-              self._layoutCode = self.layoutCode;
-              if (typeof callback == "function") {
-                callback(res.model);
-              }
-            } else {
-              window.info.show(Kooboo.text.info.save.fail, false);
+      doSubmit: function(body, callback) {
+        Kooboo.Layout.post({
+          id: self.layoutId,
+          name: self.model.name,
+          body: body
+        }).then(function(res) {
+          if (res.success) {
+            self._htmlContent = self.htmlContent;
+            self._layoutCode = self.layoutCode;
+            if (typeof callback == "function") {
+              callback(res.model);
             }
-          });
-        }
-
-        function submit() {
-          if (self.curType == "code") {
-            self.setHTML(self.layoutCode, function() {
-              setTimeout(function() {
-                var body = self.getBodyHtml();
-                doSubmit(body);
-              }, 600);
-            });
           } else {
-            var body = self.getBodyHtml();
-            doSubmit(body);
+            window.info.show(Kooboo.text.info.save.fail, false);
           }
-        }
-
-        if (self.isNewLayout) {
-          // todo: validate
-          submit();
+        });
+      },
+      submit: function(callback) {
+        if (self.curType == "code") {
+          self.setHTML(self.layoutCode, function() {
+            setTimeout(function() {
+              var body = self.getBodyHtml();
+              self.doSubmit(body, callback);
+            }, 600);
+          });
         } else {
-          submit();
+          var body = self.getBodyHtml();
+          self.doSubmit(body, callback);
+        }
+      },
+      onSubmitLayout: function(callback) {
+        if (self.isNewLayout) {
+          self.$refs.form.validate() && self.submit(callback);
+        } else {
+          self.submit(callback);
         }
       },
       goBack: function() {
@@ -514,37 +542,3 @@ $(function() {
     }
   });
 });
-
-var layoutViewModel = function() {
-  var self = this;
-
-  this.name = ko.validateField({
-    required: Kooboo.text.validation.required,
-    regex: {
-      pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-      message: Kooboo.text.validation.objectNameRegex
-    },
-    stringlength: {
-      min: 1,
-      max: 64,
-      message:
-        Kooboo.text.validation.minLength +
-        1 +
-        ", " +
-        Kooboo.text.validation.maxLength +
-        64
-    },
-    remote: {
-      url: Kooboo.Layout.isUniqueName(),
-      type: "GET",
-      data: {
-        name: function() {
-          return self.name();
-        }
-      },
-      message: Kooboo.text.validation.taken
-    }
-  });
-
-  this.bindingPanel = ko.observable(bindingPanel);
-};
