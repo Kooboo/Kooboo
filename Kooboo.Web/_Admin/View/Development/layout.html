@@ -11,18 +11,34 @@
       >
       <template v-if="isNewLayout">
         <h1 class="title pull-left">{{ Kooboo.text.common.Layout + ': ' }}</h1>
-        <div class="form-group pull-left">
-          <input
-            type="text"
-            v-model="name"
-            placeholder="name"
-            class="input-large form-control"
-          />
-        </div>
+        <kb-form
+          simple
+          ref="form"
+          class="pull-left"
+          :model="model"
+          :rules="rules"
+        >
+          <kb-form-item
+            prop="name"
+            v-slot="error"
+            id="form-name-error-container"
+          >
+            <div class="form-group" :class="{'has-error' : !!error.error }">
+              <input
+                type="text"
+                v-model="model.name"
+                placeholder="name"
+                class="input-large form-control"
+                v-kb-tooltip:right.manual.error="error.error"
+                data-container="#form-name-error-container"
+              />
+            </div>
+          </kb-form-item>
+        </kb-form>
       </template>
       <h1 v-else class="title pull-left"
         >Layout<span>:</span>
-        <strong :title="name">{{ name }}</strong>
+        <strong :title="model.name">{{ model.name }}</strong>
       </h1>
     </div>
   </div>
@@ -280,7 +296,7 @@
                 >
                   <li
                     v-for="($data, index) in bindingPanel.headScriptList"
-                    :key="$data.id"
+                    :key="index"
                     class="list-group-item"
                     :class="{'bg-gray': $data.selected}"
                   >
@@ -328,7 +344,7 @@
                 >
                   <li
                     v-for="($data, index) in bindingPanel.bodyScriptList"
-                    :key="$data.id"
+                    :key="index"
                     class="list-group-item"
                     :class="{'bg-gray': $data.selected}"
                   >
