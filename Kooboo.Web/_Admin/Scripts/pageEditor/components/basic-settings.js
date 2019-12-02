@@ -15,7 +15,8 @@
         routeHelpers: [],
         urlPath: "",
         urlPathError: "",
-        posted: false
+        posted: false,
+        init: false
       };
     },
     mounted: function() {
@@ -147,6 +148,9 @@
 
       self.metaBindingHelpers = ComponentStore.getMetaBindings();
       self.routeHelpers = ComponentStore.getUrlParamsBindings();
+      self.$nextTick(function() {
+        self.init = true;
+      });
     },
     methods: {
       routeHelp: function(data) {
@@ -173,6 +177,7 @@
     },
     watch: {
       urlPath: function() {
+        if (!this.init) return;
         Kooboo.EventBus.publish("kb/page/field/change", {
           type: "url"
         });

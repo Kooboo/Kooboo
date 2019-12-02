@@ -1,30 +1,38 @@
-<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
-                <h4 data-bind="text: title" class="modal-title"></h4>
-            </div>
-            <div class="modal-body">
-                <div class="panel panel-default">
-                    <div data-bind="error: name" class="panel-body">
-                        <div id="component_tree" data-bind="visible: !emptyMode()"></div>
-                        <span data-bind="visible: emptyMode(), text: Kooboo.text.common.empty"></span>
-                    </div>
-                </div>
-                <!-- <div data-bind="visible: showParameters">
-                    <h4>Patameters</h4>
-                </div> -->
-            </div>
-            <div class="modal-footer">
-                <!-- ko if: !emptyMode() -->
-                <button data-bind="click: save, text: Kooboo.text.common.save" class="btn green"></button>
-                <button data-bind="click: reset, text: Kooboo.text.common.cancel" class="btn gray"></button>
-                <!-- /ko -->
-                <!-- ko if: emptyMode -->
-                <button class="btn btn-default" data-bind="click: reset, text: Kooboo.text.common.close"></button>
-                <!-- /ko -->
-            </div>
+<div
+  class="modal fade"
+  data-backdrop="static"
+  data-keyboard="false"
+  v-kb-modal="isShow"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button @click="reset" class="close"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">{{title}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <span v-show="emptyMode">{{Kooboo.text.common.empty}}</span>
+            <div v-show="!emptyMode" id="component_tree"></div>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <template v-if="!emptyMode">
+          <button @click="save" class="btn green"
+            >{{Kooboo.text.common.save}}</button
+          >
+          <button @click="reset" class="btn gray"
+            >{{Kooboo.text.common.cancel}}</button
+          >
+        </template>
+        <button v-else @click="reset" class="btn btn-default"
+          >{{Kooboo.text.common.close}}</button
+        >
+      </div>
     </div>
+  </div>
 </div>
