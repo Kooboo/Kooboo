@@ -20,11 +20,13 @@ $(function() {
         showDelete: true,
         showMediaModal: false,
         tableData: [],
+        configItem:undefined,
         tableDataSelected: []
       };
     },
     created: function() {
       self = this;
+      self.getTableData()
     },
     methods: {
       getConfirmMessage: function(doc) {
@@ -112,6 +114,7 @@ $(function() {
           id: id
         });
       },
+
       onDelete: function() {
         if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
           var ids = this.tableDataSelected.map(function(m) {
