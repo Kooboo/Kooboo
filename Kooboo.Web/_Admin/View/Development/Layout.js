@@ -12,7 +12,12 @@ $(function() {
     tal2attr = Kooboo.layoutEditor.utils.tal2attr,
     talParser = Kooboo.layoutEditor.utils.talParser,
     KBFrame = Kooboo.layoutEditor.component.KBFrame;
-  var self, kbFrame, helper;
+  var self,
+    kbFrame,
+    positionKey = "k-placeholder",
+    omitTagKey = "k-omit",
+    helper;
+
   new Vue({
     el: "#main",
     data: function() {
@@ -164,11 +169,9 @@ $(function() {
         Kooboo.EventBus.publish("kb/frame/dom/update");
       });
 
-      (kbFrame = new KBFrame(document.getElementById("layout_iframe"), {
+      kbFrame = new KBFrame(document.getElementById("layout_iframe"), {
         type: "layout"
-      })),
-        (positionKey = "k-placeholder"),
-        (omitTagKey = "k-omit");
+      });
 
       $(kbFrame).on("loaded", function() {
         $(window).trigger("resize");
