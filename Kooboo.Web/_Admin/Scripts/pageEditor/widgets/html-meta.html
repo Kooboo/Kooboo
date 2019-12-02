@@ -5,7 +5,7 @@
   id="meta_modal"
   v-kb-modal="isShow"
 >
-  <div class="modal-dialog">
+  <div class="modal-dialog" v-show="isShow">
     <div class="modal-content">
       <div class="modal-header">
         <button @click="reset" class="close"

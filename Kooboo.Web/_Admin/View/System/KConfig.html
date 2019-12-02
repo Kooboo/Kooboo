@@ -6,35 +6,41 @@
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a @click="onDelete"
-              v-if="showDelete"
-              class="btn red navbar-btn"
-      >Delete</a>
+      <a
+        @click="onDelete"
+        v-if="tableDataSelected.length > 0"
+        class="btn red navbar-btn"
+        >Delete</a
+      >
     </div>
   </div>
   <kb-table
-          :show-select="true"
-          :data="tableData"
-          :selected.sync="tableDataSelected"
+    :show-select="true"
+    :data="tableData"
+    :selected.sync="tableDataSelected"
   >
     <kb-table-column :label="Kooboo.text.common.name" body-class="summary">
       <template v-slot="row">
-        <a @click.stop="" >
+        <a @click.stop="">
           <p>{{row.name}}</p>
-          <p>{{firstKey(row) + ": " + item.binding[Object.keys(firstKey(row)]}}</p>
+          <p>{{firstKey(row) + ": " + row.binding[firstKey(row)]}}</p>
         </a>
         <a>{{ row.name }}</a>
       </template>
     </kb-table-column>
-    <kb-table-column :label="Kooboo.text.common.preview" body-class="table-thumbnail">
+    <kb-table-column
+      :label="Kooboo.text.common.preview"
+      body-class="table-thumbnail"
+    >
       <template v-slot="row">
         <a target="_blank">
-        <div class="thumbnail-fixed">
-          <div class="img-wrap"></div>
-          <img :src="firstKey(row) === 'src'?item.binding[firstKey(row)] + '?SiteId=' + Kooboo.getQueryString('siteid'): ''">
-        </div>
+          <div class="thumbnail-fixed">
+            <div class="img-wrap"></div>
+            <img
+              :src="firstKey(row) === 'src'?item.binding[firstKey(row)] + '?SiteId=' + Kooboo.getQueryString('siteid'): ''"
+            />
+          </div>
         </a>
-      </template>
       </template>
     </kb-table-column>
     <kb-table-column :label="'tagName'">
@@ -43,60 +49,64 @@
       </template>
     </kb-table-column>
     <kb-table-column :label="Kooboo.text.common.usedBy">
-    <template v-slot="row">
-      <a
-              v-for="(item, index) in Kooboo.objToArr(row.relations)"
-              class="label label-sm kb-table-label-refer"
-              :style="{
+      <template v-slot="row">
+        <a
+          v-for="(item, index) in Kooboo.objToArr(row.relations)"
+          class="label label-sm kb-table-label-refer"
+          :style="{
                   background: Kooboo.getLabelColor(row.key.toLowerCase())
                 }"
-              :key="index"
-              @click.stop="onShowRelationModal(row.key, row.id,  Kooboo.KConfig.name)"
-      >
-        {{
-        item.value +
-        " " +
-        Kooboo.text.component.table[item.key.toLowerCase()]
-        }}
-      </a>
-    </template>
-  </kb-table-column>
+          :key="index"
+          @click.stop="onShowRelationModal(row.key, row.id,  Kooboo.KConfig.name)"
+        >
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
+        </a>
+      </template>
+    </kb-table-column>
     <kb-table-column :label="Kooboo.text.common.lastModified">
       <template v-slot="row">
-        <span>{{new Date(row.lastModified).toDefaultLangString())}}</span>
+        <span>{{new Date(row.lastModified).toDefaultLangString()}}</span>
       </template>
     </kb-table-column>
     <kb-table-column :label="''">
       <template v-slot="row">
-        <button @click="onEdit($event,row)"
-                class="btn btn-xs blue pull-right" :title="Kooboo.text.common.edit"><i
-                class="fa fa-pencil"></i></button>
+        <button
+          @click="onEdit($event,row)"
+          class="btn btn-xs blue pull-right"
+          :title="Kooboo.text.common.edit"
+          ><i class="fa fa-pencil"></i
+        ></button>
         <a
-                class="btn blue btn-xs"
-                :href="getVersionsUrl(row.keyHash,row.storeNameHash)"
-                @click.stop=""
-                target="_blank"
+          class="btn blue btn-xs"
+          :href="getVersionsUrl(row.keyHash,row.storeNameHash)"
+          @click.stop=""
+          target="_blank"
         >
           <i class="fa fa-clock-o"></i>
         </a>
       </template>
     </kb-table-column>
   </kb-table>
+
   <kb-relation-modal></kb-relation-modal>
+
   <div
-          class="modal fade"
-          data-backdrop="static"
-          data-keyboard="false"
-          v-kb-modal="showConfigModal"
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="showConfigModal"
   >
     <kb-dialog ref="dialog">
-      <kb-dialog-header :close-handle="onConfigCancel"
-                        :title="Kooboo.text.common.KConfig"></kb-dialog-header>
+      <kb-dialog-header
+        :close-handle="onConfigCancel"
+        :title="Kooboo.text.common.KConfig"
+      ></kb-dialog-header>
       <kb-dialog-content>
         <div v-if="configItem.length > 0" v-for="item in configItem">
           <div class="form-group">
-            <label class="control-label" >{{item.key}}</label>
-            <textarea class="form-control autosize" >{{item.value}}</textarea>
+            <label class="control-label">{{item.key}}</label>
+            <textarea class="form-control autosize">{{item.value}}</textarea>
           </div>
         </div>
         <div class="form-group" v-else>
@@ -110,7 +120,11 @@
     </kb-dialog>
   </div>
 
-  <kb-media-dialog v-if="showMediaModal" :data="mediaDialogData" @on-add="mediaDialogAdd"></kb-media-dialog>
+  <kb-media-dialog
+    v-if="showMediaModal"
+    :data="mediaDialogData"
+    @on-add="mediaDialogAdd"
+  ></kb-media-dialog>
 </div>
 
 <script>
@@ -124,4 +138,4 @@
     ]);
   })();
 </script>
-<script src="/_Admin/View/System/KConfig.js"/>
+<script src="/_Admin/View/System/KConfig.js"></script>

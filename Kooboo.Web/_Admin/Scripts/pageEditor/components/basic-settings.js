@@ -52,13 +52,12 @@
             });
           }
         );
-
         self.multiContentTitle.push(title);
         cultures.splice(defaultCultureIdx, 1);
       }
 
       cultures.forEach(function(lang) {
-        title = {
+        var title = {
           name: lang,
           value: self.settings.contentTitle[lang] || "",
           isDefault: false,
@@ -79,6 +78,8 @@
 
         self.multiContentTitle.push(title);
       });
+
+      self.urlPath = self.settings.urlPath;
 
       Kooboo.EventBus.subscribe("kb/page/title/set", function(title) {
         var _default = _.findLast(self.multiContentTitle, function(t) {

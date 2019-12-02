@@ -33,20 +33,32 @@
             <template v-for="(item,index) in menuItems">
             <tr  :class="className(item)">
                 <td>
-                    <a v-if="isNotRoot(item)" :data-url="item.UpdateText" :data-inline-edit="true" :data-id="item.id">{{item.name}}</a>
+                    <a v-if="isNotRoot(item)"
+                       style="cursor: pointer"
+                       :data-url="item.UpdateText" :data-inline-edit="true" :data-id="item.id">{{item.name}}</a>
                     <span v-else>{{item.name}}</span>
                 </td>
                 <td>
                     <a v-if="isNotRoot(item) && !item.urlEditing"
-                       @click.stop="editUrl($event,item)" class="menu-link">{{item.url}}</a>
+                       style="cursor: pointer"
+                       @click.stop="editUrl($event,item)"
+                       class="menu-link">{{item.url}}</a>
+                    <div v-if="item.urlEditing" class="col-md-8 row">
+                        <div class="col-md-8">
+                            <input v-model="item.tempEditingUrl" type="text" class="form-control" placeholder="Select value from below or type a new url">
+                        </div>
+                        <a @click.stop="updateLinkUrl($event, item)" class="btn btn-primary btn-sm" title="Save"><i class="fa fa-check"></i></a>
+                        <a @click.stop="cancelEditLink($event, item)" class="btn btn-default btn-sm" title="Cancel"><i class="fa fa-close"></i></a>
+                    </div>
                 </td>
                 <td>
-                    <a v-if="isNotRoot(item) && isMultiLangeMenu" v-kb-tooltip:left="Kooboo.text.tooltip.menu.multilingual"
-                       @click.stop="onShowMultiModal" class="btn btn-xs btn-default"><i class="fa fa-language"></i></a>
+                    <a v-if="isNotRoot(item) && isMultiLangMenu" v-kb-tooltip:left="Kooboo.text.tooltip.menu.multilingual"
+                       @click.stop="onShowMultiModal($event,item)" class="btn btn-xs btn-default"><i class="fa fa-language"></i></a>
                 </td>
                 <td>
-                    <a v-kb-tooltip:top="Kooboo.text.tooltip.menu.editTemplate"
-                       href="javascript:;" class="btn btn-xs btn-default"><i class="fa fa-code"></i></a>
+                    <a   @click.stop="onShowTemplateModal($event,item)"
+                            v-kb-tooltip:top="Kooboo.text.tooltip.menu.editTemplate"
+                        class="btn btn-xs btn-default"><i class="fa fa-code"></i></a>
                 </td>
                 <td>
                     <a class="btn btn-xs btn-default" @click.stop="onAddSubMenu($event,index,item)"
@@ -59,10 +71,10 @@
                        class="btn btn-xs btn-default"><i class="fa fa-minus"></i></a>
                 </td>
                 <td>
-                    <a v-kb-tooltip:top="index === 0 ?'' : Kooboo.text.tooltip.moveUp"
+                    <a v-kb-tooltip:top="index === 1 ?'' : Kooboo.text.tooltip.moveUp"
                        v-if="isNotRoot(item)"
                        @click.stop="menuMoveUp($event,index,item)"
-                       :disabled = 'index === 0' class="btn btn-xs btn-default"><i class="fa fa-caret-up"></i></a>
+                       :disabled = 'index === 1' class="btn btn-xs btn-default"><i class="fa fa-caret-up"></i></a>
                 </td>
                 <td>
                     <a v-kb-tooltip:left="index === menuItems.length -1 ?'' : Kooboo.text.tooltip.moveDown"
@@ -100,17 +112,131 @@
 
             </template>
             </tbody>
-            <tfoot data-bind="visible: loading">
+            <tfoot v-if="loading">
             <tr>
                 <td colspan="100" class="text-center">
                     <i class="fa fa-spinner fa-spin"></i>
-                    <!-- ko text: Kooboo.text.common.loading -->
-                    <!-- /ko -->
+                    {{Kooboo.text.common.loading}}
                 </td>
             </tr>
             </tfoot>
         </table>
     </div>
+    <div
+            class="modal fade"
+            data-backdrop="static"
+            k-if="kooboosetting.IsLocal=true"
+            v-kb-modal="showMultiLangModal"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button @click="hideMultiLangModal" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Multilingual</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+
+                        <div class="form-group" v-for="item in multiNames">
+                            <label  class="control-label col-md-3">{{item.key}}</label>
+                            <div class="col-md-9">
+                                <input v-if="item.validate" v-model="item.value"
+                                       v-kb-hint="item.validate.msg"
+                                       type="text" class="form-control">
+                                <input v-else v-model="item.value"  type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="onSaveMultiName" class="btn green">Save</button>
+                    <button @click="hideMultiLangModal" class="btn gray">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div
+            class="modal fade"
+            data-backdrop="static"
+            k-if="kooboosetting.IsLocal=true"
+            v-kb-modal="showTemplateModal"
+    >
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button @click="onHideTemplateModal" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Template</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Preview</label>
+                                <div class="border-gray">
+                                    <div style="height:460px">
+                                        <kb-code-editor ref="editor1" auto-size :code.sync="previewCode" lang="html"
+                                        :options="{ readOnly: true,lineNumbersMinChars:2,minimap:{enabled:false}}"></kb-code-editor>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div v-if="!menuWithNoChild" class="form-group">
+                                <label class="control-label">Sub item container</label>
+                                <div class="border-gray">
+                                    <div :style="{height:showCurrentTemplate?'80px':'230px'}">
+                                        <kb-code-editor  ref="editor2" auto-size :code.sync="subItemContainer" lang="html" :options="editorOptions"></kb-code-editor>
+                                    </div>
+
+                                </div>
+                                <div class="btn-group margin-top-10" >
+                                    <a v-for='help in codeHelperSubItem'
+                                       @click.stop="codeHelp($event,help)"
+                                       class="btn btn-xs btn-default">{{help.text}}</a>
+                                </div>
+                            </div>
+                            <div   v-if="!menuWithNoChild" class="form-group">
+                                <label class="control-label">Sub item template</label>
+                                <div class="border-gray">
+                                    <div :style="{height:showCurrentTemplate?'80px':'105px'}">
+                                    <kb-code-editor ref="editor3" auto-size :code.sync="subItemTemplate" lang="html" :options="editorOptions"></kb-code-editor>
+                                    </div>
+                                </div>
+                                <div class="btn-group margin-top-10" >
+                                    <a v-for='help in subTmplCodeHelpers'
+                                       @click.stop="codeHelp($event,help)"
+                                       class="btn btn-xs btn-default">{{help.text}}</a>
+                                </div>
+                            </div>
+                            <div  v-show="showCurrentTemplate" class="form-group">
+                                <label class="control-label">Current template</label>
+                                <div class="border-gray">
+                                    <div style="height:80px">
+                                        <kb-code-editor ref="editor4" auto-size :code.sync="currentTemplate" lang="html" :options="editorOptions"></kb-code-editor>
+                                    </div>
+                                </div>
+                                <div class="btn-group margin-top-10" >
+                                    <a  v-for='help in tmplCodeHelpers'
+                                        @click.stop="codeHelp($event,help)"
+                                        class="btn btn-xs btn-default">{{help.text}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="onSaveTemplate" class="btn green">Save</button>
+                    <button  @click="onHideTemplateModal" class="btn gray">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 <script>
     (function () {
@@ -119,6 +245,8 @@
             "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
             "/_Admin/Scripts/kobindings.typeahead.js",
             "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
+            "/_Admin/Scripts/./lib/js-beautify/lib/beautify-html.js",
+            "/_Admin/Scripts/vue-components/kb-code-editor.js",
             "/_Admin/Scripts/lib/treegrid/jquery.treegrid.min.js",
             "/_Admin/Scripts/lib/x-editable/bootstrap-editable.min.js"
         ]);

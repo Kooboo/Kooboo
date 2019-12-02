@@ -4,7 +4,7 @@
   id="inline-source-modal"
   v-kb-modal="isShow"
 >
-  <div class="modal-dialog" :class="{'modal-lg':id}">
+  <div class="modal-dialog" v-if="isShow" :class="{'modal-lg':id}">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" @click="reset"
@@ -12,8 +12,14 @@
         ></button>
         <h4 class="modal-title">{{Kooboo.text.common[_.capitalize(title)]}}</h4>
       </div>
-      <div v-if="id" v-kb-tooltip:top.manual.error="textError">
-        <textarea id="inline-script" class="hidden">{{text}}</textarea>
+      <div v-if="id">
+        <kb-code-editor
+          :lang="lang"
+          auto-size
+          :code.sync="text"
+          style="height: 400px;"
+        >
+        </kb-code-editor>
       </div>
       <div v-else class="modal-body">
         <div class="form-horizontal">

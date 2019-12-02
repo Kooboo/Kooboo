@@ -1,17 +1,16 @@
-(function () {
+(function() {
   Kooboo.loadJS([
     "/_Admin/Scripts/vue-components/manacoService/manaco-service.js"
   ]);
 
-  var state = Vue.observable({loader: false});
+  var state = Vue.observable({ loader: false });
   var monacoService = new MonacoEditorService();
   var monaco;
-  monacoService.loader(function (Monaco) {
+  monacoService.loader(function(Monaco) {
     state.loader = true;
-    monaco = Monaco
+    monaco = Monaco;
     monacoService.init();
   });
-
 
   Vue.component("kb-code-editor", {
     template: "<div  style='width:100%;height:100%'></div>",
@@ -20,11 +19,11 @@
         type: String,
         require: true
       },
-      autoSize: {default: false},
-      code: {type: String, require: true},
+      autoSize: { type: Boolean, default: false },
+      code: { type: String, require: true },
       options: {}
     },
-    data: function () {
+    data: function() {
       return {
         isInit: false,
         d_code: this.code,
@@ -37,39 +36,38 @@
     watch: {
       loader: function(value) {
         var self = this;
-        this.$nextTick(function () {
-          self.render()
-        })
-
+        this.$nextTick(function() {
+          self.render();
+        });
       },
-      d_code: function (value) {
+      d_code: function(value) {
         this.$emit("update:code", value);
       },
-      code: function (value, old) {
+      code: function(value, old) {
         if (value !== old && value !== this.d_code) {
           if (this.model) {
             monacoService.changeValue(value, this.model);
           }
         }
       },
-      lang: function (value) {
+      lang: function(value) {
         if (this.model) {
           monacoService.changeLanguage(value, this.model);
         }
       }
     },
     computed: {
-      loader: function () {
-        return state.loader
+      loader: function() {
+        return state.loader;
       }
     },
-    created: function () {
-
+    mounted: function() {
+      if (this.loader) this.render();
     },
     methods: {
-      render: function () {
+      render: function() {
         var self = this;
-        if(monacoService.isLoader) {
+        if (monacoService.isLoader) {
           var options = {};
           var path = self._uid;
           if (self.options) {
@@ -90,25 +88,20 @@
           self.monaco = monaco;
           self.isInit = true;
           self.isCreate = true;
-          monacoService.onModelContentChange(self.model, function (
-              content
-          ) {
+          monacoService.onModelContentChange(self.model, function(content) {
             self.d_code = content;
           });
         }
       },
-      setAutosize: function (value) {
-        monacoService.setAutosize(value);
-      },
-      changeTheme: function (value) {
+      changeTheme: function(value) {
         monacoService.changeTheme(value);
       },
-      formatCode: function () {
-        monacoService.format(this.editor);
+      formatCode: function(callback) {
+        monacoService.format(this.editor, callback);
+      },
+      replace: function (text,range) {
+        monacoService.replace(this.editor,text,range);
       }
     }
   });
-
-
 })();
-
