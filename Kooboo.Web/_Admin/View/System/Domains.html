@@ -120,9 +120,8 @@
                                 v-model="formModel.root"
                                 class="form-control"
                                 name="RootDomain"
-                                v-for="item in rootDomain"
                         >
-                          <option >{{ item.domainName }}</option>
+                          <option  v-for="item in rootDomain">{{ item.domainName }}</option>
                         </select>
                       </div>
                     </div>
@@ -164,9 +163,8 @@
                     <select v-kb-hint="validateModel.subdomain.msg"
                             class="form-control"
                             name="RootDomain"
-                            v-for="domain in rootDomain"
                     >
-                      <option>{{ domain.domainName }}</option>
+                      <option  v-for="domain in rootDomain">{{ domain.domainName }}</option>
                     </select>
                   </div>
                 </kb-form-item>
