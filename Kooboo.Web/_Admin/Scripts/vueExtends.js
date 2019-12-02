@@ -500,13 +500,22 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
     remove: function(ev, ui) {
       var removeItem = binding.value[sourceIndex];
       $($el.sortable("option").connectWith).data("__drop_item__", removeItem);
-      binding.value.splice(sourceIndex, 1);
-      if (vnode.data.on) {
-        var afterRemoveFn = vnode.data.on["after-remove"];
-        if (afterRemoveFn) {
-          afterRemoveFn(removeItem);
-        }
+      var newList = [];
+      for (let i = 0; i < binding.value.length; i++) {
+        if (i != sourceIndex) newList.push(binding.value[i]);
       }
+      binding.value.splice(0);
+      setTimeout(function() {
+        newList.forEach(function(item) {
+          binding.value.push(item);
+        });
+        if (vnode.data.on) {
+          var afterRemoveFn = vnode.data.on["after-remove"];
+          if (afterRemoveFn) {
+            afterRemoveFn(removeItem);
+          }
+        }
+      });
     }
   });
 });
