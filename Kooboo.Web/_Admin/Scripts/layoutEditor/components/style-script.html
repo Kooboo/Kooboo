@@ -18,6 +18,7 @@
           auto-size
           :code.sync="text"
           style="height: 400px;"
+          ref="codeEditor"
         >
         </kb-code-editor>
       </div>
@@ -51,6 +52,9 @@
         </div>
       </div>
       <div class="modal-footer">
+        <button v-if="id" @click="formatCode" class="btn btn-default"
+          >Format code</button
+        >
         <button class="btn green" :disabled="!isResourceExist" @click="save"
           >{{Kooboo.text.common.save}}</button
         >

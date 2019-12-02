@@ -43,24 +43,6 @@
     },
     mounted: function() {
       var self = this;
-      // $("#inline-source-modal")
-      //   .on("shown.bs.modal", function() {
-      //     var node = document.getElementById("inline-script");
-      //     if (node) {
-      //       var cm = CodeMirror.fromTextArea(node, {
-      //         lineNumbers: true,
-      //         mode: "htmlmixed"
-      //       });
-      //       cm.on("change", function(c, obj) {
-      //         self.text(c.getValue());
-      //       });
-      //       $(node).data("cm", cm);
-      //     }
-      //   })
-      //   .on("hidden.bs.modal", function() {
-      //     self.reset();
-      //   });
-
       Kooboo.EventBus.subscribe("binding/edit", function(data) {
         if (bindingType.indexOf(data.type) > -1) {
           self.isShow = true;
@@ -211,6 +193,9 @@
         Kooboo.EventBus.publish("kb/page/field/change", {
           type: "resource"
         });
+      },
+      formatCode:function(){
+        this.$refs.codeEditor.formatCode();
       }
     }
   });

@@ -445,7 +445,14 @@ Vue.component("kb-page-widget-meta", {
       self.enableName = true;
       self.enableHttpEquiv = true;
       self.enableCharset = true;
-      self.enableMultiContents = true;
+      self.enableMultiContents(true);
+    },
+    enableMultiContents: function(enable) {
+      var self = this;
+      _.forEach(self.multiContents, function(content) {
+        content.enable = enable;
+        !enable && (content.value = "");
+      });
     }
   },
   watch: {
@@ -455,7 +462,7 @@ Vue.component("kb-page-widget-meta", {
         self.enableName = true;
         self.enableHttpEquiv = false;
         self.enableCharset = false;
-        self.enableMultiContents = true;
+        self.enableMultiContents(true);
       } else {
         self.enableAll();
       }
@@ -466,7 +473,7 @@ Vue.component("kb-page-widget-meta", {
         self.enableName = false;
         self.enableHttpEquiv = true;
         self.enableCharset = false;
-        self.enableMultiContents = true;
+        self.enableMultiContents(true);
       } else {
         self.enableAll();
       }
@@ -477,7 +484,7 @@ Vue.component("kb-page-widget-meta", {
         self.enableName = false;
         self.enableHttpEquiv = false;
         self.enableCharset = true;
-        self.enableMultiContents = false;
+        self.enableMultiContents(false);
       } else {
         self.enableAll();
       }

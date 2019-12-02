@@ -6,7 +6,7 @@
         <h1 class="title pull-left">{{Kooboo.text.common.Page + ': '}}</h1>
         <div class="form-group pull-left" :class="{'has-error':nameError}">
           <input
-            v-kb-tooltip:top.manual.error="nameError"
+            v-kb-tooltip:right.manual.error="nameError"
             type="text"
             placeholder="name"
             class="input-large form-control"
@@ -90,34 +90,38 @@
                           <ul
                             class="list-group"
                             v-kb-sortable="bindingPanel.styleList"
+                            @after-sort="bindingPanel.styleSorted"
                           >
-                            <li
+                            <template
                               v-for="(item,index) in bindingPanel.styleList"
-                              :key="index"
-                              class="list-group-item"
                             >
-                              <span class="sortable"
-                                ><i class="glyphicon glyphicon-list"></i
-                              ></span>
-                              <a
-                                class="btn gray btn-xs pull-right margin-right-5"
-                                href="javascript:;"
-                                title="Remove"
-                                v-kb-tooltip:top="Kooboo.text.common.remove"
-                                @click="removeStyle(item)"
-                                ><i class="fa fa-minus"></i
-                              ></a>
-                              <a
-                                v-if="item.text"
-                                class="btn blue btn-xs pull-right"
-                                href="javascript:;"
-                                title="Edit"
-                                v-kb-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss(item)"
-                                ><i class="fa fa-pencil"></i
-                              ></a>
-                              <span class="nowrap-text">{{item.name}}</span>
-                            </li>
+                              <li
+                                :key="index"
+                                class="list-group-item"
+                              >
+                                <span class="sortable"
+                                  ><i class="glyphicon glyphicon-list"></i
+                                ></span>
+                                <a
+                                  class="btn gray btn-xs pull-right margin-right-5"
+                                  href="javascript:;"
+                                  title="Remove"
+                                  v-kb-tooltip:top="Kooboo.text.common.remove"
+                                  @click="removeStyle(item)"
+                                  ><i class="fa fa-minus"></i
+                                ></a>
+                                <a
+                                  v-if="item.text"
+                                  class="btn blue btn-xs pull-right"
+                                  href="javascript:;"
+                                  title="Edit"
+                                  v-kb-tooltip:top="Kooboo.text.common.edit"
+                                  @click="editJsCss(item)"
+                                  ><i class="fa fa-pencil"></i
+                                ></a>
+                                <span class="nowrap-text">{{item.name}}</span>
+                              </li>
+                            </template>
                           </ul>
                           <div class="panel-body">
                             <button
@@ -150,35 +154,37 @@
                             class="list-group"
                             id="head-scripts"
                             v-kb-sortable="bindingPanel.headScriptList"
+                            @after-sort="bindingPanel.headScriptSorted"
                             style="min-height: 40px;"
-                            data-connect="#body-scripts"
+                            data-sort-connect="#body-scripts"
                           >
-                            <li
-                              class="list-group-item"
+                            <template
                               v-for="(item,index) in bindingPanel.headScriptList"
                             >
-                              <span class="sortable"
-                                ><i class="glyphicon glyphicon-list"></i
-                              ></span>
-                              <a
-                                class="btn gray btn-xs pull-right margin-right-5"
-                                href="javascript:;"
-                                title="Remove"
-                                v-kb-tooltip:top="Kooboo.text.common.remove"
-                                @click="removeScript(item)"
-                                ><i class="fa fa-minus"></i
-                              ></a>
-                              <a
-                                v-if="item.text"
-                                class="btn blue btn-xs pull-right"
-                                href="javascript:;"
-                                title="Edit"
-                                v-kb-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss(item)"
-                                ><i class="fa fa-pencil"></i
-                              ></a>
-                              <span class="nowrap-text">{{item.name}}</span>
-                            </li>
+                              <li class="list-group-item" :key="index">
+                                <span class="sortable"
+                                  ><i class="glyphicon glyphicon-list"></i
+                                ></span>
+                                <a
+                                  class="btn gray btn-xs pull-right margin-right-5"
+                                  href="javascript:;"
+                                  title="Remove"
+                                  v-kb-tooltip:top="Kooboo.text.common.remove"
+                                  @click="removeScript(item)"
+                                  ><i class="fa fa-minus"></i
+                                ></a>
+                                <a
+                                  v-if="item.text"
+                                  class="btn blue btn-xs pull-right"
+                                  href="javascript:;"
+                                  title="Edit"
+                                  v-kb-tooltip:top="Kooboo.text.common.edit"
+                                  @click="editJsCss(item)"
+                                  ><i class="fa fa-pencil"></i
+                                ></a>
+                                <span class="nowrap-text">{{item.name}}</span>
+                              </li>
+                            </template>
                           </ul>
                           <div class="panel-body">
                             <button
@@ -195,35 +201,37 @@
                             class="list-group"
                             id="body-scripts"
                             v-kb-sortable="bindingPanel.bodyScriptList"
-                            data-connect="#head-scripts"
+                            @after-sort="bindingPanel.bodyScriptSorted"
+                            data-sort-connect="#head-scripts"
                             style="min-height: 40px;"
                           >
-                            <li
-                              class="list-group-item"
+                            <template
                               v-for="(item,index) in bindingPanel.bodyScriptList"
                             >
-                              <span class="sortable"
-                                ><i class="glyphicon glyphicon-list"></i
-                              ></span>
-                              <a
-                                class="btn gray btn-xs pull-right margin-right-5"
-                                href="javascript:;"
-                                title="Remove"
-                                v-kb-tooltip:top="Kooboo.text.common.remove"
-                                @click="removeScript(item)"
-                                ><i class="fa fa-minus"></i
-                              ></a>
-                              <a
-                                v-if="item.text"
-                                class="btn blue btn-xs pull-right"
-                                href="javascript:;"
-                                title="Edit"
-                                v-kb-tooltip:top="Kooboo.text.common.edit"
-                                @click="editJsCss(item)"
-                                ><i class="fa fa-pencil"></i
-                              ></a>
-                              <span class="nowrap-text">{{item.name}}</span>
-                            </li>
+                              <li class="list-group-item" :key="index">
+                                <span class="sortable"
+                                  ><i class="glyphicon glyphicon-list"></i
+                                ></span>
+                                <a
+                                  class="btn gray btn-xs pull-right margin-right-5"
+                                  href="javascript:;"
+                                  title="Remove"
+                                  v-kb-tooltip:top="Kooboo.text.common.remove"
+                                  @click="removeScript(item)"
+                                  ><i class="fa fa-minus"></i
+                                ></a>
+                                <a
+                                  v-if="item.text"
+                                  class="btn blue btn-xs pull-right"
+                                  href="javascript:;"
+                                  title="Edit"
+                                  v-kb-tooltip:top="Kooboo.text.common.edit"
+                                  @click="editJsCss(item)"
+                                  ><i class="fa fa-pencil"></i
+                                ></a>
+                                <span class="nowrap-text">{{item.name}}</span>
+                              </li>
+                            </template>
                           </ul>
                           <div class="panel-body">
                             <button
@@ -354,7 +362,6 @@
           kbFrame: null,
           curType: "preview",
           settings: null,
-          isBodyChanged: false,
           isTitleChanged: false,
           isMetaChanged: false,
           isUrlChanged: false,
