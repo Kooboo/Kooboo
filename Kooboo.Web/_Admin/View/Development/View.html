@@ -815,7 +815,7 @@
   <li class="list-group-item">
       <a
           class="btn gray btn-xs pull-right"
-          @click="$root.dataSourcePanel.remove"
+          @click="$root.dataSourcePanel.remove(item)"
           v-kb-tooltip="Kooboo.text.common.remove"
           href="javascript:;"
       >
@@ -823,7 +823,7 @@
       </a>
       <a
           class="btn blue btn-xs pull-right"
-          @click="$root.dataSourcePanel.addChild"
+          @click="$root.dataSourcePanel.addChild(item)"
           v-kb-tooltip:left="Kooboo.text.tooltip.addRelativeSource"
           href="javascript:;"
       >
@@ -832,14 +832,14 @@
       <span
           class="tree-toggle"
           v-if="item.children.length"
-          @click="$root.dataSourcePanel.toggle"
+          @click="$root.dataSourcePanel.toggle(item)"
       >
           <i :class="item.isOpen ? 'fa fa-caret-down' : 'fa fa-caret-right'"></i>
       </span>
       <a
           href="javascript:;"
           class="nowrap-text"
-          @click="$root.dataSourcePanel.edit"
+          @click="$root.dataSourcePanel.edit(item)"
           >{{ item.aliasName }}</a
       >
       <ul class="list-group" v-if="item.isOpen && item.children.length">
