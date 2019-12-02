@@ -34,7 +34,7 @@
                     displayName: "",
                     controlType: "TextBox",
                     isSummaryField: false,
-                    multipleLanguage: true,
+                    multipleLanguage: false,
                     editable: true,
                     order: 0,
                     tooltip: "",
@@ -99,6 +99,12 @@
         },
         methods: {
             initDataByType: function (item) {
+                if (item.dataType === "String") {
+                    self.d_data.multilingual = true;
+                } else {
+                    self.d_data.multilingual = undefined;
+                    self.d_data.multipleLanguage = undefined
+                }
                 if (item.value === "Selection" || item.value === "Switch") {
                     self.d_data.validations = [];
                 } else {
