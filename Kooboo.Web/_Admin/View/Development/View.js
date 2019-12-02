@@ -23,7 +23,42 @@ $(function() {
       self = this;
       return {
         viewId: Kooboo.getQueryString("Id"),
-        name: "",
+        model: {
+          name: ""
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              remote: {
+                url: Kooboo.View.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.model.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         bindingPanel: new BindingPanel({
           onRemove: function(binding) {
             if (pos) {
@@ -52,15 +87,14 @@ $(function() {
         curType: "preview",
         elem: null,
         viewContent: "",
-        _viewContent: "",
-        load: null,
+        load: false,
         positions: {}
       };
     },
     mounted: function() {
       helper = new Helper($(".kb-editor")[0]);
       Kooboo.EventBus.subscribe("kb/lighter/holder", function(elem) {
-        self.elem(elem);
+        self.elem = elem;
         // Lighter
         helper.hold(elem);
         // HTML Preivew
@@ -84,9 +118,9 @@ $(function() {
       });
       Kooboo.EventBus.subscribe("layout/change", function(layout) {
         function loadLayout() {
-          self.load(true);
+          self.load = true;
           if (window.viewEditor.position) {
-            self.changePosition(self.layoutPosition().position());
+            self.changePosition(self.layoutPosition.position);
             helper.shadow(window.viewEditor.position.elem, $(".kb-editor")[0]);
           }
         }
@@ -209,8 +243,8 @@ $(function() {
     },
     methods: {
       changeType: function(type) {
-        if (self.curType() !== type) {
-          self.curType(type);
+        if (self.curType !== type) {
+          self.curType = type;
 
           if (type == "code") {
             if (pos) {
@@ -236,8 +270,8 @@ $(function() {
         helper.unshadow();
         helper.unhold();
         helper.unhover();
-        self.bindingPanel().reset();
-        self.elem(null);
+        self.bindingPanel.reset();
+        self.elem = null;
 
         if (pos) {
           pos.setHTML(html);
@@ -272,7 +306,7 @@ $(function() {
               })
               .join(", ");
             helper.label(it.elem, text);
-            self.bindingPanel().add(bindings[idx]);
+            self.bindingPanel.add(bindings[idx]);
           });
 
           $(window).trigger("resize");
@@ -291,37 +325,35 @@ $(function() {
       },
       onSave: function() {
         self.submit(function(id) {
-          if (self.isNewView()) {
+          if (self.isNewView) {
             location.href = Kooboo.Route.Get(Kooboo.Route.View.DetailPage, {
               Id: id
             });
           } else {
             window.info.show(Kooboo.text.info.save.success, true);
-            self._viewContent(
-              self.curType() == "preview" ? pos.getHTML() : self.viewContent
-            );
+            self._viewContent =
+              self.curType == "preview" ? pos.getHTML() : self.viewContent;
           }
         });
       },
       isValid: function() {
-        return self.isNewView() ? self.name.isValid() : true;
+        return self.isNewView ? self.$refs.form.validate() : true;
       },
       submit: function(callback) {
-        if (self.isValid()) {
-          Kooboo.View.post(JSON.stringify(self.getSubmitData())).then(function(
-            res
-          ) {
-            if (res.success) {
-              if (typeof callback === "function") {
-                callback(res.model);
-              }
-            } else {
-              window.info.show(Kooboo.text.info.save.fail, false);
-            }
-          });
-        } else {
-          self.showError(true);
+        if (!self.isValid()) {
+          return;
         }
+        Kooboo.View.post(JSON.stringify(self.getSubmitData())).then(function(
+          res
+        ) {
+          if (res.success) {
+            if (typeof callback === "function") {
+              callback(res.model);
+            }
+          } else {
+            window.info.show(Kooboo.text.info.save.fail, false);
+          }
+        });
       },
       goBack: function() {
         location.href = Kooboo.Route.Get(Kooboo.Route.View.ListPage);
@@ -336,28 +368,28 @@ $(function() {
         }
       },
       hasValueChanged: function() {
-        if (self.curType() == "preview") {
+        if (self.curType == "preview") {
           if (pos) {
-            return pos.getHTML() !== self._viewContent();
+            return pos.getHTML() !== self._viewContent;
           } else {
             return true;
           }
         } else {
-          return self.viewContent !== self._viewContent();
+          return self.viewContent !== self._viewContent;
         }
       },
       getSubmitData: function() {
-        var actions = ko.mapping.toJS(self.dataSourcePanel().actions());
+        var actions = self.dataSourcePanel.actions;
         _.forEach(actions, function(action) {
           self.removeClientId(action);
         });
 
         var _data = {
-          id: self.isNewView() ? Kooboo.Guid.Empty : self.viewId(),
+          id: self.isNewView ? Kooboo.Guid.Empty : self.viewId,
           name: self.name,
           dataSources: actions,
           body:
-            self.curType() == "preview"
+            self.curType == "preview"
               ? pos
                 ? pos.getHTML()
                 : self.viewContent
@@ -365,12 +397,12 @@ $(function() {
           /*formBindings: FormBindingStore.all()*/
         };
 
-        if (self.layoutPosition().layout()) {
-          _data["defaultDisplayLayout"] = self.layoutPosition().layout().name;
+        if (self.layoutPosition.layout) {
+          _data["defaultDisplayLayout"] = self.layoutPosition.layout.name;
         }
 
-        if (self.layoutPosition().position()) {
-          _data["defaultDisplayPosition"] = self.layoutPosition().position();
+        if (self.layoutPosition.position) {
+          _data["defaultDisplayPosition"] = self.layoutPosition.position;
         }
 
         return _data;
@@ -389,11 +421,10 @@ $(function() {
         });
       },
       formatCode: function() {
-        var formatted = html_beautify(self.viewContent());
-        self.viewContent(formatted);
+        this.$refs.editor.formatCode();
       },
       bindingSave: function(data) {
-        var inst = self.bindingPanel().get(data.elem, data.bindingType);
+        var inst = self.bindingPanel.get(data.elem, data.bindingType);
         bindingPanel[inst ? "update" : "add"](data);
         pos.bind(data);
         helper.ring(data.elem);
@@ -409,7 +440,7 @@ $(function() {
         $(window).trigger("resize");
       },
       bindingItemRemove: function(binding) {
-        self.bindingPanel().remove(binding);
+        self.bindingPanel.remove(binding);
         Kooboo.EventBus.publish("kb/frame/dom/update");
       },
       bindingItemEdit: function(binding) {
@@ -421,13 +452,13 @@ $(function() {
           find && (binding.elem = find.elem);
         }
 
-        self.bindingPanel().edit(binding);
+        self.bindingPanel.edit(binding);
       },
       focusBinding: function(type, binding) {
         Kooboo.EventBus.publish("kb/lighter/holder", binding.elem);
       },
       changePosition: function(position) {
-        var oldHTML = self.viewContent(),
+        var oldHTML = self.viewContent,
           newHTML = self.viewContent;
 
         var isFirstLoaded = false;
@@ -473,58 +504,57 @@ $(function() {
             res.model["show"] = true;
             res.model["context"] = self;
             res.model["onAdd"] = function(selected) {
-              self.elem().setAttribute("src", selected.url);
-              self.elem().setAttribute("style", "max-width: 100%;");
+              self.elem.setAttribute("src", selected.url);
+              self.elem.setAttribute("style", "max-width: 100%;");
               Kooboo.EventBus.publish("kb/frame/dom/update");
             };
-            self.mediaDialogData(res.model);
+            self.mediaDialogData = res.model;
           }
         });
       },
       editDom: function() {
-        if ($(self.elem()).is("a")) {
+        if ($(self.elem).is("a")) {
           Kooboo.EventBus.publish("kb/view/edit/node", {
             type: "link",
-            html: $(self.elem()).html(),
-            href: $(self.elem()).attr("href"),
+            html: $(self.elem).html(),
+            href: $(self.elem).attr("href"),
             inNewWindow:
-              $(self.elem()).attr("target") &&
-              $(self.elem()).attr("target") == "_blank"
+              $(self.elem).attr("target") &&
+              $(self.elem).attr("target") == "_blank"
           });
         } else {
           Kooboo.EventBus.publish("kb/view/edit/node", {
             type: "normal",
-            html: $(self.elem()).html()
+            html: $(self.elem).html()
           });
         }
       },
       editNodeSave: function(data) {
         switch (data.type) {
           case "link":
-            $(self.elem()).html(data.html);
-            $(self.elem()).attr("href", data.href);
+            $(self.elem).html(data.html);
+            $(self.elem).attr("href", data.href);
             if (data.inNewWindow) {
-              $(self.elem()).attr("target", "_blank");
+              $(self.elem).attr("target", "_blank");
             } else {
-              self.elem().removeAttribute("target");
+              self.elem.removeAttribute("target");
             }
             break;
           case "normal":
-            $(self.elem()).html(data.html);
+            $(self.elem).html(data.html);
             break;
         }
 
         $(window).trigger("resize");
       },
-
       copyDom: function() {
-        var cloneDom = $(self.elem()).clone();
-        $(cloneDom).insertAfter(self.elem());
+        var cloneDom = $(self.elem).clone();
+        $(cloneDom).insertAfter(self.elem);
 
         if (pos) {
           var bindings = pos.getBindings();
           _.forEach(bindings, function(it, idx) {
-            var inst = self.bindingPanel().get(it.elem, it.bindingType);
+            var inst = self.bindingPanel.get(it.elem, it.bindingType);
             if (!inst) {
               helper.ring(it.elem);
               var text = pos
@@ -535,20 +565,19 @@ $(function() {
                 })
                 .join(", ");
               helper.label(it.elem, text);
-              self.bindingPanel().add(bindings[idx]);
+              self.bindingPanel.add(bindings[idx]);
             }
           });
         }
         Kooboo.EventBus.publish("kb/frame/dom/update");
         $(window).trigger("resize");
       },
-
       removeDom: function() {
-        self.removeBindings(self.elem());
-        DataContext.clear(self.elem());
+        self.removeBindings(self.elem);
+        DataContext.clear(self.elem);
 
-        var parent = $(self.elem()).parent()[0];
-        $(self.elem()).remove();
+        var parent = $(self.elem).parent()[0];
+        $(self.elem).remove();
         Kooboo.EventBus.publish(
           "kb/lighter/holder",
           $(pos.elem).children()[0] || pos.elem
@@ -562,7 +591,7 @@ $(function() {
       },
       removeDesendantBindings: function(elem) {
         var storedElem = elem;
-        $(self.elem())
+        $(self.elem)
           .find("*")
           .each(function(i) {
             self.removeBindingsNonRecursive(this);
@@ -570,11 +599,11 @@ $(function() {
         self.elem(storedElem);
       },
       removeBindingsNonRecursive: function(elem) {
-        self.elem(elem);
-        var bindings = _.cloneDeep(self.bindingPanel().existList());
+        self.elem = elem;
+        var bindings = _.cloneDeep(self.bindingPanel.existList);
         _.forEach(bindings, function(binding) {
           if (binding.elem === elem) {
-            self.bindingPanel().remove(binding);
+            self.bindingPanel.remove(binding);
           }
         });
       },
@@ -584,35 +613,35 @@ $(function() {
     },
     computed: {
       isNewView: function() {
-        return !this.id;
+        return !self.viewId;
       },
       canChangeImg: function() {
-        if (self.elem() && pos && self.elem().tagName == "IMG") {
+        if (self.elem && pos && self.elem.tagName == "IMG") {
           if (
-            $(self.elem()).parents(k2attr["repeat"]).length ||
-            self.elem().hasAttribute(k2attr["attributes"])
+            $(self.elem).parents(k2attr["repeat"]).length ||
+            self.elem.hasAttribute(k2attr["attributes"])
           ) {
             return false;
           }
-          return !self.elem().hasAttribute(placeholderKey);
+          return !self.elem.hasAttribute(placeholderKey);
         } else {
           return false;
         }
       },
       canEditDom: function() {
         if (
-          self.elem() &&
+          self.elem &&
           pos &&
-          ["img"].indexOf(self.elem().tagName.toLowerCase()) == -1
+          ["img"].indexOf(self.elem.tagName.toLowerCase()) == -1
         ) {
-          return !self.elem().hasAttribute(placeholderKey);
+          return !self.elem.hasAttribute(placeholderKey);
         } else {
           return false;
         }
       },
       canRemoveDom: function() {
-        if (self.elem() && pos) {
-          return !self.elem().hasAttribute(placeholderKey);
+        if (self.elem && pos) {
+          return !self.elem.hasAttribute(placeholderKey);
         } else {
           return false;
         }
@@ -624,7 +653,7 @@ $(function() {
           dataSourcePanel.setViewId(id ? id : Kooboo.Guid.Empty);
       },
       elem: function(elem) {
-        self.bindingPanel().elem(elem);
+        self.bindingPanel.elem(elem);
       },
       load: function(load) {
         if (load) {
@@ -633,10 +662,10 @@ $(function() {
           helper.unshadow();
           helper.unhold();
           helper.unhover();
-          self.bindingPanel().reset();
-          self.elem(null);
+          self.bindingPanel.reset();
+          self.elem = null;
 
-          layoutPosition.positionList.removeAll();
+          layoutPosition.positionList.splice(0);
 
           self.scanPositions(kbFrame.getDocumentElement());
 
@@ -644,48 +673,15 @@ $(function() {
             layoutPosition.positionList.push(position);
           });
 
-          self.load(null);
+          self.load = false;
         }
       }
     },
     components: {
       dataSourceItem: {
         template: "#dataSourceTmpl",
-        props: ['item', 'index']
+        props: ["item", "index"]
       }
     }
   });
-});
-
-(function() {
-  var viewViewModel = function() {
-    // TODO: form validate
-    this.showError = ko.observable(false);
-    this.name = ko.validateField({
-      required: Kooboo.text.validation.required,
-      regex: {
-        pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-        message: Kooboo.text.validation.objectNameRegex
-      },
-      stringlength: {
-        min: 1,
-        max: 64,
-        message:
-          Kooboo.text.validation.minLength +
-          1 +
-          ", " +
-          Kooboo.text.validation.maxLength +
-          64
-      },
-      remote: {
-        url: Kooboo.View.isUniqueName(),
-        data: {
-          name: function() {
-            return self.name;
-          }
-        },
-        message: Kooboo.text.validation.taken
-      }
-    });
-  };
 });

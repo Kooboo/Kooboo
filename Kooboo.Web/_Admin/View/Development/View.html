@@ -43,18 +43,30 @@
     >
     <template v-if="isNewView">
       <h1 class="title pull-left">{{ Kooboo.text.common.View + ': ' }}</h1>
-      <div class="form-group pull-left">
-        <input
-          type="text"
-          v-model="name"
-          placeholder="Name"
-          class="form-control input-medium"
-        />
-      </div>
+      <kb-form
+        simple
+        ref="form"
+        class="pull-left"
+        :model="model"
+        :rules="rules"
+      >
+        <kb-form-item prop="name" v-slot="error" id="form-name-error-container">
+          <div class="form-group" :class="{'has-error' : !!error.error }">
+            <input
+              type="text"
+              v-model="model.name"
+              placeholder="Name"
+              class="form-control input-medium"
+              v-kb-tooltip:right.manual.error="error.error"
+              data-container="#form-name-error-container"
+            />
+          </div>
+        </kb-form-item>
+      </kb-form>
     </template>
     <h1 v-else class="title pull-left">
       <span>{{ Kooboo.text.common.View + ': ' }}</span>
-      <strong :title="name">{{ name }}</strong>
+      <strong :title="model.name">{{ model.name }}</strong>
     </h1>
   </div>
   <kb-media-dialog :data="mediaDialogData"></kb-media-dialog>
@@ -768,7 +780,10 @@
           >
             <a href="javascript:;">Preview</a>
           </li>
-          <li class="{ active: curType == 'code' }" @click="changeType('code')">
+          <li
+            :class="{ active: curType == 'code' }"
+            @click="changeType('code')"
+          >
             <a href="javascript:;">Source code</a>
           </li>
         </ul>
@@ -881,15 +896,8 @@
       "/_Admin/Scripts/viewEditor/utils/kBinder.js",
       "/_Admin/Scripts/viewEditor/utils/kParser.js",
       "/_Admin/Scripts/viewEditor/widgets/Position.js",
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-      "/_Admin/Scripts/kobindings.codemirror.js",
-      "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
-      "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
-      "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
-      "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
       "/_Admin/Scripts/viewEditor/components/modal.js",
       "/_Admin/Scripts/viewEditor/utils/fieldFilter.js",
-      "/_Admin/Scripts/components/kbHtmlViewer.js",
       "/_Admin/Scripts/components/kb-media-dialog.js",
       "/_Admin/Scripts/components/kbLabelDialog.js",
       "/_Admin/Scripts/viewEditor/components/attribute.js",
@@ -900,20 +908,13 @@
       "/_Admin/Scripts/viewEditor/components/condition.js",
       "/_Admin/Scripts/viewEditor/components/ActionDialog.js",
       "/_Admin/Scripts/viewEditor/components/editNode.js",
-      "/_Admin/Scripts/components/htmlViewer/kbHtmlTree.js",
-      "/_Admin/Scripts/components/htmlViewer/kbHtmlPath.js",
-      "/_Admin/Scripts/kobindings.typeahead.js",
+      "/_Admin/Scripts/vue-components/kb-code-editor.js",
+      "/_Admin/Scripts/vue-components/kbHtmlViewer.js",
       "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
       "/_Admin/Scripts/tableModel.js",
-      "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
       "/_Admin/Scripts/layoutEditor/components/KBFrame.js"
     ]);
-    Kooboo.loadCSS([
-      "/_Admin/Scripts/components/htmlViewer/kbHtmlTree.css",
-      "/_Admin/Scripts/components/htmlViewer/kbHtmlPath.css",
-      "/_Admin/Styles/jstree/style.min.css",
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.css"
-    ]);
+    Kooboo.loadCSS(["/_Admin/Styles/jstree/style.min.css"]);
   })();
 </script>
 <script src="/_Admin/View/Development/View.js"></script>
