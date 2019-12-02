@@ -91,6 +91,9 @@ $(function() {
           }
         }
       };
+      self.dataSourcePanel.setViewId(
+        self.viewId ? self.viewId : Kooboo.Guid.Empty
+      );
     },
     mounted: function() {
       helper = new Helper($(".kb-editor")[0]);
@@ -649,10 +652,6 @@ $(function() {
       }
     },
     watch: {
-      viewId: function(id) {
-        self.dataSourcePanel &&
-          self.dataSourcePanel.setViewId(id ? id : Kooboo.Guid.Empty);
-      },
       elem: function(elem) {
         self.bindingPanel.elem = elem;
       },

@@ -74,15 +74,15 @@
     </h1>
   </div>
   <kb-media-dialog :data="mediaDialogData"></kb-media-dialog>
-  <kb-label-dialog @save="bindingSave"></kb-label-dialog>
-  <kb-view-attribute @save="bindingSave"></kb-view-attribute>
-  <kb-view-data @save="bindingSave"></kb-view-data>
-  <kb-view-link @save="bindingSave"></kb-view-link>
+  <kb-label-dialog @on-save="bindingSave"></kb-label-dialog>
+  <kb-view-attribute @on-save="bindingSave"></kb-view-attribute>
+  <kb-view-data @on-save="bindingSave"></kb-view-data>
+  <kb-view-link @on-save="bindingSave"></kb-view-link>
   <!-- <kb-view-input params="onSave: bindingSave"></kb-view-input> -->
-  <kb-view-repeat @save="bindingSave"></kb-view-repeat>
-  <kb-view-condition @save="bindingSave"></kb-view-condition>
+  <kb-view-repeat @on-save="bindingSave"></kb-view-repeat>
+  <kb-view-condition @on-save="bindingSave"></kb-view-condition>
   <!-- <kb-view-form params="onSave: bindingSave"></kb-view-form> -->
-  <kb-view-edit-node @save="editNodeSave"></kb-view-edit-node>
+  <kb-view-edit-node @on-save="editNodeSave"></kb-view-edit-node>
   <div class="block-fullpage with-buttons">
     <div class="block-visual-editor default">
       <div class="tabs-bottom">
@@ -809,7 +809,7 @@
     </div>
     <a href="javascript:;" @click="userCancel" class="btn gray">Cancel</a>
   </div>
-  <kb-view-action-dialog @save="onDataSourceSave"></kb-view-action-dialog>
+  <kb-view-action-dialog @on-save="onDataSourceSave"></kb-view-action-dialog>
 </div>
 <script id="dataSourceTmpl" type="text/html">
   <li class="list-group-item">
