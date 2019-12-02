@@ -1,24 +1,21 @@
 (function() {
-  var PositionStore =
-    Kooboo[Kooboo.layoutEditor ? "layoutEditor" : "pageEditor"].store
-      .PositionStore;
+  // var PositionStore =
+  //   Kooboo[Kooboo.layoutEditor ? "layoutEditor" : "pageEditor"].store
+  //     .PositionStore;
 
   function Position(data) {
-    var self = this;
     this.id = data.id;
     this.elem = data.elem;
     this.placeholder = data.placeholder;
     this.type = data.type;
     this.name = data.name;
     this.selected = false;
-
-    this.editing = false;
+    // var self = this;
+    // this.editing = false;
     // this.editing.subscribe(function(flag) {
     //     self.editName(flag ? self.name() : '');
     // });
-    this.editName = this.editing ? self.name : "";
-
-    // TODO: editName logic
+    // this.editName = this.editing ? self.name : "";
     // this.editName = this.editName.extend({
     //     validate: function(name) {
     //         if (_.isEmpty(_.trim(name))) {
@@ -30,8 +27,7 @@
     //         }
     //     }
     // });
-
-    this.showError = false;
+    // this.showError = false;
   }
 
   if (Kooboo.layoutEditor) {
