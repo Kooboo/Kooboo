@@ -107,7 +107,6 @@
                           >
                             <li
                               v-for="(item,index) in bindingPanel.styleList"
-                             
                               :key="index"
                               class="list-group-item"
                             >
@@ -292,7 +291,8 @@
       "/_Admin/Scripts/pageEditor/widgets/html-meta.js",
       "/_Admin/Scripts/lib/jstree.min.js",
       "/_Admin/Scripts/pageEditor/widgets/component-selector.js",
-      "/_Admin/Scripts/lib/jquery-ui-customized.js"
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js"
     ]);
     Kooboo.loadCSS([
       "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
@@ -372,10 +372,9 @@
         window.__pageEditor.kbFrame = self.kbFrame;
 
         Kooboo.EventBus.subscribe("binding/remove", function(data) {
-          if(BindingStore.byId(data.id)){
-             BindingStore.remove(data.id);
+          if (BindingStore.byId(data.id)) {
+            BindingStore.remove(data.id);
           }
-          
         });
 
         $(window).on(
@@ -782,10 +781,8 @@
         changeType: function(type) {
           if (self.curType !== type) {
             if (type == "code") {
-              self.pageContent = self.getLayoutHTML();
-              self.formatCode(function() {
-                self.backupPageContent = self.pageContent;
-              });
+              self.pageContent = html_beautify(self.getLayoutHTML());
+              self.backupPageContent = self.pageContent;
             } else {
               if (!self.isPageContentEqual) {
                 Kooboo.EventBus.publish("fdoc/load", {

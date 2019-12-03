@@ -95,10 +95,7 @@
                             <template
                               v-for="(item,index) in bindingPanel.styleList"
                             >
-                              <li
-                                :key="index"
-                                class="list-group-item"
-                              >
+                              <li :key="index" class="list-group-item">
                                 <span class="sortable"
                                   ><i class="glyphicon glyphicon-list"></i
                                 ></span>
@@ -333,7 +330,8 @@
       "/_Admin/Scripts/pageEditor/components/parameters.js",
       "/_Admin/Scripts/pageEditor/widgets/html-meta.js",
       "/_Admin/Scripts/layoutEditor/components/style-script.js",
-      "/_Admin/Scripts/layoutEditor/components/KBFrame.js"
+      "/_Admin/Scripts/layoutEditor/components/KBFrame.js",
+      "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js"
     ]);
     Kooboo.loadCSS([
       "/_Admin/Styles/bootstrap-editable/css/bootstrap-editable.css"
@@ -628,10 +626,8 @@
         changeType: function(type) {
           if (self.curType !== type) {
             if (type == "code") {
-              self.pageContent = self.kbFrame.getHTML();
-              self.formatCode(function() {
-                self.backupPageContent = self.pageContent;
-              });
+              self.pageContent = html_beautify(self.kbFrame.getHTML());
+              self.backupPageContent = self.pageContent;
             } else {
               if (self.backupPageContent != self.pageContent) {
                 self.setHTML(self.pageContent, function() {
