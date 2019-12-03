@@ -1,259 +1,233 @@
 (function() {
-  ko.components.register("control-string", {
+  Vue.component("control-string", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/string.html"
+      "/_Admin/Scripts/vue-components/extensionEditor/string.html"
     ),
-    viewModel: function(params) {
-      var self = this;
-      this.value = ko.observable(params.value);
-      this.key = params.key;
-      this.value.subscribe(function() {
-        Kooboo.EventBus.publish("parameterBinding change", self);
-      });
+    props: ["key", "value"],
+    watch: {
+      key: function(val) {
+        Kooboo.EventBus.publish("parameterBinding change", this);
+      }
     }
   });
 
-  ko.components.register("control-textarea", {
+  Vue.component("control-textarea", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/textarea.html"
+      "/_Admin/Scripts/vue-components/extensionEditor/textarea.html"
     ),
-    viewModel: function(params) {
-      var self = this;
-      this.value = ko.observable(params.value);
-      this.key = params.key;
-      this.value.subscribe(function() {
-        Kooboo.EventBus.publish("parameterBinding change", self);
-      });
+    props: ["key", "value"],
+    watch: {
+      key: function(val) {
+        Kooboo.EventBus.publish("parameterBinding change", this);
+      }
     }
   });
 
-  function Dictionary(ob, controlDictionaryVm) {
-    this.value = ko.observable(ob.value);
-    this.key = ko.observable(ob.key);
-    this.key.subscribe(function() {
-      Kooboo.EventBus.publish("parameterBinding change", controlDictionaryVm);
-    });
-    this.value.subscribe(function() {
-      Kooboo.EventBus.publish("parameterBinding change", controlDictionaryVm);
-    });
-  }
-
-  ko.components.register("control-dictionary", {
+  Vue.component("control-dictionary", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/dictionary.html"
+      "/_Admin/Scripts/vue-components/extensionEditor/dictionary.html"
     ),
-    viewModel: function(params) {
-      var self = this;
-      this.key = params.key;
-
-      if (params.value !== "") {
-        var dictionaries = JSON.parse(params.value);
+    props: ["key", "value"],
+    data: function() {
+      return {
+        values: []
+      };
+    },
+    mounted: function() {
+      if (!this.value) {
+        var dictionaries = JSON.parse(this.value);
         if (dictionaries instanceof Array && dictionaries.length > 0) {
-          this.value = ko.observableArray(dictionaries);
+          this.values = dictionaries;
         } else {
-          this.value = ko.observableArray([]);
+          this.values = [];
         }
       } else {
-        this.value = ko.observableArray([]);
+        this.values = [];
       }
-
-      this.add = function(m, e) {
-        e.preventDefault();
-        self.value.push(
-          new Dictionary(
-            {
-              key: "",
-              value: ""
-            },
-            self
-          )
-        );
-      };
-      this.remove = function(i, m, e) {
-        var index = i;
-        self.value.splice(index - 1, 1);
-      };
+    },
+    methods: {
+      add: function() {
+        this.values.push({
+          key: "",
+          value: ""
+        });
+      },
+      remove: function(i) {
+        this.values.splice(i, 1);
+      }
+    },
+    watch: {
+      values: {
+        handler: function(val) {
+          Kooboo.EventBus.publish("parameterBinding change", this);
+        },
+        deep: true
+      }
     }
   });
 
-  function Collection(ob, controlCollectionVm) {
-    this.value = ko.observable(ob.value);
-    this.value.subscribe(function() {
-      Kooboo.EventBus.publish("parameterBinding change", controlCollectionVm);
-    });
-  }
-
-  ko.components.register("control-collection", {
+  Vue.component("control-collection", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/collection.html"
+      "/_Admin/Scripts/vue-components/extensionEditor/collection.html"
     ),
-    viewModel: function(params) {
-      var self = this;
-      this.key = params.key;
-
-      if (params.value !== "") {
-        var collections = JSON.parse(params.value);
+    props: ["key", "value"],
+    data: function() {
+      return {
+        values: []
+      };
+    },
+    mounted: function() {
+      if (!this.value) {
+        var collections = JSON.parse(this.value);
         if (collections instanceof Array && collections.length > 0) {
-          this.value = ko.observableArray(collections);
+          this.values = collections;
         } else {
-          this.value = ko.observableArray([]);
+          this.values = [];
         }
       } else {
-        this.value = ko.observableArray([]);
+        this.values = [];
       }
-
-      this.add = function(m, e) {
-        e.preventDefault();
-        self.value.push(
-          new Collection(
-            {
-              value: ""
-            },
-            self
-          )
-        );
-      };
-      this.remove = function(i, m, e) {
-        var index = i();
-        self.value.splice(index - 1, 1);
-      };
-    }
-  });
-
-  ko.components.register("control-checkbox", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/checkbox.html"
-    ),
-    viewModel: function(params) {
-      var self = this;
-      if (
-        params &&
-        (params.value === "True" ||
-          params.value === "true" ||
-          params.value === "False" ||
-          params.value === "false")
-      ) {
-        this.value = ko.observable(JSON.parse(params.value.toCamelCase()));
-      } else {
-        this.value = false;
+    },
+    methods: {
+      add: function() {
+        this.values.push({
+          value: ""
+        });
+      },
+      remove: function(i) {
+        this.values.splice(i, 1);
       }
-      this.key = params.key;
-      this.value.subscribe(function() {
-        Kooboo.EventBus.publish("parameterBinding change", self);
-      });
+    },
+    watch: {
+      values: {
+        handler: function(val) {
+          Kooboo.EventBus.publish("parameterBinding change", this);
+        },
+        deep: true
+      }
     }
   });
 
-  ko.components.register("control-order", {
+  Vue.component("control-checkbox", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/orderBy.html"
+      "/_Admin/Scripts/vue-components/extensionEditor/checkbox.html"
     ),
-    viewModel: function(params) {
-      var self = this;
-      this.key = params.key;
-      this.fieldsOfCurrentFolder = params.fieldsOfCurrentFolder;
-      this.value = ko.observable();
-      this.fieldsOfCurrentFolder.subscribe(function() {
-        self.value(params.value);
-      });
-      this.value.subscribe(function() {
-        Kooboo.EventBus.publish("parameterBinding change", self);
-      });
+    props: ["key", "value"],
+    data: function() {
+      return {
+        valueBool: false
+      };
+    },
+    mounted: function() {
+      this.valueBool = this.value === "True" || this.value === "true";
+    },
+    watch: {
+      valueBool: function(val) {
+        Kooboo.EventBus.publish("parameterBinding change", this);
+      }
     }
   });
 
-  function Filter(ob, filterVm) {
-    var self = this;
-    this.key = ko.observable(ob.key);
+  Vue.component("control-order", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/vue-components/extensionEditor/orderBy.html"
+    ),
+    props: ["key", "value", "fieldsOfCurrentFolder"],
+    watch: {
+      value: function(val) {
+        Kooboo.EventBus.publish("parameterBinding change", this);
+      }
+    }
+  });
+
+  function Filter(ob, fieldsOfCurrentFolder) {
     var choosedOperator;
-    this.value = ko.observable(ob.value);
     if (ob.key) {
-      choosedOperator = filterVm.fieldsOfCurrentFolder().filter(function(item) {
+      choosedOperator = fieldsOfCurrentFolder.filter(function(item) {
         return item.name === ob.key;
       })[0];
     }
-
     if (choosedOperator !== undefined) {
-      this.operators = ko.observableArray(choosedOperator.operators);
+      ob.operators = choosedOperator.operators;
     } else {
-      this.operators = ko.observableArray([]);
+      ob.operators = [];
     }
-    this.comparison = ko.observable(ob.comparison);
-
-    this.chooseField = function(m, e) {
-      if (m.fieldsOfCurrentFolder) {
-        var choosedOperator = m.fieldsOfCurrentFolder().filter(function(item) {
-          return item.name === e.target.value;
-        })[0];
-        self.operators(choosedOperator ? choosedOperator.operators : []);
-      }
-    };
-
-    this.key.subscribe(function() {
-      Kooboo.EventBus.publish("parameterBinding change", filterVm);
-    });
-    this.comparison.subscribe(function() {
-      Kooboo.EventBus.publish("parameterBinding change", filterVm);
-    });
-    this.value.subscribe(function() {
-      Kooboo.EventBus.publish("parameterBinding change", filterVm);
-    });
+    return ob;
   }
 
-  ko.components.register("control-filter", {
+  Vue.component("control-filter", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/components/extensionEditor/filter.html"
+      "/_Admin/Scripts/vue-components/extensionEditor/filter.html"
     ),
-    viewModel: function(params) {
-      var self = this;
-      this.fieldsOfCurrentFolder = params.fieldsOfCurrentFolder;
-      this.value = ko.observableArray();
-      this.key = params.key;
-
-      this.fieldsOfCurrentFolder.subscribe(function() {
-        self.value.removeAll();
-        if (
-          params.value !== undefined &&
-          params.value !== "" &&
-          params.value !== "[{}]"
-        ) {
-          if (
-            JSON.parse(params.value) instanceof Array &&
-            JSON.parse(params.value).length > 0
-          ) {
-            JSON.parse(params.value).forEach(function(item) {
-              self.value.push(
-                new Filter(
-                  {
-                    key: item.FieldName,
-                    value: item.FieldValue,
-                    comparison: item.Comparer
-                  },
-                  self
-                )
-              );
-            });
-          }
+    props: ["key", "value", "fieldsOfCurrentFolder"],
+    data: function() {
+      return {
+        values: []
+      };
+    },
+    methods: {
+      chooseField: function(filter) {
+        if (this.fieldsOfCurrentFolder) {
+          var choosedOperator = m.fieldsOfCurrentFolder.filter(function(item) {
+            return item.name === filter.key;
+          })[0];
+          filter.operators = choosedOperator ? choosedOperator.operators : [];
         }
-      });
-
-      this.add = function(m, e) {
-        e.preventDefault();
-        var newFilter = new Filter(
+      },
+      add: function() {
+        var newFilter = Filter(
           {
             key: "Id",
             value: "",
             comparison: ""
           },
-          self
+          this.fieldsOfCurrentFolder
         );
-        self.value.push(newFilter);
-      };
-      this.remove = function(i, m, e) {
-        var index = i();
-        self.value.splice(index, 1);
-        Kooboo.EventBus.publish("parameterBinding change", self);
-      };
+        this.values.push(newFilter);
+      },
+      remove: function(i) {
+        this.values.splice(i, 1);
+        Kooboo.EventBus.publish("parameterBinding change", this);
+      }
+    },
+    watch: {
+      fieldsOfCurrentFolder: {
+        handler: function(val) {
+          this.values = [];
+          if (
+            this.value !== undefined &&
+            this.value !== "" &&
+            this.value !== "[{}]"
+          ) {
+            if (
+              JSON.parse(this.value) instanceof Array &&
+              JSON.parse(this.value).length > 0
+            ) {
+              JSON.parse(this.value).forEach(function(item) {
+                this.values.push(
+                  Filter(
+                    {
+                      key: item.FieldName,
+                      value: item.FieldValue,
+                      comparison: item.Comparer
+                    },
+                    this.fieldsOfCurrentFolder
+                  )
+                );
+              });
+            }
+          }
+        },
+        immediate: true
+      },
+      watch: {
+        values: {
+          handler: function(val) {
+            Kooboo.EventBus.publish("parameterBinding change", this);
+          },
+          deep: true
+        }
+      }
     }
   });
 })();
