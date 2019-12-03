@@ -1,20 +1,51 @@
 (function() {
-  var template = Kooboo.getTemplate(
-      "/_Admin/Scripts/viewEditor/components/ActionDialog.html"
-    ),
-    DataStore = Kooboo.viewEditor.store.DataStore,
+  var DataStore = Kooboo.viewEditor.store.DataStore,
     ActionStore = Kooboo.viewEditor.store.ActionStore,
     DataContext = Kooboo.viewEditor.DataContext,
     modal = Kooboo.viewEditor.component.modal;
   var self;
   Vue.component("kb-view-action-dialog", {
-    template: template,
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/viewEditor/components/ActionDialog.html"
+    ),
     data: function() {
       self = this;
       return {
         excludeEnumerable: false,
         viewId: "",
-        name: "",
+        model: {
+          name: ""
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^[a-zA-Z]\w*$/,
+              message: Kooboo.text.validation.nameInvalid
+            },
+            {
+              validate: function(val) {
+                if (self.isEdit) {
+                  return true;
+                }
+                if (
+                  !self.context ||
+                  !self.context.actions ||
+                  !self.context.actions.length
+                ) {
+                  return true;
+                }
+                return !_.some(self.context.actions, function(a) {
+                  return a.aliasName.toLowerCase() === val.toLowerCase();
+                });
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         isEdit: false,
         dataItem: null,
         isShow: false,
@@ -59,7 +90,7 @@
           var tree = $("#action_tree").data("jstree");
           tree.deselect_all();
           var $container = $("#action_tree").parent();
-          self.name = data.name;
+          self.model.name = data.name;
           self.parentId = data.parentId;
           self.isShow = true;
           self.context = data.context;
@@ -107,48 +138,27 @@
         return ret;
       },
       reset: function() {
-        self.name = null;
+        self.model.name = null;
         self.methodId = null;
         self.parentId = null;
         self.isShow = false;
         $.jstree.destroy();
+        self.$refs.form.clearValid();
       },
       valid: function() {
-        var result = self.name.valid() && self.methodId.valid();
-        if (
-          result &&
-          this.context &&
-          this.context.actions &&
-          typeof this.context.actions === "function"
-        ) {
-          var existsActions = _.map(this.context.actions(), function(a) {
-            return a["aliasName"].toLowerCase();
-          });
-          if (
-            existsActions.indexOf(self.name().toLowerCase()) > -1 &&
-            !self.isEdit()
-          ) {
-            self.name.error(Kooboo.text.validation.taken);
-            return false;
-          }
-        }
-        return result;
+        return self.$refs.form.validate();
       },
       next: function() {
         if (!self.valid()) {
-          self.showError(true);
           return;
-        } else {
-          self.showError(false);
         }
+        var method = ActionStore.byId(self.methodId);
 
-        var method = ActionStore.byId(self.methodId());
-
-        self.isShow(false);
-        self.methodId(null);
+        self.isShow = false;
+        self.methodId = null;
 
         if (_.toArray(method.parameters).length === 0) {
-          self.methodId(method.id);
+          self.methodId = method.id;
           modal.open({
             title: "Configure datasource",
             html:
@@ -185,7 +195,8 @@
                     $(window.document.body).removeClass("modal-open");
                     modal.find(
                       "iframe"
-                    )[0].contentWindow.dataSourceMethodSettingsContext.displayName = self.name();
+                    )[0].contentWindow.dataSourceMethodSettingsContext.displayName =
+                      self.model.name;
                     modal
                       .find("iframe")[0]
                       .contentWindow.dataSourceMethodSettingsContext.submit();
@@ -209,11 +220,11 @@
               });
             },
             onSubmit: function(data) {
-              data["methodName"] = self.name();
+              data["methodName"] = self.model.name;
               if (method.isGlobal) {
                 ActionStore.addMethod(data);
               }
-              self.methodId(data.id);
+              self.methodId = data.id;
 
               window.dataSourceMethodSettingsModal.destroy();
               self.save(data);
@@ -244,8 +255,8 @@
         }
       },
       edit: function() {
-        var method = ActionStore.byId(self.methodId());
-        self.isShow(false);
+        var method = ActionStore.byId(self.methodId);
+        self.isShow = false;
 
         window.dataSourceMethodSettingsContext = {
           onLoad: function(data) {
@@ -265,7 +276,8 @@
                   $(window.document.body).removeClass("modal-open");
                   modal.find(
                     "iframe"
-                  )[0].contentWindow.dataSourceMethodSettingsContext.displayName = self.name();
+                  )[0].contentWindow.dataSourceMethodSettingsContext.displayName =
+                    self.model.name;
                   modal
                     .find("iframe")[0]
                     .contentWindow.dataSourceMethodSettingsContext.submit();
@@ -318,30 +330,27 @@
         });
       },
       save: function(data) {
-        if (self.valid()) {
-          var name = self.name(),
-            methodId = self.methodId(),
-            parentId = self.parentId(),
-            params = {},
-            isEdit = self.isEdit();
-          self.parameterMappings.each(function(it) {
-            params[it.fromParameter] = it.toParameter();
-          });
-
-          self.onSave({
-            isEdit: isEdit,
-            id: isEdit ? self.dataItem.id : null,
-            name: name,
-            methodId: methodId,
-            parentId: parentId,
-            parameterMappings: params,
-            itemFields: data ? data.itemFields : []
-          });
-
-          self.reset();
-        } else {
-          self.showError(true);
+        if (!self.valid()) {
+          return;
         }
+        var name = self.model.name,
+          methodId = self.methodId,
+          parentId = self.parentId,
+          params = {},
+          isEdit = self.isEdit;
+        self.parameterMappings.forEach(function(it) {
+          params[it.fromParameter] = it.toParameter;
+        });
+        self.$emit("on-save", {
+          isEdit: isEdit,
+          id: isEdit ? self.dataItem.id : null,
+          name: name,
+          methodId: methodId,
+          parentId: parentId,
+          parameterMappings: params,
+          itemFields: data ? data.itemFields : []
+        });
+        self.reset();
       },
       renderTree: function() {
         $("#action_tree")
@@ -451,22 +460,22 @@
               });
               self.isGlobal = selectedData.isGlobal;
               self.isPublic = selectedData.isPublic;
-              self.name = selectedData.name;
+              self.model.name = selectedData.name;
               self.methodId = selectedData.methodId;
             }
           })
           .on("deselect_node.jstree", function() {
             self.methodId = null;
-            self.name = "";
+            self.model.name = "";
           });
       }
     },
     watch: {
       methodId: function(id) {
         var act = ActionStore.byId(id);
-        self.parameterMappings.removeAll();
+        self.parameterMappings = [];
         act &&
-          self.parentId() &&
+          self.parentId &&
           _.forEach(act.userVariables, function(paramName) {
             var toParam = null;
 
@@ -476,7 +485,7 @@
 
             if (!toParam) {
               // Guest best default
-              var field = _.find(self.fields(), function(field) {
+              var field = _.find(self.fields, function(field) {
                 return (
                   field.name.replace(/\./g, "").toLowerCase() ===
                   paramName.toLowerCase()
@@ -490,7 +499,7 @@
 
             self.parameterMappings.push({
               fromParameter: paramName,
-              toParameter: ko.observable(toParam)
+              toParameter: toParam
             });
           });
       },
@@ -522,26 +531,3 @@
     }
   });
 })();
-
-(function() {
-  // TODO: nj validate
-  var self = this;
-
-  this.onSave = params.onSave;
-
-  this.name = ko.validateField({
-    required: Kooboo.text.validation.required,
-    regex: {
-      pattern: /^[a-zA-Z]\w*$/,
-      message: Kooboo.text.validation.nameInvalid
-    }
-  });
-
-  this.methodId = ko.validateField({
-    required: Kooboo.text.validation.required
-  });
-
-  this.isValid = ko.pureComputed(function() {
-    return this.valid();
-  }, this);
-});
