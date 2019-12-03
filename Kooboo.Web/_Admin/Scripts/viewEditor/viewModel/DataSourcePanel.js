@@ -97,7 +97,7 @@
       removeChildren: function(item, ids) {
         if (item.children.length) {
           _.forEach(item.children, function(child) {
-            self.removeChildren(child, ids);
+            this.removeChildren(child, ids);
             if (!child.isPublic) {
               ActionStore.deleteMethodById(child.methodId);
               ids.push(child.id);
@@ -112,7 +112,7 @@
           if (!item.isPublic) {
             ActionStore.deleteMethodById(item.methodId);
           }
-          self.removeChildren(item, ids);
+          this.removeChildren(item, ids);
           DataStore.remove(_.uniq(ids.reverse()));
         }
       },
