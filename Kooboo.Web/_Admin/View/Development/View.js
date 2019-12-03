@@ -1,3 +1,10 @@
+(function() {
+  Vue.component("data-source-item", {
+    template: "#dataSourceTmpl",
+    props: ["item", "index"]
+  });
+})();
+
 $(function() {
   window.viewEditor = {};
   var placeholderKey = "k-placeholder";
@@ -611,8 +618,8 @@ $(function() {
           }
         });
       },
-      onDataSourceSave: function() {
-        return self.dataSourcePanel.save();
+      onDataSourceSave: function(data) {
+        return self.dataSourcePanel.save(data);
       }
     },
     computed: {
@@ -676,12 +683,6 @@ $(function() {
 
           self.load = false;
         }
-      }
-    },
-    components: {
-      dataSourceItem: {
-        template: "#dataSourceTmpl",
-        props: ["item", "index"]
       }
     }
   });
