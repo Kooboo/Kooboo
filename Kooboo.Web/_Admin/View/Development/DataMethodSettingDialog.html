@@ -86,65 +86,15 @@
         v-show="!isFolder && !isProductType"
       >
         <div class="form-horizontal">
-          <!-- ko foreach: parameterBinding -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "normal" -->
-          <!-- ko component: {
-                        name: "control-string",
-                        params: {key: value.displayName, value: value.binding}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "textarea" -->
-          <!-- ko component: {
-                        name: "control-textarea",
-                        params: {key: value.displayName, value: value.binding}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "checkbox" -->
-          <!-- ko component: {
-                        name: "control-checkbox",
-                        params: {key: value.displayName, value: value.binding}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "dictionary" -->
-          <!-- ko component: {
-                        name: "control-dictionary",
-                        params: {key: value.displayName, value: value.binding}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "collection" -->
-          <!-- ko component: {
-                        name: "control-collection",
-                        params: {key: value.displayName, value: value.binding}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "orderby" -->
-          <!-- ko component: {
-                        name: "control-order",
-                        params: {key: value.displayName, value: value.binding, fieldsOfCurrentFolder: $root.fieldsOfCurrentFolder}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- ko if: value.controlType.toLowerCase() === "contentfilter" -->
-          <!-- ko component: {
-                        name: "control-filter",
-                        params: {key: value.displayName, value: value.binding, fieldsOfCurrentFolder: $root.fieldsOfCurrentFolder}
-                    } -->
-          <!-- /ko -->
-          <!-- /ko -->
-
-          <!-- /ko -->
+          <component
+            v-for="(item, index) in parameterBinding"
+            :is="getControlName(item.value.controlType)"
+            :key="index"
+            :name="item.value.displayName"
+            :value="item.value.binding"
+            :fields="fieldsOfCurrentFolder"
+            @change="changeParameterBinding"
+          ></component>
         </div>
       </div>
     </div>

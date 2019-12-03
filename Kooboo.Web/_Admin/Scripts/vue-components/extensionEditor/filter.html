@@ -1,5 +1,5 @@
 ﻿<div class="form-group">
-  <label class="col-sm-3 control-label">{{ key }}</label>
+  <label class="col-sm-3 control-label">{{ name }}</label>
   <div class="col-sm-9">
     <div class="input-rules">
       <div class="input-rule">
@@ -11,7 +11,7 @@
               @change="chooseField(item)"
             >
               <option
-                v-for="option in fieldsOfCurrentFolder"
+                v-for="option in fields"
                 :value="option.name"
                 >{{ option.displayName }}</option
               >

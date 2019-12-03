@@ -1,10 +1,11 @@
 <div class="form-group">
-  <label class="control-label col-sm-3">{{ key }}</label>
+  <label class="control-label col-sm-3">{{ name }}</label>
   <div class="col-sm-9">
     <textarea
       type="text"
       class="form-control input-large"
-      v-model="value"
+      :value="value"
+      @change="change($event.target.value)"
     ></textarea>
   </div>
 </div>

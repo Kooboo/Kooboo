@@ -3,10 +3,14 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/string.html"
     ),
-    props: ["key", "value"],
-    watch: {
-      key: function(val) {
-        Kooboo.EventBus.publish("parameterBinding change", this);
+    inheritAttrs: false,
+    props: ["name", "value"],
+    methods: {
+      change: function(value) {
+        this.$emit("change", {
+          name: this.name,
+          value: value
+        });
       }
     }
   });
@@ -15,19 +19,25 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/textarea.html"
     ),
-    props: ["key", "value"],
-    watch: {
-      key: function(val) {
-        Kooboo.EventBus.publish("parameterBinding change", this);
+    inheritAttrs: false,
+    props: ["name", "value"],
+    methods: {
+      change: function(value) {
+        this.$emit("change", {
+          name: this.name,
+          value: value
+        });
       }
     }
   });
 
   Vue.component("control-dictionary", {
+    inheritAttrs: false,
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/dictionary.html"
     ),
-    props: ["key", "value"],
+    props: ["name", "value"],
+    inheritAttrs: false,
     data: function() {
       return {
         values: []
@@ -59,7 +69,10 @@
     watch: {
       values: {
         handler: function(val) {
-          Kooboo.EventBus.publish("parameterBinding change", this);
+          this.$emit("change", {
+            name: this.name,
+            value: this.values
+          });
         },
         deep: true
       }
@@ -70,7 +83,8 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/collection.html"
     ),
-    props: ["key", "value"],
+    inheritAttrs: false,
+    props: ["name", "value"],
     data: function() {
       return {
         values: []
@@ -96,12 +110,19 @@
       },
       remove: function(i) {
         this.values.splice(i, 1);
+        this.$emit("change", {
+          name: this.name,
+          value: this.values
+        });
       }
     },
     watch: {
       values: {
         handler: function(val) {
-          Kooboo.EventBus.publish("parameterBinding change", this);
+          this.$emit("change", {
+            name: this.name,
+            value: this.values
+          });
         },
         deep: true
       }
@@ -112,7 +133,8 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/checkbox.html"
     ),
-    props: ["key", "value"],
+    inheritAttrs: false,
+    props: ["name", "value"],
     data: function() {
       return {
         valueBool: false
@@ -123,7 +145,10 @@
     },
     watch: {
       valueBool: function(val) {
-        Kooboo.EventBus.publish("parameterBinding change", this);
+        this.$emit("change", {
+          name: this.name,
+          value: val
+        });
       }
     }
   });
@@ -132,18 +157,21 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/orderBy.html"
     ),
-    props: ["key", "value", "fieldsOfCurrentFolder"],
-    watch: {
-      value: function(val) {
-        Kooboo.EventBus.publish("parameterBinding change", this);
+    props: ["name", "value", "fields"],
+    methods: {
+      change: function(value) {
+        this.$emit("change", {
+          name: this.name,
+          value: value
+        });
       }
     }
   });
 
-  function Filter(ob, fieldsOfCurrentFolder) {
+  function Filter(ob, fields) {
     var choosedOperator;
     if (ob.key) {
-      choosedOperator = fieldsOfCurrentFolder.filter(function(item) {
+      choosedOperator = fields.filter(function(item) {
         return item.name === ob.key;
       })[0];
     }
@@ -159,7 +187,7 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/filter.html"
     ),
-    props: ["key", "value", "fieldsOfCurrentFolder"],
+    props: ["name", "value", "fields"],
     data: function() {
       return {
         values: []
@@ -167,8 +195,8 @@
     },
     methods: {
       chooseField: function(filter) {
-        if (this.fieldsOfCurrentFolder) {
-          var choosedOperator = m.fieldsOfCurrentFolder.filter(function(item) {
+        if (this.fields) {
+          var choosedOperator = m.fields.filter(function(item) {
             return item.name === filter.key;
           })[0];
           filter.operators = choosedOperator ? choosedOperator.operators : [];
@@ -181,17 +209,20 @@
             value: "",
             comparison: ""
           },
-          this.fieldsOfCurrentFolder
+          this.fields
         );
         this.values.push(newFilter);
       },
       remove: function(i) {
         this.values.splice(i, 1);
-        Kooboo.EventBus.publish("parameterBinding change", this);
+        this.$emit("change", {
+          name: this.name,
+          value: this.values
+        });
       }
     },
     watch: {
-      fieldsOfCurrentFolder: {
+      fields: {
         handler: function(val) {
           this.values = [];
           if (
@@ -211,7 +242,7 @@
                       value: item.FieldValue,
                       comparison: item.Comparer
                     },
-                    this.fieldsOfCurrentFolder
+                    this.fields
                   )
                 );
               });
@@ -223,7 +254,10 @@
       watch: {
         values: {
           handler: function(val) {
-            Kooboo.EventBus.publish("parameterBinding change", this);
+            this.$emit("change", {
+              name: this.name,
+              value: this.values
+            });
           },
           deep: true
         }
@@ -259,20 +293,6 @@ $(function() {
       };
     },
     mounted: function() {
-      Kooboo.EventBus.subscribe("parameterBinding change", function(vm) {
-        if (vm.value !== undefined) {
-          var value = vm.value;
-        } else {
-          return false;
-        }
-        if (typeof value === "string" || typeof value === "boolean") {
-          self.model.parameterBinding[vm.key.toCamelCase()].binding = value;
-        } else {
-          self.model.parameterBinding[
-            vm.key.toCamelCase()
-          ].binding = JSON.stringify(value);
-        }
-      });
       Kooboo.EventBus.subscribe("folder change", function(id) {
         var getFolder = self.parameterBinding.filter(function(item) {
             if (item.value.controlType === "contentFolder") {
@@ -609,6 +629,19 @@ $(function() {
       });
     },
     methods: {
+      changeParameterBinding(data) {
+        var value = data.value;
+        if (value === undefined) {
+          return;
+        }
+        if (typeof value === "string" || typeof value === "boolean") {
+          this.model.parameterBinding[data.name.toCamelCase()].binding = value;
+        } else {
+          this.model.parameterBinding[
+            data.name.toCamelCase()
+          ].binding = JSON.stringify(value);
+        }
+      },
       dataSourceUrl: function() {
         window.location = Kooboo.Route.Get(Kooboo.Route.DataSource.ListPage);
       },
@@ -656,6 +689,34 @@ $(function() {
           }
         }
         return Kooboo.DataSource.update(JSON.stringify(data));
+      },
+      getControlName: function(controlType) {
+        controlType = controlType.toLowerCase();
+        if (
+          [
+            "normal",
+            "textarea",
+            "checkbox",
+            "dictionary",
+            "collection",
+            "orderby",
+            "contentfilter"
+          ].indexOf(controlType) === -1
+        ) {
+          return;
+        }
+        switch (controlType) {
+          case "normal":
+            controlType = "string";
+            break;
+          case "orderby":
+            controlType = "order";
+            break;
+          case "contentfilter":
+            controlType = "filter";
+            break;
+        }
+        return "control-" + controlType;
       }
     }
   });

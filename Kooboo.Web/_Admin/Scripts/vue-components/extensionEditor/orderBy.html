@@ -1,8 +1,12 @@
 ﻿<div class="form-group">
-  <label class="col-sm-3 control-label">{{ key }}</label>
+  <label class="col-sm-3 control-label">{{ name }}</label>
   <div class="col-sm-9">
-    <select class="form-control input-medium" v-model="value">
-      <option v-for="option in fieldsOfCurrentFolder" :value="option.name"
+    <select
+      class="form-control input-medium"
+      :value="value"
+      @change="change($event.target.value)"
+    >
+      <option v-for="option in fields" :value="option.name"
         >{{ option.displayName }}</option
       >
     </select>
