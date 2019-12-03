@@ -1,3 +1,10 @@
+(function() {
+  Vue.component("data-source-item", {
+    template: "#dataSourceTmpl",
+    props: ["item", "index"]
+  });
+})();
+
 $(function() {
   window.viewEditor = {};
   var placeholderKey = "k-placeholder";
@@ -676,12 +683,6 @@ $(function() {
 
           self.load = false;
         }
-      }
-    },
-    components: {
-      dataSourceItem: {
-        template: "#dataSourceTmpl",
-        props: ["item", "index"]
       }
     }
   });

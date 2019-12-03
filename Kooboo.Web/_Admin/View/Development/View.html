@@ -842,10 +842,10 @@
           @click="$root.dataSourcePanel.edit(item)"
           >{{ item.aliasName }}</a
       >
-      <ul class="list-group" v-if="item.isOpen && item.children.length">
+      <ul class="list-group" v-if="item.isOpen &&  item.children && item.children.length">
           <data-source-item
-          v-for="($data, $index) in dataSourcePanel.actions"
-          :item="$data.children"
+          v-for="($data, $index) in item.children"
+          :item="$data"
           :key="index + '_' + $index"
           ></data-source-item>
       </ul>
