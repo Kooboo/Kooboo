@@ -26,10 +26,7 @@
   </head>
 
   <body class="full-width">
-    <div
-      data-bind="component: { name: 'header', params: $data }"
-      id="component_container_header"
-    ></div>
+    <kb-header id="component_container_header"></kb-header>
     <script>
       (function() {
         Kooboo.loadJS(
@@ -45,7 +42,7 @@
             "/_Admin/Scripts/kooboo/EventBus.js",
             "/_Admin/Scripts/lib/knockout.mapping.min.js",
             "/_Admin/Scripts/SPA.js",
-            "/_Admin/Scripts/components/header.js",
+            "/_Admin/Scripts/vue-components/header.js",
             "/_Admin/Scripts/app.js"
           ],
           true
@@ -62,4 +59,9 @@
     </div>
     <div class="clearfix" tal-placeholder="main" layout="default"> </div>
   </body>
+  <script>
+    new Vue({
+      el: "#component_container_header"
+    });
+  </script>
 </html>
