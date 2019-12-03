@@ -611,8 +611,8 @@ $(function() {
           }
         });
       },
-      onDataSourceSave: function() {
-        return self.dataSourcePanel.save();
+      onDataSourceSave: function(data) {
+        return self.dataSourcePanel.save(data);
       }
     },
     computed: {
