@@ -82,7 +82,7 @@
                   text: displayText,
                   elem: parent
                 });
-                parent = $(parent).parent[0];
+                parent = $(parent).parent()[0];
               }
             }
           }
