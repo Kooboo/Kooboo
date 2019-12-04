@@ -1,852 +1,620 @@
-$(function() {
+$(function () {
+    var self;
 
-    var CUR_MENU = null,
-        IS_MODAL_SHOWEN = false;
-
-    function LangModel(lang) {
-        var self = this;
-
-        this.showError = ko.observable(false);
-
-        this.key = lang.key;
-
-        if (lang.verifyField) {
-            this.value = ko.validateField(lang.value, {
-                required: ""
-            })
-        } else {
-            this.value = ko.observable(lang.value);
-        }
-
-        this.verifyField = lang.verifyField;
-    }
-
-    var menuViewModel = function(params) {
-
-        var self = this;
-
-        this.loading = ko.observable(true);
-
-        this.defaultLang = ko.observable();
-        this.isMultiLangeMenu = ko.observable(false);
-        this.multilingualModal = ko.observable(false);
-        this.multiNames = ko.observableArray();
-        this.onShowMultiModal = function(menu) {
-            CUR_MENU = menu;
-            Kooboo.Menu.getLang({
-                id: menu.id(),
-                rootId: menu.rootId()
-            }).then(function(res) {
-                if (res.success) {
-                    var langs = [];
-                    Kooboo.objToArr(res.model).forEach(function(lang) {
-                        lang["verifyField"] = Boolean(lang.key == self.defaultLang());
-                        langs.push(new LangModel(lang));
-                    })
-
-                    self.multiNames(langs);
-                    self.multilingualModal(true);
-                }
-            })
-
-        }
-        this.onHideMultilinModal = function() {
-            var find = _.find(self.multiNames(), function(name) {
-                return name.key == self.defaultLang();
-            })
-            find.showError(false);
-
-            self.multilingualModal(false);
-            self.multiNames([]);
-        }
-        this.isMultiNameValid = function() {
-            var find = _.find(self.multiNames(), function(mn) {
-                return mn.key == self.defaultLang();
-            })
-
-            return find.value.isValid();
-        }
-        this.onSaveMultiName = function() {
-            if (self.isMultiNameValid()) {
-                var menus = _.cloneDeep(self.menuItems()),
-                    data = {};
-                _.forEach(self.multiNames(), function(mn) {
-                    data[mn.key] = mn.value();
-                })
-                var menus = _.cloneDeep(self.menuItems());
-                Kooboo.Menu.updateLang({
-                    id: CUR_MENU.id(),
-                    rootId: CUR_MENU.rootId(),
-                    values: data
-                }).then(function(res) {
-                    if (res.success) {
-                        var idx = _.findIndex(menus, function(m) {
-                            return m.id() == CUR_MENU.id()
-                        })
-                        var m = menus.splice(idx, 1);
-                        m[0].name(res.model);
-                        menus.splice(idx, 0, m[0]);
-                        self.menuItems(menus);
-                        window.info.show(Kooboo.text.info.save.success, true);
-                        self.onHideMultilinModal();
-                    } else {
-                        window.info.show(Kooboo.text.info.save.fail, false);
-                    }
-                    CUR_MENU = null;
-                })
-            } else {
-                self.showMultiNameError();
-            }
-        }
-        this.showMultiNameError = function() {
-            var find = _.find(self.multiNames(), function(mn) {
-                return mn.key == self.defaultLang();
-            })
-
-            return find.showError(true);
-        }
-
-        this.afterMenusRendered = function() {
-
-            $('[data-inline-edit="true"]').editable({
-                mode: "inline",
-                type: "text",
-                validate: function(value) {
-                    if ($.trim(value) == '') {
-                        return Kooboo.text.validation.required;
-                    } else if (value.match(/<[^>]+>/g) && value.match(/<[^>]+>/g).length) {
-                        return Kooboo.text.validation.tagNotAllow;
-                    }
+    new Vue({
+        el: "#menu-dialog",
+        data: function () {
+            return {
+                name: "",
+                menuItems: [],
+                breads: [],
+                mark: {
+                    markAnchorText: "{anchortext}",
+                    markHref: "{href}",
+                    markSubItems: "{items}",
+                    markActiveClass: "{activeclass:className}",
+                    markParentId: "{parentid}",
+                    markCurrentId: "{currentid}"
                 },
-                send: 'always',
-                success: function(res, newName) {
-                    var id = $(this).attr("data-id"),
-                        name = newName;
-                    var _find = _.findLast(self.menuItems(), function(menu) {
-                        return menu.id() == id;
-                    });
-
-                    _find.name(name);
-
-                    self.updateRelatedMenu(_find);
-                    self.saveMenuCodeEvent();
-                    DataCache.removeRelatedData("menu");
-                }
-            });
-
-            $(".tree").treegrid({
-                expanderExpandedClass: 'fa fa-caret-down',
-                expanderCollapsedClass: 'fa fa-caret-right'
-            });
-
-            adjustFrameHeight();
-
-        };
-
-        this.name = ko.observable(params.name);
-
-        this.pageList = ko.observableArray();
-
-        var _menus = [];
-        params.menuItems.forEach(function(menu) {
-            _menus.push(new Menu(menu));
-        });
-        this.menuItems = ko.observableArray(_menus);
-        this.loading(false);
-
-        this._menuItems = ko.observableArray();
-
-        this.isNotRoot = function(m) {
-            return m.id() !== m.rootId();
-        };
-
-        this.className = function(m) {
-            var className = [];
-            className.push("treegrid-" + m.id());
-
-            if (m.parentId() !== Kooboo.Guid.Empty) {
-                className.push("treegrid-parent-" + m.parentId());
-            }
-
-            return className.join(" ");
-        }
-
-        this.onEditLink = function(m) {
-            _.forEach(self.menuItems(), function(menu) {
-                menu.addMenu(false);
-                menu.urlEditing(false);
-            });
-
-            m.urlEditing(true);
-            var originalUrl = _.cloneDeep(m.url());
-            m._url(originalUrl);
-        };
-
-        this.cancelEditLink = function(m) {
-            m.url(m._url());
-            m.urlEditing(false);
-        }
-
-        this.updateLinkUrl = function(m) {
-
-            if (!m.url()) {
-                m.url("#");
-            }
-
-            if (m.url() !== m._url()) {
-
-                Kooboo.Menu.UpdateUrl({
-                    Id: m.id(),
-                    RootId: m.rootId(),
-                    url: m.url()
-                }).then(function(res) {
-
-                    if (res.success) {
-                        m.urlEditing(false);
-                        window.info.show(Kooboo.text.info.update.success, true);
-
-                        self.updateRelatedMenu(m);
-                        self.saveMenuCodeEvent();
-                    } else {
-                        m.url(m._url());
-                        window.info.show(Kooboo.text.info.update.fail, false);
+                editorOptions: {lineNumbersMinChars: 2, minimap: {enabled: false}},
+                defaultLang: undefined,
+                isMultiLangMenu: true,
+                showMultiLangModal: false,
+                showTemplateModal: false,
+                multiNames: undefined,
+                loading: true,
+                CUR_MENU: undefined,
+                menuWithNoChild: false,
+                showCurrentTemplate: false,
+                currentTemplate: '',
+                previewCode: undefined,
+                subItemContainer: '',
+                subItemTemplate: ""
+            };
+        },
+        created: function () {
+            self = this;
+            self.getData();
+            self.initHelp();
+        },
+        watch: {
+            name: function (val) {
+                self.breads = [
+                    {
+                        name: Kooboo.text.component.breadCrumb.sites
+                    },
+                    {
+                        name: Kooboo.text.component.breadCrumb.dashboard
+                    },
+                    {
+                        name: Kooboo.text.common.Menus,
+                        url: Kooboo.Route.Menu.ListPage
+                    },
+                    {
+                        name: val
                     }
-                })
-            } else {
-                self.cancelEditLink(m);
+                ];
             }
-        }
+        },
+        methods: {
+            getData: function (callback) {
+                var nameOrId = Kooboo.getQueryString("nameOrId");
 
-        this.menuWithNoChild = ko.observable(false);
-        this.showCurrentTemplate = ko.observable(false);
+                $.when(Kooboo.Menu.getFlat({
+                        name: nameOrId
+                    }),
+                    Kooboo.Site.Langs(),
+                    Kooboo.Page.getAll()
+                ).then(function (menu, lang, page) {
+                    var r1 = $.isArray(menu) ? menu[0] : menu,
+                        r2 = $.isArray(lang) ? lang[0] : lang,
+                        r3 = $.isArray(page) ? page[0] : page;
 
-        this.onShowTemplate = function(m) {
-            CUR_MENU = m;
-            self.menuWithNoChild(m.children().length == 0);
-            self.showCurrentTemplate(m.id() !== m.rootId());
-            self.templateModal(true);
-        };
+                    if (r1.success && r2.success && r3.success) {
+                        self.name = r1.model[0].name;
+                        var temp = r1.model.map(function (item, index) {
+                            item.urlEditing = false;
+                            item.addSubMenuing = false;
+                            item.tempEditingUrl = item.url;
+                            item.newSub = {name: undefined, url: undefined};
+                            item.validate = {
+                                name: {valid: true, msg: ""},
+                                url: {valid: true, msg: ""}
+                            };
+                            item.UpdateText = Kooboo.Route.Get(Kooboo.Menu._getUrl("UpdateText"), {
+                                Id: item.id,
+                                RootId: item.rootId
+                            });
+                            return item;
+                        });
+                        self.menuItems = [];
+                        self.$nextTick(function () {
+                            self.menuItems = temp;
+                            self.defaultLang = r2.model.default;
+                            self.isMultiLangMenu = Object.keys(r2.model.cultures).length > 1;
 
-        $("#template_modal").on('shown.bs.modal', function(e) {
-            var _find = _.findLast(self.menuItems(), function(menu) {
-                return menu.id() == CUR_MENU.id();
-            });
+                            self.pageList = [];
+                            r3.model.pages.forEach(function (page) {
+                                self.pageList.push(page.path);
+                            });
+                            self.loading = false;
+                            self.$nextTick(function () {
+                                self.afterMenusRendered();
+                            });
+                            if (callback) {
+                                callback()
+                            }
+                        })
 
-            self.subItemContainer(_find.subItemContainer() || "");
-            self.subItemTemplate(_find.subItemTemplate() || "");
-            self.currentTemplate(_find.template() || "");
+                    }
+                });
+            },
+            isNotRoot: function (m) {
+                return m.id !== m.rootId;
+            },
+            className: function (m) {
+                var className = [];
+                className.push("treegrid-" + m.id);
 
-            if (!self.currentTemplate()) {
-                var parent = _.find(self.menuItems(), function(menu) {
-                    return menu.id() == _find.parentId();
-                })
-                parent && self.currentTemplate(parent.subItemTemplate());
-            }
+                if (m.parentId !== Kooboo.Guid.Empty) {
+                    className.push("treegrid-parent-" + m.parentId);
+                }
 
-            $(".CodeMirror")[1].CodeMirror.setSize("100%", self.showCurrentTemplate() ? "80px" : "230px");
-            $(".CodeMirror")[2].CodeMirror.setSize("100%", self.showCurrentTemplate() ? "80px" : "105px");
+                return className.join(" ");
+            },
+            afterMenusRendered: function () {
+                $('[data-inline-edit="true"]').editable({
+                    mode: "inline",
+                    type: "text",
+                    validate: function (value) {
+                        if ($.trim(value) == "") {
+                            return Kooboo.text.validation.required;
+                        } else if (
+                            value.match(/<[^>]+>/g) &&
+                            value.match(/<[^>]+>/g).length
+                        ) {
+                            return Kooboo.text.validation.tagNotAllow;
+                        }
+                    },
+                    send: "always",
+                    success: function (res, newName) {
+                        var id = $(this).attr("data-id");
+                        var _find = _.findLast(self.menuItems, function (menu) {
+                            return menu.id === id;
+                        });
+                        _find.name = newName;
+                        self.updateRelatedMenu(_find);
+                        self.saveMenuCodeEvent(_find);
+                        DataCache.removeRelatedData("menu");
+                    }
+                });
 
-            _.forEach($(".CodeMirror"), function($cm) {
-                // CodeMirror's bug
-                $cm.CodeMirror.refresh();
-            })
+                $(".tree").treegrid({
+                    expanderExpandedClass: "fa fa-caret-down",
+                    expanderCollapsedClass: "fa fa-caret-right"
+                });
+            },
+            editUrl: function (event, item) {
+                var toggle = function (item) {
+                    item.urlEditing = false;
+                    if (item.children instanceof Array && item.children.length > 0) {
+                        item.children.forEach(function (i) {
+                            toggle(i);
+                        });
+                    }
+                };
+                this.menuItems.forEach(function (value) {
+                    toggle(value);
+                });
+                item.urlEditing = true;
+            },
+            cancelEditLink: function (event, item) {
+                item.tempEditingUrl = item.url;
+                item.urlEditing = false;
+            },
+            updateLinkUrl: function (event, item) {
+                if (item.url !== item.tempEditingUrl) {
+                    if (!item.tempEditingUrl) item.tempEditingUrl = '#';
+                    item.url = item.tempEditingUrl;
+                    Kooboo.Menu.UpdateUrl({
+                        Id: item.id,
+                        RootId: item.rootId,
+                        url: item.url
+                    }).then(function (res) {
+                        if (res.success) {
+                            item.urlEditing = false;
+                            window.info.show(Kooboo.text.info.update.success, true);
+                            var _find = _.findLast(self.menuItems, function (menu) {
+                                return menu.id === item.id;
+                            });
+                            self.updateRelatedMenu(_find);
+                            self.saveMenuCodeEvent(_find);
+                        } else {
+                            m.url(m._url());
+                            window.info.show(Kooboo.text.info.update.fail, false);
+                        }
+                    })
+                } else {
+                    self.cancelEditLink();
+                }
 
-            IS_MODAL_SHOWEN = true;
-            self.previewCode();
-        });
+            },
+            swapOrder: function (rootId, ida, idb) {
+                if(ida && idb) {
+                    Kooboo.Menu.Swap({
+                        rootId: rootId,
+                        ida: ida,
+                        idb: idb
+                    }).then(function (res) {
+                        if (res.success) {
+                            self.getData(function () {
+                                self.saveMenuCodeEvent();
+                            });
+                        }
+                    });
+                }
 
-        $("#template_modal").on('hide.bs.modal', function(e) {
-            self.subItemContainer("");
-            self.subItemTemplate("");
-            self.currentTemplate("");
-        });
+            },
+            clearValidate: function (item) {
+                item.validate = {
+                    name: {valid: true, msg: ""},
+                    url: {valid: true, msg: ""}
+                };
+            },
+            updateRelatedMenu: function (child) {
+                var parent = _.find(self.menuItems, function (me) {
+                    return me.id === child.parentId;
+                });
 
-        this.onAddSubMenu = function(m) {
-
-            _.forEach(self.menuItems(), function(menu) {
-                menu.addMenu(false);
-                menu.urlEditing(false);
-            });
-
-            m.addMenu(true);
-        };
-
-        this.onAddDataSourceMneu = function(m) {
-            debugger
-        }
-
-        this.onRemoveSubMenu = function(m) {
-
-            if (confirm(Kooboo.text.confirm.deleteItem)) {
-
-                Kooboo.Menu.Delete({
-                    rootId: m.rootId(),
-                    Id: m.id()
-                }).then(function(res) {
-
-                    if (res.success) {
-
-                        var newOrder = _.cloneDeep(self.menuItems());
-
-                        var idx = _.findIndex(newOrder, function(me) {
-                            return me.id() == m.id();
+                if (parent) {
+                    var siblings = _.filter(self.menuItems, function (me) {
+                            return me.parentId === child.parentId;
+                        }),
+                        idxInSiblings = _.findIndex(siblings, function (sb) {
+                            return sb.id === child.id;
                         });
 
-                        newOrder.splice(idx, self.getChildrenCount(m) + 1);
+                    siblings.splice(idxInSiblings, 1);
+                    siblings.splice(idxInSiblings, 0, child);
 
-                        var parent = _.findLast(newOrder, function(me) {
-                                return me.id() == m.parentId();
-                            }),
-                            idxInParent = _.findIndex(parent.children(), function(child) {
-                                return child.id() == m.id();
-                            });
+                    parent.children = siblings;
 
-                        parent.children().splice(idxInParent, 1);
-                        self.updateRelatedMenu(parent);
-                        self.menuItems(newOrder);
-
-                        window.info.show(Kooboo.text.info.delete.success, true);
-                        self.saveMenuCodeEvent();
-
-                    } else {
-                        window.info.show(Kooboo.text.info.delete.fail, false);
+                    self.updateRelatedMenu(parent);
+                } else {
+                    return;
+                }
+            },
+            menuMoveUp: function (e, index, item) {
+                var _index = _.findLastIndex(self.menuItems, function(i,idx) {
+                    if(idx < index && i.parentId === item.parentId) {
+                        return true;
                     }
-                })
-            }
-        };
+                });
 
-        this.subMenuValid = function(m) {
-            return m.newSubName.isValid();
-        }
+                if( _index > -1) {
+                    var idb = self.menuItems[_index].id;
+                    self.swapOrder(
+                        item.rootId,
+                        item.id,
+                        idb
+                    );
+                }
+            },
+            initHelp: function () {
+                self.codeHelperSubItem = [{
+                    text: "MarkSubItems",
+                    value: self.mark.markSubItems,
+                    for: "SUB_ITEM_CONTAINER"
+                }];
+                self.subTmplCodeHelpers = [{
+                    text: "MarkAnchorText",
+                    value: self.mark.markAnchorText,
+                    for: "SUB_ITEM_TEMPLATE"
+                }, {
+                    text: "MarkHref",
+                    value: self.mark.markHref,
+                    for: "SUB_ITEM_TEMPLATE"
+                }, {
+                    text: "MarkSubItems",
+                    value: self.mark.markSubItems,
+                    for: "SUB_ITEM_TEMPLATE"
+                }, {
+                    text: "MarkActiveClass",
+                    value: self.mark.markActiveClass,
+                    for: "SUB_ITEM_TEMPLATE"
+                }, {
+                    text: "MarkParentId",
+                    value: self.mark.markParentId,
+                    for: "SUB_ITEM_TEMPLATE"
+                }, {
+                    text: "MarkCurrentId",
+                    value: self.mark.markCurrentId,
+                    for: "SUB_ITEM_TEMPLATE"
+                }];
+                self.tmplCodeHelpers = [{
+                    text: "MarkAnchorText",
+                    value: self.mark.markAnchorText,
+                    for: "TEMPLATE"
+                }, {
+                    text: "MarkHref",
+                    value: self.mark.markHref,
+                    for: "TEMPLATE"
+                }, {
+                    text: "MarkSubItems",
+                    value: self.mark.markSubItems,
+                    for: "TEMPLATE"
+                }, {
+                    text: "MarkActiveClass",
+                    value: self.mark.markActiveClass,
+                    for: "TEMPLATE"
+                }, {
+                    text: "MarkParentId",
+                    value: self.mark.markParentId,
+                    for: "TEMPLATE"
+                }, {
+                    text: "MarkCurrentId",
+                    value: self.mark.markCurrentId,
+                    for: "TEMPLATE"
+                }]
+            },
+            menuMoveDown: function (e, index, item) {
+                var _index = _.findIndex(self.menuItems, function(i,idx) {
+                    if(idx > index && i.parentId === item.parentId) {
+                        return true;
+                    }
+                });
+                if(_index > -1){
+                    var idb = self.menuItems[_index].id;
+                    self.swapOrder(
+                        item.rootId,
+                        item.id,
+                        idb
+                    );
+                }
+            },
+            onRemoveSubMenu: function (event, index, item) {
+                if (confirm(Kooboo.text.confirm.deleteItem)) {
+                    Kooboo.Menu.Delete({
+                        rootId: item.rootId,
+                        Id: item.id
+                    }).then(function (res) {
+                        if (res.success) {
+                            self.getData();
+                            window.info.show(Kooboo.text.info.delete.success, true);
+                            self.saveMenuCodeEvent(item);
+                        } else {
+                            window.info.show(Kooboo.text.info.delete.fail, false);
+                        }
+                    });
+                }
+            },
+            onAddSubMenu: function (event, index, item) {
+                item.addSubMenuing = true;
+            },
+            onCancelSubMenu: function (event, index, item) {
+                item.addSubMenuing = false;
+            },
+            onSaveSubMenu: function (event, index, item) {
+                var rules = {
+                    name: [{required: Kooboo.text.validation.required}],
+                    url: []
+                };
 
-        this.onSaveSubMenu = function(m) {
-
-            if (self.subMenuValid(m)) {
-
-                m.subNameRequired(false);
-
-                Kooboo.Menu.CreateSub({
-                    rootId: m.rootId(),
-                    parentId: m.id(),
-                    name: m.newSubName(),
-                    url: m.newSubUrl() || "#"
-                }).then(function(res) {
-
+                var temp = Kooboo.validate(item.newSub, rules);
+                item.validate = temp.result;
+                self.$forceUpdate();
+                if (!item.hasError) {
+                    Kooboo.Menu.CreateSub({
+                        rootId: item.rootId,
+                        parentId: item.id,
+                        name: item.newSub.name,
+                        url: item.newSub.url || "#"
+                    }).then(function (res) {
+                        if (res.success) {
+                            item.addSubMenuing = false;
+                            self.getData();
+                            self.saveMenuCodeEvent(item);
+                            window.info.show(Kooboo.text.info.save.success, true);
+                        } else {
+                            window.info.show(Kooboo.text.info.save.fail, false);
+                        }
+                    });
+                } else {
+                    window.info.show(Kooboo.text.info.menuNameRequired, false);
+                }
+            },
+            hideMultiLangModal: function () {
+                self.showMultiLangModal = false;
+            },
+            onShowMultiModal: function (event, item) {
+                self.CUR_MENU = item;
+                Kooboo.Menu.getLang({
+                    id: item.id,
+                    rootId: item.rootId
+                }).then(function (res) {
                     if (res.success) {
 
-                        var newSubMenuModel = new Menu(res.model),
-                            _idx = _.findIndex(self.menuItems(), function(menu) {
-                                return menu.id() == m.id();
-                            });
+                        var keys = Object.keys(res.model);
+                        var defaultCultureIdx = keys.indexOf(self.defaultLang);
 
-                        self.menuItems.splice((_idx + 1), 0, newSubMenuModel);
-                        m.children.splice(0, 0, newSubMenuModel);
-
-                        self.updateRelatedMenu(m);
-
-                        m.addMenu(false);
-                        m.newSubName("");
-                        m.newSubUrl("");
-
-                        window.info.show(Kooboo.text.info.save.success, true);
-                        self.saveMenuCodeEvent();
-                    } else {
-                        window.info.show(Kooboo.text.info.save.fail, false);
+                        self.multiNames = [];
+                        keys.forEach(function (key, index) {
+                            self.multiNames.push({key: key, value: res.model[key]});
+                            if (index === defaultCultureIdx)
+                                self.multiNames[index].validate = {valid: true, msg: ''}
+                        });
+                        self.showMultiLangModal = true;
                     }
                 })
-            } else {
-                window.info.show(Kooboo.text.info.menuNameRequired, false);
-                m.subNameRequired(true);
-            }
-        };
-
-        this.menuMoveUp = function(m, e) {
-            var newOrder = _.cloneDeep(self.menuItems()),
-                siblings = _.filter(newOrder, function(me) {
-                    return me.parentId() == m.parentId();
-                });
-
-            self._menuItems(_.cloneDeep(newOrder));
-
-            // 获取当前的位置
-            var idx = _.findIndex(newOrder, function(me) {
-                    return me.id() == m.id();
-                }),
-                idxInSiblings = _.findIndex(siblings, function(me) {
-                    return me.id() == m.id();
-                });
-
-            // 获取当前菜单
-            var current = newOrder.splice(idx, 1 + self.getChildrenCount(m));
-
-            if (idxInSiblings > 0) {
-                var siblingIdx = _.findIndex(newOrder, function(me) {
-                    return me.id() == siblings[idxInSiblings - 1].id();
-                });
-                newOrder.splice(siblingIdx, 0, current);
-                newOrder = _.flatten(newOrder);
-
-                self.menuItems(newOrder);
-
-                siblings.splice(idxInSiblings, 1);
-                siblings.splice(idxInSiblings - 1, 0, m);
-                siblings = _.flatten(siblings);
-
-                var parent = _.find(newOrder, function(me) {
-                    return me.id() == m.parentId();
-                });
-
-                parent.children(siblings);
-
-                self.updateRelatedMenu(parent);
-
-                self.swapOrder(m.rootId(), m.id(), siblings[idxInSiblings].id());
-            } else {
-                e.preventDefault();
-            }
-        };
-
-        this.menuMoveDown = function(m, e) {
-            var newOrder = _.cloneDeep(self.menuItems()),
-                siblings = _.filter(newOrder, function(me) {
-                    return me.parentId() == m.parentId();
-                });
-
-            self._menuItems(_.cloneDeep(newOrder));
-
-            // 获取 当前的位置
-            var idx = _.findIndex(newOrder, function(me) {
-                    return me.id() == m.id();
-                }),
-                idxInSiblings = _.findIndex(siblings, function(me) {
-                    return me.id() == m.id();
-                });
-
-            // 获取当前菜单
-            var current = newOrder.splice(idx, 1 + self.getChildrenCount(m));
-            if (idxInSiblings < siblings.length - 1) {
-                var siblingIdx = _.findIndex(newOrder, function(me) {
-                    return me.id() == siblings[idxInSiblings + 1].id();
-                });
-                newOrder.splice(siblingIdx + self.getChildrenCount(siblings[idxInSiblings + 1]) + 1, 0, current);
-                newOrder = _.flatten(newOrder);
-
-                self.menuItems(newOrder);
-
-                siblings.splice(idxInSiblings, 1);
-                siblings.splice(idxInSiblings + 1, 0, m);
-                siblings = _.flatten(siblings);
-
-                var parent = _.find(newOrder, function(me) {
-                    return me.id() == m.parentId();
-                });
-
-                parent.children(siblings);
-
-                self.updateRelatedMenu(parent);
-
-                self.swapOrder(m.rootId(), m.id(), siblings[idxInSiblings].id());
-            } else {
-                e.preventDefault();
-            }
-        };
-
-        this.swapOrder = function(rootId, ida, idb) {
-            var rawData = ko.mapping.toJS(self.menuItems());
-
-            Kooboo.Menu.Swap({
-                rootId: rootId,
-                ida: ida,
-                idb: idb
-            }).then(function(res) {
-
-                if (res.success) {
-                    self.saveMenuCodeEvent();
-                } else {
-                    self.menuItems(self._menuItems());
-                }
-            });
-        }
-
-        this.onCancelSubMenu = function(m) {
-            m.newSubName("");
-            m.newSubUrl("");
-            m.addMenu(false);
-            m.subNameRequired(false);
-        }
-
-        this.updateRelatedMenu = function(child) {
-            var parent = _.find(self.menuItems(), function(me) {
-                return me.id() == child.parentId();
-            });
-
-            if (parent) {
-                var siblings = _.filter(self.menuItems(), function(me) {
-                        return me.parentId() == child.parentId();
-                    }),
-                    idxInSiblings = _.findIndex(siblings, function(sb) {
-                        return sb.id() == child.id();
-                    });
-
-                siblings.splice(idxInSiblings, 1);
-                siblings.splice(idxInSiblings, 0, child);
-
-                parent.children(siblings);
-
-                self.updateRelatedMenu(parent);
-            } else {
-                return;
-            }
-        };
-
-        this.getChildrenCount = function(menu) {
-            // 获取所有子菜单的数量
-            var count = 0,
-                children = menu.children();
-            if (children && children.length) {
-                _.forEach(children, function(child) {
-                    count++;
-                    count += self.getChildrenCount(child);
-                })
-                return count;
-            } else {
-                return 0;
-            }
-        }
-
-        // Template Modal
-
-        this.templateModal = ko.observable(false);
-
-        this.onHideTemplateModal = function() {
-            self.templateModal(false);
-            CUR_MENU = null;
-        }
-
-        this.onSaveTemplate = function() {
-
-            Kooboo.Menu.UpdateTemplate({
-                Id: CUR_MENU.id(),
-                RootId: CUR_MENU.rootId(),
-                SubItemContainer: self.subItemContainer(),
-                SubItemTemplate: self.subItemTemplate(),
-                Template: self.currentTemplate()
-            }).then(function(res) {
-
-                if (res.success) {
-                    var _find = _.findLast(self.menuItems(), function(me) {
-                        return me.id() == CUR_MENU.id();
-                    });
-
-                    _find.subItemContainer(self.subItemContainer());
-                    _find.subItemTemplate(self.subItemTemplate());
-                    _find.template(self.currentTemplate());
-
-                    self.updateRelatedMenu(_find);
-                    self.onHideTemplateModal();
-                    self.saveMenuCodeEvent();
-                }
-            });
-        }
-
-        this.saveMenuCodeEvent = function() {
-            if (window.parent.__gl && window.parent.__gl.saveMenuFinish) {
-                var current = markSubItems;
-                var value = self.renderPreview(current, self.menuItems()[0]);
-                window.parent.__gl.saveMenuFinish(value);
-            }
-        }
-
-        var markAnchorText = "{anchortext}";
-        var markHref = "{href}";
-        var markSubItems = "{items}";
-        var markActiveClass = "{activeclass:className}";
-        var markParentId = "{parentid}";
-        var markCurrentId = "{currentid}";
-
-        this.subItemContainer = ko.observable("");
-        this.subItemContainer.subscribe(function() {
-            if (IS_MODAL_SHOWEN) {
-                self.previewCode();
-            }
-        });
-
-        this.subItemTemplate = ko.observable("");
-        this.subItemTemplate.subscribe(function() {
-            if (IS_MODAL_SHOWEN) {
-                self.previewCode();
-            }
-        });
-
-        this.currentTemplate = ko.observable("");
-        this.currentTemplate.subscribe(function() {
-            if (IS_MODAL_SHOWEN) {
-                self.previewCode();
-            }
-        });
-
-        this.templatePreview = ko.observable("");
-
-        this.previewCode = _.debounce(function() {
-            var current = markSubItems;
-
-            if (CUR_MENU) {
-                current = html_beautify(self.renderPreview(current, self.menuItems()[0]));
-                self.templatePreview(current);
-            }
-        }, 200);
-
-        this.renderPreview = function(tmpl, context) {
-            var self = this,
-                relativeUrl = self.getRelativeUrl();
-            if (tmpl.indexOf(markHref) > -1) {
-                tmpl = tmpl.split(markHref).join(context.url() ? context.url() : "#");
-            }
-            if (tmpl.indexOf(markAnchorText) > -1) {
-                tmpl = tmpl.split(markAnchorText).join(context.name());
-            }
-            if (tmpl.indexOf(markCurrentId) > -1) {
-                tmpl = tmpl.split(markCurrentId).join(context.id());
-            }
-            if (tmpl.indexOf(markParentId) > -1) {
-                tmpl = tmpl.split(markParentId).join(context.parentId());
-            }
-
-            if (tmpl.indexOf(markSubItems) > -1) {
-                if (context.children().length > 0) {
-                    var _tmplArr = tmpl.split(markSubItems),
-                        parentsTemplate = "";
-
-                    if (!CUR_MENU) {
-                        tmpl = _tmplArr.join(context.subItemContainer());
-                        parentsTemplate = context.subItemTemplate();
-                    } else {
-                        tmpl = _tmplArr.join((CUR_MENU.id() == context.id()) ? self.subItemContainer() : context.subItemContainer());
-                        parentsTemplate = (CUR_MENU.id() == context.id()) ? self.subItemTemplate() : context.subItemTemplate();
+            },
+            onSaveMultiName: function () {
+                var hasError = false;
+                self.multiNames.forEach(function (item) {
+                    if (item.validate) {
+                        item.validate = Kooboo.validField(item.value, [{required: Kooboo.text.validation.required}])
+                        if (item.validate.valid === false) {
+                            hasError = true
+                        }
                     }
-
-                    var childTemplates = [];
-                    _.forEach(context.children(), function(child) {
-                        var template = "";
-
-                        if (CUR_MENU) {
-                            template = ((CUR_MENU.id() == child.id()) ?
-                                    self.currentTemplate() :
-                                    (child.template() == context.subItemTemplate() ? parentsTemplate : child.template())) ||
-                                parentsTemplate;
+                });
+                self.$forceUpdate();
+                if (!hasError) {
+                    var menus = _.cloneDeep(self.menuItems),
+                        data = {};
+                    _.forEach(self.multiNames, function (mn) {
+                        data[mn.key] = mn.value;
+                    });
+                    Kooboo.Menu.updateLang({
+                        id: self.CUR_MENU.id,
+                        rootId: self.CUR_MENU.rootId,
+                        values: data
+                    }).then(function (res) {
+                        if (res.success) {
+                            self.hideMultiLangModal();
+                            self.getData()
                         } else {
-                            template = (child.template() == context.subItemTemplate() ? parentsTemplate : child.template()) || parentsTemplate;
+                            window.info.show(Kooboo.text.info.save.fail, false);
                         }
-                        childTemplates.push(self.renderPreview(template, child));
-                    });
-                    tmpl = self.removeNoActiveClass(tmpl, context, relativeUrl);
-                    tmpl = tmpl.split(markSubItems).join(childTemplates.join(""));
-
-                } else {
-                    tmpl = tmpl.split(markSubItems).join("");
-                    tmpl = self.removeNoActiveClass(tmpl, context, relativeUrl);
+                    })
                 }
-            }
-            if (tmpl.indexOf("activeclass:") > -1) {
-                try {
-                    function setActiveClass(elem) {
-                        var selfTemplate = $(elem)[0].outerHTML;
-                        var hasActiveClass = selfTemplate.match(/{.*?}/);
-                        if (hasActiveClass) {
-                            var className = hasActiveClass[0].match(/{[\w\W]*:([\w\W]*)}/)[1];
-                            if ($(elem)[0].hasAttribute("{activeclass:" + className + "}")) {
-                                $(elem)[0].removeAttribute("{activeclass:" + className + "}");
-                                $(elem).addClass(className);
+            },
+            renderPreview: function (tmpl, context, CUR_MENU) {
+                if (!CUR_MENU) {
+                    CUR_MENU = self.CUR_MENU
+                }
+                var relativeUrl = self.getRelativeUrl();
+
+                if (tmpl.indexOf(self.mark.markHref) > -1) {
+                    tmpl = tmpl.split(self.mark.markHref).join(context.url ? context.url : "#");
+                }
+                if (tmpl.indexOf(self.mark.markAnchorText) > -1) {
+                    tmpl = tmpl.split(self.mark.markAnchorText).join(context.name);
+                }
+                if (tmpl.indexOf(self.mark.markCurrentId) > -1) {
+                    tmpl = tmpl.split(self.mark.markCurrentId).join(context.id);
+                }
+                if (tmpl.indexOf(self.mark.markParentId) > -1) {
+                    tmpl = tmpl.split(self.mark.markParentId).join(context.parentId);
+                }
+
+                if (tmpl.indexOf(self.mark.markSubItems) > -1) {
+                    if (context.children.length > 0) {
+                        var _tmplArr = tmpl.split(self.mark.markSubItems),
+                            parentsTemplate = "";
+                        if (!CUR_MENU) {
+                            tmpl = _tmplArr.join(context.subItemContainer);
+                            parentsTemplate = context.subItemTemplate;
+                        } else {
+
+                            tmpl = _tmplArr.join((CUR_MENU.id === context.id) ? self.subItemContainer : context.subItemContainer);
+                            parentsTemplate = (CUR_MENU.id === context.id) ? self.subItemTemplate : context.subItemTemplate;
+                        }
+
+                        var childTemplates = [];
+                        _.forEach(context.children, function (child) {
+                            var template = "";
+
+                            if (CUR_MENU) {
+                                template = ((CUR_MENU.id === child.id) ?
+                                    self.currentTemplate :
+                                    (child.template === context.subItemTemplate ? parentsTemplate : child.template)) ||
+                                    parentsTemplate;
+                            } else {
+                                template = (child.template === context.subItemTemplate ? parentsTemplate : child.template) || parentsTemplate;
                             }
+                            childTemplates.push(self.renderPreview(template, child, CUR_MENU));
+                        });
+                        tmpl = self.removeNoActiveClass(tmpl, context, relativeUrl);
+                        tmpl = tmpl.split(self.mark.markSubItems).join(childTemplates.join(""));
 
-                            $(elem).children().each(function(idx, child) {
-                                setActiveClass($(child));
-                            })
-                        }
-                        return elem;
+                    } else {
+                        tmpl = tmpl.split(self.mark.markSubItems).join("");
+                        tmpl = self.removeNoActiveClass(tmpl, context, relativeUrl);
                     }
-                    var elem = setActiveClass($(tmpl));
-                    tmpl = elem[0].outerHTML;
-
-                } catch (ex) {
-                    tmpl = "error";
                 }
-            }
-            return tmpl;
-        }
-        this.removeNoActiveClass = function(tmpl, context, relativeUrl) {
-            var self = this;
-            if (tmpl.indexOf("activeclass:") > -1 && !self.isActive(context, relativeUrl)) {
-                var _temp = $(tmpl);
-                var activeClassName = tmpl.match(/{.*?}/)[0].match(/{[\w\W]*:([\w\W]*)}/)[1];
-                _temp[0].removeAttribute("{activeclass:" + activeClassName + "}");
-                tmpl = _temp[0].outerHTML;
-            }
-            return tmpl;
-        };
-        this.getRelativeUrl = function() {
-            var relativeUrl = window.parent.__gl.relativeUrl;
-            return relativeUrl;
-        };
-        this.isActive = function(context, relativeUrl) {
-            var self = this;
-            var menuUrl = context.url();
-            if (!menuUrl || !relativeUrl) return false;
-            if (menuUrl.toLowerCase() == relativeUrl.toLowerCase())
-                return true;
-            var active = false;
-            $.each(context.children(), function(i, children) {
-                if (self.isActive(children, relativeUrl)) {
-                    active = true;
-                    return false;
+
+
+                if (tmpl.indexOf("activeclass:") > -1) {
+                    try {
+                        function setActiveClass(elem) {
+                            var selfTemplate = $(elem)[0].outerHTML;
+                            var hasActiveClass = selfTemplate.match(/{.*?}/);
+                            if (hasActiveClass) {
+                                var className = hasActiveClass[0].match(/{[\w\W]*:([\w\W]*)}/)[1];
+                                if ($(elem)[0].hasAttribute("{activeclass:" + className + "}")) {
+                                    $(elem)[0].removeAttribute("{activeclass:" + className + "}");
+                                    $(elem).addClass(className);
+                                }
+
+                                $(elem).children().each(function (idx, child) {
+                                    setActiveClass($(child));
+                                })
+                            }
+                            return elem;
+                        }
+
+                        var elem = setActiveClass($(tmpl));
+                        tmpl = elem[0].outerHTML;
+
+                    } catch (ex) {
+                        tmpl = "error";
+                    }
                 }
-            });
-            return active;
-        };
-        this.codeHelperSubItem = ko.observableArray([{
-            text: "MarkSubItems",
-            value: markSubItems,
-            for: "SUB_ITEM_CONTAINER"
-        }]);
+                return tmpl;
+            },
+            onHideTemplateModal: function () {
+                self.showTemplateModal = false;
+                self.subItemContainer = '';
+                self.subItemTemplate = '';
+                self.currentTemplate = '';
+                self.previewCode = '';
+                self.templatePreview = '';
 
-        this.subTmplCodeHelpers = ko.observableArray([{
-            text: "MarkAnchorText",
-            value: markAnchorText,
-            for: "SUB_ITEM_TEMPLATE"
-        }, {
-            text: "MarkHref",
-            value: markHref,
-            for: "SUB_ITEM_TEMPLATE"
-        }, {
-            text: "MarkSubItems",
-            value: markSubItems,
-            for: "SUB_ITEM_TEMPLATE"
-        }, {
-            text: "MarkActiveClass",
-            value: markActiveClass,
-            for: "SUB_ITEM_TEMPLATE"
-        }, {
-            text: "MarkParentId",
-            value: markParentId,
-            for: "SUB_ITEM_TEMPLATE"
-        }, {
-            text: "MarkCurrentId",
-            value: markCurrentId,
-            for: "SUB_ITEM_TEMPLATE"
-        }]);
+            },
+            onShowTemplateModal: function (event, item) {
+                self.CUR_MENU = item;
+                var _find = _.findLast(self.menuItems, function (menu) {
+                    return menu.id === self.CUR_MENU.id;
+                });
+                self.subItemContainer = _find.subItemContainer || "";
+                self.subItemTemplate = _find.subItemTemplate || "";
+                self.currentTemplate = _find.template || "";
+                if (!self.currentTemplate) {
+                    var parent = _.find(self.menuItems, function (menu) {
+                        return menu.id === _find.parentId;
+                    });
+                    if (parent) {
+                        self.currentTemplate = parent.subItemTemplate;
+                    }
 
-        this.tmplCodeHelpers = ko.observableArray([{
-            text: "MarkAnchorText",
-            value: markAnchorText,
-            for: "TEMPLATE"
-        }, {
-            text: "MarkHref",
-            value: markHref,
-            for: "TEMPLATE"
-        }, {
-            text: "MarkSubItems",
-            value: markSubItems,
-            for: "TEMPLATE"
-        }, {
-            text: "MarkActiveClass",
-            value: markActiveClass,
-            for: "TEMPLATE"
-        }, {
-            text: "MarkParentId",
-            value: markParentId,
-            for: "TEMPLATE"
-        }, {
-            text: "MarkCurrentId",
-            value: markCurrentId,
-            for: "TEMPLATE"
-        }]);
+                }
 
-        this.codeHelp = function(m, e) {
-            var editor = null;
+                var current = self.mark.markSubItems;
+                self.previewCode = html_beautify(self.renderPreview(current, self.menuItems[0]));
+                self.templatePreview = item.subItemTemplate;
+                if (item.children && item.children.length === 0) {
+                    self.menuWithNoChild = true
+                }
+                if (item.id !== item.rootId) {
+                    self.showCurrentTemplate = true
+                }
+                self.showTemplateModal = true
+            },
+            onSaveTemplate: function () {
+                var item = self.CUR_MENU;
+                Kooboo.Menu.UpdateTemplate({
+                    Id: self.CUR_MENU.id,
+                    RootId: self.CUR_MENU.rootId,
+                    SubItemContainer: self.subItemContainer,
+                    SubItemTemplate: self.subItemTemplate,
+                    Template: self.currentTemplate
+                }).then(function (res) {
 
-            switch (m.for) {
-                case "SUB_ITEM_CONTAINER":
-                    editor = $(".CodeMirror")[1].CodeMirror;
-                    break;
-                case "SUB_ITEM_TEMPLATE":
-                    editor = $(".CodeMirror")[2].CodeMirror
-                    break;
-                case "TEMPLATE":
-                    editor = $(".CodeMirror")[3].CodeMirror
-                    break;
-            }
+                    if (res.success) {
+                        self.getData();
+                        self.saveMenuCodeEvent(item);
+                        self.onHideTemplateModal();
+                    }
+                });
+            },
+            codeHelp: function (event, m) {
 
-            if (!editor.getCursor().line && !editor.getCursor().ch) {
-                editor.setValue(editor.getValue() + m.value);
-            } else {
-                editor.replaceSelection(m.value);
+                var component = undefined;
+
+                switch (m.for) {
+                    case "SUB_ITEM_CONTAINER":
+                        component = self.$refs.editor2;
+                        break;
+                    case "SUB_ITEM_TEMPLATE":
+                        component = self.$refs.editor3;
+                        break;
+                    case "TEMPLATE":
+                        component = self.$refs.editor4;
+                        break;
+                }
+                component.replace(m.value)
+            },
+            saveMenuCodeEvent: function (item) {
+                if (window.parent.__gl && window.parent.__gl.saveMenuFinish) {
+                    var current = self.mark.markSubItems;
+                    var value = self.renderPreview(current, self.menuItems[0], item);
+                    window.parent.__gl.saveMenuFinish(value);
+                }
+            },
+            getRelativeUrl: function () {
+                return window.parent.__gl.relativeUrl;
+            },
+            removeNoActiveClass: function (tmpl, context, relativeUrl) {
+                var self = this;
+                if (tmpl.indexOf("activeclass:") > -1 && !self.isActive(context, relativeUrl)) {
+                    var _temp = $(tmpl);
+                    var activeClassName = tmpl.match(/{.*?}/)[0].match(/{[\w\W]*:([\w\W]*)}/)[1];
+                    _temp[0].removeAttribute("{activeclass:" + activeClassName + "}");
+                    tmpl = _temp[0].outerHTML;
+                }
+                return tmpl;
             }
         }
-    }
-
-    var Menu = function(menu) {
-        var self = this;
-
-        ko.mapping.fromJS(menu, {}, self);
-
-        this._url = ko.observable();
-
-        this.UpdateText = ko.pureComputed(function() {
-            return Kooboo.Route.Get(Kooboo.Menu._getUrl("UpdateText"), {
-                Id: self.id(),
-                RootId: self.rootId()
-            });
-        });
-
-        this.addMenu = ko.observable(false);
-
-        this.urlEditing = ko.observable(false);
-
-        this.newSubName = ko.validateField({
-            required: Kooboo.text.validation.required
-        });
-
-        this.subNameRequired = ko.observable(false);
-
-        this.newSubUrl = ko.observable();
-    }
-
-    function adjustFrameHeight() {
-        var height = window.document.body.clientHeight + 200;
-
-        height = Math.min((parent.window.innerHeight - 200), height);
-
-        window.parent.Kooboo.EventBus.publish("kb/component/modal/set/height", { height: height });
-    }
-
-    var nameOrId = Kooboo.getQueryString("nameOrId");
-
-    $.when(Kooboo.Menu.getFlat({
-            name: nameOrId
-        }),
-        Kooboo.Site.Langs(),
-        Kooboo.Page.getAll()).then(function(menu, lang, page) {
-
-        var r1 = $.isArray(menu) ? menu[0] : menu,
-            r2 = $.isArray(lang) ? lang[0] : lang,
-            r3 = $.isArray(page) ? page[0] : page;
-
-        if (r1.success && r2.success && r3.success) {
-            var vm = new menuViewModel({
-                menuItems: r1.model,
-                name: r1.model[0].name
-            })
-
-            vm.defaultLang(r2.model.default);
-            vm.isMultiLangeMenu(Object.keys(r2.model.cultures).length > 1);
-
-            r3.model.pages.forEach(function(page) {
-                vm.pageList.push(page.path);
-            });
-
-
-            ko.applyBindings(vm, document.getElementById("main"));
-        }
-    })
+    });
 
 });
