@@ -1,270 +1,3 @@
-(function() {
-  Vue.component("control-string", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/string.html"
-    ),
-    inheritAttrs: false,
-    props: ["name", "value"],
-    methods: {
-      change: function(value) {
-        this.$emit("change", {
-          name: this.name,
-          value: value
-        });
-      }
-    }
-  });
-
-  Vue.component("control-textarea", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/textarea.html"
-    ),
-    inheritAttrs: false,
-    props: ["name", "value"],
-    methods: {
-      change: function(value) {
-        this.$emit("change", {
-          name: this.name,
-          value: value
-        });
-      }
-    }
-  });
-
-  Vue.component("control-dictionary", {
-    inheritAttrs: false,
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/dictionary.html"
-    ),
-    props: ["name", "value"],
-    inheritAttrs: false,
-    data: function() {
-      return {
-        values: []
-      };
-    },
-    mounted: function() {
-      if (!this.value) {
-        var dictionaries = JSON.parse(this.value);
-        if (dictionaries instanceof Array && dictionaries.length > 0) {
-          this.values = dictionaries;
-        } else {
-          this.values = [];
-        }
-      } else {
-        this.values = [];
-      }
-    },
-    methods: {
-      add: function() {
-        this.values.push({
-          key: "",
-          value: ""
-        });
-      },
-      remove: function(i) {
-        this.values.splice(i, 1);
-      }
-    },
-    watch: {
-      values: {
-        handler: function(val) {
-          this.$emit("change", {
-            name: this.name,
-            value: this.values
-          });
-        },
-        deep: true
-      }
-    }
-  });
-
-  Vue.component("control-collection", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/collection.html"
-    ),
-    inheritAttrs: false,
-    props: ["name", "value"],
-    data: function() {
-      return {
-        values: []
-      };
-    },
-    mounted: function() {
-      if (!this.value) {
-        var collections = JSON.parse(this.value);
-        if (collections instanceof Array && collections.length > 0) {
-          this.values = collections;
-        } else {
-          this.values = [];
-        }
-      } else {
-        this.values = [];
-      }
-    },
-    methods: {
-      add: function() {
-        this.values.push({
-          value: ""
-        });
-      },
-      remove: function(i) {
-        this.values.splice(i, 1);
-        this.$emit("change", {
-          name: this.name,
-          value: this.values
-        });
-      }
-    },
-    watch: {
-      values: {
-        handler: function(val) {
-          this.$emit("change", {
-            name: this.name,
-            value: this.values
-          });
-        },
-        deep: true
-      }
-    }
-  });
-
-  Vue.component("control-checkbox", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/checkbox.html"
-    ),
-    inheritAttrs: false,
-    props: ["name", "value"],
-    data: function() {
-      return {
-        valueBool: false
-      };
-    },
-    mounted: function() {
-      this.valueBool = this.value === "True" || this.value === "true";
-    },
-    watch: {
-      valueBool: function(val) {
-        this.$emit("change", {
-          name: this.name,
-          value: val
-        });
-      }
-    }
-  });
-
-  Vue.component("control-order", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/orderBy.html"
-    ),
-    props: ["name", "value", "fields"],
-    methods: {
-      change: function(value) {
-        this.$emit("change", {
-          name: this.name,
-          value: value
-        });
-      }
-    }
-  });
-
-  function Filter(ob, fields) {
-    var choosedOperator;
-    if (ob.key) {
-      choosedOperator = fields.filter(function(item) {
-        return item.name === ob.key;
-      })[0];
-    }
-    if (choosedOperator !== undefined) {
-      ob.operators = choosedOperator.operators;
-    } else {
-      ob.operators = [];
-    }
-    return ob;
-  }
-
-  Vue.component("control-filter", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/filter.html"
-    ),
-    props: ["name", "value", "fields"],
-    data: function() {
-      return {
-        values: []
-      };
-    },
-    methods: {
-      chooseField: function(filter) {
-        if (this.fields) {
-          var choosedOperator = m.fields.filter(function(item) {
-            return item.name === filter.key;
-          })[0];
-          filter.operators = choosedOperator ? choosedOperator.operators : [];
-        }
-      },
-      add: function() {
-        var newFilter = Filter(
-          {
-            key: "Id",
-            value: "",
-            comparison: ""
-          },
-          this.fields
-        );
-        this.values.push(newFilter);
-      },
-      remove: function(i) {
-        this.values.splice(i, 1);
-        this.$emit("change", {
-          name: this.name,
-          value: this.values
-        });
-      }
-    },
-    watch: {
-      fields: {
-        handler: function(val) {
-          this.values = [];
-          if (
-            this.value !== undefined &&
-            this.value !== "" &&
-            this.value !== "[{}]"
-          ) {
-            if (
-              JSON.parse(this.value) instanceof Array &&
-              JSON.parse(this.value).length > 0
-            ) {
-              JSON.parse(this.value).forEach(function(item) {
-                this.values.push(
-                  Filter(
-                    {
-                      key: item.FieldName,
-                      value: item.FieldValue,
-                      comparison: item.Comparer
-                    },
-                    this.fields
-                  )
-                );
-              });
-            }
-          }
-        },
-        immediate: true
-      },
-      watch: {
-        values: {
-          handler: function(val) {
-            this.$emit("change", {
-              name: this.name,
-              value: this.values
-            });
-          },
-          deep: true
-        }
-      }
-    }
-  });
-})();
 $(function() {
   var folderSelected = false,
     productTypeSelected = false;
@@ -276,7 +9,29 @@ $(function() {
       self = this;
       return {
         methodId: Kooboo.getQueryString("id"),
-        methodName: "",
+        rules: {
+          methodName: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              pattern: /^\w+$/,
+              message: Kooboo.text.validation.nameInvalid
+            },
+            {
+              remote: {
+                url: Kooboo.DataSource.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.model.methodName
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         declareType: "",
         fieldsOfCurrentFolder: [],
         model: {},
@@ -321,7 +76,6 @@ $(function() {
         self.model = model;
         self.isPublic = model.isPublic;
         self.declareType = model.declareType;
-        self.methodName = model.methodName;
 
         _.forEach(model.parameterBinding, function(value, key) {
           var ob = {};
@@ -646,10 +400,12 @@ $(function() {
         window.location = Kooboo.Route.Get(Kooboo.Route.DataSource.ListPage);
       },
       submitable: function() {
-        return true;
-        // TODO: nj validate
-        if (!!self.isPublic && !self.methodName.isValid() && !!self.isNew) {
-          self.showError(true);
+        if (
+          self.isPublic &&
+          self.isNew &&
+          self.$refs.methodForm &&
+          !self.$refs.methodForm.validate()
+        ) {
           return false;
         } else if (self.isFolder && !folderSelected) {
           window.alert(Kooboo.text.alert.pleaseChooseAFolder);
@@ -661,15 +417,11 @@ $(function() {
         return true;
       },
       submit: function(m, e) {
-        // self.showError(false);
         if (self.isNew) {
           self.model.id = Kooboo.Guid.Empty;
-          self.model.isGlobal = false;
-        } else {
-          self.model.isGlobal = false;
         }
+        self.model.isGlobal = false;
         self.model.isPublic = self.isPublic;
-        self.model.methodName = self.methodName;
         var data = self.model;
         for (var k in data.parameterBinding) {
           if (data.parameterBinding[k].controlType === "contentFilter") {
@@ -688,6 +440,7 @@ $(function() {
             }
           }
         }
+        self.$refs.methodForm && self.$refs.methodForm.clearValid();
         return Kooboo.DataSource.update(JSON.stringify(data));
       },
       getControlName: function(controlType) {
@@ -720,35 +473,4 @@ $(function() {
       }
     }
   });
-});
-
-(function() {
-  function methodSettingViewModel() {
-    var self = this;
-    this.showError = ko.observable();
-    self.methodName.extend({
-      validate: {
-        required: Kooboo.text.validation.required,
-        remote: {
-          url: Kooboo.DataSource.isUniqueName(),
-          message: Kooboo.text.validation.taken,
-          type: "get",
-          data: {
-            name: function() {
-              return self.methodName();
-            }
-          }
-        },
-        regex: {
-          pattern: /^\w+$/,
-          message: Kooboo.text.validation.nameInvalid
-        }
-      }
-    });
-    this.isPublic.subscribe(function(isPublic) {
-      if (!isPublic) {
-        self.showError(false);
-      }
-    });
-  }
 });

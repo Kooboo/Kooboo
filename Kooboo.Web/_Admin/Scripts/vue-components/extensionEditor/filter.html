@@ -8,17 +8,17 @@
             <select
               class="form-control key"
               v-model="item.key"
-              @change="chooseField(item)"
+              @change="selectField(item)"
             >
-              <option
-                v-for="option in fields"
-                :value="option.name"
+              <option v-for="option in fields" :value="option.name"
                 >{{ option.displayName }}</option
               >
             </select>
             <span class="input-group-addon separator"></span>
             <select class="form-control comparison" v-model="item.comparison">
-              <option v-for="option in operators">{{ option }}</option>
+              <option v-for="option in item.operators" :value="option"
+                >{{ option }}</option
+              >
             </select>
             <span class="input-group-addon separator"></span>
             <input

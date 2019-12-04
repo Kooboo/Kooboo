@@ -52,10 +52,14 @@ $(function() {
             name: val
           }
         ];
-      }
+      },
+      menuItems:{handler:function () {
+          this.$forceUpdate()
+        },deep:true}
+
     },
     methods: {
-      getData: function() {
+      getData: function(callback) {
         $.when(
           Kooboo.Menu.getFlat({
             id: Kooboo.getQueryString("Id")
@@ -84,18 +88,24 @@ $(function() {
               });
               return item;
             });
-            self.menuItems = temp;
-            self.defaultLang = r2.model.default;
-            self.isMultiLangeMenu = Object.keys(r2.model.cultures).length > 1;
+            self.menuItems = [];
+            self.$nextTick(function () {
+              self.menuItems = temp;
+              self.defaultLang = r2.model.default;
+              self.isMultiLangMenu = Object.keys(r2.model.cultures).length > 1;
 
-            self.pageList = [];
-            r3.model.pages.forEach(function(page) {
-              self.pageList.push(page.path);
-            });
-            self.loading = false;
-            self.$nextTick(function() {
-              self.afterMenusRendered();
-            });
+              self.pageList = [];
+              r3.model.pages.forEach(function (page) {
+                self.pageList.push(page.path);
+              });
+              self.loading = false;
+              self.$nextTick(function () {
+                self.afterMenusRendered();
+              });
+              if (callback) {
+                callback()
+              }
+            })
           }
         });
       },
@@ -188,16 +198,17 @@ $(function() {
 
       },
       swapOrder: function(rootId, ida, idb) {
-        Kooboo.Menu.Swap({
-          rootId: rootId,
-          ida: ida,
-          idb: idb
-        }).then(function(res) {
-          if (res.success) {
-          } else {
-            self.menuItems = self._menuItems;
-          }
-        });
+        if(ida && idb) {
+          Kooboo.Menu.Swap({
+            rootId: rootId,
+            ida: ida,
+            idb: idb
+          }).then(function(res) {
+            if (res.success) {
+              self.getData();
+            }
+          });
+        }
       },
       clearValidate: function(item) {
         item.validate = {
@@ -205,22 +216,10 @@ $(function() {
           url: { valid: true, msg: "" }
         };
       },
-      getAllChildrenMumber: function(item) {
-        var mum = 0;
-        if (item.children instanceof Array && item.children.length > 0) {
-          item.children.forEach(function(i) {
-            var childMum = self.getAllChildrenMumber(i);
-            mum = mum + childMum;
-            mum++;
-          });
-        }
-        return mum;
-      },
       updateRelatedMenu: function(child) {
         var parent = _.find(self.menuItems, function(me) {
           return me.id === child.parentId;
         });
-
         if (parent) {
           var siblings = _.filter(self.menuItems, function(me) {
                 return me.parentId === child.parentId;
@@ -239,14 +238,21 @@ $(function() {
           return;
         }
       },
-      menuMoveUp: function(e, index, item) {
-        var count = self.getAllChildrenMumber(self.menuItems[index - 1]);
-        self.swapOrder(
-          item.rootId,
-          item.id,
-          self.menuItems[index - count - 1].id
-        );
-        self.getData();
+      menuMoveUp: function (e, index, item) {
+        var _index = _.findLastIndex(self.menuItems, function(i,idx) {
+          if(idx < index && i.parentId === item.parentId) {
+            return true;
+          }
+        });
+
+        if( _index > -1) {
+          var idb = self.menuItems[_index].id;
+          self.swapOrder(
+              item.rootId,
+              item.id,
+              idb
+          );
+        }
       },
       initHelp: function() {
         self.codeHelperSubItem = [{
@@ -305,14 +311,20 @@ $(function() {
           for: "TEMPLATE"
         }]
       },
-      menuMoveDown: function(e, index, item) {
-        var count = self.getAllChildrenMumber(item);
-        self.swapOrder(
-          item.rootId,
-          item.id,
-          self.menuItems[index + count + 1].id
-        );
-        self.getData();
+      menuMoveDown: function (e, index, item) {
+        var _index = _.findIndex(self.menuItems, function(i,idx) {
+          if(idx > index && i.parentId === item.parentId) {
+            return true;
+          }
+        });
+        if(_index > -1){
+          var idb = self.menuItems[_index].id;
+          self.swapOrder(
+              item.rootId,
+              item.id,
+              idb
+          );
+        }
       },
       onRemoveSubMenu: function(event, index, item) {
         if (confirm(Kooboo.text.confirm.deleteItem)) {
@@ -492,11 +504,11 @@ $(function() {
       onHideTemplateModal:function () {
         self.showTemplateModal = false;
         self.CUR_MENU = undefined;
-        self.subItemContainer = undefined;
-        self.subItemTemplate = undefined;
-        self.currentTemplate = undefined;
-        self.previewCode = undefined;
-        self.templatePreview = undefined;
+        self.subItemContainer = '';
+        self.subItemTemplate = '';
+        self.currentTemplate = '';
+        self.previewCode = '';
+        self.templatePreview = '';
 
       },
       onShowTemplateModal:function(event,item){
