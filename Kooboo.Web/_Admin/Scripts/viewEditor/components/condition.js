@@ -18,9 +18,6 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/viewEditor/components/condition.html"
     ),
-    props: {
-      closeHandler: {}
-    },
     data: function() {
       return {
         elem: undefined,

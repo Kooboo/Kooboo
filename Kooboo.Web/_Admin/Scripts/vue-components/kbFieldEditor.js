@@ -295,7 +295,7 @@
                 if (self.validate()) {
                     var data = this.d_data;
                     data.displayName = !this.d_data.displayName || this.d_data.displayName === ''? this.d_data.name : this.d_data.displayName;
-                    data.editable = this.d_data.isSystemField?this.d_data.editable : true;
+                    data.editable = !this.d_data.isSystemField?this.d_data.editable : false;
                     data[self.languageKeyRecord] = self.d_data[self.languageKeyRecord];
                     data.multipleValue = this.d_data.controlType.toLowerCase() === "checkbox"? true: this.d_data.isMultipleValue;
                     data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
