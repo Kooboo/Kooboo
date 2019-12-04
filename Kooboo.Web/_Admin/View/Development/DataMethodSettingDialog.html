@@ -18,7 +18,7 @@
         <kb-form
           simple
           ref="methodForm"
-          :model="methodModel"
+          :model="model"
           :rules="rules"
           v-if="isPublic"
         >
@@ -38,7 +38,7 @@
                   name="MethodName"
                   class="form-control input-medium"
                   placeholder="Name"
-                  v-model="methodModel.methodName"
+                  v-model="model.methodName"
                   v-kb-tooltip:right.manual.error="error.error"
                   data-container="#method-name-error-container"
                 />
