@@ -12,6 +12,7 @@
     repeatSelfKey = repeatKey + "-self";
 
   Vue.component("kb-view-data", {
+    template: template,
     data: function() {
       return {
         isShow: false,
