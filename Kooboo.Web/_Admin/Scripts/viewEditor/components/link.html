@@ -7,8 +7,7 @@
         ></button>
         <h4
           class="modal-title"
-          data-bind="text: Kooboo.text.component.viewEditor.link"
-        ></h4>
+        >{{ Kooboo.text.component.viewEditor.link }}</h4>
       </div>
       <div class="modal-body">
         <div class="form-horizontal">
@@ -23,7 +22,6 @@
                     <option
                       v-for="$data in pages"
                       :value="$data.url"
-                      data-bind="value: $data.url, text: $data.url"
                       >{{$data.url}}</option
                     >
                   </optgroup>
@@ -31,7 +29,6 @@
                     <option
                       v-for="$data in views"
                       :value="$data.url"
-                      data-bind="value: $data.url, text: $data.url"
                       >{{ $data.url}}</option
                     >
                   </optgroup>
