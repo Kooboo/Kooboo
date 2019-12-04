@@ -11,8 +11,8 @@
     </h1>
   </div>
   <div class="block-fullpage with-buttons">
-    <div v-if="dataType == 0" id="compare"></div>
-    <div v-else-if=" dataType == 1" class="col-md-12">
+    <div v-if="dataType == 0" id="compare" style="height: 100%;"></div>
+    <div v-else-if="dataType == 1" class="col-md-12">
       <div class="col-md-6">
         <img :src="source1" style="max-width: 100%" />
       </div>
@@ -29,12 +29,7 @@
 <script>
   (function() {
     Kooboo.loadJS([
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-      "/_Admin/Scripts/lib/mergely-3.3.10/mergely.min.js"
-    ]);
-    Kooboo.loadCSS([
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
-      "/_Admin/Scripts/lib/mergely-3.3.10/mergely.css"
+      "/_Admin/Scripts/vue-components/manacoService/manaco-service.js"
     ]);
   })();
 </script>

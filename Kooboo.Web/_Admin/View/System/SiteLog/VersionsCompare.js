@@ -18,20 +18,28 @@ $(function() {
       compare: function() {
         switch (self.dataType) {
           case 0:
-            $("#compare").mergely({
-              cmsettings: {
-                readOnly: true,
-                lineNumbers: true
-              },
-              width: "100%",
-              height: "auto",
-              sidebar: false,
-              lhs: function(setValue) {
-                setValue(self.source1 || "");
-              },
-              rhs: function(setValue) {
-                setValue(self.source2 || "");
-              }
+            var monacoService = new MonacoEditorService();
+            monacoService.loader(function(monaco) {
+              // https://microsoft.github.io/monaco-editor/playground.html#creating-the-diffeditor-hello-diff-world
+              var diffEditor = monaco.editor.createDiffEditor(
+                document.getElementById("compare"),
+                {
+                  enableSplitViewResizing: true,
+                  readOnly: true
+                }
+              );
+              var lhsModel = monaco.editor.createModel(
+                self.source1 || "",
+                "text/plain"
+              );
+              var rhsModel = monaco.editor.createModel(
+                self.source2 || "",
+                "text/plain"
+              );
+              diffEditor.setModel({
+                original: lhsModel,
+                modified: rhsModel
+              });
             });
             break;
           case 1:
