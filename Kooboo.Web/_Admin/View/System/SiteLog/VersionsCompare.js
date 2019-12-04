@@ -24,7 +24,8 @@ $(function() {
               var diffEditor = monaco.editor.createDiffEditor(
                 document.getElementById("compare"),
                 {
-                  enableSplitViewResizing: true
+                  enableSplitViewResizing: true,
+                  readOnly: true
                 }
               );
               var lhsModel = monaco.editor.createModel(

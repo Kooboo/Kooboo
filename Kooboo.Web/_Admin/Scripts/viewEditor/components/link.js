@@ -133,7 +133,7 @@
           return alert(Kooboo.text.validation.required);
         }
 
-        self.$emit("onSave", {
+        self.$emit("on-save", {
           elem: self.elem,
           bindingType: bindingType,
           href: self.getFinalHref()

@@ -166,10 +166,7 @@
         var self = this;
         var rawAttribute = "";
         _.forEach(self.attributes, function(attr) {
-          var value = attr
-            .value()
-            .split('"')
-            .join("'");
+          var value = attr.value.split('"').join("'");
           rawAttribute += attr.key;
           rawAttribute += " ";
           rawAttribute += value;
@@ -196,11 +193,9 @@
       },
       getRemovedDataSourceId: function() {
         var self = this;
-        var newIds = self.getDataSourceIds,
+        var newIds = self.getDataSourceIds(),
           oldIds = self.origIds;
-
         var ids = [];
-
         oldIds.forEach(function(id) {
           newIds.indexOf(id) == -1 && ids.push(id);
         });
@@ -215,7 +210,7 @@
           text: self.getRawAttributes(),
           ids: self.getDataSourceIds()
         };
-        self.$emit("onSave", context);
+        self.$emit("on-save", context);
         BindingStore.removeAttributeBindings(self.getRemovedDataSourceId());
         self.isShow = false;
       }

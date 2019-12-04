@@ -133,7 +133,7 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button data-bind="click: hideDataSourceModal" class="btn btn-default"
+          <button @click="showDataSourceModal = false" class="btn btn-default"
             >OK</button
           >
         </div>
@@ -141,7 +141,6 @@
     </div>
   </div>
   <div
-    data-bind="modal: copyModal"
     class="modal fade"
     data-backdrop="static"
     data-keyboard="false"

@@ -322,7 +322,6 @@
                   <td>{{ item.name }}</td>
                   <td>
                     <button
-                      data-bind="click: $root.removeItem"
                       class="btn btn-xs red"
                       @click="removeGroupItem(item)"
                       >Remove</button
@@ -348,7 +347,6 @@
     </div>
   </div>
   <div
-    data-bind="modal: inlineModal"
     class="modal fade"
     data-backdrop="static"
     data-keyboard="false"

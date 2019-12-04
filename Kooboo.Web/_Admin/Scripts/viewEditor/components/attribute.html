@@ -44,19 +44,15 @@
                       data-toggle="tooltip"
                       title=""
                       data-original-title="Remove"
-                      @click="removeAttribute(attribute)"
+                      @click.prevent="removeAttribute(attribute)"
                       ><i class="fa fa-minus"></i
                     ></a>
                   </span>
                 </div>
-                <div
-                  class="margin-bottom-10"
-                  data-bind="foreach: { data: fields, as: 'field' }"
-                >
+                <div class="margin-bottom-10">
                   <template v-for="(field,i) in attribute.fields">
                     <template v-for="li in field.list">
                       <span
-                        :key="i"
                         class="btn btn-xs btn-default"
                         @click="insertDataField(attribute,li)"
                         href="javascript:;"
@@ -71,7 +67,7 @@
                 class="btn dark"
                 href="#"
                 v-kb-tooltip:top="Kooboo.text.tooltip.add"
-                @click="addAttribute"
+                @click.prevent="addAttribute"
                 ><i class="fa fa-plus"></i
               ></a>
             </div>
