@@ -3,7 +3,7 @@
     props: ["name", "value", "fields"],
     methods: {
       change: function(value) {
-        console.log(this.name, value);
+        // console.log(this.name, value);
         this.$emit("change", {
           name: this.name,
           value: value
@@ -42,7 +42,25 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/orderBy.html"
     ),
-    extends: controlBase
+    extends: controlBase,
+    computed: {
+      selectedValue: function() {
+        var self = this;
+        var value = this.value;
+        if (this.fields && this.fields.length) {
+          if (
+            !this.value ||
+            !_.some(this.fields, function(field) {
+              return self.value === field.name;
+            })
+          ) {
+            value = this.fields[0].name;
+            this.change(value);
+          }
+        }
+        return value;
+      }
+    }
   });
 
   Vue.component("control-filter", {
@@ -124,7 +142,55 @@
         }
       },
       values: {
-        handler: function(val) {
+        handler: function() {
+          this.debounceChange();
+        },
+        deep: true
+      }
+    }
+  });
+
+  var controlCollection = Vue.component("control-collection", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/vue-components/extensionEditor/collection.html"
+    ),
+    extends: controlBase,
+    data: function() {
+      return {
+        values: []
+      };
+    },
+    created: function() {
+      var self = this;
+      this.debounceChange = _.debounce(function() {
+        self.change(self.values);
+      }, 400);
+    },
+    mounted: function() {
+      if (!this.value) {
+        var values = JSON.parse(this.value);
+        if (Array.isArray(values) && values.length) {
+          this.values = values;
+        } else {
+          this.values = [];
+        }
+      } else {
+        this.values = [];
+      }
+    },
+    methods: {
+      add: function() {
+        this.values.push({
+          value: ""
+        });
+      },
+      remove: function(i) {
+        this.values.splice(i, 1);
+      }
+    },
+    watch: {
+      values: {
+        handler: function() {
           this.debounceChange();
         },
         deep: true
@@ -136,93 +202,13 @@
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/vue-components/extensionEditor/dictionary.html"
     ),
-    extends: controlBase,
-    data: function() {
-      return {
-        values: []
-      };
-    },
-    mounted: function() {
-      if (!this.value) {
-        var dictionaries = JSON.parse(this.value);
-        if (dictionaries instanceof Array && dictionaries.length > 0) {
-          this.values = dictionaries;
-        } else {
-          this.values = [];
-        }
-      } else {
-        this.values = [];
-      }
-    },
+    extends: controlCollection,
     methods: {
       add: function() {
         this.values.push({
           key: "",
           value: ""
         });
-      },
-      remove: function(i) {
-        this.values.splice(i, 1);
-      }
-    },
-    watch: {
-      values: {
-        handler: function(val) {
-          this.$emit("change", {
-            name: this.name,
-            value: this.values
-          });
-        },
-        deep: true
-      }
-    }
-  });
-
-  Vue.component("control-collection", {
-    template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/collection.html"
-    ),
-    extends: controlBase,
-    data: function() {
-      return {
-        values: []
-      };
-    },
-    mounted: function() {
-      if (!this.value) {
-        var collections = JSON.parse(this.value);
-        if (collections instanceof Array && collections.length > 0) {
-          this.values = collections;
-        } else {
-          this.values = [];
-        }
-      } else {
-        this.values = [];
-      }
-    },
-    methods: {
-      add: function() {
-        this.values.push({
-          value: ""
-        });
-      },
-      remove: function(i) {
-        this.values.splice(i, 1);
-        this.$emit("change", {
-          name: this.name,
-          value: this.values
-        });
-      }
-    },
-    watch: {
-      values: {
-        handler: function(val) {
-          this.$emit("change", {
-            name: this.name,
-            value: this.values
-          });
-        },
-        deep: true
       }
     }
   });
