@@ -66,6 +66,7 @@
           dataSourceId: self.getDataSourceId(self.text) || null
         };
         self.$emit("onSave", context);
+        self.isShow = false;
       },
       getDataSourceId: function(text) {
         var self = this;
