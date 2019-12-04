@@ -66,7 +66,6 @@
           v-for="folder in folders"
           :key="folder.fullPath"
           @click="folder.selected=!folder.selected"
-          data-bind="click: $parent.selectDoc"
         >
           <td><input v-model="folder.selected" type="checkbox"/></td>
           <td>
