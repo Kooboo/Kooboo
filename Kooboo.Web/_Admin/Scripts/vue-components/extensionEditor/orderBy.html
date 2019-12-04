@@ -3,7 +3,7 @@
   <div class="col-sm-9">
     <select
       class="form-control input-medium"
-      :value="value"
+      :value="selectedValue"
       @change="change($event.target.value)"
     >
       <option v-for="option in fields" :value="option.name"
