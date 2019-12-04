@@ -68,10 +68,9 @@
                                 </kb-form-item>
                                 <kb-form-item
                                         v-if="['selection','checkbox','radiobox','fixedspec'].includes(d_data.controlType.toLowerCase())">
-                                    <label class="col-md-3 control-label"
-                                           data-bind="text: Kooboo.text.component.fieldEditor.Options"></label>
+                                    <label class="col-md-3 control-label">{{ Kooboo.text.component.fieldEditor.Options }}</label>
                                     <div class="col-md-9">
-                                        <div class="input-groups" id="selection-options">
+                                        <div class="input-groups" id="selection-options" v-show="d_data.selectionOptions && d_data.selectionOptions.length">
 
                                             <div v-for="(item,index) in d_data.selectionOptions" class="input-group">
                                                 <div>

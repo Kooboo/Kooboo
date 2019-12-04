@@ -2,11 +2,11 @@
     <ul class="nav nav-tabs">
         <li v-if="displayNames" v-for="(item, index) in displayNames" :key="index" :class="index === d_active && 'active'"
             @click="changeIndex($event,index)">
-            <a>{{item}}</a>
+            <a href="javascript:;">{{item}}</a>
         </li>
         <li v-if="!displayNames && item.$scopedSlots.header()" v-for="(item, index) in containers" :key="index" :class="index === d_active && 'active'"
             @click="changeIndex($event,index)">
-            <kb-container  tag="a"
+            <kb-container  tag="a"  href="javascript:;"
                           :v-nodes="item.$scopedSlots.header()"></kb-container>
         </li>
     </ul>
