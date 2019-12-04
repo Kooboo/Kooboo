@@ -124,10 +124,7 @@
                     {{item.displayName}}
                   </option></select
                 >
-                <p
-                  v-else
-                  class="form-control-static"
-                  data-bind="text: data().controlType() ? Kooboo.columnEditor.controlTypeNames[data().controlType().toLowerCase()] : ''"
+                <p v-else class="form-control-static"
                   >{{columnModel.controlType?Kooboo.columnEditor.controlTypeNames[columnModel.controlType.toLowerCase()]
                   : ''}}</p
                 >

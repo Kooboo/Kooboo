@@ -267,7 +267,7 @@
                   <th class="table-action"></th>
                 </tr>
               </thead>
-              <tbody data-bind="foreach: members">
+              <tbody>
                 <tr v-for="($data,index) in members" :key="index">
                   <template v-if="!$data.editing">
                     <td>{{$data}}</td>

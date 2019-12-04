@@ -5,7 +5,7 @@
       <div
         class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 margin-bottom-25"
       >
-        <div data-bind="foreach: { data: columns, as: 'col' }">
+        <div>
           <template v-for="(item,index) in columns">
             <div :key="index" v-if="!item.isSystem" class="form-group">
               <label class="control-label">{{item.name}}</label>
