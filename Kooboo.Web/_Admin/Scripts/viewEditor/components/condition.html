@@ -1,62 +1,87 @@
-<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+<div
+        class="modal fade"
+        data-backdrop="static"
+        data-keyboard="false"
+        v-kb-modal="isShow">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.component.viewEditor.condition"></h4>
+                <button @click="reset" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">{{Kooboo.text.component.viewEditor.condition}}</h4>
             </div>
             <div class="modal-body">
                 <div class="form-horizontal">
-                    <div data-bind="visible: isRepeatConditionEnabled" class="form-group">
-                        <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.viewEditor.type"></label>
+                    <div v-if="isRepeatConditionEnabled"  class="form-group">
+                        <label class="control-label col-md-3">{{Kooboo.text.component.viewEditor.type}}</label>
                         <div class="col-md-9">
                             <label class="radio-inline">
-                                <input type="radio" data-bind="checked: conditionType" value="normal"> <span data-bind="text: Kooboo.text.component.viewEditor.normal"></span>
+                                <input type="radio"  v-model="conditionType" value="normal"> <span>{{Kooboo.text.component.viewEditor.normal}}</span>
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" data-bind="checked: conditionType" value="repeat"> <span data-bind="text: Kooboo.text.component.viewEditor.repeat"></span>
+                                <input type="radio"  v-model="conditionType" value="repeat"> <span>{{Kooboo.text.component.viewEditor.repeat}}</span>
                             </label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.viewEditor.condition"></label>
-                        <!-- ko if: conditionType() == 'normal' -->
-                        <div class="col-md-9">
+                        <label class="control-label col-md-3">{{Kooboo.text.component.viewEditor.condition}}</label>
+                        <div class="col-md-9" v-if="conditionType === 'normal'">
                             <div class="input-group">
-                                <select data-bind="foreach: { data: fields, as: 'field' }, value: normalConditionField, error: normalConditionField" class="form-control">
-                                    <!-- ko if: $index() == 0 -->
-                                    <option value="" data-bind="text: Kooboo.text.component.viewEditor.selectHint"></option>
-                                    <!-- /ko -->
-                                    <optgroup data-bind="attr: { label: field.name }, foreach: { data: field.list, as: 'list' }, visible: field.list.length">
-                                        <option data-bind="text: list.name, value: list.name"></option>
-                                    </optgroup>
-                                </select>
+                                <div>
+                                    <select v-model="normalConditionField"
+                                            v-kb-hint:left="validateModel.normalConditionField.msg"
+                                            class="form-control">
+                                        <option value="">{{Kooboo.text.component.viewEditor.selectHint}}</option>
+                                        <template v-for="(field,key) in fields">
+                                            <optgroup v-if="field.list.length > 0" :label="field.name">
+                                                <option v-for="item in field.list" :value="item.name">{{item.name}}</option>
+                                            </optgroup>
+                                        </template>
+                                    </select>
+                                </div>
                                 <span class="input-group-addon separator"></span>
-                                <select class="form-control" data-bind="value:conditionOperator,options:operators,optionsText:'name',optionsValue:'symbol'"></select>
+                                <div>
+                                    <select v-model="conditionOperator"
+                                            v-kb-hint="validateModel.conditionOperator.msg"
+                                            class="form-control">
+                                        <option v-for="item in operators" :value="item.symbol">{{item.name}}</option>
+                                    </select>
+                                </div>
+
                                 <span class="input-group-addon separator"></span>
-                                <input type="text" class="form-control" data-bind="value:conditionValue, error: conditionValue" />
+                                <div>
+                                    <input v-kb-hint="validateModel.conditionValue.msg"
+                                           v-model="conditionValue" type="text" class="form-control"/>
+                                </div>
                             </div>
                         </div>
-                        <!-- /ko -->
-                        <!-- ko if: conditionType() == 'repeat' -->
-                        <div class="col-md-9 form-inline">
-                            <select class="form-control" data-bind="value: repeatConditionField">
-                                <option value="repeat/odd" data-bind="text: Kooboo.text.component.viewEditor.repeatCondition.odd"></option>
-                                <option value="repeat/even" data-bind="text: Kooboo.text.component.viewEditor.repeatCondition.even"></option>
-                                <option value="repeat/first" data-bind="text: Kooboo.text.component.viewEditor.repeatCondition.first"></option>
-                                <option value="repeat/last" data-bind="text: Kooboo.text.component.viewEditor.repeatCondition.last"></option>
-                                <option value="repeat/" data-bind="text: Kooboo.text.component.viewEditor.repeatCondition.number"></option>
-                            </select>
-                            <input type="text" class="form-control" data-bind="visible: repeatConditionField() === 'repeat/', error: repeatConditionNumberParam, value:repeatConditionNumberParam" />
+                        <div class="col-md-9 form-inline" v-if="conditionType === 'repeat'">
+                            <div class="input-group">
+                                <select class="form-control" v-model="repeatConditionField">
+                                    <option value="repeat/odd">{{Kooboo.text.component.viewEditor.repeatCondition.odd}}</option>
+                                    <option value="repeat/even">{{Kooboo.text.component.viewEditor.repeatCondition.even}}</option>
+                                    <option value="repeat/first">{{Kooboo.text.component.viewEditor.repeatCondition.first}}</option>
+                                    <option value="repeat/last">{{Kooboo.text.component.viewEditor.repeatCondition.last}}</option>
+                                    <option value="repeat/">{{Kooboo.text.component.viewEditor.repeatCondition.number}}</option>
+                                </select>
+                                <span class="input-group-addon separator"></span>
+                                <div v-show="repeatConditionField === 'repeat/'">
+                                    <input
+                                           v-kb-hint="validateModel.repeatConditionNumberParam.msg"
+                                           v-model="repeatConditionNumberParam"
+                                           type="text" class="form-control"/>
+                                </div>
+                            </div>
+
+
                         </div>
-                        <!-- /ko -->
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button data-bind="click: save, text: Kooboo.text.common.save" class="btn green"></button>
-                <button data-bind="click: reset, text: Kooboo.text.common.cancel" class="btn gray"></button>
+                <button @click="save" class="btn green">{{Kooboo.text.common.save}}</button>
+                <button @click="reset" class="btn gray">{{Kooboo.text.common.cancel}}</button>
             </div>
         </div>
     </div>
+
 </div>
