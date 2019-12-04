@@ -261,26 +261,28 @@ $(function() {
       },
       startScan: function() {
         var self = this;
+        var ids = JSON.stringify(self.scanType);
+        if(self.scanType.length > 0 ) {
+          Kooboo.Diagnosis.startSession({
+            checkers: ids
+          }).then(function(res) {
+            if (res.success) {
+              self.isScanFinished = false;
+              self.getStatus(res.model);
+            }
+          });
 
-        Kooboo.Diagnosis.startSession({
-          checkers: JSON.stringify(self.scanType)
-        }).then(function(res) {
-          if (res.success) {
-            self.isScanFinished = false;
-            self.getStatus(res.model);
-          }
-        });
-
-        window.onbeforeunload = function(event) {
-          event.returnValue = self.text.scanning;
-        };
-        this.isScanningView = true;
-        this.score = 100;
-        this.issueNumber = 0;
-        this.percent = 0;
-        this.showProgress = true;
-        this.cancelBtnText = self.text.cancel;
+          window.onbeforeunload = function(event) {
+            event.returnValue = self.text.scanning;
+          };
+          this.isScanningView = true;
+          this.score = 100;
+          this.issueNumber = 0;
+          this.percent = 0;
+          this.showProgress = true;
+          this.cancelBtnText = self.text.cancel;
           $('#progressBar').fadeIn()
+        }
       }
     }
   });
