@@ -9,9 +9,6 @@ $(function() {
       self = this;
       return {
         methodId: Kooboo.getQueryString("id"),
-        methodModel: {
-          methodName: ""
-        },
         rules: {
           methodName: [
             {
@@ -27,7 +24,7 @@ $(function() {
                 url: Kooboo.DataSource.isUniqueName(),
                 data: function() {
                   return {
-                    name: self.methodModel.methodName
+                    name: self.model.methodName
                   };
                 }
               },
@@ -79,7 +76,6 @@ $(function() {
         self.model = model;
         self.isPublic = model.isPublic;
         self.declareType = model.declareType;
-        self.methodModel.methodName = model.methodName;
 
         _.forEach(model.parameterBinding, function(value, key) {
           var ob = {};
@@ -423,12 +419,9 @@ $(function() {
       submit: function(m, e) {
         if (self.isNew) {
           self.model.id = Kooboo.Guid.Empty;
-          self.model.isGlobal = false;
-        } else {
-          self.model.isGlobal = false;
         }
+        self.model.isGlobal = false;
         self.model.isPublic = self.isPublic;
-        self.model.methodName = self.methodModel.methodName;
         var data = self.model;
         for (var k in data.parameterBinding) {
           if (data.parameterBinding[k].controlType === "contentFilter") {
