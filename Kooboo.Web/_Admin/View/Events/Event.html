@@ -166,11 +166,11 @@
       <span class="label blue" v-html="conditionsSummary(rule, '[' + Kooboo.text.component.event.noCondition + ']')"></span>
      <template v-if="rule.then.length > 0">
       <span>THEN</span>
-      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.then)" v-kb-tooltip.html="branchTooltip(rule.then)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.then)" v-kb-tooltip.html="branchTooltip(rule.then)" data-container="#J_RulesContainer"></span>
      </template>
      <template v-if="rule.else.length > 0">
       <span>ELSE</span>
-      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.else)" v-kb-tooltip.html="branchTooltip(rule.else)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.else)" v-kb-tooltip.html="branchTooltip(rule.else)" data-container="#J_RulesContainer"></span>
      </template>
   </div>
 </script>
@@ -224,7 +224,7 @@
 <script type="text/x-template" id="RuleSummaryTemplate-Do">
   <div class="summary-text">
       <span>DO</span>
-      <span class="label blue" data-toggle="expand-rule" v-html="activitiesSummary(rule)" v-kb-tooltip.html="activitiesTooltip(rule)"></span>
+      <span class="label blue" data-toggle="expand-rule" v-html="activitiesSummary(rule)" v-kb-tooltip.html="activitiesTooltip(rule)" data-container="#J_RulesContainer"></span>
   </div>
 </script>
 <script src="/_Admin/View/Events/Event.js"></script>

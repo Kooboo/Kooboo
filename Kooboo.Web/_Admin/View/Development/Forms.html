@@ -1,5 +1,5 @@
 <!-- #layout name=blank -->
-<div id="app">
+<div id="app" v-cloak>
   <div class="page-header">
     <h1 class="title">Forms</h1>
   </div>
@@ -349,7 +349,7 @@
         Kooboo.Form.getSetting({
           id: id
         }).then(function(res) {
-          me.settingModel.id = id;
+          me.settingModel.id = res.model.id;
           me.settingModel.formId = res.model.formId;
           me.settingModel.method = res.model.method || "get";
           me.externalUrl = "";
@@ -430,7 +430,6 @@
       },
       settings: {
         handler: function(value) {
-          console.log(value);
           var me = this;
           this.settingModel.setting = {};
           value.forEach(function(i) {
