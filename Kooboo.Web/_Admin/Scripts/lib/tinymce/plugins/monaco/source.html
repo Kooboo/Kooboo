@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var Kooboo = { loadJS: function() {} };
+      var jsFiles = [
+        "lib/jquery.min.js",
+        "components/manacoService/manaco-service.js"
+      ];
+      jsFiles.forEach(function(item) {
+        document.write(
+          "<scr" +
+            'ipt type="text/javascript" src="/_Admin/Scripts/' +
+            item +
+            '"></scr' +
+            "ipt>"
+        );
+      });
+
+      // Global vars:
+      var tinymce, // Reference to TinyMCE
+        editor, // Reference to TinyMCE editor
+        monacoEditor, // Monaco instance
+        setttings, // settings
+        isDirty;
+      (function() {
+        "use strict";
+        tinymce = parent.tinymce;
+        editor = tinymce.activeEditor;
+        var userSettings = editor.settings.monaco || {};
+        // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.ieditorconstructionoptions.html
+        setttings = {
+          config: {
+            // Default config
+            language: "html",
+            value: "",
+            automaticLayout: true
+          }
+        };
+        // Merge config
+        for (var i in userSettings.config) {
+          setttings.config[i] = userSettings.config[i];
+        }
+        window.onload = start;
+      })();
+
+      function start() {
+        "use strict";
+        var html = editor.getContent({
+          source_view: true
+        });
+        setttings.config.value = html;
+        var monacoService = new MonacoEditorService();
+        monacoService.loader(function(monaco) {
+          monacoEditor = monaco.editor.create(document.body, setttings.config);
+          isDirty = false;
+          monacoEditor.onDidChangeModelContent(function() {
+            isDirty = true;
+          });
+        });
+      }
+      // This function is called by plugin.js, when user clicks 'Ok' button
+      function submit() {
+        "use strict";
+        editor.setContent(monacoEditor.getValue());
+        editor.isNotDirty = !isDirty;
+        if (isDirty) {
+          editor.nodeChanged();
+        }
+      }
+    </script>
+    <style type="text/css">
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-size: 12px;
+        line-height: 18px;
+      }
+    </style>
+  </head>
+
+  <body></body>
+</html>
