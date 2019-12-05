@@ -304,7 +304,7 @@
         });
         var _pos = _.cloneDeep(self.positions);
         _pos.splice(startIndex + 1, 0, list);
-        self.positions(_.flatten(_pos));
+        self.positions = _.flatten(_pos);
         self.reload();
       }
     }

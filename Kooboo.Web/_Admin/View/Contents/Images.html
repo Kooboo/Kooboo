@@ -123,7 +123,7 @@
             </a>
           </td>
           <td>
-            <a @click="onChoosingFolder($data.fullPath)" href="javascript:;">
+            <a @click.stop="onChoosingFolder($data.fullPath)" href="javascript:;">
               {{ $data.name }}
             </a>
           </td>
