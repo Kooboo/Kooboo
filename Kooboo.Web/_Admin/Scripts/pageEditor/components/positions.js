@@ -118,7 +118,7 @@
               _.forEach(p.contents, function(item) {
                 self.remove(p, item.id, item);
               });
-              self.positions.remove(p);
+              self.positions = _.without(self.positions, p);
             });
           }
         }

@@ -74,7 +74,6 @@ $(function() {
           name: this.text.diagnosis
         }
       ];
-      this.diagnosisCodeURL = this.dataService.diagnosisCodeURL;
       this.getList();
     },
     methods: {
