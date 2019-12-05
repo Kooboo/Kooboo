@@ -1,468 +1,314 @@
-(function() {
-  Kooboo.loadJS(["/_Admin/Scripts/Kooboo/ControlType.js"]);
+(function () {
+    Kooboo.loadJS([
+        "/_Admin/Scripts/components/kbDialog.js",
+        "/_Admin/Scripts/components/kbTabs.js",
+        "/_Admin/Scripts/components/kbForm.js",
+        "/_Admin/Scripts/components/kbFieldValidation.js"
+    ]);
+    Kooboo.loadJS(["/_Admin/Scripts/Kooboo/ControlType.js"]);
 
-  var template = Kooboo.getTemplate(
-    "/_Admin/Scripts/components/kbFieldEditor.html"
-  );
-
-  var CONTROL_TYPES = Kooboo.controlTypes;
-
-  ko.components.register("kb-field-editor", {
-    viewModel: function(params) {
-      var self = this;
-
-      this.showError = ko.observable(false);
-
-      this.field = ko.observable();
-
-      this.controlTypes = ko.observableArray();
-      this._controlTypes = ko.observableArray();
-
-      this.showPreviewPanel = ko.observable(params.options.showPreviewPanel);
-      this.previewImage = ko.observable();
-      this.previewType = ko.observable();
-
-      this.showMultilingualOption = ko.observable(
-        params.options.showMultilingualOption
-      );
-      this.multilinguable = ko.observable(false);
-
-      this.showFilePanel = ko.observable(false);
-
-      this.showDBColumnPanel = ko.observable(
-        !!params.options.showDBColumnPanel
-      );
-
-      this.onShow = params.onShow;
-      this.onShow.subscribe(function(show) {
-        if (show) {
-          var field = new Field(
-            _.assignIn(params.data() || { editable: true }, params.options)
-          );
-
-          field.on("controlType/change", function(type) {
-            var t = CONTROL_TYPES.find(function(o) {
-              return o.value.toLowerCase() == type.toLowerCase();
-            });
-
-            self.field().dataType(t.dataType || "Undefined");
-
-            self.previewImage(t ? t.preview : "");
-            self.previewType(t ? t.value : "");
-            self.multilinguable(
-              t ? t.dataType.toLowerCase() == "string" : false
-            );
-
-            if (
-              [
-                "boolean",
-                "switch",
-                "selection",
-                "fixedspec",
-                "dynamicspec"
-              ].indexOf(type.toLowerCase()) > -1
-            ) {
-              self.showValidationTab(false);
-            } else {
-              self.showValidationTab(true);
-            }
-
-            if (
-              ["selection", "checkbox", "radiobox", "fixedspec"].indexOf(
-                type.toLowerCase()
-              ) > -1
-            ) {
-              self.showAddOptionPanel(true);
-            } else {
-              self.showAddOptionPanel(false);
-            }
-
-            if (["mediafile", "file"].indexOf(type.toLowerCase()) > -1) {
-              self.showFilePanel(true);
-            } else {
-              self.showFilePanel(false);
-            }
-          });
-
-          field.on("controlTypes/change", function(types) {
-            self.controlTypes(getControlTypes(types));
-          });
-
-          self.field(field);
-
-          if (self.field().isNewField()) {
-            self.controlTypes(self._controlTypes());
-          } else {
-            if (!self.field().isSystemField()) {
-              if (
-                self
-                  .field()
-                  .controlType()
-                  .toLowerCase() == "tinymce"
-              ) {
-                self.field().controlType("RichEditor");
-              }
-              var type = self._controlTypes().find(function(t) {
-                  return (
-                    t.value.toLowerCase() ==
-                    self
-                      .field()
-                      .controlType()
-                      .toLowerCase()
-                  );
-                }),
-                types = [];
-
-              var dataType = type.dataType;
-              self._controlTypes().forEach(function(t) {
-                if (t.dataType == dataType) {
-                  types.push(t);
-                }
-              });
-              self.controlTypes(types);
-            }
-          }
-
-          setTimeout(function() {
-            field.emit("controlType/change", field.controlType());
-          }, 300);
-        }
-      });
-
-      this.onSave = params.onSave;
-
-      this.showValidationTab = ko.observable(true);
-      this.showAddOptionPanel = ko.observable(false);
-      this.showAddOptionPanel.subscribe(function(show) {
-        if (!show) {
-          self.field()._optionRequired("OPTION");
-          self
-            .field()
-            .options()
-            .forEach(function(opt) {
-              opt.showError(false);
-            });
-          self.field().options.removeAll();
-        }
-      });
-
-      this.onModalSave = function() {
-        if (this.showAddOptionPanel()) {
-          this.field()._optionRequired(
-            this.field().options().length ? "OPTIONS" : ""
-          );
-        }
-
-        if (this.field().isValid()) {
-          this.onSave(this.demappingField(this.field()));
-          this.onHide();
-        } else {
-          this.field().hideError();
-          if (!this.field().isBasicValid()) {
-            this.curTab("basic");
-          } else {
-            this.curTab("validation");
-          }
-          this.showError(true);
-          this.field().showAllError();
-        }
-      };
-
-      this.onHide = function() {
-        this.controlTypes([]);
-        this.showAddOptionPanel(false);
-        this.showFilePanel(false);
-        this.field().hideError();
-        this.field(null);
-        this.showError(false);
-        this.onShow(false);
-        this.curTab("basic");
-      };
-
-      this.curTab = ko.observable("basic");
-      this.tabs = ko.observableArray([
-        {
-          value: "basic",
-          displayText: Kooboo.text.component.fieldEditor.basic
+    var self;
+    Vue.component("kb-field-editor", {
+        template: Kooboo.getTemplate(
+            "/_Admin/Scripts/components/kbFieldEditor.html"
+        ),
+        props: {
+            closeHandle: {require: true},
+            data: {require: true},
+            allItems: {require: true},
+            editingIndex: {require: true},
+            options: {}
         },
-        {
-          value: "advanced",
-          displayText: Kooboo.text.component.fieldEditor.advanced
-        }
-      ]);
-      this.changeTab = function(m, e) {
-        if (m.value !== self.curTab()) {
-          self.curTab(m.value);
-        }
-      };
-      this.changeTabToValidation = function() {
-        if (self.curTab() !== "validation") {
-          self.curTab("validation");
-        }
-      };
-
-      if (params.options.controlTypes && params.options.controlTypes.length) {
-        // TODO：若参数变化，controltype 取到的值就是旧的值了
-        self._controlTypes(getControlTypes(params.options.controlTypes));
-      }
-
-      this.demappingField = function(field) {
-        var options = [];
-        if (field.options().length) {
-          options = field.options().map(function(opt) {
-            return opt.getValue();
-          });
-        }
-
-        var validations = [];
-        if (field._validations().length) {
-          validations = field._validations().map(function(v) {
-            return v.getValue();
-          });
-        }
-
-        if (!this.multilinguable()) {
-          field.multilingual(false);
-        }
-
-        var result = {
-          name: field.name(),
-          displayName: field.displayName() || field.name(),
-          controlType: field.controlType(),
-          editable: field.isSystemField() ? field.editable() : true,
-          options: JSON.stringify(options),
-          selectionOptions: JSON.stringify(options),
-          tooltip: field.tooltip(),
-          multilingual: field.multilingual(),
-          multipleLanguage: field.multilingual(),
-          isSystemField: field.isSystemField(),
-          multipleValue:
-            field.controlType().toLowerCase() == "checkbox"
-              ? true
-              : field.isMultipleValue(),
-          validations: JSON.stringify(validations),
-          dataType: field.dataType
-        };
-
-        if (field.modifiedField()) {
-          result[field.modifiedFieldName] = field[field.modifiedFieldName]();
-        }
-
-        return result;
-      };
-
-      function getControlTypes(types) {
-        var _types = [];
-        types.forEach(function(t) {
-          var _t = CONTROL_TYPES.find(function(c) {
-            return c.value.toLowerCase() == t;
-          });
-
-          _types.push(_t || { displayName: "NOT_FOUND" });
-        });
-
-        return _types;
-      }
-    },
-    template: template
-  });
-
-  function Field(data) {
-    var self = this;
-
-    this.showError = ko.observable(false);
-    this.hasError = ko.observable(false);
-
-    this.isNewField = ko.observable(!data.name);
-
-    this.name = ko.validateField(data.name || "", {
-      required: "",
-      regex: {
-        pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
-        message: Kooboo.text.validation.contentTypeNameRegex
-      },
-      localUnique: {
-        compare: function() {
-          if (self.name) {
-            return _.concat(self.name(), data.getFieldNames());
-          } else {
-            return data.getFieldNames();
-          }
-        }
-      }
-    });
-
-    this.displayName = ko.observable(data.displayName || "");
-
-    this.editable = ko.observable(data.editable || false);
-
-    this.controlType = ko.observable(data.controlType || "");
-
-    this.controlType.subscribe(function(type) {
-      self.emit("controlType/change", type);
-    });
-
-    this.dataType = ko.observable();
-
-    var _options = JSON.parse(
-      data.options || data.selectionOptions || "[]"
-    ).map(function(o) {
-      return new Option(o);
-    });
-    this.options = ko.observableArray(_options);
-
-    this.tooltip = ko.observable(data.tooltip || "");
-
-    this.validations = ko.observableArray(JSON.parse(data.validations || "[]"));
-    this._validations = ko.observableArray();
-
-    this.addOption = function() {
-      if (self.isOptionsValid()) {
-        self.options.push(new Option({}));
-        self._optionRequired("OPTION");
-      }
-    };
-    this.removeOption = function(m, e) {
-      m.showError(false);
-      self.options.remove(m);
-
-      self._optionRequired(self.options().length ? "OPTION" : "");
-    };
-    this._optionRequired = ko.validateField({
-      required: ""
-    });
-
-    this.isMultipleValue = ko.observable(
-      data.isMultipleValue || data.multipleValue || false
-    );
-    this.isSystemField = ko.observable(data.isSystemField || false);
-    var multilingual =
-      data.hasOwnProperty("multilingual") ||
-      data.hasOwnProperty("multipleLanguage")
-        ? data.multilingual || data.multipleLanguage
-        : true;
-    this.multilingual = ko.observable(multilingual);
-
-    this.modifiedField = ko.observable(data.modifiedField || false);
-    this.modifiedFieldText = ko.observable(data.modifiedFieldText || "");
-
-    if (data.modifiedField) {
-      this.modifiedFieldName = data.modifiedField;
-      this[data.modifiedField] = ko.observable(
-        data[data.modifiedField] || false
-      );
-      if (data.modifiedFieldSubscriber) {
-        this[data.modifiedField].subscribe(function(value) {
-          data.modifiedFieldSubscriber(self, value);
-        });
-      }
-    }
-
-    this.isValid = function() {
-      return this.isBasicValid() && this.isValidationValid();
-    };
-
-    this.isBasicValid = function() {
-      var flag = this.name.isValid();
-      if (self.options().length) {
-        flag = flag && this.isOptionsValid();
-      }
-
-      if (
-        ["selection", "checkbox", "radiobox", "fixedspec"].indexOf(
-          this.controlType().toLowerCase()
-        ) > -1
-      ) {
-        flag = flag && this._optionRequired.isValid();
-      }
-
-      return flag;
-    };
-
-    this.isValidationValid = function() {
-      if (
-        ["boolean", "switch", "selection"].indexOf(
-          this.controlType().toLowerCase()
-        ) > -1
-      ) {
-        return true;
-      } else {
-        var flag = true;
-        if (this._validations().length) {
-          this._validations().forEach(function(v) {
-            if (!v.isValid()) {
-              flag = false;
+        data: function () {
+            return {
+                showValidateTab: true,
+                showOptionsPanel: false,
+                showMultilvalue: false,
+                tabIndex: 0,
+                isNewField: true,
+                type: undefined,
+                isInit: true,
+                addDisable: false,
+                d_data: {
+                    name: "",
+                    displayName: "",
+                    controlType: "TextBox",
+                    isSummaryField: false,
+                    multipleLanguage: true,
+                    editable: true,
+                    order: 0,
+                    tooltip: "",
+                    validations: [],
+                    multilingual: undefined,
+                    modifiedFieldName: undefined,
+                    selectionOptions: []
+                },
+                formRules: {},
+                firstTabValidate: {},
+                controlTypesOptions: [],
+                AllControlTypes: []
+            };
+        },
+        created: function () {
+            self = this;
+            self.AllControlTypes = self.getAllControlTypes(self.options.controlTypes);
+            if (!self.isNew()) {
+                if (self.d_data.controlType.toLowerCase() === "tinymce") {
+                    self.d_data.controlType = "RichEditor";
+                }
+                try {
+                    if (self.data.validations.length > 0) {
+                        self.d_data.validations = JSON.parse(self.data.validations);
+                    }
+                } catch (e) {
+                    self.d_data.validations = [];
+                }
+                try {
+                    if (self.data.selectionOptions.length > 0) {
+                        self.d_data.selectionOptions = JSON.parse(
+                            self.data.selectionOptions
+                        );
+                    }
+                } catch (e) {
+                    self.d_data.selectionOptions = [];
+                }
+                self.initDataByType(
+                    self.findControlType(self.d_data.controlType)
+                );
+            } else {
+                self.controlTypesOptions = self.AllControlTypes;
             }
-          });
+
+            self.generateValidateModel();
+        },
+        watch: {
+            d_data: {
+                handler: function (val, old) {
+                    if (self.type !== val.controlType) {
+                        self.initDataByType(
+                            self.findControlType(self.d_data.controlType)
+                        );
+                        self.type = val.controlType;
+                    }
+                    self.addDisableHandler();
+
+                    self.generateValidateModel();
+                },
+                deep: true
+            }
+        },
+        methods: {
+            initDataByType: function (item) {
+                if (item.dataType === "String") {
+                    self.d_data.multilingual = true;
+                } else {
+                    self.d_data.multilingual = undefined;
+                    self.d_data.multipleLanguage = undefined
+                }
+                if (item.value === "Selection" || item.value === "Switch") {
+                    self.d_data.validations = [];
+                } else {
+                    if (self.isInit) {
+                        self.d_data.validations = [];
+                        try {
+                            self.d_data.validations = JSON.parse(self.data.validations);
+                        } catch (e) {
+                            self.d_data.validations = [];
+                        }
+
+                    }
+                }
+
+                if (item.dataType === "Array") {
+                    if (self.isInit) {
+                        self.d_data.selectionOptions = [];
+                        try {
+                            self.d_data.selectionOptions = JSON.parse(
+                                self.data.selectionOptions
+                            );
+                        } catch (e) {
+                            self.d_data.selectionOptions = [];
+                        }
+                    }
+                } else {
+                    self.d_data.selectionOptions = [];
+                }
+
+
+                if (item.dataType !== "Undefined") {
+                    delete self.d_data.multipleValue;
+                }
+
+                self.initControlTypesOptions(item);
+                self.isInit = false;
+            },
+            initControlTypesOptions:function(item) {
+                var options = self.AllControlTypes.filter(function (i) {
+                    if (i.dataType && i.dataType === item.dataType) {
+                        return i
+                    }
+                });
+                if (self.isNewField) {
+                    self.controlTypesOptions = self.AllControlTypes;
+                }else {
+                    self.controlTypesOptions = options;
+                }
+            },
+            getAllControlTypes: function (types) {
+                var _types = [];
+                var CONTROL_TYPES = Kooboo.controlTypes;
+                types.forEach(function (t) {
+                    var _t = CONTROL_TYPES.find(function (c) {
+                        return c.value.toLowerCase() === t;
+                    });
+
+                    _types.push(_t || {displayName: "NOT_FOUND"});
+                });
+                return _types;
+            },
+            isNew: function () {
+                if (!self.data || !self.data.name || self.data.name === "") {
+                    self.isNewField = true;
+                } else {
+                    self.isNewField = false;
+                    var data = {};
+                    if (self.data) {
+                        data = self.data;
+                    }
+                    _.assign(self.d_data, data);
+                }
+                return self.isNewField;
+            },
+            findControlType: function (value) {
+                return self.AllControlTypes.find(function (item) {
+                    return item.value.toLowerCase() === value.toLowerCase();
+                });
+            },
+            addOption: function () {
+                if (!self.addDisable) {
+                    self.d_data.selectionOptions.push({key: "", value: ""});
+                }
+            },
+            removeOption: function (event, index) {
+                self.d_data.selectionOptions.splice(index, 1);
+            },
+            generateValidateModel: function () {
+                var temp = {valid: true, msg: ""};
+                self.firstTabValidate = {};
+                self.firstTabValidate.selectionOptionsNull = temp;
+                self.firstTabValidate.name = temp;
+                if (self.d_data.selectionOptions) {
+                    self.firstTabValidate.selectionOptions = [];
+                    self.d_data.selectionOptions.forEach(function (item) {
+                        self.firstTabValidate.selectionOptions.push({
+                            key: temp,
+                            value: temp
+                        });
+                    });
+                }
+            },
+            validate: function () {
+                var firstTabHasError = false;
+
+                if (self.isNewField) {
+                    self.firstTabValidate.name = Kooboo.validField(self.d_data.name, [
+                        {required: true, message: Kooboo.text.validation.required},
+                        {
+                            pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
+                            message: Kooboo.text.validation.contentTypeNameRegex
+                        },
+                        {
+                            validate: function (value) {
+                                var status = true;
+                                self.allItems.forEach(function (item, index) {
+                                    if (item.name === value && !(index === self.editingIndex)) {
+                                        status = false;
+                                    }
+                                });
+                                return status;
+                            },
+                            message: Kooboo.text.validation.taken
+                        }
+                    ]);
+                    if (!self.firstTabValidate.name.valid) {
+                        firstTabHasError = true;
+                    }
+                }
+                if (self.d_data.selectionOptions.length < 1) {
+                    if(['selection','checkbox','radiobox','fixedspec'].includes(self.d_data.controlType.toLowerCase())) {
+                        self.firstTabValidate.selectionOptionsNull = {valid: false, msg: Kooboo.text.validation.required}
+                        firstTabHasError = true;
+                    }
+                } else {
+                    self.d_data.selectionOptions.forEach(function (item, index) {
+                        var rule = [
+                            {required: true, message: Kooboo.text.validation.required}
+                        ];
+
+                        var key = Kooboo.validField(item.key, rule);
+                        var value = Kooboo.validField(item.value, rule);
+                        if (key.valid === false || value.valid === false) {
+                            self.firstTabValidate.selectionOptions[index] = {
+                                key: key,
+                                value: value
+                            };
+                            firstTabHasError = true;
+                        }
+
+                    });
+                }
+
+
+                if (self.$refs.fieldValidation) {
+                    var threeTabValidation = self.$refs.fieldValidation.validate();
+                    if (threeTabValidation.hasError) {
+                        self.tabIndex = 2;
+                    }
+                }
+                if (firstTabHasError) {
+                    self.tabIndex = 0;
+                }
+                var els = document.getElementsByClassName("has-error");
+                if (els.length > 0) {
+                    els[0].scrollIntoView();
+                }
+                self.showValidateError = true;
+                this.$forceUpdate();
+                return !(firstTabHasError || threeTabValidation.hasError);
+            },
+            onSave: function () {
+                if (self.validate()) {
+                    var data = this.d_data;
+                    data.displayName = !this.d_data.displayName || this.d_data.displayName === ''? this.d_data.name : this.d_data.displayName;
+                    data.editable = this.d_data.isSystemField?this.d_data.editable : true;
+
+                    data.multilingual =  this.d_data.multilingual || this.d_data.multipleLanguage;
+                    data.multipleLanguage =  data.multilingual;
+                    data.multipleValue = this.d_data.controlType.toLowerCase() === "checkbox"? true: this.d_data.isMultipleValue;
+                    data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
+                    data.validations = JSON.stringify(this.d_data.validations);
+
+                    var temp = {
+                        isNewField: self.isNewField,
+                        data: data,
+                        editingIndex: self.editingIndex
+                    };
+                    self.$emit("on-save", temp);
+                    self.closeHandle();
+                }
+            },
+            addDisableHandler: function () {
+                self.addDisable = false;
+                self.d_data.selectionOptions.forEach(function (i) {
+                    if (!i.key || !i.value || i.key === "" || i.value === "") {
+                        self.addDisable = true;
+                    }
+                });
+            },
+            onCancel: function () {
+                self.closeHandle();
+            }
         }
-        return flag;
-      }
-    };
-
-    this.isOptionsValid = ko.pureComputed(function() {
-      var flag = true;
-      self.options().forEach(function(opt) {
-        !opt.isValid() && (flag = false);
-      });
-
-      return flag;
     });
-
-    this.showAllError = function() {
-      this.showError(true);
-
-      if (this.options().length) {
-        this.options().forEach(function(opt) {
-          opt.showError(true);
-        });
-      }
-
-      if (this._validations().length) {
-        this._validations().forEach(function(v) {
-          v.showError(true);
-        });
-      }
-    };
-    this.hideError = function() {
-      this.showError(false);
-      this.options().forEach(function(opt) {
-        opt.showError(false);
-      });
-      if (this._validations().length) {
-        this._validations().forEach(function(v) {
-          v.showError(false);
-        });
-      }
-    };
-
-    this.events = {};
-    this.emit = function(event, data) {
-      if (!this.events[event] || this.events[event].length == 0) return;
-      this.events[event].forEach(function(fn) {
-        fn(data);
-      });
-    };
-    this.on = function(event, fn) {
-      if (!this.events[event]) this.events[event] = [];
-      this.events[event].push(fn);
-    };
-  }
-
-  function Option(data) {
-    this.showError = ko.observable(false);
-
-    this.key = ko.validateField(data.key || "", { required: "" });
-
-    this.value = ko.validateField(data.value || "", { required: "" });
-
-    this.isValid = function() {
-      return this.key.isValid() && this.value.isValid();
-    };
-
-    this.getValue = function() {
-      return { key: this.key(), value: this.value() };
-    };
-  }
-
-  Kooboo.loadJS(["/_Admin/Scripts/components/kbFieldValidation.js"]);
 })();
+

@@ -1,13 +1,22 @@
 <div class="kb-html-path path">
-    <!-- ko foreach: path -->
-
-    <!-- ko ifnot: $index() == $parent.path().length - 1 -->
-    <a href="javascript:;" data-bind="text: $data.text, click: $parent.changeElem, event: { mouseover: $parent.hoverElem }" class="node"></a>
-    <span>></span>
-    <!-- /ko -->
-    <!-- ko if: $index() == $parent.path().length - 1 -->
-    <a href="javascript:;" data-bind="text: $data.text, click: $parent.changeElem, event: { mouseover: $parent.hoverElem }" class="node active"></a>
-    <!-- /ko -->
-
-    <!-- /ko -->
+  <template v-for="($data,$index) in path">
+    <a
+      v-if="$index == path.length - 1"
+      href="javascript:;"
+      @click.stop="changeElem($data)"
+      @mouseover.stop="hoverElem($data)"
+      class="node active"
+      >{{$data.text }}</a
+    >
+    <template v-else>
+      <a
+        href="javascript:;"
+        @click.stop="changeElem($data)"
+        @mouseover.stop="hoverElem($data)"
+        class="node"
+        >{{ $data.text }}</a
+      >
+      <span>></span>
+    </template>
+  </template>
 </div>

@@ -14,21 +14,21 @@
 
   Vue.component("control-string", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/string.html"
+      "/_Admin/Scripts/components/extensionEditor/string.html"
     ),
     extends: controlBase
   });
 
   Vue.component("control-textarea", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/textarea.html"
+      "/_Admin/Scripts/components/extensionEditor/textarea.html"
     ),
     extends: controlBase
   });
 
   Vue.component("control-checkbox", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/checkbox.html"
+      "/_Admin/Scripts/components/extensionEditor/checkbox.html"
     ),
     extends: controlBase,
     computed: {
@@ -40,7 +40,7 @@
 
   Vue.component("control-order", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/orderBy.html"
+      "/_Admin/Scripts/components/extensionEditor/orderBy.html"
     ),
     extends: controlBase,
     computed: {
@@ -65,7 +65,7 @@
 
   Vue.component("control-filter", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/filter.html"
+      "/_Admin/Scripts/components/extensionEditor/filter.html"
     ),
     extends: controlBase,
     data: function() {
@@ -152,7 +152,7 @@
 
   var controlCollection = Vue.component("control-collection", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/collection.html"
+      "/_Admin/Scripts/components/extensionEditor/collection.html"
     ),
     extends: controlBase,
     data: function() {
@@ -200,7 +200,7 @@
 
   Vue.component("control-dictionary", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/extensionEditor/dictionary.html"
+      "/_Admin/Scripts/components/extensionEditor/dictionary.html"
     ),
     extends: controlCollection,
     methods: {

@@ -1,21 +1,38 @@
-<div class="form-inline pull-right" data-bind="if: cultures().length > 1">
-    <div class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" id="multi_lang" data-toggle="dropdown">
-            <span data-bind="text: Kooboo.text.common.Multilingual"></span> <span class="caret"></span>
-        </button>
-        <ul data-bind="foreach: cultures" class="dropdown-menu pull-right" aria-labelledby="multi_lang">
-            <li data-bind="css: { 'disabled':$data.key() == $parent.defaultCulture() }">
-                <a href="javascript:;">
-                    <label data-bind="css: { 'disabled':$data.key() == $parent.defaultCulture() }" class="checkbox-inline">
-                        <input type="checkbox" data-bind="checked: $data.selected, enable: $data.key() !== $parent.defaultCulture()">
-                        <!-- ko text: $data.value() -->
-                        <!-- /ko -->
-                        <!-- ko if: $data.key() == $parent.defaultCulture() -->
-                        <span data-bind="text: Kooboo.text.component.multilingualselector.default"></span>
-                        <!-- /ko -->
-                    </label>
-                </a>
-            </li>
-        </ul>
-    </div>
+<div class="form-inline pull-right" v-if="innerCultures.length > 1">
+  <div class="dropdown">
+    <button
+      class="btn btn-default dropdown-toggle"
+      type="button"
+      id="multi_lang"
+      data-toggle="dropdown"
+    >
+      <span>{{ Kooboo.text.common.Multilingual }}</span>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu pull-right" aria-labelledby="multi_lang">
+      <li
+        v-for="$data in innerCultures"
+        :key="$data.key"
+        class="{ disabled: $data.key == defaultCulture }"
+      >
+        <a href="javascript:;">
+          <label
+            :class="{ disabled: $data.key == defaultCulture }"
+            class="checkbox-inline"
+          >
+            <input
+              type="checkbox"
+              v-model="$data.selected"
+              :disabled="$data.key == defaultCulture"
+              @change="changeSelected($data)"
+            />
+            {{ $data.value }}
+            <span v-if="$data.key == defaultCulture">{{
+              Kooboo.text.component.multilingualselector.default
+            }}</span>
+          </label>
+        </a>
+      </li>
+    </ul>
+  </div>
 </div>

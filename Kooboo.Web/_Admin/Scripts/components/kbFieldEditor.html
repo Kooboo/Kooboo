@@ -1,168 +1,195 @@
-<div data-bind="modal: onShow" class="modal fade" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.component.fieldEditor.title">Field editor</h4>
-            </div>
-            <div class="modal-body">
-                <div data-bind="if: field">
-                    <ul class="nav nav-tabs" data-bind="visible: !field().isSystemField()">
-                        <!-- ko foreach: tabs -->
-                        <li data-bind="css: { active: $data.value == $parent.curTab() }, click: $parent.changeTab.bind(this)">
-                            <a href="javascript:;" data-bind="text: $data.displayText"></a>
-                        </li>
-                        <!-- /ko -->
-                        <li data-bind="css: { active: curTab() == 'validation' }, click: changeTab.bind(this, {value: 'validation'}), visible: showValidationTab">
-                            <a href="javascript:;" data-bind="text: Kooboo.text.component.fieldEditor.validation"></a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <section class="tab-pane fade" data-bind="css: { 'active in': curTab() == 'basic' }" id="basic_pane">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.name"></label>
+<div>
+    <kb-dialog ref="dialog">
+        <kb-dialog-header :close-handle="closeHandle"
+                          :title="Kooboo.text.component.fieldEditor.title"></kb-dialog-header>
+        <kb-dialog-content>
+            <div>
+                <kb-tabs ref="kbTabs" :active.sync="tabIndex">
+                    <kb-container>
+                        <template #header>{{Kooboo.text.component.fieldEditor.basic}}</template>
+                        <template #content>
+                            <kb-form :model="d_data">
+                                <kb-form-item style="position: relative"
+                                >
+                                    <label class="col-md-3 control-label">{{Kooboo.text.common.name}}</label>
                                     <div class="col-md-9">
-                                        <div class="input-group" data-bind="error: field().name, errorContainer: '.name-error-container'">
-                                            <!-- ko if: field().isNewField -->
-                                            <input type="text" class="form-control key" data-bind="textInput: field().name">
-                                            <!-- /ko -->
-                                            <!-- ko if: !field().isNewField() -->
-                                            <p class="form-control-static key" data-bind="text: field().name" style="word-break: break-word;"></p>
-                                            <!-- /ko -->
-                                            <!-- ko if: field().modifiedField() -->
-                                            <span class="input-group-addon" data-bind="visible: !field().isSystemField()">
+                                        <div class="input-group"
+                                             v-kb-hint:right="{msg:firstTabValidate.name.msg,show:true}">
+                                            <input v-if="isNewField"
+                                                   v-model="d_data.name"
+                                                   type="text" class="form-control key">
+                                            <p v-else class="form-control-static key"
+                                               style="word-break: break-word;">{{d_data.name}}</p>
+                                            <template v-if="options.modifiedField">
+                                            <span class="input-group-addon">
                                             <div class="checkbox">
                                                 <label>
-                                                    <input type="checkbox" data-bind="checked: field()[field().modifiedFieldName]">
-                                                    <!-- ko text: field().modifiedFieldText -->
-                                                    <!-- /ko -->
+                                                    <input type="checkbox"
+                                                           v-model="d_data[options.modifiedField]">
+                                                    {{options.modifiedFieldText || ''}}
                                                 </label>
                                             </div>
                                         </span>
-                                            <!-- /ko -->
+                                                </span>
+                                            </template>
                                         </div>
                                     </div>
-                                    <div class="name-error-container" style="position: absolute; width: 150%;"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.displayName"></label>
+                                </kb-form-item>
+                                <kb-form-item
+                                >
+                                    <label class="col-md-3 control-label">{{ Kooboo.text.common.displayName}}</label>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control key" data-bind="textInput: field().displayName">
+                                        <input v-model="d_data.displayName"
+                                               type="text" class="form-control key">
                                     </div>
-                                </div>
-                                <div class="form-group" data-bind="visible: field().isSystemField()">
+                                </kb-form-item>
+                                <kb-form-item
+                                >
                                     <div class="col-md-9 col-md-offset-3">
                                         <div class="checkbox">
                                             <label>
-                                            <input type="checkbox" data-bind="checked: field().editable"><span data-bind="text: Kooboo.text.component.fieldEditor.userEditable"></span>
-                                        </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group" data-bind="visible: !field().isSystemField()">
-                                    <label class="col-md-3 control-label" data-bind="text:Kooboo.text.component.fieldEditor.controlType"></label>
-                                    <div class="col-md-9">
-                                        <!-- ko if: controlTypes().length > 1 -->
-                                        <select class="form-control" data-bind="value: field().controlType, options: controlTypes, optionsText: 'displayName', optionsValue: 'value'"></select>
-                                        <!-- /ko -->
-                                        <!-- ko if: controlTypes().length == 1 -->
-                                        <p class="form-control-static" data-bind="text: Kooboo.text.component.controlType[_.camelCase(field().controlType())]"></p>
-                                        <!-- /ko -->
-                                    </div>
-                                </div>
-                                <div class="form-group" data-bind="visible: showAddOptionPanel">
-                                    <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.fieldEditor.Options"></label>
-                                    <div class="col-md-9">
-                                        <div class="input-groups" data-bind="foreach: field().options, visible: field().options().length">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control key input-small" data-bind="textInput: $data.key, error: $data.key, errorContainer: '.option-error-container', errorPlacement: 'left', attr: { placeholder: Kooboo.text.common.displayName }">
-                                                <span class="input-group-addon">:</span>
-                                                <input type="text" class="form-control value input-small" data-bind="textInput: $data.value, attr: { placeholder: Kooboo.text.common.value }">
-                                                <span class="input-group-btn" data-bind="error: $data.value, errorContainer: '.option-error-container'"><a href="javascript:;" class="btn btn-default" data-bind="click: $parent.field().removeOption.bind(this)"><i class="fa fa-minus"></i></a></span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="kb-error-holder">
-                                                <a href="javascript:;" class="btn dark" data-bind="click: field().addOption, attr: { disabled: !field().isOptionsValid() }, error: field()._optionRequired, errorContainer: '.option-error-container'"><i class="fa fa-plus"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="option-error-container" style="position: absolute; width: 150%;"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group" data-bind="visible: showFilePanel">
-                                    <div class="col-md-9 col-md-offset-3">
-                                        <div class="checkbox">
-                                            <label>
-                                            <input type="checkbox" data-bind="checked: field().isMultipleValue, attr: { disabled: !field().isNewField() }">
-                                            <span data-bind="text: Kooboo.text.component.fieldEditor.enableMultiple"></span>
-                                        </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-bind="visible: showDBColumnPanel">
-
-                                </div>
-                                <div class="panel panel-default margin-top-20" data-bind="visible: showPreviewPanel">
-                                    <div class="panel-heading">
-                                        <h6 class="panel-title" data-bind="text: Kooboo.text.common.preview"></h6>
-                                    </div>
-                                    <div class="panel-body form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-md-3" data-bind="text: field().displayName() || field().name()"></label>
-                                            <div class="col-md-9">
-                                                <img data-bind="attr: { src: previewImage, alt: previewType }" style="max-width: 100%;">
-                                                <span class="help-block" data-bind="text: field().tooltip"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                        <section class="tab-pane fade" data-bind="css: { 'active in': curTab() == 'advanced' }">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.fieldEditor.tooltip"></label>
-                                    <div class="col-md-9">
-                                        <input type="text" data-bind="textInput: field().tooltip" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group" data-bind="visible: multilinguable() && showMultilingualOption()">
-                                    <div class="col-md-9 col-md-offset-3">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" data-bind="checked: field().multilingual">
-                                                <span data-bind="text: Kooboo.text.component.fieldEditor.enableMultilingual"></span>
+                                                <input type="checkbox" v-model="d_data.editable"><span>{{Kooboo.text.component.fieldEditor.userEditable}}</span>
                                             </label>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="panel panel-default margin-top-20" data-bind="visible: showPreviewPanel">
-                                    <div class="panel-heading">
-                                        <h6 class="panel-title" data-bind="text: Kooboo.text.common.preview"></h6>
+                                </kb-form-item>
+                                <kb-form-item
+                                >
+                                    <label class="col-md-3 control-label">{{Kooboo.text.component.fieldEditor.controlType}}</label>
+                                    <div class="col-md-9">
+                                        <select v-if="controlTypesOptions.length > 1" class="form-control"
+                                                v-model="d_data.controlType">
+                                            <option v-for="(item , index) in controlTypesOptions" :value="item.value">
+                                                {{item.displayName}}
+                                            </option>
+                                        </select>
+                                        <p v-else class="form-control-static">{{Kooboo.text.component.controlType[_.camelCase(d_data.controlType)]}}</p>
                                     </div>
-                                    <div class="panel-body form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label col-md-3" data-bind="text: field().displayName() || field().name()"></label>
-                                            <div class="col-md-9">
-                                                <img data-bind="attr: { src: previewImage, alt: previewType }" style="max-width: 100%;">
-                                                <span class="help-block" data-bind="text: field().tooltip"></span>
+                                </kb-form-item>
+                                <kb-form-item
+                                        v-if="['selection','checkbox','radiobox','fixedspec'].includes(d_data.controlType.toLowerCase())">
+                                    <label class="col-md-3 control-label"
+                                           data-bind="text: Kooboo.text.component.fieldEditor.Options"></label>
+                                    <div class="col-md-9">
+                                        <div class="input-groups" id="selection-options">
+
+                                            <div v-for="(item,index) in d_data.selectionOptions" class="input-group">
+                                                <div>
+                                                    <input v-model="item.key"
+                                                           type="text" class="form-control key input-small"
+                                                           :placeholder="Kooboo.text.common.displayName"
+                                                           v-kb-hint:left="firstTabValidate.selectionOptions[index].key.msg"/>
+                                                </div>
+
+                                                <span class="input-group-addon">:</span>
+                                                <div>
+                                                    <input v-model="item.value"
+                                                           type="text" class="form-control value input-small"
+                                                           :placeholder="Kooboo.text.common.value"
+                                                    />
+
+                                                    <span class="input-group-btn"
+                                                          v-kb-hint:right="firstTabValidate.selectionOptions[index].value.msg"><a
+                                                            @click.stop="removeOption($event, index)" class="btn btn-default"
+                                                    ><i
+                                                            class="fa fa-minus"
+                                                            data-container="#selection-options"
+                                                    ></i></a></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <a      v-kb-hint:right="firstTabValidate.selectionOptionsNull.msg"
+                                                        @click.stop="addOption" :disabled="addDisable" class="btn dark"><i
+                                                        class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </section>
-                        <section class="tab-pane fade" data-bind="css: { 'active in': curTab() == 'validation' }">
-                            <div data-bind="component: { name: 'kb-field-validation', params:{ field:field }}"></div>
-                        </section>
+                                </kb-form-item>
+                                <kb-form-item v-if="['mediafile', 'file'].includes(d_data.controlType.toLowerCase())">
+                                    <div class="col-md-9 col-md-offset-3">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" v-model="d_data.multipleValue"
+                                                       :disabled="!isNewField">
+                                                <span>{{Kooboo.text.component.fieldEditor.enableMultiple}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </kb-form-item>
+                            </kb-form>
+                            <kb-container v-if="options.showPreviewPanel" tag='div'
+                                          :v-nodes="$refs.dialog.$slots.preview"
+                                          class="panel panel-default margin-top-20"></kb-container>
+                        </template>
+                    </kb-container>
+                    <kb-container>
+                        <template #header>{{Kooboo.text.component.fieldEditor.advanced}}</template>
+                        <template #content>
+                            <kb-form :model="d_data">
+                                <kb-form-item
+                                >
+                                    <label class="control-label col-md-3">{{Kooboo.text.component.fieldEditor.tooltip}}</label>
+                                    <div class="col-md-9">
+                                        <input type="text" v-model="d_data.tooltip" class="form-control">
+                                    </div>
+                                </kb-form-item>
+                                <kb-form-item
+                                 v-if="d_data.multilingual !== undefined || d_data.multipleLanguage !== undefined"
+                                >
+                                    <div  class="col-md-9 col-md-offset-3">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox"
+                                                       v-model="d_data.multilingual !== undefined? d_data.multilingual:d_data.multipleLanguage">
+                                                <span>{{Kooboo.text.component.fieldEditor.enableMultilingual}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </kb-form-item>
+
+                            </kb-form>
+                            <kb-container v-if="options.showPreviewPanel" tag='div'
+                                          :v-nodes="$refs.dialog.$slots.preview"
+                                          class="panel panel-default margin-top-20"></kb-container>
+                        </template>
+                    </kb-container>
+                    <kb-container>
+                        <template #header>
+                            <template v-if="!['boolean','switch','selection','fixedspec','dynamicspec'].includes(d_data.controlType.toLowerCase())">
+                                {{Kooboo.text.component.fieldEditor.validation}}
+                            </template>
+                        </template>
+                        <template #content>
+                                <kb-field-validation  ref="fieldValidation" :data="d_data"
+                                                     :show-validate-error="tabIndex === 2"></kb-field-validation>
+                        </template>
+                    </kb-container>
+
+                </kb-tabs>
+            </div>
+        </kb-dialog-content>
+        <kb-dialog-footer>
+        <button class="btn green" @click="onSave">Save</button>
+        <button class="btn gray" @click="onCancel">Cancel</button>
+    </kb-dialog-footer>
+        <template #preview>
+            <div class="panel-heading">
+                <h6 class="panel-title">{{Kooboo.text.common.preview}}</h6>
+            </div>
+            <div class="panel-body form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-md-3">{{d_data.displayName || d_data.name}}</label>
+                    <div class="col-md-9">
+                        <img :src="findControlType(d_data.controlType).preview" style="max-width: 100%;">
+                        <span class="help-block">{{d_data.tooltip}}</span>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn green" data-bind="click: onModalSave">Save</button>
-                <button class="btn gray" data-bind="click: onHide">Cancel</button>
-            </div>
-        </div>
-    </div>
+        </template>
+
+    </kb-dialog>
 </div>
+

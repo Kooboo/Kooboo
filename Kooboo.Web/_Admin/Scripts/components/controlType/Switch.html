@@ -1,19 +1,19 @@
-<div class="form-group">
-    <!-- ko if:isMultilingual -->
-    <label data-bind="text: fieldName() + '(' + lang() + ')', css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-    <!-- ko if:!isMultilingual() -->
-    <label data-bind="text: fieldName(), css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-    <div class="col-md-9">
-        <!-- ko if: validations().length > 0 -->
-        <input class="sync-switch" type="checkbox" data-bind="checked: fieldValue, error: fieldValue, disable: disabled, attr: {id: _id}" />
-        <!-- /ko -->
-        <!-- ko if: validations().length === 0 -->
-        <input class="sync-switch" type="checkbox" data-bind="checked: fieldValue, disable: disabled, attr: {id: _id}" />
-        <!-- /ko -->
-        <!-- ko if: !!tooltip() -->
-        <span class="help-block" data-bind="text:tooltip"></span>
-        <!-- /ko -->
-    </div>
+<div class="form-group" :class="{'has-error': !kbFormItem.valid}">
+  <label
+    :class="{ 'text-muted': field.disabled }"
+    class="control-label col-md-3"
+    >{{ field.fieldName }}</label
+  >
+  <div class="col-md-9" style="position: relative">
+    <kb-switch
+      class="sync-switch"
+      v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
+      :disabled="field.disabled"
+      :id="field._id"
+    ></kb-switch>
+    <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
+    <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+      >{{ kbFormItem.msg }}</span
+    >
+  </div>
 </div>

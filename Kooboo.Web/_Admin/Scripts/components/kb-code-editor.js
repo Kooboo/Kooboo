@@ -1,6 +1,6 @@
 (function() {
   Kooboo.loadJS([
-    "/_Admin/Scripts/vue-components/manacoService/manaco-service.js"
+    "/_Admin/Scripts/components/manacoService/manaco-service.js"
   ]);
 
   var state = Vue.observable({ loader: false });

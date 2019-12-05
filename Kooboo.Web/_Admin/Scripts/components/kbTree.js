@@ -2,7 +2,7 @@
 (function() {
     Vue.component("kb-tree", {
         template: Kooboo.getTemplate(
-            "/_Admin/Scripts/vue-components/kbTree.html"
+            "/_Admin/Scripts/components/kbTree.html"
         ),
         props: {
             nodes: {type: Array}

@@ -1,5 +1,5 @@
 ﻿(function() {
-  Kooboo.loadJS(["/_Admin/Scripts/vue-components/kbForm.js"]);
+  Kooboo.loadJS(["/_Admin/Scripts/components/kbForm.js"]);
   Vue.component("kb-folder-editor", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/textContent/folderEditor.html"

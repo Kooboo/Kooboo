@@ -30,7 +30,7 @@
           <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
         </div>
       </div>
-      <div id="vue-components">
+      <div id="components">
         <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
       </div>
     </div>
@@ -84,14 +84,14 @@
       "/_Admin/Scripts/kooboo/LanguageManager.js",
       "/_Admin/Scripts/kooboo/DateExtend.js",
       "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-      "/_Admin/Scripts/vue-components/kb-media-dialog.js",
+      "/_Admin/Scripts/components/kb-media-dialog.js",
     ]);
   })();
 </script>
 <script type="text/javascript">
   $(function() {
     var vueInstance = new Vue({
-      el: "#vue-components",
+      el: "#components",
       data: function() {
         return {
           mediaDialogData: null
