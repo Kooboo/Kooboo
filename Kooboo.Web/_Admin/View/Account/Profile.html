@@ -149,7 +149,6 @@
                 >
                 <div class="col-md-9">
                   <select
-                    data-bind="options: organizationOptions, optionsText: 'name', optionsValue: 'id', value: organization"
                     class="form-control input-large"
                     v-model="organizationModel.organizationId"
                   >
@@ -191,9 +190,9 @@
               <kb-form-item class="form-group">
                 <label class="control-label col-md-3">Users</label>
                 <div class="col-md-9">
-                  <ul data-bind="foreach: organizationUsers">
+                  <ul>
                     <li v-for="(item,index) in users" :key="index">
-                      <span data-bind="text: $data">{{ item }}</span>
+                      <span>{{ item }}</span>
                       <template v-if="item!==organization.name">
                         <a
                           href="javascript:;"

@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <th>To</th>
-          <td data-bind="foreach: currentMail.to">
+          <td>
             <template v-for="($data,index) in currentMail.to">
               <strong>{{$data.name}}</strong>
               {{'<' + $data.address + '>'}}
