@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         public string Get(string key)
         {
-            var value = this.context.Request.GetValue(key);
+            var value = this.context.Request.GetValue(key,false);
             if (value != null)
             {
                 return value;
