@@ -267,7 +267,7 @@ Vue.directive("kb-collapsein", {
           language: languageManager.getTinyMceLanguage(), // params needed
           branding: false,
           plugins:
-            "autoresize link textcolor lists codemirror image " +
+            "autoresize link textcolor lists monaco image " +
             (isMailEditor ? "" : "codesample"),
           toolbar:
             "undo redo | " +
@@ -329,23 +329,9 @@ Vue.directive("kb-collapsein", {
             "html { overflow-x: hidden; } .mce-content-body img { max-width: 100%; height: auto; }",
           verify_html: false,
           file_browser_callback_types: "image",
-          codemirror: {
-            indentOnInit: true, // Whether or not to indent code on init.
-            path: "/_Admin/Scripts/lib/codemirror", // Path to CodeMirror distribution
-            config: {
-              // CodeMirror config object
-              mode: "htmlmixed",
-              lineNumbers: true,
-              indentUnit: 4,
-              tabSize: 4
-            },
+          monaco: {
             width: 800, // Default value is 800
             height: 400, // Default value is 550
-            // saveCursorPosition: true, // Insert caret marker
-            jsFiles: [
-              // Additional JS files to load
-              "mode/htmlmixed/htmlmixed"
-            ]
           }
         };
 
