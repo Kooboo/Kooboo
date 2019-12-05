@@ -4,12 +4,44 @@ $(function() {
   new Vue({
     el: "#main",
     data: function() {
+      self = this;
       return {
         isNewContentType: false,
         tableData: [],
         tableDataSelected: [],
         showSystemField: false,
-        name: "",
+        model: {
+          name: ""
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              remote: {
+                url: Kooboo.ContentType.isUniqueName(),
+                data: function() {
+                  return {
+                    name: self.model.name
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
+            }
+          ]
+        },
         contentTypeId: "",
         controlType: "",
         notSystemProperties: [],
@@ -39,7 +71,6 @@ $(function() {
       };
     },
     created: function() {
-      self = this;
       self.contentTypeId = Kooboo.getQueryString("id") || Kooboo.Guid.Empty;
       if (self.contentTypeId === Kooboo.Guid.Empty)
         self.isNewContentType = true;
@@ -56,7 +87,7 @@ $(function() {
           id: id
         }).then(function(res) {
           if (res.success) {
-            self.name = res.model.name;
+            self.model.name = res.model.name;
             var properties = res.model.properties.map(function(o) {
               if (o.controlType.toLowerCase() === "tinymce") {
                 o.controlType = "RichEditor";
@@ -90,7 +121,6 @@ $(function() {
         this.notSystemProperties.splice(index, 1);
       },
       onFieldEditorSave: function(event) {
-
         if (event.isNewField) {
           self.notSystemProperties.push(event.data);
         } else {
@@ -100,13 +130,16 @@ $(function() {
         }
       },
       onSave: function(data) {
+        if (self.isNewContentType && !self.$refs.form.validate()) {
+          return;
+        }
         var properties = _.concat(
           self.notSystemProperties,
           self.systemProperties
         );
         var data = {
           id: self.contentTypeId,
-          name: self.name,
+          name: self.model.name,
           properties: properties
         };
         Kooboo.ContentType.save(data).then(function(res) {
