@@ -534,7 +534,7 @@
         },
         onSave: function() {
           self.isSaveAndReturn = false;
-          if (self.curType() == "code") {
+          if (self.curType == "code") {
             self.setHTML(self.pageContent, function() {
               Kooboo.EventBus.publish(
                 "kb/page/title/set",
