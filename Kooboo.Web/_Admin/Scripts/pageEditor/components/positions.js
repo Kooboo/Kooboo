@@ -118,7 +118,7 @@
               _.forEach(p.contents, function(item) {
                 self.remove(p, item.id, item);
               });
-              self.positions.remove(p);
+              self.positions = _.without(self.positions, p);
             });
           }
         }
@@ -304,7 +304,7 @@
         });
         var _pos = _.cloneDeep(self.positions);
         _pos.splice(startIndex + 1, 0, list);
-        self.positions(_.flatten(_pos));
+        self.positions = _.flatten(_pos);
         self.reload();
       }
     }
