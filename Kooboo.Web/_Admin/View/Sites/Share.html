@@ -179,6 +179,9 @@
 
           data.append("siteName", self.model.siteName);
           data.append("isPrivate", false);
+          data.append("description", self.model.description || "");
+          data.append("link", self.model.link || "");
+
           data.append(
             "tags",
             self.tagSelect2.selected
@@ -187,18 +190,23 @@
               })
               .join(",")
           );
-          data.append("description", self.model.description || "");
-          data.append("link", self.model.link || "");
+
+          if (self.model.images.length) {
+            data.append(
+              "images",
+              JSON.stringify(
+                self.model.images.map(function(f) {
+                  if (typeof f != "string") return f.file.name;
+                  return f;
+                })
+              )
+            );
+          }
+
           data.append(
-            "images",
-            JSON.stringify(
-              self.model.images.map(function(f) {
-                if (typeof f != "string") return f.file.name;
-                return f;
-              })
-            )
+            "defaultImg",
+            self.model.images.length ? self.model.defaultImg : -1
           );
-          data.append("defaultImg", self.model.defaultImg);
 
           Kooboo.Template.Share(data).then(function(res) {
             if (res.success) {
