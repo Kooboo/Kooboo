@@ -104,6 +104,9 @@ $(function() {
     },
     mounted: function() {
       helper = new Helper($(".kb-editor")[0]);
+      kbFrame = new KBFrame(document.getElementById("view_iframe"), {
+        type: "view"
+      });
       Kooboo.EventBus.subscribe("kb/lighter/holder", function(elem) {
         self.elem = elem;
         // Lighter
@@ -154,9 +157,6 @@ $(function() {
       });
       Kooboo.EventBus.subscribe("DataStore/change", function(remove) {
         self.scanPositions(kbFrame.getDocumentElement());
-      });
-      kbFrame = new KBFrame(document.getElementById("view_iframe"), {
-        type: "view"
       });
       var dummyLayout;
       $.when(

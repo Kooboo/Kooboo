@@ -1,5 +1,5 @@
 ﻿(function() {
-  Kooboo.loadJS(["/_Admin/Scripts/vue-components/kbTable.js"]);
+  Kooboo.loadJS(["/_Admin/Scripts/components/kbTable.js"]);
 
   var modal = Kooboo.viewEditor && Kooboo.viewEditor.component.modal;
   Vue.component("kb-embedded-dialog", {

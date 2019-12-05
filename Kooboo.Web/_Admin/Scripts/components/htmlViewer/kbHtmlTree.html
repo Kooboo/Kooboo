@@ -1,39 +1,35 @@
-<ul class="code-tree" data-bind="foreach: { data: tree, as: 'tag' }">
-    <li data-bind="click: $parent.changeElem, event: { mouseover: $parent.hoverElem, mouseout: $parent.unhoverElem }, mouseoverBubble: false, clickBubble: false">
-        <span data-bind="css: { 'hover': tag.isHovered }" class="code">&lt;<!-- ko text: tag.name --><!-- /ko -->
-        <!-- ko if: tag.hasAttr -->
-        <span class="code-attr" data-bind="html: tag.attrText"></span>
-        <!-- /ko -->
-        <!-- ko if: tag.isSelfClosed -->/&gt;
-        <!-- /ko -->
-        <!-- ko ifnot: tag.isSelfClosed -->&gt;
-        <!-- /ko -->
-        </span>
-
-        <!-- ko if: tag.hasChild -->
-
-        <!-- ko if: tag.depth() <= $parent.maxDepth() -->
-
-        <!-- ko component: {
-            name: 'kb-html-tree',
-            params: {
-                elem: tag.children,
-                depth: depth() + 1
-            }
-        } -->
-        <!-- /ko -->
-
-        <!-- /ko -->
-
-        <!-- /ko -->
-        <!-- ko ifnot: tag.hasChild -->
-        <!-- ko ifnot: tag.isSelfClosed -->
-        ...
-        <!-- /ko -->
-        <!-- /ko -->
-
-        <!-- ko ifnot: tag.isSelfClosed -->
-        <span data-bind="css: { 'hover': tag.isHovered }" class="code">&lt;/<!-- ko text: tag.name --><!-- /ko -->&gt;</span>
-        <!-- /ko -->
-    </li>
+<ul class="code-tree">
+  <li
+    v-for="(tag,index) in tree"
+    :key="index"
+    @click.stop="changeElem(tag)"
+    @mouseover.stop="hoverElem(tag)"
+    @mouseout.stop="unhoverElem(tag)"
+  >
+    <span :class="{ hover: tag.isHovered }" class="code"
+      >&lt;{{ tag.name }}<span
+        v-if="tag.hasAttr"
+        class="code-attr"
+        v-html="tag.attrText"
+      ></span
+      ><template v-if="tag.isSelfClosed">/&gt;</template>
+      <template v-else>&gt;</template>
+    </span>
+    <template v-if="tag.hasChild">
+      <kb-html-tree
+        v-if="tag.depth <= maxDepth"
+        :elem="tag.children"
+        :depth="tag.depth + 1"
+      ></kb-html-tree>
+    </template>
+    <template v-else-if="!tag.isSelfClosed">
+      ...
+    </template>
+    <span
+      v-if="!tag.isSelfClosed"
+      :class="{ hover: tag.isHovered }"
+      class="code"
+      >&lt;/{{ tag.name }}&gt;</span
+    >
+  </li>
 </ul>

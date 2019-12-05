@@ -1,14 +1,11 @@
 (function() {
-    var template = Kooboo.getTemplate("/_Admin/Scripts/components/controlType/RadioBox.html");
-
-    ko.components.register("radiobox", {
-        viewModel: function(params) {
-            _.assign(this, params);
-
-            this.clearValue = function() {
-                this.fieldValue("");
-            }
-        },
-        template: template
-    })
-})()
+  Vue.component("kb-control-radiobox", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/components/controlType/RadioBox.html"
+    ),
+    props: {
+      field: Object
+    },
+    inject: ["kbFormItem"]
+  });
+})();

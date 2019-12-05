@@ -1,6 +1,6 @@
 (function() {
   Vue.component("kb-tabs", {
-    template: Kooboo.getTemplate("/_Admin/Scripts/vue-components/kbTabs.html"),
+    template: Kooboo.getTemplate("/_Admin/Scripts/components/kbTabs.html"),
     data: function() {
       return {
         containers: [],

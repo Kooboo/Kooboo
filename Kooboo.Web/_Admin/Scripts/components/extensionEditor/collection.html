@@ -1,18 +1,36 @@
 ﻿﻿<div class="form-group">
-    <label data-bind="text: key" class="col-md-3 control-label"></label>
-    <div class="col-md-9">
-        <div class="input-groups">
-            <!-- ko foreach: value -->
-            <div class="input-group input-large margin-bottom-10">
-                <input type="text" class="form-control value" placeholder="Value" data-bind="value: value">
-                <span class="input-group-btn">
-                    <a class="btn btn-default" href="#" data-bind="click:$parent.remove, tooltip: Kooboo.text.common.remove">
-                        <i class="fa fa-minus"></i>
-                    </a>
-                </span>
-            </div>
-            <!-- /ko -->
-            <a data-bind="click: add, tooltip: Kooboo.text.common.add" class="btn btn-default" href="#"><i class="fa fa-plus"></i></a>
-        </div>
+  <label class="col-md-3 control-label">{{ name }}</label>
+  <div class="col-md-9">
+    <div class="input-groups">
+      <div
+        class="input-group input-large margin-bottom-10"
+        v-for="(item, index) in values"
+        :key="index"
+      >
+        <input
+          type="text"
+          class="form-control value"
+          placeholder="Value"
+          v-model="item.value"
+        />
+        <span class="input-group-btn">
+          <a
+            class="btn btn-default"
+            href="javascript:;"
+            @click="remove(item)"
+            v-kb-tooltip="Kooboo.text.common.remove"
+          >
+            <i class="fa fa-minus"></i>
+          </a>
+        </span>
+      </div>
+      <a
+        @click="add"
+        v-kb-tooltip="Kooboo.text.common.add"
+        class="btn btn-default"
+        href="javascript:;"
+        ><i class="fa fa-plus"></i
+      ></a>
     </div>
+  </div>
 </div>

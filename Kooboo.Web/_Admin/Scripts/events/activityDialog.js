@@ -1,9 +1,9 @@
 ﻿(function() {
   Kooboo.loadJS([
-    "/_Admin/Scripts/vue-components/kbForm.js",
-    "/_Admin/Scripts/vue-components/controlType/TextBox.js",
-    "/_Admin/Scripts/vue-components/controlType/Selection.js",
-    "/_Admin/Scripts/vue-components/controlType/CheckBox.js"
+    "/_Admin/Scripts/components/kbForm.js",
+    "/_Admin/Scripts/components/controlType/TextBox.js",
+    "/_Admin/Scripts/components/controlType/Selection.js",
+    "/_Admin/Scripts/components/controlType/CheckBox.js"
   ]);
   var self;
   Vue.component("kb-activity-dialog", {

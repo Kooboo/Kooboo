@@ -1,10 +1,11 @@
 (function() {
-    var template = Kooboo.getTemplate("/_Admin/Scripts/components/controlType/Number.html");
-
-    ko.components.register("number", {
-        viewModel: function(params) {
-            _.assign(this, params);
-        },
-        template: template
-    })
-})()
+  Vue.component("kb-control-number", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/components/controlType/Number.html"
+    ),
+    props: {
+      field: Object
+    },
+    inject: ["kbFormItem"]
+  });
+})();

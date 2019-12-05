@@ -209,7 +209,7 @@
 
   Vue.component("kb-style-list", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/kb-style-list.html"
+      "/_Admin/Scripts/components/kb-style-list.html"
     ),
     props: {
       rules: {

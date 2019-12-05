@@ -2,7 +2,7 @@
   var self;
   Vue.component("kb-field-validation-item", {
     template: Kooboo.getTemplate(
-      "/_Admin/Scripts/vue-components/kbFieldValidationItem.html"
+      "/_Admin/Scripts/components/kbFieldValidationItem.html"
     ),
     props: {
       item: { require: true },
