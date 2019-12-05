@@ -136,13 +136,13 @@
                                     </div>
                                 </kb-form-item>
                                 <kb-form-item
-                                 v-if="d_data.multilingual !== undefined || d_data.multipleLanguage !== undefined"
+                                 v-if="multilinguable"
                                 >
                                     <div  class="col-md-9 col-md-offset-3">
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox"
-                                                       v-model="d_data[languageKeyRecord]">
+                                                       v-model="d_data.multilingual">
                                                 <span>{{Kooboo.text.component.fieldEditor.enableMultilingual}}</span>
                                             </label>
                                         </div>
