@@ -9,7 +9,7 @@
   monacoService.loader(function(Monaco) {
     state.loader = true;
     monaco = Monaco;
-    var kscriptContent = Kooboo.getTemplate("/_Admin/Scripts/vue-components/manacoService/kscript.d.ts");
+    var kscriptContent = Kooboo.getTemplate("/_Admin/Scripts/components/manacoService/kscript.d.ts");
     monacoService.addExtraLib('javascript',kscriptContent,'kscript/kscript.d.ts');
     monacoService.init();
   });
