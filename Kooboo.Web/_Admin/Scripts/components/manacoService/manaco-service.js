@@ -1,4 +1,8 @@
 Kooboo.loadJS(["/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js"]);
+
+
+
+
 var MonacoEditorService =
     /*#__PURE__*/
     (function () {
@@ -205,6 +209,31 @@ var MonacoEditorService =
             editor.executeEdits("", [
                 {range: range, text: text}
             ]);
+        };
+        MonacoEditorService.prototype.addExtraLib = function (language,fileContent,path) {
+            if(!path){
+                path =  Date.now();
+                var languagesId = monaco.languages.getEncodedLanguageId(language);
+                if(languagesId) {
+                    path = path  + '.' + monaco.languages.getLanguages()[languagesId-1].extensions[0].toLowerCase()
+                }
+            }
+            path = monaco.Uri.file(path);
+            switch (language) {
+                case 'javascript':
+                    monaco.languages.typescript.javascriptDefaults.addExtraLib(fileContent,path);
+                    break;
+                case 'typescript':
+                    monaco.languages.typescript.typescriptDefaults.addExtraLib(fileContent,path);
+                    break;
+                default:
+                    if(monaco.languages[language]) {
+                        monaco.languages[language].addExtraLib(fileContent,path);
+                    } else {
+                        console.error('monaco.languages is no ' + language)
+                    }
+
+            }
         };
         return MonacoEditorService;
     })();
