@@ -16,9 +16,7 @@
   </div>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a class="btn green navbar-btn"  @click.stop="onAdd"
-        >New field</a
-      >
+      <a class="btn green navbar-btn" @click.stop="onAdd">New field</a>
     </div>
   </div>
   <table class="table table-striped table-hover">
@@ -34,7 +32,7 @@
         <th class="table-action"></th>
       </tr>
     </thead>
-    <tbody class="ui-sortable" v-kb-sortable="tableData">
+    <tbody class="ui-sortable" v-kb-sortable="notSystemProperties">
       <tr v-for="(item, index) in notSystemProperties">
         <td class="table-sortable"
           ><span class="sortable"><i class="glyphicon glyphicon-list"></i></span
@@ -76,9 +74,7 @@
         </td>
 
         <td class="table-action">
-          <a
-            class="btn btn-xs red"
-            @click.stop="removeItem($event,index,item)"
+          <a class="btn btn-xs red" @click.stop="removeItem($event,index,item)"
             >Remove</a
           >
         </td>
@@ -86,8 +82,7 @@
     </tbody>
     <tfoot>
       <tr class="action-row">
-        <td colspan="100"
-          ><!---->
+        <td colspan="100">
           <a @click.stop="toggleSystemFields">
             <i
               v-kb-tooltip:right="Kooboo.text.site.contentType.showSystemField"
@@ -99,7 +94,7 @@
       <tr v-for="item in systemProperties" v-if="showSystemField">
         <td class="table-sortable"></td>
         <td>
-          <a  @click.stop="">{{item.name}}</a>
+          <a @click.stop="">{{item.name}}</a>
         </td>
         <td :title="item.displayName">
           {{item.displayName.length > 10 ? item.displayName.substr(0,8) + '...'
