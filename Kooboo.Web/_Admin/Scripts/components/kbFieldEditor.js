@@ -34,15 +34,16 @@
                     displayName: "",
                     controlType: "TextBox",
                     isSummaryField: false,
-                    multipleLanguage: true,
+                    multipleLanguage: undefined,
                     editable: true,
                     order: 0,
                     tooltip: "",
                     validations: [],
-                    multilingual: undefined,
+                    multilingual: true,
                     modifiedFieldName: undefined,
                     selectionOptions: []
                 },
+                languageKeyRecord: undefined,
                 formRules: {},
                 firstTabValidate: {},
                 controlTypesOptions: [],
@@ -75,9 +76,24 @@
                 self.initDataByType(
                     self.findControlType(self.d_data.controlType)
                 );
+
             } else {
                 self.controlTypesOptions = self.AllControlTypes;
             }
+
+            if(self.d_data.multipleLanguage !== undefined) {
+                self.languageKeyRecord = 'multipleLanguage'
+            }else if(self.d_data.multilingual !== undefined) {
+                self.languageKeyRecord = 'multilingual'
+            } else {
+                var  type =  self.findControlType(self.d_data.controlType);
+                if(type.dataType === 'String'){
+                    self.languageKeyRecord = 'multilingual';
+                    self.d_data.multilingual = true;
+                }
+
+            }
+
 
             self.generateValidateModel();
         },
@@ -100,10 +116,9 @@
         methods: {
             initDataByType: function (item) {
                 if (item.dataType === "String") {
-                    self.d_data.multilingual = true;
+                    self.d_data[self.languageKeyRecord] = true;
                 } else {
-                    self.d_data.multilingual = undefined;
-                    self.d_data.multipleLanguage = undefined
+                    self.d_data[self.languageKeyRecord] = undefined;
                 }
                 if (item.value === "Selection" || item.value === "Switch") {
                     self.d_data.validations = [];
@@ -280,10 +295,8 @@
                 if (self.validate()) {
                     var data = this.d_data;
                     data.displayName = !this.d_data.displayName || this.d_data.displayName === ''? this.d_data.name : this.d_data.displayName;
-                    data.editable = this.d_data.isSystemField?this.d_data.editable : true;
-
-                    data.multilingual =  this.d_data.multilingual || this.d_data.multipleLanguage;
-                    data.multipleLanguage =  data.multilingual;
+                    data.editable = !this.d_data.isSystemField?this.d_data.editable : false;
+                    data[self.languageKeyRecord] = self.d_data[self.languageKeyRecord];
                     data.multipleValue = this.d_data.controlType.toLowerCase() === "checkbox"? true: this.d_data.isMultipleValue;
                     data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
                     data.validations = JSON.stringify(this.d_data.validations);
