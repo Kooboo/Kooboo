@@ -4,13 +4,32 @@
     <div>
       <div v-if="isNewContentType">
         <h1 class="title">{{ Kooboo.text.common.ContentType + ': '}}</h1>
-        <div class="form-group pull-left">
-          <input class="form-control input-medium" />
-        </div>
+        <kb-form
+          simple
+          ref="form"
+          class="pull-left"
+          :model="model"
+          :rules="rules"
+        >
+          <kb-form-item
+            prop="name"
+            v-slot="error"
+            id="form-name-error-container"
+          >
+            <div class="form-group" :class="{'has-error' : !!error.error }">
+              <input
+                class="form-control input-medium"
+                v-model="model.name"
+                v-kb-tooltip:right.manual.error="error.error"
+                data-container="#form-name-error-container"
+              />
+            </div>
+          </kb-form-item>
+        </kb-form>
       </div>
 
       <h1 v-if="!isNewContentType" class="title"
-        ><span>Content type</span>: <strong>{{name}}</strong></h1
+        ><span>Content type</span>: <strong>{{ model.name }}</strong></h1
       >
     </div>
   </div>
@@ -156,6 +175,7 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbForm.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/components/kbFieldEditor.js"
     ]);
