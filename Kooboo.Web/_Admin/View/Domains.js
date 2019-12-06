@@ -43,6 +43,7 @@ $(function() {
       },
       onDialogCancel: function() {
         self.domain = "";
+        self.domainValidateModel = { valid: true, msg: "" };
         this.showCreateDialog = false;
       },
       onDelete: function() {

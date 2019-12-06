@@ -51,7 +51,7 @@
             <input
               type="checkbox"
               v-model="selectAll"
-              :enable="(folders.length+files.length)>0"
+              :disabled="folders.length+files.length==0"
             />
           </th>
           <th>URL</th>
@@ -132,7 +132,7 @@
     data-keyboard="false"
     v-kb-modal="showNewFolderModal"
   >
-    <div class="modal-dialog">
+    <div class="modal-dialog" v-if="showNewFolderModal">
       <div class="modal-content">
         <div class="modal-header">
           <button data-dismiss="modal" class="close"
@@ -238,7 +238,8 @@
             }) &&
             this.files.every(function(file) {
               return file.selected;
-            })
+            }) &&
+            this.folders.length + this.files.length > 0
           );
         },
         set: function(value) {
@@ -315,7 +316,7 @@
 
           _.forEach(me.selectedRows, function(selected) {
             if (selected.type == "folder") {
-              folders.push(selected.fullPath());
+              folders.push(selected.fullPath);
             } else if (selected.type == "file") {
               files.push(selected.id);
             }

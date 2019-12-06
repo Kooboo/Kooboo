@@ -32,7 +32,7 @@
 
             </template>
         </kb-table-column>
-        <kb-table-column :label="Kooboo.text.site.domain.name">
+        <kb-table-column :label="Kooboo.text.site.domain.expires">
             <template v-slot="row">
                 <span class="label label-sm label-warning">{{row.expires}}</span>
             </template>
@@ -61,7 +61,7 @@
             data-keyboard="false"
             v-kb-modal="showCreateDialog"
     >
-        <kb-dialog>
+        <kb-dialog >
             <kb-dialog-header :close-handle="onDialogCancel">
                 <h4 class="modal-title">New local domain</h4>
             </kb-dialog-header>

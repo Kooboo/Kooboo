@@ -266,7 +266,7 @@ var MonacoEditorService =
             .replace(/=\s*"[^"]*"/g, "") // remove attributes ""
             .replace(/=\s*'[^"]*'/g, ""); // remove attributes ''
           if (/["']/.test(cleanTag)) return; // is inside attribute
-          if (/>\s*[a-zA-Z\-]$/.test(cleanTag)) return; // is ouside tag  <div .... > k
+          if (/>[^<]*[a-zA-Z\-]$/.test(cleanTag)) return; // is ouside tag  <div .... > k
 
           // clone sugguestions
           var tempSuggestions = suggestions.map(function(item) {
