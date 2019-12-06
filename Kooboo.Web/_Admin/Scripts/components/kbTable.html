@@ -53,6 +53,17 @@
         </td>
       </template>
     </tr>
+    <tr v-for="(item,index) in progressorRows">
+      <td v-if="showSelect" class="table-checkbox">
+        <input type="checkbox" :checked="false" />
+      </td>
+      <td>{{item.name}}</td>
+      <td colspan="10000">
+        <kb-upload-progressor
+          :percentage="item.uploadPercentage"
+        ></kb-upload-progressor>
+      </td>
+    </tr>
   </tbody>
   <tbody v-else>
     <tr>
