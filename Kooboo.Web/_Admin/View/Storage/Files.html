@@ -132,7 +132,7 @@
     data-keyboard="false"
     v-kb-modal="showNewFolderModal"
   >
-    <div class="modal-dialog">
+    <div class="modal-dialog" v-if="showNewFolderModal">
       <div class="modal-content">
         <div class="modal-header">
           <button data-dismiss="modal" class="close"
