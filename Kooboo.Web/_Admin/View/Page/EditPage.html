@@ -4,7 +4,7 @@
     <div class="page-header">
       <template v-if="isNewPage">
         <h1 class="title pull-left">{{Kooboo.text.common.Page + ': '}}</h1>
-        <div class="form-group pull-left" :class="{'has-error':nameError}">
+        <div class="form-group pull-left" :class="{'has-error':nameError}" id="form-name-error-container">
           <input
             v-kb-tooltip:right.manual.error="nameError"
             type="text"
@@ -13,6 +13,7 @@
             v-model="name"
             @input="valid"
             @blur="nameInputBlur"
+            data-container="#form-name-error-container"
           />
         </div>
       </template>
