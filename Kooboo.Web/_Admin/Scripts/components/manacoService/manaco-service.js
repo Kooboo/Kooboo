@@ -276,7 +276,7 @@ var MonacoEditorService =
           var tempSuggestions = suggestions.map(function(item) {
             return {
               label: item.label,
-              kind: item.kind,
+              kind: item.kind || monaco.languages.CompletionItemKind.Value,
               documentation: item.documentation,
               insertText: item.insertText
             };
