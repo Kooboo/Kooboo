@@ -1,7 +1,5 @@
 (function() {
-  Kooboo.loadJS([
-    "/_Admin/Scripts/components/manacoService/manaco-service.js"
-  ]);
+  Kooboo.loadJS(["/_Admin/Scripts/components/manacoService/manaco-service.js"]);
 
   var state = Vue.observable({ loader: false });
   var monacoService = new MonacoEditorService();
@@ -9,8 +7,19 @@
   monacoService.loader(function(Monaco) {
     state.loader = true;
     monaco = Monaco;
-    var kscriptContent = Kooboo.getTemplate("/_Admin/Scripts/components/manacoService/kscript.d.ts");
-    monacoService.addExtraLib('javascript',kscriptContent,'kscript/kscript.d.ts');
+    var kscriptContent = Kooboo.getTemplate(
+      "/_Admin/Scripts/components/manacoService/kscript.d.ts"
+    );
+    monacoService.addExtraLib(
+      "javascript",
+      kscriptContent,
+      "kscript/kscript.d.ts"
+    );
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/manacoService/kview-complete-suggestions.js"
+    ]);
+    var kViewSuggestions = getKViewSuggestions();
+    monacoService.addCompleteForHtmlTag(kViewSuggestions);
     monacoService.init();
   });
 
@@ -79,11 +88,11 @@
             options.automaticLayout = true;
           }
           var temp = monacoService.create(
-              self.$el,
-              self.d_code || self.code,
-              self.lang,
-              options,
-              path
+            self.$el,
+            self.d_code || self.code,
+            self.lang,
+            options,
+            path
           );
           self.editor = temp.editor;
           self.model = temp.model;
@@ -101,8 +110,8 @@
       formatCode: function(callback) {
         monacoService.format(this.editor, callback);
       },
-      replace: function (text,range) {
-        monacoService.replace(this.editor,text,range);
+      replace: function(text, range) {
+        monacoService.replace(this.editor, text, range);
       }
     }
   });
