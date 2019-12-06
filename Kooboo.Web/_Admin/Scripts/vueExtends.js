@@ -10,15 +10,20 @@ Vue.directive("kb-tooltip", {
     if (binding.modifiers.manual) trigger.push("manual");
     trigger = trigger.join(" ");
     var $el = $(el);
+    var container = $el.data("container");
+    var zIndex = 199999;
+    if(container) {
+      zIndex = 20000;
+    }
     $el.tooltip({
       title: binding.value,
       placement: binding.arg,
       trigger: trigger || "hover",
       html: binding.modifiers.html,
       template: binding.modifiers.error
-        ? '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-        : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-      container: $el.data("container") || "body"
+        ? '<div class="tooltip error" role="tooltip" style="z-index:' + zIndex + ';width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+        : '<div class="tooltip" role="tooltip" style="z-index:' + zIndex + ';width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+      container: container || "body"
     });
   },
   inserted: function(el, binding) {
@@ -331,7 +336,7 @@ Vue.directive("kb-collapsein", {
           file_browser_callback_types: "image",
           monaco: {
             width: 800, // Default value is 800
-            height: 400, // Default value is 550
+            height: 400 // Default value is 550
           }
         };
 

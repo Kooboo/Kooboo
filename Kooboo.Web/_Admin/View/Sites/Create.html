@@ -6,48 +6,65 @@
         <div class="page-header">
           <h1 class="title">Create a new site</h1>
         </div>
-        <kb-form :model="model" :rules="rules" ref="form">
+        <kb-form
+          simple
+          class="form-horizontal"
+          :model="model"
+          :rules="rules"
+          ref="form"
+        >
           <div class="note note-info">
             <p>{{Kooboo.text.site.sites.createModalTip}}</p>
           </div>
-          <kb-form-item prop="SiteName">
-            <label class="col-md-2 control-label" for="SiteName"
-              >Site name</label
-            >
-            <div class="col-md-10">
-              <input
-                class="input-medium form-control"
-                placeholder="Site name"
-                type="text"
-                v-model="model.SiteName"
-              />
-              <span class="help-block"
-                >Start with letters and no space allowed.</span
+          <kb-form-item class="form-group" prop="SiteName" v-slot="error">
+            <div :class="{'has-error': error.error}">
+              <label class="col-md-2 control-label" for="SiteName"
+                >Site name</label
               >
-            </div>
-          </kb-form-item>
-          <kb-form-item prop="SubDomain">
-            <label class="col-md-2 control-label" for="SubDomain">domain</label>
-            <div class="col-md-10">
-              <div class="form-inline">
+              <div class="col-md-10">
                 <input
                   class="input-medium form-control"
-                  placeholder="SubDomain"
+                  placeholder="Site name"
                   type="text"
-                  v-model="model.SubDomain"
+                  v-model="model.SiteName"
+                  v-kb-tooltip:right.manual.error="error.error"
                 />
-                <select v-model="model.RootDomain" class="form-control">
-                  <option
-                    v-for="$data in domains"
-                    :value="$data.domainName"
-                    :key="$data.domainName"
-                    >{{'.'+$data.domainName}}</option
-                  >
-                </select>
+                <span class="help-block"
+                  >Start with letters and no space allowed.</span
+                >
               </div>
-              <span class="help-block"
-                >Give your site a domain that other people can access.</span
+            </div>
+          </kb-form-item>
+          <kb-form-item class="form-group" prop="SubDomain" v-slot="error">
+            <div :class="{'has-error': error.error}">
+              <label class="col-md-2 control-label" for="SubDomain"
+                >domain</label
               >
+              <div class="col-md-10">
+                <div class="form-inline">
+                  <input
+                    class="input-medium form-control"
+                    placeholder="SubDomain"
+                    type="text"
+                    v-model="model.SubDomain"
+                  />
+                  <select
+                    v-model="model.RootDomain"
+                    class="form-control"
+                    v-kb-tooltip:right.manual.error="error.error"
+                  >
+                    <option
+                      v-for="$data in domains"
+                      :value="$data.domainName"
+                      :key="$data.domainName"
+                      >{{'.'+$data.domainName}}</option
+                    >
+                  </select>
+                </div>
+                <span class="help-block"
+                  >Give your site a domain that other people can access.</span
+                >
+              </div>
             </div>
           </kb-form-item>
           <ul class="pager">
