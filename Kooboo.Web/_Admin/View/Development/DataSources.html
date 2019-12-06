@@ -325,6 +325,9 @@
           }).then(function(res) {
             if (res.success) {
               self.init();
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
         }

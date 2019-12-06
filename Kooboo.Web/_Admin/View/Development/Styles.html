@@ -677,6 +677,9 @@
           .then(function(res) {
             if (res.success) {
               me.onTabClick(me.currentTab);
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
       },

@@ -701,6 +701,9 @@
                   me.model.pages = res.model.pages;
                 }
               });
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
       }
