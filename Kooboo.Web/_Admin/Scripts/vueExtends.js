@@ -264,7 +264,9 @@ Vue.directive("kb-collapsein", {
           : false,
         // Set up a minimal default configuration
         defaults = {
-          language: languageManager.getTinyMceLanguage(), // params needed
+          skin_url:
+            location.origin +
+            "\\_Admin\\Styles\\kooboo-web-editor\\tinymce\\ui\\oxide",
           branding: false,
           plugins:
             "autoresize link textcolor lists monaco image " +
@@ -331,11 +333,30 @@ Vue.directive("kb-collapsein", {
           file_browser_callback_types: "image",
           monaco: {
             width: 800, // Default value is 800
-            height: 400, // Default value is 550
+            height: 400 // Default value is 550
           }
         };
 
+      if (languageManager.getLang() == "zh") {
+        defaults.language = "zh_CN";
+        defaults.language_url = `${location.origin}\\_Admin\\Scripts\\kooboo-web-editor\\${defaults.language}.js`;
+      }
+
       if (!isMailEditor) {
+        defaults.file_picker_callback = function(callBack) {
+          Kooboo.Media.getList().then(function(res) {
+            if (res.success) {
+              res.model["show"] = true;
+              res.model["onAdd"] = function(selected) {
+                callBack(
+                  selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId")
+                );
+              };
+            }
+            binding.value.mediaDialogData = res.model;
+          });
+        };
+
         defaults.file_browser_callback = function(
           field_name,
           url,
@@ -394,7 +415,7 @@ Vue.directive("kb-collapsein", {
           $(el).attr("src", $(el).attr("src") + SITE_ID_STRING);
         });
         var content = $(_tempParent).html();
-        $(element).text(content);
+        $(element).html(content);
 
         element.value = content;
         Kooboo.trigger(element, "input");

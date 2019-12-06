@@ -15,7 +15,7 @@
         >
         <div>
           <textarea
-            v-kb-richeditor="{value:$data.value}"
+            v-kb-richeditor="richeditor($data.value)"
             v-model="$data.value"
             style="opacity: 0"
           ></textarea>
@@ -29,8 +29,8 @@
 <script>
   (function() {
     Kooboo.loadJS([
-      "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-      "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+      "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+      "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/components/kbMultilangSelector.js",
       "/_Admin/Scripts/components/kb-media-dialog.js"
@@ -157,6 +157,24 @@
           });
 
           return _values;
+        },
+        richeditor: function(data) {
+          var self = this;
+          var item = {
+            value: data,
+            mediaDialogData: null
+          };
+          item = Vue.observable(item);
+          this.$watch(
+            function() {
+              return item.mediaDialogData;
+            },
+            function(value) {
+              self.mediaDialogData = value;
+            }
+          );
+
+          return item;
         }
       },
       watch: {

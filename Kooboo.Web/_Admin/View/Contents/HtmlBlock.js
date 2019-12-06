@@ -6,8 +6,10 @@ $(function() {
       self = this;
       return {
         blockId: Kooboo.getQueryString("id") || Kooboo.Guid.Empty,
-        mediaDialogData: null,
         isMultilingual: false,
+        richeditor: {
+          mediaDialogData: null
+        },
         contents: [],
         multiLangs: {},
         htmlBlock: {
