@@ -35,7 +35,8 @@
 
                   <textarea
                     v-if="item.controlType=='Tinymce'"
-                    v-kb-richeditor="item.value"
+                    v-kb-richeditor="richeditor(item.value)"
+                    v-model="item.value"
                     style="opacity: 0"
                   ></textarea>
 
@@ -124,8 +125,8 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
-      "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-      "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+      "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+      "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
       "/_Admin/Scripts/components/kb-media-dialog.js"
     ]);
     Kooboo.loadCSS(["/_Admin/Styles/bootstrap-datetimepicker.min.css"]);
@@ -186,9 +187,7 @@
               data.controlType &&
               data.controlType.toLowerCase() == "tinymce"
             ) {
-              data.value = {
-                value: data.value
-              };
+              data.value = data.value;
             } else if (
               data.controlType &&
               data.controlType.toLowerCase() == "datetime"
@@ -212,6 +211,24 @@
       });
     },
     methods: {
+      richeditor: function(data) {
+        var self = this;
+        var item = {
+          value: data,
+          mediaDialogData: null
+        };
+        item = Vue.observable(item);
+        this.$watch(
+          function() {
+            return item.mediaDialogData;
+          },
+          function(value) {
+            self.mediaDialogData = value;
+          }
+        );
+
+        return item;
+      },
       onSave: function() {
         var me = this;
         var values = this.columns.map(function(col) {

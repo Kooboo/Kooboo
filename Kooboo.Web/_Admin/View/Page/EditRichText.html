@@ -66,167 +66,171 @@
     </div>
     <a @click="goBack" class="btn gray">Cancel</a>
   </div>
-  <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
+  <kb-media-dialog :data.sync="richEditor.mediaDialogData"></kb-media-dialog>
 </div>
 <script>
-  Kooboo.loadJS([
-    "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-    "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-    "/_Admin/Scripts/kooboo/Guid.js",
-    "/_Admin/Scripts/components/kbForm.js",
-    "/_Admin/Scripts/components/kb-media-dialog.js"
-  ]);
-  var self = new Vue({
-    el: "#main",
-    data: function() {
-      return {
-        isNewPage: false,
-        model: {
-          id: Kooboo.getQueryString("Id"),
-          name: "",
-          title: "",
-          url: "",
-          body: ""
-        },
-        richEditor: {
-          value: "",
-          editorConfig: {
-            autoresize_min_height: 400,
-            autoresize_max_height: 12000
-          }
-        },
-        backUp: null,
-        mediaDialogData: null,
-        init: false
-      };
-    },
-    mounted: function() {
-      var self = this;
-      if (!this.model.id) {
-        this.isNewPage = true;
-        this.model.id = Kooboo.Guid.Empty;
-        this.backUp = JSON.parse(JSON.stringify(self.model));
-        $(".page-loading").hide();
-        self.init = true;
-      } else {
-        Kooboo.Page.getEdit({ id: this.model.id }).then(function(res) {
-          if (res.success) {
-            self.model.name = res.model.name;
-            self.model.title = res.model.title;
-            self.model.url = res.model.urlPath;
-            self.richEditor.value = res.model.body;
-            self.backUp = JSON.parse(JSON.stringify(self.model));
-            self.init = true;
-          }
-        });
-      }
-
-      Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(ctx) {
-        Kooboo.Media.getList().then(function(res) {
-          if (res.success) {
-            res.model["show"] = true;
-            res.model["context"] = ctx;
-            res.model["onAdd"] = function(selected) {
-              ctx.settings.file_browser_callback(
-                ctx.field_name,
-                selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
-                ctx.type,
-                ctx.win,
-                true
-              );
-            };
-            self.mediaDialogData = res.model;
-          }
-        });
-      });
-    },
-    computed: {
-      rules: function() {
-        var rules = {
-          title: [{ required: Kooboo.text.validation.required }],
-          url: [
-            { required: Kooboo.text.validation.required },
-            {
-              pattern: /^[^\s|\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\=|\||\[|\]|\;|\:|\"|\'|\,|\<|\>|\?]*$/,
-              message: Kooboo.text.validation.urlInvalid
-            }
-          ]
-        };
-        if (this.isNewPage) {
-          rules.name = [
-            { required: Kooboo.text.validation.required },
-            {
-              min: 1,
-              max: 64,
-              message:
-                Kooboo.text.validation.minLength +
-                1 +
-                ", " +
-                Kooboo.text.validation.maxLength +
-                64
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+      "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/components/kbForm.js",
+      "/_Admin/Scripts/components/kb-media-dialog.js"
+    ]);
+    var self = new Vue({
+      el: "#main",
+      data: function() {
+        return {
+          isNewPage: false,
+          model: {
+            id: Kooboo.getQueryString("Id"),
+            name: "",
+            title: "",
+            url: "",
+            body: ""
+          },
+          richEditor: {
+            value: "",
+            editorConfig: {
+              autoresize_min_height: 400,
+              autoresize_max_height: 12000
             },
-            {
-              remote: {
-                url: Kooboo.Page.isUniqueName(),
-                data: function(value) {
-                  return {
-                    name: value
-                  };
-                }
-              },
-              message: Kooboo.text.validation.taken
-            }
-          ];
-        }
-        return rules;
+            mediaDialogData: null
+          },
+          backUp: null,
+          init: false
+        };
       },
-      isContentChange: function() {
-        if (this.backUp.name.trim() != this.model.name.trim()) return true;
-        if (this.backUp.title.trim() != this.model.title.trim()) return true;
-        if (this.backUp.body.trim() != this.model.body.trim()) return true;
-        if (this.backUp.url.trim() != this.model.url.trim()) return true;
-      }
-    },
-    methods: {
-      onSaveAndReturn: function() {
-        self.onSave(function() {
-          location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
-        });
-      },
-      onSave: function(cb) {
-        if (!this.$refs.form.validate()) return;
-        Kooboo.Page.PostRichText(this.model).then(function(res) {
-          if (res.success) {
-            if (cb && typeof cb == "function") {
-              cb(res.model);
-            }
-            self.backUp = JSON.parse(JSON.stringify(self.model));
-          }
-        });
-      },
-
-      goBack: function() {
-        if (!self.isContentChange) {
-          location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
+      mounted: function() {
+        var self = this;
+        if (!this.model.id) {
+          this.isNewPage = true;
+          this.model.id = Kooboo.Guid.Empty;
+          this.backUp = JSON.parse(JSON.stringify(self.model));
+          $(".page-loading").hide();
+          self.init = true;
         } else {
-          if (confirm(Kooboo.text.confirm.beforeReturn)) {
+          Kooboo.Page.getEdit({ id: this.model.id }).then(function(res) {
+            if (res.success) {
+              self.model.name = res.model.name;
+              self.model.title = res.model.title;
+              self.model.url = res.model.urlPath;
+              self.richEditor.value = res.model.body;
+              self.backUp = JSON.parse(JSON.stringify(self.model));
+              self.init = true;
+            }
+          });
+        }
+
+        Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(
+          ctx
+        ) {
+          Kooboo.Media.getList().then(function(res) {
+            if (res.success) {
+              res.model["show"] = true;
+              res.model["context"] = ctx;
+              res.model["onAdd"] = function(selected) {
+                ctx.settings.file_browser_callback(
+                  ctx.field_name,
+                  selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
+                  ctx.type,
+                  ctx.win,
+                  true
+                );
+              };
+              self.mediaDialogData = res.model;
+            }
+          });
+        });
+      },
+      computed: {
+        rules: function() {
+          var rules = {
+            title: [{ required: Kooboo.text.validation.required }],
+            url: [
+              { required: Kooboo.text.validation.required },
+              {
+                pattern: /^[^\s|\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\=|\||\[|\]|\;|\:|\"|\'|\,|\<|\>|\?]*$/,
+                message: Kooboo.text.validation.urlInvalid
+              }
+            ]
+          };
+          if (this.isNewPage) {
+            rules.name = [
+              { required: Kooboo.text.validation.required },
+              {
+                min: 1,
+                max: 64,
+                message:
+                  Kooboo.text.validation.minLength +
+                  1 +
+                  ", " +
+                  Kooboo.text.validation.maxLength +
+                  64
+              },
+              {
+                remote: {
+                  url: Kooboo.Page.isUniqueName(),
+                  data: function(value) {
+                    return {
+                      name: value
+                    };
+                  }
+                },
+                message: Kooboo.text.validation.taken
+              }
+            ];
+          }
+          return rules;
+        },
+        isContentChange: function() {
+          if (this.backUp.name.trim() != this.model.name.trim()) return true;
+          if (this.backUp.title.trim() != this.model.title.trim()) return true;
+          if (this.backUp.body.trim() != this.model.body.trim()) return true;
+          if (this.backUp.url.trim() != this.model.url.trim()) return true;
+        }
+      },
+      methods: {
+        onSaveAndReturn: function() {
+          self.onSave(function() {
             location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
-          }
-        }
-      }
-    },
-    watch: {
-      "model.name": function() {
-        if (this.isNewPage) {
-          if (this.model.name.trim()[0] == "/") {
-            this.model.url = this.model.name;
-          } else if (this.model.name.length == 0) {
-            this.model.url = "";
+          });
+        },
+        onSave: function(cb) {
+          if (!this.$refs.form.validate()) return;
+          Kooboo.Page.PostRichText(this.model).then(function(res) {
+            if (res.success) {
+              if (cb && typeof cb == "function") {
+                cb(res.model);
+              }
+              self.backUp = JSON.parse(JSON.stringify(self.model));
+            }
+          });
+        },
+
+        goBack: function() {
+          if (!self.isContentChange) {
+            location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
           } else {
-            this.model.url = "/" + this.model.name;
+            if (confirm(Kooboo.text.confirm.beforeReturn)) {
+              location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
+            }
+          }
+        }
+      },
+      watch: {
+        "model.name": function() {
+          if (this.isNewPage) {
+            if (this.model.name.trim()[0] == "/") {
+              this.model.url = this.model.name;
+            } else if (this.model.name.length == 0) {
+              this.model.url = "";
+            } else {
+              this.model.url = "/" + this.model.name;
+            }
           }
         }
       }
-    }
-  });
+    });
+  })();
 </script>

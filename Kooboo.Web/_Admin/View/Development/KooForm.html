@@ -73,7 +73,6 @@
         class="form-group pull-left"
         prop="name"
         v-slot="error"
-        id="form-name-error-container"
       >
         <input
           type="text"
@@ -81,7 +80,6 @@
           placeholder="Name"
           class="form-control input-medium"
           v-kb-tooltip:right.manual.error="error.error"
-          data-container="#form-name-error-container"
         />
       </kb-form-item>
     </kb-form>

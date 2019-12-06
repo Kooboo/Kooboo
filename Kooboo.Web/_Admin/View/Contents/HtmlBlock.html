@@ -17,9 +17,9 @@
       :rules="htmlBlockRules"
       class="col-md-10 col-md-offset-1 margin-bottom-25 form-horizontal"
     >
-      <kb-form-item prop="name">
+      <kb-form-item prop="name" class="form-group" >
         <template v-slot="error">
-          <div class="form-group" :class="{'has-error': !!error.error}">
+          <div :class="{'has-error': !!error.error}">
             <label class="control-label col-md-2">Name</label>
             <div class="col-md-10">
               <input
@@ -46,7 +46,7 @@
         <div class="col-md-10">
           <textarea
             v-model="$data.value"
-            v-kb-richeditor="{}"
+            v-kb-richeditor="richeditor"
             style="opacity: 0"
           ></textarea>
         </div>
@@ -57,14 +57,14 @@
     <button @click="onSubmit" class="btn green">Save</button>
     <a :href="cancelUrl" class="btn gray">Cancel</a>
   </div>
-  <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
+  <kb-media-dialog :data.sync="richeditor.mediaDialogData"></kb-media-dialog>
 </div>
 
 <script>
   (function() {
     Kooboo.loadJS([
-      "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-      "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+      "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+      "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/components/kbMultilangSelector.js",
       "/_Admin/Scripts/components/kb-media-dialog.js",
