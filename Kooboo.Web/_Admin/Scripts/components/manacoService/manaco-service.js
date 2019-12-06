@@ -254,30 +254,33 @@ var MonacoEditorService =
     ) {
       monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
-          var tempSuggestions = [];
-          var isInAttribute = function(str) {
-            var temp1 = str.match(/[']/g);
-            var temp2 = str.match(/["]/g);
-            if (temp1 && temp1.length % 2 > 0) {
-              return true;
-            }
-            if (temp2 && temp2.length % 2 > 0) {
-              return true;
-            }
-          };
           var textUntilPosition = model.getValueInRange({
             startLineNumber: 1,
             startColumn: 1,
             endLineNumber: position.lineNumber,
             endColumn: position.column
           });
-          var matchs = textUntilPosition.match(/<[^/][\S]*.*/g);
-          if (matchs.length > 0) {
-            var lastMatch = matchs[matchs.length - 1];
-            if (!isInAttribute(lastMatch)) {
-              tempSuggestions = suggestions;
-            }
-          }
+          var matchs = textUntilPosition.match(
+            /<[a-zA-Z]+[^>]*\s+[a-zA-Z\-]$/g
+          ); // <div .... k>
+          if (!matchs) return;
+          var isInAttribute = function(str) {
+            var temp1 = str.match(/"/g);
+            if (temp1 && temp1.length % 2) return true;
+            var temp2 = str.match(/'/g);
+            if (temp2 && temp2.length % 2) return true;
+          };
+          if (isInAttribute(matchs[0])) return;
+
+          // clone sugguestions
+          var tempSuggestions = suggestions.map(function(item) {
+            return {
+              label: item.label,
+              kind: item.kind,
+              documentation: item.documentation,
+              insertText: item.insertText
+            };
+          });
           return {
             suggestions: tempSuggestions
           };
