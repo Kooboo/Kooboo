@@ -34,6 +34,13 @@ var getKViewSuggestions = function() {
       insertText: 'k-href="url"'
     },
     {
+      label: "k-if",
+      kind: monaco.languages.CompletionItemKind.Value,
+      documentation:
+        "When the if condition return true, the element will be rendered.",
+      insertText: 'k-if="true"'
+    },
+    {
       label: "k-ignore",
       kind: monaco.languages.CompletionItemKind.Value,
       documentation:
@@ -51,7 +58,7 @@ var getKViewSuggestions = function() {
       label: "k-omit",
       kind: monaco.languages.CompletionItemKind.Value,
       documentation: "Omit the element open tag.",
-      insertText: "k-omit=true"
+      insertText: 'k-omit="true"'
     },
     {
       label: "k-placeholder",
