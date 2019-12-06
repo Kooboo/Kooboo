@@ -14,14 +14,12 @@
           <kb-form-item
             prop="name"
             v-slot="error"
-            id="form-name-error-container"
           >
             <div class="form-group" :class="{'has-error' : !!error.error }">
               <input
                 class="form-control input-medium"
                 v-model="model.name"
                 v-kb-tooltip:right.manual.error="error.error"
-                data-container="#form-name-error-container"
               />
             </div>
           </kb-form-item>

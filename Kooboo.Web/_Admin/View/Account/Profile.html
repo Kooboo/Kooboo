@@ -1,5 +1,5 @@
 <!-- #layout name=default -->
-<div id="main" class="offset-top">
+<div id="main" class="offset-top" v-cloak>
   <div class="container">
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
@@ -36,9 +36,9 @@
               <kb-form-item prop="emailAddress">
                 <label class="control-label col-md-3">Email</label>
                 <div class="col-md-9">
-                  <p v-if="user.emailAddress" class="form-control-static">{{
-                    user.emailAddress
-                  }}</p>
+                  <p v-if="user.emailAddress" class="form-control-static"
+                    >{{ user.emailAddress }}</p
+                  >
                   <input
                     v-else
                     type="text"
@@ -76,42 +76,62 @@
             class="tab-pane fade"
           >
             <kb-form
-              class="margin-top-20"
+              class="form-horizontal margin-top-20"
               :model="passwordModel"
               :rules="passwordModelRules"
               ref="passwordForm"
+              simple
             >
-              <kb-form-item prop="oldPassword">
-                <label class="control-label col-md-3">Old password</label>
-                <div class="col-md-9">
-                  <input
-                    type="password"
-                    class="form-control input-large"
-                    v-model="passwordModel.oldPassword"
-                  />
+              <kb-form-item
+                prop="oldPassword"
+                class="form-group"
+                v-slot="error"
+              >
+                <div class="clearfix" :class="{'has-error': error.error}">
+                  <label class="control-label col-md-3">Old password</label>
+                  <div class="col-md-9">
+                    <input
+                      type="password"
+                      class="form-control input-large"
+                      v-model="passwordModel.oldPassword"
+                      v-kb-tooltip:right.manual.error="error.error"
+                    />
+                  </div>
                 </div>
               </kb-form-item>
-              <kb-form-item prop="newPassword">
-                <label class="control-label col-md-3">New password</label>
-                <div class="col-md-9">
-                  <input
-                    type="password"
-                    class="form-control input-large"
-                    v-model="passwordModel.newPassword"
-                  />
-                </div>
+              <kb-form-item
+                prop="newPassword"
+                class="form-group"
+                v-slot="error"
+              >
+                <div class="clearfix" :class="{'has-error': error.error}">
+                  <label class="control-label col-md-3">New password</label>
+                  <div class="col-md-9">
+                    <input
+                      type="password"
+                      class="form-control input-large"
+                      v-model="passwordModel.newPassword"
+                      v-kb-tooltip:right.manual.error="error.error"
+                    /> </div
+                ></div>
               </kb-form-item>
-              <kb-form-item prop="confirmPassword">
-                <label class="control-label col-md-3">Confirm password</label>
-                <div class="col-md-9">
-                  <input
-                    type="password"
-                    class="form-control input-large"
-                    v-model="passwordModel.confirmPassword"
-                  />
-                </div>
+              <kb-form-item
+                prop="confirmPassword"
+                class="form-group"
+                v-slot="error"
+              >
+                <div class="clearfix" :class="{'has-error': error.error}">
+                  <label class="control-label col-md-3">Confirm password</label>
+                  <div class="col-md-9">
+                    <input
+                      type="password"
+                      class="form-control input-large"
+                      v-model="passwordModel.confirmPassword"
+                      v-kb-tooltip:right.manual.error="error.error"
+                    /> </div
+                ></div>
               </kb-form-item>
-              <kb-form-item>
+              <kb-form-item class="form-group">
                 <div class="col-md-9 col-md-offset-3">
                   <button @click="savePassword" class="btn green">Save</button>
                 </div>
@@ -135,12 +155,12 @@
               <kb-form-item>
                 <label class="control-label col-md-3">Is Admin</label>
                 <div class="col-md-9">
-                  <p class="form-control-static">{{
-                    Kooboo.text.common[user.isAdmin ? "yes" : "no"]
-                  }}</p>
-                  <span v-if="!user.isAdmin" class="help-block">{{
-                    Kooboo.text.account.youAreNotAdmin
-                  }}</span>
+                  <p class="form-control-static"
+                    >{{ Kooboo.text.common[user.isAdmin ? "yes" : "no"] }}</p
+                  >
+                  <span v-if="!user.isAdmin" class="help-block"
+                    >{{ Kooboo.text.account.youAreNotAdmin }}</span
+                  >
                 </div>
               </kb-form-item>
               <kb-form-item>
@@ -176,12 +196,13 @@
             class="tab-pane fade"
           >
             <kb-form
-              class="margin-top-20"
+              simple
+              class="form-horizontal margin-top-20"
               :model="userModel"
               :rules="userModelRules"
               ref="userForm"
             >
-              <kb-form-item>
+              <kb-form-item class="form-group">
                 <label class="control-label col-md-3">Organization name</label>
                 <div class="col-md-9">
                   <p class="form-control-static">{{ organization.name }}</p>
@@ -206,15 +227,18 @@
                   </ul>
                 </div>
               </kb-form-item>
-              <kb-form-item class="form-group" prop="userName">
-                <label class="control-label col-md-3">Add user</label>
-                <div class="col-md-9">
-                  <input
-                    type="text"
-                    class="form-control input-large"
-                    placeholder="Enter user name"
-                    v-model="userModel.userName"
-                  />
+              <kb-form-item class="form-group" prop="userName" v-slot="error">
+                <div class="clearfix" :class="{'has-error': error.error}">
+                  <label class="control-label col-md-3">Add user</label>
+                  <div class="col-md-9">
+                    <input
+                      type="text"
+                      class="form-control input-large"
+                      placeholder="Enter user name"
+                      v-model="userModel.userName"
+                      v-kb-tooltip:right.manual.error="error.error"
+                    />
+                  </div>
                 </div>
               </kb-form-item>
               <kb-form-item class="form-group">

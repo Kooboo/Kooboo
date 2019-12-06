@@ -21,7 +21,6 @@
           <kb-form-item
             prop="name"
             v-slot="error"
-            id="form-name-error-container"
           >
             <div class="form-group" :class="{'has-error' : !!error.error }">
               <input
@@ -30,7 +29,6 @@
                 placeholder="name"
                 class="input-large form-control"
                 v-kb-tooltip:right.manual.error="error.error"
-                data-container="#form-name-error-container"
               />
             </div>
           </kb-form-item>
