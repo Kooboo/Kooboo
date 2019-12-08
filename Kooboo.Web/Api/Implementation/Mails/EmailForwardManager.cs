@@ -12,15 +12,15 @@ namespace Kooboo.Web.Api.Implementation.Mails
     {
         public static bool RequireForward(RenderContext context)
         {
-            return Kooboo.Mail.Settings.ForwardRequired; 
-        }
-          
-        public  static string GetForwardUrl(string modelName, string method)
-        {
-          return string.Format(Kooboo.Mail.Settings.MailServer + "/_api/{0}/{1}", modelName, method); 
+            return Kooboo.Mail.Settings.ForwardRequired;
         }
 
-        public static T Get<T>(string modelName, string method,User user,Dictionary<string,string> param=null)
+        public static string GetForwardUrl(string modelName, string method)
+        {
+            return "http://" + Kooboo.Mail.Settings.MailServerIP + "/_api/" + modelName + "/" + method;
+        }
+
+        public static T Get<T>(string modelName, string method, User user, Dictionary<string, string> param = null)
         {
             var url = GetForwardUrl(modelName, method);
             var headers = TwoFactorUserCache.GetHeaders(user.Id);
@@ -53,13 +53,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     }
                 }
             }
-            
+
             return EmailHttpHelper.Post<T>(url, headers, bytes);
         }
 
         public static byte[] Post(string modelName, string method, User user, byte[] bytes, Dictionary<string, string> param = null)
         {
-            var url= GetForwardUrl(modelName, method);
+            var url = GetForwardUrl(modelName, method);
             if (param == null)
             {
                 param = new Dictionary<string, string>();
@@ -82,7 +82,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             return EmailHttpHelper.PostBytes(url, bytes, headers);
         }
 
-         
     }
 
     public class TwoFactorUserCache
@@ -90,7 +89,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         private static Dictionary<Guid, Dictionary<string, string>> Cache = new Dictionary<Guid, Dictionary<string, string>>();
 
         private static object _lockObj = new object();
-        public static Dictionary<string,string> GetHeaders(Guid userId)
+        public static Dictionary<string, string> GetHeaders(Guid userId)
         {
             if (Cache.ContainsKey(userId))
             {

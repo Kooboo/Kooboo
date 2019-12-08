@@ -62,6 +62,30 @@ namespace Kooboo.Sites.Service
 
         }
 
+        public static string EnsureDocType(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return input; 
+            }
+
+            int len = input.Length-10;
+            if (len >500)
+            {
+                len = 500; 
+            }
+
+            // <!DOCTYPE html>
+            var sub = input.Substring(0, len); 
+            if (!sub.ToLower().Contains("<!DOCTYPE"))
+            {
+                input = "<!DOCTYPE html>\r\n" + input; 
+            } 
+
+            return input; 
+
+        }
+
         public static string GetKoobooId(Node node)
         {
             List<int> indexlist = new List<int>();
