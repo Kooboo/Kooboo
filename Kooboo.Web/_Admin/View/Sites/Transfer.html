@@ -1,5 +1,5 @@
 ﻿<!-- #layout name=default -->
-<div id="main" class="offset-top">
+<div id="main" class="offset-top" v-cloak>
   <div k-if="kooboosetting.IsLocal == true" ref="isLocal"></div>
   <div class="container">
     <div class="row">
@@ -198,6 +198,12 @@
     </div>
   </div>
 </div>
+<style>
+  .header-abs {
+    position: absolute;
+    z-index: 200000;
+  }
+</style>
 <script>
   Kooboo.loadJS([
     "/_Admin/Scripts/SPA.js",
@@ -515,10 +521,7 @@
           if (self.domains.length) {
             self.model.RootDomain = self.domains[0].domainName;
           }
-          $("#component_container_header").css({
-            position: "absolute",
-            zIndex: "200000"
-          });
+          $("#component_container_header").addClass("header-abs");
         }
       });
       if (!self.$refs.isLocal) self.convertType = "ONLINE";
@@ -541,6 +544,7 @@
         Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
           container: '[layout="default"]'
         });
+        $("#component_container_header").removeClass("header-abs");
       },
       startConvert: function() {
         if (self.$refs.form.validate()) {
