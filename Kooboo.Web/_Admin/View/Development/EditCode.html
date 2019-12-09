@@ -1,12 +1,12 @@
 <!-- #layout name=default -->
-<div id="main" class="fixed">
+<div id="main" class="fixed" v-cloak>
     <div class="page-header">
         <template v-if="isNewCode">
             <div class="form-inline pull-left margin-right-10" >
                 <div class="form-group">
                     <h1 class="title pull-left" >{{Kooboo.text.common.Code + ': '}}</h1>
                     <input v-model="name" v-kb-hint="nameValidateModel.msg"
-                           type="text" placeholder="Name" class="form-control input-medium">
+                           type="text" placeholder="Name" class="form-control input-medium"  data-container="body">
                 </div>
             </div>
         </template>
