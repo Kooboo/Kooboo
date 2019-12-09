@@ -67,7 +67,7 @@
 
     <kb-table-column :label="Kooboo.text.common.preview">
       <template v-slot="row">
-        <a :href="row.fullUrl" @click.stop="">{{ row.name }}</a>
+        <a :href="row.fullUrl" target="_blank" @click.stop="">{{ row.name }}</a>
       </template>
     </kb-table-column>
 
