@@ -1,5 +1,5 @@
 ﻿<!-- #layout name=default -->
-<div id="main" class="offset-top">
+<div id="main" class="offset-top" v-cloak>
   <div k-if="kooboosetting.IsLocal == true" ref="isLocal"></div>
   <div class="container">
     <div class="row">
@@ -7,68 +7,88 @@
         <div class="page-header">
           <h1 class="title">Transfer a website</h1>
         </div>
-        <kb-form :model="model" :rules="rules" ref="form">
+        <kb-form
+          simple
+          class="form-horizontal"
+          :model="model"
+          :rules="rules"
+          ref="form"
+        >
           <div class="note note-info">
             <p>{{Kooboo.text.site.sites.transferAWebsiteTip}}</p>
           </div>
-          <kb-form-item prop="url">
-            <label for="url" class="col-md-2 control-label">URL</label>
-            <div class="col-md-10">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="URL, example: http://www.kooboo.com/"
-                v-kb-focus
-                v-model="model.url"
-                @keydown.enter="handleEnter"
-              />
+          <kb-form-item class="form-group" prop="url" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label for="url" class="col-md-2 control-label">URL</label>
+              <div class="col-md-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="URL, example: http://www.kooboo.com/"
+                  v-kb-focus
+                  v-model="model.url"
+                  @keydown.enter="handleEnter"
+                  v-kb-tooltip:right.manual.error="error.error"
+                />
+              </div>
             </div>
           </kb-form-item>
-          <kb-form-item prop="SiteName">
-            <label for="SiteName" class="col-md-2 control-label"
-              >Site name</label
-            >
-            <div class="col-md-10">
-              <input
-                type="text"
-                class="form-control input-medium"
-                placeholder="Site name"
-                v-model="model.SiteName"
-              />
-              <span class="help-block"
-                >Start with letters and no space allowed.</span
+          <kb-form-item class="form-group" prop="SiteName" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label for="SiteName" class="col-md-2 control-label"
+                >Site name</label
               >
+              <div class="col-md-10">
+                <input
+                  type="text"
+                  class="form-control input-medium"
+                  placeholder="Site name"
+                  v-model="model.SiteName"
+                  v-kb-tooltip:right.manual.error="error.error"
+                />
+                <span class="help-block"
+                  >Start with letters and no space allowed.</span
+                >
+              </div>
             </div>
           </kb-form-item>
-          <kb-form-item prop="SubDomain">
-            <label for="SubDomain" class="col-md-2 control-label">Domain</label>
-            <div class="col-md-10">
-              <div class="form-inline">
-                <div style="display: inline-block">
-                  <input
-                    type="text"
-                    class="input-medium form-control"
-                    placeholder="SubDomain"
-                    v-model="model.SubDomain"
-                  />
-                  <div class="form-group">
-                    <select v-model="model.RootDomain" class="form-control">
-                      <option
-                        v-for="$data in domains"
-                        :key="$data.domainName"
-                        :value="$data.domainName"
-                        >{{'.'+$data.domainName}}</option
+          <kb-form-item class="form-group" prop="SubDomain" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label for="SubDomain" class="col-md-2 control-label"
+                >Domain</label
+              >
+              <div class="col-md-10">
+                <div class="form-inline">
+                  <div style="display: inline-block">
+                    <input
+                      type="text"
+                      class="input-medium form-control"
+                      placeholder="SubDomain"
+                      v-model="model.SubDomain"
+                    />
+                    <div class="form-group">
+                      <select
+                        v-model="model.RootDomain"
+                        class="form-control"
+                        v-kb-tooltip:right.manual.error="error.error"
                       >
-                    </select>
+                        <option
+                          v-for="$data in domains"
+                          :key="$data.domainName"
+                          :value="$data.domainName"
+                          >{{'.'+$data.domainName}}</option
+                        >
+                      </select>
+                    </div>
                   </div>
                 </div>
+                <span class="help-block"
+                  >Give your site a domain that other people can access.</span
+                >
               </div>
-              <span class="help-block"
-                >Give your site a domain that other people can access.</span
-              >
             </div>
           </kb-form-item>
-          <kb-form-item v-if="$refs.isLocal">
+          <kb-form-item class="form-group" v-if="$refs.isLocal">
             <label class="col-md-2 control-label">Setting</label>
             <div class="col-md-10">
               <div class="radio">
@@ -170,7 +190,7 @@
               </div>
             </div>
           </kb-form-item>
-          <kb-form-item v-else>
+          <kb-form-item class="form-group" v-else>
             <label class="col-md-2 control-label">Setting</label>
             <div class="col-md-10">
               <p class="form-control-static"
@@ -198,6 +218,12 @@
     </div>
   </div>
 </div>
+<style>
+  .header-abs {
+    position: absolute;
+    z-index: 200000;
+  }
+</style>
 <script>
   Kooboo.loadJS([
     "/_Admin/Scripts/SPA.js",
@@ -515,10 +541,7 @@
           if (self.domains.length) {
             self.model.RootDomain = self.domains[0].domainName;
           }
-          $("#component_container_header").css({
-            position: "absolute",
-            zIndex: "200000"
-          });
+          $("#component_container_header").addClass("header-abs");
         }
       });
       if (!self.$refs.isLocal) self.convertType = "ONLINE";
@@ -541,6 +564,7 @@
         Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
           container: '[layout="default"]'
         });
+        $("#component_container_header").removeClass("header-abs");
       },
       startConvert: function() {
         if (self.$refs.form.validate()) {

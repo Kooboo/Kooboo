@@ -1,6 +1,6 @@
 ﻿﻿﻿<!-- #layout name=blank-->
 
-<div id="app">
+<div id="app" v-cloak>
   <div class="page-header">
     <h1 class="title">Synchronization</h1>
   </div>
@@ -250,50 +250,64 @@
         </div>
         <div class="modal-body">
           <kb-form
+            simple
+            class="form-horizontal"
             ref="createSiteForm"
             :model="remoteSiteModel"
             :rules="remoteSiteRules"
           >
-            <kb-form-item prop="remoteSiteName">
-              <label class="control-label col-md-2">Site name</label>
-              <div class="col-md-10">
-                <input
-                  :value="remoteSiteModel.remoteSiteName"
-                  @input="remoteSiteNameChangeHandle"
-                  type="text"
-                  class="form-control input-medium"
-                  placeholder="Site name"
-                />
-                <span class="help-block"
-                  >Start with letters and no space allowed.</span
-                >
+            <kb-form-item
+              class="form-group"
+              prop="remoteSiteName"
+              v-slot="error"
+            >
+              <div :class="{'has-error' : !!error.error}" id="site-name-error-container">
+                <label class="control-label col-md-2">Site name</label>
+                <div class="col-md-10">
+                  <input
+                    :value="remoteSiteModel.remoteSiteName"
+                    @input="remoteSiteNameChangeHandle"
+                    type="text"
+                    class="form-control input-medium"
+                    placeholder="Site name"
+                    v-kb-tooltip:right.manual.error="error.error"
+                    data-container="#site-name-error-container"
+                  />
+                  <span class="help-block"
+                    >Start with letters and no space allowed.</span
+                  >
+                </div>
               </div>
             </kb-form-item>
 
-            <kb-form-item prop="preDomain">
-              <label class="control-label col-md-2">Domain</label>
-              <div class="col-md-10">
-                <div class="form-inline">
-                  <input
-                    type="text"
-                    v-model="remoteSiteModel.preDomain"
-                    class="form-control input-medium"
-                    placeholder="Sub domain"
-                  />
-                  <select
-                    v-model="remoteSiteModel.suffixDomain"
-                    class="form-control"
-                  >
-                    <option
-                      v-for="item in avaliableRemoteDomain"
-                      :value="item.domainName"
-                      >{{item.domainName}}</option
+            <kb-form-item class="form-group" prop="preDomain" v-slot="error">
+              <div :class="{'has-error' : !!error.error}" id="site-domain-error-container">
+                <label class="control-label col-md-2">Domain</label>
+                <div class="col-md-10">
+                  <div class="form-inline">
+                    <input
+                      type="text"
+                      v-model="remoteSiteModel.preDomain"
+                      class="form-control input-medium"
+                      placeholder="Sub domain"
+                    />
+                    <select
+                      v-model="remoteSiteModel.suffixDomain"
+                      class="form-control"
+                      v-kb-tooltip:right.manual.error="error.error"
+                      data-container="#site-domain-error-container"
                     >
-                  </select>
+                      <option
+                        v-for="item in avaliableRemoteDomain"
+                        :value="item.domainName"
+                        >{{item.domainName}}</option
+                      >
+                    </select>
+                  </div>
+                  <span class="help-block"
+                    >Give your site a domain that other people can access.</span
+                  >
                 </div>
-                <span class="help-block"
-                  >Give your site a domain that other people can access.</span
-                >
               </div>
             </kb-form-item>
           </kb-form>

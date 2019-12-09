@@ -1,29 +1,38 @@
 <!--#layout name=default-->
-<div id="main" class="offset-top">
+<div id="main" class="offset-top" v-cloak>
   <div class="container">
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
         <div class="page-header">
           <h1 class="title">Share a website</h1>
         </div>
-        <kb-form :model="model" :rules="rules" ref="form">
+        <kb-form
+          simple
+          class="form-horizontal"
+          :model="model"
+          :rules="rules"
+          ref="form"
+        >
           <div class="note note-info">
             <p>{{Kooboo.text.site.sites.shareTip}}</p>
           </div>
-          <kb-form-item prop="siteName">
-            <label class="col-md-2 control-label">Site name</label>
-            <div class="col-md-10 row">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  class="form-control input-medium"
-                  placeholder="Site name"
-                  v-model="model.siteName"
-                />
+          <kb-form-item class="form-group" prop="siteName" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label class="col-md-2 control-label">Site name</label>
+              <div class="col-md-10 row">
+                <div class="col-md-6">
+                  <input
+                    type="text"
+                    class="form-control input-medium"
+                    placeholder="Site name"
+                    v-model="model.siteName"
+                    v-kb-tooltip:right.manual.error="error.error"
+                  />
+                </div>
               </div>
             </div>
           </kb-form-item>
-          <kb-form-item>
+          <kb-form-item class="form-group">
             <label class="col-md-2 control-label">Tags</label>
             <div class="col-md-10">
               <select
@@ -33,7 +42,7 @@
               ></select>
             </div>
           </kb-form-item>
-          <kb-form-item>
+          <kb-form-item class="form-group">
             <label class="col-md-2 control-label">Description</label>
             <div class="col-md-10">
               <textarea
@@ -42,7 +51,7 @@
               ></textarea>
             </div>
           </kb-form-item>
-          <kb-form-item>
+          <kb-form-item class="form-group">
             <label class="col-md-2 control-label">Link</label>
             <div class="col-md-10">
               <input
@@ -52,7 +61,7 @@
               />
             </div>
           </kb-form-item>
-          <kb-form-item>
+          <kb-form-item class="form-group">
             <label class="col-md-2 control-label">Thumbnails</label>
             <div class="col-md-10">
               <div class="fileinput">
