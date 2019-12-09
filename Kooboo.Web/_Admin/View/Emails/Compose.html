@@ -38,7 +38,7 @@
           id="receiver_addresses"
           v-kb-tooltip:left.manual.error="data.error"
           :class="{'has-error':data.error}"
-          dara-container="#receiver_addresses"
+          data-container="#receiver_addresses"
         >
           <select
             style="width: 100%"
@@ -164,6 +164,12 @@
     </kb-form-item>
   </kb-form>
 </div>
+
+<style>
+    #receiver_addresses .tooltip {
+        margin-top: -10px;
+    }
+</style>
 
 <script>
   (function() {
