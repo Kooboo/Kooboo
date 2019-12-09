@@ -34,6 +34,10 @@
         default: function() {
           return [];
         }
+      },
+      hideEmpty: {
+        type: Boolean,
+        default: false
       }
     },
     data: function() {

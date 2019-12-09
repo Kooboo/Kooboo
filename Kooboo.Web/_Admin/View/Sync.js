@@ -87,12 +87,18 @@ $(function() {
       this.getTableData();
     },
     watch: {
-      editableServers: {handler:function (value) {
+      editableServers: {
+        handler: function(value) {
           self.validateModel = [];
-          value.forEach(function (item) {
-            item.validateModel={name:{msg:"",valid: true},serverUrl:{msg:"",valid: true}}
+          value.forEach(function(item) {
+            item.validateModel = {
+              name: { msg: "", valid: true },
+              serverUrl: { msg: "", valid: true }
+            };
           });
-      },deep:true}
+        },
+        deep: true
+      }
     },
     methods: {
       getTableData: function() {
@@ -108,7 +114,7 @@ $(function() {
         self.selectedPushType = pushType;
       },
       cancelEditEditableServers: function(event, row) {
-        if(row.isNew){
+        if (row.isNew) {
           delete row.isNew;
           self.editableServers.pop();
         }
@@ -128,11 +134,9 @@ $(function() {
 
         var pattern = new RegExp(patternString);
         var keyOptions = {
-          name: [
-            { required:true, message: Kooboo.text.validation.required }
-          ],
+          name: [{ required: true, message: Kooboo.text.validation.required }],
           serverUrl: [
-            { required:true, message: Kooboo.text.validation.required },
+            { required: true, message: Kooboo.text.validation.required },
             {
               pattern: pattern,
               message: Kooboo.text.validation.urlInvalid
@@ -143,9 +147,9 @@ $(function() {
           name: row.name,
           serverUrl: row.serverUrl
         };
-      var validate = Kooboo.validate(keyValues, keyOptions);
-      row.validateModel = validate.result;
-      this.$forceUpdate();
+        var validate = Kooboo.validate(keyValues, keyOptions);
+        row.validateModel = validate.result;
+        this.$forceUpdate();
         if (!validate.hasError) {
           Kooboo.UserPublish.updateServer({
             id: row.id,
@@ -156,6 +160,7 @@ $(function() {
               Kooboo.EventBus.publish("server/list/refresh/needed");
               window.info.done(Kooboo.text.info.update.success);
               row.editable = false;
+              row.isNew = false;
               self.$forceUpdate();
               self.ableAddNewServer = true;
             } else {
@@ -185,10 +190,8 @@ $(function() {
         }).then(function(res) {
           if (res.success) {
             window.info.done(Kooboo.text.info.delete.success);
-            self.editableServers = _.remove(self.editableServers, function(
-              item
-            ) {
-              return item.id === row.id;
+            self.editableServers = self.editableServers.filter(function(item) {
+              if (item.id !== row.id) return true;
             });
           } else {
             window.info.fail(Kooboo.text.info.delete.fail);
@@ -311,11 +314,19 @@ $(function() {
         this.showManageServerModal();
       },
       showManageServerModal: function() {
+        this.ableAddNewServer = true;
         this.isShowManageServerModal = true;
+        this._editableServers = _.cloneDeep(this.editableServers);
       },
       hideManageServerModal: function() {
+        this.editableServers = this.editableServers.filter(function(item) {
+          if (!item.isNew) return true;
+        });
+        this.ableAddNewServer = false;
         this.isShowManageServerModal = false;
-        this.getModalData();
+        if (!_.isEqual(this.editableServers, this._editableServers)) {
+          this.getModalData();
+        }
       },
       getModalData: function() {
         Kooboo.UserPublish.getList().then(function(res) {
