@@ -98,6 +98,9 @@ $(function() {
           });
         },
         deep: true
+      },
+      currentServer: function() {
+        this.isNextStep = false;
       }
     },
     methods: {
@@ -192,7 +195,7 @@ $(function() {
           if (res.success) {
             window.info.done(Kooboo.text.info.delete.success);
             self.editableServers = self.editableServers.filter(function(item) {
-              return !_.isEqual(item,row);
+              return !_.isEqual(item, row);
             });
           } else {
             window.info.fail(Kooboo.text.info.delete.fail);
