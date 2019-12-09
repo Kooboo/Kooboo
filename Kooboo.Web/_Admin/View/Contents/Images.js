@@ -323,40 +323,44 @@ $(function() {
             }
           });
 
-          Kooboo.Media.deleteFolders(JSON.stringify(folders)).then(function(
-            res
-          ) {
-            if (res.success) {
-              _.forEach(folders, function(fullPath) {
-                var _find = _.find(self.folders, function(folder) {
-                  return folder.fullPath == fullPath;
+          if (folders.length) {
+            Kooboo.Media.deleteFolders(JSON.stringify(folders)).then(function(
+              res
+            ) {
+              if (res.success) {
+                _.forEach(folders, function(fullPath) {
+                  var _find = _.find(self.folders, function(folder) {
+                    return folder.fullPath == fullPath;
+                  });
+                  if (_find) {
+                    self.folders = _.without(self.folders, _find);
+                  }
                 });
-                if (_find) {
-                  self.folders = _.without(self.folders, _find);
-                }
-              });
-              window.info.done(Kooboo.text.info.delete.success);
-            } else {
-              window.info.done(Kooboo.text.info.delete.fail);
-            }
-          });
-
-          Kooboo.Media.deleteImages(JSON.stringify(files)).then(function(res) {
-            if (res.success) {
-              _.forEach(files, function(id) {
-                var _find = _.find(self.files, function(files) {
-                  return files.id == id;
+                window.info.done(Kooboo.text.info.delete.success);
+              } else {
+                window.info.done(Kooboo.text.info.delete.fail);
+              }
+            });
+          }
+          if (files.length) {
+            Kooboo.Media.deleteImages(JSON.stringify(files)).then(function(
+              res
+            ) {
+              if (res.success) {
+                _.forEach(files, function(id) {
+                  var _find = _.find(self.files, function(files) {
+                    return files.id == id;
+                  });
+                  if (_find) {
+                    self.files = _.without(self.files, _find);
+                  }
                 });
-                if (_find) {
-                  self.files = _.without(self.files, _find);
-                }
-              });
-              window.info.done(Kooboo.text.info.delete.success);
-            } else {
-              window.info.done(Kooboo.text.info.delete.fail);
-            }
-          });
-
+                window.info.done(Kooboo.text.info.delete.success);
+              } else {
+                window.info.done(Kooboo.text.info.delete.fail);
+              }
+            });
+          }
           self.selectedFiles = [];
         }
       },
