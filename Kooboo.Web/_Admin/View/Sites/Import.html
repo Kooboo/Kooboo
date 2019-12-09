@@ -283,8 +283,11 @@
         }
       },
       SPAClick: function() {
-        Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
-          container: '[layout="default"]'
+        self.$refs.form.clearValid();
+        self.$nextTick(function() {
+          Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
+            container: '[layout="default"]'
+          });
         });
       },
       uploadFile: function(data, files) {

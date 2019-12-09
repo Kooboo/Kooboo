@@ -561,10 +561,13 @@
         }
       },
       SPAClick: function() {
-        Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
-          container: '[layout="default"]'
+        self.$refs.form.clearValid();
+        self.$nextTick(function() {
+          Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
+            container: '[layout="default"]'
+          });
+          $("#component_container_header").removeClass("header-abs");
         });
-        $("#component_container_header").removeClass("header-abs");
       },
       startConvert: function() {
         if (self.$refs.form.validate()) {
