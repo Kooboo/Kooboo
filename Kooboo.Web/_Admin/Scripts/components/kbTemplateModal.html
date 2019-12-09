@@ -157,9 +157,7 @@
                   </div>
                 </li>
                 <li class="list-group-item">
-                  <span
-                    class="title"
-                  >{{ Kooboo.text.common.tags }}</span>
+                  <span class="title">{{ Kooboo.text.common.tags }}</span>
                   <div class="margin-top-5">
                     <template v-if="data.tags">
                       <label
@@ -192,8 +190,9 @@
                       type="text"
                       class="form-control input-medium"
                       name="SiteName"
-                      placeholder="Site name"
+                      :placeholder="Kooboo.text.component.templateModal.siteName"
                       v-model="model.siteName"
+                      ref="siteName"
                     />
                     <span class="help-block">
                       {{Kooboo.text.component.templateModal.siteNameHint}}
@@ -209,7 +208,7 @@
                       <input
                         type="text"
                         class="input-medium form-control"
-                        placeholder="SubDomain"
+                        :placeholder="Kooboo.text.component.templateModal.subDomain"
                         v-model="model.subDomain"
                       />
                       <div class="form-group">

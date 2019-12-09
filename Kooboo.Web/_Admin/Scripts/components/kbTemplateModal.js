@@ -132,6 +132,14 @@
 
         this.data = temp;
         this.model.downloadCode = this.data.downloadCode;
+      },
+      selected: function(value) {
+        var self = this;
+        if (value) {
+          this.$nextTick(function() {
+            self.$refs.siteName.focus();
+          });
+        }
       }
     }
   });
