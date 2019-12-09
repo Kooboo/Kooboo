@@ -1,5 +1,5 @@
 <!-- #layout name=default -->
-<div id="main">
+<div id="main" v-cloak>
   <div class="content-fluid">
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
@@ -200,17 +200,9 @@
                     <div class="col-md-10">
                       <select
                         id="select2_element"
-                        v-model="editModel.tags"
                         multiple
-                        class="form-control invisible"
+                        style="width: 100%;"
                       >
-                        <option
-                          v-for="(item,index) in editModel.tags"
-                          :key="index"
-                          :value="item"
-                        >
-                          {{item}}
-                        </option>
                       </select>
                     </div>
                   </div>
@@ -505,6 +497,20 @@
             self.editModel.tags = res.model.tags.split(",").filter(function(m) {
               return !!m;
             });
+            self.$nextTick(function() {
+              var tags = self.editModel.tags.map(function(item) {
+                return {
+                  id: item,
+                  text: item,
+                  selected: true
+                };
+              });
+              $("#select2_element").select2({
+                tags: true,
+                tokenSeparators: [",", " ", ";"],
+                data: tags
+              });
+            });
             self.editModel.description = res.model.description;
             self.editModel.link = res.model.link;
             self.editModel.images = res.model.images;
@@ -686,11 +692,6 @@
       showEditTemplateModal: function(value) {
         if (value) {
           setTimeout(function() {
-            var test = $("#select2_element").select2({
-              tags: true,
-              tokenSeparators: [",", " ", ";"]
-            });
-
             $(".autosize")
               .textareaAutoSize()
               .trigger("keyup");

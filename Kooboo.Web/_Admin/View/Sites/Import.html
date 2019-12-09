@@ -1,93 +1,116 @@
 <!-- #layout name=default -->
-<div id="main" class="offset-top">
+<div id="main" class="offset-top" v-cloak>
   <div class="container">
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
         <div class="page-header">
           <h1 class="title">Import a site</h1>
         </div>
-        <kb-form :model="model" :rules="rules" ref="form">
+        <kb-form
+          simple
+          class="form-horizontal"
+          :model="model"
+          :rules="rules"
+          ref="form"
+        >
           <div class="note note-info">
             <p>{{Kooboo.text.site.sites.importTip}}</p>
           </div>
-          <kb-form-item prop="siteName">
-            <label class="col-md-2 control-label" for="SiteName"
-              >Site name</label
-            >
-            <div class="col-md-10">
-              <input
-                class="input-medium form-control"
-                placeholder="Site name"
-                type="text"
-                v-model="model.siteName"
-              />
-              <span class="help-block"
-                >Start with letters and no space allowed</span
+          <kb-form-item class="form-group" prop="siteName" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label class="col-md-2 control-label" for="SiteName"
+                >Site name</label
               >
-            </div>
-          </kb-form-item>
-          <kb-form-item prop="subDomain">
-            <label class="col-md-2 control-label" for="SubDomain">Domain</label>
-            <div class="col-md-10">
-              <div class="form-inline">
+              <div class="col-md-10">
                 <input
                   class="input-medium form-control"
-                  id="SubDomain"
-                  name="SubDomain"
-                  placeholder="SubDomain"
+                  placeholder="Site name"
                   type="text"
-                  v-model="model.subDomain"
+                  v-model="model.siteName"
+                  v-kb-tooltip:right.manual.error="error.error"
                 />
-                <select class="form-control" v-model="model.rootDomain">
-                  <option
-                    v-for="($data,index) in domains"
-                    :key="index"
-                    :value="$data.domainName"
-                    >{{'.'+$data.domainName}}</option
-                  >
-                </select>
+                <span class="help-block"
+                  >Start with letters and no space allowed</span
+                >
               </div>
-              <span class="help-block"
-                >{{ Kooboo.text.info.subDomainInfo}}</span
-              >
             </div>
           </kb-form-item>
-          <kb-form-item prop="file">
-            <label class="col-md-2 control-label" for="Package">Package</label>
-            <div class="col-md-10">
-              <div
-                class="well"
-                id="dropArea"
-                style="border: 1px dashed #9a9a9a"
-                v-show="showDropArea"
+          <kb-form-item class="form-group" prop="subDomain" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label class="col-md-2 control-label" for="SubDomain"
+                >Domain</label
               >
-                <h4 class="text-center">Drop here</h4>
-              </div>
-
-              <div class="fileinput fileinput-new">
-                <span class="btn btn-default btn-file">
-                  {{model.file?Kooboo.text.common.change:Kooboo.text.common.selectFile}}
+              <div class="col-md-10">
+                <div class="form-inline">
                   <input
-                    type="file"
-                    name="package"
-                    v-kb-upload="{
+                    class="input-medium form-control"
+                    id="SubDomain"
+                    name="SubDomain"
+                    placeholder="SubDomain"
+                    type="text"
+                    v-model="model.subDomain"
+                  />
+                  <select
+                    class="form-control"
+                    v-model="model.rootDomain"
+                    v-kb-tooltip:right.manual.error="error.error"
+                  >
+                    <option
+                      v-for="($data,index) in domains"
+                      :key="index"
+                      :value="$data.domainName"
+                      >{{'.'+$data.domainName}}</option
+                    >
+                  </select>
+                </div>
+                <span class="help-block"
+                  >{{ Kooboo.text.info.subDomainInfo}}</span
+                >
+              </div>
+            </div>
+          </kb-form-item>
+          <kb-form-item class="form-group" prop="file" v-slot="error">
+            <div :class="{'has-error' : !!error.error}">
+              <label class="col-md-2 control-label" for="Package"
+                >Package</label
+              >
+              <div class="col-md-10">
+                <div
+                  class="well"
+                  id="dropArea"
+                  style="border: 1px dashed #9a9a9a"
+                  v-show="showDropArea"
+                >
+                  <h4 class="text-center">Drop here</h4>
+                </div>
+
+                <div class="fileinput fileinput-new">
+                  <span class="btn btn-default btn-file">
+                    {{model.file?Kooboo.text.common.change:Kooboo.text.common.selectFile}}
+                    <input
+                      type="file"
+                      name="package"
+                      v-kb-upload="{
                     allowMultiple: false,
                     acceptTypes: ['application/zip'],
                     acceptSuffix: ['zip'],
                     callback: uploadFile
                 }"
-                  />
-                </span>
-                &nbsp;<span v-if="ableToDragFile&&!model.file"
-                  >or drag zip file here.</span
-                >
-                <span v-if="model.file" class="fileinput-filename"
-                  >{{model.file.name}}</span
-                >
-                <a v-if="model.file" @click="model.file=null" class="close"
-                  ><i class="fa fa-close"></i
-                ></a>
-                <span class="help-block">Accept type: *.zip</span>
+                    />
+                  </span>
+                  &nbsp;<span
+                    v-if="ableToDragFile&&!model.file"
+                    v-kb-tooltip:right.manual.error="error.error"
+                    >or drag zip file here.</span
+                  >
+                  <span v-if="model.file" class="fileinput-filename"
+                    >{{model.file.name}}</span
+                  >
+                  <a v-if="model.file" @click="model.file=null" class="close"
+                    ><i class="fa fa-close"></i
+                  ></a>
+                  <span class="help-block">Accept type: *.zip</span>
+                </div>
               </div>
             </div>
           </kb-form-item>

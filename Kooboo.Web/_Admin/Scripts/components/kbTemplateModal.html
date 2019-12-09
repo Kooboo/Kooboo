@@ -177,29 +177,39 @@
           </template>
           <template v-else>
             <div class="col-md-10 col-md-offset-1">
-              <kb-form :model="model" :rules="rules" ref="form">
+              <kb-form
+                simple
+                class="form-horizontal"
+                :model="model"
+                :rules="rules"
+                ref="form"
+              >
                 <div class="note note-info">
                   <p>{{Kooboo.text.component.templateModal.hint}}</p>
                 </div>
-                <kb-form-item prop="siteName">
-                  <label class="col-md-2 control-label" for="SiteName"
-                    >{{Kooboo.text.component.templateModal.siteName}}</label
-                  >
-                  <div class="col-md-10">
-                    <input
-                      type="text"
-                      class="form-control input-medium"
-                      name="SiteName"
-                      :placeholder="Kooboo.text.component.templateModal.siteName"
-                      v-model="model.siteName"
-                      ref="siteName"
-                    />
-                    <span class="help-block">
-                      {{Kooboo.text.component.templateModal.siteNameHint}}
-                    </span>
+                <kb-form-item class="form-group" prop="siteName" v-slot="error">
+                  <div :class="{'has-error' : !!error.error}" id="site-name-error-container2">
+                    <label class="col-md-2 control-label" for="SiteName"
+                      >{{Kooboo.text.component.templateModal.siteName}}</label
+                    >
+                    <div class="col-md-10">
+                      <input
+                        type="text"
+                        class="form-control input-medium"
+                        name="SiteName"
+                        :placeholder="Kooboo.text.component.templateModal.siteName"
+                        v-model="model.siteName"
+                        ref="siteName"
+                        v-kb-tooltip:right.manual.error="error.error"
+                        data-container="#site-name-error-container2"
+                      />
+                      <span class="help-block">
+                        {{Kooboo.text.component.templateModal.siteNameHint}}
+                      </span>
+                    </div>
                   </div>
                 </kb-form-item>
-                <kb-form-item>
+                <kb-form-item class="form-group">
                   <label for="SubDomain" class="col-md-2 control-label"
                     >{{Kooboo.text.component.table.domain}}</label
                   >
