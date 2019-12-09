@@ -1,12 +1,12 @@
 <!-- #layout name=default -->
-<div id="main" class="fixed">
+<div id="main" class="fixed" v-cloak>
     <div class="page-header">
         <template v-if="isNewCode">
             <h1 class="title pull-left" >{{Kooboo.text.common.Script + ': '}}</h1>
             <button @click="formatCode" type="button" class="btn btn-default pull-right">Format code</button>
             <div class="col-md-3" >
                 <div class="row form-group">
-                    <div v-kb-hint="nameValidateModel.msg" class="input-group">
+                    <div v-kb-hint="nameValidateModel.msg" class="input-group" data-container="body">
                         <input
                                 v-model="name" type="text" placeholder="Name" class="form-control">
                         <span class="input-group-addon dropdown">

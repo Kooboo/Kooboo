@@ -614,6 +614,10 @@ Vue.directive("kb-hint", {
       template:
         '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
     };
+    var errorContainer = element.data('container');
+    if(errorContainer) {
+      tipsOptions.container = errorContainer;
+    }
     try {
       tipsOptions = element.data("bs.tooltip").options;
     } catch (e) {}

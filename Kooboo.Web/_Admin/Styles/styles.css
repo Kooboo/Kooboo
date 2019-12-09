@@ -12164,8 +12164,7 @@ a.thumbnail:focus {
   position: fixed;
   right: 0;
   top: 46px;
-  /* z-index: 999; */
-  z-index: 19998;
+  z-index: 999;
 }
 #main.with-button {
   margin-bottom: 53px;

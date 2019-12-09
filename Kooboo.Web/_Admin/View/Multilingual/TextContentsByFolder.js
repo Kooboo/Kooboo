@@ -19,7 +19,6 @@ $(function() {
     mounted: function() {
       Kooboo.TextContent.getByFolder().then(function(res) {
         if (res.success) {
-          self.cacheData = res.model;
           self.handleData(res.model);
         }
       });
@@ -84,8 +83,9 @@ $(function() {
           ob.Edit = {
             text: Kooboo.text.common.edit,
             url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
-              folder: Kooboo.getQueryString("folder"),
-              id: item.id
+              folder: Kooboo.getQueryString("folder") || "",
+              id: item.id || "",
+              lang: Kooboo.getQueryString("lang")
             })
           };
           return ob;
