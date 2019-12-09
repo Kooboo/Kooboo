@@ -261,7 +261,10 @@
               prop="remoteSiteName"
               v-slot="error"
             >
-              <div :class="{'has-error' : !!error.error}" id="site-name-error-container">
+              <div
+                :class="{'has-error' : !!error.error}"
+                id="site-name-error-container"
+              >
                 <label class="control-label col-md-2">Site name</label>
                 <div class="col-md-10">
                   <input
@@ -281,7 +284,10 @@
             </kb-form-item>
 
             <kb-form-item class="form-group" prop="preDomain" v-slot="error">
-              <div :class="{'has-error' : !!error.error}" id="site-domain-error-container">
+              <div
+                :class="{'has-error' : !!error.error}"
+                id="site-domain-error-container"
+              >
                 <label class="control-label col-md-2">Domain</label>
                 <div class="col-md-10">
                   <div class="form-inline">

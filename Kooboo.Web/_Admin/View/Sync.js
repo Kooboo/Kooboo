@@ -3,6 +3,7 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      var self = this;
       return {
         breads: [
           {
@@ -22,6 +23,7 @@ $(function() {
         },
         remoteSiteRules: {
           remoteSiteName: [
+            { required: Kooboo.text.validation.required },
             {
               pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
               message: Kooboo.text.validation.siteNameInvalid
@@ -35,9 +37,21 @@ $(function() {
                 ", " +
                 Kooboo.text.validation.maxLength +
                 63
+            },
+            {
+              remote: {
+                url: Kooboo.Site.isUniqueName(),
+                data: function() {
+                  return {
+                    SiteName: self.remoteSiteModel.remoteSiteName
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ],
           preDomain: [
+            { required: Kooboo.text.validation.required },
             {
               pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
               message: Kooboo.text.validation.siteNameInvalid
@@ -51,6 +65,18 @@ $(function() {
                 ", " +
                 Kooboo.text.validation.maxLength +
                 63
+            },
+            {
+              remote: {
+                url: Kooboo.Site.CheckDomainBindingAvailable(),
+                data: function() {
+                  return {
+                    SiteName: self.remoteSiteModel.remoteSiteName,
+                    RootDomain: self.remoteSiteModel.suffixDomain
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ]
         },
@@ -259,6 +285,11 @@ $(function() {
         self.remoteSiteModel.preDomain = self.remoteSiteModel.remoteSiteName;
       },
       hideCreateSiteModalHandle: function() {
+        self.remoteSiteModel = {
+          remoteSiteName: "",
+          preDomain: "",
+          suffixDomain: ""
+        };
         self.showCreateSiteModal = false;
       },
       saveHandle: function() {
@@ -293,6 +324,7 @@ $(function() {
           };
           self.avaliableSites.push(newSite);
           self.selectedSite = newSite;
+          self.ableAddSite = true;
           this.hideCreateSiteModalHandle();
         }
       },
