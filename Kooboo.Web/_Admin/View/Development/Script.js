@@ -49,7 +49,7 @@ $(function() {
 
           if (styleRes.success && extensionRes.success) {
             self.codeId = Kooboo.getQueryString("Id") || Kooboo.Guid.Empty;
-            self.name = styleRes.model.displayName;
+            self.name = styleRes.model.name;
             self.codeContent = styleRes.model.body || "";
             self.compareTarget = self.codeContent;
             self.sourceChange = styleRes.model.sourceChange;
