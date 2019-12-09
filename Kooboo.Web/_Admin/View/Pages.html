@@ -134,7 +134,7 @@
     <kb-table-column width="10px">
       <template v-slot="row">
         <a
-          v-if="!$refs.isLocal"
+          v-if="!isLocal"
           class="btn-default btn-xs"
           @click.stop="onShowQrCode(row.previewUrl)"
         >
@@ -391,7 +391,7 @@
     </div>
   </div>
   <kb-relation-modal></kb-relation-modal>
-  <div k-if="kooboosetting.IsLocal=true" ref="isLocal"> </div>
+  <div k-if="kooboosetting.IsLocal==true" id="isLocal"> </div>
 </div>
 
 <script>
@@ -517,7 +517,8 @@
           "application/zip",
           "application/octet-stream",
           "text/html"
-        ]
+        ],
+        isLocal: false
       };
     },
     computed: {
@@ -571,6 +572,7 @@
     },
     mounted: function() {
       var me = this;
+      me.isLocal = document.getElementById("isLocal");
       Kooboo.Page.getAll().then(function(res) {
         if (res.success) {
           me.model = res.model;
@@ -739,6 +741,15 @@
         } else {
           this.$refs.copyForm.clearValid();
         }
+      },
+      "importModel.pageUrl": function(val) {
+        var path = /\w[^/]+:\/\/[\w\.]+:?\d*(.[^\?&]+)/.exec(val.trim());
+        var name = "";
+        if (!path) name = "";
+        else if (!path[1]) name = "";
+        else if (path[1].startsWith("/")) name = path[1];
+        else if (path[1].indexOf("/") > -1) name = "/";
+        this.importModel.name = name;
       }
     }
   });

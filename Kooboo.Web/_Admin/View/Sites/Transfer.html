@@ -1,6 +1,6 @@
 ﻿<!-- #layout name=default -->
 <div id="main" class="offset-top" v-cloak>
-  <div k-if="kooboosetting.IsLocal == true" ref="isLocal"></div>
+  <div k-if="kooboosetting.IsLocal==true" id="isLocal"></div>
   <div class="container">
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
@@ -88,7 +88,7 @@
               </div>
             </div>
           </kb-form-item>
-          <kb-form-item class="form-group" v-if="$refs.isLocal">
+          <kb-form-item class="form-group" v-if="isLocal">
             <label class="col-md-2 control-label">Setting</label>
             <div class="col-md-10">
               <div class="radio">
@@ -530,11 +530,13 @@
         domains: [],
         urls: [],
         selectedRows: [],
-        scanDone: false
+        scanDone: false,
+        isLocal: false
       };
     },
     mounted: function() {
       var self = this;
+      self.isLocal = document.getElementById("isLocal");
       $.when(Kooboo.Domain.getAvailable()).then(function(availableRes) {
         if (availableRes.success) {
           self.domains = availableRes.model;
@@ -544,7 +546,7 @@
           $("#component_container_header").addClass("header-abs");
         }
       });
-      if (!self.$refs.isLocal) self.convertType = "ONLINE";
+      if (!self.isLocal) self.convertType = "ONLINE";
     },
     computed: {
       startDisabled: function() {
