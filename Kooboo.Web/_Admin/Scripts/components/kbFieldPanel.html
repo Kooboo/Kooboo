@@ -14,7 +14,11 @@
       :prop="field.prop"
       v-show="isShow(field)"
     >
-      <component :is="field.controlName" :field="field"></component>
+      <component
+        :is="field.controlName"
+        :field="field"
+        @media-dialog-data="$emit('media-dialog-data',$event)"
+      ></component>
     </kb-form-item>
   </kb-form>
   <template v-else>

@@ -1,7 +1,7 @@
 (function() {
   Kooboo.loadJS([
-    "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-    "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+    "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+    "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
     "/_Admin/Scripts/lib/jstree.min.js",
     "/_Admin/Scripts/lib/moment.min.js",
     "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
