@@ -138,7 +138,6 @@
                 >
                   <input
                     v-model="item.newSub.name"
-                    v-kb-typeahead="{source: pageList, defaultShow: true, items: 20 }"
                     @input="clearValidate($event,item)"
                     type="text"
                     class="form-control"
@@ -154,9 +153,10 @@
                   <input
                     @input="clearValidate($event,item)"
                     v-model="item.newSub.url"
+                    v-kb-typeahead="{source: pageList, defaultShow: true, items: 20 }"
                     type="text"
                     class="form-control row"
-                    placeholder="elect value from below or type a new url"
+                    placeholder="Select value from below or type a new url"
                   />
                 </div>
               </td>
