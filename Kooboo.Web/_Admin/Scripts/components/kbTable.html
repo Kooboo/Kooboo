@@ -29,7 +29,7 @@
       </template>
     </tr>
   </thead>
-  <tbody v-if="data.length > 0">
+  <tbody v-if="data.length+progressorRows.length > 0">
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" @click="selectRow(row)">
       <td v-if="showSelect" class="table-checkbox">
         <input type="checkbox" :checked="itemIsSelected(row)" />
