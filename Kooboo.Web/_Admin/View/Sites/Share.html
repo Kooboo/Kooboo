@@ -233,9 +233,12 @@
         }
       },
       SPAClick: function() {
+        self.$refs.form.clearValid();
+        self.$nextTick(function() {
         Kooboo.SPA.getView(Kooboo.Route.Site.ListPage, {
           container: '[layout="default"]'
         });
+      });
       },
       removeFile: function(item, index) {
         var selected = self.model.images[self.model.defaultImg];

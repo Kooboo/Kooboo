@@ -68,8 +68,9 @@ $(function() {
           ob[columnName] = {
             text: item.values[columnName],
             url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
-              folder: Kooboo.getQueryString("folder"),
-              id: item.id
+              folder: Kooboo.getQueryString("folder") || "",
+              id: item.id || "",
+              lang: Kooboo.getQueryString("lang")
             })
           };
           ob.lastModified = new Date(item.lastModified).toDefaultLangString();
