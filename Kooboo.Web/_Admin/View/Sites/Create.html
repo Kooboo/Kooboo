@@ -17,7 +17,7 @@
             <p>{{Kooboo.text.site.sites.createModalTip}}</p>
           </div>
           <kb-form-item class="form-group" prop="SiteName" v-slot="error">
-            <div :class="{'has-error': error.error}">
+            <div :class="{'has-error': !!error.error}">
               <label class="col-md-2 control-label" for="SiteName"
                 >Site name</label
               >
@@ -36,7 +36,7 @@
             </div>
           </kb-form-item>
           <kb-form-item class="form-group" prop="SubDomain" v-slot="error">
-            <div :class="{'has-error': error.error}">
+            <div :class="{'has-error': !!error.error}">
               <label class="col-md-2 control-label" for="SubDomain"
                 >domain</label
               >
