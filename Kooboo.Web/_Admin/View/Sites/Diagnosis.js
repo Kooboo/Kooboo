@@ -65,10 +65,10 @@ $(function() {
       this.cancelBtnText = this.text.cancel;
       this.breads = [
         {
-          name: this.text.sites
+          name: "SITES"
         },
         {
-          name: this.text.dashboard
+          name: "DASHBOARD"
         },
         {
           name: this.text.diagnosis
@@ -239,9 +239,9 @@ $(function() {
         this.showProgress = false;
         this.scanPage = "";
         this.cancelBtnText = this.text.scanAgain;
-          setTimeout(function() {
-              $('#progressBar').fadeOut()
-          }, 1000);
+        setTimeout(function() {
+          $("#progressBar").fadeOut();
+        }, 1000);
       },
       endScan: function(insideCancel) {
         this.clearMessageStack();
@@ -261,7 +261,7 @@ $(function() {
       startScan: function() {
         var self = this;
         var ids = JSON.stringify(self.scanType);
-        if(self.scanType.length > 0 ) {
+        if (self.scanType.length > 0) {
           Kooboo.Diagnosis.startSession({
             checkers: ids
           }).then(function(res) {
@@ -280,7 +280,7 @@ $(function() {
           this.percent = 0;
           this.showProgress = true;
           this.cancelBtnText = self.text.cancel;
-          $('#progressBar').fadeIn()
+          $("#progressBar").fadeIn();
         }
       }
     }

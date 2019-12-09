@@ -6,10 +6,10 @@ $(function() {
       return {
         breads: [
           {
-            name: Kooboo.text.component.breadCrumb.sites
+            name: "SITES"
           },
           {
-            name: Kooboo.text.component.breadCrumb.dashboard
+            name: "DASHBOARD"
           },
           {
             name: Kooboo.text.common.sync

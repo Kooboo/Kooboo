@@ -15,10 +15,10 @@
     created: function() {
       this.breads = [
         {
-          name: this.text.sites
+          name: "SITES"
         },
         {
-          name: this.text.dashboard
+          name: "DASHBOARD"
         },
         {
           name: this.text.transferTask

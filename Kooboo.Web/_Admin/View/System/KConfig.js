@@ -7,10 +7,10 @@ $(function() {
       return {
         breads: [
           {
-            name: Kooboo.text.component.breadCrumb.sites
+            name: "SITES"
           },
           {
-            name: Kooboo.text.component.breadCrumb.dashboard
+            name: "DASHBOARD"
           },
           {
             name: Kooboo.text.common.KConfig
@@ -20,13 +20,13 @@ $(function() {
         showDelete: true,
         showMediaModal: false,
         tableData: [],
-        configItem:undefined,
+        configItem: undefined,
         tableDataSelected: []
       };
     },
     created: function() {
       self = this;
-      self.getTableData()
+      self.getTableData();
     },
     methods: {
       getConfirmMessage: function(doc) {
