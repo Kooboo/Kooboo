@@ -1,42 +1,58 @@
 <!-- #layout name=default -->
 <div id="main" class="fixed" v-if="init">
   <div class="container">
-    <kb-form :model="model" :rules="rules" ref="form" class="margin-bottom-25">
-      <kb-form-item prop="name">
-        <label class="control-label col-md-1"
-          >{{Kooboo.text.common.Page + ': '}}</label
-        >
-        <div class="col-md-11">
-          <input
-            v-if="isNewPage"
-            type="text"
-            class="form-control input-large"
-            v-model="model.name"
-          />
-          <p v-else class="form-control-static">{{model.name}}</p>
+    <kb-form
+      simple
+      class="form-horizontal"
+      :model="model"
+      :rules="rules"
+      ref="form"
+      class="margin-bottom-25"
+    >
+      <kb-form-item class="form-group" prop="name" v-slot="error">
+        <div :class="{'has-error' : !!error.error}">
+          <label class="control-label col-md-1"
+            >{{Kooboo.text.common.Page + ': '}}</label
+          >
+          <div class="col-md-11">
+            <input
+              v-if="isNewPage"
+              type="text"
+              class="form-control input-large"
+              v-model="model.name"
+              v-kb-tooltip:right.manual.error="error.error"
+            />
+            <p v-else class="form-control-static">{{model.name}}</p>
+          </div>
         </div>
       </kb-form-item>
-      <kb-form-item prop="url">
-        <label class="control-label col-md-1">URL</label>
-        <div class="col-md-11">
-          <input
-            type="text"
-            class="form-control input-large"
-            v-model="model.url"
-          />
+      <kb-form-item class="form-group" prop="url" v-slot="error">
+        <div :class="{'has-error' : !!error.error}">
+          <label class="control-label col-md-1">URL</label>
+          <div class="col-md-11">
+            <input
+              type="text"
+              class="form-control input-large"
+              v-model="model.url"
+              v-kb-tooltip:right.manual.error="error.error"
+            />
+          </div>
         </div>
       </kb-form-item>
-      <kb-form-item prop="title">
-        <label class="control-label col-md-1">Title</label>
-        <div class="col-md-11">
-          <input
-            type="text"
-            class="form-control input-large"
-            v-model="model.title"
-          />
+      <kb-form-item class="form-group" prop="title" v-slot="error">
+        <div :class="{'has-error' : !!error.error}">
+          <label class="control-label col-md-1">Title</label>
+          <div class="col-md-11">
+            <input
+              type="text"
+              class="form-control input-large"
+              v-model="model.title"
+              v-kb-tooltip:right.manual.error="error.error"
+            />
+          </div>
         </div>
       </kb-form-item>
-      <kb-form-item>
+      <kb-form-item class="form-group">
         <label class="control-label col-md-1">Content</label>
         <div class="col-md-11">
           <textarea
