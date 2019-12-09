@@ -12,6 +12,7 @@
           :model="model"
           :rules="rules"
           ref="form"
+          id="create_site_form"
         >
           <div class="note note-info">
             <p>{{Kooboo.text.site.sites.createModalTip}}</p>
@@ -27,6 +28,7 @@
                   placeholder="Site name"
                   type="text"
                   v-model="model.SiteName"
+                  data-container="#create_site_form"
                   v-kb-tooltip:right.manual.error="error.error"
                 />
                 <span class="help-block"
@@ -51,6 +53,7 @@
                   <select
                     v-model="model.RootDomain"
                     class="form-control"
+                    data-container="#create_site_form"
                     v-kb-tooltip:right.manual.error="error.error"
                   >
                     <option
