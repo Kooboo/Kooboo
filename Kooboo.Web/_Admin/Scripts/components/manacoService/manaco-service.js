@@ -260,13 +260,16 @@ var MonacoEditorService =
             endLineNumber: position.lineNumber,
             endColumn: position.column
           });
-          var matchs = textUntilPosition.match(/<[\w\d]+\s+.*[a-zA-Z\-]$/g); // <div .... k>
+          var matchs = textUntilPosition.match(
+            /<[\w\d-]+\s+((?!<\/).)*[a-zA-Z\-]$/g
+          ); // <div .... k>
           if (!matchs) return;
           var cleanTag = matchs[0]
             .replace(/=\s*"[^"]*"/g, "") // remove attributes ""
-            .replace(/=\s*'[^"]*'/g, ""); // remove attributes ''
-          if (/["']/.test(cleanTag)) return; // is inside attribute
-          if (/>[^<]*[a-zA-Z\-]$/.test(cleanTag)) return; // is ouside tag  <div .... > k
+            .replace(/=\s*'[^"]*'/g, "") // remove attributes ''
+            .replace(/<.+[^>]+>/g, ""); // remove tags
+          if (/["']/.test(cleanTag)) return; // is inside other attribute
+          if (!/<[\w\d-]+/.test(cleanTag)) return; // is not attribute
 
           // clone sugguestions
           var tempSuggestions = suggestions.map(function(item) {
