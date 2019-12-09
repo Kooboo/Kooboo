@@ -427,7 +427,7 @@
             me.passwordModel.oldPassword = "";
             me.passwordModel.newPassword = "";
             me.passwordModel.confirmPassword = "";
-            this.$refs.passwordForm.clearvalid();
+            me.$refs.passwordForm.clearValid();
 
             window.info.show(
               Kooboo.text.info.update[res.success ? "success" : "fail"],

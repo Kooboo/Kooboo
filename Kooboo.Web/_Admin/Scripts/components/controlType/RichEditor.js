@@ -6,6 +6,20 @@
     props: {
       field: Object
     },
-    inject: ["kbFormItem"]
+    data: function() {
+      var self = this;
+      return {
+        richeditor: {
+          editorConfig: { readonly: self.field.disabled === true },
+          mediaDialogData: null
+        }
+      };
+    },
+    inject: ["kbFormItem"],
+    watch: {
+      "richeditor.mediaDialogData": function(value) {
+        this.$emit("media-dialog-data", value);
+      }
+    }
   });
 })();

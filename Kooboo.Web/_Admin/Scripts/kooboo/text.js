@@ -828,7 +828,8 @@
         siteName: "Site name",
         siteNameHint: "Start with letters and no space allowed",
         domainHint: "Give your site a domain that other people can access.",
-        useThisTemplate: "Use this template"
+        useThisTemplate: "Use this template",
+        subDomain:"SubDomain"
       },
       demandModal: {
         publishDemand: "Publish a demand",

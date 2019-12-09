@@ -150,7 +150,11 @@
         </div>
         <div class="modal-body">
           <div class="table-responsive">
-            <kb-table :show-select="false" :data="editableServers">
+            <kb-table
+              :show-select="false"
+              :data="editableServers"
+              :hide-empty="true"
+            >
               <kb-table-column :label="'Server name'">
                 <template v-slot="row">
                   <div v-if="!row.editable">{{ !row.editable && row.name}}</div>

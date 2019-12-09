@@ -197,8 +197,9 @@
                         type="text"
                         class="form-control input-medium"
                         name="SiteName"
-                        placeholder="Site name"
+                        :placeholder="Kooboo.text.component.templateModal.siteName"
                         v-model="model.siteName"
+                        ref="siteName"
                         v-kb-tooltip:right.manual.error="error.error"
                         data-container="#site-name-error-container2"
                       />
@@ -217,7 +218,7 @@
                       <input
                         type="text"
                         class="input-medium form-control"
-                        placeholder="SubDomain"
+                        :placeholder="Kooboo.text.component.templateModal.subDomain"
                         v-model="model.subDomain"
                       />
                       <div class="form-group">
