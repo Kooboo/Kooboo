@@ -158,11 +158,12 @@ $(function() {
           }).then(function(res) {
             if (res.success) {
               Kooboo.EventBus.publish("server/list/refresh/needed");
-              window.info.done(Kooboo.text.info.update.success);
+              row.id = res.model;
               row.editable = false;
               row.isNew = false;
               self.$forceUpdate();
               self.ableAddNewServer = true;
+              window.info.done(Kooboo.text.info.update.success);
             } else {
               window.info.fail(Kooboo.text.info.update.fail);
             }
@@ -191,7 +192,7 @@ $(function() {
           if (res.success) {
             window.info.done(Kooboo.text.info.delete.success);
             self.editableServers = self.editableServers.filter(function(item) {
-              if (item.id !== row.id) return true;
+              return !_.isEqual(item,row);
             });
           } else {
             window.info.fail(Kooboo.text.info.delete.fail);
