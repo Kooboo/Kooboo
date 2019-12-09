@@ -38,7 +38,8 @@
     },
     data: function() {
       return {
-        slots: []
+        slots: [],
+        progressorRows: []
       };
     },
     mounted: function() {

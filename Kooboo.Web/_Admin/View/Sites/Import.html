@@ -100,6 +100,11 @@
             >
           </ul>
         </kb-form>
+
+        <kb-upload-progressor
+          v-if="importing"
+          :percentage="uploadPercentage"
+        ></kb-upload-progressor>
       </div>
     </div>
   </div>
@@ -108,7 +113,8 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/SPA.js",
-      "/_Admin/Scripts/components/kbForm.js"
+      "/_Admin/Scripts/components/kbForm.js",
+      "/_Admin/Scripts/components/kbUploadProgressor.js"
     ]);
   })();
 
@@ -137,9 +143,9 @@
                   return {
                     SiteName: self.model.siteName
                   };
-                },
-                message: Kooboo.text.validation.taken
-              }
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ],
           subDomain: [
@@ -166,9 +172,9 @@
                     SubDomain: self.model.subDomain,
                     RootDomain: self.model.rootDomain
                   };
-                },
-                message: Kooboo.text.validation.taken
-              }
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ],
           file: [{ required: Kooboo.text.validation.required }]
@@ -176,7 +182,8 @@
         domains: [],
         showDropArea: false,
         ableToDragFile: false,
-        uploadPercentage: ""
+        uploadPercentage: 0,
+        importing: false
       };
     },
     mounted: function() {
@@ -235,13 +242,15 @@
     methods: {
       startSubmit: function() {
         if (self.$refs.form.validate()) {
+          self.importing = true;
           var data = new FormData();
           data.append("SiteName", self.model.siteName);
           data.append("SubDomain", self.model.subDomain);
           data.append("RootDomain", self.model.rootDomain);
           data.append("Package", self.model.file);
-
-          Kooboo.Site.Import(data, self.uploadPercentage).then(function(res) {
+          Kooboo.Site.Import(data, function(rate) {
+            self.uploadPercentage = rate;
+          }).then(function(res) {
             if (res.success) {
               location.href = Kooboo.Route.Get(Kooboo.Route.Site.DetailPage, {
                 SiteId: res.model

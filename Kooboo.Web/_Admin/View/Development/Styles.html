@@ -57,6 +57,7 @@
     show-select
     :selected.sync="selectedRows"
     key="1"
+    ref="table"
   >
     <kb-table-column :label="Kooboo.text.common.name">
       <template v-slot="row">
@@ -398,7 +399,8 @@
       "/_Admin/Scripts/components/kbTypeahead.js",
       "/_Admin/Scripts/kooboo/Color.js",
       "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
-      "/_Admin/Scripts/lib/spectrum/spectrum-custom.js"
+      "/_Admin/Scripts/lib/spectrum/spectrum-custom.js",
+      "/_Admin/Scripts/components/kbUploadProgressor.js"
     ]);
     Kooboo.loadCSS(["/_Admin/Scripts/lib/spectrum/spectrum.css"]);
   })();
@@ -616,10 +618,23 @@
           files.forEach(function(file, idx) {
             var formdata = new FormData();
             formdata.append("file_" + idx, file);
-            Kooboo.Upload.Style(formdata, 0).then(function(res) {
+            if (me.$refs.table && me.currentTab == "External") {
+              file.progressor = {
+                name: file.name,
+                uploadPercentage: 0
+              };
+              file.setProgressor = function(rate) {
+                file.progressor.uploadPercentage = rate;
+              };
+              me.$refs.table.progressorRows.push(file.progressor);
+            }
+            Kooboo.Upload.Style(formdata, file.setProgressor).then(function(
+              res
+            ) {
               if (res.success) {
                 ++finishedCount;
                 if (filesCount == finishedCount) {
+                  if (me.$refs.table) me.$refs.table.progressorRows = [];
                   me.onTabClick("External");
                   window.info.show(Kooboo.text.info.upload.success, true);
                 }
@@ -677,6 +692,9 @@
           .then(function(res) {
             if (res.success) {
               me.onTabClick(me.currentTab);
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
       },

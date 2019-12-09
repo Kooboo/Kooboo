@@ -8,26 +8,29 @@ $(function() {
         name: "",
         menuItems: [],
         breads: [],
-        mark:{markAnchorText: "{anchortext}",
+        mark: {
+          markAnchorText: "{anchortext}",
           markHref: "{href}",
           markSubItems: "{items}",
           markActiveClass: "{activeclass:className}",
           markParentId: "{parentid}",
-          markCurrentId: "{currentid}"},
-        editorOptions:{lineNumbersMinChars:2,minimap:{enabled:false}},
+          markCurrentId: "{currentid}"
+        },
+        editorOptions: { lineNumbersMinChars: 2, minimap: { enabled: false } },
         defaultLang: undefined,
         isMultiLangMenu: true,
         showMultiLangModal: false,
         showTemplateModal: false,
-        multiNames:undefined,
+        multiNames: undefined,
         loading: true,
         CUR_MENU: undefined,
         menuWithNoChild: false,
         showCurrentTemplate: false,
-        currentTemplate: '',
+        currentTemplate: "",
         previewCode: undefined,
-        subItemContainer: '',
-        subItemTemplate:""
+        subItemContainer: "",
+        subItemTemplate: "",
+        pageList: []
       };
     },
     created: function() {
@@ -35,8 +38,8 @@ $(function() {
       self.getData();
       self.initHelp();
     },
-    watch:{
-      name:function (val) {
+    watch: {
+      name: function(val) {
         self.breads = [
           {
             name: Kooboo.text.component.breadCrumb.sites
@@ -53,10 +56,12 @@ $(function() {
           }
         ];
       },
-      menuItems:{handler:function () {
-          this.$forceUpdate()
-        },deep:true}
-
+      menuItems: {
+        handler: function() {
+          this.$forceUpdate();
+        },
+        deep: true
+      }
     },
     methods: {
       getData: function(callback) {
@@ -82,30 +87,33 @@ $(function() {
                 name: { valid: true, msg: "" },
                 url: { valid: true, msg: "" }
               };
-              item.UpdateText = Kooboo.Route.Get(Kooboo.Menu._getUrl("UpdateText"), {
-                Id:item.id,
-                RootId: item.rootId
-              });
+              item.UpdateText = Kooboo.Route.Get(
+                Kooboo.Menu._getUrl("UpdateText"),
+                {
+                  Id: item.id,
+                  RootId: item.rootId
+                }
+              );
               return item;
             });
             self.menuItems = [];
-            self.$nextTick(function () {
+            self.$nextTick(function() {
               self.menuItems = temp;
               self.defaultLang = r2.model.default;
               self.isMultiLangMenu = Object.keys(r2.model.cultures).length > 1;
 
               self.pageList = [];
-              r3.model.pages.forEach(function (page) {
+              r3.model.pages.forEach(function(page) {
                 self.pageList.push(page.path);
               });
               self.loading = false;
-              self.$nextTick(function () {
+              self.$nextTick(function() {
                 self.afterMenusRendered();
               });
               if (callback) {
-                callback()
+                callback();
               }
-            })
+            });
           }
         });
       },
@@ -154,17 +162,7 @@ $(function() {
         });
       },
       editUrl: function(event, item) {
-        var toggle = function(item) {
-          item.urlEditing = false;
-          if (item.children instanceof Array && item.children.length > 0) {
-            item.children.forEach(function(i) {
-              toggle(i);
-            });
-          }
-        };
-        this.menuItems.forEach(function(value) {
-          toggle(value);
-        });
+        self.clearEditStatus();
         item.urlEditing = true;
       },
       cancelEditLink: function(event, item) {
@@ -173,7 +171,7 @@ $(function() {
       },
       updateLinkUrl: function(event, item) {
         if (item.url !== item.tempEditingUrl) {
-          if(!item.tempEditingUrl) item.tempEditingUrl = '#';
+          if (!item.tempEditingUrl) item.tempEditingUrl = "#";
           item.url = item.tempEditingUrl;
           Kooboo.Menu.UpdateUrl({
             Id: item.id,
@@ -191,14 +189,13 @@ $(function() {
               m.url(m._url());
               window.info.show(Kooboo.text.info.update.fail, false);
             }
-          })
+          });
         } else {
           self.cancelEditLink();
         }
-
       },
       swapOrder: function(rootId, ida, idb) {
-        if(ida && idb) {
+        if (ida && idb) {
           Kooboo.Menu.Swap({
             rootId: rootId,
             ida: ida,
@@ -222,11 +219,11 @@ $(function() {
         });
         if (parent) {
           var siblings = _.filter(self.menuItems, function(me) {
-                return me.parentId === child.parentId;
-              }),
-              idxInSiblings = _.findIndex(siblings, function(sb) {
-                return sb.id === child.id;
-              });
+              return me.parentId === child.parentId;
+            }),
+            idxInSiblings = _.findIndex(siblings, function(sb) {
+              return sb.id === child.id;
+            });
 
           siblings.splice(idxInSiblings, 1);
           siblings.splice(idxInSiblings, 0, child);
@@ -238,92 +235,100 @@ $(function() {
           return;
         }
       },
-      menuMoveUp: function (e, index, item) {
-        var _index = _.findLastIndex(self.menuItems, function(i,idx) {
-          if(idx < index && i.parentId === item.parentId) {
+      menuMoveUp: function(e, index, item) {
+        var _index = _.findLastIndex(self.menuItems, function(i, idx) {
+          if (idx < index && i.parentId === item.parentId) {
             return true;
           }
         });
 
-        if( _index > -1) {
+        if (_index > -1) {
           var idb = self.menuItems[_index].id;
-          self.swapOrder(
-              item.rootId,
-              item.id,
-              idb
-          );
+          self.swapOrder(item.rootId, item.id, idb);
         }
       },
       initHelp: function() {
-        self.codeHelperSubItem = [{
-          text: "MarkSubItems",
-          value: self.mark.markSubItems,
-          for: "SUB_ITEM_CONTAINER"
-        }];
-        self.subTmplCodeHelpers = [{
-          text: "MarkAnchorText",
-          value: self.mark.markAnchorText,
-          for: "SUB_ITEM_TEMPLATE"
-        }, {
-          text: "MarkHref",
-          value: self.mark.markHref,
-          for: "SUB_ITEM_TEMPLATE"
-        }, {
-          text: "MarkSubItems",
-          value: self.mark.markSubItems,
-          for: "SUB_ITEM_TEMPLATE"
-        }, {
-          text: "MarkActiveClass",
-          value: self.mark.markActiveClass,
-          for: "SUB_ITEM_TEMPLATE"
-        }, {
-          text: "MarkParentId",
-          value: self.mark.markParentId,
-          for: "SUB_ITEM_TEMPLATE"
-        }, {
-          text: "MarkCurrentId",
-          value: self.mark.markCurrentId,
-          for: "SUB_ITEM_TEMPLATE"
-        }];
-            self.tmplCodeHelpers = [{
-          text: "MarkAnchorText",
-          value: self.mark.markAnchorText,
-          for: "TEMPLATE"
-        }, {
-          text: "MarkHref",
-          value: self.mark.markHref,
-          for: "TEMPLATE"
-        }, {
-          text: "MarkSubItems",
-          value: self.mark.markSubItems,
-          for: "TEMPLATE"
-        }, {
-          text: "MarkActiveClass",
-          value: self.mark.markActiveClass,
-          for: "TEMPLATE"
-        }, {
-          text: "MarkParentId",
-          value: self.mark.markParentId,
-          for: "TEMPLATE"
-        }, {
-          text: "MarkCurrentId",
-          value: self.mark.markCurrentId,
-          for: "TEMPLATE"
-        }]
+        self.codeHelperSubItem = [
+          {
+            text: "MarkSubItems",
+            value: self.mark.markSubItems,
+            for: "SUB_ITEM_CONTAINER"
+          }
+        ];
+        self.subTmplCodeHelpers = [
+          {
+            text: "MarkAnchorText",
+            value: self.mark.markAnchorText,
+            for: "SUB_ITEM_TEMPLATE"
+          },
+          {
+            text: "MarkHref",
+            value: self.mark.markHref,
+            for: "SUB_ITEM_TEMPLATE"
+          },
+          {
+            text: "MarkSubItems",
+            value: self.mark.markSubItems,
+            for: "SUB_ITEM_TEMPLATE"
+          },
+          {
+            text: "MarkActiveClass",
+            value: self.mark.markActiveClass,
+            for: "SUB_ITEM_TEMPLATE"
+          },
+          {
+            text: "MarkParentId",
+            value: self.mark.markParentId,
+            for: "SUB_ITEM_TEMPLATE"
+          },
+          {
+            text: "MarkCurrentId",
+            value: self.mark.markCurrentId,
+            for: "SUB_ITEM_TEMPLATE"
+          }
+        ];
+        self.tmplCodeHelpers = [
+          {
+            text: "MarkAnchorText",
+            value: self.mark.markAnchorText,
+            for: "TEMPLATE"
+          },
+          {
+            text: "MarkHref",
+            value: self.mark.markHref,
+            for: "TEMPLATE"
+          },
+          {
+            text: "MarkSubItems",
+            value: self.mark.markSubItems,
+            for: "TEMPLATE"
+          },
+          {
+            text: "MarkActiveClass",
+            value: self.mark.markActiveClass,
+            for: "TEMPLATE"
+          },
+          {
+            text: "MarkParentId",
+            value: self.mark.markParentId,
+            for: "TEMPLATE"
+          },
+          {
+            text: "MarkCurrentId",
+            value: self.mark.markCurrentId,
+            for: "TEMPLATE"
+          }
+        ];
       },
-      menuMoveDown: function (e, index, item) {
-        var _index = _.findIndex(self.menuItems, function(i,idx) {
-          if(idx > index && i.parentId === item.parentId) {
+      menuMoveDown: function(e, index, item) {
+        var _index = _.findIndex(self.menuItems, function(i, idx) {
+          if (idx > index && i.parentId === item.parentId) {
             return true;
           }
         });
-        if(_index > -1){
+        if (_index > -1) {
           var idb = self.menuItems[_index].id;
-          self.swapOrder(
-              item.rootId,
-              item.id,
-              idb
-          );
+          self.swapOrder(item.rootId, item.id, idb);
         }
       },
       onRemoveSubMenu: function(event, index, item) {
@@ -342,7 +347,16 @@ $(function() {
         }
       },
       onAddSubMenu: function(event, index, item) {
+        self.clearEditStatus();
         item.addSubMenuing = true;
+      },
+      clearEditStatus: function() {
+        self.menuItems.forEach(function(value, index) {
+          if (self.menuItems[index].urlEditing)
+            self.menuItems[index].urlEditing = false;
+          if (self.menuItems[index].addSubMenuing)
+            self.menuItems[index].addSubMenuing = false;
+        });
       },
       onCancelSubMenu: function(event, index, item) {
         item.addSubMenuing = false;
@@ -375,45 +389,46 @@ $(function() {
           window.info.show(Kooboo.text.info.menuNameRequired, false);
         }
       },
-      hideMultiLangModal:function() {
+      hideMultiLangModal: function() {
         self.showMultiLangModal = false;
         self.CUR_MENU = undefined;
       },
-      onShowMultiModal: function (event,item) {
+      onShowMultiModal: function(event, item) {
         self.CUR_MENU = item;
         Kooboo.Menu.getLang({
           id: item.id,
           rootId: item.rootId
         }).then(function(res) {
           if (res.success) {
-
             var keys = Object.keys(res.model);
             var defaultCultureIdx = keys.indexOf(self.defaultLang);
 
             self.multiNames = [];
-            keys.forEach(function (key,index) {
-              self.multiNames.push({key:key,value:res.model[key]});
-                  if(index === defaultCultureIdx)
-                    self.multiNames[index].validate={valid:true,msg:''}
+            keys.forEach(function(key, index) {
+              self.multiNames.push({ key: key, value: res.model[key] });
+              if (index === defaultCultureIdx)
+                self.multiNames[index].validate = { valid: true, msg: "" };
             });
             self.showMultiLangModal = true;
           }
-        })
+        });
       },
-      onSaveMultiName:function () {
+      onSaveMultiName: function() {
         var hasError = false;
-        self.multiNames.forEach(function (item) {
-          if(item.validate) {
-            item.validate = Kooboo.validField(item.value,[{ required: Kooboo.text.validation.required }])
-            if(item.validate.valid === false) {
-              hasError = true
+        self.multiNames.forEach(function(item) {
+          if (item.validate) {
+            item.validate = Kooboo.validField(item.value, [
+              { required: Kooboo.text.validation.required }
+            ]);
+            if (item.validate.valid === false) {
+              hasError = true;
             }
           }
         });
         self.$forceUpdate();
-        if(!hasError) {
+        if (!hasError) {
           var menus = _.cloneDeep(self.menuItems),
-              data = {};
+            data = {};
           _.forEach(self.multiNames, function(mn) {
             data[mn.key] = mn.value;
           });
@@ -424,94 +439,118 @@ $(function() {
           }).then(function(res) {
             if (res.success) {
               self.hideMultiLangModal();
-              self.getData()
+              self.getData();
             } else {
               window.info.show(Kooboo.text.info.save.fail, false);
             }
-          })
+          });
         }
       },
-      renderPreview:function(tmpl, context) {
-        
-        if (typeof  tmpl ==='string'  && tmpl.indexOf(self.mark.markHref) > -1) {
-          tmpl = tmpl.split(self.mark.markHref).join(context.url ? context.url : "#");
+      renderPreview: function(tmpl, context) {
+        if (typeof tmpl === "string" && tmpl.indexOf(self.mark.markHref) > -1) {
+          tmpl = tmpl
+            .split(self.mark.markHref)
+            .join(context.url ? context.url : "#");
         }
-        if (typeof  tmpl ==='string'  && tmpl.indexOf(self.mark.markAnchorText) > -1) {
+        if (
+          typeof tmpl === "string" &&
+          tmpl.indexOf(self.mark.markAnchorText) > -1
+        ) {
           tmpl = tmpl.split(self.mark.markAnchorText).join(context.name);
         }
-        if (typeof  tmpl ==='string'  && tmpl.indexOf(self.mark.markCurrentId) > -1) {
+        if (
+          typeof tmpl === "string" &&
+          tmpl.indexOf(self.mark.markCurrentId) > -1
+        ) {
           tmpl = tmpl.split(self.mark.markCurrentId).join(context.id);
         }
-        if (typeof  tmpl ==='string'  && tmpl.indexOf(self.mark.markParentId) > -1) {
+        if (
+          typeof tmpl === "string" &&
+          tmpl.indexOf(self.mark.markParentId) > -1
+        ) {
           tmpl = tmpl.split(self.mark.markParentId).join(context.parentId);
         }
-        
-        if (typeof  tmpl ==='string'  && tmpl.indexOf(self.mark.markSubItems) > -1) {
-          
+
+        if (
+          typeof tmpl === "string" &&
+          tmpl.indexOf(self.mark.markSubItems) > -1
+        ) {
           if (context.children.length > 0) {
             var _tmplArr = tmpl.split(self.mark.markSubItems),
-                parentsTemplate = "";
+              parentsTemplate = "";
 
-            
-            tmpl = _tmplArr.join((self.CUR_MENU.id === context.id) ? self.subItemContainer : context.subItemContainer);
-            parentsTemplate = (self.CUR_MENU.id === context.id) ? self.subItemTemplate : context.subItemTemplate;
+            tmpl = _tmplArr.join(
+              self.CUR_MENU.id === context.id
+                ? self.subItemContainer
+                : context.subItemContainer
+            );
+            parentsTemplate =
+              self.CUR_MENU.id === context.id
+                ? self.subItemTemplate
+                : context.subItemTemplate;
 
             var childTemplates = [];
-            
+
             _.forEach(context.children, function(child) {
-              var template = ((self.CUR_MENU.id === child.id) ?
-                  self.currentTemplate :
-                  (child.template === context.subItemTemplate ? parentsTemplate : child.template)) ||
-                  parentsTemplate;
+              var template =
+                (self.CUR_MENU.id === child.id
+                  ? self.currentTemplate
+                  : child.template === context.subItemTemplate
+                  ? parentsTemplate
+                  : child.template) || parentsTemplate;
               childTemplates.push(self.renderPreview(template, child));
             });
-            
-            tmpl = tmpl.split(self.mark.markSubItems).join(childTemplates.join(""));
-            
+
+            tmpl = tmpl
+              .split(self.mark.markSubItems)
+              .join(childTemplates.join(""));
           } else {
             tmpl = tmpl.split(self.mark.markSubItems).join("");
-            
           }
         }
-        if (typeof  tmpl ==='string'  &&tmpl.indexOf("activeclass:") > -1) {
+        if (typeof tmpl === "string" && tmpl.indexOf("activeclass:") > -1) {
           try {
             function setActiveClass(elem) {
               var selfTemplate = $(elem)[0].outerHTML;
               var hasActiveClass = selfTemplate.match(/{.*?}/);
               if (hasActiveClass) {
-                var className = hasActiveClass[0].match(/{[\w\W]*:([\w\W]*)}/)[1];
-                if ($(elem)[0].hasAttribute("{activeclass:" + className + "}")) {
+                var className = hasActiveClass[0].match(
+                  /{[\w\W]*:([\w\W]*)}/
+                )[1];
+                if (
+                  $(elem)[0].hasAttribute("{activeclass:" + className + "}")
+                ) {
                   $(elem)[0].removeAttribute("{activeclass:" + className + "}");
                   $(elem).addClass(className);
                 }
 
-                $(elem).children().each(function(idx, child) {
-                  setActiveClass($(child));
-                })
+                $(elem)
+                  .children()
+                  .each(function(idx, child) {
+                    setActiveClass($(child));
+                  });
               }
               return elem;
             }
             var elem = setActiveClass($(tmpl));
             tmpl = elem[0].outerHTML;
-
           } catch (ex) {
             tmpl = "error";
           }
         }
-        
+
         return tmpl;
       },
-      onHideTemplateModal:function () {
+      onHideTemplateModal: function() {
         self.showTemplateModal = false;
         self.CUR_MENU = undefined;
-        self.subItemContainer = '';
-        self.subItemTemplate = '';
-        self.currentTemplate = '';
-        self.previewCode = '';
-        self.templatePreview = '';
-
+        self.subItemContainer = "";
+        self.subItemTemplate = "";
+        self.currentTemplate = "";
+        self.previewCode = "";
+        self.templatePreview = "";
       },
-      onShowTemplateModal:function(event,item){
+      onShowTemplateModal: function(event, item) {
         self.CUR_MENU = item;
         var _find = _.findLast(self.menuItems, function(menu) {
           return menu.id === self.CUR_MENU.id;
@@ -523,24 +562,25 @@ $(function() {
           var parent = _.find(self.menuItems, function(menu) {
             return menu.id === _find.parentId;
           });
-          if(parent) {
+          if (parent) {
             self.currentTemplate = parent.subItemTemplate;
           }
-
         }
 
         var current = self.mark.markSubItems;
-        self.previewCode = html_beautify(self.renderPreview(current, self.menuItems[0]));
-       self.templatePreview = item.subItemTemplate;
-        if(item.children && item.children.length === 0){
-          self.menuWithNoChild = true
+        self.previewCode = html_beautify(
+          self.renderPreview(current, self.menuItems[0])
+        );
+        self.templatePreview = item.subItemTemplate;
+        if (item.children && item.children.length === 0) {
+          self.menuWithNoChild = true;
         }
-        if(item.id !== item.rootId){
-          self.showCurrentTemplate = true
+        if (item.id !== item.rootId) {
+          self.showCurrentTemplate = true;
         }
-        self.showTemplateModal = true
+        self.showTemplateModal = true;
       },
-      onSaveTemplate:function () {
+      onSaveTemplate: function() {
         Kooboo.Menu.UpdateTemplate({
           Id: self.CUR_MENU.id,
           RootId: self.CUR_MENU.rootId,
@@ -548,21 +588,19 @@ $(function() {
           SubItemTemplate: self.subItemTemplate,
           Template: self.currentTemplate
         }).then(function(res) {
-
           if (res.success) {
             self.getData();
             self.onHideTemplateModal();
           }
         });
       },
-      codeHelp:function (event,m) {
-
+      codeHelp: function(event, m) {
         var component = undefined;
 
         switch (m.for) {
           case "SUB_ITEM_CONTAINER":
             component = self.$refs.editor2;
-                break;
+            break;
           case "SUB_ITEM_TEMPLATE":
             component = self.$refs.editor3;
             break;
@@ -570,9 +608,8 @@ $(function() {
             component = self.$refs.editor4;
             break;
         }
-        component.replace(m.value)
+        component.replace(m.value);
       }
     }
   });
-
 });

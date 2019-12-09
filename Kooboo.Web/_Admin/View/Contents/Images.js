@@ -335,6 +335,9 @@ $(function() {
                   self.folders = _.without(self.folders, _find);
                 }
               });
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
 
@@ -348,6 +351,9 @@ $(function() {
                   self.files = _.without(self.files, _find);
                 }
               });
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
 

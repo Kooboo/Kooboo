@@ -331,6 +331,9 @@
                   me.onChoosingFolder(
                     location.hash ? location.hash.split("#")[1] : ""
                   );
+                  window.info.done(Kooboo.text.info.delete.success);
+                } else {
+                  window.info.done(Kooboo.text.info.delete.fail);
                 }
               });
             }

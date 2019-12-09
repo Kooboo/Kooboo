@@ -45,9 +45,9 @@
       :key="item.value"
       :class="{active:item.value==currentTab}"
     >
-      <a href="javascript:;" @click="onTabClick(item.value)">{{
-        item.displayName
-      }}</a>
+      <a href="javascript:;" @click="onTabClick(item.value)"
+        >{{ item.displayName }}</a
+      >
     </li>
   </ul>
   <kb-table
@@ -56,6 +56,7 @@
     show-select
     :selected.sync="selectedRows"
     key="1"
+    ref="table"
   >
     <kb-table-column :label="Kooboo.text.common.name">
       <template v-slot="row">
@@ -80,11 +81,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Script.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -134,11 +132,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Script.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -160,9 +155,9 @@
   >
     <kb-table-column :label="Kooboo.text.common.name">
       <template v-slot="row">
-        <a class="btn btn-link" @click.stop="editGroup(row.id)">{{
-          row.name
-        }}</a>
+        <a class="btn btn-link" @click.stop="editGroup(row.id)"
+          >{{ row.name }}</a
+        >
       </template>
     </kb-table-column>
 
@@ -190,11 +185,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.ResourceGroup.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -209,9 +201,9 @@
 
     <kb-table-column width="200px" align="right">
       <template v-slot="row">
-        <a class="btn blue" :href="row.previewUrl" target="_blank">{{
-          Kooboo.text.common.preview
-        }}</a>
+        <a class="btn blue" :href="row.previewUrl" target="_blank"
+          >{{ Kooboo.text.common.preview }}</a
+        >
       </template>
     </kb-table-column>
   </kb-table>
@@ -307,9 +299,9 @@
           </kb-form>
         </div>
         <div class="modal-footer">
-          <button class="btn green" @click="onGroupModalSubmit">{{
-            Kooboo.text.common[isGroupNew ? "create" : "save"]
-          }}</button>
+          <button class="btn green" @click="onGroupModalSubmit"
+            >{{ Kooboo.text.common[isGroupNew ? "create" : "save"] }}</button
+          >
           <button class="btn gray" data-dismiss="modal">Cancel</button>
         </div>
       </div>
@@ -324,7 +316,8 @@
     "/_Admin/Scripts/components/kbTable.js",
     "/_Admin/Scripts/components/kbRelationModal.js",
     "/_Admin/Scripts/kooboo/Guid.js",
-    "/_Admin/Scripts/lib/jquery-ui-customized.js"
+    "/_Admin/Scripts/lib/jquery-ui-customized.js",
+    "/_Admin/Scripts/components/kbUploadProgressor.js"
   ]);
 
   new Vue({
@@ -481,10 +474,24 @@
           files.forEach(function(file, idx) {
             var formdata = new FormData();
             formdata.append("file_" + idx, file);
-            Kooboo.Upload.Script(formdata, 0).then(function(res) {
+
+            if (me.$refs.table && me.currentTab == "External") {
+              file.progressor = {
+                name: file.name,
+                uploadPercentage: 0
+              };
+              file.setProgressor = function(rate) {
+                file.progressor.uploadPercentage = rate;
+              };
+              me.$refs.table.progressorRows.push(file.progressor);
+            }
+            Kooboo.Upload.Script(formdata, file.setProgressor).then(function(
+              res
+            ) {
               if (res.success) {
                 ++finishedCount;
                 if (filesCount == finishedCount) {
+                  if (me.$refs.table) me.$refs.table.progressorRows = [];
                   me.onTabClick("External");
                   window.info.show(Kooboo.text.info.upload.success, true);
                 }
@@ -531,6 +538,9 @@
           .then(function(res) {
             if (res.success) {
               me.onTabClick(me.currentTab);
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
       },

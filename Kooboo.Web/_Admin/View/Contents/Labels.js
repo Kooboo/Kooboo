@@ -99,6 +99,9 @@ $(function() {
             if (res.success) {
               self.labels = _.without(self.labels, m);
               self._labels = self.labels;
+              window.info.done(Kooboo.text.info.delete.success);
+            } else {
+              window.info.done(Kooboo.text.info.delete.fail);
             }
           });
         }
