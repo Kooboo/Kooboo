@@ -201,6 +201,12 @@
                 })
               )
             );
+
+            self.model.images.forEach(function(f, index) {
+              if (typeof f != "string") {
+                data.append("file_" + index, f.file);
+              }
+            });
           }
 
           data.append(
