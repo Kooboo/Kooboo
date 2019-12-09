@@ -14,6 +14,11 @@
       },
       displayNames: {
         type: Array
+      },
+
+      showHeader: {
+        type: Boolean,
+        default: true
       }
     },
     watch: {
@@ -46,10 +51,8 @@
       },
       changeIndex: function(event, index) {
         this.d_active = index;
-        this.$emit('change',index)
+        this.$emit("change", index);
       }
     }
   });
 })();
-
-

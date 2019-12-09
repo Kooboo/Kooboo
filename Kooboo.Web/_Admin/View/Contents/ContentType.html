@@ -11,10 +11,7 @@
           :model="model"
           :rules="rules"
         >
-          <kb-form-item
-            prop="name"
-            v-slot="error"
-          >
+          <kb-form-item prop="name" v-slot="error">
             <div class="form-group" :class="{'has-error' : !!error.error }">
               <input
                 class="form-control input-medium"
@@ -55,7 +52,9 @@
           ><span class="sortable"><i class="glyphicon glyphicon-list"></i></span
         ></td>
         <td>
-          <a href="javascript:;" @click.stop="onEdit($event,item,index)"
+          <a
+            @click.stop="onEdit($event,item,index,false)"
+            style="cursor: pointer"
             >{{item.name}}</a
           >
         </td>
@@ -108,10 +107,14 @@
           </a>
         </td>
       </tr>
-      <tr v-for="item in systemProperties" v-if="showSystemField">
+      <tr v-for="(item,index) in systemProperties" v-if="showSystemField">
         <td class="table-sortable"></td>
         <td>
-          <a @click.stop="">{{item.name}}</a>
+          <a
+            @click.stop="onEdit($event,item,index,true)"
+            style="cursor: pointer"
+            >{{item.name}}</a
+          >
         </td>
         <td :title="item.displayName">
           {{item.displayName.length > 10 ? item.displayName.substr(0,8) + '...'

@@ -4,7 +4,7 @@
                           :title="Kooboo.text.component.fieldEditor.title"></kb-dialog-header>
         <kb-dialog-content>
             <div>
-                <kb-tabs ref="kbTabs" :active.sync="tabIndex">
+                <kb-tabs ref="kbTabs" :active.sync="tabIndex" :show-header="d_data.isSystemField?!d_data.isSystemField :!options.isSystemField">
                     <kb-container>
                         <template #header>{{Kooboo.text.component.fieldEditor.basic}}</template>
                         <template #content>
@@ -21,7 +21,7 @@
                                             <p v-else class="form-control-static key"
                                                style="word-break: break-word;">{{d_data.name}}</p>
                                             <template v-if="options.modifiedField">
-                                            <span class="input-group-addon">
+                                            <span class="input-group-addon" v-show="d_data.isSystemField?!d_data.isSystemField :!options.isSystemField">
                                             <div class="checkbox">
                                                 <label>
                                                     <input type="checkbox"
@@ -43,29 +43,34 @@
                                                type="text" class="form-control key">
                                     </div>
                                 </kb-form-item>
-                                <kb-form-item
-                                >
-                                    <div class="col-md-9 col-md-offset-3">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" v-model="d_data.editable"><span>{{Kooboo.text.component.fieldEditor.userEditable}}</span>
-                                            </label>
+                                <template v-if="d_data.isSystemField?d_data.isSystemField :options.isSystemField">
+                                    <kb-form-item
+                                    >
+                                        <div class="col-md-9 col-md-offset-3">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" v-model="d_data.editable"><span>{{Kooboo.text.component.fieldEditor.userEditable}}</span>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                </kb-form-item>
-                                <kb-form-item
-                                >
-                                    <label class="col-md-3 control-label">{{Kooboo.text.component.fieldEditor.controlType}}</label>
-                                    <div class="col-md-9">
-                                        <select v-if="controlTypesOptions.length > 1" class="form-control"
-                                                v-model="d_data.controlType">
-                                            <option v-for="(item , index) in controlTypesOptions" :value="item.value">
-                                                {{item.displayName}}
-                                            </option>
-                                        </select>
-                                        <p v-else class="form-control-static">{{Kooboo.text.component.controlType[_.camelCase(d_data.controlType)]}}</p>
-                                    </div>
-                                </kb-form-item>
+                                    </kb-form-item>
+                                </template>
+
+                                <template v-if="d_data.isSystemField?!d_data.isSystemField :!options.isSystemField">
+                                    <kb-form-item
+                                    >
+                                        <label class="col-md-3 control-label">{{Kooboo.text.component.fieldEditor.controlType}}</label>
+                                        <div class="col-md-9">
+                                            <select v-if="controlTypesOptions.length > 1" class="form-control"
+                                                    v-model="d_data.controlType">
+                                                <option v-for="(item , index) in controlTypesOptions" :value="item.value">
+                                                    {{item.displayName}}
+                                                </option>
+                                            </select>
+                                            <p v-else class="form-control-static">{{Kooboo.text.component.controlType[_.camelCase(d_data.controlType)]}}</p>
+                                        </div>
+                                    </kb-form-item>
+                                </template>
                                 <kb-form-item
                                         v-if="['selection','checkbox','radiobox','fixedspec'].includes(d_data.controlType.toLowerCase())">
                                     <label class="col-md-3 control-label">{{ Kooboo.text.component.fieldEditor.Options }}</label>
@@ -125,7 +130,9 @@
                         </template>
                     </kb-container>
                     <kb-container>
-                        <template #header>{{Kooboo.text.component.fieldEditor.advanced}}</template>
+                        <template #header>
+                                {{Kooboo.text.component.fieldEditor.advanced}}
+                        </template>
                         <template #content>
                             <kb-form :model="d_data">
                                 <kb-form-item
@@ -150,16 +157,16 @@
                                 </kb-form-item>
 
                             </kb-form>
-                            <kb-container v-if="options.showPreviewPanel" tag='div'
+                            <kb-container v-if="options.showPreviewPanel && $refs.dialog.$slots.preview" tag='div'
                                           :v-nodes="$refs.dialog.$slots.preview"
                                           class="panel panel-default margin-top-20"></kb-container>
                         </template>
                     </kb-container>
                     <kb-container>
                         <template #header>
-                            <template v-if="!['boolean','switch','selection','fixedspec','dynamicspec'].includes(d_data.controlType.toLowerCase())">
-                                {{Kooboo.text.component.fieldEditor.validation}}
-                            </template>
+                                <template v-if="!['boolean','switch','selection','fixedspec','dynamicspec'].includes(d_data.controlType.toLowerCase())">
+                                    {{Kooboo.text.component.fieldEditor.validation}}
+                                </template>
                         </template>
                         <template #content>
                                 <kb-field-validation  ref="fieldValidation" :data="d_data"
