@@ -153,19 +153,19 @@
                                 <template v-slot="row">
                                     <div v-if='!row.editable'>
                                         <button @click="deleteEditableServers($event,row)"
-                                                class="btn btn-xs red pull-right" :title="Kooboo.text.common.delete"><i
+                                                class="btn btn-sm red pull-right" :title="Kooboo.text.common.delete"><i
                                                 class="fa fa-close"></i></button>
                                         <button @click="editEditableServers($event,row)"
-                                                class="btn btn-xs blue pull-right" :title="Kooboo.text.common.edit"><i
+                                                class="btn btn-sm blue pull-right" :title="Kooboo.text.common.edit"><i
                                                 class="fa fa-pencil"></i></button>
 
                                     </div>
                                     <div v-else>
                                         <button @click="cancelEditEditableServers($event,row)"
-                                                class="btn btn-xs red pull-right" :title="Kooboo.text.common.cancel"><i
+                                                class="btn btn-sm red pull-right" :title="Kooboo.text.common.cancel"><i
                                                 class="fa fa-close"></i></button>
                                         <button @click="saveEditableServers($event,row)"
-                                                class="btn btn-xs blue pull-right" :title="Kooboo.text.common.save"><i
+                                                class="btn btn-sm blue pull-right" :title="Kooboo.text.common.save"><i
                                                 class="fa fa-save"></i></button>
 
                                     </div>
