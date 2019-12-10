@@ -79,9 +79,15 @@
     },
     watch: {
       data: {
-        handler: function(value) {
+        handler: function(value, old) {
           this.d_data = value;
+        },
+        deep: true
+      },
+      "data.controlType": {
+        handler: function(value, old) {
           self.allOptions = self.getOptionsBytype(self.data.controlType);
+          self.getOptions();
           self.validations = self.d_data.validations;
         },
         deep: true
@@ -124,6 +130,7 @@
           case "richeditor":
           case "mediafile":
           case "datetime":
+          case "file":
           case "radiobox":
             options = [a.required];
             break;
