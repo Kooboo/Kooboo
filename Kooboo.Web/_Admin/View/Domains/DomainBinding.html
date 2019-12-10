@@ -65,7 +65,10 @@
                   >Record</label
                 >
                 <div class="col-md-9">
-                  <div class="input-group input-large" v-kb-tooltip:right.manual.error="error.error">
+                  <div
+                    class="input-group input-large"
+                    v-kb-tooltip:right.manual.error="error.error"
+                  >
                     <input
                       class="form-control form-control"
                       id="SubDomain"
@@ -74,7 +77,11 @@
                       type="text"
                       v-model="model.SubDomain"
                     />
-                    <span class="input-group-addon">.{{model.RootDomain}}</span>
+                    <span
+                      class="input-group-addon"
+                      style="max-width: 200px; overflow: hidden;"
+                      >.{{model.RootDomain}}</span
+                    >
                   </div>
                 </div>
               </div>

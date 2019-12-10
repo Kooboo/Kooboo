@@ -13,6 +13,7 @@
           class="form-control"
           id="J_layouts"
           v-model="layoutPosition.layout"
+          style="max-width: 180px;"
         >
           <option
             v-for="(item,index) in layoutPosition.layoutList"
@@ -28,6 +29,7 @@
           class="form-control"
           id="J_positions"
           v-model="layoutPosition.position"
+          style="max-width: 180px;"
         >
           <option
             v-for="(item, index) in layoutPosition.positionList"
@@ -231,7 +233,11 @@
                             {{ $data.text }}
                           </li>
 
-                          <li v-if="$data.type=='data'" class="list-group-item">
+                          <li
+                            v-if="$data.type=='data'"
+                            class="list-group-item"
+                            style="word-break: break-all;"
+                          >
                             <a
                               title="Remove"
                               href="javascript:"
@@ -256,6 +262,7 @@
                           <li
                             v-if="$data.type=='attribute'"
                             class="list-group-item"
+                            style="word-break: break-all;"
                           >
                             <a
                               title="Remove"
@@ -289,6 +296,7 @@
                               class="btn gray btn-xs pull-right"
                               v-kb-tooltip="Kooboo.text.common.remove"
                               @click="bindingItemRemove($data)"
+                              style="word-break: break-all;"
                             >
                               <i class="fa fa-minus"></i>
                             </a>
@@ -304,7 +312,11 @@
                             <strong>Repeater</strong>
                             {{ $data.text }}
                           </li>
-                          <li v-if="$data.type=='link'" class="list-group-item">
+                          <li
+                            v-if="$data.type=='link'"
+                            class="list-group-item"
+                            style="word-break: break-all;"
+                          >
                             <a
                               href="javascript:;"
                               class="btn gray btn-xs pull-right"
@@ -326,7 +338,11 @@
                             <strong>Link to</strong>
                             {{ $data.href }}
                           </li>
-                          <li v-if="$data.type=='form'" class="list-group-item">
+                          <li
+                            v-if="$data.type=='form'"
+                            class="list-group-item"
+                            style="word-break: break-all;"
+                          >
                             <a
                               href="javascript:"
                               class="btn gray btn-xs pull-right"
@@ -351,6 +367,7 @@
                           <li
                             v-if="$data.type=='input'"
                             class="list-group-item"
+                            style="word-break: break-all;"
                           >
                             <a
                               href="javascript:"
@@ -376,6 +393,7 @@
                           <li
                             v-if="$data.type=='condition'"
                             class="list-group-item"
+                            style="word-break: break-all;"
                           >
                             <a
                               title="Remove"
@@ -420,6 +438,7 @@
                             v-for="($data, $index) in bindingPanel.labelList"
                             class="list-group-item"
                             @click="focusBinding('label', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -462,6 +481,7 @@
                             :key="$index"
                             class="list-group-item"
                             @click="focusBinding('repeat', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -504,6 +524,7 @@
                             :key="$index"
                             class="list-group-item"
                             @click="focusBinding('data', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -546,6 +567,7 @@
                             v-for="($data, $index) in bindingPanel.linkList"
                             :key="$index"
                             @click="focusBinding('link', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -588,6 +610,7 @@
                             :key="$index"
                             class="list-group-item"
                             @click="focusBinding('form', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -630,6 +653,7 @@
                             :key="$index"
                             class="list-group-item"
                             @click="focusBinding('input', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -672,6 +696,7 @@
                             :key="$index"
                             class="list-group-item"
                             @click="focusBinding('data', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
@@ -714,6 +739,7 @@
                             :key="$index"
                             class="list-group-item"
                             @click="focusBinding('data', $data)"
+                            style="word-break: break-all;"
                           >
                             <a
                               class="btn gray btn-xs pull-right"
