@@ -35,10 +35,6 @@ namespace Kooboo.Sites.Scripting.Extension
         {
             return username + " sample"; 
         } 
-
-        public void test()
-        {
-            context.Response.AppendCookie("xxx", "11");
     }
 
 }
