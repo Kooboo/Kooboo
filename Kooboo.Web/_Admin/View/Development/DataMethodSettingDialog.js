@@ -153,66 +153,65 @@ $(function() {
                 }
               });
               setTimeout(function() {
-                $("#using_json")
-                  .jstree({
-                    plugins: ["types", "checkbox"],
-                    types: {
-                      default: {
-                        icon: "fa fa-file icon-state-warning"
-                      }
-                    },
-                    core: {
-                      strings: {
-                        "Loading ...": Kooboo.text.common.loading + " ..."
+                if (self.hasFolder) {
+                  $("#using_json")
+                    .jstree({
+                      plugins: ["types", "checkbox"],
+                      types: {
+                        default: {
+                          icon: "fa fa-file icon-state-warning"
+                        }
                       },
-                      data: d,
-                      multiple: allowMultiple
-                    }
-                  })
-                  .on("changed.jstree", function(e, data) {
-                    //判断是否有选中folder
-                    var ContentFolderId;
+                      core: {
+                        strings: {
+                          "Loading ...": Kooboo.text.common.loading + " ..."
+                        },
+                        data: d,
+                        multiple: allowMultiple
+                      }
+                    })
+                    .on("changed.jstree", function(e, data) {
+                      //判断是否有选中folder
+                      var ContentFolderId;
 
-                    if (!allowMultiple) {
-                      ContentFolderId = data.selected[0];
-                      if (!!ContentFolderId) {
-                        folderSelected = true;
+                      if (!allowMultiple) {
+                        ContentFolderId = data.selected[0];
+                        if (!!ContentFolderId) {
+                          folderSelected = true;
+                        } else {
+                          folderSelected = false;
+                        }
+
+                        //get content folder columns
+                        if (folderSelected) {
+                          Kooboo.ContentFolder.getColumnsById({
+                            id: ContentFolderId
+                          }).then(function(res) {
+                            var model = res.model;
+                            self.fieldsOfCurrentFolder = model;
+                          });
+                        }
                       } else {
-                        folderSelected = false;
+                        ContentFolderId = data.selected;
+                        if (ContentFolderId && ContentFolderId.length) {
+                          folderSelected = true;
+                        } else {
+                          folderSelected = false;
+                        }
+                        ContentFolderId = JSON.stringify(ContentFolderId);
                       }
 
-                      //get content folder columns
-                      if (folderSelected) {
-                        Kooboo.ContentFolder.getColumnsById({
-                          id: ContentFolderId
-                        }).then(function(res) {
-                          var model = res.model;
-                          self.fieldsOfCurrentFolder = model;
-                        });
-                      }
-                    } else {
-                      ContentFolderId = data.selected;
-                      if (ContentFolderId && ContentFolderId.length) {
-                        folderSelected = true;
-                      } else {
-                        folderSelected = false;
-                      }
-                      ContentFolderId = JSON.stringify(ContentFolderId);
-                    }
-
-                    Kooboo.EventBus.publish("folder change", ContentFolderId);
-                  })
-                  .on("loaded.jstree", function() {
-                    $("#using_json")
-                      .parent()
-                      .readOnly(!self.isNew);
-                    window.parent.Kooboo.EventBus.publish(
-                      "kb/component/modal/set/height",
-                      {
-                        height: window.document.body.scrollHeight
-                      }
-                    );
-                  });
+                      Kooboo.EventBus.publish("folder change", ContentFolderId);
+                    })
+                    .on("loaded.jstree", function() {
+                      $("#using_json")
+                        .parent()
+                        .readOnly(!self.isNew);
+                      self.setHeight();
+                    });
+                } else {
+                  self.setHeight();
+                }
               });
             }
           });
@@ -328,24 +327,14 @@ $(function() {
                     $("#using_json")
                       .parent()
                       .readOnly(!self.isNew);
-                    window.parent.Kooboo.EventBus.publish(
-                      "kb/component/modal/set/height",
-                      {
-                        height: window.document.body.scrollHeight
-                      }
-                    );
+                    self.setHeight();
                   });
               });
             }
           });
         } else {
           setTimeout(function() {
-            window.parent.Kooboo.EventBus.publish(
-              "kb/component/modal/set/height",
-              {
-                height: window.document.body.scrollHeight
-              }
-            );
+            self.setHeight();
           }, 200);
         }
 
@@ -358,12 +347,7 @@ $(function() {
             return false;
           $(".wizard-body").hide();
           $("div[data-step=" + target + "]").show();
-          window.parent.Kooboo.EventBus.publish(
-            "kb/component/modal/set/height",
-            {
-              height: window.document.body.scrollHeight
-            }
-          );
+          self.setHeight();
         });
       });
 
@@ -383,7 +367,12 @@ $(function() {
       });
     },
     methods: {
-      changeParameterBinding(data) {
+      setHeight: function() {
+        window.parent.Kooboo.EventBus.publish("kb/component/modal/set/height", {
+          height: window.document.body.scrollHeight
+        });
+      },
+      changeParameterBinding: function(data) {
         var value = data.value;
         if (value === undefined) {
           return;
