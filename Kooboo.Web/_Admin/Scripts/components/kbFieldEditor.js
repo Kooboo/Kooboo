@@ -32,6 +32,7 @@
         d_data: {
           name: "",
           displayName: "",
+          dataType: "String",
           controlType: "TextBox",
           isSummaryField: false,
           multipleLanguage: undefined,
@@ -41,18 +42,18 @@
           validations: [],
           multilingual: true,
           modifiedFieldName: undefined,
+          multipleValue: undefined,
           selectionOptions: []
         },
         formRules: {},
         firstTabValidate: {},
         controlTypesOptions: [],
-        AllControlTypes: [],
+        AllControlTypes: Kooboo.controlTypes,
         multilinguable: false
       };
     },
     created: function() {
       self = this;
-      self.AllControlTypes = self.getAllControlTypes(self.options.controlTypes);
       if (!self.isNew()) {
         if (self.d_data.controlType.toLowerCase() === "tinymce") {
           self.d_data.controlType = "RichEditor";
@@ -79,10 +80,12 @@
         }
         self.initDataByType(self.findControlType(self.d_data.controlType));
       } else {
-        self.controlTypesOptions = self.AllControlTypes;
+        self.controlTypesOptions = self.getAllControlTypes(
+          self.options.controlTypes
+        );
       }
       var type = self.findControlType(self.d_data.controlType);
-      if (type.dataType === "String") {
+      if (type && type.dataType === "String") {
         self.multilinguable = true;
       }
       self.generateValidateModel();
@@ -103,6 +106,7 @@
     },
     methods: {
       initDataByType: function(item) {
+        self.d_data.dataType = item.dataType;
         if (item.dataType === "String") {
           self.multilinguable = true;
         } else {
@@ -115,6 +119,7 @@
             self.d_data.validations = [];
             try {
               self.d_data.validations = JSON.parse(self.data.validations);
+              if (!self.d_data.validations) self.d_data.validations = [];
             } catch (e) {
               self.d_data.validations = [];
             }
@@ -128,6 +133,7 @@
               self.d_data.selectionOptions = JSON.parse(
                 self.data.selectionOptions
               );
+              if (!self.data.selectionOptions) self.data.selectionOptions = [];
             } catch (e) {
               self.d_data.selectionOptions = [];
             }
@@ -150,7 +156,9 @@
           }
         });
         if (self.isNewField) {
-          self.controlTypesOptions = self.AllControlTypes;
+          self.controlTypesOptions = self.getAllControlTypes(
+            self.options.controlTypes
+          );
         } else {
           self.controlTypesOptions = options;
         }
@@ -285,21 +293,21 @@
       onSave: function() {
         if (self.validate()) {
           var data = this.d_data;
+          data.isSystemField =
+            self.d_data.isSystemField || self.options.isSystemField;
           data.displayName =
             !this.d_data.displayName || this.d_data.displayName === ""
               ? this.d_data.name
               : this.d_data.displayName;
-          data.editable = !this.d_data.isSystemField
-            ? this.d_data.editable
-            : false;
+          data.editable =
+            self.d_data.isSystemField || self.options.isSystemField
+              ? this.d_data.editable
+              : true;
           if (!self.multilinguable) {
             self.d_data.multilingual = false;
           }
           data.multipleLanguage = data.multilingual = self.d_data.multilingual;
-          data.multipleValue =
-            this.d_data.controlType.toLowerCase() === "checkbox"
-              ? true
-              : this.d_data.isMultipleValue;
+          data.multipleValue = self.d_data.multipleValue;
           data.selectionOptions = JSON.stringify(this.d_data.selectionOptions);
           data.validations = JSON.stringify(this.d_data.validations);
 

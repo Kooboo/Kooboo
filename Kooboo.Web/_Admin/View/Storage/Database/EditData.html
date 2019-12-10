@@ -200,6 +200,9 @@
             var setting = JSON.parse(data.setting);
             if (setting && setting.options && setting.options.length) {
               data.options = setting.options;
+              if (data.options && data.options.length) {
+                data.value = data.options[0].value;
+              }
             }
 
             if (setting && setting.validations && setting.validations.length) {

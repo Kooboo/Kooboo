@@ -121,11 +121,15 @@ $(function() {
         this.notSystemProperties.splice(index, 1);
       },
       onFieldEditorSave: function(event) {
-        if (event.isNewField) {
-          self.notSystemProperties.push(event.data);
+        if (event.data.isSystemField) {
+          self.systemProperties[event.editingIndex] = event.data;
         } else {
-          if (event.editingIndex > -1) {
-            self.notSystemProperties[event.editingIndex] = event.data;
+          if (event.isNewField) {
+            self.notSystemProperties.push(event.data);
+          } else {
+            if (event.editingIndex > -1) {
+              self.notSystemProperties[event.editingIndex] = event.data;
+            }
           }
         }
       },
@@ -156,8 +160,13 @@ $(function() {
       onCancel: function() {
         location.href = self.contentTypesPageUrl;
       },
-      onEdit: function(event, item, index) {
+      onEdit: function(event, item, index, isSystemField) {
         this.editingItemData = item;
+        if (isSystemField) {
+          this.fieldEditorOptions.isSystemField = true;
+        } else {
+          this.fieldEditorOptions.isSystemField = false;
+        }
         this.editingItemIndex = index;
         this.modalVisible = true;
       },

@@ -92,7 +92,7 @@
 
           self.refreshFields();
 
-          if (condition.type !== "repeat" || self.isRepeatConditionEnabled()) {
+          if (condition.type !== "repeat" || self.isRepeatConditionEnabled) {
             self.conditionType = condition.type;
             self.conditionValue = condition.value;
             if (condition.repeatField) {
@@ -103,7 +103,7 @@
             self.conditionOperator = condition.operator;
           }
           self.$nextTick(function() {
-            self.isRepeatConditionEnabled = self.getRepeatElements().length > 0;
+            self.isRepeatConditionEnabled = self.getRepeatElements.length > 0;
             self.isShow = true;
           });
         }

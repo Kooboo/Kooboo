@@ -256,7 +256,6 @@ $(function() {
       changeType: function(type) {
         if (self.curType !== type) {
           self.curType = type;
-
           if (type == "code") {
             if (pos) {
               self.viewContent = pos.getHTML();
@@ -269,8 +268,9 @@ $(function() {
               if (oldHTML !== newHTML) {
                 self.setView(newHTML);
               }
-
-              $(window).trigger("resize");
+              self.$nextTick(function() {
+                $(window).trigger("resize");
+              });
             }
           }
         }

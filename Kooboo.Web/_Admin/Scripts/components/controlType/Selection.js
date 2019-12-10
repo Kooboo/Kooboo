@@ -14,7 +14,7 @@
           return this.kbFormItem.kbForm.model[this.kbFormItem.prop];
         },
         function(val) {
-          if (val !== null) {
+          if (val !== null && val != "") {
             unwatch && unwatch();
           } else if (this.field.options[0]) {
             this.kbFormItem.kbForm.model[

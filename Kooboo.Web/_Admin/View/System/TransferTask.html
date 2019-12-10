@@ -6,7 +6,8 @@
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a v-if="tableDataSelected.length > 0"
+      <a
+        v-if="tableDataSelected.length > 0"
         @click="onDelete"
         class="btn red navbar-btn"
         >Delete</a
@@ -18,15 +19,9 @@
     :data="tableData"
     :selected.sync="tableDataSelected"
   >
-    <kb-table-column :label="Kooboo.text.common.URL">
-      <template v-slot="row">
-        <a>{{ row.url }}</a>
-      </template>
+    <kb-table-column :label="Kooboo.text.common.URL" prop="url">
     </kb-table-column>
-    <kb-table-column :label="Kooboo.text.common.lastModified">
-      <template v-slot="row">
-        <a>{{ row.date }}</a>
-      </template>
+    <kb-table-column :label="Kooboo.text.common.lastModified" prop="date">
     </kb-table-column>
   </kb-table>
 </div>

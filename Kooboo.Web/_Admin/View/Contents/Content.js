@@ -183,10 +183,15 @@ $(function() {
           self.getContentFields();
         }
       },
-      editProperty: function(m, index) {
+      editProperty: function(m, index, isSystemField) {
         self.isNewField = false;
         self.fieldData = m;
         self.editingFieldIndex = index;
+        if (isSystemField) {
+          self.fieldEditorOptions.isSystemField = true;
+        } else {
+          self.fieldEditorOptions.isSystemField = false;
+        }
         self.onFieldModalShow = true;
       },
       deleteProperty: function(m, e) {
@@ -278,18 +283,24 @@ $(function() {
       onCreateField: function() {
         self.isNewField = true;
         self.fieldData = undefined;
+        self.fieldEditorOptions.isSystemField = false;
         self.onFieldModalShow = true;
         self.editingFieldIndex = -1;
       },
       onFieldSave: function(fm) {
-        if (self.isNewField) {
-          self.typeProperties.push(fm.data);
+        if (self.fieldEditorOptions.isSystemField) {
+          self.systemTypeProperties[fm.editingIndex] = fm.data;
         } else {
-          self.userTypeProperties[self.editingFieldIndex] = fm.data;
-          self.typeProperties = self.userTypeProperties.concat(
-            self.systemTypeProperties
-          );
+          if (self.isNewField) {
+            self.typeProperties.push(fm.data);
+          } else {
+            self.userTypeProperties[self.editingFieldIndex] = fm.data;
+            self.typeProperties = self.userTypeProperties.concat(
+              self.systemTypeProperties
+            );
+          }
         }
+        delete self.fieldEditorOptions.isSystemField;
         self.saveContentFields(function() {
           self.refreshContent();
         });

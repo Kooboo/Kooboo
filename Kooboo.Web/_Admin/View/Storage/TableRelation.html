@@ -284,6 +284,17 @@
           ).then(function(r1, r2) {
             me.tables = r1[0].model;
             me.relationTypes = r2[0].model;
+            if (me.tables && me.tables.length) {
+              me.createModel.tableA = me.tables[0].name;
+              me.createModel.tableB = me.tables[0].name;
+              if (me.tables[0].fields && me.tables[0].fields.length) {
+                me.createModel.fieldA = me.tables[0].fields[0];
+                me.createModel.fieldB = me.tables[0].fields[0];
+              }
+            }
+            if (me.relationTypes && me.relationTypes.length) {
+              me.createModel.relation = me.relationTypes[0].type;
+            }
           });
         } else {
           me.createModel = {

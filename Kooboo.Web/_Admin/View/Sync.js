@@ -3,13 +3,14 @@ $(function() {
   new Vue({
     el: "#app",
     data: function() {
+      var self = this;
       return {
         breads: [
           {
-            name: Kooboo.text.component.breadCrumb.sites
+            name: "SITES"
           },
           {
-            name: Kooboo.text.component.breadCrumb.dashboard
+            name: "DASHBOARD"
           },
           {
             name: Kooboo.text.common.sync
@@ -22,6 +23,7 @@ $(function() {
         },
         remoteSiteRules: {
           remoteSiteName: [
+            { required: Kooboo.text.validation.required },
             {
               pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
               message: Kooboo.text.validation.siteNameInvalid
@@ -35,9 +37,21 @@ $(function() {
                 ", " +
                 Kooboo.text.validation.maxLength +
                 63
+            },
+            {
+              remote: {
+                url: Kooboo.Site.isUniqueName(),
+                data: function() {
+                  return {
+                    SiteName: self.remoteSiteModel.remoteSiteName
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ],
           preDomain: [
+            { required: Kooboo.text.validation.required },
             {
               pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
               message: Kooboo.text.validation.siteNameInvalid
@@ -51,6 +65,18 @@ $(function() {
                 ", " +
                 Kooboo.text.validation.maxLength +
                 63
+            },
+            {
+              remote: {
+                url: Kooboo.Site.CheckDomainBindingAvailable(),
+                data: function() {
+                  return {
+                    SiteName: self.remoteSiteModel.remoteSiteName,
+                    RootDomain: self.remoteSiteModel.suffixDomain
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
           ]
         },
@@ -98,6 +124,9 @@ $(function() {
           });
         },
         deep: true
+      },
+      currentServer: function() {
+        this.isNextStep = false;
       }
     },
     methods: {
@@ -192,7 +221,7 @@ $(function() {
           if (res.success) {
             window.info.done(Kooboo.text.info.delete.success);
             self.editableServers = self.editableServers.filter(function(item) {
-              return !_.isEqual(item,row);
+              return !_.isEqual(item, row);
             });
           } else {
             window.info.fail(Kooboo.text.info.delete.fail);
@@ -278,7 +307,14 @@ $(function() {
         });
       },
       hidelModalHandle: function() {
+        self.remoteSiteModel = {
+          remoteSiteName: "",
+          preDomain: "",
+          suffixDomain: ""
+        };
+        self.$refs.createSiteForm.clearValid();
         this.isShowModal = false;
+        this.ableAddSite = false;
       },
       createRemoteSite: function() {
         var validateStatus = this.$refs.createSiteForm.validate();
@@ -290,6 +326,7 @@ $(function() {
           };
           self.avaliableSites.push(newSite);
           self.selectedSite = newSite;
+          self.ableAddSite = true;
           this.hideCreateSiteModalHandle();
         }
       },

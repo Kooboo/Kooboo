@@ -124,9 +124,7 @@
                     {{item.displayName}}
                   </option></select
                 >
-                <p
-                  v-else
-                  class="form-control-static"
+                <p v-else class="form-control-static"
                   >{{columnModel.controlType?Kooboo.columnEditor.controlTypeNames[columnModel.controlType.toLowerCase()]
                   : ''}}</p
                 >
@@ -345,6 +343,7 @@
         showEditColumnModal: false,
         isNew: false,
         optionsEmptyMsg: "",
+        selectedColumn: null,
         columnModel: {
           name: "",
           dataType: "",
@@ -389,12 +388,6 @@
             {
               pattern: /^[0-9]*$/,
               message: Kooboo.text.validation.taken
-            },
-            {
-              validate: function(value) {
-                return typeof value == "number";
-              },
-              message: Kooboo.text.validation.taken
             }
           ],
           seed: [
@@ -402,12 +395,6 @@
             {
               min: 1,
               message: Kooboo.text.validation.minLength + " 1"
-            },
-            {
-              validate: function(value) {
-                return typeof value == "number";
-              },
-              message: Kooboo.text.validation.taken
             }
           ],
           scale: [
@@ -415,12 +402,6 @@
             {
               min: 1,
               message: Kooboo.text.validation.minLength + " 1"
-            },
-            {
-              validate: function(value) {
-                return typeof value == "number";
-              },
-              message: Kooboo.text.validation.taken
             }
           ]
         }
@@ -430,7 +411,8 @@
       onShowEditColumnModal: function(item) {
         if (item) {
           this.handleColumn(item);
-          this.columnModel = item;
+          this.selectedColumn = item;
+          this.columnModel = JSON.parse(JSON.stringify(item));
           this.isNew = false;
         } else {
           this.columnModel = {
@@ -504,6 +486,9 @@
 
         if (this.isNew) {
           this.columns.push(this.columnModel);
+        } else {
+          var index = this.columns.indexOf(this.selectedColumn);
+          this.columns.splice(index, 1, this.columnModel);
         }
 
         if (this.columnModel.isPrimaryKey) {

@@ -64,6 +64,9 @@ $(function() {
         Kooboo.SiteUser.getAvailableUsers().then(function(res) {
           if (res.success) {
             self.availableUsers = res.model;
+            if (self.availableUsers && self.availableUsers.length) {
+              self.newUser = self.availableUsers[0].userId;
+            }
             self.showAddUserModal = true;
           }
         });
