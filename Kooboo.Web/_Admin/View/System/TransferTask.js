@@ -54,11 +54,11 @@
             })
             .then(function(res) {
               if (res.success) {
-                window.info.done(Kooboo.text.info.enable.success);
+                window.info.done(Kooboo.text.info.delete.success);
                 self.getDomainsData();
                 self.cancelDialog();
               } else {
-                window.info.fail(Kooboo.text.info.enable.failed);
+                window.info.fail(Kooboo.text.info.delete.failed);
               }
             });
         }
