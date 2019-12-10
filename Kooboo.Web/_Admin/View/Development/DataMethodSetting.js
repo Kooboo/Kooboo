@@ -210,7 +210,7 @@ $(function() {
       });
     },
     methods: {
-      changeParameterBinding(data) {
+      changeParameterBinding: function(data) {
         var value = data.value;
         if (value === undefined) {
           return;

@@ -69,18 +69,16 @@
       :model="model"
     >
       <h1 class="title pull-left">{{ Kooboo.text.common.Form + ': ' }}</h1>
-      <kb-form-item
-        class="form-group pull-left"
-        prop="name"
-        v-slot="error"
-      >
-        <input
-          type="text"
-          v-model="model.name"
-          placeholder="Name"
-          class="form-control input-medium"
-          v-kb-tooltip:right.manual.error="error.error"
-        />
+      <kb-form-item class="form-group pull-left" prop="name" v-slot="error">
+        <div :class="{'has-error': !!error.error}">
+          <input
+            type="text"
+            v-model="model.name"
+            placeholder="Name"
+            class="form-control input-medium"
+            v-kb-tooltip:right.manual.error="error.error"
+          />
+        </div>
       </kb-form-item>
     </kb-form>
     <h1 v-else class="title pull-left">

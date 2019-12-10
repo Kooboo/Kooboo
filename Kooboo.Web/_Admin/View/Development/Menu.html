@@ -8,6 +8,11 @@
   .menu-link:hover {
     text-decoration: none;
   }
+  .editableform .input-sm {
+    font-size: 12px;
+    height: auto;
+    padding: 6px 10px;
+  }
 </style>
 <div id="app">
   <div class="page-header">
@@ -38,6 +43,7 @@
                 :data-url="item.UpdateText"
                 :data-inline-edit="true"
                 :data-id="item.id"
+                @click="editDiplayText"
                 >{{item.name}}</a
               >
               <span v-else>{{item.name}}</span>
@@ -64,13 +70,13 @@
                   @click="updateLinkUrl($event, item)"
                   class="btn btn-primary btn-sm"
                   title="Save"
-                  ><i class="fa fa-check"></i
+                  ><i class="glyphicon glyphicon-ok"></i
                 ></a>
                 <a
                   @click="cancelEditLink($event, item)"
                   class="btn btn-default btn-sm"
                   title="Cancel"
-                  ><i class="fa fa-close"></i
+                  ><i class="glyphicon glyphicon-remove"></i
                 ></a>
               </div>
             </td>

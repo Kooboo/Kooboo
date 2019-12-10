@@ -44,6 +44,7 @@
         }
       },
       onDelete: function() {
+        var vm = this;
         if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
           var ids = this.tableDataSelected.map(function(m) {
             return m.id;
@@ -55,8 +56,9 @@
             .then(function(res) {
               if (res.success) {
                 window.info.done(Kooboo.text.info.delete.success);
-                self.getDomainsData();
-                self.cancelDialog();
+                vm.tableData = vm.tableData.filter(function(item) {
+                  return ids.indexOf(item.id) === -1;
+                });
               } else {
                 window.info.fail(Kooboo.text.info.delete.failed);
               }

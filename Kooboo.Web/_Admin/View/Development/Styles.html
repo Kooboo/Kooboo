@@ -154,7 +154,7 @@
     :selected.sync="selectedRows"
     key="3"
   >
-    <kb-table-column :label="Kooboo.text.site.style.name">
+    <kb-table-column :label="Kooboo.text.site.style.name" body-class="limit-col">
       <template v-slot="row">
         <a class="btn btn-link" @click.stop="onShowInlineModal(row.id)"
           >{{ row.name }}</a
@@ -193,7 +193,7 @@
     :selected.sync="selectedRows"
     key="4"
   >
-    <kb-table-column :label="Kooboo.text.common.name">
+    <kb-table-column :label="Kooboo.text.common.name" body-class="limit-col">
       <template v-slot="row">
         <a class="btn btn-link" @click.stop="editGroup(row.id)"
           >{{ row.name }}</a
@@ -381,6 +381,14 @@
   </div>
   <kb-media-dialog :data="mediaDialogData"></kb-media-dialog>
 </div>
+<style>
+.limit-col {
+  max-width: 400px;
+}
+.limit-col .btn-link {
+  white-space: normal;
+}
+</style>
 <script>
   Kooboo.styleEditor = {};
 </script>
