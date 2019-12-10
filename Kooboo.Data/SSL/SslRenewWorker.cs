@@ -4,7 +4,6 @@ using System;
 namespace Kooboo.Data.SSL
 {
     public class SslRenewWorker : IBackgroundWorker
-
     {
         public int Interval => 60 * 50 * 2;
 
