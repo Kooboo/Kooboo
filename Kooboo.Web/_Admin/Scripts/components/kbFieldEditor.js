@@ -156,7 +156,9 @@
           }
         });
         if (self.isNewField) {
-          self.controlTypesOptions = self.AllControlTypes;
+          self.controlTypesOptions = self.getAllControlTypes(
+            self.options.controlTypes
+          );
         } else {
           self.controlTypesOptions = options;
         }
