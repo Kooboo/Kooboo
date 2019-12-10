@@ -19,14 +19,12 @@
         <kb-form-item
           class="row form-group"
           v-slot="error"
-          id="name-error-container"
           prop="name"
         >
           <div
             class="input-group"
             :class="{'has-error' : !!error.error }"
             v-kb-tooltip:right.manual.error="error.error"
-            data-container="#name-error-container"
           >
             <input
               v-model="model.name"
