@@ -155,7 +155,7 @@
               :data="editableServers"
               :hide-empty="true"
             >
-              <kb-table-column :label="'Server name'">
+              <kb-table-column :label="Kooboo.text.system.serverName">
                 <template v-slot="row">
                   <div v-if="!row.editable">{{ !row.editable && row.name}}</div>
                   <div v-else>
@@ -168,7 +168,7 @@
                   </div>
                 </template>
               </kb-table-column>
-              <kb-table-column :label="'Server address'">
+              <kb-table-column :label="Kooboo.text.system.serverAddress">
                 <template v-slot="row">
                   <div v-if="!row.editable"
                     >{{ !row.editable && row.serverUrl }}</div

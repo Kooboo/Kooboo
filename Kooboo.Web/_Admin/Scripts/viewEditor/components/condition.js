@@ -89,21 +89,19 @@
         if (data.bindingType === bindingType) {
           var condition = self.parseConditionExpression(data.text);
           self.elem = data.elem;
-
           self.refreshFields();
-
-          if (condition.type !== "repeat" || self.isRepeatConditionEnabled) {
-            self.conditionType = condition.type;
-            self.conditionValue = condition.value;
-            if (condition.repeatField) {
-              self.repeatConditionField = condition.repeatField;
-            }
-            self.repeatConditionNumberParam = condition.number;
-            self.normalConditionField = condition.normalField;
-            self.conditionOperator = condition.operator;
-          }
           self.$nextTick(function() {
             self.isRepeatConditionEnabled = self.getRepeatElements.length > 0;
+            if (condition.type !== "repeat" || self.isRepeatConditionEnabled) {
+              self.conditionType = condition.type;
+              self.conditionValue = condition.value;
+              if (condition.repeatField) {
+                self.repeatConditionField = condition.repeatField;
+              }
+              self.repeatConditionNumberParam = condition.number;
+              self.normalConditionField = condition.normalField;
+              self.conditionOperator = condition.operator;
+            }
             self.isShow = true;
           });
         }
