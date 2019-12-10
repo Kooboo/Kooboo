@@ -1,11 +1,9 @@
 (function() {
-  var self;
   Vue.component("kb-relation-modal", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/components/kbRelationModal.html"
     ),
     data: function() {
-      self = this;
       return {
         isShow: false,
         by: "",
@@ -15,13 +13,13 @@
     },
     methods: {
       reset: function() {
-        self.isShow = false;
-        self.relations = [];
-        self.loading = true;
+        this.isShow = false;
+        this.relations = [];
+        this.loading = true;
       },
       getRelationEditUrl: function(rel) {
         var url = "";
-        switch (self.by.toLowerCase()) {
+        switch (this.by.toLowerCase()) {
           case "layout":
             url = Kooboo.Route.Get(Kooboo.Route.Layout.DetailPage, {
               Id: rel.objectId
@@ -70,14 +68,15 @@
             break;
           default:
             url = "";
-            /*  window.info.show("Unhandle relation type: " + self.by(), false);
-                        console.warn("unhandle relation type:" + self.by());*/
+            /*  window.info.show("Unhandle relation type: " + this.by(), false);
+                        console.warn("unhandle relation type:" + this.by());*/
             break;
         }
         return url;
       }
     },
     mounted: function() {
+      var self = this;
       Kooboo.EventBus.subscribe("kb/relation/modal/show", function(comm) {
         self.by = comm.by;
         self.loading = true;
@@ -95,10 +94,14 @@
             self.isShow = false;
           }
         });
+
+        // a hack for image loading twice
+        if (comm.type === "Image") {
+          self.$nextTick(function() {
+            $(".modal-backdrop:eq(1)").remove();
+          });
+        }
       });
-    },
-    beforeDestory: function() {
-      self = null;
     }
   });
 })();
