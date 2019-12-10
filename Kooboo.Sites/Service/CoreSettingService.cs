@@ -52,7 +52,7 @@ namespace Kooboo.Sites.Service
         {
             foreach (var item in types)
             {
-                if (item.Value == type)
+                if (item.Value == type ||item.Value.FullName.Equals(type.FullName))
                 {
                    return item.Key; 
                 }
