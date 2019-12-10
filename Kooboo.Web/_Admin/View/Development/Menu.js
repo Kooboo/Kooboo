@@ -164,6 +164,10 @@ $(function() {
       editUrl: function(event, item) {
         self.clearEditStatus();
         item.urlEditing = true;
+        $('.glyphicon-remove:visible').click();
+      },
+      editDiplayText: function() {
+        $('.glyphicon-remove:visible').click();
       },
       cancelEditLink: function(event, item) {
         item.tempEditingUrl = item.url;
