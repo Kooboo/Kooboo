@@ -100,7 +100,9 @@
               }
               self.repeatConditionNumberParam = condition.number;
               self.normalConditionField = condition.normalField;
-              self.conditionOperator = condition.operator;
+              self.$nextTick(function() {
+                self.conditionOperator = condition.operator;
+              });
             }
             self.isShow = true;
           });

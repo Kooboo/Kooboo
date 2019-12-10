@@ -1,122 +1,174 @@
 <!-- #layout name=default -->
 <div id="main" class="fixed" v-cloak>
-    <div class="page-header">
+  <div class="page-header">
+    <template v-if="isNewCode">
+      <div class="form-inline pull-left margin-right-10">
+        <div class="form-group">
+          <h1 class="title pull-left">{{Kooboo.text.common.Code + ': '}}</h1>
+          <input
+            v-model="name"
+            v-kb-hint="nameValidateModel.msg"
+            type="text"
+            placeholder="Name"
+            class="form-control input-medium"
+            data-container="body"
+          />
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <h1
+        class="title pull-left"
+        >Script<span>:</span>
+        <strong :title="name">{{name}}</strong>
+      </h1>
+    </template>
+
+    <div
+      class="form-inline pull-left"
+      v-if="codeType && codeType.toLowerCase() === 'api'"
+    >
+      <div class="form-group">
+        <h1 class="title pull-left">URL</h1>
+        <input
+          v-model="url"
+          type="text"
+          placeholder="URL"
+          class="form-control input-medium"
+        />
+      </div>
+    </div>
+
+    <div class="col-md-5 pull-right row">
+      <div class="col-md-2 pull-right">
+        <button @click="formatCode" type="button" class="btn btn-default"
+          >Format code</button
+        >
+      </div>
+      <div class="form-inline pull-right">
         <template v-if="isNewCode">
-            <div class="form-inline pull-left margin-right-10" >
-                <div class="form-group">
-                    <h1 class="title pull-left" >{{Kooboo.text.common.Code + ': '}}</h1>
-                    <input v-model="name" v-kb-hint="nameValidateModel.msg"
-                           type="text" placeholder="Name" class="form-control input-medium"  data-container="body">
-                </div>
-            </div>
+          <div class="form-group">
+            <select
+              class="form-control"
+              v-model="codeType"
+              v-kb-hint:left="codeTypeValidateModel.msg"
+            >
+              <option v-for="item in availableCodeType" :value="item.value"
+                >{{item.displayText}}</option
+              >
+            </select>
+          </div>
+          <!--    codeType.toLowerCase() === 'event' -->
+          <div
+            class="form-group"
+            v-if="codeType && codeType.toLowerCase() === 'event'"
+          >
+            <select class="form-control">
+              <option v-for="item in availableEventType" :value="item.value"
+                >{{item.displayText}}</option
+              >
+            </select>
+          </div>
         </template>
         <template v-else>
-            <h1 class="title pull-left">Script<span>:</span>
-                <strong :title="name">{{name}}</strong>
-            </h1>
+          <div class="form-group">
+            <label for="">Code type:</label>
+            <p class="form-control-static">
+              <label for="" class="label label-sm green">{{codeType}}</label>
+            </p>
+          </div>
+          <div
+            class="form-group"
+            v-if="codeType && codeType.toLowerCase() == 'event'"
+          >
+            <label for="">Event type:</label>
+            <p class="form-control-static">
+              <label for="" class="label label-sm label-success"
+                >{{eventType}}</label
+              >
+            </p>
+          </div>
         </template>
-
-        <div class="form-inline pull-left" v-if="codeType && codeType.toLowerCase() === 'api'">
-            <div class="form-group">
-                <h1 class="title pull-left">URL</h1>
-                <input  v-model="url" type="text" placeholder="URL" class="form-control input-medium">
-            </div>
-        </div>
-
-
-
-        <div class="col-md-5 pull-right row">
-            <div class="col-md-2 pull-right">
-                <button  @click="formatCode" type="button" class="btn btn-default">Format code</button>
-            </div>
-            <div class="form-inline pull-right">
-                <template v-if="isNewCode">
-                <div class="form-group">
-                    <select class="form-control" v-model="codeType" v-kb-hint:left="codeTypeValidateModel.msg">
-                        <option v-for="item in availableCodeType" :value="item.value">{{item.displayText}}</option>
-                    </select>
-                </div>
-                <!--    codeType.toLowerCase() === 'event' -->
-                <div class="form-group" v-if="codeType && codeType.toLowerCase() === 'event'">
-                    <select class="form-control">
-                        <option v-for="item in availableEventType" :value="item.value">{{item.displayText}}</option>
-                    </select>
-                </div>
-                </template>
-                <template v-else>
-                <div class="form-group">
-                    <label for="">Code type:</label>
-                    <p class="form-control-static">
-                        <label for="" class="label label-sm green" >{{codeType}}</label>
-                    </p>
-                </div>
-                <div class="form-group" v-if="codeType && codeType.toLowerCase() == 'event'">
-                    <label for="">Event type:</label>
-                    <p class="form-control-static">
-                        <label for="" class="label label-sm label-success">{{eventType}}</label>
-                    </p>
-                </div>
-                </template>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="block-fullpage with-buttons">
-        <div class="block-visual-editor default">
-            <div class="tabs-bottom">
-                <div class="tab-content">
-                    <div class="tab-pane" :class="{'active': activeTab === 'code'}">
-                        <div class="kb-editor">
-                            <kb-code-editor  ref="code" :auto-size="true"  :code.sync="codeContent" :lang="lang"></kb-code-editor>
-                        </div>
-                    </div>
-                    <div class="tab-pane" :class="{'active': activeTab === 'config'}">
-                        <div class="kb-editor" >
-                            <kb-code-editor  ref="config"  :auto-size="true"   :code.sync="configContent" :lang="lang"></kb-code-editor>
-                        </div>
-                    </div>
-                </div>
-
-
-                <ul class="nav nav-tabs">
-                    <li :class="activeTab == 'code' && 'active'" @click="activeTab='code'">
-                        <a href="javascript:;">Code</a>
-                    </li>
-                    <li :class="activeTab == 'config' && 'active'"  @click="activeTab='config'">
-                        <a href="javascript:;">Config</a>
-                    </li>
-                </ul>
+  <div class="block-fullpage with-buttons">
+    <div class="block-visual-editor default">
+      <div class="tabs-bottom">
+        <div class="tab-content">
+          <div class="tab-pane" :class="{'active': activeTab === 'code'}">
+            <div class="kb-editor">
+              <kb-code-editor
+                ref="code"
+                :auto-size="true"
+                :code.sync="codeContent"
+                :lang="lang"
+              ></kb-code-editor>
             </div>
-
-            <div class="kb-panel">
-                <iframe src="/_Admin/Development/KScript/Documentation" frameborder="0" style="width: 410px;height: 100%;"></iframe>
+          </div>
+          <div class="tab-pane" :class="{'active': activeTab === 'config'}">
+            <div class="kb-editor">
+              <kb-code-editor
+                ref="config"
+                :auto-size="true"
+                :code.sync="configContent"
+                :lang="lang"
+              ></kb-code-editor>
             </div>
-
+          </div>
         </div>
+
+        <ul class="nav nav-tabs">
+          <li
+            :class="activeTab == 'code' && 'active'"
+            @click="activeTab='code'"
+          >
+            <a href="javascript:;">Code</a>
+          </li>
+          <li
+            :class="activeTab == 'config' && 'active'"
+            @click="activeTab='config'"
+          >
+            <a href="javascript:;">Config</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="kb-panel">
+        <iframe
+          src="/_Admin/Development/KScript/Documentation"
+          frameborder="0"
+          style="width: 410px;height: 100%;"
+        ></iframe>
+      </div>
     </div>
+  </div>
 
-
-
-
-
-
-    <div class="page-buttons">
-        <div class="btn-group dropup">
-            <button @click="onSaveAndReturn" class="btn green" style="margin:0;">Save & Return</button>
-            <a class="btn green dropdown-toggle" data-toggle="dropdown" style="margin:0;min-width:auto;"><i class="fa fa-angle-up"></i></a>
-            <ul class="dropdown-menu" role="menu">
-                <li><a @click="onSave">Save</a></li>
-            </ul>
-        </div>
-        <a  @click.stop="onCancel" class="btn gray">Cancel</a>
+  <div class="page-buttons">
+    <div class="btn-group dropup">
+      <button @click="onSaveAndReturn" class="btn green" style="margin:0;"
+        >Save & Return</button
+      >
+      <a
+        class="btn green dropdown-toggle"
+        data-toggle="dropdown"
+        style="margin:0;min-width:auto;"
+        ><i class="fa fa-angle-up"></i
+      ></a>
+      <ul class="dropdown-menu" role="menu">
+        <li><a @click="onSave">Save</a></li>
+      </ul>
     </div>
+    <a @click.stop="onCancel" class="btn gray">Cancel</a>
+  </div>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/components/kb-code-editor.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/components/kb-code-editor.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Development/EditCode.js"></script>

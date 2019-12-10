@@ -512,7 +512,7 @@ Vue.directive("kb-sortable", function(el, binding, vnode) {
       var removeItem = binding.value[sourceIndex];
       $($el.sortable("option").connectWith).data("__drop_item__", removeItem);
       var newList = [];
-      for (let i = 0; i < binding.value.length; i++) {
+      for (var i = 0; i < binding.value.length; i++) {
         if (i != sourceIndex) newList.push(binding.value[i]);
       }
       binding.value.splice(0);
@@ -614,8 +614,8 @@ Vue.directive("kb-hint", {
       template:
         '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
     };
-    var errorContainer = element.data('container');
-    if(errorContainer) {
+    var errorContainer = element.data("container");
+    if (errorContainer) {
       tipsOptions.container = errorContainer;
     }
     try {
@@ -699,30 +699,13 @@ Vue.directive("kb-select2", {
       })
       .on("change", function(e) {
         var selected = [];
-        for (let i = 0; i < e.target.selectedOptions.length; i++) {
+        for (var i = 0; i < e.target.selectedOptions.length; i++) {
           selected.push({
             index: e.target.selectedOptions[i].index,
             text: e.target.selectedOptions[i].text
           });
         }
         binding.value.selected = selected;
-      })
-      .on("select2:closing", function() {
-        var possibleValue = $(element)
-          .parent()
-          .find(".select2-search__field")
-          .val();
-        if (possibleValue) {
-          if (possibleValue.indexOf(" ") == -1) {
-            var origValues = $(element).val() || [];
-            if (origValues.indexOf(possibleValue) == -1) {
-              origValues.push(possibleValue);
-              $(element)
-                .val(origValues)
-                .trigger("change");
-            }
-          }
-        }
       });
 
     $(element)

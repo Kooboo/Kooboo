@@ -445,9 +445,9 @@
           return f.id == data.id;
         });
         if (mail) {
-          self.selectedList ==
+          self.selectedList =
             self.selectedList.filter(function(f) {
-              return f != mail;
+              return f!= mail;
             });
         } else {
           self.selectedList.push(data);

@@ -8,7 +8,11 @@ $(function() {
         blockId: Kooboo.getQueryString("id") || Kooboo.Guid.Empty,
         isMultilingual: false,
         richeditor: {
-          mediaDialogData: null
+          mediaDialogData: null,
+          editorConfig: {
+            min_height: 300,
+            max_height: 600
+          }
         },
         contents: [],
         multiLangs: {},
