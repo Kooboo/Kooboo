@@ -252,7 +252,7 @@
                           <td class="table-action hover-show"
                             ><a
                               class="btn btn-xs blue"
-                              @click="editProperty($data, $index)"
+                              @click="editProperty($data, $index,false)"
                               v-kb-tooltip="Kooboo.text.common.edit"
                               ><i class="fa fa-pencil"></i></a
                           ></td>
@@ -332,11 +332,12 @@
                               colspan="2"
                             ></td>
                             <td class="table-action hover-show">
-                              <!-- <a
+                              <a
                                 class="btn btn-xs blue"
-                                @click="editProperty($data, $index)"
+                                @click="editProperty($data, $index,true)"
                                 v-kb-tooltip="Kooboo.text.common.edit"
-                                ><i class="fa fa-pencil"></i></a> -->
+                                ><i class="fa fa-pencil"></i
+                              ></a>
                             </td>
                           </tr>
                         </template>
