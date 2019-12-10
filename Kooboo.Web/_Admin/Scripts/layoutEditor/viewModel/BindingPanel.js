@@ -128,7 +128,7 @@
           id: item.id,
           elem: item.elem,
           type: item.type,
-          text: item.text()
+          text: item.text
         });
       },
       removeLabel: function(item) {
