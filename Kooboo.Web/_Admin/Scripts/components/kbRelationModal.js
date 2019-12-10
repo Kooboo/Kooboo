@@ -94,6 +94,13 @@
             self.isShow = false;
           }
         });
+
+        // a hack for image loading twice
+        if (comm.type === "Image") {
+          self.$nextTick(function() {
+            $(".modal-backdrop:eq(1)").remove();
+          });
+        }
       });
     }
   });
