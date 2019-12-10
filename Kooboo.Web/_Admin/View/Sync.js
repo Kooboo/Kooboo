@@ -285,11 +285,6 @@ $(function() {
         self.remoteSiteModel.preDomain = self.remoteSiteModel.remoteSiteName;
       },
       hideCreateSiteModalHandle: function() {
-        self.remoteSiteModel = {
-          remoteSiteName: "",
-          preDomain: "",
-          suffixDomain: ""
-        };
         self.showCreateSiteModal = false;
       },
       saveHandle: function() {
@@ -312,7 +307,14 @@ $(function() {
         });
       },
       hidelModalHandle: function() {
+        self.remoteSiteModel = {
+          remoteSiteName: "",
+          preDomain: "",
+          suffixDomain: ""
+        };
+        self.$refs.createSiteForm.clearValid();
         this.isShowModal = false;
+        this.ableAddSite = false;
       },
       createRemoteSite: function() {
         var validateStatus = this.$refs.createSiteForm.validate();
