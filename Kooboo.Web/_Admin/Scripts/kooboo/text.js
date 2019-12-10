@@ -175,6 +175,11 @@
       chooseAction: "Choose action"
     },
 
+    system: {
+      serverName: "Server name",
+      serverAddress: "Server address"
+    },
+
     account: {
       sendResetEmailTip:
         "After submiting your request, we will send you a verification mail, please check in time",
@@ -829,7 +834,7 @@
         siteNameHint: "Start with letters and no space allowed",
         domainHint: "Give your site a domain that other people can access.",
         useThisTemplate: "Use this template",
-        subDomain:"SubDomain"
+        subDomain: "SubDomain"
       },
       demandModal: {
         publishDemand: "Publish a demand",
@@ -891,7 +896,8 @@
           "* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.",
         automatically:
           "System will add thumbnails automatically if user don't upload any thumbnail.",
-          shareTip:"Share your website as a template for public users or within your organization."
+        shareTip:
+          "Share your website as a template for public users or within your organization."
       },
       setting: {
         addNewLanguage: "Add new language",
@@ -1194,7 +1200,8 @@
         "You don't have a address yet, please add a new address before composing a email.",
       attachments: " Attachment(s)",
       noAddressFound: "No address found",
-      wildcardTip:"Use * to represent any characters. * is required and only one * is allowed"
+      wildcardTip:
+        "Use * to represent any characters. * is required and only one * is allowed"
     },
 
     commerce: {
