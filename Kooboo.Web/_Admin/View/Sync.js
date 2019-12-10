@@ -71,7 +71,7 @@ $(function() {
                 url: Kooboo.Site.CheckDomainBindingAvailable(),
                 data: function() {
                   return {
-                    SiteName: self.remoteSiteModel.remoteSiteName,
+                    SubDomain: self.remoteSiteModel.remoteSiteName,
                     RootDomain: self.remoteSiteModel.suffixDomain
                   };
                 }
