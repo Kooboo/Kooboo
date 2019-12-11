@@ -172,10 +172,10 @@ $(function() {
         });
         self.clearEditStatus();
         item.urlEditing = true;
-        $('.glyphicon-remove:visible').click();
+        $(".glyphicon-remove:visible").click();
       },
       editDisplayText: function() {
-        $('.glyphicon-remove:visible').click();
+        $(".glyphicon-remove:visible").click();
       },
       cancelEditLink: function(event, item) {
         item.tempEditingUrl = item.url;
@@ -646,6 +646,20 @@ $(function() {
       },
       getRelativeUrl: function() {
         return window.parent.__gl.relativeUrl;
+      },
+      isActive: function(context, relativeUrl) {
+        var self = this;
+        var menuUrl = context.url;
+        if (!menuUrl || !relativeUrl) return false;
+        if (menuUrl.toLowerCase() == relativeUrl.toLowerCase()) return true;
+        var active = false;
+        $.each(context.children(), function(i, children) {
+          if (self.isActive(children, relativeUrl)) {
+            active = true;
+            return false;
+          }
+        });
+        return active;
       },
       removeNoActiveClass: function(tmpl, context, relativeUrl) {
         var self = this;

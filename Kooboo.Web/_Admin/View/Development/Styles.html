@@ -156,7 +156,7 @@
   >
     <kb-table-column :label="Kooboo.text.site.style.name" body-class="limit-col">
       <template v-slot="row">
-        <a class="btn btn-link" @click.stop="onShowInlineModal(row.id)"
+        <a href="javascript:;" @click.stop="onShowInlineModal(row.id)"
           >{{ row.name }}</a
         >
       </template>
@@ -195,7 +195,7 @@
   >
     <kb-table-column :label="Kooboo.text.common.name" body-class="limit-col">
       <template v-slot="row">
-        <a class="btn btn-link" @click.stop="editGroup(row.id)"
+        <a href="javascript:;" @click.stop="editGroup(row.id)"
           >{{ row.name }}</a
         >
       </template>
@@ -384,9 +384,6 @@
 <style>
 .limit-col {
   max-width: 400px;
-}
-.limit-col .btn-link {
-  white-space: normal;
 }
 </style>
 <script>
