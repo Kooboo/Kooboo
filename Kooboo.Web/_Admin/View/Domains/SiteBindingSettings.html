@@ -50,17 +50,17 @@
                 <label class="radio-inline">
                   <input
                     type="radio"
-                    value="domain"
-                    :checked="defaultBinding ==='domain'"
-                    @input="defaultBindingCheckboxHandle"
+                    name="defaultBinding"
+                    :checked="defaultBinding =='domain'"
+                    @click="defaultBinding='domain'"
                   /><span>Domain</span>
                 </label>
                 <label class="radio-inline">
                   <input
                     type="radio"
-                    value="port"
-                    :checked="defaultBinding ==='port'"
-                    @input="defaultBindingCheckboxHandle"
+                    name="defaultBinding"
+                    :checked="defaultBinding =='port'"
+                    @click="defaultBinding='port'"
                   /><span>Port</span>
                 </label>
               </div>
@@ -341,9 +341,6 @@
               self.cancelDialog();
             });
           }
-        },
-        defaultBindingCheckboxHandle: function(event) {
-          this.defaultBinding = event.target.value;
         },
         onAdd: function() {
           this.modalShow = true;

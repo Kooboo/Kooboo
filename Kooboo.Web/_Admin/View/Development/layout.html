@@ -136,6 +136,7 @@
 
                     <li
                       class="list-group-item"
+                      style="word-break: break-all;"
                       v-for="($data,index) in bindingPanel.existLabels"
                       :key="index"
                     >
@@ -175,6 +176,7 @@
                     :key="index"
                     :class="$data.selected ? 'list-group-item bg-gray' : 'list-group-item'"
                     @click="bindingPanel.focusPosition"
+                    style="word-break: break-all;"
                   >
                     <a
                       class="btn gray btn-xs pull-right"
@@ -209,6 +211,7 @@
                     v-for="($data, index) in bindingPanel.labelList"
                     :key="index"
                     :class="$data.selected ? 'list-group-item bg-gray' : 'list-group-item'"
+                    style="word-break: break-all;"
                   >
                     <a
                       class="btn gray btn-xs pull-right"

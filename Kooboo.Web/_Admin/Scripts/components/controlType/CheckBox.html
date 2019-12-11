@@ -12,8 +12,9 @@
     >
       <input
         type="checkbox"
-        v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
+        @click="check(option.value)"
         :value="option.value"
+        :checked="kbFormItem.kbForm.model[kbFormItem.prop]&&kbFormItem.kbForm.model[kbFormItem.prop].indexOf(option.value)>-1"
         :disabled="field.disabled"
       />
       <span>{{ option.key }}</span>

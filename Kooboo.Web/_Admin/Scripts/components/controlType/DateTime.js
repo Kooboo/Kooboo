@@ -20,7 +20,7 @@
     },
     watch: {
       formattedDate(val) {
-        var d = new Date(val);
+        var d = new Date(moment(val));
         this.kbFormItem.kbForm.model[this.kbFormItem.prop] = d.toISOString();
       }
     }

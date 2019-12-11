@@ -290,6 +290,9 @@ $(function() {
       onFieldSave: function(fm) {
         if (self.fieldEditorOptions.isSystemField) {
           self.systemTypeProperties[fm.editingIndex] = fm.data;
+          self.typeProperties = self.userTypeProperties.concat(
+              self.systemTypeProperties
+          );
         } else {
           if (self.isNewField) {
             self.typeProperties.push(fm.data);
@@ -300,7 +303,7 @@ $(function() {
             );
           }
         }
-        delete self.fieldEditorOptions.isSystemField;
+        self.fieldEditorOptions.isSystemField = false;
         self.saveContentFields(function() {
           self.refreshContent();
         });
@@ -310,7 +313,6 @@ $(function() {
         var name = self.contentTypes.find(function(ct) {
           return ct.id == self.contentType;
         }).name;
-
         Kooboo.ContentType.save({
           id: self.contentType,
           name: name,

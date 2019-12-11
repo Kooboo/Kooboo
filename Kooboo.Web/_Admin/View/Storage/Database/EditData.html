@@ -200,7 +200,13 @@
             var setting = JSON.parse(data.setting);
             if (setting && setting.options && setting.options.length) {
               data.options = setting.options;
-              if (data.options && data.options.length) {
+              if (
+                data.options &&
+                data.options.length &&
+                data.controlType &&
+                data.controlType.toLowerCase() == "selection" &&
+                !data.value
+              ) {
                 data.value = data.options[0].value;
               }
             }

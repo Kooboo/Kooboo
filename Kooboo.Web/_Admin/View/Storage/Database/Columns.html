@@ -114,7 +114,7 @@
                   v-if="availableControlTypes.length > 1 "
                   class="form-control"
                   v-model="columnModel.controlType"
-                  @input="resetColumnModel"
+                  @click="resetColumnModel"
                 >
                   <option
                     v-for="item in availableControlTypes"
