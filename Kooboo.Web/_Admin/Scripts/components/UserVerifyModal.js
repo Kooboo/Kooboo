@@ -1,5 +1,5 @@
 (function() {
-  Vue.component("data-center-modal", {
+  Vue.component("user-verify-modal", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/components/UserVerifyModal.html"
     ),
@@ -31,7 +31,7 @@
       },
       onSubmit: function() {
         var self = this;
-        if (this.$refs.form.valdate()) {
+        if (this.$refs.form.validate && this.$refs.form.validate()) {
           Kooboo.User.verifyEmail({
             email: self.model.email
           }).then(function(res) {
