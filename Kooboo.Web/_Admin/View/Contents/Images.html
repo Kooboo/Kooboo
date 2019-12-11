@@ -212,9 +212,8 @@
           </span>
         </a>
         <input
-          v-model="$data.selected"
+          @click.stop="selectDoc($data)"
           type="checkbox"
-          style="pointer-events: none;"
         />
       </div>
     </div>

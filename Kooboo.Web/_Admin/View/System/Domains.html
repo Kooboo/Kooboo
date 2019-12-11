@@ -80,16 +80,16 @@
                   <input
                           type="radio"
                           value="domain"
-                          :checked="defaultBinding ==='domain'"
-                          @input="defaultBindingCheckboxHandle"
+                          :checked="defaultBinding =='domain'"
+                          @click="defaultBindingCheckboxHandle"
                   /><span>Domain</span>
                 </label>
                 <label class="radio-inline">
                   <input
                           type="radio"
                           value="port"
-                          :checked="defaultBinding ==='port'"
-                          @input="defaultBindingCheckboxHandle"
+                          :checked="defaultBinding =='port'"
+                          @click="defaultBindingCheckboxHandle"
                   /><span>Port</span>
                 </label>
               </div>
