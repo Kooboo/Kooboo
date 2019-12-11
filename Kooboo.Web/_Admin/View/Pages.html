@@ -722,7 +722,7 @@
           if (res.success) {
             me.routerModel = res.model;
             if (
-              (me.routerModel.startPage = Kooboo.Guid.Empty) &&
+              me.routerModel.startPage == Kooboo.Guid.Empty &&
               me.model.pages &&
               me.model.pages.length
             ) {
@@ -763,6 +763,27 @@
         this.importModel.pageUrl = "";
         this.importModel.name = "";
         this.$refs.importForm.clearValid();
+      },
+      routerModel: {
+        handler: function(val) {
+          if (val.notFound == val.startPage) {
+            val.notFound = Kooboo.Guid.Empty;
+          }
+          if (val.error === val.startPage) {
+            val.error = Kooboo.Guid.Empty;
+          }
+        },
+        deep: true
+      },
+      "routerModel.notFound": function(val) {
+        if (val != Kooboo.Guid.Empty && this.routerModel.error == val) {
+          this.routerModel.error = Kooboo.Guid.Empty;
+        }
+      },
+      "routerModel.error": function(val) {
+        if (val != Kooboo.Guid.Empty && this.routerModel.notFound == val) {
+          this.routerModel.notFound = Kooboo.Guid.Empty;
+        }
       }
     }
   });
