@@ -113,7 +113,9 @@
           this.model.siteName = "";
           this.model.subDomain = "";
           this.data = null;
-          this.$refs.form.clearValid();
+          if (this.$refs.form && this.$refs.form.clearValid) {
+            this.$refs.form.clearValid();
+          }
         }
       },
       "model.siteName": function(value) {
