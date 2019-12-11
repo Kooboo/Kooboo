@@ -1,97 +1,142 @@
 <!-- #layout name=blank --sideType='market'-->
 
-<div class="page-header">
+<div id="app">
+  <div class="page-header">
     <h1 class="title">Mine</h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'MARKET'
-}]}"></div>
-
-<div class="row">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="row">
     <div class="col-md-4 block-dashboard-stat">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">Account</h4>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="item">
-                            <div class="number" data-bind="text: username"></div>
-                            <small class="text-muted" data-bind="text: Kooboo.text.common.user"></small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="item">
-                            <div class="number">
-                                <a href="javascript:;" class="label label-sm" data-bind="text: Kooboo.text.common[isUserVerified() ? 'yes' : 'no'], css: { green: isUserVerified, gray: !isUserVerified() }, click: onVerifyUser"></a>
-                            </div>
-                            <small class="text-muted">Verified</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="item">
-                            <div class="number">
-                                <a href="javascript:;" data-bind="text: currentDataCenter, click: onChangeDC"></a>
-                            </div>
-                            <small class="text-muted">Data center</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">Account</h4>
         </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="item">
+                <div class="number" data-bind="text: username"></div>
+                <small
+                  class="text-muted"
+                  data-bind="text: Kooboo.text.common.user"
+                ></small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="item">
+                <div class="number">
+                  <a
+                    href="javascript:;"
+                    class="label label-sm"
+                    data-bind="text: Kooboo.text.common[isUserVerified() ? 'yes' : 'no'], css: { green: isUserVerified, gray: !isUserVerified() }, click: onVerifyUser"
+                  ></a>
+                </div>
+                <small class="text-muted">Verified</small>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="item">
+                <div class="number">
+                  <a
+                    href="javascript:;"
+                    data-bind="text: currentDataCenter, click: onChangeDC"
+                  ></a>
+                </div>
+                <small class="text-muted">Data center</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-md-4 block-dashboard-stat">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">Balance</h4>
-                <div class="panel-actions">
-                    <div class="btn-group" role="group">
-                        <button data-bind="click: onShowRechargeModal" class="btn btn-default"><i class="fa fa-plus"></i></button>
-                        <button data-bind="click: onShowTopupHistoryModal" class="btn btn-default"><i class="fa fa-history"></i></button>
-                        <button data-bind="click: onShowCurrenies" class="btn btn-default"><i class="fa fa-money"></i></button>
-                    </div>
-                </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">Balance</h4>
+          <div class="panel-actions">
+            <div class="btn-group" role="group">
+              <button
+                data-bind="click: onShowRechargeModal"
+                class="btn btn-default"
+                ><i class="fa fa-plus"></i
+              ></button>
+              <button
+                data-bind="click: onShowTopupHistoryModal"
+                class="btn btn-default"
+                ><i class="fa fa-history"></i
+              ></button>
+              <button data-bind="click: onShowCurrenies" class="btn btn-default"
+                ><i class="fa fa-money"></i
+              ></button>
             </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="item">
-                            <div class="number" data-bind="text: displayBalance"></div>
-                            <small class="text-muted" data-bind="text: currencyCode"></small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="item">
+                <div class="number" data-bind="text: displayBalance"></div>
+                <small
+                  class="text-muted"
+                  data-bind="text: currencyCode"
+                ></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <data-center-modal
+    params="isShow: showDataCenterModal, available: availableDataCenters"
+  ></data-center-modal>
+  <user-verify-modal
+    params="isShow: showUserVerifyModal, email: userEmail"
+  ></user-verify-modal>
+
+  <div
+    data-bind="component: {
+          name: 'recharge-modal',
+          params: {
+              isShow: showRechargeModal
+          }
+      }"
+  ></div>
+
+  <currency-modal
+    params="isShow: showCurrencyModal, code: currencyCode"
+  ></currency-modal>
+  <topup-history-modal
+    params="isShow: showTopupHistoryModal"
+  ></topup-history-modal>
 </div>
- 
-<data-center-modal params="isShow: showDataCenterModal, available: availableDataCenters"></data-center-modal>
-<user-verify-modal params='isShow: showUserVerifyModal, email: userEmail'></user-verify-modal>
-
-<div data-bind="component: {
-    name: 'recharge-modal',
-    params: {
-        isShow: showRechargeModal
-    }
-}"></div>
-
-<currency-modal params="isShow: showCurrencyModal, code: currencyCode"></currency-modal>
-<topup-history-modal params="isShow: showTopupHistoryModal"></topup-history-modal>
 
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/lib/waterfall.min.js",
-            "/_Admin/Scripts/components/UserVerifyModal.js",
-            "/_Admin/View/Market/Scripts/components/CurrencyModal.js",
-            "/_Admin/View/Market/Scripts/components/RechargeModal.js",
-            "/_Admin/View/Market/Scripts/components/TopupHistoryModal.js",
-            "/_Admin/View/Market/Scripts/components/DataCenterModal.js",
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/lib/waterfall.min.js",
+      "/_Admin/Scripts/components/UserVerifyModal.js",
+      "/_Admin/View/Market/Scripts/components/CurrencyModal.js",
+      "/_Admin/View/Market/Scripts/components/RechargeModal.js",
+      "/_Admin/View/Market/Scripts/components/TopupHistoryModal.js",
+      "/_Admin/View/Market/Scripts/components/DataCenterModal.js"
+    ]);
+
+    var self = new Vue({
+      el: "#app",
+      data: function() {
+        return {
+          breads: [
+            {
+              name: "MARKET"
+            }
+          ]
+        };
+      }
+    });
+  })();
 </script>
 <script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
-<script src="/_Admin/View/Market/Index.js"></script>
+<!-- <script src="/_Admin/View/Market/Index.js"></script> -->

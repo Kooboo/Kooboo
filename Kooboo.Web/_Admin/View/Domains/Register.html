@@ -62,16 +62,12 @@
                   data-toggle="dropdown"
                   ><i class="fa fa-angle-down"></i
                 ></button>
-                <ul
-                  class="dropdown-menu"
-                  role="menu"
-                  data-bind="foreach:$root.yearOptions(price)"
-                >
-                  <li v-for="i in yearOptions($data.price)" :key="i">
+                <ul class="dropdown-menu" role="menu">
+                  <li v-for="(item,i) in yearOptions($data.price)" :key="i">
                     <a
                       href="javascript:;"
-                      @click="select($data,i)"
-                      v-html="formatYearPrice($data)"
+                      @click="select($data,i.key)"
+                      v-html="formatYearPrice(item)"
                     ></a>
                   </li>
                 </ul>
@@ -92,7 +88,7 @@
           <tbody>
             <tr>
               <td>{{domain}}</td>
-              <td>{{formatedYear}}</td>
+              <td>{{formatedYear()}}</td>
               <td>{{unitPrice}}</td>
             </tr>
             <tr>
@@ -115,13 +111,13 @@
                 <label>
                   <input
                     type="radio"
-                    value="wechat"
+                    value="balance"
                     v-model="payment"
                     :disabled="totalPrice>balance"
                   />
                   <span>Balance</span>:
                   <span
-                    v-html="currencySymbol + ' ' + (balance()*100)/100"
+                    v-html="currencySymbol + ' ' + (balance*100)/100"
                   ></span>
                   <span v-if="totalPrice > balance"
                     >(Insufficient balance)</span
@@ -165,7 +161,7 @@
       </ul>
     </div>
   </div>
-  <div data-bind="component: {name: 'cashier-modal'}"></div>
+  <cashier-modal></cashier-modal>
   <div
     id="payment-qrcode-container"
     class="modal fade"
@@ -237,12 +233,13 @@
             domain: self.domain
           }).then(function(data) {
             self.suggests = data.model;
+            self.confirm = true;
           });
         },
         select: function(item, amount) {
           Kooboo.Order.domain({
             domainName: item.domain,
-            year: amount
+            year: amount + 1
           }).then(function(res) {
             if (res.success) {
               Kooboo.EventBus.publish(
@@ -329,4 +326,3 @@
   })();
 </script>
 <script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
-<script src="/_Admin/View/Domains/Register.js"></script>
