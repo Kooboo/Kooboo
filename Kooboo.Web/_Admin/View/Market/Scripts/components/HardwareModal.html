@@ -1,55 +1,105 @@
-<div class="modal fade" data-bind="modal: isShow" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: title"></h4>
+<div
+  class="modal fade"
+  data-backdrop="static"
+  data-keyboard="false"
+  v-kb-modal="isShow"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" @click="onHide"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">{{title}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label for="" class="control-label col-md-3"
+              >{{Kooboo.text.common.Types}}</label
+            >
+            <div class="col-md-9">
+              <p class="form-control-static">
+                <a
+                  v-for="($data,index) in variants"
+                  :key="index"
+                  @click="onSelectType($data)"
+                  :class=" { green: $data.selected }"
+                  class="label label-sm label-default"
+                  href="javascript:;"
+                  >{{$data.displayText}}</a
+                >
+              </p>
             </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.Types"></label>
-                        <div class="col-md-9">
-                            <p class="form-control-static" data-bind="foreach: variants">
-                                <a data-bind="text: $data.displayText, click: $parent.onSelectType, css: { green: $data.selected }" class="label label-sm label-default" href="javascript:;"></a>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.unitPrice"></label>
-                        <div class="col-md-9">
-                            <p class="form-control-static" data-bind="text: currentVar() ? symbol() + '' + currentVar().price : Kooboo.text.component.hardwareModal.selectTypeFirst"></p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.component.hardwareModal.quantity"></label>
-                        <div class="col-md-9">
-                            <div class="input-group input-xsmall">
-                                <input type="number" class="form-control input-xsmall" min='0' data-bind="textInput: quantity, error: quantity, event: { keydown: Kooboo.event.input.positiveIntegerOnly }">
-                                <span class="input-group-addon" data-bind="text: currentVar() && currentVar().period" style="text-transform: capitalize;"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.component.hardwareModal.startMonth"></label>
-                        <div class="col-md-9">
-                            <div class="input-group input-small">
-                                <select class="form-control input-small" data-bind="options: availableMonths, optionsText: 'displayName', optionsValue: 'value', value: startMonth"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.totalPrice"></label>
-                        <div class="col-md-9">
-                            <p class="form-control-static" data-bind="text: symbol() + totalPrice()"></p>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="control-label col-md-3"
+              >{{Kooboo.text.common.unitPrice}}</label
+            >
+            <div class="col-md-9">
+              <p class="form-control-static"
+                >{{currentVar ? symbol + '' + currentVar.price :
+                Kooboo.text.component.hardwareModal.selectTypeFirst}}</p
+              >
             </div>
-            <div class="modal-footer">
-                <button class="btn green" data-bind="click: onBuy, enable: isAbleToBuy, text: Kooboo.text.common.buy"></button>
-                <button class="btn gray" data-bind="text: Kooboo.text.common.cancel, click: onHide"></button>
+          </div>
+          <div class="form-group">
+            <label for="" class="control-label col-md-3"
+              >{{Kooboo.text.component.hardwareModal.quantity}}</label
+            >
+            <div class="col-md-9">
+              <div class="input-group input-xsmall">
+                <input
+                  type="number"
+                  class="form-control input-xsmall"
+                  min="0"
+                  v-kb-tooltip:right.manual.error="error"
+                  v-model="quantity"
+                  id="_quantity"
+                />
+                <span
+                  class="input-group-addon"
+                  style="text-transform: capitalize;"
+                  >{{ currentVar && currentVar.period}}</span
+                >
+              </div>
             </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="control-label col-md-3"
+              >{{Kooboo.text.component.hardwareModal.startMonth}}</label
+            >
+            <div class="col-md-9">
+              <div class="input-group input-small">
+                <select class="form-control input-small" v-model="startMonth">
+                  <option
+                    v-for="(item,index) in availableMonths"
+                    :key="index"
+                    :value="item.value"
+                    >{{item.displayName}}</option
+                  >
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="control-label col-md-3"
+              >{{Kooboo.text.common.totalPrice}}</label
+            >
+            <div class="col-md-9">
+              <p class="form-control-static">{{symbol + totalPrice}}</p>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn green" @click="onBuy" :disabled="!isAbleToBuy"
+          >{{Kooboo.text.common.buy}}</button
+        >
+        <button class="btn gray" @click="onHide"
+          >{{Kooboo.text.common.cancel}}</button
+        >
+      </div>
     </div>
+  </div>
 </div>
