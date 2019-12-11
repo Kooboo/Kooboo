@@ -22,7 +22,7 @@ Vue.directive("kb-tooltip", {
         ? '<div class="tooltip error" role="tooltip" style="z-index:' +
           zIndex +
           ';white-space:nowrap"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-        : '<div class="tooltip" role="tooltip" style="z-index:199999;white-space: nowrap;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+          : '<div class="tooltip" role="tooltip" style="z-index:199999;white-space: nowrap;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
       container: $el.data("container") || "body"
     });
 

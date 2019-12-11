@@ -211,7 +211,10 @@
             <span class="name">{{ $data.name }}</span>
           </span>
         </a>
-        <input v-model="$data.selected" type="checkbox" />
+        <input
+          @click.stop="selectDoc($data)"
+          type="checkbox"
+        />
       </div>
     </div>
     <div class="grid-group files">
