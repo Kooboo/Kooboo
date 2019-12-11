@@ -37,8 +37,8 @@
         }
       },
       onHide: function() {
-        self.dataCenter = "";
-        self.$emit("update:isShow", false);
+        this.dataCenter = "";
+        this.$emit("update:isShow", false);
       }
     },
     watch: {
