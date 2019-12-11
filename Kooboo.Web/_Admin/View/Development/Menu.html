@@ -8,10 +8,11 @@
   .menu-link:hover {
     text-decoration: none;
   }
-  .editableform .input-sm {
+
+  .editable-input .input-sm {
     font-size: 12px;
     height: auto;
-    padding: 6px 10px;
+    padding: 5px 10px;
   }
 </style>
 <div id="app">
@@ -43,7 +44,7 @@
                 :data-url="item.UpdateText"
                 :data-inline-edit="true"
                 :data-id="item.id"
-                @click="editDiplayText"
+                @click="editDisplayText"
                 >{{item.name}}</a
               >
               <span v-else>{{item.name}}</span>
@@ -56,28 +57,30 @@
                 class="menu-link"
                 >{{item.url}}</a
               >
-              <div v-if="item.urlEditing" class="col-md-8 row">
-                <div class="col-md-8">
+              <div v-if="item.urlEditing" class="col-md-8">
+                <div class="editable-input">
                   <input
                     v-model="item.tempEditingUrl"
                     type="text"
-                    class="form-control"
+                    class="form-control input-sm"
                     v-kb-typeahead="{source: pageList, defaultShow: true, items: 20 }"
                     placeholder="Select value from below or type a new url"
                   />
                 </div>
-                <a
-                  @click="updateLinkUrl($event, item)"
-                  class="btn btn-primary btn-sm"
-                  title="Save"
-                  ><i class="glyphicon glyphicon-ok"></i
-                ></a>
-                <a
-                  @click="cancelEditLink($event, item)"
-                  class="btn btn-default btn-sm"
-                  title="Cancel"
-                  ><i class="glyphicon glyphicon-remove"></i
-                ></a>
+                <div class="editable-buttons">
+                  <a
+                    @click="updateLinkUrl($event, item)"
+                    class="btn btn-primary btn-sm editable-submit"
+                    title="Save"
+                    ><i class="glyphicon glyphicon-ok"></i
+                  ></a>
+                  <a
+                    @click="cancelEditLink($event, item)"
+                    class="btn btn-default btn-sm  editable-cancel"
+                    title="Cancel"
+                    ><i class="glyphicon glyphicon-remove"></i
+                  ></a>
+                </div>
               </div>
             </td>
             <td>
