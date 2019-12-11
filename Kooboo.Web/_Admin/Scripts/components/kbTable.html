@@ -5,7 +5,7 @@
         <input
           type="checkbox"
           :disabled="data.length <= 0"
-          @input="selectedAll"
+          @click="selectedAll"
           :checked="data.length == selected.length && data.length > 0"
         />
       </th>
