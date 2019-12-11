@@ -605,75 +605,75 @@ Vue.component("kb-container", {
 // #region <kb-hint>
 Vue.directive("kb-hint", {
   update: function(el, binding) {
-    var element = $(el);
-    var show = true;
-    var tipsOptions = {
-      title: "",
-      placement: "right",
-      trigger: "manual",
-      template:
-        '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-    };
-    var errorContainer = element.data("container");
-    if (errorContainer) {
-      tipsOptions.container = errorContainer;
-    }
-    try {
-      tipsOptions = element.data("bs.tooltip").options;
-    } catch (e) {}
-    if (binding.arg) {
-      tipsOptions.placement = binding.arg;
-    }
+    if (!_.isEqual(binding.oldValue, binding.value)) {
+      var element = $(el);
+      var show = true;
+      var tipsOptions = {
+        title: "",
+        placement: "right",
+        trigger: "manual",
+        template:
+            '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+      };
+      var errorContainer = element.data("container");
+      if (errorContainer) {
+        tipsOptions.container = errorContainer;
+      }
+      try {
+        tipsOptions = element.data("bs.tooltip").options;
+      } catch (e) {}
+      if (binding.arg) {
+        tipsOptions.placement = binding.arg;
+      }
 
-    switch (typeof binding.value) {
-      case "string":
-        tipsOptions.title = binding.value;
-        break;
-      case "object":
-        if (binding.value.options) {
-          _.assign(tipsOptions, binding.value.options);
-        }
-        if (binding.value.hasOwnProperty("msg")) {
-          if (binding.value.msg) {
-            tipsOptions.title = binding.value.msg;
-          } else {
-            tipsOptions.title = "";
+      switch (typeof binding.value) {
+        case "string":
+          tipsOptions.title = binding.value;
+          break;
+        case "object":
+          if (binding.value.options) {
+            _.assign(tipsOptions, binding.value.options);
           }
+          if (binding.value.hasOwnProperty("msg")) {
+            if (binding.value.msg) {
+              tipsOptions.title = binding.value.msg;
+            } else {
+              tipsOptions.title = "";
+            }
+          }
+          break;
+      }
+      element.tooltip(tipsOptions);
+      var hidetip = function() {
+        element.tooltip("hide");
+        if (el.parentNode.classList.contains("has-error")) {
+          el.parentNode.classList.remove("has-error");
         }
-        break;
-    }
-    element.tooltip(tipsOptions);
-    var hidetip = function() {
-      element.tooltip("hide");
-      if (el.parentNode.classList.contains("has-error")) {
-        el.parentNode.classList.remove("has-error");
+      };
+      var showtip = function() {
+        element.tooltip("show");
+        if (!el.parentNode.classList.contains("has-error")) {
+          el.parentNode.classList.add("has-error");
+        }
+      };
+      if (binding.value.show !== undefined) {
+        show = binding.value.show;
       }
-    };
-    var showtip = function() {
-      element.tooltip("show");
-      if (!el.parentNode.classList.contains("has-error")) {
-        el.parentNode.classList.add("has-error");
+      debugger;
+      if (!tipsOptions.title || tipsOptions.title === "") {
+        show = false;
+      } else {
+        element.attr("title", tipsOptions.title).tooltip("fixTitle");
       }
-    };
-    if (binding.value.show) {
-      show = true;
-    } else {
-      show = false;
-    }
-    if (!tipsOptions.title || tipsOptions.title === "") {
-      show = false;
-    } else {
-      show = true;
-      element.attr("title", tipsOptions.title).tooltip("fixTitle");
-    }
-    if (show) {
-      var bounding = el.getBoundingClientRect();
-      if (bounding.top < 0 || bounding.bottom > $(window).height()) {
-        el.scrollIntoView();
+      if (show) {
+        var bounding = el.getBoundingClientRect();
+        if (bounding.top < 0 || bounding.bottom > $(window).height()) {
+          el.scrollIntoView();
+        }
+        showtip();
+      } else {
+        hidetip();
       }
-      showtip();
-    } else {
-      hidetip();
     }
   },
   unbind: function(el) {
