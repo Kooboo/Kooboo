@@ -85,7 +85,53 @@
     </kb-container>
     <kb-container>
       <template #header>{{Kooboo.text.site.sync.pullLog}}</template>
-      <template #content></template>
+      <template #content>
+        <kb-table :show-select="false" :data="dynamicItems">
+          <kb-table-column>
+            <kb-table-column>
+              <template #head>Last modified</template>
+              <template v-slot="row">
+                {{ new Date(row.lastModified).toDefaultLangString()}}
+              </template>
+            </kb-table-column>
+            <template #head>Name</template>
+            <template v-slot="row">
+              <span v-if="row.thumbnail" class="thumbnail-fixed">
+                <span class="img-wrap">
+                  <img :src="''" />
+                </span>
+              </span>
+              <template v-else>{{ row.name }}</template>
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Object Type</template>
+            <template v-slot="row">
+              <span class="label label-sm label-primary"
+                >{{Kooboo.text.component.table[ row.objectType.toLowerCase()] ||
+                row.objectType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Action</template>
+            <template v-slot="row">
+              <span
+                class="label label-sm"
+                :class="getChangeClass(row.changeType)"
+                >{{Kooboo.text.action[row.changeType.toLowerCase()] ||
+                row.changeType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Size</template>
+            <template v-slot="row">
+              {{ row.size }}
+            </template>
+          </kb-table-column>
+        </kb-table>
+      </template>
     </kb-container>
     <kb-container>
       <template #header>{{Kooboo.text.site.sync.pushLog}}</template>

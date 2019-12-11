@@ -13,7 +13,7 @@
     ></kb-table-column>
     <kb-table-column :label="Kooboo.text.common.type" head-class="table-short">
       <template v-slot="row">
-        <span class="label" v-kb-tooltip="row.type.tooltip"
+        <span :class="['label', row.type.class]" v-kb-tooltip="row.type.tooltip"
           >{{ row.type.text }}</span
         >
       </template>
@@ -23,7 +23,7 @@
       head-class="table-short"
     >
       <template v-slot="row">
-        <span class="label" v-kb-tooltip="row.amount.tooltip"
+        <span :class="['label', row.amount.class]" v-kb-tooltip="row.amount.tooltip"
           >{{ row.amount.text }}</span
         >
       </template>
@@ -33,7 +33,7 @@
       head-class="table-short"
     >
       <template v-slot="row">
-        <span class="label" v-kb-tooltip="row.startTime.tooltip"
+        <span :class="['label', row.startTime.class]" v-kb-tooltip="row.startTime.tooltip"
           >{{ row.startTime.text }}</span
         >
       </template>
@@ -43,7 +43,7 @@
       head-class="table-short"
     >
       <template v-slot="row">
-        <span class="label" v-kb-tooltip="row.endMonth.tooltip"
+        <span :class="['label', row.endMonth.class]" v-kb-tooltip="row.endMonth.tooltip"
           >{{ row.endMonth.text }}</span
         >
       </template>
@@ -61,17 +61,10 @@
     :total-pages="pager.totalPages"
     @change="changePage"
   ></kb-pager>
-
-  <div
-    data-bind="component: {
-    name: 'hardware-modal',
-    params: {
-        isShow: showHardwareModal,
-        data: hardwareData
-    }
-}"
-  ></div>
-
+  <hardware-modal
+    :is-show.sync="showHardwareModal"
+    :data="hardwareData"
+  ></hardware-modal>
   <cashier-modal></cashier-modal>
 </div>
 <script>
