@@ -153,6 +153,7 @@ $(function() {
         });
       },
       onAdd: function() {
+        this.fieldEditorOptions.isSystemField = false;
         this.editingItemData = undefined;
         this.modalVisible = true;
         this.editingItemIndex = self.notSystemProperties.length;
