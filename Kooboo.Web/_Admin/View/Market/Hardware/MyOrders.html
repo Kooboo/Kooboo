@@ -1,41 +1,90 @@
 <!-- #layout name=blank --sideType='market'-->
-<div class="page-header">
+<div id="app">
+  <div class="page-header">
     <h1 class="title">My Orders</h1>
-</div>
+  </div>
 
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-        name: 'MARKET'
-},{
-    name: Kooboo.text.common.Hardwares,
-    url: Kooboo.Route.Hardware.ListPage
-},{
-    name: Kooboo.text.market.supplier.myOrders
-}]}"></div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
 
-<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
-<div data-bind="component: { name: 'kb-pager', params: pager }"></div>
+  <kb-table :data="tableData">
+    <kb-table-column
+      :label="Kooboo.text.common.name"
+      prop="name"
+    ></kb-table-column>
+    <kb-table-column :label="Kooboo.text.common.type" head-class="table-short">
+      <template v-slot="row">
+        <span class="label" v-kb-tooltip="row.type.tooltip"
+          >{{ row.type.text }}</span
+        >
+      </template>
+    </kb-table-column>
+    <kb-table-column
+      :label="Kooboo.text.common.amount"
+      head-class="table-short"
+    >
+      <template v-slot="row">
+        <span class="label" v-kb-tooltip="row.amount.tooltip"
+          >{{ row.amount.text }}</span
+        >
+      </template>
+    </kb-table-column>
+    <kb-table-column
+      :label="Kooboo.text.common.startTime"
+      head-class="table-short"
+    >
+      <template v-slot="row">
+        <span class="label" v-kb-tooltip="row.startTime.tooltip"
+          >{{ row.startTime.text }}</span
+        >
+      </template>
+    </kb-table-column>
+    <kb-table-column
+      :label="Kooboo.text.common.endMonth"
+      head-class="table-short"
+    >
+      <template v-slot="row">
+        <span class="label" v-kb-tooltip="row.endMonth.tooltip"
+          >{{ row.endMonth.text }}</span
+        >
+      </template>
+    </kb-table-column>
+    <kb-table-column head-class="table-action" body-class="table-action">
+      <template v-slot="row">
+        <a class="btn btn-sm blue" @click.stop="renew(row.id)">
+          {{ row.renew.text }}
+        </a>
+      </template>
+    </kb-table-column>
+  </kb-table>
+  <kb-pager
+    :page-nr="pager.pageNr"
+    :total-pages="pager.totalPages"
+    @change="changePage"
+  ></kb-pager>
 
-<div data-bind="component: {
+  <div
+    data-bind="component: {
     name: 'hardware-modal',
     params: {
         isShow: showHardwareModal,
         data: hardwareData
     }
-}"></div>
+}"
+  ></div>
 
-<div data-bind="component: {name: 'cashier-modal'}"></div>
-
+  <cashier-modal></cashier-modal>
+</div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/components/kbPager.js",
-            "/_Admin/View/Market/Scripts/components/HardwareModal.js",
-            "/_Admin/View/Market/Scripts/components/CashierModal.js",
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/tableModel.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbPager.js",
+      "/_Admin/View/Market/Scripts/components/HardwareModal.js",
+      "/_Admin/View/Market/Scripts/components/CashierModal.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
 <script src="/_Admin/View/Market/Hardware/MyOrders.js"></script>
