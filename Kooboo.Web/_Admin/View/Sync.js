@@ -285,6 +285,12 @@ $(function() {
         self.remoteSiteModel.preDomain = self.remoteSiteModel.remoteSiteName;
       },
       hideCreateSiteModalHandle: function() {
+        self.remoteSiteModel = {
+          remoteSiteName: "",
+          preDomain: "",
+          suffixDomain: ""
+        };
+        self.$refs.createSiteForm.clearValid();
         self.showCreateSiteModal = false;
       },
       saveHandle: function() {
@@ -327,7 +333,7 @@ $(function() {
           self.avaliableSites.push(newSite);
           self.selectedSite = newSite;
           self.ableAddSite = true;
-          this.hideCreateSiteModalHandle();
+          self.showCreateSiteModal = false;
         }
       },
       getAvaliableSites: function() {

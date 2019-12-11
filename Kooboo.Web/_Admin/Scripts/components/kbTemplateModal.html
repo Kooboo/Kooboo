@@ -188,7 +188,10 @@
                   <p>{{Kooboo.text.component.templateModal.hint}}</p>
                 </div>
                 <kb-form-item class="form-group" prop="siteName" v-slot="error">
-                  <div :class="{'has-error' : !!error.error}" id="site-name-error-container2">
+                  <div
+                    :class="{'has-error' : !!error.error}"
+                    id="site-name-error-container2"
+                  >
                     <label class="col-md-2 control-label" for="SiteName"
                       >{{Kooboo.text.component.templateModal.siteName}}</label
                     >
@@ -209,17 +212,19 @@
                     </div>
                   </div>
                 </kb-form-item>
-                <kb-form-item class="form-group">
+                <kb-form-item class="form-group" prop="subDomain" v-slot="error">
                   <label for="SubDomain" class="col-md-2 control-label"
                     >{{Kooboo.text.component.table.domain}}</label
                   >
                   <div class="col-md-10">
-                    <div class="form-inline">
+                    <div class="form-inline" :class="{'has-error' : !!error.error}">
                       <input
                         type="text"
                         class="input-medium form-control"
                         :placeholder="Kooboo.text.component.templateModal.subDomain"
                         v-model="model.subDomain"
+                        v-kb-tooltip:right.manual.error="error.error"
+                        data-container="#site-name-error-container2"
                       />
                       <div class="form-group">
                         <select class="form-control" v-model="model.rootDomain">

@@ -97,7 +97,8 @@ $(function() {
       Kooboo.Domain.getAvailable().then(function(res) {
         if (res.success) {
           self.domains = res.model;
-          self.checkoutForm.rootDomain = self.domains[0] && self.domains[0].domainName;
+          self.checkoutForm.rootDomain =
+            self.domains[0] && self.domains[0].domainName;
         }
       });
     },
@@ -272,8 +273,8 @@ $(function() {
       },
       checkoutDialogReset: function() {
         self.showCheckoutDialog = false;
-        self.checkoutSiteName = "";
-        self.checkoutSubDomain = "";
+        self.checkoutForm.siteName = "";
+        self.checkoutForm.subDomain = "";
         self.$refs.checkoutForm.clearValid();
       }
     },
@@ -285,7 +286,7 @@ $(function() {
       }
     },
     watch: {
-      'checkoutForm.siteName': function(siteName) {
+      "checkoutForm.siteName": function(siteName) {
         self.checkoutForm.subDomain = _.kebabCase(siteName);
       }
     },

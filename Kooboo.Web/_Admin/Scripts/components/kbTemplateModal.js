@@ -110,7 +110,10 @@
         this.$emit("input", value);
         if (!value) {
           this.selected = false;
+          this.model.siteName = "";
+          this.model.subDomain = "";
           this.data = null;
+          this.$refs.form.clearValid();
         }
       },
       "model.siteName": function(value) {
@@ -139,6 +142,10 @@
           this.$nextTick(function() {
             self.$refs.siteName.focus();
           });
+        } else {
+          this.model.siteName = "";
+          this.model.subDomain = "";
+          this.$refs.form.clearValid();
         }
       }
     }
