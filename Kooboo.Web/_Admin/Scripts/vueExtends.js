@@ -659,7 +659,6 @@ Vue.directive("kb-hint", {
       if (binding.value.show !== undefined) {
         show = binding.value.show;
       }
-      debugger;
       if (!tipsOptions.title || tipsOptions.title === "") {
         show = false;
       } else {
