@@ -166,7 +166,7 @@ $(function() {
         item.urlEditing = true;
         $('.glyphicon-remove:visible').click();
       },
-      editDiplayText: function() {
+      editDisplayText: function() {
         $('.glyphicon-remove:visible').click();
       },
       cancelEditLink: function(event, item) {

@@ -172,6 +172,10 @@ $(function() {
         });
         self.clearEditStatus();
         item.urlEditing = true;
+        $('.glyphicon-remove:visible').click();
+      },
+      editDisplayText: function() {
+        $('.glyphicon-remove:visible').click();
       },
       cancelEditLink: function(event, item) {
         item.tempEditingUrl = item.url;
