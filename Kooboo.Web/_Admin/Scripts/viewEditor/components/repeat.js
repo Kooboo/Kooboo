@@ -43,6 +43,13 @@
           self.refreshFields();
           self.model.text = data.text;
           self.repeatSelf = data.repeatSelf;
+          if (
+            !_.some(self.fields, function(item) {
+              return _.some(item.list, { name: data.text });
+            })
+          ) {
+            self.model.text = ""; // dirty binding
+          }
         }
       });
 

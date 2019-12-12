@@ -459,10 +459,8 @@ $(function() {
           var find = _.findLast(pos.bindings, function(bd) {
             return binding.elem.isEqualNode(bd.elem);
           });
-
           find && (binding.elem = find.elem);
         }
-
         self.bindingPanel.edit(binding);
       },
       focusBinding: function(type, binding) {

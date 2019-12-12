@@ -150,11 +150,11 @@
       Kooboo.EventBus.publish("binding/edit", {
         elem: item.elem,
         bindingType: "form",
-        dataSourceMethodId: item.dataSourceMethodId(),
-        dataSourceMethodDisplay: item.dataSourceMethodDisplay(),
-        method: item.method(),
-        redirect: item.redirect(),
-        callback: item.callback()
+        dataSourceMethodId: item.dataSourceMethodId,
+        dataSourceMethodDisplay: item.dataSourceMethodDisplay,
+        method: item.method,
+        redirect: item.redirect,
+        callback: item.callback
       });
     },
     input: function(item) {
