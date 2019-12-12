@@ -15,6 +15,8 @@
               @keyup.enter="search"
               class="form-control input-lg"
               v-model="domain"
+              v-kb-tooltip:top.manual.error="error"
+              @click="error=''"
             />
             <span class="input-group-btn">
               <button type="button" @click="search" class="btn blue btn-lg"
@@ -76,7 +78,11 @@
           </tr>
         </tbody>
       </table>
-      <p style="text-align: center;margin: 50px;" v-if="!suggests.length&&posted">Empty</p>
+      <p
+        style="text-align: center;margin: 50px;"
+        v-if="!suggests.length&&posted"
+        >Empty</p
+      >
       <template v-if="confirm">
         <table class="table">
           <thead>
@@ -207,7 +213,8 @@
           showQrcode: false,
           paymentId: "",
           interval: null,
-          posted: false
+          posted: false,
+          error: ""
         };
       },
       mounted: function() {
@@ -231,6 +238,15 @@
       },
       methods: {
         search: function() {
+          var validResult = Kooboo.validField(self.domain, [
+            { required: Kooboo.text.validation.required },
+            {
+              pattern: /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/,
+              message: Kooboo.text.validation.urlInvalid
+            }
+          ]);
+          self.error = validResult.msg;
+          if (!validResult.valid) return;
           Kooboo.Domain.searchDomain({
             domain: self.domain
           }).then(function(data) {
