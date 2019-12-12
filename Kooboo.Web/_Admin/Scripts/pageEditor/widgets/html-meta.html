@@ -1,61 +1,118 @@
-<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false" id="meta_modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Meta</h4>
+<div
+  class="modal fade"
+  data-backdrop="static"
+  data-keyboard="false"
+  id="meta_modal"
+  v-kb-modal="isShow"
+>
+  <div class="modal-dialog" v-show="isShow">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button @click="reset" class="close"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">Meta</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <div class="col-md-12">
+              <kb-multilang-selector
+                v-if="multiLangs"
+                :cultures="multiLangs.cultures"
+                :default-culture="multiLangs.default"
+              ></kb-multilang-selector>
             </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <div class="col-md-12">
-                            <div data-bind="component: { name: 'kb-multilang-selector', params: multiLangs }"></div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.name"></label>
-                        <div class="col-md-9">
-                            <input type="text" data-bind="textInput: name, enable: enableName, typeahead: possibleMetaName, items: 6" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">HTTP-equiv</label>
-                        <div class="col-md-9">
-                            <select data-bind="value: httpEquiv, enable: enableHttpEquiv" class="form-control">
-                                <!-- ko foreach: possibleHttpEquiv -->
-                                <option data-bind="value: $data, text: $data"></option>
-                                <!-- /ko -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Charset</label>
-                        <div class="col-md-9">
-                            <input type="text" data-bind="textInput: charset, enable: enableCharset, typeahead: possibleCharset, items: 6" class="form-control">
-                        </div>
-                    </div>
-                    <!-- ko foreach: { data: multiContents, as: 'content' } -->
-                    <div data-bind="collapsein: content.show" class="form-group">
-                        <label class="col-md-3 control-label">
-                            <span data-bind="text: Kooboo.text.component.pageEditor.content"></span>
-                            <!-- ko ifnot: content.isDefault -->
-                            (<!-- ko text: content.name --><!-- /ko -->)
-                            <!-- /ko -->
-                        </label>
-                        <div class="col-md-9">
-                            <textarea type="text" data-bind="value: content.value, enable: content.enable" class="form-control autosize"></textarea>
-                            <div class="btn-group margin-top-10" data-bind="foreach: $component.metaBindingHelpers, visible: $component.metaBindingHelpers().length && content.enable">
-                                <a class="btn btn-xs btn-default" data-bind="text: '{'+$data+'}', click: $component.metaHelp.bind(this, content)" href="javascript:;" style="margin-right: 5px;"></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /ko -->
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"
+              >{{Kooboo.text.common.name}}</label
+            >
+            <div class="col-md-9">
+              <input
+                type="text"
+                v-kb-typeahead="{source:possibleMetaName,items: 6}"
+                class="form-control"
+                :disabled="!enableName"
+                v-model="name"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">HTTP-equiv</label>
+            <div class="col-md-9">
+              <select
+                class="form-control"
+                :disabled="!enableHttpEquiv"
+                v-model="httpEquiv"
+              >
+                <option
+                  v-for="$data in possibleHttpEquiv"
+                  :key="$data"
+                  :value="$data"
+                  >{{$data}}</option
+                >
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label">Charset</label>
+            <div class="col-md-9">
+              <input
+                type="text"
+                v-kb-typeahead="{source:possibleCharset,items: 6}"
+                :disabled="!enableCharset"
+                class="form-control"
+                v-model="charset"
+              />
+            </div>
+          </div>
+          <div
+            v-for="(content,index) in multiContents"
+            :key="index"
+            v-kb-collapsein="content.show"
+            class="form-group"
+          >
+            <label class="col-md-3 control-label">
+              <span>{{Kooboo.text.component.pageEditor.content}}</span>
+              <template v-if="!content.isDefault">
+                {{content.name}}
+              </template>
+            </label>
+            <div class="col-md-9">
+              <textarea
+                type="text"
+                class="form-control autosize"
+                v-model="content.value"
+                :disabled="!content.enable"
+              ></textarea>
+              <template v-for="($data,i) in metaBindingHelpers">
+                <div
+                  class="btn-group margin-top-10"
+                  :key="i"
+                  v-if="content.enable"
+                >
+                  <a
+                    class="btn btn-xs btn-default"
+                    @click="metaHelp($data,content)"
+                    href="javascript:;"
+                    style="margin-right: 5px;"
+                    >{{'{'+$data+'}'}}</a
+                  >
                 </div>
+              </template>
             </div>
-            <div class="modal-footer">
-                <button data-bind="click: save, text: Kooboo.text.common.save" class="btn green"></button>
-                <button data-bind="click: reset, text: Kooboo.text.common.cancel" class="btn gray"></button>
-            </div>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn green" @click="save"
+          >{{Kooboo.text.common.save}}</button
+        >
+        <button @click="reset" class="btn gray"
+          >{{Kooboo.text.common.cancel}}</button
+        >
+      </div>
     </div>
+  </div>
 </div>

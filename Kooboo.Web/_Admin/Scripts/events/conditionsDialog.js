@@ -1,92 +1,102 @@
 ﻿(function() {
-    var template = Kooboo.getTemplate("/_Admin/Scripts/events/conditionsDialog.html");
-    ko.components.register("condition-dialog", {
-        viewModel: function(params) {
-            var self = this;
-
-            self.modalShow = params.modalShow;
-
-            self.conditions = ko.observableArray([])
-
-            params.conditionData.subscribe(function(conditions) {
-                self.conditions.removeAll();
-                conditions.forEach(function(condition) {
-                    var condition = ko.mapping.toJS(condition);
-                    self.conditions.push(new Condition(condition));
-                })
-            })
-
-            self.conditionRule = params.conditionRule;
-
-            self.parameters = ko.observableArray();
-
-            self.addCondition = function() {
-                self.conditions.push(new Condition)
+  var self;
+  Vue.component("kb-condition-dialog", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/events/conditionsDialog.html"
+    ),
+    props: {
+      modalShow: Boolean,
+      conditionData: Array,
+      conditionRule: Object
+    },
+    data: function() {
+      self = this;
+      return {
+        conditions: [],
+        parameters: []
+      };
+    },
+    mounted: function() {
+      Kooboo.BusinessRule.getConditionOption({
+        eventName: Kooboo.getQueryString("name")
+      }).then(function(data) {
+        if (data.success) {
+          $.each(data.model, function() {
+            self.parameters = data.model;
+          });
+        }
+      });
+    },
+    methods: {
+      addCondition: function() {
+        self.conditions.push(self.mapCondition());
+      },
+      removeCondition: function(index) {
+        self.conditions.splice(index, 1);
+      },
+      J_Submit: function() {
+        Kooboo.EventBus.publish("conditionUpdata", {
+          conditions: self.conditions,
+          rule: self.conditionRule
+        });
+        // self.$emit(self.conditions);
+        self.J_Cancel();
+      },
+      J_Cancel: function() {
+        self.$emit("update:modalShow", false);
+      },
+      mapCondition(opt) {
+        var condition = {
+          left: (opt && opt.left) || "",
+          operators: [],
+          operator: (opt && opt.operator) || "",
+          controlType: (opt && opt.controlType) || "",
+          right: (opt && opt.right) || "",
+          selectionValues: (opt && opt.right) || ""
+        };
+        self.changeLeft(condition);
+        return condition;
+      },
+      changeLeft(condition) {
+        if (!condition.left) {
+          condition.left = self.parameters[0].name;
+        }
+        var p = _.find(self.parameters, function(pa) {
+          return pa.name === condition.left;
+        });
+        if (p) {
+          condition.controlType = p.controlType;
+          if (p.controlType === "Selection") {
+            condition.selectionValues = p.selectionValues;
+            if (!condition.right) {
+              condition.right = condition.selectionValues[0].key;
             }
-
-            self.J_Submit = function() {
-                Kooboo.EventBus.publish("conditionUpdata", { conditions: self.conditions(), rule: self.conditionRule() });
-                self.modalShow(false);
-            }
-
-            self.J_Cancel = function() {
-                self.modalShow(false);
-            }
-
-            function Condition(opt) {
-                var _this = this;
-                this.left = ko.observable((opt && opt.left) || "");
-                this.operators = ko.observableArray();
-                this.operator = ko.observable((opt && opt.operator) || "");
-                this.controlType = ko.observable((opt && opt.controlType) || "");
-                this.right = ko.observable((opt && opt.right) || "");
-                this.selectionValues = ko.observable((opt && opt.right) || "")
-                this.availableValues = ko.observableArray([]);
-                _this.selectionValues.subscribe(function(selectionValues) {
-                    if (selectionValues) {
-                        var arr = []
-                        for (var key in selectionValues) {
-                            _this.availableValues.push({ key: key, value: selectionValues[key] })
-                        }
-                    }
-                })
-                if (this.left()) {
-                    var p = self.parameters().filter(function(pa) {
-                        return pa.name === _this.left()
-                    })[0];
-                    if (p.controlType === "Selection") {
-                        _this.controlType(p.controlType);
-                        _this.selectionValues(p.selectionValues);
-                    }
-                    _this.operators(p.operator);
-                }
-                this.left.subscribe(function(paramName) {
-                    var p = self.parameters().filter(function(pa) {
-                        return pa.name === paramName
-                    })[0];
-                    _this.controlType(p.controlType);
-                    if (p.controlType === "Selection") {
-                        _this.selectionValues(p.selectionValues);
-                    } else {
-                        _this.selectionValues("");
-                    }
-                    _this.operators(p.operator);
-                })
-            }
-
-            Kooboo.BusinessRule.getConditionOption({ eventName: Kooboo.getQueryString('name') }).then(function (data) {
-                debugger;
-                if (data.success) {
-                    $.each(data.model, function() {
-                        self.parameters(data.model);
-                    });
-                }
-            })
-
-            self.removeCondition = function(condition) {
-                self.conditions.remove(condition);
-            }
-        },
-        template: template
-    })
-})()
+          } else {
+            condition.selectionValues = "";
+          }
+          condition.operators = p.operator;
+          if (!condition.operator) {
+            condition.operator = condition.operators[0];
+          }
+        }
+      }
+    },
+    computed: {
+      visibleConditionData: function() {
+        return self.modalShow ? self.conditionData : null;
+      }
+    },
+    watch: {
+      visibleConditionData: function(val) {
+        if (!val) {
+          return;
+        }
+        var conditions = [];
+        val.forEach(function(condition) {
+          conditions.push(self.mapCondition(condition));
+        });
+        self.conditions = conditions;
+      }
+    }
+  });
+})();

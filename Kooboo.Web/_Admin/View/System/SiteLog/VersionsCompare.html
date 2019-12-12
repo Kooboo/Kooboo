@@ -1,44 +1,36 @@
 <!-- #layout name=default -->
-<div id="main" class="fixed">
-    <div class="page-header">
-        <h1 class="title">Compare<span> </span>
-            <strong data-bind="text:title1"></strong>
-            <small data-bind="text:id1"></small>
-            <strong> : </strong>
-            <strong data-bind="text:title2"></strong>
-            <small data-bind="text:id2"></small>
-        </h1>
+<div id="main" class="fixed" v-cloak>
+  <div class="page-header">
+    <h1 class="title"
+      >Compare<span> </span>
+      <strong>{{ title1 }}</strong>
+      <small>{{ id1 }}</small>
+      <strong> : </strong>
+      <strong>{{ title2 }}</strong>
+      <small>{{ id2 }}</small>
+    </h1>
+  </div>
+  <div class="block-fullpage with-buttons">
+    <div v-if="dataType == 0" id="compare" style="height: 100%;"></div>
+    <div v-else-if="dataType == 1" class="col-md-12">
+      <div class="col-md-6">
+        <img :src="source1" style="max-width: 100%" />
+      </div>
+      <div class="col-md-6">
+        <img :src="source2" style="max-width: 100%" />
+      </div>
     </div>
-    <div class="block-fullpage with-buttons">
-        <!-- ko if: dataType() == 0 -->
-        <div data-bind="visible: dataType()== 0" id="compare"></div>
-        <!-- /ko -->
-        <!-- ko if: dataType() == 1 -->
-        <div data-bind="visible: dataType()== 1" class="col-md-12">
-            <div class="col-md-6">
-                <img data-bind="attr: { 'src': source1 }" style="max-width: 100%" />
-            </div>
-            <div class="col-md-6">
-                <img data-bind="attr: { 'src': source2 }" style="max-width: 100%" />
-            </div>
-        </div>
-        <!-- /ko -->
-        <div class="page-buttons">
-            <a data-bind="attr: { href: backUrl }" class="btn gray">Back</a>
-        </div>
+    <div class="page-buttons">
+      <a :href="backUrl" class="btn gray">Back</a>
     </div>
+  </div>
 </div>
 
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-            "/_Admin/Scripts/lib/mergely-3.3.10/mergely.min.js"
-        ])
-        Kooboo.loadCSS([
-            "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
-            "/_Admin/Scripts/lib/mergely-3.3.10/mergely.css"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/manacoService/manaco-service.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/System/SiteLog/VersionsCompare.js"></script>

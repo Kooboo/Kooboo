@@ -1,211 +1,305 @@
 <!-- #layout name=blank -->
-<div class="page-header">
+<div id="app" v-cloak>
+  <div class="page-header">
     <h1 class="title">Media library</h1>
     <div class="btn-group pull-right">
-        <a href="javascript:;" data-bind="css: { 'active': curType() == 'list' }, click: changeType.bind(this, 'list'), attr: { title: Kooboo.text.tooltip.image.listView }" class="btn btn-default">
-            <i class="fa fa-list fa-x2"></i>
-        </a>
-        <a href="javascript:;" data-bind="css: { 'active': curType() == 'grid' }, click: changeType.bind(this, 'grid'), attr: { title: Kooboo.text.tooltip.image.gridView }" class="btn btn-default">
-            <i class="fa fa-th"></i>
-        </a>
+      <a
+        href="javascript:;"
+        :class="{ active: curType == 'list' }"
+        @click="changeType('list')"
+        :title="Kooboo.text.tooltip.image.listView"
+        class="btn btn-default"
+      >
+        <i class="fa fa-list fa-x2"></i>
+      </a>
+      <a
+        href="javascript:;"
+        :class="{ active: curType == 'grid' }"
+        @click="changeType('grid')"
+        :title="Kooboo.text.tooltip.image.gridView"
+        class="btn btn-default"
+      >
+        <i class="fa fa-th"></i>
+      </a>
     </div>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'SITES'
-},{
-    name: 'DASHBOARD'
-},{
-    name: Kooboo.text.common.mediaLibrary
-}]}"></div>
-<ul data-bind="foreach: imgTypes" class="nav nav-tabs">
-    <li data-bind="css: { 'active': $parent.curImgType() == $data.value }, click: $parent.changeImgType.bind(this, $data.value)">
-        <a href="javascript:;" data-bind="text: $data.displayName"></a>
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <ul class="nav nav-tabs">
+    <li
+      v-for="$data in imgTypes"
+      :class="{ active: curImgType == $data.value }"
+      @click="changeImgType($data.value)"
+    >
+      <a href="javascript:;">{{ $data.displayName }}</a>
     </li>
-</ul>
-<div class="navbar navbar-default" data-bind="visible: curImgType() == 'all'">
+  </ul>
+  <div class="navbar navbar-default" v-show="curImgType == 'all'">
     <div class="container-fluid">
-        <a data-bind="click: onCreateFolder" class="btn green navbar-btn">New folder</a>
-        <a class="btn green navbar-btn btn-file">
-            <span>Upload images</span>
-            <input data-bind="upload:{
-                allowMultiple: true,
-                acceptTypes: ['image/bmp','image/x-windows-bmp','image/png','image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/x-icon'],
-                acceptSuffix: ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'webp'],
-                callback: uploadImage
-            }" type="file">
-        </a>
-        <a data-bind="click: editImage, visible: selectedFiles().length == 1 && curType() == 'grid' && selectedFiles()[0].type() == 'file'" class="btn green navbar-btn">Edit</a>
-        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+      <a @click="onCreateFolder" class="btn green navbar-btn">New folder</a>
+      <a class="btn green navbar-btn btn-file">
+        <span>Upload images</span>
+        <input v-kb-upload="uploadSetting" type="file" />
+      </a>
+      <a
+        @click="editImage"
+        v-show="selectedFiles.length == 1 && curType == 'grid' && selectedFiles[0].type == 'file'"
+        class="btn green navbar-btn"
+        >Edit</a
+      >
+      <a v-show="showDeleteBtn" @click="onDelete" class="btn red navbar-btn"
+        >Delete</a
+      >
     </div>
-</div>
+  </div>
 
-<div class="page-bar" style="background: #f8f8f8" data-bind="visible: curImgType() == 'all'">
-    <ol data-bind="foreach: crumbPath" class="breadcrumb">
-        <!-- ko ifnot: ($index() == ($parent.crumbPath().length - 1)) -->
-        <li>
-            <a data-bind="click: $parent.onChoosingFolder.bind($data, $data.fullPath), text: $data.name" href="javascript:;"></a>
+  <div
+    class="page-bar"
+    style="background: #f8f8f8"
+    v-show="curImgType == 'all'"
+  >
+    <ol class="breadcrumb">
+      <template v-for="($data, $index) in crumbPath">
+        <li v-if="$index == (crumbPath.length - 1)" class="active" :key="$index"
+          >{{ $data.name }}</li
+        >
+        <li v-else>
+          <a
+            @click="onChoosingFolder($data.fullPath)"
+            href="javascript:;"
+            :key="$index"
+            >{{ $data.name }}</a
+          >
         </li>
-        <!-- /ko -->
-        <!-- ko if: ($index() == ($parent.crumbPath().length - 1)) -->
-        <li data-bind="text: $data.name" class="active"></li>
-        <!-- /ko -->
+      </template>
     </ol>
-</div>
-<!-- ko if: curType() == "list" -->
-<div class="table-responsive">
-    <table data-bind="visible: curType() == 'list'" class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th class="table-checkbox" data-bind="visible: curImgType() == 'all'">
-                    <input data-bind="checked: selectAll, enable: folders().length || files().length" type="checkbox" />
-                </th>
-                <th></th>
-                <th class="table-sortby" data-bind="css: currentOrderCSS('url')">
-                    <a href="javascript:;" data-bind="click: changeSort.bind(this, 'url')">URL<i class="fa"></i></a>
-                </th>
-                <th>Used by</th>
-                <th class="table-sortby table-short" data-bind="css: currentOrderCSS('size')">
-                    <a href="javascript:;" data-bind="click: changeSort.bind(this, 'size')">Size<i class="fa"></i></a>
-                </th>
-                <th class="table-sortby" data-bind="css: currentOrderCSS('date')">
-                    <a href="javascript:;" data-bind="click: changeSort.bind(this, 'date')">Last modified<i class="fa"></i></a>
-                </th>
-                <th class="table-action"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- ko foreach: folders -->
-            <tr data-bind="click: $parent.selectDoc">
-                <td data-bind="visible: $parent.curImgType() == 'all'"><input data-bind="checked: $data.selected, click: $data.onSelect" type="checkbox" /></td>
-                <td class="table-thumbnail" align="right">
-                    <a href="javascript:;">
-                        <i class="table-icon fa fa-folder"></i>
-                    </a>
-                </td>
-                <td>
-                    <a data-bind="click: $parent.onChoosingFolder.bind($data, $data.fullPath())" href="javascript:;">
-                        <!-- ko text: $data.name -->
-                        <!-- /ko -->
-                    </a>
-                </td>
-                <td>-</td>
-                <td data-bind="text: $data.size || '-'"></td>
-                <td data-bind="text: $parent.localDate($data.lastModified)"></td>
-                <td></td>
-            </tr>
-            <!-- /ko -->
-            <!-- ko foreach: { data: files, as: 'file' }-->
-            <tr data-bind="click: $parent.selectDoc">
-                <td data-bind="visible: $parent.curImgType() == 'all'">
-                    <input data-bind="checked: file.selected, click: file.onSelect" type="checkbox" />
-                </td>
-                <td class="table-thumbnail">
-                    <a target="_blank" data-bind="attr: { href: file.previewUrl }, click: function(){ return true; }, clickBubble: false" title="Preview">
-                        <div class="thumbnail-fixed">
-                            <div class="img-wrap"></div>
-                            <img alt="" data-bind="attr: { src: file.thumbnail() }">
-                        </div>
-                    </a>
-                </td>
-                <td data-bind="text: file.url"></td>
-                <td>
-                    <!-- ko if: Object.keys(file.references).length > 0 -->
-                    <!-- ko foreach: { data: Object.keys(file.references), as: 'refer' } -->
-                    <a data-bind="text: file.references[refer]() + ' ' + Kooboo.text.component.table[refer.toLowerCase()], click: $root.getRelation.bind(this, $parent), clickBubble: false, style: { background: Kooboo.getLabelColor(refer) }" href="javascript:;" class="label label-sm kb-table-label-refer"></a>
-                    <!-- /ko -->
-                    <!-- /ko -->
-                    <!-- ko ifnot: Object.keys(file.references).length > 0 -->
-                    -
-                    <!-- /ko -->
-                </td>
-                <td data-bind="text: Kooboo.bytesToSize(file.size()) || '-'"></td>
-                <td data-bind="text: $parent.localDate(file.lastModified)"></td>
-                <td class="table-action">
-                    <!-- ko if: file.mimeType() == 'image/svg+xml' -->
-                    <button class="btn blue disabled" title="Unable to edit SVG" data-bind="click: function(){ return true; }, clickBubble: false">Edit</button>
-                    <!-- /ko -->
-                    <!-- ko ifnot: file.mimeType() == 'image/svg+xml' -->
-                    <button data-bind="click: $parent.editImage, clickBubble: false" class="btn blue">Edit</button>
-                    <!-- /ko -->
-                </td>
-            </tr>
-            <!-- /ko -->
-            <!-- ko if: folders().length + files().length == 0 -->
-            <tr>
-                <td class="text-center" colspan="100">Empty</td>
-            </tr>
-            <!-- /ko -->
-        </tbody>
-    </table>
-</div>
-<!-- /ko -->
+  </div>
 
-<!-- ko if: curType() == "grid" -->
-<div data-bind="visible: curType() == 'grid'" class="grid">
-    <div data-bind="foreach: folders" class="grid-group folders">
-        <div data-bind="click: $parent.selectDoc, css: { 'active': $data.selected }" class="grid-item grid-folder">
-            <a data-bind="click: $parent.onChoosingFolder.bind($data, $data.fullPath()), clickBubble: false" href="javascript:;">
-                <span class="info">
-                    <span data-bind="text: $data.count" class="count"></span>
-                <span data-bind="text: $data.name" class="name"></span>
-                </span>
-            </a>
-            <input data-bind="checked: $data.selected" type="checkbox">
-        </div>
-    </div>
-    <div data-bind="foreach: files" class="grid-group files">
-        <div data-bind="click: $parent.selectDoc, css: { 'grid-img': $data.isImage, active: $data.selected }" class="grid-item">
+  <div class="table-responsive" v-if="curType == 'list'">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="table-checkbox" v-show="curImgType == 'all'">
+            <input
+              v-model="selectAll"
+              :disabled="!folders.length && !files.length"
+              type="checkbox"
+            />
+          </th>
+          <th></th>
+          <th class="table-sortby" :class="currentOrderCSS('url')">
+            <a href="javascript:;" @click="changeSort('url')"
+              >URL<i class="fa"></i
+            ></a>
+          </th>
+          <th>Used by</th>
+          <th class="table-sortby table-short" :class="currentOrderCSS('size')">
+            <a href="javascript:;" @click="changeSort('size')"
+              >Size<i class="fa"></i
+            ></a>
+          </th>
+          <th class="table-sortby" :class="currentOrderCSS('date')">
+            <a href="javascript:;" @click="changeSort('date')"
+              >Last modified<i class="fa"></i
+            ></a>
+          </th>
+          <th class="table-action"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="$data in folders"
+          :key="$data.fullPath"
+          @click="selectDoc($data)"
+        >
+          <td v-show="curImgType == 'all'"
+            ><input
+              style="pointer-events: none;"
+              v-model="$data.selected"
+              type="checkbox"
+          /></td>
+          <td class="table-thumbnail" align="right">
             <a href="javascript:;">
-                <span class="img-wrap"></span>
-                <img alt="" data-bind="attr: { src: $data.thumbnail }">
-                <span class="info">
-                    <span class="name">
-                        <i class="fa fa-file-image-o"></i>
-                        <!-- ko text: $data.name --><!-- /ko -->
-                    </span>
-                </span>
+              <i class="table-icon fa fa-folder"></i>
             </a>
-            <input data-bind="checked: $data.selected" style="pointer-events: none;" type="checkbox">
-        </div>
+          </td>
+          <td>
+            <a
+              @click.stop="onChoosingFolder($data.fullPath)"
+              href="javascript:;"
+            >
+              {{ $data.name }}
+            </a>
+          </td>
+          <td>-</td>
+          <td>{{ $data.size || "-" }}</td>
+          <td>{{ localDate($data.lastModified) }}</td>
+          <td></td>
+        </tr>
+        <tr v-for="file in files" :key="file.id" @click="selectDoc(file)">
+          <td v-show="curImgType == 'all'">
+            <input
+              style="pointer-events: none;"
+              v-model="file.selected"
+              type="checkbox"
+            />
+          </td>
+          <td class="table-thumbnail">
+            <a
+              target="_blank"
+              :href="file.previewUrl"
+              @click.stop
+              title="Preview"
+            >
+              <div class="thumbnail-fixed">
+                <div class="img-wrap"></div>
+                <img alt="" :src="file.thumbnail" />
+              </div>
+            </a>
+          </td>
+          <td>{{ file.url }}</td>
+          <td>
+            <template v-if="Object.keys(file.references).length > 0">
+              <a
+                v-for="refer in Object.keys(file.references)"
+                @click.stop="getRelation(file, refer)"
+                :style="{ background: Kooboo.getLabelColor(refer) }"
+                href="javascript:;"
+                class="label label-sm kb-table-label-refer"
+                >{{ file.references[refer] + " " +
+                Kooboo.text.component.table[refer.toLowerCase()] }}</a
+              >
+            </template>
+            <template v-else>
+              -
+            </template>
+          </td>
+          <td>{{ Kooboo.bytesToSize(file.size) || "-" }}</td>
+          <td>{{ localDate(file.lastModified) }}</td>
+          <td class="table-action">
+            <button
+              v-if="file.mimeType == 'image/svg+xml'"
+              class="btn blue disabled"
+              title="Unable to edit SVG"
+              @click.stop
+              >Edit</button
+            >
+            <button v-else @click.stop="editImage(file)" class="btn blue"
+              >Edit</button
+            >
+          </td>
+        </tr>
+
+        <tr v-if="folders.length + files.length == 0">
+          <td class="text-center" colspan="100">Empty</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div v-if="curType == 'grid'" class="grid">
+    <div class="grid-group folders">
+      <div
+        v-for="$data in folders"
+        :key="$data.fullPath"
+        @click="selectDoc($data)"
+        :class="{active: $data.selected }"
+        class="grid-item grid-folder"
+      >
+        <a @click.stop="onChoosingFolder($data.fullPath)" href="javascript:;">
+          <span class="info">
+            <span class="count">{{ $data.count }}</span>
+            <span class="name">{{ $data.name }}</span>
+          </span>
+        </a>
+        <input
+          @click.stop="selectDoc($data)"
+          type="checkbox"
+        />
+      </div>
     </div>
-</div>
-<!-- /ko -->
+    <div class="grid-group files">
+      <div
+        v-for="$data in files"
+        :key="$data.id"
+        @click="selectDoc($data)"
+        :class="{ 'grid-img': $data.isImage, active: $data.selected }"
+        class="grid-item"
+      >
+        <a href="javascript:;">
+          <span class="img-wrap"></span>
+          <img alt="" :src="$data.thumbnail" />
+          <span class="info">
+            <span class="name">
+              <i class="fa fa-file-image-o"></i>
+              <!-- {{$data.name }} -->
+            </span>
+          </span>
+        </a>
+        <input
+          v-model="$data.selected"
+          style="pointer-events: none;"
+          type="checkbox"
+        />
+      </div>
+    </div>
+  </div>
 
-<div data-bind="component: { name: 'kb-pager', params: pager }"></div>
-
-<div data-bind="modal: newFolderModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+  <kb-pager
+    :page-nr="pager.pageNr"
+    :total-pages="pager.totalPages"
+    @change="changePage"
+  ></kb-pager>
+  <div
+    v-kb-modal="newFolderModal"
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+  >
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button data-bind="click: onNewFolderModalReset" class="close"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">New folder</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Name</label>
-                        <div class="col-md-9">
-                            <input type="text" data-bind="value: folderName, error: folderName" class="form-control">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button data-bind="click: onNewFolderModalSubmit" class="btn green">Save</button>
-                <button data-bind="click: onNewFolderModalReset" class="btn gray">Cancel</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <button @click="onNewFolderModalReset" class="close"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">New folder</h4>
         </div>
+        <div class="modal-body">
+          <kb-form :model="folderForm" :rules="folderRules" ref="folderForm">
+            <kb-form-item prop="name">
+              <label class="col-md-3 control-label">Name</label>
+              <div class="col-md-9">
+                <input
+                  type="text"
+                  v-model="folderForm.name"
+                  class="form-control"
+                  @keydown.enter="onNewFolderModalSubmit"
+                />
+              </div>
+            </kb-form-item>
+          </kb-form>
+        </div>
+        <div class="modal-footer">
+          <button @click="onNewFolderModalSubmit" class="btn green"
+            >Save</button
+          >
+          <button @click="onNewFolderModalReset" class="btn gray"
+            >Cancel</button
+          >
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+  <kb-relation-modal></kb-relation-modal>
+</div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/components/kbRelationModal.js",
-            "/_Admin/Scripts/components/kbPager.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/components/kbRelationModal.js",
+      "/_Admin/Scripts/components/kbPager.js",
+      "/_Admin/Scripts/components/kbForm.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Contents/Images.js"></script>

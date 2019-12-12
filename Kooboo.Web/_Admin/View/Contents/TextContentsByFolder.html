@@ -1,46 +1,97 @@
 <!-- #layout name=blank-->
-<div class="page-header">
-    <h1 class="title" data-bind="text: Kooboo.text.common.Contents + ': ' + folderName()"></h1>
+<div id="app" v-cloak>
+  <div class="page-header">
+    <h1 class="title">{{ Kooboo.text.common.Contents + ": " + folderName }}</h1>
 
     <div>
-        <div class="input-group input-large pull-right">
-            <input type="text" data-bind="value: searchKey, event: { keyup: handleEnter }" class="form-control" style="height: 32px;" placeholder="输入关键字">
-            <div class="input-group-btn">
-                <button class="btn btn-default" data-bind="click: searchStart"><i class="fa fa-search"></i>Search</button>
-            </div>
+      <div class="input-group input-large pull-right">
+        <input
+          type="text"
+          v-model="searchKey"
+          @keyup.enter="searchStart"
+          class="form-control"
+          style="height: 32px;"
+          placeholder="输入关键字"
+        />
+        <div class="input-group-btn">
+          <button class="btn btn-default" @click="searchStart"
+            ><i class="fa fa-search"></i>Search</button
+          >
         </div>
+      </div>
     </div>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params: [{
-    name: 'SITES'
-}, {
-    name: 'DASHBOARD'
-}, {
-    name: Kooboo.text.common.contentFolders,
-    url: Kooboo.Route.Get(Kooboo.Route.TextContent.ListPage)
-}, {
-    name: folderName()
-}] }"></div>
-<div class="navbar navbar-default">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="navbar navbar-default">
     <div class="container-fluid">
-        <a class="btn btn-link disabled navbar-btn" data-bind="visible: isSearching" href="javascript:;">Search result</a>
-        <a data-bind="attr:{'href':newTextContent}, text: Kooboo.text.site.textContent.new + ' ' + folderName(), visible: !isSearching()" class="btn green navbar-btn"></a>
-        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
-        <a data-bind="click: onEditContentType, tooltip: Kooboo.text.site.contentType.editContentType, tooltipPlacement: 'left', visible: !isSearching()" href="javascript:;" class="btn btn-default navbar-btn pull-right"><i class="fa fa-gear"></i></a>
-        <a href="javascript:;" class="btn btn-default navbar-btn pull-right" data-bind="visible: isSearching, click: clearSearching"><i class="fa fa-close"></i></a>
+      <a
+        class="btn btn-link disabled navbar-btn"
+        v-if="isSearching"
+        href="javascript:;"
+        >Search result</a
+      >
+      <a :href="newTextContent" v-else class="btn green navbar-btn">{{
+        Kooboo.text.site.textContent.new + " " + folderName
+      }}</a>
+      <a v-if="selected.length > 0" @click="onDelete" class="btn red navbar-btn"
+        >Delete</a
+      >
+      <a
+        @click="onEditContentType"
+        v-if="!isSearching"
+        v-kb-tooltip:left="Kooboo.text.site.contentType.editContentType"
+        href="javascript:;"
+        class="btn btn-default navbar-btn pull-right"
+        ><i class="fa fa-gear"></i
+      ></a>
+      <a
+        v-else
+        href="javascript:;"
+        class="btn btn-default navbar-btn pull-right"
+        @click="clearSearching"
+        ><i class="fa fa-close"></i
+      ></a>
     </div>
+  </div>
+  <kb-table :data="tableData" show-select :selected.sync="selected">
+    <kb-table-column :label="defaultColumnName">
+      <template v-slot="row">
+        <a :href="row[defaultColumnName].url" @click.stop>{{
+          row[defaultColumnName].text
+        }}</a>
+      </template>
+    </kb-table-column>
+    <kb-table-column :label="Kooboo.text.common.online">
+      <template v-slot="row">
+        <span :class="['label', row.online.class]">{{ row.online.text }}</span>
+      </template>
+    </kb-table-column>
+    <kb-table-column
+      :label="Kooboo.text.common.lastModified"
+      prop="lastModified"
+    ></kb-table-column>
+    <kb-table-column head-class="table-action" body-class="table-action">
+      <template v-slot="row">
+        <a class="btn btn-sm blue" :href="row.Edit.url" @click.stop>
+          {{ row.Edit.text }}
+        </a>
+      </template>
+    </kb-table-column>
+  </kb-table>
+  <kb-pager
+    :page-nr="pager.pageNr"
+    :total-pages="pager.totalPages"
+    @change="changePage"
+  ></kb-pager>
 </div>
-<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
-<div data-bind="component: { name: 'kb-pager', params: pager }"></div>
 
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/components/kbPager.js",
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/components/kbPager.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Contents/TextContentsByFolder.js"></script>

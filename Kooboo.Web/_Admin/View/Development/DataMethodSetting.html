@@ -1,126 +1,114 @@
 ﻿<!-- #layout name=default-->
-<div id="main" class="fixed">
-    <div id="basic-info">
-        <div class="page-header">
-            <!-- ko if: !isNew() -->
-            <h1 class="title pull-left">Method Name<span>:</span>
-                <strong data-bind="text: methodName()"></strong>
-            </h1>
-            <!-- /ko -->
-            <!-- ko if: isNew() -->
-            <h1 data-bind="text: Kooboo.text.site.dataSource.methodName + ': '" class="title pull-left"></h1>
-            <div class="form-group">
-                <input type="text" data-bind="value: methodName, error: methodName" placeholder="name" class="form-control input-medium">
+<div id="main" class="fixed" v-cloak>
+  <div id="basic-info">
+    <div class="page-header">
+      <h1 v-if="!isNew" class="title pull-left"
+        >Method Name<span>:</span>
+        <strong>{{ model.methodName }}</strong>
+      </h1>
+      <template v-else>
+        <h1 class="title pull-left"
+          >{{ Kooboo.text.site.dataSource.methodName + ': ' }}</h1
+        >
+        <kb-form simple ref="methodForm" :model="model" :rules="rules">
+          <kb-form-item
+            prop="methodName"
+            v-slot="error"
+          >
+            <div class="form-group" :class="{'has-error' : !!error.error }">
+              <input
+                type="text"
+                class="form-control input-medium"
+                placeholder="name"
+                v-model="model.methodName"
+                v-kb-tooltip:right.manual.error="error.error"
+              />
             </div>
-            <!-- /ko -->
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <!-- ko if: isFolder -->
-                <div class="wizard" data-toggle="wizard">
-                    <div class="wrapper">
-                        <a class="wizard-nav-item active" href="javascript:;" data-step="choose-folder">Select folder<b></b></a>
-                        <a class="wizard-nav-item" href="javascript:;" data-step="configure">Configure<b></b></a>
-                    </div>
-                </div>
-                <!-- /ko -->
-                <!-- ko if: isFolder -->
-                <div class="wizard-body" data-step="choose-folder" style="display: block;">
-                    <div id="using_json" class="margin-bottom-15"></div>
-
-                    <div data-bind="visible: !hasFolder()">
-                        <div class="alert alert-info">
-                            <p>Create your first folder and Refresh this dialog.</p>
-                            <p>
-                                <a data-bind="attr: {href: textContentsUrl}" href="" target="_blank" class="btn green">Create folder</a>
-                                <a href="javascript:location.reload()" target="_self" class="btn btn-line">Refresh</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <!-- /ko -->
-
-                <div class="wizard-body" data-step="configure" data-bind="style: {display: !!isFolder() ? 'none' : 'block' }">
-                    <div class="form-horizontal">
-
-                        <!-- ko foreach: parameterBinding -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "normal" -->
-                        <!-- ko component: {
-                            name: "control-string",
-                            params: {key: value.displayName, value: value.binding}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "textarea" -->
-                        <!-- ko component: {
-                            name: "control-textarea",
-                            params: {key: value.displayName, value: value.binding}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "checkbox" -->
-                        <!-- ko component: {
-                            name: "control-checkbox",
-                            params: {key: value.displayName, value: value.binding}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "dictionary" -->
-                        <!-- ko component: {
-                            name: "control-dictionary",
-                            params: {key: value.displayName, value: value.binding}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "collection" -->
-                        <!-- ko component: {
-                            name: "control-collection",
-                            params: {key: value.displayName, value: value.binding}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "orderby" -->
-                        <!-- ko component: {
-                            name: "control-order",
-                            params: {key: value.displayName, value: value.binding, fieldsOfCurrentFolder: $root.fieldsOfCurrentFolder}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: value.controlType.toLowerCase() === "contentfilter" -->
-                        <!-- ko component: {
-                            name: "control-filter",
-                            params: {key: value.displayName, value: value.binding, fieldsOfCurrentFolder: $root.fieldsOfCurrentFolder}
-                        } -->
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- /ko -->
-                    </div>
-                </div>
+          </kb-form-item>
+        </kb-form>
+      </template>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div v-show="isFolder">
+          <div class="wizard" data-toggle="wizard">
+            <div class="wrapper">
+              <a
+                class="wizard-nav-item active"
+                href="javascript:;"
+                data-step="choose-folder"
+                >Select folder<b></b
+              ></a>
+              <a
+                class="wizard-nav-item"
+                href="javascript:;"
+                data-step="configure"
+                >Configure<b></b
+              ></a>
             </div>
+          </div>
 
+          <div
+            class="wizard-body"
+            data-step="choose-folder"
+            style="display: block;"
+          >
+            <div id="using_json" class="margin-bottom-15"></div>
+
+            <div v-if="!hasFolder">
+              <div class="alert alert-info">
+                <p>Create your first folder and Refresh this dialog.</p>
+                <p>
+                  <a :href="textContentsUrl" target="_blank" class="btn green"
+                    >Create folder</a
+                  >
+                  <a
+                    href="javascript:location.reload()"
+                    target="_self"
+                    class="btn btn-line"
+                    >Refresh</a
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div class="wizard-body" data-step="configure" v-show="!isFolder">
+          <div class="form-horizontal">
+            <component
+              v-for="(item, index) in parameterBinding"
+              :is="getControlName(item.value.controlType)"
+              :key="index"
+              :name="item.value.displayName"
+              :value="item.value.binding"
+              :fields="fieldsOfCurrentFolder"
+              @change="changeParameterBinding"
+            ></component>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="page-buttons">
-        <button data-bind="click: submit" class="btn green btn-submit-methodsettings" type="submit">Save</button>
-        <a class="btn gray" data-bind="click: dataSourceUrl" href="">Cancel</a>
-    </div>
+  </div>
+  <div class="page-buttons">
+    <button
+      @click="submit"
+      class="btn green btn-submit-methodsettings"
+      type="submit"
+      >Save</button
+    >
+    <a class="btn gray" @click="dataSourceUrl" href="javascript:;">Cancel</a>
+  </div>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/lib/jstree.min.js",
-            "/_Admin/Scripts/tableModel.js"
-        ])
-        Kooboo.loadCSS(["/_Admin/Styles/jstree/style.min.css"]);
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/lib/jstree.min.js",
+      "/_Admin/Scripts/components/kbForm.js",
+      "/_Admin/Scripts/components/extensionEditor/controls.js"
+    ]);
+    Kooboo.loadCSS(["/_Admin/Styles/jstree/style.min.css"]);
+  })();
 </script>
 <script src="/_Admin/View/Development/DataMethodSetting.js"></script>

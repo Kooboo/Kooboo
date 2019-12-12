@@ -1,182 +1,230 @@
 ﻿<!-- #layout name=blank-->
-<div class="page-header">
+<div id="app" v-cloak>
+  <div class="page-header">
     <h1 class="title">Event</h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'SITES'
-},{
-    name: 'DASHBOARD'
-},{
-    name: Kooboo.text.common.Event
-}] }"></div>
-<div class="block-rules" id="J_RulesContainer">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="block-rules" id="J_RulesContainer">
     <div class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="btn-group navbar-btn">
-                <button class="btn green" data-toggle="dropdown"><span>New rule</span> <i class="fa fa-angle-down"></i></button>
-                <ul class="dropdown-menu" data-bind="foreach: ruleTypes">
-                    <li>
-                        <a href="#" data-bind="text: displayName, click: $root.addRule.bind($data, $root.rules) "></a>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid">
+        <div class="btn-group navbar-btn">
+          <button class="btn green" data-toggle="dropdown"
+            ><span>New rule</span> <i class="fa fa-angle-down"></i
+          ></button>
+          <ul class="dropdown-menu">
+            <li v-for="$data in ruleTypes" :key="$data">
+              <a href="javascript:;" @click.prevent="addRule(rules, $data) "
+                >{{ $data }}</a
+              >
+            </li>
+          </ul>
         </div>
+      </div>
     </div>
-    <div class="blank-page-text" data-bind="visible: rules().length === 0">
-        <p>You do not have any rules yet.</p>
+    <div class="blank-page-text" v-if="rules.length === 0">
+      <p>You do not have any rules yet.</p>
     </div>
-    <div data-bind="sortable: { data: rules, connectClass: 'root-rules', options: { handle: '.sortable' } }" data-rules-prop="rules">
-
-        <div data-bind="template: { data: $data, name: 'RuleTemplate-' + ruleType() }" class="top-level-rule-holder"></div>
+    <div v-else v-kb-sortable="rules">
+      <div v-for="(rule,index) in rules" :key="index">
+        <component
+          :is="rule.component"
+          :rule="rule"
+          :rules="rules"
+          :rule-index="index"
+        ></component>
+      </div>
     </div>
-    <div data-bind="visible: shouldShowSaveButton">
-        <button type="button" class="btn green" data-bind="click: save">Save</button>
+    <div v-if="shouldShowSaveButton">
+      <button type="button" class="btn green" @click="save">Save</button>
     </div>
+  </div>
+  <kb-condition-dialog
+    :modal-show.sync="conditionDialogShow"
+    :condition-data="conditionData"
+    :condition-rule="conditionRule"
+  ></kb-condition-dialog>
+  <kb-activity-dialog
+    :modal-show.sync="activityDialogShow"
+    :activity-data="activityData"
+    @on-save="saveActivity"
+  ></kb-activity-dialog>
 </div>
-<condition-dialog params="modalShow: conditionDialogShow, conditionData: conditionData, conditionRule: conditionRule"></condition-dialog>
-<activity-dialog params="modalShow: activityDialogShow, activityData: activityData, onSave: saveActivity"></activity-dialog>
+
 <script>
-    (function() {
-        Kooboo.fieldEditor = {};
-        Kooboo.contentFolderEditor = {};
-    })()
+  (function() {
+    Kooboo.fieldEditor = {};
+    Kooboo.contentFolderEditor = {};
+  })();
 </script>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/kobindings.sortable.js",
-            "/_Admin/Scripts/events/RuleType-IfElse.js",
-            "/_Admin/Scripts/events/RuleType-Always.js",
-            "/_Admin/Scripts/events/activityDialog.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/lib/jquery-ui-customized.js",
-            "/_Admin/Scripts/events/conditionsDialog.js",
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js"
-        ])
-        Kooboo.loadCSS([
-            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/events/RuleType-IfElse.js",
+      "/_Admin/Scripts/events/RuleType-Always.js",
+      "/_Admin/Scripts/events/activityDialog.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/events/conditionsDialog.js"
+    ]);
+  })();
 </script>
-<script type="text/html" id="RuleTemplate-IfElse">
-    <div class="panel panel-default J_Rule">
-        <div class="panel-heading">
-            <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-            <a class="btn btn-xs btn-link pull-left margin-right-10" data-bind="click: $root.toggleRule">
-                <i class="fa fa-chevron-right" data-bind="css: { 'fa-chevron-right': !expanded(), 'fa-chevron-down': expanded }"></i>
-            </a>
-            <a class="btn btn-xs dark pull-right" data-bind="click: $root.removeRule" href="javascript:;"><i class="fa fa-minus"></i></a>
-            <div data-bind="visible: !expanded(), template: { name: 'RuleSummaryTemplate-' + ruleType(), data: $data }"></div>
-        </div>
-        <div class="panel-body J_Detail" data-bind="visible: expanded">
-            <div class="form-horizontal">
-                <div class="form-group">
-                    <label class="col-md-2">IF</label>
-                    <div class="col-md-10">
-                        <div class="condition">
-                            <a class="label label-info" data-bind="html: window.RuleTypes['IfElse'].conditionsSummary($data), click: $root.ifelseRule.editCondition.bind($data, $data)"></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2">THEN</label>
-                    <div class="col-md-10">
-                        <div data-bind="sortable: { data: then, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }" data-rules-prop="then">
-                            <div data-bind="template: { data: $data, name: 'RuleTemplate-' + ruleType() }"></div>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-xs blue" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
-                            <ul class="dropdown-menu">
-                                <!-- ko foreach: $root.ruleTypes -->
-                                <li>
-                                    <a href="#" data-bind="click: $root.addRule.bind($data, $parent.then), text: displayNameWhenNotInTopLevel"></a>
-                                </li>
-                                <!-- /ko -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2">ELSE</label>
-                    <div class="col-md-10">
-                        <div data-bind="sortable: { data: $data['else'], connectClass: $root.generateSortableConnectClass(), options: { handle: '.icon.drag' } }" data-rules-prop="else">
-                            <div data-bind="template: { data: $data, name: 'RuleTemplate-' + ruleType() }"></div>
-                        </div>
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-xs blue" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
-                            <ul class="dropdown-menu">
-                                <!-- ko foreach: $root.ruleTypes -->
-                                <li>
-                                    <a href="#" data-bind="click: $root.addRule.bind($data, $parent['else']), text: displayNameWhenNotInTopLevel"></a>
-                                </li>
-                                <!-- /ko -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+<script type="text/x-template" id="RuleTemplate-IfElse">
+  <div class="panel panel-default J_Rule">
+    <div class="panel-heading">
+      <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
+      <a
+        class="btn btn-xs btn-link pull-left margin-right-10"
+        @click="$root.toggleRule(rule)"
+      >
+        <i
+          class="fa fa-chevron-right"
+          :class="[rule.expanded ? 'fa-chevron-down' : 'fa-chevron-right']"
+        ></i>
+      </a>
+      <a
+        class="btn btn-xs dark pull-right"
+        @click="$root.removeRule(rule, rules, ruleIndex)"
+        href="javascript:;"
+        ><i class="fa fa-minus"></i
+      ></a>
+      <component v-show="!rule.expanded" :is="rule.component+'-summary'" :rule="rule" :rules="rules"></component>
+    </div>
+    <div class="panel-body J_Detail" v-show="rule.expanded">
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="col-md-2">IF</label>
+          <div class="col-md-10">
+            <div class="condition">
+              <a
+                class="label label-info"
+                @click="editCondition(rule)"
+                v-html="conditionsSummary(rule)"
+              ></a>
             </div>
+          </div>
         </div>
-    </div>
-</script>
-<script type="text/html" id="RuleSummaryTemplate-IfElse">
-    <div class="summary-text">
-        <span>IF</span>
-        <span class="label blue" data-bind="html: window.RuleTypes['IfElse'].conditionsSummary($data, '[' + Kooboo.text.component.event.noCondition + ']')"></span>
-        <!-- ko if: then().length > 0 -->
-        <span>THEN</span>
-        <span class="label blue" data-toggle="expand-rule" data-bind="html: window.RuleTypes['IfElse'].branchSummary(then()), tooltip: window.RuleTypes['IfElse'].branchTooltip(then())"></span>
-        <!-- /ko -->
-        <!-- ko if: $data['else']().length > 0 -->
-        <span>ELSE</span>
-        <span class="label blue" data-toggle="expand-rule" data-bind="html: window.RuleTypes['IfElse'].branchSummary($data['else']()), tooltip: window.RuleTypes['IfElse'].branchTooltip($data['else']())"></span>
-        <!-- /ko -->
-    </div>
-</script>
-<script type="text/html" id="RuleTemplate-Do">
-    <div class="panel panel-default J_Rule">
-        <div class="panel-heading">
-            <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-            <a class="btn btn-xs btn-link pull-left margin-right-10" data-bind="click: $root.toggleRule">
-                <i class="fa fa-chevron-right" data-bind="css: { 'fa-chevron-right': !expanded(), 'fa-chevron-down': expanded }"></i>
-            </a>
-            <a class="btn btn-xs dark pull-right" data-bind="click: $root.removeRule" href="javascript:;"><i class="fa fa-minus"></i></a>
-            <div data-bind="visible: !expanded(), template: { name: 'RuleSummaryTemplate-' + ruleType(), data: $data }"></div>
-        </div>
-        <div class="list-group-wrapper J_Detail" data-bind="visible: expanded">
-            <ul class="list-group" data-bind="sortable: { data: activity, connectClass: $root.generateSortableConnectClass(), options: { handle: '.sortable' } }, visible: activity().length > 0">
-                <li class="list-group-item">
-                    <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-                    <a class="btn btn-xs pull-right gray" href="#" data-bind="click: $root.removeActivity.bind($data, $parent.activity)"><i class="fa fa-minus"></i></a>
-                    <a class="btn btn-xs pull-right blue margin-right-10" href="#" data-bind="click: $root.editActivity.bind(this, $parent, $data)"><i class="fa fa-pencil"></i></a>
-                    <span class="text" data-bind="text: name"></span>
-                </li>
-            </ul>
+        <div class="form-group">
+          <label class="col-md-2">THEN</label>
+          <div class="col-md-10">
+            <div
+            v-kb-sortable="rule.then"
+            >
+              <div v-for="(then ,index) in rule.then" :key="index">
+                <component :is="then.component" :rule="then" :rules="rule.then"></component>
+              </div>
+            </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-xs blue dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
-                <!-- ko if: $root.availableCodes.length > 0 -->
-                <ul class="dropdown-menu" data-bind="foreach: $root.availableCodes">
-                    <li>
-                        <a href="#" data-bind="text: displayName, click: $root.addActivity.bind(this, $parent, $data);"></a>
-                    </li>
-                </ul>
-                <!-- /ko -->
-                <!-- ko if: $root.availableCodes.length == 0 -->
-                <ul class="dropdown-menu">
-                    <li>
-                        <a data-bind="click: $root.createCode, text: Kooboo.text.site.code.noActivityAndCreate" href="javascript:;"></a>
-                    </li>
-                </ul>
-                <!-- /ko -->
+              <button type="button" class="btn btn-xs blue" data-toggle="dropdown"
+                ><i class="fa fa-plus"></i
+              ></button>
+              <ul class="dropdown-menu">
+                <li v-for="(item, index) in $root.ruleTypes" :key="index">
+                  <a
+                    href="javascript:;"
+                    @click.prevent="$root.addRule(rule.then, item)"
+                    >{{ item }}</a
+                  >
+                </li>
+              </ul>
             </div>
+          </div>
         </div>
+        <div class="form-group">
+          <label class="col-md-2">ELSE</label>
+          <div class="col-md-10">
+            <div
+            v-kb-sortable="rule.else"
+              data-rules-prop="else">
+              <div v-for="(els ,index) in rule.else" :key="index">
+                <component :is="els.component" :rule="els" :rules="rule.else"></component>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button type="button" class="btn btn-xs blue" data-toggle="dropdown"
+                ><i class="fa fa-plus"></i
+              ></button>
+              <ul class="dropdown-menu">
+                <li v-for="(item, index) in $root.ruleTypes" :key="index">
+                  <a
+                    href="javascript:;"
+                    @click.prevent="$root.addRule(rule.else, item)"
+                    >{{ item }}</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </script>
-<script type="text/html" id="RuleSummaryTemplate-Do">
-    <div class="summary-text">
-        <span>DO</span>
-        <span class="label blue" data-toggle="expand-rule" data-bind="html: window.RuleTypes['Do'].activitiesSummary($data), tooltip: window.RuleTypes['Do'].activitiesTooltip($data)"></span>
-    </div>
+<script type="text/x-template" id="RuleSummaryTemplate-IfElse">
+  <div class="summary-text">
+      <span>IF</span>
+      <span class="label blue" v-html="conditionsSummary(rule, '[' + Kooboo.text.component.event.noCondition + ']')"></span>
+     <template v-if="rule.then.length > 0">
+      <span>THEN</span>
+      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.then)" v-kb-tooltip.html="branchTooltip(rule.then)" data-container="#J_RulesContainer"></span>
+     </template>
+     <template v-if="rule.else.length > 0">
+      <span>ELSE</span>
+      <span class="label blue" data-toggle="expand-rule" v-html="branchSummary(rule.else)" v-kb-tooltip.html="branchTooltip(rule.else)" data-container="#J_RulesContainer"></span>
+     </template>
+  </div>
+</script>
+<script type="text/x-template" id="RuleTemplate-Do">
+  <div class="panel panel-default J_Rule">
+      <div class="panel-heading">
+          <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
+          <a
+          class="btn btn-xs btn-link pull-left margin-right-10"
+          @click="$root.toggleRule(rule)"
+        >
+          <i
+            class="fa fa-chevron-right"
+            :class="[rule.expanded ? 'fa-chevron-down' : 'fa-chevron-right']"
+          ></i>
+        </a>
+
+        <a
+        class="btn btn-xs dark pull-right"
+        @click="$root.removeRule(rule, rules, ruleIndex)"
+        href="javascript:;"
+        ><i class="fa fa-minus"></i
+      ></a>
+      <component v-show="!rule.expanded" :is="rule.component+'-summary'" :rule="rule" :rules="rules"></component>
+      </div>
+      <div class="list-group-wrapper J_Detail" v-show="rule.expanded">
+          <ul class="list-group" v-if="rule.activity.length > 0" v-kb-sortable="rule.activity">
+              <li class="list-group-item" v-for="($data, $index) in rule.activity" :key="$index">
+                  <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
+                  <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity(rule.activity, $index)"><i class="fa fa-minus"></i></a>
+                  <a class="btn btn-xs pull-right blue margin-right-10" href="javascript:;" @click.prevent="$root.editActivity($data, $index)"><i class="fa fa-pencil"></i></a>
+                  <span class="text">{{ $data.name }}</span>
+              </li>
+          </ul>
+          <div class="btn-group">
+              <button type="button" class="btn btn-xs blue dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+              <ul v-if="$root.availableCodes.length > 0" class="dropdown-menu">
+                  <li v-for="($data, $index) in $root.availableCodes" :key="$index">
+                      <a href="javascript:;" @click.prevent="$root.addActivity(rule, $data)">{{ $data.displayName }}</a>
+                  </li>
+              </ul>
+              <ul v-else class="dropdown-menu">
+                  <li>
+                      <a @click="$root.createCode" href="javascript:;">{{ Kooboo.text.site.code.noActivityAndCreate }}</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</script>
+<script type="text/x-template" id="RuleSummaryTemplate-Do">
+  <div class="summary-text">
+      <span>DO</span>
+      <span class="label blue" data-toggle="expand-rule" v-html="activitiesSummary(rule)" v-kb-tooltip.html="activitiesTooltip(rule)" data-container="#J_RulesContainer"></span>
+  </div>
 </script>
 <script src="/_Admin/View/Events/Event.js"></script>

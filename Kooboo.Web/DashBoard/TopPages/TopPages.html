@@ -1,50 +1,63 @@
 ﻿<div class="row" id="top-pages">
-    <div class="col-md-12" data-bind="visible: charts().length">
-        <!--ko foreach: charts-->
-        <div class="margin-bottom-5">
-            <div data-bind="text: $data.name, attr: { title: $data.name }" class="text-nowrap" style="overflow: hidden; text-overflow: ellipsis;"></div>
-            <div class="progress" data-bind="tooltip: 'PV: '+ $data.value">
-                <div class="progress-bar progress-bar-info" data-bind="style: { width: $data.width }">
-                    <span class="sr-only" data-bind="text: 'Page view: '+ $data.value"></span>
-                </div>
-            </div>
+  <div class="col-md-12" v-if="charts.length">
+    <div
+      class="margin-bottom-5"
+      v-for="($data, index) in charts"
+      :key="index"
+    >
+      <div
+        :title="$data.name"
+        class="text-nowrap"
+        style="overflow: hidden; text-overflow: ellipsis;"
+        >{{ $data.name }}</div
+      >
+      <div class="progress" v-kb-tooltip="'PV: '+ $data.value">
+        <div
+          class="progress-bar progress-bar-info"
+          :style="{ width: $data.width }"
+        >
+          <span class="sr-only">{{ "Page view: " + $data.value }}</span>
         </div>
-        <!-- /ko -->
+      </div>
     </div>
-    <div data-bind="visible: !charts().length">
-        <div class="item col-md-12">
-            <div class="number">---</div>
-            <small class="text-muted" data-bind="text: Kooboo.text.dashboard.noPageViewed"></small>
-        </div>
+  </div>
+  <div v-else>
+    <div class="item col-md-12">
+      <div class="number">---</div>
+      <small
+        class="text-muted"
+      >{{ Kooboo.text.dashboard.noPageViewed }}</small>
     </div>
-    <div class="hide">
-        <div k-repeat="item model" k-repeat-self="true" class="hide-item">
-            <input type="text" class="item-count" k-attributes="value item.Count;">
-            <input type="text" class="item-name" k-attributes="value item.Name;">
-        </div>
+  </div>
+  <div class="hide">
+    <div k-repeat="item model" k-repeat-self="true" class="hide-item">
+      <input type="text" class="item-count" k-attributes="value item.Count;" />
+      <input type="text" class="item-name" k-attributes="value item.Name;" />
     </div>
+  </div>
 </div>
 <script>
-    $(function() {
-
-        var topModel = function() {
-            var self = this;
-
-            this.charts = ko.observableArray();
-        }
-
-        var vm = new topModel();
-        ko.applyBindings(vm, document.getElementById("top-pages"));
-
+  $(function() {
+    new Vue({
+      el: "#top-pages",
+      data: function() {
+        return {
+          charts: []
+        };
+      },
+      mounted: function() {
+        var self = this;
         var maxCount = 0;
         $("#top-pages .hide-item").each(function(idx, el) {
-            (idx == 0) && (maxCount = $(".item-count", el).val());
+          idx == 0 && (maxCount = $(".item-count", el).val());
 
-            vm.charts.push({
-                name: $(".item-name", el).val(),
-                value: $(".item-count", el).val(),
-                width: ($(".item-count", el).val() / maxCount) * 99 + "%"
-            })
-        })
-    })
+          self.charts.push({
+            name: $(".item-name", el).val(),
+            value: $(".item-count", el).val(),
+            width: ($(".item-count", el).val() / maxCount) * 99 + "%"
+          });
+        });
+      }
+    });
+  });
 </script>

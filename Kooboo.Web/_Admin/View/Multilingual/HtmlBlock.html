@@ -1,44 +1,54 @@
 <!-- #layout name=default -->
 <div id="main" class="with-button">
-    <div class="page-header">
-        <h1 class="title" data-bind="visible: name(), text: Kooboo.text.common.HTMLblock + ': ' + name()"></h1>
+  <div class="page-header">
+    <h1 class="title">{{Kooboo.text.common.HTMLblock + ': ' + name}}</h1>
+  </div>
+
+  <div class="col-md-8 col-md-offset-2 margin-bottom-25 form-horizontal">
+    <div v-for="(item,index) in contents" v-if="item.show" class="form-group">
+      <label
+        class="control-label col-md-2"
+        :class="{ 'text-muted': item.abbr == multiLangs.default}"
+        >{{ Kooboo.text.common.Content + ' (' + (item.abbr !==
+        multiLangs.default ? item.abbr : Kooboo.text.site.htmlblock.readOnly )+
+        ')'}}</label
+      >
+      <div class="col-md-10">
+        <textarea
+          v-if="item.abbr === multiLangs.default"
+          v-model="item.value"
+          v-kb-richeditor="{editorConfig: {
+                    toolbar: false,
+                    readonly: true,
+                    content_style: '#tinymce[contenteditable=false] {word-wrap: break-word;-webkit-line-break: after-white-space;}',
+                    min_height: 300,
+                    max_height: 600
+                }}"
+          style="opacity: 0"
+        ></textarea>
+        <textarea
+          v-else
+          v-model="item.value"
+          v-kb-richeditor="richeditor(item.value)"
+          style="opacity: 0"
+        ></textarea>
+      </div>
     </div>
-    <div class="col-md-8 col-md-offset-2 margin-bottom-25 form-horizontal">
-        <!-- ko foreach: contents -->
-        <div data-bind="visible: $data.show" class="form-group">
-            <label data-bind="text: Kooboo.text.common.Content + ' (' + ($data.abbr !== $parent.multiLangs().default ? $data.abbr : Kooboo.text.site.htmlblock.readOnly )+ ')', css: { 'text-muted': $data.abbr == $parent.multiLangs().default }" class="control-label col-md-2"></label>
-            <div class="col-md-10">
-                <!-- ko if: $data.abbr == $parent.multiLangs().default -->
-                <textarea data-bind="richeditor: $data.value, editorConfig: {
-                    toolbar: false, 
-                    readonly: true, 
-                    content_style: '#tinymce[contenteditable=false] {word-wrap: break-word;-webkit-line-break: after-white-space;}', 
-                    height: 280
-                }" style="opacity: 0"></textarea>
-                <!-- /ko -->
-                <!-- ko ifnot: $data.abbr == $parent.multiLangs().default -->
-                <textarea data-bind="richeditor: $data.value" style="opacity: 0"></textarea>
-                <!-- /ko -->
-            </div>
-        </div>
-        <!-- /ko -->
-    </div>
-    <div class="page-buttons">
-        <button data-bind="click: onSubmit" class="btn green">Save</button>
-        <a data-bind="attr: { href: cancelUrl }" class="btn gray">Cancel</a>
-    </div>
-    <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+  </div>
+  <div class="page-buttons">
+    <button @click="onSubmit" class="btn green">Save</button>
+    <a :href="cancelUrl()" class="btn gray">Cancel</a>
+  </div>
+  <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
 
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-            "/_Admin/Scripts/kobindings.richeditor.js",
-            "/_Admin/Scripts/components/kbMultilangSelector.js",
-            "/_Admin/Scripts/components/kb-media-dialog.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+      "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
+      "/_Admin/Scripts/components/kb-media-dialog.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Multilingual/HtmlBlock.js"></script>

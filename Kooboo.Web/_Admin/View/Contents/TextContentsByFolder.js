@@ -1,146 +1,156 @@
 $(function() {
-    var ContentType = function() {
-        var self = this;
-        this.tableData = ko.observable({});
-        this.newTextContent = Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
-            folder: Kooboo.getQueryString("folder")
+  var self;
+  var folderId = Kooboo.getQueryString("folder") || location.hash;
+
+  new Vue({
+    el: "#app",
+    data: function() {
+      self = this;
+      return {
+        tableData: [],
+        selected: [],
+        newTextContent: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
+          folder: Kooboo.getQueryString("folder")
+        }),
+        folderName: "",
+        contentTypeId: "",
+        pager: {},
+        searchKey: "",
+        cacheData: null,
+        isSearching: false,
+        defaultColumnName: ""
+      };
+    },
+    mounted: function() {
+      Kooboo.TextContent.getByFolder().then(function(res) {
+        if (res.success) {
+          self.cacheData = res.model;
+          self.handleData(res.model);
+        }
+      });
+      Kooboo.ContentFolder.getFolderInfoById({
+        id: folderId
+      }).then(function(res) {
+        if (res.success) {
+          self.folderName = res.model.name;
+          self.contentTypeId = res.model.contentTypeId;
+        }
+      });
+    },
+    computed: {
+      breads: function() {
+        return [
+          {
+            name: "SITES"
+          },
+          {
+            name: "DASHBOARD"
+          },
+          {
+            name: Kooboo.text.common.contentFolders,
+            url: Kooboo.Route.Get(Kooboo.Route.TextContent.ListPage)
+          },
+          {
+            name: self.folderName
+          }
+        ];
+      }
+    },
+    methods: {
+      onEditContentType: function() {
+        window.open(
+          Kooboo.Route.Get(Kooboo.Route.ContentType.DetailPage, {
+            id: self.contentTypeId
+          })
+        );
+      },
+      searchStart: function() {
+        if (this.searchKey) {
+          Kooboo.TextContent.search({
+            folderId: folderId,
+            keyword: self.searchKey
+          }).then(function(res) {
+            if (res.success) {
+              self.handleData(res.model);
+              self.isSearching = true;
+            }
+          });
+        } else {
+          this.isSearching = false;
+          self.handleData(this.cacheData);
+        }
+      },
+      clearSearching: function() {
+        this.searchKey = "";
+        this.isSearching = false;
+        self.handleData(this.cacheData);
+      },
+      dataMapping: function(data) {
+        var columnName = self.getDefaultColumnName(data);
+        self.defaultColumnName = columnName;
+        return data.map(function(item) {
+          var ob = {};
+          ob[columnName] = {
+            text: item.values[columnName],
+            url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
+              folder: Kooboo.getQueryString("folder"),
+              id: item.id
+            })
+          };
+          ob.lastModified = new Date(item.lastModified).toDefaultLangString();
+          ob.online = {
+            text: item.online ? Kooboo.text.online.yes : Kooboo.text.online.no,
+            class: item.online
+              ? "label-sm label-success"
+              : "label-sm label-default"
+          };
+          ob.id = item.id;
+          ob.Edit = {
+            text: Kooboo.text.common.edit,
+            url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
+              folder: Kooboo.getQueryString("folder"),
+              id: item.id
+            })
+          };
+          return ob;
         });
-        this.folderName = ko.observable("");
-        this.contentTypeId = ko.observable("");
-        var folderId = Kooboo.getQueryString("folder") || location.hash;
-        this.pager = ko.observable();
-
-        this.onEditContentType = function() {
-            window.open(Kooboo.Route.Get(Kooboo.Route.ContentType.DetailPage, {
-                id: this.contentTypeId()
-            }))
+      },
+      getDefaultColumnName: function(records) {
+        if (!!records && records instanceof Array && records.length > 0) {
+          return Object.keys(records[0].values)[0];
         }
-
-        this.cacheData = null;
-
-        this.searchKey = ko.observable("");
-        this.handleEnter = function(m, e) {
-            if (e.keyCode == 13) {
-                this.searchStart();
-            }
-        }
-        this.isSearching = ko.observable(false);
-        this.searchStart = function() {
-            if (this.searchKey()) {
-                Kooboo.TextContent.search({
-                    folderId: folderId,
-                    keyword: self.searchKey()
-                }).then(function(res) {
-                    if (res.success) {
-                        handleData(res.model);
-                        self.isSearching(true);
-                    }
-                })
-            } else {
-                this.isSearching(false);
-                handleData(this.cacheData);
-            }
-        }
-
-        this.clearSearching = function() {
-            this.searchKey("");
-            this.isSearching(false);
-            handleData(this.cacheData);
-        }
-
-        function dataMapping(data) {
-            var tempArr = [];
-            var columnName = getDefaultColumnName(data);
-            data.forEach(function(item) {
-                var ob = {};
-                ob[columnName] = {
-                    text: item.values[columnName],
-                    url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
-                        folder: Kooboo.getQueryString("folder"),
-                        id: item.id
-                    })
-                }
-                ob.lastModified = new Date(item.lastModified).toDefaultLangString();
-
-                ob.online = {
-                    text: item.online ? Kooboo.text.online.yes : Kooboo.text.online.no,
-                    class: item.online ? "label-sm label-success" : "label-sm label-default"
-                };
-                ob.id = item.id;
-                ob.Edit = {
-                    text: Kooboo.text.common.edit,
-                    url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {
-                        folder: Kooboo.getQueryString("folder"),
-                        id: item.id
-                    })
-                }
-                tempArr.push(ob);
-            })
-            return tempArr;
-        }
-
-        function getDefaultColumnName(records) {
-            if (!!records && records instanceof Array && records.length > 0) {
-                return Object.keys(records[0].values)[0];
-            }
-        }
-
-        function handleData(data) {
-            self.pager(data);
-            var ob = {
-                columns: [{
-                    displayName: Kooboo.text.common.online,
-                    fieldName: "online",
-                    type: "label"
-                }, {
-                    displayName: Kooboo.text.common.lastModified,
-                    fieldName: "lastModified",
-                    type: "text"
-                }],
-                kbType: "TextContent"
-            }
-            var columnName = getDefaultColumnName(data.list);
-            ob.columns.unshift({
-                displayName: columnName,
-                fieldName: columnName,
-                type: "link"
-            });
-            ob.docs = dataMapping(data.list);
-            ob.tableActions = [{
-                fieldName: "Edit",
-                type: "link-btn",
-            }]
-            self.tableData(ob);
-        }
-
-        Kooboo.TextContent.getByFolder().then(function(res) {
+      },
+      handleData: function(data) {
+        self.pager = data;
+        self.tableData = self.dataMapping(data.list);
+      },
+      onDelete: function() {
+        if (confirm(Kooboo.text.confirm.deleteItems)) {
+          var ids = self.selected.map(function(row) {
+            return row.id;
+          });
+          Kooboo.TextContent.Deletes({
+            ids: JSON.stringify(ids)
+          }).then(function(res) {
             if (res.success) {
-                self.cacheData = res.model;
-                handleData(res.model);
+              self.tableData = _.filter(self.tableData, function(row) {
+                return ids.indexOf(row.id) === -1;
+              });
+              self.selected = [];
+              window.info.show(Kooboo.text.info.delete.success, true);
             }
-        })
-
-        Kooboo.ContentFolder.getFolderInfoById({
-            id: folderId
+          });
+        }
+      },
+      changePage: function(page) {
+        Kooboo.TextContent.getByFolder({
+          pageNr: page
         }).then(function(res) {
-            if (res.success) {
-                self.folderName(res.model.name)
-                self.contentTypeId(res.model.contentTypeId);
-            }
-        })
-
-        Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
-
-            Kooboo.TextContent.getByFolder({
-                pageNr: page
-            }).then(function(res) {
-                if (res.success) {
-                    handleData(res.model);
-                }
-            })
-        })
+          if (res.success) {
+            self.handleData(res.model);
+          }
+        });
+      }
     }
-
-    ContentType.prototype = new Kooboo.tableModel(Kooboo.Page.name);
-    ko.applyBindings(new ContentType, document.getElementById("main"));
-})
+  });
+});

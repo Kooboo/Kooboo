@@ -175,6 +175,18 @@
       chooseAction: "Choose action"
     },
 
+    system: {
+      serverName: "Server name",
+      serverAddress: "Server address"
+    },
+
+    account: {
+      sendResetEmailTip:
+        "After submiting your request, we will send you a verification mail, please check in time",
+      youAreNotAdmin:
+        "You are not administrator of current organization, you do not have access to organization profile."
+    },
+
     online: {
       yes: "online_YES",
       no: "online_NO"
@@ -505,7 +517,8 @@
       minimalChecked: "Minimal checked",
       maximumChecked: "Maximum checked",
       minimalLength: "Minimal length",
-      maximumLength: "Maximum length"
+      maximumLength: "Maximum length",
+      domainInvalid: "invalid domain",
     },
 
     action: {
@@ -821,7 +834,8 @@
         siteName: "Site name",
         siteNameHint: "Start with letters and no space allowed",
         domainHint: "Give your site a domain that other people can access.",
-        useThisTemplate: "Use this template"
+        useThisTemplate: "Use this template",
+        subDomain: "SubDomain"
       },
       demandModal: {
         publishDemand: "Publish a demand",
@@ -868,7 +882,23 @@
     site: {
       sites: {
         takeOffline: "Take offline",
-        takeOnline: "Take online"
+        takeOnline: "Take online",
+        transferAWebsiteTip:
+          "Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.",
+        templatesTip:
+          "Share or use templates made by public users or from your organization private packages.",
+        createTip:
+          "Create a blank new website, and use well defined elements to develop your website.",
+        importTip:
+          "Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.",
+        createModalTip:
+          "Create a blank new website, and use well defined elements to develop your website.",
+        onlineVersionCloneTip:
+          "* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.",
+        automatically:
+          "System will add thumbnails automatically if user don't upload any thumbnail.",
+        shareTip:
+          "Share your website as a template for public users or within your organization."
       },
       setting: {
         addNewLanguage: "Add new language",
@@ -909,7 +939,9 @@
         position: "Position",
         copyPage: "Copy page",
         fromLayout: "From layout",
-        previewInMobile: "Preview in mobile"
+        previewInMobile: "Preview in mobile",
+        redirectRoutesTip:
+          "Set the redirect pages for default home page, 404 and error pages"
       },
       layout: {
         copyLayout: "Copy layout"
@@ -1168,7 +1200,9 @@
       noAddressYet:
         "You don't have a address yet, please add a new address before composing a email.",
       attachments: " Attachment(s)",
-      noAddressFound: "No address found"
+      noAddressFound: "No address found",
+      wildcardTip:
+        "Use * to represent any characters. * is required and only one * is allowed"
     },
 
     commerce: {
