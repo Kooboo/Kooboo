@@ -1,6 +1,6 @@
 <!-- #layout name=default -->
 <div id="main" class="fixed" v-cloak>
-  <div class="page-header">
+  <div class="page-header" style="min-width: 920px;">
     <template v-if="isNewCode">
       <div class="form-inline pull-left margin-right-10">
         <div class="form-group">
@@ -17,8 +17,7 @@
       </div>
     </template>
     <template v-else>
-      <h1
-        class="title pull-left"
+      <h1 class="title pull-left"
         >Script<span>:</span>
         <strong :title="name">{{name}}</strong>
       </h1>

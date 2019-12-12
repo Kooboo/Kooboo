@@ -42,9 +42,14 @@
       }
     },
     watch: {
-      available: function(val) {
-        if (val && val[0]) {
-          this.dataCenter = val[0].value;
+      isShow: function(val) {
+        if (!val && this.available && this.available[0]) {
+          this.dataCenter = this.available[0].value;
+        }
+      },
+      available: function() {
+        if (this.available && this.available[0]) {
+          this.dataCenter = this.available[0].value;
         }
       }
     }

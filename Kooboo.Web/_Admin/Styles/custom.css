@@ -353,6 +353,10 @@ blockquote footer,
   display: none;
 }
 
+.tox-dialog--width-lg{
+  height: 70% !important;
+}
+
 /* editable-input */
 .editable-input .input-sm {
   font-size: 12px;
