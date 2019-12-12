@@ -339,7 +339,7 @@
   <key id="Record">Record</key>
   <key id="example: www">example: www</key>
   <key id="Site">Site</key>
-  <key id="domain name keyword">domain name keyword</key>
+  <key id="domain name keyword">Domain name keyword</key>
   <key id="Suggested domains">Suggested domains</key>
   <key id="Price">Price</key>
   <key id="First year">First year</key>
@@ -1371,7 +1371,7 @@
   <key id="Debugger not started">Debugger not started</key>
   <key id="Debug engine not started or has ended">Debug engine not started or has ended</key>
   <key id="Never">Never</key>
-  <key id="invalid domain">invalid domain</key>
+  <key id="invalid domain">Invalid domain</key>
   <key id="Setting not found">Setting not found</key>
   <key id="Form not found">Form not found</key>
   <key id="Job can not edit, you may delete and create a new one">Job can not edit, you may delete and create a new one</key>

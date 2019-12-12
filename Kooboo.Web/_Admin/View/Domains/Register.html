@@ -238,7 +238,7 @@
       },
       methods: {
         search: function() {
-          var validResult = Kooboo.validField(self.domain, [
+          var validResult = Kooboo.validField(self.domain.trim(), [
             { required: Kooboo.text.validation.required },
             {
               pattern: /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/,
@@ -248,7 +248,7 @@
           self.error = validResult.msg;
           if (!validResult.valid) return;
           Kooboo.Domain.searchDomain({
-            domain: self.domain
+            domain: self.domain.trim()
           }).then(function(data) {
             self.suggests = data.model;
             self.posted = true;
