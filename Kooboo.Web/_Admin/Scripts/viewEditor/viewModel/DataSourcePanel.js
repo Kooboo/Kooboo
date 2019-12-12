@@ -95,9 +95,10 @@
         });
       },
       removeChildren: function(item, ids) {
+        var self = this;
         if (item.children.length) {
           _.forEach(item.children, function(child) {
-            this.removeChildren(child, ids);
+            self.removeChildren(child, ids);
             if (!child.isPublic) {
               ActionStore.deleteMethodById(child.methodId);
               ids.push(child.id);

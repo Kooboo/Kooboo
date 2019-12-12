@@ -356,3 +356,10 @@ blockquote footer,
 .tox-dialog--width-lg{
   height: 70% !important;
 }
+
+/* editable-input */
+.editable-input .input-sm {
+  font-size: 12px;
+  height: auto;
+  padding: 5px 10px;
+}
