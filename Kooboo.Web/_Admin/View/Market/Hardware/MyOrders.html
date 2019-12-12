@@ -13,9 +13,7 @@
     ></kb-table-column>
     <kb-table-column :label="Kooboo.text.common.type" head-class="table-short">
       <template v-slot="row">
-        <span :class="['label', row.type.class]" v-kb-tooltip="row.type.tooltip"
-          >{{ row.type.text }}</span
-        >
+        <span :class="['label', row.type.class]">{{ row.type.text }}</span>
       </template>
     </kb-table-column>
     <kb-table-column
@@ -23,9 +21,7 @@
       head-class="table-short"
     >
       <template v-slot="row">
-        <span :class="['label', row.amount.class]" v-kb-tooltip="row.amount.tooltip"
-          >{{ row.amount.text }}</span
-        >
+        <span :class="['label', row.amount.class]">{{ row.amount.text }}</span>
       </template>
     </kb-table-column>
     <kb-table-column
@@ -33,7 +29,7 @@
       head-class="table-short"
     >
       <template v-slot="row">
-        <span :class="['label', row.startTime.class]" v-kb-tooltip="row.startTime.tooltip"
+        <span :class="['label', row.startTime.class]"
           >{{ row.startTime.text }}</span
         >
       </template>
@@ -43,7 +39,7 @@
       head-class="table-short"
     >
       <template v-slot="row">
-        <span :class="['label', row.endMonth.class]" v-kb-tooltip="row.endMonth.tooltip"
+        <span :class="['label', row.endMonth.class]"
           >{{ row.endMonth.text }}</span
         >
       </template>
@@ -70,7 +66,6 @@
 <script>
   (function() {
     Kooboo.loadJS([
-      "/_Admin/Scripts/tableModel.js",
       "/_Admin/Scripts/components/kbBreadcrumb.js",
       "/_Admin/Scripts/components/kbTable.js",
       "/_Admin/Scripts/components/kbPager.js",
