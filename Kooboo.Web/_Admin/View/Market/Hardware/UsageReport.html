@@ -1,6 +1,5 @@
 <!-- #layout name=blank --sideType='market'-->
-
-<div id="app">
+<div id="app" v-cloak>
   <div class="page-header">
     <h1 class="title">Hardwares</h1>
   </div>
@@ -19,7 +18,7 @@
               <a href="javascript:;">{{ $data.displayName }}</a>
             </li>
           </ul>
-          <div class="col-md-8">
+          <div class="col-md-7">
             <div class="row">
               <div class="panel panel-default">
                 <div class="panel-heading">
@@ -31,7 +30,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h3 class="panel-title">Logs</h3>
@@ -47,11 +46,15 @@
                       <small class="text-muted">Month</small>
                     </div>
                     <div class="item col-md-3">
-                      <div class="number">{{ currentData.totalName }}</div>
+                      <div class="number" :title="currentData.totalName"
+                        >{{ currentData.totalName }}</div
+                      >
                       <small class="text-muted">Total</small>
                     </div>
                     <div class="item col-md-3">
-                      <div class="number">{{ currentData.usedName }}</div>
+                      <div class="number" :title="currentData.usedName"
+                        >{{ currentData.usedName }}</div
+                      >
                       <small class="text-muted">Used</small>
                     </div>
                     <div class="item col-md-3">
@@ -66,9 +69,9 @@
                 <table class="table Logs-table" style="margin-bottom: -10px;">
                   <thead>
                     <tr>
-                      <th>Content</th>
-                      <th>Date</th>
-                      <th>Count</th>
+                      <th style="width: calc(100% - 200px)">Content</th>
+                      <th style="width: 120px;">Date</th>
+                      <th style="width: 80px;">Count</th>
                     </tr>
                   </thead>
                   <tbody v-if="!logsLoading">
@@ -108,6 +111,12 @@
     </div>
   </div>
 </div>
+<style>
+  .block-dashboard-stat .item {
+    padding: 0 5px;
+    text-align: center;
+  }
+</style>
 <script>
   (function() {
     Kooboo.loadJS([
