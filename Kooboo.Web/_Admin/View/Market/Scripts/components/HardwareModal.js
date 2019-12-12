@@ -55,7 +55,7 @@
         if (!this.posted) return true;
         var result = Kooboo.validField(Number(self.quantity), [
           { required: Kooboo.text.validation.required },
-          { min: 1, message: Kooboo.text.validate.minimalValue + 1 }
+          { min: 1, message: Kooboo.text.validate.minimalValue + " " + 1 }
         ]);
         this.error = result.msg;
         return result.valid;

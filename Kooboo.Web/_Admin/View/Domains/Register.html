@@ -6,7 +6,7 @@
         <h1 class="title">Register a domain</h1>
       </div>
       <div v-if="!confirm">
-        <div class="form-group">
+        <div class="form-group" :class="{'has-error':error}">
           <div class="input-group">
             <input
               type="text"
@@ -242,7 +242,7 @@
             { required: Kooboo.text.validation.required },
             {
               pattern: /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/,
-              message: Kooboo.text.validation.urlInvalid
+              message: Kooboo.text.validate.domainInvalid
             }
           ]);
           self.error = validResult.msg;
