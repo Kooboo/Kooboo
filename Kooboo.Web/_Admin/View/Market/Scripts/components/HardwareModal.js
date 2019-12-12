@@ -63,6 +63,7 @@
       onHide: function() {
         var self = this;
         self.error = "";
+        self.posted = false;
         self.title = "";
         self.symbol = "";
         self.variants.forEach(function(vari) {

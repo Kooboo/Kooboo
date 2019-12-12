@@ -32,7 +32,7 @@
             <div class="col-md-4">
               <div class="item">
                 <div class="number">
-                  <a @click.stop="onChangeDC">{{currentDataCenter}}</a>
+                  <a style="cursor: pointer;" @click.stop="onChangeDC">{{currentDataCenter}}</a>
                 </div>
                 <small class="text-muted">Data center</small>
               </div>
@@ -41,7 +41,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4 block-dashboard-stat">
+    <!-- <div class="col-md-4 block-dashboard-stat">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">Balance</h4>
@@ -64,16 +64,16 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 
 
-  <data-center-modal v-if="showDataCenterModal" :available="availableDataCenters"></data-center-modal>
-  <user-verify-modal v-if="showUserVerifyModal" email="userEmail"></user-verify-modal>
-  <kb-recharge-modal :isShow.sync="showRechargeModal"></kb-recharge-modal>
+  <data-center-modal :is-show.sync="showDataCenterModal" :available="availableDataCenters"></data-center-modal>
+  <user-verify-modal :is-show.sync="showUserVerifyModal" :email="userEmail"></user-verify-modal>
+<!--  <kb-recharge-modal :isShow.sync="showRechargeModal"></kb-recharge-modal>
 
   <currency-modal v-if="showCurrencyModal" :code= "currencyCode"></currency-modal>
-  <topup-history-modal v-if="showTopupHistoryModal"></topup-history-modal>
+  <topup-history-modal v-if="showTopupHistoryModal"></topup-history-modal>-->
 
 
 
@@ -83,7 +83,14 @@
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kbBreadcrumb.js",
-      "/_Admin/Scripts/lib/waterfall.min.js"
+      "/_Admin/Scripts/lib/waterfall.min.js",
+      "/_Admin/Scripts/components/UserVerifyModal.js",/*
+      "/_Admin/View/Market/Scripts/components/CurrencyModal.js",
+      "/_Admin/View/Market/Scripts/components/RechargeModal.js",
+      "/_Admin/View/Market/Scripts/components/TopupHistoryModal.js",*/
+      "/_Admin/View/Market/Scripts/components/DataCenterModal.js",
+      "/_Admin/Scripts/components/kbForm.js"
+
     ]);
   })();
 </script>

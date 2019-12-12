@@ -17,8 +17,9 @@ $(function() {
                 currencySymbol:undefined,
                 currencyCode:undefined,
                 userEmail:undefined,
-                showUserVerifyModal:undefined,
-                showRechargeModal:undefined
+                showUserVerifyModal:false,
+                showRechargeModal:false,
+                showDataCenterModal:false
 
 
 
@@ -53,7 +54,7 @@ $(function() {
                             }
                         });
                     }
-                })
+                });
                 Kooboo.User.getUser().then(function(res) {
                     if (res.success) {
                         self.userEmail = res.model.emailAddress;

@@ -1,5 +1,5 @@
 (function() {
-  Vue.component("data-center-modal", {
+  Vue.component("user-verify-modal", {
     template: Kooboo.getTemplate(
       "/_Admin/Scripts/components/UserVerifyModal.html"
     ),
@@ -9,6 +9,9 @@
     },
     data: function() {
       return {
+        model: {
+          email: ""
+        },
         rules: {
           email: [
             {
@@ -26,12 +29,11 @@
     methods: {
       onHide: function() {
         this.$refs.form.clearValid();
-        this.model.email = "";
         this.$emit("update:isShow", false);
       },
       onSubmit: function() {
         var self = this;
-        if (this.$refs.form.valdate()) {
+        if (this.$refs.form.validate && this.$refs.form.validate()) {
           Kooboo.User.verifyEmail({
             email: self.model.email
           }).then(function(res) {
@@ -43,11 +45,11 @@
         }
       }
     },
-    computed: {
-      model: function() {
-        return {
-          email: this.email
-        };
+    watch: {
+      isShow: function(val) {
+        if (val) {
+          this.model.email = this.email;
+        }
       }
     }
   });
