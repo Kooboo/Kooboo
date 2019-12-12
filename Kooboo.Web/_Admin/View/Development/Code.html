@@ -47,9 +47,9 @@
       :key="item.value"
       :class="{active:item.value==currentTab}"
     >
-      <a href="javascript:;" @click="onTabClick(item.value)">{{
-        item.displayName
-      }}</a>
+      <a href="javascript:;" @click="onTabClick(item.value)"
+        >{{ item.displayName }}</a
+      >
     </li>
   </ul>
   <kb-table :data="model" show-select :selected.sync="selectedRows">
@@ -75,11 +75,8 @@
           :key="index"
           @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Code.name)"
         >
-          {{
-            item.value +
-              " " +
-              Kooboo.text.component.table[item.key.toLowerCase()]
-          }}
+          {{ item.value + " " +
+          Kooboo.text.component.table[item.key.toLowerCase()] }}
         </a>
       </template>
     </kb-table-column>
@@ -127,17 +124,20 @@
           <h4 class="modal-title">API Generation</h4>
         </div>
         <div class="modal-body" v-if="showApiModal">
-          <div class="row">
-            <div class="wizard">
-              <div class="wrapper">
-                <span
-                  v-for="(item,index) in steps"
-                  :class="{active:index==currentStepIndex}"
-                  >{{ item }}<b></b
-                ></span>
+          <div style="overflow: hidden;">
+            <div class="row" style="min-width: 600px;">
+              <div class="wizard">
+                <div class="wrapper">
+                  <span
+                    v-for="(item,index) in steps"
+                    :class="{active:index==currentStepIndex}"
+                    >{{ item }}<b></b
+                  ></span>
+                </div>
               </div>
             </div>
           </div>
+
           <div v-show="currentStepIndex==0">
             <table class="table table-hover">
               <tbody>
@@ -210,7 +210,8 @@
                   <div class="media-body">
                     <h4 class="media-heading">{{ item.name }}</h4>
                     <p
-                      >{{item.actions.filter(function(act){ return act.selected }).map(function(act){return act.type }).join(' / ')}}</p
+                      >{{item.actions.filter(function(act){ return act.selected
+                      }).map(function(act){return act.type }).join(' / ')}}</p
                     >
                   </div>
                 </div>
