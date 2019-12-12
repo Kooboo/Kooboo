@@ -29,13 +29,6 @@
           self.isShow = true;
           self.refreshFields();
           self.text = data.text;
-          if (
-            !_.some(self.fields, function(item) {
-              return _.some(item.list, { name: data.text });
-            })
-          ) {
-            self.text = ""; // dirty binding
-          }
         }
       });
 
