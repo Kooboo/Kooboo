@@ -1,5 +1,5 @@
 <!-- #layout name=blank -->
-<div id="app">
+<div id="app" v-cloak>
   <div class="page-header">
     <h1 class="title">Urls</h1>
   </div>
@@ -123,7 +123,13 @@
   ></kb-pager>
   <kb-relation-modal></kb-relation-modal>
 </div>
-
+<style>
+  .editable-input .input-sm {
+    font-size: 14px;
+    height: auto;
+    padding: 4px 10px;
+  }
+</style>
 <script>
   Kooboo.loadJS([
     "/_Admin/Scripts/lib/x-editable/bootstrap-editable.min.js",
