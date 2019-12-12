@@ -64,15 +64,6 @@
         var self = this;
         self.error = "";
         self.posted = false;
-        self.title = "";
-        self.symbol = "";
-        self.variants.forEach(function(vari) {
-          vari.selected = false;
-        });
-        self.variants = [];
-        self.currentVar = null;
-        self.totalPrice = 0;
-        self.quantity = null;
         self.$emit("update:isShow", false);
       },
       onSelectType: function(m) {
@@ -109,23 +100,10 @@
             }
           });
         }
-      }
-    },
-    watch: {
-      isShow: function(show) {
-        var self = this;
-        self.$nextTick(function() {
-          if (show) {
-            var defaultVar = self.variants[0];
-            defaultVar.selected = true;
-            self.currentVar = defaultVar;
-            self.quantity = defaultVar.quantity;
-            self.totalPrice = self.quantity * defaultVar.price;
-          }
-        });
       },
-      data: function(data) {
+      handleData: function() {
         var self = this;
+        var data = self.data;
         self.id = data.id;
         self.title = data.name;
         self.symbol = data.symbol;
@@ -147,6 +125,21 @@
             quantity: va.quantity,
             selected: false
           };
+        });
+      }
+    },
+    watch: {
+      isShow: function(show) {
+        var self = this;
+        self.$nextTick(function() {
+          if (show) {
+            self.handleData();
+            var defaultVar = self.variants[0];
+            defaultVar.selected = true;
+            self.currentVar = defaultVar;
+            self.quantity = defaultVar.quantity;
+            self.totalPrice = self.quantity * defaultVar.price;
+          }
         });
       },
       quantity: function(quantity) {
