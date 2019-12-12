@@ -322,32 +322,13 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-        public bool CheckOut(ApiCall call)
-        {
-            string strsiteid = call.GetValue("SiteId");
-            Guid SiteId;
-            if (!System.Guid.TryParse(strsiteid, out SiteId))
-            {
-                return false;
-            }
+        public bool CheckOut(Guid SiteId, long Id, ApiCall call)
+        { 
             var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
             if (website == null)
             {
                 return false;
-            }
-
-            string strid = call.GetValue("id");
-            long id = -1;
-
-            if (!string.IsNullOrEmpty(strid))
-            {
-                if (!long.TryParse(strid, out id))
-                {
-                    return false;
-                }
-            }
-            else
-            { return false; }
+            } 
 
             string subdomain = call.GetValue("SubDomain");
             string rootdomain = call.GetValue("RootDomain");
@@ -362,7 +343,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var newwebsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(website.OrganizationId, SiteName, fulldomain, call.Context.User.Id);
 
-            Kooboo.Sites.Service.LogService.CheckOut(call.WebSite.SiteDb(), newwebsite.SiteDb(), id);
+            Kooboo.Sites.Service.LogService.CheckOut(call.WebSite.SiteDb(), newwebsite.SiteDb(), Id);
 
             return true;
 
