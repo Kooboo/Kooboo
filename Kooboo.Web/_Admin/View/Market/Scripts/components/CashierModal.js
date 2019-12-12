@@ -84,7 +84,6 @@
         var order = self.order;
         order.paymentMethod = self.paymentMethod;
         order.returnPath = location.pathname;
-
         if (self.paymentMethod == "coupon") {
           order.code = self.couponCode;
         }

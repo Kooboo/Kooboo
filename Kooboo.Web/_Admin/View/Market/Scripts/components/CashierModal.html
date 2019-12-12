@@ -16,7 +16,7 @@
         ></button>
         <h4 class="modal-title">{{Kooboo.text.common.pay}}</h4>
       </div>
-      <div class="modal-body" v-if="!isPaying">
+      <div class="modal-body" v-show="!isPaying">
         <div class="form-horizontal">
           <div class="form-group">
             <label class="control-label col-md-3" style="text-align: left;"
@@ -58,7 +58,7 @@
           </li>
         </ul>
       </div>
-      <div class="modal-body" v-else>
+      <div class="modal-body" v-show="isPaying">
         <div id="qr-code" style="text-align:center"></div>
       </div>
       <div class="modal-footer">
