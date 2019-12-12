@@ -76,6 +76,7 @@
           </tr>
         </tbody>
       </table>
+      <p style="text-align: center;margin: 50px;" v-if="!suggests.length&&posted">Empty</p>
       <template v-if="confirm">
         <table class="table">
           <thead>
@@ -205,7 +206,8 @@
           organizationId: "",
           showQrcode: false,
           paymentId: "",
-          interval: null
+          interval: null,
+          posted: false
         };
       },
       mounted: function() {
@@ -233,6 +235,7 @@
             domain: self.domain
           }).then(function(data) {
             self.suggests = data.model;
+            self.posted = true;
           });
         },
         select: function(item, amount) {
