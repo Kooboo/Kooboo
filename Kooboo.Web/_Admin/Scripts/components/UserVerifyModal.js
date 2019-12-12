@@ -9,6 +9,9 @@
     },
     data: function() {
       return {
+        model: {
+          email: ""
+        },
         rules: {
           email: [
             {
@@ -26,7 +29,6 @@
     methods: {
       onHide: function() {
         this.$refs.form.clearValid();
-        this.model.email = "";
         this.$emit("update:isShow", false);
       },
       onSubmit: function() {
@@ -43,11 +45,11 @@
         }
       }
     },
-    computed: {
-      model: function() {
-        return {
-          email: this.email
-        };
+    watch: {
+      isShow: function(val) {
+        if (val) {
+          this.model.email = this.email;
+        }
       }
     }
   });
