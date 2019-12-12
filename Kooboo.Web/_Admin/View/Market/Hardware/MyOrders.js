@@ -24,7 +24,13 @@ $(function() {
       };
     },
     mounted: function() {
+      var self = this;
       this.getList();
+      Kooboo.EventBus.subscribe("kb/market/cashier/done", function() {
+        setTimeout(function() {
+          self.getList();
+        }, 200);
+      });
     },
     methods: {
       changePage: function(page) {
