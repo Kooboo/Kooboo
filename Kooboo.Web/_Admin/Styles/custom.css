@@ -352,3 +352,7 @@ blockquote footer,
 [v-cloak] {
   display: none;
 }
+
+.tox-dialog--width-lg{
+  height: 70% !important;
+}
