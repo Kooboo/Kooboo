@@ -352,3 +352,10 @@ blockquote footer,
 [v-cloak] {
   display: none;
 }
+
+/* editable-input */
+.editable-input .input-sm {
+  font-size: 12px;
+  height: auto;
+  padding: 5px 10px;
+}
