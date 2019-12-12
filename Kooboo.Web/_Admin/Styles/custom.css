@@ -304,6 +304,8 @@ blockquote footer,
 
 .block-dashboard-stat .number {
   font-size: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .table .table-short {
@@ -341,8 +343,10 @@ blockquote footer,
   text-align: center;
 }
 
-.Logs-table > tbody > tr > td {
-  max-width: 200px;
+.Logs-table {
+  table-layout: fixed
+}
+.Logs-table > tbody > tr > td:first-child {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

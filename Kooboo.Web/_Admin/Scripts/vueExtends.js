@@ -21,8 +21,8 @@ Vue.directive("kb-tooltip", {
       template: binding.modifiers.error
         ? '<div class="tooltip error" role="tooltip" style="z-index:' +
           zIndex +
-          ';width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-          : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+          ';width: max-content;word-wrap: break-word;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+          : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;word-wrap: break-word;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
       container: $el.data("container") || "body"
     });
 
