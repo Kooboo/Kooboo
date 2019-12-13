@@ -517,7 +517,8 @@
       minimalChecked: "Minimal checked",
       maximumChecked: "Maximum checked",
       minimalLength: "Minimal length",
-      maximumLength: "Maximum length"
+      maximumLength: "Maximum length",
+      domainInvalid: "invalid domain",
     },
 
     action: {

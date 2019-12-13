@@ -74,7 +74,7 @@ $(function() {
           { required: true, message: Kooboo.text.validation.required },
           {
             pattern: /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/,
-            message: Kooboo.text.validation.urlInvalid
+            message: Kooboo.text.validate.domainInvalid
           }
         ];
         self.domainValidateModel = Kooboo.validField(self.domain, rule);
