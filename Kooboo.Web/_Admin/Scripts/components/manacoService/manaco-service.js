@@ -113,6 +113,7 @@ var MonacoEditorService =
             monaco = window.monaco;
             self.isLoader = true;
             callback(monaco);
+            define = undefined;
           });
         }
       });
