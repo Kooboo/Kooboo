@@ -1,6 +1,6 @@
 $(function() {
   var cropper, self;
-  var vm = new Vue({
+  new Vue({
     el: "#main",
     data: function() {
       self = this;
@@ -41,6 +41,25 @@ $(function() {
         rotate: 0,
         isImageChange: false
       };
+    },
+    mounted: function() {
+      var id = Kooboo.getQueryString("Id");
+      if (!id) {
+        return;
+      }
+      Kooboo.Media.Get({
+        Id: id
+      }).then(function(res) {
+        if (res.success) {
+          self.filename = res.model.name;
+          self.linkText = res.model.url;
+          self.link = res.model.fullUrl;
+          self.altText = res.model.alt || "";
+          self._altText = self.altText;
+          self.src = res.model.siteUrl;
+          self._src = self.src;
+        }
+      });
     },
     methods: {
       toggleMode: function() {
@@ -180,21 +199,4 @@ $(function() {
       self = null;
     }
   });
-
-  var id = Kooboo.getQueryString("Id");
-
-  id &&
-    Kooboo.Media.Get({
-      Id: id
-    }).then(function(res) {
-      if (res.success) {
-        vm.filename = res.model.name;
-        vm.linkText = res.model.url;
-        vm.link = res.model.fullUrl;
-        vm.altText = res.model.alt || "";
-        vm._altText = vm.altText;
-        vm.src = res.model.siteUrl;
-        vm._src = vm.src;
-      }
-    });
 });
