@@ -1,5 +1,6 @@
 $(function() {
   var cropper, self;
+  var id = Kooboo.getQueryString("Id");
   new Vue({
     el: "#main",
     data: function() {
@@ -43,7 +44,6 @@ $(function() {
       };
     },
     mounted: function() {
-      var id = Kooboo.getQueryString("Id");
       if (!id) {
         return;
       }
@@ -144,6 +144,7 @@ $(function() {
               : (self.rotate = self.rotate + 1);
             break;
         }
+        self.resetCropper();
       },
       submitEdit: function() {
         Kooboo.Media.imageUpdate(self.getUpdateData()).then(function(res) {
@@ -186,15 +187,6 @@ $(function() {
     watch: {
       aspectRatio: function(ratio) {
         cropper.setAspectRatio(ratio);
-      },
-      width: function() {
-        self.resetCropper();
-      },
-      height: function() {
-        self.resetCropper();
-      },
-      rotate: function() {
-        self.resetCropper();
       }
     },
     beforeDestory: function() {
