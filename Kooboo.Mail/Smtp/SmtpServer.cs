@@ -18,9 +18,19 @@ namespace Kooboo.Mail.Smtp
 {
     public class SmtpServer : Kooboo.Tasks.IWorkerStarter
     {
+        internal static Logging.ILogger _logger;
+        private static long _nextConnectionId;
+
+        static SmtpServer()
+        {
+            _logger = Logging.LogProvider.GetLogger("smtp", "socket");
+        }
+
         private CancellationTokenSource _cancellationTokenSource;
         private TcpListener _listener;
-        internal ConcurrentDictionary<string, int> _connections;
+        private Task _listenTask;
+        private Heartbeat _heartbeat;
+        internal SmtpConnectionManager _connectionManager;
 
         public SmtpServer(string name)
             : this(name, 25)
@@ -37,7 +47,9 @@ namespace Kooboo.Mail.Smtp
             Name = name;
             Port = port;
             Certificate = cert;
-            _connections = new ConcurrentDictionary<string, int>();
+
+            _connectionManager = new SmtpConnectionManager(Options.MaxConnections);
+            _heartbeat = new Heartbeat(_connectionManager);
         }
 
         [JsonIgnore]
@@ -51,7 +63,9 @@ namespace Kooboo.Mail.Smtp
 
         public bool AuthenticationRequired { get; set; }
 
-        public async void Start()
+        public SmtpServerOptions Options { get; set; } = new SmtpServerOptions();
+
+        public void Start()
         {
             // 第一层端口占用保护
             if (Lib.Helper.NetworkHelper.IsPortInUse(Port))
@@ -83,21 +97,9 @@ namespace Kooboo.Mail.Smtp
                 }
             }
 
-            _cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = _cancellationTokenSource.Token;
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                try
-                {
-                    var tcpClient = await _listener.AcceptTcpClientAsync();
+            _listenTask = Task.Run(() => Loop());
 
-                    var session = new SmtpConnector(this, tcpClient);
-                   session.Accept();
-                }
-                catch
-                {
-                }
-            }
+            _heartbeat.Start();
         }
 
         public void Stop()
@@ -114,6 +116,44 @@ namespace Kooboo.Mail.Smtp
                 _listener.Stop();
             }
         }
-        
+
+        private async Task Loop()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = _cancellationTokenSource.Token;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var needawait = false;
+                try
+                {
+                    var cid = _nextConnectionId++;
+                    _logger.LogInformation($"<ac {cid} {Thread.CurrentThread.ManagedThreadId}");
+                    var tcpClient = await _listener.AcceptTcpClientAsync();
+                    _logger.LogInformation($">ac {cid} {Thread.CurrentThread.ManagedThreadId} {tcpClient.Client.RemoteEndPoint}");
+
+                    var session = new SmtpConnector(this, tcpClient, cid);
+                    _ = session.Accept();
+                }
+                catch(Exception ex)
+                {
+                    Kooboo.Data.Log.Instance.Exception.Write(DateTime.Now.ToString()+ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
+                    needawait = true;
+                }
+                if (needawait)
+                {
+                    await Task.Delay(200);
+                }
+                
+            }
+        }
+    }
+
+    public class SmtpServerOptions
+    {
+        public TimeSpan LiveTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        public int MailsPerConnection { get; set; } = 10;
+
+        public int? MaxConnections { get; set; }
     }
 }
