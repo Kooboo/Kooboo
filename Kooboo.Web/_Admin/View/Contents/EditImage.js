@@ -65,16 +65,18 @@ $(function() {
       toggleMode: function() {
         if (!self.imageEditing) {
           self.imageEditing = true;
-          var image = document.getElementById("editable-img");
-          cropper = new Cropper(image, {
-            aspectRatio: self.aspectRatio,
-            viewMode: 1,
-            preview: ".thumbnail",
-            crop: function(e) {
-              self.width = Math.round(e.detail.width);
-              self.height = Math.round(e.detail.height);
-              self.rotate = Math.round(e.detail.rotate);
-            }
+          self.$nextTick(function() {
+            var image = document.getElementById("editable-img");
+            cropper = new Cropper(image, {
+              aspectRatio: self.aspectRatio,
+              viewMode: 1,
+              preview: ".thumbnail",
+              crop: function(e) {
+                self.width = Math.round(e.detail.width);
+                self.height = Math.round(e.detail.height);
+                self.rotate = Math.round(e.detail.rotate);
+              }
+            });
           });
         } else {
           if (confirm(Kooboo.text.confirm.exit)) {
