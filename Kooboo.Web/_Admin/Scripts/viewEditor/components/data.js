@@ -80,7 +80,8 @@
         return id;
       },
       getRepeatElements: function(elem) {
-        var repeatElements = [],
+        var self = this,
+          repeatElements = [],
           _parent = elem || self.elem;
 
         while ($(_parent).closest(repeatAttr).length) {
@@ -100,7 +101,6 @@
         if (self.elem) {
           var fields = DataContext.get(self.elem).getDataSource(),
             _fields = [];
-
           fields.forEach(function(field) {
             _fields.push({
               name: field.name,
