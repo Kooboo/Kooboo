@@ -1,50 +1,75 @@
 <!-- #layout name=default -->
-<div id="main" class="with-button">
-    <div class="page-header">
-        <h1 class="title">HTML block</h1>
-        <div data-bind="component: { name: 'kb-multilang-selector', params: multiLangs }"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1 margin-bottom-25 form-horizontal">
-            <div class="form-group">
-                <label class="control-label col-md-2">Name</label>
-                <div class="col-md-10">
-                    <!-- ko if: isNewBlock -->
-                    <input type="text" data-bind="textInput: name, error: name" class="input-large form-control">
-                    <!-- /ko -->
-                    <!-- ko ifnot: isNewBlock -->
-                    <label data-bind="text: name" class="control-label"></label>
-                    <!-- /ko -->
-                </div>
+<div id="main" class="with-button" v-cloak>
+  <div class="page-header">
+    <h1 class="title">HTML block</h1>
+    <kb-multilang-selector
+      v-if="multiLangs"
+      :cultures="multiLangs.cultures"
+      :default-culture="multiLangs.default"
+    >
+    </kb-multilang-selector>
+  </div>
+  <div class="row">
+    <kb-form
+      simple
+      ref="htmlBlockForm"
+      :model="htmlBlock"
+      :rules="htmlBlockRules"
+      class="col-md-10 col-md-offset-1 margin-bottom-25 form-horizontal"
+    >
+      <kb-form-item prop="name" class="form-group" >
+        <template v-slot="error">
+          <div :class="{'has-error': !!error.error}">
+            <label class="control-label col-md-2">Name</label>
+            <div class="col-md-10">
+              <input
+                v-if="isNewBlock"
+                type="text"
+                v-model="htmlBlock.name"
+                class="input-large form-control"
+                v-kb-tooltip:right.manual.error="error.error"
+              />
+              <label v-else class="control-label">{{ htmlBlock.name }}</label>
             </div>
-            <!-- ko foreach: contents -->
-            <div data-bind="visible: $data.show()" class="form-group">
-                <label data-bind="text: Kooboo.text.common.Content + ($parent.isMultilingual() ? ' (' + $data.abbr + ')' :'')" class="control-label col-md-2"></label>
-                <div class="col-md-10">
-                    <textarea data-bind="richeditor: $data.value" style="opacity: 0"></textarea>
-                </div>
-            </div>
-            <!-- /ko -->
+          </div>
+        </template>
+      </kb-form-item>
+      <div
+        v-for="($data, $index) in contents"
+        v-show="$data.show"
+        class="form-group"
+      >
+        <label class="control-label col-md-2"
+          >{{ Kooboo.text.common.Content + (isMultilingual ? ' (' + $data.abbr +
+          ')' :'') }}</label
+        >
+        <div class="col-md-10">
+          <textarea
+            v-model="$data.value"
+            v-kb-richeditor="richeditor"
+            style="opacity: 0"
+          ></textarea>
         </div>
-    </div>
-    <div class="page-buttons">
-        <button data-bind="click: onSubmit" class="btn green">Save</button>
-        <a data-bind="attr: { href: cancelUrl }" class="btn gray">Cancel</a>
-    </div>
-    <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+      </div>
+    </kb-form>
+  </div>
+  <div class="page-buttons">
+    <button @click="onSubmit" class="btn green">Save</button>
+    <a :href="cancelUrl" class="btn gray">Cancel</a>
+  </div>
+  <kb-media-dialog :data.sync="richeditor.mediaDialogData"></kb-media-dialog>
 </div>
 
 <script>
-    (function() {
-
-        Kooboo.loadJS([
-            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-            "/_Admin/Scripts/kobindings.richeditor.js",
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/components/kbMultilangSelector.js",
-            "/_Admin/Scripts/components/kb-media-dialog.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
+      "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/components/kbMultilangSelector.js",
+      "/_Admin/Scripts/components/kb-media-dialog.js",
+      "/_Admin/Scripts/components/kbForm.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Contents/HtmlBlock.js"></script>

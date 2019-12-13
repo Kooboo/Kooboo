@@ -1,26 +1,56 @@
-<div id="embeddedDialog" class="modal fade" data-backdrop="static" data-bind="" style="z-index: 200002">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bind="click: close"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.common.Embedded"></h4>
+<div
+  id="embeddedDialog"
+  class="modal fade"
+  data-backdrop="static"
+  style="z-index: 200002"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" @click="close"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">{{ Kooboo.text.common.Embedded }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="col-md-12">
+            <div class="navbar navbar-default">
+              <div class="container-fluid">
+                <a @click="newTextContent" class="btn green navbar-btn"
+                  >{{ Kooboo.text.common.new }}</a
+                >
+                <a
+                  v-if="selected.length > 0"
+                  @click="onDelete"
+                  class="btn red navbar-btn"
+                >
+                  {{ Kooboo.text.common.delete }}</a
+                >
+              </div>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="navbar navbar-default">
-                            <div class="container-fluid">
-                                <a data-bind="click: newTextContent, text: Kooboo.text.common.new" class="btn green navbar-btn"></a>
-                                <a data-bind="visible: showDeleteBtn, click: onDelete, text: Kooboo.text.common.delete" class="btn red navbar-btn"></a>
-                            </div>
-                        </div>
-                        <div data-bind="component: { name: 'kb-table', params: tableData }"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button data-bind="click: close, text: Kooboo.text.common.OK" class="btn btn-default"></button>
-            </div>
+            <kb-table :data="tableData" show-select :selected.sync="selected">
+              <kb-table-column
+                v-for="(column, index) in columns"
+                :key="index"
+                :label="column.displayName"
+              >
+                <template v-slot="row">
+                  <a @click.stop="onEdit(row.id)" style="cursor: pointer;"
+                    >{{ row[column.fieldName] && row[column.fieldName].text
+                    }}</a
+                  >
+                </template>
+              </kb-table-column>
+            </kb-table>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button @click="close" class="btn btn-default"
+          >{{ Kooboo.text.common.OK }}</button
+        >
+      </div>
     </div>
+  </div>
 </div>

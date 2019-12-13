@@ -1,131 +1,128 @@
 $(function() {
-
-    var formViewModel = function() {
-
-        var self = this;
-
-        this.isNewForm = ko.observable(false);
-        this.formId = ko.observable("");
-        this.formId.subscribe(function(id) {
-            self.isNewForm(Kooboo.Guid.Empty == id);
-        })
-
-        this.name = ko.validateField({
-            required: Kooboo.text.validation.required,
-            regex: {
-                pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-                message: Kooboo.text.validation.objectNameRegex
+  var self;
+  new Vue({
+    el: "#main",
+    data: function() {
+      self = this;
+      return {
+        formId: Kooboo.getQueryString("Id") || Kooboo.Guid.Empty,
+        compareTarget: "",
+        isEmbedded: false,
+        formContent: "",
+        model: {
+          name: ""
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
             },
-            stringlength: {
-                min: 1,
-                max: 64,
-                message: Kooboo.text.validation.minLength + 1 + ", " + Kooboo.text.validation.maxLength + 64
+            {
+              pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+              message: Kooboo.text.validation.objectNameRegex
             },
-            remote: {
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              remote: {
                 url: Kooboo.Form.isUniqueName(),
-                data: {
-                    name: function() {
-                        return self.name()
-                    }
-                },
-                message: Kooboo.text.validation.taken
-            }
-        });
-
-        this.formContent = ko.observable("");
-        this.compareTarget = ko.observable("");
-
-        this.isEmbedded = ko.observable();
-
-        this.formatCode = function() {
-            var formatted = html_beautify(self.formContent());
-            self.formContent(formatted);
-        }
-
-        this.showError = ko.observable(false);
-
-        this.isValid = function() {
-            return self.name.isValid();
-        }
-
-        this.onSubmitStyle = function(callback) {
-            if ((self.isNewForm() && self.isValid()) || !self.isNewForm()) {
-                self.showError(false);
-                Kooboo.Form.post({
-                    id: self.formId(),
-                    body: self.formContent(),
-                    name: self.isEmbedded() ? "" : self.name(),
-                    isEmbedded: self.isEmbedded()
-                }).then(function(res) {
-
-                    if (res.success) {
-
-                        if (typeof callback == "function") {
-                            callback(res.model);
-                        }
-                    } else {
-                        window.info.show(Kooboo.text.info.save.fail, false);
-                    }
-                });
-
-            } else {
-                self.showError(true);
-            }
-        }
-
-        this.onSaveAndReturn = function() {
-            self.onSubmitStyle(function() {
-                self.goBack();
-            });
-        }
-
-        this.onSave = function() {
-            self.onSubmitStyle(function(id) {
-                if (self.isNewForm()) {
-                    location.href = Kooboo.Route.Get(Kooboo.Route.Form.DetailPage, {
-                        Id: id
-                    })
-                } else {
-                    window.info.show(Kooboo.text.info.save.success, true);
-                    self.compareTarget(self.formContent());
+                data: function() {
+                  return {
+                    name: self.model.name
+                  };
                 }
-            });
-        }
-
-        this.userCancel = function() {
-            if (self.isContentChanged()) {
-                if (confirm(Kooboo.text.confirm.beforeReturn)) {
-                    self.goBack();
-                }
-            } else {
-                self.goBack();
+              },
+              message: Kooboo.text.validation.taken
             }
+          ]
         }
-
-        this.isContentChanged = function() {
-            return self.formContent() !== self.compareTarget();
+      };
+    },
+    mounted: function() {
+      Kooboo.Form.GetEdit({
+        Id: self.formId
+      }).then(function(res) {
+        if (res.success) {
+          self.model.name = res.model.name;
+          self.formContent = res.model.body;
+          self.compareTarget = self.formContent;
+          self.isEmbedded = res.model.isEmbedded;
         }
-
-        this.goBack = function() {
-            location.href = Kooboo.Route.Get(Kooboo.Route.Form.ListPage) + (self.isEmbedded() ? '#Embedded' : '');
-        }
-
-        Kooboo.Form.GetEdit({
-            Id: Kooboo.getQueryString("Id") || Kooboo.Guid.Empty
-        }).then(function(res) {
-
+      });
+    },
+    methods: {
+      formatCode: function() {
+        this.$refs.editor.formatCode();
+      },
+      onSubmitStyle: function(callback) {
+        if (
+          (self.isNewForm && self.$refs.mainForm.validate()) ||
+          !self.isNewForm
+        ) {
+          Kooboo.Form.post({
+            id: self.formId,
+            body: self.formContent,
+            name: self.isEmbedded ? "" : self.model.name,
+            isEmbedded: self.isEmbedded
+          }).then(function(res) {
             if (res.success) {
-                self.name(res.model.name);
-                self.formContent(res.model.body || "");
-                self.compareTarget(self.formContent());
-                self.isEmbedded(res.model.isEmbedded);
+              if (typeof callback == "function") {
+                callback(res.model);
+              }
+            } else {
+              window.info.show(Kooboo.text.info.save.fail, false);
             }
-        })
-    };
-
-    var vm = new formViewModel();
-
-    vm.formId(Kooboo.getQueryString("Id") || Kooboo.Guid.Empty);
-
-    ko.applyBindings(vm, document.getElementById("main"));
+          });
+        }
+      },
+      onSaveAndReturn: function() {
+        self.onSubmitStyle(function() {
+          self.goBack();
+        });
+      },
+      onSave: function() {
+        self.onSubmitStyle(function(id) {
+          if (self.isNewForm) {
+            location.href = Kooboo.Route.Get(Kooboo.Route.Form.DetailPage, {
+              Id: id
+            });
+          } else {
+            window.info.show(Kooboo.text.info.save.success, true);
+            self.compareTarget = self.formContent;
+          }
+        });
+      },
+      userCancel: function() {
+        if (self.isContentChanged) {
+          if (confirm(Kooboo.text.confirm.beforeReturn)) {
+            self.goBack();
+          }
+        } else {
+          self.goBack();
+        }
+      },
+      goBack: function() {
+        location.href =
+          Kooboo.Route.Get(Kooboo.Route.Form.ListPage) +
+          (self.isEmbedded ? "#Embedded" : "");
+      }
+    },
+    computed: {
+      isNewForm: function() {
+        return Kooboo.Guid.Empty == self.formId;
+      },
+      isContentChanged: function() {
+        return self.formContent !== self.compareTarget;
+      }
+    }
+  });
 });

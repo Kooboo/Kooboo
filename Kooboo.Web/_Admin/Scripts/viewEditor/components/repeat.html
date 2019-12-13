@@ -1,39 +1,58 @@
-<div class="modal fade" data-backdrop="static" data-bind="modal:isShow">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bind="click:reset"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.component.viewEditor.repeatedItem"></h4>
+<div class="modal fade" data-backdrop="static" v-kb-modal="isShow">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" @click="reset"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title"
+          >{{ Kooboo.text.component.viewEditor.repeatedItem }}</h4
+        >
+      </div>
+      <div class="modal-body">
+        <kb-form ref="repeatForm" :model="model" :rules="rules">
+          <kb-form-item prop="text">
+            <label class="control-label col-md-3"
+              >{{ Kooboo.text.site.view.dataSource }}</label
+            >
+            <div class="col-md-9 form-inline" id="repeat-error-container">
+              <select v-model="model.text" class="form-control input-large">
+                <option value=""
+                  >{{ Kooboo.text.component.viewEditor.selectHint }}</option
+                >
+                <optgroup
+                  v-for="field in fields"
+                  :label="field.name"
+                  v-if="field.list.length"
+                >
+                  <option v-for="list in field.list" :value="list.name"
+                    >{{ list.name }}</option
+                  >
+                </optgroup>
+              </select>
+              <button type="button" class="btn btn-default" @click="add"
+                ><i class="fa fa-plus"></i
+              ></button>
             </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="control-label col-md-3" data-bind="text: Kooboo.text.site.view.dataSource"></label>
-                        <div class="col-md-9 form-inline">
-                            <select data-bind="foreach: { data: fields, as: 'field'}, value: text, error: text, event: { change: valid }" class="form-control input-large">
-                                <!-- ko if: $index() == 0 -->
-                                <option value="" data-bind="text: Kooboo.text.component.viewEditor.selectHint"></option>
-                                <!-- /ko -->
-                                <optgroup data-bind="attr: { label: field.name }, foreach: { data: field.list, as: 'list' }, visible: field.list.length">
-                                    <option data-bind="text: list.name, value: list.name"></option>
-                                </optgroup>
-                            </select>
-                            <button type="button" class="btn btn-default" data-bind="click: add"><i class="fa fa-plus"></i></button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-9 col-md-offset-3">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" data-bind="checked: repeatSelf" /> <span data-bind="text: Kooboo.text.component.viewEditor.repeatSelf"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+          </kb-form-item>
+          <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
+              <label class="checkbox-inline">
+                <input type="checkbox" v-model="repeatSelf" />
+                <span>{{ Kooboo.text.component.viewEditor.repeatSelf }}</span>
+              </label>
             </div>
-            <div class="modal-footer">
-                <button class="btn green" data-bind="click:save, enable: fields().length > 0, text: Kooboo.text.common.save"></button>
-                <button class="btn gray" aria-hidden="true" data-bind="click:reset, text: Kooboo.text.common.cancel"></button>
-            </div>
-        </div>
+          </div>
+        </kb-form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn green" @click="save" :disabled="!fields.length"
+          >{{ Kooboo.text.common.save }}</button
+        >
+        <button class="btn gray" aria-hidden="true" @click="reset"
+          >{{ Kooboo.text.common.cancel }}</button
+        >
+      </div>
     </div>
+  </div>
 </div>

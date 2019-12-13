@@ -1,20 +1,22 @@
-<div class="form-group">
-    <!-- ko if:isMultilingual -->
-    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted':  disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
-    <!-- ko if:!isMultilingual() -->
-    <label data-bind="text: fieldName(), css: { 'text-muted':  disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
-    <div class="col-md-9" style="position: relative;">
-        <select class="form-control" data-bind="options: options, optionsText: 'key', optionsValue: 'value', value: fieldValue, disable:  disabled, textError: fieldValue"></select>
-
-        <span data-bind="textError: fieldValue" style="position: absolute;">&nbsp;</span>
-
-        <!-- ko if: !!tooltip() -->
-        <span class="help-block" data-bind="text:tooltip"></span>
-        <!-- /ko -->
-
-    </div>
+<div class="form-group" :class="{'has-error': !kbFormItem.valid}">
+  <label
+    :class="{ 'text-muted': field.disabled }"
+    class="control-label col-md-3"
+    >{{ field.fieldName }}</label
+  >
+  <div class="col-md-9" style="position: relative">
+    <select
+      class="form-control"
+      v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
+      :disabled="field.disabled"
+    >
+      <option v-for="option in field.options" :value="option.value">
+        {{ option.key }}
+      </option>
+    </select>
+    <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
+    <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+      >{{ kbFormItem.msg }}</span
+    >
+  </div>
 </div>

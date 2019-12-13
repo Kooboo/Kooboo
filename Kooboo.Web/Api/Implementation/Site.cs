@@ -42,16 +42,16 @@ namespace Kooboo.Web.Api.Implementation
                 return "Site";
             }
         }
-                        
+
         public Dictionary<string, string> Types(ApiCall call)
         {
             Dictionary<string, string> types = new Dictionary<string, string>();
             types.Add("p", Data.Language.Hardcoded.GetValue("public", call.Context));
             types.Add("o", Data.Language.Hardcoded.GetValue("private", call.Context));
-            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));   
+            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));
             return types;
         }
-                                                       
+
         public SiteCultureViewModel Langs(ApiCall request)
         {
             SiteCultureViewModel viewmodel = new SiteCultureViewModel();
@@ -140,7 +140,7 @@ namespace Kooboo.Web.Api.Implementation
                 summary.SiteName = item.Name;
                 summary.SiteDisplayName = item.DisplayName;
                 summary.PageCount = sitedb.Pages.Count();
-                summary.ImageCount = sitedb.Images.Count(); 
+                summary.ImageCount = sitedb.Images.Count();
                 // if user has not right to access the site. present the preview link.  
 
                 summary.Online = item.Published;
@@ -159,8 +159,8 @@ namespace Kooboo.Web.Api.Implementation
                         }
                     }
                 }
-                 
-                summary.HomePageLink = item.BaseUrl(); 
+
+                summary.HomePageLink = item.BaseUrl();
                 result.Add(summary);
             }
             return result;
@@ -260,18 +260,18 @@ namespace Kooboo.Web.Api.Implementation
 
 
         public void Preview(ApiCall call, Guid SiteId)
-        {                      
+        {
             var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
             if (site != null)
-            {                      
+            {
                 var baseurl = site.BaseUrl();
 
                 if (!string.IsNullOrEmpty(baseurl))
                 {
                     call.Context.Response.Redirect(301, baseurl);
-                }   
-            }     
-            
+                }
+            }
+
         }
 
         public WebSite Get(ApiCall call)
@@ -323,7 +323,7 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.AutoDetectCulture = newinfo.AutoDetectCulture;
                 currentsite.ForceSSL = newinfo.ForceSSL;
 
-                currentsite.SiteType = newinfo.SiteType; 
+                currentsite.SiteType = newinfo.SiteType;
 
                 // the cluster... 
 
@@ -457,6 +457,11 @@ namespace Kooboo.Web.Api.Implementation
             if (!string.IsNullOrEmpty(subdomain) && subdomain.ToLower() == "local" && RootDomain.ToLower() == "kooboo")
             {
                 return false;
+            }
+
+            if (RootDomain != null && RootDomain.StartsWith("."))
+            {
+                RootDomain = RootDomain.Substring(1);
             }
 
             var bindings = GlobalDb.Bindings.GetByDomain(RootDomain);

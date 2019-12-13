@@ -1,35 +1,76 @@
-<div data-bind="foreach: { data: positions, as: 'position' }">
-    <div class="panel panel-default">
-        <div data-bind="attr: { 'data-target': '#J_Position_' + position.name + $index() }" class="panel-heading clickable" data-toggle="collapse">
-            <h4 class="panel-title">
-                <!-- ko text: Kooboo.text.site.page.position + ': ' + position.name -->
-                <!-- /ko -->
-                <!-- ko if: position.fromLayout -->
-                <small data-bind="text: ' (' + Kooboo.text.site.page.fromLayout + ': ' + position.layoutName + ')'"></small>
-                <!-- /ko -->
-            </h4>
-        </div>
-        <div data-bind="attr: { id: 'J_Position_' + position.name + $index() }" class="panel-collapse collapse in">
-            <ul data-bind="sortable: position.contents" class="list-group ui-sortable">
-                <li class="list-group-item">
-                    <span class="sortable ui-sortable-handle"><i class="glyphicon glyphicon-list"></i></span>
-                    <a href="javascript:;" data-bind="click: $component.remove.bind(this, position, $data.id)" class="btn gray btn-xs pull-right"><i class="fa fa-minus"></i></a>
-                    <a class="label label-sm kb-table-label-refer pull-right margin-right-5" data-bind="text: Kooboo.text.component.table[$data.type.toLowerCase()], style: { background: Kooboo.getLabelColor($data.type) }"></a>
-                    <span data-bind="html: $data.name || '&nbsp;', click: $component.showContent" class="nowrap-text"></span>
-                </li>
+<div>
+  <div>
+    <div
+      v-for="(position,$index) in positions"
+      :key="$index"
+      class="panel panel-default"
+    >
+      <div
+        :data-target="'#J_Position_' + position.name + $index"
+        class="panel-heading clickable"
+        data-toggle="collapse"
+      >
+        <h4 class="panel-title" style="word-break: break-all;">
+          {{Kooboo.text.site.page.position + ': ' + position.name}}
+          <small v-if="position.fromLayout"
+            >{{ ' (' + Kooboo.text.site.page.fromLayout + ': ' +
+            position.layoutName + ')'}}</small
+          >
+        </h4>
+      </div>
+      <div
+        :id="'J_Position_' + position.name + $index"
+        class="panel-collapse collapse in"
+      >
+        <ul
+          v-kb-sortable="position.contents"
+          @after-sort="onSorted(position.contents)"
+          class="list-group ui-sortable"
+        >
+          <li
+            class="list-group-item"
+            v-for="($data,index) in position.contents"
+            :key="index"
+          >
+            <span class="sortable ui-sortable-handle"
+              ><i class="glyphicon glyphicon-list"></i
+            ></span>
+            <a
+              href="javascript:;"
+              @click="remove(position, $data.id,$data)"
+              class="btn gray btn-xs pull-right"
+              ><i class="fa fa-minus"></i
+            ></a>
+            <a
+              class="label label-sm kb-table-label-refer pull-right margin-right-5"
+              :style="{background:Kooboo.getLabelColor($data.type)}"
+              >{{Kooboo.text.component.table[$data.type.toLowerCase()]}}</a
+            >
+            <span
+              class="nowrap-text"
+              @click="showContent($data)"
+              v-html=" $data.name || '&nbsp;'"
+            ></span>
+          </li>
+        </ul>
+        <div class="buttons text-right">
+          <div class="btn-group">
+            <button
+              data-toggle="dropdown"
+              class="btn blue btn-xs pull-right dropdown-toggle"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li v-for="($data,index) in components" :key="index">
+                <a href="javascript:;" @click="chooseComponent(position, $data)"
+                  >{{$data.displayName}}</a
+                >
+              </li>
             </ul>
-            <div class="buttons text-right">
-                <div class="btn-group">
-                    <button data-toggle="dropdown" class="btn blue btn-xs pull-right dropdown-toggle">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                    <ul data-bind="foreach: $parent.components" class="dropdown-menu dropdown-menu-right">
-                        <li>
-                            <a href="javascript:;" data-bind="text: $data.displayName, click: $component.chooseComponent.bind(this, position, $data)"></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

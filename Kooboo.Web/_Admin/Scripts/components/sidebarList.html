@@ -1,79 +1,58 @@
 ﻿<ul>
-    <!-- ko foreach: listData -->
+  <template v-for="(item,index) in listData">
+    <template v-if="!item.icon && !item.url && item.level===1">
+      <li class="title" :data-id="item.name">{{item.displayName}}</li>
+      <sidebar-list :list-data="item.items"> </sidebar-list>
+    </template>
 
-    <!-- ko if: !icon && !url && level===1 -->
-    <li class="title" data-bind="text: displayName, attr:{'data-id': name}"></li>
-    <!-- ko if: items.length>0 -->
-    <!-- ko component: {
-            name: "sidebar-list",
-            params: { listData: items }
-        } -->
-    <!-- /ko -->
-    <!-- /ko -->
-    <!-- /ko -->
-
-    <!-- ko if: !icon && !url && level > 1 -->
-    <li data-bind="css:{active: !!active}, attr:{'data-id': name}">
-        <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
-        <a data-bind="text: displayName" href="javascript:;" data-toggle="expand" target="_self">
-        </a>
-        <!-- ko if: items.length>0 -->
-        <!-- ko component: {
-            name: "sidebar-list",
-            params: { listData: items }
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
+    <li
+      v-if="!item.icon &&!item.url && item.level > 1"
+      :class="{active: !!item.active}"
+      :data-id="item.name"
+    >
+      <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
+      <a href="javascript:;" data-toggle="expand" target="_self"
+        >{{item.displayName}}
+      </a>
+      <sidebar-list :list-data="item.items"> </sidebar-list>
     </li>
-    <!-- /ko -->
 
-
-    <!-- ko if: !!icon && !!url -->
-    <li data-bind="css: {current: !!current}, attr:{'data-id': name}">
-        <a data-bind="attr:{'href': url}, click: $component.SPAClick" target="_self">
-            <i data-bind="attr:{'class': icon}"></i>
-            <!-- ko text: displayName -->
-            <!-- /ko -->
-        </a>
+    <li
+      v-if="!!item.icon&&!!item.url"
+      :class="{current: !!item.current}"
+      :data-id="item.name"
+    >
+      <a :href="item.url" @click.prevent="SPAClick(item,$event)" target="_self">
+        <i :class="item.icon"></i>
+        {{item.displayName}}
+      </a>
     </li>
-    <!-- /ko -->
 
-    <!-- ko if: !!icon && !url -->
-    <li data-bind="css:{active: !!active}, attr:{'data-id': name}">
-        <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
-        <a href="javascript:;" data-toggle="expand" target="_self">
-            <i data-bind="attr:{'class': icon}"></i>
-            <!-- ko text: displayName -->
-            <!-- /ko -->
-        </a>
-        <!-- ko if: items.length>0 -->
-        <!-- ko component: {
-            name: "sidebar-list",
-            params: { listData: items }
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
+    <li
+      v-if="!!item.icon && !item.url"
+      :class="{active: !!item.active}"
+      :data-id="item.name"
+    >
+      <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
+      <a href="javascript:;" data-toggle="expand" target="_self">
+        <i :class="item.icon"></i>
+        {{item.displayName}}
+      </a>
+      <sidebar-list :list-data="item.items"> </sidebar-list>
     </li>
-    <!-- /ko -->
 
-    <!-- ko if: !icon && !!url -->
-    <li data-bind="css: {current: !!current, active: !!active}, attr:{'data-id': name}">
-        <!-- ko if: items.length>0 -->
-        <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
-        <!-- /ko -->
-        <a data-bind="attr:{'href': url}, click: $component.SPAClick" target="_self">
-            <!-- ko text: displayName -->
-            <!-- /ko -->
-        </a>
-        <!-- ko if: items.length>0 -->
-        <!-- ko component: {
-            name: "sidebar-list",
-            params: { listData: items }
-        } -->
-        <!-- /ko -->
-        <!-- /ko -->
+    <li
+      v-if="!item.icon && !!item.url"
+      :class="{current: !!item.current, active: !!item.active}"
+      :data-id="item.name"
+    >
+      <span v-if="item.items.length>0" class="arrow" data-toggle="expand"
+        ><i class="icon fa"></i
+      ></span>
+      <a :href="item.url" @click.prevent="SPAClick(item,$event)" target="_self">
+        {{item.displayName}}
+      </a>
+      <sidebar-list :list-data="item.items"> </sidebar-list>
     </li>
-    <!-- /ko -->
-
-    <!-- /ko -->
+  </template>
 </ul>

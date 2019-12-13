@@ -1,14 +1,14 @@
 <div class="clearfix">
-    <!-- ko if: totalPages().length > 1 -->
-    <ul class="pagination pull-right" data-bind="foreach: totalPages">
-        <li data-bind="css:{ 'active': $data.active }">
-            <!-- ko if: $data.active -->
-            <span data-bind="text: $data.count"></span>
-            <!-- /ko -->
-            <!-- ko ifnot: $data.active -->
-            <a data-bind="text: $data.count, click: $parent.changePage.bind(this, $data)" href="javascript:;"></a>
-            <!-- /ko -->
-        </li>
-    </ul>
-    <!-- /ko -->
+  <ul v-if="pages.length > 1" class="pagination pull-right">
+    <li
+      v-for="($data, index) in pages"
+      :key="$data.count"
+      :class="{ active: $data.active }"
+    >
+      <span v-if="$data.active">{{ $data.count }}</span>
+      <a v-else @click="changePage($data)" href="javascript:;">{{
+        $data.count
+      }}</a>
+    </li>
+  </ul>
 </div>

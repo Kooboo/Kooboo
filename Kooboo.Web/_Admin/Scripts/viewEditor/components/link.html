@@ -1,81 +1,129 @@
-<div class="modal fade" data-backdrop="static" data-bind="modal:isShow">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bind="click:reset"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.component.viewEditor.link"></h4>
+<div class="modal fade" data-backdrop="static" v-kb-modal="isShow">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4
+          class="modal-title"
+        >{{ Kooboo.text.component.viewEditor.link }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <template v-if="mode == 'normal'">
+            <div class="form-group">
+              <label class="control-label col-md-2"
+                >{{Kooboo.text.component.viewEditor.linkTo}}</label
+              >
+              <div class="col-md-10">
+                <select class="form-control" v-model="link">
+                  <optgroup :label="Kooboo.text.common.Pages">
+                    <option
+                      v-for="$data in pages"
+                      :value="$data.url"
+                      >{{$data.url}}</option
+                    >
+                  </optgroup>
+                  <optgroup :label="Kooboo.text.common.Views">
+                    <option
+                      v-for="$data in views"
+                      :value="$data.url"
+                      >{{ $data.url}}</option
+                    >
+                  </optgroup>
+                  <optgroup :label="Kooboo.text.common.externalLink">
+                    <option value="__external_link"
+                      >{{Kooboo.text.common.externalLink}}</option
+                    >
+                  </optgroup>
+                </select>
+              </div>
             </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <!-- ko if: mode() == 'normal' -->
-                    <div class="form-group">
-                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.component.viewEditor.linkTo"></label>
-                        <div class="col-md-10">
-                            <select class="form-control" data-bind="value: link">
-                                <optgroup data-bind="foreach:pages, attr: { label: Kooboo.text.common.Pages }">
-                                    <option data-bind="value: $data.url, text: $data.url"></option>
-                                </optgroup>
-                                <optgroup data-bind="foreach:views, attr: { label: Kooboo.text.common.Views }">
-                                    <option data-bind="value: $data.url, text: $data.url"></option>
-                                </optgroup>
-                                <optgroup data-bind="attr: { label: Kooboo.text.common.externalLink }">
-                                    <option data-bind="value: externalLink, text: Kooboo.text.common.externalLink"></option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" data-bind="visible: isExternalLink">
-                        <div class="col-md-10 col-md-offset-2">
-                            <input class="form-control" type="text" placeholder="example: http://www.example.com" data-bind="value:extLink,error:extLink">
-                        </div>
-                    </div>
-                    <div data-bind="visible:parameters().length" class="form-group">
-                        <div class="col-md-10 col-md-offset-2">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th data-bind="text: Kooboo.text.component.viewEditor.parameter"></th>
-                                        <th data-bind="text: Kooboo.text.component.viewEditor.value"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!--ko foreach:parameters-->
-                                    <tr>
-                                        <td data-bind="text: $data.name"></td>
-                                        <td>
-                                            <input data-bind="value: $data.value" type="text" class="form-control">
-                                        </td>
-                                    </tr>
-                                    <!--/ko-->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- /ko -->
-                    <!-- ko if: mode() == 'pagination' -->
-                    <div class="form-group">
-                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.component.viewEditor.linkTo"></label>
-                        <div class="col-md-10">
-                            <p class="form-control-static" data-bind="text: Kooboo.text.component.viewEditor.currentPage"></p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.component.viewEditor.dynamicParam"></label>
-                        <div class="col-md-10">
-                            <div class="input-group" data-bind="foreach: dynaParams">
-                                <input type="text" class="form-control key" data-bind="value: $data.name" readonly style="width: 199px">
-                                <span class="input-group-addon">:</span>
-                                <input type="text" class="form-control value input-medium" data-bind="value: $data.value">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /ko -->
+            <div class="form-group" v-if="link=='__external_link'">
+              <div class="col-md-10 col-md-offset-2">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="example: http://www.example.com"
+                  v-model="extLink"
+                />
+              </div>
+            </div>
+            <div v-if="parameters.length" class="form-group">
+              <div class="col-md-10 col-md-offset-2">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>{{Kooboo.text.component.viewEditor.parameter}}</th>
+                      <th>{{Kooboo.text.component.viewEditor.value}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="($data,index) in parameters" :key="index">
+                      <td>{{$data.name}}</td>
+                      <td>
+                        <input
+                          type="text"
+                          class="form-control"
+                          v-model="$data.value"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </template>
+
+          <template v-if="mode == 'pagination'">
+            <div class="form-group">
+              <label class="control-label col-md-2"
+                >{{Kooboo.text.component.viewEditor.linkTo}}</label
+              >
+              <div class="col-md-10">
+                <p class="form-control-static"
+                  >{{Kooboo.text.component.viewEditor.currentPage}}</p
+                >
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-md-2"
+                >{{Kooboo.text.component.viewEditor.dynamicParam}}</label
+              >
+              <div class="col-md-10">
+                <div
+                  v-for="($data,index) in dynaParams"
+                  :key="index"
+                  class="input-group"
+                >
+                  <input
+                    type="text"
+                    class="form-control key"
+                    readonly
+                    style="width: 199px"
+                    v-model="$data.name"
+                  />
+                  <span class="input-group-addon">:</span>
+                  <input
+                    type="text"
+                    class="form-control value input-medium"
+                    v-model="$data.value"
+                  />
                 </div>
+              </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn green" data-bind="click: save, text: Kooboo.text.common.save"></button>
-                <button class="btn gray" data-bind="click: reset, text: Kooboo.text.common.cancel"></button>
-            </div>
+          </template>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn green" @click="save"
+          >{{Kooboo.text.common.save}}</button
+        >
+        <button class="btn gray" data-dismiss="modal"
+          >{{Kooboo.text.common.cancel}}</button
+        >
+      </div>
     </div>
+  </div>
 </div>

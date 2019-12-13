@@ -1,12 +1,12 @@
 <div class="page-bar">
-    <ol data-bind="foreach: breads" class="breadcrumb">
-        <!-- ko ifnot: $index() == $parent.breads().length - 1 -->
-        <li>
-            <a data-bind="text: $data.text, attr: { href: $data.url }, click: $component.SPAClick"></a>
-        </li>
-        <!-- /ko -->
-        <!-- ko if: $index() == $parent.breads().length - 1 -->
-        <li data-bind="text: $data.text" class="active"></li>
-        <!-- /ko -->
-    </ol>
+  <ol class="breadcrumb">
+    <template v-for="(item,index) in bindingList">
+      <li v-if="index==bindingList.length - 1" class="active" :key="index">
+        {{ item.text }}
+      </li>
+      <li v-else :key="index">
+        <a :href="item.url" @click="SPAClick(item,$event)">{{ item.text }}</a>
+      </li>
+    </template>
+  </ol>
 </div>

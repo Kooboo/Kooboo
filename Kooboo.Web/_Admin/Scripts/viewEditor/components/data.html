@@ -1,32 +1,60 @@
-<div class="modal fade" data-backdrop="static" data-keyboard="false" data-bind="modal:isShow">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bind="click:reset"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: Kooboo.text.component.viewEditor.data"></h4>
+<div
+  class="modal fade"
+  data-backdrop="static"
+  data-keyboard="false"
+  v-kb-modal="isShow"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">{{Kooboo.text.component.viewEditor.data}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-md-3"
+              >{{Kooboo.text.component.viewEditor.bindTo}}</label
+            >
+            <div class="col-md-9 form-inline">
+              <select class="form-control input-large" v-model="text">
+                <template v-for="(field,index) in fields">
+                  <option v-if="index==0" :key="index" value=""
+                    >{{Kooboo.text.component.viewEditor.selectHint}}</option
+                  >
+                  <optgroup
+                    :label="field.name"
+                    v-if="field.list.length"
+                  >
+                    <option
+                      v-for="list in field.list"
+                      :key="list.name"
+                      :value="list.name"
+                      >{{list.name}}</option
+                    >
+                  </optgroup>
+                </template>
+              </select>
+              <button type="button" class="btn btn-default" @click="add"
+                ><i class="fa fa-plus"></i
+              ></button>
             </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.viewEditor.bindTo"></label>
-                        <div class="col-md-9 form-inline">
-                            <select data-bind="foreach: { data: fields, as: 'field' }, value: text, error: text" class="form-control input-large">
-                                <!-- ko if: $index() == 0 -->
-                                <option value="" data-bind="text: Kooboo.text.component.viewEditor.selectHint"></option>
-                                <!-- /ko -->
-                                <optgroup data-bind="attr: { label: field.name }, foreach: { data: field.list, as: 'list' }, visible: field.list.length">
-                                    <option data-bind="text: list.name, value: list.name"></option>
-                                </optgroup>
-                            </select>
-                            <button type="button" class="btn btn-default" data-bind="click: add"><i class="fa fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn green" data-bind="click:save, enable: fields() && fields().length > 0, text: Kooboo.text.common.save"></button>
-                <button class="btn gray" aria-hidden="true" data-bind="click:reset, text: Kooboo.text.common.cancel"></button>
-            </div>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn green"
+          @click="save"
+          :disabled="!fields || !fields.length"
+          >{{Kooboo.text.common.save}}</button
+        >
+        <button class="btn gray" aria-hidden="true" data-dismiss="modal"
+          >{{Kooboo.text.common.cancel}}</button
+        >
+      </div>
     </div>
+  </div>
 </div>
