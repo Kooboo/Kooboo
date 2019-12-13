@@ -7,24 +7,34 @@ using System.Net.Sockets;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
+using System.Threading;
 
 namespace Kooboo.Mail.Smtp
 {
-    public class SmtpConnector
+    public class SmtpConnector : IDisposable
     {
         private TcpClient _client;
         private Stream _stream;
         private StreamReader _reader;
         private StreamWriter _writer;
         private SmtpServer _server;
+        private bool _disposed;
 
-        public SmtpConnector(SmtpServer server, TcpClient client)
+        private CancellationTokenSource _cancellationTokenSource;
+        private long _timeoutTimestamp = Int64.MaxValue;    // To check connection alive timeout
+        private int _receivedMails; // Record how many DATA recevied, to control max received mails per connection
+        private int _disposing;
+
+        public SmtpConnector(SmtpServer server, TcpClient client, long connectionId)
         {
             _server = server;
             _client = client;
+            Id = connectionId;
             Local = CopyIPEndPoint(_client.Client.LocalEndPoint as IPEndPoint);
             Client = CopyIPEndPoint(_client.Client.RemoteEndPoint as IPEndPoint);
         }
+
+        public long Id { get; set; }
 
         public IPEndPoint Local { get; set; }
 
@@ -32,6 +42,11 @@ namespace Kooboo.Mail.Smtp
 
         public async Task Accept()
         {
+            // Add cancellation token to allow cancel from any point calling Dispose()
+            _server._connectionManager.AddConnection(this);
+            _cancellationTokenSource = new CancellationTokenSource();
+            Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(_server.Options.LiveTimeout).Ticks);
+
             Exception exception = null;
 
             try
@@ -53,7 +68,9 @@ namespace Kooboo.Mail.Smtp
                 await _writer.WriteLineAsync(session.ServiceReady().Render());
 
                 var commandline = await _reader.ReadLineAsync();
-                while (commandline != null)
+
+                var cancellationToken = _cancellationTokenSource.Token;
+                while (!cancellationToken.IsCancellationRequested && commandline != null)
                 {      
                     var response = session.Command(commandline);
                     if (response.SendResponse)
@@ -70,7 +87,7 @@ namespace Kooboo.Mail.Smtp
 
                     if (response.Close)
                     {
-                        _client.Close();
+                        Dispose();
                         break;
                     }
 
@@ -82,7 +99,7 @@ namespace Kooboo.Mail.Smtp
                         if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts))
                         {
                             await _writer.WriteLineAsync("550 you have no enough credit to send emails");
-                            _client.Close();
+                            Dispose();
                             break;
                         }
 
@@ -116,45 +133,81 @@ namespace Kooboo.Mail.Smtp
                             Kooboo.Data.Infrastructure.InfraManager.Add(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts, subject); 
 
                             session.ReSet();
+
+                            OnDataCompleted();
                         }
 
                         if (dataresponse.Close)
                         {
-                            _client.Close();
-                            break;
+                            Dispose();
                         }
                     }
 
-                    commandline = await _reader.ReadLineAsync();
-
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        commandline = await _reader.ReadLineAsync();
+                    }
                 }
 
             }
+            catch (ObjectDisposedException)
+            {
+                // Caused by our active connection closing, no need to handle as exception
+            }
             catch (Exception ex)
             {
-                exception = ex;
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
- 
-            }
-
-            if (exception != null)
-            {
-                // 有异常一定要关闭session
                 try
                 {
                     if (_client.Connected)
                     {
                         await _writer.WriteLineAsync("550 Internal Server Error");
-                        _client.Close();
                     }
                 }
                 catch
                 {
                 }
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
+            }
+            finally
+            {
+                _server._connectionManager.RemoveConnection(Id);
+                Dispose();
             }
         }
 
-    
+        public void CheckTimeout(DateTime now)
+        {
+            var timestamp = now.Ticks;
+            if (timestamp > Interlocked.Read(ref _timeoutTimestamp))
+            {
+                _timeoutTimestamp = Int64.MaxValue;
+                Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref _disposing, 1) == 0)
+            {
+                _cancellationTokenSource.Cancel();
+                _reader.Dispose();
+                _writer.Dispose();
+                _client.Close();
+            }
+        }
+
+        private void OnDataCompleted()
+        {
+            _receivedMails++;
+            if (_receivedMails >= _server.Options.MailsPerConnection)
+            {
+                Dispose();
+                return;
+            }
+
+            Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(_server.Options.LiveTimeout).Ticks);
+        }
+
         private IPEndPoint CopyIPEndPoint(IPEndPoint ip)
         {
             return new IPEndPoint(ip.Address, ip.Port);
