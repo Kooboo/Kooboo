@@ -43,8 +43,10 @@
         if (!PAYMENT_METHODS.length) {
           Kooboo.Payment.getMethods().then(function(res) {
             if (res.success) {
-              PAYMENT_METHODS = res.model;
-              self.paymentMethods = res.model;
+              PAYMENT_METHODS = res.model.filter(function(f) {
+                return f.type != "balance";
+              });
+              self.paymentMethods = PAYMENT_METHODS;
               self.isShow = true;
             }
           });
