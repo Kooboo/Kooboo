@@ -2151,6 +2151,11 @@
     }
 
     function loadJS(path, text, fromLayout) {
+      text =
+        "window.__define=window.define;window.define = undefined;\n" +
+        text +
+        "\nwindow.define=window.__define";
+
       var script = $(
         '<script data-src="' +
           path +
