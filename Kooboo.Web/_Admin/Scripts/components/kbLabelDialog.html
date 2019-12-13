@@ -1,29 +1,65 @@
-<div data-bind="modal: isShow" class="modal fade" style="z-index:100001" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text: title"></h4>
+<div
+  v-kb-modal="isShow"
+  class="modal fade"
+  style="z-index:100001"
+  data-backdrop="static"
+  data-keyboard="false"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button @click="reset" class="close"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">{{ title }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-md-2"
+              >{{ Kooboo.text.common.name }}</label
+            >
+            <div class="col-md-10">
+              <select v-model="labelValue" class="form-control">
+                <option v-for="item in existLabels" :value="item.value"
+                  >{{ item.name }}</option
+                >
+              </select>
             </div>
-            <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.common.name"></label>
-                        <div class="col-md-10">
-                            <select data-bind="options: existLabels, optionsText: 'name', optionsValue: 'value', value: labelValue" class="form-control"></select>
-                        </div>
-                    </div>
-                    <div class="form-group" data-bind="visible: showInput">
-                        <div class="col-md-10 col-md-offset-2">
-                            <input type="text" data-bind="value: text, error: text,attr: {placeholder: placeholder}" class="form-control">
-                        </div>
-                    </div>
+          </div>
+          <kb-form simple ref="form" :model="model" :rules="rules">
+            <kb-form-item prop="text" v-slot="error">
+              <div
+                class="form-group"
+                v-show="showInput"
+                :class="{'has-error': !!error.error }"
+              >
+                <div
+                  class="col-md-10 col-md-offset-2"
+                  id="text-error-container"
+                >
+                  <input
+                    type="text"
+                    v-model="model.text"
+                    :placeholder="placeholder"
+                    class="form-control"
+                    v-kb-tooltip:right.manual.error="error.error"
+                    data-container="#text-error-container"
+                  />
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button data-bind="click: save, text: Kooboo.text.common.save" class="btn green"></button>
-                <button data-bind="click: reset, text: Kooboo.text.common.cancel" class="btn gray"></button>
-            </div>
+              </div>
+            </kb-form-item>
+          </kb-form>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button @click="save" class="btn green"
+          >{{ Kooboo.text.common.save }}</button
+        >
+        <button @click="reset" class="btn gray"
+          >{{ Kooboo.text.common.cancel }}</button
+        >
+      </div>
     </div>
+  </div>
 </div>

@@ -1,17 +1,20 @@
-<div class="form-group">
-    <!-- ko if:isMultilingual -->
-    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
-    <!-- ko if:!isMultilingual() -->
-    <label data-bind="text: fieldName(), css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
-    <!-- /ko -->
-
-    <div class="col-md-9" style="position: relative">
-        <textarea class="tiny-mce" data-isTinyMce="true" data-bind="richeditor: fieldValue || '', attr: { id: _id }, editorConfig: { readonly: disabled() === true }"></textarea>
-        <span data-bind="textError: fieldValue" style="position: absolute;">&nbsp;</span>
-        <!-- ko if: !!tooltip() -->
-        <span class="help-block" data-bind="text:tooltip"></span>
-        <!-- /ko -->
-    </div>
+<div class="form-group" :class="{'has-error': !kbFormItem.valid}">
+  <label
+    :class="{ 'text-muted': field.disabled }"
+    class="control-label col-md-3"
+    >{{ field.fieldName }}</label
+  >
+  <div class="col-md-9" style="position: relative">
+    <textarea
+      class="tiny-mce"
+      data-isTinyMce="true"
+      :id="field._id"
+      v-model="kbFormItem.kbForm.model[kbFormItem.prop]"
+      v-kb-richeditor="richeditor"
+    ></textarea>
+    <span v-if="field.tooltip" class="help-block">{{ field.tooltip }}</span>
+    <span v-if="!kbFormItem.valid" class="help-block kb-text-error"
+      >{{ kbFormItem.msg }}</span
+    >
+  </div>
 </div>

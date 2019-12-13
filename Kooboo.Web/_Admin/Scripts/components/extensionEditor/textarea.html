@@ -1,6 +1,11 @@
 <div class="form-group">
-    <label class="control-label col-sm-3" data-bind="text: key"></label>
-    <div class="col-sm-9">
-        <textarea type="text" class="form-control input-large" data-bind="value: value"></textarea>
-    </div>
+  <label class="control-label col-sm-3">{{ name }}</label>
+  <div class="col-sm-9">
+    <textarea
+      type="text"
+      class="form-control input-large"
+      :value="value"
+      @change="change($event.target.value)"
+    ></textarea>
+  </div>
 </div>

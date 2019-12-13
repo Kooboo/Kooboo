@@ -10,7 +10,7 @@ namespace Kooboo.IndexedDB.Dynamic
     public class Table
     {
         public Setting Setting { get; set; }
-        
+
         public Guid CurrentUserId { get; set; }
 
         internal object _Locker = new object();
@@ -1559,9 +1559,12 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
 
-        public void CheckOut(Int64 VersionId, Table destinationTable, bool SelfIncluded)
+        public void CheckOut(Int64 VersionId, Table destinationTable, bool SelfIncluded, bool UpdateSetting = true)
         {
-            UpdateCheckOutTableSetting(destinationTable);
+            if (UpdateSetting)
+            { 
+                UpdateCheckOutTableSetting(destinationTable);
+            }
 
             List<LogEntry> logs;
             int namehash = this.Name.GetHashCode32();
@@ -1619,7 +1622,15 @@ namespace Kooboo.IndexedDB.Dynamic
 
                         var value = this.GetLogData(lastlog);
 
-                        destTable.Update(value);
+                        var old = this.Get(dataid);
+                        if (old == null)
+                        {
+                            destTable.Add(value);
+                        }
+                        else
+                        {
+                            destTable.Update(dataid, value);
+                        }
                     }
                     processed.Add(dataid);
                 }
@@ -1631,7 +1642,7 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 if (!processed.Contains(item.Key))
                 {
-                    var logitem = item.Value; 
+                    var logitem = item.Value;
 
                     if (logitem.EditType == EditType.Update || logitem.EditType == EditType.Delete)
                     {
@@ -1647,7 +1658,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
                     }
                 }
-            
+
             }
         }
 

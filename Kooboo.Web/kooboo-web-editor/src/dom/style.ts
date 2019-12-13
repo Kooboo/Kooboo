@@ -236,17 +236,19 @@ export function matchSelector(el: HTMLElement, selector: string) {
   var selectors = selector.split(",");
   for (const i of selectors) {
     let splited = splitPseudo(i);
-    if (splited && el.matches(splited.selector)) {
-      matcheds.push({
-        selector: i,
-        pseudo: splited.pseudo
-      });
-    } else if (el.matches(i)) {
-      matcheds.push({
-        selector: i,
-        pseudo: ""
-      });
-    }
+    try {
+      if (splited && el.matches(splited.selector)) {
+        matcheds.push({
+          selector: i,
+          pseudo: splited.pseudo
+        });
+      } else if (el.matches(i)) {
+        matcheds.push({
+          selector: i,
+          pseudo: ""
+        });
+      }
+    } catch (error) {}
   }
   return matcheds;
 }

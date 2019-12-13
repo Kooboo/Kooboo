@@ -1,136 +1,205 @@
 ﻿<!-- #layout name=blank-->
-<div class="page-header">
+<div id="app">
+  <div class="page-header">
     <h1 class="title">Publishing</h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params: [{
-        name: 'SITES'
-    },{
-        name: 'DASHBOARD'
-    },{
-        name: Kooboo.text.site.sync.name,
-        url: Kooboo.Route.Get(Kooboo.Route.Publish.ListPage)
-    },{
-        name: Kooboo.text.site.sync.listName
-    }] }">
-</div>
-
-<div class="navbar navbar-default">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="navbar navbar-default">
     <div class="container-fluid">
-        <a class="btn green navbar-btn" data-bind="click: PullToLocal, visible: !isPulling()" href="#">Pull to local</a>
-        <a href="javascript:;" class="btn green navbar-btn disabled" data-bind="visible: isPulling"><i class="fa fa-spinner fa-spin"></i> <span>Pulling</span></a>
-        <a class="btn green navbar-btn" href="#" data-bind="click: pushToRemote, visible: !isPushing(), attr: { disabled: !selectedItems().length, title: !selectedItems().length ? Kooboo.text.alert.selectBeforePushing : ''}">Push to remote</a>
-        <a href="javascript:;" class="btn green navbar-btn disabled" data-bind="visible: isPushing"><i class="fa fa-spinner fa-spin"></i> <span>Pushing</span></a>
+      <a
+        v-if="!isPulling"
+        class="btn green navbar-btn"
+        @click.stop="onPullToLocal"
+        >Pull to local</a
+      >
+      <a v-else class="btn green navbar-btn disabled"
+        ><i class="fa fa-spinner fa-spin"></i> <span>Pulling</span></a
+      >
+
+      <a
+        v-if="!isPushing"
+        class="btn green navbar-btn"
+        @click.stop="pushToRemote"
+        :disabled="selectedItems.length <= 0"
+        >Push to remote</a
+      >
+      <a v-else class="btn green navbar-btn disabled"
+        ><i class="fa fa-spinner fa-spin"></i> <span>Pushing</span></a
+      >
     </div>
-</div>
-
-<ul class="nav nav-tabs" data-bind="foreach: tabs">
-    <li data-bind="css: { active: $data.value == $parent.curTab() }, click: $parent.changeTab.bind(this, $data.value)">
-        <a href="javascript:;" data-bind="text: $data.displayName"></a>
-    </li>
-</ul>
-
-<div class="tab-content">
-    <div class="tab-pane" data-bind="css: { active: curTab() == 'local' }">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="table-checkbox">
-                        <input type="checkbox" data-bind="checked: allSelected, enable: localChanges().length">
-                    </th>
-                    <th>Name</th>
-                    <th>Object Type</th>
-                    <th>Action</th>
-                    <th>Size</th>
-                    <th>Last modified</th>
-                </tr>
-            </thead>
-            <tbody data-bind="visible: localChanges().length, foreach: localChanges">
-                <tr data-bind="click: $parent.selectItem">
-                    <td><input type="checkbox" data-bind="value: $data.id, checked: $data.selected" style="pointer-events: none"></td>
-                    <td>
-                        <!--ko if: $data.thumbnail -->
-                        <span class="thumbnail-fixed">
-                                <spam class="img-wrap">
-                                    <img  data-bind="attr: { src: $data.thumbnail }">
-                                </spam>
-                            </span>
-                        <!--/ko -->
-
-                        <!--ko ifnot: $data.thumbnail -->
-                        <!--ko text: $data.name -->
-                        <!--/ko -->
-                        <!--/ko -->
-                    </td>
-                    <td>
-                        <span class="label label-sm label-primary" data-bind="text: Kooboo.text.component.table[$data.objectType.toLowerCase()] || $data.objectType"></span>
-                    </td>
-                    <td>
-                        <span class="label label-sm" data-bind="css: $parent.getChangeClass($data.changeType), text: Kooboo.text.action[$data.changeType.toLowerCase()] || $data.changeType"></span>
-                    </td>
-                    <td data-bind="text: $data.size"></td>
-                    <td data-bind="text: $parent.getDisplayTime($data.lastModified)"></td>
-                </tr>
-            </tbody>
-            <tbody data-bind="visible: !localChanges().length">
-                <tr>
-                    <td colspan="100" class="text-center">No change</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="tab-pane" data-bind="css: { active: curTab() !== 'local' }">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Last modified</th>
-                    <th>Name</th>
-                    <th>Object Type</th>
-                    <th>Action</th>
-                    <th>Size</th>
-                </tr>
-            </thead>
-            <tbody data-bind="visible: dynamicItems().length, foreach: dynamicItems">
-                <tr>
-                    <td data-bind="text: $parent.getDisplayTime($data.lastModified)"></td>
-                    <td>
-                        <!--ko if: $data.thumbnail -->
-                        <span class="thumbnail-fixed">
-                                <spam class="img-wrap">
-                                    <img  data-bind="attr: { src: $data.thumbnail }">
-                                </spam>
-                            </span>
-                        <!--/ko -->
-
-                        <!--ko ifnot: $data.thumbnail -->
-                        <!--ko text: $data.name -->
-                        <!--/ko -->
-                        <!--/ko -->
-                    </td>
-                    <td>
-                        <span class="label label-sm label-primary" data-bind="text: Kooboo.text.component.table[$data.objectType.toLowerCase()] || $data.objectType"></span>
-                    </td>
-                    <td>
-                        <span class="label label-sm" data-bind="css: $parent.getChangeClass($data.changeType), text: Kooboo.text.action[$data.changeType.toLowerCase()] || $data.changeType"></span>
-                    </td>
-                    <td data-bind="text: $data.size"></td>
-                </tr>
-            </tbody>
-            <tbody data-bind="visible: !dynamicItems().length">
-                <tr>
-                    <td colspan="100" class="text-center">Empty</td>
-                </tr>
-            </tbody>
-        </table>
-        <div data-bind="component: { name: 'kb-pager', params: pager }"></div>
-    </div>
+  </div>
+  <kb-tabs :active.sync="tabIndex">
+    <kb-container>
+      <template #header>{{ Kooboo.text.site.sync.localChanges}}</template>
+      <template #content>
+        <kb-table
+          :show-select="true"
+          :data="pushItems"
+          :selected.sync="selectedItems"
+        >
+          <kb-table-column>
+            <template #head>Name</template>
+            <template v-slot="row">
+              <span v-if="row.thumbnail" class="thumbnail-fixed">
+                <span class="img-wrap">
+                  <img :src="''" />
+                </span>
+              </span>
+              <template v-else>{{ row.name }}</template>
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Object Type</template>
+            <template v-slot="row">
+              <span class="label label-sm label-primary"
+                >{{Kooboo.text.component.table[ row.objectType.toLowerCase()] ||
+                row.objectType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Action</template>
+            <template v-slot="row">
+              <span
+                class="label label-sm"
+                :class="getChangeClass(row.changeType)"
+                >{{Kooboo.text.action[row.changeType.toLowerCase()] ||
+                row.changeType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Size</template>
+            <template v-slot="row">
+              {{ row.size }}
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Last modified</template>
+            <template v-slot="row">
+              {{ new Date(row.lastModified).toDefaultLangString()}}
+            </template>
+          </kb-table-column>
+        </kb-table>
+      </template>
+    </kb-container>
+    <kb-container>
+      <template #header>{{Kooboo.text.site.sync.pullLog}}</template>
+      <template #content>
+        <kb-table :show-select="false" :data="dynamicItems">
+          <kb-table-column>
+            <kb-table-column>
+              <template #head>Last modified</template>
+              <template v-slot="row">
+                {{ new Date(row.lastModified).toDefaultLangString()}}
+              </template>
+            </kb-table-column>
+            <template #head>Name</template>
+            <template v-slot="row">
+              <span v-if="row.thumbnail" class="thumbnail-fixed">
+                <span class="img-wrap">
+                  <img :src="''" />
+                </span>
+              </span>
+              <template v-else>{{ row.name }}</template>
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Object Type</template>
+            <template v-slot="row">
+              <span class="label label-sm label-primary"
+                >{{Kooboo.text.component.table[ row.objectType.toLowerCase()] ||
+                row.objectType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Action</template>
+            <template v-slot="row">
+              <span
+                class="label label-sm"
+                :class="getChangeClass(row.changeType)"
+                >{{Kooboo.text.action[row.changeType.toLowerCase()] ||
+                row.changeType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Size</template>
+            <template v-slot="row">
+              {{ row.size }}
+            </template>
+          </kb-table-column>
+        </kb-table>
+      </template>
+    </kb-container>
+    <kb-container>
+      <template #header>{{Kooboo.text.site.sync.pushLog}}</template>
+      <template #content>
+        <kb-table :show-select="false" :data="dynamicItems">
+          <kb-table-column>
+            <kb-table-column>
+              <template #head>Last modified</template>
+              <template v-slot="row">
+                {{ new Date(row.lastModified).toDefaultLangString()}}
+              </template>
+            </kb-table-column>
+            <template #head>Name</template>
+            <template v-slot="row">
+              <span v-if="row.thumbnail" class="thumbnail-fixed">
+                <span class="img-wrap">
+                  <img :src="''" />
+                </span>
+              </span>
+              <template v-else>{{ row.name }}</template>
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Object Type</template>
+            <template v-slot="row">
+              <span class="label label-sm label-primary"
+                >{{Kooboo.text.component.table[ row.objectType.toLowerCase()] ||
+                row.objectType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Action</template>
+            <template v-slot="row">
+              <span
+                class="label label-sm"
+                :class="getChangeClass(row.changeType)"
+                >{{Kooboo.text.action[row.changeType.toLowerCase()] ||
+                row.changeType}}</span
+              >
+            </template>
+          </kb-table-column>
+          <kb-table-column>
+            <template #head>Size</template>
+            <template v-slot="row">
+              {{ row.size }}
+            </template>
+          </kb-table-column>
+        </kb-table>
+      </template>
+    </kb-container>
+  </kb-tabs>
+  <kb-pager
+    v-if="pager"
+    :page-nr="pager.pageNr"
+    :total-pages="pager.totalPages"
+    @change="changePage"
+  ></kb-pager>
 </div>
 
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbPager.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbTabs.js",
+      "/_Admin/Scripts/components/kbPager.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/Sync/List.js"></script>

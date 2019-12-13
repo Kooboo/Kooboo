@@ -1,51 +1,84 @@
-<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog" data-bind="css: { 'modal-sm': isPaying }" style="transition: 300ms all;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title" data-bind="text:Kooboo.text.common.pay"></h4>
+<div
+  class="modal fade"
+  data-backdrop="static"
+  data-keyboard="false"
+  v-kb-modal="isShow"
+>
+  <div
+    class="modal-dialog"
+    :class=" { 'modal-sm': isPaying }"
+    style="transition: 300ms all;"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" @click="onHide"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">{{Kooboo.text.common.pay}}</h4>
+      </div>
+      <div class="modal-body" v-show="!isPaying">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-md-3" style="text-align: left;"
+              >{{Kooboo.text.common.totalAmount}}</label
+            >
+            <div class="col-md-9">
+              <p class="form-control-static">{{displayAmount}}</p>
             </div>
-            <div class="modal-body" data-bind="visible: !isPaying()">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="control-label col-md-3" style="text-align: left;" data-bind="text: Kooboo.text.common.totalAmount"></label>
-                        <div class="col-md-9">
-                            <p class="form-control-static" data-bind="text: displayAmount"></p>
-                        </div>
-                    </div>
-                </div>
-                <h5 data-bind="text:Kooboo.text.component.cashierModal.choosePaymentMethod"></h5>
-                <ul class="list-group" data-bind="foreach: paymentMethods">
-                    <li class="list-group-item" style="min-height: 54px;">
-                        <div class="radio-inline">
-                            <label style="margin: 0">
-                                <input name="method" type="radio" data-bind="value: $data.type, checked: $parent.paymentMethod">
-                                <!-- ko text: $data.displayName -->
-                                <!-- /ko -->
-                            </label>
-                        </div>
-                        <!-- ko if: $data.type == 'coupon' -->
-                        <input type="text" class="pull-right form-control input-medium" data-bind="value: $parent.couponCode">
-                        <!-- /ko -->
-                        <!-- ko if: $data.type == 'balance' -->
-                        <span class="badge gray" data-bind="text: $parent.userBalance"></span>
-                        <!-- /ko -->
-                    </li>
-                </ul>
-            </div>
-            <div class="modal-body" data-bind="visible: isPaying">
-                <div id="qr-code" style="text-align:center"></div>
-            </div>
-            <div class="modal-footer">
-                <!-- ko if: isPaying -->
-                <button class="btn green" data-bind="click: onPayingSuccess, text: Kooboo.text.component.topupModal.paid"></button>
-                <button class="btn btn-danger" data-bind="click: onPayingFailed, text: Kooboo.text.common.failed"></button>
-                <!-- /ko -->
-                <!-- ko ifnot: isPaying -->
-                <button class="btn green" data-bind="click: onPay, text: Kooboo.text.common.pay"></button>
-                <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
-                <!-- /ko -->
-            </div>
+          </div>
         </div>
+        <h5>{{Kooboo.text.component.cashierModal.choosePaymentMethod}}</h5>
+        <ul class="list-group">
+          <li
+            v-for="($data,index) in paymentMethods"
+            :key="index"
+            class="list-group-item"
+            style="min-height: 54px;"
+          >
+            <div class="radio-inline">
+              <label style="margin: 0">
+                <input
+                  name="method"
+                  type="radio"
+                  :value="$data.type"
+                  v-model="paymentMethod"
+                />
+                {{$data.displayName}}
+              </label>
+            </div>
+            <input
+              v-if="$data.type == 'coupon'"
+              type="text"
+              class="pull-right form-control input-medium"
+              v-model="couponCode"
+            />
+            <span v-if="$data.type == 'balance'" class="badge gray"
+              >{{userBalance}}</span
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="modal-body" v-show="isPaying">
+        <div id="qr-code" style="text-align:center"></div>
+      </div>
+      <div class="modal-footer">
+        <template v-if="isPaying">
+          <button class="btn green" @click="onPayingSuccess"
+            >{{Kooboo.text.component.topupModal.paied}}</button
+          >
+          <button class="btn btn-danger" @click="onPayingFailed"
+            >{{ Kooboo.text.common.failed}}</button
+          >
+        </template>
+        <template v-else>
+          <button class="btn green" @click="onPay"
+            >{{ Kooboo.text.common.pay}}</button
+          >
+          <button class="btn gray" @click="onHide"
+            >{{Kooboo.text.common.cancel}}</button
+          >
+        </template>
+      </div>
     </div>
+  </div>
 </div>

@@ -4,7 +4,7 @@ import { createIframe } from "@/dom/element";
 const gl = (document as any).__gl;
 
 const Kooboo = (document as any).Kooboo;
-const mediaDialogData = (document as any).mediaDialogData;
+const vueInstance = (document as any).vueInstance;
 export const parentBody = (document as any).parentBody as HTMLBodyElement;
 
 export function pickImg(callBack: (path: string) => void) {
@@ -15,7 +15,7 @@ export function pickImg(callBack: (path: string) => void) {
         callBack(selected.url);
       };
     }
-    mediaDialogData(res.model);
+    vueInstance.mediaDialogData = res.model;
   });
 }
 

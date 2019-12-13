@@ -216,8 +216,11 @@ namespace Kooboo.Sites.Service
                 var currentable = kdb.GetTable(item);
                 if (currentable != null)
                 {
-                    var table = newkdb.GetOrCreateTable(item);
-                    currentable.CheckOut(LatestLogId, table, SelfInclude);
+                    var table = newkdb.GetTable(item);
+                    if (table != null)
+                    {
+                        currentable.CheckOut(LatestLogId, table, SelfInclude, false);
+                    } 
                 }
             }
 
