@@ -19,6 +19,7 @@ namespace Kooboo.Lib.Reflection
         private static List<Assembly> LoadAllDlls()
         {
             var dlls = new List<Assembly>();
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             var allassembs = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -38,7 +39,7 @@ namespace Kooboo.Lib.Reflection
             // load dll from modules or dll. 
             List<string> subfolders = new List<string>();
             subfolders.Add("dll");
-            subfolders.Add("modules");
+            //subfolders.Add("modules");
             subfolders.Add("packages"); 
 
             foreach (var item in subfolders)
@@ -65,9 +66,75 @@ namespace Kooboo.Lib.Reflection
                     } 
 
                 }
-            } 
+            }
+            dlls=LoadModules(dlls);
             return dlls; 
         }
+
+        #region
+        public static List<Assembly> LoadModules(List<Assembly> dlls)
+        {
+            // load dll from modules. 
+            List<string> subfolders = new List<string>();
+            subfolders.Add("modules");
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+
+            foreach (var item in subfolders)
+            {
+                string folder = System.IO.Path.Combine(path, item);
+                if (System.IO.Directory.Exists(folder))
+                {
+                    var allsubdlls = System.IO.Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
+
+                    foreach (var filename in allsubdlls)
+                    {
+                        try
+                        {
+                            var otherAssembly = Assembly.Load(File.ReadAllBytes(filename));
+                            
+                            if (otherAssembly != null)
+                            {
+                                dlls.Add(otherAssembly);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+
+                }
+            }
+            return dlls;
+        }
+
+        public static Dictionary<string, Assembly> ModuleAssembly = new Dictionary<string, Assembly>();
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender,ResolveEventArgs args)
+        {
+            var assemblyName = new AssemblyName(args.Name);
+            var name = assemblyName.Name;
+
+            var allassembs = AppDomain.CurrentDomain.GetAssemblies();
+
+            if (ModuleAssembly.ContainsKey(name))
+            {
+                return ModuleAssembly[name];
+            }
+            else
+            {
+                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                var path = Path.Combine(baseDirectory, "modules",string.Format("{0}.dll", name));
+                if (!File.Exists(path)) return null;
+
+                var assembly = Assembly.Load(File.ReadAllBytes(path));
+                ModuleAssembly[name] = assembly;
+
+                return assembly;
+            }
+        }
+
+        #endregion
 
         public static List<Assembly> LoadExtensionDll(string extensiondlls)
         {

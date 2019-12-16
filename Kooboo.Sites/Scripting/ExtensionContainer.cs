@@ -4,7 +4,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.Scripting.KscriptConfig;
+using Kooboo.Sites.KscriptConfig;
 using System.Linq;
 
 namespace Kooboo.Sites.Scripting
@@ -35,12 +35,13 @@ namespace Kooboo.Sites.Scripting
                                 }
 
                             }
-
-                            foreach(var item in ExtensionKscriptConfigContainer.List)
+                            if (KscriptConfigContainer.List != null)
                             {
-                                _list[item.Key] = item.Value;
+                                foreach (var item in KscriptConfigContainer.List)
+                                {
+                                    _list[item.Key] = item.Value;
+                                }
                             }
-
                         }
                     }
 
@@ -63,21 +64,16 @@ namespace Kooboo.Sites.Scripting
 
                 if (instance !=null)
                 {
-                    
                     var kscriptInstance = instance as IkScript;
                     if (kscriptInstance!=null)
                     {
                         kscriptInstance.context = context;
                         return instance;
                     }
-                    else
+                    else if(instance is KScriptConfigType)
                     {
-                        var properties = type.GetProperties().ToList();
-                        var datacontextProperty = properties.Find(p => typeof(IDataContext).IsAssignableFrom(p.PropertyType));
-                        if (datacontextProperty == null) return instance;
-
-                        var datacontext=  Activator.CreateInstance(datacontextProperty.PropertyType, context);
-                        datacontextProperty.SetValue(instance, datacontext);
+                        var kscriptConfigType = instance as KScriptConfigType;
+                        kscriptConfigType.SetKscriptnameNContext(name, context);
                     }
 
                     return instance;

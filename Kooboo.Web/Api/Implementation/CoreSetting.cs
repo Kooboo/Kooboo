@@ -58,11 +58,13 @@ namespace Kooboo.Web.Api.Implementation
                
                 if (value == null)
                 {
-                    var instance = Activator.CreateInstance(item.Value) as ISiteSetting; 
-                    if (instance !=null)
+                    var instance = Activator.CreateInstance(item.Value);
+                    if (instance != null)
                     {
-                        result.Add(new CoreSettingViewModel() { Name = instance.Name }); 
-                    } 
+                        var name = GetName(instance);
+                        result.Add(new CoreSettingViewModel() { Name = name });
+                    }
+                    
                 }
                 else
                 {
@@ -83,6 +85,32 @@ namespace Kooboo.Web.Api.Implementation
             Core.Values = model;
             call.WebSite.SiteDb().CoreSetting.AddOrUpdate(Core); 
 
+        }
+
+        private string GetName(object instance)
+        {
+            var type = instance.GetType();
+            var sitesettingInstance = instance as ISiteSetting;
+
+            var name = string.Empty;
+            if (sitesettingInstance != null)
+            {
+                name = sitesettingInstance.Name;
+            }
+            else
+            {
+                var nameProp = type.GetProperty("Name");
+                if (nameProp != null)
+                {
+                    name = nameProp.GetValue(instance) as string;
+                }
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = type.Name;
+                }
+            }
+
+            return name;
         }
     }
 

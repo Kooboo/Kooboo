@@ -53,13 +53,13 @@ namespace Kooboo.Sites.Repository
             base.Delete(id, UserId);
         }
 
-        public Dictionary<string, ISiteSetting> cache = new Dictionary<string, ISiteSetting>();
+        public Dictionary<string, object> cache = new Dictionary<string, object>();
 
         public T GetSetting<T>() where T: ISiteSetting
         {
             var type = typeof(T);
 
-            var result = GetSetting(type); 
+            var result = GetSiteSetting(type) as ISiteSetting; 
             if (result !=null)
             {
                 return (T)result; 
@@ -67,8 +67,7 @@ namespace Kooboo.Sites.Repository
             return default(T);  
         }
 
-
-        public ISiteSetting GetSetting(Type siteSettingType)
+        public object GetSiteSetting(Type siteSettingType)
         {
             var name = Sites.Service.CoreSettingService.GetName(siteSettingType); 
             if (string.IsNullOrEmpty(name))
@@ -83,7 +82,7 @@ namespace Kooboo.Sites.Repository
             var obj = this.Get(name);
             if (obj != null)
             {
-                var result = Kooboo.Sites.Service.CoreSettingService.GetSiteSetting(obj, siteSettingType);
+                var result = Kooboo.Sites.Service.CoreSettingService.GetSetting(obj, siteSettingType);
                 cache[name] = result;
                 return result;
             }

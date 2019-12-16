@@ -63,6 +63,8 @@ namespace Kooboo.Data
             }
 
             _serversetting = null; // reset server setting. 
+
+            KscriptConfig = KscriptConfigReader.GetConfig();
         }
 
         private static void SetUser()
@@ -694,7 +696,9 @@ namespace Kooboo.Data
 
 
         public static bool IsOnlineServer { get; set; }
-         
+
+        public static KscriptConfig KscriptConfig { get; private set; }
+
 
         public static GlobalInfo Global { get; set; }
 
