@@ -5,6 +5,8 @@
  */
 
 interface Kscript {
+
+  valk: Valk
   /**
    * Access to the http request data, query string, form or headers. Cookie is available from k.cookie.
    */
@@ -333,7 +335,7 @@ interface Kscript {
      * @param Server
      * @param Msg
      */
-    smtpSend(Server: SmtpServer, Msg: object): void;
+    smtpSend(Server: any, Msg: object): void;
   };
 
   /**
@@ -839,6 +841,102 @@ interface User {
    * logout current login user
    */
   logout(): void;
+}
+
+interface Valk {
+  authenticate: Valk.Authenticate;
+  cart: Valk.Cart;
+  checkout: Valk.Checkout;
+  customer: Valk.Customer;
+  home: Valk.Home;
+  order: Valk.Order
+  payment: Valk.Payment
+  product: Valk.Product
+  store: Valk.Store
+  webNode: Valk.WebNode
+}
+
+declare namespace Valk {
+  interface Authenticate {
+    isAuthenticate(storecode: string): boolean
+  }
+
+  interface Cart {
+    /**
+     * clear shopping cart
+     */
+    clear(): boolean
+    /**
+     * update shopping cart
+     */
+    addOrUpdate(data: object): boolean;
+
+    get(): any;
+    getCartContent(): any
+  }
+
+  interface Checkout {
+    getSetting(): any;
+    getCheckoutAddress(): any
+    confirmAddress(data: object): any;
+    getDeliveryAddress(): any;
+    confirmDeliveryAddress(data: object);
+    getLocation(data: object)
+    getDeliveryOptions(): string[];
+    selectDeliveryOption(delivery: string, deliveryStoreId: string): boolean;
+    getPaymentMethods(): any[],
+    getCountries(): any[]
+  }
+
+  interface Customer {
+    get(): any;
+    login(emailOrCard: string): any;
+    authenticate(email: string, password: string): any;
+    resetPassword(email: string, oldpassword: string, newpassword: string): boolean;
+    forgetPassword(email: string): boolean;
+    logout(): boolean;
+    ssValidEmail(email: string): boolean;
+    createAccount(data: object): any;
+    createAccountInfo(data: object): any;
+    getAccount(): any
+  }
+
+  interface Home {
+    get(): any
+  }
+
+  interface Order {
+    placeOrder(paymentMethodId: string): any
+    getOrder(orderId: string): any
+  }
+
+  interface Payment {
+    getAdditionalInfo(orderId: string): any
+    createPayment(data: object): any
+    paymentCallback(result: string): any;
+    continuePayment(orderId: string): any
+  }
+
+  interface Product {
+    get(productId: string): any;
+    getAlternativeProducts(productId: string, webNodeId: string): any
+    checkAvailability(productId: string, qty: number): any
+    getProductMaps(productId: string): any
+  }
+
+  interface Store {
+    getStores(): any;
+    search(postalcode: string): any
+    config(): any
+  }
+
+  interface WebNode {
+    getInfo(webNodeIdObj: object): any;
+    search(data: object): any;
+    getRequest(data: object): any
+  }
+
+
 }
 
 declare const k: Kscript;

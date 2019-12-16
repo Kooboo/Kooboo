@@ -1,6 +1,7 @@
 $(function() {
   var cropper, self;
-  var vm = new Vue({
+  var id = Kooboo.getQueryString("Id");
+  new Vue({
     el: "#main",
     data: function() {
       self = this;
@@ -42,20 +43,40 @@ $(function() {
         isImageChange: false
       };
     },
+    mounted: function() {
+      if (!id) {
+        return;
+      }
+      Kooboo.Media.Get({
+        Id: id
+      }).then(function(res) {
+        if (res.success) {
+          self.filename = res.model.name;
+          self.linkText = res.model.url;
+          self.link = res.model.fullUrl;
+          self.altText = res.model.alt || "";
+          self._altText = self.altText;
+          self.src = res.model.siteUrl;
+          self._src = self.src;
+        }
+      });
+    },
     methods: {
       toggleMode: function() {
         if (!self.imageEditing) {
           self.imageEditing = true;
-          var image = document.getElementById("editable-img");
-          cropper = new Cropper(image, {
-            aspectRatio: self.aspectRatio,
-            viewMode: 1,
-            preview: ".thumbnail",
-            crop: function(e) {
-              self.width = Math.round(e.detail.width);
-              self.height = Math.round(e.detail.height);
-              self.rotate = Math.round(e.detail.rotate);
-            }
+          self.$nextTick(function() {
+            var image = document.getElementById("editable-img");
+            cropper = new Cropper(image, {
+              aspectRatio: self.aspectRatio,
+              viewMode: 1,
+              preview: ".thumbnail",
+              crop: function(e) {
+                self.width = Math.round(e.detail.width);
+                self.height = Math.round(e.detail.height);
+                self.rotate = Math.round(e.detail.rotate);
+              }
+            });
           });
         } else {
           if (confirm(Kooboo.text.confirm.exit)) {
@@ -123,6 +144,7 @@ $(function() {
               : (self.rotate = self.rotate + 1);
             break;
         }
+        self.resetCropper();
       },
       submitEdit: function() {
         Kooboo.Media.imageUpdate(self.getUpdateData()).then(function(res) {
@@ -165,36 +187,10 @@ $(function() {
     watch: {
       aspectRatio: function(ratio) {
         cropper.setAspectRatio(ratio);
-      },
-      width: function() {
-        self.resetCropper();
-      },
-      height: function() {
-        self.resetCropper();
-      },
-      rotate: function() {
-        self.resetCropper();
       }
     },
     beforeDestory: function() {
       self = null;
     }
   });
-
-  var id = Kooboo.getQueryString("Id");
-
-  id &&
-    Kooboo.Media.Get({
-      Id: id
-    }).then(function(res) {
-      if (res.success) {
-        vm.filename = res.model.name;
-        vm.linkText = res.model.url;
-        vm.link = res.model.fullUrl;
-        vm.altText = res.model.alt || "";
-        vm._altText = vm.altText;
-        vm.src = res.model.siteUrl;
-        vm._src = vm.src;
-      }
-    });
 });
