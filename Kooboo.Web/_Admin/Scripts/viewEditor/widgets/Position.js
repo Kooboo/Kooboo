@@ -71,13 +71,25 @@
                             });
                             break;
                         case 'data':
-                            dataContext = DataContext.create(elem, contextStack, false);
-                            list.push({
-                                elem: elem,
-                                bindingType: key,
-                                text: val.text,
-                                dataSourceId: dataContext ? dataContext.lookup(val.text).dataId : null
-                            });
+                            var repeatSelf = !!$(elem).attr('k-repeat-self');
+                            if(repeatSelf) {
+                                dataContext = DataContext.create(elem, contextStack, true);
+                                var _key = Object.keys(dataContext.value())[0];
+                                list.push({
+                                    elem: elem,
+                                    bindingType: key,
+                                    text: val.text,
+                                    dataSourceId: dataContext.value(true)[_key].dataId
+                                });
+                            } else {
+                                dataContext = DataContext.create(elem, contextStack, false);
+                                list.push({
+                                    elem: elem,
+                                    bindingType: key,
+                                    text: val.text,
+                                    dataSourceId: dataContext ? dataContext.lookup(val.text).dataId : null
+                                });
+                            }
                             break;
                         case 'attribute':
                             dataContext = DataContext.createByAttribute(elem, contextStack);
