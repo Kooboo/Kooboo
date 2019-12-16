@@ -73,9 +73,9 @@
                         case 'data':
                             var repeatSelf = !!$(elem).attr('k-repeat-self');
                             if(repeatSelf) {
-                                dataContext = DataContext.get(elem);
+                                dataContext = $(elem).data('kb-datacontext-repeat');
                                 var _key = Object.keys(dataContext.value())[0];
-                                var dataId = dataContext.value(true)[_key].dataId;
+                                var dataId = dataContext ? dataContext.value(true)[_key].dataId : null;
                                 list.push({
                                     elem: elem,
                                     bindingType: key,
@@ -96,20 +96,22 @@
                             var ids = [];
                             var repeatSelf = !!$(elem).attr('k-repeat-self');
                             if(repeatSelf) {
-                                dataContext = DataContext.get(elem);
-                                val.text.split(";").forEach(function(attr) {
+                                dataContext = $(elem).data('kb-datacontext-repeat');
+                                if(dataContext) {
+                                  val.text.split(";").forEach(function(attr) {
                                     if (attr) {
-                                        var value = attr.split(" ")[1],
-                                            sources = value.match(/[^\{\}]+(?=\})/g);
-                                        if (sources && sources.length) {
-                                            sources.forEach(function(src) {
-                                                var _key = src.split('.')[0];
-                                                var dataId = dataContext.value(true)[_key].dataId;
-                                                ids.indexOf(dataId) == -1 && ids.push(dataId);
-                                            });
+                                            var value = attr.split(" ")[1],
+                                                sources = value.match(/[^\{\}]+(?=\})/g);
+                                            if (sources && sources.length) {
+                                                sources.forEach(function(src) {
+                                                    var _key = src.split('.')[0];
+                                                    var dataId = dataContext.value(true)[_key].dataId;
+                                                    ids.indexOf(dataId) == -1 && ids.push(dataId);
+                                                });
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                                 list.push({
                                     elem: elem,
                                     bindingType: key,
@@ -148,7 +150,7 @@
 
                                 if (repeatSelf) {
                                     _key = Object.keys(dataContext.value())[0];
-                                    $(elem).data('kb-datacontext', dataContext);
+                                    $(elem).data('kb-datacontext-repeat', dataContext);
                                 } else {
                                     _key = Object.keys(DataContext.get(elem.parentNode).value())[0];
                                 }
