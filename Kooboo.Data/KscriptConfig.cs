@@ -18,9 +18,6 @@ namespace Kooboo.Data
         [XmlElement("kcontext")]
         public string KscriptContext { get; set; }
 
-        //[XmlElement("kcontext")]
-        //public KscriptContext Context { get; set; }
-
         [XmlElement("setting")]
         public string KscriptSetting { get; set; }
 
@@ -34,21 +31,6 @@ namespace Kooboo.Data
         public string Name { get; set; }
         [XmlAttribute("value")]
         public string Value { get; set; }
-    }
-
-
-    //public class SiteSetting
-    //{
-    //    [XmlAttribute("value")]
-    //    public string Value { get; set; }
-    //}
-
-    public class KscriptContext
-    {
-        [XmlElement("krequest")]
-        public string Request { get; set; }
-        [XmlElement("kresponse")]
-        public string Resposne { get; set; }
     }
 
 }

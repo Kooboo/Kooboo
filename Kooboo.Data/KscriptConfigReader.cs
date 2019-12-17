@@ -16,7 +16,8 @@ namespace Kooboo.Data
                 {
                     try
                     {
-                        var xmlSerializer = new XmlSerializer(typeof(KscriptConfig));
+                        //var xmlSerializer = new XmlSerializer(typeof(KscriptConfig));
+                        XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new[] { typeof(KscriptConfig) })[0];
                         return xmlSerializer.Deserialize(fileStream) as KscriptConfig;
                     }
                     catch(Exception ex) { }
