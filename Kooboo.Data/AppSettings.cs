@@ -136,7 +136,7 @@ namespace Kooboo.Data
 
         public static System.Version Version { get; set; }
 
-        public static int MaxForEachLoop { get; set; } = 100;
+        public static int MaxForEachLoop { get; set; } = 300;
 
         public static bool CustomSslCheck { get; set; }
 
