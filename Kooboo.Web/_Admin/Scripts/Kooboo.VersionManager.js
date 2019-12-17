@@ -6,7 +6,9 @@
         KB_USER_API_KEY: "_kooboo_api_user",
         init: function() {
             var self = this;
-            if (self.shouldCheckVersion()) {
+            var __vue_version=localStorage.getItem("__vue_version")
+            if (self.shouldCheckVersion()||(Vue&&!__vue_version)) {
+                if(!__vue_version) localStorage.setItem("__vue_version","__vue_version")
                 KB.System.Version().then(function(res) {
                     if (res.success) {
                         self.setAdminVersion(new Version(res.model.admin));
