@@ -1,33 +1,26 @@
-﻿using System;
+﻿using Kooboo.Web.Frontend.KScriptDefine.BaseMembers;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Kooboo.Web.Frontend.KScriptDefine
 {
     public interface KScript
     {
-        [Discription(@"method or property description")]
-        User User { get; set; }
+        [Description("Access to the http request data, query string, form or headers. Cookie is available from k.cookie.")]
+        Request Request { get; set; }
 
-        void Execute(string code, User user);
-    }
+        [Description("The http response object that is used to set data into http resposne stream")]
+        Response Response { get; set; }
 
-    public class User : Person
-    {
-        public string Name { get; set; }
-        public string Pwd { get; set; }
-        public int Age { get; set; }
-    }
+        [Description("a temporary storage for small interactive information. Session does not persist")]
+        Session Session { get; set; }
 
-    public class Person
-    {
-        public int Id { get; set; }
-        public KType KType { get; set; }
+        [Description("Get or set cookie value")]
+        Cookie Cookie { get; set; }
 
-    }
-    public enum KType
-    {
-        aaa,
-        bbb
+        [Description("The Kooboo website database with version control")]
+        Site Site { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,6 +14,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Namespace { get; set; }
             public string Name { get; set; }
             public string Discription { get; set; }
+            public List<Type> Extends { get; set; }
             public List<Property> Properties { get; set; }
             public List<Method> Methods { get; set; }
             public Dictionary<string, string> Enums { get; set; }
@@ -60,6 +62,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(bool)] = "boolean",
             [typeof(object)] = "any",
             [typeof(void)] = "void",
+            [typeof(DateTime)] = "Date",
         };
 
         static string[] skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode" };
@@ -68,7 +71,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         {
             void Recursion(Type t)
             {
-                if (type.FullName.StartsWith("System")) return;
+                if (IsSystemType(t)) return;
 
                 var define = TypeToDefine(t);
                 _defines.Add(t, define);
@@ -101,8 +104,10 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                     var define = group.Value;
                     var defineType = define.Enums == null ? "interface" : "enum";
                     var declare = string.IsNullOrWhiteSpace(define.Namespace) ? "declare " : string.Empty;
+                    var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}" );
+                    var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
 
-                    builder.AppendLine($"   {declare}{defineType} {define.Name} {{");
+                    builder.AppendLine($"   {declare}{defineType} {define.Name} {extends} {{");
 
                     if (define.Enums != null)
                     {
@@ -151,7 +156,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         {
             Define define;
 
-            if (type.IsClass || type.IsInterface)
+            if (type.IsClass || type.IsInterface || type.IsValueType)
             {
                 define = ConvertClassOrInterface(type);
             }
@@ -190,10 +195,15 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                     Discription = GetDiscription(s)
                                 }).ToList();
 
+            var extends = new List<Type>();
+            extends.AddRange(type.GetInterfaces());
+            if (type.BaseType != null) extends.Add(type.BaseType);
+
             return new Define
             {
                 Methods = methods,
                 Properties = properties,
+                Extends = extends,
                 Discription = GetDiscription(type)
             };
         }
@@ -237,6 +247,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         string GetNamespace(Type type, bool suffix = true)
         {
+            if (type.FullName == null) return string.Empty;
             var arr = type.FullName.Split('.');
             if (arr.FirstOrDefault() == "System") return "";
             var @namespace = string.Join(".", arr.Take(arr.Length - 1));
@@ -290,6 +301,11 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 return convertedTypes[typeToUse];
             }
 
+            if (typeToUse.IsGenericType || IsSystemType(typeToUse))
+            {
+                return "any";
+            }
+
             if (typeToUse.IsConstructedGenericType && typeToUse.GetGenericTypeDefinition() == typeof(IDictionary<,>))
             {
                 var keyType = typeToUse.GenericTypeArguments[0];
@@ -302,12 +318,17 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return typeToUse.Name;
         }
 
+        bool IsSystemType(Type type)
+        {
+            return type.FullName?.StartsWith("System") ?? true;
+        }
+
         string GetDiscription(MemberInfo memberInfo)
         {
-            var atr = memberInfo.GetCustomAttribute(typeof(DiscriptionAttribute));
-            if (atr is DiscriptionAttribute discription)
+            var atr = memberInfo.GetCustomAttribute(typeof(DescriptionAttribute));
+            if (atr is DescriptionAttribute discription)
             {
-                return discription.Discription;
+                return discription.Description;
             }
             return null;
         }
