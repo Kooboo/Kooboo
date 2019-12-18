@@ -9,6 +9,7 @@ using Kooboo.Render;
 using Kooboo.Sites.Extensions;
 using Kooboo.Web.Api;
 using Kooboo.Web.Frontend;
+using Kooboo.Web.Frontend.KScriptDefine;
 using Kooboo.Web.JsTest;
 using Kooboo.Web.Spa;
 using System;
@@ -25,6 +26,8 @@ namespace Kooboo.Web
         public static void Start(int port)
         {
 
+            KScriptGenerater.Generate();
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
@@ -37,7 +40,7 @@ namespace Kooboo.Web
             //}
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
-             
+
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
 
             Data.GlobalDb.Bindings.EnsureLocalBinding();
@@ -67,7 +70,7 @@ namespace Kooboo.Web
 
             JobWorker.Instance.Start();
 
-            Service.UpGradeService.UpgradeFix(); 
+            Service.UpGradeService.UpgradeFix();
         }
 
 
@@ -78,7 +81,7 @@ namespace Kooboo.Web
                 var server = Kooboo.Data.Server.WebServerFactory.Create(port, Middleware);
 
                 server.Start();
-                WebServers[port] = server; 
+                WebServers[port] = server;
             }
         }
 
@@ -107,7 +110,7 @@ namespace Kooboo.Web
                             _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
-                             
+
                             _middlewares.Add(new EndMiddleWare());
                         }
                     }
@@ -122,8 +125,8 @@ namespace Kooboo.Web
         {
             // stop all web servers. 
             foreach (var item in WebServers)
-            { 
-                item.Value.Stop(); 
+            {
+                item.Value.Stop();
             }
 
             // close all database. 
@@ -134,8 +137,8 @@ namespace Kooboo.Web
 
             foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
             {
-                item.Value.SiteDb().DatabaseDb.Close(); 
-            } 
+                item.Value.SiteDb().DatabaseDb.Close();
+            }
         }
 
         private static RenderOption KoobooBackEndViewOption()
@@ -251,9 +254,9 @@ namespace Kooboo.Web
             return option;
         }
 
-        private static Kooboo.Api.IApiProvider _apiprovider; 
-        public static Kooboo.Api.IApiProvider CurrentApiProvider 
-        { 
+        private static Kooboo.Api.IApiProvider _apiprovider;
+        public static Kooboo.Api.IApiProvider CurrentApiProvider
+        {
             get
             {
                 if (_apiprovider == null)
@@ -264,13 +267,13 @@ namespace Kooboo.Web
                         {
                             var apimiddle = item as Kooboo.Api.ApiMiddleware;
 
-                            _apiprovider =  apimiddle.ApiProvider;  
+                            _apiprovider = apimiddle.ApiProvider;
                         }
-                    } 
-                } 
-                return _apiprovider;  
-            } 
-        } 
+                    }
+                }
+                return _apiprovider;
+            }
+        }
     }
 
     public class CmsLanguage
