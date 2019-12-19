@@ -25,9 +25,6 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
-
-            KScriptGenerater.Generate();
-
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
@@ -99,6 +96,7 @@ namespace Kooboo.Web
                         if (_middlewares == null)
                         {
                             _middlewares = new List<IKoobooMiddleWare>();
+                            _middlewares.Add(new KScriptDefineMiddleware());
                             _middlewares.Add(new FrontRequest.KoobooMiddleware());
                             _middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
 
