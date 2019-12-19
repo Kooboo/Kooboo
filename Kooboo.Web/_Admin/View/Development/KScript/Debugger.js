@@ -52,7 +52,7 @@ $(function () {
                         break;
                     case 121://F10
                         e.preventDefault();
-                        self.debugClick('over');
+                        self.debugClick(null,'over');
                         break;
                 }
             })
