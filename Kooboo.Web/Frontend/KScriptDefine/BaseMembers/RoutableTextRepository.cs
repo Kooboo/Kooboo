@@ -1,4 +1,5 @@
-﻿using Kooboo.Sites.Models;
+﻿using Kooboo.Data.Interface;
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,12 +10,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine.BaseMembers
     public interface RoutableTextRepository : TextRepository
     {
         [Description("get the absolute Url of this object")]
-        SiteObject GetAbsUrl(object id);
+        ISiteObject GetAbsUrl(object id);
 
         [Description("get the SiteObject by Url")]
-        SiteObject GetByUrl(string url);
+        ISiteObject GetByUrl(string url);
 
         [Description("get the relative Url of this object")]
-        SiteObject GetUrl(object id);
+        ISiteObject GetUrl(object id);
     }
 }

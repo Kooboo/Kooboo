@@ -22,5 +22,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         [Description("The Kooboo website database with version control")]
         Site Site { get; set; }
+
+        [Description("Get content from or post data to remote url.")]
+        Url Url { get; set; }
     }
 }
