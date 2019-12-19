@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Server;
+using Kooboo.Sites.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         public KScriptDefineMiddleware()
         {
-            _defineContent = new KScriptToTsDefineConventer().Convent(typeof(KScript));
+            _defineContent = new KScriptToTsDefineConventer().Convent(typeof(k));
         }
         public IKoobooMiddleWare Next
         {

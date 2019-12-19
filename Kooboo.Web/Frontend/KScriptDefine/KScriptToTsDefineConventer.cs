@@ -104,7 +104,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                     var define = group.Value;
                     var defineType = define.Enums == null ? "interface" : "enum";
                     var declare = string.IsNullOrWhiteSpace(define.Namespace) ? "declare " : string.Empty;
-                    var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}" );
+                    var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
                     var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
 
                     builder.AppendLine($"   {declare}{defineType} {define.Name} {extends} {{");
@@ -169,13 +169,26 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 throw new InvalidOperationException();
             }
 
-            define.Name = type.Name;
+            define.Name = GetTypeName(type);
             define.Namespace = GetNamespace(type, false);
             return define;
         }
 
+        string GetTypeName(Type type)
+        {
+            var name = type.Name;
+
+            if (type.IsAnsiClass && name.EndsWith("&"))
+            {
+                name = name.Substring(0, name.Length - 1);
+            }
+
+            return name;
+        }
+
         Define ConvertClassOrInterface(Type type)
         {
+
             var properties = type.GetProperties()
                                 .Where(p => p.GetMethod.IsPublic)
                                 .Select(s => new Property
@@ -183,7 +196,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                     Name = CamelCaseName(s.Name),
                                     Type = TypeString(type, s.PropertyType),
                                     Discription = GetDiscription(s)
-                                }).ToList();
+                                }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
 
             var methods = type.GetMethods()
                                 .Where(p => p.IsPublic && !p.IsSpecialName && !skipMthods.Contains(p.Name))
@@ -233,12 +246,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         string TypeString(Type parentType, Type type)
         {
-            var @namespace = GetNamespace(type);
-            var parentNamespace = GetNamespace(parentType);
-            if (parentNamespace == @namespace) @namespace = string.Empty;
             var arrayType = GetArrayOrEnumerableType(type);
             var nullableType = GetNullableType(type);
             var typeToUse = nullableType ?? arrayType ?? type;
+            var @namespace = GetNamespace(typeToUse);
+            var parentNamespace = GetNamespace(parentType);
+            if (parentNamespace == @namespace) @namespace = string.Empty;
             var suffix = "";
             suffix = arrayType != null ? "[]" : suffix;
             suffix = nullableType != null ? "|null" : suffix;
@@ -247,7 +260,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         string GetNamespace(Type type, bool suffix = true)
         {
-            if (type.FullName == null) return string.Empty;
+            if (type.FullName == null || type.IsGenericType) return string.Empty;
             var arr = type.FullName.Split('.');
             if (arr.FirstOrDefault() == "System") return "";
             var @namespace = string.Join(".", arr.Take(arr.Length - 1));
@@ -315,7 +328,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
             _queue.Enqueue(typeToUse);
 
-            return typeToUse.Name;
+            return GetTypeName(typeToUse);
         }
 
         bool IsSystemType(Type type)
