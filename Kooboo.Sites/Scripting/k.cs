@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace Kooboo.Sites.Scripting
 {
-    public class k
+    public class k : Ik
     {
         private object _locker = new object();
 
@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Scripting
 
 
         public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
-         
+
 
         private kDataContext _data;
         public kDataContext DataContext
@@ -117,7 +117,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_viewdata == null)
                         {
-                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                         }
                     }
                 }
@@ -153,17 +153,17 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        private UserInfoModel _user; 
+        private UserInfoModel _user;
         public UserInfoModel User
         {
             get
             {
                 if (_user == null)
                 {
-                    _user = new UserInfoModel(this.RenderContext); 
-                } 
-                return _user; 
-            }  
+                    _user = new UserInfoModel(this.RenderContext);
+                }
+                return _user;
+            }
         }
 
         private KTemplate _template;
@@ -203,10 +203,10 @@ namespace Kooboo.Sites.Scripting
             public UserModel User
             {
                 get; set;
-            } 
-           
+            }
+
         }
-                     
+
         private kSiteDb _sitedb;
         public kSiteDb SiteDb
         {
@@ -301,7 +301,7 @@ namespace Kooboo.Sites.Scripting
 
         [Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
-         
+
         public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
@@ -421,20 +421,20 @@ namespace Kooboo.Sites.Scripting
         public void Import(string codename)
         {
             var sitedb = this.RenderContext.WebSite.SiteDb();
-            var code = sitedb.Code.Get(codename); 
-            if (code !=null)
+            var code = sitedb.Code.Get(codename);
+            if (code != null)
             {
-              var result =    Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id); 
-                if (result !=null)
+                var result = Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id);
+                if (result != null)
                 {
-                    Response.write(result); 
+                    Response.write(result);
                 }
             }
         }
 
         public void ImportCode(string codename)
         {
-            Import(codename); 
+            Import(codename);
         }
 
         #region APIHelper
