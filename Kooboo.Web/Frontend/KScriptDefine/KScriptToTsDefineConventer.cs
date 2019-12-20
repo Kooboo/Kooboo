@@ -102,40 +102,44 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 foreach (var group in defines)
                 {
                     var define = group.Value;
-                    var defineType = define.Enums == null ? "interface" : "enum";
                     var declare = string.IsNullOrWhiteSpace(define.Namespace) ? "declare " : string.Empty;
-                    var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
-                    var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
 
-                    builder.AppendLine($"   {declare}{defineType} {define.Name} {extends} {{");
-
-                    if (define.Enums != null)
+                    if (define.Enums == null)
                     {
+                        var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
+                        var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
+                        builder.AppendLine($"   {declare}interface {define.Name} {extends} {{");
+
+                        if (define.Properties != null)
+                        {
+                            foreach (var item in define.Properties)
+                            {
+                                if (item.Discription != null)
+                                {
+                                    builder.AppendLine($"       /** {item.Discription} */");
+                                }
+
+                                builder.AppendLine($"       {item.Name}:{item.Type};");
+                            }
+                        }
+
+                        if (define.Methods != null)
+                        {
+                            foreach (var item in define.Methods)
+                            {
+                                var @params = item.Params.Select(s => $"{s.Name}:{s.Type}");
+                                builder.AppendLine($"       {item.Name}({string.Join(",", @params)}):{item.ReturnType};");
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        builder.AppendLine($"   {declare}enum {define.Name} {{");
+
                         foreach (var item in define.Enums)
                         {
                             builder.AppendLine($"       {item.Key}={item.Value},");
-                        }
-                    }
-
-                    if (define.Properties != null)
-                    {
-                        foreach (var item in define.Properties)
-                        {
-                            if (item.Discription != null)
-                            {
-                                builder.AppendLine($"       /** {item.Discription} */");
-                            }
-
-                            builder.AppendLine($"       {item.Name}:{item.Type};");
-                        }
-                    }
-
-                    if (define.Methods != null)
-                    {
-                        foreach (var item in define.Methods)
-                        {
-                            var @params = item.Params.Select(s => $"{s.Name}:{s.Type}");
-                            builder.AppendLine($"       {item.Name}({string.Join(",", @params)}):{item.ReturnType};");
                         }
                     }
 
