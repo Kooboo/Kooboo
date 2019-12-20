@@ -10,11 +10,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 {
     public class KScriptDefineMiddleware : IKoobooMiddleWare
     {
-        private readonly string _defineContent;
+        private readonly Lazy<string> _defineContent;
 
         public KScriptDefineMiddleware()
         {
-            _defineContent = new KScriptToTsDefineConventer().Convent(typeof(k));
+
+            _defineContent = new Lazy<string>(() => new KScriptToTsDefineConventer().Convent(typeof(k)), true);
         }
         public IKoobooMiddleWare Next
         {
@@ -25,7 +26,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         {
             if (context.Request.Path.ToLower() == "/_admin/scripts/components/manacoservice/kscript.d.ts")
             {
-                context.Response.AppendString(_defineContent);
+                context.Response.AppendString(_defineContent.Value);
                 return;
             }
 
