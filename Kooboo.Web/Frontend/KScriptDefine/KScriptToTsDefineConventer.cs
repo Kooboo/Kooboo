@@ -65,7 +65,9 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(DateTime)] = "Date",
         };
 
-        static string[] skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode" };
+        static string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode" };
+
+        static string[] _skipNamespaces = new string[] { "System", "Jint" };
 
         public string Convent(Type type)
         {
@@ -108,7 +110,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                     {
                         var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
                         var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
-                        builder.AppendLine($"   {declare}interface {define.Name} {extends} {{");
+                        builder.AppendLine($"   {declare}interface {define.Name} {extends}{{");
 
                         if (define.Properties != null)
                         {
@@ -203,7 +205,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                 }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
 
             var methods = type.GetMethods()
-                                .Where(p => p.IsPublic && !p.IsSpecialName && !skipMthods.Contains(p.Name))
+                                .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name))
                                 .Select(s => new Method
                                 {
                                     Name = CamelCaseName(s.Name),
@@ -264,9 +266,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         string GetNamespace(Type type, bool suffix = true)
         {
-            if (type.FullName == null || type.IsGenericType) return string.Empty;
+            if (type.FullName == null || type.IsGenericType||IsSystemType(type)) return string.Empty;
             var arr = type.FullName.Split('.');
-            if (arr.FirstOrDefault() == "System") return "";
             var @namespace = string.Join(".", arr.Take(arr.Length - 1));
 
             if (suffix)
@@ -276,6 +277,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
             return @namespace;
         }
+
         static Type GetArrayOrEnumerableType(Type type)
         {
             if (type.IsArray)
@@ -337,7 +339,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         bool IsSystemType(Type type)
         {
-            return type.FullName?.StartsWith("System") ?? true;
+            if (type.FullName == null) return true;
+            return _skipNamespaces.Any(a => type.FullName.StartsWith(a));
         }
 
         string GetDiscription(MemberInfo memberInfo)
