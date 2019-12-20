@@ -244,7 +244,7 @@
     created: function() {
       Kooboo.EventBus.subscribe("DataStore/removed", function(removed) {
         if (confirm(Kooboo.text.confirm.removeBinding)) {
-          _.forEach(removed.reverse(), function(r) {
+          _.forEach(removed, function(r) {
             self.removeBindings(
               _.cloneDeep(BindingStore.getRemoveBindingInfos(r.id))
             );

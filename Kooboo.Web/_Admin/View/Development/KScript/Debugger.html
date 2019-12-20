@@ -173,7 +173,7 @@
           :id="'code-line-' + index"
         >
           <div class="line-idx" @click="toggleBreakpoint($event,item,index)">
-            <span v-html="item.idx + getPlaceholder(index)"> </span>
+            <span v-html="item.idx + 1 + getPlaceholder(index)"> </span>
             <i v-if="item.isBreakpoint" class="fa fa-circle"></i>
             <i class="fa fa-circle hover"></i>
           </div>
