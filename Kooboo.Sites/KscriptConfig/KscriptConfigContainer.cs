@@ -124,6 +124,13 @@ namespace Kooboo.Sites.KscriptConfig
         /// </summary>
         public static Dictionary<string, Type> NamespaceTypeDic { get; set; } = new Dictionary<string, Type>();
 
+        public static void Clear()
+        {
+            _list = null;
+            kscriptSetting = null;
+            kscriptContextType = null;
+        }
+
         private static Dictionary<string, Type> GetKscriptSetting(string kscriptSetting)
         {
             var kscriptSettings = new Dictionary<string, Type>();

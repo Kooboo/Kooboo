@@ -11,15 +11,15 @@ namespace Kooboo.Lib.Reflection
 {
     public static class AssemblyLoader
     {
+        private static List<Assembly> allAssemblies = new List<Assembly>();
         static AssemblyLoader()
         {
-            AllAssemblies = LoadAllDlls();
+            allAssemblies = LoadAllDlls();
         }
 
         private static List<Assembly> LoadAllDlls()
         {
             var dlls = new List<Assembly>();
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             var allassembs = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -36,138 +36,8 @@ namespace Kooboo.Lib.Reflection
 
             var path =  AppDomain.CurrentDomain.BaseDirectory;
             dlls = LoadKoobooDlls(dlls, path);
-            // load dll from modules or dll. 
-            List<string> subfolders = new List<string>();
-            subfolders.Add("dll");
-            //subfolders.Add("modules");
-            subfolders.Add("packages"); 
 
-            foreach (var item in subfolders)
-            {
-                string folder = System.IO.Path.Combine(path, item); 
-                if (System.IO.Directory.Exists(folder))
-                {
-                    var allsubdlls = System.IO.Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
-
-                    foreach (var filename in allsubdlls)
-                    {
-                        try
-                        {
-                            var otherAssembly = Assembly.LoadFile(filename);
-                            if (otherAssembly !=null)
-                            {
-                                dlls.Add(otherAssembly);
-                            } 
-                        }
-                        catch (Exception ex)
-                        {
- 
-                        } 
-                    } 
-
-                }
-            }
-            dlls=LoadModules(dlls);
             return dlls; 
-        }
-
-        #region
-        public static List<Assembly> LoadModules(List<Assembly> dlls)
-        {
-            // load dll from modules. 
-            List<string> subfolders = new List<string>();
-            subfolders.Add("modules");
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-
-            foreach (var item in subfolders)
-            {
-                string folder = System.IO.Path.Combine(path, item);
-                if (System.IO.Directory.Exists(folder))
-                {
-                    var allsubdlls = System.IO.Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
-
-                    foreach (var filename in allsubdlls)
-                    {
-                        try
-                        {
-                            var otherAssembly = Assembly.Load(File.ReadAllBytes(filename));
-                            
-                            if (otherAssembly != null)
-                            {
-                                dlls.Add(otherAssembly);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-
-                }
-            }
-            return dlls;
-        }
-
-        public static Dictionary<string, Assembly> ModuleAssembly = new Dictionary<string, Assembly>();
-
-        private static Assembly CurrentDomain_AssemblyResolve(object sender,ResolveEventArgs args)
-        {
-            var assemblyName = new AssemblyName(args.Name);
-            var name = assemblyName.Name;
-
-            var allassembs = AppDomain.CurrentDomain.GetAssemblies();
-
-            if (ModuleAssembly.ContainsKey(name))
-            {
-                return ModuleAssembly[name];
-            }
-            else
-            {
-                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                var path = Path.Combine(baseDirectory, "modules",string.Format("{0}.dll", name));
-                if (!File.Exists(path)) return null;
-
-                var assembly = Assembly.Load(File.ReadAllBytes(path));
-                ModuleAssembly[name] = assembly;
-
-                return assembly;
-            }
-        }
-
-        #endregion
-
-        public static List<Assembly> LoadExtensionDll(string extensiondlls)
-        {
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-
-            if (!string.IsNullOrEmpty(extensiondlls))
-            {
-                var extensionList= extensiondlls.Split(',').ToList().Distinct().ToList();
-                foreach (var dll in extensionList)
-                {
-                    try
-                    {
-                        var filename = dll.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
-                            ? dll
-                            : string.Format("{0}.dll", dll);
-
-                        var filepath = Path.Combine(path, filename);
-                        if(File.Exists(filepath))
-                        {
-                            var assembly = Assembly.LoadFile(filepath);
-                            if (assembly != null && !AllAssemblies.Exists(ass=>ass.FullName.Equals(assembly.FullName)))
-                            {
-                                AllAssemblies.Add(assembly);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                }
-            }
-            return AllAssemblies;
         }
 
         public static List<Assembly> LoadKoobooDlls(List<Assembly> dlls,string path)
@@ -207,10 +77,20 @@ namespace Kooboo.Lib.Reflection
             return dlls;
         }
 
+
         public static List<Assembly> AllAssemblies
         {
-            get; set;
+            get
+            {
+                var list = new List<Assembly>();
+                list.AddRange(allAssemblies);
+                list.AddRange(ExtensionAssemblyLoader.Instance.Assemblies);
+
+                return list;
+                //allAssemblies.Concat(ExtensionAssemblyLoader.Instance.Assemblies).ToList();
+            }
         }
+
 
         private static List<Assembly> LoadOtherAssemblies()
         {
@@ -267,7 +147,26 @@ namespace Kooboo.Lib.Reflection
 
             return typelist;
         }
- 
+
+        public static List<Type> LoadTypeByBaseClass(Type baseType)
+        {
+            List<Type> typelist = new List<Type>();
+
+            foreach (var item in AllAssemblies)
+            {
+                foreach (var type in item.GetTypes())
+                {
+                    if (!type.IsAbstract && type.IsClass&& type.IsSubclassOf(baseType))
+                    {
+                        typelist.Add(type);
+                    }
+                }
+
+            }
+
+            return typelist;
+        }
+
         public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
         {
             List<Type> typelist = new List<Type>();
