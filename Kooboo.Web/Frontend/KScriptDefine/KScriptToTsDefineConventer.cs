@@ -65,7 +65,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(DateTime)] = "Date",
         };
 
-        static string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode" };
+        static string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
 
         static string[] _skipNamespaces = new string[] { "System", "Jint" };
 
