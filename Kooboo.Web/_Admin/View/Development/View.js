@@ -244,12 +244,6 @@ $(function() {
           e.preventDefault();
           self.onSave();
         }
-
-        if (e.keyCode == 70 && e.altKey && e.shiftKey) {
-          //Shift + Alt + F
-          e.preventDefault();
-          self.formatCode();
-        }
       });
     },
     methods: {
