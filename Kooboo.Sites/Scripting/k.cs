@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.SiteItem;
@@ -12,7 +13,7 @@ using System.Reflection;
 
 namespace Kooboo.Sites.Scripting
 {
-    public class k : Ik
+    public class k
     {
         private object _locker = new object();
 
@@ -23,9 +24,8 @@ namespace Kooboo.Sites.Scripting
             this.RenderContext = context;
         }
 
-
+        [Ignore]
         public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
-
 
         private kDataContext _data;
         public kDataContext DataContext
@@ -208,6 +208,10 @@ namespace Kooboo.Sites.Scripting
         }
 
         private kSiteDb _sitedb;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public kSiteDb SiteDb
         {
             get
@@ -462,7 +466,6 @@ namespace Kooboo.Sites.Scripting
         {
             this.ReturnValues.Add(obj);
         }
-
 
         public void export(object obj)
         {
@@ -761,10 +764,10 @@ namespace Kooboo.Sites.Scripting
 
 
     public class UserInfoModel
-    { 
+    {
         public UserInfoModel(RenderContext context)
         {
-            this.context = context; 
+            this.context = context;
         }
 
         public RenderContext context { get; set; }
@@ -778,7 +781,7 @@ namespace Kooboo.Sites.Scripting
                     return context.User.Id;
                 }
                 return default(Guid);
-            } 
+            }
         }
 
         public Guid _Id
@@ -797,7 +800,7 @@ namespace Kooboo.Sites.Scripting
         {
             get
             {
-                return context.User != null; 
+                return context.User != null;
             }
         }
 
@@ -806,30 +809,30 @@ namespace Kooboo.Sites.Scripting
         {
             if (context.User == null)
             {
-                return false; 
+                return false;
             }
-            Guid OrgId = default(Guid); 
+            Guid OrgId = default(Guid);
             if (!Guid.TryParse(OrganizationName, out OrgId))
             {
                 OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
-            } 
+            }
 
             if (context.User.CurrentOrgId == OrgId)
             {
-                return true; 
+                return true;
             }
 
-            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id); 
-            
+            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id);
+
             if (orgs.Any())
             {
-                var find = orgs.Find(o => o.Id == OrgId); 
-                if (find !=null)
+                var find = orgs.Find(o => o.Id == OrgId);
+                if (find != null)
                 {
                     return true;
                 }
             }
-            return false;  
+            return false;
         }
 
         public Kooboo.Data.Models.User Get(string userName)
@@ -848,36 +851,39 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        public string UserName {
+        public string UserName
+        {
             get
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
-                    return context.User.UserName; 
+                    return context.User.UserName;
                 }
                 return null;
             }
         }
 
-        public string FirstName {
+        public string FirstName
+        {
             get
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
-                    return context.User.FirstName; 
+                    return context.User.FirstName;
                 }
-                return null; 
+                return null;
             }
         }
 
-        public string LastName {
+        public string LastName
+        {
             get
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
-                    return context.User.LastName; 
+                    return context.User.LastName;
                 }
-                return null; 
+                return null;
             }
         }
 
@@ -911,17 +917,17 @@ namespace Kooboo.Sites.Scripting
 
             if (user != null)
             {
-                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(),  30);
-                context.User = user; 
-                return user; 
+                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(), 30);
+                context.User = user;
+                return user;
             }
 
-            return null; 
-        }  
+            return null;
+        }
 
         public bool Exists(string UserName)
         {
-            return Data.GlobalDb.Users.Get(UserName) != null; 
+            return Data.GlobalDb.Users.Get(UserName) != null;
         }
 
         [Obsolete]
@@ -938,7 +944,7 @@ namespace Kooboo.Sites.Scripting
         public void Logout()
         {
             // log user out. 
-            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
-        } 
+            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);
+        }
     }
 }

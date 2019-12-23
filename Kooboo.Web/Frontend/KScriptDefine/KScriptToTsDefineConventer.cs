@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kooboo.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -41,10 +42,14 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Name { get; set; }
         }
 
-        Dictionary<Type, Define> _defines = new Dictionary<Type, Define>();
-        Queue<Type> _queue = new Queue<Type>();
+        class Indentation
+        {
+        }
 
-        static IDictionary<Type, string> convertedTypes = new Dictionary<Type, string>()
+        readonly Dictionary<Type, Define> _defines = new Dictionary<Type, Define>();
+        readonly Queue<Type> _queue = new Queue<Type>();
+
+        static readonly IDictionary<Type, string> _convertedTypes = new Dictionary<Type, string>()
         {
             [typeof(string)] = "string",
             [typeof(char)] = "string",
@@ -65,17 +70,23 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(DateTime)] = "Date",
         };
 
-        static string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
+        static readonly string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
+        static readonly string[] _skipNamespaces = new string[] { "System", "Jint" };
 
-        static string[] _skipNamespaces = new string[] { "System", "Jint" };
-
-        public string Convent(Type type)
+        public string Convent(Type type, Dictionary<string, Type> extensions = null)
         {
             void Recursion(Type t)
             {
                 if (IsSystemType(t)) return;
 
                 var define = TypeToDefine(t);
+
+                if (t == type && extensions != null)
+                {
+                    var extensionProperties = ExtensionToDefine(extensions, type);
+                    define.Properties?.AddRange(extensionProperties);
+                }
+
                 _defines.Add(t, define);
 
                 while (_queue.Any())
@@ -87,12 +98,26 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             }
 
             Recursion(type);
+
+
+
             return DefinesToString(type);
+        }
+
+        IEnumerable<Property> ExtensionToDefine(Dictionary<string, Type> extensions, Type parentType)
+        {
+            return extensions.Select(s => new Property
+            {
+                Name = CamelCaseName(s.Key),
+                Type = TypeString(parentType, s.Value),
+                Discription = null
+            }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
         }
 
         string DefinesToString(Type type)
         {
             var builder = new StringBuilder();
+
             builder.AppendLine($"declare const k: {GetNamespace(type)}{type.Name};");
             foreach (var defines in _defines.GroupBy(global => global.Value.Namespace))
             {
@@ -196,7 +221,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         {
 
             var properties = type.GetProperties()
-                                .Where(p => p.GetMethod.IsPublic)
+                                .Where(p => p.GetMethod.IsPublic && p.GetCustomAttribute(typeof(IgnoreAttribute)) == null)
                                 .Select(s => new Property
                                 {
                                     Name = CamelCaseName(s.Name),
@@ -205,13 +230,29 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                 }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
 
             var methods = type.GetMethods()
-                                .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name))
-                                .Select(s => new Method
+                                .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name) && p.GetCustomAttribute(typeof(IgnoreAttribute)) == null)
+                                .Select(s =>
                                 {
-                                    Name = CamelCaseName(s.Name),
-                                    Params = s.GetParameters().Select(ss => new Param { Name = ss.Name, Type = TypeString(type, ss.ParameterType) }).ToList(),
-                                    ReturnType = TypeString(type, s.ReturnType),
-                                    Discription = GetDiscription(s)
+                                    var defineType = s.GetCustomAttribute(typeof(DefineTypeAttribute)) as DefineTypeAttribute;
+                                    var returnType = defineType?.Return ?? s.ReturnType;
+                                    var @params = new List<Param>();
+                                    var defineParams = defineType?.Params?.GetEnumerator();
+
+                                    foreach (var item in s.GetParameters())
+                                    {
+                                        if (!defineParams?.MoveNext() ?? false) defineParams = null;
+                                        var itemType = (Type)defineParams?.Current ?? item.ParameterType;
+                                        var param = new Param { Name = item.Name, Type = TypeString(type, itemType) };
+                                        @params.Add(param);
+                                    }
+
+                                    return new Method
+                                    {
+                                        Name = CamelCaseName(s.Name),
+                                        Params = @params,
+                                        ReturnType = TypeString(type, returnType),
+                                        Discription = GetDiscription(s)
+                                    };
                                 }).ToList();
 
             var extends = new List<Type>();
@@ -266,7 +307,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         string GetNamespace(Type type, bool suffix = true)
         {
-            if (type.FullName == null || type.IsGenericType||IsSystemType(type)) return string.Empty;
+            if (type.FullName == null || type.IsGenericType || IsSystemType(type)) return string.Empty;
             var arr = type.FullName.Split('.');
             var @namespace = string.Join(".", arr.Take(arr.Length - 1));
 
@@ -315,9 +356,9 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         string ConvertType(Type typeToUse)
         {
-            if (convertedTypes.ContainsKey(typeToUse))
+            if (_convertedTypes.ContainsKey(typeToUse))
             {
-                return convertedTypes[typeToUse];
+                return _convertedTypes[typeToUse];
             }
 
             if (typeToUse.IsGenericType || IsSystemType(typeToUse))

@@ -14,8 +14,10 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         public KScriptDefineMiddleware()
         {
-
-            _defineContent = new Lazy<string>(() => new KScriptToTsDefineConventer().Convent(typeof(Ik)), true);
+            _defineContent = new Lazy<string>(() =>
+            {
+                return new KScriptToTsDefineConventer().Convent(typeof(k), ExtensionContainer.List);
+            }, true);
         }
         public IKoobooMiddleWare Next
         {
