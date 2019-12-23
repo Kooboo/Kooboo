@@ -4,6 +4,7 @@ using Kooboo.Data;
 using System.Linq;
 using System.Collections.Generic;
 using Kooboo.Data.Context;
+using Kooboo.Lib.Reflection;
 
 namespace Kooboo.Sites.KscriptConfig
 {
@@ -41,7 +42,7 @@ namespace Kooboo.Sites.KscriptConfig
             get
             {
                 var config = AppSettings.KscriptConfig;
-                if (config == null && string.IsNullOrEmpty(config.KscriptSetting)) return null;
+                if (config == null || string.IsNullOrEmpty(config.KscriptSetting)) return new Dictionary<string, Type>();
 
                 if (kscriptSetting == null)
                 {
@@ -96,9 +97,8 @@ namespace Kooboo.Sites.KscriptConfig
                                     }
 
                                     //get type with namespace
-                                    var kscriptTypes = kscriptType.IsInterface
-                                                    ? Lib.Reflection.AssemblyLoader.LoadTypeByInterface(kscriptType)
-                                                    : new List<Type> { kscriptType };
+                                    var kscriptTypes = GetTypes(kscriptType);
+
                                     foreach (var type in kscriptTypes)
                                     {
                                         var name = string.IsNullOrEmpty(item.Name) ? type.Name : item.Name;
@@ -131,9 +131,7 @@ namespace Kooboo.Sites.KscriptConfig
             var settingType = Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(kscriptSetting);
             if (settingType != null)
             {
-                var types = settingType.IsInterface
-                                ? Lib.Reflection.AssemblyLoader.LoadTypeByInterface(settingType)
-                                : new List<Type> { settingType };
+                var types = GetTypes(settingType);
 
                 foreach (var type in types)
                 {
@@ -157,6 +155,20 @@ namespace Kooboo.Sites.KscriptConfig
             return kscriptSettings;
         }
 
+        private static List<Type> GetTypes(Type type)
+        {
+            var types = new List<Type> { type };
+            if (type.IsInterface)
+            {
+                types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(type);
+            }
+            else if (type.IsClass)
+            {
+                types = Lib.Reflection.AssemblyLoader.LoadTypeByBaseClass(type);
+            }
+
+            return types;
+        }
         private static string GetTopLevelNamespace(string ns)
         {
             if (string.IsNullOrEmpty(ns)) return string.Empty;
@@ -169,7 +181,7 @@ namespace Kooboo.Sites.KscriptConfig
         private static void LoadExtensionDll(string extensionDlls)
         {
             if (!string.IsNullOrEmpty(extensionDlls))
-                Lib.Reflection.AssemblyLoader.LoadExtensionDll(extensionDlls);
+                ExtensionAssemblyLoader.Instance.LoadSpecificDlls(extensionDlls);
         }
 
     }
@@ -223,7 +235,7 @@ namespace Kooboo.Sites.KscriptConfig
         private void CreateInstanceByNamespace(string kscriptname, RenderContext context)
         {
             var keys = KscriptConfigContainer.NamespaceTypeDic.Keys;
-            var matchNS = keys.ToList().FindAll(k => k.StartsWith(kscriptname, StringComparison.OrdinalIgnoreCase));
+            var matchNS = keys.ToList().FindAll(k => k.StartsWith(kscriptname+".", StringComparison.OrdinalIgnoreCase));
 
             foreach (var ns in matchNS)
             {
