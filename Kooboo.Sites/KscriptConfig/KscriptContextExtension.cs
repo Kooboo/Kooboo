@@ -1,111 +1,110 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Reflection;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
-using System.Net;
 using Kooboo.Lib.Reflection;
 
 namespace Kooboo.Sites.KscriptConfig
 {
     public static class KscriptContextExtension
     {
-        public static object ToKscriptContext(this RenderContext renderContext, Type kscriptContextType)
+        public static object CopyTo(this RenderContext renderContext, Type type)
         {
-            if (kscriptContextType == null) return null;
-            var instance = Activator.CreateInstance(kscriptContextType);
-            if (instance == null || renderContext == null) return null;
-
-            var requestProp = kscriptContextType.GetProperty("Request");
-            if (requestProp != null)
-            {
-                var requestInstance = Activator.CreateInstance(requestProp.PropertyType);
-                
-                SetPropertyData(renderContext.Request, requestInstance);
-                requestProp.SetValue(instance, TypeHelper.ChangeType(requestInstance, requestProp.PropertyType));
-            }
-
-            var responseProp = kscriptContextType.GetProperty("Response");
-            if (responseProp != null)
-            {
-                var responseInstance = Activator.CreateInstance(responseProp.PropertyType);
-                responseProp.SetValue(instance, responseInstance);
-
-                //to do chang to set dynamic method
-                var addCookie = responseProp.PropertyType.GetField("AddCookie");
-                if (addCookie != null)
-                {
-                    Action<Cookie> action = (Cookie cookie) =>
-                     {
-                         renderContext.Response.AddCookie(cookie);
-                     };
-                    addCookie.SetValue(responseInstance, action);
-                }
-                var appendCookie = responseProp.PropertyType.GetField("AppendCookie");
-                if (appendCookie != null)
-                {
-                    Action<string,string,DateTime> action = (string cookieName, string value, DateTime expire) =>
-                    {
-                        renderContext.Response.AppendCookie(cookieName,value,expire);
-                    };
-                    appendCookie.SetValue(responseInstance, action);
-                }
-                responseProp.SetValue(instance, TypeHelper.ChangeType(responseInstance, responseProp.PropertyType));
-                //SetPropertyData(renderContext.Response, responseInstance);
-            }
-
-            var getSetting = kscriptContextType.GetField("GetSetting");
+            var instance = Activator.CreateInstance(type);
+            instance = Copy(renderContext,instance);
+            //sepcial setting method
+            var getSetting = type.GetField("GetSetting");
             if (getSetting != null)
             {
-                Func<Type, object> getSettingFunc = (Type type) =>
-                  {
-                      if (renderContext.WebSite != null && renderContext.WebSite.OrganizationId != default(Guid))
-                      {
-                          var sitedb = renderContext.WebSite.SiteDb();
-                          var setting = sitedb.CoreSetting.GetSiteSetting(type);
-                          if (setting != null)
-                          {
-                              return setting;
-                          }
-                      }
-                      return Activator.CreateInstance(type);
-                  };
-
+                Func<Type, object> getSettingFunc = renderContext.GetSetting;
                 getSetting.SetValue(instance, getSettingFunc);
             }
-            return TypeHelper.ChangeType(instance, kscriptContextType);
-            //return instance;
+
+            return instance;
         }
 
-
-        public static void SetPropertyData(object dataFrom, object dataTo)
+        public static object GetSetting(this RenderContext renderContext, Type type)
         {
-            var fromProperties = dataFrom.GetType().GetProperties().ToList();
-            var toProperties = dataTo.GetType().GetProperties().ToList();
-
-            foreach (var toProp in toProperties)
+            if (renderContext.WebSite != null && renderContext.WebSite.OrganizationId != default(Guid))
             {
-                var fromProp = fromProperties.Find(p => p.Name == toProp.Name && p.PropertyType == toProp.PropertyType);
-                if (fromProp == null) continue;
-
-                var value = fromProp.GetValue(dataFrom);
-                toProp.SetValue(dataTo, TypeHelper.ChangeType(value, fromProp.PropertyType));
+                var sitedb = renderContext.WebSite.SiteDb();
+                var setting = sitedb.CoreSetting.GetSiteSetting(type);
+                if (setting != null)
+                {
+                    return setting;
+                }
             }
-
-            //var fromMethods = dataFrom.GetType().GetMethods().ToList();
-            //var toMethodFields = dataTo.GetType().GetFields().ToList();
-
-            //foreach (var toMethodField in toMethodFields)
-            //{
-            //    var fromMethod = fromMethods.Find(m => m.Name == toMethodField.Name && IsSameMethod(toMethodField, m));
-            //    if (fromMethod == null) continue;
-            //    toMethodField.SetValue(dataTo, fromMethod);
-
-            //}
-
+            return Activator.CreateInstance(type);
         }
+
+        /// <summary>
+        /// copy object to another object
+        /// </summary>
+        /// <param name="copyFrom"></param>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        private static object Copy(object copyFrom, object instance)
+        {
+            if (copyFrom == null) return instance;
+
+            #region map method to Action/Func field
+            var fromMethods = copyFrom.GetType().GetMethods().ToList();
+            //var extensionMethods = GetExtensionMethods(typeof(KscriptContextExtension).Assembly,copyFrom.GetType());
+            //fromMethods.AddRange(extensionMethods);
+
+            var fields = instance.GetType().GetFields().ToList();
+            foreach (var field in fields)
+            {
+                var matchMethod = fromMethods.Find(m => IsSameMethod(field,m));
+                if (matchMethod == null) continue;
+
+                var delegateMethod = matchMethod.CreateDelegate(field.FieldType,copyFrom);
+                field.SetValue(instance, delegateMethod);
+            }
+            #endregion
+
+            #region map properties
+            var fromProperties = copyFrom.GetType().GetProperties().ToList();
+            var properties = instance.GetType().GetProperties().ToList();
+            foreach (var prop in properties)
+            {
+                var matchProp = fromProperties.Find(p => p.Name.Equals(prop.Name, StringComparison.OrdinalIgnoreCase));
+                if (matchProp == null)
+                {
+                    continue;
+                }
+                var value = matchProp.GetValue(copyFrom);
+                if (prop.PropertyType == matchProp.PropertyType)
+                {
+                    prop.SetValue(instance, value);
+                }
+                else 
+                {
+                    var matchPropertyInstance = Activator.CreateInstance(prop.PropertyType);
+                    matchPropertyInstance= Copy(value,matchPropertyInstance);
+                    //need convert type
+                    prop.SetValue(instance, TypeHelper.ChangeType(matchPropertyInstance,prop.PropertyType));
+                }
+            }
+            #endregion
+
+
+            return TypeHelper.ChangeType(instance,instance.GetType());
+        }
+
+        //private static List<MethodInfo> GetExtensionMethods(Assembly assembly,Type extensionType)
+        //{
+        //    var query = from type in assembly.GetTypes()
+        //                where !type.IsGenericType && !type.IsNested
+        //                from method in type.GetMethods(BindingFlags.Static
+        //                    | BindingFlags.Public | BindingFlags.NonPublic)
+        //                where method.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), false)
+        //                where method.GetParameters()[0].ParameterType == extensionType
+        //                select method;
+        //    return query.ToList();
+        //}
 
         private static bool IsSameMethod(FieldInfo field, MethodInfo methodInfo)
         {
@@ -139,7 +138,7 @@ namespace Kooboo.Sites.KscriptConfig
             return false;
         }
 
-        public static bool IsAction(Type type)
+        private static bool IsAction(Type type)
         {
             var types = new List<Type> {
                 typeof(Action),typeof(Action<>),typeof(Action<,>),typeof(Action<,,>)
@@ -149,7 +148,7 @@ namespace Kooboo.Sites.KscriptConfig
             return type.IsGenericType && types.Contains(type.GetGenericTypeDefinition());
         }
 
-        public static bool IsFunc(Type type)
+        private static bool IsFunc(Type type)
         {
             var types = new List<Type> {
                 typeof(Func<>),typeof(Func<,>),typeof(Func<,,>),typeof(Func<,,,>)

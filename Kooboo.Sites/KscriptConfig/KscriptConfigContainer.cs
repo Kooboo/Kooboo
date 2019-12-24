@@ -294,14 +294,14 @@ namespace Kooboo.Sites.KscriptConfig
         //    return instance;
         //}
 
-        private object GetOrCreateContext(RenderContext context,Type kscriptContextType)
+        private object GetOrCreateContext(RenderContext renderContext,Type kscriptContextType)
         {
-            if (kscriptContextType == null || context == null)
+            if (kscriptContextType == null || renderContext == null)
                 return null;
             if (kscriptContext != null)
                 return kscriptContext;
 
-            var instance = context.ToKscriptContext(kscriptContextType);
+            var instance = renderContext.CopyTo(kscriptContextType);
             this.kscriptContext = instance;
             return instance;
         }
