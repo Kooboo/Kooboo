@@ -48,6 +48,15 @@ $(function() {
             }
             self.init();
         },
+        mounted: function() {
+            $(document).keydown(function(e) {
+              if (e.keyCode == 83 && e.ctrlKey) {
+                //Ctrl + S
+                e.preventDefault();
+                self.onSave();
+              }
+            });
+        },
         methods: {
             init: function() {
                 Kooboo.Code.getEdit({

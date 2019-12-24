@@ -106,7 +106,7 @@
                   <span v-if="model.file" class="fileinput-filename"
                     >{{model.file.name}}</span
                   >
-                  <a v-if="model.file" @click="model.file=null" class="close"
+                  <a v-if="model.file" @click="removeFile" class="close"
                     ><i class="fa fa-close"></i
                   ></a>
                   <span class="help-block">Accept type: *.zip</span>
@@ -249,12 +249,16 @@
 
           if (files.length) {
             var name = files[0].name;
-
             if (
               name.indexOf(".") > -1 &&
               name.split(".").reverse()[0] == "zip"
             ) {
               self.model.file = files[0];
+              if (!self.model.siteName) {
+                var arr = name.split(".");
+                arr.pop();
+                self.model.siteName = arr.join(".");
+              }
             } else {
               alert(Kooboo.text.alert.uploadZipFile);
             }
@@ -263,6 +267,10 @@
       }
     },
     methods: {
+      removeFile: function() {
+        self.model.file = null;
+        self.model.siteName = "";
+      },
       startSubmit: function() {
         if (self.$refs.form.validate()) {
           self.importing = true;

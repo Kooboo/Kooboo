@@ -99,10 +99,10 @@
 
     <kb-table-column align="right" width="200px">
       <template v-slot="row">
-        <a class="btn btn-sm blue" :href="getEditUrl(row)">
+        <a class="btn btn-sm blue" :href="getEditUrl(row)" @click.stop>
           {{ Kooboo.text.common.edit }}
         </a>
-        <a class="btn btn-sm blue" :href="getDebugUrl(row.id)" target="_blank">
+        <a class="btn btn-sm blue" :href="getDebugUrl(row.id)" target="_blank" @click.stop>
           {{ Kooboo.text.common.Debug }}
         </a>
       </template>
