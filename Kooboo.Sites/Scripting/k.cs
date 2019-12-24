@@ -27,6 +27,9 @@ namespace Kooboo.Sites.Scripting
         [Ignore]
         public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
 
+        [Ignore, Extension]
+        public static KeyValuePair<string, Type>[] Extensions => ExtensionContainer.List.ToArray();
+
         private kDataContext _data;
         public kDataContext DataContext
         {

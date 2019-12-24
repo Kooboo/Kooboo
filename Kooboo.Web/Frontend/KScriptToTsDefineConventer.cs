@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using ExtensionAttribute = System.Runtime.CompilerServices.ExtensionAttribute;
 
 namespace Kooboo.Web.Frontend.KScriptDefine
 {
@@ -80,7 +81,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 .Where(w => w.GetCustomAttributes(false).Any(a => a.GetType() == typeof(ExtensionAttribute)))
                 .ToArray();
 
-        public string Convent(Type type, Dictionary<string, Type> extensions = null)
+        public string Convent(Type type)
         {
             void Recursion(Type t)
             {
@@ -88,11 +89,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
                 var define = TypeToDefine(t);
 
-                if (t == type && extensions != null)
-                {
-                    var extensionProperties = ExtensionToDefine(extensions, type);
-                    define.Properties?.AddRange(extensionProperties);
-                }
+                var extensionProperties = ExtensionToProperties(t);
+                define.Properties?.AddRange(extensionProperties);
 
                 _defines.Add(t, define);
 
@@ -111,8 +109,16 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return DefinesToString(type);
         }
 
-        IEnumerable<Property> ExtensionToDefine(Dictionary<string, Type> extensions, Type parentType)
+        IEnumerable<Property> ExtensionToProperties(Type parentType)
         {
+            var props = parentType.GetRuntimeProperties().Where(w => w.GetCustomAttribute(typeof(Data.Attributes.ExtensionAttribute)) != null);
+            var extensions = new List<KeyValuePair<string, Type>>();
+
+            foreach (var prop in props)
+            {
+                extensions.AddRange(prop.GetValue(null, null) as KeyValuePair<string, Type>[]);
+            }
+
             return extensions.Select(s => new Property
             {
                 Name = CamelCaseName(s.Key),
