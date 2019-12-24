@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Data.Models
+namespace Kooboo.Data.Attributes
 {
     /// <summary>
     /// skip this member when generate typescript define
@@ -12,6 +12,9 @@ namespace Kooboo.Data.Models
     {
     }
 
+    /// <summary>
+    /// customize method type
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class DefineTypeAttribute : Attribute
     {

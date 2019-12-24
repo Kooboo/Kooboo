@@ -2,7 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using Kooboo.Data.Models;
+using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.SiteItem;
@@ -304,9 +304,9 @@ namespace Kooboo.Sites.Scripting
         public Dictionary<string, string> config { get; set; }
 
         [Attributes.SummaryIgnore]
-        public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
+        public FrontEvent.IFrontEvent @event { get; set; }
 
-        public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
+        public Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
 
@@ -382,8 +382,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        private Kooboo.Sites.Scripting.Global.Mail _mail;
-        public Kooboo.Sites.Scripting.Global.Mail mail
+        private Global.Mail _mail;
+        public Global.Mail mail
         {
             get
             {
@@ -401,9 +401,9 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        Kooboo.Sites.Scripting.Global.Security _security;
+        Security _security;
 
-        public Kooboo.Sites.Scripting.Global.Security Security
+        public Security Security
         {
             get
             {
@@ -413,7 +413,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_security == null)
                         {
-                            _security = new Global.Security();
+                            _security = new Security();
                         }
                     }
                 }
@@ -446,7 +446,7 @@ namespace Kooboo.Sites.Scripting
         public void Help()
         {
             //var html = new HelperRender().Render(RenderContext);
-            var html = new Kooboo.Sites.Scripting.Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
+            var html = new Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
             Response.write(html);
             //Help("k");
         }
@@ -476,7 +476,7 @@ namespace Kooboo.Sites.Scripting
         {
             string spe = ".";
             fullname = fullname.ToLower().Replace("k.", "");
-            List<string> psname = fullname.Split(spe.ToCharArray()).ToList();
+            var psname = fullname.Split(spe.ToCharArray()).ToList();
 
             //walkaround:cz
             var currenttype = this.GetType();
@@ -497,13 +497,13 @@ namespace Kooboo.Sites.Scripting
 
         private List<PropertyViewModel> GetProperty(Type type, string methodbase)
         {
-            List<PropertyViewModel> result = new List<PropertyViewModel>();
+            var result = new List<PropertyViewModel>();
 
             var allparas = _GetProperties(type);
 
             foreach (var item in allparas)
             {
-                PropertyViewModel model = new PropertyViewModel() { Name = methodbase + "." + item.Key, ReturnType = item.Value };
+                var model = new PropertyViewModel() { Name = methodbase + "." + item.Key, ReturnType = item.Value };
 
                 result.Add(model);
             }
@@ -540,7 +540,7 @@ namespace Kooboo.Sites.Scripting
                 else
                 {
                     string name = item.Name;
-                    Dictionary<string, string> para = new Dictionary<string, string>();
+                    var para = new Dictionary<string, string>();
                     para.Add("name", name);
                     string url = Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
                     result += "<br/><br/> <a href='" + url + "'><b>" + name + "</b></a>";
@@ -608,16 +608,16 @@ namespace Kooboo.Sites.Scripting
                 return new List<MethodViewModel>();
             }
 
-            List<MethodViewModel> methods = new List<MethodViewModel>();
+            var methods = new List<MethodViewModel>();
 
             var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
 
             foreach (var item in allmethods)
             {
-                var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
+                var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
                 if (requirepara == null)
                 {
-                    MethodViewModel model = new MethodViewModel();
+                    var model = new MethodViewModel();
                     model.Name = MethodPathBase + "." + item.Name;
                     var paras = item.GetParameters();
                     foreach (var p in paras)
@@ -649,7 +649,7 @@ namespace Kooboo.Sites.Scripting
                 return ExtensionContainer.List;
             }
 
-            Dictionary<string, Type> fieldlist = new Dictionary<string, Type>();
+            var fieldlist = new Dictionary<string, Type>();
 
             FieldInfo[] fieldInfo = objectType.GetFields();
 
@@ -657,7 +657,7 @@ namespace Kooboo.Sites.Scripting
             {
                 if (item.CanRead && item.PropertyType.IsPublic)
                 {
-                    var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
+                    var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
                     if (requirepara == null)
                     {
                         fieldlist.Add(item.Name, item.PropertyType);
@@ -669,7 +669,7 @@ namespace Kooboo.Sites.Scripting
 
         private List<MethodViewModel> GetRepositoryMethod(Type type, string MethodPathBase)
         {
-            List<MethodViewModel> methods = new List<MethodViewModel>();
+            var methods = new List<MethodViewModel>();
 
             var repo = Activator.CreateInstance(type) as IRepository;
 
@@ -677,7 +677,7 @@ namespace Kooboo.Sites.Scripting
 
             var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
 
-            List<string> takeMethods = new List<string>();
+            var takeMethods = new List<string>();
             if (isRoutable)
             {
                 takeMethods.Add("GetByUrl");
@@ -706,7 +706,7 @@ namespace Kooboo.Sites.Scripting
                     }
                 }
 
-                MethodViewModel model = new MethodViewModel();
+                var model = new MethodViewModel();
                 model.Name = MethodPathBase + "." + item.Name;
                 var paras = item.GetParameters();
                 foreach (var p in paras)
@@ -811,7 +811,7 @@ namespace Kooboo.Sites.Scripting
             {
                 return false;
             }
-            Guid OrgId = default(Guid);
+            var OrgId = default(Guid);
             if (!Guid.TryParse(OrganizationName, out OrgId))
             {
                 OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
@@ -835,7 +835,7 @@ namespace Kooboo.Sites.Scripting
             return false;
         }
 
-        public Kooboo.Data.Models.User Get(string userName)
+        public Data.Models.User Get(string userName)
         {
             if (string.IsNullOrEmpty(userName))
                 return null;
@@ -911,7 +911,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        public Kooboo.Data.Models.User Login(string username, string password)
+        public Data.Models.User Login(string username, string password)
         {
             var user = Kooboo.Data.GlobalDb.Users.Validate(username, password);
 

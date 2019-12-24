@@ -19,6 +19,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 return new KScriptToTsDefineConventer().Convent(typeof(k), ExtensionContainer.List);
             }, true);
         }
+
         public IKoobooMiddleWare Next
         {
             get; set;

@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,16 @@ namespace Kooboo.Sites.Scripting.Global
     public class Mail
     {
 
+        public interface MailSendValue
+        {
+            string To { get; set; }
+            string From { get; set; }
+            string Subject { get; set; }
+            string TextBody { get; set; }
+            string HtmlBody { get; set; }
+
+        }
+
         private RenderContext context { get; set; }
 
         public Mail(RenderContext context)
@@ -18,6 +29,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.context = context;
         }
 
+        [DefineType(Params = new[] { typeof(MailSendValue) })]
         public void Send(object value)
         {
             var maildata = PrepareData(value);
@@ -362,8 +374,6 @@ namespace Kooboo.Sites.Scripting.Global
             return result;
 
         }
-
-
 
     }
 

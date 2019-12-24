@@ -1,4 +1,4 @@
-﻿using Kooboo.Data.Models;
+﻿using Kooboo.Data.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
