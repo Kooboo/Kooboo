@@ -94,12 +94,12 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var loaderUrl = "https://unpkg.com/monaco-editor@0.18.1/min/vs/loader.js";
+      var loaderUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.19.0/min/vs/loader.js";
 
       $.getScript(loaderUrl, function(response, status) {
         if (status === "success") {
           window.require.config({
-            paths: { vs: "https://unpkg.com/monaco-editor@0.18.1/min/vs" }
+            paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.19.0/min/vs" }
           });
           window.MonacoEnvironment = {
             getWorkerUrl: function(workerId, label) {
