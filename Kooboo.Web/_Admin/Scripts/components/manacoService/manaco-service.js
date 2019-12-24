@@ -94,26 +94,28 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var loaderUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/vs/loader.js";
-      $.getScript(loaderUrl, function(response, status) {
-        if (status === "success") {
-          window.require.config({
-            paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/vs" }
-          });
-          window.MonacoEnvironment = {
-            getWorkerUrl: function(workerId, label) {
-              var encoded = encodeURIComponent(
-                "self.MonacoEnvironment = { baseUrl: 'https://unpkg.com/monaco-editor@0.18.1/min/' }; importScripts('https://unpkg.com/monaco-editor@0.18.1/min/vs/base/worker/workerMain.js');"
-              );
-              return "data:text/javascript;charset=utf-8," + encoded;
-            }
-          };
-          window.require(["vs/editor/editor.main"], function() {
-            monaco = window.monaco;
-            self.isLoader = true;
-            callback(monaco);
-          });
-        }
+      var baseUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/";
+      $.getScript(baseUrl + "vs/loader.js").done(function() {
+        window.require.config({
+          paths: { vs: baseUrl + "vs" }
+        });
+        window.MonacoEnvironment = {
+          getWorkerUrl: function(workerId, label) {
+            var encoded = encodeURIComponent(
+              "self.MonacoEnvironment = { baseUrl: '" +
+                baseUrl +
+                "' }; importScripts('" +
+                baseUrl +
+                "vs/base/worker/workerMain.js');"
+            );
+            return "data:text/javascript;charset=utf-8," + encoded;
+          }
+        };
+        window.require(["vs/editor/editor.main"], function() {
+          monaco = window.monaco;
+          self.isLoader = true;
+          callback(monaco);
+        });
       });
     };
     MonacoEditorService.prototype.init = function(callback, files) {
@@ -248,7 +250,7 @@ var MonacoEditorService =
           }
       }
     };
-    MonacoEditorService.prototype.addManualTriggerSuggest=function(editor){
+    MonacoEditorService.prototype.addManualTriggerSuggest = function(editor) {
       editor.addAction({
         id: "ManualTriggerSuggest",
         label: "ManualTriggerSuggest",
@@ -265,7 +267,7 @@ var MonacoEditorService =
           ed.getAction("editor.action.triggerSuggest").run();
         }
       });
-    }
+    };
 
     MonacoEditorService.prototype.addCompleteForHtmlTag = function(
       suggestions
