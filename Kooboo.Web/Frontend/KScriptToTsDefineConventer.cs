@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Kooboo.Web.Frontend.KScriptDefine
@@ -72,6 +73,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         static readonly string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
         static readonly string[] _skipNamespaces = new string[] { "System", "Jint" };
+
+        readonly IEnumerable<MethodInfo> _extensionMethodInfos = Lib.Reflection.AssemblyLoader.AllAssemblies
+                .SelectMany(s => s.GetTypes())
+                .SelectMany(s => s.GetMethods())
+                .Where(w => w.GetCustomAttributes(false).Any(a => a.GetType() == typeof(ExtensionAttribute)))
+                .ToArray();
 
         public string Convent(Type type, Dictionary<string, Type> extensions = null)
         {
@@ -231,14 +238,17 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
             var methods = type.GetMethods()
                                 .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name) && p.GetCustomAttribute(typeof(IgnoreAttribute)) == null)
+                                .Union(_extensionMethodInfos.Where(w => w.GetParameters().FirstOrDefault()?.ParameterType == type))
                                 .Select(s =>
                                 {
                                     var defineType = s.GetCustomAttribute(typeof(DefineTypeAttribute)) as DefineTypeAttribute;
                                     var returnType = defineType?.Return ?? s.ReturnType;
                                     var @params = new List<Param>();
                                     var defineParams = defineType?.Params?.GetEnumerator();
+                                    var isExtension = s.GetCustomAttributes(false).Any(a => a.GetType() == typeof(ExtensionAttribute));
+                                    var rawParams = isExtension ? s.GetParameters().Skip(1) : s.GetParameters();
 
-                                    foreach (var item in s.GetParameters())
+                                    foreach (var item in rawParams)
                                     {
                                         if (!defineParams?.MoveNext() ?? false) defineParams = null;
                                         var itemType = (Type)defineParams?.Current ?? item.ParameterType;
