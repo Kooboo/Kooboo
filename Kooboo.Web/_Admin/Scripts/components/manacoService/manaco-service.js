@@ -248,6 +248,25 @@ var MonacoEditorService =
           }
       }
     };
+    MonacoEditorService.prototype.addManualTriggerSuggest=function(editor){
+      editor.addAction({
+        id: "ManualTriggerSuggest",
+        label: "ManualTriggerSuggest",
+        keybindings: [
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_J,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space,
+          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space
+        ],
+        precondition: null,
+        keybindingContext: null,
+        contextMenuGroupId: "ManualTriggerSuggest",
+        contextMenuOrder: 1.5,
+        run: function(ed) {
+          ed.getAction("editor.action.triggerSuggest").run();
+        }
+      });
+    }
+
     MonacoEditorService.prototype.addCompleteForHtmlTag = function(
       suggestions
     ) {

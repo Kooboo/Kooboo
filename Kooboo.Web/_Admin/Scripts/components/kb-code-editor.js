@@ -100,7 +100,7 @@
           self.monaco = monaco;
           self.isInit = true;
           self.isCreate = true;
-          this.manualTriggerSuggest();
+          monacoService.addManualTriggerSuggest(self.editor);
           monacoService.onModelContentChange(self.model, function(content) {
             self.d_code = content;
           });
@@ -114,23 +114,6 @@
       },
       replace: function(text, range) {
         monacoService.replace(this.editor, text, range);
-      },
-      manualTriggerSuggest: function() {
-        this.editor.addAction({
-          id: "ManualTriggerSuggest",
-          label: "ManualTriggerSuggest",
-          keybindings: [
-            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_J,
-            monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space
-          ],
-          precondition: null,
-          keybindingContext: null,
-          contextMenuGroupId: "ManualTriggerSuggest",
-          contextMenuOrder: 1.5,
-          run: function(ed) {
-            ed.getAction("editor.action.triggerSuggest").run();
-          }
-        });
       }
     }
   });
