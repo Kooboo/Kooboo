@@ -96,7 +96,6 @@ namespace Kooboo.Web
                         if (_middlewares == null)
                         {
                             _middlewares = new List<IKoobooMiddleWare>();
-                            _middlewares.Add(new KScriptDefineMiddleware());
                             _middlewares.Add(new FrontRequest.KoobooMiddleware());
                             _middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
 
