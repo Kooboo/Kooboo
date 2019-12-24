@@ -94,28 +94,55 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var loaderUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.19.0/min/vs/loader.js";
-
-      $.getScript(loaderUrl, function(response, status) {
-        if (status === "success") {
-          window.require.config({
-            paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.19.0/min/vs" }
-          });
-          window.MonacoEnvironment = {
-            getWorkerUrl: function(workerId, label) {
-              var encoded = encodeURIComponent(
-                "self.MonacoEnvironment = { baseUrl: 'https://unpkg.com/monaco-editor@0.18.1/min/' }; importScripts('https://unpkg.com/monaco-editor@0.18.1/min/vs/base/worker/workerMain.js');"
-              );
-              return "data:text/javascript;charset=utf-8," + encoded;
+      function loadCdn(cdn, url) {
+        return new Promise(function(resolve, reject) {
+          var script;
+          window.onload = function() {
+            if (!document.getElementById("monaco-loader")) {
+              script = document.createElement("script");
+              script.id = "monaco-loader";
+              document.head.appendChild(script);
+            } else {
+              script = document.createElement("script");
             }
+            $.get(cdn + url, function(data, status) {
+              if (status === "success") {
+                script.innerHTML = data;
+                resolve(cdn, url);
+              } else {
+                reject(cdn, url);
+              }
+            });
           };
-          window.require(["vs/editor/editor.main"], function() {
-            monaco = window.monaco;
-            self.isLoader = true;
-            callback(monaco);
-          });
-        }
-      });
+        });
+      }
+      function monacoLoad(cdnUrl) {
+        window.require.config({
+          paths: { vs: `${cdnUrl}monaco-editor@0.18.1/min/vs` }
+        });
+        window.require(["vs/editor/editor.main"], function() {
+          monaco = window.monaco;
+          self.isLoader = true;
+          callback(monaco);
+        });
+      }
+      var cdnList = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"];
+      var i = 0;
+      var loaderUrl = "monaco-editor@0.18.1/min/vs/loader.js";
+      function loadHandler(cdn, url) {
+        loadCdn(cdn, url).then(
+          function(cdn) {
+            monacoLoad(cdn);
+          },
+          function(cdn) {
+            i++;
+            if (i < cdnList.length) {
+              loadHandler(cdnList[i], url);
+            }
+          }
+        );
+      }
+      loadHandler(cdnList[i], loaderUrl);
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (window.monaco) {
