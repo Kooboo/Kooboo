@@ -50,6 +50,8 @@ namespace Kooboo.Sites.KscriptConfig
             if (copyFrom == null) return instance;
 
             #region map method to Action/Func field
+
+            //GetMethods doesn't return extension method.
             var fromMethods = copyFrom.GetType().GetMethods().ToList();
             //var extensionMethods = GetExtensionMethods(typeof(KscriptContextExtension).Assembly,copyFrom.GetType());
             //fromMethods.AddRange(extensionMethods);
