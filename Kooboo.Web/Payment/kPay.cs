@@ -32,7 +32,7 @@ namespace Kooboo.Web.Payment
             set { }
         }
 
-        [Ignore, Extension]
-        public static KeyValuePair<string, Type>[] PaymentMethods => PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, Type>(s.Name, s.GetType())).ToArray();
+        [Extension]
+        static KeyValuePair<string, Type>[] _ = PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, Type>(s.Name, s.GetType())).ToArray();
     }
 }

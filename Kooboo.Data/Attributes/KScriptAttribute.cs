@@ -25,7 +25,7 @@ namespace Kooboo.Data.Attributes
     /// <summary>
     /// mark extension info
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public class ExtensionAttribute : Attribute
     {
         public ExtensionAttribute()

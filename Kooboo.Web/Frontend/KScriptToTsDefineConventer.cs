@@ -111,12 +111,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
         IEnumerable<Property> ExtensionToProperties(Type parentType)
         {
-            var props = parentType.GetRuntimeProperties().Where(w => w.GetCustomAttribute(typeof(Data.Attributes.ExtensionAttribute)) != null);
+            var fields = parentType.GetRuntimeFields().Where(w => w.GetCustomAttribute(typeof(Data.Attributes.ExtensionAttribute)) != null && w.IsStatic);
             var extensions = new List<KeyValuePair<string, Type>>();
 
-            foreach (var prop in props)
+            foreach (var prop in fields)
             {
-                extensions.AddRange(prop.GetValue(null, null) as KeyValuePair<string, Type>[]);
+                extensions.AddRange(prop.GetValue(null) as KeyValuePair<string, Type>[]);
             }
 
             return extensions.Select(s => new Property
