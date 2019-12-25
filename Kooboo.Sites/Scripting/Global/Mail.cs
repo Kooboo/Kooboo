@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.context = context;
         }
 
-        [DefineType(Params = new[] { typeof(MailSendValue) })]
+        [KDefineType(Params = new[] { typeof(MailSendValue) })]
         public void Send(object value)
         {
             var maildata = PrepareData(value);

@@ -44,12 +44,10 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Name { get; set; }
         }
 
-        class Indentation
-        {
-        }
+        readonly string _indentation = "  ";
 
-        readonly Dictionary<Type, Define> _defines = new Dictionary<Type, Define>();
-        readonly Queue<Type> _queue = new Queue<Type>();
+        static readonly string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
+        static readonly string[] _skipNamespaces = new string[] { "System", "Jint" };
 
         static readonly IDictionary<Type, string> _convertedTypes = new Dictionary<Type, string>()
         {
@@ -72,13 +70,13 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(DateTime)] = "Date",
         };
 
-        static readonly string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
-        static readonly string[] _skipNamespaces = new string[] { "System", "Jint" };
+        readonly Dictionary<Type, Define> _defines = new Dictionary<Type, Define>();
+        readonly Queue<Type> _queue = new Queue<Type>();
 
         readonly IEnumerable<MethodInfo> _extensionMethodInfos = Lib.Reflection.AssemblyLoader.AllAssemblies
                 .SelectMany(s => s.GetTypes())
                 .SelectMany(s => s.GetMethods())
-                .Where(w => w.GetCustomAttributes(false).Any(a => a.GetType() == typeof(ExtensionAttribute)))
+                .Where(w => IsExtension(w))
                 .ToArray();
 
         public string Convent(Type type)
@@ -89,7 +87,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
                 var define = TypeToDefine(t);
 
-                var extensionProperties = ExtensionToProperties(t);
+                var extensionProperties = GetExtensionProperties(t);
                 define.Properties?.AddRange(extensionProperties);
 
                 _defines.Add(t, define);
@@ -104,25 +102,27 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
             Recursion(type);
 
-
-
             return DefinesToString(type);
         }
 
-        IEnumerable<Property> ExtensionToProperties(Type parentType)
+        IEnumerable<Property> GetExtensionProperties(Type type)
         {
-            var fields = parentType.GetRuntimeFields().Where(w => w.GetCustomAttribute(typeof(Data.Attributes.ExtensionAttribute)) != null && w.IsStatic);
+            var fields = type.GetRuntimeFields().Where(w => IsKExtension(w) && w.IsStatic);
             var extensions = new List<KeyValuePair<string, Type>>();
 
             foreach (var prop in fields)
             {
-                extensions.AddRange(prop.GetValue(null) as KeyValuePair<string, Type>[]);
+                var value = prop.GetValue(null);
+                if (value is KeyValuePair<string, Type>[])
+                {
+                    extensions.AddRange(value as KeyValuePair<string, Type>[]);
+                }
             }
 
             return extensions.Select(s => new Property
             {
                 Name = CamelCaseName(s.Key),
-                Type = TypeString(parentType, s.Value),
+                Type = TypeString(type, s.Value),
                 Discription = null
             }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
         }
@@ -148,7 +148,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                     {
                         var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
                         var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
-                        builder.AppendLine($"   {declare}interface {define.Name} {extends}{{");
+                        builder.AppendLine($"{_indentation}{declare}interface {define.Name} {extends}{{");
 
                         if (define.Properties != null)
                         {
@@ -156,10 +156,10 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                             {
                                 if (item.Discription != null)
                                 {
-                                    builder.AppendLine($"       /** {item.Discription} */");
+                                    builder.AppendLine($"{_indentation}{_indentation}/** {item.Discription} */");
                                 }
 
-                                builder.AppendLine($"       {item.Name}:{item.Type};");
+                                builder.AppendLine($"{_indentation}{_indentation}{item.Name}:{item.Type};");
                             }
                         }
 
@@ -168,22 +168,22 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                             foreach (var item in define.Methods)
                             {
                                 var @params = item.Params.Select(s => $"{s.Name}:{s.Type}");
-                                builder.AppendLine($"       {item.Name}({string.Join(",", @params)}):{item.ReturnType};");
+                                builder.AppendLine($"{_indentation}{_indentation}{item.Name}({string.Join(",", @params)}):{item.ReturnType};");
                             }
                         }
 
                     }
                     else
                     {
-                        builder.AppendLine($"   {declare}enum {define.Name} {{");
+                        builder.AppendLine($"{_indentation}{declare}enum {define.Name} {{");
 
                         foreach (var item in define.Enums)
                         {
-                            builder.AppendLine($"       {item.Key}={item.Value},");
+                            builder.AppendLine($"{_indentation}{_indentation}{item.Key}={item.Value},");
                         }
                     }
 
-                    builder.AppendLine($"   }}");
+                    builder.AppendLine($"{_indentation}}}");
                     builder.AppendLine();
                 }
 
@@ -234,7 +234,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         {
 
             var properties = type.GetProperties()
-                                .Where(p => p.GetMethod.IsPublic && p.GetCustomAttribute(typeof(IgnoreAttribute)) == null)
+                                .Where(p => p.GetMethod.IsPublic && p.GetCustomAttribute(typeof(KIgnoreAttribute)) == null)
                                 .Select(s => new Property
                                 {
                                     Name = CamelCaseName(s.Name),
@@ -243,11 +243,11 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                 }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
 
             var methods = type.GetMethods()
-                                .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name) && p.GetCustomAttribute(typeof(IgnoreAttribute)) == null)
+                                .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name) && p.GetCustomAttribute(typeof(KIgnoreAttribute)) == null)
                                 .Union(_extensionMethodInfos.Where(w => w.GetParameters().FirstOrDefault()?.ParameterType == type))
                                 .Select(s =>
                                 {
-                                    var defineType = s.GetCustomAttribute(typeof(DefineTypeAttribute)) as DefineTypeAttribute;
+                                    var defineType = s.GetCustomAttribute(typeof(KDefineTypeAttribute)) as KDefineTypeAttribute;
                                     var returnType = defineType?.Return ?? s.ReturnType;
                                     var @params = new List<Param>();
                                     var defineParams = defineType?.Params?.GetEnumerator();
@@ -394,13 +394,23 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return GetTypeName(typeToUse);
         }
 
-        bool IsSystemType(Type type)
+        static bool IsSystemType(Type type)
         {
             if (type.FullName == null) return true;
             return _skipNamespaces.Any(a => type.FullName.StartsWith(a));
         }
 
-        string GetDiscription(MemberInfo memberInfo)
+        static bool IsKExtension(MemberInfo type)
+        {
+            return type.CustomAttributes.Any(a => a.AttributeType == typeof(KExtensionAttribute));
+        }
+
+        static bool IsExtension(MemberInfo type)
+        {
+            return type.CustomAttributes.Any(a => a.AttributeType == typeof(ExtensionAttribute));
+        }
+
+        static string GetDiscription(MemberInfo memberInfo)
         {
             var atr = memberInfo.GetCustomAttribute(typeof(DescriptionAttribute));
             if (atr is DescriptionAttribute discription)

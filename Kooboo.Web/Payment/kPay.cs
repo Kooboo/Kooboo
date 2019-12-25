@@ -14,7 +14,7 @@ namespace Kooboo.Web.Payment
 
         public RenderContext context { get; set; }
 
-        [Ignore]
+        [KIgnore]
         public KPaymentMethod this[string key]
         {
             get
@@ -32,7 +32,7 @@ namespace Kooboo.Web.Payment
             set { }
         }
 
-        [Extension]
+        [KExtension]
         static KeyValuePair<string, Type>[] _ = PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, Type>(s.Name, s.GetType())).ToArray();
     }
 }
