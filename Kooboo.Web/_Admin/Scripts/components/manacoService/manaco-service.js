@@ -273,6 +273,39 @@ var MonacoEditorService =
       suggestions
     ) {
       monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: ["<"],
+        provideCompletionItems: function(model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          if (textUntilPosition != "<") return;
+
+          var extendTags = [
+            "view",
+            "htmlblock",
+            "layout",
+            "menu",
+            "placeholder"
+          ];
+          
+          return {
+            suggestions: extendTags.map(function(item) {
+              return {
+                label: item,
+                kind: monaco.languages.CompletionItemKind.Property,
+                documentation: item,
+                insertText: item
+              };
+            })
+          };
+        }
+      });
+
+      monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
           var textUntilPosition = model.getValueInRange({
             startLineNumber: 1,
