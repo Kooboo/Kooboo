@@ -8,7 +8,7 @@ namespace Kooboo.Data.Attributes
     /// skip this member when generate typescript define
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class IgnoreAttribute : Attribute
+    public class KIgnoreAttribute : Attribute
     {
     }
 
@@ -16,20 +16,17 @@ namespace Kooboo.Data.Attributes
     /// customize method type
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class DefineTypeAttribute : Attribute
+    public class KDefineTypeAttribute : Attribute
     {
         public Type Return { get; set; }
         public Type[] Params { get; set; }
     }
 
     /// <summary>
-    /// mark extension info
+    /// mark filed is extension 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
-    public class ExtensionAttribute : Attribute
+    public class KExtensionAttribute : Attribute
     {
-        public ExtensionAttribute()
-        {
-        }
     }
 }

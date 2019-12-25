@@ -24,10 +24,10 @@ namespace Kooboo.Sites.Scripting
             this.RenderContext = context;
         }
 
-        [Ignore]
+        [KIgnore]
         public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
 
-        [Extension]
+        [KExtension]
         static KeyValuePair<string, Type>[] _= ExtensionContainer.List.ToArray();
 
         private kDataContext _data;
