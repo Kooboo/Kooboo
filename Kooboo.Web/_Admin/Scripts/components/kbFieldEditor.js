@@ -150,16 +150,16 @@
         self.isInit = false;
       },
       initControlTypesOptions: function(item) {
-        var options = self.AllControlTypes.filter(function(i) {
-          if (i.dataType && i.dataType === item.dataType) {
-            return i;
-          }
-        });
         if (self.isNewField) {
           self.controlTypesOptions = self.getAllControlTypes(
             self.options.controlTypes
           );
         } else {
+          var options = self.AllControlTypes.filter(function(i) {
+            if (i.dataType && i.dataType === item.dataType && i.displayName) {
+              return i;
+            }
+          });
           self.controlTypesOptions = options;
         }
       },
