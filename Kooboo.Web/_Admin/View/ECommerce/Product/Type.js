@@ -43,19 +43,7 @@ $(function() {
         isNewField: false,
         onFieldModalShow: false,
         fieldData: {},
-        normalControlTypes: [
-          "textbox",
-          "textarea",
-          "richeditor",
-          "radiobox",
-          "switch",
-          "mediafile",
-          "number"
-        ],
         productTypesUrl: Kooboo.Route.Product.Type.ListPage,
-        specControlTypes: ["dynamicspec", "fixedspec"],
-        controlTypes: self.normalControlTypes,
-        specControlTypes: self.specControlTypes,
         editingItemIndex: -1,
         fieldEditorOptions: {
           controlTypes: [
@@ -67,6 +55,7 @@ $(function() {
             "mediafile",
             "number"
           ],
+          specControlTypes: ["dynamicspec", "fixedspec"],
           modifiedField: "isSpecification",
           modifiedFieldText:
             Kooboo.text.component.fieldEditor.specificationField,
@@ -118,6 +107,15 @@ $(function() {
         if (self.isNewProductType && !self.$refs.form.validate()) {
           return;
         }
+        self.fields.forEach(function(prop) {
+          if (
+            ["fixedspec", "dynamicspec"].indexOf(
+              prop.controlType.toLowerCase()
+            ) > -1
+          ) {
+            prop.dataType = "Array";
+          }
+        });
         Kooboo.ProductType.post({
           id: self.id,
           name: self.model.typename,
@@ -139,20 +137,3 @@ $(function() {
     }
   });
 });
-
-// $(function() {
-//   var typeModel = function() {
-//     var self = this;
-
-//     this.showError = ko.observable(false);
-
-//     this.fields = ko.observableArray([]);
-
-//     specSelect = function(field, select) {
-//       field.emit(
-//         "controlTypes/change",
-//         select ? self.specControlTypes() : self.normalControlTypes()
-//       );
-//     };
-//   };
-// });
