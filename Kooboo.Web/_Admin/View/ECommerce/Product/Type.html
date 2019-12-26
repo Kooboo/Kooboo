@@ -1,94 +1,137 @@
 <!-- #layout name=default-->
-<div id="main">
-    <div class="page-header">
-        <div>
-            <div data-bind="visible: isNewProductType">
-                <h1 class="title" data-bind="text: Kooboo.text.common.ProductType + ': '"></h1>
-                <div class="form-group pull-left">
-                    <input class="form-control input-medium" data-bind="value: typename, error: typename" />
-                </div>
+<div id="main" v-cloak>
+  <div class="page-header">
+    <div>
+      <div v-if="isNewProductType">
+        <h1 class="title">{{ Kooboo.text.common.ProductType + ': ' }}</h1>
+        <kb-form
+          simple
+          ref="form"
+          class="pull-left"
+          :model="model"
+          :rules="rules"
+        >
+          <kb-form-item prop="typename" v-slot="error">
+            <div class="form-group" :class="{'has-error' : !!error.error }">
+              <input
+                class="form-control input-medium"
+                v-model="model.typename"
+                v-kb-tooltip:right.manual.error="error.error"
+              />
             </div>
-
-            <h1 data-bind="visible: !isNewProductType()" class="title"><span>Product type</span>: <strong data-bind="text: typename"></strong></h1>
-        </div>
+          </kb-form-item>
+        </kb-form>
+      </div>
+      <h1 v-else class="title"
+        ><span>{{ Kooboo.text.common.ProductType + ': ' }}</span>:
+        <strong>{{ model.typename }}</strong></h1
+      >
     </div>
-    <div class="navbar navbar-default">
-        <div class="container-fluid">
-            <a class="btn green navbar-btn" href="javascript:;" data-bind="click: addNewField">New field</a>
-        </div>
+  </div>
+  <div class="navbar navbar-default">
+    <div class="container-fluid">
+      <a class="btn green navbar-btn" href="javascript:;" @click="addNewField"
+        >New field</a
+      >
     </div>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th class="table-sortable"></th>
-                <th>Name</th>
-                <th class="table-short">Display name</th>
-                <th class="table-short">Control type</th>
-                <th class="table-short">Multiple language</th>
-                <th class="table-short">User editable</th>
-                <th class="table-short">Specification field</th>
-                <th class="table-action"></th>
-            </tr>
-        </thead>
-        <tbody class="ui-sortable" data-bind="sortable: fields">
-            <tr>
-                <td class="table-sortable">
-                    <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
-                </td>
-                <td>
-                    <a href="javascript::" data-bind="click: $root.editField.bind(this), text: $data.name"></a>
-                </td>
-                <td data-bind="text: displayName().length > 10 ? (displayName().substr(0,8) + '...') : displayName(), attr: { title: displayName() }"></td>
-                <td data-bind="text: Kooboo.text.component.controlType[_.camelCase(controlType())]"></td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[multipleLanguage() ? 'yes' : 'no'], css: {'label-default': !multipleLanguage(), 'green': multipleLanguage()}" class="label label-sm"></span>
-                </td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[editable() ? 'yes' : 'no'], css: { green: editable(), 'label-default': !editable() }" class="label label-sm"></span>
-                </td>
-                <td>
-                    <span data-bind="text: Kooboo.text.common[isSpecification() ? 'yes' : 'no'], css: { green: isSpecification(), 'label-default': !isSpecification() }" class="label label-sm label-default"></span>
-                </td>
-                <td>
-                    <a class="btn btn-xs red" href="javascript:;" data-bind="click: $root.removeField.bind(this)">Remove</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  </div>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th class="table-sortable"></th>
+        <th>Name</th>
+        <th class="table-short">Display name</th>
+        <th class="table-short">Control type</th>
+        <th class="table-short">Multiple language</th>
+        <th class="table-short">User editable</th>
+        <th class="table-short">Specification field</th>
+        <th class="table-action"></th>
+      </tr>
+    </thead>
+    <tbody class="ui-sortable" v-kb-sortable="fields">
+      <tr v-for="($data, index) in fields" :key="index">
+        <td class="table-sortable">
+          <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
+        </td>
+        <td>
+          <a href="javascript:;" @click.stop="editField($data, index)"
+            >{{ $data.name }}</a
+          >
+        </td>
+        <td :title="$data.displayName"
+          >{{ $data.displayName | ellipsis:10 }}</td
+        >
+        <td
+          >{{ Kooboo.text.component.controlType[_.camelCase($data.controlType)]
+          }}</td
+        >
+        <td>
+          <span
+            class="label label-sm"
+            :class="$data.multipleLanguage ? 'green' : 'label-default'"
+            >{{ Kooboo.text.common[$data.multipleLanguage ? 'yes' : 'no']
+            }}</span
+          >
+        </td>
+        <td>
+          <span
+            class="label label-sm"
+            :class="$data.editable ? 'green' : 'label-default' "
+            >{{ Kooboo.text.common[$data.editable ? 'yes' : 'no'] }}</span
+          >
+        </td>
+        <td>
+          <span
+            class="label label-sm label-default"
+            :class="$data.isSpecification ? 'green' : 'label-default'"
+            >{{ Kooboo.text.common[$data.isSpecification ? 'yes' : 'no']
+            }}</span
+          >
+        </td>
+        <td>
+          <a
+            class="btn btn-xs red"
+            href="javascript:;"
+            @click.stop="removeField($data, index)"
+            >Remove</a
+          >
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-    <div class="page-buttons">
-        <button data-bind="click: onSave" class="btn green">Save</button>
-        <a data-bind="attr: { href: productTypesUrl }" class="btn gray">Cancel</a>
-    </div>
+  <div class="page-buttons">
+    <button @click="onSave" class="btn green">Save</button>
+    <a :href="productTypesUrl" class="btn gray">Cancel</a>
+  </div>
 
-    <div data-bind="component: { name: 'kb-field-editor', params: {
-        onShow: onFieldModalShow,
-        onSave: onFieldSave, 
-        data: fieldData,
-        options: {
-            controlTypes: controlTypes(),
-            modifiedField: 'isSpecification',
-            modifiedFieldText: Kooboo.text.component.fieldEditor.specificationField,
-            modifiedFieldSubscriber: specSelect,
-            showMultilingualOption: true,
-            showPreviewPanel: true,
-            getFieldNames: getFieldNames
-        }
-    }}"></div>
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="onFieldModalShow"
+  >
+    <kb-field-editor
+      @on-save="onFieldSave"
+      v-if="onFieldModalShow"
+      :close-handle="onModalClose"
+      :all-items="fields"
+      :editing-index="editingItemIndex"
+      :data="fieldData"
+      :options="fieldEditorOptions"
+    ></kb-field-editor>
+  </div>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/kobindings.sortable.js",
-            "/_Admin/Scripts/productEditor/typeEditor.js",
-            "/_Admin/Scripts/lib/jquery-ui-customized.js",
-            "/_Admin/Scripts/components/kbFieldEditor.js"
-        ])
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/components/kbForm.js",
+      "/_Admin/Scripts/components/kbFieldEditor.js"
+    ]);
 
-        Kooboo.loadCSS([
-            "/_Admin/Styles/jquery-ui-customized.css"
-        ])
-    })()
+    Kooboo.loadCSS(["/_Admin/Styles/jquery-ui-customized.css"]);
+  })();
 </script>
 <script src="/_Admin/View/ECommerce/Product/Type.js"></script>
