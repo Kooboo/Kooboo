@@ -35,7 +35,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             this.Culture = culture;
         }
 
-        public string get(string key)
+        public object get(string key)
         {
 
             string lower = key.ToLower();
@@ -105,7 +105,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 var obj = view.GetValue(key, context);
                 if (obj != null)
                 {
-                    return obj.ToString();
+                    return obj;
                 }
             }
 

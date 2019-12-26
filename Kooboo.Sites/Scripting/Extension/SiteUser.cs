@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Sites.Scripting.Extension
 {
@@ -35,4 +36,5 @@ namespace Kooboo.Sites.Scripting.Extension
             return username + " sample"; 
         }
     }
+
 }

@@ -5,7 +5,8 @@ using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection; 
+using System.Reflection;
+using Kooboo.Sites.KscriptConfig;
 
 namespace Kooboo.Sites.Service
 {
@@ -41,6 +42,15 @@ namespace Kooboo.Sites.Service
                                     _types[name] = item; 
                                 }
                             }
+
+                            if (KscriptConfigContainer.KscriptSettings != null)
+                            {
+                                foreach (var setting in KscriptConfigContainer.KscriptSettings)
+                                {
+                                    _types[setting.Key] = setting.Value;
+
+                                }
+                            }
                         }
                     }
                 }
@@ -52,7 +62,7 @@ namespace Kooboo.Sites.Service
         {
             foreach (var item in types)
             {
-                if (item.Value == type)
+                if (item.Value == type ||item.Value.FullName.Equals(type.FullName))
                 {
                    return item.Key; 
                 }
@@ -144,15 +154,19 @@ namespace Kooboo.Sites.Service
             return result;
         }
 
-
         public static ISiteSetting GetSiteSetting(CoreSetting coresetting, Type SettingType)
+        {
+            return GetSetting(coresetting, SettingType) as ISiteSetting;
+        }
+
+        public static object GetSetting(CoreSetting coresetting, Type SettingType)
         { 
             if (SettingType == null)
             {
                 return null; 
             }
 
-            var result = Activator.CreateInstance(SettingType) as ISiteSetting;
+            var result = Activator.CreateInstance(SettingType);
 
             if (coresetting != null && coresetting.Values != null && coresetting.Values.Any())
             {

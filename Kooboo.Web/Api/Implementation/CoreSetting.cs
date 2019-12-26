@@ -6,6 +6,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -21,27 +22,19 @@ namespace Kooboo.Web.Api.Implementation
         {
             var sitedb = call.Context.WebSite.SiteDb();
 
-          
-            var item = sitedb.CoreSetting.Get(name); 
+            var item = sitedb.CoreSetting.Get(name);
+
+            var values = new Dictionary<string, string>();
             if (item !=null)
             {
-                return item.Values; 
+                values= item.Values; 
             }
-            else
+
+            var type = Sites.Service.CoreSettingService.GetSettingType(name);
+
+            if (type != null)
             {
-                var type = Sites.Service.CoreSettingService.GetSettingType(name);
-
-                if (type != null)
-                {
-                    Dictionary<string, string> result = new Dictionary<string, string>(); 
-                    var allfieldsl = Lib.Reflection.TypeHelper.GetPublicPropertyOrFields(type);
-                    foreach (var field in allfieldsl)
-                    {
-                        result[field.Name] = ""; 
-                    }
-
-                    return result; 
-                }
+                return GetValues(values, type);
             }
             return null; 
         }
@@ -58,15 +51,18 @@ namespace Kooboo.Web.Api.Implementation
                
                 if (value == null)
                 {
-                    var instance = Activator.CreateInstance(item.Value) as ISiteSetting; 
-                    if (instance !=null)
+                    var instance = Activator.CreateInstance(item.Value);
+                    if (instance != null)
                     {
-                        result.Add(new CoreSettingViewModel() { Name = instance.Name }); 
-                    } 
+                        var name = GetName(instance);
+                        result.Add(new CoreSettingViewModel() { Name = name });
+                    }
+                    
                 }
                 else
                 {
-                    var json = Lib.Helper.JsonHelper.Serialize(value.Values); 
+                    var values = GetValues(value.Values, item.Value);
+                    var json = Lib.Helper.JsonHelper.Serialize(values); 
 
                     result.Add(new CoreSettingViewModel() { Name =value.Name, Value = json, lastModify = value.LastModified });  
                 }
@@ -76,6 +72,19 @@ namespace Kooboo.Web.Api.Implementation
             return result; 
         }
 
+        private Dictionary<string,string> GetValues(Dictionary<string,string> values,Type type)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            var allfields = Lib.Reflection.TypeHelper.GetPublicPropertyOrFields(type);
+            foreach (var field in allfields)
+            {
+                var key = values.Keys.ToList().Find(k => k.Equals(field.Name, StringComparison.OrdinalIgnoreCase));
+                result[field.Name] = !string.IsNullOrEmpty(key) ? values[key] : "";
+            }
+
+            return result;
+        }
+
         public void Update(string name, Dictionary<string, string> model, ApiCall call)
         {
             var Core = new CoreSetting();
@@ -83,6 +92,32 @@ namespace Kooboo.Web.Api.Implementation
             Core.Values = model;
             call.WebSite.SiteDb().CoreSetting.AddOrUpdate(Core); 
 
+        }
+
+        private string GetName(object instance)
+        {
+            var type = instance.GetType();
+            var sitesettingInstance = instance as ISiteSetting;
+
+            var name = string.Empty;
+            if (sitesettingInstance != null)
+            {
+                name = sitesettingInstance.Name;
+            }
+            else
+            {
+                var nameProp = type.GetProperty("Name");
+                if (nameProp != null)
+                {
+                    name = nameProp.GetValue(instance) as string;
+                }
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = type.Name;
+                }
+            }
+
+            return name;
         }
     }
 

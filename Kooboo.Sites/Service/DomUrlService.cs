@@ -239,7 +239,7 @@ namespace Kooboo.Sites.Service
             }
 
             url = url.ToLower();
-            if (url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://") )
+            if (url.StartsWith("//") || url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://") )
             {
                 return true;
             }
@@ -330,7 +330,7 @@ namespace Kooboo.Sites.Service
                     url = GetImageNonSrcUrl(item);
                 }
 
-                if (!string.IsNullOrWhiteSpace(url))
+                if (!string.IsNullOrWhiteSpace(url)&&Kooboo.Lib.Helper.UrlHelper.IsImage(url))
                 {
                     result.Add(item, url);
                 }

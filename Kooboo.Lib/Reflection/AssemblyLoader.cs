@@ -4,14 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Lib.Reflection
 {
     public static class AssemblyLoader
     {
+        private static List<Assembly> allAssemblies = new List<Assembly>();
         static AssemblyLoader()
         {
-            AllAssemblies = LoadAllDlls();
+            allAssemblies = LoadAllDlls();
         }
 
         private static List<Assembly> LoadAllDlls()
@@ -34,37 +37,6 @@ namespace Kooboo.Lib.Reflection
             var path =  AppDomain.CurrentDomain.BaseDirectory;
             dlls = LoadKoobooDlls(dlls, path);
 
-            // load dll from modules or dll. 
-            List<string> subfolders = new List<string>();
-            subfolders.Add("dll");
-            subfolders.Add("modules");
-            subfolders.Add("packages"); 
-
-            foreach (var item in subfolders)
-            {
-                string folder = System.IO.Path.Combine(path, item); 
-                if (System.IO.Directory.Exists(folder))
-                {
-                    var allsubdlls = System.IO.Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
-
-                    foreach (var filename in allsubdlls)
-                    {
-                        try
-                        {
-                            var otherAssembly = Assembly.LoadFile(filename);
-                            if (otherAssembly !=null)
-                            {
-                                dlls.Add(otherAssembly);
-                            } 
-                        }
-                        catch (Exception ex)
-                        {
- 
-                        } 
-                    } 
-
-                }
-            } 
             return dlls; 
         }
 
@@ -105,10 +77,20 @@ namespace Kooboo.Lib.Reflection
             return dlls;
         }
 
+
         public static List<Assembly> AllAssemblies
         {
-            get; set;
+            get
+            {
+                var list = new List<Assembly>();
+                list.AddRange(allAssemblies);
+                list.AddRange(ExtensionAssemblyLoader.Instance.Assemblies);
+
+                return list;
+                //allAssemblies.Concat(ExtensionAssemblyLoader.Instance.Assemblies).ToList();
+            }
         }
+
 
         private static List<Assembly> LoadOtherAssemblies()
         {
@@ -165,7 +147,26 @@ namespace Kooboo.Lib.Reflection
 
             return typelist;
         }
- 
+
+        public static List<Type> LoadTypeByBaseClass(Type baseType)
+        {
+            List<Type> typelist = new List<Type>();
+
+            foreach (var item in AllAssemblies)
+            {
+                foreach (var type in item.GetTypes())
+                {
+                    if (!type.IsAbstract && type.IsClass&& type.IsSubclassOf(baseType))
+                    {
+                        typelist.Add(type);
+                    }
+                }
+
+            }
+
+            return typelist;
+        }
+
         public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
         {
             List<Type> typelist = new List<Type>();
@@ -182,6 +183,20 @@ namespace Kooboo.Lib.Reflection
             }
 
             return typelist;
+        }
+
+        public static Type LoadTypeByFullClassName(string fullClassName)
+        {
+            foreach (var item in AllAssemblies)
+            {
+                var type = item.GetType(fullClassName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            return null;
         }
 
     }

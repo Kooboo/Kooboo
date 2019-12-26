@@ -129,9 +129,9 @@ namespace Kooboo.Data.Context
 
         public string IP { get; set; }
 
-        public string GetValue(string name)
+        public string GetValue(string name,bool needDecode=true)
         {
-            return RequestManager.GetValue(this, name);
+            return RequestManager.GetValue(this, name,needDecode);
         }
 
         public string Get(string name)

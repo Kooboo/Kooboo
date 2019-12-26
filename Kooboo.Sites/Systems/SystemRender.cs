@@ -103,7 +103,7 @@ namespace Kooboo.Sites.Systems
                 case ConstObjectType.Script:
                     context.RenderContext.Response.ContentType = "text/javascript;charset=utf-8";
                     repo = context.SiteDb.Scripts as IRepository;
-                    spliter = ";";
+                    spliter = ";\r\n";//need split with newline ,otherwise two different combinations of comments will report an error
                     break;
                 default:
                     break;

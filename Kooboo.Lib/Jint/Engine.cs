@@ -319,7 +319,11 @@ namespace Jint
                 }
                 else
                 {
-                    error = ex.Message; 
+                    error = ex.Message;
+                    if (ex.InnerException != null && !string.IsNullOrEmpty(ex.InnerException.Message))
+                    {
+                        error += " " + ex.InnerException.Message;
+                    }
                 }
             }
 
