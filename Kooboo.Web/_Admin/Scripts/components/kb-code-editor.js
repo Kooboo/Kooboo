@@ -7,14 +7,15 @@
   monacoService.loader(function(Monaco) {
     state.loader = true;
     monaco = Monaco;
-    var kscriptContent = Kooboo.getTemplate(
-      "/_Admin/Scripts/components/manacoService/kscript.d.ts"
-    );
-    monacoService.addExtraLib(
-      "javascript",
-      kscriptContent,
-      "kscript/kscript.d.ts"
-    );
+    Kooboo.KScript.GetDefine().then(function(rsp) {
+      if (rsp.success) {
+        monacoService.addExtraLib(
+          "javascript",
+          rsp.model,
+          "kscript/kscript.d.ts"
+        );
+      }
+    });
     Kooboo.loadJS([
       "/_Admin/Scripts/components/manacoService/kview-complete-suggestions.js"
     ]);
@@ -99,6 +100,7 @@
           self.monaco = monaco;
           self.isInit = true;
           self.isCreate = true;
+          monacoService.addManualTriggerSuggest(self.editor);
           monacoService.onModelContentChange(self.model, function(content) {
             self.d_code = content;
           });

@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.SiteItem;
@@ -23,9 +24,11 @@ namespace Kooboo.Sites.Scripting
             this.RenderContext = context;
         }
 
+        [KIgnore]
+        public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
 
-        public object this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
-         
+        [KExtension]
+        static KeyValuePair<string, Type>[] _= ExtensionContainer.List.ToArray();
 
         private kDataContext _data;
         public kDataContext DataContext
@@ -117,7 +120,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_viewdata == null)
                         {
-                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                         }
                     }
                 }
@@ -153,17 +156,17 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        private UserInfoModel _user; 
+        private UserInfoModel _user;
         public UserInfoModel User
         {
             get
             {
                 if (_user == null)
                 {
-                    _user = new UserInfoModel(this.RenderContext); 
-                } 
-                return _user; 
-            }  
+                    _user = new UserInfoModel(this.RenderContext);
+                }
+                return _user;
+            }
         }
 
         private KTemplate _template;
@@ -203,11 +206,15 @@ namespace Kooboo.Sites.Scripting
             public UserModel User
             {
                 get; set;
-            } 
-           
+            }
+
         }
-                     
+
         private kSiteDb _sitedb;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public kSiteDb SiteDb
         {
             get
@@ -300,9 +307,9 @@ namespace Kooboo.Sites.Scripting
         public Dictionary<string, string> config { get; set; }
 
         [Attributes.SummaryIgnore]
-        public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
-         
-        public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
+        public FrontEvent.IFrontEvent @event { get; set; }
+
+        public Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
 
@@ -378,8 +385,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        private Kooboo.Sites.Scripting.Global.Mail _mail;
-        public Kooboo.Sites.Scripting.Global.Mail mail
+        private Global.Mail _mail;
+        public Global.Mail mail
         {
             get
             {
@@ -397,9 +404,9 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        Kooboo.Sites.Scripting.Global.Security _security;
+        Security _security;
 
-        public Kooboo.Sites.Scripting.Global.Security Security
+        public Security Security
         {
             get
             {
@@ -409,7 +416,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_security == null)
                         {
-                            _security = new Global.Security();
+                            _security = new Security();
                         }
                     }
                 }
@@ -421,20 +428,20 @@ namespace Kooboo.Sites.Scripting
         public void Import(string codename)
         {
             var sitedb = this.RenderContext.WebSite.SiteDb();
-            var code = sitedb.Code.Get(codename); 
-            if (code !=null)
+            var code = sitedb.Code.Get(codename);
+            if (code != null)
             {
-              var result =    Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id); 
-                if (result !=null)
+                var result = Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id);
+                if (result != null)
                 {
-                    Response.write(result); 
+                    Response.write(result);
                 }
             }
         }
 
         public void ImportCode(string codename)
         {
-            Import(codename); 
+            Import(codename);
         }
 
         #region APIHelper
@@ -442,7 +449,7 @@ namespace Kooboo.Sites.Scripting
         public void Help()
         {
             //var html = new HelperRender().Render(RenderContext);
-            var html = new Kooboo.Sites.Scripting.Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
+            var html = new Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
             Response.write(html);
             //Help("k");
         }
@@ -463,7 +470,6 @@ namespace Kooboo.Sites.Scripting
             this.ReturnValues.Add(obj);
         }
 
-
         public void export(object obj)
         {
             output(obj);
@@ -473,7 +479,7 @@ namespace Kooboo.Sites.Scripting
         {
             string spe = ".";
             fullname = fullname.ToLower().Replace("k.", "");
-            List<string> psname = fullname.Split(spe.ToCharArray()).ToList();
+            var psname = fullname.Split(spe.ToCharArray()).ToList();
 
             //walkaround:cz
             var currenttype = this.GetType();
@@ -494,13 +500,13 @@ namespace Kooboo.Sites.Scripting
 
         private List<PropertyViewModel> GetProperty(Type type, string methodbase)
         {
-            List<PropertyViewModel> result = new List<PropertyViewModel>();
+            var result = new List<PropertyViewModel>();
 
             var allparas = _GetProperties(type);
 
             foreach (var item in allparas)
             {
-                PropertyViewModel model = new PropertyViewModel() { Name = methodbase + "." + item.Key, ReturnType = item.Value };
+                var model = new PropertyViewModel() { Name = methodbase + "." + item.Key, ReturnType = item.Value };
 
                 result.Add(model);
             }
@@ -537,7 +543,7 @@ namespace Kooboo.Sites.Scripting
                 else
                 {
                     string name = item.Name;
-                    Dictionary<string, string> para = new Dictionary<string, string>();
+                    var para = new Dictionary<string, string>();
                     para.Add("name", name);
                     string url = Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
                     result += "<br/><br/> <a href='" + url + "'><b>" + name + "</b></a>";
@@ -605,16 +611,16 @@ namespace Kooboo.Sites.Scripting
                 return new List<MethodViewModel>();
             }
 
-            List<MethodViewModel> methods = new List<MethodViewModel>();
+            var methods = new List<MethodViewModel>();
 
             var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
 
             foreach (var item in allmethods)
             {
-                var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
+                var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
                 if (requirepara == null)
                 {
-                    MethodViewModel model = new MethodViewModel();
+                    var model = new MethodViewModel();
                     model.Name = MethodPathBase + "." + item.Name;
                     var paras = item.GetParameters();
                     foreach (var p in paras)
@@ -646,7 +652,7 @@ namespace Kooboo.Sites.Scripting
                 return ExtensionContainer.List;
             }
 
-            Dictionary<string, Type> fieldlist = new Dictionary<string, Type>();
+            var fieldlist = new Dictionary<string, Type>();
 
             FieldInfo[] fieldInfo = objectType.GetFields();
 
@@ -654,7 +660,7 @@ namespace Kooboo.Sites.Scripting
             {
                 if (item.CanRead && item.PropertyType.IsPublic)
                 {
-                    var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
+                    var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
                     if (requirepara == null)
                     {
                         fieldlist.Add(item.Name, item.PropertyType);
@@ -666,7 +672,7 @@ namespace Kooboo.Sites.Scripting
 
         private List<MethodViewModel> GetRepositoryMethod(Type type, string MethodPathBase)
         {
-            List<MethodViewModel> methods = new List<MethodViewModel>();
+            var methods = new List<MethodViewModel>();
 
             var repo = Activator.CreateInstance(type) as IRepository;
 
@@ -674,7 +680,7 @@ namespace Kooboo.Sites.Scripting
 
             var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
 
-            List<string> takeMethods = new List<string>();
+            var takeMethods = new List<string>();
             if (isRoutable)
             {
                 takeMethods.Add("GetByUrl");
@@ -703,7 +709,7 @@ namespace Kooboo.Sites.Scripting
                     }
                 }
 
-                MethodViewModel model = new MethodViewModel();
+                var model = new MethodViewModel();
                 model.Name = MethodPathBase + "." + item.Name;
                 var paras = item.GetParameters();
                 foreach (var p in paras)
@@ -761,10 +767,10 @@ namespace Kooboo.Sites.Scripting
 
 
     public class UserInfoModel
-    { 
+    {
         public UserInfoModel(RenderContext context)
         {
-            this.context = context; 
+            this.context = context;
         }
 
         public RenderContext context { get; set; }
@@ -778,7 +784,7 @@ namespace Kooboo.Sites.Scripting
                     return context.User.Id;
                 }
                 return default(Guid);
-            } 
+            }
         }
 
         public Guid _Id
@@ -797,7 +803,7 @@ namespace Kooboo.Sites.Scripting
         {
             get
             {
-                return context.User != null; 
+                return context.User != null;
             }
         }
 
@@ -806,33 +812,33 @@ namespace Kooboo.Sites.Scripting
         {
             if (context.User == null)
             {
-                return false; 
+                return false;
             }
-            Guid OrgId = default(Guid); 
+            var OrgId = default(Guid);
             if (!Guid.TryParse(OrganizationName, out OrgId))
             {
                 OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
-            } 
+            }
 
             if (context.User.CurrentOrgId == OrgId)
             {
-                return true; 
+                return true;
             }
 
-            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id); 
-            
+            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id);
+
             if (orgs.Any())
             {
-                var find = orgs.Find(o => o.Id == OrgId); 
-                if (find !=null)
+                var find = orgs.Find(o => o.Id == OrgId);
+                if (find != null)
                 {
                     return true;
                 }
             }
-            return false;  
+            return false;
         }
 
-        public Kooboo.Data.Models.User Get(string userName)
+        public Data.Models.User Get(string userName)
         {
             if (string.IsNullOrEmpty(userName))
                 return null;
@@ -848,36 +854,39 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        public string UserName {
+        public string UserName
+        {
             get
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
-                    return context.User.UserName; 
+                    return context.User.UserName;
                 }
                 return null;
             }
         }
 
-        public string FirstName {
+        public string FirstName
+        {
             get
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
-                    return context.User.FirstName; 
+                    return context.User.FirstName;
                 }
-                return null; 
+                return null;
             }
         }
 
-        public string LastName {
+        public string LastName
+        {
             get
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
-                    return context.User.LastName; 
+                    return context.User.LastName;
                 }
-                return null; 
+                return null;
             }
         }
 
@@ -905,23 +914,23 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        public Kooboo.Data.Models.User Login(string username, string password)
+        public Data.Models.User Login(string username, string password)
         {
             var user = Kooboo.Data.GlobalDb.Users.Validate(username, password);
 
             if (user != null)
             {
-                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(),  30);
-                context.User = user; 
-                return user; 
+                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(), 30);
+                context.User = user;
+                return user;
             }
 
-            return null; 
-        }  
+            return null;
+        }
 
         public bool Exists(string UserName)
         {
-            return Data.GlobalDb.Users.Get(UserName) != null; 
+            return Data.GlobalDb.Users.Get(UserName) != null;
         }
 
         [Obsolete]
@@ -938,7 +947,7 @@ namespace Kooboo.Sites.Scripting
         public void Logout()
         {
             // log user out. 
-            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
-        } 
+            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);
+        }
     }
 }
