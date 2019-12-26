@@ -282,7 +282,7 @@ var MonacoEditorService =
             endColumn: position.column
           });
 
-          if (textUntilPosition != "<") return;
+          if (!textUntilPosition.endsWith("<")) return;
 
           var extendTags = [
             "view",
