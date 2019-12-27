@@ -19,7 +19,8 @@ $(function() {
         productTypes: [],
         pager: {},
         tableData: [],
-        selected: []
+        selected: [],
+        defaultColumns: []
       };
     },
     mounted: function() {
@@ -52,7 +53,7 @@ $(function() {
         self.pager = data;
         self.tableData = data.list.map(function(d) {
           var date = new Date(d.lastModified);
-          var type = _.find(self.productTypes(), function(t) {
+          var type = _.find(self.productTypes, function(t) {
             return t.id == d.productTypeId;
           });
 
@@ -76,44 +77,17 @@ $(function() {
             d.values
           );
         });
-        // TODO
-        // var columns = [];
-        // if (data.list.length) {
-        //   var keys = Object.keys(data.list[0].values);
-        //   keys.forEach(function(key) {
-        //     columns.push({
-        //       displayName: key,
-        //       fieldName: key,
-        //       type: "text"
-        //     });
-        //   });
 
-        //   columns.push({
-        //     displayName: Kooboo.text.common.ProductType,
-        //     fieldName: "productType",
-        //     type: "label"
-        //   });
-        // }
-
-        // self.tableData({
-        //   docs: docs,
-        //   columns: columns,
-        //   tableActions: [
-        //     {
-        //       fieldName: "edit",
-        //       type: "link-btn"
-        //     }
-        //   ],
-        //   kbType: Kooboo.Product.name,
-        //   class: "table-bordered"
-        // });
+        if (data.list.length) {
+          self.defaultColumns = Object.keys(data.list[0].values);
+        }
       },
       onDelete: function() {
         if (confirm(Kooboo.text.confirm.deleteItems)) {
           var ids = self.selected.map(function(row) {
             return row.id;
           });
-          Kooboo.ProductType.Deletes({
+          Kooboo.Product.Deletes({
             ids: JSON.stringify(ids)
           }).then(function(res) {
             if (res.success) {

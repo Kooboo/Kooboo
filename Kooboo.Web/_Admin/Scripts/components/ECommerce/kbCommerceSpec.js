@@ -66,6 +66,7 @@
               newValue: ""
             };
           });
+          this.$emit("change", this.dynamicSpecs);
         }
       }
     }

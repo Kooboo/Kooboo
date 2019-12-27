@@ -19,9 +19,9 @@ $(function() {
         multipleMedia: false,
         mediaDialogData: {},
         variants: [],
-        specFields: [],
         specNames: [],
         fixedSpecFields: [],
+        dynaSpecFields: [],
         dynamicSpecFields: [],
         typesMatrix: [],
         typesUrl: Kooboo.Route.Product.ListPage,
@@ -51,7 +51,7 @@ $(function() {
                 })
               : []
           );
-
+          self.selectedCategories = getSelected(self.categories);
           self.variants = productRes.model.variants || [];
 
           var normalFields = [],
@@ -113,10 +113,9 @@ $(function() {
 
           self.fields = normalFields;
           self.fixedSpecFields = fixedSpecFields;
-          self.dynamicSpecFields = dynaSpecFields;
-          self.specFields = _.concat(fixedSpecFields, dynaSpecFields);
-
-          if (!self.specFields.length) {
+          self.dynaSpecFields = dynaSpecFields;
+          if (dynaSpecFields.length == 0) {
+            // else render in kbCommerceSpec component
             self.renderTable();
           }
         }
@@ -124,25 +123,37 @@ $(function() {
     },
     methods: {
       dynamicFieldsChange: function(fields) {
-        // self.dynamicSpecFields(fields);
+        self.dynamicSpecFields = fields;
         fields.forEach(function(f) {
           if (f.options.length) {
             if (self.specNames.indexOf(f.name) == -1) {
               self.specNames.push(f.name);
             }
           } else {
-            self.specNames.remove(f.name);
+            self.specNames = _.without(self.specNames, f.name);
           }
         });
         self.renderTable();
       },
-      renderTable() {
+      renderTable: function() {
         if (self.variants.length) {
-          if (initTimes < 2) {
+          if (initTimes < 1) {
             self.typesMatrix = self.variants.map(function(vari) {
               var types = [];
               self.specNames.forEach(function(name) {
-                types.push({ name: name, value: vari.variants[name] });
+                var item = {
+                  name: name
+                };
+
+                var value = null;
+                var keys = Object.keys(vari.variants);
+                keys.forEach(function(key) {
+                  if (key.toLowerCase() == name.toLowerCase()) {
+                    value = vari.variants[key];
+                  }
+                });
+                item.value = value;
+                types.push(item);
               });
 
               var images = [];
@@ -157,155 +168,123 @@ $(function() {
 
               return {
                 types: types,
-                showError: false,
-                stock: {
-                  required: "",
-                  min: { value: 0 }
-                },
-                price: {
-                  required: "",
-                  min: { value: 0 }
-                },
+                stock: vari.stock,
+                price: vari.price,
                 sku: vari.sku,
                 skuImage: vari.thumbnail,
                 skuThumbnail:
                   "/_thumbnail/80/80" + vari.thumbnail + SITE_ID_QUERY_STRING,
                 images: images,
                 online: vari.online,
-                isValid: function() {
-                  return this.stock.isValid() && this.price.isValid();
+                error: {
+                  stock: false,
+                  price: false
                 }
               };
             });
-
             initTimes++;
           } else {
-            var types = [];
-            self.fixedSpecFields.forEach(function(f) {
-              var options = JSON.parse(f.selectionOptions).map(function(opt) {
-                return {
-                  name: f.name,
-                  value: opt.key
-                };
-              });
-
-              types.push(options);
-            });
-
-            self.dynamicSpecFields.forEach(function(f) {
-              if (f.options.length) {
-                var options = f.options.map(function(opt) {
-                  return {
-                    name: f.name,
-                    value: opt
-                  };
-                });
-                types.push(options);
-              }
-            });
-
-            var matrix = getTableDataByTypes(types);
-            self.typesMatrix = matrix.map(function(m) {
-              var find = _.find(self.typesMatrix, function(row) {
-                return getValue(row.types) == getValue(m);
-
-                function getValue(list) {
-                  return list
-                    .map(function(item) {
-                      return item.value;
-                    })
-                    .join(",");
-                }
-              });
-
-              return (
-                find || {
-                  types: m,
-                  showError: ko.observable(false),
-                  stock: ko.validateField({
-                    required: "",
-                    min: { value: 0 }
-                  }),
-                  price: ko.validateField({
-                    required: "",
-                    min: { value: 0 }
-                  }),
-                  sku: ko.observable(),
-                  skuImage: ko.observable(),
-                  skuThumbnail: ko.observable(),
-                  images: ko.observableArray(),
-                  online: ko.observable(true),
-                  isValid: function() {
-                    return this.stock.isValid() && this.price.isValid();
-                  }
-                }
-              );
-            });
+            self.getTypeMatrix();
           }
         } else {
-          self.typesMatrix = [
-            {
-              showError: false,
-              stock: {
-                required: "",
-                min: { value: 0 }
-              },
-              price: {
-                required: "",
-                min: { value: 0 }
-              },
+          self.getTypeMatrix();
+        }
+      },
+      getTypeMatrix: function() {
+        var types = [];
+        self.fixedSpecFields.forEach(function(f) {
+          var options = JSON.parse(f.selectionOptions).map(function(opt) {
+            return {
+              name: f.name,
+              value: opt.key
+            };
+          });
+
+          types.push(options);
+        });
+
+        self.dynamicSpecFields.forEach(function(f) {
+          if (f.options.length) {
+            var options = f.options.map(function(opt) {
+              return {
+                name: f.name,
+                value: opt
+              };
+            });
+            types.push(options);
+          }
+        });
+
+        var matrix = getTableDataByTypes(types);
+        self.typesMatrix = matrix.map(function(m) {
+          var find = _.find(self.typesMatrix, function(row) {
+            return getValue(row.types) == getValue(m);
+
+            function getValue(list) {
+              return list
+                .map(function(item) {
+                  return item.value;
+                })
+                .join(",");
+            }
+          });
+
+          return (
+            find || {
+              types: m,
+              stock: "",
+              price: "",
               sku: "",
               skuImage: "",
               skuThumbnail: "",
-              images: "",
+              images: [],
               online: true,
-              isValid: function() {
-                return this.stock.isValid() && this.price.isValid();
+              error: {
+                stock: false,
+                price: false
               }
             }
-          ];
-        }
+          );
+        });
       },
       removeSkuPic: function(m) {
-        m.skuImage("");
-        m.skuThumbnail();
+        m.skuImage = "";
+        m.skuThumbnail = "";
       },
       selectSkuPic: function(m) {
-        self.multipleMedia(false);
+        self.multipleMedia = false;
         Kooboo.Media.getList().then(function(res) {
           if (res.success) {
             res.model["show"] = true;
             res.model["context"] = m;
             res.model["onAdd"] = function(selected) {
-              m.skuImage(selected.url);
-              m.skuThumbnail(selected.thumbnail);
+              m.skuImage = selected.url;
+              m.skuThumbnail = selected.thumbnail;
             };
-            self.mediaDialogData(res.model);
+            self.mediaDialogData = res.model;
           }
         });
       },
       selectImages: function(m) {
-        self.multipleMedia(true);
+        self.multipleMedia = true;
         Kooboo.Media.getList().then(function(res) {
           if (res.success) {
             res.model["show"] = true;
             res.model["context"] = m;
             res.model["onAdd"] = function(selected) {
-              m.images(
-                selected.map(function(s) {
-                  return {
-                    url: s.url,
-                    thumbnail: s.thumbnail
-                  };
-                })
-              );
+              m.images = selected.map(function(s) {
+                return {
+                  url: s.url,
+                  thumbnail: s.thumbnail
+                };
+              });
             };
-            self.mediaDialogData(res.model);
+            self.mediaDialogData = res.model;
           }
         });
       },
-      removeImg: function(m, data) {
-        m.images.remove(data);
+      removeImg: function(m, index) {
+        m.images.splice(index, 1);
       },
       onSaveAndReturn: function() {
         self.onSave(function() {
@@ -314,36 +293,32 @@ $(function() {
       },
       onSave: function(cb) {
         if (self.isValid()) {
-          self.startValidating(false);
-
-          var variants = self.typesMatrix().map(function(row) {
+          var variants = self.typesMatrix.map(function(row) {
               var specs = {};
               if (row.types && row.types.length) {
                 row.types.forEach(function(t) {
                   specs[t.name] = t.value;
                 });
               }
-
               return {
                 variants: specs,
-                stock: row.stock(),
-                price: row.price(),
-                sku: row.sku(),
-                thumbnail: row.skuImage(),
-                images: row.images().map(function(img) {
+                stock: row.stock,
+                price: row.price,
+                sku: row.sku,
+                thumbnail: row.skuImage,
+                images: row.images.map(function(img) {
                   return img.url;
                 }),
-                online: row.online()
+                online: row.online
               };
             }),
-            categories = self.selectedCategories().map(function(cate) {
+            categories = self.selectedCategories.map(function(cate) {
               return cate.id;
             });
-
           Kooboo.Product.post({
-            id: self.productId(),
+            id: self.productId,
             type: typeId,
-            values: self.contentValues().fieldsValue,
+            values: self.contentValues.fieldsValue,
             variants: variants,
             categories: categories
           }).then(function(res) {
@@ -361,22 +336,23 @@ $(function() {
               }
             }
           });
-        } else {
-          self.typesMatrix().forEach(function(row) {
-            if (!row.isValid()) row.showError(true);
-          });
         }
       },
       isValid: function() {
-        self.startValidating(true);
-        var flag = true;
-        this.typesMatrix().forEach(function(row) {
-          if (!row.isValid()) flag = false;
+        var valid = self.$refs.fieldPanel.validate();
+        if (!valid) return;
+
+        self.typesMatrix.forEach(function(row) {
+          if (
+            self.validateInput(row, "price") ||
+            self.validateInput(row, "stock")
+          ) {
+            valid = false;
+          }
         });
 
-        return flag && self.validationPassed();
+        return valid;
       },
-
       getCategories: function(cates, selectedIds) {
         var temp = [];
         cates.forEach(function(c) {
@@ -389,10 +365,9 @@ $(function() {
 
         return temp;
       },
-      toggleStatus: function(m, e) {
-        m.online(!m.online());
+      toggleStatus: function(m) {
+        m.online = !m.online;
       },
-
       onShowCategoriesModal: function() {
         self.showCategoriesModal = true;
       },
@@ -402,20 +377,9 @@ $(function() {
       onSaveCategoriesModal: function() {
         self.selectedCategories = getSelected(self.categories);
         self.onHideCategoriesModal();
-
-        function getSelected(cates) {
-          var temp = [];
-          cates.forEach(function(c) {
-            if (c.selected) {
-              temp.push(c);
-            }
-
-            if (c.subCats && c.subCats.length) {
-              temp = _.concat(temp, getSelected(c.subCats));
-            }
-          });
-          return temp;
-        }
+      },
+      validateInput: function(data, fieldName) {
+        return (data.error[fieldName] = data[fieldName] === "");
       }
     },
     computed: {
@@ -424,6 +388,20 @@ $(function() {
       }
     }
   });
+
+  function getSelected(cates) {
+    var temp = [];
+    cates.forEach(function(c) {
+      if (c.selected) {
+        temp.push(c);
+      }
+
+      if (c.subCats && c.subCats.length) {
+        temp = _.concat(temp, getSelected(c.subCats));
+      }
+    });
+    return temp;
+  }
 
   function getTableDataByTypes() {
     return Array.prototype.reduce.call(
@@ -447,52 +425,4 @@ $(function() {
       category: Object
     }
   });
-});
-
-$(function() {
-  var Product = function() {
-    var self = this;
-
-    this.categories.subscribe(function(cates) {
-      var selected = getSelected(cates).map(function(c) {
-        return ko.mapping.toJS(c);
-      });
-      self.selectedCategories(selected);
-
-      function getSelected(cates) {
-        var temp = [];
-        cates.forEach(function(c) {
-          if (c.selected()) {
-            temp.push(c);
-          }
-
-          if (c.subCats() && c.subCats().length) {
-            temp = _.concat(temp, getSelected(c.subCats()));
-          }
-        });
-        return temp;
-      }
-    });
-
-    this.specFields.subscribe(function(fields) {
-      if (fields.length) {
-        renderTable();
-      }
-    });
-
-    this.singleProduct = {
-      showError: ko.observable(false),
-      stock: ko.validateField({
-        required: "",
-        min: { value: 0 }
-      }),
-      price: ko.validateField({
-        required: "",
-        min: { value: 0 }
-      }),
-      sku: ko.observable(),
-      skuImage: ko.observable(),
-      skuThumbnail: ko.observable()
-    };
-  };
 });

@@ -123,136 +123,124 @@
       <legend>Specification &amp; stock</legend>
       <kb-commerce-spec
         class="col-md-11"
-        :fields="dynamicSpecFields"
+        :fields="dynaSpecFields"
         @change="dynamicFieldsChange"
       ></kb-commerce-spec>
     </fieldset>
-
-    <div>
-      <table class="table table-striped table-hover table-bordered">
-        <thead>
-          <tr>
-            <!-- ko if: specNames().length -->
-            <!-- ko foreach: specNames -->
-            <th data-bind="text: $data"></th>
-            <!-- /ko -->
-            <!-- /ko -->
-            <th class="table-short">Stock</th>
-            <th class="table-short">Price</th>
-            <th>SKU</th>
-            <th>SKU preview</th>
-            <th>Images</th>
-            <th class="table-action">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- ko if: typesMatrix().length -->
-          <!-- ko foreach: typesMatrix -->
-          <tr>
-            <!-- ko foreach: { data: $data.types, as: 'type'} -->
-            <td data-bind="text: type.value"></td>
-            <!-- /ko -->
-            <td>
-              <div class="form-group">
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control input-xsmall"
-                  data-bind="value: $data.stock, error: $data.stock, errorPlacement: 'top', event: { keydown: Kooboo.event.input.positiveIntegerOnly }"
-                />
-              </div>
-            </td>
-            <td>
-              <div class="form-group">
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control input-xsmall"
-                  data-bind="value: $data.price, error: $data.price, errorPlacement: 'top'"
-                />
-              </div>
-            </td>
-            <td>
-              <div class="form-group">
-                <input
-                  type="text"
-                  class="form-control input-xsmall"
-                  data-bind="value: $data.sku"
-                />
-              </div>
-            </td>
-            <td>
-              <button
-                class="btn blue"
-                data-bind="click: $parent.selectSkuPic.bind(this)"
-                >Select file</button
-              >
-              <div class="file-list">
-                <!-- ko if: skuImage -->
-                <ul>
-                  <li>
-                    <div class="fileinput-new thumbnail">
-                      <img
-                        data-bind="attr: { src: $data.skuThumbnail }"
-                        style="width: 80px; height: 80px;"
-                      />
-                    </div>
-                    <!-- ko text: $data.skuImage -->
-                    <!-- /ko -->
-                    <a
-                      data-bind="click: $parent.removeSkuPic.bind(this), attr: { title: Kooboo.text.common.remove }"
-                      href="javascript:;"
-                    >
-                      <i class="fa fa-remove"></i>
-                    </a>
-                  </li>
-                </ul>
-                <!-- /ko -->
-              </div>
-            </td>
-            <td>
-              <button
-                class="btn blue"
-                data-bind="click: $parent.selectImages.bind(this)"
-                >Select file</button
-              >
-              <div class="file-list">
-                <!-- ko if: images && images().length -->
-                <ul data-bind="foreach: images">
-                  <li>
-                    <div class="fileinput-new thumbnail">
-                      <img
-                        data-bind="attr: { src: $data.thumbnail }"
-                        style="width: 80px; height: 80px;"
-                      />
-                    </div>
-                    <!-- ko text: $data.url -->
-                    <!-- /ko -->
-                    <a
-                      data-bind="click: $root.removeImg.bind($data, $parent), attr: { title: Kooboo.text.common.remove }"
-                      href="javascript:;"
-                    >
-                      <i class="fa fa-remove"></i>
-                    </a>
-                  </li>
-                </ul>
-                <!-- /ko -->
-              </div>
-            </td>
-            <td>
-              <a
-                href="javascript:;"
-                class="label"
-                data-bind="text: Kooboo.text.commerce.product[$data.online() ? 'inStock' : 'dropOff'], click: $parent.toggleStatus.bind(this), css: { green: $data.online(), 'label-default': !$data.online() }"
-              >
-              </a>
-            </td>
-          </tr>
-          <!-- /ko -->
-          <!-- /ko -->
-        </tbody>
-      </table>
-    </div>
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th v-for="($data, index) in specNames" :key="index">{{ $data }}</th>
+          <th class="table-short">Stock</th>
+          <th class="table-short">Price</th>
+          <th>SKU</th>
+          <th>SKU preview</th>
+          <th>Images</th>
+          <th class="table-action">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="($data, index) in typesMatrix" :key="index">
+          <td v-for="(type, tIndex) in $data.types" :key="tIndex"
+            >{{ type.value }}</td
+          >
+          <td>
+            <div class="form-group" :class="{'has-error': $data.error.stock }">
+              <input
+                type="number"
+                min="0"
+                class="form-control input-xsmall"
+                v-model="$data.stock"
+                v-kb-tooltip:top.manual.error="$data.error.stock && Kooboo.text.validation.required"
+                @change="validateInput($data, 'stock')"
+              />
+            </div>
+          </td>
+          <td>
+            <div class="form-group" :class="{'has-error': $data.error.price }">
+              <input
+                type="number"
+                min="0"
+                class="form-control input-xsmall"
+                v-model="$data.price"
+                v-kb-tooltip:top.manual.error="$data.error.price && Kooboo.text.validation.required"
+                @change="validateInput($data, 'price')"
+              />
+            </div>
+          </td>
+          <td>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control input-xsmall"
+                v-model="$data.sku"
+              />
+            </div>
+          </td>
+          <td>
+            <button class="btn blue" @click="selectSkuPic($data)"
+              >Select file</button
+            >
+            <div class="file-list">
+              <ul v-if="$data.skuImage">
+                <li>
+                  <div class="fileinput-new thumbnail">
+                    <img
+                      :src="$data.skuThumbnail"
+                      style="width: 80px; height: 80px;"
+                    />
+                  </div>
+                  {{ $data.skuImage }}
+                  <a
+                    @click="removeSkuPic($data)"
+                    :title="Kooboo.text.common.remove"
+                    href="javascript:;"
+                  >
+                    <i class="fa fa-remove"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+          <td>
+            <button class="btn blue" @click="selectImages($data)"
+              >Select file</button
+            >
+            <div class="file-list">
+              <ul v-if="$data.images && $data.images.length">
+                <li v-for="(img, imgIndex) in $data.images" :key="imgIndex">
+                  <div class="fileinput-new thumbnail">
+                    <img
+                      :src="img.thumbnail"
+                      style="width: 80px; height: 80px;"
+                    />
+                  </div>
+                  {{ img.url }}
+                  <a
+                    @click="removeImg($data, imgIndex)"
+                    :title="Kooboo.text.common.remove"
+                    href="javascript:;"
+                  >
+                    <i class="fa fa-remove"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+          <td>
+            <a
+              href="javascript:;"
+              class="label"
+              @click="toggleStatus($data)"
+              :class="$data.online ? 'green' : 'label-default'"
+            >
+              {{ Kooboo.text.commerce.product[$data.online ? 'inStock' :
+              'dropOff'] }}
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   <kb-media-dialog
     :data.sync="mediaDialogData"
@@ -295,12 +283,8 @@
   </div>
 
   <div class="page-buttons">
-    <!-- ko ifnot: isNew -->
-    <div class="btn-group dropup">
-      <button
-        data-bind="click: onSaveAndReturn"
-        class="btn green"
-        style="margin: 0;"
+    <div v-if="!isNew" class="btn-group dropup">
+      <button @click="onSaveAndReturn" class="btn green" style="margin: 0;"
         >Save &amp; Return</button
       >
       <a
@@ -312,15 +296,12 @@
       </a>
       <ul class="dropdown-menu" role="menu">
         <li>
-          <a href="javascript:;" data-bind="click: onSave">Save</a>
+          <a href="javascript:;" @click="onSave">Save</a>
         </li>
       </ul>
     </div>
-    <!-- /ko -->
-    <!-- ko if: isNew -->
-    <button data-bind="click: onSave" class="btn green">Save</button>
-    <!-- /ko -->
-    <a data-bind="attr: { href: typesUrl }" class="btn gray">Cancel</a>
+    <button v-else @click="onSave" class="btn green">Save</button>
+    <a :href="typesUrl" class="btn gray">Cancel</a>
   </div>
 </div>
 <script>
