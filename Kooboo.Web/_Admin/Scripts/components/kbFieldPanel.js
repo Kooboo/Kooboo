@@ -82,7 +82,7 @@
           self.currentLangs = _.without(self.currentLangs, lang.name);
         }
       });
-      if (!this.siteLangs) {
+      if (!this.siteLangs || !Object.keys(this.siteLangs).length) {
         self.$watch("siteLangs", function(langs) {
           if (langs) {
             if (self.currentLangs.indexOf(langs.default) == -1) {
