@@ -38,9 +38,9 @@
   <button class="btn green" v-show="isJsTreeChanged" @click="saveCategory"
     >Save</button
   >
-  
+
   <div
-    data-bind="modal: showMultilingualModal"
+    v-kb-modal="showMultilingualModal"
     class="modal fade"
     data-backdrop="static"
     data-keyboard="false"
@@ -48,44 +48,38 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button class="close" data-bind="click: onHideMultilingualModal"
+          <button class="close" @click="onHideMultilingualModal"
             ><i class="fa fa-close"></i
           ></button>
           <h4 class="modal-title">Multilingual</h4>
         </div>
-        <div class="modal-body" data-bind="if: currentCateNames()">
-          <!-- ko foreach: cultureKeys -->
-          <div class="form-group">
-            <label
-              class="control-label"
-              data-bind="text: $data + ' - ' + $parent.cultures()[$data]"
-            ></label>
+        <div class="modal-body" v-if="currentCateNames">
+          <div
+            class="form-group"
+            v-for="($data, index) in cultureKeys"
+            :key="index"
+          >
+            <label class="control-label"
+              >{{ $data + ' - ' + cultures[$data] }}</label
+            >
             <input
               type="text"
               class="form-control"
-              data-bind="value: $parent.currentCateNames()[$data]"
+              v-model="currentCateNames[$data]"
             />
           </div>
-          <!-- /ko -->
         </div>
         <div class="modal-footer">
-          <button class="btn green" data-bind="click: onSaveMultilingualModal"
+          <button class="btn green" @click="onSaveMultilingualModal"
             >Save</button
           >
-          <button class="btn grey" data-bind="click: onHideMultilingualModal"
+          <button class="btn grey" @click="onHideMultilingualModal"
             >Cancel</button
           >
         </div>
       </div>
     </div>
   </div>
-
-  <script type="text/html" type="text/html" id="category-template">
-    <li data-bind="attr: { 'data-id': id }">
-        <span data-bind="text: name"></span>
-        <ul data-bind="template: { name: 'category-template', foreach: subCates}"></ul>
-    </li>
-  </script>
 </div>
 <script>
   (function() {

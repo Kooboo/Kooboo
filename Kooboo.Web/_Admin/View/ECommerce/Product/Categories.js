@@ -111,6 +111,11 @@ $(function() {
         self.showMultilingualModal = false;
       },
       onSaveMultilingualModal: function() {
+        self.isJsTreeChanged = !_.isEqual(
+          self.currentNode.node.data.names,
+          self.currentCateNames
+        );
+
         self.currentNode.node.data.names = self.currentCateNames;
         self.currentNode.instance.set_text(
           self.currentNode.node,
@@ -176,10 +181,9 @@ $(function() {
       onEdit: function() {
         var id = self.currentNode.selected[0],
           inst = self.currentNode.instance;
-
         if (self.cultureKeys.length > 1) {
           // 如果有多种，显示弹窗
-          self.currentCateNames = inst._model.data[id].data.names;
+          self.currentCateNames = _.cloneDeep(inst._model.data[id].data.names);
           self.showMultilingualModal = true;
         } else {
           // 如果只有一种语言，直接编辑
