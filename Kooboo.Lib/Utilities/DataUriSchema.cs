@@ -57,6 +57,6 @@ namespace Kooboo.Lib.Utilities
         public string DataString { get; set; }
 
         public bool isBase64 { get; set; }
-
+        
     }
 }

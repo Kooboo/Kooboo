@@ -66,7 +66,7 @@
                   <span :class="'label label-sm label-' + message.class"
                     >{{ message.typeText }}</span
                   >
-                  <span>{{ message.body }}</span>
+                  <span v-html="message.body"></span>
                 </td>
               </tr>
             </tbody>
