@@ -13,11 +13,10 @@ namespace Kooboo.Data.SSL
         {   
             if (DateTime.Now.Hour == 2 || DateTime.Now.Hour == 3)
             {
-                foreach (var item in Kooboo.Data.GlobalDb.SslCertificate.All())
-                {
-                    if (item.Expiration < DateTime.Now.AddDays(30))
-                    {
-                        // Renew the certificate...
+                foreach (var item in Kooboo.Data.GlobalDb.SslCertificate.GetAllInUsed())
+                {  
+                    if (item.Expiration < DateTime.Now.AddDays(10))
+                    { 
                          SslService.SetSsl(item.Domain, item.OrganizationId);  
                     }
                 }
