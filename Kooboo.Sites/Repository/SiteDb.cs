@@ -17,8 +17,8 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.SiteTransfer.Model;
 using System.Linq;
 using System.Threading;
-//using Kooboo.Sites.Ecommerce.Repository;
-//using Kooboo.Sites.Ecommerce.Models;
+using Kooboo.Sites.Ecommerce.Repository;
+using Kooboo.Sites.Ecommerce.Models;
 
 namespace Kooboo.Sites.Repository
 {
@@ -1012,6 +1012,61 @@ namespace Kooboo.Sites.Repository
             this.WebSite.EnableDiskSync = disksync;
             this.WebSite.ContinueDownload = continuedownload;
         }
+
+        #region Ecommerce
+
+
+        private CategoryRepository _category;
+
+        public CategoryRepository Category
+        {
+            get
+            {
+                return GetSiteRepository<CategoryRepository, Category>();
+            }
+        }
+
+        private ProductTypeRepository _productType;
+
+        public ProductTypeRepository ProductType
+        {
+            get
+            {
+                return GetSiteRepository<ProductTypeRepository, ProductType>();
+            }
+        }
+
+        public ProductCategoryRepository _productcategory;
+        public ProductCategoryRepository ProductCategory
+        {
+            get
+            {
+                return GetSiteRepository<ProductCategoryRepository, ProductCategory>();
+            }
+        }
+
+        public ProductRepository _product;
+        public ProductRepository Product
+        {
+            get
+            {
+                return GetSiteRepository<ProductRepository, Product>();
+            }
+        }
+
+        public ProductVariantsRepository _productvariants;
+
+        public ProductVariantsRepository ProductVariants
+        {
+            get
+            {
+                return GetSiteRepository<ProductVariantsRepository, ProductVariants>();
+            }
+        }
+
+
+
+        #endregion
 
     }
 
