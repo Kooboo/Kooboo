@@ -1083,6 +1083,14 @@
       and: "Logical and"
     },
 
+    dashboard: {
+      noPageViewed: "No page has been viewed yet.",
+      total: "Total",
+      IPs: "IPs",
+      Pages: "Pages",
+      avgSize: "Avg Size"
+    },
+
     inlineEditor: {
       pageLink: "Page link",
       outLink: "Out link",
