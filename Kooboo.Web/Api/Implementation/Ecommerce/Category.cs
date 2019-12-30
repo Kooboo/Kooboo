@@ -102,6 +102,7 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
         private void savecat(SiteDb sitedb, CategoryViewModel model, Guid ParentId)
         {
             Category cat = new Category();
+            cat.Id = model.Id;
             cat.ParentId = ParentId;
 
             Dictionary<string, string> values = Lib.Helper.JsonHelper.Deserialize<Dictionary<string, string>>(model.Values);
