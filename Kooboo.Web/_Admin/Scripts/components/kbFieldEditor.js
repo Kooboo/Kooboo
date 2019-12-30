@@ -43,7 +43,8 @@
           multilingual: true,
           modifiedFieldName: undefined,
           multipleValue: undefined,
-          selectionOptions: []
+          selectionOptions: [],
+          isSpecification: false
         },
         formRules: {},
         firstTabValidate: {},
@@ -347,7 +348,7 @@
     },
     computed: {
       isProductType: function() {
-        return !!this.options.specControlTypes;
+        return this.options.modifiedField == "isSpecification";
       }
     }
   });
