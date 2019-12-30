@@ -22,7 +22,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Commerce
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("Products", Context);
+            return Hardcoded.GetValue("Products management", Context);
         }
     }
 }

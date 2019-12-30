@@ -1351,7 +1351,7 @@
   <key id="Advance">高级</key>
   <key id="System">系统</key>
   <key id="Development">开发</key>
-  <key id="Commerce">Commerce</key>
+  <key id="Commerce">电商</key>
   <key id="SiteBindings">网站绑定</key>
   <key id="SiteMirror">站点镜像</key>
   <key id="Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates">只有使用Kooboo DNS或是架设在Kooboo线上服务器上的域名可以生成证书</key>

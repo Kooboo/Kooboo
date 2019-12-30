@@ -113,13 +113,13 @@ namespace Kooboo.Web.Api.Implementation
             var development = new CmsMenuViewModel(SideBarSection.Development.ToString(), Hardcoded.GetValue("Development", context)) { Icon = "icon fa fa-code" };
             var content = new CmsMenuViewModel(SideBarSection.Contents.ToString(), Hardcoded.GetValue("Contents", context)) { Icon = "icon fa fa-files-o" };
             var database = new CmsMenuViewModel(SideBarSection.Database.ToString(), Hardcoded.GetValue("Database", context)) { Icon = "icon fa fa-database" };
-            var commerce = new CmsMenuViewModel(SideBarSection.Commerce.ToString(), Hardcoded.GetValue("Commerce", context)) { Icon = "icon fa fa-database" };
+            var commerce = new CmsMenuViewModel(SideBarSection.Commerce.ToString(), Hardcoded.GetValue("E-Commerce", context)) { Icon = "icon fa fa-database" };
 
             advance.Items.Add(system);
             advance.Items.Add(development);
             advance.Items.Add(content);
             advance.Items.Add(database);
-            // advance.Items.Add(commerce);
+            advance.Items.Add(commerce);
 
             var sitebarmenus = MenuContainer.SideBarMenus;
 
@@ -147,7 +147,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else if (item.Parent == SideBarSection.Commerce)
                 {
-                  //  commerce.Items.Add(new CmsMenuViewModel(item, context));
+                    commerce.Items.Add(new CmsMenuViewModel(item, context));
                 }
             }
              
