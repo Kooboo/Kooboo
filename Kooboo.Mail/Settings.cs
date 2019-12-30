@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Kooboo.Mail
 {
@@ -33,6 +34,8 @@ namespace Kooboo.Mail
             {
                 MtaPort = 587;
             }
+
+            nextcheck = System.DateTime.Now.AddHours(-10);
         }
 
         public static async Task<SendSetting> GetSendSetting(Data.Models.ServerSetting serverSetting, bool IsOnlineServer, string MailFrom, string RcptTo)
@@ -100,17 +103,75 @@ namespace Kooboo.Mail
             }
             return setting;
         }
-         
+
         public static bool ForwardRequired
         {
             get
             {
-
-               return false; 
-             ///   return !HasDefineMta; 
+              //return false;
+              return !HasDefineMta; 
             }
         }
 
-        public static string MailServer { get; set; }
+
+        private static string _mailserverip;
+
+        public static string MailServerIP
+        {
+            get
+            {
+                SetMailServer();
+                return _mailserverip; 
+            }
+        }
+
+        public static void SetMailServer()
+        {
+            if (_mailserverip == null)
+            {
+                _mailserverip = GetMailServer(true); 
+            }
+            else
+            {
+                // already has value...  
+                System.Threading.Thread t = new System.Threading.Thread(setAsync);  
+                t.Start();  
+            }
+        }
+
+        private static void setAsync()
+        {
+            var mailserver = GetMailServer(true); 
+            if (!string.IsNullOrWhiteSpace(mailserver))
+            {
+                _mailserverip = mailserver; 
+            }
+        }
+
+        private static System.DateTime nextcheck { get; set; }
+
+        private static string GetMailServer(bool isNull = false)
+        {
+            if (nextcheck < DateTime.Now)
+            {
+                if (isNull)
+                {
+                    nextcheck = DateTime.Now.AddHours(2);
+                }
+                else
+                {
+                    nextcheck = DateTime.Now.AddHours(24);
+                }
+
+                string url = Kooboo.Data.Helper.AccountUrlHelper.System("MailServer");
+                var ip = Lib.Helper.HttpHelper.TryGet<string>(url);
+
+                if (ip != null && Lib.Helper.IPHelper.IsIP(ip))
+                {
+                    return ip;
+                }
+            }
+            return null;
+        }
     }
 }

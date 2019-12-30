@@ -1,49 +1,81 @@
 <!-- #layout name=blank-->
-<div class="page-header">
+<div id="app" v-cloak>
+  <div class="page-header">
     <h1 class="title">Products management</h1>
-</div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'SITES'
-},{
-    name: 'DASHBOARD'
-},{
-    name: Kooboo.text.common.ProductManagement
-}]}"></div>
-<div class="navbar navbar-default">
+  </div>
+  <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+  <div class="navbar navbar-default">
     <div class="container-fluid">
-        <div class="btn-group navbar-btn">
-            <div class="btn-group">
-                <button class="btn green dropdown-toggle" data-toggle="dropdown"><span>Add product</span>&nbsp;<i class="fa fa-angle-down"></i></button>
-                <ul class="dropdown-menu">
-                    <!-- ko if: productTypes().length -->
-                    <!-- ko foreach: productTypes -->
-                    <li>
-                        <a data-bind="text: $data.name, attr: { href: Kooboo.Route.Get(Kooboo.Route.Product.DetailPage, { type: $data.id }) }"></a>
-                    </li>
-                    <!-- /ko -->
-                    <!-- /ko -->
-                    <!-- ko ifnot: productTypes().length -->
-                    <li>
-                        <a href="javascript:;" data-bind="attr: { href: Kooboo.Route.Product.Type.DetailPage }">Create a new type first</a>
-                    </li>
-                    <!-- /ko -->
-                </ul>
-            </div>
+      <div class="btn-group navbar-btn">
+        <div class="btn-group">
+          <button class="btn green dropdown-toggle" data-toggle="dropdown"
+            ><span>Add product</span>&nbsp;<i class="fa fa-angle-down"></i
+          ></button>
+          <ul class="dropdown-menu">
+            <template v-if="productTypes.length">
+              <li v-for="($data, index) in productTypes" :key="index">
+                <a
+                  :href="Kooboo.Route.Get(Kooboo.Route.Product.DetailPage, { type: $data.id })"
+                  >{{ $data.name }}</a
+                >
+              </li>
+            </template>
+            <li v-else>
+              <a
+                href="javascript:;"
+                :href="Kooboo.Route.Product.Type.DetailPage"
+                >Create a new type first</a
+              >
+            </li>
+          </ul>
         </div>
-        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+      </div>
+      <a class="btn red navbar-btn" v-show="selected.length>0" @click="onDelete"
+        >Delete</a
+      >
     </div>
+  </div>
+  <kb-table
+    :data="tableData"
+    show-select
+    :selected.sync="selected"
+    class="table-bordered"
+  >
+    <kb-table-column
+      v-for="(column, index) in defaultColumns"
+      :label="column"
+      :prop="column"
+      :key="index"
+    ></kb-table-column>
+    <kb-table-column :label="Kooboo.text.common.ProductType">
+      <template v-slot="row">
+        <span :class="['label', row.productType.class]"
+          >{{ row.productType.text }}</span
+        >
+      </template>
+    </kb-table-column>
+    <kb-table-column head-class="table-action" body-class="table-action">
+      <template v-slot="row">
+        <a class="btn btn-sm blue" :href="row.edit.url" @click.stop>
+          {{ row.edit.text }}
+        </a>
+      </template>
+    </kb-table-column>
+  </kb-table>
+  <kb-pager
+    :page-nr="pager.pageNr"
+    :total-pages="pager.totalPages"
+    @change="changePage"
+  ></kb-pager>
 </div>
-<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
-<div data-bind="component: { name: 'kb-pager', params: pager }"></div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/components/kbPager.js"
-        ]);
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/components/kbPager.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/ECommerce/Products.js"></script>

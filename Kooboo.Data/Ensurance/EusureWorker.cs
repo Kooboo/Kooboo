@@ -23,6 +23,4 @@ namespace Kooboo.Data.Ensurance
             EnsureManager.Execute(); 
         }
     }
-
-
 }

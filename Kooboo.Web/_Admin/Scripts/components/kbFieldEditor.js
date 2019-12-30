@@ -43,13 +43,15 @@
           multilingual: true,
           modifiedFieldName: undefined,
           multipleValue: undefined,
-          selectionOptions: []
+          selectionOptions: [],
+          isSpecification: false
         },
         formRules: {},
         firstTabValidate: {},
         controlTypesOptions: [],
         AllControlTypes: Kooboo.controlTypes,
-        multilinguable: false
+        multilinguable: false,
+        changeModifiedField: false
       };
     },
     created: function() {
@@ -93,6 +95,12 @@
     watch: {
       d_data: {
         handler: function(val, old) {
+          if (self.changeModifiedField) {
+            val.controlType = val[self.options.modifiedField]
+              ? "dynamicSpec"
+              : "TextBox";
+            self.changeModifiedField = false;
+          }
           if (self.type !== val.controlType) {
             self.initDataByType(self.findControlType(self.d_data.controlType));
             self.type = val.controlType;
@@ -112,7 +120,7 @@
         } else {
           self.multilinguable = false;
         }
-        if (item.value === "Selection" || item.value === "Switch") {
+        if (item.value === "Selection" || item.value === "Switch" || item.dataType == "Spec") {
           self.d_data.validations = [];
         } else {
           if (self.isInit) {
@@ -125,8 +133,7 @@
             }
           }
         }
-
-        if (item.dataType === "Array") {
+        if (item.dataType === "Array" || item.value === "fixedSpec") {
           if (self.isInit) {
             self.d_data.selectionOptions = [];
             try {
@@ -150,16 +157,18 @@
         self.isInit = false;
       },
       initControlTypesOptions: function(item) {
-        var options = self.AllControlTypes.filter(function(i) {
-          if (i.dataType && i.dataType === item.dataType) {
-            return i;
-          }
-        });
         if (self.isNewField) {
           self.controlTypesOptions = self.getAllControlTypes(
-            self.options.controlTypes
+            self.isProductType && self.d_data[self.options.modifiedField]
+              ? self.options.specControlTypes
+              : self.options.controlTypes
           );
         } else {
+          var options = self.AllControlTypes.filter(function(i) {
+            if (i.dataType && i.dataType === item.dataType && i.displayName) {
+              return i;
+            }
+          });
           self.controlTypesOptions = options;
         }
       },
@@ -330,6 +339,16 @@
       },
       onCancel: function() {
         self.closeHandle();
+      },
+      changeModified: function() {
+        if (this.isProductType) {
+          this.changeModifiedField = true;
+        }
+      }
+    },
+    computed: {
+      isProductType: function() {
+        return this.options.modifiedField == "isSpecification";
       }
     }
   });

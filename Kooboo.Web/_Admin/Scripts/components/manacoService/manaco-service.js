@@ -94,27 +94,28 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var loaderUrl = "https://unpkg.com/monaco-editor@0.18.1/min/vs/loader.js";
-
-      $.getScript(loaderUrl, function(response, status) {
-        if (status === "success") {
-          window.require.config({
-            paths: { vs: "https://unpkg.com/monaco-editor@0.18.1/min/vs" }
-          });
-          window.MonacoEnvironment = {
-            getWorkerUrl: function(workerId, label) {
-              var encoded = encodeURIComponent(
-                "self.MonacoEnvironment = { baseUrl: 'https://unpkg.com/monaco-editor@0.18.1/min/' }; importScripts('https://unpkg.com/monaco-editor@0.18.1/min/vs/base/worker/workerMain.js');"
-              );
-              return "data:text/javascript;charset=utf-8," + encoded;
-            }
-          };
-          window.require(["vs/editor/editor.main"], function() {
-            monaco = window.monaco;
-            self.isLoader = true;
-            callback(monaco);
-          });
-        }
+      var baseUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/";
+      $.getScript(baseUrl + "vs/loader.js").done(function() {
+        window.require.config({
+          paths: { vs: baseUrl + "vs" }
+        });
+        window.MonacoEnvironment = {
+          getWorkerUrl: function(workerId, label) {
+            var encoded = encodeURIComponent(
+              "self.MonacoEnvironment = { baseUrl: '" +
+                baseUrl +
+                "' }; importScripts('" +
+                baseUrl +
+                "vs/base/worker/workerMain.js');"
+            );
+            return "data:text/javascript;charset=utf-8," + encoded;
+          }
+        };
+        window.require(["vs/editor/editor.main"], function() {
+          monaco = window.monaco;
+          self.isLoader = true;
+          callback(monaco);
+        });
       });
     };
     MonacoEditorService.prototype.init = function(callback, files) {
@@ -249,9 +250,61 @@ var MonacoEditorService =
           }
       }
     };
+    MonacoEditorService.prototype.addManualTriggerSuggest = function(editor) {
+      editor.addAction({
+        id: "ManualTriggerSuggest",
+        label: "ManualTriggerSuggest",
+        keybindings: [
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_J,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space,
+          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space
+        ],
+        precondition: null,
+        keybindingContext: null,
+        contextMenuGroupId: "ManualTriggerSuggest",
+        contextMenuOrder: 1.5,
+        run: function(ed) {
+          ed.getAction("editor.action.triggerSuggest").run();
+        }
+      });
+    };
+
     MonacoEditorService.prototype.addCompleteForHtmlTag = function(
       suggestions
     ) {
+      monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: ["<"],
+        provideCompletionItems: function(model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          if (!textUntilPosition.endsWith("<")) return;
+
+          var extendTags = [
+            "view",
+            "htmlblock",
+            "layout",
+            "menu",
+            "placeholder"
+          ];
+
+          return {
+            suggestions: extendTags.map(function(item) {
+              return {
+                label: item,
+                kind: monaco.languages.CompletionItemKind.Property,
+                documentation: item,
+                insertText: item
+              };
+            })
+          };
+        }
+      });
+
       monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
           var textUntilPosition = model.getValueInRange({
@@ -277,7 +330,10 @@ var MonacoEditorService =
               label: item.label,
               kind: item.kind || monaco.languages.CompletionItemKind.Value,
               documentation: item.documentation,
-              insertText: item.insertText
+              insertText: item.insertText,
+              insertTextRules:
+                item.insertTextRules ||
+                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
             };
           });
           return {

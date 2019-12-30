@@ -25,7 +25,8 @@
                                             <div class="checkbox">
                                                 <label>
                                                     <input type="checkbox"
-                                                           v-model="d_data[options.modifiedField]">
+                                                           v-model="d_data[options.modifiedField]"
+                                                           @change="changeModified">
                                                     {{options.modifiedFieldText || ''}}
                                                 </label>
                                             </div>

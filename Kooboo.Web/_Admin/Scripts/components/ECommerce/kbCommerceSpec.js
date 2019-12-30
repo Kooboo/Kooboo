@@ -1,104 +1,74 @@
 (function() {
-    var template = Kooboo.getTemplate("/_Admin/Scripts/components/ECommerce/kbCommerceSpec.html");
-
-    ko.components.register('kb-commerce-spec', {
-        viewModel: function(params) {
-            var self = this;
-
-            this.fields = params.fields;
-            this.fields.subscribe(function(fields) {
-                if (fields.length) {
-                    var fixedSpecs = [],
-                        dynamicSpecs = [];
-                    fields.forEach(function(f) {
-                        if (f.controlType.toLowerCase() == 'fixedspec') {
-                            fixedSpecs.push(f);
-                        } else {
-                            var dy = new DynamicSpec(f);
-                            dynamicSpecs.push(dy);
-
-                            dy.on('change', function() {
-                                self.dynamicFieldsChange(self.dynamicSpecs());
-                            })
-                        }
-                    })
-
-                    self.fixedSpecs(fixedSpecs);
-                    self.dynamicSpecs(dynamicSpecs);
-                }
-            })
-
-            this.fixedSpecs = ko.observableArray();
-            this.dynamicSpecs = ko.observableArray();
-
-            this.dynamicFieldsChange = params.dynamicFieldsChange;
-        },
-        template: template
-    })
-
-    function DynamicSpec(data) {
-        var self = this;
-
-        this.showError = ko.observable(false);
-
-        this.name = ko.observable(data.name);
-
-        if (typeof data.selectionOptions == 'string') {
-            data.selectionOptions = JSON.parse(data.selectionOptions);
-        }
-
-        this.options = ko.observableArray(data.selectionOptions || []);
-
-        if (data.selectionOptions && data.selectionOptions.length) {
-            setTimeout(function() { self.emit('change') }, 100);
-        }
-
-        this.addOption = function() {
-            self.showNewOptionForm(true);
-        }
-
-        this.newValue = ko.validateField({
-            required: '',
-            localUnique: {
-                compare: function() {
-                    return _.concat(self.options(), self.newValue());
-                }
+  Vue.component("kb-commerce-spec", {
+    template: Kooboo.getTemplate(
+      "/_Admin/Scripts/components/ECommerce/kbCommerceSpec.html"
+    ),
+    props: {
+      fields: Array
+    },
+    data: function() {
+      var self = this;
+      return {
+        dynamicSpecs: [],
+        validateField: {},
+        rules: {
+          newValue: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
+            },
+            {
+              validate: function(val) {
+                return self.validateField.options.indexOf(val) == -1;
+              },
+              message: Kooboo.text.validation.taken
             }
-        });
-
-        this.saveOption = function() {
-            if (self.newValue.isValid()) {
-                self.options.push(self.newValue());
-                self.resetForm();
-                this.emit('change');
-            } else {
-                self.showError(true);
+          ]
+        }
+      };
+    },
+    methods: {
+      dynamicFieldsChange: function() {
+        this.$emit("change", this.dynamicSpecs);
+      },
+      addOption: function(field) {
+        field.showNewOptionForm = true;
+      },
+      saveOption: function(field, index) {
+        this.validateField = field;
+        if (this.$refs.form[index].validate()) {
+          field.options.push(field.newValue);
+          this.resetForm(field, index);
+          this.dynamicFieldsChange();
+        }
+      },
+      resetForm: function(field, index) {
+        field.newValue = "";
+        field.showNewOptionForm = false;
+        this.$refs.form[index].clearValid();
+      },
+      removeOption: function(field, index) {
+        field.options.splice(index, 1);
+        this.dynamicFieldsChange();
+      }
+    },
+    watch: {
+      fields: function(fields) {
+        if (fields.length) {
+          this.dynamicSpecs = fields.map(function(data) {
+            if (typeof data.selectionOptions == "string") {
+              data.selectionOptions = JSON.parse(data.selectionOptions);
             }
+            return {
+              name: data.name,
+              showNewOptionForm: false,
+              options: data.selectionOptions || [],
+              newValue: ""
+            };
+          });
+          this.$emit("change", this.dynamicSpecs);
         }
-
-        this.resetForm = function() {
-            self.showError(false);
-            self.newValue('');
-            self.showNewOptionForm(false);
-        }
-
-        this.removeOption = function(m, e) {
-            self.options.remove(m);
-            self.emit('change');
-        }
-
-        this.showNewOptionForm = ko.observable(false);
-
-        this.events = {};
-        this.on = function(ev, fn) {
-            if (!this.events[ev]) this.events[ev] = [];
-            this.events[ev].push(fn);
-        }
-        this.emit = function(ev, data) {
-            if (!this.events[ev] || !this.events[ev].length) return;
-            this.events[ev].forEach(function(fn) {
-                fn(data);
-            })
-        }
+      }
     }
-})()
+  });
+})();

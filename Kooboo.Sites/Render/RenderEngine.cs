@@ -24,15 +24,20 @@ namespace Kooboo.Sites.Render
             if (context.RenderContext.Request.Channel != Data.Context.RequestChannel.InlineDesign)
             {
                 RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, GetPageOption(context)));
+
+                result = RenderHelper.Render(RenderPlan, context.RenderContext);
             }
             else
             {
                 string html = DomService.ApplyKoobooId(context.Page.Body);
                 RenderPlan = RenderEvaluator.Evaluate(html, GetPageOption(context));
                 RenderPlan.Insert(0, new BindingObjectRenderTask() { ObjectType = "page", NameOrId = context.Page.Id.ToString() });
+
+                result = RenderHelper.Render(RenderPlan, context.RenderContext);
+                result = DomService.EnsureDocType(result); 
             }
 
-            result = RenderHelper.Render(RenderPlan, context.RenderContext);
+
 
             if (context.Page.Type == Models.PageType.RichText)
             {

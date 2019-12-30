@@ -1,124 +1,139 @@
 $(function() {
-    var typeModel = function() {
-        var self = this;
-
-        this.id = Kooboo.getQueryString('id') || Kooboo.Guid.Empty;
-
-        this.isNewProductType = ko.observable(true);
-        this.productTypesUrl = Kooboo.Route.Product.Type.ListPage;
-
-        this.typename = ko.validateField({
-            required: '',
-            stringlength: {
-                min: 1,
-                max: 64,
-                message: Kooboo.text.validation.minLength + 1 + ", " + Kooboo.text.validation.maxLength + 64
+  var self;
+  new Vue({
+    el: "#main",
+    data: function() {
+      self = this;
+      return {
+        id: Kooboo.getQueryString("id") || Kooboo.Guid.Empty,
+        model: {
+          typename: ""
+        },
+        rules: {
+          typename: [
+            {
+              required: true,
+              message: Kooboo.text.validation.required
             },
-            remote: {
+            {
+              min: 1,
+              max: 64,
+              message:
+                Kooboo.text.validation.minLength +
+                1 +
+                ", " +
+                Kooboo.text.validation.maxLength +
+                64
+            },
+            {
+              remote: {
                 url: Kooboo.ProductType.isUniqueName(),
-                data: {
-                    name: function() { return self.typename() }
-                },
-                message: Kooboo.text.validation.taken
+                data: function() {
+                  return {
+                    name: self.model.typename
+                  };
+                }
+              },
+              message: Kooboo.text.validation.taken
             }
-        })
-
-        this.showError = ko.observable(false);
-
-        this.fields = ko.observableArray([]);
-
-        this.isNewField = ko.observable();
-        this.onFieldModalShow = ko.observable(false);
-        this.fieldData = ko.observable();
-
-        this.addNewField = function() {
-            self.isNewField(true);
-            self.fieldData({});
-            self.onFieldModalShow(true);
+          ]
+        },
+        fields: [],
+        isNewProductType: true,
+        isNewField: false,
+        onFieldModalShow: false,
+        fieldData: {},
+        productTypesUrl: Kooboo.Route.Product.Type.ListPage,
+        editingItemIndex: -1,
+        fieldEditorOptions: {
+          controlTypes: [
+            "textbox",
+            "textarea",
+            "richeditor",
+            "radiobox",
+            "switch",
+            "mediafile",
+            "number"
+          ],
+          specControlTypes: ["dynamicspec", "fixedspec"],
+          modifiedField: "isSpecification",
+          modifiedFieldText:
+            Kooboo.text.component.fieldEditor.specificationField,
+          modifiedFieldSubscriber: self.specSelect,
+          showMultilingualOption: true,
+          showPreviewPanel: true
         }
-
-        this.editField = function(m, e) {
-            self.isNewField(false);
-            self.fieldData(ko.mapping.toJS(m));
-            self.onFieldModalShow(true);
+      };
+    },
+    mounted: function() {
+      Kooboo.ProductType.get({
+        id: self.id
+      }).then(function(res) {
+        if (res.success) {
+          self.isNewProductType = !res.model.name;
+          self.model.typename = res.model.name;
+          self.fields = res.model.properties;
         }
-
-        this.removeField = function(m, e) {
-            if (confirm(Kooboo.text.confirm.deleteItem)) {
-                this.fields.remove(m);
-            }
+      });
+    },
+    methods: {
+      addNewField: function() {
+        self.isNewField = true;
+        self.fieldData = {};
+        self.onFieldModalShow = true;
+        self.editingItemIndex = -1;
+      },
+      editField: function(m, index) {
+        self.isNewField = false;
+        self.fieldData = m;
+        self.editingIndex = index;
+        self.onFieldModalShow = true;
+      },
+      removeField: function(m, index) {
+        if (confirm(Kooboo.text.confirm.deleteItem)) {
+          this.fields.splice(index, 1);
         }
-
-        this.normalControlTypes = ko.observableArray(['textbox', 'textarea', 'richeditor', 'radiobox', 'switch', 'mediafile', 'number']);
-        this.specControlTypes = ko.observable(['dynamicspec', 'fixedspec']);
-        this.controlTypes = ko.observableArray(this.normalControlTypes());
-
-        this.onFieldSave = function(field) {
-
-            var idx = _.findIndex(self.fields(), function(f) {
-                return f.name() == field.name;
-            })
-
-            if (idx > -1) {
-                var _fields = _.cloneDeep(self.fields());
-                _fields.splice(idx, 1, ko.mapping.fromJS(field));
-                self.fields(_fields);
-            } else {
-                self.fields.push(ko.mapping.fromJS(field));
-            }
-        };
-
-        this.getFieldNames = function() {
-            return self.fields().map(function(f) {
-                return f.name()
-            })
+      },
+      onFieldSave: function(event) {
+        if (self.isNewField) {
+          self.fields.push(event.data);
+        } else {
+          if (self.editingIndex > -1) {
+            self.fields[self.editingIndex] = event.data;
+          }
         }
-
-        this.specSelect = function(field, select) {
-            field.emit('controlTypes/change', select ? self.specControlTypes() : self.normalControlTypes());
+      },
+      onSave: function() {
+        if (self.isNewProductType && !self.$refs.form.validate()) {
+          return;
         }
-
-        this.isValid = function() {
-            if (this.isNewProductType()) {
-                return this.typename.isValid()
-            } else {
-                return true;
-            }
-        }
-
-        this.onSave = function() {
-            if (this.isValid()) {
-                var props = this.fields().map(function(f) {
-                    return ko.mapping.toJS(f);
-                })
-
-                Kooboo.ProductType.post({
-                    id: self.id,
-                    name: self.typename(),
-                    properties: props
-                }).then(function(res) {
-                    if (res.success) {
-                        location.href = self.productTypesUrl;
-                    }
-                })
-            } else {
-                this.showError(true);
-            }
-        }
-
-        Kooboo.ProductType.get({
-            id: self.id
+        self.fields.forEach(function(prop) {
+          if (
+            ["fixedspec", "dynamicspec"].indexOf(
+              prop.controlType.toLowerCase()
+            ) > -1
+          ) {
+            prop.dataType = "Array";
+          }
+        });
+        Kooboo.ProductType.post({
+          id: self.id,
+          name: self.model.typename,
+          properties: self.fields
         }).then(function(res) {
-            if (res.success) {
-                self.isNewProductType(!res.model.name);
-                self.typename(res.model.name);
-                self.fields(res.model.properties.map(function(p) {
-                    return ko.mapping.fromJS(p);
-                }))
-            }
-        })
+          if (res.success) {
+            location.href = self.productTypesUrl;
+          }
+        });
+      },
+      onModalClose: function() {
+        if (self.onFieldModalShow) {
+          self.onFieldModalShow = false;
+          self.editingItemIndex = -1;
+        } else {
+          self.onFieldModalShow = true;
+        }
+      }
     }
-
-    var vm = new typeModel();
-    ko.applyBindings(vm, document.getElementById('main'));
-})
+  });
+});

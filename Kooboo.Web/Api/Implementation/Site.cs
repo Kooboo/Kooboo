@@ -176,13 +176,21 @@ namespace Kooboo.Web.Api.Implementation
             var exportfile = ImportExport.ExportInter(site.SiteDb());
             var path = System.IO.Path.GetFullPath(exportfile);
 
+            string name = site.DisplayName; 
+            if (string.IsNullOrEmpty(name))
+            {
+                name = site.Name; 
+            }
+
+            name = Lib.Helper.StringHelper.ToValidFileName(name); 
+
             if (File.Exists(exportfile))
             {
                 var allbytes = System.IO.File.ReadAllBytes(path);
 
                 BinaryResponse response = new BinaryResponse();
                 response.ContentType = "application/zip";
-                response.Headers.Add("Content-Disposition", $"attachment;filename={site.Name}.zip");
+                response.Headers.Add("Content-Disposition", $"attachment;filename={name}.zip");
                 response.BinaryBytes = allbytes;
                 return response;
             }
