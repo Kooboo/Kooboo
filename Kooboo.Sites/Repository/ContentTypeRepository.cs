@@ -49,6 +49,37 @@ namespace Kooboo.Sites.Repository
             return null; 
         }
 
+        public List<ContentProperty> GetTitlePropertyByFolder(Guid FolderId)
+        {
+            var folder = this.SiteDb.ContentFolders.Get(FolderId);
+            if (folder != null)
+            {
+                return GetTitlePropertyByContentType(folder.ContentTypeId);
+            }
+            return null; 
+        }
+
+        public List<ContentProperty> GetTitlePropertyByContentType(Guid ContentTypeId)
+        {
+            List<ContentProperty> properties = new List<ContentProperty>(); 
+             
+            var contentType = this.Get(ContentTypeId);
+
+            foreach (var item in contentType.Properties.Where(o => o.IsSummaryField && !o.IsSystemField))
+            {
+                properties.Add(item);
+            }
+
+            if (properties.Any())
+            {
+                return properties;
+            }
+
+            properties.Add(contentType.Properties.OrderBy(o => o.Order).First());
+            return properties;
+        }
+
+
 
         public override bool AddOrUpdate(ContentType value)
         {
