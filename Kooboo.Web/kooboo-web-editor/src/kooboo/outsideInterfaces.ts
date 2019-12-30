@@ -3,8 +3,8 @@ import { TEXT } from "@/common/lang";
 import { createIframe } from "@/dom/element";
 const gl = (document as any).__gl;
 
-const Kooboo = (document as any).Kooboo;
 const vueInstance = (document as any).vueInstance;
+export const Kooboo = (document as any).Kooboo;
 export const parentBody = (document as any).parentBody as HTMLBodyElement;
 
 export function pickImg(callBack: (path: string) => void) {

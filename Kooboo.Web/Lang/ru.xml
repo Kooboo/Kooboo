@@ -1433,4 +1433,18 @@
   <key id="required model type not provided">Указанный тип не указан</key>
   <key id="Require parameter not found">Параметр не указан</key>
   <key id="Max number of sites has been reached, require service level upgrade">Для достижения максимального уровня данных сайта требуется уровень пользователя</key>
+  <key id="Enter link">Перейти по ссылке</key>
+  <key id="Page link">Ссылка на страницу</key>
+  <key id="Out link">Внешние ссылки</key>
+  <key id="Please edit after save">Пожалуйста, сохраните и отредактируйте</key>
+  <key id="Move">мобильный</key>
+  <key id="Undo">Предыдущий шаг</key>
+  <key id="Redo">Следующий шаг</key>
+  <key id="DOM Images">DOM изображения</key>
+  <key id="Content links">Ссылка на контент</key>
+  <key id="DOM links">DOM ссылка</key>
+  <key id="Click">Нажмите на</key>
+  <key id="Failed to initialize the editor as the document is not in standards mode">Не удается инициализировать встроенный редактор на этой странице, потому что эта страница работает в нестандартном режиме</key>
+  <key id="Click to replace">Нажмите, чтобы заменить</key>
+  <key id="Global update">Глобальное обновление</key>
 </Lang>

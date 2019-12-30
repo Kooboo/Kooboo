@@ -1433,4 +1433,18 @@
   <key id="required model type not provided">required model type not provided</key>
   <key id="Require parameter not found">Require parameter not found</key>
   <key id="Max number of sites has been reached, require service level upgrade">Max number of sites has been reached, require service level upgrade</key>
+  <key id="Enter link">Enter link</key>
+  <key id="Page link">Page link</key>
+  <key id="Out link">Out link</key>
+  <key id="Please edit after save">Please edit after save</key>
+  <key id="Move">Move</key>
+  <key id="Undo">Undo</key>
+  <key id="Redo">Redo</key>
+  <key id="DOM Images">DOM Images</key>
+  <key id="Content links">Content links</key>
+  <key id="DOM links">DOM links</key>
+  <key id="Click">Click</key>
+  <key id="Failed to initialize the editor as the document is not in standards mode">Failed to initialize the editor as the document is not in standards mode</key>
+  <key id="Click to replace">Click to replace</key>
+  <key id="Global update">Global update</key>
 </Lang>

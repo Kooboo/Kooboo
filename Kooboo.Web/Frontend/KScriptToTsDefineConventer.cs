@@ -8,11 +8,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using ExtensionAttribute = System.Runtime.CompilerServices.ExtensionAttribute;
 
+[assembly: InternalsVisibleTo("Kooboo.Web.Test")]
 namespace Kooboo.Web.Frontend.KScriptDefine
 {
     public class KScriptToTsDefineConventer
     {
-        class Define
+        internal class Define
         {
             public string Namespace { get; set; }
             public string Name { get; set; }
@@ -23,14 +24,14 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public Dictionary<string, string> Enums { get; set; }
         }
 
-        class Property
+        internal class Property
         {
             public string Type { get; set; }
             public string Name { get; set; }
             public string Discription { get; set; }
         }
 
-        class Method
+        internal class Method
         {
             public string Name { get; set; }
             public string ReturnType { get; set; }
@@ -38,7 +39,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Discription { get; set; }
         }
 
-        class Param
+        internal class Param
         {
             public string Type { get; set; }
             public string Name { get; set; }
@@ -105,7 +106,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return DefinesToString(type);
         }
 
-        IEnumerable<Property> GetExtensionProperties(Type type)
+        internal IEnumerable<Property> GetExtensionProperties(Type type)
         {
             var fields = type.GetRuntimeFields().Where(w => IsKExtension(w) && w.IsStatic);
             var extensions = new List<KeyValuePair<string, Type>>();
@@ -127,7 +128,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
         }
 
-        string DefinesToString(Type type)
+        internal string DefinesToString(Type type)
         {
             var builder = new StringBuilder();
 
@@ -196,7 +197,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return builder.ToString();
         }
 
-        Define TypeToDefine(Type type)
+        internal Define TypeToDefine(Type type)
         {
             Define define;
 
@@ -218,7 +219,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return define;
         }
 
-        string GetTypeName(Type type)
+        internal string GetTypeName(Type type)
         {
             var name = type.Name;
 
@@ -230,7 +231,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return name;
         }
 
-        Define ConvertClassOrInterface(Type type)
+        internal Define ConvertClassOrInterface(Type type)
         {
 
             var properties = type.GetProperties()
@@ -284,7 +285,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             };
         }
 
-        Define ConvertEnum(Type type)
+        internal Define ConvertEnum(Type type)
         {
             var enumValues = type.GetEnumValues().Cast<int>().ToArray();
             var enumNames = type.GetEnumNames();
@@ -302,12 +303,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             };
         }
 
-        static string CamelCaseName(string pascalCaseName)
+        internal static string CamelCaseName(string pascalCaseName)
         {
             return pascalCaseName[0].ToString().ToLower() + pascalCaseName.Substring(1);
         }
 
-        string TypeString(Type parentType, Type type)
+        internal string TypeString(Type parentType, Type type)
         {
             var arrayType = GetArrayOrEnumerableType(type);
             var nullableType = GetNullableType(type);
@@ -321,7 +322,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return $"{@namespace}{ConvertType(typeToUse)}{suffix}";
         }
 
-        string GetNamespace(Type type, bool suffix = true)
+        internal static string GetNamespace(Type type, bool suffix = true)
         {
             if (type.FullName == null || type.IsGenericType || IsSystemType(type)) return string.Empty;
             var arr = type.FullName.Split('.');
@@ -335,7 +336,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return @namespace;
         }
 
-        static Type GetArrayOrEnumerableType(Type type)
+        internal static Type GetArrayOrEnumerableType(Type type)
         {
             if (type.IsArray)
             {
@@ -355,7 +356,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return null;
         }
 
-        static Type GetNullableType(Type type)
+        internal static Type GetNullableType(Type type)
         {
             if (type.IsConstructedGenericType)
             {
@@ -370,7 +371,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return null;
         }
 
-        string ConvertType(Type typeToUse)
+        internal string ConvertType(Type typeToUse)
         {
             if (_convertedTypes.ContainsKey(typeToUse))
             {
@@ -394,23 +395,23 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return GetTypeName(typeToUse);
         }
 
-        static bool IsSystemType(Type type)
+        internal static bool IsSystemType(Type type)
         {
             if (type.FullName == null) return true;
             return _skipNamespaces.Any(a => type.FullName.StartsWith(a));
         }
 
-        static bool IsKExtension(MemberInfo type)
+        internal static bool IsKExtension(MemberInfo type)
         {
             return type.CustomAttributes.Any(a => a.AttributeType == typeof(KExtensionAttribute));
         }
 
-        static bool IsExtension(MemberInfo type)
+        internal static bool IsExtension(MemberInfo type)
         {
             return type.CustomAttributes.Any(a => a.AttributeType == typeof(ExtensionAttribute));
         }
 
-        static string GetDiscription(MemberInfo memberInfo)
+        internal static string GetDiscription(MemberInfo memberInfo)
         {
             var atr = memberInfo.GetCustomAttribute(typeof(DescriptionAttribute));
             if (atr is DescriptionAttribute discription)
