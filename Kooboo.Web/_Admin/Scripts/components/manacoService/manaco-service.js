@@ -291,7 +291,7 @@ var MonacoEditorService =
             "menu",
             "placeholder"
           ];
-          
+
           return {
             suggestions: extendTags.map(function(item) {
               return {
@@ -330,7 +330,10 @@ var MonacoEditorService =
               label: item.label,
               kind: item.kind || monaco.languages.CompletionItemKind.Value,
               documentation: item.documentation,
-              insertText: item.insertText
+              insertText: item.insertText,
+              insertTextRules:
+                item.insertTextRules ||
+                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
             };
           });
           return {

@@ -4,35 +4,35 @@ var getKViewSuggestions = function() {
       label: "k-attributes",
       documentation:
         "k-attributes will render the value as defined attribute name inside the open tag.",
-      insertText: 'k-attributes="attributeKey attributeValue"'
+      insertText: 'k-attributes="${1:attributeKey} ${2:attributeValue}"'
     },
     {
       label: "k-content",
       documentation:
         "k-content will replace the inner html of that tag with the value of that key",
-      insertText: 'k-content="obj"'
+      insertText: 'k-content="${1:obj}"'
     },
     {
       label: "k-for",
       documentation: "Loop the item collection.",
-      insertText: 'k-for="1, 10, i"'
+      insertText: 'k-for="${1:1}, ${2:10}, ${3:i}"'
     },
     {
       label: "k-foreach",
       documentation: "Loop the item collection",
-      insertText: 'k-foreach="item itemList"'
+      insertText: 'k-foreach="${1:item} ${2:itemList}"'
     },
     {
       label: "k-href",
       documentation:
         "Bind the value into href attribute of the tag. You can also set the value in the href attribute of a tag, only in the later case, you must use the {} to mark the field name that will be used to retrieve value from kooboo data context.",
-      insertText: 'k-href="url"'
+      insertText: 'k-href="${1:url}"'
     },
     {
       label: "k-if",
       documentation:
         "When the if condition return true, the element will be rendered.",
-      insertText: 'k-if="true"'
+      insertText: 'k-if="${1:true}"'
     },
     {
       label: "k-ignore",
@@ -44,23 +44,23 @@ var getKViewSuggestions = function() {
       label: "k-label",
       documentation:
         "Used to get or set value from content label repository. If the key exists, it will get the value from label repository and replace the tag innerhtml. If the key is not exists, it will be created with the tag innerhtml as the default value.",
-      insertText: 'k-label="value"'
+      insertText: 'k-label="${1:value}"'
     },
     {
       label: "k-omit",
       documentation: "Omit the element open tag.",
-      insertText: 'k-omit="true"'
+      insertText: 'k-omit="${1:true}"'
     },
     {
       label: "k-placeholder",
       documentation:
         "Used to mark an element as a placeholder/container in the layout. Components can be added into that placeholder from page designer.",
-      insertText: 'k-placeholder="positionName"'
+      insertText: 'k-placeholder="${1:positionName}"'
     },
     {
       label: "k-repeat",
       documentation: "Loop the item collection.",
-      insertText: 'k-repeat="item itemlist"'
+      insertText: 'k-repeat="${1:item} ${2:itemList}"'
     },
     {
       label: "k-repeat-self",
@@ -70,7 +70,7 @@ var getKViewSuggestions = function() {
     {
       label: "k-replace",
       documentation: "Replace the element with the value.",
-      insertText: 'k-replace="htmlText"'
+      insertText: 'k-replace="${1:htmlText}"'
     }
   ];
   return suggestions;
