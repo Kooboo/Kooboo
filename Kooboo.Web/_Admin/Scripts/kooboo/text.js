@@ -1091,6 +1091,10 @@
       avgSize: "Avg Size"
     },
 
+    popover: {
+      searchStatusExplain: "Add to index automatically when documnent changed."
+    },
+
     inlineEditor: {
       pageLink: "Page link",
       outLink: "Out link",
