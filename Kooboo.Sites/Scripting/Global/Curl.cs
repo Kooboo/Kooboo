@@ -28,6 +28,18 @@ namespace Kooboo.Sites.Scripting.Global
             return _get(url, null, username, password).Result;
         }
 
+        public object GetJson(string url, string username, string password)
+        {
+            string result =  _get(url, null, username, password).Result;
+            return Lib.Helper.JsonHelper.Deserialize(result); 
+        }
+
+        public object GetJson(string url)
+        {
+            string result = _get(url).Result;
+            return Lib.Helper.JsonHelper.Deserialize(result);
+        }
+
         public string post(string url, string data)
         {
             return _Post(url, data).Result;

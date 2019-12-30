@@ -46,7 +46,6 @@ namespace Kooboo.Web.Api.Implementation
         public List<Data.Models.Dll> List(ApiCall call)
         {
             return Kooboo.Data.GlobalDb.Dlls.All().OrderBy(o => o.AssemblyName).ToList();
-
         }
         
         public List<Dll> Post(ApiCall call)
@@ -180,8 +179,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return tree;
         }
-
- 
+        
         public static TypeTree CreateSubTree(List<Type> types, TypeTree root = null)
         {
             if (root == null)

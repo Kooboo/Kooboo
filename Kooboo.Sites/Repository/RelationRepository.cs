@@ -153,15 +153,18 @@ namespace Kooboo.Sites.Repository
 
         private List<ObjectRelation> GetReferredByRelationViaRoutes(Guid objectYId, byte siteObjectType = 0)
         {
-            var route = SiteDb.Routes.GetByObjectId(objectYId);
             List<ObjectRelation> relations = new List<ObjectRelation>();
-            if (route != null)
+            if (objectYId != default(Guid))
             {
-                foreach (var relationitem in GetReferredByRelations(route.Id, siteObjectType))
+                var route = SiteDb.Routes.GetByObjectId(objectYId);
+                if (route != null)
                 {
-                    if (relations.Find(o => o.Id == relationitem.Id) == null)
+                    foreach (var relationitem in GetReferredByRelations(route.Id, siteObjectType))
                     {
-                        relations.Add(relationitem);
+                        if (relations.Find(o => o.Id == relationitem.Id) == null)
+                        {
+                            relations.Add(relationitem);
+                        }
                     }
                 }
             }

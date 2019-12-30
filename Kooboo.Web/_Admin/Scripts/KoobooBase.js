@@ -754,6 +754,10 @@
     this.Update = function(para) {
       return this.executePost("Update", para);
     };
+
+    this.GetDefine = function() {
+      return this.executePost("GetDefine");
+    };
   }
   extend(KScript, BaseModel);
 

@@ -10,16 +10,16 @@ using Kooboo.Sites.Models;
 namespace Kooboo.Sites.Diagnosis.Implementation
 {
     public class DuplicateId : IDiagnosis
-    { 
+    {
         public DiagnosisSession session { get; set; }
 
         public void Check()
-        { 
+        {
             string checking = Hardcoded.GetValue("Checking", this.session.context);
             string name = Hardcoded.GetValue("duplicate id", this.session.context);
 
-            session.Headline = checking + " " + name; 
-             
+            session.Headline = checking + " " + name;
+
             var sitedb = session.context.WebSite.SiteDb();
 
             foreach (var repo in sitedb.ActiveRepositories())
@@ -30,7 +30,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                     foreach (var item in allitems)
                     {
-                        var domitem = item as IDomObject; 
+                        var domitem = item as IDomObject;
 
                         var dom = domitem.Dom;
 
@@ -39,6 +39,11 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                         foreach (var el in allidelements.item)
                         {
+                            if (IsSystemTag(el))
+                            {
+                                continue;
+                            }
+
                             var id = el.id;
                             if (!string.IsNullOrEmpty(id))
                             {
@@ -47,8 +52,8 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                                     string opentag = HttpUtility.HtmlEncode(Service.DomService.GetOpenTag(el));
                                     var message = id + " " + opentag;
 
-                                    message += DiagnosisHelper.DisplayUsedBy(session.context, item as SiteObject); 
-                              
+                                    message += DiagnosisHelper.DisplayUsedBy(session.context, item as SiteObject);
+
                                     session.AddMessage(name, message, MessageType.Critical);
                                 }
                                 else
@@ -56,15 +61,34 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                                     ids.Add(id);
                                 }
                             }
-                        } 
+                        }
                     }
-                } 
-            }  
+                }
+            }
         }
-         
+
         public string Group(RenderContext context)
         {
             return Data.Language.Hardcoded.GetValue("Normal", context);
+        }
+
+
+        public bool IsSystemTag(Kooboo.Dom.Element el)
+        {
+            if (el == null || string.IsNullOrEmpty(el.tagName))
+            {
+                return false;
+            }
+            else
+            {
+                var name = el.tagName.ToLower();
+                if (name == "layout" || name == "placeholder" || Kooboo.Sites.Render.Components.Manager.IsComponentElement(el))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public string Name(RenderContext context)
@@ -73,4 +97,3 @@ namespace Kooboo.Sites.Diagnosis.Implementation
         }
     }
 }
- 
