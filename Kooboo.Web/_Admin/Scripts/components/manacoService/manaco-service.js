@@ -94,29 +94,39 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.19.0/min/";
-      $.getScript(baseUrl + "vs/loader.js").done(function() {
-        window.require.config({
-          paths: { vs: baseUrl + "vs" }
-        });
-        window.MonacoEnvironment = {
-          getWorkerUrl: function(workerId, label) {
-            var encoded = encodeURIComponent(
-              "self.MonacoEnvironment = { baseUrl: '" +
-                baseUrl +
-                "' }; importScripts('" +
-                baseUrl +
-                "vs/base/worker/workerMain.js');"
+      var baseUrl = "https://cdn.jsdelivr.net/npm";
+      $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
+          function() {
+            window.require.config({
+              paths: {
+                vs: baseUrl + "/monaco-editor-core@0.19.0/min/vs",
+                "vs/basic-languages":
+                    baseUrl + "/monaco-languages@1.9.0/release/min",
+                "vs/language/html":
+                    baseUrl + "/monaco-html-extra@2.6.0/release/dev",
+                "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
+                "vs/language/typescript":
+                    baseUrl + "/monaco-typescript@3.6.1/release/min"
+              }
+            });
+            window.require(
+                ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
+                function() {
+                  require([
+                    "vs/basic-languages/monaco.contribution",
+                    "vs/language/html/monaco.contribution",
+                    "vs/language/css/monaco.contribution",
+                    "vs/language/typescript/monaco.contribution"
+                  ], function() {
+                    monaco = window.monaco;
+                    callback(monaco);
+                  });
+
+                  self.isLoader = true;
+                }
             );
-            return "data:text/javascript;charset=utf-8," + encoded;
           }
-        };
-        window.require(["vs/editor/editor.main"], function() {
-          monaco = window.monaco;
-          self.isLoader = true;
-          callback(monaco);
-        });
-      });
+      );
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (window.monaco) {
