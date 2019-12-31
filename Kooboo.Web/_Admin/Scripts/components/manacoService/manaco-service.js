@@ -94,7 +94,7 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/";
+      var baseUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.19.0/min/";
       $.getScript(baseUrl + "vs/loader.js").done(function() {
         window.require.config({
           paths: { vs: baseUrl + "vs" }
