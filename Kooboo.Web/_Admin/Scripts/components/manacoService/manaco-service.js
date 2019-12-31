@@ -103,7 +103,7 @@ var MonacoEditorService =
                 "vs/basic-languages":
                     baseUrl + "/monaco-languages@1.9.0/release/min",
                 "vs/language/html":
-                    baseUrl + "/monaco-html-extra@2.6.0/release/dev",
+                    baseUrl + "/monaco-html-extra@2.6.0/release/min",
                 "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
                 "vs/language/typescript":
                     baseUrl + "/monaco-typescript@3.6.1/release/min"
