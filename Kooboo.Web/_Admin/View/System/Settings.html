@@ -145,8 +145,8 @@
       <div class="col-md-3">
         <label class="control-label">Enable language path</label>
         <!-- prettier-ignore -->
-        <p class="form-control-static">Language path is a virtual path of your website. You may create a path eg. www.kooboo.com/en, en is the language
-          path.</p>
+        <p class="form-control-static">
+          Language path is a virtual path of your website. You may create a path eg. www.kooboo.com/en, en is the language path.</p>
       </div>
       <div class="col-md-9">
         <div class="form-group">
@@ -171,18 +171,7 @@
         </div>
       </div>
     </li>
-    <!--<li class="item clearfix" k-if="false">
-        <div class="col-md-3">
-            <label class="control-label">Site mirror</label>
-            <p class="form-control-static"></p>
-        </div>
-        <div class="col-md-9">
-            <div class="form-group">
-                <a href="javascript:;" class="btn btn-default" @click="onShowSiteMirrorConfigModal"><i class="fa fa-gear"></i> <span>Config</span></a>
-            </div>
 
-        </div>
-    </li>-->
     <li class="item clearfix">
       <div class="col-md-3">
         <label class="control-label">Force SSL</label>
@@ -285,15 +274,9 @@
                 <label class="col-md-3 control-label">Root server</label>
                 <div class="col-md-9">
                   <p class="form-control-static">
-                    <!-- ko foreach: _clusters -->
-                    <!-- ko if: $data.isRoot -->
                     <a href="javascript:;" class="btn blue" disabled data-bind="tooltip:">
                       <i class="fa fa-dot-circle-o"></i>
-                      <!-- ko text: $data.displayName() + ' (' + $data.name() + ')' -->
-                      <!-- /ko -->
                     </a>
-                    <!-- /ko -->
-                    <!-- /ko -->
                   </p>
                 </div>
               </div>
@@ -301,18 +284,16 @@
                 <label class="col-md-3 control-label">Available server</label>
                 <div class="col-md-9">
                   <div class="margin-bottom-5" data-bind="foreach: _clusters, visible: _clusters().length">
-                    <!-- ko ifnot: $data.isRoot -->
+
                     <a href="javascript:;" class="btn" data-bind="click: changeStatus, css: { 'btn-default': !$data.isSelected(), 'blue': $data.isSelected() }, attr: { disabled: $data.disabled, title: 'IP: ' + $data.ip() + ':' + $data.port() }"
                       style="margin: 0 5px 5px 0;">
                       <i class="fa" data-bind="css: { 'fa-dot-circle-o': $data.isSelected(), 'fa-circle-o': !$data.isSelected() }"></i>
-                      <!-- ko text: $data.displayName() + ' (' + $data.name() + ')' -->
-                      <!-- /ko -->
-                      <!-- ko if: $data.isCustom -->
+
                       <i class="fa fa-close" data-bind="click: $parent.removeCustomCluster, tooltip: Kooboo.text.common.remove, clickBubble: false"
                         style="margin-left: 5px; margin-right: 5px;"></i>
-                      <!-- /ko -->
+
                     </a>
-                    <!-- /ko -->
+
                   </div>
                   <a href="javascript:;" class="btn dark" data-bind="click: addCustomServer, tooltip: Kooboo.text.common.add" style="margin-top: -5px;">
                     <i class="fa fa-plus"></i>
@@ -331,7 +312,7 @@
                   <div class="form-group">
                     <p class="col-md-9 col-md-offset-3">Site Cluster enable your website to have mirrors on different data centers</p>
                   </div>
-                  <!-- ko foreach: _clusters -->
+
                   <div class="form-group" v-kb-collapsein="$data.isSelected">
                     <label class="col-md-3 control-label" data-bind="text: $data.displayName"></label>
                     <div class="col-md-9">
@@ -343,7 +324,7 @@
                       </div>
                     </div>
                   </div>
-                  <!-- /ko -->
+
                 </div>
               </div>
             </div>
