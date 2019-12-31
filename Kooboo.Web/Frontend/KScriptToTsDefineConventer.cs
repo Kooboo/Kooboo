@@ -168,6 +168,11 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                         {
                             foreach (var item in define.Methods)
                             {
+
+                                if (item.Discription != null)
+                                {
+                                    builder.AppendLine($"{_indentation}{_indentation}/** {item.Discription} */");
+                                }
                                 var @params = item.Params.Select(s => $"{s.Name}:{s.Type}");
                                 builder.AppendLine($"{_indentation}{_indentation}{item.Name}({string.Join(",", @params)}):{item.ReturnType};");
                             }
