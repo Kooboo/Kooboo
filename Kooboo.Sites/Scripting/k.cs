@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         [KIgnore]
-        public IkScript this[string key] { get { return ExtensionContainer.Get(key, RenderContext) as IkScript; } set { ExtensionContainer.Set(value); } }
+        public object this[string key] { get { return ExtensionContainer.Get(key, RenderContext); } set { ExtensionContainer.Set(value); } }
 
         [KExtension]
         static KeyValuePair<string, Type>[] _ = ExtensionContainer.List.ToArray();
