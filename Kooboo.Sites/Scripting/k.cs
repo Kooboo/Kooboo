@@ -5,13 +5,13 @@ using Kooboo.Data.Interface;
 using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.SiteItem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
 using KScript;
+using KScript.Sites;
 
 namespace Kooboo.Sites.Scripting
 {

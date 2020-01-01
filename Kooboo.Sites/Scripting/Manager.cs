@@ -13,6 +13,7 @@ using System.Reflection;
 using Kooboo.Lib.Reflection;
 using Jint.Runtime;
 using Kooboo.Sites.Scripting.Global;
+using KScript;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -36,7 +37,7 @@ namespace Kooboo.Sites.Scripting
             return kcontext;
         }
 
-        public static Session GetOrSetSession(RenderContext context)
+        public static KScript.Session GetOrSetSession(RenderContext context)
         {
             var ksession = context.GetItem<Session>();
             if (ksession == null)

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
     public class MultilingualObject : Kooboo.Sites.Contents.Models.MultipleLanguageObject, IDictionary<string, object>
     {
@@ -169,13 +169,13 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         }
 
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             return this.Values.GetEnumerator();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

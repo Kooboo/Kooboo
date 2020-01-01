@@ -28,15 +28,15 @@ namespace KScript
             }
             string output = ToJson(value); 
 
-            var item = this.context.GetItem<string>(Constants.OutputName);
+            var item = this.context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
             if (item == null)
             {
-                this.context.SetItem<string>(output, Constants.OutputName);
+                this.context.SetItem<string>(output, Kooboo.Sites.Scripting.Constants.OutputName);
             }
             else
             {
                 item += output;
-                this.context.SetItem<string>(item, Constants.OutputName);
+                this.context.SetItem<string>(item, Kooboo.Sites.Scripting.Constants.OutputName);
             }
         }
 
@@ -45,7 +45,7 @@ namespace KScript
             string output;
             if (!(value is string) && value.GetType().IsClass)
             { 
-                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
+                output = Kooboo.Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
             }
             else
             {
@@ -140,15 +140,15 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
             } 
 
 
-            var item = this.context.GetItem<string>(Constants.OutputName);
+            var item = this.context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
             if (item == null)
             {
-                this.context.SetItem<string>(value, Constants.OutputName);
+                this.context.SetItem<string>(value, Kooboo.Sites.Scripting.Constants.OutputName);
             }
             else
             {
                 item += value;
-                this.context.SetItem<string>(item, Constants.OutputName);
+                this.context.SetItem<string>(item, Kooboo.Sites.Scripting.Constants.OutputName);
             }
         }
     }

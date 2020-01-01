@@ -4,7 +4,7 @@ using System.Text;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
     public class FormValuesRepository : RepositoryBase
     {

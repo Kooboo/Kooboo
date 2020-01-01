@@ -6,7 +6,7 @@ using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
     public class RoutableTextRepository : TextRepository
     {
@@ -29,13 +29,13 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             string url = null;
 
-            var data = kHelper.GetData(SiteObject);
+            var data = Kooboo.Sites.Scripting.Global.kHelper.GetData(SiteObject);
             if (data.ContainsKey("url"))
             {
                 url = data["url"].ToString();
             }
                   
-            var siteobject = Lib.Reflection.TypeHelper.ToObject(data, this.repo.ModelType);
+            var siteobject = Kooboo.Lib.Reflection.TypeHelper.ToObject(data, this.repo.ModelType);
             if (siteobject != null)
             {
                 var routeobject = siteobject as Kooboo.Sites.Models.SiteObject;
@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         url = "/" +  routeobject.Name;       
                     }
 
-                    if (routeobject is Models.Style || routeobject is Models.Script)
+                    if (routeobject is Kooboo.Sites.Models.Style || routeobject is Kooboo.Sites.Models.Script)
                     {
                         var ext = routeobject as IExtensionable;
                         if (!url.Contains("."))

@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class Session : IDictionary<string, object>
     {
@@ -23,18 +23,18 @@ namespace Kooboo.Sites.Scripting.Global
         [Description("All values in current session storage")]
         public ICollection<object> Values => SessionManager.Values(getcookie());
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public int Count => SessionManager.Keys(getcookie()).Count();
 
 
         public int length { get { return this.Count();  } }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool IsReadOnly => false;
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public object this[string key]
         {
@@ -110,7 +110,7 @@ var value2 = k.session.key;")]
             return SessionManager.Get(id, key);
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool ContainsKey(string key)
         {
@@ -126,7 +126,7 @@ if (k.session.contains(""key"")){//}")]
         }
 
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void Add(string key, object value)
         {
@@ -141,14 +141,14 @@ k.session.remove(""key"");")]
             return true;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool TryGetValue(string key, out object value)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void Add(KeyValuePair<string, object> item)
         {
@@ -161,34 +161,34 @@ k.session.remove(""key"");")]
             SessionManager.Clear(getcookie());
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool Contains(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool Remove(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             return SessionManager.All(getcookie()).GetEnumerator();
         }
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {

@@ -3,13 +3,14 @@
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Models;
+using KScript.Sites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
     public class MultilingualRepository
     {
@@ -37,14 +38,13 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
             return result;
         }
-
-      
+         
         public virtual MultilingualObject Get(object nameOrId)
         {
             var item = this.repo.GetByNameOrId(nameOrId.ToString());
             if (item != null && item is Kooboo.Sites.Contents.Models.MultipleLanguageObject)
             {
-                return new MultilingualObject(item as Contents.Models.MultipleLanguageObject, this.context);
+                return new MultilingualObject(item as Kooboo.Sites.Contents.Models.MultipleLanguageObject, this.context);
             }
             return null;
         }

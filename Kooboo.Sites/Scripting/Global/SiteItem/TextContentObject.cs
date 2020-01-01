@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
 
     public class TextContentObject : IDictionary<string, object>, System.Collections.IDictionary
@@ -160,7 +160,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
-            if (contenttype == null || contenttype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, FieldName)) != null)
+            if (contenttype == null || contenttype.Properties.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Name, FieldName)) != null)
             {
                 this.TextContent.SetValue(FieldName, Value, this.Culture);
             }

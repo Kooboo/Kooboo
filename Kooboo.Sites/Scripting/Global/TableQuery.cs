@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class TableQuery
     {
@@ -16,7 +16,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.ktable = table;  
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public KTable ktable { get; set; }
 
         public int skipcount { get; set; }
@@ -55,7 +55,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public DynamicTableObject[] take(int count)
         {
-            var query = new IndexedDB.Dynamic.Query(this.ktable.table);
+            var query = new Kooboo.IndexedDB.Dynamic.Query(this.ktable.table);
              
             if (!string.IsNullOrEmpty(this.SearchCondition))
             {

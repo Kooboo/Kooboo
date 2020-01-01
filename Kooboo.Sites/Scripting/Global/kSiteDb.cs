@@ -2,7 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Scripting.Global.SiteItem;
+using KScript.Sites;
 
 namespace KScript
 {

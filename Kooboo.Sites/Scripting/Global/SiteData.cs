@@ -2,7 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class kDataContext 
     {
@@ -11,12 +11,13 @@ namespace Kooboo.Sites.Scripting.Global
         {
             this.context = context; 
         } 
+
         public void set(string key, object value)
         {
             this.context.DataContext.Push(key, value); 
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public object this[string key]
         {
             get

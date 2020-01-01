@@ -6,12 +6,14 @@ using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.DataSources;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+
+namespace KScript.Sites
 {
 
     public class TextContentObjectRepository
@@ -33,7 +35,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             var culture = this.context.Culture;
 
-            Kooboo.Sites.Contents.Models.TextContent content = new Contents.Models.TextContent();
+            Kooboo.Sites.Contents.Models.TextContent content = new Kooboo.Sites.Contents.Models.TextContent();
 
             ContentType type = null;
             ContentFolder folder = null;
@@ -143,7 +145,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             foreach (var item in initdata)
             {
-                if (type.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, item.Key)) != null)
+                if (type.Properties.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Name, item.Key)) != null)
                 {
                     content.SetValue(item.Key, item.Value, culture);
                 }
@@ -157,7 +159,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             foreach (var item in nonfields)
             {
-                Guid ValueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
+                Guid ValueId = Kooboo.Lib.Helper.IDHelper.GetOrParseKey(item.Value);
 
                 var category = GetCatFolder(item.Key);
                 if (category != null)
@@ -174,7 +176,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                     if (by.Any())
                     {
-                        var beEmbedded = by.Find(o => Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
+                        var beEmbedded = by.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
 
                         if (beEmbedded == null && (item.Key.ToLower() == "parent" || item.Key.ToLower() == "parentid"))
                         {
@@ -223,7 +225,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             CategoryFolder GetCatFolder(string foldername)
             {
-                var category = folder.Category.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Alias, foldername));
+                var category = folder.Category.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Alias, foldername));
                 if (category != null)
                 {
                     return category;
@@ -235,7 +237,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         var catfolder = siteDb.ContentFolders.Get(item.FolderId);
                         if (catfolder != null)
                         {
-                            if (Lib.Helper.StringHelper.IsSameValue(catfolder.Name, foldername))
+                            if (Kooboo.Lib.Helper.StringHelper.IsSameValue(catfolder.Name, foldername))
                             {
                                 return item;
                             }
@@ -277,7 +279,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 Guid ValueId = default(Guid);
                 if (!String.IsNullOrWhiteSpace(item.Value))
                 {
-                    ValueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
+                    ValueId = Kooboo.Lib.Helper.IDHelper.GetOrParseKey(item.Value);
                 }
 
                 var category = GetCatFolder(item.Key);
@@ -307,7 +309,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                     if (by.Any())
                     {
-                        var beEmbedded = by.Find(o => Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
+                        var beEmbedded = by.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
 
                         if (beEmbedded == null && (item.Key.ToLower() == "parent" || item.Key.ToLower() == "parentid"))
                         {
@@ -365,7 +367,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             CategoryFolder GetCatFolder(string foldername)
             {
-                var category = folder.Category.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Alias, foldername));
+                var category = folder.Category.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Alias, foldername));
                 if (category != null)
                 {
                     return category;
@@ -377,7 +379,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         var catfolder = siteDb.ContentFolders.Get(item.FolderId);
                         if (catfolder != null)
                         {
-                            if (Lib.Helper.StringHelper.IsSameValue(catfolder.Name, foldername))
+                            if (Kooboo.Lib.Helper.StringHelper.IsSameValue(catfolder.Name, foldername))
                             {
                                 return item;
                             }
@@ -390,7 +392,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public TextContentObject Get(object nameOrId)
         {
-            var key = Lib.Helper.IDHelper.ParseKey(nameOrId);
+            var key = Kooboo.Lib.Helper.IDHelper.ParseKey(nameOrId);
 
             var content = this.context.WebSite.SiteDb().TextContent.Get(key);
 
@@ -404,7 +406,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         public void Delete(object nameOrId)
         {
 
-            var key = Lib.Helper.IDHelper.ParseKey(nameOrId);
+            var key = Kooboo.Lib.Helper.IDHelper.ParseKey(nameOrId);
 
             var content = this.context.WebSite.SiteDb().TextContent.Get(key);
 
@@ -502,7 +504,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return filterItems(all, condition.Conditions, onlyType, onlyFolder);
         }
 
-        internal List<TextContent> filterItems(List<TextContent> input, List<IndexedDB.Dynamic.ConditionItem> conditions, ContentType type, ContentFolder folder)
+        internal List<TextContent> filterItems(List<TextContent> input, List<Kooboo.IndexedDB.Dynamic.ConditionItem> conditions, ContentType type, ContentFolder folder)
         {
             List<TextContent> result = new List<TextContent>();
 
@@ -532,7 +534,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return result;
         }
 
-        public bool CheckItem(TextContent TextContent, List<IndexedDB.Dynamic.ConditionItem> conditions, ContentType contenttype, ContentFolder folder = null)
+        public bool CheckItem(TextContent TextContent, List<Kooboo.IndexedDB.Dynamic.ConditionItem> conditions, ContentType contenttype, ContentFolder folder = null)
         {
 
             foreach (var item in conditions)
@@ -541,7 +543,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                 if (col != null)
                 {
-                    var clrtype = Data.Helper.DataTypeHelper.ToClrType(col.DataType);
+                    var clrtype = Kooboo.Data.Helper.DataTypeHelper.ToClrType(col.DataType);
 
                     if (col.MultipleLanguage)
                     {
@@ -677,24 +679,24 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             switch (input)
             {
-                case IndexedDB.Query.Comparer.EqualTo:
-                    return Data.Definition.Comparer.EqualTo;
-                case IndexedDB.Query.Comparer.GreaterThan:
-                    return Data.Definition.Comparer.GreaterThan;
-                case IndexedDB.Query.Comparer.GreaterThanOrEqual:
-                    return Data.Definition.Comparer.GreaterThanOrEqual;
-                case IndexedDB.Query.Comparer.LessThan:
-                    return Data.Definition.Comparer.LessThan;
-                case IndexedDB.Query.Comparer.LessThanOrEqual:
-                    return Data.Definition.Comparer.LessThanOrEqual;
-                case IndexedDB.Query.Comparer.NotEqualTo:
-                    return Data.Definition.Comparer.NotEqualTo;
-                case IndexedDB.Query.Comparer.StartWith:
-                    return Data.Definition.Comparer.StartWith;
-                case IndexedDB.Query.Comparer.Contains:
-                    return Data.Definition.Comparer.Contains;
+                case Kooboo.IndexedDB.Query.Comparer.EqualTo:
+                    return Kooboo.Data.Definition.Comparer.EqualTo;
+                case Kooboo.IndexedDB.Query.Comparer.GreaterThan:
+                    return Kooboo.Data.Definition.Comparer.GreaterThan;
+                case Kooboo.IndexedDB.Query.Comparer.GreaterThanOrEqual:
+                    return Kooboo.Data.Definition.Comparer.GreaterThanOrEqual;
+                case Kooboo.IndexedDB.Query.Comparer.LessThan:
+                    return Kooboo.Data.Definition.Comparer.LessThan;
+                case Kooboo.IndexedDB.Query.Comparer.LessThanOrEqual:
+                    return Kooboo.Data.Definition.Comparer.LessThanOrEqual;
+                case Kooboo.IndexedDB.Query.Comparer.NotEqualTo:
+                    return Kooboo.Data.Definition.Comparer.NotEqualTo;
+                case Kooboo.IndexedDB.Query.Comparer.StartWith:
+                    return Kooboo.Data.Definition.Comparer.StartWith;
+                case Kooboo.IndexedDB.Query.Comparer.Contains:
+                    return Kooboo.Data.Definition.Comparer.Contains;
                 default:
-                    return Data.Definition.Comparer.EqualTo;
+                    return Kooboo.Data.Definition.Comparer.EqualTo;
             }
         }
 
@@ -821,12 +823,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public Guid CategoryId { get; set; }
 
-        public List<IndexedDB.Dynamic.ConditionItem> Conditions { get; set; }
-    }
-
-
-
-
-
+        public List<Kooboo.IndexedDB.Dynamic.ConditionItem> Conditions { get; set; }
+    } 
 
 }
