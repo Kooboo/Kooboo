@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel; 
+using System.ComponentModel;
 using KScript.Sites;
 using Kooboo.Sites.Scripting;
 using Kooboo;
@@ -76,7 +76,7 @@ namespace KScript
         }
 
         private Request _request;
-         
+
 
         [Description(@"Access to the http request data, query string, form or headers. Cookie is available from k.cookie.
 var value = k.request.queryname;
@@ -102,7 +102,7 @@ var value = k.request.form.queryname;")]
 
         private Session _session;
 
-         [Description(@"a temporary storage for small interactive information. Session does not persist
+        [Description(@"a temporary storage for small interactive information. Session does not persist
    k.session.set(""key"", obj);
    var back = k.session.get(""key"");
 k.session.newkey = ""value""; 
@@ -126,10 +126,10 @@ var value = k.session.key; ")]
         }
 
 
-        private Dictionary<string, string> _viewdata;
+        private KDictionary _viewdata;
 
-        [Description("Shared thread storage")]
-        public Dictionary<string, string> ViewData
+        [Description("Shared current context storage")]
+        public KScript.KDictionary ViewData
         {
             get
             {
@@ -139,7 +139,7 @@ var value = k.session.key; ")]
                     {
                         if (_viewdata == null)
                         {
-                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                            _viewdata = new KDictionary();
                         }
                     }
                 }
@@ -148,7 +148,8 @@ var value = k.session.key; ")]
         }
 
         private InfoModel _siteinfo;
-
+        
+        [Description("Access to current request information")]
         public InfoModel Info
         {
             get
@@ -164,7 +165,7 @@ var value = k.session.key; ")]
                             {
                                 _siteinfo.Culture = this.RenderContext.Culture;
                                 _siteinfo.Name = this.RenderContext.WebSite.Name;
-                                _siteinfo.Setting = this.RenderContext.WebSite.CustomSettings;
+                                _siteinfo.Setting = new KDictionary(this.RenderContext.WebSite.CustomSettings);
                                 _siteinfo.User = new UserModel(this.RenderContext.User);
                             }
                         }
@@ -206,16 +207,17 @@ var value = k.session.key; ")]
         {
             public string Culture { get; set; }
 
+            [Description("WebSite name")]
             public string Name { get; set; }
 
-            private Dictionary<string, string> _setting;
-            public Dictionary<string, string> Setting
+            private KDictionary _setting;
+            public KDictionary Setting
             {
                 get
                 {
                     if (_setting == null)
                     {
-                        _setting = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                        _setting = new KDictionary(); 
                     }
                     return _setting;
                 }
@@ -226,8 +228,7 @@ var value = k.session.key; ")]
             public UserModel User
             {
                 get; set;
-            }
-
+            } 
         }
 
         private kSiteDb _sitedb;
@@ -285,6 +286,8 @@ var value = k.session.key; ")]
 
         private FileIO _file;
 
+
+        [Description("Provide read and write access to text or binary files under the site folder")]
         public FileIO File
         {
             get
@@ -305,6 +308,7 @@ var value = k.session.key; ")]
 
         private Cookie _cookie;
 
+        [Description("Get or set cookie value")]
         public Cookie Cookie
         {
             get
@@ -322,10 +326,9 @@ var value = k.session.key; ")]
                 return _cookie;
             }
         }
-
-
+         
         public Dictionary<string, string> config { get; set; }
-
+         
         [Kooboo.Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
 
@@ -333,6 +336,7 @@ var value = k.session.key; ")]
 
         private kKeyValue _sitestore;
 
+        [Description("The database key value storage")]
         public kKeyValue KeyValue
         {
             get
@@ -427,6 +431,7 @@ var value = k.session.key; ")]
 
         Security _security;
 
+        [Description("One way and two way encryption")]
         public Security Security
         {
             get
@@ -445,7 +450,7 @@ var value = k.session.key; ")]
             }
         }
 
-
+        [Description("Import and execute another KScript")]
         public void Import(string codename)
         {
             var sitedb = this.RenderContext.WebSite.SiteDb();
@@ -460,6 +465,7 @@ var value = k.session.key; ")]
             }
         }
 
+        [KIgnore]
         public void ImportCode(string codename)
         {
             Import(codename);
@@ -481,17 +487,18 @@ var value = k.session.key; ")]
         {
             var html = new ViewHelpRender().Render(RenderContext);
             Response.write(html);
-        }
+        } 
 
-      
-        internal  List<object> ReturnValues = new List<object>();
-         
+        internal List<object> ReturnValues = new List<object>();
 
+
+        [Description("return value to the caller")]
         public void output(object obj)
         {
             this.ReturnValues.Add(obj);
         }
 
+        [Description("return value to the caller")]
         public void export(object obj)
         {
             output(obj);
@@ -774,7 +781,7 @@ var value = k.session.key; ")]
         public string Sample { get; set; }
         public Type ReturnType { get; set; }
     }
-     
+
     public class PropertyViewModel
     {
         public PropertyViewModel()
@@ -785,7 +792,7 @@ var value = k.session.key; ")]
 
         public Type ReturnType { get; set; }
     }
-     
+
     public class UserInfoModel
     {
         public UserInfoModel(RenderContext context)

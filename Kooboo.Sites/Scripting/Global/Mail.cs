@@ -12,7 +12,7 @@ using System.Net;
 namespace KScript
 {
     public class Mail
-    {  
+    {
         private RenderContext context { get; set; }
 
         public Mail(RenderContext context)
@@ -23,7 +23,7 @@ namespace KScript
         [KDefineType(Params = new[] { typeof(MailMessage) })]
         [Description(@"Send an email message using default smtp")]
         public void Send(object value)
-        {  
+        {
             var maildata = PrepareData(value);
             if (maildata != null)
             {
@@ -133,6 +133,25 @@ namespace KScript
                 }
             }
 
+            if (data.ContainsKey("cc"))
+            {
+                var value = data["cc"];
+                if (value != null)
+                {
+                    string values = value.ToString();
+                    result.Cc = values.Split(sep, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+            }
+
+            if (data.ContainsKey("bcc"))
+            {
+                var value = data["bcc"];
+                if (value != null)
+                {
+                    string values = value.ToString();
+                    result.Bcc = values.Split(sep, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+            }
 
             if (data.ContainsKey("from"))
             {
@@ -202,6 +221,10 @@ namespace KScript
 
         }
 
+        [Description(@"Send an email using an external smtp server
+var msg = { to: ""guoqi@kooboo.com"", from: ""1802897953@qq.com"", subject: ""this is a test email xxxx"", body: ""some html body"" }; 
+var smtpserver = { host: ""smtp.qq.com"", port: 587, ssl: true, username: ""1802897953@qq.com"", password: ""xjpctnbtvsxwbige"" }; 
+k.mail.smtpSend(smtpserver, msg);")]
         public void SmtpSend(object SmtpServer, object MailMessage)
         {
             var server = GetSmtpServer(SmtpServer);
@@ -210,14 +233,29 @@ namespace KScript
                 var mailobj = PrepareData(MailMessage);
 
                 if (!string.IsNullOrWhiteSpace(mailobj.From) && mailobj.To != null && mailobj.To.Any())
-                {
-
+                { 
                     System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
                     msg.From = new System.Net.Mail.MailAddress(mailobj.From);
 
                     foreach (var item in mailobj.To)
                     {
                         msg.To.Add(item);
+                    }
+
+                    if (mailobj.Cc != null)
+                    {
+                        foreach (var item in mailobj.Cc)
+                        {
+                            msg.CC.Add(item);
+                        }
+                    }
+
+                    if (mailobj.Bcc != null)
+                    {
+                        foreach (var item in mailobj.Bcc)
+                        {
+                            msg.Bcc.Add(item);
+                        }
                     }
 
                     msg.Subject = mailobj.Subject;

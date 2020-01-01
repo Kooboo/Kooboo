@@ -2,6 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -12,12 +13,18 @@ namespace KScript
 {
   public  class Security
     {
+        [Description(@"Compute a 32 length text string value
+var input = ""myvalue"";  
+    var md5value = k.security.md5(input); ")]
         public string md5(string input)
         {
             Guid id = Kooboo.Lib.Security.Hash.ComputeHashGuid(input);
             return id.ToString("N");
         }
 
+        [Description(@"Compute a 40 length text string value
+  var input = ""myvalue"";  
+     var shavalue = k.security.sha1(input); ")]
         public string sha1(string input)
         {
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
@@ -39,12 +46,21 @@ namespace KScript
             return sb.ToString();
         }
 
-
+         [Description(@"Two-way encryption
+var input = ""myvalue""; 
+     var key = ""hashkey"";  
+     var encrptyValue = k.security.encrypt(input, key);   
+     var decryptValue = k.security.decrypt(encrptyValue, key);")]
         public string encrypt(string input, string key)
         {
             return EncryptHelper.EncryptString(input, key); 
         }
 
+        [Description(@"Two-way encryption
+var input = ""myvalue""; 
+     var key = ""hashkey"";  
+     var encrptyValue = k.security.encrypt(input, key);   
+     var decryptValue = k.security.decrypt(encrptyValue, key);")]
         public string decrypt(string input, string key)
         {
             return EncryptHelper.DecryptString(input, key); 

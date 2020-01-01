@@ -1,10 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace KScript
 {
@@ -62,7 +64,7 @@ namespace KScript
             {
                 if (_table == null)
                 {
-                    _table = Kooboo.Data.DB.GetOrCreateTable(this.context.WebSite, "_sys_keyvalues");   
+                    _table = Kooboo.Data.DB.GetOrCreateTable(this.context.WebSite, "_sys_keyvalues");
                 }
                 return _table;
             }
@@ -70,6 +72,7 @@ namespace KScript
 
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public int Count
         {
             get
@@ -86,12 +89,14 @@ namespace KScript
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public bool IsReadOnly
         {
             get { return true; }
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public string this[string key]
         {
             get
@@ -109,6 +114,10 @@ namespace KScript
             this.context = context;
         }
 
+        [Description(@"k.keyValue.set(""key"", ""value"");
+    var value = k.keyValue.get(""key"");
+    // or
+    var value = k.keyValue.key;")]
         public void set(string key, string value)
         {
             if (value != null)
@@ -143,7 +152,10 @@ namespace KScript
             }
         }
 
-
+        [Description(@"k.keyValue.set(""key"", ""value"");
+    var value = k.keyValue.get(""key"");
+    // or
+    var value = k.keyValue.key;")]
         public string get(string key)
         {
             if (!string.IsNullOrWhiteSpace(key))
@@ -163,6 +175,7 @@ namespace KScript
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public bool ContainsKey(string key)
         {
             var hash = Kooboo.IndexedDB.Helper.KeyHelper.ComputeGuid(key);
@@ -179,6 +192,7 @@ namespace KScript
 
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public void Add(string key, string value)
         {
             set(key, value);
@@ -197,6 +211,7 @@ namespace KScript
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public bool TryGetValue(string key, out string value)
         {
             var dbvalue = this.get(key);
@@ -210,19 +225,21 @@ namespace KScript
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public void Add(KeyValuePair<string, string> item)
         {
             set(item.Key, item.Value);
         }
 
-
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public void Clear()
         {
             this.table.DelSelf();
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public bool Contains(KeyValuePair<string, string> item)
         {
             var value = this.get(item.Key);
@@ -230,18 +247,21 @@ namespace KScript
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public bool Remove(KeyValuePair<string, string> item)
         {
             return Remove(item.Key);
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
             Dictionary<string, string> allvalues = new Dictionary<string, string>();
@@ -255,6 +275,7 @@ namespace KScript
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

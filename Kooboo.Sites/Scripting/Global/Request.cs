@@ -199,8 +199,19 @@ var value = k.request.form.queryname")]
 
     public class KDictionary : IDictionary<string, string>, System.Collections.IDictionary
     {
+        public KDictionary()
+        {
+
+        }
+
+        public KDictionary(Dictionary<string, string> value)
+        {
+            this.data = value; 
+        }
+
         private Dictionary<string, string> data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+        [KIgnore]
         public string this[string key]
         {
             get
