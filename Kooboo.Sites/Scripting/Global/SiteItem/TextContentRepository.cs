@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Contents.Models;
@@ -10,6 +11,7 @@ using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 
@@ -27,6 +29,22 @@ namespace KScript.Sites
             this.repo = repo;
         }
 
+        [Description(@"Add a text content into content repository. Folder is a required.
+        var obj = {fieldone: ""value one"", fieldtwo: ""value two""};
+        obj.folder = ""blogfolder""; 
+        k.site.textContents.add(obj); 
+
+        //To add relation data. For example, comment is embedded by blog.
+         var commentItem = {content: ""very nice article""};
+    commentItem.folder = ""comment""; 
+        commentItem.blog = ""blogArticlekey"";  
+        k.site.textContents.add(commentItem);
+
+        //To add relation data. For example,  blog has a catgory.
+        var obj = { fieldone: ""value one"", fieldtwo: ""value two"" };
+    obj.folder = ""blogfolder""; 
+        obj.catalias= ""categorykey""; 
+        k.site.textContents.add(obj);")] 
         public void Add(object SiteObject)
         {
             var sitedb = this.context.WebSite.SiteDb();
@@ -248,6 +266,10 @@ namespace KScript.Sites
             }
         }
 
+
+
+
+
         public void Update(object SiteObject)
         {
             if (SiteObject is TextContentObject)
@@ -390,6 +412,9 @@ namespace KScript.Sites
             }
         }
 
+
+        [Description(@"Get a text content object based on Id or UserKey
+var item = k.site.textContents.get(""titletwo"");")]
         public TextContentObject Get(object nameOrId)
         {
             var key = Kooboo.Lib.Helper.IDHelper.ParseKey(nameOrId);
@@ -402,7 +427,10 @@ namespace KScript.Sites
             }
             return null;
         }
+         
 
+        [Description(@"Delete an item based on id or userkey
+  k.site.textContents.delete(""userkey""); ")]
         public void Delete(object nameOrId)
         {
 
@@ -417,6 +445,9 @@ namespace KScript.Sites
         }
 
 
+
+        [Description(@"Return an array of all TextContentObjects
+ var list= k.site.textContents.all();")]
         public List<TextContentObject> All()
         {
             List<TextContentObject> result = new List<TextContentObject>();
@@ -430,6 +461,7 @@ namespace KScript.Sites
             }
             return result;
         }
+
 
         public TextContentObject Find(string query)
         {
@@ -504,6 +536,7 @@ namespace KScript.Sites
             return filterItems(all, condition.Conditions, onlyType, onlyFolder);
         }
 
+        [KIgnore]
         internal List<TextContent> filterItems(List<TextContent> input, List<Kooboo.IndexedDB.Dynamic.ConditionItem> conditions, ContentType type, ContentFolder folder)
         {
             List<TextContent> result = new List<TextContent>();
@@ -534,7 +567,8 @@ namespace KScript.Sites
             return result;
         }
 
-        public bool CheckItem(TextContent TextContent, List<Kooboo.IndexedDB.Dynamic.ConditionItem> conditions, ContentType contenttype, ContentFolder folder = null)
+        [KIgnore]
+        internal bool CheckItem(TextContent TextContent, List<Kooboo.IndexedDB.Dynamic.ConditionItem> conditions, ContentType contenttype, ContentFolder folder = null)
         {
 
             foreach (var item in conditions)
@@ -673,8 +707,7 @@ namespace KScript.Sites
             return true;
 
         }
-
-
+         
         private Kooboo.Data.Definition.Comparer ToFilterCompare(Kooboo.IndexedDB.Query.Comparer input)
         {
             switch (input)
@@ -699,8 +732,9 @@ namespace KScript.Sites
                     return Kooboo.Data.Definition.Comparer.EqualTo;
             }
         }
+         
 
-
+        [KIgnore]
         public FindCondition ParseCondition(string query)
         {
             var conditions = Kooboo.IndexedDB.Dynamic.QueryPraser.ParseConditoin(query);
@@ -789,30 +823,7 @@ namespace KScript.Sites
             result.Where(searchCondition);
             return result;
         }
-
-        //internal List<TextContentViewModel> ByCategory(Guid CategoryId, Guid ContentFolderId, List<FilterDefinition> Filters, string SortField, Boolean IsAscending)
-        //{
-        //    var allcontentids = this.Context.SiteDb.ContentCategories.Query.Where(o => o.CategoryId == CategoryId).SelectAll().Select(o => o.ContentId).ToList();
-
-        //    var categoryContentquery = this.Context.SiteDb.TextContent.Query.Where(o => o.FolderId == ContentFolderId).WhereIn("Id", allcontentids);
-
-        //    if (this.IsDefault)
-        //    {
-        //        categoryContentquery.Where(o => o.Online == true);
-        //    }
-
-        //    var allorgcontents = categoryContentquery.SelectAll();
-
-        //    var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(ContentFolderId);
-
-        //    SetSortField(ref SortField, props);
-
-        //    var allcontents = Helper.ContentHelper.ToViews(allorgcontents, this.Context.RenderContext.Culture, props);
-
-        //    return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending); 
-        //}
-
-
+         
     }
 
     public class FindCondition

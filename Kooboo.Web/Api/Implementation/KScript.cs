@@ -23,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public KScriptApi()
         {
-            _defineContent = new Lazy<string>(() => new KScriptToTsDefineConventer().Convent(typeof(k)), true);
+            _defineContent = new Lazy<string>(() => new KScriptToTsDefineConventer().Convent(typeof(KScript.k)), true);
         }
 
         public string ModelName

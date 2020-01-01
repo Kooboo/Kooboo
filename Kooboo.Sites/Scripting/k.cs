@@ -9,11 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
-using KScript;
+using System.ComponentModel; 
 using KScript.Sites;
+using Kooboo.Sites.Scripting;
+using Kooboo;
 
-namespace Kooboo.Sites.Scripting
+namespace KScript
 {
     public partial class k
     {
@@ -77,7 +78,10 @@ namespace Kooboo.Sites.Scripting
         private Request _request;
          
 
-        [Description("Access to the http request data, query string, form or headers. Cookie is available from k.cookie.\r\nvar value = k.request.queryname;\r\nvar value = k.request.queryString.queryname;\r\nvar value = k.request.form.queryname;")]
+        [Description(@"Access to the http request data, query string, form or headers. Cookie is available from k.cookie.
+var value = k.request.queryname;
+var value = k.request.queryString.queryname;
+var value = k.request.form.queryname;")]
         public Request Request
         {
             get
@@ -322,10 +326,10 @@ var value = k.session.key; ")]
 
         public Dictionary<string, string> config { get; set; }
 
-        [Attributes.SummaryIgnore]
-        public FrontEvent.IFrontEvent @event { get; set; }
+        [Kooboo.Attributes.SummaryIgnore]
+        public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
 
-        public Diagnosis.KDiagnosis diagnosis { get; set; }
+        public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
 
@@ -467,7 +471,7 @@ var value = k.session.key; ")]
         public void Help()
         {
             //var html = new HelperRender().Render(RenderContext);
-            var html = new Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
+            var html = new Kooboo.Sites.Scripting.Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
             Response.write(html);
             //Help("k");
         }
@@ -545,11 +549,11 @@ var value = k.session.key; ")]
                 if (item.ReturnType == null || item.ReturnType == typeof(string) || !item.ReturnType.IsClass)
                 {
                     result += "<br/><br/><b>" + item.Name + "</b>";
-                    bool iscol = Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
+                    bool iscol = Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
 
                     if (iscol)
                     {
-                        var coltype = Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
+                        var coltype = Kooboo.Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
                         result += "<br/>Return type:  Array";
                         result += "<br/>Data type: " + coltype.Name;
                     }
@@ -563,7 +567,7 @@ var value = k.session.key; ")]
                     string name = item.Name;
                     var para = new Dictionary<string, string>();
                     para.Add("name", name);
-                    string url = Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
+                    string url = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
                     result += "<br/><br/> <a href='" + url + "'><b>" + name + "</b></a>";
                 }
             }
@@ -599,11 +603,11 @@ var value = k.session.key; ")]
 
                 if (item.ReturnType != typeof(void))
                 {
-                    bool iscol = Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
+                    bool iscol = Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
 
                     if (iscol)
                     {
-                        var coltype = Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
+                        var coltype = Kooboo.Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
                         result += "<br/>Return type: Array";
                         result += "<br/>Data type: " + coltype.Name;
                     }
@@ -635,7 +639,7 @@ var value = k.session.key; ")]
 
             foreach (var item in allmethods)
             {
-                var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
+                var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
                 if (requirepara == null)
                 {
                     var model = new MethodViewModel();
@@ -653,7 +657,7 @@ var value = k.session.key; ")]
                         if (item.ReturnType.IsClass && item.ReturnType != typeof(string))
                         {
                             var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
-                            model.Sample = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                            model.Sample = Kooboo.Lib.Helper.JsonHelper.Serialize(SampleResponseData);
                         }
                     }
                     methods.Add(model);
@@ -678,7 +682,7 @@ var value = k.session.key; ")]
             {
                 if (item.CanRead && item.PropertyType.IsPublic)
                 {
-                    var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
+                    var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
                     if (requirepara == null)
                     {
                         fieldlist.Add(item.Name, item.PropertyType);
@@ -742,7 +746,7 @@ var value = k.session.key; ")]
                     if (item.ReturnType.IsClass && item.ReturnType != typeof(string))
                     {
                         var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
-                        model.Sample = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                        model.Sample = Kooboo.Lib.Helper.JsonHelper.Serialize(SampleResponseData);
                     }
                 }
                 methods.Add(model);
@@ -770,8 +774,7 @@ var value = k.session.key; ")]
         public string Sample { get; set; }
         public Type ReturnType { get; set; }
     }
-
-
+     
     public class PropertyViewModel
     {
         public PropertyViewModel()
@@ -782,8 +785,7 @@ var value = k.session.key; ")]
 
         public Type ReturnType { get; set; }
     }
-
-
+     
     public class UserInfoModel
     {
         public UserInfoModel(RenderContext context)
@@ -835,7 +837,7 @@ var value = k.session.key; ")]
             var OrgId = default(Guid);
             if (!Guid.TryParse(OrganizationName, out OrgId))
             {
-                OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
+                OrgId = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
             }
 
             if (context.User.CurrentOrgId == OrgId)
@@ -843,7 +845,7 @@ var value = k.session.key; ")]
                 return true;
             }
 
-            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id);
+            var orgs = Kooboo.Data.GlobalDb.Users.Organizations(context.User.Id);
 
             if (orgs.Any())
             {
@@ -856,11 +858,11 @@ var value = k.session.key; ")]
             return false;
         }
 
-        public Data.Models.User Get(string userName)
+        public Kooboo.Data.Models.User Get(string userName)
         {
             if (string.IsNullOrEmpty(userName))
                 return null;
-            return Data.GlobalDb.Users.Get(userName);
+            return Kooboo.Data.GlobalDb.Users.Get(userName);
         }
 
         public void EnsureLogin(string redirectUrl)
@@ -932,7 +934,7 @@ var value = k.session.key; ")]
             }
         }
 
-        public Data.Models.User Login(string username, string password)
+        public Kooboo.Data.Models.User Login(string username, string password)
         {
             var user = Kooboo.Data.GlobalDb.Users.Validate(username, password);
 
@@ -948,18 +950,18 @@ var value = k.session.key; ")]
 
         public bool Exists(string UserName)
         {
-            return Data.GlobalDb.Users.Get(UserName) != null;
+            return Kooboo.Data.GlobalDb.Users.Get(UserName) != null;
         }
 
         [Obsolete]
         public bool ExistEmail(string email)
         {
-            return Data.GlobalDb.Users.GetByEmail(email) != null;
+            return Kooboo.Data.GlobalDb.Users.GetByEmail(email) != null;
         }
 
         public bool EmailExists(string email)
         {
-            return Data.GlobalDb.Users.GetByEmail(email) != null;
+            return Kooboo.Data.GlobalDb.Users.GetByEmail(email) != null;
         }
 
         public void Logout()

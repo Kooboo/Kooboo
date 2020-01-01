@@ -13,6 +13,11 @@ namespace KScript.Parameter
         string HtmlBody { get; set; }
     }
 
-
+    public interface  RoutableText
+    {
+        string name { get; set; }
+        string body { get; set; }
+        string url { get; set; }  
+    }
 
 }

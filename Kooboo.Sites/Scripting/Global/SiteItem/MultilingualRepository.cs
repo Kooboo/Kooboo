@@ -38,7 +38,7 @@ namespace KScript.Sites
             }
             return result;
         }
-         
+
         public virtual MultilingualObject Get(object nameOrId)
         {
             var item = this.repo.GetByNameOrId(nameOrId.ToString());
@@ -78,7 +78,7 @@ namespace KScript.Sites
                 else
                 {
                     result.SetValue(item.Key, item.Value);
-                } 
+                }
             }
 
             this.repo.AddOrUpdate(result);
@@ -88,12 +88,26 @@ namespace KScript.Sites
         {
             if (string.IsNullOrEmpty(name))
             {
-                return; 
-            } 
-            var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject; 
-            result.Name = name; 
-            result.SetValue(this.context.Culture, value);   
-            this.repo.AddOrUpdate(result);
+                return;
+            }
+
+            var old = this.repo.GetByNameOrId(name);
+            if (old == null)
+            {
+                var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
+                result.Name = name;
+                result.SetValue(this.context.Culture, value);
+                this.repo.AddOrUpdate(result);
+            }
+            else
+            {
+                var oldmul = old as Kooboo.Sites.Contents.Models.MultipleLanguageObject; 
+                if (oldmul!=null)
+                {
+                    oldmul.SetValue(this.context.Culture, value);
+                    this.repo.AddOrUpdate(oldmul);
+                } 
+            }
         }
 
         public void Add(string name, string value, string culture)
@@ -102,20 +116,33 @@ namespace KScript.Sites
             {
                 return;
             }
-            var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
-            result.Name = name;
-            result.SetValue(culture, value);
-            this.repo.AddOrUpdate(result);
+            var old = this.repo.GetByNameOrId(name);
+            if (old == null)
+            { 
+                var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
+                result.Name = name;
+                result.SetValue(culture, value);
+                this.repo.AddOrUpdate(result);
+            }
+            else
+            {
+                var oldmul = old as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
+                if (oldmul != null)
+                {
+                    oldmul.SetValue(culture, value);
+                    this.repo.AddOrUpdate(oldmul);
+                }  
+            }
         }
 
         public void Update(string name, string value)
         {
-            this.Add(name, value); 
+            this.Add(name, value);
         }
 
         public void Update(string name, string value, string culture)
         {
-            this.Add(name, value, culture); 
+            this.Add(name, value, culture);
         }
 
         public virtual void Update(object SiteObject)
@@ -129,8 +156,7 @@ namespace KScript.Sites
                 result.Name = multi.Name;
                 result.Values = multi.Values;
 
-                this.repo.AddOrUpdate(result);
-
+                this.repo.AddOrUpdate(result); 
             }
             else
             {
@@ -199,6 +225,6 @@ namespace KScript.Sites
 
             return data;
         }
-         
+
     }
 }
