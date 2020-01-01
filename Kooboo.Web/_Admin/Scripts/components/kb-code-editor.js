@@ -88,6 +88,7 @@
           if (self.autoSize) {
             options.automaticLayout = true;
           }
+          options.fixedOverflowWidgets = true;
           var temp = monacoService.create(
             self.$el,
             self.d_code || self.code,
