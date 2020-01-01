@@ -1,7 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Sites.Scripting.Global; 
+using Kooboo.Sites.Scripting.Global;
+using KScript;
 using System.Collections.Generic; 
 
 namespace Kooboo.Web.Api.Implementation

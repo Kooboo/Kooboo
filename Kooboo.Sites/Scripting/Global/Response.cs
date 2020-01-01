@@ -4,9 +4,10 @@ using Kooboo.Data.Context;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Extensions;
 using System.ComponentModel;
+ 
 
-namespace Kooboo.Sites.Scripting.Global
-{
+namespace KScript
+{ 
     public class Response
     {
         private RenderContext context { get; set; }

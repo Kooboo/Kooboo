@@ -2,9 +2,11 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Scripting.Global;
+using KScript;
 using System;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class KTable
     {
@@ -87,13 +89,13 @@ namespace Kooboo.Sites.Scripting.Global
 
         public DynamicTableObject find(string field, object value)
         {
-            var obj = this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).FirstOrDefault();
+            var obj = this.table.Query.Where(field, Kooboo.IndexedDB.Query.Comparer.EqualTo, value).FirstOrDefault();
             return DynamicTableObject.Create(obj, this.table, this.context);
         }
 
         public DynamicTableObject[] findAll(string field, object value)
         {
-            var list = this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).SelectAll();
+            var list = this.table.Query.Where(field, Kooboo.IndexedDB.Query.Comparer.EqualTo, value).SelectAll();
             return DynamicTableObject.CreateList(list.ToArray(), this.table, this.context);
         }
 

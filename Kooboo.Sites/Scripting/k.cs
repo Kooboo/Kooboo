@@ -11,10 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
+using KScript;
 
 namespace Kooboo.Sites.Scripting
 {
-    public class k
+    public partial class k
     {
         private object _locker = new object();
 
@@ -401,8 +402,8 @@ var value = k.session.key; ")]
             }
         }
 
-        private Global.Mail _mail;
-        public Global.Mail mail
+        private KScript.Mail _mail;
+        public KScript.Mail mail
         {
             get
             {
@@ -412,7 +413,7 @@ var value = k.session.key; ")]
                     {
                         if (_mail == null)
                         {
-                            _mail = new Global.Mail(this.RenderContext);
+                            _mail = new KScript.Mail(this.RenderContext);
                         }
                     }
                 }

@@ -4,18 +4,15 @@ using Kooboo.Lib.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
-    // TODO: should try to use async/await. 
+ 
     public class Curl
     {
         public string get(string url)
@@ -31,13 +28,13 @@ namespace Kooboo.Sites.Scripting.Global
         public object GetJson(string url, string username, string password)
         {
             string result =  _get(url, null, username, password).Result;
-            return Lib.Helper.JsonHelper.Deserialize(result); 
+            return Kooboo.Lib.Helper.JsonHelper.Deserialize(result); 
         }
 
         public object GetJson(string url)
         {
             string result = _get(url).Result;
-            return Lib.Helper.JsonHelper.Deserialize(result);
+            return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);
         }
 
         public string post(string url, string data)

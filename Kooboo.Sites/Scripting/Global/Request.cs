@@ -2,12 +2,13 @@
 //All rights reserved.
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Scripting.Global;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class Request
     {
@@ -17,7 +18,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.context = context;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [Description(@"var value = k.request.get(""key"");
 var value = k.request.queryname;")]
         public string Get(string key)
@@ -35,7 +36,7 @@ var value = k.request.queryname;")]
             return null;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public string this[string key]
         {
@@ -228,7 +229,7 @@ var value = k.request.form.queryname")]
             get { return data.Values; }
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public int Count
         {
@@ -252,7 +253,7 @@ var value = k.request.form.queryname")]
             return null;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool IsReadOnly
         {
@@ -271,19 +272,19 @@ var value = k.request.form.queryname")]
             get { return data.Values; }
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool IsFixedSize => true;
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public object SyncRoot => throw new NotImplementedException();
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool IsSynchronized => throw new NotImplementedException();
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public object this[object key]
         {
@@ -309,39 +310,39 @@ var value = k.request.form.queryname")]
             this.data.Add(key, value);
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void Add(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public void Clear()
         {
             this.data.Clear();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool Contains(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
         }
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool ContainsKey(string key)
         {
             return data.ContainsKey(key);
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
@@ -349,27 +350,27 @@ var value = k.request.form.queryname")]
         }
 
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool Remove(string key)
         {
             return data.Remove(key);
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool Remove(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool TryGetValue(string key, out string value)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -388,20 +389,20 @@ var value = k.request.form.queryname")]
             Add(key.ToString(), value.ToString());
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
             return data.GetEnumerator();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public void Remove(object key)
         {
             this.Remove(key.ToString());
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void CopyTo(Array array, int index)
         {

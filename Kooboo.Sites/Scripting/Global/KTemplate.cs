@@ -1,12 +1,8 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.SiteItem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Kooboo.Sites.Repository;
 using System.IO;
 using Kooboo.Data;
@@ -16,7 +12,7 @@ using Kooboo.Sites.Routing;
 using Kooboo.Lib.Compatible;
 using Kooboo.Lib.Helper;
 using Kooboo.Data.Template;
-using System.Linq;
+using KScript;
 
 namespace Kooboo.Sites.Scripting.Global
 {
