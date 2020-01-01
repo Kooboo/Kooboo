@@ -367,3 +367,7 @@ blockquote footer,
   height: auto;
   padding: 5px 10px;
 }
+
+.editor-widget.parameter-hints-widget{
+  z-index: 10000000 !important;
+}
