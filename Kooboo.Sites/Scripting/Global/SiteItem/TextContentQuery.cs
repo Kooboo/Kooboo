@@ -5,6 +5,7 @@ using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace KScript.Sites
 
         public string SearchCondition { get; set; }
 
+        [Description("skip number")]
         public TextContentQuery skip(int skip)
         {
             this.skipcount = skip;
@@ -59,7 +61,7 @@ namespace KScript.Sites
         {
             return this.OrderByDescending(fieldname); 
         }
-
+         
         public List<TextContentObject> take(int count)
         {
 

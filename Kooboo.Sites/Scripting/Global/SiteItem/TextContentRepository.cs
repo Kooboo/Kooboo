@@ -267,9 +267,10 @@ namespace KScript.Sites
         }
 
 
-
-
-
+        [Description(@"update a text content values
+          var item = k.site.textContents.get(""titletwo"");
+          item.title = ""new value""; 
+          k.site.textContents.update(item); ")] 
         public void Update(object SiteObject)
         {
             if (SiteObject is TextContentObject)
@@ -462,7 +463,15 @@ var item = k.site.textContents.get(""titletwo"");")]
             return result;
         }
 
-
+        [Description(@"find the first matched items based on search condition
+//available operators: ==,  >=,  >,  <,  <=, contains, startwith 
+        var item= k.site.textContents.find(""name == 'matchedvalue'""); 
+        var item= k.site.textContents.find(""number>=123""); 
+        var item= k.site.textContents.find(""number >=123&&name=='matchedvalue'""); 
+        var item= k.site.textContents.find(""name contains 'matchedvalue'""); 
+        var item= k.site.textContents.find(""name startwith 'matchedvalue'""); 
+        // you may use the condition of ""folder"", ""contenttype"" and ""category"".
+        var bloglist = k.site.textContents.find(""folder ==blog"");")]
         public TextContentObject Find(string query)
         {
             // todo: improve the performance.
@@ -474,6 +483,15 @@ var item = k.site.textContents.get(""titletwo"");")]
             return null;
         }
 
+        [Description(@"Search text contents based on query condition
+       // available operators: ==,  >=,  >,  <,  <=, contains, startwith 
+        var items = k.site.textContents.findAll(""name == 'matchedvalue'""); 
+        var items = k.site.textContents.findAll(""number>=123""); 
+        var items = k.site.textContents.findAll(""number >=123&&name=='matchedvalue'""); 
+        var items = k.site.textContents.findAll(""name contains 'matchedvalue'""); 
+        var items = k.site.textContents.findAll(""name startwith 'matchedvalue'""); 
+        // you may use the condition of ""folder"", ""contenttype"" and ""category"".
+        var bloglist = k.site.textContents.findAll(""folder ==blog"");")]
         public List<TextContentObject> FindAll(string query)
         {
             var all = _findAll(query);
@@ -733,7 +751,6 @@ var item = k.site.textContents.get(""titletwo"");")]
             }
         }
          
-
         [KIgnore]
         public FindCondition ParseCondition(string query)
         {
@@ -816,14 +833,14 @@ var item = k.site.textContents.get(""titletwo"");")]
             return result;
         }
 
-
-        public TextContentQuery Query(string searchCondition)
+        [Description(@"Return the query object for further operations like paging
+use the same query syntax as find or findAll")]
+        public TextContentQuery Query(string query)
         {
             var result = new TextContentQuery(this);
-            result.Where(searchCondition);
+            result.Where(query);
             return result;
         }
-         
     }
 
     public class FindCondition
