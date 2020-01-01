@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class FileIO
     {
@@ -71,14 +71,14 @@ namespace Kooboo.Sites.Scripting.Global
         {
             var valid = ToValidPath(FileName);
 
-            string filename = Lib.Helper.IOHelper.CombinePath(this.RootFolder, valid);
+            string filename = Kooboo.Lib.Helper.IOHelper.CombinePath(this.RootFolder, valid);
 
             if (!filename.StartsWith(this.RootFolder))
             {
                 return null; // this is not allowed, as it may try to write to other folders. 
             }
 
-            Lib.Helper.IOHelper.EnsureFileDirectoryExists(filename);
+            Kooboo.Lib.Helper.IOHelper.EnsureFileDirectoryExists(filename);
 
             return filename;
         }
@@ -118,7 +118,7 @@ namespace Kooboo.Sites.Scripting.Global
                 filename = filename.Substring(this.RootFolder.Length + 1);
             }
             string url = "/__kb/kfile/";
-            return Lib.Helper.UrlHelper.Combine(url, filename);
+            return Kooboo.Lib.Helper.UrlHelper.Combine(url, filename);
         }
 
         public string read(string FileName)
@@ -186,7 +186,7 @@ namespace Kooboo.Sites.Scripting.Global
             else
             {
                 folder = folder.Replace("/", "\\");
-                folder = Lib.Helper.IOHelper.CombinePath(this.RootFolder, folder);
+                folder = Kooboo.Lib.Helper.IOHelper.CombinePath(this.RootFolder, folder);
             }
 
             var fileList = new List<FileInfo>();
@@ -234,11 +234,11 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         info.Size = iofile.Length;
                         info.LastModified = iofile.LastWriteTime;
-                        info.StringSize = Lib.Utilities.CalculateUtility.GetSizeString(iofile.Length);
+                        info.StringSize = Kooboo.Lib.Utilities.CalculateUtility.GetSizeString(iofile.Length);
                     }
 
                     string url = fullname.Replace("\\", "/");
-                    url = Lib.Helper.UrlHelper.Combine("/__kb/kfile/", url);
+                    url = Kooboo.Lib.Helper.UrlHelper.Combine("/__kb/kfile/", url);
                     string absurl = this.context.WebSite.BaseUrl(url);
                     info.AbsoluteUrl = absurl;
                     info.RelativeUrl = url;
@@ -257,7 +257,7 @@ namespace Kooboo.Sites.Scripting.Global
             else
             {
                 folder = folder.Replace("/", "\\");
-                folder = Lib.Helper.IOHelper.CombinePath(this.RootFolder, folder);
+                folder = Kooboo.Lib.Helper.IOHelper.CombinePath(this.RootFolder, folder);
             }
 
             List<FolderInfo> subs = new List<FolderInfo>();
@@ -288,14 +288,14 @@ namespace Kooboo.Sites.Scripting.Global
             string fulldir = null;
             if (string.IsNullOrEmpty(ParentFolder))
             {
-                fulldir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, Folder);
+                fulldir = Kooboo.Lib.Helper.IOHelper.CombinePath(this.RootFolder, Folder);
             }
             else
             {
-                string parentdir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, ParentFolder);
-                fulldir = Lib.Helper.IOHelper.CombinePath(parentdir, Folder);
+                string parentdir = Kooboo.Lib.Helper.IOHelper.CombinePath(this.RootFolder, ParentFolder);
+                fulldir = Kooboo.Lib.Helper.IOHelper.CombinePath(parentdir, Folder);
             }
-            Lib.Helper.IOHelper.EnsureDirectoryExists(fulldir);
+            Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(fulldir);
         }
 
         public void CreateFolder(string Folder)
@@ -310,7 +310,7 @@ namespace Kooboo.Sites.Scripting.Global
                 return;
             }
 
-            string fulldir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, Folder);
+            string fulldir = Kooboo.Lib.Helper.IOHelper.CombinePath(this.RootFolder, Folder);
             if (System.IO.Directory.Exists(fulldir))
             {
                 bool ok = true;

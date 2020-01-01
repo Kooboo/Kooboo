@@ -1,8 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Sites.Scripting.Global;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class kDatabase
     {
@@ -15,7 +16,7 @@ namespace Kooboo.Sites.Scripting.Global
         public KTable GetTable(string Name)
         {
             var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
-            var tb = Data.DB.GetOrCreateTable(db, Name);
+            var tb = Kooboo.Data.DB.GetOrCreateTable(db, Name);
             return new KTable(tb, this.context);
         }
 

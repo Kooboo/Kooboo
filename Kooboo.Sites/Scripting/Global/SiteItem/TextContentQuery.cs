@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
     public class TextContentQuery
     {
@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             this.txtObjRepo = txtObjRepo;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public TextContentObjectRepository txtObjRepo { get; set; }
 
         public int skipcount { get; set; }
@@ -120,7 +120,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 ContentProperty prop = null;
                 if (onlyType != null)
                 {
-                    prop = onlyType.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));  
+                    prop = onlyType.Properties.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));  
                 }       
 
                 if (prop == null)
@@ -134,7 +134,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         var uniquetype = sitedb.ContentTypes.Get(item); 
                         if (uniquetype !=null)
                         {
-                             var find = uniquetype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));
+                             var find = uniquetype.Properties.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));
                             if (find !=null)
                             {
                                 prop = find;

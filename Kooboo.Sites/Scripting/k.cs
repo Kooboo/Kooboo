@@ -5,16 +5,17 @@ using Kooboo.Data.Interface;
 using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.SiteItem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
+using KScript;
+using KScript.Sites;
 
 namespace Kooboo.Sites.Scripting
 {
-    public class k
+    public partial class k
     {
         private object _locker = new object();
 
@@ -96,6 +97,12 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Session _session;
+
+         [Description(@"a temporary storage for small interactive information. Session does not persist
+   k.session.set(""key"", obj);
+   var back = k.session.get(""key"");
+k.session.newkey = ""value""; 
+var value = k.session.key; ")]
         public Session Session
         {
             get
@@ -243,6 +250,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+
+        [Description("The Kooboo website database with version control")]
         public kSiteDb Site
         {
             get
@@ -393,8 +402,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        private Global.Mail _mail;
-        public Global.Mail mail
+        private KScript.Mail _mail;
+        public KScript.Mail mail
         {
             get
             {
@@ -404,7 +413,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_mail == null)
                         {
-                            _mail = new Global.Mail(this.RenderContext);
+                            _mail = new KScript.Mail(this.RenderContext);
                         }
                     }
                 }

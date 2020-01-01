@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KScript.Sites; 
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
   public class TextRepository   : RepositoryBase
     {
@@ -24,8 +25,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             domitem.Body = newbody;
             this.repo.AddOrUpdate(item); 
         }
-         
-
+          
         public object this[string key]
         {
 
@@ -39,8 +39,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 this.AddOrUpdate(key, value);
             }
         }
-
-
+         
         protected virtual void AddOrUpdate(string key, object value)
         {
             if (value is ISiteObject)
@@ -54,8 +53,5 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 this.Add(value);
             }
         }
-
-
-
-    }
+     }
 }

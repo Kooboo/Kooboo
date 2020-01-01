@@ -8,13 +8,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
   public  class Security
     {
         public string md5(string input)
         {
-            Guid id = Lib.Security.Hash.ComputeHashGuid(input);
+            Guid id = Kooboo.Lib.Security.Hash.ComputeHashGuid(input);
             return id.ToString("N");
         }
 

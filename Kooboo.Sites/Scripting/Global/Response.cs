@@ -4,9 +4,10 @@ using Kooboo.Data.Context;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Extensions;
 using System.ComponentModel;
+ 
 
-namespace Kooboo.Sites.Scripting.Global
-{
+namespace KScript
+{ 
     public class Response
     {
         private RenderContext context { get; set; }
@@ -27,24 +28,24 @@ namespace Kooboo.Sites.Scripting.Global
             }
             string output = ToJson(value); 
 
-            var item = this.context.GetItem<string>(Constants.OutputName);
+            var item = this.context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
             if (item == null)
             {
-                this.context.SetItem<string>(output, Constants.OutputName);
+                this.context.SetItem<string>(output, Kooboo.Sites.Scripting.Constants.OutputName);
             }
             else
             {
                 item += output;
-                this.context.SetItem<string>(item, Constants.OutputName);
+                this.context.SetItem<string>(item, Kooboo.Sites.Scripting.Constants.OutputName);
             }
         }
 
-        public string ToJson(object value)
+        private string ToJson(object value)
         {
             string output;
             if (!(value is string) && value.GetType().IsClass)
             { 
-                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
+                output = Kooboo.Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
             }
             else
             {
@@ -53,21 +54,34 @@ namespace Kooboo.Sites.Scripting.Global
             return output;
         }
 
+        [Description(@"set header value on output html page.
+k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
+        k.response.setHeader(""Access-Control-Allow-Origin"", ""*""")]
         public void setHeader(string key, string value)
         {
             this.context.Response.Headers[key] = value;
         }
 
+        [Description(@"Redirect user to another url, url can be relative or absolute
+        k.response.redirect(""/relativepath""); 
+        k.response.redirect(""http://www.kooboo.com"");
+        k.response.statusCode(301); 
+")]
         public void redirect(string url)
         {
             this.context.Response.Redirect(302, url);
         } 
 
+        [Description(@"Print object in Json format
+ var obj = {fieldone:""valueone"", fieldtwo:""valuetwo""};
+        k.response.json(obj);
+")]
         public void Json(object value)
         {
             // write method default is Json already...
             write(value);
         }
+
 
         public void binary(string contentType,byte[] bytes)
         {
@@ -75,12 +89,15 @@ namespace Kooboo.Sites.Scripting.Global
             this.context.Response.Body = bytes;
         }
        
-
+        [Description(@"Set the status code
+  k.response.statusCode(301);")]
         public void StatusCode(int code)
         {
             this.context.Response.StatusCode = code; 
         }
          
+        [Description(@"Excute another Url, and write the response within current context
+ k.response.execute(""/anotherpage"");")]
         public void Execute(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
@@ -123,15 +140,15 @@ namespace Kooboo.Sites.Scripting.Global
             } 
 
 
-            var item = this.context.GetItem<string>(Constants.OutputName);
+            var item = this.context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
             if (item == null)
             {
-                this.context.SetItem<string>(value, Constants.OutputName);
+                this.context.SetItem<string>(value, Kooboo.Sites.Scripting.Constants.OutputName);
             }
             else
             {
                 item += value;
-                this.context.SetItem<string>(item, Constants.OutputName);
+                this.context.SetItem<string>(item, Kooboo.Sites.Scripting.Constants.OutputName);
             }
         }
     }

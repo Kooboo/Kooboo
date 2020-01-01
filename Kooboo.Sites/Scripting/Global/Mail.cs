@@ -9,11 +9,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class Mail
-    { 
-
+    {  
         private RenderContext context { get; set; }
 
         public Mail(RenderContext context)
@@ -63,7 +62,7 @@ namespace Kooboo.Sites.Scripting.Global
                 }
 
                 // check if org allowed to send.
-                if (!Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count()))
+                if (!Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Kooboo.Data.Infrastructure.InfraType.Email, allrcptos.Count()))
                 {
                     throw new Exception("No enough email sending credits");
                 }
@@ -71,7 +70,7 @@ namespace Kooboo.Sites.Scripting.Global
                 {
                     Kooboo.Mail.Transport.Incoming.Receive(maildata.From, allrcptos, messagebody);
 
-                    Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count(), string.Join(",", allrcptos));
+                    Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Kooboo.Data.Infrastructure.InfraType.Email, allrcptos.Count(), string.Join(",", allrcptos));
                 }
 
             }

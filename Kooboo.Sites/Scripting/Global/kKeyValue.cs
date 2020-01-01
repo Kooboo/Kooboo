@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class kKeyValue : System.Collections.Generic.IDictionary<string, string>
     {
@@ -54,9 +54,9 @@ namespace Kooboo.Sites.Scripting.Global
 
         private int MaxValueLen { get; set; } = 4096;
 
-        private IndexedDB.Dynamic.Table _table;
+        private Kooboo.IndexedDB.Dynamic.Table _table;
 
-        private IndexedDB.Dynamic.Table table
+        private Kooboo.IndexedDB.Dynamic.Table table
         {
             get
             {
@@ -69,7 +69,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public int Count
         {
             get
@@ -85,13 +85,13 @@ namespace Kooboo.Sites.Scripting.Global
             get { return this.Count; }
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool IsReadOnly
         {
             get { return true; }
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public string this[string key]
         {
             get
@@ -116,7 +116,7 @@ namespace Kooboo.Sites.Scripting.Global
                 var bytes = System.Text.Encoding.UTF8.GetBytes(value);
                 if (bytes.Length > this.MaxValueLen)
                 {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("Maximun value length reached", this.context));
+                    throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Maximun value length reached", this.context));
                 }
             }
 
@@ -162,7 +162,7 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool ContainsKey(string key)
         {
             var hash = Kooboo.IndexedDB.Helper.KeyHelper.ComputeGuid(key);
@@ -178,7 +178,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public void Add(string key, string value)
         {
             set(key, value);
@@ -196,7 +196,7 @@ namespace Kooboo.Sites.Scripting.Global
             return false;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool TryGetValue(string key, out string value)
         {
             var dbvalue = this.get(key);
@@ -209,39 +209,39 @@ namespace Kooboo.Sites.Scripting.Global
             return false;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public void Add(KeyValuePair<string, string> item)
         {
             set(item.Key, item.Value);
         }
 
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public void Clear()
         {
             this.table.DelSelf();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool Contains(KeyValuePair<string, string> item)
         {
             var value = this.get(item.Key);
             return value != null && value == item.Value;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public bool Remove(KeyValuePair<string, string> item)
         {
             return Remove(item.Key);
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
             Dictionary<string, string> allvalues = new Dictionary<string, string>();
@@ -254,7 +254,7 @@ namespace Kooboo.Sites.Scripting.Global
             return allvalues.GetEnumerator();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
