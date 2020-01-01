@@ -1,9 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -16,9 +18,11 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [Description(@"var value = k.request.get(""key"");
+var value = k.request.queryname;")]
         public string Get(string key)
         {
-            var value = this.context.Request.GetValue(key,false);
+            var value = this.context.Request.GetValue(key, false);
             if (value != null)
             {
                 return value;
@@ -32,6 +36,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public string this[string key]
         {
             get
@@ -44,14 +49,17 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        private MyDictionary _query;
-        public MyDictionary queryString
+        private KDictionary _query;
+
+        [Description(@"Access to the http query string
+var value = k.request.queryString.queryname")]
+        public KDictionary queryString
         {
             get
             {
                 if (_query == null)
                 {
-                    _query = new MyDictionary();
+                    _query = new KDictionary();
 
                     foreach (var item in this.context.Request.QueryString.AllKeys)
                     {
@@ -62,14 +70,17 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        private MyDictionary _form;
-        public MyDictionary form
+        private KDictionary _form;
+
+        [Description(@"Access to the http form field value
+var value = k.request.form.queryname")]
+        public KDictionary form
         {
             get
             {
                 if (_form == null)
                 {
-                    _form = new MyDictionary();
+                    _form = new KDictionary();
 
                     foreach (var item in this.context.Request.Forms.AllKeys)
                     {
@@ -87,6 +98,15 @@ namespace Kooboo.Sites.Scripting.Global
 
         private UploadFile[] _files;
 
+        [Description(@"Form upload file collections
+        if (k.request.files.count>0)
+           { 
+       k.request.files.forEach(function(item)
+        { 
+         k.response.write(item.fileName); 
+         item.save(item.fileName);  
+        })  
+      }   ")]
         public UploadFile[] files
         {
             get
@@ -100,7 +120,7 @@ namespace Kooboo.Sites.Scripting.Global
                         foreach (var item in this.context.Request.Files)
                         {
                             if (!string.IsNullOrWhiteSpace(item.FileName) && item.Bytes != null)
-                            { 
+                            {
                                 UploadFile uploadfile = new UploadFile(this.context);
                                 uploadfile.FileName = item.FileName;
                                 uploadfile.ContentType = item.ContentType;
@@ -113,20 +133,19 @@ namespace Kooboo.Sites.Scripting.Global
 
                 }
                 return _files;
-
             }
         }
 
-
+        [Description("The request text body")]
         public string body
         {
             get
             {
                 return this.context.Request.Body;
-            }
-
+            } 
         }
 
+        [KIgnore]
         public byte[] postData
         {
             get
@@ -135,27 +154,27 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-
-
+        [Description("HTTP Method like GET, POST, PUT")]
         public string method
         {
             get { return this.context.Request.Method; }
         }
 
+        [Description("Client Requst IP")]
         public string clientIp
         {
             get { return this.context.Request.IP; }
         }
 
-        private MyDictionary _headers;
+        private KDictionary _headers;
 
-        public MyDictionary headers
+        public KDictionary headers
         {
             get
             {
                 if (_headers == null)
                 {
-                    _headers = new MyDictionary();
+                    _headers = new KDictionary();
 
                     foreach (var item in this.context.Request.Headers.AllKeys)
                     {
@@ -170,13 +189,14 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
+        [Description("Current Requst URL")]
         public string url
         {
             get { return this.context.Request.Url; }
         }
     }
 
-    public class MyDictionary : IDictionary<string, string>, System.Collections.IDictionary
+    public class KDictionary : IDictionary<string, string>, System.Collections.IDictionary
     {
         private Dictionary<string, string> data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -209,6 +229,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public int Count
         {
             get { return data.Count; }
@@ -232,6 +253,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool IsReadOnly
         {
             get
@@ -240,23 +262,29 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
+        [KIgnore]
         ICollection IDictionary.Keys { get { return data.Keys; } }
 
+        [KIgnore]
         ICollection IDictionary.Values
         {
             get { return data.Values; }
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool IsFixedSize => true;
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public object SyncRoot => throw new NotImplementedException();
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool IsSynchronized => throw new NotImplementedException();
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public object this[object key]
         {
             get
@@ -282,6 +310,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public void Add(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
@@ -294,6 +323,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool Contains(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
@@ -305,12 +335,14 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
             return data.GetEnumerator();
@@ -324,22 +356,26 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool Remove(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool TryGetValue(string key, out string value)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return data.GetEnumerator();
         }
+
 
         public bool Contains(object key)
         {
@@ -353,6 +389,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
             return data.GetEnumerator();
@@ -365,6 +402,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public void CopyTo(Array array, int index)
         {
             throw new NotImplementedException();

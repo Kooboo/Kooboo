@@ -28,5 +28,6 @@ namespace Kooboo.Data.Attributes
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public class KExtensionAttribute : Attribute
     {
+        
     }
 }

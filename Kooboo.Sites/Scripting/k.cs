@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -17,6 +18,7 @@ namespace Kooboo.Sites.Scripting
     {
         private object _locker = new object();
 
+        [KIgnore]
         public RenderContext RenderContext { get; set; }
 
         public k(RenderContext context)
@@ -31,6 +33,7 @@ namespace Kooboo.Sites.Scripting
         static KeyValuePair<string, Type>[] _ = ExtensionContainer.List.ToArray();
 
         private kDataContext _data;
+
         public kDataContext DataContext
         {
             get
@@ -50,6 +53,8 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Response _response;
+
+        [Description("The HTTP response object that is used to set data into http resposne stream")]
         public Response Response
         {
             get
@@ -69,7 +74,9 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Request _request;
+         
 
+        [Description("Access to the http request data, query string, form or headers. Cookie is available from k.cookie.\r\nvar value = k.request.queryname;\r\nvar value = k.request.queryString.queryname;\r\nvar value = k.request.form.queryname;")]
         public Request Request
         {
             get
@@ -110,6 +117,7 @@ namespace Kooboo.Sites.Scripting
 
         private Dictionary<string, string> _viewdata;
 
+        [Description("Shared thread storage")]
         public Dictionary<string, string> ViewData
         {
             get
@@ -170,6 +178,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private KTemplate _template;
+        [KIgnore]
         public KTemplate Template
         {
             get
@@ -212,9 +221,7 @@ namespace Kooboo.Sites.Scripting
 
         private kSiteDb _sitedb;
 
-        /// <summary>
-        /// 
-        /// </summary>
+        [KIgnore]
         public kSiteDb SiteDb
         {
             get
@@ -351,6 +358,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+        [KIgnore]
         public kDatabase DB
         {
 
@@ -358,7 +366,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private KScriptExtension _ex;
-
+        [KIgnore]
         public KScriptExtension Extension
         {
             get
@@ -446,6 +454,7 @@ namespace Kooboo.Sites.Scripting
 
         #region APIHelper
 
+        [KIgnore]
         public void Help()
         {
             //var html = new HelperRender().Render(RenderContext);
@@ -454,16 +463,16 @@ namespace Kooboo.Sites.Scripting
             //Help("k");
         }
 
+        [KIgnore]
         public void ViewHelp()
         {
             var html = new ViewHelpRender().Render(RenderContext);
             Response.write(html);
         }
 
-
-        public List<object> ReturnValues = new List<object>();
-
-
+      
+        internal  List<object> ReturnValues = new List<object>();
+         
 
         public void output(object obj)
         {

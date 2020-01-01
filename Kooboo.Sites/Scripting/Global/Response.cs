@@ -3,6 +3,7 @@
 using Kooboo.Data.Context; 
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Extensions;
+using System.ComponentModel;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -13,7 +14,11 @@ namespace Kooboo.Sites.Scripting.Global
         {
             this.context = context;
         }
-
+        [Description(@"Print on output page. Will convert Non-Value type to Json format
+      k.response.write(""hello world"");
+        k.response.write(1234);
+        var obj = {name: ""myname""};
+    k.response.write(obj);")]
         public void write(object value)
         {
             if (value == null)
@@ -38,31 +43,8 @@ namespace Kooboo.Sites.Scripting.Global
         {
             string output;
             if (!(value is string) && value.GetType().IsClass)
-            {
-                //if (value is Kooboo.Data.Interface.IDynamic)
-                //{
-                //    var dynamic = value as Kooboo.Data.Interface.IDynamic;
-                //    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(dynamic.Values);
-                //}
-                //else if (IsDynamicArray(value))
-                //{
-                //    var dynamicValues = value as ICollection;
-
-                //    List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
-                //    foreach (var v in dynamicValues)
-                //    {
-                //        var dynamicvalue = v as Kooboo.Data.Interface.IDynamic;
-                //        if (dynamicvalue != null)
-                //        {
-                //            result.Add(dynamicvalue.Values);
-                //        }
-                //    }
-                //    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(result);
-                //}
-                //else
-                //{
-                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert());
-                //}
+            { 
+                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
             }
             else
             {
@@ -92,6 +74,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.context.Response.ContentType = contentType;
             this.context.Response.Body = bytes;
         }
+       
 
         public void StatusCode(int code)
         {
