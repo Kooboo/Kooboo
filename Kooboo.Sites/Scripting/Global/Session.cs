@@ -1,9 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,17 +17,25 @@ namespace Kooboo.Sites.Scripting.Global
 
         private RenderContext context { get; set; }
 
+        [Description("All keys in current session storage")]
         public ICollection<string> Keys => SessionManager.Keys(getcookie());
 
+        [Description("All values in current session storage")]
         public ICollection<object> Values => SessionManager.Values(getcookie());
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public int Count => SessionManager.Keys(getcookie()).Count();
 
+
+        public int length { get { return this.Count();  } }
+
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool IsReadOnly => false;
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public object this[string key]
         {
             get
@@ -41,8 +51,7 @@ namespace Kooboo.Sites.Scripting.Global
         public Session(RenderContext context)
         {
             this.context = context;
-        }
-
+        } 
 
         private Guid _cookie;
 
@@ -82,12 +91,19 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
+        [Description(@"Set a Key Value in current session.
+  k.session.set(""key"", ""value""); 
+k.session.key=""value"";")]
         public void set(string key, object value)
         {
             var id = getcookie();
             SessionManager.Set(id, key, value);
         }
 
+
+        [Description(@"get a session value
+        var value = k.session.get(""key""); 
+var value2 = k.session.key;")]
         public object get(string key)
         {
             var id = getcookie();
@@ -95,10 +111,14 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool ContainsKey(string key)
         {
             return Contains(key);
         }
+
+        [Description(@"Check whether session has the key or not.
+if (k.session.contains(""key"")){//}")]
         public bool Contains(string key)
         {
             var value = SessionManager.Get(getcookie(), key);
@@ -107,11 +127,14 @@ namespace Kooboo.Sites.Scripting.Global
 
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public void Add(string key, object value)
         {
             set(key, value);
         }
 
+        [Description(@"Remove item from session
+k.session.remove(""key"");")]
         public bool Remove(string key)
         {
             SessionManager.Remove(getcookie(), key);
@@ -119,12 +142,14 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool TryGetValue(string key, out object value)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public void Add(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
@@ -137,29 +162,34 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool Contains(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public bool Remove(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             return SessionManager.All(getcookie()).GetEnumerator();
         }
         [Attributes.SummaryIgnore]
+        [KIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return SessionManager.All(getcookie()).GetEnumerator();

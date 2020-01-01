@@ -38,9 +38,88 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return result;
         }
 
+      
+        public virtual MultilingualObject Get(object nameOrId)
+        {
+            var item = this.repo.GetByNameOrId(nameOrId.ToString());
+            if (item != null && item is Kooboo.Sites.Contents.Models.MultipleLanguageObject)
+            {
+                return new MultilingualObject(item as Contents.Models.MultipleLanguageObject, this.context);
+            }
+            return null;
+        }
+
+        public virtual void Delete(object nameOrId)
+        {
+            var item = Get(nameOrId);
+            if (item != null)
+            {
+                this.repo.Delete(item.Id);
+            }
+        }
+
+        public virtual void Add(object SiteObject)
+        {
+            var data = this.GetData(SiteObject);
+
+            var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
+
+            foreach (var item in data)
+            {
+                var lowerkey = item.Key.ToLower();
+                if (lowerkey == "name")
+                {
+                    result.Name = item.Value.ToString();
+                }
+                else if (lowerkey == "value")
+                {
+                    result.SetValue(this.context.Culture, item.Value);
+                }
+                else
+                {
+                    result.SetValue(item.Key, item.Value);
+                } 
+            }
+
+            this.repo.AddOrUpdate(result);
+        }
+
+        public void Add(string name, string value)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return; 
+            } 
+            var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject; 
+            result.Name = name; 
+            result.SetValue(this.context.Culture, value);   
+            this.repo.AddOrUpdate(result);
+        }
+
+        public void Add(string name, string value, string culture)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+            var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
+            result.Name = name;
+            result.SetValue(culture, value);
+            this.repo.AddOrUpdate(result);
+        }
+
+        public void Update(string name, string value)
+        {
+            this.Add(name, value); 
+        }
+
+        public void Update(string name, string value, string culture)
+        {
+            this.Add(name, value, culture); 
+        }
+
         public virtual void Update(object SiteObject)
         {
-
             if (SiteObject is MultilingualObject)
             {
                 var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
@@ -82,57 +161,8 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     }
                 }
                 this.repo.AddOrUpdate(result);
-
-            }
-
-        }
-
-        public virtual MultilingualObject Get(object nameOrId)
-        {
-            var item = this.repo.GetByNameOrId(nameOrId.ToString());
-            if (item != null && item is Kooboo.Sites.Contents.Models.MultipleLanguageObject)
-            {
-                return new MultilingualObject(item as Contents.Models.MultipleLanguageObject, this.context);
-            }
-            return null;
-        }
-
-        public virtual void Delete(object nameOrId)
-        {
-            var item = Get(nameOrId);
-            if (item != null)
-            {
-                this.repo.Delete(item.Id);
             }
         }
-
-        public virtual void Add(object SiteObject)
-        {
-            var data = this.GetData(SiteObject);
-
-            var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
-
-            foreach (var item in data)
-            {
-                var lowerkey = item.Key.ToLower();
-                if (lowerkey == "name")
-                {
-                    result.Name = item.Value.ToString();
-                }
-                else if (lowerkey == "value")
-                {
-                    result.SetValue(this.context.Culture, item.Value);
-                }
-                else
-                {
-                    result.SetValue(item.Key, item.Value);
-                }
-
-            }
-
-            this.repo.AddOrUpdate(result);
-        }
-
 
         internal Dictionary<string, object> GetData(object dataobj)
         {
@@ -169,13 +199,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             return data;
         }
-
-
-        
-
-
-
-
-
+         
     }
 }

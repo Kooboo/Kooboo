@@ -96,6 +96,12 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Session _session;
+
+         [Description(@"a temporary storage for small interactive information. Session does not persist
+   k.session.set(""key"", obj);
+   var back = k.session.get(""key"");
+k.session.newkey = ""value""; 
+var value = k.session.key; ")]
         public Session Session
         {
             get
@@ -243,6 +249,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+
+        [Description("The Kooboo website database with version control")]
         public kSiteDb Site
         {
             get

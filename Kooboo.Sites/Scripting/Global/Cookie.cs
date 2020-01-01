@@ -9,25 +9,26 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo; 
 
-namespace Kooboo.Sites.Scripting.Global
-{
-
+namespace KScript
+{ 
     public class Cookie : IDictionary<string, string>
     {
         private RenderContext context { get; set; }
 
+        [Description("All keys in current cookie collection")]
         public ICollection<string> Keys => context.Request.Cookies.Keys;
-
+        [Description("All values in current cookie collection")]
         public ICollection<string> Values => context.Request.Cookies.Values;
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public int Count => context.Request.Cookies.Count();
 
         public int length => this.Count;
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool IsReadOnly => true;
 
@@ -45,7 +46,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.context.Response.AppendCookie(name, value, days);
         }
 
-        [Description("set the cookie with an expiration time in minutes\r\nk.cookie.setByMinutes(\"cookiename\", \"value\", 240);")]
+        [Description("set a cookie with an expiration time in minutes\r\nk.cookie.setByMinutes(\"cookiename\", \"value\", 240);")]
         public void setByMinutes(string name, string value, int mins)
         {
             this.context.Response.AppendCookie(name, value, DateTime.Now.AddMinutes(mins));
@@ -64,7 +65,9 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        [Description("Get the cookie value by name. \r\nvar cookievalue =  k.cookie.get(\"cookiename\");")]
+        [Description(@"Get the cookie value by name.
+var cookievalue =  k.cookie.get(""cookiename"");
+var cookievalue2 =  k.cookie.cookiename;")]
         public string get(string Name)
         {
             if (this.context.Request.Cookies.ContainsKey(Name))
@@ -80,7 +83,7 @@ namespace Kooboo.Sites.Scripting.Global
             return this.context.Request.Cookies.ContainsKey(key);
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void Add(string key, string value)
         {
@@ -94,7 +97,7 @@ namespace Kooboo.Sites.Scripting.Global
             return true;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool TryGetValue(string key, out string value)
         {
@@ -102,7 +105,7 @@ namespace Kooboo.Sites.Scripting.Global
             return true;
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void Add(KeyValuePair<string, string> item)
         {
@@ -118,21 +121,21 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool Contains(KeyValuePair<string, string> item)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        [Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public bool Remove(KeyValuePair<string, string> item)
         {
