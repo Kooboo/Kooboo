@@ -522,7 +522,6 @@ namespace Kooboo.Data.Server
                             //    res.StatusCode = 404;
                             //    await res.Body.WriteAsync(bytes, 0, bytes.Length);
                             //}
-
                         }
                     }
                 }

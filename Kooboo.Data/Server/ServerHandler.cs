@@ -348,6 +348,13 @@ namespace Kooboo.Data.Server
 
                 string location = response.RedirectLocation;
 
+                context.Features.Response.Headers["Server"] = "http://www.kooboo.com";
+
+                foreach (var item in response.Headers)
+                {
+                    context.Features.Response.Headers[item.Key] = item.Value;
+                }
+
                 foreach (var item in response.DeletedCookieNames)
                 {
                     var options = new CookieOptions()
