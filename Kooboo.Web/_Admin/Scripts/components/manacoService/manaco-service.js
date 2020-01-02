@@ -96,36 +96,36 @@ var MonacoEditorService =
     MonacoEditorService.prototype.loader = function(callback) {
       var baseUrl = "https://cdn.jsdelivr.net/npm";
       $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
-          function() {
-            window.require.config({
-              paths: {
-                vs: baseUrl + "/monaco-editor-core@0.19.0/min/vs",
-                "vs/basic-languages":
-                    baseUrl + "/monaco-languages@1.9.0/release/min",
-                "vs/language/html":
-                    baseUrl + "/monaco-html-extra@2.6.0/release/min",
-                "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
-                "vs/language/typescript":
-                    baseUrl + "/monaco-typescript@3.6.1/release/min"
-              }
-            });
-            window.require(
-                ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
-                function() {
-                  require([
-                    "vs/basic-languages/monaco.contribution",
-                    "vs/language/html/monaco.contribution",
-                    "vs/language/css/monaco.contribution",
-                    "vs/language/typescript/monaco.contribution"
-                  ], function() {
-                    monaco = window.monaco;
-                    callback(monaco);
-                  });
+        function() {
+          window.require.config({
+            paths: {
+              vs: baseUrl + "/monaco-editor-core@0.19.0/min/vs",
+              "vs/basic-languages":
+                baseUrl + "/monaco-languages@1.9.0/release/min",
+              "vs/language/html":
+                baseUrl + "/monaco-html-extra@2.6.0/release/min",
+              "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
+              "vs/language/typescript":
+                baseUrl + "/monaco-typescript@3.6.1/release/min"
+            }
+          });
+          window.require(
+            ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
+            function() {
+              require([
+                "vs/basic-languages/monaco.contribution",
+                "vs/language/html/monaco.contribution",
+                "vs/language/css/monaco.contribution",
+                "vs/language/typescript/monaco.contribution"
+              ], function() {
+                monaco = window.monaco;
+                callback(monaco);
+              });
 
-                  self.isLoader = true;
-                }
-            );
-          }
+              self.isLoader = true;
+            }
+          );
+        }
       );
     };
     MonacoEditorService.prototype.init = function(callback, files) {
@@ -315,42 +315,40 @@ var MonacoEditorService =
         }
       });
 
-      // monaco.languages.registerCompletionItemProvider("html", {
-      //   triggerCharacters: [">"],
-      //   provideCompletionItems: function(model, position) {
-      //     var textUntilPosition = model.getValueInRange({
-      //       startLineNumber: position.lineNumber,
-      //       startColumn: 1,
-      //       endLineNumber: position.lineNumber,
-      //       endColumn: position.column
-      //     });
+      monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: [">"],
+        provideCompletionItems: function(model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
 
-      //     if (
-      //       textUntilPosition.split("<").length !=
-      //       textUntilPosition.split(">").length
-      //     ) {
-      //       return;
-      //     }
+          if (
+            textUntilPosition.split("<").length !=
+              textUntilPosition.split(">").length ||
+            !textUntilPosition.endsWith(">")
+          ) {
+            return;
+          }
 
-      //     var tag = textUntilPosition.split("<").pop();
+          var tag = textUntilPosition.split("<").pop();
 
-      //     if (tag) {
-      //       return {
-      //         suggestions: [
-      //           {
-      //             label: "</" + tag,
-      //             kind: monaco.languages.CompletionItemKind.Property,
-      //             documentation: "</" + tag,
-      //             insertText: "${1}</" + tag,
-      //             insertTextRules:
-      //               monaco.languages.CompletionItemInsertTextRule
-      //                 .InsertAsSnippet
-      //           }
-      //         ]
-      //       };
-      //     }
-      //   }
-      // });
+          if (tag) {
+            return {
+              suggestions: [
+                {
+                  label: "</" + tag,
+                  kind: monaco.languages.CompletionItemKind.Property,
+                  documentation: "</" + tag,
+                  insertText: "</" + tag
+                }
+              ]
+            };
+          }
+        }
+      });
 
       monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
