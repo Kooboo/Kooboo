@@ -26,6 +26,8 @@ namespace Kooboo.Data.Context
 
         private HttpResponse _response;
 
+        public bool EnableTextGZip { get; set; } = false; 
+
         public HttpResponse Response
         {
             get

@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Render
                         }
                     case ConstObjectType.Image:
                         {
-                            ImageRenderer.Render(context);
+                           await ImageRenderer.Render(context);
                             break;
                         }
                     case ConstObjectType.Script:
@@ -45,12 +45,12 @@ namespace Kooboo.Sites.Render
                         }
                     case ConstObjectType.View:
                         {
-                            await   ViewRenderer.Render(context);
+                            await ViewRenderer.Render(context);
                             break;
                         }
                     case ConstObjectType.KoobooSystem:
                         {
-                            Systems.SystemRender.Render(context);
+                            await Systems.SystemRender.Render(context);
                             break;
                         }
                     case ConstObjectType.ResourceGroup:
@@ -69,9 +69,12 @@ namespace Kooboo.Sites.Render
             }
             catch (System.Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + " " + ex.Source + ex.StackTrace); 
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + " " + ex.Source + ex.StackTrace);
+
+                context.RenderContext.Response.AppendString(ex.Message+ " " + ex.Source);
+      
             }
-          
+
         }
     }
 }

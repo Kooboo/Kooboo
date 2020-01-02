@@ -18,9 +18,8 @@ namespace Kooboo.Sites.Render.Functions
             var engine = Scripting.Manager.GetJsEngine(context);
 
             var prog = engine.GetValue(FunctionName);
-
-            if (prog !=null)
-           // if (prog != null && prog != Jint.Native.JsValue.Undefined)
+             
+            if (prog != null && prog != Jint.Native.JsValue.Undefined)
             {
                 var paras = FunctionHelper.RenderParameter(context, this.Parameters);
 

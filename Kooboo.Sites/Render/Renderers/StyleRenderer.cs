@@ -13,8 +13,22 @@ namespace Kooboo.Sites.Render
 
             if (css != null && css.Body != null)
             {
-               // var body = GetBody(css);
-                context.RenderContext.Response.Body = Encoding.UTF8.GetBytes(css.Body);  
+                var bytes = Encoding.UTF8.GetBytes(css.Body);
+
+                //if (context.RenderContext.EnableTextGZip)
+                //{
+                //    context.RenderContext.Response.Headers.Add("Content-encoding", "GZip");
+                //    context.RenderContext.Response.OrginalLength = bytes.Length; 
+                //    var stream = new System.IO.MemoryStream(bytes);
+
+                //context.RenderContext.Response.Stream = new System.IO.Compression.GZipStream(stream, System.IO.Compression.CompressionLevel.Fastest);
+
+                //}
+                //else
+                //{
+                    // var body = GetBody(css);
+                    context.RenderContext.Response.Body = bytes;
+               // }
             }
         }
 
@@ -37,7 +51,7 @@ namespace Kooboo.Sites.Render
                 var find = styleEngines.Find(o => o.Extension == style.Extension);
                 if (find != null)
                 {
-                    return find.Execute(null, style.Body);   
+                    return find.Execute(null, style.Body);
                 }
                 else
                 {

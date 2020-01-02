@@ -9,13 +9,13 @@ namespace Kooboo.Sites.Render
 {
     public class ImageRenderer
     {
-        public static void Render(FrontContext context)
+        public async static Task Render(FrontContext context)
         {
-            var image = context.SiteDb.ImagePool.Get(context.Route.objectId);
+            var image = await context.SiteDb.ImagePool.GetAsync(context.Route.objectId);
 
             if (image == null || image.ContentBytes == null)
             {
-                image = context.SiteDb.Images.Get(context.Route.objectId);
+                image = await context.SiteDb.Images.GetAsync(context.Route.objectId);
             }
             //  var image = context.SiteDb.Images.Get(context.Route.objectId);
 

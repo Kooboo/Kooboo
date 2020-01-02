@@ -8,6 +8,7 @@ using Kooboo.IndexedDB.Columns;
 using Kooboo.IndexedDB.Indexs;
 using Kooboo.IndexedDB.Query;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
@@ -54,14 +55,14 @@ namespace Kooboo.IndexedDB
         {
             get
             {
-                List<TKey> result = new List<TKey>(); 
+                List<TKey> result = new List<TKey>();
 
                 foreach (var item in this.primaryIndex.AllKeyBytesCollection(true))
                 {
                     var key = this.KeyConverter.FromByte(item);
-                    result.Add(key); 
-                } 
-                return result; 
+                    result.Add(key);
+                }
+                return result;
             }
         }
 
@@ -623,7 +624,7 @@ namespace Kooboo.IndexedDB
 
                 if (EqualityComparer<TValue>.Default.Equals(oldrecord, default(TValue)))
                 {
-                    return false; 
+                    return false;
                 }
 
                 long logid = 0;
@@ -652,7 +653,7 @@ namespace Kooboo.IndexedDB
 
                     this.OwnerDatabase.Log.Add(log);
                 }
-                return true; 
+                return true;
             }
         }
 
@@ -916,7 +917,27 @@ namespace Kooboo.IndexedDB
             else
             {
                 return default(TValue);
-            } 
+            }
+        }
+
+
+        public async Task<TValue> getAsync(TKey key)
+        {
+            Int64 blockposition;
+
+            lock (_Locker)
+            {
+                blockposition = this.primaryIndex.Get(key);
+            }
+
+            if (blockposition > 0)
+            {
+                return await getValueAsync(blockposition);
+            }
+            else
+            {
+                return default(TValue);
+            }
         }
 
         /// <summary>
@@ -945,10 +966,23 @@ namespace Kooboo.IndexedDB
                 }
             }
         }
+        
+        public async Task<TValue> getValueAsync(Int64 blockposition)
+        {
+            byte[] contentbytes = await this.BlockFile.GetAsync(blockposition);
+            if (contentbytes == null)
+            {
+                return default(TValue);
+            }
+            else
+            {
+                return this.ValueConverter.FromByte(contentbytes);
+            }
+        }
 
         public int getLength(long blockposition)
         {
-            return this.BlockFile.GetLength(blockposition); 
+            return this.BlockFile.GetLength(blockposition);
         }
 
         public TValue GetFromColumns(TKey key)
@@ -1129,13 +1163,13 @@ namespace Kooboo.IndexedDB
 
 
         private void TrySetVersionFunction()
-        { 
+        {
             var VersionFieldType = Helper.TypeHelper.GetFieldType<TValue>(GlobalSettings.VersionFieldName);
 
             if (VersionFieldType != null && VersionFieldType == typeof(Int64))
-            { 
+            {
                 this.SetVersionNr = Helper.ObjectHelper.GetSetValue<TValue, Int64>(GlobalSettings.VersionFieldName);
-            } 
+            }
         }
 
         public bool add(object key, object value)
