@@ -102,7 +102,7 @@ k.session.key=""value"";")]
 
 
         [Description(@"get a session value
-        var value = k.session.get(""key""); 
+var value = k.session.get(""key""); 
 var value2 = k.session.key;")]
         public object get(string key)
         {

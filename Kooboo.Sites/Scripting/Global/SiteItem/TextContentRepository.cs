@@ -833,7 +833,7 @@ var item = k.site.textContents.get(""titletwo"");")]
             return result;
         }
 
-        [Description(@"Return the query object for further operations like paging
+        [Description(@"Return the query object for further operations like paging.
 use the same query syntax as find or findAll")]
         public TextContentQuery Query(string query)
         {

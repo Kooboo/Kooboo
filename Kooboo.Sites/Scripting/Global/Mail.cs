@@ -21,7 +21,9 @@ namespace KScript
         }
 
         [KDefineType(Params = new[] { typeof(MailMessage) })]
-        [Description(@"Send an email message using default smtp")]
+        [Description(@"Send an email message using default smtp
+var msg = { to: ""guoqi@kooboo.com"", from: ""1802897953@qq.com"", subject: ""this is a test email xxxx"", body: ""some html body"" };  
+k.mail.send(msg);")]
         public void Send(object value)
         {
             var maildata = PrepareData(value);
@@ -225,6 +227,7 @@ namespace KScript
 var msg = { to: ""guoqi@kooboo.com"", from: ""1802897953@qq.com"", subject: ""this is a test email xxxx"", body: ""some html body"" }; 
 var smtpserver = { host: ""smtp.qq.com"", port: 587, ssl: true, username: ""1802897953@qq.com"", password: ""xjpctnbtvsxwbige"" }; 
 k.mail.smtpSend(smtpserver, msg);")]
+        [KDefineType(Params = new[] { typeof(SmtpServer), typeof(MailMessage) })]
         public void SmtpSend(object SmtpServer, object MailMessage)
         {
             var server = GetSmtpServer(SmtpServer);

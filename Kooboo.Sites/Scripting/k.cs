@@ -36,6 +36,7 @@ namespace KScript
 
         private kDataContext _data;
 
+        [Description("the dataContext of kview engine, the html render engine of kooboo. You can explicitly set value into datacontext or just declare the value as JS global variable, it will be accesible from kview engine.")]
         public kDataContext DataContext
         {
             get
