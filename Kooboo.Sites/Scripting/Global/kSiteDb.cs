@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using KScript.Sites;
@@ -94,6 +95,7 @@ namespace KScript
             }
         }
 
+        [KIgnore]
         public TextContentObjectRepository TextContent
         {
             get

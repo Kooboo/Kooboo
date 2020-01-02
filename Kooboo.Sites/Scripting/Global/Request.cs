@@ -321,6 +321,11 @@ var value = k.request.form.queryname")]
             this.data.Add(key, value);
         }
 
+        public void Set(string key, string value)
+        {
+            this.Add(key, value);
+        }
+
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
         public void Add(KeyValuePair<string, string> item)

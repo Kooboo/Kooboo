@@ -1,6 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using System.ComponentModel;
 
 namespace KScript
 {
@@ -12,12 +14,16 @@ namespace KScript
             this.context = context; 
         } 
 
+        [Description(@"Set value into KView render engine
+    var obj = {name: ""myname"", fieldtwo: ""value""};
+    k.dataContext.set(""key"", obj);")]
         public void set(string key, object value)
         {
             this.context.DataContext.Push(key, value); 
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public object this[string key]
         {
             get
@@ -30,6 +36,7 @@ namespace KScript
             }
         }
 
+        [Description("get existing object from dataContext")]
         public object get(string key)
         {
             return this.context.DataContext.GetValue(key); 

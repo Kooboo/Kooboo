@@ -12,11 +12,20 @@ namespace KScript.Parameter
         string From { get; set; }
         string Subject { get; set; }
         string TextBody { get; set; }
-        string HtmlBody { get; set; }
-        
+        string HtmlBody { get; set; } 
        string Body { get; set; }
     }
 
+
+    public interface SmtpServer
+    {
+        string host { get; set; }
+        int port { get; set; }
+        bool ssl { get; set; }
+        string username { get; set; }
+        string password { get; set; }
+    }
+  
     public interface  RoutableText
     {
         string name { get; set; }
