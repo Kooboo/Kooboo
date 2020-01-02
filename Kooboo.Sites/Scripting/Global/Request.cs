@@ -206,7 +206,13 @@ var value = k.request.form.queryname")]
 
         public KDictionary(Dictionary<string, string> value)
         {
-            this.data = value; 
+            if (value !=null)
+            {
+                foreach (var item in value)
+                {
+                    this.data[item.Key] = item.Value; 
+                }
+            } 
         }
 
         private Dictionary<string, string> data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

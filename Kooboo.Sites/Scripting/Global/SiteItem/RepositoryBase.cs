@@ -28,7 +28,7 @@ namespace KScript.Sites
         [KIgnore]
         internal RenderContext context { get; set; }
 
-        [Description(@"Return an array of all the SiteObjects
+        [Description(@"Return an array of all SiteObjects. SiteObject can be view, layout, style or others.
 var allStyles = k.site.styles.all(); ")]
         public virtual List<SiteObject> All()
         {
@@ -44,7 +44,7 @@ var allStyles = k.site.styles.all(); ")]
             return result;
         }
 
-        [Description(@"Update the SiteOject property values
+        [Description(@"Update the SiteOject property values. SiteObject can be view, layout, style or others. 
     var style = k.site.styles.getByUrl(""/a.css""); 
     style.body = "".sample {}""; 
     k.site.styles.update(style);")]
@@ -53,14 +53,14 @@ var allStyles = k.site.styles.all(); ")]
             this.repo.AddOrUpdate(SiteObject);
         }
 
-        [Description(@"Get an item based on Name or Id
+        [Description(@"Get an SiteObject based on Name or Id. SiteObject can be view, layout, style or others. 
    var view = k.site.views.get(""viewname"");")]
         public virtual ISiteObject Get(object nameOrId)
         {
             return this.repo.GetByNameOrId(nameOrId.ToString());
         }
 
-        [Description(@"Delete an item
+        [Description(@"Delete a SiteObject, SiteObject can be view, layout, page or others.
        var page = k.site.pages.getByUrl(""/pagename""); 
 k.site.pages.delete(page.id);")]
         public virtual void Delete(object nameOrId)
@@ -72,7 +72,7 @@ k.site.pages.delete(page.id);")]
             }
         } 
 
-        [Description(@"Add a siteobject
+        [Description(@"Add a siteobject, a siteobject can be view, layout, page or others. 
        var view = { };
        view.name = ""viewname"";
   view.body = ""new  body""; 

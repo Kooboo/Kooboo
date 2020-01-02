@@ -149,7 +149,7 @@ namespace Kooboo.Sites.FrontEvent
                     var code = sitedb.Code.Get(item.CodeId);
                     if (code != null && !string.IsNullOrWhiteSpace(code.Body))
                     {
-                        kcontext.config = CopySetting(item.Setting);
+                        kcontext.config = new KDictionary(CopySetting(item.Setting));
 
                         var outputstring = Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
                         

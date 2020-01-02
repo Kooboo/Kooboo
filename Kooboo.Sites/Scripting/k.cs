@@ -327,8 +327,20 @@ var value = k.session.key; ")]
                 return _cookie;
             }
         }
-         
-        public Dictionary<string, string> config { get; set; }
+
+        [Description("Access to configuration of current event")]
+
+        private KDictionary _config; 
+        public KDictionary config {
+            get {
+                if (_config == null)
+                {
+                    _config = new KDictionary(); 
+                }
+                return _config; 
+            }
+            set { _config = value;  }
+        }
          
         [Kooboo.Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }

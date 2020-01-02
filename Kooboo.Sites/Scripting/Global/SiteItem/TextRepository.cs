@@ -20,7 +20,7 @@ namespace KScript.Sites
         {
         }
 
-        [Description(@"Update the text value of the body property
+        [Description(@"Update text value of the body property
        var style = k.site.styles.getByUrl(""/a.css""); 
       k.site.styles.updateBody(style.Id, "".newcls{}"");")]
         public void UpdateBody(object NameOrId, string newbody)

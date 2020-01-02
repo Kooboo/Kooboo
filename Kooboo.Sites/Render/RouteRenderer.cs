@@ -8,62 +8,70 @@ namespace Kooboo.Sites.Render
     {
         public static async Task RenderAsync(FrontContext context)
         {
-            if (context.RenderContext.Response.End)
+            try
             {
-                return;
-            }
+                if (context.RenderContext.Response.End)
+                {
+                    return;
+                }
 
-            switch (context.Route.DestinationConstType)
-            {
-                case ConstObjectType.Page:
-                    {
-                        await PageRenderer.RenderAsync(context);
+                switch (context.Route.DestinationConstType)
+                {
+                    case ConstObjectType.Page:
+                        {
+                            await PageRenderer.RenderAsync(context);
+                            break;
+                        }
+                    case ConstObjectType.CmsFile:
+                        {
+                            FileRenderer.Render(context);
+                            break;
+                        }
+                    case ConstObjectType.Image:
+                        {
+                            ImageRenderer.Render(context);
+                            break;
+                        }
+                    case ConstObjectType.Script:
+                        {
+                            ScriptRenderer.Render(context);
+                            break;
+                        }
+
+                    case ConstObjectType.Style:
+                        {
+                            StyleRenderer.Render(context);
+                            break;
+                        }
+                    case ConstObjectType.View:
+                        {
+                            await   ViewRenderer.Render(context);
+                            break;
+                        }
+                    case ConstObjectType.KoobooSystem:
+                        {
+                            Systems.SystemRender.Render(context);
+                            break;
+                        }
+                    case ConstObjectType.ResourceGroup:
+                        {
+                            Systems.SystemRender.ResourceGroupRender(context, context.Route.objectId.ToString());
+                            break;
+                        }
+                    case ConstObjectType.Code:
+                        {
+                            CodeRenderer.Render(context);
+                            break;
+                        }
+                    default:
                         break;
-                    }
-                case ConstObjectType.CmsFile:
-                    {
-                        FileRenderer.Render(context);
-                        break;
-                    }
-                case ConstObjectType.Image:
-                    {
-                        ImageRenderer.Render(context);
-                        break;
-                    }
-                case ConstObjectType.Script:
-                    {
-                        ScriptRenderer.Render(context);
-                        break;
-                    }
- 
-                case ConstObjectType.Style:
-                    {
-                        StyleRenderer.Render(context);
-                        break;
-                    }
-                case ConstObjectType.View:
-                    {
-                        ViewRenderer.Render(context);
-                        break;
-                    }
-                case ConstObjectType.KoobooSystem:
-                    {
-                        Systems.SystemRender.Render(context);
-                        break;
-                    }
-                case ConstObjectType.ResourceGroup:
-                    {
-                        Systems.SystemRender.ResourceGroupRender(context, context.Route.objectId.ToString());
-                        break;
-                    }
-                case ConstObjectType.Code: 
-                    {
-                        CodeRenderer.Render(context);
-                        break; 
-                    }
-                default:
-                    break;
+                }
             }
+            catch (System.Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + " " + ex.Source + ex.StackTrace); 
+            }
+          
         }
     }
 }

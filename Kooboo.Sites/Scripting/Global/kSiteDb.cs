@@ -17,7 +17,7 @@ namespace KScript
             _locker = new object();
         }
 
-        private object _locker; 
+        private object _locker;
         RoutableTextRepository _page;
 
         public RoutableTextRepository Pages
@@ -37,8 +37,8 @@ namespace KScript
                 return _page;
             }
         }
-          
-        TextRepository _views; 
+
+        TextRepository _views;
         public TextRepository Views
         {
             get
@@ -57,7 +57,7 @@ namespace KScript
             }
         }
 
-        TextRepository _layout; 
+        TextRepository _layout;
         public TextRepository Layouts
         {
             get
@@ -76,7 +76,7 @@ namespace KScript
             }
         }
 
-        TextContentObjectRepository _textcontents; 
+        TextContentObjectRepository _textcontents;
         public TextContentObjectRepository TextContents
         {
             get
@@ -100,7 +100,7 @@ namespace KScript
         {
             get
             {
-                return this.TextContents; 
+                return this.TextContents;
             }
         }
 
@@ -143,11 +143,11 @@ namespace KScript
                     }
                 }
                 return _labels;
-            }    
+            }
         }
 
 
-        private RoutableTextRepository _script; 
+        private RoutableTextRepository _script;
 
         public RoutableTextRepository Scripts
         {
@@ -164,11 +164,11 @@ namespace KScript
                     }
                 }
                 return _script;
-            }            
+            }
         }
 
 
-        private RoutableTextRepository _styles; 
+        private RoutableTextRepository _styles;
 
         public RoutableTextRepository Styles
         {
@@ -185,13 +185,13 @@ namespace KScript
                     }
                 }
                 return _styles;
-            }    
+            }
         }
 
 
-        private BinaryRepository _images;       
+        private BinaryRepository _images;
         public BinaryRepository Images
-        {   
+        {
             get
             {
                 if (_images == null)
@@ -205,10 +205,10 @@ namespace KScript
                     }
                 }
                 return _images;
-            }         
+            }
         }
 
-        private BinaryRepository _files; 
+        private BinaryRepository _files;
         public BinaryRepository Files
         {
             get
@@ -224,14 +224,25 @@ namespace KScript
                     }
                 }
                 return _files;
-            }    
+            }
         }
-                      
-        public Kooboo.Sites.Repository.RouteRepository Routes
+
+        RouteObjectRepository _routes;
+        public KScript.Sites.RouteObjectRepository Routes
         {
             get
-            {     
-                return this.context.WebSite != null ? this.context.WebSite.SiteDb().Routes : null;
+            {
+                if (_routes == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_routes == null)
+                        {
+                            _routes = new RouteObjectRepository(this.context.WebSite.SiteDb().Routes, this.context);
+                        }
+                    }
+                }
+                return _routes;
             }
         }
 

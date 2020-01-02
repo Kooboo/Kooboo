@@ -17,7 +17,7 @@ namespace KScript.Sites
 
         }
 
-        [Description(@"get the SiteObject by Url
+        [Description(@"get the SiteObject by Url, SiteObject can be page, style or others.
       var page = k.site.pages.getByUrl(""/pagename"");
       var style = k.site.styles.getByUrl(""/style.css"");")]
         public ISiteObject GetByUrl(string url)
@@ -31,7 +31,7 @@ namespace KScript.Sites
         }
 
         [KDefineType(Params = new[] { typeof(Parameter.RoutableText) })]
-        [Description(@"Add a routable item
+        [Description(@"Add a routable SiteObject, SiteObject can be page, style or others. 
   var page = {};
   page.name = ""pagename"";
   page.body = ""new  body"";
@@ -101,7 +101,7 @@ namespace KScript.Sites
             return null;
         }
 
-        [Description(@"get the object relative url
+        [Description(@"get the SiteObject relative url, SiteObject can be page, style or others.
       var page = k.site.pages.getByUrl(""/ pagename"");
       var url = k.site.pages.getUrl(page.id);")]
         public string getUrl(object id)

@@ -36,8 +36,7 @@ namespace Kooboo.Sites.Render
                 result = RenderHelper.Render(RenderPlan, context.RenderContext);
                 result = DomService.EnsureDocType(result); 
             }
-
-
+            
 
             if (context.Page.Type == Models.PageType.RichText)
             {
