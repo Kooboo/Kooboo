@@ -103,12 +103,29 @@ var MonacoEditorService =
               "vs/basic-languages":
                 baseUrl + "/monaco-languages@1.9.0/release/min",
               "vs/language/html":
-                baseUrl + "/monaco-html-extra@2.6.0/release/min",
+                baseUrl + "/monaco-html-extra@2.6.1/release/min",
               "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
               "vs/language/typescript":
                 baseUrl + "/monaco-typescript@3.6.1/release/min"
             }
           });
+
+          window.MonacoEnvironment = {
+            getWorkerUrl: function(workerId, label) {
+              var baseUrl =
+                "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
+              if (label === "html") {
+                baseUrl =
+                  "https://cdn.jsdelivr.net/npm/monaco-html-extra@2.6.1/min";
+              }
+              return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                      self.MonacoEnvironment = {
+                        baseUrl: ${baseUrl} 
+                      };
+                      importScripts('https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min/vs/base/worker/workerMain.js');`)}`;
+            }
+          };
+
           window.require(
             ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
             function() {
@@ -239,26 +256,29 @@ var MonacoEditorService =
         }
       }
       path = monaco.Uri.file(path);
-      switch (language) {
-        case "javascript":
-          monaco.languages.typescript.javascriptDefaults.addExtraLib(
-            fileContent,
-            path
-          );
-          break;
-        case "typescript":
-          monaco.languages.typescript.typescriptDefaults.addExtraLib(
-            fileContent,
-            path
-          );
-          break;
-        default:
-          if (monaco.languages[language]) {
-            monaco.languages[language].addExtraLib(fileContent, path);
-          } else {
-            console.error("monaco.languages is no " + language);
-          }
-      }
+        if (monaco.languages[language]) {
+            switch (language) {
+                case "javascript":
+                    monaco.languages.typescript.javascriptDefaults.addExtraLib(
+                        fileContent,
+                        path
+                    );
+                    break;
+                case "typescript":
+                    monaco.languages.typescript.typescriptDefaults.addExtraLib(
+                        fileContent,
+                        path
+                    );
+                    break;
+                case "html":
+                    monaco.languages[language].htmlDefaults.addExtraLib(
+                        fileContent,
+                        path
+                    );
+                    break;
+            }
+        }
+
     };
     MonacoEditorService.prototype.addManualTriggerSuggest = function(editor) {
       editor.addAction({
