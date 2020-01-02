@@ -14,6 +14,7 @@
           rsp.model,
           "kscript/kscript.d.ts"
         );
+        monacoService.addExtraLib("html", rsp.model, "kscript/kscript.d.ts");
       }
     });
     Kooboo.loadJS([
