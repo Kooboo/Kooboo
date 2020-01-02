@@ -1,6 +1,10 @@
 var getKViewSuggestions = function() {
   var suggestions = [
     {
+      label: "engine",
+      insertText: 'engine="kscript"'
+    },
+    {
       label: "k-attributes",
       documentation:
         "k-attributes will render the value as defined attribute name inside the open tag.",
@@ -49,7 +53,7 @@ var getKViewSuggestions = function() {
     {
       label: "k-omit",
       documentation: "Omit the element open tag.",
-      insertText: 'k-omit="${1:true}"'
+      insertText: "k-omit"
     },
     {
       label: "k-placeholder",

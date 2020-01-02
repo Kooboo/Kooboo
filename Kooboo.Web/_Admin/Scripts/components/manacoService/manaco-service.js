@@ -333,16 +333,20 @@ var MonacoEditorService =
             return;
           }
 
-          var tag = textUntilPosition.split("<").pop();
-
-          if (tag) {
+          var tags = textUntilPosition.match(/<[\w\d-]+\s?/g);
+          if (tags) {
+            var tag =
+              tags
+                .pop()
+                .replace("<", "</")
+                .replace(" ", "") + ">";
             return {
               suggestions: [
                 {
-                  label: "</" + tag,
+                  label: tag,
                   kind: monaco.languages.CompletionItemKind.Property,
-                  documentation: "</" + tag,
-                  insertText: "</" + tag
+                  documentation: tag,
+                  insertText: tag
                 }
               ]
             };
@@ -362,6 +366,7 @@ var MonacoEditorService =
             /<[\w\d-]+\s+((?!<\/).)*[a-zA-Z\-]$/
           ); // <div .... k> or <div ....> k
           if (!matchs) return;
+          if (!matchs[0].match(/\s+[a-zA-Z\-]$/)) return; // space + character
           var cleanTag = matchs[0]
             .replace(/=\s*"[^"]*"/g, "") // remove attributes ""
             .replace(/=\s*'[^"]*'/g, "") // remove attributes ''
