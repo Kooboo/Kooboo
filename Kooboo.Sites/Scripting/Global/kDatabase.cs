@@ -7,6 +7,7 @@ using System.ComponentModel;
 
 namespace KScript
 {
+    [KValueType(typeof(KTable))]
     public class kDatabase
     {
         private RenderContext context { get; set; }
