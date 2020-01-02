@@ -333,16 +333,20 @@ var MonacoEditorService =
             return;
           }
 
-          var tag = textUntilPosition.split("<").pop();
-
-          if (tag) {
+          var tags = textUntilPosition.match(/<[\w\d-]+\s?/g);
+          if (tags) {
+            var tag =
+              tags
+                .pop()
+                .replace("<", "</")
+                .replace(" ", "") + ">";
             return {
               suggestions: [
                 {
-                  label: "</" + tag,
+                  label: tag,
                   kind: monaco.languages.CompletionItemKind.Property,
-                  documentation: "</" + tag,
-                  insertText: "</" + tag
+                  documentation: tag,
+                  insertText: tag
                 }
               ]
             };
