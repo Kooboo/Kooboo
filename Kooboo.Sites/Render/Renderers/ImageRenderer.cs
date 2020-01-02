@@ -9,7 +9,7 @@ namespace Kooboo.Sites.Render
 {
     public class ImageRenderer
     {
-        public async static Task Render(FrontContext context)
+        public async static Task RenderAsync(FrontContext context)
         {
             var image = await context.SiteDb.ImagePool.GetAsync(context.Route.objectId);
 
@@ -67,17 +67,7 @@ namespace Kooboo.Sites.Render
             context.RenderContext.Response.Body = image.ContentBytes;
         }
 
-        public byte[] GetContentBytes(FrontContext context, Models.Image image)
-        {
-            if (image.ContentBytes == null)
-            {
-                var sitedb = context.RenderContext.WebSite.SiteDb();
-                 
-            }
-            return image.ContentBytes; 
-        }
-
-
+    
 
     }
 }

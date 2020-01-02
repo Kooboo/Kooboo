@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Render
                         }
                     case ConstObjectType.Image:
                         {
-                           await ImageRenderer.Render(context);
+                           await ImageRenderer.RenderAsync(context);
                             break;
                         }
                     case ConstObjectType.Script:
