@@ -333,13 +333,14 @@ var MonacoEditorService =
             return;
           }
 
-          var tags = textUntilPosition.match(/<[\w\d-]+\s?/g);
-          if (tags) {
-            var tag =
-              tags
-                .pop()
-                .replace("<", "</")
-                .replace(" ", "") + ">";
+          var regex = /<([\w\d-]+)\s?/g,
+            matches,
+            tag;
+          while ((matches = regex.exec(textUntilPosition))) {
+            tag = matches[1];
+          }
+          if (tag) {
+            tag = "</" + tag + ">";
             return {
               suggestions: [
                 {
