@@ -256,7 +256,6 @@ var MonacoEditorService =
         }
       }
       path = monaco.Uri.file(path);
-        if (monaco.languages[language]) {
             switch (language) {
                 case "javascript":
                     monaco.languages.typescript.javascriptDefaults.addExtraLib(
@@ -277,7 +276,6 @@ var MonacoEditorService =
                     );
                     break;
             }
-        }
 
     };
     MonacoEditorService.prototype.addManualTriggerSuggest = function(editor) {
