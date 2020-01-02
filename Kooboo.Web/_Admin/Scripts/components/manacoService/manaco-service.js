@@ -276,7 +276,7 @@ var MonacoEditorService =
         triggerCharacters: ["<"],
         provideCompletionItems: function(model, position) {
           var textUntilPosition = model.getValueInRange({
-            startLineNumber: 1,
+            startLineNumber: position.lineNumber,
             startColumn: 1,
             endLineNumber: position.lineNumber,
             endColumn: position.column
@@ -302,6 +302,43 @@ var MonacoEditorService =
               };
             })
           };
+        }
+      });
+
+      monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: [">"],
+        provideCompletionItems: function(model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          if (
+            textUntilPosition.split("<").length !=
+            textUntilPosition.split(">").length
+          ) {
+            return;
+          }
+
+          var tag = textUntilPosition.split("<").pop();
+
+          if (tag) {
+            return {
+              suggestions: [
+                {
+                  label: "</" + tag,
+                  kind: monaco.languages.CompletionItemKind.Property,
+                  documentation: "</" + tag,
+                  insertText: "${1}</" + tag,
+                  insertTextRules:
+                    monaco.languages.CompletionItemInsertTextRule
+                      .InsertAsSnippet
+                }
+              ]
+            };
+          }
         }
       });
 
