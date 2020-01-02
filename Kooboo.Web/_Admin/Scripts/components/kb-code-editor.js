@@ -102,12 +102,6 @@
           self.isInit = true;
           self.isCreate = true;
           monacoService.addManualTriggerSuggest(self.editor);
-          self.$el.addEventListener("keydown", function(e) {
-            if (e.keyCode != 32) return;
-            setTimeout(function() {
-              self.editor.getAction("editor.action.triggerSuggest").run();
-            }, 100);
-          });
           monacoService.onModelContentChange(self.model, function(content) {
             self.d_code = content;
           });
