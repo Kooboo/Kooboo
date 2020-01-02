@@ -513,15 +513,15 @@ namespace Kooboo.Data.Server
                         else
                         {
                             // 404.   
-                            string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
-                            if (System.IO.File.Exists(filename))
-                            {
-                                string text = System.IO.File.ReadAllText(filename);
-                                var bytes = System.Text.Encoding.UTF8.GetBytes(text);
-                                res.Headers["Content-Length"] = bytes.Length.ToString();
-                                res.StatusCode = 404;
-                                await res.Body.WriteAsync(bytes, 0, bytes.Length);
-                            }
+                            //string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
+                            //if (System.IO.File.Exists(filename))
+                            //{
+                            //    string text = System.IO.File.ReadAllText(filename);
+                            //    var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+                            //    res.Headers["Content-Length"] = bytes.Length.ToString();
+                            //    res.StatusCode = 404;
+                            //    await res.Body.WriteAsync(bytes, 0, bytes.Length);
+                            //}
 
                         }
                     }
