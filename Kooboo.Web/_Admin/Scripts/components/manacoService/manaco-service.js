@@ -362,6 +362,7 @@ var MonacoEditorService =
             /<[\w\d-]+\s+((?!<\/).)*[a-zA-Z\-]$/
           ); // <div .... k> or <div ....> k
           if (!matchs) return;
+          if (!matchs[0].match(/\s+[a-zA-Z\-]$/)) return; // space + character
           var cleanTag = matchs[0]
             .replace(/=\s*"[^"]*"/g, "") // remove attributes ""
             .replace(/=\s*'[^"]*'/g, "") // remove attributes ''
