@@ -21,8 +21,7 @@ namespace Kooboo.Sites.Render
                 //    context.RenderContext.Response.OrginalLength = bytes.Length; 
                 //    var stream = new System.IO.MemoryStream(bytes);
 
-                //context.RenderContext.Response.Stream = new System.IO.Compression.GZipStream(stream, System.IO.Compression.CompressionLevel.Fastest);
-
+                //context.RenderContext.Response.Stream = new System.IO.Compression.GZipStream(stream, System.IO.Compression.CompressionLevel.Fastest); 
                 //}
                 //else
                 //{
