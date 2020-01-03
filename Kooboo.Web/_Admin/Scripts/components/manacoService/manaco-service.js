@@ -95,15 +95,17 @@ var MonacoEditorService =
     };
     MonacoEditorService.prototype.loader = function(callback) {
       var baseUrl = "https://cdn.jsdelivr.net/npm";
+      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/dev";
+      let monacoCoreUrl =
+        "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
       $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
         function() {
           window.require.config({
             paths: {
-              vs: baseUrl + "/monaco-editor-core@0.19.0/min/vs",
+              vs: monacoCoreUrl + "/vs",
               "vs/basic-languages":
                 baseUrl + "/monaco-languages@1.9.0/release/min",
-              "vs/language/html":
-                baseUrl + "/monaco-html-extra@2.6.1/release/min",
+              "vs/language/html": monacoHtmlUrl,
               "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
               "vs/language/typescript":
                 baseUrl + "/monaco-typescript@3.6.1/release/min"
@@ -112,17 +114,19 @@ var MonacoEditorService =
 
           window.MonacoEnvironment = {
             getWorkerUrl: function(workerId, label) {
-              var baseUrl =
-                "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
+              var url = monacoCoreUrl;
               if (label === "html") {
-                baseUrl =
-                  "https://cdn.jsdelivr.net/npm/monaco-html-extra@2.6.1/min";
+                url = monacoHtmlUrl;
               }
-              return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+              return `data:text/javascript;charset=utf-8,
+                            debugger
                       self.MonacoEnvironment = {
-                        baseUrl: ${baseUrl} 
+                        baseUrl:${encodeURIComponent(url)}
                       };
-                      importScripts('https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min/vs/base/worker/workerMain.js');`)}`;
+                        importScripts(${encodeURIComponent(
+                          monacoCoreUrl + "/vs/base/worker/workerMain.js"
+                        )})
+                      `;
             }
           };
 
@@ -256,27 +260,26 @@ var MonacoEditorService =
         }
       }
       path = monaco.Uri.file(path);
-            switch (language) {
-                case "javascript":
-                    monaco.languages.typescript.javascriptDefaults.addExtraLib(
-                        fileContent,
-                        path
-                    );
-                    break;
-                case "typescript":
-                    monaco.languages.typescript.typescriptDefaults.addExtraLib(
-                        fileContent,
-                        path
-                    );
-                    break;
-                case "html":
-                    monaco.languages[language].htmlDefaults.addExtraLib(
-                        fileContent,
-                        path
-                    );
-                    break;
-            }
-
+      switch (language) {
+        case "javascript":
+          monaco.languages.typescript.javascriptDefaults.addExtraLib(
+            fileContent,
+            path
+          );
+          break;
+        case "typescript":
+          monaco.languages.typescript.typescriptDefaults.addExtraLib(
+            fileContent,
+            path
+          );
+          break;
+        case "html":
+          monaco.languages[language].htmlDefaults.addExtraLib(
+            fileContent,
+            path
+          );
+          break;
+      }
     };
     MonacoEditorService.prototype.addManualTriggerSuggest = function(editor) {
       editor.addAction({
