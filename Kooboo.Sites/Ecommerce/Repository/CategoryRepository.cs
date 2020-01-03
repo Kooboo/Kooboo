@@ -38,6 +38,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }   
             base.Delete(id); 
         }
+         
     }     
 
 
