@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Render
                         }
                     case ConstObjectType.CmsFile:
                         {
-                            FileRenderer.Render(context);
+                           await FileRenderer.RenderAsync(context);
                             break;
                         }
                     case ConstObjectType.Image:
