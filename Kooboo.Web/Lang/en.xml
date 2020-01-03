@@ -1182,8 +1182,8 @@
   <key id=" Attachment(s)"> Attachment(s)</key>
   <key id="No address found">No address found</key>
   <key id="E-commerce enabled">E-commerce enabled</key>
-  <key id="In stock">In stock</key>
-  <key id="Drop off">Drop off</key>
+  <key id="In stock">Online</key>
+  <key id="Drop off">Offline</key>
   <key id="Logical and">Logical and</key>
   <key id="Logical or">Logical or</key>
   <key id="No page has been viewed yet.">No page has been viewed yet.</key>

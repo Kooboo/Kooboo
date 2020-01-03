@@ -1651,6 +1651,10 @@
     this.getList = function(para) {
       return this.executeGet("ProductList", para);
     };
+
+    this.search = function(para) {
+      return this.executePost("Search", para);
+    };
   }
   extend(Product, BaseModel);
 

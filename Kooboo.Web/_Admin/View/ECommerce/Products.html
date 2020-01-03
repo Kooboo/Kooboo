@@ -1,11 +1,140 @@
 <!-- #layout name=blank-->
+<style>
+  #category_tree {
+    padding: 10px 0;
+    border: 1px solid #e5e5e5;
+    border-radius: 2px;
+    max-height: 460px;
+    overflow-y: auto;
+  }
+
+  .category-list,
+  .sub-category-list {
+    list-style: none;
+    padding-left: 10px;
+    margin-bottom: 0;
+  }
+
+  .sub-category-list {
+    padding-left: 30px;
+  }
+
+  .sub-category-list li {
+    position: relative;
+  }
+
+  .sub-category-list li::before {
+    content: "";
+    width: 15px;
+    height: 21px;
+    background-image: url(/_Admin/Styles/images/jstree.png);
+    background-position: -79px -2px;
+    position: absolute;
+    left: -23px;
+    top: -3px;
+  }
+
+  .tree-checkbox label {
+    cursor: pointer;
+    margin-bottom: 6px;
+  }
+
+  .tree-checkbox label .icon {
+    width: 22px;
+    height: 15px;
+    background-image: url(/_Admin/Styles/images/jstree.png);
+    background-position: -169px -9px;
+    display: inline-block;
+    position: relative;
+    top: 2px;
+  }
+
+  .tree-checkbox label.checked .icon {
+    background-position: -233px -9px;
+  }
+
+  .tree-checkbox label input[type="checkbox"] {
+    display: none;
+  }
+
+  .selected-cates-container {
+    border: 1px solid #e5e5e5;
+    border-radius: 2px 0 0 2px;
+    padding: 6px 6px;
+    height: 32px;
+    display: inline-block; 
+    vertical-align: middle;
+  }
+
+  .selected-cates-container span.cate {
+    padding: 2px 4px;
+    border: 1px solid #e5e5e5;
+    border-radius: 2px;
+    cursor: default;
+    margin-right: 3px;
+    user-select: none;
+  }
+  .filter-by-category {
+    float: right;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: calc(100% - 588px);
+  }
+  .filter-by-category .input-group-btn {
+    display: inline-block; 
+    width: auto
+  }
+</style>
 <div id="app" v-cloak>
   <div class="page-header">
     <h1 class="title">Products management</h1>
+    <div>
+      <div class="input-group input-large pull-right">
+        <input
+          type="text"
+          v-model="searchKey"
+          @keyup.enter="searchStart"
+          class="form-control"
+          style="height: 32px;"
+          placeholder="keywords"
+        />
+        <div class="input-group-btn">
+          <button class="btn btn-default" @click="searchStart"
+            ><i class="fa fa-search"></i>Search</button
+          >
+        </div>
+      </div>
+      <div class="filter-by-category">
+        <span class="input-group-btn">
+          <button class="btn blue" @click="onShowCategoriesModal"
+            >Select Category</button
+          >
+        </span>
+        <div v-show="selectedCategories.length" class="selected-cates-container">
+          <span class="cate" v-for="($data, index) in selectedCategories" :key="index"
+            >{{ $data.name }}</span
+          >
+        </div>
+      </div>
+    </div>
   </div>
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
-    <div class="container-fluid">
+    <div v-if="isSearching" class="container-fluid">
+      <a
+        class="btn btn-link disabled navbar-btn"
+        href="javascript:;"
+        >Search result</a
+      >
+      <a
+        href="javascript:;"
+        class="btn btn-default navbar-btn pull-right"
+        @click="clearSearching"
+        ><i class="fa fa-close"></i
+      ></a>
+    </div>
+
+    <div v-else class="container-fluid">
       <div class="btn-group navbar-btn">
         <div class="btn-group">
           <button class="btn green dropdown-toggle" data-toggle="dropdown"
@@ -67,6 +196,43 @@
     :total-pages="pager.totalPages"
     @change="changePage"
   ></kb-pager>
+
+<div
+  v-kb-modal="showCategoriesModal"
+  class="modal fade"
+  data-backdrop="static"
+  data-keyboard="false"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" @click="onHideCategoriesModal"
+          ><i class="fa fa-close"></i
+        ></button>
+        <h4 class="modal-title">Category</h4>
+      </div>
+      <div class="modal-body">
+        <div id="category_tree" v-if="categories.length">
+          <ul class="category-list">
+            <li v-for="($data, index) in categories" :key="index">
+              <product-category :category="$data"></product-category>
+            </li>
+          </ul>
+        </div>
+        <p v-else class="form-control-static"
+          >You don't have a category yet.</p
+        >
+      </div>
+      <div class="modal-footer">
+        <button class="btn green" @click="onSaveCategoriesModal">Save</button>
+        <button class="btn gray" @click="onHideCategoriesModal"
+          >Cancel</button
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 <script>
   (function() {
@@ -79,3 +245,18 @@
   })();
 </script>
 <script src="/_Admin/View/ECommerce/Products.js"></script>
+
+<script type="text/x-template" id="category-template">
+  <div class="tree-checkbox">
+      <label :class="{checked: category.selected }">
+          <i class="icon"></i>
+          <input type="checkbox" v-model="category.selected">
+          {{ category.name }}
+      </label>
+      <ul v-if="category.subCats.length" class="sub-category-list">
+          <li v-for="(subCate, index) in category.subCats" :key="index">
+            <product-category :category="subCate"></product-category>
+          </li>
+      </ul>
+  </div>
+</script>

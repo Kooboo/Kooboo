@@ -340,5 +340,48 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             return key;
         }
 
+        public PagedListViewModel<ProductViewModel> Search(ApiCall call, string keyword, List<Guid> categories)
+        {
+            var sitedb = call.WebSite.SiteDb();
+
+            int pagesize = ApiHelper.GetPageSize(call, 50);
+            int pagenr = ApiHelper.GetPageNr(call);
+
+            string language = string.IsNullOrEmpty(call.Context.Culture) ? call.WebSite.DefaultCulture : call.Context.Culture;
+
+            PagedListViewModel<ProductViewModel> model = new PagedListViewModel<ProductViewModel>();
+            model.PageNr = pagenr;
+            model.PageSize = pagesize;
+
+            // TODO: performance
+            var products = sitedb.Product.Query.SelectAll();
+            if (categories != null && categories.Count > 0)
+            {
+               var productCategories = sitedb.ProductCategory.Query.SelectAll().Where(o => categories.Contains(o.CategoryId));
+                products = products.Where(o => productCategories.Any(p => p.ProductId == o.Id)).ToList();
+            }
+            if(!string.IsNullOrWhiteSpace(keyword))
+            {
+                products = products.Where(o => o.Body.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) > -1).ToList();
+            }
+
+            model.TotalCount = products.Count();
+            model.TotalPages = ApiHelper.GetPageCount(model.TotalCount, model.PageSize);
+
+            var productlist = products.OrderByDescending(o => o.LastModified).Skip(model.PageNr * model.PageSize - model.PageSize).Take(model.PageSize).ToList();
+
+            model.List = new List<ProductViewModel>();
+
+            foreach (var item in productlist)
+            {
+                var type = sitedb.ProductType.Get(item.ProductTypeId);
+
+
+                model.List.Add(Kooboo.Sites.Ecommerce.Helper.ProductHelper.ToView(item, language, type != null ? type.Properties : null));
+            }
+
+            return model;
+        }
+
     }
 }

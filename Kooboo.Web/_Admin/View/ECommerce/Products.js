@@ -20,7 +20,13 @@ $(function() {
         pager: {},
         tableData: [],
         selected: [],
-        defaultColumns: []
+        defaultColumns: [],
+        searchKey: "",
+        selectedCategories: [],
+        showCategoriesModal: false,
+        categories: [],
+        cacheData: null,
+        isSearching: false,
       };
     },
     mounted: function() {
@@ -35,6 +41,11 @@ $(function() {
           self.getListByPage();
         }
       });
+      Kooboo.ProductCategory.getList().then(function(res) {
+        if (res.success) {
+          self.categories = res.model;
+        }
+      });
     },
     methods: {
       getListByPage: function(page) {
@@ -43,6 +54,7 @@ $(function() {
         }).then(function(res) {
           if (res.success) {
             self.handleData(res.model);
+            self.cacheData = res.model;
           }
         });
       },
@@ -99,7 +111,61 @@ $(function() {
             }
           });
         }
+      },
+      searchStart: function() {
+        if (this.searchKey || this.selectedCategories.length) {
+          self.isSearching = true;
+          Kooboo.Product.search({
+            categories: self.selectedCategories.map(function(item) {
+              return item.id;
+            }),
+            keyword: self.searchKey || " "
+          }).then(function(res) {
+            if (res.success) {
+              self.handleData(res.model);
+              self.isSearching = true;
+            }
+          });
+        } else {
+          this.isSearching = false;
+          self.handleData(this.cacheData);
+        }
+      },
+      clearSearching: function() {
+        this.searchKey = "";
+        this.selectedCategories = [];
+        this.isSearching = false;
+        self.handleData(this.cacheData);
+      },
+      onShowCategoriesModal: function() {
+        self.showCategoriesModal = true;
+      },
+      onHideCategoriesModal: function() {
+        self.showCategoriesModal = false;
+      },
+      onSaveCategoriesModal: function() {
+        self.selectedCategories = getSelected(self.categories);
+        self.onHideCategoriesModal();
       }
+    }
+  });
+  function getSelected(cates) {
+    var temp = [];
+    cates.forEach(function(c) {
+      if (c.selected) {
+        temp.push(c);
+      }
+
+      if (c.subCats && c.subCats.length) {
+        temp = _.concat(temp, getSelected(c.subCats));
+      }
+    });
+    return temp;
+  }
+  Vue.component("product-category", {
+    template: "#category-template",
+    props: {
+      category: Object
     }
   });
 });
