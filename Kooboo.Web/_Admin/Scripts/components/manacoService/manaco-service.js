@@ -118,11 +118,11 @@ var MonacoEditorService =
                 baseUrl =
                   "https://cdn.jsdelivr.net/npm/monaco-html-extra@2.6.1/min";
               }
-              return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                return `data:text/javascript;charset=utf-8,
                       self.MonacoEnvironment = {
-                        baseUrl: ${baseUrl} 
+                        baseUrl:${encodeURIComponent(baseUr)}
                       };
-                      importScripts('https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min/vs/base/worker/workerMain.js');`)}`;
+                      importScripts(${encodeURIComponent(baseUr + '/monaco-editor-core@0.19.0/min/vs/base/worker/workerMain.js')})`;
             }
           };
 
