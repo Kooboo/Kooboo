@@ -95,7 +95,7 @@ var MonacoEditorService =
     };
     MonacoEditorService.prototype.loader = function(callback) {
       var baseUrl = "https://cdn.jsdelivr.net/npm";
-      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.3/release/dev";
+      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/dev";
       let monacoCoreUrl =
         "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
       $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
