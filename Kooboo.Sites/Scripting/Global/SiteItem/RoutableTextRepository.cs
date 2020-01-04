@@ -102,7 +102,7 @@ namespace KScript.Sites
         }
 
         [Description(@"get the SiteObject relative url, SiteObject can be page, style or others.
-      var page = k.site.pages.getByUrl(""/ pagename"");
+      var page = k.site.pages.getByUrl(""/pagename"");
       var url = k.site.pages.getUrl(page.id);")]
         public string getUrl(object id)
         {

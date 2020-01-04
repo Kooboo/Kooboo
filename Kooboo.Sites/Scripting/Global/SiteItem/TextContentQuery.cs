@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Definition;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
@@ -20,6 +21,7 @@ namespace KScript.Sites
         }
 
         [Kooboo.Attributes.SummaryIgnore]
+        [KIgnore]
         public TextContentObjectRepository txtObjRepo { get; set; }
 
         public int skipcount { get; set; }
@@ -27,6 +29,7 @@ namespace KScript.Sites
         public bool Ascending { get; set; }
 
         public string OrderByField { get; set; }
+
 
         public string SearchCondition { get; set; }
 
@@ -243,6 +246,7 @@ namespace KScript.Sites
         }
 
 
+        [KIgnore]
         public int count()
         {
             // TODO: improve performance.
@@ -257,6 +261,8 @@ namespace KScript.Sites
             }
         }
 
+
+        public int length => this.count(); 
     }
 
 

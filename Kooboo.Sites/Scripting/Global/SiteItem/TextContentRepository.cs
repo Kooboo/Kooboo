@@ -20,8 +20,9 @@ namespace KScript.Sites
 
     public class TextContentObjectRepository
     {
+        [KIgnore]
         public RenderContext context { get; set; }
-
+        [KIgnore]
         public IRepository repo { get; set; }
         public TextContentObjectRepository(IRepository repo, RenderContext context)
         {
@@ -267,15 +268,15 @@ namespace KScript.Sites
         }
 
 
-        [Description(@"update a text content values
+        [Description(@"update a text content values.
           var item = k.site.textContents.get(""titletwo"");
           item.title = ""new value""; 
           k.site.textContents.update(item); ")] 
-        public void Update(object SiteObject)
+        public void Update(object textContent)
         {
-            if (SiteObject is TextContentObject)
+            if (textContent is TextContentObject)
             {
-                var obj = SiteObject as TextContentObject;
+                var obj = textContent as TextContentObject;
                 var sitedb = this.context.WebSite.SiteDb();
 
                 sitedb.TextContent.AddOrUpdate(obj.TextContent);

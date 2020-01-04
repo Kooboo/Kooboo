@@ -1,11 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Models;
 using KScript.Sites;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,6 +60,7 @@ namespace KScript.Sites
             }
         }
 
+        [KIgnore]
         public virtual void Add(object SiteObject)
         {
             var data = this.GetData(SiteObject);
@@ -84,6 +87,7 @@ namespace KScript.Sites
             this.repo.AddOrUpdate(result);
         }
 
+        [Description("Add an item with default culture")]
         public void Add(string name, string value)
         {
             if (string.IsNullOrEmpty(name))

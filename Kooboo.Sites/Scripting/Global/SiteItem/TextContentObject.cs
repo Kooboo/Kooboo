@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
@@ -14,12 +15,15 @@ namespace KScript.Sites
 
     public class TextContentObject : IDictionary<string, object>, System.Collections.IDictionary
     {
+        [KIgnore]
         public RenderContext context { get; set; }
-
+        [KIgnore]
         public Kooboo.Sites.Repository.SiteDb siteDb { get; set; }
 
+        [KIgnore]
         public string Culture { get; set; }
 
+        [KIgnore]
         public Kooboo.Sites.Contents.Models.TextContent TextContent { get; set; }
 
         public TextContentObject(Kooboo.Sites.Contents.Models.TextContent siteobject, RenderContext context)
@@ -30,6 +34,7 @@ namespace KScript.Sites
             this.siteDb = context.WebSite.SiteDb();
         }
 
+        [KIgnore]
         public void SetCulture(string culture)
         {
             this.Culture = culture;
@@ -146,21 +151,21 @@ namespace KScript.Sites
                 var type = this.siteDb.ContentTypes.Get(Value);
                 if (type != null)
                 {
-                    contenttype = type;
+                    contentType = type;
                     this.TextContent.ContentTypeId = type.Id;
                     return;
                 }
             }
 
-            if (contenttype == null)
+            if (contentType == null)
             {
                 if (this.TextContent.ContentTypeId != default(Guid))
                 {
-                    contenttype = siteDb.ContentTypes.Get(this.TextContent.ContentTypeId);
+                    contentType = siteDb.ContentTypes.Get(this.TextContent.ContentTypeId);
                 }
             }
 
-            if (contenttype == null || contenttype.Properties.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Name, FieldName)) != null)
+            if (contentType == null || contentType.Properties.Find(o => Kooboo.Lib.Helper.StringHelper.IsSameValue(o.Name, FieldName)) != null)
             {
                 this.TextContent.SetValue(FieldName, Value, this.Culture);
             }
@@ -170,9 +175,11 @@ namespace KScript.Sites
             } 
         }
          
-        public ContentType contenttype { get; set; }
+        public ContentType contentType { get; set; }
 
         private Dictionary<string, string> _AdditionalValues;
+
+        [KIgnore]
         public Dictionary<string, string> AdditionalValues
         {
             get
@@ -211,6 +218,7 @@ namespace KScript.Sites
             }
         }
 
+        [KIgnore]
         public int Count
         {
             get
@@ -224,8 +232,10 @@ namespace KScript.Sites
             }
         }
 
+        [KIgnore]
         public bool IsReadOnly => false;
 
+        [KIgnore]
         ICollection<object> IDictionary<string, object>.Values
         {
             get
@@ -238,42 +248,44 @@ namespace KScript.Sites
                 return new List<object>();
             }
         }
-
-
+         
         public void Add(string key, object value)
         {
             this.TextContent.SetValue(key, value.ToString(), Culture);
         }
 
+        [KIgnore]
         public void Add(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
 
+        [KIgnore]
         public void Clear()
         {
             this.TextContent.Contents.Clear();
         }
 
+        [KIgnore]
         public bool Contains(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
 
+        [KIgnore]
         public bool ContainsKey(string key)
         {
             var item = this.get(key);
             return item != null;
         }
-
+        [KIgnore]
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
-
+        [KIgnore]
         public bool Remove(string key)
-        {
-
+        { 
             var store = this.TextContent.GetContentStore(this.Culture);
             if (store != null)
             {
@@ -281,12 +293,12 @@ namespace KScript.Sites
             }
             return false;
         }
-
+        [KIgnore]
         public bool Remove(KeyValuePair<string, object> item)
         {
             throw new NotImplementedException();
         }
-
+        [KIgnore]
         public bool TryGetValue(string key, out object value)
         {
             var result = get(key);
@@ -302,12 +314,12 @@ namespace KScript.Sites
             }
         }
 
-
+        [KIgnore]
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             return data.GetEnumerator();
         }
-
+        [KIgnore]
         private Dictionary<string, object> data
         {
             get
@@ -332,38 +344,38 @@ namespace KScript.Sites
 
             }
         }
-
+        [KIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
-
+        [KIgnore]
         public bool Contains(object key)
         {
             return this.ContainsKey(key.ToString());
         }
-
+        [KIgnore]
         public void Add(object key, object value)
         {
             this.Add(key.ToString(), value);
         }
-
+        [KIgnore]
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
             return data.GetEnumerator();
         }
-
+        [KIgnore]
         public void Remove(object key)
         {
             Remove(key.ToString());
         }
-
+        [KIgnore]
         public void CopyTo(Array array, int index)
         {
             throw new NotImplementedException();
         }
 
-
+        [KIgnore]
         ICollection IDictionary.Keys
         {
             get
@@ -395,7 +407,7 @@ namespace KScript.Sites
             }
         }
 
-
+        [KIgnore]
         public ICollection Values
         {
             get
@@ -405,15 +417,14 @@ namespace KScript.Sites
         }
 
 
-
+        [KIgnore]
         public bool IsFixedSize => false;
-
+        [KIgnore]
         public object SyncRoot => throw new NotImplementedException();
-
+        [KIgnore]
         public bool IsSynchronized => false;
 
-
-
+        [KIgnore]
         public object this[object key]
         {
 
@@ -426,9 +437,7 @@ namespace KScript.Sites
             {
                 this.SetObjectValue(key.ToString(), value.ToString());
             }
-        }
-
-
+        } 
 
     }
 }

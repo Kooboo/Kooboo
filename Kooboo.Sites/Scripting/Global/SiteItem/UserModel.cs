@@ -27,8 +27,7 @@ namespace KScript.Sites
 
         public string LastName { get; set; }
 
-        public string Language { get; set; }
-
+        public string Language { get; set; } 
 
     }
 }
