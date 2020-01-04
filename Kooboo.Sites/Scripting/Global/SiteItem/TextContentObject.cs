@@ -9,10 +9,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace KScript.Sites
 {
-
     public class TextContentObject : IDictionary<string, object>, System.Collections.IDictionary
     {
         [KIgnore]
@@ -131,7 +129,16 @@ namespace KScript.Sites
             }
         }
 
-         
+        public object GetValue(string fieldName)
+        {
+            return this.get(fieldName); 
+        }
+
+        public void SetValue(string fieldName, string value)
+        {
+            this.SetObjectValue(fieldName, value); 
+        }
+     
         public void SetObjectValue(string FieldName, string Value)
         {
             string lower = FieldName.ToLower();
