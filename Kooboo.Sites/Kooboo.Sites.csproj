@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Ecommerce\Interface\ShoppingCart.cs" />
     <Compile Remove="Engine\CoffeeScript.cs" />
     <Compile Remove="Engine\TypeScript.cs" />
     <Compile Remove="Service\Suggestion.cs" />
@@ -74,6 +75,10 @@
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
     <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
     <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ecommerce\Interface\" />
+    <Folder Include="Ecommerce\Promotion\" />
   </ItemGroup>
 
 </Project>

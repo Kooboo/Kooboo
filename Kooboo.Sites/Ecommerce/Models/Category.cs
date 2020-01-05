@@ -17,8 +17,7 @@ namespace Kooboo.Sites.Ecommerce.Models
             this.ConstType = ConstObjectType.Cateogry;
         }
         public Guid ParentId { get; set; }
-
-
+         
         private Guid _id;
         [Kooboo.Attributes.SummaryIgnore]
         public override Guid Id

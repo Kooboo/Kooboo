@@ -11,7 +11,7 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class Session : IDictionary<string, object>
     {
-        private object _locker = new object(); 
+        private object _locker = new object();
 
         private RenderContext context { get; set; }
 
@@ -41,8 +41,8 @@ namespace Kooboo.Sites.Scripting.Global
         public Session(RenderContext context)
         {
             this.context = context;
-        }
-
+            getcookie(); // init the cookie. 
+        } 
 
         private Guid _cookie;
 
@@ -79,6 +79,15 @@ namespace Kooboo.Sites.Scripting.Global
                 this.context.Response.AddCookie(new System.Net.Cookie() { Name = "_kb_session_id", Value = _cookie.ToString(), Expires = DateTime.Now.AddMinutes(30) });
 
                 return _cookie;
+            }
+        }
+
+
+        public Guid SessionId
+        {
+            get
+            {
+                return getcookie();
             }
         }
 
@@ -269,7 +278,7 @@ namespace Kooboo.Sites.Scripting.Global
             var existing = data[cookie];
 
             existing.LastModified = DateTime.Now;
-  
+
 
             if (existing.Values.Count() <= 50)
             {
@@ -284,7 +293,7 @@ namespace Kooboo.Sites.Scripting.Global
                 HashSet<Guid> removeid = new HashSet<Guid>();
                 foreach (var item in data)
                 {
-                    if (item.Value.LastModified < DateTime.Now.AddMinutes(-30))
+                    if (item.Value.LastModified < DateTime.Now.AddHours(-48))
                     {
                         removeid.Add(item.Key);
                     }
