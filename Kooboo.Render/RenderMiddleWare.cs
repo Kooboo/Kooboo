@@ -123,6 +123,8 @@ namespace Kooboo.Render
 
             var Response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
 
+            // Set System version. 
+            context.Response.AppendCookie("_system_version_", Data.AppSettings.Version.ToString());  
             if (Response != null)
             {
                 if (this.options.Log != null)

@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Authorization;
+using Kooboo.Sites.Extensions;
 using Kooboo.Web.Authorization;
 using Kooboo.Web.Menus;
 using System;
@@ -15,6 +16,16 @@ namespace Kooboo.Web.Backend
 
         public static bool IsAllow(RenderContext context, Kooboo.Api.ApiMethod method)
         {
+            // Append site Version for client synchronization. 
+            if (context.WebSite !=null)
+            {
+                var db = context.WebSite.SiteDb();
+                var last = db.Log.Store.LastKey;
+
+                context.Response.AppendCookie("_site_version_", last.ToString());
+                context.Response.AppendCookie("_site_id_", context.WebSite.Id.ToString()); 
+            }
+
             if (context.User == null)
             {
                 if (method.ClassInstance == null || !(method.ClassInstance is IApiPermissionString))

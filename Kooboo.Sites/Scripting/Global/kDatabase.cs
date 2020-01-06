@@ -2,7 +2,6 @@
 //All rights reserved.
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
-using Kooboo.Sites.Scripting.Global;
 using System.ComponentModel;
 
 namespace KScript
@@ -16,7 +15,7 @@ namespace KScript
             this.context = context;
         }
 
-        [Description("Return the kScript database table object, if the table is not exists, it will be created.	")]
+        [Description("Return the kScript database table object, if the table is not exists, it will be created.")]
         public KTable GetTable(string Name)
         {
             var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
@@ -42,7 +41,6 @@ namespace KScript
 
             }
         }
-
-
+        
     }
 }

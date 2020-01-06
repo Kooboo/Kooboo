@@ -228,9 +228,34 @@ namespace Kooboo.Sites.Service
             {
                 return true; 
             } 
+
+            if (IsRelativeExternal(link))
+            {
+                return true; 
+            }
             return IsSpecialUrl(lower);  
         }
 
+        //the link like: //kooboo.com/abc.png
+        public static bool IsRelativeExternal(string link)
+        {
+            if (link.StartsWith("//"))
+            {
+                var index = link.IndexOf("/", 3); 
+                if (index>-1)
+                {
+                    int len = index - 2;  
+                    if (len >0)
+                    {
+                        string domain = link.Substring(2, index - 2);
+                        var root = Kooboo.Data.Helper.DomainHelper.GetRootDomain(domain);
+                        return !string.IsNullOrEmpty(root); 
+                    }
+                }
+            }
+            return false; 
+        }
+         
         public static bool IsSpecialUrl(string url)
         {
             if (url == null)
@@ -245,7 +270,6 @@ namespace Kooboo.Sites.Service
             }
             return false;
         }
-
          
 
         private static Dictionary<Kooboo.Dom.Element, string> EnsureImageNonSrcUrl(Dictionary<Kooboo.Dom.Element, string> orgResult)
