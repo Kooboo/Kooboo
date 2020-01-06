@@ -1,6 +1,9 @@
 (function(KB, $) {
   KB.VersionManager = {
     init: function() {
+      this.checkAdminVersion();
+    },
+    checkAdminVersion() {
       var system_version_key = "_system_version_";
       var system_version = Kooboo.GetCookie(system_version_key);
       if (system_version) {

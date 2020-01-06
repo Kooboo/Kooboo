@@ -105,19 +105,10 @@
         async: !useSync
       }).done(function(res) {
         if (res && res.success) {
-          var system_version_key = "_system_version_";
           var site_version_key = "_site_version_";
           var site_id_key = "_site_id_";
 
-          var system_version = Kooboo.GetCookie(system_version_key);
-          if (system_version) {
-            var localSystemVersion = localStorage.getItem(system_version_key);
-            if (localSystemVersion != system_version) {
-              localStorage.clear();
-              localStorage.setItem(system_version_key, system_version);
-              location.reload();
-            }
-          }
+          Kooboo.VersionManager.checkAdminVersion();
 
           var siteId = Kooboo.GetCookie(site_id_key);
           var site_version = Kooboo.GetCookie(site_version_key);
