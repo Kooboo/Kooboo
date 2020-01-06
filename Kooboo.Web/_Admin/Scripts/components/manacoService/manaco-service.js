@@ -94,43 +94,42 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = location.origin + "/_cdn?url=https://cdn.jsdelivr.net/npm";
-      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/min";
-      let monacoCoreUrl =
-        location.origin +
-        "/_cdn?url=https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
-      $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
-        function() {
-          window.require.config({
-            paths: {
-              vs: monacoCoreUrl + "/vs",
-              "vs/basic-languages":
-                baseUrl + "/monaco-languages@1.9.0/release/min",
-              "vs/language/html": monacoHtmlUrl,
-              "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
-              "vs/language/typescript":
-                baseUrl + "/monaco-typescript@3.6.1/release/min"
-            }
-          });
+      var baseUrl = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
+      $.getScript(baseUrl + "vs/loader.js").done(function() {
+        window.require.config({
+          paths: { vs: baseUrl + "vs" }
+        });
 
-          window.require(
-            ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
-            function() {
-              require([
-                "vs/basic-languages/monaco.contribution",
-                "vs/language/html/monaco.contribution",
-                "vs/language/css/monaco.contribution",
-                "vs/language/typescript/monaco.contribution"
-              ], function() {
-                monaco = window.monaco;
-                callback(monaco);
-              });
+        window.MonacoEnvironment = {
+          getWorkerUrl: function(workerId, label) {
+            return (
+              "data:text/javascript;charset=utf-8," +
+              encodeURIComponent(
+                "self.MonacoEnvironment = {baseUrl: " +
+                  baseUrl +
+                  "};importScripts(" +
+                  baseUrl +
+                  "vs/base/worker/workerMain.js);"
+              )
+            );
+          }
+        };
 
-              self.isLoader = true;
-            }
-          );
-        }
-      );
+        // window.MonacoEnvironment = {
+        //   getWorkerUrl: function(workerId, label) {
+        //     return `data:text/javascript;charset=utf-8,self.MonacoEnvironment = {
+        //       baseUrl: "${encodeURIComponent('https://cdn.jsdelivr.net/gh/kooboo/monaco@master')}"
+        //     };
+        //     importScripts("${encodeURIComponent('https://cdn.jsdelivr.net/gh/kooboo/monaco@master/vs/base/worker/workerMain.js')}");`;
+        //   }
+        // };
+
+        window.require(["vs/editor/editor.main"], function() {
+          monaco = window.monaco;
+          callback(monaco);
+          self.isLoader = true;
+        });
+      });
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (window.monaco) {

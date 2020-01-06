@@ -23,7 +23,10 @@ namespace Kooboo.Web.Frontend
             if (context.Request.Path.ToLower().StartsWith("/_cdn"))
             {
                 var url = context.Request.QueryString.Get("url");
-                if (string.IsNullOrWhiteSpace(url)) throw new ArgumentNullException("url");
+                if (string.IsNullOrWhiteSpace(url)) {
+                   var referer= context.Request.Headers.Get("Referer");
+                    //throw new ArgumentNullException("url");
+                }
                 var contentType = CompatibleManager.Instance.Framework.GetMimeMapping(url);
                 if (contentType == "application/octet-stream")
                 {
