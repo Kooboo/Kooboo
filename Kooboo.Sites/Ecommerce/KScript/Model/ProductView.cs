@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KScript.Model
 {
-    class ProductView
+    public class ProductView
     {
     }
 }

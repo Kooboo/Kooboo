@@ -193,6 +193,10 @@
         App: {
             ListPage: GetRoute("Market/App/Index")
         },
+        Order: {
+            ListPage: GetRoute("ECommerce/Orders"),
+            DetailPage: GetRoute("ECommerce/Order")
+        },
         Get: function(PageRoute, params) {
 
             var paramStr = "";
