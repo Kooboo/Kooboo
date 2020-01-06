@@ -94,10 +94,11 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = "https://cdn.jsdelivr.net/npm";
-      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/dev";
+      var baseUrl = location.origin + "/_cdn?url=https://cdn.jsdelivr.net/npm";
+      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/min";
       let monacoCoreUrl =
-        "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
+        location.origin +
+        "/_cdn?url=https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
       $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
         function() {
           window.require.config({
@@ -111,24 +112,6 @@ var MonacoEditorService =
                 baseUrl + "/monaco-typescript@3.6.1/release/min"
             }
           });
-
-          window.MonacoEnvironment = {
-            getWorkerUrl: function(workerId, label) {
-              var url = monacoCoreUrl;
-              if (label === "html") {
-                url = monacoHtmlUrl;
-              }
-              return `data:text/javascript;charset=utf-8,
-                            debugger
-                      self.MonacoEnvironment = {
-                        baseUrl:${encodeURIComponent(url)}
-                      };
-                        importScripts(${encodeURIComponent(
-                          monacoCoreUrl + "/vs/base/worker/workerMain.js"
-                        )})
-                      `;
-            }
-          };
 
           window.require(
             ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
