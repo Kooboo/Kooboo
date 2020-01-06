@@ -45,9 +45,8 @@ namespace Kooboo.Sites.Render
             }
 
             if (!string.IsNullOrEmpty(html))
-            { 
-                var bytes = Encoding.UTF8.GetBytes(html);
-                context.RenderContext.Response.Body = bytes;  
+            {
+                TextBodyRender.SetBody(context, html);  
             } 
             else
             {

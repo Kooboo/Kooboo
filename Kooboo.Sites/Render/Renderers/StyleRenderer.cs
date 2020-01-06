@@ -1,5 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
+//All rights reserved. 
 using System.Text;
 
 namespace Kooboo.Sites.Render
@@ -13,29 +13,9 @@ namespace Kooboo.Sites.Render
 
             if (css != null && css.Body != null)
             {
-                var bytes = Encoding.UTF8.GetBytes(css.Body);
-                var acceptEncoding = context.RenderContext.Request.Headers["Accept-Encoding"];
-                var gzipSupported = acceptEncoding.Contains("gzip") || acceptEncoding.Contains("deflate");
-                if (context.RenderContext.EnableTextGZip && gzipSupported)
-                {
-                     byte[] gzipBytes;
-                     using (var stream = new System.IO.MemoryStream())
-                     {
-                        using (System.IO.Compression.GZipStream gZipStream = new System.IO.Compression.GZipStream(stream, System.IO.Compression.CompressionLevel.Fastest))
-                        {
-                            gZipStream.Write(bytes, 0, bytes.Length);
-                        }
-                        gzipBytes = stream.ToArray();
-                     }
-                     context.RenderContext.Response.Body = gzipBytes;
-                     context.RenderContext.Response.Headers.Add("Content-encoding", "gzip");
-                     context.RenderContext.Response.OrginalLength = gzipBytes.Length;
-                }
-                else
-                {
-                    var body = GetBody(css);
-                    context.RenderContext.Response.Body = bytes;
-                }
+                var body = GetBody(css);
+
+                TextBodyRender.SetBody(context, body); 
             }
         }
 
