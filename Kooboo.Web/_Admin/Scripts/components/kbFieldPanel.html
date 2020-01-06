@@ -21,9 +21,9 @@
       ></component>
     </kb-form-item>
   </kb-form>
-  <template v-else>
+  <div class="no-fields" v-else>
     No field Yet
-  </template>
+  </div>
   <div class="col-md-11 form-horizontal">
     <!-- CATEGORY START -->
     <div v-if="categories.length && !isMultiContent">
