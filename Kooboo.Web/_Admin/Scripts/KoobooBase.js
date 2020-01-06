@@ -1746,6 +1746,87 @@
   }
   extend(Role, BaseModel);
 
+  function Order() {
+    this.name = "Order";
+    this.getEdit = function(para) {
+      return this.executeGet("GetEdit", para);
+    };
+
+    this.getList = function(para) {
+      return new Promise(resovel => {
+        var fakeData = {
+          model: {
+            list: [],
+            pageNr: 1,
+            pageSize: 20,
+            totalCount: 50,
+            totalPages: 2
+          },
+          success: true
+        };
+        Array(10)
+          .fill(0)
+          .forEach((x, i) => {
+            fakeData.model.list.push({
+              id: "bcd3df0f-e295-e731-f9e8-95929f33335" + i,
+              createDate: "2017-08-01T07:01:39.3677109Z",
+              isPaid: true
+            });
+          });
+        resovel(fakeData);
+      });
+      return this.executeGet("GetList", para);
+    };
+
+    this.search = function(para) {
+      return this.executePost("Search", para);
+    };
+  }
+  extend(Order, BaseModel);
+
+  function Customer() {
+    this.name = "Customer";
+    this.getList = function(para) {
+      return new Promise(resovel => {
+        var fakeData = {
+          model: {
+            list: [],
+            pageNr: 1,
+            pageSize: 20,
+            totalCount: 50,
+            totalPages: 2
+          },
+          success: true
+        };
+        Array(10)
+          .fill(0)
+          .forEach((x, i) => {
+            fakeData.model.list.push({
+              id: "bcd3df0f-e295-e731-f9e8-95929f33335" + i,
+              firstName: "firstName",
+              lastName: "LastName",
+              emailAddress: "EmailAddress",
+              telephone: "telephone",
+              address: "address",
+              postCode: "postCode",
+              address2: "Address2",
+              houseNumber: "houseNumber",
+              city: "city",
+              country: "country"
+            });
+          });
+        resovel(fakeData);
+      });
+      return this.executeGet("GetList", para);
+    };
+    extend(Customer, BaseModel);
+
+    this.search = function(para) {
+      return this.executePost("Search", para);
+    };
+  }
+  extend(Customer, BaseModel);
+
   wind.Kooboo = {
     APIGeneration: new APIGeneration(),
     Bar: new Bar(),
@@ -1815,7 +1896,9 @@
     User: new User(),
     UserPublish: new UserPublish(),
     Url: new Url(),
-    View: new View()
+    View: new View(),
+    Order: new Order(),
+    Customer: new Customer()
   };
   wind.Kooboo.TextContent = new TextContent();
 

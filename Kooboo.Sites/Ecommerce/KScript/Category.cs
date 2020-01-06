@@ -1,5 +1,5 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Sites.Ecommerce.KScript.Model;
+// using Kooboo.Sites.Ecommerce.KScript.Model;
 using Kooboo.Sites.Ecommerce.Repository;
 using Kooboo.Sites.Extensions;
 using KScript.Model;

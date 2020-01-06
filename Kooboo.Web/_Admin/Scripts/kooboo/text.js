@@ -172,7 +172,9 @@
       endMonth: "End month",
       renew: "Renew",
       chooseObject: "Choose object",
-      chooseAction: "Choose action"
+      chooseAction: "Choose action",
+
+      Orders: "Orders"
     },
 
     system: {
@@ -191,7 +193,6 @@
       yes: "online_YES",
       no: "online_NO"
     },
-
     confirm: {
       deleteItem: "Are you sure you want to delete this item?",
       deleteItems: "Are you sure you want to delete these items?",
@@ -1301,7 +1302,12 @@
       selectImage: "please select image",
       noColorAbleToChange: "No color is able to change.",
       deleteLabel: "Delete label"
-    }
+    },
+    isPaid: "isPaid",
+    paid: {
+      yes: "paid_YES",
+      no: "paid_NO"
+    },
   };
   Kooboo.text = text;
 })();

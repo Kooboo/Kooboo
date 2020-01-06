@@ -62,7 +62,7 @@
     border-radius: 2px 0 0 2px;
     padding: 6px 6px;
     height: 32px;
-    display: inline-block; 
+    display: inline-block;
     vertical-align: middle;
   }
 
@@ -81,8 +81,8 @@
     max-width: calc(100% - 588px);
   }
   .filter-by-category .input-group-btn {
-    display: inline-block; 
-    width: auto
+    display: inline-block;
+    width: auto;
   }
 </style>
 <div id="app" v-cloak>
@@ -110,8 +110,14 @@
             >Select Category</button
           >
         </span>
-        <div v-show="selectedCategories.length" class="selected-cates-container">
-          <span class="cate" v-for="($data, index) in selectedCategories" :key="index"
+        <div
+          v-show="selectedCategories.length"
+          class="selected-cates-container"
+        >
+          <span
+            class="cate"
+            v-for="($data, index) in selectedCategories"
+            :key="index"
             >{{ $data.name }}</span
           >
         </div>
@@ -120,22 +126,14 @@
   </div>
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
-    <div v-if="isSearching" class="container-fluid">
+    <div class="container-fluid">
       <a
+        v-if="isSearching"
         class="btn btn-link disabled navbar-btn"
         href="javascript:;"
         >Search result</a
       >
-      <a
-        href="javascript:;"
-        class="btn btn-default navbar-btn pull-right"
-        @click="clearSearching"
-        ><i class="fa fa-close"></i
-      ></a>
-    </div>
-
-    <div v-else class="container-fluid">
-      <div class="btn-group navbar-btn">
+      <div v-else class="btn-group navbar-btn">
         <div class="btn-group">
           <button class="btn green dropdown-toggle" data-toggle="dropdown"
             ><span>Add product</span>&nbsp;<i class="fa fa-angle-down"></i
@@ -162,6 +160,13 @@
       <a class="btn red navbar-btn" v-show="selected.length>0" @click="onDelete"
         >Delete</a
       >
+      <a
+        v-if="isSearching"
+        href="javascript:;"
+        class="btn btn-default navbar-btn pull-right"
+        @click="clearSearching"
+        ><i class="fa fa-close"></i
+      ></a>
     </div>
   </div>
   <kb-table
@@ -197,42 +202,41 @@
     @change="changePage"
   ></kb-pager>
 
-<div
-  v-kb-modal="showCategoriesModal"
-  class="modal fade"
-  data-backdrop="static"
-  data-keyboard="false"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="close" @click="onHideCategoriesModal"
-          ><i class="fa fa-close"></i
-        ></button>
-        <h4 class="modal-title">Category</h4>
-      </div>
-      <div class="modal-body">
-        <div id="category_tree" v-if="categories.length">
-          <ul class="category-list">
-            <li v-for="($data, index) in categories" :key="index">
-              <product-category :category="$data"></product-category>
-            </li>
-          </ul>
+  <div
+    v-kb-modal="showCategoriesModal"
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" @click="onHideCategoriesModal"
+            ><i class="fa fa-close"></i
+          ></button>
+          <h4 class="modal-title">Category</h4>
         </div>
-        <p v-else class="form-control-static"
-          >You don't have a category yet.</p
-        >
-      </div>
-      <div class="modal-footer">
-        <button class="btn green" @click="onSaveCategoriesModal">Save</button>
-        <button class="btn gray" @click="onHideCategoriesModal"
-          >Cancel</button
-        >
+        <div class="modal-body">
+          <div id="category_tree" v-if="categories.length">
+            <ul class="category-list">
+              <li v-for="($data, index) in categories" :key="index">
+                <product-category :category="$data"></product-category>
+              </li>
+            </ul>
+          </div>
+          <p v-else class="form-control-static"
+            >You don't have a category yet.</p
+          >
+        </div>
+        <div class="modal-footer">
+          <button class="btn green" @click="onSaveCategoriesModal">Save</button>
+          <button class="btn gray" @click="onHideCategoriesModal"
+            >Cancel</button
+          >
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 </div>
 <script>
   (function() {
