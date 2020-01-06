@@ -1,0 +1,54 @@
+<!-- #layout name=default -->
+<div id="main" class="clearfix" v-cloak>
+  <div class="col-md-8 col-md-offset-2">
+    <fieldset class="margin-bottom-15 clearfix">
+      <legend>
+        <div class="pull-left"></div>
+        <kb-multilang-selector
+          v-if="siteLangs"
+          class="clearfix margin-bottom-5"
+          :cultures="siteLangs.cultures"
+          :default-culture="siteLangs.default"
+        >
+        </kb-multilang-selector>
+      </legend>
+      <kb-field-panel
+        class="clearfix"
+        ref="fieldPanel"
+        :fields="fields"
+        :values.sync="contentValues"
+        :site-langs="siteLangs"
+      ></kb-field-panel>
+    </fieldset>
+  </div>
+
+  <div class="page-buttons">
+    <template v-if="isNewContent">
+      <a href="javascript:;" class="btn green" @click="onContentSaveAndCreate"
+        >Save &amp; Create</a
+      >
+      <a href="javascript:;" class="btn green" @click="onContentSaveAndReturn"
+        >Save</a
+      >
+    </template>
+    <template v-else>
+      <a href="javascript:;" class="btn green" @click="onContentSave">Save</a>
+      <a href="javascript:;" class="btn green" @click="onContentSaveAndReturn"
+        >Save &amp; Return</a
+      >
+    </template>
+    <a href="javascript:;" class="btn gray" @click="userCancel">Return</a>
+  </div>
+  <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
+</div>
+<script>
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/components/kbMultilangSelector.js",
+      "/_Admin/Scripts/components/kbFieldPanel.js",
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/kooboo/Guid.js"
+    ]);
+  })();
+</script>
+<script src="/_Admin/View/ECommerce/Order.js"></script>
