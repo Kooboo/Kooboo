@@ -14,8 +14,7 @@ namespace Kooboo.Sites.Service
     /// Get all the url relation resource within the dom document. 
     /// </summary>
     public static class DomUrlService
-    {
-
+    { 
         /// <summary>
         /// get all image links
         /// </summary>
@@ -229,31 +228,11 @@ namespace Kooboo.Sites.Service
                 return true; 
             } 
 
-            if (IsRelativeExternal(link))
+            if (Kooboo.Lib.Helper.UrlHelper.IsRelativeExternal(link))
             {
                 return true; 
             }
             return IsSpecialUrl(lower);  
-        }
-
-        //the link like: //kooboo.com/abc.png
-        public static bool IsRelativeExternal(string link)
-        {
-            if (link.StartsWith("//"))
-            {
-                var index = link.IndexOf("/", 3); 
-                if (index>-1)
-                {
-                    int len = index - 2;  
-                    if (len >0)
-                    {
-                        string domain = link.Substring(2, index - 2);
-                        var root = Kooboo.Data.Helper.DomainHelper.GetRootDomain(domain);
-                        return !string.IsNullOrEmpty(root); 
-                    }
-                }
-            }
-            return false; 
         }
          
         public static bool IsSpecialUrl(string url)
