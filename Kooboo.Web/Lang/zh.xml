@@ -1433,4 +1433,11 @@
   <key id="required model type not provided">未提供指定类型</key>
   <key id="Require parameter not found">参数未提供</key>
   <key id="Max number of sites has been reached, require service level upgrade">已经到达最大的站点数据， 需要生级用户级别</key>
+  <key id="Orders">订单</key>
+  <key id="Add order">添加订单</key>
+  <key id="isPaid">是否付款</key>
+  <key id="paid_YES">已付款</key>
+  <key id="paid_NO">未付款</key>
+  <key id="Customers">客户</key>
+  <key id="Add customer">添加客户</key>
 </Lang>

@@ -1434,8 +1434,10 @@
   <key id="Require parameter not found">Require parameter not found</key>
   <key id="Max number of sites has been reached, require service level upgrade">Max number of sites has been reached, require service level upgrade</key>
   <key id="Orders">Orders</key>
+  <key id="Add order">Add order</key>
   <key id="isPaid">isPaid</key>
   <key id="paid_YES">YES</key>
   <key id="paid_NO">NO</key>
   <key id="Customers">Customers</key>
+  <key id="Add customer">Add customer</key>
 </Lang>

@@ -353,13 +353,17 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             model.PageNr = pagenr;
             model.PageSize = pagesize;
 
-            // TODO: performance
-            var products = sitedb.Product.Query.SelectAll();
+            var products = new List<Product>();
             if (categories != null && categories.Count > 0)
             {
                var productCategories = sitedb.ProductCategory.Query.SelectAll().Where(o => categories.Contains(o.CategoryId));
-                products = products.Where(o => productCategories.Any(p => p.ProductId == o.Id)).ToList();
+                products = sitedb.Product.Query.WhereIn("Id", productCategories.Select(it => it.ProductId).ToList()).SelectAll();
+            } 
+            else
+            {
+                products = sitedb.Product.Query.SelectAll();
             }
+
             if(!string.IsNullOrWhiteSpace(keyword))
             {
                 products = products.Where(o => o.Body.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) > -1).ToList();
