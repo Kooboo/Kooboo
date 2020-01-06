@@ -1437,4 +1437,5 @@
   <key id="isPaid">isPaid</key>
   <key id="paid_YES">YES</key>
   <key id="paid_NO">NO</key>
+  <key id="Customers">Customers</key>
 </Lang>
