@@ -1770,7 +1770,7 @@
             fakeData.model.list.push({
               id: "bcd3df0f-e295-e731-f9e8-95929f33335" + i,
               createDate: "2017-08-01T07:01:39.3677109Z",
-              isPaid: true
+              isPaid: i % 2
             });
           });
         resovel(fakeData);

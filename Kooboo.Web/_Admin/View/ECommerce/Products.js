@@ -119,7 +119,7 @@ $(function() {
             categories: self.selectedCategories.map(function(item) {
               return item.id;
             }),
-            keyword: self.searchKey || " "
+            keyword: self.searchKey
           }).then(function(res) {
             if (res.success) {
               self.handleData(res.model);

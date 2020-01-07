@@ -340,8 +340,9 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             return key;
         }
 
-        public PagedListViewModel<ProductViewModel> Search(ApiCall call, string keyword, List<Guid> categories)
+        public PagedListViewModel<ProductViewModel> Search(ApiCall call, List<Guid> categories)
         {
+            string keyword = call.GetValue<string>("keyword");
             var sitedb = call.WebSite.SiteDb();
 
             int pagesize = ApiHelper.GetPageSize(call, 50);
