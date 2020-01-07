@@ -94,7 +94,10 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
+      var baseUrl = Kooboo.isLocal()
+        ? "/_admin/scripts/lib/"
+        : "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
+        
       $.getScript(baseUrl + "vs/loader.js").done(function() {
         window.require.config({
           paths: { vs: baseUrl + "vs" }
@@ -102,9 +105,7 @@ var MonacoEditorService =
 
         window.MonacoEnvironment = {
           getWorkerUrl: function(workerId, label) {
-            return (
-              "data:text/javascript;charset=utf-8, throw Error()"
-            );
+            return "data:text/javascript;charset=utf-8, throw Error()";
           }
         };
 

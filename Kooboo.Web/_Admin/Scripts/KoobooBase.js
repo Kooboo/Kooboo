@@ -2278,4 +2278,8 @@
     e.initEvent(type, true, true);
     el.dispatchEvent(e);
   };
+
+  Kooboo.isLocal=function(){
+    return !!document.getElementById("isLocal");
+  }
 })(window);

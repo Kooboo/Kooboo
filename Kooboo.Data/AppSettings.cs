@@ -146,7 +146,7 @@ namespace Kooboo.Data
             {
                 Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
                 CustomSslCheck = true;
-            } 
+            }
         }
 
         public static string GetMailDbName(Guid OrganizationId)
@@ -275,11 +275,11 @@ namespace Kooboo.Data
             }
         }
 
-        public static bool MomacoLoaded
+        public static string MonacoVersion
         {
             get
             {
-                return ConfigurationManager.AppSettings.Get("MomacoLoaded")!="false";
+                return ConfigurationManager.AppSettings.Get("MonacoVersion");
             }
         }
 
@@ -410,7 +410,7 @@ namespace Kooboo.Data
                     {
                         if (accounturl.ToLower().StartsWith("https://"))
                         {
-                            accounturl = accounturl.Replace("https://", "http://"); 
+                            accounturl = accounturl.Replace("https://", "http://");
                         }
                         apis.Add(accounturl);
                     }
@@ -426,18 +426,18 @@ namespace Kooboo.Data
                 string apiurl = "/account/system/apiresource";
                 if (IsOnlineServer)
                 {
-                    apiurl += apiurl += "?online=true"; 
+                    apiurl += apiurl += "?online=true";
                 }
 
                 foreach (var item in apis)
                 {
-                    string url = item + apiurl; 
+                    string url = item + apiurl;
                     try
                     {
                         apires = HttpHelper.Get<ApiResource>(url);
                     }
                     catch (Exception ex)
-                    { 
+                    {
                     }
                     if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
                     {
@@ -447,9 +447,9 @@ namespace Kooboo.Data
 
                 if (apires != null)
                 {
-                    if(!CustomSslCheck)
+                    if (!CustomSslCheck)
                     {
-                        apires.AccountUrl = apires.AcccountDomain; 
+                        apires.AccountUrl = apires.AcccountDomain;
                     }
 
                     //Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
@@ -491,14 +491,14 @@ namespace Kooboo.Data
                 if (_serversetting == null)
                 {
                     if (IsOnlineServer)
-                    { 
-                        string CurrentRooturl = RootUrl; 
-                        
+                    {
+                        string CurrentRooturl = RootUrl;
+
                         if (string.IsNullOrWhiteSpace(CurrentRooturl))
                         {
                             CurrentRooturl = ConfigurationManager.AppSettings.Get("RootUrl");
                         }
-                      
+
                         string url = null;
 
                         if (string.IsNullOrEmpty(CurrentRooturl))
