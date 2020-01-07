@@ -274,21 +274,25 @@ namespace Kooboo.Web.FrontRequest
 
             if (shouldcheck)
             {
-                long length = frontContext.RenderContext.Response.OrginalLength;
+                long length = 0;
 
-                if (length == 0)
+                if (frontContext.RenderContext.Response.Body != null)
                 {
-                    if (frontContext.RenderContext.Response.Body != null)
-                    {
-                        length = frontContext.RenderContext.Response.Body.Length;
-                    }
+                    length = frontContext.RenderContext.Response.Body.Length;
                 }
 
                 if (length == 0)
                 {
                     if (frontContext.RenderContext.Response.Stream != null)
                     {
-                        length = frontContext.RenderContext.Response.Stream.Length;
+                        try
+                        {
+                            length = frontContext.RenderContext.Response.Stream.Length;
+                        }
+                        catch (Exception ex)
+                        {
+                            Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.Source + ex.StackTrace);
+                        }
                     }
                 }
 

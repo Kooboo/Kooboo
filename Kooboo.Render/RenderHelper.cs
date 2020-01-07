@@ -132,12 +132,7 @@ namespace Kooboo.Render
         {
             return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl); 
         }
-
-        public static string GetRelativeUrl(Uri AbsoluteUri, RenderOption option)
-        {
-            string RawRelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(AbsoluteUri);
-            return GetRelativeUrl(RawRelativeUrl, option); 
-        }
+         
         public static string GetRelativeUrl(string RawRelativeUrl, RenderOption option)
         {
            string  RelativeUrl = RemoveQuestionMark(RawRelativeUrl); 

@@ -11,7 +11,7 @@ namespace Kooboo.Lib.Helper
     {
 
         public static bool IsValidUrl(string input, bool RequireAbsolute = false)
-        { 
+        {
             //  RFC 3986 also specifies some unreserved characters, which can always be used simply to represent data without any encoding: 
             //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -._~
             // Finally, the % character itself is allowed for percent - encodings.  
@@ -21,32 +21,32 @@ namespace Kooboo.Lib.Helper
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                return false; 
+                return false;
             }
 
             for (int i = 0; i < input.Length; i++)
             {
-                var currentchar = input[i]; 
+                var currentchar = input[i];
                 if (currentchar == '<' || currentchar == '>' || currentchar == '^' || currentchar == '`')
                 {
-                    return false; 
+                    return false;
                 }
             }
 
             if (RequireAbsolute)
             {
-                string lower = input.ToLower(); 
+                string lower = input.ToLower();
                 if (lower.StartsWith("https://") || lower.StartsWith("http://"))
                 {
-                    return true; 
+                    return true;
                 }
                 else
                 {
-                    return false; 
+                    return false;
                 }
             }
 
-            return true; 
+            return true;
         }
 
 
@@ -60,6 +60,80 @@ namespace Kooboo.Lib.Helper
 
             type = type.ToLower();
             return type.Contains("image");
+        }
+
+
+        //the link like: //kooboo.com/abc.png
+        public static bool IsRelativeExternal(string link)
+        {
+            if (link.StartsWith("//"))
+            {
+                var index = link.IndexOf("/", 3);
+                if (index > -1)
+                {
+                    int len = index - 2;
+                    if (len > 0)
+                    {
+                        string domain = link.Substring(2, index - 2);
+
+                        return IsValidDomain(domain);
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool IsValidDomain(string domain)
+        {
+            if (domain == null)
+            {
+                return false;
+            }
+
+            int index = domain.LastIndexOf(".");
+            if (index == -1 || index == 0)
+            {
+                return false;
+            }
+
+            var lastpart = domain.Substring(index, domain.Length - index);
+            if (string.IsNullOrEmpty(lastpart))
+            {
+                return false;
+            }
+
+            if (lastpart.Length < 3)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < lastpart.Length; i++)
+            {
+                if (!Helper.CharHelper.IsAscii(lastpart[i]) && lastpart[i] != '.')
+                {
+                    return false;
+                }
+            }
+
+            //for (int i = 0; i < domain.Length; i++)
+            //{
+            //    var current = domain[i];
+            //    if (!Helper.CharHelper.isAlphanumeric(current))
+            //    {
+            //        if (current == '-' || current == '-' || current == '.')
+            //        {
+            //            continue;
+            //        }
+            //    }
+            //}
+
+            return true;
+            //A complete domain name must have one or more subdomain names and one top-level domain name.
+            //A complete domain name must use dots(.) to separate domain names.
+            //Domain names must use only alphanumeric characters and dashes(-).
+            //Domain names must not begin or end with dashes(-).
+            //Domain names must mot have more than 63 characters.
+            //The top-level domain name must be one of the predefined top - level domain names, like (com), (org), or (ca)
         }
 
         /// <summary>
@@ -85,6 +159,11 @@ namespace Kooboo.Lib.Helper
             if (subUrl.ToLower().StartsWith("http") || string.IsNullOrEmpty(baseUrl) || Kooboo.Lib.Utilities.DataUriService.isDataUri(subUrl))
             {
                 return subUrl;
+            }
+
+            if (IsRelativeExternal(subUrl))
+            {
+                return subUrl; 
             }
 
             if (baseUrl.ToLower().StartsWith("http"))
@@ -128,7 +207,7 @@ namespace Kooboo.Lib.Helper
                     string domain = Kooboo.Lib.Helper.UrlHelper.UriHost(absoluteUrl, true);
 
                     string relativeUrl = UrlHelper.RelativePath(absoluteUrl);
-                    if (domain !=null)
+                    if (domain != null)
                     {
                         return "/" + domain + relativeUrl;
                     }
@@ -136,7 +215,7 @@ namespace Kooboo.Lib.Helper
                     {
                         return relativeUrl;
                     }
-                   
+
                 }
                 else
                 {
@@ -154,6 +233,11 @@ namespace Kooboo.Lib.Helper
         /// <returns></returns>
         public static string RelativePath(string fullurl)
         {
+            if (IsRelativeExternal(fullurl))
+            {
+                return fullurl; 
+            }
+
             if (fullurl.ToLower().StartsWith("http"))
             {
                 Uri url = new Uri(fullurl);
@@ -257,7 +341,7 @@ namespace Kooboo.Lib.Helper
         /// <returns></returns>
         private static string HostWithoutWWW(string fullurl)
         {
-           // fullurl = fullurl.ToLower(); already done before call. 
+            // fullurl = fullurl.ToLower(); already done before call. 
 
             if (!fullurl.StartsWith("http"))
             {
@@ -291,7 +375,7 @@ namespace Kooboo.Lib.Helper
             }
 
             return null;
- 
+
         }
 
 
@@ -306,7 +390,7 @@ namespace Kooboo.Lib.Helper
         {
             if (fullurl == null)
             {
-                return null; 
+                return null;
             }
 
             fullurl = fullurl.ToLower().Replace("\\", "/");
@@ -315,7 +399,7 @@ namespace Kooboo.Lib.Helper
             {
                 return HostWithoutWWW(fullurl);
             }
-              
+
             if (!fullurl.StartsWith("http"))
             {
                 int slashindex = fullurl.IndexOf("/");
@@ -342,11 +426,11 @@ namespace Kooboo.Lib.Helper
                     return url.Host.ToLower();
                 }
                 catch (Exception)
-                {       
+                {
                 }
             }
 
-            return null; 
+            return null;
         }
 
         /// <summary>
@@ -602,8 +686,8 @@ namespace Kooboo.Lib.Helper
             if (LastQuestionMark > 0)
             {
                 path = path.Substring(0, LastQuestionMark);
-            } 
-            return path; 
+            }
+            return path;
         }
 
         public static UrlFileType GetFileType(string url, string ContentType = "")
@@ -670,16 +754,16 @@ namespace Kooboo.Lib.Helper
                     return UrlFileType.Style;
                 }
 
-                if (extension == ".ts" || extension == ".coffee" )
+                if (extension == ".ts" || extension == ".coffee")
                 {
                     return UrlFileType.JavaScript;
-                } 
-               
+                }
+
             }
 
             if (string.IsNullOrEmpty(ContentType))
             {
-                ContentType = IOHelper.MimeType(url); 
+                ContentType = IOHelper.MimeType(url);
             }
 
             if (!string.IsNullOrWhiteSpace(ContentType))
@@ -713,19 +797,19 @@ namespace Kooboo.Lib.Helper
                 }
                 else if (ContentType.Contains("font"))
                 {
-                    return UrlFileType.File; 
+                    return UrlFileType.File;
                 }
                 else if (ContentType.Contains("video"))
                 {
-                    return UrlFileType.File; 
+                    return UrlFileType.File;
                 }
                 else if (ContentType.Contains("audio"))
                 {
-                    return UrlFileType.File; 
+                    return UrlFileType.File;
                 }
                 else if (ContentType.StartsWith("x-"))
                 {
-                    return UrlFileType.File; 
+                    return UrlFileType.File;
                 }
             }
 
@@ -796,14 +880,14 @@ namespace Kooboo.Lib.Helper
                 return baseUrl;
             }
 
-            string local = null; 
-            int marklocal = baseUrl.IndexOf("#"); 
+            string local = null;
+            int marklocal = baseUrl.IndexOf("#");
             if (marklocal > -1)
-            {    
+            {
                 local = baseUrl.Substring(marklocal);
-                baseUrl = baseUrl.Substring(0, marklocal);  
+                baseUrl = baseUrl.Substring(0, marklocal);
             }
-                
+
             int markindex = baseUrl.IndexOf("?");
             string querypart = "";
             string url = baseUrl;
@@ -839,7 +923,7 @@ namespace Kooboo.Lib.Helper
                 string para = item.Key;
 
                 if (!string.IsNullOrEmpty(item.Value))
-                { 
+                {
                     para += "=" + System.Web.HttpUtility.UrlEncode(item.Value);
                 }
                 if (first)
@@ -852,9 +936,9 @@ namespace Kooboo.Lib.Helper
                     url = url + "&" + para;
                 }
             }
-            if (local!=null)
+            if (local != null)
             {
-                url += local; 
+                url += local;
             }
             return url;
         }

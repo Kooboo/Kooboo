@@ -1448,7 +1448,7 @@
     this.name = "System";
 
     this.Version = function(para) {
-      return this.executeGet("Version", para, true);
+      return this.executeGet("Version", para, true, true);
     };
 
     this.loadFile = function(para) {
@@ -2282,4 +2282,18 @@
   Kooboo.isLocal=function(){
     return !!document.getElementById("isLocal");
   }
+
+  Kooboo.GetCookie = function(key) {
+    var value = null;
+    
+    document.cookie.split(";").find(function(m) {
+      var keyvalue = m.trim().split("=");
+      if (keyvalue[0] == key) {
+        value = keyvalue[1];
+        return true;
+      }
+    });
+
+    return value;
+  };
 })(window);
