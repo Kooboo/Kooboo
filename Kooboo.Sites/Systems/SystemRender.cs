@@ -125,7 +125,9 @@ namespace Kooboo.Sites.Systems
                 }
             }
 
-            context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
+            string result = sb.ToString();
+            TextBodyRender.SetBody(context, result); 
+           // context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
         }
 
         public static async Task ViewRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
