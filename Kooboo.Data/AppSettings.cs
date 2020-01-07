@@ -274,7 +274,15 @@ namespace Kooboo.Data
                 return ConfigurationManager.AppSettings.Get("CmsLang");
             }
         }
-          
+
+        public static bool MomacoLoaded
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings.Get("MomacoLoaded")!="false";
+            }
+        }
+
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
         public static int CurrentUsedPort { get; set; } = 80;

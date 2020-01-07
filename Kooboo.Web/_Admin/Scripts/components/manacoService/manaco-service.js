@@ -103,26 +103,10 @@ var MonacoEditorService =
         window.MonacoEnvironment = {
           getWorkerUrl: function(workerId, label) {
             return (
-              "data:text/javascript;charset=utf-8," +
-              encodeURIComponent(
-                "self.MonacoEnvironment = {baseUrl: " +
-                  baseUrl +
-                  "};importScripts(" +
-                  baseUrl +
-                  "vs/base/worker/workerMain.js);"
-              )
+              "data:text/javascript;charset=utf-8, throw Error()"
             );
           }
         };
-
-        // window.MonacoEnvironment = {
-        //   getWorkerUrl: function(workerId, label) {
-        //     return `data:text/javascript;charset=utf-8,self.MonacoEnvironment = {
-        //       baseUrl: "${encodeURIComponent('https://cdn.jsdelivr.net/gh/kooboo/monaco@master')}"
-        //     };
-        //     importScripts("${encodeURIComponent('https://cdn.jsdelivr.net/gh/kooboo/monaco@master/vs/base/worker/workerMain.js')}");`;
-        //   }
-        // };
 
         window.require(["vs/editor/editor.main"], function() {
           monaco = window.monaco;
