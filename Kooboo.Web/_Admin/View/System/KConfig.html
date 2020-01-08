@@ -35,6 +35,7 @@
         <a
           target="_blank"
           @click="linkTo(firstKey(row) === 'src'?row.binding[firstKey(row)] + '?SiteId=' + Kooboo.getQueryString('siteid'): '')"
+          v-if="row.tagName == 'img'"
         >
           <div class="thumbnail-fixed">
             <div class="img-wrap"></div>
@@ -43,6 +44,9 @@
             />
           </div>
         </a>
+        <div style="text-align: center" v-else>
+          -
+        </div>
       </template>
     </kb-table-column>
     <kb-table-column :label="'tagName'">
@@ -72,7 +76,18 @@
         <span>{{new Date(row.lastModified).toDefaultLangString()}}</span>
       </template>
     </kb-table-column>
-    <kb-table-column :label="''">
+    <kb-table-column :label="''" width="40px">
+      <template v-slot="row">
+        <button
+          v-for="(item, index) in Kooboo.objToArr(row.relations)"
+          @click.stop="onEdit(row)"
+          class="btn btn-xs blue pull-right"
+          :title="Kooboo.text.common.edit"
+          ><i class="fa fa-pencil"></i
+        ></button>
+      </template>
+    </kb-table-column>
+    <kb-table-column :label="''" width="40px">
       <template v-slot="row">
         <a
           class="btn blue btn-xs"
@@ -81,13 +96,6 @@
         >
           <i class="fa fa-clock-o"></i>
         </a>
-        <button
-          v-for="(item, index) in Kooboo.objToArr(row.relations)"
-          @click.stop="onEdit($event,row)"
-          class="btn btn-xs blue pull-right"
-          :title="Kooboo.text.common.edit"
-          ><i class="fa fa-pencil"></i
-        ></button>
       </template>
     </kb-table-column>
   </kb-table>
@@ -123,11 +131,7 @@
     </kb-dialog>
   </div>
 
-  <kb-media-dialog
-    v-if="showMediaModal"
-    :data="mediaDialogData"
-    @on-add="mediaDialogAdd"
-  ></kb-media-dialog>
+  <kb-media-dialog :data="mediaDialogData"></kb-media-dialog>
 </div>
 
 <script>

@@ -21,7 +21,8 @@ $(function() {
         showMediaModal: false,
         tableData: [],
         configItem: undefined,
-        tableDataSelected: []
+        tableDataSelected: [],
+        mediaDialogData:null
       };
     },
     created: function() {
@@ -84,14 +85,25 @@ $(function() {
           if (res.success) {
             switch (res.model.controlType.toLowerCase()) {
               case "textbox":
-                self.configItem = Kooboo.objToArr(res.model);
+                self.configItem = Kooboo.objToArr(item.binding);
                 self.showConfigModal = true;
                 break;
               case "mediafile":
                 Kooboo.Media.getList().then(function(res) {
                   if (res.success) {
-                    self.mediaDialogData = Kooboo.objToArr(res.model);
-                    self.showMediaModal = true;
+                    res.model["show"] = true;
+                    res.model["context"] = self;
+                    res.model["onAdd"] = function(selected) {
+                      Kooboo.KConfig.update({
+                        id: item.id,
+                        binding: {
+                          src: selected.url
+                        }
+                      }).then(function(res) {
+                        self.getTableData();
+                      });
+                    };
+                    self.mediaDialogData=res.model;
                   }
                 });
                 break;
