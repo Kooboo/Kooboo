@@ -238,11 +238,7 @@
             validate: function(value) {
               if ($.trim(value) == "") {
                 return Kooboo.text.validation.required;
-              } else if (
-                !/^[^\s|\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\=|\||\\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\>|\?]*\w$/.test(
-                  value
-                )
-              ) {
+              } else if (false) {
                 return Kooboo.text.validation.urlInvalid;
               }
             },

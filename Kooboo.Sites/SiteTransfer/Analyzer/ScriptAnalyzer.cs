@@ -9,9 +9,7 @@ namespace Kooboo.Sites.SiteTransfer
     public class ScriptAnalyzer : ITransferAnalyzer
     {
         public void Execute(AnalyzerContext Context)
-        {
-            int embeddedItemIndex = 0;
-
+        { 
             HTMLCollection scripts = Context.Dom.getElementsByTagName("script");
 
             foreach (var item in scripts.item)

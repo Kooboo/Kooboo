@@ -1,18 +1,21 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Scripting.Helper;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; 
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
     public class DynamicTableObject : Kooboo.Data.Interface.IDynamic
     {
+        [KIgnore]
         public IDictionary<string, object> obj { get; set; }
+
         private RenderContext context { get; set; }
         private Table table { get; set; }
 
@@ -31,6 +34,7 @@ namespace Kooboo.Sites.Scripting.Global
             this.table = orgtable;
         }
 
+        [KIgnore]
         public object this[string key]
         {
             get
@@ -68,13 +72,13 @@ namespace Kooboo.Sites.Scripting.Global
 
                             if (relation.Relation == EnumTableRelation.ManyMany || relation.Relation == EnumTableRelation.OneMany)
                             {
-                                var tableB = Data.DB.GetTable(db, relation.TableB);
+                                var tableB = Kooboo.Data.DB.GetTable(db, relation.TableB);
                                 var result = tableB.Query.WhereEqual(relation.FieldB, fielda).Take(999);
                                 return CreateList(result.ToArray(), tableB, this.context);
                             }
                             else
                             {
-                                var tableB = Data.DB.GetTable(db, relation.TableB);
+                                var tableB = Kooboo.Data.DB.GetTable(db, relation.TableB);
                                 var result = tableB.Query.WhereEqual(relation.FieldB, fielda).FirstOrDefault();
                                 return Create(result, tableB, this.context);
                             }
@@ -88,13 +92,13 @@ namespace Kooboo.Sites.Scripting.Global
 
                             if (relation.Relation == EnumTableRelation.ManyMany || relation.Relation == EnumTableRelation.OneMany)
                             {
-                                var tableB = Data.DB.GetTable(db, relation.TableA);
+                                var tableB = Kooboo.Data.DB.GetTable(db, relation.TableA);
                                 var result = tableB.Query.WhereEqual(relation.FieldA, fieldb).Take(999);
                                 return CreateList(result.ToArray(), tableB, this.context);
                             }
                             else
                             {
-                                var tableB = Data.DB.GetTable(db, relation.TableA);
+                                var tableB = Kooboo.Data.DB.GetTable(db, relation.TableA);
                                 var result = tableB.Query.WhereEqual(relation.FieldA, fieldb).FirstOrDefault();
                                 return Create(result, tableB, this.context);
                             }
@@ -106,6 +110,7 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
+        [KIgnore]
         public static DynamicTableObject[] CreateList(IDictionary<string, object>[] list, Table TargetTable, RenderContext context)
         {
             int len = list.Length;
@@ -119,6 +124,7 @@ namespace Kooboo.Sites.Scripting.Global
             return result;
         }
 
+        [KIgnore]
         public static DynamicTableObject Create(IDictionary<string, object> item, Table sourceTable, RenderContext context)
         {
             if (item != null)

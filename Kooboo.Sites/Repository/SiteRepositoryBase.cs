@@ -11,6 +11,7 @@ using Kooboo.Sites.Routing;
 using Kooboo.Events.Cms;
 using Kooboo.Data.Interface;
 using Kooboo.Lib.Helper;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Repository
 {
@@ -246,6 +247,35 @@ namespace Kooboo.Sites.Repository
 
             return result;
         }
+
+
+        public virtual async Task<TValue> GetAsync(Guid id)
+        {
+            TValue result;
+            if (this.UseCache)
+            {
+                result = Cache.SiteObjectCache<TValue>.Get(this.SiteDb, id);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+      
+            result = await Store.getAsync(id);
+           
+
+            if (result != null)
+            {
+                if (this.UseCache)
+                {
+                    Cache.SiteObjectCache<TValue>.AddOrUpdate(this.SiteDb, result);
+                }
+            }
+
+            return result;
+        }
+
 
         public virtual TValue GetFromCache(Guid id)
         {

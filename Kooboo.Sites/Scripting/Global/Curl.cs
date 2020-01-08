@@ -4,60 +4,68 @@ using Kooboo.Lib.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
+using System.ComponentModel;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
-    // TODO: should try to use async/await. 
+
     public class Curl
     {
+
+        [Description(@"Get data string from the url
+var webcontent = k.url.get(""http://www.kooboo.com""); ")]
         public string get(string url)
         {
-            return  _get(url).Result;
+            return _get(url).Result;
         }
 
+        [Description(@"Get data string from remote url using HTTP Basic authentication
+var webcontent = k.url.get(""http://www.kooboo.com"", ""username"", ""password"");")]
         public string Get(string url, string username, string password)
         {
             return _get(url, null, username, password).Result;
         }
 
+        [Description(@"Get data string from remote url using HTTP Basic authentication, and deserialize the string as a JSON object")]
         public object GetJson(string url, string username, string password)
         {
-            string result =  _get(url, null, username, password).Result;
-            return Lib.Helper.JsonHelper.Deserialize(result); 
+            string result = _get(url, null, username, password).Result;
+            return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);
         }
 
+        [Description(@"Get data string from remote url and deserialize the string as a JSON object")]
         public object GetJson(string url)
         {
             string result = _get(url).Result;
-            return Lib.Helper.JsonHelper.Deserialize(result);
+            return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);
         }
 
+
+        [Description(@"Post data to remote url
+var data = ""name=myname&field=value""; 
+      k.url.post(""http://www.kooboo.com/fakereceiver"", data); ")]
         public string post(string url, string data)
         {
             return _Post(url, data).Result;
         }
 
+        [Description(@"Post data to remote url using HTTP Basic authentication")]
         public string post(string url, string data, string userName, string password)
         {
             return _Post(url, data, userName, password).Result;
         }
-
+        [Description(@"Post data as a Json string to remote url using HTTP Basic authentication")]
         public string postData(string url, object data, string userName, string password)
         {
-            string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
-
+            string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data); 
             return _Post(url, poststring, userName, password).Result;
         }
-
-
+         
         private Dictionary<string, string> getvalues(object obj)
         {
 
@@ -106,7 +114,7 @@ namespace Kooboo.Sites.Scripting.Global
                 if (value != null)
                 {
                     foreach (var item in value)
-                    { 
+                    {
                         if (item.Value != null)
                         {
                             result.Add(item.Key, item.Value.ToString());
@@ -119,10 +127,9 @@ namespace Kooboo.Sites.Scripting.Global
                 }
             }
 
-            return result; 
+            return result;
         }
-
-
+         
         private static async Task<string> _Post(string url, string json, string UserName = null, string Password = null)
         {
             try
@@ -130,12 +137,12 @@ namespace Kooboo.Sites.Scripting.Global
                 var client = HttpClientHelper.Client;
 
                 var content = new StringContent(json, Encoding.UTF8);
-                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/json");
+                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application /json");
                 var requestMessage = new HttpRequestMessage
                 {
                     RequestUri = new Uri(url),
                     Method = HttpMethod.Post,
-                    Content=content,
+                    Content = content,
                 };
                 if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
                 {
@@ -143,7 +150,7 @@ namespace Kooboo.Sites.Scripting.Global
                     requestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), "Basic " + Convert.ToBase64String(bytes));
                 }
 
-                var response =await client.SendAsync(requestMessage);
+                var response = await client.SendAsync(requestMessage);
 
                 var byteArray = await response.Content.ReadAsByteArrayAsync();
                 return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);

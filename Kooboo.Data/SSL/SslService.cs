@@ -86,6 +86,14 @@ namespace Kooboo.Data.SSL
                 return;
             }
 
+            foreach (var item in MiddleWareList)
+            {
+                if (item is SslCertMiddleWare)
+                {
+                    return; 
+                }
+            }
+
             int len = MiddleWareList.Count();
 
             var pos = len - 1;

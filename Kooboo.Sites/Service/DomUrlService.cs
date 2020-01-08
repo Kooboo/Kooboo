@@ -14,8 +14,7 @@ namespace Kooboo.Sites.Service
     /// Get all the url relation resource within the dom document. 
     /// </summary>
     public static class DomUrlService
-    {
-
+    { 
         /// <summary>
         /// get all image links
         /// </summary>
@@ -228,9 +227,14 @@ namespace Kooboo.Sites.Service
             {
                 return true; 
             } 
+
+            if (Kooboo.Lib.Helper.UrlHelper.IsRelativeExternal(link))
+            {
+                return true; 
+            }
             return IsSpecialUrl(lower);  
         }
-
+         
         public static bool IsSpecialUrl(string url)
         {
             if (url == null)
@@ -245,7 +249,6 @@ namespace Kooboo.Sites.Service
             }
             return false;
         }
-
          
 
         private static Dictionary<Kooboo.Dom.Element, string> EnsureImageNonSrcUrl(Dictionary<Kooboo.Dom.Element, string> orgResult)

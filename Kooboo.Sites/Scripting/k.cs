@@ -5,19 +5,23 @@ using Kooboo.Data.Interface;
 using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.SiteItem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
+using KScript.Sites;
+using Kooboo.Sites.Scripting;
+using Kooboo;
 using Kooboo.Sites.KscriptConfig;
 
-namespace Kooboo.Sites.Scripting
+namespace KScript
 {
-    public class k
+    public partial class k
     {
         private object _locker = new object();
 
+        [KIgnore]
         public RenderContext RenderContext { get; set; }
 
         public k(RenderContext context)
@@ -35,6 +39,8 @@ namespace Kooboo.Sites.Scripting
         static KeyValuePair<string, Type>[] __ = KscriptConfigContainer.KscriptConfigTypes.ToArray();
 
         private kDataContext _data;
+
+        [Description("the dataContext of kview engine, the html render engine of kooboo. You can explicitly set value into datacontext or just declare the value as JS global variable, it will be accesible from kview engine.")]
         public kDataContext DataContext
         {
             get
@@ -54,6 +60,8 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Response _response;
+
+        [Description("The HTTP response object that is used to set data into http resposne stream")]
         public Response Response
         {
             get
@@ -74,6 +82,11 @@ namespace Kooboo.Sites.Scripting
 
         private Request _request;
 
+
+        [Description(@"Access to the http request data, query string, form or headers. Cookie is available from k.cookie.
+var value = k.request.queryname;
+var value = k.request.queryString.queryname;
+var value = k.request.form.queryname;")]
         public Request Request
         {
             get
@@ -93,6 +106,12 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Session _session;
+
+        [Description(@"a temporary storage for small interactive information. Session does not persist
+   k.session.set(""key"", obj);
+   var back = k.session.get(""key"");
+k.session.newkey = ""value""; 
+var value = k.session.key; ")]
         public Session Session
         {
             get
@@ -112,9 +131,10 @@ namespace Kooboo.Sites.Scripting
         }
 
 
-        private Dictionary<string, string> _viewdata;
+        private KDictionary _viewdata;
 
-        public Dictionary<string, string> ViewData
+        [Description("Shared current context storage")]
+        public KScript.KDictionary ViewData
         {
             get
             {
@@ -124,7 +144,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_viewdata == null)
                         {
-                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                            _viewdata = new KDictionary();
                         }
                     }
                 }
@@ -133,7 +153,8 @@ namespace Kooboo.Sites.Scripting
         }
 
         private InfoModel _siteinfo;
-
+        
+        [Description("Access to current request information")]
         public InfoModel Info
         {
             get
@@ -149,7 +170,7 @@ namespace Kooboo.Sites.Scripting
                             {
                                 _siteinfo.Culture = this.RenderContext.Culture;
                                 _siteinfo.Name = this.RenderContext.WebSite.Name;
-                                _siteinfo.Setting = this.RenderContext.WebSite.CustomSettings;
+                                _siteinfo.Setting = new KDictionary(this.RenderContext.WebSite.CustomSettings);
                                 _siteinfo.User = new UserModel(this.RenderContext.User);
                             }
                         }
@@ -174,6 +195,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private KTemplate _template;
+        [KIgnore]
         public KTemplate Template
         {
             get
@@ -190,16 +212,17 @@ namespace Kooboo.Sites.Scripting
         {
             public string Culture { get; set; }
 
+            [Description("WebSite name")]
             public string Name { get; set; }
 
-            private Dictionary<string, string> _setting;
-            public Dictionary<string, string> Setting
+            private KDictionary _setting;
+            public KDictionary Setting
             {
                 get
                 {
                     if (_setting == null)
                     {
-                        _setting = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                        _setting = new KDictionary(); 
                     }
                     return _setting;
                 }
@@ -210,15 +233,12 @@ namespace Kooboo.Sites.Scripting
             public UserModel User
             {
                 get; set;
-            }
-
+            } 
         }
 
         private kSiteDb _sitedb;
 
-        /// <summary>
-        /// 
-        /// </summary>
+        [KIgnore]
         public kSiteDb SiteDb
         {
             get
@@ -240,6 +260,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+
+        [Description("The Kooboo website database with version control")]
         public kSiteDb Site
         {
             get
@@ -269,6 +291,8 @@ namespace Kooboo.Sites.Scripting
 
         private FileIO _file;
 
+
+        [Description("Provide read and write access to text or binary files under the site folder")]
         public FileIO File
         {
             get
@@ -289,6 +313,7 @@ namespace Kooboo.Sites.Scripting
 
         private Cookie _cookie;
 
+        [Description("Get or set cookie value")]
         public Cookie Cookie
         {
             get
@@ -307,16 +332,28 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+        [Description("Access to configuration of current event")]
 
-        public Dictionary<string, string> config { get; set; }
+        private KDictionary _config; 
+        public KDictionary config {
+            get {
+                if (_config == null)
+                {
+                    _config = new KDictionary(); 
+                }
+                return _config; 
+            }
+            set { _config = value;  }
+        }
+         
+        [Kooboo.Attributes.SummaryIgnore]
+        public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
 
-        [Attributes.SummaryIgnore]
-        public FrontEvent.IFrontEvent @event { get; set; }
-
-        public Diagnosis.KDiagnosis diagnosis { get; set; }
+        public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
 
+        [Description("The database key value storage")]
         public kKeyValue KeyValue
         {
             get
@@ -355,6 +392,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+        [KIgnore]
         public kDatabase DB
         {
 
@@ -362,7 +400,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private KScriptExtension _ex;
-
+        [KIgnore]
         public KScriptExtension Extension
         {
             get
@@ -389,8 +427,8 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        private Global.Mail _mail;
-        public Global.Mail mail
+        private KScript.Mail _mail;
+        public KScript.Mail mail
         {
             get
             {
@@ -400,7 +438,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_mail == null)
                         {
-                            _mail = new Global.Mail(this.RenderContext);
+                            _mail = new KScript.Mail(this.RenderContext);
                         }
                     }
                 }
@@ -410,6 +448,7 @@ namespace Kooboo.Sites.Scripting
 
         Security _security;
 
+        [Description("One way and two way encryption")]
         public Security Security
         {
             get
@@ -428,7 +467,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-
+        [Description("Import and execute another KScript")]
         public void Import(string codename)
         {
             var sitedb = this.RenderContext.WebSite.SiteDb();
@@ -443,6 +482,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+        [KIgnore]
         public void ImportCode(string codename)
         {
             Import(codename);
@@ -450,30 +490,32 @@ namespace Kooboo.Sites.Scripting
 
         #region APIHelper
 
+        [KIgnore]
         public void Help()
         {
             //var html = new HelperRender().Render(RenderContext);
-            var html = new Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
+            var html = new Kooboo.Sites.Scripting.Helper.ScriptHelper.ScriptHelperRender().Render(RenderContext);
             Response.write(html);
             //Help("k");
         }
 
+        [KIgnore]
         public void ViewHelp()
         {
             var html = new ViewHelpRender().Render(RenderContext);
             Response.write(html);
-        }
+        } 
+
+        internal List<object> ReturnValues = new List<object>();
 
 
-        public List<object> ReturnValues = new List<object>();
-
-
-
+        [Description("return value to the caller")]
         public void output(object obj)
         {
             this.ReturnValues.Add(obj);
         }
 
+        [Description("return value to the caller")]
         public void export(object obj)
         {
             output(obj);
@@ -531,11 +573,11 @@ namespace Kooboo.Sites.Scripting
                 if (item.ReturnType == null || item.ReturnType == typeof(string) || !item.ReturnType.IsClass)
                 {
                     result += "<br/><br/><b>" + item.Name + "</b>";
-                    bool iscol = Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
+                    bool iscol = Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
 
                     if (iscol)
                     {
-                        var coltype = Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
+                        var coltype = Kooboo.Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
                         result += "<br/>Return type:  Array";
                         result += "<br/>Data type: " + coltype.Name;
                     }
@@ -549,7 +591,7 @@ namespace Kooboo.Sites.Scripting
                     string name = item.Name;
                     var para = new Dictionary<string, string>();
                     para.Add("name", name);
-                    string url = Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
+                    string url = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
                     result += "<br/><br/> <a href='" + url + "'><b>" + name + "</b></a>";
                 }
             }
@@ -585,11 +627,11 @@ namespace Kooboo.Sites.Scripting
 
                 if (item.ReturnType != typeof(void))
                 {
-                    bool iscol = Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
+                    bool iscol = Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
 
                     if (iscol)
                     {
-                        var coltype = Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
+                        var coltype = Kooboo.Lib.Reflection.TypeHelper.GetEnumberableType(item.ReturnType);
                         result += "<br/>Return type: Array";
                         result += "<br/>Data type: " + coltype.Name;
                     }
@@ -621,7 +663,7 @@ namespace Kooboo.Sites.Scripting
 
             foreach (var item in allmethods)
             {
-                var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
+                var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
                 if (requirepara == null)
                 {
                     var model = new MethodViewModel();
@@ -639,7 +681,7 @@ namespace Kooboo.Sites.Scripting
                         if (item.ReturnType.IsClass && item.ReturnType != typeof(string))
                         {
                             var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
-                            model.Sample = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                            model.Sample = Kooboo.Lib.Helper.JsonHelper.Serialize(SampleResponseData);
                         }
                     }
                     methods.Add(model);
@@ -664,7 +706,7 @@ namespace Kooboo.Sites.Scripting
             {
                 if (item.CanRead && item.PropertyType.IsPublic)
                 {
-                    var requirepara = item.GetCustomAttribute(typeof(Attributes.SummaryIgnore));
+                    var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
                     if (requirepara == null)
                     {
                         fieldlist.Add(item.Name, item.PropertyType);
@@ -728,7 +770,7 @@ namespace Kooboo.Sites.Scripting
                     if (item.ReturnType.IsClass && item.ReturnType != typeof(string))
                     {
                         var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
-                        model.Sample = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                        model.Sample = Kooboo.Lib.Helper.JsonHelper.Serialize(SampleResponseData);
                     }
                 }
                 methods.Add(model);
@@ -757,7 +799,6 @@ namespace Kooboo.Sites.Scripting
         public Type ReturnType { get; set; }
     }
 
-
     public class PropertyViewModel
     {
         public PropertyViewModel()
@@ -768,7 +809,6 @@ namespace Kooboo.Sites.Scripting
 
         public Type ReturnType { get; set; }
     }
-
 
     public class UserInfoModel
     {
@@ -821,7 +861,7 @@ namespace Kooboo.Sites.Scripting
             var OrgId = default(Guid);
             if (!Guid.TryParse(OrganizationName, out OrgId))
             {
-                OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
+                OrgId = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
             }
 
             if (context.User.CurrentOrgId == OrgId)
@@ -829,7 +869,7 @@ namespace Kooboo.Sites.Scripting
                 return true;
             }
 
-            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id);
+            var orgs = Kooboo.Data.GlobalDb.Users.Organizations(context.User.Id);
 
             if (orgs.Any())
             {
@@ -842,11 +882,11 @@ namespace Kooboo.Sites.Scripting
             return false;
         }
 
-        public Data.Models.User Get(string userName)
+        public Kooboo.Data.Models.User Get(string userName)
         {
             if (string.IsNullOrEmpty(userName))
                 return null;
-            return Data.GlobalDb.Users.Get(userName);
+            return Kooboo.Data.GlobalDb.Users.Get(userName);
         }
 
         public void EnsureLogin(string redirectUrl)
@@ -918,7 +958,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        public Data.Models.User Login(string username, string password)
+        public Kooboo.Data.Models.User Login(string username, string password)
         {
             var user = Kooboo.Data.GlobalDb.Users.Validate(username, password);
 
@@ -934,18 +974,18 @@ namespace Kooboo.Sites.Scripting
 
         public bool Exists(string UserName)
         {
-            return Data.GlobalDb.Users.Get(UserName) != null;
+            return Kooboo.Data.GlobalDb.Users.Get(UserName) != null;
         }
 
         [Obsolete]
         public bool ExistEmail(string email)
         {
-            return Data.GlobalDb.Users.GetByEmail(email) != null;
+            return Kooboo.Data.GlobalDb.Users.GetByEmail(email) != null;
         }
 
         public bool EmailExists(string email)
         {
-            return Data.GlobalDb.Users.GetByEmail(email) != null;
+            return Kooboo.Data.GlobalDb.Users.GetByEmail(email) != null;
         }
 
         public void Logout()

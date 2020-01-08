@@ -9,13 +9,13 @@ namespace Kooboo.Sites.Render
 {
     public class ImageRenderer
     {
-        public static void Render(FrontContext context)
+        public async static Task RenderAsync(FrontContext context)
         {
-            var image = context.SiteDb.ImagePool.Get(context.Route.objectId);
+            var image = await context.SiteDb.ImagePool.GetAsync(context.Route.objectId);
 
             if (image == null || image.ContentBytes == null)
             {
-                image = context.SiteDb.Images.Get(context.Route.objectId);
+                image = await context.SiteDb.Images.GetAsync(context.Route.objectId);
             }
             //  var image = context.SiteDb.Images.Get(context.Route.objectId);
 
@@ -43,6 +43,39 @@ namespace Kooboo.Sites.Render
             } 
             RenderImage(context, image);
         }
+         
+        public   static  void Render(FrontContext context)
+        {
+            var image =   context.SiteDb.ImagePool.Get(context.Route.objectId);
+
+            if (image == null || image.ContentBytes == null)
+            {
+                image =   context.SiteDb.Images.Get(context.Route.objectId);
+            } 
+            if (context.RenderContext.WebSite.EnableImageLog)
+            {
+                if (context.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
+                {
+                    Kooboo.Data.Models.ImageLog log = new Data.Models.ImageLog();
+                    log.ClientIP = context.RenderContext.Request.IP;
+                    log.Url = context.RenderContext.Request.RawRelativeUrl;
+                    log.StartTime = DateTime.Now;
+
+                    if (image != null)
+                    {
+                        log.Size = image.Size;
+                        log.ImageId = image.Id;
+                    }
+                    context.RenderContext.WebSite.SiteDb().ImageLog.Add(log);
+                }
+            }
+
+            if (image == null)
+            {
+                return;
+            }
+            RenderImage(context, image);
+        }
 
         public static void RenderImage(FrontContext context, Models.Image image)
         {
@@ -67,17 +100,7 @@ namespace Kooboo.Sites.Render
             context.RenderContext.Response.Body = image.ContentBytes;
         }
 
-        public byte[] GetContentBytes(FrontContext context, Models.Image image)
-        {
-            if (image.ContentBytes == null)
-            {
-                var sitedb = context.RenderContext.WebSite.SiteDb();
-                 
-            }
-            return image.ContentBytes; 
-        }
-
-
+    
 
     }
 }

@@ -49,6 +49,18 @@ namespace Kooboo.IndexedDB
             return null;
         }
 
+        private async Task<byte[]> GetPartialAsync(long position, int offset, int count)
+        {
+            byte[] partial = new byte[count];
+            Stream.Position = position + offset;
+            if (Stream.Length >= position + offset + count)
+            {
+                await Stream.ReadAsync(partial, 0, count);
+                return partial;
+            }
+            return null;
+        }
+
         // keep for upgrade.. not used any more. 
         public byte[] GetContent(long position, int KeyColumnOffset)
         {
@@ -89,6 +101,17 @@ namespace Kooboo.IndexedDB
             }
             int counter = BitConverter.ToInt32(counterbytes, 0);
             return GetPartial(position, 10, counter);
+        }
+
+        public async Task<byte[]> GetAsync(long position)
+        {
+            byte[] counterbytes = GetPartial(position, 2, 4);
+            if (counterbytes == null)
+            {
+                return null;
+            }
+            int counter = BitConverter.ToInt32(counterbytes, 0);
+            return await GetPartialAsync(position, 10, counter);
         }
 
 

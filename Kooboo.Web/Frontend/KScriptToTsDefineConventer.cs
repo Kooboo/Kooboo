@@ -22,6 +22,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public List<Property> Properties { get; set; }
             public List<Method> Methods { get; set; }
             public Dictionary<string, string> Enums { get; set; }
+            public string ValueType { get; set; }
         }
 
         internal class Property
@@ -151,6 +152,11 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                         var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
                         builder.AppendLine($"{_indentation}{declare}interface {define.Name} {extends}{{");
 
+                        if (define.ValueType != null)
+                        {
+                            builder.AppendLine($"{_indentation}{_indentation}[key:string]:{define.ValueType};");
+                        }
+
                         if (define.Properties != null)
                         {
                             foreach (var item in define.Properties)
@@ -168,6 +174,11 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                         {
                             foreach (var item in define.Methods)
                             {
+
+                                if (item.Discription != null)
+                                {
+                                    builder.AppendLine($"{_indentation}{_indentation}/** {item.Discription} */");
+                                }
                                 var @params = item.Params.Select(s => $"{s.Name}:{s.Type}");
                                 builder.AppendLine($"{_indentation}{_indentation}{item.Name}({string.Join(",", @params)}):{item.ReturnType};");
                             }
@@ -272,6 +283,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                     };
                                 }).ToList();
 
+            var valueType = type.GetCustomAttributesData().FirstOrDefault(f => f.AttributeType == typeof(KValueTypeAttribute))?.ConstructorArguments?[0].Value as Type;
+
             var extends = new List<Type>();
             extends.AddRange(type.GetInterfaces());
             if (type.BaseType != null) extends.Add(type.BaseType);
@@ -281,7 +294,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 Methods = methods,
                 Properties = properties,
                 Extends = extends,
-                Discription = GetDiscription(type)
+                Discription = GetDiscription(type),
+                ValueType = valueType == null ? null : TypeString(type, valueType)
             };
         }
 

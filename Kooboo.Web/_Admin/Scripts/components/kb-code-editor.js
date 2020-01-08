@@ -14,6 +14,7 @@
           rsp.model,
           "kscript/kscript.d.ts"
         );
+        monacoService.addExtraLib("html", rsp.model, "kscript/kscript.d.ts");
       }
     });
     Kooboo.loadJS([
@@ -88,6 +89,7 @@
           if (self.autoSize) {
             options.automaticLayout = true;
           }
+          options.fixedOverflowWidgets = true;
           var temp = monacoService.create(
             self.$el,
             self.d_code || self.code,

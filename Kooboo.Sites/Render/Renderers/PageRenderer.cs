@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Sites.Models;
   
@@ -45,9 +44,8 @@ namespace Kooboo.Sites.Render
             }
 
             if (!string.IsNullOrEmpty(html))
-            { 
-                var bytes = Encoding.UTF8.GetBytes(html);
-                context.RenderContext.Response.Body = bytes;  
+            {
+                TextBodyRender.SetBody(context, html);  
             } 
             else
             {

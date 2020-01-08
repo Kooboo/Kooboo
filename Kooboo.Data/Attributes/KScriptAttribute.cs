@@ -28,5 +28,20 @@ namespace Kooboo.Data.Attributes
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public class KExtensionAttribute : Attribute
     {
+
+    }
+
+    /// <summary>
+    /// mark filed is extension 
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+    public class KValueTypeAttribute : Attribute
+    {
+        public KValueTypeAttribute(Type type)
+        {
+            Type = type;
+        }
+
+        Type Type { get; }
     }
 }

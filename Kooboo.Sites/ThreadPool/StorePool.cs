@@ -36,7 +36,16 @@ namespace Kooboo.Sites.ThreadPool
             ReleaseObject(store);
             return siteobject; 
         }
-          
+
+        public async Task<TValue> GetAsync(Guid id)
+        {
+            var store = GetAvailable();
+            var siteobject = await store.getAsync(id);
+            store.Close();
+            ReleaseObject(store);
+            return siteobject;
+        }
+
         private ObjectStore<Guid,TValue>  GetAvailable()
         {
             lock (Locker)

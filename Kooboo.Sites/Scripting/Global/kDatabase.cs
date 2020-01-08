@@ -1,9 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using System.ComponentModel;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
+    [KValueType(typeof(KTable))]
     public class kDatabase
     {
         private RenderContext context { get; set; }
@@ -12,18 +15,21 @@ namespace Kooboo.Sites.Scripting.Global
             this.context = context;
         }
 
+        [Description("Return the kScript database table object, if the table is not exists, it will be created.")]
         public KTable GetTable(string Name)
         {
             var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
-            var tb = Data.DB.GetOrCreateTable(db, Name);
+            var tb = Kooboo.Data.DB.GetOrCreateTable(db, Name);
             return new KTable(tb, this.context);
         }
 
+        [KIgnore]
         public KTable Table(string Name)
         {
             return GetTable(Name);
         }
 
+        [KIgnore]
         public KTable this[string key]
         {
             get
@@ -35,7 +41,6 @@ namespace Kooboo.Sites.Scripting.Global
 
             }
         }
-
-
+        
     }
 }

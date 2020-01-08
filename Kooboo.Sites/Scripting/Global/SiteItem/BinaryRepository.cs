@@ -4,12 +4,9 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {           
     public class BinaryRepository : RepositoryBase
     {
@@ -17,6 +14,12 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
         }
 
+        [Description(@"Update the binary content
+ if (k.request.files.length>0)
+   {
+         var image = k.site.images.getByUrl(""/kooboo.png"");
+         k.site.images.updateBinary(image.id, k.request.files[0].bytes); 
+   }")]
         public void UpdateBinary(object NameOrId, byte[] Binary)
         {
             var item = this.repo.GetByNameOrId(NameOrId.ToString());
@@ -25,8 +28,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             binaryitem.ContentBytes = Binary;
             this.repo.AddOrUpdate(item);
         }
-                   
 
+        [Description(@"get the Binary Object by Url
+       var image = k.site.images.getByUrl(""/kooboo.png"");")]
         public ISiteObject GetByUrl(string url)
         {
             var route = this.context.WebSite.SiteDb().Routes.GetByUrl(url);

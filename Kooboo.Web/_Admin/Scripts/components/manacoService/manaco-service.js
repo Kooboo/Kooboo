@@ -94,29 +94,60 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = "https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/";
-      $.getScript(baseUrl + "vs/loader.js").done(function() {
-        window.require.config({
-          paths: { vs: baseUrl + "vs" }
-        });
-        window.MonacoEnvironment = {
-          getWorkerUrl: function(workerId, label) {
-            var encoded = encodeURIComponent(
-              "self.MonacoEnvironment = { baseUrl: '" +
-                baseUrl +
-                "' }; importScripts('" +
-                baseUrl +
-                "vs/base/worker/workerMain.js');"
-            );
-            return "data:text/javascript;charset=utf-8," + encoded;
-          }
-        };
-        window.require(["vs/editor/editor.main"], function() {
-          monaco = window.monaco;
-          self.isLoader = true;
-          callback(monaco);
-        });
-      });
+      var baseUrl = "https://cdn.jsdelivr.net/npm";
+      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/dev";
+      let monacoCoreUrl =
+        "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
+      $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
+        function() {
+          window.require.config({
+            paths: {
+              vs: monacoCoreUrl + "/vs",
+              "vs/basic-languages":
+                baseUrl + "/monaco-languages@1.9.0/release/min",
+              "vs/language/html": monacoHtmlUrl,
+              "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
+              "vs/language/typescript":
+                baseUrl + "/monaco-typescript@3.6.1/release/min"
+            }
+          });
+
+          window.MonacoEnvironment = {
+            getWorkerUrl: function(workerId, label) {
+              var url = monacoCoreUrl;
+              if (label === "html") {
+                url = monacoHtmlUrl;
+              }
+              return `data:text/javascript;charset=utf-8,
+                            debugger
+                      self.MonacoEnvironment = {
+                        baseUrl:${encodeURIComponent(url)}
+                      };
+                        importScripts(${encodeURIComponent(
+                          monacoCoreUrl + "/vs/base/worker/workerMain.js"
+                        )})
+                      `;
+            }
+          };
+
+          window.require(
+            ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
+            function() {
+              require([
+                "vs/basic-languages/monaco.contribution",
+                "vs/language/html/monaco.contribution",
+                "vs/language/css/monaco.contribution",
+                "vs/language/typescript/monaco.contribution"
+              ], function() {
+                monaco = window.monaco;
+                callback(monaco);
+              });
+
+              self.isLoader = true;
+            }
+          );
+        }
+      );
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (window.monaco) {
@@ -242,12 +273,12 @@ var MonacoEditorService =
             path
           );
           break;
-        default:
-          if (monaco.languages[language]) {
-            monaco.languages[language].addExtraLib(fileContent, path);
-          } else {
-            console.error("monaco.languages is no " + language);
-          }
+        case "html":
+          monaco.languages[language].htmlDefaults.addExtraLib(
+            fileContent,
+            path
+          );
+          break;
       }
     };
     MonacoEditorService.prototype.addManualTriggerSuggest = function(editor) {
@@ -276,7 +307,7 @@ var MonacoEditorService =
         triggerCharacters: ["<"],
         provideCompletionItems: function(model, position) {
           var textUntilPosition = model.getValueInRange({
-            startLineNumber: 1,
+            startLineNumber: position.lineNumber,
             startColumn: 1,
             endLineNumber: position.lineNumber,
             endColumn: position.column
@@ -306,6 +337,46 @@ var MonacoEditorService =
       });
 
       monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: [">"],
+        provideCompletionItems: function(model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          if (
+            textUntilPosition.split("<").length !=
+              textUntilPosition.split(">").length ||
+            !textUntilPosition.endsWith(">")
+          ) {
+            return;
+          }
+
+          var regex = /<([\w\d-]+)\s?/g,
+            matches,
+            tag;
+          while ((matches = regex.exec(textUntilPosition))) {
+            tag = matches[1];
+          }
+          if (tag) {
+            tag = "</" + tag + ">";
+            return {
+              suggestions: [
+                {
+                  label: tag,
+                  kind: monaco.languages.CompletionItemKind.Property,
+                  documentation: tag,
+                  insertText: tag
+                }
+              ]
+            };
+          }
+        }
+      });
+
+      monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
           var textUntilPosition = model.getValueInRange({
             startLineNumber: 1,
@@ -317,6 +388,7 @@ var MonacoEditorService =
             /<[\w\d-]+\s+((?!<\/).)*[a-zA-Z\-]$/
           ); // <div .... k> or <div ....> k
           if (!matchs) return;
+          if (!matchs[0].match(/\s+[a-zA-Z\-]$/)) return; // space + character
           var cleanTag = matchs[0]
             .replace(/=\s*"[^"]*"/g, "") // remove attributes ""
             .replace(/=\s*'[^"]*'/g, "") // remove attributes ''
