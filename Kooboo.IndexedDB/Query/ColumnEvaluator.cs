@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,22 @@ namespace Kooboo.IndexedDB.Query
         private Comparer compareType;
         private IComparer<byte[]> byteCompare;
         private byte[] ValueBytes;
+
+        private DateTime _datetimeValue; 
+        private DateTime DateTimeValue
+        {
+            get
+            {
+                if (_datetimeValue == default(DateTime))
+                {
+                    if (this.ValueBytes !=null)
+                    {
+                        _datetimeValue = DateTimeUtcHelper.ToDateTime(this.ValueBytes); 
+                    }
+                }
+                return _datetimeValue; 
+            }
+        }
 
         private int columnLength; // the actually column length. Maybe adjusted by different compare type. 
         private int maxColumnLength;   // the setting defined column length. 
@@ -43,39 +60,43 @@ namespace Kooboo.IndexedDB.Query
             }
             if (this.DataType == typeof(DateTime))
             {
-                columnbytes = ConvertDatetimeBytes(columnbytes);
+                var coltime = DateTimeUtcHelper.ToDateTime(columnbytes);
+
+                return DateTimeUtcHelper.Compare(compareType, coltime, this.DateTimeValue);  
             }
-
-            switch (compareType)
+            else
             {
-                case Comparer.EqualTo:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) == 0;
+                switch (compareType)
+                {
+                    case Comparer.EqualTo:
+                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) == 0;
 
-                case Comparer.GreaterThan:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) > 0;
+                    case Comparer.GreaterThan:
+                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) > 0;
 
-                case Comparer.GreaterThanOrEqual:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) >= 0;
+                    case Comparer.GreaterThanOrEqual:
+                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) >= 0;
 
-                case Comparer.LessThan:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) < 0;
+                    case Comparer.LessThan:
+                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) < 0;
 
-                case Comparer.LessThanOrEqual:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) <= 0;
+                    case Comparer.LessThanOrEqual:
+                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) <= 0;
 
-                case Comparer.NotEqualTo:
+                    case Comparer.NotEqualTo:
 
-                    return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this.ValueBytes, columnLength);
+                        return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this.ValueBytes, columnLength);
 
 
-                case Comparer.StartWith:
-                    return Btree.Comparer.MoreComparer.StartWith(columnbytes, this.ValueBytes, this.columnLength);
+                    case Comparer.StartWith:
+                        return Btree.Comparer.MoreComparer.StartWith(columnbytes, this.ValueBytes, this.columnLength);
 
-                case Comparer.Contains:
-                    return Btree.Comparer.MoreComparer.Contains(columnbytes, this.ValueBytes, this.columnLength, this.maxColumnLength);
+                    case Comparer.Contains:
+                        return Btree.Comparer.MoreComparer.Contains(columnbytes, this.ValueBytes, this.columnLength, this.maxColumnLength);
 
-                default:
-                    return false;
+                    default:
+                        return false;
+                }
             }
         }
         /// <summary>
