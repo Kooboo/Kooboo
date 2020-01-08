@@ -13,6 +13,7 @@ using System.ComponentModel;
 using KScript.Sites;
 using Kooboo.Sites.Scripting;
 using Kooboo;
+using Kooboo.Sites.KscriptConfig;
 
 namespace KScript
 {
@@ -29,10 +30,13 @@ namespace KScript
         }
 
         [KIgnore]
-        public IkScript this[string key] { get { return ExtensionContainer.Get(key, RenderContext) as IkScript; } set { ExtensionContainer.Set(value); } }
+        public object this[string key] { get { return ExtensionContainer.Get(key, RenderContext); } set { ExtensionContainer.Set(value); } }
 
         [KExtension]
         static KeyValuePair<string, Type>[] _ = ExtensionContainer.List.ToArray();
+
+        [KExtension]
+        static KeyValuePair<string, Type>[] __ = KscriptConfigContainer.KscriptConfigTypes.ToArray();
 
         private kDataContext _data;
 

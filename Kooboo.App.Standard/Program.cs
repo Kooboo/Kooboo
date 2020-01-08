@@ -40,6 +40,8 @@ namespace Kooboo.App.CrossPlatform
           
 
             AppSettings.CurrentUsedPort = port;
+            //linux add ssl
+            Kooboo.Data.SSL.SslService.AddSslMiddleWare(Kooboo.Web.SystemStart.Middleware);
 
             Web.SystemStart.Start(port);
             Console.WriteLine("Web Server Started");
