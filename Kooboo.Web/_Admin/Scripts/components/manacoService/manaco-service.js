@@ -94,17 +94,16 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = Kooboo.isLocal()
-        ? "/_admin/scripts/lib/"
-        : "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
-        
-      $.getScript(baseUrl + "vs/loader.js").done(function() {
+      var local = "/_admin/scripts/lib/";
+      var cdn = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
+
+      var load = function(url) {
         window.require.config({
-          paths: { vs: baseUrl + "vs" }
+          paths: { vs: url + "vs" }
         });
 
         window.MonacoEnvironment = {
-          getWorkerUrl: function(workerId, label) {
+          getWorkerUrl: function() {
             return "data:text/javascript;charset=utf-8, throw Error()";
           }
         };
@@ -114,7 +113,29 @@ var MonacoEditorService =
           callback(monaco);
           self.isLoader = true;
         });
-      });
+      };
+
+      var createScript = function(url) {
+        var loaderScript = document.createElement("script");
+        loaderScript.id = "__monaco_loader";
+        loaderScript.src = url + "vs/loader.js";
+        loaderScript.onload = function() {
+          load(url);
+        };
+        return loaderScript;
+      };
+
+      var loaderScript = createScript(Kooboo.isLocal() ? local : cdn);
+
+      loaderScript.onerror = function() {
+        document.head.removeChild(loaderScript);
+        loaderScript = createScript(cdn);
+        document.head.appendChild(loaderScript);
+      };
+
+      if (!document.getElementById("__monaco_loader")) {
+        document.head.appendChild(loaderScript);
+      }
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (window.monaco) {
