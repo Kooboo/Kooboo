@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Repository
 
         public override bool AddOrUpdate(DatabaseTable value, Guid UserId)
         {
-             VerifyData(value.Columns); 
+            VerifyData(value.Columns);
 
             var ok = base.AddOrUpdate(value, UserId);
 
@@ -146,7 +146,14 @@ namespace Kooboo.Sites.Repository
                 foreach (var item in nameorids)
                 {
                     DatabaseTable table = new DatabaseTable() { Name = item };
-                    this.Delete(table.Id, userid);
+
+                    var old = Get(table.Id);
+
+                    if (old != null)
+                    {
+                        base.Delete(old.Id, userid);
+                    }
+                    KDB.DeleteTable(item);
                 }
             }
         }
@@ -158,20 +165,20 @@ namespace Kooboo.Sites.Repository
 
         public void VerifyData(List<DbTableColumn> columns)
         {
-            var finds = columns.FindAll(o =>o.IsPrimaryKey || o.IsIndex);
-            
-            if (finds !=null)
+            var finds = columns.FindAll(o => o.IsPrimaryKey || o.IsIndex);
+
+            if (finds != null)
             {
                 foreach (var item in finds)
                 {
-                    if (item.DataType !=null && item.DataType.ToLower().Contains("date"))
+                    if (item.DataType != null && item.DataType.ToLower().Contains("date"))
                     {
-                        throw new Exception(Data.Language.Hardcoded.GetValue("Does not support index on date time column")); 
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Does not support index on date time column"));
                     }
                 }
             }
 
         }
-      
+
     }
 }

@@ -4,6 +4,7 @@ using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Context;
 using Kooboo.Data.Server;
+using Kooboo.Data.SSL;
 using Kooboo.Jobs;
 using Kooboo.Render;
 using Kooboo.Sites.Extensions;
@@ -107,6 +108,8 @@ namespace Kooboo.Web
                             _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
+
+                            _middlewares.Add(new SslCertMiddleWare()); 
 
                             _middlewares.Add(new EndMiddleWare());
                         }
