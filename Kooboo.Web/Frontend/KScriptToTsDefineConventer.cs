@@ -48,7 +48,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         readonly string _indentation = "  ";
 
         static readonly string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
-        static readonly string[] _skipNamespaces = new string[] { "System", "Jint" };
+        static readonly string[] _skipNamespaces = new string[] { "System", "Jint", "Newtonsoft" };
 
         static readonly IDictionary<Type, string> _convertedTypes = new Dictionary<Type, string>()
         {
@@ -125,7 +125,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 Name = CamelCaseName(s.Key),
                 Type = TypeString(type, s.Value),
                 Discription = null
-            }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
+            }).GroupBy(g => g.Name).Select(s => s.Last()).ToList();
         }
 
         internal string DefinesToString(Type type)

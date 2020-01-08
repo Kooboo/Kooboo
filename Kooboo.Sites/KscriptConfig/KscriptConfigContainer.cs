@@ -117,6 +117,46 @@ namespace Kooboo.Sites.KscriptConfig
                 return _list;
             }
         }
+
+        private static Dictionary<string, Type> kscriptConfigTypes;
+        public static Dictionary<string, Type> KscriptConfigTypes
+        {
+            get
+            {
+                if (kscriptConfigTypes == null)
+                {
+                    lock (_lockObj)
+                    {
+                        if (kscriptConfigTypes == null)
+                        {
+                            kscriptConfigTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+                            var config = AppSettings.KscriptConfig;
+                            if (config == null) return kscriptConfigTypes;
+
+                            //dll in base directory,need be loaded
+                            LoadExtensionDll(config.ExtensionDlls);
+
+                            foreach (var item in config.Kscripts)
+                            {
+                                try
+                                {
+                                    var type = ExtensionAssemblyLoader.Instance.LoadTypeByName(item.NameSpace);
+                                    if (type == null) continue;
+                                    kscriptConfigTypes[item.NameSpace] = type;
+
+
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                            }
+                        }
+                    }
+                }
+                return kscriptConfigTypes;
+            }
+        }
         /// <summary>
         /// data 
         /// key:koobootest.service
@@ -217,7 +257,7 @@ namespace Kooboo.Sites.KscriptConfig
         /// <param name="name"></param>
         /// <param name="context"></param>
         /// <param name="kscriptContext"></param>
-        KScriptConfigType(string name, RenderContext context,object kscriptContext)
+        KScriptConfigType(string name, RenderContext context, object kscriptContext)
         {
             SetKscriptnameNContext(name, context, kscriptContext);
         }
@@ -233,7 +273,7 @@ namespace Kooboo.Sites.KscriptConfig
             }
         }
 
-        public void SetKscriptnameNContext(string kscriptname, RenderContext context,object kscriptContext=null)
+        public void SetKscriptnameNContext(string kscriptname, RenderContext context, object kscriptContext = null)
         {
             this.kscriptname = kscriptname;
             this.kscriptContext = kscriptContext;
@@ -242,7 +282,7 @@ namespace Kooboo.Sites.KscriptConfig
         private void CreateInstanceByNamespace(string kscriptname, RenderContext context)
         {
             var keys = KscriptConfigContainer.NamespaceTypeDic.Keys;
-            var matchNS = keys.ToList().FindAll(k => k.StartsWith(kscriptname+".", StringComparison.OrdinalIgnoreCase));
+            var matchNS = keys.ToList().FindAll(k => k.StartsWith(kscriptname + ".", StringComparison.OrdinalIgnoreCase));
 
             foreach (var ns in matchNS)
             {
@@ -276,7 +316,7 @@ namespace Kooboo.Sites.KscriptConfig
             else
             {
                 startNS = string.Format("{0}.{1}", startNS, parts[0]);
-                var kScriptConfigType= new KScriptConfigType(startNS, rendercontext,kscriptContext);
+                var kScriptConfigType = new KScriptConfigType(startNS, rendercontext, kscriptContext);
                 Types[parts[0]] = kScriptConfigType;
             }
         }
@@ -290,11 +330,11 @@ namespace Kooboo.Sites.KscriptConfig
         //        return kscriptContext;
 
         //    var instance = context.ToKscriptContext(kscriptContextType);
-            
+
         //    return instance;
         //}
 
-        private object GetOrCreateContext(RenderContext renderContext,Type kscriptContextType)
+        private object GetOrCreateContext(RenderContext renderContext, Type kscriptContextType)
         {
             if (kscriptContextType == null || renderContext == null)
                 return null;

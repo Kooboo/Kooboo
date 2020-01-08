@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Kooboo.Sites.KscriptConfig;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -29,6 +30,9 @@ namespace Kooboo.Sites.Scripting
 
         [KExtension]
         static KeyValuePair<string, Type>[] _ = ExtensionContainer.List.ToArray();
+
+        [KExtension]
+        static KeyValuePair<string, Type>[] __ = KscriptConfigContainer.KscriptConfigTypes.ToArray();
 
         private kDataContext _data;
         public kDataContext DataContext
