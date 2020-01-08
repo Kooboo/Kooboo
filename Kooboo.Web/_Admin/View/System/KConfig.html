@@ -21,11 +21,10 @@
   >
     <kb-table-column :label="Kooboo.text.common.name" body-class="summary">
       <template v-slot="row">
-        <a @click.stop="">
-          <p>{{row.name}}</p>
-          <p>{{firstKey(row) + ": " + row.binding[firstKey(row)]}}</p>
+        <a @click.stop="" href="javascript:;">
+          <p>{{rowNameFormat(row).title}}</p>
+          <p>{{rowNameFormat(row).description}}</p>
         </a>
-        <a>{{ row.name }}</a>
       </template>
     </kb-table-column>
     <kb-table-column
@@ -33,14 +32,21 @@
       body-class="table-thumbnail"
     >
       <template v-slot="row">
-        <a target="_blank">
+        <a
+          target="_blank"
+          @click="linkTo(firstKey(row) === 'src'?row.binding[firstKey(row)] + '?SiteId=' + Kooboo.getQueryString('siteid'): '')"
+          v-if="row.tagName == 'img'"
+        >
           <div class="thumbnail-fixed">
             <div class="img-wrap"></div>
             <img
-              :src="firstKey(row) === 'src'?item.binding[firstKey(row)] + '?SiteId=' + Kooboo.getQueryString('siteid'): ''"
+              :src="firstKey(row) === 'src'?row.binding[firstKey(row)] + '?SiteId=' + Kooboo.getQueryString('siteid'): ''"
             />
           </div>
         </a>
+        <div style="text-align: center" v-else>
+          -
+        </div>
       </template>
     </kb-table-column>
     <kb-table-column :label="'tagName'">
@@ -53,11 +59,12 @@
         <a
           v-for="(item, index) in Kooboo.objToArr(row.relations)"
           class="label label-sm kb-table-label-refer"
-          :style="{
-                  background: Kooboo.getLabelColor(row.key.toLowerCase())
-                }"
           :key="index"
-          @click.stop="onShowRelationModal(row.key, row.id,  Kooboo.KConfig.name)"
+          v-for="(item, index) in Kooboo.objToArr(row.relations)"
+          :style="{
+                  background: Kooboo.getLabelColor(item.key.toLowerCase())
+                }"
+          @click.stop="onShowRelationModal(item.key, row.id,  Kooboo.KConfig.name)"
         >
           {{ item.value + " " +
           Kooboo.text.component.table[item.key.toLowerCase()] }}
@@ -69,18 +76,22 @@
         <span>{{new Date(row.lastModified).toDefaultLangString()}}</span>
       </template>
     </kb-table-column>
-    <kb-table-column :label="''">
+    <kb-table-column :label="''" width="40px">
       <template v-slot="row">
         <button
-          @click="onEdit($event,row)"
+          v-for="(item, index) in Kooboo.objToArr(row.relations)"
+          @click.stop="onEdit(row)"
           class="btn btn-xs blue pull-right"
           :title="Kooboo.text.common.edit"
           ><i class="fa fa-pencil"></i
         ></button>
+      </template>
+    </kb-table-column>
+    <kb-table-column :label="''" width="40px">
+      <template v-slot="row">
         <a
           class="btn blue btn-xs"
           :href="getVersionsUrl(row.keyHash,row.storeNameHash)"
-          @click.stop=""
           target="_blank"
         >
           <i class="fa fa-clock-o"></i>
@@ -120,11 +131,7 @@
     </kb-dialog>
   </div>
 
-  <kb-media-dialog
-    v-if="showMediaModal"
-    :data="mediaDialogData"
-    @on-add="mediaDialogAdd"
-  ></kb-media-dialog>
+  <kb-media-dialog :data="mediaDialogData"></kb-media-dialog>
 </div>
 
 <script>
