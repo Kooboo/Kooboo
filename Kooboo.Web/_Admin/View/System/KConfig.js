@@ -28,6 +28,11 @@ $(function() {
       self = this;
       self.getTableData();
     },
+    mounted: function() {
+      Kooboo.EventBus.subscribe("kb/config/edit", function(data) {
+        self.getTableData();
+      });
+    },
     methods: {
       getConfirmMessage: function(doc) {
         if (doc.relations) {
@@ -74,18 +79,18 @@ $(function() {
       },
       onEdit: function(item) {
         Kooboo.KConfig.Get({
-          id: data.id
+          id: item.id
         }).then(function(res) {
           if (res.success) {
             switch (res.model.controlType.toLowerCase()) {
               case "textbox":
-                self.configItem = res.model;
+                self.configItem = Kooboo.objToArr(res.model);
                 self.showConfigModal = true;
                 break;
               case "mediafile":
                 Kooboo.Media.getList().then(function(res) {
                   if (res.success) {
-                    self.mediaDialogData = res.model;
+                    self.mediaDialogData = Kooboo.objToArr(res.model);
                     self.showMediaModal = true;
                   }
                 });
@@ -107,14 +112,24 @@ $(function() {
           }
         });
       },
+      rowNameFormat: function(row) {
+        var firstKey = Object.keys(row.binding)[0];
+        return {
+          title: row.name,
+          description: firstKey + ": " + row.binding[firstKey]
+        };
+      },
+      linkTo: function(href) {
+        window.open(href);
+      },
       onShowRelationModal: function(by, id, type) {
+        debugger;
         Kooboo.EventBus.publish("kb/relation/modal/show", {
           by: by,
           type: type,
           id: id
         });
       },
-
       onDelete: function() {
         if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
           var ids = this.tableDataSelected.map(function(m) {

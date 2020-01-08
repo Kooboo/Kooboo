@@ -75,6 +75,11 @@ var getKViewSuggestions = function() {
       label: "k-replace",
       documentation: "Replace the element with the value.",
       insertText: 'k-replace="${1:htmlText}"'
+    },
+    {
+      label: "k-config",
+      documentation: "Replace the element with the value.",
+      insertText: 'k-config="${1:}"'
     }
   ];
   return suggestions;
