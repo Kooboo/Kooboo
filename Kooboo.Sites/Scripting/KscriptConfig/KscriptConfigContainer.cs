@@ -5,7 +5,7 @@ using System.Linq;
 using Kooboo.Data.Context;
 using Kooboo.Lib.Reflection;
 
-namespace Kooboo.Sites.KscriptConfig
+namespace KScript.KscriptConfig
 {
     public static class KscriptConfigContainer
     {
@@ -26,7 +26,7 @@ namespace Kooboo.Sites.KscriptConfig
                         if (kscriptContextType == null)
                         {
                             LoadExtensionDll(config.ExtensionDlls);
-                            kscriptContextType = Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(config.KscriptContext);
+                            kscriptContextType = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(config.KscriptContext);
                         }
                     }
                 }
@@ -85,7 +85,7 @@ namespace Kooboo.Sites.KscriptConfig
                             {
                                 try
                                 {
-                                    var kscriptType = Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(item.Value);
+                                    var kscriptType = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(item.Value);
                                     if (kscriptType == null) continue;
 
                                     var ns = GetTopLevelNamespace(item.NameSpace);
@@ -107,7 +107,7 @@ namespace Kooboo.Sites.KscriptConfig
                                 }
                                 catch (Exception ex)
                                 {
-
+                                    Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.Source); 
                                 }
                             }
                         }
@@ -174,7 +174,7 @@ namespace Kooboo.Sites.KscriptConfig
         {
             var kscriptSettings = new Dictionary<string, Type>();
 
-            var settingType = Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(kscriptSetting);
+            var settingType = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByFullClassName(kscriptSetting);
             if (settingType != null)
             {
                 var types = GetTypes(settingType);
@@ -206,11 +206,11 @@ namespace Kooboo.Sites.KscriptConfig
             var types = new List<Type> { type };
             if (type.IsInterface)
             {
-                types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(type);
+                types = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByInterface(type);
             }
             else if (type.IsClass)
             {
-                types = Lib.Reflection.AssemblyLoader.LoadTypeByBaseClass(type);
+                types = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByBaseClass(type);
             }
 
             return types;
