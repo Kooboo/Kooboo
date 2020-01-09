@@ -118,8 +118,8 @@ namespace Kooboo.Sites.KscriptConfig
             }
         }
 
-        private static Dictionary<string, Type> kscriptConfigTypes;
-        public static Dictionary<string, Type> KscriptConfigTypes
+        private static Dictionary<string, Type[]> kscriptConfigTypes;
+        public static Dictionary<string, Type[]> KscriptConfigTypes
         {
             get
             {
@@ -129,7 +129,7 @@ namespace Kooboo.Sites.KscriptConfig
                     {
                         if (kscriptConfigTypes == null)
                         {
-                            kscriptConfigTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+                            kscriptConfigTypes = new Dictionary<string, Type[]>(StringComparer.OrdinalIgnoreCase);
                             var config = AppSettings.KscriptConfig;
                             if (config == null) return kscriptConfigTypes;
 
@@ -140,11 +140,12 @@ namespace Kooboo.Sites.KscriptConfig
                             {
                                 try
                                 {
-                                    var type = ExtensionAssemblyLoader.Instance.LoadTypeByName(item.NameSpace);
-                                    if (type == null) continue;
-                                    kscriptConfigTypes[item.NameSpace] = type;
+                                    var kscriptType = AssemblyLoader.LoadTypeByFullClassName(item.Value);
+                                    if (kscriptType == null) continue;
+                                    var kscriptTypes = GetTypes(kscriptType);
+                                    if (kscriptTypes == null || kscriptTypes.Count == 0) continue;
 
-
+                                    kscriptConfigTypes[item.NameSpace] = kscriptTypes.ToArray();
                                 }
                                 catch (Exception ex)
                                 {

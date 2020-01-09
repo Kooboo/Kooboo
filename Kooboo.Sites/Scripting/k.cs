@@ -36,7 +36,7 @@ namespace KScript
         static KeyValuePair<string, Type>[] _ = ExtensionContainer.List.ToArray();
 
         [KExtension]
-        static KeyValuePair<string, Type>[] __ = KscriptConfigContainer.KscriptConfigTypes.ToArray();
+        static KeyValuePair<string, Type[]>[] __ = KscriptConfigContainer.KscriptConfigTypes.ToArray();
 
         private kDataContext _data;
 
