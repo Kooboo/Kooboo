@@ -141,9 +141,8 @@ var MonacoEditorService =
               ], function() {
                 monaco = window.monaco;
                 callback(monaco);
+                self.isLoader = true;
               });
-
-              self.isLoader = true;
             }
           );
         }

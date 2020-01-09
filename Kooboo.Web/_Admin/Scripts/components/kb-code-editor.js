@@ -26,7 +26,8 @@
   });
 
   Vue.component("kb-code-editor", {
-    template: "<div  style='width:100%;height:100%'></div>",
+    template:
+      "<h2 v-if='!loader' style='text-align:center'>{{Kooboo.text.common.loading}}...</h2> <div v-else style='width:100%;height:100%'></div>",
     props: {
       lang: {
         type: String,
