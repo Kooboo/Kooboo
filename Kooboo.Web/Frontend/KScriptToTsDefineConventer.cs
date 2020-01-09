@@ -72,7 +72,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(DateTime)] = "Date",
         };
 
-        readonly Dictionary<Type, Define> _defines = new Dictionary<Type, Define>();
+        readonly Dictionary<string, Define> _defines = new Dictionary<string, Define>();
         readonly Queue<Type> _queue = new Queue<Type>();
 
         readonly IEnumerable<MethodInfo> _extensionMethodInfos = Lib.Reflection.AssemblyLoader.AllAssemblies
@@ -92,12 +92,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 var extensionProperties = GetExtensionProperties(t);
                 define.Properties?.AddRange(extensionProperties);
 
-                _defines.Add(t, define);
+                _defines.Add(t.FullName, define);
 
                 while (_queue.Any())
                 {
                     var nextType = _queue.Dequeue();
-                    if (_defines.ContainsKey(nextType)) continue;
+                    if (_defines.ContainsKey(nextType.FullName)) continue;
                     Recursion(nextType);
                 }
             }
@@ -148,7 +148,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
                     if (define.Enums == null)
                     {
-                        var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
+                        var extendList = define.Extends.Where(w => _defines.ContainsKey(w.FullName)).Select(s => $"{GetNamespace(s)}{_defines[s.FullName].Name}");
                         var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
                         builder.AppendLine($"{_indentation}{declare}interface {define.Name} {extends}{{");
 
