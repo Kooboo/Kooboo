@@ -756,7 +756,7 @@
     };
 
     this.GetDefine = function() {
-      return this.executePost("GetDefine");
+      return this.executeGet("GetDefine", null, true);
     };
   }
   extend(KScript, BaseModel);
@@ -2281,7 +2281,7 @@
 
   Kooboo.GetCookie = function(key) {
     var value = null;
-    
+
     document.cookie.split(";").find(function(m) {
       var keyvalue = m.trim().split("=");
       if (keyvalue[0] == key) {
