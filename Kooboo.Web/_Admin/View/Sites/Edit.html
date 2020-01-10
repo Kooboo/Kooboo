@@ -1,39 +1,15 @@
-﻿<!DOCTYPE html>
-<html>
-  <head>
-    <title>Kooboo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0087c2" />
-    <script src="/_Admin/Scripts/lib/jquery.min.js"></script>
-    <script src="/_Admin/Scripts/lib/vuejs/vue.js"></script>
-    <script src="/_Admin/Scripts/KoobooBase.js"></script>
-    <script src="/_Admin/Scripts/kooboo/text.js"></script>
-    <script src="/_Admin/Scripts/vueExtends.js"></script>
-    <link href="/_Admin/Styles/styles.css" rel="stylesheet" />
-    <link href="/_Admin/Styles/custom.css" rel="stylesheet" />
-    <link rel="Shortcut Icon" href="/_Admin/Images/favicon.ico" />
-    <meta charset="UTF-8" />
-  </head>
-
-  <body style="overflow: hidden;">
-    <div class="page-loading">
-      <div class="content">
-        <p><i class="fa fa-spinner fa-spin"></i>Loading...</p>
-      </div>
+﻿<!-- #layout name=empty -->
+<div id="main">
+  <div class="block-fullscreen">
+    <div class="block-visual-editor vertical">
+      <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
     </div>
+  </div>
+  <div id="components">
+    <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
+  </div>
+</div>
 
-    <div id="main">
-      <div class="block-fullscreen">
-        <div class="block-visual-editor vertical">
-          <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
-        </div>
-      </div>
-      <div id="components">
-        <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
-      </div>
-    </div>
-  </body>
-</html>
 <script>
   function checkBrowser(lang) {
     if (lang == "zh") {
