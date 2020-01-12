@@ -29,6 +29,12 @@ namespace Kooboo.Data.Log
             Write(text); 
         }
 
+        public void WriteException(Exception ex)
+        {
+            string text = ex.Message + ex.Source + ex.StackTrace;
+            Write(text); 
+        }
+
         private StreamWriter Writer
         {
             get
