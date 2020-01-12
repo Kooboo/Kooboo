@@ -65,7 +65,7 @@ namespace Kooboo.Mail.Smtp
                 Kooboo.Mail.Smtp.SmtpSession session = new Smtp.SmtpSession(this.Client.Address.ToString());
 
                 // Service ready
-                await _writer.WriteLineAsync(session.ServiceReady().Render());
+                await WriteLineAsync(session.ServiceReady().Render());
 
                 var commandline = await _reader.ReadLineAsync();
 
@@ -76,7 +76,7 @@ namespace Kooboo.Mail.Smtp
                     if (response.SendResponse)
                     {
                         var responseline = response.Render();   
-                        await _writer.WriteLineAsync(responseline);
+                        await WriteLineAsync(responseline);
                     }
 
                     if (response.SessionCompleted)
@@ -98,7 +98,7 @@ namespace Kooboo.Mail.Smtp
 
                         if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts))
                         {
-                            await _writer.WriteLineAsync("550 you have no enough credit to send emails");
+                            await WriteLineAsync("550 you have no enough credit to send emails");
                             Dispose();
                             break;
                         }
@@ -109,7 +109,7 @@ namespace Kooboo.Mail.Smtp
 
                         if (dataresponse.SendResponse)
                         {
-                            await _writer.WriteLineAsync(dataresponse.Render());
+                            await WriteLineAsync(dataresponse.Render());
                         }
 
                         if (dataresponse.SessionCompleted)
@@ -160,7 +160,7 @@ namespace Kooboo.Mail.Smtp
                 {
                     if (_client.Connected)
                     {
-                        await _writer.WriteLineAsync("550 Internal Server Error");
+                        await WriteLineAsync("550 Internal Server Error");
                     }
                 }
                 catch
@@ -173,6 +173,11 @@ namespace Kooboo.Mail.Smtp
                 _server._connectionManager.RemoveConnection(Id);
                 Dispose();
             }
+        }
+
+        private Task WriteLineAsync(string line)
+        {
+            return _writer.WriteAsync(line + "\r\n");
         }
 
         public void CheckTimeout(DateTime now)
