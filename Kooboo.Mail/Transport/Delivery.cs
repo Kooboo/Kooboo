@@ -138,33 +138,7 @@ namespace Kooboo.Mail.Transport
             {
                 return;
             }
-
-            //Kooboo.Mail.Smtp.Log.LogInfo("sending external  mails: " + mailfrom + " TO: " + string.Join(",", RctpTos.ToArray()) + "\r\n" + MessageBody);
-
-            //if (RctpTos.Count() <= 3)
-            //{
-            //    foreach (var item in RctpTos)
-            //    {
-            //       var result = await Send(mailfrom, item, MessageBody);
-
-            //        if (!result.Success)
-            //        {
-            //            if (result.ShouldRetry)
-            //            {
-            //                Kooboo.Mail.Queue.QueueManager.AddSendQueue(mailfrom, item, MessageBody);
-            //            }
-            //            else
-            //            {
-            //               NotifyFailure(mailfrom, item, MessageBody, result.Message);
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-
-            //_logger.Log($"{mailfrom},{String.Join("|", RctpTos)},Queued");
-
+             
             foreach (var item in RctpTos)
             {
                 Kooboo.Mail.Queue.QueueManager.AddSendQueue(mailfrom, item, MessageBody);
