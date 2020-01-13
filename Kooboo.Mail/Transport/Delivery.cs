@@ -45,6 +45,9 @@ namespace Kooboo.Mail.Transport
         {
             var setting = await  Settings.GetSendSetting(Data.AppSettings.ServerSetting, Data.AppSettings.IsOnlineServer, MailFrom, RcptTo);
 
+            Kooboo.Data.Log.Instance.Email.Write("-- sending \r\n"); 
+            Data.Log.Instance.Email.Write(MailFrom +" to: " + RcptTo);
+
             if (!setting.OkToSend)
             {
                 return new ActionResponse() { Success = false, Message = setting.ErrorMessage, ShouldRetry = false };
@@ -54,12 +57,16 @@ namespace Kooboo.Mail.Transport
             {
                 if (setting.UseKooboo)
                 {
+                    Kooboo.Data.Log.Instance.Email.Write(setting.KoobooServerIp + " " + setting.Port);
+
                     await sendClient.Connect(setting.KoobooServerIp, setting.Port);
                 }
                 else
                 {
                     foreach (var item in setting.Mxs)
                     {
+                        Kooboo.Data.Log.Instance.Email.Write(item);
+
                         try
                         {
                             await sendClient.Connect(item, 25);
@@ -67,7 +74,9 @@ namespace Kooboo.Mail.Transport
                         }
                         catch (System.Exception ex)
                         {
-                            Kooboo.Mail.Smtp.Log.LogInfo(ex.Message + ex.StackTrace + ex.Source);
+                            Data.Log.Instance.Email.WriteException(ex); 
+
+                            // Kooboo.Mail.Smtp.Log.LogInfo(ex.Message + ex.StackTrace + ex.Source);
                         }
                     }
                 }
