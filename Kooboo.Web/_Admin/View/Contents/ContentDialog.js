@@ -13,7 +13,7 @@ $(function() {
         categories: [],
         embedded: [],
         choosedEmbedded: {},
-        mediaDialogData: {}
+        mediaDialogData: null
       };
     },
     mounted: function() {
@@ -44,24 +44,6 @@ $(function() {
       }
       $(window).on("resize.dialog", function() {
         self.adjustHeight();
-      });
-      Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(ctx) {
-        Kooboo.Media.getList().then(function(res) {
-          if (res.success) {
-            res.model["show"] = true;
-            res.model["context"] = ctx;
-            res.model["onAdd"] = function(selected) {
-              ctx.settings.file_browser_callback(
-                ctx.field_name,
-                selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
-                ctx.type,
-                ctx.win,
-                true
-              );
-            };
-            self.mediaDialogData = res.model;
-          }
-        });
       });
     },
     methods: {
