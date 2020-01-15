@@ -64,9 +64,31 @@ namespace Kooboo.Sites.Scripting.Sqlite
             sqliteConnection.Execute($"INSERT INTO {name} ({columns}) VALUES ({values})", data);
         }
 
+        public static void CreateIndex(this SQLiteConnection sqliteConnection, string name, string fieldname)
+        {
+            sqliteConnection.Execute($"CREATE INDEX {fieldname} on {name}({fieldname})");
+        }
+
+        public static void Delete(this SQLiteConnection sqliteConnection, string name, string id)
+        {
+            sqliteConnection.Execute($"DELETE FROM {name} WHERE _id = @Id", new { Id = id });
+        }
+
         public static object[] All(this SQLiteConnection sqliteConnection, string name)
         {
             return sqliteConnection.Query<object>($"SELECT * FROM {name}").ToArray();
+        }
+
+        public static void UpdateData(this SQLiteConnection sqliteConnection, string name, string id, object data)
+        {
+            var dic = data as IDictionary<string, object>;
+            var keyValues = string.Join(",", dic.Select(s => $"{s.Key}=@{s.Key}"));
+            sqliteConnection.Execute($"UPDATE {name} SET {keyValues} WHERE _id = @Id", data);
+        }
+
+        public static object Get(this SQLiteConnection sqliteConnection, string name, string id)
+        {
+           return sqliteConnection.Query<object>($"SELECT * FROM {name} WHERE _id = @Id", new { Id = id }).FirstOrDefault();
         }
     }
 }

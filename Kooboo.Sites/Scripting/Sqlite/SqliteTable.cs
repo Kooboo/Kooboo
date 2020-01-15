@@ -35,6 +35,12 @@ namespace Kooboo.Sites.Scripting.Sqlite
             return _connection.All(_name);
         }
 
+        public object Get(object id)
+        {
+            EnsureTableCreated();
+            return _connection.Get(_name, id.ToString());
+        }
+
         public object Append(object value)
         {
             EnsureTableCreated();
@@ -42,6 +48,33 @@ namespace Kooboo.Sites.Scripting.Sqlite
             EnsureHaveId(value);
             _connection.Append(_name, value, _schema);
             return value;
+        }
+
+        public void CreateIndex(string fieldname)
+        {
+            EnsureTableCreated();
+            _connection.CreateIndex(_name, fieldname);
+        }
+
+        public void Update(object id, object newvalue)
+        {
+            EnsureTableCreated();
+            TryUpgradeSchema(newvalue);
+            EnsureHaveId(newvalue, id.ToString());
+            _connection.UpdateData(_name, id.ToString(), newvalue);
+        }
+
+        public void Update(object newvalue)
+        {
+            var dic = newvalue as IDictionary<string, object>;
+            if (!dic.ContainsKey("_id")) Update(dic["_id"], newvalue);
+            else Add(newvalue);
+        }
+
+        public void Delete(object id)
+        {
+            EnsureTableCreated();
+            _connection.Delete(_name, id.ToString());
         }
 
         void TryUpgradeSchema(object value)
@@ -56,6 +89,7 @@ namespace Kooboo.Sites.Scripting.Sqlite
                 }
             }
         }
+
 
         IEnumerable<SqliteSchema.Item> EnsureSchemaCompatible(object value)
         {
@@ -74,10 +108,11 @@ namespace Kooboo.Sites.Scripting.Sqlite
             }
         }
 
-        object EnsureHaveId(object value)
+        object EnsureHaveId(object value, string id = null)
         {
+            if (id == null) id = Guid.NewGuid().ToString();
             var dic = value as IDictionary<string, object>;
-            if (!dic.ContainsKey("_id")) dic.Add("_id", Guid.NewGuid().ToString());
+            if (!dic.ContainsKey("_id")) dic.Add("_id", id);
             return value;
         }
     }
