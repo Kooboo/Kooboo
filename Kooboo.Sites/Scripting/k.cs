@@ -14,6 +14,7 @@ using KScript.Sites;
 using Kooboo.Sites.Scripting;
 using Kooboo;
 using KScript.KscriptConfig;
+using Kooboo.Sites.Scripting.Sqlite;
 
 namespace KScript
 {
@@ -153,7 +154,7 @@ var value = k.session.key; ")]
         }
 
         private InfoModel _siteinfo;
-        
+
         [Description("Access to current request information")]
         public InfoModel Info
         {
@@ -222,7 +223,7 @@ var value = k.session.key; ")]
                 {
                     if (_setting == null)
                     {
-                        _setting = new KDictionary(); 
+                        _setting = new KDictionary();
                     }
                     return _setting;
                 }
@@ -233,7 +234,7 @@ var value = k.session.key; ")]
             public UserModel User
             {
                 get; set;
-            } 
+            }
         }
 
         private kSiteDb _sitedb;
@@ -334,18 +335,20 @@ var value = k.session.key; ")]
 
         [Description("Access to configuration of current event")]
 
-        private KDictionary _config; 
-        public KDictionary config {
-            get {
+        private KDictionary _config;
+        public KDictionary config
+        {
+            get
+            {
                 if (_config == null)
                 {
-                    _config = new KDictionary(); 
+                    _config = new KDictionary();
                 }
-                return _config; 
+                return _config;
             }
-            set { _config = value;  }
+            set { _config = value; }
         }
-         
+
         [Kooboo.Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
 
@@ -389,6 +392,26 @@ var value = k.session.key; ")]
                     }
                 }
                 return _database;
+            }
+        }
+
+        private SqliteDatabase _sqlite;
+
+        public SqliteDatabase Sqlite
+        {
+            get
+            {
+                if (_sqlite == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_sqlite == null)
+                        {
+                            _sqlite = new SqliteDatabase(this.RenderContext);
+                        }
+                    }
+                }
+                return _sqlite;
             }
         }
 
@@ -504,7 +527,7 @@ var value = k.session.key; ")]
         {
             var html = new ViewHelpRender().Render(RenderContext);
             Response.write(html);
-        } 
+        }
 
         internal List<object> ReturnValues = new List<object>();
 
