@@ -33,5 +33,40 @@ namespace Kooboo.Sites.Scripting.Sqlite
             sqliteConnection.Execute($"CREATE TABLE {name} ( _id TEXT PRIMARY KEY)");
         }
 
+        public static void Insert(this SQLiteConnection sqliteConnection, string name, object data)
+        {
+            var dic = data as IDictionary<string, object>;
+            var columns = string.Join(",", dic.Select(s => s.Key));
+            var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
+            sqliteConnection.Execute($"INSERT INTO {name} ({columns}) VALUES ({values})", data);
+        }
+
+        public static void Append(this SQLiteConnection sqliteConnection, string name, object data, SqliteSchema schema)
+        {
+            var dic = data as IDictionary<string, object>;
+            var removeKeys = new List<string>();
+
+            foreach (var item in dic)
+            {
+                if (schema.Items.All(a => a.Name != item.Key))
+                {
+                    removeKeys.Add(item.Key);
+                }
+            }
+
+            foreach (var item in removeKeys)
+            {
+                dic.Remove(item);
+            }
+
+            var columns = string.Join(",", dic.Select(s => s.Key));
+            var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
+            sqliteConnection.Execute($"INSERT INTO {name} ({columns}) VALUES ({values})", data);
+        }
+
+        public static object[] All(this SQLiteConnection sqliteConnection, string name)
+        {
+            return sqliteConnection.Query<object>($"SELECT * FROM {name}").ToArray();
+        }
     }
 }

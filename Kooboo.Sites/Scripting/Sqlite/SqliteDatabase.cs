@@ -13,6 +13,7 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Sqlite
 {
+    [KValueType(typeof(SqliteTable))]
     public class SqliteDatabase
     {
         readonly SQLiteConnection _connection;
