@@ -8,9 +8,7 @@ namespace Kooboo.Web.Frontend
     {
 
         public static bool IsBackendUrl(string relativeUrl)
-        {
-
-
+        {  
             //string relativeUrl = Relativeurl.ToLower(); 
             //if (relativeUrl.StartsWith("/_api/") ||
             //    relativeUrl.StartsWith("/_admin/") ||
@@ -20,8 +18,7 @@ namespace Kooboo.Web.Frontend
             //    )
             //{
             //    return true;
-            //} 
-
+            //}
             return false; 
         }
     }

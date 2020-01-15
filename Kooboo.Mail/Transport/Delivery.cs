@@ -153,7 +153,6 @@ namespace Kooboo.Mail.Transport
                 Kooboo.Mail.Queue.QueueManager.AddSendQueue(mailfrom, item, MessageBody);
             }
 
-
             await Kooboo.Mail.Queue.QueueManager.Execute();
             //}
         }

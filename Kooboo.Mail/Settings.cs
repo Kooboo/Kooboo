@@ -106,8 +106,8 @@ namespace Kooboo.Mail
         {
             get
             {
-                //return false;
-                return !HasDefineMta;
+                //return false; 
+                return !HasDefineMta && Data.AppSettings.IsOnlineServer;
             }
         }
 
