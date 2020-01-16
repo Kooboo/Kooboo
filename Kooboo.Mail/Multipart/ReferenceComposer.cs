@@ -2,15 +2,8 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Mail.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Data;
 using Kooboo.Data.Language;
 using LumiSoft.Net.MIME;
-using Kooboo.Data.Models;
 using Kooboo.Mail.ViewModel;
 
 namespace Kooboo.Mail.Multipart

@@ -17,6 +17,7 @@
     :embedded="embedded"
     :values.sync="contentValues"
     :site-langs="siteLangs"
+    @media-dialog-data="mediaDialogData=$event"
   ></kb-field-panel>
   <kb-media-dialog :data.sync="mediaDialogData"></kb-media-dialog>
 </div>
@@ -32,7 +33,7 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kbMultilangSelector.js",
       "/_Admin/Scripts/components/kbFieldPanel.js",
-
+      "/_Admin/Scripts/components/kb-media-dialog.js",
       "/_Admin/Scripts/kooboo/Guid.js"
     ]);
   })();
