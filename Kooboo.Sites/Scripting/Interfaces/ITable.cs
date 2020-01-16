@@ -58,11 +58,11 @@ var items = k.database.tablename.findAll(""fieldname"", ""matchvalue"");")]
 
         [Description("get an item based on Id or primary key")]
         IDynamicTableObject get(object id);
-        TableQuery Query();
+        ITableQuery Query();
 
         [Description(@"Return the query object for further operations like paging.
 use the same query syntax as find or findAll")]
-        TableQuery Query(string query);
+        ITableQuery Query(string query);
 
         [Description(@"update an item
 var table = k.database.tablename;

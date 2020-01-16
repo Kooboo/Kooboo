@@ -1,4 +1,6 @@
-﻿using Kooboo.Sites.Scripting.Global;
+﻿using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.Sqlite;
 using KScript;
 using System;
 using System.Collections.Generic;
@@ -60,7 +62,7 @@ namespace KScript
 
         public object add(object value)
         {
-            value = Helper.CleanDynamicObject(value);
+            value = kHelper.CleanDynamicObject(value);
             EnsureTableCreated();
             TryUpgradeSchema(value);
             var newId = Guid.NewGuid().ToString();
@@ -72,13 +74,13 @@ namespace KScript
         public IDynamicTableObject[] all()
         {
             EnsureTableCreated();
-            var data = _connection.All(_name);
+            var data = _connection.QueryData(_name);
             return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _name);
         }
 
         public object append(object value)
         {
-            value = Helper.CleanDynamicObject(value);
+            value = kHelper.CleanDynamicObject(value);
             EnsureTableCreated();
             EnsureSchemaCompatible(value);
             var newId = Guid.NewGuid().ToString();
@@ -101,40 +103,52 @@ namespace KScript
 
         public IDynamicTableObject find(string query)
         {
-            throw new NotImplementedException();
+            EnsureTableCreated();
+            var data = _connection.QueryData(_name, query).FirstOrDefault();
+            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
         }
 
         public IDynamicTableObject find(string fieldName, object matchValue)
         {
-            throw new NotImplementedException();
+            EnsureTableCreated();
+            var data = _connection.QueryData(_name, $"{fieldName} == '{matchValue}'").FirstOrDefault();
+            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
         }
 
         public IDynamicTableObject[] findAll(string query)
         {
-            throw new NotImplementedException();
+            EnsureTableCreated();
+            var data = _connection.QueryData(_name, query);
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _name);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
         {
-            throw new NotImplementedException();
+            EnsureTableCreated();
+            var data = _connection.QueryData(_name, $"{field} == '{value}'");
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _name);
         }
 
         public IDynamicTableObject get(object id)
         {
             EnsureTableCreated();
-            var data = _connection.Get(_name, id.ToString());
+            var data = _connection.QueryData(_name, $"_id == '{id}'").FirstOrDefault();
             return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
         }
 
-        public TableQuery Query()
+        #region todo
+        public ITableQuery Query()
         {
-            throw new NotImplementedException();
+            return new SqliteTableQuery(_connection,_name);
         }
 
-        public TableQuery Query(string query)
+        public ITableQuery Query(string query)
         {
-            throw new NotImplementedException();
+            var result = new SqliteTableQuery(_connection, _name);
+            result.Where(query);
+            return result;
         }
+        #endregion
 
         public void update(object newvalue)
         {

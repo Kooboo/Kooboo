@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using KScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,19 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global
 {
-  public static  class kHelper
-    {                    
+    public static class kHelper
+    {
+        public static object CleanDynamicObject(object Value)
+        {
+            if (Value is IDynamicTableObject)
+            {
+                var dynamictable = Value as IDynamicTableObject;
+                return dynamictable.obj;
+            }
+
+            return Value;
+        }
+
         public static object PrepareData(object dataobj, Type modelType)
         {
             Dictionary<string, object> data = GetData(dataobj);

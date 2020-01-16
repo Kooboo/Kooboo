@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using Jint.Parser.Ast;
+using Kooboo.IndexedDB.Dynamic;
+using Kooboo.IndexedDB.Query;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -75,11 +77,6 @@ namespace KScript
             sqliteConnection.Execute($"DELETE FROM {name} WHERE _id = @Id", new { Id = id });
         }
 
-        public static object[] All(this SQLiteConnection sqliteConnection, string name)
-        {
-            return sqliteConnection.Query<object>($"SELECT * FROM {name}").ToArray();
-        }
-
         public static void UpdateData(this SQLiteConnection sqliteConnection, string name, string id, object data)
         {
             var dic = data as IDictionary<string, object>;
@@ -87,16 +84,85 @@ namespace KScript
             sqliteConnection.Execute($"UPDATE {name} SET {keyValues} WHERE _id = @Id", data);
         }
 
-        public static object Get(this SQLiteConnection sqliteConnection, string name, string id)
-        {
-            return sqliteConnection.Query<object>($"SELECT * FROM {name} WHERE _id = @Id", new { Id = id }).FirstOrDefault();
-        }
-
         public static object GetRelation(this SQLiteConnection sqliteConnection, string name, string relation)
         {
             var sql = $@"SELECT ""table"",""from"",""to"" FROM pragma_foreign_key_list('{name}') where ""table""='{relation}';";
             var relations = sqliteConnection.Query<RelationModel>(sql);
             return relations.FirstOrDefault();
+        }
+
+        public static object[] QueryData(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null)
+        {
+            var conditions = QueryPraser.ParseConditoin(where);
+            var whereStr = where == null ? string.Empty : ConditionsToSql(conditions);
+            var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
+            var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
+            return sqliteConnection.Query<object>($"SELECT * FROM {name} {whereStr} {limitStr} {offsetStr}").ToArray();
+        }
+
+        public static int Count(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null)
+        {
+            var conditions = QueryPraser.ParseConditoin(where);
+            var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
+            var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
+            var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
+            return sqliteConnection.Query<int>($"SELECT count(*) FROM {name} {whereStr} {limitStr} {offsetStr}").FirstOrDefault();
+        }
+
+        private static string ConditionsToSql(List<ConditionItem> conditions)
+        {
+            return string.Join(" and ", conditions.Select(s => $" {s.Field} {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
+        }
+
+        static string ComparerToString(Comparer comparer)
+        {
+            switch (comparer)
+            {
+                case Comparer.EqualTo:
+                    return "=";
+                case Comparer.GreaterThan:
+                    return ">";
+                case Comparer.GreaterThanOrEqual:
+                    return ">=";
+                case Comparer.LessThan:
+                    return "<";
+                case Comparer.LessThanOrEqual:
+                    return "<=";
+                case Comparer.NotEqualTo:
+                    return "<>";
+                case Comparer.StartWith:
+                    return "like";
+                case Comparer.Contains:
+                    return "like";
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        static string ConventValue(Comparer comparer, string value)
+        {
+            switch (comparer)
+            {
+                case Comparer.EqualTo:
+                case Comparer.NotEqualTo:
+
+                    if (!decimal.TryParse(value, out var _) && !bool.TryParse(value, out var _))
+                    {
+                        value = $"'{value}'";
+                    }
+
+                    break;
+                case Comparer.StartWith:
+                    value = $"'{value}%'";
+                    break;
+                case Comparer.Contains:
+                    value = $"'%{value}%'";
+                    break;
+                default:
+                    break;
+            }
+
+            return value;
         }
     }
 }

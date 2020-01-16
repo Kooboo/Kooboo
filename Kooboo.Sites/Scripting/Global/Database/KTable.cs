@@ -26,7 +26,7 @@ namespace KScript
 
         public object add(object value)
         {
-            value = Helper.CleanDynamicObject(value);
+            value = kHelper.CleanDynamicObject(value);
             var result = this.table.Add(value, true);
             if (result == default(Guid))
             {
@@ -37,7 +37,7 @@ namespace KScript
 
         public object append(object value)
         {
-            value = Helper.CleanDynamicObject(value);
+            value = kHelper.CleanDynamicObject(value);
             var result = this.table.Add(value, false);
             if (result == default(Guid))
             {
@@ -48,13 +48,13 @@ namespace KScript
 
         public void update(object id, object newvalue)
         {
-            newvalue = Helper.CleanDynamicObject(newvalue);
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             this.table.Update(id, newvalue);
         }
 
         public void update(object newvalue)
         {
-            newvalue = Helper.CleanDynamicObject(newvalue);
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             var newdata = this.table.PrepareData(newvalue);
             if (newdata.ContainsKey("_id"))
             {
@@ -102,12 +102,12 @@ namespace KScript
             return DynamicTableObject.Create(obj, this.table, this.context);
         }
 
-        public TableQuery Query()
+        public ITableQuery Query()
         {
             return new TableQuery(this);
         }
 
-        public TableQuery Query(string query)
+        public ITableQuery Query(string query)
         {
             var result = new TableQuery(this);
             result.Where(query);

@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace KScript
 {
-    public class TableQuery
+    public class TableQuery : ITableQuery
     {
         public TableQuery(KTable table)
         {
-            this.ktable = table;  
+            this.ktable = table;
         }
 
         [Kooboo.Attributes.SummaryIgnore]
@@ -27,40 +27,40 @@ namespace KScript
 
         public string SearchCondition { get; set; }
 
-        public TableQuery skip(int skip)
-        { 
+        public ITableQuery skip(int skip)
+        {
             this.skipcount = skip;
             return this;
         }
 
-        public TableQuery Where(string searchCondition)
+        public ITableQuery Where(string searchCondition)
         {
             this.SearchCondition = searchCondition;
             return this;
         }
 
-        public TableQuery OrderBy(string fieldname)
+        public ITableQuery OrderBy(string fieldname)
         {
             this.OrderByField = fieldname;
             this.Ascending = true;
             return this;
         }
 
-        public TableQuery OrderByDescending(string fieldname)
+        public ITableQuery OrderByDescending(string fieldname)
         {
             this.OrderByField = fieldname;
             this.Ascending = false;
             return this;
         }
 
-        public DynamicTableObject[] take(int count)
+        public IDynamicTableObject[] take(int count)
         {
             var query = new Kooboo.IndexedDB.Dynamic.Query(this.ktable.table);
-             
+
             if (!string.IsNullOrEmpty(this.SearchCondition))
             {
                 var filter = query.ParserFilter(this.SearchCondition);
-                query.items = filter; 
+                query.items = filter;
             }
             else
             {
@@ -78,23 +78,23 @@ namespace KScript
                     query.OrderByDescending(this.OrderByField);
                 }
             }
-            
-            var result =  query.Skip(this.skipcount).Take(count).ToArray();
-            return DynamicTableObject.CreateList(result, this.ktable.table, this.ktable.context); 
+
+            var result = query.Skip(this.skipcount).Take(count).ToArray();
+            return DynamicTableObject.CreateList(result, this.ktable.table, this.ktable.context);
 
         }
-         
+
         public int count()
         {
             // TODO: improve performance.
-            var all = take(99999); 
+            var all = take(99999);
             if (all == null)
             {
-                return 0; 
+                return 0;
             }
             else
             {
-                return all.Count(); 
+                return all.Count();
             }
         }
     }
