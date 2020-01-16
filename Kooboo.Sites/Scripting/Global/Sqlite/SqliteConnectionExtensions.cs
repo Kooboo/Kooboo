@@ -91,13 +91,14 @@ namespace KScript
             return relations.FirstOrDefault();
         }
 
-        public static object[] QueryData(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null)
+        public static object[] QueryData(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null, string orderBy = null)
         {
             var conditions = QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
             var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
+            var orderByStr = orderBy == null ? string.Empty : $"ORDER BY {orderBy}";
             var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            return sqliteConnection.Query<object>($@"SELECT * FROM ""{name}"" {whereStr} {limitStr} {offsetStr}").ToArray();
+            return sqliteConnection.Query<object>($@"SELECT * FROM ""{name}"" {whereStr} {orderByStr} {limitStr} {offsetStr}").ToArray();
         }
 
         public static int Count(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null)

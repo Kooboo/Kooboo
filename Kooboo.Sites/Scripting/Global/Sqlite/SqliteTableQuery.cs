@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
 
         public int count()
         {
-           return _connection.Count(_tableName, SearchCondition, null, skipcount);
+            return _connection.Count(_tableName, SearchCondition, null, skipcount);
         }
 
         public ITableQuery OrderBy(string fieldname)
@@ -50,7 +50,9 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
 
         public IDynamicTableObject[] take(int count)
         {
-            var data = _connection.QueryData(_tableName, SearchCondition, count, skipcount);
+            var desc = Ascending ? string.Empty : "DESC";
+            var orderBy = OrderByField == null ? null : $"{OrderByField} {desc}";
+            var data = _connection.QueryData(_tableName, SearchCondition, count, skipcount, orderBy);
             return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _tableName);
         }
 
