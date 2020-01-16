@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Sqlite
+namespace KScript
 {
     public class SqliteSchemaNotCompatibleException : Exception
     {

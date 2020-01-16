@@ -11,7 +11,7 @@ using System.Linq;
 namespace KScript
 {
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
-    public class DynamicTableObject : Kooboo.Data.Interface.IDynamic
+    public class DynamicTableObject :IDynamicTableObject
     {
         [KIgnore]
         public IDictionary<string, object> obj { get; set; }
@@ -65,7 +65,7 @@ namespace KScript
                     var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
 
                     if (relation.TableA == this.table.Name)
-                    { 
+                    {
                         if (obj.ContainsKey(relation.FieldA))
                         {
                             var fielda = obj[relation.FieldA];
@@ -85,7 +85,7 @@ namespace KScript
                         }
                     }
                     else if (relation.TableB == this.table.Name)
-                    { 
+                    {
                         if (obj.ContainsKey(relation.FieldB))
                         {
                             var fieldb = obj[relation.FieldB];

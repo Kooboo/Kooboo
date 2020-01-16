@@ -11,24 +11,27 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Sqlite
+namespace KScript
 {
     [KValueType(typeof(SqliteTable))]
-    public class SqliteDatabase
+    public class SqliteDatabase : ISqliteDatabase
     {
         readonly SQLiteConnection _connection;
-        readonly RenderContext _renderContext;
         readonly ConcurrentDictionary<string, SqliteTable> _tables = new ConcurrentDictionary<string, SqliteTable>();
 
         public SqliteDatabase(RenderContext renderContext)
         {
-            _renderContext = renderContext;
             var path = Path.Combine(AppSettings.GetFileIORoot(renderContext.WebSite), "sqlite.db");
             _connection = new SQLiteConnection($"Data source='{path}';Version=3");
         }
 
+        ~SqliteDatabase()
+        {
+            _connection.Dispose();
+        }
+
         [KIgnore]
-        public SqliteTable this[string key]
+        public ITable this[string key]
         {
             get
             {
@@ -36,7 +39,7 @@ namespace Kooboo.Sites.Scripting.Sqlite
             }
         }
 
-        public SqliteTable GetTable(string name)
+        public ITable GetTable(string name)
         {
             return _tables.GetOrAdd(name, new SqliteTable(_connection, name));
         }

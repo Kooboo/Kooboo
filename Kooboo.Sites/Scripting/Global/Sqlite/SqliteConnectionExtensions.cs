@@ -1,12 +1,13 @@
 ﻿using Dapper;
 using Jint.Parser.Ast;
+using Kooboo.Sites.Scripting.Global.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Sqlite
+namespace KScript
 {
     public static class SqliteConnectionExtensions
     {
@@ -88,7 +89,14 @@ namespace Kooboo.Sites.Scripting.Sqlite
 
         public static object Get(this SQLiteConnection sqliteConnection, string name, string id)
         {
-           return sqliteConnection.Query<object>($"SELECT * FROM {name} WHERE _id = @Id", new { Id = id }).FirstOrDefault();
+            return sqliteConnection.Query<object>($"SELECT * FROM {name} WHERE _id = @Id", new { Id = id }).FirstOrDefault();
+        }
+
+        public static object GetRelation(this SQLiteConnection sqliteConnection, string name, string relation)
+        {
+            var sql = $@"SELECT ""table"",""from"",""to"" FROM pragma_foreign_key_list('{name}') where ""table""='{relation}';";
+            var relations = sqliteConnection.Query<RelationModel>(sql);
+            return relations.FirstOrDefault();
         }
     }
 }

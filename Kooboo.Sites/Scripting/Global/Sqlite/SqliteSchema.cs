@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Sqlite
+namespace KScript
 {
     public class SqliteSchema
     {

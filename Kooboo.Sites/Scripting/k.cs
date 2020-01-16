@@ -14,7 +14,6 @@ using KScript.Sites;
 using Kooboo.Sites.Scripting;
 using Kooboo;
 using KScript.KscriptConfig;
-using Kooboo.Sites.Scripting.Sqlite;
 
 namespace KScript
 {
@@ -375,9 +374,9 @@ var value = k.session.key; ")]
             }
         }
 
-        private kDatabase _database;
+        private IDatabase _database;
 
-        public kDatabase Database
+        public IDatabase Database
         {
             get
             {
@@ -395,9 +394,9 @@ var value = k.session.key; ")]
             }
         }
 
-        private SqliteDatabase _sqlite;
+        private ISqliteDatabase _sqlite;
 
-        public SqliteDatabase Sqlite
+        public ISqliteDatabase Sqlite
         {
             get
             {
@@ -416,7 +415,7 @@ var value = k.session.key; ")]
         }
 
         [KIgnore]
-        public kDatabase DB
+        public IDatabase DB
         {
 
             get { return this.Database; }
