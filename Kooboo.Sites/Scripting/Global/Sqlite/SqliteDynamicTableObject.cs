@@ -14,7 +14,6 @@ namespace KScript
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
     public class SqliteDynamicTableObject : IDynamicTableObject
     {
-        [KIgnore]
         public IDictionary<string, object> obj { get; set; }
         readonly SQLiteConnection _connection;
         readonly string _tableName;
@@ -35,7 +34,6 @@ namespace KScript
             _tableName = tableName;
         }
 
-        [KIgnore]
         public object this[string key]
         {
             get
@@ -55,17 +53,17 @@ namespace KScript
                 return obj[key];
             }
 
-            var relation = _connection.GetRelation(_tableName, key);
+            var relation = _connection.GetRelation(key, _tableName);
 
-            if (relation != default)
+            if (relation != default && obj.ContainsKey(relation.To))
             {
-                
+                var data= _connection.QueryData(key, $"{relation.From} == {obj[relation.To]}").Take(999);
+                return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, key);
             }
 
             return null;
         }
 
-        [KIgnore]
         public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list, SQLiteConnection connection, string tableName)
         {
             int len = list.Length;
@@ -79,7 +77,6 @@ namespace KScript
             return result;
         }
 
-        [KIgnore]
         public static IDynamicTableObject Create(IDictionary<string, object> item, SQLiteConnection connection, string tableName)
         {
             if (item != null)

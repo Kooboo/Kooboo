@@ -25,7 +25,7 @@ namespace KScript
 
             foreach (var item in items)
             {
-                sb.AppendLine($"ALTER TABLE {name} ADD COLUMN {item.Name} {item.Type.ToString()};");
+                sb.AppendLine($@"ALTER TABLE ""{name}"" ADD COLUMN {item.Name} {item.Type.ToString()};");
             }
 
             sqliteConnection.Execute(sb.ToString());
@@ -33,15 +33,15 @@ namespace KScript
 
         public static void CreateTable(this SQLiteConnection sqliteConnection, string name)
         {
-            sqliteConnection.Execute($"CREATE TABLE {name} ( _id TEXT PRIMARY KEY)");
+            sqliteConnection.Execute($@"CREATE TABLE ""{name}"" ( _id TEXT PRIMARY KEY)");
         }
 
         public static void Insert(this SQLiteConnection sqliteConnection, string name, object data)
         {
             var dic = data as IDictionary<string, object>;
-            var columns = string.Join(",", dic.Select(s => s.Key));
+            var columns = string.Join(",", dic.Select(s => $@"""{s.Key}"""));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            sqliteConnection.Execute($"INSERT INTO {name} ({columns}) VALUES ({values})", data);
+            sqliteConnection.Execute($@"INSERT INTO ""{name}"" ({columns}) VALUES ({values})", data);
         }
 
         public static void Append(this SQLiteConnection sqliteConnection, string name, object data, SqliteSchema schema)
@@ -62,29 +62,29 @@ namespace KScript
                 dic.Remove(item);
             }
 
-            var columns = string.Join(",", dic.Select(s => s.Key));
+            var columns = string.Join(",", dic.Select(s => $@"""{s.Key}"""));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            sqliteConnection.Execute($"INSERT INTO {name} ({columns}) VALUES ({values})", data);
+            sqliteConnection.Execute($@"INSERT INTO ""{name}"" ({columns}) VALUES ({values})", data);
         }
 
         public static void CreateIndex(this SQLiteConnection sqliteConnection, string name, string fieldname)
         {
-            sqliteConnection.Execute($"CREATE INDEX {fieldname} on {name}({fieldname})");
+            sqliteConnection.Execute($@"CREATE INDEX {fieldname} on ""{name}""(""{fieldname}"")");
         }
 
         public static void Delete(this SQLiteConnection sqliteConnection, string name, string id)
         {
-            sqliteConnection.Execute($"DELETE FROM {name} WHERE _id = @Id", new { Id = id });
+            sqliteConnection.Execute($@"DELETE FROM ""{name}"" WHERE _id = @Id", new { Id = id });
         }
 
         public static void UpdateData(this SQLiteConnection sqliteConnection, string name, string id, object data)
         {
             var dic = data as IDictionary<string, object>;
-            var keyValues = string.Join(",", dic.Select(s => $"{s.Key}=@{s.Key}"));
-            sqliteConnection.Execute($"UPDATE {name} SET {keyValues} WHERE _id = @Id", data);
+            var keyValues = string.Join(",", dic.Select(s => $@"""{s.Key}""=@{s.Key}"));
+            sqliteConnection.Execute($@"UPDATE ""{name}"" SET {keyValues} WHERE _id = @Id", data);
         }
 
-        public static object GetRelation(this SQLiteConnection sqliteConnection, string name, string relation)
+        public static RelationModel GetRelation(this SQLiteConnection sqliteConnection, string name, string relation)
         {
             var sql = $@"SELECT ""table"",""from"",""to"" FROM pragma_foreign_key_list('{name}') where ""table""='{relation}';";
             var relations = sqliteConnection.Query<RelationModel>(sql);
@@ -94,10 +94,10 @@ namespace KScript
         public static object[] QueryData(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null)
         {
             var conditions = QueryPraser.ParseConditoin(where);
-            var whereStr = where == null ? string.Empty : ConditionsToSql(conditions);
+            var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
             var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
             var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            return sqliteConnection.Query<object>($"SELECT * FROM {name} {whereStr} {limitStr} {offsetStr}").ToArray();
+            return sqliteConnection.Query<object>($@"SELECT * FROM ""{name}"" {whereStr} {limitStr} {offsetStr}").ToArray();
         }
 
         public static int Count(this SQLiteConnection sqliteConnection, string name, string where = null, long? limit = null, long? offset = null)
@@ -106,12 +106,12 @@ namespace KScript
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
             var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
             var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            return sqliteConnection.Query<int>($"SELECT count(*) FROM {name} {whereStr} {limitStr} {offsetStr}").FirstOrDefault();
+            return sqliteConnection.Query<int>($@"SELECT count(*) FROM ""{name}"" {whereStr} {limitStr} {offsetStr}").FirstOrDefault();
         }
 
         private static string ConditionsToSql(List<ConditionItem> conditions)
         {
-            return string.Join(" and ", conditions.Select(s => $" {s.Field} {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
+            return string.Join(" and ", conditions.Select(s => $@" ""{s.Field}"" {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
         }
 
         static string ComparerToString(Comparer comparer)
