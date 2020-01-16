@@ -44,9 +44,10 @@ namespace KScript
             return _tables.GetOrAdd(name, new SqliteTable(_connection, name));
         }
 
-        public object[] Query(string sql)
+        public IDynamicTableObject[] Query(string sql)
         {
-            return _connection.Query<object>(sql).ToArray();
+            var data = _connection.Query<object>(sql).ToArray();
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, null);
         }
 
         public int Execute(string sql)

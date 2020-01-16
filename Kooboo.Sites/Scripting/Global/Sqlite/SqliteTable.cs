@@ -150,6 +150,7 @@ namespace KScript
 
         public void update(object newvalue)
         {
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             var dic = newvalue as IDictionary<string, object>;
             if (!dic.ContainsKey("_id")) update(dic["_id"], newvalue);
             else add(newvalue);
@@ -157,6 +158,7 @@ namespace KScript
 
         public void update(object id, object newvalue)
         {
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             EnsureTableCreated();
             TryUpgradeSchema(newvalue);
             EnsureHaveId(newvalue, id.ToString());
