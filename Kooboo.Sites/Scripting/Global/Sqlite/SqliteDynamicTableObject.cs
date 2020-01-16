@@ -1,6 +1,7 @@
 ﻿using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Scripting.Global.Database;
 using Kooboo.Sites.Scripting.Helper;
 using KScript;
 using System;
@@ -12,20 +13,10 @@ using System.Text;
 namespace KScript
 {
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
-    public class SqliteDynamicTableObject : IDynamicTableObject
+    public class SqliteDynamicTableObject : DynamicTableObjectBase, IDynamicTableObject
     {
-        public IDictionary<string, object> obj { get; set; }
         readonly SQLiteConnection _connection;
         readonly string _tableName;
-
-
-        public Dictionary<string, object> Values
-        {
-            get
-            {
-                return this.obj.ToDictionary(o => o.Key, o => o.Value);
-            }
-        }
 
         public SqliteDynamicTableObject(IDictionary<string, object> orgObj, SQLiteConnection connection, string tableName)
         {
@@ -34,19 +25,7 @@ namespace KScript
             _tableName = tableName;
         }
 
-        public object this[string key]
-        {
-            get
-            {
-                return GetValueFromDict(key);
-            }
-            set
-            {
-                this.obj[key] = value;
-            }
-        }
-
-        private object GetValueFromDict(string key)
+        internal override object GetValueFromDict(string key)
         {
             if (obj.ContainsKey(key))
             {
@@ -85,21 +64,6 @@ namespace KScript
             }
             return null;
 
-        }
-
-        public object GetValue(string FieldName)
-        {
-            return GetValueFromDict(FieldName);
-        }
-
-        public object GetValue(string FieldName, RenderContext Context)
-        {
-            return GetValueFromDict(FieldName);
-        }
-
-        public void SetValue(string FieldName, object Value)
-        {
-            obj[FieldName] = Value;
         }
     }
 }

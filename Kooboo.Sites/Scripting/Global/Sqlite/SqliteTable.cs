@@ -136,7 +136,6 @@ namespace KScript
             return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
         }
 
-        #region todo
         public ITableQuery Query()
         {
             return new SqliteTableQuery(_connection,_name);
@@ -148,7 +147,6 @@ namespace KScript
             result.Where(query);
             return result;
         }
-        #endregion
 
         public void update(object newvalue)
         {

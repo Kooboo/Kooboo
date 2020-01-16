@@ -12,16 +12,16 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
         readonly SQLiteConnection _connection;
         readonly string _tableName;
 
+        public bool Ascending { get; set; }
+        public string OrderByField { get; set; }
+        public string SearchCondition { get; set; }
+        public int skipcount { get; set; }
+
         public SqliteTableQuery(SQLiteConnection connection, string tableName)
         {
             _connection = connection;
             _tableName = tableName;
         }
-
-        public bool Ascending { get; set; }
-        public string OrderByField { get; set; }
-        public string SearchCondition { get; set; }
-        public int skipcount { get; set; }
 
         public int count()
         {
