@@ -15,7 +15,7 @@ namespace KScript
     {
         public static SqliteSchema GetSchema(this SQLiteConnection sqliteConnection, string name)
         {
-            var items = sqliteConnection.Query<SqliteSchema.Item>($"PRAGMA  table_info('{name}');");
+            var items = sqliteConnection.Query<SqliteSchema.Item>($@"SELECT ""name"",""type"" as _type FROM pragma_table_info ('{name}');");
             return new SqliteSchema(items);
         }
 
@@ -41,7 +41,7 @@ namespace KScript
             var dic = data as IDictionary<string, object>;
             var columns = string.Join(",", dic.Select(s => $@"""{s.Key}"""));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            sqliteConnection.Execute($@"INSERT INTO ""{name}"" ({columns}) VALUES ({values})", data);
+            sqliteConnection.Execute($@"INSERT INTO ""{name}""({columns}) VALUES ({values})", new[] { data });
         }
 
         public static void Append(this SQLiteConnection sqliteConnection, string name, object data, SqliteSchema schema)

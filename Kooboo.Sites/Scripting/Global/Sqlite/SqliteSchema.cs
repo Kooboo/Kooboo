@@ -11,7 +11,22 @@ namespace KScript
         {
             public string Name { get; set; }
 
-            public SqliteType Type { get; set; }
+            public SqliteType Type
+            {
+                get
+                {
+                    if (_enumType == null)
+                    {
+                        _enumType = (SqliteType)Enum.Parse(typeof(SqliteType), _type);
+                    }
+                    return _enumType.Value;
+                }
+                set { _enumType = value; }
+            }
+
+            SqliteType? _enumType;
+
+            string _type;
         }
 
         public enum SqliteType
