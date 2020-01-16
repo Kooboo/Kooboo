@@ -9,12 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Definition\KModel\**" />
     <Compile Remove="Payment\**" />
+    <EmbeddedResource Remove="Definition\KModel\**" />
     <EmbeddedResource Remove="Payment\**" />
+    <None Remove="Definition\KModel\**" />
     <None Remove="Payment\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Definition\KMetaProvider.cs" />
     <Compile Remove="GeoLocation\LocationWatcher.cs" />
   </ItemGroup>
 

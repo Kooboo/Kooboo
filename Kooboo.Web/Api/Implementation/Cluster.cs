@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Data.Helper;
 using Kooboo.Data.Models;
 using Kooboo.Data.ViewModel;
 using Kooboo.Sites.Extensions;
@@ -125,7 +126,7 @@ namespace Kooboo.Web.Api.Implementation
             para.Add("SiteId", call.GetValue("SiteId"));
             para.Add("OrganizationId", user.CurrentOrgId.ToString());
 
-            var datacenterlist = Lib.Helper.HttpHelper.Get<List<DataCenter>>(Kooboo.Data.Account.Url.Cluster.GetDataCenter, para, user.UserName, user.PasswordHash.ToString());
+            var datacenterlist = Lib.Helper.HttpHelper.Get<List<DataCenter>>(AccountUrlHelper.Cluster("GetDataCenter"), para, user.UserName, user.PasswordHash.ToString());
 
             viewmodel.DataCenter = datacenterlist;
 
@@ -183,7 +184,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 // Set the website doamins and send to Account for update... 
                 // Get a list of ServerId back for sync purpose... 
-                string url = Kooboo.Data.Account.Url.Cluster.SaveSetting + "?SiteId=" + siteid.ToString() + "&OrganizatioinId=" + user.CurrentOrgId.ToString();
+                string url = AccountUrlHelper.Cluster("SaveSetting") + "?SiteId=" + siteid.ToString() + "&OrganizatioinId=" + user.CurrentOrgId.ToString();
 
                 var result = Lib.Helper.HttpHelper.Post<List<SiteClusterViewModel>>(url, Lib.Helper.JsonHelper.Serialize(model));
 
