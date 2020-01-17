@@ -423,7 +423,7 @@
               res.model.forEach(function(f) {
                 if (
                   self.mailList.every(function(s) {
-                    s.id != f.id;
+                   return s.id != f.id;
                   })
                 ) {
                   self.mailList.push(f);
