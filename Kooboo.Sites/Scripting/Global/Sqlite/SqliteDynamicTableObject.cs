@@ -29,6 +29,7 @@ namespace KScript
         {
             if (obj.ContainsKey(key))
             {
+                if (obj[key] is long) return (long)obj[key] == 1;
                 return obj[key];
             }
 

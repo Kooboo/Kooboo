@@ -138,7 +138,7 @@ namespace KScript
 
         public ITableQuery Query()
         {
-            return new SqliteTableQuery(_connection,_name);
+            return new SqliteTableQuery(_connection, _name);
         }
 
         public ITableQuery Query(string query)
@@ -152,16 +152,17 @@ namespace KScript
         {
             newvalue = kHelper.CleanDynamicObject(newvalue);
             var dic = newvalue as IDictionary<string, object>;
-            if (!dic.ContainsKey("_id")) update(dic["_id"], newvalue);
+            if (dic.ContainsKey("_id")) update(dic["_id"], newvalue);
             else add(newvalue);
         }
 
         public void update(object id, object newvalue)
         {
             newvalue = kHelper.CleanDynamicObject(newvalue);
+            var dic = newvalue as IDictionary<string, object>;
+            if (dic.ContainsKey("_id")) dic.Remove("_id");
             EnsureTableCreated();
             TryUpgradeSchema(newvalue);
-            EnsureHaveId(newvalue, id.ToString());
             _connection.UpdateData(_name, id.ToString(), newvalue);
         }
 

@@ -14,6 +14,9 @@ using KScript.Sites;
 using Kooboo.Sites.Scripting;
 using Kooboo;
 using KScript.KscriptConfig;
+using System.IO;
+using Kooboo.Data;
+using System.Data.SQLite;
 
 namespace KScript
 {
@@ -406,7 +409,9 @@ var value = k.session.key; ")]
                     {
                         if (_sqlite == null)
                         {
-                            _sqlite = new SqliteDatabase(this.RenderContext);
+                            var path = Path.Combine(AppSettings.GetFileIORoot(RenderContext.WebSite), "sqlite.db");
+                            var connection = new SQLiteConnection($"Data source='{path}';Version=3");
+                            _sqlite = new SqliteDatabase(connection);
                         }
                     }
                 }

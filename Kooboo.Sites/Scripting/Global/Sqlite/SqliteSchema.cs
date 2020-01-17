@@ -57,7 +57,7 @@ namespace KScript
         static SqliteType ConventType(Type type)
         {
             if (type == typeof(string)) return SqliteType.TEXT;
-            if (type == typeof(double)) return SqliteType.REAL;
+            if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return SqliteType.REAL;
             if (type == null) return SqliteType.NULL;
             if (type == typeof(bool)) return SqliteType.INTEGER;
             throw new NotSupportedException();

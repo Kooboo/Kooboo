@@ -19,10 +19,9 @@ namespace KScript
         readonly SQLiteConnection _connection;
         readonly ConcurrentDictionary<string, SqliteTable> _tables = new ConcurrentDictionary<string, SqliteTable>();
 
-        public SqliteDatabase(RenderContext renderContext)
+        public SqliteDatabase(SQLiteConnection connection)
         {
-            var path = Path.Combine(AppSettings.GetFileIORoot(renderContext.WebSite), "sqlite.db");
-            _connection = new SQLiteConnection($"Data source='{path}';Version=3");
+            _connection = connection;
         }
 
         ~SqliteDatabase()

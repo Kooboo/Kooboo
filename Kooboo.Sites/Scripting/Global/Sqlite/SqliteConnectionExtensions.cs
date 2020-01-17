@@ -81,7 +81,7 @@ namespace KScript
         {
             var dic = data as IDictionary<string, object>;
             var keyValues = string.Join(",", dic.Select(s => $@"""{s.Key}""=@{s.Key}"));
-            sqliteConnection.Execute($@"UPDATE ""{name}"" SET {keyValues} WHERE _id = @Id", data);
+            sqliteConnection.Execute($@"UPDATE ""{name}"" SET {keyValues} WHERE _id = '{id}'", data);
         }
 
         public static RelationModel GetRelation(this SQLiteConnection sqliteConnection, string name, string relation)
@@ -105,9 +105,16 @@ namespace KScript
         {
             var conditions = QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
-            var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
-            var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            return sqliteConnection.Query<int>($@"SELECT count(*) FROM ""{name}"" {whereStr} {limitStr} {offsetStr}").FirstOrDefault();
+            var count = sqliteConnection.Query<int>($@"SELECT count(*) FROM ""{name}"" {whereStr}").FirstOrDefault();
+            if (limit.HasValue && count > limit) count = (int)limit.Value;
+
+            if (offset.HasValue)
+            {
+                count -= (int)offset.Value;
+                if (count < 0) count = 0;
+            };
+
+            return count;
         }
 
         private static string ConditionsToSql(List<ConditionItem> conditions)
