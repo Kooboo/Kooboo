@@ -56,6 +56,11 @@ var getKViewSuggestions = function() {
       insertText: "k-omit"
     },
     {
+      label: "k-omitouter",
+      documentation: "k-omitOuter is omit the entire outer tag.",
+      insertText: "k-omitouter"
+    },
+    {
       label: "k-placeholder",
       documentation:
         "Used to mark an element as a placeholder/container in the layout. Components can be added into that placeholder from page designer.",
