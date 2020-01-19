@@ -17,8 +17,7 @@ namespace Kooboo.Data.Models
                 if (_id == default(Guid))
                 {
                     string unique = this.Domain + this.Host + this.Priority.ToString() + this.Type;
-                    _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);  
-                   // _id = Guid.NewGuid(); 
+                    _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);
                 }
                 return _id; 
             }
@@ -48,8 +47,7 @@ namespace Kooboo.Data.Models
         public string Value { get; set; }
 
         public string Type { get; set; } = "A";
-
-       
+         
         public string Domain { get; set; }
 
         public int Priority { get; set; }

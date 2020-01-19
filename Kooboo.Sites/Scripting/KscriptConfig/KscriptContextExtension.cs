@@ -6,7 +6,7 @@ using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using Kooboo.Lib.Reflection;
 
-namespace Kooboo.Sites.KscriptConfig
+namespace KScript.KscriptConfig
 {
     public static class KscriptContextExtension
     {

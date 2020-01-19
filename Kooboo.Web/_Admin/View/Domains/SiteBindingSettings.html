@@ -5,22 +5,11 @@
   </div>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a class="btn green navbar-btn" @click.stop="onAdd"
-        ><span>New</span> <i class="fa fa-plus"></i
-      ></a>
-      <a
-        v-if="tableDataSelected.length > 0"
-        @click.stop="onDelete"
-        class="btn red navbar-btn"
-        >Delete</a
-      >
+      <a class="btn green navbar-btn" @click.stop="onAdd"><span>New</span> <i class="fa fa-plus"></i></a>
+      <a v-if="tableDataSelected.length > 0" @click.stop="onDelete" class="btn red navbar-btn">Delete</a>
     </div>
   </div>
-  <kb-table
-    :show-select="true"
-    :data="tableData"
-    :selected.sync="tableDataSelected"
-  >
+  <kb-table :show-select="true" :data="tableData" :selected.sync="tableDataSelected">
     <kb-table-column :label="Kooboo.text.site.domain.name">
       <template v-slot="row">
         {{row.fullName}}
@@ -28,12 +17,7 @@
     </kb-table-column>
   </kb-table>
 
-  <div
-    class="modal fade"
-    data-backdrop="static"
-    data-keyboard="false"
-    v-kb-modal="modalShow"
-  >
+  <div class="modal fade" data-backdrop="static" data-keyboard="false" v-kb-modal="modalShow">
     <div class="modal-dialog" v-if="modalShow">
       <div class="modal-content">
         <div class="modal-header">
@@ -48,20 +32,12 @@
               <label class="col-md-3 control-label">Binding to</label>
               <div class="col-md-9" k-if="kooboosetting.IsLocal = true">
                 <label class="radio-inline">
-                  <input
-                    type="radio"
-                    name="defaultBinding"
-                    :checked="defaultBinding =='domain'"
-                    @click="defaultBinding='domain'"
-                  /><span>Domain</span>
+                  <input type="radio" name="defaultBinding" :checked="defaultBinding =='domain'"
+                    @click="defaultBinding='domain'" /><span>Domain</span>
                 </label>
                 <label class="radio-inline">
-                  <input
-                    type="radio"
-                    name="defaultBinding"
-                    :checked="defaultBinding =='port'"
-                    @click="defaultBinding='port'"
-                  /><span>Port</span>
+                  <input type="radio" name="defaultBinding" :checked="defaultBinding =='port'"
+                    @click="defaultBinding='port'" /><span>Port</span>
                 </label>
               </div>
             </div>
@@ -71,23 +47,12 @@
                   <kb-form-item v-if="defaultBinding === 'domain'">
                     <div>
                       <div class="input-group">
-                        <input
-                          v-model="formModel.subdomain"
-                          class="form-control"
-                          name="SubDomain"
-                          placeholder="example: www"
-                          type="text"
-                        />
+                        <input v-model="formModel.subdomain" class="form-control" name="SubDomain"
+                          placeholder="example: www" type="text" />
                         <span class="input-group-addon">.</span>
-                        <select
-                          v-kb-hint="validateModel.subdomain.msg"
-                          v-model="formModel.root"
-                          class="form-control"
-                          name="RootDomain"
-                        >
-                          <option v-for="item in rootDomain"
-                            >{{ item.domainName }}</option
-                          >
+                        <select v-kb-hint="validateModel.subdomain.msg" v-model="formModel.root" class="form-control"
+                          name="RootDomain">
+                          <option v-for="item in rootDomain">{{ item.domainName }}</option>
                         </select>
                       </div>
                     </div>
@@ -96,44 +61,29 @@
                   <kb-form-item v-if="defaultBinding === 'port'">
                     <div>
                       <div>
-                        <input
-                          v-kb-hint="validateModel.port.msg"
-                          v-model.number="formModel.port"
-                          class="form-control"
-                          placeholder="example: 81"
-                          type="number"
-                          min="0"
-                        />
+                        <input v-kb-hint="validateModel.port.msg" v-model.number="formModel.port" class="form-control"
+                          placeholder="example: 81" type="number" min="0" />
                       </div>
                     </div>
                   </kb-form-item>
                 </kb-form>
               </div>
             </div>
-            <div class="col-md-9" k-if="kooboosetting.IsLocal = false">
-              <kb-form :model="formModel" align="inline">
-                <kb-form-item v-if="defaultBinding === 'domain'">
-                  <div class="input-group">
-                    <input
-                      v-model="subdomain"
-                      class="form-control"
-                      name="SubDomain"
-                      placeholder="example: www"
-                      type="text"
-                    />
-                    <span class="input-group-addon">.</span>
-                    <select
-                      v-kb-hint="validateModel.subdomain.msg"
-                      class="form-control"
-                      name="RootDomain"
-                    >
-                      <option v-for="domain in rootDomain"
-                        >{{ domain.domainName }}</option
-                      >
-                    </select>
-                  </div>
-                </kb-form-item>
-              </kb-form>
+            <div class="form-group" k-if="kooboosetting.IsLocal = false">
+              <div class="col-md-9 col-md-offset-3">
+                <kb-form :model="formModel" align="inline">
+                  <kb-form-item v-if="defaultBinding === 'domain'">
+                    <div class="input-group">
+                      <input v-model="formModel.subdomain" class="form-control" name="SubDomain"
+                        placeholder="example: www" type="text" />
+                      <span class="input-group-addon">.</span>
+                      <select v-kb-hint="validateModel.subdomain.msg" class="form-control" name="RootDomain">
+                        <option v-for="domain in rootDomain">{{ domain.domainName }}</option>
+                      </select>
+                    </div>
+                  </kb-form-item>
+                </kb-form>
+              </div>
             </div>
           </div>
         </div>
@@ -152,7 +102,7 @@
   }
 </style>
 <script>
-  (function() {
+  (function () {
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kbTable.js",
       "/_Admin/Scripts/components/kbForm.js"
@@ -160,11 +110,11 @@
   })();
 </script>
 <script>
-  $(function() {
+  $(function () {
     var self;
     new Vue({
       el: "#app",
-      data: function() {
+      data: function () {
         return {
           tableData: [],
           tableDataSelected: [],
@@ -193,8 +143,8 @@
                   63
               },
               {
-                validate: function(value) {
-                  var exist = _.map(self.domainsData, function(dm) {
+                validate: function (value) {
+                  var exist = _.map(self.domainsData, function (dm) {
                     return dm.fullName;
                   });
                   if (
@@ -211,7 +161,7 @@
               {
                 remote: {
                   url: Kooboo.Site.CheckDomainBindingAvailable(),
-                  data: function() {
+                  data: function () {
                     return {
                       SubDomain: self.formModel.subdomain,
                       RootDomain: self.formModel.root
@@ -236,7 +186,7 @@
           }
         };
       },
-      created: function() {
+      created: function () {
         self = this;
         self.getTableData();
         this.getDomainData();
@@ -244,32 +194,32 @@
       },
       watch: {
         formModel: {
-          handler: function() {
+          handler: function () {
             self.createValidateModel();
           },
           deep: true
         },
-        defaultBinding: function() {
+        defaultBinding: function () {
           self.createValidateModel();
         }
       },
       methods: {
-        createValidateModel: function() {
+        createValidateModel: function () {
           this.validateModel = {
             subdomain: { valid: true, msg: "" },
             port: { valid: true, msg: "" }
           };
         },
-        getTableData: function() {
-          Kooboo.Binding.listBySite().then(function(res) {
+        getTableData: function () {
+          Kooboo.Binding.listBySite().then(function (res) {
             if (res.success) {
               self.tableData = res.model;
             }
           });
         },
-        onDelete: function() {
+        onDelete: function () {
           if (confirm(this.getConfirmMessage(this.tableDataSelected))) {
-            var ids = this.tableDataSelected.map(function(m) {
+            var ids = this.tableDataSelected.map(function (m) {
               return m.id;
             });
 
@@ -277,7 +227,7 @@
               .Deletes({
                 ids: ids
               })
-              .then(function(res) {
+              .then(function (res) {
                 if (res.success) {
                   self.getTableData();
                   self.cancelDialog();
@@ -288,12 +238,12 @@
               });
           }
         },
-        getConfirmMessage: function(doc) {
+        getConfirmMessage: function (doc) {
           if (doc.relations) {
             var reorderedKeys = _.sortBy(Object.keys(doc.relations));
             doc.relationsTypes = reorderedKeys;
           }
-          var find = _.find(doc, function(item) {
+          var find = _.find(doc, function (item) {
             return item.relations && Object.keys(item.relations).length;
           });
 
@@ -303,15 +253,15 @@
             return Kooboo.text.confirm.deleteItems;
           }
         },
-        getDomainData: function() {
-          Kooboo.Domain.getList().then(function(res) {
+        getDomainData: function () {
+          Kooboo.Domain.getList().then(function (res) {
             self.rootDomain = res.model;
             if (self.rootDomain.length > 0) {
               self.formModel.root = self.rootDomain[0].domainName;
             }
           });
         },
-        onSave: function() {
+        onSave: function () {
           var valid = true;
           if (self.defaultBinding === "domain") {
             self.validateModel.subdomain = Kooboo.validField(
@@ -336,16 +286,16 @@
               rootdomain: self.formModel.root,
               port: self.formModel.port + "",
               defaultBinding: self.defaultBinding === "port"
-            }).then(function() {
+            }).then(function () {
               self.getTableData();
               self.cancelDialog();
             });
           }
         },
-        onAdd: function() {
+        onAdd: function () {
           this.modalShow = true;
         },
-        cancelDialog: function() {
+        cancelDialog: function () {
           this.modalShow = false;
           this.formModel.subdomain = "";
           this.formModel.port = 81;

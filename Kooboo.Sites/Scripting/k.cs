@@ -13,7 +13,7 @@ using System.ComponentModel;
 using KScript.Sites;
 using Kooboo.Sites.Scripting;
 using Kooboo;
-using Kooboo.Sites.KscriptConfig;
+using KScript.KscriptConfig;
 
 namespace KScript
 {

@@ -536,8 +536,7 @@ namespace Kooboo.Data
             else
             {
                 bool boolValue;
-                bool.TryParse(value, out boolValue);
-
+                bool.TryParse(value, out boolValue); 
                 return boolValue;
             }
         }

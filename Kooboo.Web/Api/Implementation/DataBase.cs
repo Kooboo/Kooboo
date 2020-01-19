@@ -180,8 +180,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     continue;
                 }
-
-
+                 
                 DbTableColumn model = new DbTableColumn() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
                 model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);

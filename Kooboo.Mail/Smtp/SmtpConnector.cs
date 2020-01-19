@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Threading;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -47,8 +48,6 @@ namespace Kooboo.Mail.Smtp
             _cancellationTokenSource = new CancellationTokenSource();
             Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(_server.Options.LiveTimeout).Ticks);
 
-            Exception exception = null;
-
             try
             {
                 _stream = _client.GetStream();
@@ -65,22 +64,22 @@ namespace Kooboo.Mail.Smtp
                 Kooboo.Mail.Smtp.SmtpSession session = new Smtp.SmtpSession(this.Client.Address.ToString());
 
                 // Service ready
-                await _writer.WriteLineAsync(session.ServiceReady().Render());
+                await WriteLineAsync(session.ServiceReady().Render());
 
                 var commandline = await _reader.ReadLineAsync();
 
                 var cancellationToken = _cancellationTokenSource.Token;
                 while (!cancellationToken.IsCancellationRequested && commandline != null)
-                {      
+                {
                     var response = session.Command(commandline);
                     if (response.SendResponse)
                     {
-                        var responseline = response.Render();   
-                        await _writer.WriteLineAsync(responseline);
+                        var responseline = response.Render();
+                        await WriteLineAsync(responseline);
                     }
 
                     if (response.SessionCompleted)
-                    {        
+                    {
                         await Kooboo.Mail.Transport.Incoming.Receive(session);
                         session.ReSet();
                     }
@@ -93,14 +92,22 @@ namespace Kooboo.Mail.Smtp
 
                     // When enter the session state, read till the end . 
                     if (session.State == SmtpSession.CommandState.Data)
-                    {                  
-                        var reptcounts = session.Log.Keys.Where(o => o.Name == SmtpCommandName.RCPTTO).Count();
+                    {
+                        var externalto = AddressUtility.GetExternalRcpts(session);
+                        var counter = externalto.Count();
 
-                        if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts))
+                        Kooboo.Data.Log.Instance.Email.Write("--recipants");
+                        Kooboo.Data.Log.Instance.Email.WriteObj(externalto);
+                        Kooboo.Data.Log.Instance.Email.WriteObj(session.Log);
+
+                        if (counter > 0)
                         {
-                            await _writer.WriteLineAsync("550 you have no enough credit to send emails");
-                            Dispose();
-                            break;
+                            if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, counter))
+                            {
+                                await WriteLineAsync("550 you have no enough credit to send emails");
+                                Dispose();
+                                break;
+                            }
                         }
 
                         var data = await _stream.ReadToDotLine(TimeSpan.FromSeconds(60));
@@ -109,7 +116,7 @@ namespace Kooboo.Mail.Smtp
 
                         if (dataresponse.SendResponse)
                         {
-                            await _writer.WriteLineAsync(dataresponse.Render());
+                            await WriteLineAsync(dataresponse.Render());
                         }
 
                         if (dataresponse.SessionCompleted)
@@ -118,19 +125,22 @@ namespace Kooboo.Mail.Smtp
 
                             var tos = session.Log.Keys.Where(o => o.Name == SmtpCommandName.RCPTTO);
 
-                            string subject = "TO: "; 
-                            if (tos !=null)
+                            string subject = "TO: ";
+                            if (tos != null)
                             {
                                 foreach (var item in tos)
                                 {
-                                    if (item !=null && !string.IsNullOrWhiteSpace(item.Value))
+                                    if (item != null && !string.IsNullOrWhiteSpace(item.Value))
                                     {
                                         subject += item.Value;
-                                    } 
+                                    }
                                 }
                             }
 
-                            Kooboo.Data.Infrastructure.InfraManager.Add(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts, subject); 
+                            if (counter > 0)
+                            {
+                                Kooboo.Data.Infrastructure.InfraManager.Add(session.OrganizationId, Data.Infrastructure.InfraType.Email, counter, subject);
+                            }
 
                             session.ReSet();
 
@@ -160,19 +170,24 @@ namespace Kooboo.Mail.Smtp
                 {
                     if (_client.Connected)
                     {
-                        await _writer.WriteLineAsync("550 Internal Server Error");
+                        await WriteLineAsync("550 Internal Server Error");
                     }
                 }
                 catch
                 {
                 }
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
             }
             finally
             {
                 _server._connectionManager.RemoveConnection(Id);
                 Dispose();
             }
+        }
+
+        private Task WriteLineAsync(string line)
+        {
+            return _writer.WriteAsync(line + "\r\n");
         }
 
         public void CheckTimeout(DateTime now)

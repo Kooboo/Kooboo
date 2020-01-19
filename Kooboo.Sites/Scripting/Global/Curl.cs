@@ -137,7 +137,7 @@ var data = ""name=myname&field=value"";
                 var client = HttpClientHelper.Client;
 
                 var content = new StringContent(json, Encoding.UTF8);
-                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application /json");
+                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/json");
                 var requestMessage = new HttpRequestMessage
                 {
                     RequestUri = new Uri(url),

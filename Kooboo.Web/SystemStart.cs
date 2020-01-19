@@ -30,13 +30,7 @@ namespace Kooboo.Web
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
-
-            //ensure that WindowsHost is working .   
-            //foreach (var item in Data.GlobalDb.Dlls.All())
-            //{
-            //    AppDomain.CurrentDomain.Load(item.Content);
-            //}
-
+             
             Sites.DataSources.DataSourceHelper.InitIDataSource();
 
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());

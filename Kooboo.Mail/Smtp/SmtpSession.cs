@@ -288,46 +288,7 @@ namespace Kooboo.Mail.Smtp
             string address = Utility.AddressUtility.GetAddress(fromAddress);
             return Utility.AddressUtility.IsValidEmailAddress(address);
         }
-
-        //internal bool ValidateRecipient(string rcptToAddress)
-        //{
-        //    string address = Utility.AddressUtility.GetAddress(rcptToAddress);
-        //    var validate = Utility.AddressUtility.IsValidEmailAddress(address);
-        //    if (!validate)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (!this.IsAuthenticated)
-        //    {
-        //        // if (!Utility.AddressUtility.IsOrganizationOk(address))
-        //        // { 
-        //        // check if it is allowed server.   
-        //        if (Lib.Helper.IPHelper.IsLocalIp(this.ClientIP) || Kooboo.Data.Helper.ApiHelper.IsOnlineSever(this.ClientIP))
-        //        {
-        //            this.IsAuthenticated = true;     
-        //            return true;
-        //        }
-
-        //        else
-        //        {
-
-        //            if (Utility.AddressUtility.IsOrganizationOk(address))
-        //            {                 
-        //                return true;
-        //            }
-        //            else
-        //            {
-        //                return false;
-        //            }  
-        //        }
-        //        //} 
-        //    }
-
-
-        //    return true;
-        //}
-
+  
         public RecipientValidationResult ValidateRecipient(string rcptToAddress)
         {
             RecipientValidationResult result = new RecipientValidationResult();

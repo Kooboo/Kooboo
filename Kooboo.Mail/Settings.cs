@@ -7,7 +7,7 @@ using System;
 namespace Kooboo.Mail
 {
     public static class Settings
-    {
+    { 
         // the mta server ip. This should only defined in the Mail Server.
         public static string Mta { get; set; }
 
@@ -39,8 +39,7 @@ namespace Kooboo.Mail
         }
 
         public static async Task<SendSetting> GetSendSetting(Data.Models.ServerSetting serverSetting, bool IsOnlineServer, string MailFrom, string RcptTo)
-        {
-
+        { 
             SendSetting setting = new SendSetting();
 
             if (IsOnlineServer)
@@ -72,8 +71,7 @@ namespace Kooboo.Mail
                 {
                     setting.OkToSend = false;
                     setting.ErrorMessage = "Email Sending is prevented";
-                }
-
+                } 
             }
             else
             {
@@ -108,8 +106,8 @@ namespace Kooboo.Mail
         {
             get
             {
-              //return false;
-              return !HasDefineMta; 
+                //return false; 
+                return !HasDefineMta && Data.AppSettings.IsOnlineServer;
             }
         }
 
@@ -120,57 +118,54 @@ namespace Kooboo.Mail
         {
             get
             {
-                SetMailServer();
-                return _mailserverip; 
+                if (Kooboo.Mail.Settings.ForwardRequired)
+                {
+                    if (string.IsNullOrWhiteSpace(_mailserverip))
+                    {
+                        _mailserverip = GetMailServer();
+                        nextcheck = DateTime.Now.AddHours(10);
+                    }
+                    else
+                    {
+                        if (nextcheck < DateTime.Now)
+                        {
+                            nextcheck = DateTime.Now.AddHours(10);
+                            System.Threading.Thread t = new System.Threading.Thread(setAsync);
+                            t.Start();
+                        }
+                    }
+                    return _mailserverip;
+                }
+                return _mailserverip;
             }
         }
 
-        public static void SetMailServer()
-        {
-            if (_mailserverip == null)
-            {
-                _mailserverip = GetMailServer(true); 
-            }
-            else
-            {
-                // already has value...  
-                System.Threading.Thread t = new System.Threading.Thread(setAsync);  
-                t.Start();  
-            }
-        }
 
         private static void setAsync()
         {
-            var mailserver = GetMailServer(true); 
+            var mailserver = GetMailServer();
             if (!string.IsNullOrWhiteSpace(mailserver))
             {
-                _mailserverip = mailserver; 
+                _mailserverip = mailserver;
             }
         }
 
         private static System.DateTime nextcheck { get; set; }
 
-        private static string GetMailServer(bool isNull = false)
+        private static string GetMailServer()
         {
-            if (nextcheck < DateTime.Now)
+            string url = Kooboo.Data.Helper.AccountUrlHelper.System("MailServer");
+            var ip = Lib.Helper.HttpHelper.TryGet<string>(url);
+
+            if (ip != null && Lib.Helper.IPHelper.IsIP(ip))
             {
-                if (isNull)
-                {
-                    nextcheck = DateTime.Now.AddHours(2);
-                }
-                else
-                {
-                    nextcheck = DateTime.Now.AddHours(24);
-                }
-
-                string url = Kooboo.Data.Helper.AccountUrlHelper.System("MailServer");
-                var ip = Lib.Helper.HttpHelper.TryGet<string>(url);
-
-                if (ip != null && Lib.Helper.IPHelper.IsIP(ip))
-                {
-                    return ip;
-                }
-            }
+                return ip;
+            }  
+            ip = Lib.Helper.HttpHelper.TryGet<string>(url); 
+            if (ip != null && Lib.Helper.IPHelper.IsIP(ip))
+            {
+                return ip;
+            } 
             return null;
         }
     }
