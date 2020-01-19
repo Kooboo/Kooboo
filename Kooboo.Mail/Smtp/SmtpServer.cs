@@ -150,10 +150,26 @@ namespace Kooboo.Mail.Smtp
 
     public class SmtpServerOptions
     {
-        public TimeSpan LiveTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
-        public int MailsPerConnection { get; set; } = 10;
+        public SmtpServerOptions()
+        {
+
+            this.LiveTimeout = TimeSpan.FromSeconds(30);
+            this.MailsPerConnection = 10; 
+
+#if DEBUG
+            {
+                this.LiveTimeout = TimeSpan.FromSeconds(30000);
+                this.MailsPerConnection = 1000;
+            }
+#endif
+
+        }
+
+        public TimeSpan LiveTimeout { get; set; }
+
+        public int MailsPerConnection { get; set; }
 
         public int? MaxConnections { get; set; }
     }
-}
+} 
