@@ -11,15 +11,16 @@ namespace KScript
 {
     public class SqliteTable : ITable
     {
-        readonly SQLiteConnection _connection;
-        readonly string _name;
         readonly static object _locker = new object();
         SqliteSchema _schema;
 
-        public SqliteTable(SQLiteConnection connection, string name)
+        public string Name { get; set; }
+        public SqliteDatabase Database { get; set; }
+
+        public SqliteTable(string name, SqliteDatabase database)
         {
-            _connection = connection;
-            _name = name;
+            Database = database;
+            Name = name;
         }
 
         void TryUpgradeSchema(object value)
@@ -30,7 +31,7 @@ namespace KScript
                 if (newItems.Count() > 0)
                 {
                     _schema.AddItems(newItems);
-                    _connection.UpgradeSchema(_name, newItems);
+                    Database.Connection.UpgradeSchema(Name, newItems);
                 }
             }
         }
@@ -47,8 +48,8 @@ namespace KScript
         {
             lock (_locker)
             {
-                if (_schema == null) _schema = SqliteConnectionExtensions.GetSchema(_connection, _name);
-                if (!_schema.Created) _connection.CreateTable(_name);
+                if (_schema == null) _schema = SqliteConnectionExtensions.GetSchema(Database.Connection, Name);
+                if (!_schema.Created) Database.Connection.CreateTable(Name);
             }
         }
 
@@ -67,15 +68,15 @@ namespace KScript
             TryUpgradeSchema(value);
             var newId = Guid.NewGuid().ToString();
             EnsureHaveId(value, newId);
-            _connection.Insert(_name, value);
+            Database.Connection.Insert(Name, value);
             return newId;
         }
 
         public IDynamicTableObject[] all()
         {
             EnsureTableCreated();
-            var data = _connection.QueryData(_name);
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _name);
+            var data = Database.Connection.QueryData(Name);
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public object append(object value)
@@ -85,65 +86,65 @@ namespace KScript
             EnsureSchemaCompatible(value);
             var newId = Guid.NewGuid().ToString();
             EnsureHaveId(value, newId);
-            _connection.Append(_name, value, _schema);
+            Database.Connection.Append(Name, value, _schema);
             return newId;
         }
 
         public void createIndex(string fieldname)
         {
             EnsureTableCreated();
-            _connection.CreateIndex(_name, fieldname);
+            Database.Connection.CreateIndex(Name, fieldname);
         }
 
         public void delete(object id)
         {
             EnsureTableCreated();
-            _connection.Delete(_name, id.ToString());
+            Database.Connection.Delete(Name, id.ToString());
         }
 
         public IDynamicTableObject find(string query)
         {
             EnsureTableCreated();
-            var data = _connection.QueryData(_name, query).FirstOrDefault();
-            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
+            var data = Database.Connection.QueryData(Name, query).FirstOrDefault();
+            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, this);
         }
 
         public IDynamicTableObject find(string fieldName, object matchValue)
         {
             EnsureTableCreated();
-            var data = _connection.QueryData(_name, $"{fieldName} == '{matchValue}'").FirstOrDefault();
-            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
+            var data = Database.Connection.QueryData(Name, $"{fieldName} == '{matchValue}'").FirstOrDefault();
+            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, this);
         }
 
         public IDynamicTableObject[] findAll(string query)
         {
             EnsureTableCreated();
-            var data = _connection.QueryData(_name, query);
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _name);
+            var data = Database.Connection.QueryData(Name, query);
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
         {
             EnsureTableCreated();
-            var data = _connection.QueryData(_name, $"{field} == '{value}'");
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, _name);
+            var data = Database.Connection.QueryData(Name, $"{field} == '{value}'");
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public IDynamicTableObject get(object id)
         {
             EnsureTableCreated();
-            var data = _connection.QueryData(_name, $"_id == '{id}'").FirstOrDefault();
-            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, _connection, _name);
+            var data = Database.Connection.QueryData(Name, $"_id == '{id}'").FirstOrDefault();
+            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, this);
         }
 
         public ITableQuery Query()
         {
-            return new SqliteTableQuery(_connection, _name);
+            return new SqliteTableQuery(this);
         }
 
         public ITableQuery Query(string query)
         {
-            var result = new SqliteTableQuery(_connection, _name);
+            var result = new SqliteTableQuery(this);
             result.Where(query);
             return result;
         }
@@ -163,7 +164,7 @@ namespace KScript
             if (dic.ContainsKey("_id")) dic.Remove("_id");
             EnsureTableCreated();
             TryUpgradeSchema(newvalue);
-            _connection.UpdateData(_name, id.ToString(), newvalue);
+            Database.Connection.UpdateData(Name, id.ToString(), newvalue);
         }
 
     }

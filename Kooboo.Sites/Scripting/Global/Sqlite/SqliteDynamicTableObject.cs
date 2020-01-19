@@ -1,28 +1,19 @@
-﻿using Kooboo.Data.Attributes;
-using Kooboo.Data.Context;
-using Kooboo.IndexedDB.Dynamic;
-using Kooboo.Sites.Scripting.Global.Database;
+﻿using Kooboo.Sites.Scripting.Global.Database;
 using Kooboo.Sites.Scripting.Helper;
-using KScript;
-using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
-using System.Text;
 
 namespace KScript
 {
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
     public class SqliteDynamicTableObject : DynamicTableObjectBase, IDynamicTableObject
     {
-        readonly SQLiteConnection _connection;
-        readonly string _tableName;
+        readonly SqliteTable _table;
 
-        public SqliteDynamicTableObject(IDictionary<string, object> orgObj, SQLiteConnection connection, string tableName)
+        SqliteDynamicTableObject(IDictionary<string, object> orgObj, SqliteTable table)
         {
             this.obj = orgObj;
-            _connection = connection;
-            _tableName = tableName;
+            _table = table;
         }
 
         internal override object GetValueFromDict(string key)
@@ -33,18 +24,18 @@ namespace KScript
                 return obj[key];
             }
 
-            var relation = _connection.GetRelation(key, _tableName);
+            var relation = _table.Database.Connection.GetRelation(key, _table.Name);
 
-            if (relation != default && _tableName != default && obj.ContainsKey(relation.To))
+            if (relation != default && _table.Name != default && obj.ContainsKey(relation.To))
             {
-                var data = _connection.QueryData(key, $"{relation.From} == {obj[relation.To]}").Take(999);
-                return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, key);
+                var data = _table.Database.Connection.QueryData(key, $"{relation.From} == {obj[relation.To]}").Take(999);
+                return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table.Database.GetTable(key) as SqliteTable);
             }
 
             return null;
         }
 
-        public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list, SQLiteConnection connection, string tableName)
+        public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list, SqliteTable table)
         {
             int len = list.Length;
 
@@ -52,16 +43,16 @@ namespace KScript
 
             for (int i = 0; i < len; i++)
             {
-                result[i] = Create(list[i], connection, tableName);
+                result[i] = Create(list[i], table);
             }
             return result;
         }
 
-        public static IDynamicTableObject Create(IDictionary<string, object> item, SQLiteConnection connection, string tableName)
+        public static IDynamicTableObject Create(IDictionary<string, object> item, SqliteTable table)
         {
             if (item != null)
             {
-                return new SqliteDynamicTableObject(item, connection, tableName);
+                return new SqliteDynamicTableObject(item, table);
             }
             return null;
 

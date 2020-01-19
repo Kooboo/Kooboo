@@ -16,17 +16,18 @@ namespace KScript
     [KValueType(typeof(SqliteTable))]
     public class SqliteDatabase : ISqliteDatabase
     {
-        readonly SQLiteConnection _connection;
         readonly ConcurrentDictionary<string, SqliteTable> _tables = new ConcurrentDictionary<string, SqliteTable>();
+
+        public SQLiteConnection Connection { get; }
 
         public SqliteDatabase(SQLiteConnection connection)
         {
-            _connection = connection;
+            Connection = connection;
         }
 
         ~SqliteDatabase()
         {
-            _connection.Dispose();
+            Connection.Dispose();
         }
 
         [KIgnore]
@@ -40,18 +41,18 @@ namespace KScript
 
         public ITable GetTable(string name)
         {
-            return _tables.GetOrAdd(name, new SqliteTable(_connection, name));
+            return _tables.GetOrAdd(name, new SqliteTable(name, this));
         }
 
         public IDynamicTableObject[] Query(string sql)
         {
-            var data = _connection.Query<object>(sql).ToArray();
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _connection, null);
+            var data = Connection.Query<object>(sql).ToArray();
+            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), null);
         }
 
         public int Execute(string sql)
         {
-            return _connection.Execute(sql);
+            return Connection.Execute(sql);
         }
     }
 }
