@@ -13,7 +13,6 @@ using System.Text;
 
 namespace KScript
 {
-    [KValueType(typeof(SqliteTable))]
     public class SqliteDatabase : ISqliteDatabase
     {
         readonly ConcurrentDictionary<string, SqliteTable> _tables = new ConcurrentDictionary<string, SqliteTable>();
@@ -30,7 +29,6 @@ namespace KScript
             Connection.Dispose();
         }
 
-        [KIgnore]
         public ITable this[string key]
         {
             get

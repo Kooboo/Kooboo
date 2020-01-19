@@ -14,7 +14,6 @@ namespace KScript
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
     public class DynamicTableObject : DynamicTableObjectBase, IDynamicTableObject
     {
-        [KIgnore]
         public IDictionary<string, object> obj { get; set; }
 
         private RenderContext context { get; set; }
@@ -90,7 +89,6 @@ namespace KScript
             return null;
         }
 
-        [KIgnore]
         public static DynamicTableObject[] CreateList(IDictionary<string, object>[] list, Table TargetTable, RenderContext context)
         {
             int len = list.Length;
@@ -104,7 +102,6 @@ namespace KScript
             return result;
         }
 
-        [KIgnore]
         public static DynamicTableObject Create(IDictionary<string, object> item, Table sourceTable, RenderContext context)
         {
             if (item != null)
