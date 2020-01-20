@@ -65,6 +65,8 @@ namespace Kooboo.Mail.Smtp
 
         public SmtpServerOptions Options { get; set; } = new SmtpServerOptions();
 
+        internal Heartbeat Heatbeat => _heartbeat;
+
         public void Start()
         {
             // 第一层端口占用保护
@@ -155,7 +157,7 @@ namespace Kooboo.Mail.Smtp
         {
 
             this.LiveTimeout = TimeSpan.FromSeconds(30);
-            this.MailsPerConnection = 10; 
+            this.MailsPerConnection = 10;
 
 #if DEBUG
             {
