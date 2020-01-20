@@ -1,28 +1,25 @@
 ﻿using KScript;
-using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
-using System.Text;
 
-namespace Kooboo.Sites.Scripting.Global.Sqlite
+namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class SqliteTableQuery : ITableQuery
+    public class RelationalTableQuery<TExecuter, TSchema> : ITableQuery where TExecuter : SqlExecuter where TSchema : RelationalSchema
     {
         public bool Ascending { get; set; }
         public string OrderByField { get; set; }
         public string SearchCondition { get; set; }
         public int skipcount { get; set; }
-        public SqliteTable _table { get; set; }
+        public RelationalTable<TExecuter, TSchema> _table { get; set; }
 
-        public SqliteTableQuery(SqliteTable table)
+        public RelationalTableQuery(RelationalTable<TExecuter, TSchema> table)
         {
             _table = table;
         }
 
         public int count()
         {
-            return _table.Database.Connection.Count(_table.Name, SearchCondition, null, skipcount);
+            return _table.Database.SqlExecuter.Count(_table.Name, SearchCondition, null, skipcount);
         }
 
         public ITableQuery OrderBy(string fieldname)
@@ -49,8 +46,8 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
         {
             var desc = Ascending ? string.Empty : "DESC";
             var orderBy = OrderByField == null ? null : $"{OrderByField} {desc}";
-            var data = _table.Database.Connection.QueryData(_table.Name, SearchCondition, count, skipcount, orderBy);
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table);
+            var data = _table.Database.SqlExecuter.QueryData(_table.Name, SearchCondition, count, skipcount, orderBy);
+            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table);
         }
 
         public ITableQuery Where(string searchCondition)

@@ -17,6 +17,10 @@ using KScript.KscriptConfig;
 using System.IO;
 using Kooboo.Data;
 using System.Data.SQLite;
+using Kooboo.Sites.Scripting.Global.Sqlite;
+using Kooboo.Sites.Scripting.Global.RelationalDatabase;
+using Kooboo.Sites.Scripting.Global.Mysql;
+using MySql.Data.MySqlClient;
 
 namespace KScript
 {
@@ -397,9 +401,9 @@ var value = k.session.key; ")]
             }
         }
 
-        private ISqliteDatabase _sqlite;
+        private SqliteDatabase _sqlite;
 
-        public ISqliteDatabase Sqlite
+        public SqliteDatabase Sqlite
         {
             get
             {
@@ -418,6 +422,29 @@ var value = k.session.key; ")]
                 return _sqlite;
             }
         }
+
+        private MysqlDatabase _mysql;
+
+        public MysqlDatabase Mysql
+        {
+            get
+            {
+                if (_mysql == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_mysql == null)
+                        {
+#warning TODO 更换连接字符串来源
+                            var connection = new MySqlConnection($"server=localhost;database=union;userid=root;password=");
+                            _mysql = new MysqlDatabase(connection);
+                        }
+                    }
+                }
+                return _mysql;
+            }
+        }
+
 
         [KIgnore]
         public IDatabase DB

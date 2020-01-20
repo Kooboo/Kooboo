@@ -1,23 +1,20 @@
-﻿using Kooboo.IndexedDB.Dynamic;
-using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.Sqlite;
-using KScript;
+﻿using KScript;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data;
 using System.Linq;
 
-namespace KScript
+namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class SqliteTable : ITable
+    public class RelationalTable<TExecuter, TSchema> : ITable where TExecuter : SqlExecuter where TSchema : RelationalSchema
     {
         readonly static object _locker = new object();
-        SqliteSchema _schema;
+        RelationalSchema _schema;
 
         public string Name { get; set; }
-        public SqliteDatabase Database { get; set; }
+        public RelationalDatabase<TExecuter,TSchema> Database { get; set; }
 
-        public SqliteTable(string name, SqliteDatabase database)
+        public RelationalTable(string name, RelationalDatabase<TExecuter, TSchema> database)
         {
             Database = database;
             Name = name;
@@ -31,7 +28,7 @@ namespace KScript
                 if (newItems.Count() > 0)
                 {
                     _schema.AddItems(newItems);
-                    Database.Connection.UpgradeSchema(Name, newItems);
+                    Database.SqlExecuter.UpgradeSchema(Name, newItems);
                 }
             }
         }
@@ -40,7 +37,7 @@ namespace KScript
         {
             var newSchema = new SqliteSchema(value as IDictionary<string, object>);
             var compatible = _schema.Compatible(newSchema, out var newItems);
-            if (!compatible) throw new SqliteSchemaNotCompatibleException();
+            if (!compatible) throw new SchemaNotCompatibleException();
             return newItems;
         }
 
@@ -48,8 +45,8 @@ namespace KScript
         {
             lock (_locker)
             {
-                if (_schema == null) _schema = SqliteConnectionExtensions.GetSchema(Database.Connection, Name);
-                if (!_schema.Created) Database.Connection.CreateTable(Name);
+                if (_schema == null) _schema = Database.SqlExecuter.GetSchema(Name);
+                if (!_schema.Created) Database.SqlExecuter.CreateTable(Name);
             }
         }
 
@@ -68,15 +65,15 @@ namespace KScript
             TryUpgradeSchema(value);
             var newId = Guid.NewGuid().ToString();
             EnsureHaveId(value, newId);
-            Database.Connection.Insert(Name, value);
+            Database.SqlExecuter.Insert(Name, value);
             return newId;
         }
 
         public IDynamicTableObject[] all()
         {
             EnsureTableCreated();
-            var data = Database.Connection.QueryData(Name);
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
+            var data = Database.SqlExecuter.QueryData(Name);
+            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public object append(object value)
@@ -86,65 +83,65 @@ namespace KScript
             EnsureSchemaCompatible(value);
             var newId = Guid.NewGuid().ToString();
             EnsureHaveId(value, newId);
-            Database.Connection.Append(Name, value, _schema);
+            Database.SqlExecuter.Append(Name, value, _schema);
             return newId;
         }
 
         public void createIndex(string fieldname)
         {
             EnsureTableCreated();
-            Database.Connection.CreateIndex(Name, fieldname);
+            Database.SqlExecuter.CreateIndex(Name, fieldname);
         }
 
         public void delete(object id)
         {
             EnsureTableCreated();
-            Database.Connection.Delete(Name, id.ToString());
+            Database.SqlExecuter.Delete(Name, id.ToString());
         }
 
         public IDynamicTableObject find(string query)
         {
             EnsureTableCreated();
-            var data = Database.Connection.QueryData(Name, query).FirstOrDefault();
-            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, this);
+            var data = Database.SqlExecuter.QueryData(Name, query).FirstOrDefault();
+            return RelationalDynamicTableObject<TExecuter, TSchema>.Create(data as IDictionary<string, object>, this);
         }
 
         public IDynamicTableObject find(string fieldName, object matchValue)
         {
             EnsureTableCreated();
-            var data = Database.Connection.QueryData(Name, $"{fieldName} == '{matchValue}'").FirstOrDefault();
-            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, this);
+            var data = Database.SqlExecuter.QueryData(Name, $"{fieldName} == '{matchValue}'").FirstOrDefault();
+            return RelationalDynamicTableObject<TExecuter, TSchema>.Create(data as IDictionary<string, object>, this);
         }
 
         public IDynamicTableObject[] findAll(string query)
         {
             EnsureTableCreated();
-            var data = Database.Connection.QueryData(Name, query);
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
+            var data = Database.SqlExecuter.QueryData(Name, query);
+            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
         {
             EnsureTableCreated();
-            var data = Database.Connection.QueryData(Name, $"{field} == '{value}'");
-            return SqliteDynamicTableObject.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
+            var data = Database.SqlExecuter.QueryData(Name, $"{field} == '{value}'");
+            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public IDynamicTableObject get(object id)
         {
             EnsureTableCreated();
-            var data = Database.Connection.QueryData(Name, $"_id == '{id}'").FirstOrDefault();
-            return SqliteDynamicTableObject.Create(data as IDictionary<string, object>, this);
+            var data = Database.SqlExecuter.QueryData(Name, $"_id == '{id}'").FirstOrDefault();
+            return RelationalDynamicTableObject<TExecuter, TSchema>.Create(data as IDictionary<string, object>, this);
         }
 
         public ITableQuery Query()
         {
-            return new SqliteTableQuery(this);
+            return new RelationalTableQuery<TExecuter, TSchema>(this);
         }
 
         public ITableQuery Query(string query)
         {
-            var result = new SqliteTableQuery(this);
+            var result = new RelationalTableQuery<TExecuter, TSchema>(this);
             result.Where(query);
             return result;
         }
@@ -164,8 +161,7 @@ namespace KScript
             if (dic.ContainsKey("_id")) dic.Remove("_id");
             EnsureTableCreated();
             TryUpgradeSchema(newvalue);
-            Database.Connection.UpdateData(Name, id.ToString(), newvalue);
+            Database.SqlExecuter.UpdateData(Name, id.ToString(), newvalue);
         }
-
     }
 }

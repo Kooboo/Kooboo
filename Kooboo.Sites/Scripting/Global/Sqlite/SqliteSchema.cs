@@ -1,85 +1,28 @@
-﻿using System;
+﻿using Kooboo.Sites.Scripting.Global.RelationalDatabase;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace KScript
 {
-    public class SqliteSchema
+    public class SqliteSchema : RelationalSchema
     {
-        public class Item
+        public SqliteSchema(IDictionary<string, object> keyValuePairs) : base(keyValuePairs)
         {
-            public string Name { get; set; }
-
-            public SqliteType Type
-            {
-                get
-                {
-                    if (_enumType == null)
-                    {
-                        _enumType = (SqliteType)Enum.Parse(typeof(SqliteType), _type);
-                    }
-                    return _enumType.Value;
-                }
-                set { _enumType = value; }
-            }
-
-            SqliteType? _enumType;
-
-            string _type;
         }
 
-        public enum SqliteType
+        public SqliteSchema(IEnumerable<Item> items) : base(items)
         {
-            NULL,
-            INTEGER,
-            REAL,
-            TEXT,
-            BLOB
         }
 
-        readonly List<Item> _items;
+        public override string[] DataTypes => new string[] { "NULL", "INTEGER", "REAL", "TEXT", "BLOB" };
 
-        public IEnumerable<Item> Items => _items;
-
-        public bool Created => _items.Count() > 0;
-
-        public SqliteSchema(IDictionary<string, object> keyValuePairs)
+        internal override string ConventType(Type type)
         {
-            _items = keyValuePairs.Select(s => new Item { Name = s.Key, Type = ConventType(s.Value?.GetType()) }).ToList();
-        }
-
-        public SqliteSchema(IEnumerable<SqliteSchema.Item> items)
-        {
-            _items = items.ToList();
-        }
-
-        static SqliteType ConventType(Type type)
-        {
-            if (type == typeof(string)) return SqliteType.TEXT;
-            if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return SqliteType.REAL;
-            if (type == null) return SqliteType.NULL;
-            if (type == typeof(bool)) return SqliteType.INTEGER;
+            if (type == typeof(string)) return "TEXT";
+            if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return "REAL";
+            if (type == null) return "NULL";
+            if (type == typeof(bool)) return "INTEGER";
             throw new NotSupportedException();
-        }
-
-        public bool Compatible(SqliteSchema schema, out List<Item> newItems)
-        {
-            newItems = new List<Item>();
-
-            foreach (var item in schema._items)
-            {
-                var findItem = _items.FirstOrDefault(f => f.Name == item.Name);
-                if (findItem == default) newItems.Add(item);
-                else if (findItem.Type != item.Type) return false;
-            }
-
-            return true;
-        }
-
-        public void AddItems(IEnumerable<Item> items)
-        {
-            _items.AddRange(items);
         }
     }
 }

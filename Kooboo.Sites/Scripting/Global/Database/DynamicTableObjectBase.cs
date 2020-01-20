@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Context;
+using KScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Database
 {
-    public abstract class DynamicTableObjectBase
+    public abstract class DynamicTableObjectBase : IDynamicTableObject
     {
         public IDictionary<string, object> obj { get; set; }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Global.Sqlite
+namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
     public class RelationModel
     {
