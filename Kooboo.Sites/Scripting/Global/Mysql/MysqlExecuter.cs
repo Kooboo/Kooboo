@@ -17,11 +17,6 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         public override char QuotationLeft => '`';
         public override char QuotationRight => '`';
 
-        public override void CreateIndex(string name, string fieldname)
-        {
-            Connection.Execute($@"CREATE INDEX {fieldname} on `{name}`(`{fieldname}`)");
-        }
-
         public override void CreateTable(string name)
         {
             Connection.Execute($@"CREATE TABLE `{name}` ( _id char(36) ,PRIMARY KEY ( `_id` ))ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -34,16 +29,24 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public override RelationalSchema GetSchema(string name)
         {
-           var result= Connection.Query<object>($"DESCRIBE `{name}`");
+            IEnumerable<RelationalSchema.Item> items = null;
 
-            return null;
-           //var item= result.Select(s => new RelationalSchema.Item { Name = s.field, Type = s.type });
-           // return new MysqlSchema(item);
-        }
+            try
+            {
+                var result = Connection.Query<object>($"DESCRIBE `{name}`");
 
-        public override void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items)
-        {
-            throw new NotImplementedException();
+                items = result.Select(s =>
+                   {
+                       var dic = s as IDictionary<string, object>;
+                       return new RelationalSchema.Item { Name = dic["Field"].ToString(), Type = dic["Type"].ToString() };
+                   });
+            }
+            catch (Exception)
+            {
+                items = new RelationalSchema.Item[0];
+            }
+
+            return new MysqlSchema(items);
         }
     }
 }

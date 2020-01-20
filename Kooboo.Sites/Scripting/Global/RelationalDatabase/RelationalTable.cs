@@ -33,9 +33,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        IEnumerable<SqliteSchema.Item> EnsureSchemaCompatible(object value)
+        IEnumerable<RelationalSchema.Item> EnsureSchemaCompatible(object value)
         {
-            var newSchema = new SqliteSchema(value as IDictionary<string, object>);
+            var newSchema = (TSchema)Activator.CreateInstance(typeof(TSchema), value as IDictionary<string, object>);
             var compatible = _schema.Compatible(newSchema, out var newItems);
             if (!compatible) throw new SchemaNotCompatibleException();
             return newItems;

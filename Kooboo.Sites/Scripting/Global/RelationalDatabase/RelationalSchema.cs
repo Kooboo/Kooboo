@@ -7,8 +7,6 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
     public abstract class RelationalSchema
     {
-        public abstract string[] DataTypes { get; }
-
         public class Item
         {
             public string Name { get; set; }
@@ -29,8 +27,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public RelationalSchema(IEnumerable<Item> items)
         {
-            _items = items.ToList();
+            _items = items.Select(s => new Item { Name = s.Name, Type = StandardizationType(s.Type) }).ToList();
         }
+
+        internal abstract string StandardizationType(string type);
 
         internal abstract string ConventType(Type type);
 

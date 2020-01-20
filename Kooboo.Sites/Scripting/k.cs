@@ -1,26 +1,25 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo;
+using Kooboo.Data;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.Mysql;
+using Kooboo.Sites.Scripting.Global.Sqlite;
+using KScript.KscriptConfig;
+using KScript.Sites;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
-using KScript.Sites;
-using Kooboo.Sites.Scripting;
-using Kooboo;
-using KScript.KscriptConfig;
-using System.IO;
-using Kooboo.Data;
-using System.Data.SQLite;
-using Kooboo.Sites.Scripting.Global.Sqlite;
-using Kooboo.Sites.Scripting.Global.RelationalDatabase;
-using Kooboo.Sites.Scripting.Global.Mysql;
-using MySql.Data.MySqlClient;
 
 namespace KScript
 {
@@ -435,8 +434,8 @@ var value = k.session.key; ")]
                     {
                         if (_mysql == null)
                         {
-#warning TODO 更换连接字符串来源
-                            var connection = new MySqlConnection($"server=localhost;database=union;userid=root;password=");
+                            var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MysqlSetting>();
+                            var connection = new MySqlConnection(setting.ConnectionString);
                             _mysql = new MysqlDatabase(connection);
                         }
                     }

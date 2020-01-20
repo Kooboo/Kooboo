@@ -71,6 +71,9 @@
     <PackageReference Include="Dapper" Version="1.42.0">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
+    <PackageReference Include="MySql.Data" Version="6.9.12">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +83,11 @@
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
     <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
     <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core">
+      <Version>3.1.1</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

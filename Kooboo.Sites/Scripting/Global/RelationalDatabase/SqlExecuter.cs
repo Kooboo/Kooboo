@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
@@ -23,7 +24,17 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public abstract RelationalSchema GetSchema(string name);
 
-        public abstract void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items);
+        public virtual void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var item in items)
+            {
+                sb.AppendLine($@"ALTER TABLE {QuotationLeft}{name}{QuotationRight} ADD COLUMN {QuotationLeft}{item.Name}{QuotationRight} {item.Type.ToString()};");
+            }
+
+            Connection.Execute(sb.ToString());
+        }
 
         public abstract void CreateTable(string name);
 
@@ -58,7 +69,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             Connection.Execute($@"INSERT INTO {QuotationLeft}{name}{QuotationRight} ({columns}) VALUES ({values})", data);
         }
 
-        public abstract void CreateIndex(string name, string fieldname);
+        public virtual void CreateIndex(string name, string fieldname)
+        {
+            Connection.Execute($@"CREATE INDEX {fieldname} on {QuotationLeft}{name}{QuotationRight}({QuotationLeft}{fieldname}{QuotationRight})");
+        }
 
         public virtual void Delete(string name, string id)
         {

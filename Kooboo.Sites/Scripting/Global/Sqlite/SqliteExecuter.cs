@@ -23,11 +23,6 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
 
         public override char QuotationRight => '"';
 
-        public override void CreateIndex(string name, string fieldname)
-        {
-            Connection.Execute($@"CREATE INDEX {fieldname} on ""{name}""(""{fieldname}"")");
-        }
-
         public override void CreateTable(string name)
         {
             Connection.Execute($@"CREATE TABLE ""{name}"" ( _id TEXT PRIMARY KEY)");
@@ -44,18 +39,6 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
         {
             var items = Connection.Query<RelationalSchema.Item>($@"SELECT ""name"",""type"" as _type FROM pragma_table_info ('{name}');");
             return new SqliteSchema(items);
-        }
-
-        public override void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var item in items)
-            {
-                sb.AppendLine($@"ALTER TABLE ""{name}"" ADD COLUMN {item.Name} {item.Type.ToString()};");
-            }
-
-            Connection.Execute(sb.ToString());
         }
     }
 }
