@@ -37,7 +37,7 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
 
         public override RelationalSchema GetSchema(string name)
         {
-            var items = Connection.Query<RelationalSchema.Item>($@"SELECT ""name"",""type"" as _type FROM pragma_table_info ('{name}');");
+            var items = Connection.Query<RelationalSchema.Item>($@"SELECT ""name"",""type"" FROM pragma_table_info ('{name}');");
             return new SqliteSchema(items);
         }
     }
