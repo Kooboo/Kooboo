@@ -49,12 +49,13 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             lock (_locker)
             {
-                if (_schema == null || !_schema.Created)
+                if (_schema == null) _schema = Database.SqlExecuter.GetSchema(Name);
+
+                if (!_schema.Created)
                 {
                     Database.SqlExecuter.CreateTable(Name);
+                    _schema = Database.SqlExecuter.GetSchema(Name);
                 }
-
-                _schema = Database.SqlExecuter.GetSchema(Name);
             }
         }
 
@@ -83,14 +84,14 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             ClearNullField(dic);
             EnsureTableCreated();
             TryUpgradeSchema(dic);
-            object newId;
+            object newId = null;
 
-            if (_schema.PrimaryKey == null || _schema.PrimaryKey == "_id")
+            if (_schema.PrimaryKey == "_id")
             {
                 newId = Guid.NewGuid().ToString();
                 EnsureHaveId(dic, newId.ToString());
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(_schema.PrimaryKey) && dic.ContainsKey(_schema.PrimaryKey))
             {
                 newId = dic[_schema.PrimaryKey];
             }
@@ -111,14 +112,14 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var dic = kHelper.CleanDynamicObject(value);
             EnsureTableCreated();
             EnsureSchemaCompatible(dic);
-            object newId;
+            object newId = null;
 
             if (_schema.PrimaryKey == "_id")
             {
                 newId = Guid.NewGuid().ToString();
                 EnsureHaveId(dic, newId.ToString());
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(_schema.PrimaryKey) && dic.ContainsKey(_schema.PrimaryKey))
             {
                 newId = dic[_schema.PrimaryKey];
             }

@@ -19,8 +19,7 @@ namespace KScript
         internal override bool CompatibleType(string dbType, string jsType)
         {
             if (jsType == "NULL") return true;
-            if (jsType == "INTEGER" && (dbType == "INTEGER" || dbType == "REAL")) return true;
-            if (jsType == "REAL" && dbType == "REAL") return true;
+            if ((jsType == "INTEGER"|| jsType == "REAL") && (dbType == "INTEGER" || dbType == "REAL")) return true;
             if (jsType == "TEXT" && (dbType == "TEXT" || dbType == "BLOB")) return true;
             return false;
         }
