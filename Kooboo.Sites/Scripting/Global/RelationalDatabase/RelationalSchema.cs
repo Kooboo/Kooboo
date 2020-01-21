@@ -12,11 +12,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             public string Name { get; set; }
 
             public string Type { get; set; }
+
+            public bool IsPrimaryKey { get; set; }
         }
 
         readonly List<Item> _items;
 
         public IEnumerable<Item> Items => _items;
+
+        public string PrimaryKey => Items.FirstOrDefault(f => f.IsPrimaryKey)?.Name;
 
         public bool Created => _items.Count() > 0;
 

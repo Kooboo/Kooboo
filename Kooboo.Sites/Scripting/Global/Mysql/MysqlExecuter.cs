@@ -60,7 +60,12 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
                     items = result.Select(s =>
                     {
                         var dic = s as IDictionary<string, object>;
-                        return new RelationalSchema.Item { Name = dic["Field"].ToString(), Type = dic["Type"].ToString() };
+                        return new RelationalSchema.Item
+                        {
+                            Name = dic["Field"].ToString(),
+                            Type = dic["Type"].ToString(),
+                            IsPrimaryKey = dic["Key"].ToString() == "PRI"
+                        };
                     });
                 }
             }

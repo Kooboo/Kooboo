@@ -53,7 +53,7 @@ SELECT ""table"" AS TableA,""to"" AS ""from"",""from"" AS ""to"" FROM pragma_for
 
         public override RelationalSchema GetSchema(string name)
         {
-            var sql = $@"SELECT ""name"",""type"" FROM pragma_table_info ('{name}');";
+            var sql = $@"SELECT ""name"",""type"", pk AS ""IsPrimaryKey"" FROM pragma_table_info ('{name}');";
 
             using (var connection = CreateConnection())
             {
