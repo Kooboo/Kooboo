@@ -17,9 +17,9 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         {
         }
 
-        static readonly string[] _textType = new[] { "CHAR", "VARCHAR", "TINYBLOB", "TINYTEXT", "BLOB", "TEXT", "MEDIUMBLOB", "MEDIUMTEXT", "LONGBLOB", "LONGTEXT", "DATE", "TIME", "DATETIME" };
+        static readonly string[] _textType = new[] { "CHAR", "VARCHAR", "TINYBLOB", "TINYTEXT", "BLOB", "TEXT", "MEDIUMBLOB", "MEDIUMTEXT", "LONGBLOB", "LONGTEXT"};
         static readonly string[] _dateTime = new[] { "DATE", "TIME", "YEAR", "DATETIME" };
-        static readonly string[] _double = new[] { "FLOAT", "DOUBLE", "DECIMAL", "BIGINT", "INTEGER", "INT", "MEDIUMINT", "SMALLINT", "YEAR" };
+        static readonly string[] _double = new[] { "FLOAT", "DOUBLE", "DECIMAL", "BIGINT", "INTEGER", "INT", "MEDIUMINT", "SMALLINT", "YEAR","TINYINT" };
 
         internal override string ConventType(Type type)
         {

@@ -13,6 +13,10 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         public MysqlExecuter(IDbConnection dbConnection) : base(dbConnection)
         {
         }
+        ~MysqlExecuter()
+        {
+            Connection.Dispose();
+        }
 
         public override char QuotationLeft => '`';
         public override char QuotationRight => '`';
