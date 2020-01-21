@@ -27,12 +27,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public RelationalSchema(IEnumerable<Item> items)
         {
-            _items = items.Select(s => new Item { Name = s.Name, Type = StandardizationType(s.Type) }).ToList();
+            _items = items.ToList();
         }
 
-        internal abstract string StandardizationType(string type);
-
         internal abstract string ConventType(Type type);
+        internal abstract bool CompatibleType(string dbType, string jsType);
 
         public bool Compatible(RelationalSchema schema, out List<Item> newItems)
         {
@@ -41,12 +40,19 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             foreach (var item in schema._items)
             {
                 var findItem = _items.FirstOrDefault(f => f.Name == item.Name);
-                if (findItem == default) newItems.Add(item);
-                else if (findItem.Type != item.Type) return false;
+
+                if (findItem == default)
+                {
+                    newItems.Add(item);
+                    continue;
+                }
+
+                if (!CompatibleType(findItem.Type, item.Type)) return false;
             }
 
             return true;
         }
+
 
         public void AddItems(IEnumerable<Item> items)
         {

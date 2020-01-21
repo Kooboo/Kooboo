@@ -17,9 +17,9 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         {
         }
 
-        static readonly string[] _textType = new[] { "CHAR", "VARCHAR", "TINYBLOB", "TINYTEXT", "BLOB", "TEXT", "MEDIUMBLOB", "MEDIUMTEXT", "LONGBLOB", "LONGTEXT" };
+        static readonly string[] _textType = new[] { "CHAR", "VARCHAR", "TINYBLOB", "TINYTEXT", "BLOB", "TEXT", "MEDIUMBLOB", "MEDIUMTEXT", "LONGBLOB", "LONGTEXT", "DATE", "TIME", "DATETIME" };
         static readonly string[] _dateTime = new[] { "DATE", "TIME", "YEAR", "DATETIME" };
-        static readonly string[] _double = new[] { "FLOAT", "DOUBLE", "DECIMAL", "BIGINT", "INTEGER", "INT", "MEDIUMINT", "SMALLINT" };
+        static readonly string[] _double = new[] { "FLOAT", "DOUBLE", "DECIMAL", "BIGINT", "INTEGER", "INT", "MEDIUMINT", "SMALLINT", "YEAR" };
 
         internal override string ConventType(Type type)
         {
@@ -31,13 +31,14 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
             throw new NotSupportedException();
         }
 
-        internal override string StandardizationType(string type)
+        internal override bool CompatibleType(string dbType, string jsType)
         {
-            if (type.ToUpper() == "NULL") return "NULL";
-            if (_textType.Any(a => type.ToUpper().StartsWith(a))) return "TEXT";
-            if (_dateTime.Any(a => type.ToUpper().StartsWith(a))) return "DATETIME";
-            if (_double.Any(a => type.ToUpper().StartsWith(a))) return "DOUBLE";
-            return "NULL";
+            if (jsType == "NULL") return true;
+            if (jsType == "TEXT" && _textType.Any(a => dbType.ToUpper().StartsWith(a))) return true;
+            if (jsType == "DATETIME" && _dateTime.Any(a => dbType.ToUpper().StartsWith(a))) return true;
+            if (jsType == "DOUBLE" && _double.Any(a => dbType.ToUpper().StartsWith(a))) return true;
+            if (jsType == "TINYINT" && _double.Any(a => dbType.ToUpper().StartsWith(a))) return true;
+            return false;
         }
     }
 }

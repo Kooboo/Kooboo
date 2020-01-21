@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         RelationalSchema _schema;
 
         public string Name { get; set; }
-        public RelationalDatabase<TExecuter,TSchema> Database { get; set; }
+        public RelationalDatabase<TExecuter, TSchema> Database { get; set; }
 
         public RelationalTable(string name, RelationalDatabase<TExecuter, TSchema> database)
         {
@@ -20,11 +20,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             Name = name;
         }
 
-        void TryUpgradeSchema(object value)
+        void TryUpgradeSchema(IDictionary<string, object> value)
         {
             lock (_locker)
             {
                 var newItems = EnsureSchemaCompatible(value);
+
                 if (newItems.Count() > 0)
                 {
                     _schema.AddItems(newItems);
@@ -33,9 +34,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        IEnumerable<RelationalSchema.Item> EnsureSchemaCompatible(object value)
+        List<RelationalSchema.Item> EnsureSchemaCompatible(IDictionary<string, object> value)
         {
-            var newSchema = (TSchema)Activator.CreateInstance(typeof(TSchema), value as IDictionary<string, object>);
+            var newSchema = (TSchema)Activator.CreateInstance(typeof(TSchema), value);
             var compatible = _schema.Compatible(newSchema, out var newItems);
             if (!compatible) throw new SchemaNotCompatibleException();
             return newItems;
@@ -50,22 +51,34 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        object EnsureHaveId(object value, string id = null)
+        object EnsureHaveId(IDictionary<string, object> value, string id = null)
         {
             if (id == null) id = Guid.NewGuid().ToString();
-            var dic = value as IDictionary<string, object>;
-            if (!dic.ContainsKey("_id")) dic.Add("_id", id);
+            if (!value.ContainsKey("_id")) value.Add("_id", id);
             return value;
+        }
+
+        /// <summary>
+        /// because we can't know null field type
+        /// </summary>
+        /// <param name="value"></param>
+        void ClearNullField(IDictionary<string, object> value)
+        {
+            foreach (var item in value.Where(w => w.Value == null).Select(s => s.Key).ToArray())
+            {
+                value.Remove(item);
+            }
         }
 
         public object add(object value)
         {
-            value = kHelper.CleanDynamicObject(value);
+            var dic = kHelper.CleanDynamicObject(value);
+            ClearNullField(dic);
             EnsureTableCreated();
-            TryUpgradeSchema(value);
+            TryUpgradeSchema(dic);
             var newId = Guid.NewGuid().ToString();
-            EnsureHaveId(value, newId);
-            Database.SqlExecuter.Insert(Name, value);
+            EnsureHaveId(dic, newId);
+            Database.SqlExecuter.Insert(Name, dic);
             return newId;
         }
 
@@ -78,12 +91,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public object append(object value)
         {
-            value = kHelper.CleanDynamicObject(value);
+            var dic = kHelper.CleanDynamicObject(value);
             EnsureTableCreated();
-            EnsureSchemaCompatible(value);
+            EnsureSchemaCompatible(dic);
             var newId = Guid.NewGuid().ToString();
-            EnsureHaveId(value, newId);
-            Database.SqlExecuter.Append(Name, value, _schema);
+            EnsureHaveId(dic, newId);
+            Database.SqlExecuter.Append(Name, dic, _schema);
             return newId;
         }
 
@@ -148,20 +161,19 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public void update(object newvalue)
         {
-            newvalue = kHelper.CleanDynamicObject(newvalue);
-            var dic = newvalue as IDictionary<string, object>;
-            if (dic.ContainsKey("_id")) update(dic["_id"], newvalue);
-            else add(newvalue);
+            var dic = kHelper.CleanDynamicObject(newvalue);
+            if (dic.ContainsKey("_id")) update(dic["_id"], dic);
+            else add(dic);
         }
 
         public void update(object id, object newvalue)
         {
-            newvalue = kHelper.CleanDynamicObject(newvalue);
-            var dic = newvalue as IDictionary<string, object>;
+            var dic = kHelper.CleanDynamicObject(newvalue);
+            ClearNullField(dic);
             if (dic.ContainsKey("_id")) dic.Remove("_id");
             EnsureTableCreated();
-            TryUpgradeSchema(newvalue);
-            Database.SqlExecuter.UpdateData(Name, id.ToString(), newvalue);
+            TryUpgradeSchema(dic);
+            Database.SqlExecuter.UpdateData(Name, id.ToString(), dic);
         }
     }
 }

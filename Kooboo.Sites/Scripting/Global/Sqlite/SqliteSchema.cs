@@ -16,31 +16,22 @@ namespace KScript
         {
         }
 
+        internal override bool CompatibleType(string dbType, string jsType)
+        {
+            if (jsType == "NULL") return true;
+            if (jsType == "INTEGER" && (dbType == "INTEGER" || dbType == "REAL")) return true;
+            if (jsType == "REAL" && dbType == "REAL") return true;
+            if (jsType == "TEXT" && (dbType == "TEXT" || dbType == "BLOB")) return true;
+            return false;
+        }
+
         internal override string ConventType(Type type)
         {
             if (type == typeof(string) || type == typeof(DateTime)) return "TEXT";
-            if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return "REAL";
+            if (type == typeof(double) || type == typeof(float) || type == typeof(decimal)) return "REAL";
             if (type == null) return "NULL";
-            if (type == typeof(bool)) return "INTEGER";
+            if (type == typeof(bool) || type == typeof(int) || type == typeof(long)) return "INTEGER";
             throw new NotSupportedException();
-        }
-
-        internal override string StandardizationType(string type)
-        {
-            switch (type)
-            {
-                case "NULL":
-                    return "NULL";
-                case "INTEGER":
-                    return "INTEGER";
-                case "REAL":
-                    return "REAL";
-                case "TEXT":
-                case "BLOB":
-                    return "TEXT";
-                default:
-                    return "NULL";
-            }
         }
     }
 }

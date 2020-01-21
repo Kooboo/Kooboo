@@ -11,7 +11,7 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public static class kHelper
     {
-        public static object CleanDynamicObject(object Value)
+        public static IDictionary<string, object> CleanDynamicObject(object Value)
         {
             if (Value is IDynamicTableObject)
             {
@@ -19,7 +19,7 @@ namespace Kooboo.Sites.Scripting.Global
                 return dynamictable.obj;
             }
 
-            return Value;
+            return Value as IDictionary<string, object>;
         }
 
         public static object PrepareData(object dataobj, Type modelType)
