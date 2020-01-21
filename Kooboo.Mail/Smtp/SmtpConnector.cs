@@ -190,9 +190,9 @@ namespace Kooboo.Mail.Smtp
             return _writer.WriteAsync(line + "\r\n");
         }
 
-        public void CheckTimeout(DateTime now)
+        public void CheckTimeout()
         {
-            var timestamp = now.Ticks;
+            var timestamp = _server.Heatbeat.UtcNow.Ticks;
             if (timestamp > Interlocked.Read(ref _timeoutTimestamp))
             {
                 _timeoutTimestamp = Int64.MaxValue;
