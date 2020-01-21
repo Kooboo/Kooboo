@@ -6,10 +6,10 @@ using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class RelationalTable<TExecuter, TSchema,TConnection> : ITable
-        where TExecuter : SqlExecuter<TConnection> 
-        where TSchema : RelationalSchema 
-        where TConnection:IDbConnection
+    public class RelationalTable<TExecuter, TSchema, TConnection> : ITable
+        where TExecuter : SqlExecuter<TConnection>
+        where TSchema : RelationalSchema
+        where TConnection : IDbConnection
     {
         readonly static object _locker = new object();
         RelationalSchema _schema;
@@ -49,8 +49,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             lock (_locker)
             {
-                if (_schema == null) _schema = Database.SqlExecuter.GetSchema(Name);
-                if (!_schema.Created) Database.SqlExecuter.CreateTable(Name);
+                if (_schema == null || !_schema.Created)
+                {
+                    Database.SqlExecuter.CreateTable(Name);
+                }
+
+                _schema = Database.SqlExecuter.GetSchema(Name);
             }
         }
 
@@ -79,8 +83,18 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             ClearNullField(dic);
             EnsureTableCreated();
             TryUpgradeSchema(dic);
-            var newId = Guid.NewGuid().ToString();
-            EnsureHaveId(dic, newId);
+            object newId;
+
+            if (_schema.PrimaryKey == null || _schema.PrimaryKey == "_id")
+            {
+                newId = Guid.NewGuid().ToString();
+                EnsureHaveId(dic, newId.ToString());
+            }
+            else
+            {
+                newId = dic[_schema.PrimaryKey];
+            }
+
             Database.SqlExecuter.Insert(Name, dic);
             return newId;
         }
@@ -97,8 +111,18 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var dic = kHelper.CleanDynamicObject(value);
             EnsureTableCreated();
             EnsureSchemaCompatible(dic);
-            var newId = Guid.NewGuid().ToString();
-            EnsureHaveId(dic, newId);
+            object newId;
+
+            if (_schema.PrimaryKey == "_id")
+            {
+                newId = Guid.NewGuid().ToString();
+                EnsureHaveId(dic, newId.ToString());
+            }
+            else
+            {
+                newId = dic[_schema.PrimaryKey];
+            }
+
             Database.SqlExecuter.Append(Name, dic, _schema);
             return newId;
         }
@@ -112,7 +136,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void delete(object id)
         {
             EnsureTableCreated();
-            Database.SqlExecuter.Delete(Name, id.ToString());
+            Database.SqlExecuter.Delete(Name, _schema.PrimaryKey, id);
         }
 
         public IDynamicTableObject find(string query)
@@ -146,7 +170,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public IDynamicTableObject get(object id)
         {
             EnsureTableCreated();
-            var data = Database.SqlExecuter.QueryData(Name, $"_id == '{id}'").FirstOrDefault();
+            var data = Database.SqlExecuter.QueryData(Name, $"{_schema.PrimaryKey} == '{id}'").FirstOrDefault();
             return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.Create(data as IDictionary<string, object>, this);
         }
 
@@ -165,7 +189,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void update(object newvalue)
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
-            if (dic.ContainsKey("_id")) update(dic["_id"], dic);
+            if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) update(dic[_schema.PrimaryKey], dic);
             else add(dic);
         }
 
@@ -176,7 +200,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             if (dic.ContainsKey("_id")) dic.Remove("_id");
             EnsureTableCreated();
             TryUpgradeSchema(dic);
-            Database.SqlExecuter.UpdateData(Name, id.ToString(), dic);
+            Database.SqlExecuter.UpdateData(Name, _schema.PrimaryKey, id, dic);
         }
     }
 }

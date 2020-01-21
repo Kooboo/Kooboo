@@ -94,9 +94,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        public virtual void Delete(string name, string id)
+        public virtual void Delete(string name, string primaryKey, object id)
         {
-            var sql = $@"DELETE FROM {WarpField(name)} WHERE _id = @Id";
+            var sql = $@"DELETE FROM {WarpField(name)} WHERE {primaryKey} = @Id";
 
             using (var connection = CreateConnection())
             {
@@ -104,11 +104,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        public virtual void UpdateData(string name, string id, object data)
+        public virtual void UpdateData(string name, string primaryKey, object id, object data)
         {
             var dic = data as IDictionary<string, object>;
             var keyValues = string.Join(",", dic.Select(s => $@"{WarpField(s.Key)}=@{s.Key}"));
-            var sql = $@"UPDATE {WarpField(name)} SET {keyValues} WHERE _id = '{id}'";
+            dic.Add("__id", id);
+            var sql = $@"UPDATE {WarpField(name)} SET {keyValues} WHERE {primaryKey} = @__id";
 
             using (var connection = CreateConnection())
             {
@@ -118,7 +119,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public abstract RelationModel GetRelation(string name, string relation);
 
-        public virtual object[] QueryData(string name, string where = null, long? limit = null, long? offset = null, string orderBy = null)
+        public virtual object[] QueryData(string name, string where = null, long? limit = null, long? offset = null, string orderBy = null, object @params = null)
         {
             var conditions = QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
@@ -129,7 +130,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
-                return connection.Query<object>(sql).ToArray();
+                return connection.Query<object>(sql, @params).ToArray();
             }
         }
 
