@@ -33,15 +33,21 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
         public override RelationModel GetRelation(string name, string relation)
         {
             var sql = $@"
-SELECT ""table"",""from"",""to"" FROM pragma_foreign_key_list('{name}') where ""table""='{relation}'
+SELECT ""table"" AS TableA,""from"",""to"" FROM pragma_foreign_key_list('{name}') where ""table""='{relation}'
 UNION ALL
-SELECT ""table"",""to"" AS ""from"",""from"" AS ""to"" FROM pragma_foreign_key_list('{relation}') where ""table""='{name}'
+SELECT ""table"" AS TableA,""to"" AS ""from"",""from"" AS ""to"" FROM pragma_foreign_key_list('{relation}') where ""table""='{name}'
 ";
 
             using (var connection = CreateConnection())
             {
-                var relations = connection.Query<RelationModel>(sql);
-                return relations.FirstOrDefault();
+                var result = connection.Query<RelationModel>(sql).FirstOrDefault();
+
+                if (result != null && result.TableA == relation)
+                {
+                    result.TableA = name;
+                }
+
+                return result;
             }
         }
 

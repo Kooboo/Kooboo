@@ -30,7 +30,21 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public override RelationModel GetRelation(string name, string relation)
         {
-            throw new NotImplementedException();
+            var sql = $"select TABLE_NAME as `tableA`,REFERENCED_TABLE_NAME as `tableB`,COLUMN_NAME as `from`,REFERENCED_COLUMN_NAME as `to` from INFORMATION_SCHEMA.KEY_COLUMN_USAGE  where CONSTRAINT_NAME='{name}'";
+            using (var connection = CreateConnection())
+            {
+                var result = connection.Query<RelationModel>(sql).FirstOrDefault();
+
+                if (result != null && result.TableA == relation)
+                {
+                    var to = result.To;
+                    result.To = result.From;
+                    result.From = to;
+                    result.TableA = result.TableB;
+                }
+
+                return result;
+            }
         }
 
         public override RelationalSchema GetSchema(string name)
