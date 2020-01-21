@@ -413,8 +413,7 @@ var value = k.session.key; ")]
                         if (_sqlite == null)
                         {
                             var path = Path.Combine(AppSettings.GetFileIORoot(RenderContext.WebSite), "sqlite.db");
-                            var connection = new SQLiteConnection($"Data source='{path}';Version=3");
-                            _sqlite = new SqliteDatabase(connection);
+                            _sqlite = new SqliteDatabase($"Data source='{path}';Version=3");
                         }
                     }
                 }
@@ -435,8 +434,7 @@ var value = k.session.key; ")]
                         if (_mysql == null)
                         {
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MysqlSetting>();
-                            var connection = new MySqlConnection(setting.ConnectionString);
-                            _mysql = new MysqlDatabase(connection);
+                            _mysql = new MysqlDatabase(setting.ConnectionString);
                         }
                     }
                 }

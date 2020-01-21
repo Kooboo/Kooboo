@@ -10,17 +10,19 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public abstract class SqlExecuter
+    public abstract class SqlExecuter<T> where T : IDbConnection
     {
-        public IDbConnection Connection { get; set; }
+        readonly string _connectionString;
 
         public abstract char QuotationLeft { get; }
         public abstract char QuotationRight { get; }
 
-        public SqlExecuter(IDbConnection dbConnection)
+        public SqlExecuter(string connectionSring)
         {
-            Connection = dbConnection;
+            _connectionString = connectionSring;
         }
+
+        internal IDbConnection CreateConnection() => (T)Activator.CreateInstance(typeof(T), _connectionString);
 
         public abstract RelationalSchema GetSchema(string name);
 
@@ -33,7 +35,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                 sb.AppendLine($@"ALTER TABLE {QuotationLeft}{name}{QuotationRight} ADD COLUMN {QuotationLeft}{item.Name}{QuotationRight} {item.Type.ToString()};");
             }
 
-            Connection.Execute(sb.ToString());
+            using (var connection= CreateConnection())
+            {
+                connection.Execute(sb.ToString());
+            }
         }
 
         public abstract void CreateTable(string name);
@@ -43,7 +48,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var dic = data as IDictionary<string, object>;
             var columns = string.Join(",", dic.Select(s => $@"{QuotationLeft}{s.Key}{QuotationRight}"));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            Connection.Execute($@"INSERT INTO {QuotationLeft}{name}{QuotationRight}({columns}) VALUES ({values})", new[] { data });
+            var sql = $@"INSERT INTO {QuotationLeft}{name}{QuotationRight}({columns}) VALUES ({values})";
+
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sql, new[] { data });
+            }
         }
 
         public virtual void Append(string name, object data, RelationalSchema schema)
@@ -66,24 +76,44 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             var columns = string.Join(",", dic.Select(s => $@"{QuotationLeft}{s.Key}{QuotationRight}"));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            Connection.Execute($@"INSERT INTO {QuotationLeft}{name}{QuotationRight} ({columns}) VALUES ({values})", data);
+            var sql = $@"INSERT INTO {QuotationLeft}{name}{QuotationRight} ({columns}) VALUES ({values})";
+
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sql, data);
+            }
         }
 
         public virtual void CreateIndex(string name, string fieldname)
         {
-            Connection.Execute($@"CREATE INDEX {fieldname} on {QuotationLeft}{name}{QuotationRight}({QuotationLeft}{fieldname}{QuotationRight})");
+            var sql = $@"CREATE INDEX {fieldname} on {QuotationLeft}{name}{QuotationRight}({QuotationLeft}{fieldname}{QuotationRight})";
+
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sql);
+            }
         }
 
         public virtual void Delete(string name, string id)
         {
-            Connection.Execute($@"DELETE FROM {QuotationLeft}{name}{QuotationRight} WHERE _id = @Id", new { Id = id });
+            var sql = $@"DELETE FROM {QuotationLeft}{name}{QuotationRight} WHERE _id = @Id";
+
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sql, new { Id = id });
+            }
         }
 
         public virtual void UpdateData(string name, string id, object data)
         {
             var dic = data as IDictionary<string, object>;
             var keyValues = string.Join(",", dic.Select(s => $@"{QuotationLeft}{s.Key}{QuotationRight}=@{s.Key}"));
-            Connection.Execute($@"UPDATE {QuotationLeft}{name}{QuotationRight} SET {keyValues} WHERE _id = '{id}'", data);
+            var sql = $@"UPDATE {QuotationLeft}{name}{QuotationRight} SET {keyValues} WHERE _id = '{id}'";
+
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sql, data);
+            }
         }
 
         public abstract RelationModel GetRelation(string name, string relation);
@@ -95,14 +125,26 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
             var orderByStr = orderBy == null ? string.Empty : $"ORDER BY {orderBy}";
             var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            return Connection.Query<object>($@"SELECT * FROM {QuotationLeft}{name}{QuotationRight} {whereStr} {orderByStr} {limitStr} {offsetStr}").ToArray();
+            var sql = $@"SELECT * FROM {QuotationLeft}{name}{QuotationRight} {whereStr} {orderByStr} {limitStr} {offsetStr}";
+
+            using (var connection = CreateConnection())
+            {
+                return connection.Query<object>(sql).ToArray();
+            }
         }
 
         public virtual int Count(string name, string where = null, long? limit = null, long? offset = null)
         {
             var conditions = QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
-            var count = Connection.Query<int>($@"SELECT count(*) FROM {QuotationLeft}{name}{QuotationRight} {whereStr}").FirstOrDefault();
+            var sql = $@"SELECT count(*) FROM {QuotationLeft}{name}{QuotationRight} {whereStr}";
+            int count;
+
+            using (var connection = CreateConnection())
+            {
+                count = connection.Query<int>(sql).FirstOrDefault();
+            }
+
             if (limit.HasValue && count > limit) count = (int)limit.Value;
 
             if (offset.HasValue)

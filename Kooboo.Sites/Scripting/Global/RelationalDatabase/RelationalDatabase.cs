@@ -9,18 +9,21 @@ using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class RelationalDatabase<TExecuter, TSchema> : IDatabase where TExecuter : SqlExecuter where TSchema : RelationalSchema
+    public class RelationalDatabase<TExecuter, TSchema, TConnection> : IDatabase
+        where TExecuter : SqlExecuter<TConnection>
+        where TSchema : RelationalSchema
+        where TConnection : IDbConnection
     {
-        internal readonly ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema>> _tables;
+        internal readonly ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>> _tables;
 
-        public RelationalDatabase(IDbConnection dbConnection)
+        public RelationalDatabase(string connectionString)
         {
-            _tables = new ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema>>();
-            SqlExecuter = (TExecuter)Activator.CreateInstance(typeof(TExecuter), dbConnection);
+            _tables = new ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>>();
+            SqlExecuter = (TExecuter)Activator.CreateInstance(typeof(TExecuter), connectionString);
         }
 
         [KIgnore]
-        public SqlExecuter SqlExecuter { get; }
+        public SqlExecuter<TConnection> SqlExecuter { get; }
 
         [KIgnore]
         public ITable this[string key]
@@ -33,18 +36,24 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public ITable GetTable(string name)
         {
-            return _tables.GetOrAdd(name, new RelationalTable<TExecuter, TSchema>(name, this));
+            return _tables.GetOrAdd(name, new RelationalTable<TExecuter, TSchema, TConnection>(name, this));
         }
 
         public IDynamicTableObject[] Query(string sql)
         {
-            var data = SqlExecuter.Connection.Query<object>(sql).ToArray();
-            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), null);
+            using (var connection = SqlExecuter.CreateConnection())
+            {
+                var data = connection.Query<object>(sql).ToArray();
+                return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), null);
+            }
         }
 
         public int Execute(string sql)
         {
-            return SqlExecuter.Connection.Execute(sql);
+            using (var connection = SqlExecuter.CreateConnection())
+            {
+                return connection.Execute(sql);
+            }
         }
     }
 }

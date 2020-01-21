@@ -6,15 +6,18 @@ using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class RelationalTable<TExecuter, TSchema> : ITable where TExecuter : SqlExecuter where TSchema : RelationalSchema
+    public class RelationalTable<TExecuter, TSchema,TConnection> : ITable
+        where TExecuter : SqlExecuter<TConnection> 
+        where TSchema : RelationalSchema 
+        where TConnection:IDbConnection
     {
         readonly static object _locker = new object();
         RelationalSchema _schema;
 
         public string Name { get; set; }
-        public RelationalDatabase<TExecuter, TSchema> Database { get; set; }
+        public RelationalDatabase<TExecuter, TSchema, TConnection> Database { get; set; }
 
-        public RelationalTable(string name, RelationalDatabase<TExecuter, TSchema> database)
+        public RelationalTable(string name, RelationalDatabase<TExecuter, TSchema, TConnection> database)
         {
             Database = database;
             Name = name;
@@ -86,7 +89,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             EnsureTableCreated();
             var data = Database.SqlExecuter.QueryData(Name);
-            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public object append(object value)
@@ -116,45 +119,45 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             EnsureTableCreated();
             var data = Database.SqlExecuter.QueryData(Name, query).FirstOrDefault();
-            return RelationalDynamicTableObject<TExecuter, TSchema>.Create(data as IDictionary<string, object>, this);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.Create(data as IDictionary<string, object>, this);
         }
 
         public IDynamicTableObject find(string fieldName, object matchValue)
         {
             EnsureTableCreated();
             var data = Database.SqlExecuter.QueryData(Name, $"{fieldName} == '{matchValue}'").FirstOrDefault();
-            return RelationalDynamicTableObject<TExecuter, TSchema>.Create(data as IDictionary<string, object>, this);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.Create(data as IDictionary<string, object>, this);
         }
 
         public IDynamicTableObject[] findAll(string query)
         {
             EnsureTableCreated();
             var data = Database.SqlExecuter.QueryData(Name, query);
-            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
         {
             EnsureTableCreated();
             var data = Database.SqlExecuter.QueryData(Name, $"{field} == '{value}'");
-            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), this);
         }
 
         public IDynamicTableObject get(object id)
         {
             EnsureTableCreated();
             var data = Database.SqlExecuter.QueryData(Name, $"_id == '{id}'").FirstOrDefault();
-            return RelationalDynamicTableObject<TExecuter, TSchema>.Create(data as IDictionary<string, object>, this);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.Create(data as IDictionary<string, object>, this);
         }
 
         public ITableQuery Query()
         {
-            return new RelationalTableQuery<TExecuter, TSchema>(this);
+            return new RelationalTableQuery<TExecuter, TSchema, TConnection>(this);
         }
 
         public ITableQuery Query(string query)
         {
-            var result = new RelationalTableQuery<TExecuter, TSchema>(this);
+            var result = new RelationalTableQuery<TExecuter, TSchema, TConnection>(this);
             result.Where(query);
             return result;
         }

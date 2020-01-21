@@ -1,18 +1,22 @@
 ﻿using KScript;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class RelationalTableQuery<TExecuter, TSchema> : ITableQuery where TExecuter : SqlExecuter where TSchema : RelationalSchema
+    public class RelationalTableQuery<TExecuter, TSchema, TConnection> : ITableQuery
+        where TExecuter : SqlExecuter<TConnection>
+        where TSchema : RelationalSchema
+        where TConnection : IDbConnection
     {
         public bool Ascending { get; set; }
         public string OrderByField { get; set; }
         public string SearchCondition { get; set; }
         public int skipcount { get; set; }
-        public RelationalTable<TExecuter, TSchema> _table { get; set; }
+        public RelationalTable<TExecuter, TSchema, TConnection> _table { get; set; }
 
-        public RelationalTableQuery(RelationalTable<TExecuter, TSchema> table)
+        public RelationalTableQuery(RelationalTable<TExecuter, TSchema, TConnection> table)
         {
             _table = table;
         }
@@ -47,7 +51,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var desc = Ascending ? string.Empty : "DESC";
             var orderBy = OrderByField == null ? null : $"{OrderByField} {desc}";
             var data = _table.Database.SqlExecuter.QueryData(_table.Name, SearchCondition, count, skipcount, orderBy);
-            return RelationalDynamicTableObject<TExecuter, TSchema>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table);
+            return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table);
         }
 
         public ITableQuery Where(string searchCondition)

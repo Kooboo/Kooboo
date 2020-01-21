@@ -8,11 +8,14 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class RelationalDynamicTableObject<TExecuter, TSchema> : DynamicTableObjectBase where TExecuter : SqlExecuter where TSchema : RelationalSchema
+    public class RelationalDynamicTableObject<TExecuter, TSchema, TConnection> : DynamicTableObjectBase
+        where TExecuter : SqlExecuter<TConnection>
+        where TSchema : RelationalSchema
+        where TConnection : IDbConnection
     {
-        readonly RelationalTable<TExecuter, TSchema> _table;
+        readonly RelationalTable<TExecuter, TSchema, TConnection> _table;
 
-        RelationalDynamicTableObject(IDictionary<string, object> orgObj, RelationalTable<TExecuter, TSchema> table)
+        RelationalDynamicTableObject(IDictionary<string, object> orgObj, RelationalTable<TExecuter, TSchema, TConnection> table)
         {
             this.obj = orgObj;
             _table = table;
@@ -30,13 +33,13 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             if (relation != default && _table.Name != default && obj.ContainsKey(relation.To))
             {
                 var data = _table.Database.SqlExecuter.QueryData(key, $"{relation.From} == {obj[relation.To]}").Take(999);
-                return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table.Database.GetTable(key) as RelationalTable<TExecuter, TSchema>);
+                return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table.Database.GetTable(key) as RelationalTable<TExecuter, TSchema, TConnection>);
             }
 
             return null;
         }
 
-        public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list, RelationalTable<TExecuter, TSchema> table)
+        public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list, RelationalTable<TExecuter, TSchema, TConnection> table)
         {
             int len = list.Length;
 
@@ -49,11 +52,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             return result;
         }
 
-        public static IDynamicTableObject Create(IDictionary<string, object> item, RelationalTable<TExecuter, TSchema> table)
+        public static IDynamicTableObject Create(IDictionary<string, object> item, RelationalTable<TExecuter, TSchema, TConnection> table)
         {
             if (item != null)
             {
-                return new RelationalDynamicTableObject<TExecuter, TSchema>(item, table);
+                return new RelationalDynamicTableObject<TExecuter, TSchema, TConnection>(item, table);
             }
             return null;
 

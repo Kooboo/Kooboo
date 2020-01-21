@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Kooboo.Sites.Scripting.Global.RelationalDatabase;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,14 +9,10 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Mysql
 {
-    public class MysqlExecuter : SqlExecuter
+    public class MysqlExecuter : SqlExecuter<MySqlConnection>
     {
-        public MysqlExecuter(IDbConnection dbConnection) : base(dbConnection)
+        public MysqlExecuter(string connectionSring) : base(connectionSring)
         {
-        }
-        ~MysqlExecuter()
-        {
-            Connection.Dispose();
         }
 
         public override char QuotationLeft => '`';
@@ -23,7 +20,12 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public override void CreateTable(string name)
         {
-            Connection.Execute($@"CREATE TABLE `{name}` ( _id char(36) ,PRIMARY KEY ( `_id` ))ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            var sql = $@"CREATE TABLE `{name}` ( _id char(36) ,PRIMARY KEY ( `_id` ))ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sql);
+            }
         }
 
         public override RelationModel GetRelation(string name, string relation)
@@ -37,13 +39,16 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
             try
             {
-                var result = Connection.Query<object>($"DESCRIBE `{name}`");
+                using (var connection = CreateConnection())
+                {
+                    var result = connection.Query<object>($"DESCRIBE `{name}`");
 
-                items = result.Select(s =>
-                   {
-                       var dic = s as IDictionary<string, object>;
-                       return new RelationalSchema.Item { Name = dic["Field"].ToString(), Type = dic["Type"].ToString() };
-                   });
+                    items = result.Select(s =>
+                    {
+                        var dic = s as IDictionary<string, object>;
+                        return new RelationalSchema.Item { Name = dic["Field"].ToString(), Type = dic["Type"].ToString() };
+                    });
+                }
             }
             catch (Exception)
             {
