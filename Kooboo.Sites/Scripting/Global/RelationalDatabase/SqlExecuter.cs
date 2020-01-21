@@ -32,10 +32,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             foreach (var item in items)
             {
-                sb.AppendLine($@"ALTER TABLE {QuotationLeft}{name}{QuotationRight} ADD COLUMN {QuotationLeft}{item.Name}{QuotationRight} {item.Type.ToString()};");
+                sb.AppendLine($@"ALTER TABLE {WarpField(name)} ADD COLUMN {WarpField(item.Name)} {item.Type.ToString()};");
             }
 
-            using (var connection= CreateConnection())
+            using (var connection = CreateConnection())
             {
                 connection.Execute(sb.ToString());
             }
@@ -46,9 +46,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public virtual void Insert(string name, object data)
         {
             var dic = data as IDictionary<string, object>;
-            var columns = string.Join(",", dic.Select(s => $@"{QuotationLeft}{s.Key}{QuotationRight}"));
+            var columns = string.Join(",", dic.Select(s => $@"{WarpField(s.Key)}"));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            var sql = $@"INSERT INTO {QuotationLeft}{name}{QuotationRight}({columns}) VALUES ({values})";
+            var sql = $@"INSERT INTO {WarpField(name)}({columns}) VALUES ({values})";
 
             using (var connection = CreateConnection())
             {
@@ -74,9 +74,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                 dic.Remove(item);
             }
 
-            var columns = string.Join(",", dic.Select(s => $@"{QuotationLeft}{s.Key}{QuotationRight}"));
+            var columns = string.Join(",", dic.Select(s => $@"{WarpField(s.Key)}"));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
-            var sql = $@"INSERT INTO {QuotationLeft}{name}{QuotationRight} ({columns}) VALUES ({values})";
+            var sql = $@"INSERT INTO {WarpField(name)} ({columns}) VALUES ({values})";
 
             using (var connection = CreateConnection())
             {
@@ -86,7 +86,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public virtual void CreateIndex(string name, string fieldname)
         {
-            var sql = $@"CREATE INDEX {fieldname} on {QuotationLeft}{name}{QuotationRight}({QuotationLeft}{fieldname}{QuotationRight})";
+            var sql = $@"CREATE INDEX {fieldname} on {WarpField(name)}({WarpField(fieldname)})";
 
             using (var connection = CreateConnection())
             {
@@ -96,7 +96,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public virtual void Delete(string name, string id)
         {
-            var sql = $@"DELETE FROM {QuotationLeft}{name}{QuotationRight} WHERE _id = @Id";
+            var sql = $@"DELETE FROM {WarpField(name)} WHERE _id = @Id";
 
             using (var connection = CreateConnection())
             {
@@ -107,8 +107,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public virtual void UpdateData(string name, string id, object data)
         {
             var dic = data as IDictionary<string, object>;
-            var keyValues = string.Join(",", dic.Select(s => $@"{QuotationLeft}{s.Key}{QuotationRight}=@{s.Key}"));
-            var sql = $@"UPDATE {QuotationLeft}{name}{QuotationRight} SET {keyValues} WHERE _id = '{id}'";
+            var keyValues = string.Join(",", dic.Select(s => $@"{WarpField(s.Key)}=@{s.Key}"));
+            var sql = $@"UPDATE {WarpField(name)} SET {keyValues} WHERE _id = '{id}'";
 
             using (var connection = CreateConnection())
             {
@@ -125,7 +125,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var limitStr = limit.HasValue ? $"LIMIT {limit}" : string.Empty;
             var orderByStr = orderBy == null ? string.Empty : $"ORDER BY {orderBy}";
             var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            var sql = $@"SELECT * FROM {QuotationLeft}{name}{QuotationRight} {whereStr} {orderByStr} {limitStr} {offsetStr}";
+            var sql = $@"SELECT * FROM {WarpField(name)} {whereStr} {orderByStr} {limitStr} {offsetStr}";
 
             using (var connection = CreateConnection())
             {
@@ -137,7 +137,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             var conditions = QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
-            var sql = $@"SELECT count(*) FROM {QuotationLeft}{name}{QuotationRight} {whereStr}";
+            var sql = $@"SELECT count(*) FROM {WarpField(name)} {whereStr}";
             int count;
 
             using (var connection = CreateConnection())
@@ -158,7 +158,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         private string ConditionsToSql(List<ConditionItem> conditions)
         {
-            return string.Join(" and ", conditions.Select(s => $@" {QuotationLeft}{s.Field}{QuotationRight} {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
+            return string.Join(" and ", conditions.Select(s => $@" {WarpField(s.Field)} {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
+        }
+
+        internal string WarpField(string field)
+        {
+            return $"{QuotationLeft}{field}{QuotationRight}";
         }
 
         static string ComparerToString(Comparer comparer)
