@@ -5,6 +5,7 @@ using System.Reflection;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using Kooboo.Lib.Reflection;
+using KScript.Sites;
 
 namespace KScript.KscriptConfig
 {
@@ -21,7 +22,12 @@ namespace KScript.KscriptConfig
                 Func<Type, object> getSettingFunc = renderContext.GetSetting;
                 getSetting.SetValue(instance, getSettingFunc);
             }
-
+            var findContent = type.GetField("FindTextContext");
+            if (findContent != null)
+            {
+                Func<string, object> findContextFunc = renderContext.FindContext;
+                findContent.SetValue(instance, findContextFunc);
+            }
             return instance;
         }
 
@@ -37,6 +43,12 @@ namespace KScript.KscriptConfig
                 }
             }
             return Activator.CreateInstance(type);
+        }
+
+        public static IDictionary<string,object> FindContext(this RenderContext renderContext, string query)
+        {            
+            var textcontents = new TextContentObjectRepository(renderContext.WebSite.SiteDb().TextContent, renderContext);
+            return textcontents.Find(query);
         }
 
         /// <summary>
