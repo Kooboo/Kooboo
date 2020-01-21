@@ -9,6 +9,7 @@ using Kooboo.Data.Models;
 using System.Collections.Generic;
 using Kooboo.Data.Context;
 using System.Linq;
+using Kooboo.Data.Service;
 
 namespace Kooboo.Data
 {
@@ -146,7 +147,7 @@ namespace Kooboo.Data
             {
                 Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
                 CustomSslCheck = true;
-            } 
+            }
         }
 
         public static string GetMailDbName(Guid OrganizationId)
@@ -274,10 +275,12 @@ namespace Kooboo.Data
                 return ConfigurationManager.AppSettings.Get("CmsLang");
             }
         }
-          
+
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
-        public static int CurrentUsedPort { get; set; } = 80;
+        public static int HttpPort { get; set; } = 80;
+
+        public static int SslPort { get; set; } = 443;
 
         private static string _starthost;
         public static string StartHost
@@ -402,7 +405,7 @@ namespace Kooboo.Data
                     {
                         if (accounturl.ToLower().StartsWith("https://"))
                         {
-                            accounturl = accounturl.Replace("https://", "http://"); 
+                            accounturl = accounturl.Replace("https://", "http://");
                         }
                         apis.Add(accounturl);
                     }
@@ -418,18 +421,18 @@ namespace Kooboo.Data
                 string apiurl = "/account/system/apiresource";
                 if (IsOnlineServer)
                 {
-                    apiurl += apiurl += "?online=true"; 
+                    apiurl += apiurl += "?online=true";
                 }
 
                 foreach (var item in apis)
                 {
-                    string url = item + apiurl; 
+                    string url = item + apiurl;
                     try
                     {
                         apires = HttpHelper.Get<ApiResource>(url);
                     }
                     catch (Exception ex)
-                    { 
+                    {
                     }
                     if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
                     {
@@ -439,9 +442,9 @@ namespace Kooboo.Data
 
                 if (apires != null)
                 {
-                    if(!CustomSslCheck)
+                    if (!CustomSslCheck)
                     {
-                        apires.AccountUrl = apires.AcccountDomain; 
+                        apires.AccountUrl = apires.AcccountDomain;
                     }
 
                     //Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
@@ -483,14 +486,14 @@ namespace Kooboo.Data
                 if (_serversetting == null)
                 {
                     if (IsOnlineServer)
-                    { 
-                        string CurrentRooturl = RootUrl; 
-                        
+                    {
+                        string CurrentRooturl = RootUrl;
+
                         if (string.IsNullOrWhiteSpace(CurrentRooturl))
                         {
                             CurrentRooturl = ConfigurationManager.AppSettings.Get("RootUrl");
                         }
-                      
+
                         string url = null;
 
                         if (string.IsNullOrEmpty(CurrentRooturl))
@@ -536,7 +539,7 @@ namespace Kooboo.Data
             else
             {
                 bool boolValue;
-                bool.TryParse(value, out boolValue); 
+                bool.TryParse(value, out boolValue);
                 return boolValue;
             }
         }
@@ -693,11 +696,9 @@ namespace Kooboo.Data
             }
         }
 
-
         public static bool IsOnlineServer { get; set; }
 
         public static KscriptConfig KscriptConfig { get; private set; }
-
 
         public static GlobalInfo Global { get; set; }
 
@@ -708,6 +709,17 @@ namespace Kooboo.Data
             public bool EnableLog { get; set; }
 
             public string LogPath { get; set; }
+        }
+
+        public static CheckPortResult InitPort()
+        {
+            var result = Kooboo.Data.Service.StartService.CheckInitPort();
+            if (result.Ok)
+            {
+                HttpPort = result.HttpPort;
+                SslPort = result.SslPort;
+            } 
+            return result;
         }
     }
 }

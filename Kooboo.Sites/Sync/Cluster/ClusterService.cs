@@ -282,9 +282,9 @@ namespace Kooboo.Sites.Sync.Cluster
                 starturl = "http://" + ip;
             }
 
-            if (AppSettings.CurrentUsedPort != 80 && AppSettings.CurrentUsedPort > 0)
+            if (AppSettings.HttpPort != 80 && AppSettings.HttpPort > 0)
             {
-                starturl = starturl + ":" + AppSettings.CurrentUsedPort;
+                starturl = starturl + ":" + AppSettings.HttpPort;
             }
 
             return starturl; 

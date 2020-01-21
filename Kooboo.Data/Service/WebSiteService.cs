@@ -22,7 +22,7 @@ namespace Kooboo.Data.Service
             var binding = Data.GlobalDb.Bindings.GetByWebSite(site.Id).FirstOrDefault();
             if (binding != null)
             {
-                int port = AppSettings.CurrentUsedPort;
+                int port = AppSettings.HttpPort;
                 if (binding.Port > 0)
                 {
                     port = binding.Port;
