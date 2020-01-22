@@ -81,7 +81,7 @@ namespace Kooboo.Web.Api.Implementation
                 dc.Name = Data.Language.Hardcoded.GetValue("Root", call.Context);
                 dc.DisplayName = Data.Language.Hardcoded.GetValue("Root", call.Context);
                 dc.Ip = "127.0.0.1";
-                dc.Port = Data.AppSettings.CurrentUsedPort;
+                dc.Port = Data.AppSettings.HttpPort;
                 dc.IsSelected = true;
                 dc.IsRoot = true;
                 viewmodel.DataCenter.Add(dc);
@@ -158,7 +158,7 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Data.Language.Hardcoded.GetValue("Website not found", call.Context));
             }
 
-            if (Data.AppSettings.CurrentUsedPort != 80)
+            if (Data.AppSettings.HttpPort != 80)
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("To be a host of web cluster, your kooboo instance must be listening on port 80", call.Context));
             }

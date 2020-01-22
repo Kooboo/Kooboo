@@ -38,7 +38,7 @@ namespace Kooboo.App
         {
             vm.Done = true;
             vm.ButtonText = Data.Language.Hardcoded.GetValue("Start");
-            vm.Description = Data.Language.Hardcoded.GetValue("Kooboo Ready at port") + ": " + Kooboo.Data.AppSettings.CurrentUsedPort.ToString();
+            vm.Description = Data.Language.Hardcoded.GetValue("Kooboo Ready at port") + ": " + Kooboo.Data.AppSettings.HttpPort.ToString();
             Img.VerticalAlignment = VerticalAlignment.Top;
             btn.VerticalAlignment = VerticalAlignment.Top;
             txt.VerticalAlignment = VerticalAlignment.Top;

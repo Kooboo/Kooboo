@@ -3,10 +3,13 @@
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
 using KScript;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace KScript
 {
@@ -190,6 +193,36 @@ use the same query syntax as find or findAll")]
             var all = this.table.All();
             return DynamicTableObject.CreateList(all.ToArray(), this.table, this.context);
         }
+
+
+
+        [Description("Return editing history of this object")]
+        public List<ChangeLog> GetLogs(object id)
+        {
+            var guidkey = this.table._ParseKey(id);
+
+            byte[] key = Kooboo.Sites.Service.ObjectService.KeyConverter.ToByte(guidkey);
+            var logs = this.table.OwnerDatabase.Log.GetByTableNameAndKey(this.table.Name, key, 99);
+
+            if (logs != null && logs.Any())
+            {
+                return logs.Select(o => new ChangeLog(o)).ToList();
+            } 
+            return null;
+        }
+
+        [Description("Get object based on the log id")]
+        public DynamicTableObject GetByLog(long LogId)
+        {
+            var log =this.table.OwnerDatabase.Log.Get(LogId);
+            if (log != null)
+            {
+                var logdata =  this.table.GetLogData(log);
+                return DynamicTableObject.Create(logdata, this.table, this.context);
+            } 
+            return null;  
+        }
+
 
     }
 }

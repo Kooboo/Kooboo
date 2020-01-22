@@ -26,11 +26,14 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
-             
+
+            Kooboo.Data.AppSettings.SetCustomSslCheck(); 
+
             Sites.DataSources.DataSourceHelper.InitIDataSource();
 
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
@@ -47,16 +50,18 @@ namespace Kooboo.Web
                 }
             }
 
-            if (!WebServers.ContainsKey(443))
+            var sslport = Data.AppSettings.SslPort; 
+
+            if (!WebServers.ContainsKey(sslport))
             {
                 if (Data.AppSettings.IsOnlineServer)
                 {
-                    StartNewWebServer(443);
+                    StartNewWebServer(sslport);
                 }
 
-                else if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
+                else if (!Lib.Helper.NetworkHelper.IsPortInUse(sslport))
                 {
-                    StartNewWebServer(443);
+                    StartNewWebServer(sslport);
                 }
             }
 
