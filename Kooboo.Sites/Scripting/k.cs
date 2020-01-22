@@ -12,11 +12,9 @@ using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using KScript.KscriptConfig;
 using KScript.Sites;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -413,7 +411,7 @@ var value = k.session.key; ")]
                         if (_sqlite == null)
                         {
                             var path = Path.Combine(AppSettings.GetFileIORoot(RenderContext.WebSite), "sqlite.db");
-                            _sqlite = new SqliteDatabase($"Data source='{path}';Version=3");
+                            _sqlite = new SqliteDatabase($"Data source='{path}';");
                         }
                     }
                 }
