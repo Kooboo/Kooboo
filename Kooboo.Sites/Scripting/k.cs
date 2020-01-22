@@ -434,7 +434,7 @@ var value = k.session.key; ")]
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MysqlSetting>();
 
                             if (string.IsNullOrWhiteSpace(setting.ConnectionString)) {
-                                throw new Exception("Please add the mysql connection string to the system configuration of the site");
+                                throw new Exception("  ->Please add the mysql connection string to the system configuration of the site<-  ");
                             }
 
                             _mysql = new MysqlDatabase(setting.ConnectionString);
@@ -461,7 +461,7 @@ var value = k.session.key; ")]
 
                             if (string.IsNullOrWhiteSpace(setting.ConnectionString))
                             {
-                                throw new Exception("Please add the sqlserver connection string to the system configuration of the site");
+                                throw new Exception("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
 
                             _sqlServer = new SqlServerDatabase(setting.ConnectionString);
