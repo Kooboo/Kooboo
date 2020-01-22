@@ -3,7 +3,10 @@
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.IndexedDB;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
 using System;
 using System.Collections.Generic;
@@ -13,7 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace KScript.Sites
-{ 
+{
     public class RepositoryBase
     {
         public RepositoryBase(IRepository repo, RenderContext context)
@@ -70,7 +73,7 @@ k.site.pages.delete(page.id);")]
             {
                 this.repo.Delete(item.Id);
             }
-        } 
+        }
 
         [Description(@"Add a siteobject, a siteobject can be view, layout, page or others. 
        var view = { };
@@ -81,7 +84,34 @@ k.site.pages.delete(page.id);")]
         {
             var rightobject = kHelper.PrepareData(SiteObject, this.repo.ModelType);
             this.repo.AddOrUpdate(rightobject);
-        } 
+        }
+
+        public List<ChangeLog> GetLogs(object NameOrId)
+        {
+            var obj = this.Get(NameOrId);
+            if (obj != null)
+            {
+                byte[] key = Kooboo.Sites.Service.ObjectService.KeyConverter.ToByte(obj.Id); 
+                var logs = this.repo.Store.OwnerDatabase.Log.GetByStoreNameAndKey(repo.StoreName, key, 99);
+
+                if (logs != null && logs.Any())
+                {
+                    return logs.Select(o => new ChangeLog(o)).ToList();
+                }
+            }
+            return null;
+        }
+
+        public ISiteObject GetByLog(long LogId)
+        {
+            var log = this.repo.Store.OwnerDatabase.Log.Get(LogId);
+            if (log != null)
+            {
+                return this.repo.GetByLog(log);
+            }
+            return null;
+        }
+
     }
 
 

@@ -66,7 +66,7 @@ namespace WxPayAPI
                 if (isUseCert)
                 {
                     //Reverse,Refund will use Cert.
-#if NET45
+#if NET461
                     string path = HttpContext.Current.Request.PhysicalApplicationPath;
                     X509Certificate2 cert = new X509Certificate2(path + WxPayConfig.GetConfig().GetSSlCertPath(), WxPayConfig.GetConfig().GetSSlCertPassword());
                     request.ClientCertificates.Add(cert);

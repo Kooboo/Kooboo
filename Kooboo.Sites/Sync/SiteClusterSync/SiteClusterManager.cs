@@ -232,7 +232,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
                     return item.Port;
                 }
             }
-            return Kooboo.Data.AppSettings.CurrentUsedPort;
+            return Kooboo.Data.AppSettings.HttpPort;
         }
 
         public SyncObject GetSyncObject(PushTask task)

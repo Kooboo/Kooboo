@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.Sites</AssemblyName>
 	<RootNamespace>Kooboo.Sites</RootNamespace>
@@ -49,7 +49,7 @@
     <Compile Remove="TaskQueue\TaskExecutor\TemplateSyncExecutor.cs" />
     <Compile Remove="TaskQueue\TemplateDownloadWorker.cs" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />

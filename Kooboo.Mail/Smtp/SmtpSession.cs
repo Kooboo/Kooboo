@@ -288,7 +288,7 @@ namespace Kooboo.Mail.Smtp
             string address = Utility.AddressUtility.GetAddress(fromAddress);
             return Utility.AddressUtility.IsValidEmailAddress(address);
         }
-  
+
         public RecipientValidationResult ValidateRecipient(string rcptToAddress)
         {
             RecipientValidationResult result = new RecipientValidationResult();
@@ -298,7 +298,7 @@ namespace Kooboo.Mail.Smtp
             if (!result.IsValidEmailAddressFormat)
             {
                 result.IsOkToSend = false;
-                result.ErrorMessage = "Invalid recipient address";
+                result.ErrorMessage = "Invalid recipient address format";
                 return result;
             }
 
@@ -325,7 +325,6 @@ namespace Kooboo.Mail.Smtp
                     result.IsOkToSend = false;
                     result.ErrorMessage = "mail from address not local";
                 }
-
                 return result;
             }
 
@@ -335,14 +334,14 @@ namespace Kooboo.Mail.Smtp
                 result.IsOkToSend = true;
                 return result;
             }
-
-            result.IsOkToSend = false;
-            result.ErrorMessage = "Invalid recipient address";
-
-            return result;
+            else
+            {
+                result.IsOkToSend = false;
+                result.ErrorMessage = "Relay not allowed"; 
+                return result;
+            }
         }
-
-
+         
         internal SmtpResponse HeloCommand(string CommandLine)
         {
             var response = new SmtpResponse();
@@ -467,7 +466,7 @@ namespace Kooboo.Mail.Smtp
                 string username = this.UserName;
 
                 if (Kooboo.Data.Service.UserLoginProtection.CanTryLogin(username, this.ClientIP))
-                { 
+                {
 
                     if (this.UserName.IndexOf("@") > -1 && Utility.AddressUtility.IsValidEmailAddress(this.UserName))
                     {
@@ -495,14 +494,14 @@ namespace Kooboo.Mail.Smtp
                     response.Code = 235;
                     response.Message = "Authentication completed";
 
-                    Kooboo.Data.Service.UserLoginProtection.AddLoginOK(username, this.ClientIP); 
+                    Kooboo.Data.Service.UserLoginProtection.AddLoginOK(username, this.ClientIP);
                 }
                 else
                 {
                     response.Code = 535;
                     response.Message = "Authentication failed";
 
-                    Kooboo.Data.Service.UserLoginProtection.AddLoginFail(username, this.ClientIP); 
+                    Kooboo.Data.Service.UserLoginProtection.AddLoginFail(username, this.ClientIP);
                 }
 
             }

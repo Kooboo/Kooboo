@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.Data</AssemblyName>
 	<RootNamespace>Kooboo.Data</RootNamespace>
@@ -9,12 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Definition\KModel\**" />
     <Compile Remove="Payment\**" />
+    <EmbeddedResource Remove="Definition\KModel\**" />
     <EmbeddedResource Remove="Payment\**" />
+    <None Remove="Definition\KModel\**" />
     <None Remove="Payment\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Definition\KMetaProvider.cs" />
     <Compile Remove="GeoLocation\LocationWatcher.cs" />
   </ItemGroup>
 
@@ -37,7 +41,7 @@
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.IO.Compression" />
@@ -50,7 +54,7 @@
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj" />
   </ItemGroup>
 

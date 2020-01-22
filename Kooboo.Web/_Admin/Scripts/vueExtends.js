@@ -697,6 +697,11 @@ Vue.directive("kb-select2", {
         data: binding.value.options
       })
       .on("change", function(e) {
+        $(element)
+        .parent()
+        .find(".select2-search__field")
+        .val("");
+
         var selected = [];
         for (var i = 0; i < e.target.selectedOptions.length; i++) {
           selected.push({
@@ -705,6 +710,24 @@ Vue.directive("kb-select2", {
           });
         }
         binding.value.selected = selected;
+      })
+      .on("select2:closing", function() {
+        var possibleValue = $(element)
+          .parent()
+          .find(".select2-search__field")
+          .val();
+
+        if (possibleValue) {
+          if (possibleValue.indexOf(" ") == -1) {
+            var origValues = $(element).val() || [];
+            if (origValues.indexOf(possibleValue) == -1) {
+              origValues.push(possibleValue);
+              $(element)
+                .val(origValues)
+                .trigger("change");
+            }
+          }
+        }
       });
 
     $(element)
