@@ -67,9 +67,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
     <OutputPath>bin\Server\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -83,6 +81,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Kooboo.App.AppProgram</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
