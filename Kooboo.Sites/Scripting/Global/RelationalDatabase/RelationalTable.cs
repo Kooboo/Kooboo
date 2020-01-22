@@ -201,5 +201,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             TryUpgradeSchema(dic);
             Database.SqlExecuter.UpdateData(Name, _schema.PrimaryKey, id, dic);
         }
+
+        public List<ChangeLog> GetLogs(object id)
+        {
+            return null;
+        }
+
+        public IDynamicTableObject GetByLog(long LogId)
+        {
+            return null;
+        }
     }
 }

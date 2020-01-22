@@ -2,6 +2,8 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Scripting;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace KScript
@@ -80,5 +82,11 @@ var id = table.add(obj);
         obj.fieldone = ""new value"";   
         table.update(id, obj); ")]
         void update(object id, object newvalue);
+
+        [Description("Return editing history of this object")]
+        List<ChangeLog> GetLogs(object id);
+
+        [Description("Get object based on the log id")]
+        IDynamicTableObject GetByLog(long LogId);
     }
 }
