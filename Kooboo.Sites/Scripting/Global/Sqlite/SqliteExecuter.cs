@@ -1,15 +1,15 @@
 ﻿using Dapper;
 using Kooboo.Sites.Scripting.Global.RelationalDatabase;
 using KScript;
-using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Sqlite
 {
-    public class SqliteExecuter : SqlExecuter<SqliteConnection>
+    public class SqliteExecuter : SqlExecuter<SQLiteConnection>
     {
         public SqliteExecuter(string connectionSring) : base(connectionSring)
         {

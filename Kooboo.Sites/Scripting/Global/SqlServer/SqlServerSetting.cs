@@ -13,6 +13,6 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public string ConnectionString { get; set; }
 
-        public string Name => "SqlServerSetting";
+        public string Name => "SqlServer";
     }
 }
