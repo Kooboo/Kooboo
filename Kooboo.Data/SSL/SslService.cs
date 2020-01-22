@@ -76,35 +76,7 @@ namespace Kooboo.Data.SSL
             }
 
 
-        }
-
-
-        public static void AddSslMiddleWare(List<IKoobooMiddleWare> MiddleWareList)
-        {
-            if (MiddleWareList == null)
-            {
-                return;
-            }
-
-            foreach (var item in MiddleWareList)
-            {
-                if (item is SslCertMiddleWare)
-                {
-                    return; 
-                }
-            }
-
-            int len = MiddleWareList.Count();
-
-            var pos = len - 1;
-            if (pos <= 0)
-            {
-                pos = 0;
-            }
-
-            MiddleWareList.Insert(pos, new SslCertMiddleWare());
-        }
-
+        } 
 
         public static void EnsureServerHostDomain()
         {

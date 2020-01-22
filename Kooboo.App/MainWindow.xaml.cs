@@ -24,7 +24,7 @@ namespace Kooboo.App
         {
             Content = new HomePage();
             taskBarIcon.Parent = this;
-            taskBarIcon.ToolTipText = Data.Language.Hardcoded.GetValue("Kooboo at port") + ":" + AppSettings.CurrentUsedPort;
+            taskBarIcon.ToolTipText = Data.Language.Hardcoded.GetValue("Kooboo at port") + ":" + AppSettings.HttpPort;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)

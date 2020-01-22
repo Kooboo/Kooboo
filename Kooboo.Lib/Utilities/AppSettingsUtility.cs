@@ -26,15 +26,40 @@ namespace Kooboo.Lib
             var val = System.Configuration.ConfigurationManager.AppSettings.Get(name);
             if (string.IsNullOrEmpty(val))
             {
-                return false; 
+                return false;
             }
 
             bool result;
 
             bool.TryParse(val, out result);
 
-            return result; 
+            return result;
         }
+
+        public static int GetInt(string name, int defaultValue = 0)
+        {
+            if (name == null)
+            {
+                return defaultValue;
+            }
+
+            var val = System.Configuration.ConfigurationManager.AppSettings.Get(name);
+            if (string.IsNullOrWhiteSpace(val))
+            {
+                val = System.Configuration.ConfigurationManager.AppSettings.Get(name.ToLower());
+            }
+             
+            if (!string.IsNullOrWhiteSpace(val))
+            {
+                if (int.TryParse(val, out int result))
+                {
+                    return result; 
+                }
+            }
+
+            return defaultValue; 
+        }
+
 
     }
 }

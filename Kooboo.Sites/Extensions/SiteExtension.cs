@@ -27,9 +27,9 @@ namespace Kooboo.Sites.Extensions
             {
                 starturl = "http://" + binding.FullName;
 
-                if (AppSettings.CurrentUsedPort != 80 && AppSettings.CurrentUsedPort > 0)
+                if (AppSettings.HttpPort != 80 && AppSettings.HttpPort > 0)
                 {
-                    starturl = starturl + ":" + AppSettings.CurrentUsedPort;
+                    starturl = starturl + ":" + AppSettings.HttpPort;
                 }
                 starturl = starturl + "/";
                 starturl = Lib.Helper.UrlHelper.Combine(starturl, site.StartRoutePath());
@@ -53,7 +53,7 @@ namespace Kooboo.Sites.Extensions
             var binding = Data.GlobalDb.Bindings.GetByWebSite(site.Id).FirstOrDefault();
             if (binding != null)
             {
-                int port = AppSettings.CurrentUsedPort;
+                int port = AppSettings.HttpPort;
                 if (binding.Port > 0)
                 {
                     port = binding.Port;

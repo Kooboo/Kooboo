@@ -65,9 +65,9 @@ namespace Kooboo.Lib.Compatible
         }
         public CompatibleManager()
         {
-#if NET45|| NET461
+#if NET461
             System = new WindowSystem();
-            Framework = new NET45();
+            Framework = new NET461();
 #else
             Framework = new NetStandard();
             if (RuntimeSystemHelper.IsWindow())

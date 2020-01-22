@@ -1,6 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-#if NET45 || NET461
+#if NET461
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +13,7 @@ using Kooboo.Lib.Helper;
 
 namespace Kooboo.Lib.Compatible
 {
-    public class NET45 : IFramework
+    public class NET461 : IFramework
     {
         public string GetMimeMapping(string extension)
         {
