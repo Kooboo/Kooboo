@@ -30,15 +30,5 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
             if (type == typeof(bool)) return "TINYINT";
             throw new NotSupportedException();
         }
-
-        internal override bool CompatibleType(string dbType, string jsType)
-        {
-            if (jsType == "NULL") return true;
-            if (jsType == "TEXT" && _textType.Any(a => dbType.ToUpper().StartsWith(a))) return true;
-            if (jsType == "DATETIME" && _dateTime.Any(a => dbType.ToUpper().StartsWith(a))) return true;
-            if (jsType == "DOUBLE" && _double.Any(a => dbType.ToUpper().StartsWith(a))) return true;
-            if (jsType == "TINYINT" && _double.Any(a => dbType.ToUpper().StartsWith(a))) return true;
-            return false;
-        }
     }
 }

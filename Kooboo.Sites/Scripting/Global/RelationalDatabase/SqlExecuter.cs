@@ -157,7 +157,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             return count;
         }
 
-        private string ConditionsToSql(List<ConditionItem> conditions)
+        internal string ConditionsToSql(List<ConditionItem> conditions)
         {
             return string.Join(" and ", conditions.Select(s => $@" {WarpField(s.Field)} {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
         }

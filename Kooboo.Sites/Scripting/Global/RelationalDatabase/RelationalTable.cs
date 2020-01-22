@@ -27,7 +27,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             lock (_locker)
             {
-                var newItems = EnsureSchemaCompatible(value);
+                var newItems = GetNewSchemaItems(value);
 
                 if (newItems.Count() > 0)
                 {
@@ -37,12 +37,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        List<RelationalSchema.Item> EnsureSchemaCompatible(IDictionary<string, object> value)
+        List<RelationalSchema.Item> GetNewSchemaItems(IDictionary<string, object> value)
         {
             var newSchema = (TSchema)Activator.CreateInstance(typeof(TSchema), value);
-            var compatible = _schema.Compatible(newSchema, out var newItems);
-            if (!compatible) throw new SchemaNotCompatibleException();
-            return newItems;
+            return _schema.Compatible(newSchema);
         }
 
         void EnsureTableCreated()
@@ -111,7 +109,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             var dic = kHelper.CleanDynamicObject(value);
             EnsureTableCreated();
-            EnsureSchemaCompatible(dic);
+            GetNewSchemaItems(dic);
             object newId = null;
 
             if (_schema.PrimaryKey == "_id")

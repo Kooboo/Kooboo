@@ -442,6 +442,27 @@ var value = k.session.key; ")]
             }
         }
 
+        private SqlServerDatabase _sqlServer;
+
+        public SqlServerDatabase SqlServer
+        {
+            get
+            {
+                if (_sqlServer == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_sqlServer == null)
+                        {
+                            var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<SqlServerSetting>();
+                            _sqlServer = new SqlServerDatabase(setting.ConnectionString);
+                        }
+                    }
+                }
+                return _sqlServer;
+            }
+        }
+
 
         [KIgnore]
         public IDatabase DB

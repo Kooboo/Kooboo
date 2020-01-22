@@ -4,12 +4,13 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Mysql
 {
-    public class SqlServerExecuter : SqlExecuter<MySqlConnection>
+    public class SqlServerExecuter : SqlExecuter<SqlConnection>
     {
         public SqlServerExecuter(string connectionSring) : base(connectionSring)
         {
@@ -20,7 +21,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public override void CreateTable(string name)
         {
-            var sql = $@"CREATE TABLE `{name}` ( _id char(36) ,PRIMARY KEY ( `_id` ))ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            var sql = $@"CREATE TABLE [{name}] ( _id uniqueidentifier PRIMARY KEY)";
 
             using (var connection = CreateConnection())
             {
@@ -30,10 +31,27 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public override RelationModel GetRelation(string name, string relation)
         {
-            var sql = $"select TABLE_NAME as `tableA`,REFERENCED_TABLE_NAME as `tableB`,COLUMN_NAME as `from`,REFERENCED_COLUMN_NAME as `to` from INFORMATION_SCHEMA.KEY_COLUMN_USAGE  where CONSTRAINT_NAME='{name}'";
+            var sql = $@"
+SELECT
+	fname.name AS [tableA],
+	fcol.name AS [from],
+	rname.name AS [tableB],
+	rcol.name AS [to] 
+FROM
+	sysforeignkeys fk
+	LEFT JOIN sysobjects fkname ON fk.constid= fkname.id
+	LEFT JOIN sysobjects fname ON fname.id= fk.fkeyid
+	LEFT JOIN sys.syscolumns fcol ON fcol.id = fk.fkeyid 
+	AND fcol.colid = fk.fkey
+	LEFT JOIN sysobjects rname ON rname.id= fk.rkeyid
+	LEFT JOIN sys.syscolumns rcol ON rcol.id = fk.rkeyid 
+	AND rcol.colid = fk.rkey 
+WHERE
+	fkname.name= @Name
+";
             using (var connection = CreateConnection())
             {
-                var result = connection.Query<RelationModel>(sql).FirstOrDefault();
+                var result = connection.Query<RelationModel>(sql, new { Name = name }).FirstOrDefault();
 
                 if (result != null && result.TableA == relation)
                 {
@@ -49,32 +67,52 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public override RelationalSchema GetSchema(string name)
         {
-            IEnumerable<RelationalSchema.Item> items = null;
-
-            try
+            using (var connection = CreateConnection())
             {
-                using (var connection = CreateConnection())
-                {
-                    var result = connection.Query<object>($"DESCRIBE `{name}`");
+                var result = connection.Query<RelationalSchema.Item>($@"
+SELECT
+	TCol.COLUMN_NAME AS [name],
+	TCol.DATA_TYPE AS [type],
+	( CASE TKey.COLUMN_NAME WHEN TCol.COLUMN_NAME THEN 1 ELSE 0 END ) AS IsPrimaryKey 
+FROM
+	INFORMATION_SCHEMA.columns AS TCol
+	LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS TKey ON TKey.TABLE_NAME = TCol.TABLE_NAME 
+WHERE
+	TCol.TABLE_NAME= @Name
+", new { Name = name });
 
-                    items = result.Select(s =>
-                    {
-                        var dic = s as IDictionary<string, object>;
-                        return new RelationalSchema.Item
-                        {
-                            Name = dic["Field"].ToString(),
-                            Type = dic["Type"].ToString(),
-                            IsPrimaryKey = dic["Key"].ToString() == "PRI"
-                        };
-                    });
-                }
+                return new SqlServerSchema(result);
             }
-            catch (Exception)
+        }
+
+        public override object[] QueryData(string name, string where = null, long? limit = null, long? offset = null, string orderBy = null, object @params = null)
+        {
+            var conditions = IndexedDB.Dynamic.QueryPraser.ParseConditoin(where);
+            var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
+            var limitStr = limit.HasValue ? $"ROWS FETCH NEXT {limit} ROWS ONLY" : string.Empty;
+            var orderByStr = orderBy == null ? string.Empty : $"ORDER BY {orderBy}";
+            var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
+            var sql = $@"SELECT * FROM {WarpField(name)} {whereStr} {orderByStr} {limitStr} {offsetStr}";
+
+            using (var connection = CreateConnection())
             {
-                items = new RelationalSchema.Item[0];
+                return connection.Query<object>(sql, @params).ToArray();
+            }
+        }
+
+        public override void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var item in items)
+            {
+                sb.AppendLine($@"ALTER TABLE {WarpField(name)} ADD {WarpField(item.Name)} {item.Type.ToString()};");
             }
 
-            return new MysqlSchema(items);
+            using (var connection = CreateConnection())
+            {
+                connection.Execute(sb.ToString());
+            }
         }
     }
 }

@@ -3,11 +3,12 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Mysql
 {
-    public class SqlServerDatabase : RelationalDatabase<SqlServerExecuter, SqlServerSchema, MySqlConnection>
+    public class SqlServerDatabase : RelationalDatabase<SqlServerExecuter, SqlServerSchema, SqlConnection>
     {
         public SqlServerDatabase(string connectionString) : base(connectionString)
         {

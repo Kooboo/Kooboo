@@ -35,11 +35,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         }
 
         internal abstract string ConventType(Type type);
-        internal abstract bool CompatibleType(string dbType, string jsType);
 
-        public bool Compatible(RelationalSchema schema, out List<Item> newItems)
+        public List<Item> Compatible(RelationalSchema schema)
         {
-            newItems = new List<Item>();
+            var newItems = new List<Item>();
 
             foreach (var item in schema._items)
             {
@@ -50,11 +49,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                     newItems.Add(item);
                     continue;
                 }
-
-                if (!CompatibleType(findItem.Type, item.Type)) return false;
             }
 
-            return true;
+            return newItems;
         }
 
 
