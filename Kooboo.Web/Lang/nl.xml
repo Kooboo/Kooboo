@@ -69,7 +69,7 @@
 	<key id="Create Blank Website">Maak een lege website</key>
 	<key id="Import Website">Website importeren</key>
 	<key id="File synchronize">Bestand synchroniseren</key>
-	<key id="Enable file sync">Schakel Disk Mirror in</key>
+	<key id="Enable file sync">Schakel bestandssynchronisatie in</key>
 	<key id="Path">Pad</key>
 	<key id="Close">Sluiten</key>
 	<key id="Share site">Deel site</key>
@@ -330,7 +330,7 @@
 	<key id="Binding to">Koppelen aan</key>
 	<key id="Port">Poort</key>
 	<key id="example: 81">voorbeeld: 81</key>
-	<key id="Site Mirror">Site Mirror</key>
+	<key id="Site Mirror">Site mirror</key>
 	<key id="Basic info">Basis informatie</key>
 	<key id="Category">Categorie</key>
 	<key id="Select">kiezen</key>
@@ -547,7 +547,7 @@
 	<key id="Enable Visitor Log">Bezoekerslogboek inschakelen</key>
 	<key id="Enable Constraint Fix On Save">Constraint Fix inschakelen bij opslaan</key>
 	<key id="Enable Front Events">Front-evenementen inschakelen</key>
-	<key id="Enable Disk Sync">Schakel Disk Mirror in</key>
+	<key id="Enable Disk Sync">Schakel schijfsynchronisatie in</key>
 	<key id="Enable Multilingual">Meertalig inschakelen</key>
 	<key id="Default Language">Standaard taal</key>
 	<key id="Enable language path">Schakel taalpad in</key>
@@ -558,7 +558,7 @@
 	<key id="Configuration">Configuratie</key>
 	<key id="Language code">Taal code</key>
 	<key id="Language name">Naam van de taal</key>
-	<key id="Site mirror configuration">Configuratie van sitespiegel</key>
+	<key id="Site mirror configuration">Configuratie van site mirror</key>
 	<key id="Root server">Root server</key>
 	<key id="Available server">Beschikbare server</key>
 	<key id="Location redirect">Locatie omleiding</key>
@@ -1238,7 +1238,7 @@
 	<key id="Development">Ontwikkeling</key>
 	<key id="Commerce">Handel</key>
 	<key id="SiteBindings">Sitekoppelingen</key>
-	<key id="SiteMirror">SiteSpiegel</key>
+	<key id="SiteMirror">Site mirror</key>
 	<key id="Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates">Alleen internet ingeschakeld domein dat Kooboo DNS gebruikt of gehost wordt door Kooboo kan SSL-certificaten genereren</key>
 	<key id="Request IP not allowed">Verzoek IP niet toegestaan</key>
 	<key id="Root">Root</key>
