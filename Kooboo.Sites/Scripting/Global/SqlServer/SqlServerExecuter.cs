@@ -89,10 +89,11 @@ WHERE
         {
             var conditions = IndexedDB.Dynamic.QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
-            var limitStr = limit.HasValue ? $"ROWS FETCH NEXT {limit} ROWS ONLY" : string.Empty;
+            var limitStr = limit.HasValue ? $"ROW FETCH NEXT {limit} ROWS ONLY" : string.Empty;
             var orderByStr = orderBy == null ? string.Empty : $"ORDER BY {orderBy}";
             var offsetStr = offset.HasValue && offset != 0 ? $"OFFSET {offset}" : string.Empty;
-            var sql = $@"SELECT * FROM {WarpField(name)} {whereStr} {orderByStr} {limitStr} {offsetStr}";
+            if (limit.HasValue) offsetStr = "OFFSET 0";
+            var sql = $@"SELECT * FROM {WarpField(name)} {whereStr} {orderByStr} {offsetStr} {limitStr}";
 
             using (var connection = CreateConnection())
             {
