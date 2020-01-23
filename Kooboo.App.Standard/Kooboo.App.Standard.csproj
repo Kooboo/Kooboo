@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.1;net45;net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
     <AssemblyName>Kooboo.App</AssemblyName>
     <RootNamespace>Kooboo.App</RootNamespace>
   </PropertyGroup>

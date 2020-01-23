@@ -2,17 +2,17 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace Kooboo.Data.Interface
 {
-   public interface IDynamic
+    public interface IDynamic
     {
         Object GetValue(string FieldName);
 
-        Object GetValue(string FieldName, RenderContext Context); 
-         
-        void SetValue(string FieldName, Object Value); 
+        Object GetValue(string FieldName, RenderContext Context);
+
+        void SetValue(string FieldName, Object Value);
 
         Dictionary<string, object> Values { get; }
     }

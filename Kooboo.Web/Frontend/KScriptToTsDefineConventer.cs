@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +19,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Namespace { get; set; }
             public string Name { get; set; }
             public string Discription { get; set; }
-            public List<Type> Extends { get; set; }
+            public List<string> Extends { get; set; }
             public List<Property> Properties { get; set; }
             public List<Method> Methods { get; set; }
             public Dictionary<string, string> Enums { get; set; }
@@ -49,7 +50,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         readonly string _indentation = "  ";
 
         static readonly string[] _skipMthods = new string[] { "GetType", "ToString", "Equals", "GetHashCode", "GetEnumerator" };
-        static readonly string[] _skipNamespaces = new string[] { "System", "Jint" };
+        static readonly string[] _skipNamespaces = new string[] { "System", "Jint", "Newtonsoft" };
 
         static readonly IDictionary<Type, string> _convertedTypes = new Dictionary<Type, string>()
         {
@@ -72,7 +73,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             [typeof(DateTime)] = "Date",
         };
 
-        readonly Dictionary<Type, Define> _defines = new Dictionary<Type, Define>();
+        readonly Dictionary<string, Define> _defines = new Dictionary<string, Define>();
         readonly Queue<Type> _queue = new Queue<Type>();
 
         readonly IEnumerable<MethodInfo> _extensionMethodInfos = Lib.Reflection.AssemblyLoader.AllAssemblies
@@ -92,12 +93,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 var extensionProperties = GetExtensionProperties(t);
                 define.Properties?.AddRange(extensionProperties);
 
-                _defines.Add(t, define);
+                _defines.Add(t.FullName, define);
 
                 while (_queue.Any())
                 {
                     var nextType = _queue.Dequeue();
-                    if (_defines.ContainsKey(nextType)) continue;
+                    if (_defines.ContainsKey(nextType.FullName)) continue;
                     Recursion(nextType);
                 }
             }
@@ -126,7 +127,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                 Name = CamelCaseName(s.Key),
                 Type = TypeString(type, s.Value),
                 Discription = null
-            }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
+            }).GroupBy(g => g.Name).Select(s => s.Last()).ToList();
         }
 
         internal string DefinesToString(Type type)
@@ -148,8 +149,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
                     if (define.Enums == null)
                     {
-                        var extendList = define.Extends.Where(w => _defines.ContainsKey(w)).Select(s => $"{GetNamespace(s)}{_defines[s].Name}");
-                        var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
+                        var extends = define.Extends.Any() ? $"extends {string.Join(",", define.Extends)} " : string.Empty;
                         builder.AppendLine($"{_indentation}{declare}interface {define.Name} {extends}{{");
 
                         if (define.ValueType != null)
@@ -288,12 +288,11 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             var extends = new List<Type>();
             extends.AddRange(type.GetInterfaces());
             if (type.BaseType != null) extends.Add(type.BaseType);
-
             return new Define
             {
                 Methods = methods,
                 Properties = properties,
-                Extends = extends,
+                Extends = extends.Select(s=> TypeString(type,s)).ToList(),
                 Discription = GetDiscription(type),
                 ValueType = valueType == null ? null : TypeString(type, valueType)
             };

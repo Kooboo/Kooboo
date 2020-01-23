@@ -10,16 +10,21 @@ namespace Kooboo.Mail.Smtp
         private Timer _timer;
         private int _executingOnHeartbeat;
         private SmtpConnectionManager _connectionManager;
+        private Action<SmtpConnector> _walk;
+        private DateTime _utcNow;
 
         public Heartbeat(SmtpConnectionManager connectionManager)
         {
             _connectionManager = connectionManager;
+            _walk = Walk;
         }
 
         public void Start()
         {
             _timer = new Timer(OnHeartbeat, state: this, dueTime: Interval, period: Interval);
         }
+
+        public DateTime UtcNow => _utcNow;
 
         private static void OnHeartbeat(object state)
         {
@@ -29,13 +34,13 @@ namespace Kooboo.Mail.Smtp
         // Called by the Timer (background) thread
         internal void OnHeartbeat()
         {
-            var now = DateTime.UtcNow;
-
+            var utcNow = DateTime.UtcNow;
             if (Interlocked.Exchange(ref _executingOnHeartbeat, 1) == 0)
             {
+                _utcNow = utcNow;
                 try
                 {
-                    _connectionManager.Walk(o => o.CheckTimeout(now));
+                    _connectionManager.Walk(_walk);
                 }
                 catch (Exception ex)
                 {
@@ -48,13 +53,18 @@ namespace Kooboo.Mail.Smtp
             }
             else
             {
-                Kooboo.Data.Log.Instance.Exception.Write(DateTime.UtcNow.ToString() + " SMTP heartbeat slow " + now.ToString());
+                Kooboo.Data.Log.Instance.Exception.Write(DateTime.UtcNow.ToString() + " SMTP heartbeat slow " + utcNow.ToString());
             }
         }
 
         public void Dispose()
         {
             _timer?.Dispose();
+        }
+
+        private void Walk(SmtpConnector connection)
+        {
+            connection.CheckTimeout();
         }
     }
 }

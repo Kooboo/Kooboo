@@ -14,8 +14,16 @@ namespace Kooboo.Mail.Imap
 {
     public class ImapServer : Kooboo.Tasks.IWorkerStarter
     {
+        internal static Logging.ILogger _logger;
+        private static long _nextConnectionId;
+
         private CancellationTokenSource _cancellationTokenSource;
         private TcpListener _listener;
+
+        static ImapServer()
+        {
+            _logger = Logging.LogProvider.GetLogger("imap", "socket");
+        }
 
         public ImapServer(int port)
         {
@@ -66,10 +74,13 @@ namespace Kooboo.Mail.Imap
             {
                 try
                 {
+                    var cid = _nextConnectionId++;
+                    _logger.LogInformation($"<ac {cid} {Thread.CurrentThread.ManagedThreadId}");
                     var tcpClient = await _listener.AcceptTcpClientAsync();
+                    _logger.LogInformation($">ac {cid} {Thread.CurrentThread.ManagedThreadId} {tcpClient.Client.RemoteEndPoint}");
 
                     var session = new ImapSession(this, tcpClient);
-                    session.Start();
+                    _ = session.Start();
                 }
                 catch
                 {

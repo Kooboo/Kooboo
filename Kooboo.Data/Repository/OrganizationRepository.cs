@@ -4,6 +4,7 @@ using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using Kooboo.Lib.Helper;
+using Kooboo.Data.Helper;
 
 namespace Kooboo.Data.Repository
 {
@@ -64,12 +65,12 @@ namespace Kooboo.Data.Repository
 
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("id", id.ToString());
-            var org = HttpHelper.Post<Organization>(Account.Url.Org.GetUrl, para);
+            var org = HttpHelper.Post<Organization>(AccountUrlHelper.Org("get"), para);
 
             if (org == null)
             {
                 // try one more time. 
-                org = HttpHelper.Post<Organization>(Account.Url.Org.GetUrl, para);
+                org = HttpHelper.Post<Organization>(AccountUrlHelper.Org("get"), para);
             }
 
             if (org != null)
@@ -94,7 +95,7 @@ namespace Kooboo.Data.Repository
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
-            return HttpHelper.Post<List<User>>(Account.Url.Org.Users, para);
+            return HttpHelper.Post<List<User>>(AccountUrlHelper.Org("Users"), para);
         }
 
         public string AddUser(string userName, Guid organizationId)
@@ -102,7 +103,7 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
             para.Add("userName", userName);
-            var result = HttpHelper.Post<string>(Account.Url.Org.AddUser, para);
+            var result = HttpHelper.Post<string>(AccountUrlHelper.Org("adduser"), para);
 
             var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
             Kooboo.Data.Cache.OrganizationUserCache.AddUser(organizationId, userid);
@@ -115,7 +116,7 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
             para.Add("userName", userName);
-            var ok = HttpHelper.Post<bool>(Account.Url.Org.DeleteUser, para);
+            var ok = HttpHelper.Post<bool>(AccountUrlHelper.Org("deleteuser"), para);
 
             if (ok)
             {

@@ -3,14 +3,17 @@
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
 using KScript;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace KScript
 {
-    public class KTable
+    public class KTable : ITable
     {
         [KIgnore]
         public Table table { get; set; }
@@ -116,7 +119,7 @@ var item = table.get(id);
         var items = table.find(""number >=123&&name=='matchedvalue'""); 
         var items = table.find(""name contains 'matchedvalue'""); 
         var items = table.find(""name startwith 'matchedvalue'""); ")]
-        public DynamicTableObject find(string query)
+        public IDynamicTableObject find(string query)
         {
             var result = this.table.Query.Find(query);
             return DynamicTableObject.Create(result, this.table, this.context);
@@ -124,7 +127,7 @@ var item = table.get(id);
 
         [Description(@"return the first item that has field value equal the match value
 var item = k.database.tablename.find(""fieldname"", ""matchvalue"");")]
-        public DynamicTableObject find(string fieldName, object matchValue)
+        public IDynamicTableObject find(string fieldName, object matchValue)
         {
             var obj = this.table.Query.Where(fieldName, Kooboo.IndexedDB.Query.Comparer.EqualTo, matchValue).FirstOrDefault();
             return DynamicTableObject.Create(obj, this.table, this.context);
@@ -132,7 +135,7 @@ var item = k.database.tablename.find(""fieldname"", ""matchvalue"");")]
 
         [Description(@"return all items that have the field value equal the match value
 var items = k.database.tablename.findAll(""fieldname"", ""matchvalue"");")]
-        public DynamicTableObject[] findAll(string field, object value)
+        public IDynamicTableObject[] findAll(string field, object value)
         {
             var list = this.table.Query.Where(field, Kooboo.IndexedDB.Query.Comparer.EqualTo, value).SelectAll();
             return DynamicTableObject.CreateList(list.ToArray(), this.table, this.context);
@@ -147,28 +150,28 @@ var items = k.database.tablename.findAll(""fieldname"", ""matchvalue"");")]
         var items = table.findAll(""number >=123&&name=='matchedvalue'""); 
         var items = table.findAll(""name contains 'matchedvalue'""); 
         var items = table.findAll(""name startwith 'matchedvalue'""); ")]
-        public DynamicTableObject[] findAll(string query)
+        public IDynamicTableObject[] findAll(string query)
         {
             var list = this.table.Query.FindAll(query);
             return DynamicTableObject.CreateList(list.ToArray(), this.table, this.context);
         }
 
         [Description("get an item based on Id or primary key")]
-        public DynamicTableObject get(object id)
+        public IDynamicTableObject get(object id)
         {
             var obj = this.table.Get(id);
             return DynamicTableObject.Create(obj, this.table, this.context);
         }
 
 
-        public TableQuery Query()
+        public ITableQuery Query()
         {
             return new TableQuery(this);
         }
 
         [Description(@"Return the query object for further operations like paging.
 use the same query syntax as find or findAll")]
-        public TableQuery Query(string query)
+        public ITableQuery Query(string query)
         {
             var result = new TableQuery(this);
             result.Where(query);
@@ -185,11 +188,41 @@ use the same query syntax as find or findAll")]
 
 
         [Description("Return all items")]
-        public DynamicTableObject[] all()
+        public IDynamicTableObject[] all()
         {
             var all = this.table.All();
             return DynamicTableObject.CreateList(all.ToArray(), this.table, this.context);
         }
+
+
+
+        [Description("Return editing history of this object")]
+        public List<ChangeLog> GetLogs(object id)
+        {
+            var guidkey = this.table._ParseKey(id);
+
+            byte[] key = Kooboo.Sites.Service.ObjectService.KeyConverter.ToByte(guidkey);
+            var logs = this.table.OwnerDatabase.Log.GetByTableNameAndKey(this.table.Name, key, 99);
+
+            if (logs != null && logs.Any())
+            {
+                return logs.Select(o => new ChangeLog(o)).ToList();
+            }
+            return null;
+        }
+
+        [Description("Get object based on the log id")]
+        public IDynamicTableObject GetByLog(long LogId)
+        {
+            var log = this.table.OwnerDatabase.Log.Get(LogId);
+            if (log != null)
+            {
+                var logdata = this.table.GetLogData(log);
+                return DynamicTableObject.Create(logdata, this.table, this.context);
+            }
+            return null;
+        }
+
 
     }
 }

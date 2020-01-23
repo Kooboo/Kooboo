@@ -4,28 +4,20 @@ using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Scripting.Global.Database;
 using Kooboo.Sites.Scripting.Helper;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace KScript
 {
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
-    public class DynamicTableObject : Kooboo.Data.Interface.IDynamic
+    public class DynamicTableObject : DynamicTableObjectBase, IDynamicTableObject
     {
-        [KIgnore]
         public IDictionary<string, object> obj { get; set; }
 
         private RenderContext context { get; set; }
         private Table table { get; set; }
-
-        public Dictionary<string, object> Values
-        {
-            get
-            {
-                return this.obj.ToDictionary(o => o.Key, o => o.Value);
-            }
-        }
 
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
@@ -34,20 +26,7 @@ namespace KScript
             this.table = orgtable;
         }
 
-        [KIgnore]
-        public object this[string key]
-        {
-            get
-            {
-                return GetValueFromDict(key);
-            }
-            set
-            {
-                this.obj[key] = value;
-            }
-        }
-
-        private object GetValueFromDict(string key)
+        internal override object GetValueFromDict(string key)
         {
             if (obj.ContainsKey(key))
             {
@@ -65,7 +44,7 @@ namespace KScript
                     var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
 
                     if (relation.TableA == this.table.Name)
-                    { 
+                    {
                         if (obj.ContainsKey(relation.FieldA))
                         {
                             var fielda = obj[relation.FieldA];
@@ -85,7 +64,7 @@ namespace KScript
                         }
                     }
                     else if (relation.TableB == this.table.Name)
-                    { 
+                    {
                         if (obj.ContainsKey(relation.FieldB))
                         {
                             var fieldb = obj[relation.FieldB];
@@ -110,7 +89,6 @@ namespace KScript
             return null;
         }
 
-        [KIgnore]
         public static DynamicTableObject[] CreateList(IDictionary<string, object>[] list, Table TargetTable, RenderContext context)
         {
             int len = list.Length;
@@ -124,7 +102,6 @@ namespace KScript
             return result;
         }
 
-        [KIgnore]
         public static DynamicTableObject Create(IDictionary<string, object> item, Table sourceTable, RenderContext context)
         {
             if (item != null)
@@ -133,21 +110,6 @@ namespace KScript
             }
             return null;
 
-        }
-
-        public object GetValue(string FieldName)
-        {
-            return GetValueFromDict(FieldName);
-        }
-
-        public object GetValue(string FieldName, RenderContext Context)
-        {
-            return GetValueFromDict(FieldName);
-        }
-
-        public void SetValue(string FieldName, object Value)
-        {
-            obj[FieldName] = Value;
         }
     }
 }

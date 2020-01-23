@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Kooboo.Data.Interface;
 
 namespace Kooboo.Mail.Utility
 {
@@ -21,7 +22,7 @@ namespace Kooboo.Mail.Utility
             if (seg.Address == null || seg.Host == null)
             {
                 return false;
-            } 
+            }
             return IsValidEmailDomain(seg.Host) && IsValidEmailChar(seg.Address);
 
         }
@@ -52,7 +53,7 @@ namespace Kooboo.Mail.Utility
                 {
                     continue;
                 }
-                else if (currentchar == '.' || currentchar == '+' || currentchar == '_' || currentchar == '*' || currentchar == '-' || currentchar == '=' || currentchar =='&')
+                else if (currentchar == '.' || currentchar == '+' || currentchar == '_' || currentchar == '*' || currentchar == '-' || currentchar == '=' || currentchar == '&')
                 {
                     continue;
                 }
@@ -71,9 +72,9 @@ namespace Kooboo.Mail.Utility
             int start = address.IndexOf("<");
             int end = address.IndexOf(">");
 
-            if (start > -1 && end > -1 &&  end > start +1)
+            if (start > -1 && end > -1 && end > start + 1)
             {
-                return address.Substring(start+1, end - start-1);
+                return address.Substring(start + 1, end - start - 1);
             }
 
             return address;
@@ -81,7 +82,7 @@ namespace Kooboo.Mail.Utility
 
         public static bool IsLocalEmailAddress(string input)
         {
-            return GetLocalEmailAddress(input) != null; 
+            return GetLocalEmailAddress(input) != null;
         }
 
 
@@ -99,13 +100,13 @@ namespace Kooboo.Mail.Utility
             }
 
             var domain = Kooboo.Data.GlobalDb.Domains.Get(segs.Host);
-             
+
             if (domain == null || domain.OrganizationId == default(Guid))
             {
                 return false;
             }
 
-            return true;  
+            return true;
         }
 
 
@@ -131,21 +132,38 @@ namespace Kooboo.Mail.Utility
 
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(domain.OrganizationId);
 
-            var add =  orgdb.EmailAddress.Find(Address); 
-            if (add !=null)
+            var add = orgdb.EmailAddress.Find(Address);
+            if (add != null)
             {
-                add.OrgId = orgdb.OrganizationId; 
+                add.OrgId = orgdb.OrganizationId;
             }
-            return add; 
+            return add;
         }
 
-   
+
         public static EmailAddress GetEmailAddress(string emailaddress)
         {
             string rightaddress = GetAddress(emailaddress);
 
             return GetLocalEmailAddress(rightaddress);
-         
+
+        }
+
+
+        public static bool IsOnlineDomainLocal(Kooboo.Data.Models.Domain domain)
+        {
+            var org = Kooboo.Data.GlobalDb.Organization.Get(domain.OrganizationId);
+
+            if (org != null)
+            {
+                var checker = Lib.IOC.Service.GetSingleTon<IMailServerProvider>(false);
+                if (checker != null)
+                {
+                    return checker.IsLocal(org);
+                }
+            }
+
+            return false;
         }
 
 
@@ -225,6 +243,33 @@ namespace Kooboo.Mail.Utility
                 return default(EmailSegment);
             }
             return new EmailSegment() { Address = emailaddress.Substring(0, index), Host = emailaddress.Substring(index + 1) };
+        }
+
+
+        internal static HashSet<string> GetExternalRcpts(Smtp.SmtpSession session)
+        {
+            HashSet<string> tos = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in session.Log)
+            {
+                if (item.Key.Name == Smtp.SmtpCommandName.RCPTTO && item.Value.Code == 250)
+                {
+                    if (!string.IsNullOrEmpty(item.Key.Value))
+                    {
+                        var address = GetAddress(item.Key.Value);
+
+                        var islocal = IsLocalEmailAddress(address);
+
+                        Kooboo.Data.Log.Instance.Email.Write("--islocal: " + islocal.ToString() + address); 
+
+                        if (!islocal)
+                        {
+                            tos.Add(item.Key.Value);
+                        }
+                    }
+                }
+            }
+
+            return tos;
         }
     }
 

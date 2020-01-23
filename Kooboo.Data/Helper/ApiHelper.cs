@@ -33,9 +33,18 @@ namespace Kooboo.Data.Helper
 
             string url = Data.Helper.AccountUrlHelper.System("VerifyServer");
             url = url += "?IP=" + IP;
-            var isServer = Lib.Helper.HttpHelper.Get<bool>(url);
-            ServerIps[IP] = isServer;
-            return isServer;
+            try
+            {
+                var isServer = Lib.Helper.HttpHelper.Get<bool>(url);
+                ServerIps[IP] = isServer;
+                return isServer;
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+            }
+
+            return false; 
         }
 
 

@@ -1,4 +1,5 @@
 ﻿
+using Kooboo.Sites.Helper;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Models
@@ -34,7 +35,7 @@ namespace Kooboo.Sites.Models
         {
             string unique = "";
             if (_columns != null)
-            { 
+            {
                 foreach (var item in _columns)
                 {
                     unique += item.GetHashCode().ToString();
@@ -47,9 +48,25 @@ namespace Kooboo.Sites.Models
     public class DbTableColumn
     {
         public string Name { get; set; }
+
+        private string _datatype;
         public string DataType
         {
-            get; set;
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_datatype))
+                {
+                    if (!string.IsNullOrWhiteSpace(this.ControlType))
+                    {
+                        _datatype = DatabaseColumnHelper.DefaultDataTypeForControlType(this.ControlType);
+                    }
+                }
+                return _datatype;
+            } 
+            set
+            {
+                _datatype = value;
+            }
         }
         public bool IsIncremental { get; set; }
         public long Seed { get; set; }

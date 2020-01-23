@@ -93,7 +93,7 @@ var MonacoEditorService =
         cssFormatter(monaco);
       }
     };
-    MonacoEditorService.prototype.loader = function(callback) {
+      MonacoEditorService.prototype.loader = function(callback) {
       var local = "/_admin/scripts/lib/";
       var cdn = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
 

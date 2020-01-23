@@ -9,6 +9,7 @@ using Kooboo.Data.Models;
 using System.Collections.Generic;
 using Kooboo.Data.Context;
 using System.Linq;
+using Kooboo.Data.Service;
 
 namespace Kooboo.Data
 {
@@ -285,7 +286,9 @@ namespace Kooboo.Data
 
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
-        public static int CurrentUsedPort { get; set; } = 80;
+        public static int HttpPort { get; set; } = 80;
+
+        public static int SslPort { get; set; } = 443;
 
         private static string _starthost;
         public static string StartHost
@@ -545,7 +548,6 @@ namespace Kooboo.Data
             {
                 bool boolValue;
                 bool.TryParse(value, out boolValue);
-
                 return boolValue;
             }
         }
@@ -702,11 +704,9 @@ namespace Kooboo.Data
             }
         }
 
-
         public static bool IsOnlineServer { get; set; }
 
         public static KscriptConfig KscriptConfig { get; private set; }
-
 
         public static GlobalInfo Global { get; set; }
 
@@ -717,6 +717,17 @@ namespace Kooboo.Data
             public bool EnableLog { get; set; }
 
             public string LogPath { get; set; }
+        }
+
+        public static CheckPortResult InitPort()
+        {
+            var result = Kooboo.Data.Service.StartService.CheckInitPort();
+            if (result.Ok)
+            {
+                HttpPort = result.HttpPort;
+                SslPort = result.SslPort;
+            } 
+            return result;
         }
     }
 }

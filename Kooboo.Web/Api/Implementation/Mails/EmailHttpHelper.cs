@@ -13,13 +13,16 @@ namespace Kooboo.Web.Api.Implementation.Mails
     public class EmailHttpHelper
     {
         public static readonly string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 4.0.30319)";
-          
-        public static T Get<T>(string url, Dictionary<string, string> query, Dictionary<string,string> headers)
+
+        public static T Get<T>(string url, Dictionary<string, string> query, Dictionary<string, string> headers)
         {
             if (query != null)
             {
                 url = UrlHelper.AppendQueryString(url, query);
             }
+
+            Kooboo.Data.Log.Instance.Email.Write("--get--" + url);
+
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);
@@ -29,6 +32,8 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 client.Encoding = Encoding.UTF8;
 
                 var backstring = client.DownloadString(url);
+
+                Kooboo.Data.Log.Instance.Email.Write(backstring);
 
                 return ProcessApiResponse<T>(backstring);
             }
@@ -40,6 +45,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             {
                 var postString = String.Join("&", parameters.Select(it => String.Concat(it.Key, "=", Uri.EscapeDataString(it.Value))));
                 var postData = Encoding.UTF8.GetBytes(postString);
+
                 using (var client = new WebClient())
                 {
                     client.Headers.Add("user-agent", DefaultUserAgent);
@@ -47,13 +53,19 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     AddHeader(client.Headers, headers);
 
                     var responseData = client.UploadData(url, "POST", postData);
+
+                    Kooboo.Data.Log.Instance.Email.Write("--post-- " + url + " -- " + postString);
+
                     var strResult = Encoding.UTF8.GetString(responseData);
+
+                    Kooboo.Data.Log.Instance.Email.Write(strResult);
+
                     return ProcessApiResponse<T>(strResult);
                 }
             }
             catch (Exception ex)
             {
-                //TODO: log exception
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
             }
             return default(T);
         }
@@ -71,11 +83,16 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 {
                     var responseData = client.UploadData(url, "POST", postBytes);
 
-                    return ProcessApiResponse<T>(Encoding.UTF8.GetString(responseData));
+                    string result = Encoding.UTF8.GetString(responseData);
+
+                    Kooboo.Data.Log.Instance.Email.Write("--post--" + url);
+                    Kooboo.Data.Log.Instance.Email.Write(result);
+
+                    return ProcessApiResponse<T>(result);
                 }
                 catch (Exception ex)
                 {
-
+                    Kooboo.Data.Log.Instance.Exception.WriteException(ex);
                 }
                 return default(T);
             }
@@ -96,12 +113,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
             catch (Exception ex)
             {
-                //TODO: log exception
+                Data.Log.Instance.Email.WriteException(ex);
             }
             return null;
         }
 
-        private static void AddHeader(WebHeaderCollection webHeaderCollection, Dictionary<string,string> headers)
+        private static void AddHeader(WebHeaderCollection webHeaderCollection, Dictionary<string, string> headers)
         {
             if (headers != null)
             {

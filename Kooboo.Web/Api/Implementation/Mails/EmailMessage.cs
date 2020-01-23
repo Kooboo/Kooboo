@@ -45,7 +45,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.List), call.Context.User, dic);
             }
 
-            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
+            var maildb = Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             int addressid = EmailAddress.ToId(call.GetValue("address"));
 

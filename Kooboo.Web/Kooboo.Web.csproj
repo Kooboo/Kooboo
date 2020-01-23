@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.Web</AssemblyName>
 	<RootNamespace>Kooboo.Web</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="%2a%2a\**" />
     <Compile Remove="Api\Implementation\Ecommerce\**" />
     <Compile Remove="AppData\**" />
     <Compile Remove="Areas\**" />
@@ -16,6 +17,7 @@
     <Compile Remove="KoobooData\**" />
     <Compile Remove="upgradePackage\**" />
     <Compile Remove="_Admin\**" />
+    <EmbeddedResource Remove="%2a%2a\**" />
     <EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
     <EmbeddedResource Remove="AppData\**" />
     <EmbeddedResource Remove="Areas\**" />
@@ -24,6 +26,7 @@
     <EmbeddedResource Remove="KoobooData\**" />
     <EmbeddedResource Remove="upgradePackage\**" />
     <EmbeddedResource Remove="_Admin\**" />
+    <None Remove="%2a%2a\**" />
     <None Remove="Api\Implementation\Ecommerce\**" />
     <None Remove="AppData\**" />
     <None Remove="Areas\**" />
@@ -62,7 +65,7 @@
     <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -80,7 +83,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0-preview.19073.11" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

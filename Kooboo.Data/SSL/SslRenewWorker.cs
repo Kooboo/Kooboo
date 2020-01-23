@@ -5,21 +5,32 @@ namespace Kooboo.Data.SSL
 {
     public class SslRenewWorker : IBackgroundWorker
     {
-        public int Interval => 60 * 50 * 2;
+        public static int lastCheckDay;
+
+        public int Interval => 60 * 60;
 
         public DateTime LastExecute { get; set; }
 
         public void Execute()
-        {   
-            if (DateTime.Now.Hour == 2 || DateTime.Now.Hour == 3)
+        {
+            var now = DateTime.Now;
+             
+            var todayInt = now.DayOfYear;
+            if (todayInt != lastCheckDay)
             {
-                foreach (var item in Kooboo.Data.GlobalDb.SslCertificate.GetAllInUsed())
-                {  
-                    if (item.Expiration < DateTime.Now.AddDays(10))
-                    { 
-                         SslService.SetSsl(item.Domain, item.OrganizationId);  
+                if (now.Hour == 2 || now.Hour == 3 || now.Hour == 4 || now.Hour == 5 || now.Hour == 6)
+                {
+                    foreach (var item in Kooboo.Data.GlobalDb.SslCertificate.GetAllInUsed())
+                    {
+                        if (item.Expiration < DateTime.Now.AddDays(10))
+                        {
+                            SslService.SetSsl(item.Domain, item.OrganizationId);
+                        }
                     }
+
+                    lastCheckDay = todayInt;
                 }
+
             }
         }
     }

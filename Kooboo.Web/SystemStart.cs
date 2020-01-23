@@ -4,6 +4,7 @@ using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Context;
 using Kooboo.Data.Server;
+using Kooboo.Data.SSL;
 using Kooboo.Jobs;
 using Kooboo.Render;
 using Kooboo.Sites.Extensions;
@@ -25,16 +26,13 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
 
-            //ensure that WindowsHost is working .   
-            //foreach (var item in Data.GlobalDb.Dlls.All())
-            //{
-            //    AppDomain.CurrentDomain.Load(item.Content);
-            //}
+            Kooboo.Data.AppSettings.SetCustomSslCheck(); 
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
 
@@ -52,16 +50,18 @@ namespace Kooboo.Web
                 }
             }
 
-            if (!WebServers.ContainsKey(443))
+            var sslport = Data.AppSettings.SslPort; 
+
+            if (!WebServers.ContainsKey(sslport))
             {
                 if (Data.AppSettings.IsOnlineServer)
                 {
-                    StartNewWebServer(443);
+                    StartNewWebServer(sslport);
                 }
 
-                else if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
+                else if (!Lib.Helper.NetworkHelper.IsPortInUse(sslport))
                 {
-                    StartNewWebServer(443);
+                    StartNewWebServer(sslport);
                 }
             }
 
@@ -108,6 +108,8 @@ namespace Kooboo.Web
                             _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
+
+                            _middlewares.Add(new SslCertMiddleWare()); 
 
                             _middlewares.Add(new EndMiddleWare());
                         }

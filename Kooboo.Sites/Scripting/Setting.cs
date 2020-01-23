@@ -8,24 +8,31 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting
 {
-  public  class JintSetting
+    public static class JintSetting
     {
+        public static int MaxStatements { get; set; } = 5000;
+
+        public static int LimitRecursion { get; set; } = 300;
+
+        public static int TimeOutSeconds { get; set; } = 300;
+
         public static void SetOption(Jint.Options option)
         {
-            option.MaxStatements(5000);
+            option.MaxStatements(MaxStatements);
+
             option.Strict(false);
-            option.TimeoutInterval(new TimeSpan(0, 0, 5*60));
-            option.LimitRecursion(100); 
+            option.TimeoutInterval(new TimeSpan(0, 0, TimeOutSeconds));
+            option.LimitRecursion(LimitRecursion);
         }
 
         public static void SetDebugOption(Jint.Options option)
         {
-            option.MaxStatements(5000);
+            option.MaxStatements(MaxStatements);
             option.Strict(false);
             option.TimeoutInterval(new TimeSpan(0, 0, 150000));
-            option.LimitRecursion(300);
-            option.AllowDebuggerStatement(true); 
-            option.DebugMode(true);  
-        } 
+            option.LimitRecursion(LimitRecursion);
+            option.AllowDebuggerStatement(true);
+            option.DebugMode(true);
+        }
     }
 }

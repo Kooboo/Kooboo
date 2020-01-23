@@ -4,7 +4,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.KscriptConfig;
+using KScript.KscriptConfig;
 using Kooboo.Lib.Reflection;
 using System.Linq;
 
