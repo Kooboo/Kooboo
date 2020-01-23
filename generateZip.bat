@@ -36,6 +36,8 @@ C:\Windows\System32\robocopy  %dllPath% %copyDllPath% Kooboo.exe
 C:\Windows\System32\robocopy  %dllPath% %copyDllPath%\Upgrade  Kooboo.Upgrade.exe 
 ::copy language
 C:\Windows\System32\robocopy  %langPath% %copyLangPath%
+::copy sqlite
+C:\Windows\System32\robocopy  %koobooPath%\bin\%buildType%\x64 %copyDllPath%\x64
 
 :: delete minifier admin
 if exist "%minifierAmdinPath%" ( rd /s /q %batPath%Kooboo.Web\Minifier)
