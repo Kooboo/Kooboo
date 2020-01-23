@@ -2279,6 +2279,10 @@
     el.dispatchEvent(e);
   };
 
+  Kooboo.isLocal=function(){
+    return !!document.getElementById("isLocal");
+  }
+
   Kooboo.GetCookie = function(key) {
     var value = null;
 

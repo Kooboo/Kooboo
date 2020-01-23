@@ -93,60 +93,49 @@ var MonacoEditorService =
         cssFormatter(monaco);
       }
     };
-    MonacoEditorService.prototype.loader = function(callback) {
-      var baseUrl = "https://cdn.jsdelivr.net/npm";
-      let monacoHtmlUrl = baseUrl + "/monaco-html-extra@2.6.4/release/dev";
-      let monacoCoreUrl =
-        "https://cdn.jsdelivr.net/npm/monaco-editor-core@0.19.0/min";
-      $.getScript(baseUrl + "/monaco-editor-core@0.19.0/min/vs/loader.js").done(
-        function() {
-          window.require.config({
-            paths: {
-              vs: monacoCoreUrl + "/vs",
-              "vs/basic-languages":
-                baseUrl + "/monaco-languages@1.9.0/release/min",
-              "vs/language/html": monacoHtmlUrl,
-              "vs/language/css": baseUrl + "/monaco-css@2.6.0/release/min",
-              "vs/language/typescript":
-                baseUrl + "/monaco-typescript@3.6.1/release/min"
-            }
-          });
+      MonacoEditorService.prototype.loader = function(callback) {
+      var local = "/_admin/scripts/lib/";
+      var cdn = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
 
-          window.MonacoEnvironment = {
-            getWorkerUrl: function(workerId, label) {
-              var url = monacoCoreUrl;
-              if (label === "html") {
-                url = monacoHtmlUrl;
-              }
-              return `data:text/javascript;charset=utf-8,
-                            debugger
-                      self.MonacoEnvironment = {
-                        baseUrl:${encodeURIComponent(url)}
-                      };
-                        importScripts(${encodeURIComponent(
-                          monacoCoreUrl + "/vs/base/worker/workerMain.js"
-                        )})
-                      `;
-            }
-          };
+      var load = function(url) {
+        window.require.config({
+          paths: { vs: url + "vs" }
+        });
 
-          window.require(
-            ["vs/editor/editor.main", "vs/editor/editor.main.nls"],
-            function() {
-              require([
-                "vs/basic-languages/monaco.contribution",
-                "vs/language/html/monaco.contribution",
-                "vs/language/css/monaco.contribution",
-                "vs/language/typescript/monaco.contribution"
-              ], function() {
-                monaco = window.monaco;
-                callback(monaco);
-                self.isLoader = true;
-              });
-            }
-          );
-        }
-      );
+        window.MonacoEnvironment = {
+          getWorkerUrl: function() {
+            return "data:text/javascript;charset=utf-8, throw Error()";
+          }
+        };
+
+        window.require(["vs/editor/editor.main"], function() {
+          monaco = window.monaco;
+          callback(monaco);
+          self.isLoader = true;
+        });
+      };
+
+      var createScript = function(url) {
+        var loaderScript = document.createElement("script");
+        loaderScript.id = "__monaco_loader";
+        loaderScript.src = url + "vs/loader.js";
+        loaderScript.onload = function() {
+          load(url);
+        };
+        return loaderScript;
+      };
+
+      var loaderScript = createScript(Kooboo.isLocal() ? local : cdn);
+
+      loaderScript.onerror = function() {
+        document.head.removeChild(loaderScript);
+        loaderScript = createScript(cdn);
+        document.head.appendChild(loaderScript);
+      };
+
+      if (!document.getElementById("__monaco_loader")) {
+        document.head.appendChild(loaderScript);
+      }
     };
     MonacoEditorService.prototype.init = function(callback, files) {
       if (window.monaco) {

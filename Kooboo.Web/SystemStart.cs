@@ -97,6 +97,7 @@ namespace Kooboo.Web
                         {
                             _middlewares = new List<IKoobooMiddleWare>();
                             _middlewares.Add(new FrontRequest.KoobooMiddleware());
+                            if (!AppSettings.IsOnlineServer) _middlewares.Add(new MonacoCacheMiddleware());
                             _middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
 
                             _middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));

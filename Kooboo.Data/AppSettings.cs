@@ -276,6 +276,14 @@ namespace Kooboo.Data
             }
         }
 
+        public static string MonacoVersion
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings.Get("MonacoVersion");
+            }
+        }
+
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
         public static int HttpPort { get; set; } = 80;
