@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
