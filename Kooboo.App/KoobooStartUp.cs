@@ -12,7 +12,7 @@ namespace Kooboo.App
 {
     public static class KoobooStartUp
     {
-        private static System.Diagnostics.Process ScreenShotProcess = null;
+    
 
         public static void StartAll()
         { 
@@ -31,11 +31,7 @@ namespace Kooboo.App
         {
             try
             {
-                if (ScreenShotProcess != null)
-                {
-                    ScreenShotProcess.CloseMainWindow();
-                    ScreenShotProcess.Close();
-                }
+                Web.SystemStart.Stop(); 
             }
             catch (Exception ex)
             {

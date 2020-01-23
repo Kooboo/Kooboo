@@ -1,19 +1,25 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Jint.Native;
+using Kooboo;
+using Kooboo.Data;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using Kooboo.Data.Attributes;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.Mysql;
+using Kooboo.Sites.Scripting.Global.Sqlite;
+using KScript.KscriptConfig;
+using KScript.Sites;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
-using KScript.Sites;
-using Kooboo.Sites.Scripting;
-using Kooboo;
-using KScript.KscriptConfig;
 
 namespace KScript
 {
@@ -153,7 +159,7 @@ var value = k.session.key; ")]
         }
 
         private InfoModel _siteinfo;
-        
+
         [Description("Access to current request information")]
         public InfoModel Info
         {
@@ -222,7 +228,7 @@ var value = k.session.key; ")]
                 {
                     if (_setting == null)
                     {
-                        _setting = new KDictionary(); 
+                        _setting = new KDictionary();
                     }
                     return _setting;
                 }
@@ -233,7 +239,7 @@ var value = k.session.key; ")]
             public UserModel User
             {
                 get; set;
-            } 
+            }
         }
 
         private kSiteDb _sitedb;
@@ -334,18 +340,20 @@ var value = k.session.key; ")]
 
         [Description("Access to configuration of current event")]
 
-        private KDictionary _config; 
-        public KDictionary config {
-            get {
+        private KDictionary _config;
+        public KDictionary config
+        {
+            get
+            {
                 if (_config == null)
                 {
-                    _config = new KDictionary(); 
+                    _config = new KDictionary();
                 }
-                return _config; 
+                return _config;
             }
-            set { _config = value;  }
+            set { _config = value; }
         }
-         
+
         [Kooboo.Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
 
@@ -372,9 +380,9 @@ var value = k.session.key; ")]
             }
         }
 
-        private kDatabase _database;
+        private IDatabase _database;
 
-        public kDatabase Database
+        public IDatabase Database
         {
             get
             {
@@ -392,8 +400,83 @@ var value = k.session.key; ")]
             }
         }
 
+        private SqliteDatabase _sqlite;
+
+        public SqliteDatabase Sqlite
+        {
+            get
+            {
+                if (_sqlite == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_sqlite == null)
+                        {
+                            var path = Path.Combine(AppSettings.GetFileIORoot(RenderContext.WebSite), "sqlite.db");
+                            _sqlite = new SqliteDatabase($"Data source='{path}';");
+                        }
+                    }
+                }
+                return _sqlite;
+            }
+        }
+
+        private MysqlDatabase _mysql;
+
+        public MysqlDatabase Mysql
+        {
+            get
+            {
+                if (_mysql == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_mysql == null)
+                        {
+                            var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MysqlSetting>();
+
+                            if (string.IsNullOrWhiteSpace(setting.ConnectionString))
+                            {
+                                throw new Exception("  ->Please add the mysql connection string to the system configuration of the site<-  ");
+                            }
+
+                            _mysql = new MysqlDatabase(setting.ConnectionString);
+                        }
+                    }
+                }
+                return _mysql;
+            }
+        }
+
+        private SqlServerDatabase _sqlServer;
+
+        public SqlServerDatabase SqlServer
+        {
+            get
+            {
+                if (_sqlServer == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_sqlServer == null)
+                        {
+                            var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<SqlServerSetting>();
+
+                            if (string.IsNullOrWhiteSpace(setting.ConnectionString))
+                            {
+                                throw new Exception("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
+                            }
+                            _sqlServer = new SqlServerDatabase(setting.ConnectionString);
+                        }
+                    }
+                }
+                return _sqlServer;
+            }
+        }
+
+
         [KIgnore]
-        public kDatabase DB
+        public IDatabase DB
         {
 
             get { return this.Database; }
@@ -504,7 +587,7 @@ var value = k.session.key; ")]
         {
             var html = new ViewHelpRender().Render(RenderContext);
             Response.write(html);
-        } 
+        }
 
         internal List<object> ReturnValues = new List<object>();
 

@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +19,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Namespace { get; set; }
             public string Name { get; set; }
             public string Discription { get; set; }
-            public List<Type> Extends { get; set; }
+            public List<string> Extends { get; set; }
             public List<Property> Properties { get; set; }
             public List<Method> Methods { get; set; }
             public Dictionary<string, string> Enums { get; set; }
@@ -110,48 +111,23 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         internal IEnumerable<Property> GetExtensionProperties(Type type)
         {
             var fields = type.GetRuntimeFields().Where(w => IsKExtension(w) && w.IsStatic);
-            var properties = new List<Property>();
             var extensions = new List<KeyValuePair<string, Type>>();
 
             foreach (var prop in fields)
             {
                 var value = prop.GetValue(null);
-                if (value is KeyValuePair<string, Type>[] items)
+                if (value is KeyValuePair<string, Type>[])
                 {
-                    properties.AddRange(items.Select(s => new Property
-                    {
-                        Name = CamelCaseName(s.Key),
-                        Type = TypeString(type, s.Value),
-                        Discription = null
-                    }));
-                }
-                else if (value is KeyValuePair<string, Type[]>[] dynamicItems)
-                {
-                    foreach (var item in dynamicItems)
-                    {
-                        properties.Add(new Property
-                        {
-                            Name = item.Key,
-                            Discription = null,
-                            Type = item.Key
-                        });
-
-                        _defines.Add(item.Key, new Define
-                        {
-                            Name = item.Key,
-                            Properties = item.Value.Select(s => new Property
-                            {
-                                Name = CamelCaseName(s.Name),
-                                Type = TypeString(type, s)
-                            }).ToList(),
-                            Extends = new List<Type>(),
-                            Namespace=GetNamespace(type,false)
-                        });
-                    }
+                    extensions.AddRange(value as KeyValuePair<string, Type>[]);
                 }
             }
 
-            return properties.GroupBy(g => g.Name).Select(s => s.Last()).ToList();
+            return extensions.Select(s => new Property
+            {
+                Name = CamelCaseName(s.Key),
+                Type = TypeString(type, s.Value),
+                Discription = null
+            }).GroupBy(g => g.Name).Select(s => s.Last()).ToList();
         }
 
         internal string DefinesToString(Type type)
@@ -173,8 +149,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
                     if (define.Enums == null)
                     {
-                        var extendList = define.Extends.Where(w => _defines.ContainsKey(w.FullName)).Select(s => $"{GetNamespace(s)}{_defines[s.FullName].Name}");
-                        var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
+                        var extends = define.Extends.Any() ? $"extends {string.Join(",", define.Extends)} " : string.Empty;
                         builder.AppendLine($"{_indentation}{declare}interface {define.Name} {extends}{{");
 
                         if (define.ValueType != null)
@@ -267,67 +242,57 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             return name;
         }
 
-        internal List<Property> GetProperties(Type type)
+        internal Define ConvertClassOrInterface(Type type)
         {
-            return type.GetProperties()
-                       .Where(p => p.GetMethod.IsPublic && p.GetCustomAttribute(typeof(KIgnoreAttribute)) == null)
-                       .Select(s => new Property
-                       {
-                           Name = CamelCaseName(s.Name),
-                           Type = TypeString(type, s.PropertyType),
-                           Discription = GetDiscription(s)
-                       }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
 
-        }
+            var properties = type.GetProperties()
+                                .Where(p => p.GetMethod.IsPublic && p.GetCustomAttribute(typeof(KIgnoreAttribute)) == null)
+                                .Select(s => new Property
+                                {
+                                    Name = CamelCaseName(s.Name),
+                                    Type = TypeString(type, s.PropertyType),
+                                    Discription = GetDiscription(s)
+                                }).GroupBy(g => g.Name).Select(s => s.First()).ToList();
 
-        internal List<Method> GetMethods(Type type)
-        {
-            return type.GetMethods()
-                       .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name) && p.GetCustomAttribute(typeof(KIgnoreAttribute)) == null)
-                       .Union(_extensionMethodInfos.Where(w => w.GetParameters().FirstOrDefault()?.ParameterType == type))
-                       .Select(s =>
-                       {
-                           var defineType = s.GetCustomAttribute(typeof(KDefineTypeAttribute)) as KDefineTypeAttribute;
-                           var returnType = defineType?.Return ?? s.ReturnType;
-                           var @params = new List<Param>();
-                           var defineParams = defineType?.Params?.GetEnumerator();
-                           var isExtension = s.GetCustomAttributes(false).Any(a => a.GetType() == typeof(ExtensionAttribute));
-                           var rawParams = isExtension ? s.GetParameters().Skip(1) : s.GetParameters();
+            var methods = type.GetMethods()
+                                .Where(p => p.IsPublic && !p.IsSpecialName && !_skipMthods.Contains(p.Name) && p.GetCustomAttribute(typeof(KIgnoreAttribute)) == null)
+                                .Union(_extensionMethodInfos.Where(w => w.GetParameters().FirstOrDefault()?.ParameterType == type))
+                                .Select(s =>
+                                {
+                                    var defineType = s.GetCustomAttribute(typeof(KDefineTypeAttribute)) as KDefineTypeAttribute;
+                                    var returnType = defineType?.Return ?? s.ReturnType;
+                                    var @params = new List<Param>();
+                                    var defineParams = defineType?.Params?.GetEnumerator();
+                                    var isExtension = s.GetCustomAttributes(false).Any(a => a.GetType() == typeof(ExtensionAttribute));
+                                    var rawParams = isExtension ? s.GetParameters().Skip(1) : s.GetParameters();
 
-                           foreach (var item in rawParams)
-                           {
-                               if (!defineParams?.MoveNext() ?? false) defineParams = null;
-                               var itemType = (Type)defineParams?.Current ?? item.ParameterType;
-                               var param = new Param { Name = item.Name, Type = TypeString(type, itemType) };
-                               @params.Add(param);
-                           }
+                                    foreach (var item in rawParams)
+                                    {
+                                        if (!defineParams?.MoveNext() ?? false) defineParams = null;
+                                        var itemType = (Type)defineParams?.Current ?? item.ParameterType;
+                                        var param = new Param { Name = item.Name, Type = TypeString(type, itemType) };
+                                        @params.Add(param);
+                                    }
 
-                           return new Method
-                           {
-                               Name = CamelCaseName(s.Name),
-                               Params = @params,
-                               ReturnType = TypeString(type, returnType),
-                               Discription = GetDiscription(s)
-                           };
-                       }).ToList();
-        }
+                                    return new Method
+                                    {
+                                        Name = CamelCaseName(s.Name),
+                                        Params = @params,
+                                        ReturnType = TypeString(type, returnType),
+                                        Discription = GetDiscription(s)
+                                    };
+                                }).ToList();
 
-        internal List<Type> GetExtends(Type type) {
+            var valueType = type.GetCustomAttributesData().FirstOrDefault(f => f.AttributeType == typeof(KValueTypeAttribute))?.ConstructorArguments?[0].Value as Type;
+
             var extends = new List<Type>();
             extends.AddRange(type.GetInterfaces());
             if (type.BaseType != null) extends.Add(type.BaseType);
-            return extends;
-        }
-
-        internal Define ConvertClassOrInterface(Type type)
-        {
-            var valueType = type.GetCustomAttributesData().FirstOrDefault(f => f.AttributeType == typeof(KValueTypeAttribute))?.ConstructorArguments?[0].Value as Type;
-
             return new Define
             {
-                Methods = GetMethods(type),
-                Properties = GetProperties(type),
-                Extends = GetExtends(type),
+                Methods = methods,
+                Properties = properties,
+                Extends = extends.Select(s=> TypeString(type,s)).ToList(),
                 Discription = GetDiscription(type),
                 ValueType = valueType == null ? null : TypeString(type, valueType)
             };
