@@ -39,7 +39,7 @@ C:\Windows\System32\robocopy  %langPath% %copyLangPath%
 ::copy sqlite
 C:\Windows\System32\robocopy  %koobooPath%\bin\%buildType%\x64 %copyDllPath%\x64
 
-rd /s /q %copyBasePath%\_Admin\Scripts\lib\vs
+rd /s /q %copyAdminPath%\Scripts\lib\vs
 :: delete minifier admin
 if exist "%minifierAmdinPath%" ( rd /s /q %batPath%Kooboo.Web\Minifier)
 
