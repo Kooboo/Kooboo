@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Jint.Native;
 using Kooboo;
 using Kooboo.Data;
 using Kooboo.Data.Attributes;
@@ -15,6 +16,7 @@ using KScript.Sites;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -433,7 +435,8 @@ var value = k.session.key; ")]
                         {
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MysqlSetting>();
 
-                            if (string.IsNullOrWhiteSpace(setting.ConnectionString)) {
+                            if (string.IsNullOrWhiteSpace(setting.ConnectionString))
+                            {
                                 throw new Exception("  ->Please add the mysql connection string to the system configuration of the site<-  ");
                             }
 
@@ -463,8 +466,7 @@ var value = k.session.key; ")]
                             {
                                 throw new Exception("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
-
-                            _sqlServer = new SqlServerDatabase(setting.ConnectionString);
+                            _sqlServer = new SqlServerDatabase(setting.ConnectionString, RenderContext);
                         }
                     }
                 }
