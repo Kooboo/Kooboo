@@ -30,7 +30,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             var relation = _table.Database.SqlExecuter.GetRelation(key, _table.Name);
 
-            if (relation != default && _table.Name != default && obj.ContainsKey(relation.To))
+            if (relation != null && _table.Name != null && obj.ContainsKey(relation.To))
             {
                 var data = _table.Database.SqlExecuter.QueryData(relation.TableA, $"{relation.From} == {obj[relation.To]}").Take(999);
                 return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table.Database.GetTable(relation.TableA) as RelationalTable<TExecuter, TSchema, TConnection>);

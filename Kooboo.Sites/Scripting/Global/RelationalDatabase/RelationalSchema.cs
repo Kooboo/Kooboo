@@ -44,7 +44,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             {
                 var findItem = _items.FirstOrDefault(f => f.Name == item.Name);
 
-                if (findItem == default)
+                if (findItem == null)
                 {
                     newItems.Add(item);
                     continue;
