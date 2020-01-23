@@ -466,7 +466,7 @@ var value = k.session.key; ")]
                             {
                                 throw new Exception("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
-                            _sqlServer = new SqlServerDatabase(setting.ConnectionString, RenderContext);
+                            _sqlServer = new SqlServerDatabase(setting.ConnectionString);
                         }
                     }
                 }
