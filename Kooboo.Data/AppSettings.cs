@@ -38,7 +38,7 @@ namespace Kooboo.Data
             Global.IsOnlineServer = GetBool("IsOnlineServer");
             Global.EnableLog = GetBool("Log");
 
-            Global.LogPath = System.IO.Path.Combine(RootPath, "Log");
+            Global.LogPath = System.IO.Path.Combine(RootPath, "logs");
 
             IOHelper.EnsureDirectoryExists(Global.LogPath);
 

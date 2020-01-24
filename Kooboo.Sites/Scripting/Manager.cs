@@ -789,10 +789,8 @@ namespace Kooboo.Sites.Scripting
                     {
 
                     }
-                }
-
-                // TODO: also get the methods...
-
+                } 
+                // TODO: also get the methods... 
             }
 
             return result;
