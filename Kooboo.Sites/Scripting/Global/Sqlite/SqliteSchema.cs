@@ -15,6 +15,7 @@ namespace KScript
 
         public SqliteSchema(IEnumerable<Item> items) : base(items)
         {
+           
         }
 
         internal override string ConventType(Type type)

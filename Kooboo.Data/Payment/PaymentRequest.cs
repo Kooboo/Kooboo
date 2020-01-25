@@ -33,12 +33,10 @@ namespace Kooboo.Data.Models
         public Guid OrganizationId { get; set; }
 
         public Guid WebSiteId { get; set; }
-
-        public string OrganizationName { get; set; }
-         
+          
         public decimal TotalAmount { get; set; }
 
-        public string Currency { get; set; } = "CNY"; 
+        public string Currency { get; set; } = "USD"; 
 
         public Guid OrderId { get; set; }
 
@@ -49,21 +47,19 @@ namespace Kooboo.Data.Models
         public string PaymentMethod { get; set; }  
           
         public bool IsPaid { get; set; }
-
-        // When failed. set to true so that is completed. 
+         
         public bool IsCancel { get; set; } 
    
         // coupon or other codes. 
         public string Code { get; set; }
 
-        // The reference id at the payment provider. 
+        //The reference id at the payment provider. 
         public string Reference { get; set; }
 
         public string ReturnPath { get; set; }
          
         public byte ConstType { get; set; } = ConstObjectType.PaymentRequest;
-
-
+         
         private DateTime _creationdate; 
         public DateTime CreationDate {
             get
@@ -102,7 +98,7 @@ namespace Kooboo.Data.Models
         { 
             string unique = this.Code + this.Currency + this.Description + this.IsCancel.ToString() + this.IsPaid.ToString();
 
-            unique += this.Name + this.OrderId.ToString() + this.OrganizationId.ToString() + this.OrganizationName + this.PaymentMethod;
+            unique += this.Name + this.OrderId.ToString() + this.OrganizationId.ToString() + this.PaymentMethod;
 
             unique += this.Reference + this.TotalAmount.ToString() + this.UserIp + this.WebSiteId.ToString();
 

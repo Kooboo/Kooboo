@@ -3,6 +3,7 @@ using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Kooboo.Web.Payment
@@ -15,9 +16,11 @@ namespace Kooboo.Web.Payment
 
         public virtual string Icon { get; }
 
+        [Description("Img/Base64")]
         public virtual string IconType => "img";
 
         public virtual List<string> ForCurrency => new List<string>();
+
 
         public virtual List<string> ExcludeCurrency => new List<string>();
 

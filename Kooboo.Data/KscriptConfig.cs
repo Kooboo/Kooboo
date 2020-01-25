@@ -13,7 +13,7 @@ namespace Kooboo.Data
 
         [XmlArray("kscripts")]
         [XmlArrayItem("kscript")]
-        public List<Kscript> Kscripts { get; set; }
+        public List<KScriptItem> Kscripts { get; set; }
 
         [XmlElement("kcontext")]
         public string KscriptContext { get; set; }
@@ -23,7 +23,7 @@ namespace Kooboo.Data
 
     }
 
-    public class Kscript
+    public class KScriptItem
     {
         [XmlAttribute("namespace")]
         public string NameSpace { get; set;}

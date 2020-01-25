@@ -150,7 +150,19 @@ namespace Kooboo.Web.Api.Implementation
             {
                 sample = @"//Schedule task"; 
             }
-              
+
+            else if (codetype == Sites.Models.CodeType.PaymentCallBack)
+            {
+                sample = @"// kscript that can be inserted to page position. 
+//k.cookie.set(""key"", ""value"");
+//k.response.write(""Hello world"");";
+            }
+            else if (codetype == Sites.Models.CodeType.Job)
+            {
+                sample = @"//Schedule task";
+            }
+
+
             return sample;
         }
 
