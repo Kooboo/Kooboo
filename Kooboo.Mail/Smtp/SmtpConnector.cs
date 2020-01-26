@@ -53,7 +53,7 @@ namespace Kooboo.Mail.Smtp
                 _stream = _client.GetStream();
                 if (_server.Certificate != null)
                 {
-                    var ssl = new SslStream(_stream, true);
+                    var ssl = new SslStream(_stream, false);
                     await ssl.AuthenticateAsServerAsync(_server.Certificate);
                     _stream = ssl;
                 }

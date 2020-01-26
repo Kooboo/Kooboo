@@ -140,7 +140,7 @@ namespace Kooboo.Mail.Imap
 
         public async Task StartSecureConnection()
         {
-            var sslStream = new SslStream(TcpClient.GetStream(), true);
+            var sslStream = new SslStream(TcpClient.GetStream(), false);
             await sslStream.AuthenticateAsServerAsync(Server.Certificate, false, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, false);
 
             IsSecureConnection = true;
