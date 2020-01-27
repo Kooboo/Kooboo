@@ -10,13 +10,15 @@ namespace Kooboo.Web.Payment.Models
     { 
         public bool HasResult { get; set; }
 
-        public bool IsPaid { get; set; }
+        public bool Paid { get; set; }
 
-        public bool IsCancel { get; set; }
+        public bool Failed { get; set; }
     
         public  PaymentStatus Status
         {
             get;set;
         }
+
+        public string Message { get; set; }
     }
 }

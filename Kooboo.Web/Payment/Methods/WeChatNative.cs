@@ -11,6 +11,7 @@ using Kooboo.Web.Payment;
 using Kooboo.Web.Payment.Methods;
 using Kooboo.Web.Payment.Models;
 using WxPayAPI;
+using Kooboo.Data.Attributes; 
 
 namespace Kooboo.Web.Payment.Methods
 {
@@ -33,12 +34,13 @@ namespace Kooboo.Web.Payment.Methods
             }
         }
 
-        public override IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context)  
+
+         [KDefineType(Return =typeof(QRCodeResponse))]
+        public override IPaymentResponse Charge(PaymentRequest request)  
         {  
             WxPayData data = new WxPayData();
-
-            var setting = this.GetSetting(Context); 
-            if (setting == null)
+             
+            if (this.Setting  == null)
             {
                 return null; 
             }
@@ -78,7 +80,7 @@ namespace Kooboo.Web.Payment.Methods
 
             data.SetValue("notify_url", notifurl); //异步通知url
 
-            WxPayData result = WxPayApi.UnifiedOrder(data, setting);//调用统一下单接口
+            WxPayData result = WxPayApi.UnifiedOrder(data, this.Setting);//调用统一下单接口
 
             string url = result.GetValue("code_url").ToString();//获得统一下单接口返回的二维码链接
 
@@ -87,8 +89,7 @@ namespace Kooboo.Web.Payment.Methods
                 throw new Exception("Payment failed, please try again");
             }
 
-            return new QRCodeResponse(url, request.Id);
-
+            return new QRCodeResponse(url, request.Id); 
         }
 
 
@@ -181,26 +182,21 @@ namespace Kooboo.Web.Payment.Methods
 
                 var objcode = data.GetValue("result_code");
 
-                bool IsPaid = false;
-                bool IsCancel = false;
-
                 if (objcode != null)
                 {
                     string code = objcode.ToString().ToUpper();
                     if (code == "SUCCESS")
                     {
-                        IsPaid = true;
+                      result.Status = PaymentStatus.Paid;
                     }
 
                     if (code == "FAIL")
                     {
-                        IsCancel = true;
+                        result.Status = PaymentStatus.Rejected;  
                     }
                     //业务结果 result_code 是 String(16)	SUCCESS SUCCESS/ FAIL
-                }
-
-                result.IsPaid = IsPaid;
-                result.IsCancel = IsCancel;
+                } 
+             
                 return result;
             }
 
@@ -223,13 +219,11 @@ namespace Kooboo.Web.Payment.Methods
             return null; 
         }
   
-        public override PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context)
+        public override PaymentStatusResponse EnquireStatus(PaymentRequest request)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();
-
-            var setting = this.GetSetting(context); 
-
-            if (request == null || request.Id == default(Guid) || setting == null)
+              
+            if (request == null || request.Id == default(Guid) || this.Setting == null)
             {
                 return result;
             }
@@ -238,7 +232,7 @@ namespace Kooboo.Web.Payment.Methods
             {
                 var data = new WxPayData();
                 data.SetValue("out_trade_no", request.Id.ToString("N"));
-                var response = WxPayApi.OrderQuery(data, setting);
+                var response = WxPayApi.OrderQuery(data, this.Setting);
 
                 var trade_state = response.GetValue("trade_state");
                 //trade_state:SUCCESS,REFUND,NOTPAY,CLOSED,REVOKED,USERPAYING,PAYERROR
@@ -249,18 +243,26 @@ namespace Kooboo.Web.Payment.Methods
                     var code = trade_state.ToString().ToUpper();
                     if (code == "SUCCESS")
                     {
-                        result.IsPaid = true;
+                        result.Status = PaymentStatus.Paid;  
                     }
-                    else
+                    else if (code == "REFUND" || code == "NOTPAY")
                     {
-                        result.IsCancel = true;
+                        result.Status = PaymentStatus.Cancelled; 
                     }
+                    else if (code == "CLOSE" || code == "REVOKED" || code == "PAYERROR")
+                    {
+                        result.Status = PaymentStatus.Cancelled; 
+                    }
+                    else if (code == "USERPAYING")
+                    {
+                        result.Status = PaymentStatus.Pending; 
+                    } 
 
                 }
             }
             catch (Exception ex)
             {
-
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
             }
 
             return result;

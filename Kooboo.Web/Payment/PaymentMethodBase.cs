@@ -9,7 +9,13 @@ using System.Text;
 namespace Kooboo.Web.Payment
 {
     public abstract class PaymentMethodBase<TSetting> : IPaymentMethod<TSetting> where TSetting : IPaymentSetting
-    {
+    { 
+        public RenderContext Context { get; set; }
+         
+        public TSetting Setting { get; set; }
+
+        public RenderContext CurrentContext { get; set; }
+
         public abstract string Name { get; }
 
         public abstract string DisplayName { get; }
@@ -20,39 +26,32 @@ namespace Kooboo.Web.Payment
         public virtual string IconType => "img";
 
         public virtual List<string> ForCurrency => new List<string>();
-
-
+         
         public virtual List<string> ExcludeCurrency => new List<string>();
 
-        public virtual PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context)
+        public virtual PaymentStatusResponse EnquireStatus(PaymentRequest request)
         {
-            var dbrequest = this.GetRequest(request.Id, context); 
+            var dbrequest = this.GetRequest(request.Id, CurrentContext); 
             
             if (dbrequest !=null && dbrequest.IsPaid)
             {
-                return new PaymentStatusResponse() { HasResult = true, IsPaid = true };
+                return new PaymentStatusResponse() { HasResult = true, Paid = true };
             }  
             return new PaymentStatusResponse();  
         }
 
-        public abstract IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context);
+        public abstract IPaymentResponse Charge(PaymentRequest request);
 
         public TSetting GetSetting(RenderContext context)
         {
             return PaymentManager.GetPaymentSetting<TSetting>(context);
-        }
-         
+        } 
 
         public PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
         {
             return PaymentManager.GetRequest(PaymentRequestId, context); 
         }
-
-        public void UpdateRequest(PaymentRequest request, RenderContext context)
-        { 
-              PaymentManager.SaveRequest(request, context);
-        }
-         
+          
         public string GetCallbackUrl(string MethodName, RenderContext context)
         {
             return PaymentManager.GetCallbackUrl(this, MethodName, context);  
@@ -71,6 +70,6 @@ namespace Kooboo.Web.Payment
                 return true; 
             }
             return false; 
-        }
+        } 
     }
 }

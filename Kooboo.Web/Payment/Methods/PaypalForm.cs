@@ -74,17 +74,17 @@ namespace Kooboo.Web.Payment.Methods
             return amount.ToString("0.00");
         }
 
-        public override IPaymentResponse MakePayment(PaymentRequest request, RenderContext context)
+        public override  IPaymentResponse Charge(PaymentRequest request)
         {
             string currency = request.Currency;
             decimal total = request.TotalAmount;
 
-            var formUrl = this.GetCallbackUrl(nameof(GenerateRedirectForm), context);
+            var formUrl = this.GetCallbackUrl(nameof(GenerateRedirectForm), this.Context);
 
             formUrl = Lib.Helper.UrlHelper.AppendQueryString(formUrl, "paymentrequestid", request.Id.ToString());
 
             var result = new RedirectResponse(formUrl, request.Id);
-            result.PaymentReferenceId = request.Id.ToString();
+            result.PaymemtMethodReferenceId = request.Id.ToString();
             result.ActionRequired = true;
             return result;
         }
@@ -101,17 +101,16 @@ namespace Kooboo.Web.Payment.Methods
             {
                 var request = this.GetRequest(requestId, context);
                 if (request != null)
-                {
-                    var setting = this.GetSetting(context);
+                { 
 
-                    if (setting != null)
+                    if (this.Setting != null)
                     {
                         var notifyUrl = this.GetCallbackUrl(nameof(NofityUrl), context);
-                        string returnurl = this.EnsureHttpUrl(setting.ReturnUrl, context);
-                        string cancalurl = this.EnsureHttpUrl(setting.CancelUrl, context);
-                        string imageurl = this.EnsureHttpUrl(setting.LogoImage, context);
+                        string returnurl = this.EnsureHttpUrl(this.Setting.ReturnUrl, context);
+                        string cancalurl = this.EnsureHttpUrl(this.Setting.CancelUrl, context);
+                        string imageurl = this.EnsureHttpUrl(this.Setting.LogoImage, context);
 
-                        string paypalurl = setting.PaypalUrl;
+                        string paypalurl = this.Setting.PaypalUrl;
 
                         string formhtml = "<form name='paypal' action='" + paypalurl + "' method='post'>\r\n";
 
@@ -127,7 +126,7 @@ namespace Kooboo.Web.Payment.Methods
 
 
                         formhtml += "<input type = 'hidden' name = 'charset' value = 'utf-8' /> \r\n";
-                        formhtml += "<input type = 'hidden' name = 'business' value = '" + setting.EmailAddress + "' />\r\n";
+                        formhtml += "<input type = 'hidden' name = 'business' value = '" + this.Setting.EmailAddress + "' />\r\n";
                         formhtml += "<input type = 'hidden' name = 'no_shipping' value = '1' >\r\n";
                         formhtml += "<input type = 'hidden' name = 'no_note' value = '1' />\r\n";
                         formhtml += "<input type = 'hidden' name = 'currency_code' value = '" + request.Currency + "' /> \r\n";
@@ -176,8 +175,7 @@ namespace Kooboo.Web.Payment.Methods
 
                 }
             }
-
-
+             
             var errorresponse = new PlainResponse();
             errorresponse.ContentType = "Application/Json";
             errorresponse.Content = "application error";
@@ -205,7 +203,7 @@ namespace Kooboo.Web.Payment.Methods
             return name;
         }
 
-        public PaymentCallback NofityUrl(RenderContext context)
+        protected PaymentCallback NofityUrl(RenderContext context)
         { 
             // PayPal HTTPS POSTs an IPN message to your listener that notifies it of an event.
             //Your listener returns an empty HTTP 200 response to PayPal.
@@ -244,11 +242,32 @@ namespace Kooboo.Web.Payment.Methods
                             PaymentRequestId = paymentRequestId,
                         };
 
-                        if (paymentStatus != null && paymentStatus.ToLower() == "completed" || paymentStatus.ToLower() == "paid")
+                         if  (paymentStatus != null)
                         {
-                            callback.IsPaid = true;
+                            var lower = paymentStatus.ToLower(); 
+
+                            if (lower == "completed" || paymentStatus.ToLower() == "paid" || lower == "voided" || lower == "processed")
+                            {
+                                callback.Status = PaymentStatus.Paid;
+                            }
+                            else if (lower == "denied" || lower =="failed" || lower == "refused")
+                            {
+                                callback.Status = PaymentStatus.Rejected; 
+                            }
+                            else if (lower.Contains("cancel") || lower == "expired")
+                            {
+                                callback.Status = PaymentStatus.Cancelled; 
+                            }
+                            else if (lower == "pending")
+                            {
+                                callback.Status = PaymentStatus.Pending; 
+                            }
+
                         }
-                        // TODO: add cancel here.. 
+
+                    
+                        // TODO: add cancel here..
+
                         return callback;
                     }
                 }

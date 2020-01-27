@@ -13,11 +13,9 @@ namespace Kooboo.Web.Payment
             if (context.WebSite != null && context.WebSite.OrganizationId != default(Guid))
             {
                 // TODO: 
-                // Execute the ordering fullfill....
-
+                // Execute the ordering fullfill.... 
                 // TODO Process local payment. 
-                var sitedb = context.WebSite.SiteDb();
-                sitedb.GetSiteRepository<SitePaymentCallBackRepository>().AddOrUpdate(callback);
+              
                 if (callback.Paid)
                 {
                     // TODO: do the payment ok action... 

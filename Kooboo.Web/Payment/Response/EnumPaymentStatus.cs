@@ -7,9 +7,9 @@ namespace Kooboo.Web.Payment
     public enum PaymentStatus
     {
         NotAvailable = 0,
-        Pending = 1,
-        Success = 2,
-        //Complete = 3,
+        Authorized =1,
+        Pending = 2,
+        Paid = 3,
         Cancelled = 4,
         Rejected = 5
     } 

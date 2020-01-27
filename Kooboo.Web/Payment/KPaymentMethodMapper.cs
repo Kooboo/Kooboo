@@ -1,48 +1,62 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.Extensions;
 using Kooboo.Web.Payment.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Kooboo.Web.Payment.Repository; 
 
 namespace Kooboo.Web.Payment
 {
-    public class KPaymentMethod
+    public class KPaymentMethodMapper
     { 
         public RenderContext Context { get; set; }
 
         public IPaymentMethod PaymentMethod { get; set; }
 
-        public IPaymentResponse Pay(object value)
+        public IPaymentResponse Charge(object value)
         {
-            var request = ParseRequest(value); 
-            Kooboo.Web.Payment.PaymentManager.SaveRequest(request, Context);  
-            return this.PaymentMethod.MakePayment(request, Context); 
-        }
+            var request = ParseRequest(value);
 
-        public PaymentStatusResponse Check(object requestId)
+            var sitedb = this.Context.WebSite.SiteDb();
+
+            var repo = sitedb.GetSiteRepository<Kooboo.Web.Payment.Repository.TempPaymentRequestRepository>(); 
+            repo.AddOrUpdate(request); 
+
+            //TODO, validate data.
+            return this.PaymentMethod.Charge(request); 
+        }
+          
+
+        public IPaymentResponse SubmitData(object data)
+        {
+            return null; 
+        }
+        
+        // Dynamic method for... 
+        public PaymentStatusResponse CheckStatus(object requestId)
         {
            if (requestId == null)
             {
                 string strid = requestId.ToString();
                 Guid id; 
                 if (System.Guid.TryParse(strid, out id))
-                {
+                { 
                     var request = Kooboo.Web.Payment.PaymentManager.GetRequest(id, Context); 
                      
                     if (request !=null)
                     {
-                        return this.PaymentMethod.EnquireStatus(request, Context); 
+                        return this.PaymentMethod.EnquireStatus(request); 
                     }
                 }
             }
 
             return new PaymentStatusResponse(); 
         }
-
          
-        public PaymentRequest ParseRequest(object dataobj)
+        internal PaymentRequest ParseRequest(object dataobj)
         {
             PaymentRequest request = new PaymentRequest();
 
@@ -55,7 +69,7 @@ namespace Kooboo.Web.Payment
                 dynamicobj = dataobj as IDictionary<string, object>;
             }
 
-            request.Name = GetValue<string>(idict, dynamicobj, "name");
+            request.Name = GetValue<string>(idict, dynamicobj, "name", "title");
             request.Description = GetValue<string>(idict, dynamicobj, "des", "description", "detail");
             request.Currency = GetValue<string>(idict, dynamicobj, "currency"); 
             request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount",  "total","totalAmount", "totalamount");

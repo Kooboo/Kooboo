@@ -3,12 +3,14 @@ using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Kooboo.Web.Payment
 {
     public interface IPaymentMethod<T> : IPaymentMethod where T:IPaymentSetting
-    {
-     
+    { 
+        [Description("Account settig to be used for this payment method")]
+        T Setting { get; set; } 
     }
 
     public interface IPaymentMethod
@@ -19,17 +21,21 @@ namespace Kooboo.Web.Payment
 
         string Icon { get; }
 
+        [Description("Img/Base64")]
         string IconType { get; }
 
         List<string> ForCurrency { get; }
 
         List<string> ExcludeCurrency { get; }
 
-        IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context);
+        RenderContext Context { get; set; }
 
-        PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context);
+        IPaymentResponse Charge(PaymentRequest request);
+
+        PaymentStatusResponse EnquireStatus(PaymentRequest request);
 
         bool CanUse(RenderContext context); 
+
     }
 
     public interface IPaymentSetting : ISiteSetting

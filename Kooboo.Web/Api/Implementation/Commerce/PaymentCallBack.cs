@@ -12,7 +12,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
     {
         public string ModelName => "Paymentcallback";
 
-        public bool RequireSite => false;
+        public bool RequireSite => true;
 
         public bool RequireUser => false;
 
@@ -38,6 +38,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             return null;
         }
 
+        // To be used for above method. 
         public IResponse Callback(ApiCall call)
         {
             string name = call.Command.Method;
@@ -77,8 +78,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                             response.ContentType = "text/html";
                             response.Content = ""; 
                             return response; 
-                        }
-
+                        } 
                     }
                 }
             }

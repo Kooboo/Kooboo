@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kooboo.Web.Payment.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +8,14 @@ using System.Threading.Tasks;
 namespace Kooboo.Web.Payment
 {
     public interface IPaymentResponse
-    {
-        // false == pay success. 
+    {   
+        EnumResponseType Type { get; set; }
+
         bool ActionRequired { get; set; }
 
         Guid PaymentRequestId { get; set; }
         
-        // incase that payment method generate a reference id itself. 
-        string PaymentReferenceId { get; set; }
+        //in case that payment method generate a reference id itself. 
+        string PaymemtMethodReferenceId { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace Kooboo.Web.Payment
         public bool Paid {
             get 
             { 
-                return  Status == PaymentStatus.Success;  }
+                return  Status == PaymentStatus.Paid;  }
         }
           
         public bool Cancelled { 
