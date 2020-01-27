@@ -6,12 +6,12 @@ namespace Kooboo.Web.Payment.Response
 {
    public enum EnumResponseType
     {
-        Pending =0,
-        Paid = 1,
-        Failed = 2,
-        SubmitData = 3, 
-        Redirect = 4,
-        QrCode = 5,
-        AutoFormPost = 6  // Return a form with hidden fields and values, and automatic submit. 
+        pending =0,
+        paid = 1,
+        failed = 2,
+        submitdata = 3, 
+        redirect = 4,
+        qrcode = 5,
+        hiddenform = 6  // Return a form with hidden fields and values, and automatic submit. 
     }
 }

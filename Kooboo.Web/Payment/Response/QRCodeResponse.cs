@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Data.Attributes;
 using Kooboo.Web.Payment.Response;
 
 namespace Kooboo.Web.Payment.Models
@@ -11,19 +13,20 @@ namespace Kooboo.Web.Payment.Models
     {
         public QRCodeResponse(string codeurl, Guid requestId)
         {
-            this.qrcode = codeurl;
-            this.ActionRequired = true;
-            this.PaymentRequestId = requestId;
-            this.Type = EnumResponseType.QrCode;
+            this.qrcode = codeurl; 
+            this.requestId = requestId;
+            this.Type = EnumResponseType.qrcode;
         }
-
-        public bool ActionRequired { get;  set; }
-
+         
+        [Description("The QR code content to scan and pay")]
         public string qrcode { get; set; }
 
-        public Guid PaymentRequestId { get; set; }
-        public string PaymemtMethodReferenceId { get; set; }
+        public Guid requestId { get; set; }
 
+        [KIgnore]
+        public string paymemtMethodReferenceId { get; set; }
+
+        [Description("Generated sample HTML code to display the QR code")]
         public string html
         {
             get
@@ -32,6 +35,7 @@ namespace Kooboo.Web.Payment.Models
             }
         }
          
+        [KIgnore]
         public string qrcodeHTML
         {
             get

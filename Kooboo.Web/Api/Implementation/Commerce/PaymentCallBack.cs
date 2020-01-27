@@ -52,7 +52,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var paymentname = name.Substring(0, index);
             var methodname = name.Substring(index + 1);
 
-            var paymentmethod = PaymentManager.GetMethod(paymentname);
+            var paymentmethod = PaymentManager.GetMethod(paymentname, call.Context);
 
             if (paymentmethod != null)
             {

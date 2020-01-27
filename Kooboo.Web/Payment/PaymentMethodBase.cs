@@ -50,26 +50,13 @@ namespace Kooboo.Web.Payment
         public PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
         {
             return PaymentManager.GetRequest(PaymentRequestId, context); 
-        }
-          
-        public string GetCallbackUrl(string MethodName, RenderContext context)
-        {
-            return PaymentManager.GetCallbackUrl(this, MethodName, context);  
-        }
+        } 
 
         public string EnsureHttpUrl(string AbsOrRelativeUrl, RenderContext context)
         {
            return PaymentManager.EnsureHttp(AbsOrRelativeUrl, context);
         }
 
-        public virtual bool CanUse(RenderContext context)
-        {
-            var setting = this.GetSetting(context); 
-            if (setting !=null)
-            {
-                return true; 
-            }
-            return false; 
-        } 
+         
     }
 }

@@ -6,11 +6,10 @@ using System.Text;
 
 namespace Kooboo.Web.Payment.Response
 {
-    public class SubmitDataResponse : IPaymentResponse
-    {
-        public bool ActionRequired { get; set; }
-        public Guid PaymentRequestId { get; set; }
-        public string PaymemtMethodReferenceId { get; set; } 
+    public class RequireDataResponse : IPaymentResponse
+    { 
+        public Guid requestId { get; set; }
+        public string paymemtMethodReferenceId { get; set; } 
          
         [Description("GET or POST")]        
         public string HttpMethod { get; set; } 

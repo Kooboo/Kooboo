@@ -53,13 +53,18 @@ namespace Kooboo.Web.Payment
             {
                 if (item is IKoobooPayment)
                 {
-                    // skip 
+                    //skip 
                 }
                 else
                 {
-                    if (item.CanUse(context))
+                    if (context.WebSite != null && context.WebSite.OrganizationId != default(Guid))
                     {
-                        result.Add(item);
+                        var sitedb = context.WebSite.SiteDb();
+                        var setting = sitedb.CoreSetting.GetSiteSetting(item.GetType());
+                        if (setting != null)
+                        {
+                            result.Add(item);
+                        }
                     }
                 }
             }
@@ -80,52 +85,85 @@ namespace Kooboo.Web.Payment
             return null;
         }
 
-        public static Type GetMethodType(string paymentmethod)
+
+        public static IPaymentMethod GetMethod(string MethodName, RenderContext context)
         {
-            var allmethods = Lib.IOC.Service.GetInstances<IPaymentMethod>();
-
-            paymentmethod = paymentmethod.ToLower();
-
-            foreach (var item in allmethods)
+            if (MethodName == null)
             {
-                if (item.Name.ToLower() == paymentmethod)
-                {
-                    return item.GetType();
-                }
+                return null;
             }
-            return null;
+
+            var method = GetMethod(MethodName); 
+
+            if (method != null)
+            {
+                var methodType = method.GetType(); 
+
+                var sitedb = context.WebSite.SiteDb();
+
+                var paymentmethod = Activator.CreateInstance(methodType) as IPaymentMethod;
+                paymentmethod.Context = context;
+
+                if (Lib.Reflection.TypeHelper.HasGenericInterface(methodType, typeof(IPaymentMethod<>)))
+                {
+                    var settingtype = Lib.Reflection.TypeHelper.GetGenericType(methodType);
+
+                    if (settingtype != null)
+                    {
+                        var settingvalue = sitedb.CoreSetting.GetSiteSetting(settingtype) as IPaymentSetting;
+                        //Setting
+                        var setter = Lib.Reflection.TypeHelper.GetSetObjectValue("Setting", methodType, settingtype);
+                        setter(paymentmethod, settingvalue);
+
+                        return paymentmethod;
+                    }
+                    else
+                    {
+                        throw new Exception(MethodName + " missing setting infomatoin");
+                    }
+                }
+
+            }
+
+            else
+
+            {
+                throw new Exception(MethodName + " not found");
+            }
+
+            throw new Exception(MethodName + " missing setting infomatoin");
         }
 
         public static IPaymentResponse MakePayment(PaymentRequest request, RenderContext context)
         {
             EnsurePaymentRequest(request);
 
-            var method = GetMethod(request.PaymentMethod);
+            var method = GetMethod(request.PaymentMethod, context);
             method.Context = context;
 
             // save the request data..  
             var payment = method.Charge(request);
 
-            if (!string.IsNullOrEmpty(payment.PaymemtMethodReferenceId))
+            if (!string.IsNullOrEmpty(payment.paymemtMethodReferenceId))
             {
-                request.Reference = payment.PaymemtMethodReferenceId;
+                request.Reference = payment.paymemtMethodReferenceId;
 
                 SaveRequest(request, context);
             }
 
-            if (payment.PaymentRequestId == default(Guid))
+            if (payment.requestId == default(Guid))
             {
-                payment.PaymentRequestId = request.Id;
+                payment.requestId = request.Id;
             }
 
             if (payment is PaidResponse)
             {
-                CallBack(new PaymentCallback() { Status = PaymentStatus.Paid, PaymentRequestId = payment.PaymentRequestId }, context);
+                CallBack(new PaymentCallback() { Status = PaymentStatus.Paid, PaymentRequestId = payment.requestId }, context);
                 /////Kooboo.Server.Commerce.PaymentRequestService.Paid(payment.PaymentRequestId);
             }
             else if (payment is FailedResponse)
             {
-                CallBack(new PaymentCallback() { Status = PaymentStatus.Rejected, PaymentRequestId = payment.PaymentRequestId }, context);
+                CallBack(new PaymentCallback() { Status = PaymentStatus.Rejected, PaymentRequestId = payment.requestId }, context);
                 //Kooboo.Server.Commerce.PaymentRequestService.Cancel(payment.PaymentRequestId);
             }
 
@@ -179,12 +217,6 @@ namespace Kooboo.Web.Payment
 
             var baseurl = GetBaseUrl(context);
             return Lib.Helper.UrlHelper.Combine(baseurl, url);
-        }
-
-        public static string GetCallbackUrl(IPaymentMethod method, string MethodName, RenderContext context)
-        {
-            var baseurl = GetBaseUrl(context);
-            return baseurl + "/_api/paymentcallback/" + method.Name + "_" + MethodName;
         }
 
         public static void CallBack(PaymentCallback callback, RenderContext context)
@@ -269,7 +301,7 @@ namespace Kooboo.Web.Payment
 
         public static PaymentStatusResponse EnquireStatus(PaymentRequest Request, RenderContext context)
         {
-            var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(Request.PaymentMethod);
+            var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(Request.PaymentMethod, context);
             if (paymentmethod != null)
             {
                 paymentmethod.Context = context;

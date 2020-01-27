@@ -18,7 +18,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
 
         public PaymentStatusResponse CheckStatus(ApiCall call)
         {
-            var id = call.GetValue("paymentrequestid", "refid", "referenceId", "requestid");
+            var id = call.GetValue("paymentrequestid", "refid", "referenceId", "requestid", "id");
 
             if (!string.IsNullOrEmpty(id))
             {

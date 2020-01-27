@@ -12,14 +12,11 @@ namespace Kooboo.Web.Payment.Models
         public FailedResponse(string error)
         {
             this.Message = error;
-            this.Type = EnumResponseType.Failed;
-        }
-
-        public bool ActionRequired { get; set; }
-
+            this.Type = EnumResponseType.failed;
+        } 
         public string Message { get; set; }
-        public Guid PaymentRequestId { get; set; }
-        public string PaymemtMethodReferenceId { get; set; }
+        public Guid requestId { get; set; }
+        public string paymemtMethodReferenceId { get; set; }
         public EnumResponseType Type { get; set; }
     }
 }

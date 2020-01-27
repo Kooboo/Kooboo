@@ -1,4 +1,5 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
@@ -21,20 +22,21 @@ namespace Kooboo.Web.Payment
 
         string Icon { get; }
 
-        [Description("Img/Base64")]
+        [Description("Img/Base64")] 
         string IconType { get; }
 
+        [KIgnore]
         List<string> ForCurrency { get; }
 
+        [KIgnore]
         List<string> ExcludeCurrency { get; }
-
+         
         RenderContext Context { get; set; }
 
         IPaymentResponse Charge(PaymentRequest request);
 
         PaymentStatusResponse EnquireStatus(PaymentRequest request);
-
-        bool CanUse(RenderContext context); 
+         
 
     }
 

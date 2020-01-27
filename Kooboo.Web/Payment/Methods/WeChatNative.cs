@@ -19,7 +19,7 @@ namespace Kooboo.Web.Payment.Methods
     { 
         public override string Name => "wechat";
 
-        public override string DisplayName => Data.Language.Hardcoded.GetValue("wechat");
+        public override string DisplayName => Data.Language.Hardcoded.GetValue("wechat", Context);
 
         public override string Icon => "/_Admin/View/Market/Images/payment-wechat.jpg";
          
@@ -76,7 +76,7 @@ namespace Kooboo.Web.Payment.Methods
             //异步通知url未设置，则使用配置文件中的url
             // string notifurl = Manager.GetCallbackUrl(this, "Notify", site);
 
-            string notifurl = this.GetCallbackUrl(nameof(Notify), Context);  
+            string notifurl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);  
 
             data.SetValue("notify_url", notifurl); //异步通知url
 

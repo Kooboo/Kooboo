@@ -14,8 +14,7 @@ namespace Kooboo.Web.Payment
             {
                 // TODO: 
                 // Execute the ordering fullfill.... 
-                // TODO Process local payment. 
-              
+                // TODO Process local payment.
                 if (callback.Paid)
                 {
                     // TODO: do the payment ok action... 

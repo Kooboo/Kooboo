@@ -20,7 +20,7 @@ namespace Kooboo.Web.Payment
             get
             {
                 if (_id == default(Guid))
-                    _id = Guid.NewGuid();
+                    _id = Lib.Helper.IDHelper.NewTimeGuid(DateTime.UtcNow);
                 return _id;
             }
             set { _id = value; }
@@ -71,7 +71,6 @@ namespace Kooboo.Web.Payment
         }
 
         // Pending — your payment has not been sent to the bank or credit card processor.
-
         public PaymentStatus Status { get; set; }
 
         // response to payment provider. 

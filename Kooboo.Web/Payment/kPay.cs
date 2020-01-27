@@ -8,55 +8,36 @@ using System.Linq;
 
 namespace Kooboo.Web.Payment
 {
+     
     public class kPay : IkScript
     {
         public string Name => "Payment";
 
+        [KIgnore]
         public RenderContext context { get; set; }
 
         [KIgnore]
-        public KPaymentMethodMapper this[string key]
+        public KPaymentMethodWrapper this[string key]
         {
             get
             {
-                var PaymentMethodType = Kooboo.Web.Payment.PaymentManager.GetMethodType(key);
-                if (PaymentMethodType != null)
-                {
-                    var sitedb = this.context.WebSite.SiteDb();
+                return Get(key); 
+            } 
+        }
 
-                    var paymentmethod = Activator.CreateInstance(PaymentMethodType) as IPaymentMethod;
-                    paymentmethod.Context = this.context;
-
-                    if (Lib.Reflection.TypeHelper.HasGenericInterface(PaymentMethodType, typeof(IPaymentMethod<>))) 
-                    { 
-                        
-                        var settingtype = Lib.Reflection.TypeHelper.GetGenericType(PaymentMethodType);
-
-                        if (settingtype != null)
-                        {
-                            var settingvalue = sitedb.CoreSetting.GetSiteSetting(settingtype) as IPaymentSetting;
-                            //Setting
-                            var setter = Lib.Reflection.TypeHelper.GetSetObjectValue("Setting", PaymentMethodType, settingtype);
-                            setter(paymentmethod, settingvalue);
-                        }
-
-                    }
- 
-
-                    KPaymentMethodMapper method = new KPaymentMethodMapper();
-                    method.Context = this.context;
-                    method.PaymentMethod = paymentmethod;
-                    return method;
-                }
-                return null;
+       public KPaymentMethodWrapper Get(string PaymentMothod)
+        {
+            var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(PaymentMothod, this.context);
+            if (paymentmethod != null)
+            {
+                KPaymentMethodWrapper method = new KPaymentMethodWrapper(paymentmethod, this.context); 
+                return method;
             }
-            set { }
+            return null;
         }
 
         [KExtension]
-        static KeyValuePair<string, Type>[] _ = PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, Type>(s.Name, s.GetType())).ToArray();
-
-
+        static KeyValuePair<string, Type>[] _ = PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, Type>(s.Name, s.GetType())).ToArray();  
 
     }
 }

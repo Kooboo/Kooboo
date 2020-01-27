@@ -6,15 +6,22 @@ using Kooboo.Web.Payment.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Kooboo.Web.Payment.Repository; 
+using Kooboo.Web.Payment.Repository;
+using System.ComponentModel;
 
 namespace Kooboo.Web.Payment
 {
-    public class KPaymentMethodMapper
-    { 
-        public RenderContext Context { get; set; }
+    public class KPaymentMethodWrapper
+    {
+        public KPaymentMethodWrapper(IPaymentMethod paymentMethod, RenderContext context)
+        {
+            this.PaymentMethod = paymentMethod;
+            this.Context = context;
+        }
 
-        public IPaymentMethod PaymentMethod { get; set; }
+        private RenderContext Context { get; set; }
+
+        private IPaymentMethod PaymentMethod { get; set; }
 
         public IPaymentResponse Charge(object value)
         {
@@ -22,40 +29,39 @@ namespace Kooboo.Web.Payment
 
             var sitedb = this.Context.WebSite.SiteDb();
 
-            var repo = sitedb.GetSiteRepository<Kooboo.Web.Payment.Repository.TempPaymentRequestRepository>(); 
-            repo.AddOrUpdate(request); 
+            var repo = sitedb.GetSiteRepository<Kooboo.Web.Payment.Repository.TempPaymentRequestRepository>();
+            repo.AddOrUpdate(request);
 
             //TODO, validate data.
-            return this.PaymentMethod.Charge(request); 
+            return this.PaymentMethod.Charge(request);
         }
-          
 
+        [Description("Submit additional data required by payment method")]
         public IPaymentResponse SubmitData(object data)
         {
-            return null; 
+            return null;
         }
-        
-        // Dynamic method for... 
-        public PaymentStatusResponse CheckStatus(object requestId)
+
+        public PaymentStatusResponse Check(object requestId)
         {
-           if (requestId == null)
+            if (requestId == null)
             {
                 string strid = requestId.ToString();
-                Guid id; 
+                Guid id;
                 if (System.Guid.TryParse(strid, out id))
-                { 
-                    var request = Kooboo.Web.Payment.PaymentManager.GetRequest(id, Context); 
-                     
-                    if (request !=null)
+                {
+                    var request = Kooboo.Web.Payment.PaymentManager.GetRequest(id, Context);
+
+                    if (request != null)
                     {
-                        return this.PaymentMethod.EnquireStatus(request); 
+                        return this.PaymentMethod.EnquireStatus(request);
                     }
                 }
             }
 
-            return new PaymentStatusResponse(); 
+            return new PaymentStatusResponse();
         }
-         
+
         internal PaymentRequest ParseRequest(object dataobj)
         {
             PaymentRequest request = new PaymentRequest();
@@ -71,27 +77,27 @@ namespace Kooboo.Web.Payment
 
             request.Name = GetValue<string>(idict, dynamicobj, "name", "title");
             request.Description = GetValue<string>(idict, dynamicobj, "des", "description", "detail");
-            request.Currency = GetValue<string>(idict, dynamicobj, "currency"); 
-            request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount",  "total","totalAmount", "totalamount");
+            request.Currency = GetValue<string>(idict, dynamicobj, "currency");
+            request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount", "total", "totalAmount", "totalamount");
 
-            if (this.PaymentMethod !=null)
+            if (this.PaymentMethod != null)
             {
                 request.PaymentMethod = PaymentMethod.Name;
             }
-       
-            request.OrderId = GetValue<Guid>(idict, dynamicobj, "orderId", "orderid"); 
+
+            request.OrderId = GetValue<Guid>(idict, dynamicobj, "orderId", "orderid");
             if (request.OrderId == default(Guid))
             {
-                request.Order = GetValue<string>(idict, dynamicobj, "order", "orderId"); 
+                request.Order = GetValue<string>(idict, dynamicobj, "order", "orderId");
             }
 
             request.Code = GetValue<string>(idict, dynamicobj, "code");
             request.Reference = GetValue<string>(idict, dynamicobj, "ref", "reference");
 
-            return request; 
+            return request;
         }
-          
-        public T GetValue<T>(System.Collections.IDictionary idict, IDictionary<string, object> Dynamic,  params string[] fieldnames)
+
+        private T GetValue<T>(System.Collections.IDictionary idict, IDictionary<string, object> Dynamic, params string[] fieldnames)
         {
             var type = typeof(T);
 
@@ -107,19 +113,19 @@ namespace Kooboo.Web.Payment
                 {
                     Value = Accessor.GetValue(Dynamic, item, type);
                 }
-                
-                if (Value !=null)
+
+                if (Value != null)
                 {
-                    break; 
-                } 
+                    break;
+                }
             }
 
-            if (Value !=null)
+            if (Value != null)
             {
-                return (T)Value; 
+                return (T)Value;
             }
 
-            return default(T);  
+            return default(T);
         }
 
     }

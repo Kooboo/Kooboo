@@ -10,14 +10,12 @@ namespace Kooboo.Web.Payment.Models
     public class PaidResponse : IPaymentResponse
     {
         public PaidResponse()
-        {
-            this.ActionRequired = false;
-            this.Type = EnumResponseType.Paid; 
+        { 
+            this.Type = EnumResponseType.paid; 
         }
-
-        public bool ActionRequired { get;  set; }
-        public Guid PaymentRequestId { get; set; }
-        public string PaymemtMethodReferenceId { get; set; }
+         
+        public Guid requestId { get; set; }
+        public string paymemtMethodReferenceId { get; set; }
         public EnumResponseType Type { get; set; }
     }
 }

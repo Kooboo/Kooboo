@@ -12,11 +12,9 @@ namespace Kooboo.Web.Payment.Models
         public RedirectResponse(string redirectUrl, Guid requestId)
         {
             RedirectUrl = redirectUrl;
-            this.Type = EnumResponseType.Redirect; 
+            this.Type = EnumResponseType.redirect; 
         }
-
-        public bool ActionRequired {get;  set;  }
-
+          
         public string RedirectUrl { get; set; }
 
         // backward compatible. 
@@ -25,8 +23,8 @@ namespace Kooboo.Web.Payment.Models
                 return this.RedirectUrl; 
             } }
          
-        public Guid PaymentRequestId { get; set; }
-        public string PaymemtMethodReferenceId { get; set; }
+        public Guid requestId { get; set; }
+        public string paymemtMethodReferenceId { get; set; }
         public EnumResponseType Type { get; set; }
     }
 }
