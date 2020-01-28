@@ -27,22 +27,21 @@ namespace Kooboo.Web.Payment
         {
             var request = ParseRequest(value);
 
+            PaymentManager.ValidateRequest(this.PaymentMethod, request, this.Context);
+
             var sitedb = this.Context.WebSite.SiteDb();
 
             var repo = sitedb.GetSiteRepository<Kooboo.Web.Payment.Repository.TempPaymentRequestRepository>();
             repo.AddOrUpdate(request);
-
-            //TODO, validate data.
-            return this.PaymentMethod.Charge(request);
+            var result = this.PaymentMethod.Charge(request);
+            if (!string.IsNullOrWhiteSpace(request.Code) || !string.IsNullOrWhiteSpace(request.ReferenceId))
+            {
+                repo.AddOrUpdate(request);
+            }
+            return result;
         }
 
-        [Description("Submit additional data required by payment method")]
-        public IPaymentResponse SubmitData(object data)
-        {
-            return null;
-        }
-
-        public PaymentStatusResponse Check(object requestId)
+        public PaymentStatusResponse checkStatus(object requestId)
         {
             if (requestId == null)
             {
@@ -54,7 +53,7 @@ namespace Kooboo.Web.Payment
 
                     if (request != null)
                     {
-                        return this.PaymentMethod.EnquireStatus(request);
+                        return this.PaymentMethod.checkStatus(request);
                     }
                 }
             }
@@ -64,6 +63,8 @@ namespace Kooboo.Web.Payment
 
         internal PaymentRequest ParseRequest(object dataobj)
         {
+            Dictionary<string, object> additionals = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
             PaymentRequest request = new PaymentRequest();
 
             System.Collections.IDictionary idict = dataobj as System.Collections.IDictionary;
@@ -73,6 +74,32 @@ namespace Kooboo.Web.Payment
             if (idict == null)
             {
                 dynamicobj = dataobj as IDictionary<string, object>;
+                foreach (var item in dynamicobj)
+                {
+                    additionals[item.Key] = item.Value;
+                }
+            }
+            else
+            {
+                foreach (var item in idict.Keys)
+                {
+                    if (item != null)
+                    {
+                        additionals[item.ToString()] = idict[item];
+                    }
+                }
+            }
+
+            request.Additional = additionals;
+
+
+            var id = GetValue<string>(idict, dynamicobj, "id", "requestId", "paymentrequestid");
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                if (Guid.TryParse(id, out Guid requestid))
+                {
+                    request.Id = requestid;
+                }
             }
 
             request.Name = GetValue<string>(idict, dynamicobj, "name", "title");
@@ -92,7 +119,8 @@ namespace Kooboo.Web.Payment
             }
 
             request.Code = GetValue<string>(idict, dynamicobj, "code");
-            request.Reference = GetValue<string>(idict, dynamicobj, "ref", "reference");
+
+            request.ReferenceId = GetValue<string>(idict, dynamicobj, "ref", "reference");
 
             return request;
         }

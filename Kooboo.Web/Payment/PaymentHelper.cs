@@ -38,5 +38,23 @@ namespace Kooboo.Web.Payment
             return baseurl;
         }
 
+        public static string EnsureHttpUrl(string AbsOrRelativeUrl, RenderContext context)
+        {
+            if (string.IsNullOrWhiteSpace(AbsOrRelativeUrl))
+            {
+                return null;
+            }
+            if (AbsOrRelativeUrl.ToLower().StartsWith("http://") || AbsOrRelativeUrl.ToLower().StartsWith("https://"))
+            {
+                return AbsOrRelativeUrl;
+            }
+
+            var baseurl = GetBaseUrl(context);
+            return Lib.Helper.UrlHelper.Combine(baseurl, AbsOrRelativeUrl);
+        } 
+ 
+         
+
+
     }
 }

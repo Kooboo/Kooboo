@@ -1,11 +1,13 @@
 ﻿using Kooboo.Data;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Interface;
 using System;
- 
+using System.Collections.Generic;
+
 namespace Kooboo.Data.Models
 {
     public class PaymentRequest : IGolbalObject, ISiteObject
-    {  
+    {   
         public PaymentRequest() { }
          
         private Guid _id; 
@@ -30,14 +32,18 @@ namespace Kooboo.Data.Models
         // additional info if needed. 
         public string Description { get; set; }
 
+        [KIgnore]
+        [Obsolete]
         public Guid OrganizationId { get; set; }
 
+        [KIgnore]
+        [Obsolete]
         public Guid WebSiteId { get; set; }
           
         public decimal TotalAmount { get; set; }
 
-        public string Currency { get; set; } = "USD"; 
-
+        public string Currency { get; set; }
+         
         public Guid OrderId { get; set; }
 
         public string Order { get; set; }
@@ -46,15 +52,19 @@ namespace Kooboo.Data.Models
 
         public string PaymentMethod { get; set; }  
           
-        public bool IsPaid { get; set; }
+        public bool Paid { get; set; }
          
-        public bool IsCancel { get; set; } 
-   
-        // coupon or other codes. 
+        public bool Failed { get; set; }
+    
+        /// <summary>
+        /// coupon or other codes.
+        /// </summary>
         public string Code { get; set; }
-
-        //The reference id at the payment provider. 
-        public string Reference { get; set; }
+         
+        /// <summary>
+        /// The reference id at the payment provider if any. 
+        /// </summary>
+        public string ReferenceId { get; set; }
 
         public string ReturnPath { get; set; }
          
@@ -75,8 +85,7 @@ namespace Kooboo.Data.Models
                 _creationdate = value;  
             }
         }
-
-
+         
         private DateTime _lastmodified; 
         public DateTime LastModified {
             get
@@ -94,18 +103,45 @@ namespace Kooboo.Data.Models
 
         }
 
+        private Dictionary<string, object> _Additional; 
+        public Dictionary<string,object> Additional {
+            get
+            {
+                if (_Additional == null)
+                {
+                    _Additional = new Dictionary<string, object>(); 
+                }
+                return _Additional; 
+            }
+            set
+            {
+                _Additional = value; 
+            }
+        }
+
         public override int GetHashCode()
         { 
-            string unique = this.Code + this.Currency + this.Description + this.IsCancel.ToString() + this.IsPaid.ToString();
+            string unique = this.Code + this.Currency + this.Description + this.Failed.ToString() + this.Paid.ToString();
 
-            unique += this.Name + this.OrderId.ToString() + this.OrganizationId.ToString() + this.PaymentMethod;
-
-            unique += this.Reference + this.TotalAmount.ToString() + this.UserIp + this.WebSiteId.ToString();
-
-            unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString(); 
-
+            unique += this.Name + this.OrderId.ToString() + this.PaymentMethod; 
+            unique += this.ReferenceId + this.TotalAmount.ToString() + this.UserIp; 
+            unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString();  
             unique += this.ReturnPath; 
 
+            if (_Additional !=null)
+            {
+                foreach (var item in _Additional)
+                {
+                    if (item.Key !=null)
+                    {
+                        unique += item.Key; 
+                    }
+                    if (item.Value !=null)
+                    {
+                        unique += item.Value.ToString(); 
+                    }
+                } 
+            } 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
 

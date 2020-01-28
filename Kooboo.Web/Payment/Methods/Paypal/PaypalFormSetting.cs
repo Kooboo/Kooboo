@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kooboo.Web.Payment.Methods
 {
-    public class PaypalFormPaymentSetting : IPaymentSetting
+    public class PaypalFormSetting : IPaymentSetting
     {
         public string PaypalUrl
         {

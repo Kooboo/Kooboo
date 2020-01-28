@@ -25,7 +25,7 @@ namespace Kooboo.Web.Payment
             }
             set { _id = value; }
         }
-        public Guid PaymentRequestId { get; set; }
+        public Guid RequestId { get; set; }
           
         public string ResponseMessage { get; set; }
 
@@ -44,7 +44,7 @@ namespace Kooboo.Web.Payment
         public bool Paid {
             get 
             { 
-                return  Status == PaymentStatus.Paid;  }
+                return  Status == PaymentStatus.Paid || this.Status == PaymentStatus.Authorized;  }
         }
           
         public bool Cancelled { 

@@ -11,20 +11,21 @@ using Kooboo.Web.Payment;
 using Kooboo.Web.Payment.Methods;
 using Kooboo.Web.Payment.Models;
 using WxPayAPI;
-using Kooboo.Data.Attributes; 
+using Kooboo.Data.Attributes;
+using System.ComponentModel;
 
 namespace Kooboo.Web.Payment.Methods
 {
-    public class WeChatNative : PaymentMethodBase<WeChatSetting>
+    public class WeChatNative : IPaymentMethod<WeChatSetting>
     { 
-        public override string Name => "wechat";
+        public   string Name => "wechat";
 
-        public override string DisplayName => Data.Language.Hardcoded.GetValue("wechat", Context);
+        public   string DisplayName => Data.Language.Hardcoded.GetValue("wechat", Context);
 
-        public override string Icon => "/_Admin/View/Market/Images/payment-wechat.jpg";
+        public   string Icon => "/_Admin/View/Market/Images/payment-wechat.jpg";
          
 
-        public override List<string> ForCurrency
+        public   List<string> supportedCurrency
         {
             get
             {
@@ -34,9 +35,32 @@ namespace Kooboo.Web.Payment.Methods
             }
         }
 
+        public WeChatSetting Setting { get; set; }
 
-         [KDefineType(Return =typeof(QRCodeResponse))]
-        public override IPaymentResponse Charge(PaymentRequest request)  
+        public string IconType => "img";
+  
+        public RenderContext Context { get; set; }
+
+        [KDefineType(Return =typeof(QRCodeResponse))]
+        [Description(@"Pay by wechat barcode scan. Example:
+<script engine=""kscript"">
+var charge = {};
+charge.total = 1.50; 
+charge.name = ""green tea order""; 
+charge.description = ""The best tea from Xiamen"";  
+var res = k.payment.wechat.charge(charge);
+</script>
+<div k-content=""res.html""></div>
+<div id=""paymentRefId"" style=""display:none;"" k-content=""res.requestId""></div>
+<script>
+function checkStatus()
+{ var url = ""/_api/payment/CheckStatus?id=""+ document.getElementById(""paymentRefId"").innerText; 
+  $.ajax({url: url }).done(function(res) {
+   if (res.model.paid)
+   { alert('pay successfully.'); clearInterval(timerid);  } }); } 
+var timerid = setInterval(checkStatus, 1000);  
+</script>")]
+        public   IPaymentResponse Charge(PaymentRequest request)  
         {  
             WxPayData data = new WxPayData();
              
@@ -91,8 +115,7 @@ namespace Kooboo.Web.Payment.Methods
 
             return new QRCodeResponse(url, request.Id); 
         }
-
-
+         
         public PaymentCallback Notify(RenderContext context)
         {
             string postdata = context.Request.Body;
@@ -178,7 +201,7 @@ namespace Kooboo.Web.Payment.Methods
 
                 result.CallbackResponse = response;
 
-                result.PaymentRequestId = RequestId;
+                result.RequestId = RequestId;
 
                 var objcode = data.GetValue("result_code");
 
@@ -194,32 +217,15 @@ namespace Kooboo.Web.Payment.Methods
                     {
                         result.Status = PaymentStatus.Rejected;  
                     }
-                    //业务结果 result_code 是 String(16)	SUCCESS SUCCESS/ FAIL
+                    //业务结果 result_code 是 String(16)	SUCCESS SUCCESS/ FAIL 
                 } 
              
                 return result;
             }
 
         }
-
-
-        [Obsolete]
-        public IPaymentResponse GetPaymentStatus(RenderContext context)
-        {
-            Guid paymentRequestId;
-            if (Guid.TryParse(context.Request.GetValue("paymentRequestId"), out paymentRequestId))
-            {
-                var request = this.GetRequest(paymentRequestId, context); 
-                if (request !=null)
-                {
-                    //return EnquireStatus(request, context); 
-                }
-            }
-
-            return null; 
-        }
-  
-        public override PaymentStatusResponse EnquireStatus(PaymentRequest request)
+          
+        public  PaymentStatusResponse checkStatus(PaymentRequest request)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();
               

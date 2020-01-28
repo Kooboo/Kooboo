@@ -12,7 +12,7 @@ namespace Kooboo.Web.Payment.Repository
             get
             {
                 ObjectStoreParameters para = new ObjectStoreParameters(); 
-                para.AddColumn<PaymentCallback>(o => o.PaymentRequestId); 
+                para.AddColumn<PaymentCallback>(o => o.RequestId); 
                 return para;
             }
         } 

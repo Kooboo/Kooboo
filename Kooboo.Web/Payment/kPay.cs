@@ -11,6 +11,8 @@ namespace Kooboo.Web.Payment
      
     public class kPay : IkScript
     {
+
+        [KIgnore]
         public string Name => "Payment";
 
         [KIgnore]

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Web.Payment.Response;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Kooboo.Web.Payment.Models
 {
@@ -17,6 +19,9 @@ namespace Kooboo.Web.Payment.Models
         public string Message { get; set; }
         public Guid requestId { get; set; }
         public string paymemtMethodReferenceId { get; set; }
+
+
+        [JsonConverter(typeof(StringEnumConverter))]
         public EnumResponseType Type { get; set; }
     }
 }

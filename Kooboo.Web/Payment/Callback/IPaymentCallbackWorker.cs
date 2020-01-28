@@ -7,7 +7,6 @@ namespace Kooboo.Web.Payment
 {
    public interface IPaymentCallbackWorker
     {
-        void Process(PaymentCallback callback, RenderContext context); 
-
+        void Process(PaymentCallback callback, RenderContext context);  
     }
 }

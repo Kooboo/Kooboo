@@ -14,8 +14,8 @@ namespace Kooboo.Web.Payment.Repository
             {
                 ObjectStoreParameters para = new ObjectStoreParameters();
                 para.AddIndex<PaymentRequest>(o => o.OrderId);
-                para.AddColumn<PaymentRequest>(o => o.IsPaid);
-                para.AddColumn<PaymentRequest>(o => o.IsCancel);
+                para.AddColumn<PaymentRequest>(o => o.Paid);
+                para.AddColumn<PaymentRequest>(o => o.Failed);
                 return para;
             }
         }
@@ -25,7 +25,7 @@ namespace Kooboo.Web.Payment.Repository
             var reqeust = this.Get(ReqeustId);
             if (reqeust != null)
             {
-                this.Store.UpdateColumn<bool>(ReqeustId, o => o.IsPaid, true);
+                this.Store.UpdateColumn<bool>(ReqeustId, o => o.Paid, true);
                 return true;
             }
             else
@@ -39,7 +39,7 @@ namespace Kooboo.Web.Payment.Repository
             var reqeust = this.Get(ReqeustId);
             if (reqeust != null)
             {
-                this.Store.UpdateColumn<bool>(ReqeustId, o => o.IsCancel, true);
+                this.Store.UpdateColumn<bool>(ReqeustId, o => o.Failed, true);
                 return true;
             }
             else

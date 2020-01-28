@@ -110,6 +110,27 @@ namespace Kooboo.Data.Log
                 newwriter.Write(message); 
             }
         }
+
+        private static LogWriter _payment;
+        public static LogWriter Payment
+        {
+            get
+            {
+                if (_payment == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_payment == null)
+                        {
+                            _payment = new LogWriter("payment");
+                        }
+                    }
+                }
+                return _payment;
+            }
+        }
+
+
     }
  
 }

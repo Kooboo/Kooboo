@@ -41,14 +41,15 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         // To be used for above method. 
         public IResponse Callback(ApiCall call)
         {
+            log(call); 
+
             string name = call.Command.Method;
 
             int index = name.IndexOf("_");
             if (index == -1)
             {
                 return null;
-            }
-
+            } 
             var paymentname = name.Substring(0, index);
             var methodname = name.Substring(index + 1);
 
@@ -86,5 +87,41 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             return null;
         }
 
+
+        private void log(ApiCall call)
+        {
+            try
+            {
+                Dictionary<string, string[]> query = new Dictionary<string, string[]>(); 
+                foreach (var item in call.Context.Request.QueryString.Keys)
+                {
+                    var key = item.ToString(); 
+                    var value = call.Context.Request.QueryString.GetValues(key); 
+                    if (value !=null)
+                    {
+                        query[key] = value; 
+                    } 
+                }
+
+                Dictionary<string, string[]> forms = new Dictionary<string, string[]>();
+                foreach (var item in call.Context.Request.Forms.Keys)
+                {
+                    var key = item.ToString();
+                    var value = call.Context.Request.Forms.GetValues(key);
+                    if (value != null)
+                    {
+                        forms[key] = value;
+                    }
+                }
+
+                Kooboo.Data.Log.Instance.Payment.Write("---" + call.Context.Request.Url);
+                Kooboo.Data.Log.Instance.Payment.WriteObj(query);
+                Kooboo.Data.Log.Instance.Payment.WriteObj(forms);
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+            }
+        }
     }
 }

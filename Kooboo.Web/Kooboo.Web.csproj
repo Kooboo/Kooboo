@@ -44,6 +44,7 @@
     <Compile Remove="Backend\Menus\ISideBarMenu.cs" />
     <Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
     <Compile Remove="Backend\Menus\SideBarSection.cs" />
+    <Compile Remove="Payment\PaymentMethodBase.cs" />
     <Compile Remove="Payment\PaymentRequest.cs" />
   </ItemGroup>
 

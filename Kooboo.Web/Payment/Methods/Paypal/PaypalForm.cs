@@ -8,19 +8,20 @@ using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
 using Kooboo.Web.Payment.Response;
 using Kooboo.Data.Attributes;
+using System.ComponentModel;
 
 namespace Kooboo.Web.Payment.Methods
 {
-    public class PaypalForm : PaymentMethodBase<PaypalFormPaymentSetting>
+    public class PaypalForm : IPaymentMethod<PaypalFormSetting>
     { 
-        public override string Name { get => "PaypalForm"; }
-        public override string DisplayName { get => Data.Language.Hardcoded.GetValue("Paypal"); }
+        public   string Name { get => "PaypalForm"; }
+        public   string DisplayName { get => Data.Language.Hardcoded.GetValue("Paypal"); }
 
-        public override string Icon { get => "/_Admin/View/Market/Images/payment-paypal.jpg"; }
+        public   string Icon { get => "/_Admin/View/Market/Images/payment-paypal.jpg"; }
 
         private List<string> _currency;
         // see: https://developer.paypal.com/docs/classic/api/currency_codes/
-        public override List<string> ForCurrency
+        public   List<string> supportedCurrency
         {
             get
             {
@@ -57,6 +58,12 @@ namespace Kooboo.Web.Payment.Methods
             }
         }
 
+        public PaypalFormSetting Setting { get; set; }
+
+        public string IconType => "img";
+  
+        public RenderContext Context { get; set; }
+
         // see: https://developer.paypal.com/docs/classic/api/currency_codes/
         private string ToCurrencyString(string Currency, decimal amount)
         {
@@ -75,122 +82,37 @@ namespace Kooboo.Web.Payment.Methods
             return amount.ToString("0.00");
         }
 
-        [KDefineType(Return = typeof(HiddenFormResponse))]
-        public override IPaymentResponse Charge(PaymentRequest request)
-        {
-            HiddenFormResponse res = new HiddenFormResponse();
 
+        [Description(@"Pay by submitting hidden form values to Paypal. Example:
+<script engine='kscript'>
+var charge = {};
+charge.total = 1.50; 
+charge.currency='USD';
+charge.name = 'Tea from Xiamen'; 
+var resForm = k.payment.paypalForm.charge(charge);  
+</script>  
+<div k-content='resForm.html'></div>")]
+        [KDefineType(Return = typeof(HiddenFormResponse))]
+        public  IPaymentResponse Charge(PaymentRequest request)
+        {
+            HiddenFormResponse res = new HiddenFormResponse(); 
             string currency = request.Currency;
             decimal total = request.TotalAmount;
-            var formUrl = PaymentHelper.GetCallbackUrl(this, nameof(GenerateRedirectForm), this.Context);
-
-            formUrl = Lib.Helper.UrlHelper.AppendQueryString(formUrl, "paymentrequestid", request.Id.ToString());
-
-            var result = new RedirectResponse(formUrl, request.Id);
-            result.paymemtMethodReferenceId = request.Id.ToString(); 
-            return result;
+             var data = GetFieldValues(request);
+            res.fieldValues = new KScript.KDictionary(data);
+            res.html = GetHtmlForm(request);  
+            res.SubmitUrl =  this.Setting.PaypalUrl;
+            res.method = "POST";  
+            return res;
         }
 
-        // see: https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/formbasics/
-        public PaymentCallback GenerateRedirectForm(RenderContext context)
-        {
-            PaymentCallback result = new PaymentCallback();
-
-            var strrequestid = context.Request.Get("paymentRequestId");
-            Guid requestId;
-
-            if (System.Guid.TryParse(strrequestid, out requestId))
-            {
-                var request = this.GetRequest(requestId, context);
-                if (request != null)
-                {
-
-                    if (this.Setting != null)
-                    {
-                        var notifyUrl = PaymentHelper.GetCallbackUrl(this, nameof(NofityUrl), context);
-                        string returnurl = this.EnsureHttpUrl(this.Setting.ReturnUrl, context);
-                        string cancalurl = this.EnsureHttpUrl(this.Setting.CancelUrl, context);
-                        string imageurl = this.EnsureHttpUrl(this.Setting.LogoImage, context);
-
-                        string paypalurl = this.Setting.PaypalUrl;
-
-                        string formhtml = "<form name='paypal' action='" + paypalurl + "' method='post'>\r\n";
-
-                        //  Buy Now buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_xclick" >
-                        //Shopping cart buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_cart" >
-                        // Subscribe buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_xclick-subscriptions" >
-                        //Automatic Billing buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_xclick-auto-billing" >
-                        //Installment Plan buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_xclick-payment-plan" >
-                        //  Donate buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_donations" >
-
-
-                        formhtml += "<input type = 'hidden' name = 'cmd' value = '_xclick' />\r\n";
-
-
-                        formhtml += "<input type = 'hidden' name = 'charset' value = 'utf-8' /> \r\n";
-                        formhtml += "<input type = 'hidden' name = 'business' value = '" + this.Setting.EmailAddress + "' />\r\n";
-                        formhtml += "<input type = 'hidden' name = 'no_shipping' value = '1' >\r\n";
-                        formhtml += "<input type = 'hidden' name = 'no_note' value = '1' />\r\n";
-                        formhtml += "<input type = 'hidden' name = 'currency_code' value = '" + request.Currency + "' /> \r\n";
-                        formhtml += "<input type = 'hidden' name = 'cancel_return' value = '" + cancalurl + "' />\r\n";
-                        formhtml += "<input type = 'hidden' name = 'notify_url' value = '" + notifyUrl + "' /> \r\n";
-                        formhtml += "<input type = 'hidden' name = 'return' value = '" + returnurl + "' /> \r\n";
-                        formhtml += "<input type = 'hidden' name = 'image_url' value = '" + imageurl + "' />\r\n";
-                        formhtml += "<input type = 'hidden' name = 'item_name' value = '" + GetRequestName(request.Name) + "' /> \r\n";
-                        formhtml += "<input type = 'hidden' name = 'amount' value = '" + this.ToCurrencyString(request.Currency, request.TotalAmount) + "' />\r\n";
-
-
-                        // FROM paypal: Pass-through variable for you to track product or service purchased or the contribution made. The value you specify is passed back to you upon payment completion. Required if you want PayPal to track either inventory or profit and loss for the item the button sells.
-
-                        formhtml += "<input type = 'hidden' name = 'item_number' value = '" + request.Id.ToString("N") + "' /> \r\n";
-
-                        //  formhtml += "<input type = 'hidden' name = 'on1' value = 'paymentrequestid' /> \r\n";
-                        //  formhtml += "<input type = 'hidden' name = 'os1' value = '" + request.Id.ToString() + "' /> \r\n";
-
-                        ////rm
-                        // Optional
-                        ///Return method.The FORM METHOD used to send data to the URL specified by the return variable.
-
-                        //Valid value is:
-
-                        //0.All shopping cart payments use the GET method.
-                        //1.The buyer's browser is redirected to the return URL by using the GET method, but no payment variables are included.
-                        //2.The buyer's browser is redirected to the return URL by using the POST method, and all payment variables are included.
-                        //                        ///
-
-
-                        formhtml += "<input type = 'hidden' name = 'rm' value = '2' />\r\n";
-
-
-                        formhtml += "<input type = 'submit' name = 'submit' id='submit' style='display: none' value='please wait ...' />\r\n";
-                        formhtml += "<script>document.getElementById('submit').click() </script></form>";
-
-
-                        var response = new PlainResponse();
-                        response.ContentType = "text/html";
-                        response.Content = formhtml;
-
-                        result.CallbackResponse = response;
-
-                        return result;
-                    }
-
-                }
-            }
-
-            var errorresponse = new PlainResponse();
-            errorresponse.ContentType = "Application/Json";
-            errorresponse.Content = "application error";
-            result.CallbackResponse = errorresponse;
-            return result;
-        }
-
+        // see: https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/formbasics/ 
         private string GetHtmlForm(PaymentRequest request)
         {
             var notifyUrl = PaymentHelper.GetCallbackUrl(this, nameof(NofityUrl), this.Context);
-            string returnurl = this.EnsureHttpUrl(this.Setting.ReturnUrl, this.Context);
-            string cancalurl = this.EnsureHttpUrl(this.Setting.CancelUrl, this.Context);
-            string imageurl = this.EnsureHttpUrl(this.Setting.LogoImage, this.Context);
+            string returnurl = PaymentHelper.EnsureHttpUrl(this.Setting.ReturnUrl, this.Context);
+            string cancalurl = PaymentHelper.EnsureHttpUrl(this.Setting.CancelUrl, this.Context);
+            string imageurl = PaymentHelper.EnsureHttpUrl(this.Setting.LogoImage, this.Context);
 
             string paypalurl = this.Setting.PaypalUrl;
 
@@ -215,8 +137,7 @@ namespace Kooboo.Web.Payment.Methods
             formhtml += "<input type = 'hidden' name = 'image_url' value = '" + imageurl + "' />\r\n";
             formhtml += "<input type = 'hidden' name = 'item_name' value = '" + GetRequestName(request.Name) + "' /> \r\n";
             formhtml += "<input type = 'hidden' name = 'amount' value = '" + this.ToCurrencyString(request.Currency, request.TotalAmount) + "' />\r\n";
-
-
+             
             // FROM paypal: Pass-through variable for you to track product or service purchased or the contribution made. The value you specify is passed back to you upon payment completion. Required if you want PayPal to track either inventory or profit and loss for the item the button sells.
 
             formhtml += "<input type = 'hidden' name = 'item_number' value = '" + request.Id.ToString("N") + "' /> \r\n";
@@ -237,8 +158,7 @@ namespace Kooboo.Web.Payment.Methods
             formhtml += "<input type = 'hidden' name = 'rm' value = '2' />\r\n";
 
             formhtml += "<input type = 'submit' name = 'submit' id='submit' style='display: none' value='please wait ...' />\r\n";
-            formhtml += "<script>document.getElementById('submit').click() </script></form>";
-
+            formhtml += "<script>document.getElementById('submit').click() </script></form>"; 
             return formhtml;
         }
 
@@ -247,9 +167,9 @@ namespace Kooboo.Web.Payment.Methods
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             var notifyUrl = PaymentHelper.GetCallbackUrl(this, nameof(NofityUrl), this.Context);
-            string returnurl = this.EnsureHttpUrl(this.Setting.ReturnUrl, this.Context);
-            string cancalurl = this.EnsureHttpUrl(this.Setting.CancelUrl, this.Context);
-            string imageurl = this.EnsureHttpUrl(this.Setting.LogoImage, this.Context);
+            string returnurl = PaymentHelper.EnsureHttpUrl(this.Setting.ReturnUrl, this.Context);
+            string cancalurl = PaymentHelper.EnsureHttpUrl(this.Setting.CancelUrl, this.Context);
+            string imageurl = PaymentHelper.EnsureHttpUrl(this.Setting.LogoImage, this.Context);
 
             string paypalurl = this.Setting.PaypalUrl;
 
@@ -315,8 +235,7 @@ namespace Kooboo.Web.Payment.Methods
 
             return result;
         }
-
-
+         
         private string GetRequestName(string name)
         {
             if (!string.IsNullOrEmpty(name))
@@ -349,7 +268,7 @@ namespace Kooboo.Web.Payment.Methods
                 Guid paymentRequestId;
                 if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
                 {
-                    var paymentRequest = this.GetRequest(paymentRequestId, context);
+                    var paymentRequest = PaymentManager.GetRequest(paymentRequestId, context);
 
                     if (paymentRequest == null || this.Setting == null)
                     {
@@ -372,7 +291,7 @@ namespace Kooboo.Web.Payment.Methods
                     {
                         var callback = new PaymentCallback()
                         {
-                            PaymentRequestId = paymentRequestId,
+                            RequestId = paymentRequestId,
                         };
 
                         if (paymentStatus != null)
@@ -471,6 +390,10 @@ namespace Kooboo.Web.Payment.Methods
 
         }
 
+        public PaymentStatusResponse checkStatus(PaymentRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

@@ -13,22 +13,15 @@ namespace Kooboo.Web.Payment
     {
         private static object _locker = new object();
 
-        public static List<IPaymentMethod> GetMethods(string currency, List<IPaymentMethod> methods)
+        public static List<IPaymentMethod> GetCurrencyMethods(string currency, List<IPaymentMethod> methods)
         {
             List<IPaymentMethod> result = new List<IPaymentMethod>();
 
             foreach (var item in methods)
             {
-                if (item.ForCurrency.Any())
+                if (item.supportedCurrency != null && item.supportedCurrency.Any())
                 {
-                    if (item.ForCurrency.Contains(currency))
-                    {
-                        result.Add(item);
-                    }
-                }
-                else if (item.ExcludeCurrency.Any())
-                {
-                    if (!item.ExcludeCurrency.Contains(currency))
+                    if (item.supportedCurrency.Contains(currency, StringComparer.OrdinalIgnoreCase))
                     {
                         result.Add(item);
                     }
@@ -43,32 +36,9 @@ namespace Kooboo.Web.Payment
             return result;
         }
 
-        public static List<IPaymentMethod> GetSiteMethods(RenderContext context)
+        public static List<IPaymentMethod> GetSiteAvailableMethods()
         {
-            var all = PaymentContainer.PaymentMethods;
-
-            List<IPaymentMethod> result = new List<IPaymentMethod>();
-
-            foreach (var item in all)
-            {
-                if (item is IKoobooPayment)
-                {
-                    //skip 
-                }
-                else
-                {
-                    if (context.WebSite != null && context.WebSite.OrganizationId != default(Guid))
-                    {
-                        var sitedb = context.WebSite.SiteDb();
-                        var setting = sitedb.CoreSetting.GetSiteSetting(item.GetType());
-                        if (setting != null)
-                        {
-                            result.Add(item);
-                        }
-                    }
-                }
-            }
-            return result;
+            return PaymentContainer.PaymentMethods.Where(o => !(o is IKoobooPayment)).ToList();
         }
 
         public static IPaymentMethod GetMethod(string paymentmethod)
@@ -85,7 +55,6 @@ namespace Kooboo.Web.Payment
             return null;
         }
 
-
         public static IPaymentMethod GetMethod(string MethodName, RenderContext context)
         {
             if (MethodName == null)
@@ -93,11 +62,11 @@ namespace Kooboo.Web.Payment
                 return null;
             }
 
-            var method = GetMethod(MethodName); 
+            var method = GetMethod(MethodName);
 
             if (method != null)
             {
-                var methodType = method.GetType(); 
+                var methodType = method.GetType();
 
                 var sitedb = context.WebSite.SiteDb();
 
@@ -133,90 +102,80 @@ namespace Kooboo.Web.Payment
 
             throw new Exception(MethodName + " missing setting infomatoin");
         }
-
+         
+        [Obsolete]
         public static IPaymentResponse MakePayment(PaymentRequest request, RenderContext context)
         {
-            EnsurePaymentRequest(request);
+            // TODO: remove this part.... Make the payment at certain location only...  
+            //var method = GetMethod(request.PaymentMethod, context);
+            //method.Context = context;
 
-            var method = GetMethod(request.PaymentMethod, context);
-            method.Context = context;
+            //ValidateRequest(method, request, context);
 
-            // save the request data..  
-            var payment = method.Charge(request);
+            //// save the request data..  
+            //var payment = method.Charge(request);
 
-            if (!string.IsNullOrEmpty(payment.paymemtMethodReferenceId))
-            {
-                request.Reference = payment.paymemtMethodReferenceId;
+            //if (!string.IsNullOrEmpty(payment.paymemtMethodReferenceId))
+            //{
+            //    request.ReferenceId = payment.paymemtMethodReferenceId;
 
-                SaveRequest(request, context);
-            }
+            //    SaveRequest(request, context);
+            //}
 
-            if (payment.requestId == default(Guid))
-            {
-                payment.requestId = request.Id;
-            }
+            //if (payment.requestId == default(Guid))
+            //{
+            //    payment.requestId = request.Id;
+            //}
 
-            if (payment is PaidResponse)
-            {
-                CallBack(new PaymentCallback() { Status = PaymentStatus.Paid, PaymentRequestId = payment.requestId }, context);
-                /////Kooboo.Server.Commerce.PaymentRequestService.Paid(payment.PaymentRequestId);
-            }
-            else if (payment is FailedResponse)
-            {
-                CallBack(new PaymentCallback() { Status = PaymentStatus.Rejected, PaymentRequestId = payment.requestId }, context);
-                //Kooboo.Server.Commerce.PaymentRequestService.Cancel(payment.PaymentRequestId);
-            }
-
-            return payment;
+            //if (payment is PaidResponse)
+            //{
+            //    CallBack(new PaymentCallback() { Status = PaymentStatus.Paid, PaymentRequestId = payment.requestId }, context);
+            //    /////Kooboo.Server.Commerce.PaymentRequestService.Paid(payment.PaymentRequestId);
+            //}
+            //else if (payment is FailedResponse)
+            //{
+            //    CallBack(new PaymentCallback() { Status = PaymentStatus.Rejected, PaymentRequestId = payment.requestId }, context);
+            //    //Kooboo.Server.Commerce.PaymentRequestService.Cancel(payment.PaymentRequestId);
+            //} 
+            //return payment;
+            return null;
         }
-
-        public static void EnsurePaymentRequest(PaymentRequest request)
+         
+        public static void ValidateRequest(IPaymentMethod paymentMethod, PaymentRequest request, RenderContext context)
         {
+
             if (request.PaymentMethod == null)
             {
-                request.PaymentMethod = "wechat";
+                throw new Exception(Data.Language.Hardcoded.GetValue("Payment Method not found", context));
             }
-            //TODO: ensure the currency. 
-        }
 
-        private static string GetBaseUrl(RenderContext context)
-        {
-            string baseurl = null;
-            if (context.WebSite != null && context.WebSite.OrganizationId != default(Guid))
+            if (paymentMethod.supportedCurrency != null && paymentMethod.supportedCurrency.Any())
             {
-                baseurl = Kooboo.Data.Service.WebSiteService.GetBaseUrl(context.WebSite, true);
-            }
-            else
-            {
-                if (Data.AppSettings.IsOnlineServer && Data.AppSettings.ServerSetting != null)
+                if (paymentMethod.supportedCurrency.Count() == 1)
                 {
-                    baseurl = "https://" + Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
+                    if (string.IsNullOrWhiteSpace(request.Currency))
+                    {
+                        request.Currency = paymentMethod.supportedCurrency[0];
+                    }
+                    else
+                    {
+                        request.Currency = request.Currency.ToUpper();
+                        if (request.Currency != paymentMethod.supportedCurrency[0])
+                        {
+                            throw new Exception(Data.Language.Hardcoded.GetValue("currency not supported by payment method", context));
+                        }
+                    }
+                }
+                else if (!paymentMethod.supportedCurrency.Contains(request.Currency, StringComparer.OrdinalIgnoreCase))
+                {
+                    throw new Exception(Data.Language.Hardcoded.GetValue("currency not supported by payment method", context));
                 }
             }
 
-            if (baseurl == null)
+            if (string.IsNullOrWhiteSpace(request.Currency))
             {
-                baseurl = context.Request.Port == 80 || context.Request.Port == 443
-                        ? context.Request.Host
-                        : string.Format("{0}:{1}", context.Request.Host, context.Request.Port);
-                baseurl = context.Request.Scheme + "://" + baseurl;
+                request.Currency = "EUR";
             }
-            return baseurl;
-        }
-
-        public static string EnsureHttp(string url, RenderContext context)
-        {
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                return null;
-            }
-            if (url.ToLower().StartsWith("http://") || url.ToLower().StartsWith("https://"))
-            {
-                return url;
-            }
-
-            var baseurl = GetBaseUrl(context);
-            return Lib.Helper.UrlHelper.Combine(baseurl, url);
         }
 
         public static void CallBack(PaymentCallback callback, RenderContext context)
@@ -227,15 +186,7 @@ namespace Kooboo.Web.Payment
                 item.Process(callback, context);
             }
         }
-
-        public static void SaveRequest(PaymentRequest request, RenderContext context)
-        {
-            foreach (var item in PaymentContainer.RequestStore)
-            {
-                item.Save(request, context);
-            }
-        }
-
+         
         public static PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
         {
             if (context.WebSite != null)
@@ -249,63 +200,18 @@ namespace Kooboo.Web.Payment
                 {
                     return result;
                 }
-            }
-
-            foreach (var item in PaymentContainer.RequestStore)
-            {
-                var result = item.Get(PaymentRequestId, context);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
+            } 
             return null;
         }
-
-        public static T GetPaymentSetting<T>(RenderContext context) where T : IPaymentSetting
-        {
-            if (context.WebSite != null && context.WebSite.OrganizationId != default(Guid))
-            {
-                var sitedb = context.WebSite.SiteDb();
-                var setting = sitedb.CoreSetting.GetSetting<T>();
-                if (setting != null)
-                {
-                    return setting;
-                }
-            }
-            return GetDefaultSetting<T>();
-        }
-
-        public static void SetDefaultPaymentSetting(IPaymentSetting input)
-        {
-            string typename = input.GetType().Name;
-
-            defaultSettings[typename] = input;
-
-        }
-
-        private static Dictionary<string, IPaymentSetting> defaultSettings { get; set; } = new Dictionary<string, IPaymentSetting>(StringComparer.OrdinalIgnoreCase);
-
-
-        private static T GetDefaultSetting<T>()
-        {
-            var name = typeof(T).Name;
-            if (defaultSettings.ContainsKey(name))
-            {
-                var setting = defaultSettings[name];
-                return (T)setting;
-            }
-            return default(T);
-        }
-
-
+          
         public static PaymentStatusResponse EnquireStatus(PaymentRequest Request, RenderContext context)
         {
             var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(Request.PaymentMethod, context);
             if (paymentmethod != null)
             {
                 paymentmethod.Context = context;
-                var status = paymentmethod.EnquireStatus(Request);
+
+                var status = paymentmethod.checkStatus(Request);
 
                 return status;
             }

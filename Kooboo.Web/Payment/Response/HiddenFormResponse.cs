@@ -1,4 +1,6 @@
 ﻿using Kooboo.Data.Attributes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,9 +10,11 @@ namespace Kooboo.Web.Payment.Response
 {
     public class HiddenFormResponse : IPaymentResponse
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         public EnumResponseType Type { get; set; } = EnumResponseType.hiddenform;
  
         public Guid requestId { get; set; }
+
         public string paymemtMethodReferenceId { get; set; }
 
         public bool hasHTML
@@ -24,7 +28,7 @@ namespace Kooboo.Web.Payment.Response
         public string SubmitUrl { get; set; }
 
         [Description("HTTP method, POST or GET")]
-        public string HTTPMethod { get; set; }
+        public string method { get; set; }
 
         private KScript.KDictionary _fieldvalues;
         public KScript.KDictionary fieldValues

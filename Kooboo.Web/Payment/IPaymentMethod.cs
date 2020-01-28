@@ -1,5 +1,4 @@
-﻿using Kooboo.Data.Attributes;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
@@ -16,6 +15,7 @@ namespace Kooboo.Web.Payment
 
     public interface IPaymentMethod
     {
+        [Description("The name that can be used for k.payment.{name}")]
         string Name { get; }
 
         string DisplayName { get; }
@@ -24,19 +24,17 @@ namespace Kooboo.Web.Payment
 
         [Description("Img/Base64")] 
         string IconType { get; }
-
-        [KIgnore]
-        List<string> ForCurrency { get; }
-
-        [KIgnore]
-        List<string> ExcludeCurrency { get; }
          
+        /// <summary>
+        /// The support currency code in capital.
+        /// </summary>
+        List<string> supportedCurrency { get; }
+           
         RenderContext Context { get; set; }
 
         IPaymentResponse Charge(PaymentRequest request);
 
-        PaymentStatusResponse EnquireStatus(PaymentRequest request);
-         
+        PaymentStatusResponse checkStatus(PaymentRequest request);
 
     }
 
