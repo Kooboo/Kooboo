@@ -63,9 +63,6 @@ namespace Kooboo
 
         public const byte TransferTask = 53;
         public const byte TransferPage = 54;
-
-        // public const byte KScript = 52;
-
         public const byte SiteUser = 55;
 
         public const byte Code = 58;
@@ -74,14 +71,18 @@ namespace Kooboo
 
         public const byte BusinessRule = 65;
 
+        public const byte Order = 68;
+        public const byte OrderDetail = 69;
         public const byte Product = 70;
         public const byte Cateogry = 71;
         public const byte ProductCategory = 72;
         public const byte ProductVariants = 73;
         public const byte ProductType = 74;
-
         public const byte PaymentCallback = 76;
         public const byte PaymentRequest = 77;
+        public const byte Customer = 78;
+        public const byte ShippingAddress = 79;
+
 
         public const byte kfile = 80;
         public const byte Kconfig = 81;

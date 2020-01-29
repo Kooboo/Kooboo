@@ -85,7 +85,7 @@ namespace KScript
                     _cookie = Guid.NewGuid();
                 }
 
-                this.context.Response.AddCookie(new System.Net.Cookie() { Name = "_kb_session_id", Value = _cookie.ToString(), Expires = DateTime.Now.AddMinutes(30) });
+                this.context.Response.AddCookie(new System.Net.Cookie() { Name = "_kb_session_id", Value = _cookie.ToString(), Expires = DateTime.Now.AddDays(7) });
 
                 return _cookie;
             }
