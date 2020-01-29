@@ -1,5 +1,5 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Web.Payment;
+using Kooboo.Sites.Payment;
 
 namespace Kooboo.ServerData.ViewModel
 {

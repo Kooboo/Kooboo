@@ -29,10 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Payment\PaymentRequest.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Embedded\CountryLocation.csv" />
     <EmbeddedResource Include="Server\kooboo.pfx" />
     <EmbeddedResource Include="tld.dat" />

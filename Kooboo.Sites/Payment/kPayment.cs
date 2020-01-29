@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kooboo.Web.Payment
+namespace Kooboo.Sites.Payment
 {
      
     public class kPay : IkScript
@@ -29,7 +29,7 @@ namespace Kooboo.Web.Payment
 
        public KPaymentMethodWrapper Get(string PaymentMothod)
         {
-            var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(PaymentMothod, this.context);
+            var paymentmethod = PaymentManager.GetMethod(PaymentMothod, this.context);
             if (paymentmethod != null)
             {
                 KPaymentMethodWrapper method = new KPaymentMethodWrapper(paymentmethod, this.context); 

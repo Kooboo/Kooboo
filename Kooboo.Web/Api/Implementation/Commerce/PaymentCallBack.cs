@@ -1,7 +1,7 @@
 ﻿using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Api.Methods;
-using Kooboo.Web.Payment;
+using Kooboo.Sites.Payment;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -66,11 +66,14 @@ namespace Kooboo.Web.Api.Implementation.Commerce
 
                     if (result != null)
                     {
-                        Kooboo.Web.Payment.PaymentManager.CallBack(result, call.Context);
+                        PaymentManager.CallBack(result, call.Context);
 
                         if (result.CallbackResponse != null)
                         {
-                            return result.CallbackResponse;
+                            var response = new PlainResponse();
+                            response.ContentType = result.CallbackResponse.ContentType;   
+                            response.Content = result.CallbackResponse.Content;
+                            return response; 
                         }
 
                         else
@@ -86,7 +89,6 @@ namespace Kooboo.Web.Api.Implementation.Commerce
 
             return null;
         }
-
 
         private void log(ApiCall call)
         {

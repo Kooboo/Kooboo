@@ -14,6 +14,7 @@
     <Compile Remove="Backend\Menus\Hooker\**" />
     <Compile Remove="kooboo-web-editor\**" />
     <Compile Remove="KoobooData\**" />
+    <Compile Remove="Payment\**" />
     <Compile Remove="upgradePackage\**" />
     <Compile Remove="_Admin\**" />
     <EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
@@ -22,6 +23,7 @@
     <EmbeddedResource Remove="Backend\Menus\Hooker\**" />
     <EmbeddedResource Remove="kooboo-web-editor\**" />
     <EmbeddedResource Remove="KoobooData\**" />
+    <EmbeddedResource Remove="Payment\**" />
     <EmbeddedResource Remove="upgradePackage\**" />
     <EmbeddedResource Remove="_Admin\**" />
     <None Remove="Api\Implementation\Ecommerce\**" />
@@ -30,6 +32,7 @@
     <None Remove="Backend\Menus\Hooker\**" />
     <None Remove="kooboo-web-editor\**" />
     <None Remove="KoobooData\**" />
+    <None Remove="Payment\**" />
     <None Remove="upgradePackage\**" />
     <None Remove="_Admin\**" />
   </ItemGroup>
@@ -44,8 +47,6 @@
     <Compile Remove="Backend\Menus\ISideBarMenu.cs" />
     <Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
     <Compile Remove="Backend\Menus\SideBarSection.cs" />
-    <Compile Remove="Payment\PaymentMethodBase.cs" />
-    <Compile Remove="Payment\PaymentRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,7 +54,6 @@
     <None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
     <None Remove="DashBoard\Resource\SiteResource.html" />
     <None Remove="DashBoard\TopPages\TopPages.html" />
-    <None Remove="Payment\Methods\Paypal_Form_doc.html" />
   </ItemGroup>
 
   <ItemGroup>
