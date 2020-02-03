@@ -9,10 +9,12 @@ using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.Mongo;
 using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using KScript.KscriptConfig;
 using KScript.Sites;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -435,7 +437,7 @@ var value = k.session.key; ")]
                         {
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MysqlSetting>();
 
-                            if (string.IsNullOrWhiteSpace(setting.ConnectionString))
+                            if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
                             {
                                 throw new Exception("  ->Please add the mysql connection string to the system configuration of the site<-  ");
                             }
@@ -462,7 +464,7 @@ var value = k.session.key; ")]
                         {
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<SqlServerSetting>();
 
-                            if (string.IsNullOrWhiteSpace(setting.ConnectionString))
+                            if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
                             {
                                 throw new Exception("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
@@ -473,6 +475,38 @@ var value = k.session.key; ")]
                 return _sqlServer;
             }
         }
+
+        private MongoDatabase _mongo;
+
+        public MongoDatabase Mongo
+        {
+            get
+            {
+                if (_mongo == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_mongo == null)
+                        {
+                            var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MongoSetting>();
+
+                            if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
+                            {
+                                throw new Exception("  ->Please add the mongodb connection string to the system configuration of the site<-  ");
+                            }
+
+                            var url = new MongoUrl(setting.ConnectionString);
+                            var databaseName = url.DatabaseName ?? RenderContext.WebSite.Name.ToString();
+                            var client = new MongoClient(url);
+                            _mongo = new MongoDatabase(client.GetDatabase(databaseName));
+                        }
+                    }
+                }
+                return _mongo;
+            }
+        }
+
+
 
 
         [KIgnore]
