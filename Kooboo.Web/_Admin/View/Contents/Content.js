@@ -472,6 +472,16 @@ $(function() {
               }
             }
           );
+        }else{
+          if(self.siteLangs&&self.siteLangs.cultures){
+            for (var key in self.siteLangs.cultures) {
+              Kooboo.EventBus.publish("kb/multilang/change", {
+                name: key,
+                fullName: self.siteLangs.cultures[key],
+                selected: true
+              });
+            }
+          }
         }
       },
       onContentSave: function() {
