@@ -459,20 +459,10 @@ $(function() {
           window.info.fail(Kooboo.text.site.textContent.saveWidthNoFieldHint);
           return false;
         }
-        return this.$refs.fieldPanel.validate();
+        return this.$refs.fieldPanel.validate() || undefined;
       },
       onSubmit: function(cb) {
-        if (self.isAbleToSaveTextContent()) {
-          Kooboo.TextContent.langupdate(self.getSaveTextContent()).then(
-            function(res) {
-              if (res.success) {
-                if (cb && typeof cb == "function") {
-                  cb(res.model);
-                }
-              }
-            }
-          );
-        }else{
+        if(self.isAbleToSaveTextContent()==undefined){
           if(self.siteLangs&&self.siteLangs.cultures){
             for (var key in self.siteLangs.cultures) {
               Kooboo.EventBus.publish("kb/multilang/change", {
@@ -482,6 +472,17 @@ $(function() {
               });
             }
           }
+        }
+        else if (self.isAbleToSaveTextContent()) {
+          Kooboo.TextContent.langupdate(self.getSaveTextContent()).then(
+            function(res) {
+              if (res.success) {
+                if (cb && typeof cb == "function") {
+                  cb(res.model);
+                }
+              }
+            }
+          );
         }
       },
       onContentSave: function() {
