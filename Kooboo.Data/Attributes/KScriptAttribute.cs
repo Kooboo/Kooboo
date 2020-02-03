@@ -23,7 +23,7 @@ namespace Kooboo.Data.Attributes
     }
 
     /// <summary>
-    /// mark filed is extension 
+    /// mark field is extension 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
     public class KExtensionAttribute : Attribute
@@ -32,7 +32,7 @@ namespace Kooboo.Data.Attributes
     }
 
     /// <summary>
-    /// mark filed is extension 
+    /// assign this[string key] type
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
     public class KValueTypeAttribute : Attribute

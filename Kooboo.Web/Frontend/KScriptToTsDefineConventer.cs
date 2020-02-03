@@ -18,7 +18,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             public string Namespace { get; set; }
             public string Name { get; set; }
             public string Discription { get; set; }
-            public List<Type> Extends { get; set; }
+            public List<string> Extends { get; set; }
             public List<Property> Properties { get; set; }
             public List<Method> Methods { get; set; }
             public Dictionary<string, string> Enums { get; set; }
@@ -144,7 +144,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                                 Name = CamelCaseName(s.Name),
                                 Type = TypeString(type, s)
                             }).ToList(),
-                            Extends = new List<Type>(),
+                            Extends = new List<string>(),
                             Namespace = GetNamespace(type, false)
                         });
                     }
@@ -173,8 +173,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
 
                     if (define.Enums == null)
                     {
-                        var extendList = define.Extends.Where(w => _defines.ContainsKey(w.FullName)).Select(s => $"{GetNamespace(s)}{_defines[s.FullName].Name}");
-                        var extends = extendList.Any() ? $"extends {string.Join(",", extendList)} " : string.Empty;
+                        var extends = define.Extends.Any() ? $"extends {string.Join(",", define.Extends)} " : string.Empty;
                         builder.AppendLine($"{_indentation}{declare}interface {define.Name} {extends}{{");
 
                         if (define.ValueType != null)
@@ -312,12 +311,12 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                        }).ToList();
         }
 
-        internal List<Type> GetExtends(Type type)
+        internal List<string> GetExtends(Type type)
         {
             var extends = new List<Type>();
             extends.AddRange(type.GetInterfaces());
             if (type.BaseType != null) extends.Add(type.BaseType);
-            return extends;
+            return extends.Where(w => _defines.ContainsKey(w.FullName)).Select(s => TypeString(type, s)).ToList();
         }
 
         internal Define ConvertClassOrInterface(Type type)
