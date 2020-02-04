@@ -36,19 +36,38 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             var dic = value as IDictionary<string, object>;
             if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
-            var option = new InsertOneOptions();
-            option.BypassDocumentValidation = false;
+            _mongoCollection.InsertOne(value);
             return dic["_id"];
         }
 
         public void createIndex(string fieldname)
         {
-            throw new NotImplementedException();
+            var keys = new IndexKeysDefinitionBuilder<object>().Ascending(fieldname);
+            var model = new CreateIndexModel<object>(keys);
+            _mongoCollection.Indexes.CreateOne(model);
         }
 
         public void delete(object id)
         {
-            throw new NotImplementedException();
+            var filter = GetIdFilter(id);
+            _mongoCollection.DeleteOne(filter);
+        }
+
+        private static FilterDefinition<object> GetIdFilter(object id)
+        {
+            object objectId;
+
+            if (id is ObjectId)
+            {
+                objectId = id;
+            }
+            else
+            {
+                objectId = ObjectId.Parse(id.ToString());
+            }
+
+            var filter = Builders<object>.Filter.Eq("_id", objectId);
+            return filter;
         }
 
         public IDynamicTableObject find(string query)
@@ -73,7 +92,9 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public IDynamicTableObject get(object id)
         {
-            throw new NotImplementedException();
+            var filter = GetIdFilter(id);
+            var data = _mongoCollection.Find(filter).FirstOrDefault();
+            return MongoDynamicTableObject.Create(data as IDictionary<string, object>);
         }
 
         public IDynamicTableObject GetByLog(long LogId)
