@@ -26,6 +26,9 @@ namespace Kooboo.Sites.Ecommerce.Promotion
 
         public bool IsActive { get; set; }
 
+        /// <summary>
+        /// active based on dates.
+        /// </summary>
         public bool ByDate { get; set; }
     }
 }

@@ -30,6 +30,13 @@ namespace Kooboo.Sites.Ecommerce.Promotion
         // used for text box auto complete.
         List<string> AutoComplete(RenderContext context, string wordpart);
 
-        decimal CalculateDiscount(RenderContext context,Kooboo.Sites.Ecommerce.ShoppingCart.Cart cart);
+        /// <summary>
+        /// Match the condition or not.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="cart"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        bool IsMatch (RenderContext context, Cart cart, CartItem item);
     }
 }
