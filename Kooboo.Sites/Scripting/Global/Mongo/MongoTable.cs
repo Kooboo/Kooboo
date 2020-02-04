@@ -99,12 +99,12 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public IDynamicTableObject GetByLog(long LogId)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public List<ChangeLog> GetLogs(object id)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public ITableQuery Query()
@@ -119,12 +119,19 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public void update(object newvalue)
         {
-            throw new NotImplementedException();
+            var dic = newvalue as IDictionary<string, object>;
+            if (!dic.ContainsKey("_id")) add(newvalue);
+            else
+            {
+                update(dic["_id"], newvalue);
+            }
         }
 
         public void update(object id, object newvalue)
         {
-            throw new NotImplementedException();
+            var dic = newvalue as IDictionary<string, object>;
+            if (dic.ContainsKey("_id")) dic.Remove("_id");
+            _mongoCollection.FindOneAndReplace(GetIdFilter(id), dic);
         }
     }
 }
