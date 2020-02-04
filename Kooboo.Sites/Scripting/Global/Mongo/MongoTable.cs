@@ -1,34 +1,44 @@
 ﻿using KScript;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Mongo
 {
     public class MongoTable : ITable
     {
-        private IMongoCollection<object> mongoCollection;
+        private readonly IMongoCollection<object> _mongoCollection;
 
         public MongoTable(IMongoCollection<object> mongoCollection)
         {
-            this.mongoCollection = mongoCollection;
+            _mongoCollection = mongoCollection;
         }
 
         public object add(object value)
         {
-            mongoCollection.InsertOne(value);
-            return value;
+            var dic = value as IDictionary<string, object>;
+            if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
+            _mongoCollection.InsertOne(value);
+            return dic["_id"];
         }
 
         public IDynamicTableObject[] all()
         {
-            throw new NotImplementedException();
+            var data = _mongoCollection.AsQueryable().ToArray();
+            var list = data.Select(s => s as IDictionary<string, object>).ToArray();
+            return MongoDynamicTableObject.CreateList(list);
         }
 
         public object append(object value)
         {
-            throw new NotImplementedException();
+            var dic = value as IDictionary<string, object>;
+            if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
+            var option = new InsertOneOptions();
+            option.BypassDocumentValidation = false;
+            return dic["_id"];
         }
 
         public void createIndex(string fieldname)
