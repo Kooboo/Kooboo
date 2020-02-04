@@ -236,12 +236,16 @@ var value = k.session.key; ")]
                 }
                 set { _setting = value; }
             }
-
-
+             
             public UserModel User
             {
                 get; set;
             }
+
+            public string BaseUrl { get; set; }
+
+            public RenderContext RenderContext { get; set; }
+             
         }
 
         private kSiteDb _sitedb;

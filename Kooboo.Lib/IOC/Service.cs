@@ -73,19 +73,46 @@ namespace Kooboo.Lib.IOC
                     {
                         if (!SingleTons.ContainsKey(name))
                         {
+                            
                             var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(objType);
 
-                            //TODO: add rule to get the right intance. 
-                            if (types != null && types.Any())
+                            if (Lib.Reflection.TypeHelper.HasInterface(objType, typeof(ISingleTonPriority)))
                             {
-                                var type = types[0];
-                                var obj = Activator.CreateInstance(type);
-                                SingleTons[name] = obj;
+                                List<ISingleTonPriority> list = new List<ISingleTonPriority>();
+                                foreach (var item in types)
+                                {
+                                    var obj = Activator.CreateInstance(item) as ISingleTonPriority;
+                                    if (obj !=null)
+                                    {
+                                        list.Add(obj);
+                                    } 
+                                }
+                                 
+                                if (list.Any())
+                                {
+                                    SingleTons[name] = list.OrderByDescending(o=>o.Priority).First();
+                                }
+                                else
+                                {
+                                    SingleTons[name] = null;
+                                }
                             }
-                            else
+                            else 
                             {
-                                SingleTons[name] = null;
+                                if (types != null && types.Any())
+                                {
+                                    var type = types[0];
+                                    var obj = Activator.CreateInstance(type);
+                                    SingleTons[name] = obj;
+                                }
+                                else
+                                {
+                                    SingleTons[name] = null;
+                                }
+
                             }
+
+                           
                         }
                     }
                 }
@@ -97,10 +124,7 @@ namespace Kooboo.Lib.IOC
 
             return SingleTons[name];
         }
-          
-
-   
-
+        
         public static void AddSingleton<T>(T instance)
         {
             var name = typeof(T).Name;

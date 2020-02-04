@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Sites.Ecommerce.Interface
+namespace Kooboo.Sites.Ecommerce
 {
-   public  interface ShoppingCart
+   public static  class ServiceProvider
     {
-         
+        
     }
 }

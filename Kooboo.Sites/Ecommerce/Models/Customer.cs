@@ -35,8 +35,9 @@ namespace Kooboo.Sites.Ecommerce.Models
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-          
-        // Hashed password..
+        
+        public long MembershipNumber { get; set; }
+         
         public string Password { get; set; }
          
         public string EmailAddress { get; set; }

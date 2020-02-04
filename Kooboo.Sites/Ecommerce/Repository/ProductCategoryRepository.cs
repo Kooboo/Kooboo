@@ -5,17 +5,12 @@ using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Kooboo.Sites.Ecommerce.Repository
 {
-
-
     public class ProductCategoryRepository : SiteRepositoryBase<ProductCategory>
     {
-
         public override ObjectStoreParameters StoreParameters
         {
             get

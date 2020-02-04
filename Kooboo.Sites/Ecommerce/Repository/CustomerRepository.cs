@@ -18,6 +18,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 para.AddIndex<Customer>(o => o.TelHash);
                 return para;
             }
-        }  
+        }
+       
     }
 }

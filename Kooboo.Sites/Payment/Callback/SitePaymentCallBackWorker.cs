@@ -15,6 +15,7 @@ namespace Kooboo.Sites.Payment
             {
                 var sitedb = context.WebSite.SiteDb();
 
+                // fire the code first...
                var callbackrepo =  sitedb.GetSiteRepository<PaymentCallBackRepository>();
 
                 callbackrepo.AddOrUpdate(callback); 
@@ -29,6 +30,9 @@ namespace Kooboo.Sites.Payment
                 {
                     requestrepo.Store.UpdateColumn<bool>(callback.RequestId, o => o.Failed, true);
                 } 
+
+
+
             }
         }
     }

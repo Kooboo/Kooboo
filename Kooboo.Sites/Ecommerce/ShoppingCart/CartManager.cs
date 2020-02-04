@@ -21,21 +21,22 @@ namespace Kooboo.Sites.Ecommerce.ShoppingCart
 
         public static Cart GetCart(RenderContext context)
         {
-            var session = new Session(context);
-            var id = session.SessionId;
+            //var session = new Session(context);
 
-            if (SessionCart.ContainsKey(id))
-            {
-                return SessionCart[id];
-            }
+            //if (SessionCart.ContainsKey(id))
+            //{
+            //    return SessionCart[id];
+            //}
 
-            else
-            {
-                Cart usercart = new Cart();
+            //else
+            //{
+            //    Cart usercart = new Cart();
 
-                SessionCart[id] = usercart;
-                return usercart;
-            } 
+            //    SessionCart[id] = usercart;
+            //    return usercart;
+            //} 
+
+            return null;
         }
     }
 }

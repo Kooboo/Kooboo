@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Kooboo.Sites.Ecommerce.ShoppingCart
 {
-    public class Cart : CoreObject
+    public class Cart :  CoreObject
     { 
         private Guid _id; 
         [Kooboo.Attributes.SummaryIgnore]
@@ -35,7 +35,9 @@ namespace Kooboo.Sites.Ecommerce.ShoppingCart
 
         public decimal TotalAmount { get; set; }
 
-        public decimal CartDiscount { get; set; }
+        public List<Guid> DiscountRules { get; set; }
+
+        public decimal  Discount { get; set; }
 
         public List<string> DiscountReason { get; set; }
 

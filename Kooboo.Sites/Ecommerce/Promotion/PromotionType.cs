@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.Promotion
 {
-    class IPromotionRules
+    public enum PromotionType
     {
+        ForShoppingCart =1,
+        ForProductItem =2,
+        ForShippingCost = 3
     }
 }
