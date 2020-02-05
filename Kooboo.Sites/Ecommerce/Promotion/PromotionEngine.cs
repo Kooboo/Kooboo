@@ -22,9 +22,13 @@ namespace Kooboo.Sites.Ecommerce.Promotion
 
         public void CalculateShoppingCart(Cart cart, RenderContext context)
         {
-            return; 
+            return;
+        } 
+
+        public void CalculateShippingCost(Cart cart, RenderContext context)
+        {
+            return;
         }
 
-        
     }
 }

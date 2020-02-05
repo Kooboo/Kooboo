@@ -3,9 +3,9 @@ using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Kooboo.Sites.Ecommerce.ShoppingCart
+namespace Kooboo.Sites.Ecommerce.Models
 {
-    public class Cart :  CoreObject
+    public class Cart : CoreObject
     { 
         private Guid _id; 
         [Kooboo.Attributes.SummaryIgnore]
@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Ecommerce.ShoppingCart
             {
                 if (_id == default(Guid))
                 {
-                    _id = Guid.NewGuid(); 
+                    _id = Lib.Helper.IDHelper.NewTimeGuid(DateTime.Now); 
                 }
                 return _id;
             } 
@@ -25,7 +25,10 @@ namespace Kooboo.Sites.Ecommerce.ShoppingCart
             }
         }
          
-        public Guid SessionId { get; set; }
+        /// <summary>
+        /// for users that is not login yet. 
+        /// </summary>
+        public Guid tempCustomerId { get; set; }
           
         public Guid CustomerId { get; set; }
 
@@ -56,21 +59,6 @@ namespace Kooboo.Sites.Ecommerce.ShoppingCart
             {
                 _cartitems = value;
             }
-        }
-         
-        public void AddITem(Guid ProductVariantId, int quantity = 1)
-        {
-
-        }
-
-        public void RemoveItem(Guid CartItemId)
-        {
-
-        }
-
-        public void ChangeQuantity(Guid CartItemId, int newQuantity)
-        {
-
-        }
+        } 
     }
 }

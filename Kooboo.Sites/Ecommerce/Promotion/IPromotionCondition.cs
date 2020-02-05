@@ -11,14 +11,14 @@ namespace Kooboo.Sites.Ecommerce.Promotion
     /// <typeparam name="T"></typeparam>
     public interface IPromotionCondition
      { 
-        string Name { get; set; }
+        string Name { get;  }
          
-        List<string> AvailableOperators { get; set; }
+        List<string> AvailableOperators { get; }
  
         /// <summary>
         /// TextBox, Selection, TreeSelection, etc...
         /// </summary>
-        string ControlType { get; set; }
+        string ControlType { get;   }
 
         /// <summary>
         /// Used for UI target value selection. 
@@ -35,7 +35,7 @@ namespace Kooboo.Sites.Ecommerce.Promotion
         /// </summary>
         /// <param name="context"></param>
         /// <param name="cart"></param>
-        /// <param name="item"></param>
+        /// <param name="item">Null if calculating cart discount or shipping cost discount</param>
         /// <returns></returns>
         bool IsMatch (RenderContext context, Cart cart, CartItem item);
     }

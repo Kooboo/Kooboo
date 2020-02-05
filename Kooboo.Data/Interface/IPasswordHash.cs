@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kooboo.Data.Interface
 {
-   public interface IPasswordHash : Kooboo.Lib.IOC.ISingleTonPriority
+   public interface IPasswordHash : Kooboo.Lib.IOC.IPriority
     {
         string Hash(string password);
 

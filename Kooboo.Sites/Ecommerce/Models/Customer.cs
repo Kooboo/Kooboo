@@ -1,18 +1,16 @@
 ﻿using Kooboo.Sites.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.Models
 {
-  public class Customer : CoreObject
+    public class Customer : CoreObject
     {
         public Customer()
         {
-            this.ConstType = ConstObjectType.Customer;  
+            this.ConstType = ConstObjectType.Customer;
         }
 
-        private Guid _id; 
+        private Guid _id;
         public override Guid Id
         {
             get
@@ -20,9 +18,9 @@ namespace Kooboo.Sites.Ecommerce.Models
                 if (_id == default(Guid))
                 {
                     if (!string.IsNullOrEmpty(this.Name))
-                    { 
+                    {
                         _id = Data.IDGenerator.GetId(Name);
-                    } 
+                    }
                 }
                 return _id;
             }
@@ -35,15 +33,15 @@ namespace Kooboo.Sites.Ecommerce.Models
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-        
+
         public long MembershipNumber { get; set; }
-         
+
         public string Password { get; set; }
-         
+
         public string EmailAddress { get; set; }
 
         public Guid EmailId { get; set; }
-         
+
         public string Telephone { get; set; }
 
         public Guid TelHash { get; set; }
@@ -52,16 +50,9 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public Guid DefaultPaymentId { get; set; }
 
-        public string Address { get; set; }
-
-        public string PostCode { get; set; }
-
-        public string Address2 { get; set; }
-
-        public string HouseNumber { get; set; }
-
-        public string City { get; set; }
-
-        public string Country { get; set; }
+        /// <summary>
+        ///  this is a temp user. 
+        /// </summary>
+        public bool IsTemp { get; set; }
     }
 }

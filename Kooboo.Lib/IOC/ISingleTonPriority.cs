@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kooboo.Lib.IOC
 {
-  public  interface ISingleTonPriority
+  public  interface IPriority
     {
         long Priority { get; }
     }

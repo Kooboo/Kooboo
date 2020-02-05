@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Kooboo.Sites.Ecommerce.ShoppingCart
+namespace Kooboo.Sites.Ecommerce.Models
 {
    public class CartItem 
-    {
+    { 
         public Guid ProductVariantId { get; set; }
 
         public int Quantity { get; set; }

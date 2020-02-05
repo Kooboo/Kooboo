@@ -7,15 +7,15 @@ using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.Repository
 { 
-    public class CustomerRepository : SiteRepositoryBase<Customer>
+    public class CustomerRepository : SiteRepositoryBase<Models.Customer>
     { 
         public override ObjectStoreParameters StoreParameters
         {
             get
             {
                 ObjectStoreParameters para = new ObjectStoreParameters();
-                para.AddIndex<Customer>(o => o.EmailId);
-                para.AddIndex<Customer>(o => o.TelHash);
+                para.AddIndex<Models.Customer>(o => o.EmailId);
+                para.AddIndex<Models.Customer>(o => o.TelHash);
                 return para;
             }
         }

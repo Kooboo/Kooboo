@@ -16,9 +16,10 @@ namespace KScript
         {
             get
             {
-                return Kooboo.Sites.Ecommerce.ShoppingCart.CartManager.GetCart(context);
-            } 
+                return null;
+                ///return Kooboo.Sites.Ecommerce.ShoppingCart.CartManager.GetCart(context);
+            }
         }
-         
+
     }
 }

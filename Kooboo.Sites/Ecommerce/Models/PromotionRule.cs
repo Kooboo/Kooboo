@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Sites.Ecommerce.Promotion
+namespace Kooboo.Sites.Ecommerce.Models
 {
-    public class PromotionRules : CoreObject
-    {
+    public class PromotionRule : CoreObject
+    {  
         public string ConditionName { get; set; }
 
         public string Operator { get; set; }
@@ -15,6 +15,10 @@ namespace Kooboo.Sites.Ecommerce.Promotion
         /// Value stored as string, should be precomputed. rules will be stored in memory. 
         /// </summary>
         public List<string> TargetValue { get; set; }
+
+        public bool ForShippingCost { get; set; }
+
+        public bool ForShoppingCart { get; set; }
 
         public decimal Amount { get; set; } = 0;
 

@@ -14,9 +14,9 @@ namespace Kooboo.Sites.Ecommerce.Repository
         {
             get
             {
-                ObjectStoreParameters para = new ObjectStoreParameters();
-                para.AddIndex<Cart>(o => o.SessionId);
-                para.AddColumn<Cart>(o => o.CustomerId);
+                ObjectStoreParameters para = new ObjectStoreParameters(); 
+                para.AddIndex<Cart>(o => o.CustomerId);
+                para.SetPrimaryKeyField<Cart>(o => o.Id); 
                 return para;
             }
         }
