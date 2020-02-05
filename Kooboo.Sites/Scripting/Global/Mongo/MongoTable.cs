@@ -1,10 +1,13 @@
-﻿using KScript;
+﻿using Kooboo.IndexedDB.Dynamic;
+using Kooboo.IndexedDB.Query;
+using KScript;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Kooboo.Sites.Scripting.Global.Mongo
 {
@@ -72,22 +75,52 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public IDynamicTableObject find(string query)
         {
-            throw new NotImplementedException();
+            var conditions = QueryPraser.ParseConditoin(query);
+            var filter = QueryToFilter(conditions);
+            var data = _mongoCollection.Find(filter).FirstOrDefault();
+            return MongoDynamicTableObject.Create(data as IDictionary<string, object>);
+        }
+
+        private FilterDefinition<object> QueryToFilter(List<ConditionItem> conditions)
+        {
+            var filters = new List<FilterDefinition<object>>();
+            foreach (var condition in conditions)
+            {
+                var filter = ConditionToFilter(condition);
+                filters.Add(filter);
+            }
+            return Builders<object>.Filter.And(filters);
+        }
+
+        private FilterDefinition<object> ConditionToFilter(ConditionItem condition)
+        {
+            switch (condition.Comparer)
+            {
+                case Comparer.Contains:
+                    var reg = new Regex($"/{Regex.Escape(condition.Value)}/");
+                    return Builders<object>.Filter.Regex(condition.Field, new BsonRegularExpression(reg));
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         public IDynamicTableObject find(string fieldName, object matchValue)
         {
-            throw new NotImplementedException();
+            return find($"{fieldName} == {matchValue}");
         }
 
         public IDynamicTableObject[] findAll(string query)
         {
-            throw new NotImplementedException();
+            var conditions = QueryPraser.ParseConditoin(query);
+            var filter = QueryToFilter(conditions);
+            var data = _mongoCollection.Find(filter).ToList();
+            var list = data.Select(s => s as IDictionary<string, object>).ToArray();
+            return MongoDynamicTableObject.CreateList(list);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
         {
-            throw new NotImplementedException();
+                 return findAll($"{field} == {value}");
         }
 
         public IDynamicTableObject get(object id)
