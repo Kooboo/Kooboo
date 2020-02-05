@@ -1,4 +1,5 @@
-﻿using Kooboo.IndexedDB.Dynamic;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.IndexedDB.Dynamic;
 using Kooboo.IndexedDB.Query;
 using KScript;
 using MongoDB.Bson;
@@ -13,24 +14,25 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 {
     public class MongoTable : ITable
     {
-        private readonly IMongoCollection<object> _mongoCollection;
+        [KIgnore]
+        public IMongoCollection<object> MongoCollection { get; }
 
         public MongoTable(IMongoCollection<object> mongoCollection)
         {
-            _mongoCollection = mongoCollection;
+            MongoCollection = mongoCollection;
         }
 
         public object add(object value)
         {
             var dic = value as IDictionary<string, object>;
             if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
-            _mongoCollection.InsertOne(value);
+            MongoCollection.InsertOne(value);
             return dic["_id"];
         }
 
         public IDynamicTableObject[] all()
         {
-            var data = _mongoCollection.AsQueryable().ToArray();
+            var data = MongoCollection.AsQueryable().ToArray();
             var list = data.Select(s => s as IDictionary<string, object>).ToArray();
             return MongoDynamicTableObject.CreateList(list);
         }
@@ -39,7 +41,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             var dic = value as IDictionary<string, object>;
             if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
-            _mongoCollection.InsertOne(value);
+            MongoCollection.InsertOne(value);
             return dic["_id"];
         }
 
@@ -47,13 +49,13 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             var keys = new IndexKeysDefinitionBuilder<object>().Ascending(fieldname);
             var model = new CreateIndexModel<object>(keys);
-            _mongoCollection.Indexes.CreateOne(model);
+            MongoCollection.Indexes.CreateOne(model);
         }
 
         public void delete(object id)
         {
             var filter = GetIdFilter(id);
-            _mongoCollection.DeleteOne(filter);
+            MongoCollection.DeleteOne(filter);
         }
 
         private static FilterDefinition<object> GetIdFilter(object id)
@@ -75,14 +77,14 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public IDynamicTableObject find(string query)
         {
-            var conditions = QueryPraser.ParseConditoin(query);
-            var filter = QueryToFilter(conditions);
-            var data = _mongoCollection.Find(filter).FirstOrDefault();
+            var filter = QueryToFilter(query);
+            var data = MongoCollection.Find(filter).FirstOrDefault();
             return MongoDynamicTableObject.Create(data as IDictionary<string, object>);
         }
 
-        private FilterDefinition<object> QueryToFilter(List<ConditionItem> conditions)
+        public static FilterDefinition<object> QueryToFilter(string query)
         {
+            var conditions = QueryPraser.ParseConditoin(query);
             var filters = new List<FilterDefinition<object>>();
             foreach (var condition in conditions)
             {
@@ -92,16 +94,50 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
             return Builders<object>.Filter.And(filters);
         }
 
-        private FilterDefinition<object> ConditionToFilter(ConditionItem condition)
+        public static FilterDefinition<object> ConditionToFilter(ConditionItem condition)
         {
             switch (condition.Comparer)
             {
                 case Comparer.Contains:
-                    var reg = new Regex($"/{Regex.Escape(condition.Value)}/");
-                    return Builders<object>.Filter.Regex(condition.Field, new BsonRegularExpression(reg));
+                    var containsReg = new Regex($"{Regex.Escape(condition.Value)}");
+                    return Builders<object>.Filter.Regex(condition.Field, new BsonRegularExpression(containsReg));
+                case Comparer.EqualTo:
+                    return GetEqFilter(condition);
+                case Comparer.GreaterThan:
+                    return Builders<object>.Filter.Gt(condition.Field, double.Parse(condition.Value)) ;
+                case Comparer.GreaterThanOrEqual:
+                    return Builders<object>.Filter.Gte(condition.Field, double.Parse(condition.Value));
+                case Comparer.LessThan:
+                    return Builders<object>.Filter.Lt(condition.Field, double.Parse(condition.Value));
+                case Comparer.LessThanOrEqual:
+                    return Builders<object>.Filter.Lte(condition.Field, double.Parse(condition.Value));
+                case Comparer.NotEqualTo:
+                    var eqFilter = GetEqFilter(condition);
+                    return Builders<object>.Filter.Not(eqFilter);
+                case Comparer.StartWith:
+                    var startWithReg = new Regex($"^{Regex.Escape(condition.Value)}");
+                    return Builders<object>.Filter.Regex(condition.Field, new BsonRegularExpression(startWithReg));
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        private static FilterDefinition<object> GetEqFilter(ConditionItem condition)
+        {
+            var filters = new List<FilterDefinition<object>>();
+            filters.Add(Builders<object>.Filter.Eq(condition.Field, condition.Value));
+
+            if (bool.TryParse(condition.Value, out var boolean))
+            {
+                filters.Add(Builders<object>.Filter.Eq(condition.Field, boolean));
+            }
+
+            if (double.TryParse(condition.Value, out var number))
+            {
+                filters.Add(Builders<object>.Filter.Eq(condition.Field, number));
+            }
+            
+            return Builders<object>.Filter.Or(filters);
         }
 
         public IDynamicTableObject find(string fieldName, object matchValue)
@@ -111,22 +147,21 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public IDynamicTableObject[] findAll(string query)
         {
-            var conditions = QueryPraser.ParseConditoin(query);
-            var filter = QueryToFilter(conditions);
-            var data = _mongoCollection.Find(filter).ToList();
+            var filter = QueryToFilter(query);
+            var data = MongoCollection.Find(filter).ToList();
             var list = data.Select(s => s as IDictionary<string, object>).ToArray();
             return MongoDynamicTableObject.CreateList(list);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
         {
-                 return findAll($"{field} == {value}");
+            return findAll($"{field} == {value}");
         }
 
         public IDynamicTableObject get(object id)
         {
             var filter = GetIdFilter(id);
-            var data = _mongoCollection.Find(filter).FirstOrDefault();
+            var data = MongoCollection.Find(filter).FirstOrDefault();
             return MongoDynamicTableObject.Create(data as IDictionary<string, object>);
         }
 
@@ -142,12 +177,12 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public ITableQuery Query()
         {
-            throw new NotImplementedException();
+            return new MongoTableQuery(this);
         }
 
         public ITableQuery Query(string query)
         {
-            throw new NotImplementedException();
+            return Query().Where(query);
         }
 
         public void update(object newvalue)
@@ -164,7 +199,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             var dic = newvalue as IDictionary<string, object>;
             if (dic.ContainsKey("_id")) dic.Remove("_id");
-            _mongoCollection.FindOneAndReplace(GetIdFilter(id), dic);
+            MongoCollection.FindOneAndReplace(GetIdFilter(id), dic);
         }
     }
 }

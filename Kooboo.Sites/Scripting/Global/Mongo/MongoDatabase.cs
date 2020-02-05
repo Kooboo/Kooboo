@@ -1,4 +1,6 @@
-﻿using KScript;
+﻿using Kooboo.Lib.Helper;
+using KScript;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
