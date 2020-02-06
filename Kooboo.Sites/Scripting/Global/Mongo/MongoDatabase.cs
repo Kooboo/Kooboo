@@ -18,6 +18,8 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             _database = database;
         }
+        
+        [KIgnore]
         public ITable this[string key] => GetTable(key);
 
         public ITable GetTable(string Name)
