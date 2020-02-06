@@ -37,7 +37,6 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
 
         }
-          
-        
+           
     }
 }

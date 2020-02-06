@@ -91,8 +91,8 @@ namespace Kooboo.Sites.Ecommerce.Service
         public void UpdateCart(Cart cart)
         {
             //calculate discount before updates...
-
-        }
-
+            Promotion.PromotionEngine.CalculatePromotion(cart, this.Context);
+            this.Repo.AddOrUpdate(cart); 
+        } 
     }
 }

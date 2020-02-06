@@ -7,17 +7,33 @@ using System.Text;
 namespace Kooboo.Sites.Ecommerce.Models
 {
     public class PromotionRule : Kooboo.Sites.Contents.Models.MultipleLanguageObject
-    {  
+    {
         public string ConditionName { get; set; }
 
         public string Operator { get; set; }
 
+        private List<string> _targetvalues;
+
         /// <summary>
         /// Value stored as string, should be precomputed. rules will be stored in memory. 
         /// </summary>
-        public List<string> TargetValue { get; set; }
+        public List<string> TargetValue
+        {
+            get
+            {
+                if (_targetvalues == null)
+                {
+                    _targetvalues = new List<string>();
+                }
+                return _targetvalues;
+            }
+            set
+            {
+                _targetvalues = value;
+            }
+        }
 
-       public EnumPromotionTarget ForObject { get; set; }
+        public EnumPromotionTarget ForObject { get; set; }
 
         /// <summary>
         /// Can combined with other rules.
@@ -26,7 +42,7 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public decimal Amount { get; set; } = 0;
 
-        public decimal Percent { get; set; } = 1;
+        public decimal Percent { get; set; } = 0;
 
         public DateTime StartDate { get; set; }
 

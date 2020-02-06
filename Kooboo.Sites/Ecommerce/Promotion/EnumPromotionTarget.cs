@@ -7,7 +7,6 @@ namespace Kooboo.Sites.Ecommerce.Promotion
     public enum EnumPromotionTarget
     { 
         ForProduct =0,
-        ForShoppingCart =1,
-        ForShippingCost = 2 
+        ForShoppingCart =1, 
     }
 }

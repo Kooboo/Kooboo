@@ -2,12 +2,22 @@
 using Kooboo.Data.Context;
 using Kooboo.Sites.Ecommerce.Service;
 using Kooboo.Sites.Ecommerce.Models;
+using System.Linq;
 
 namespace Kooboo.Sites.Ecommerce.Promotion.ConditionImplementation
 {
+    /// <summary>
+    /// Based on the product category... 
+    /// </summary>
     public class ByCategory : IPromotionCondition
     {
-        public string Name => "ByCategory";
+        public string Name => "ByProductCategory";
+
+        public string DisplayName(RenderContext context)
+        {
+            return Data.Language.Hardcoded.GetValue("ByProductCategory", context); 
+        }
+
         public List<string> AvailableOperators
         {
             get
@@ -18,7 +28,7 @@ namespace Kooboo.Sites.Ecommerce.Promotion.ConditionImplementation
             }
         }
 
-        //Control type... 
+        //Control type...
         public string ControlType => "Tree";
 
         public EnumPromotionTarget TargetObject => EnumPromotionTarget.ForProduct;
@@ -27,10 +37,29 @@ namespace Kooboo.Sites.Ecommerce.Promotion.ConditionImplementation
         {
             return null;
         }
+         
 
-        public bool IsMatch(RenderContext context, Cart cart, CartItem item)
+        public bool IsMatch(RenderContext context, PromotionRule rule, Cart cart, CartItem item)
         {
-            return true;
+            if (rule.TargetValue == null || !rule.TargetValue.Any())
+            {
+                return false;
+            }
+            var productcatservice = ServiceProvider.GetService<ProductCategoryService>(context);
+
+            var allcat = productcatservice.FindCategoies(item.ProductId);
+
+            foreach (var target in rule.TargetValue)
+            {
+                if (System.Guid.TryParse(target, out System.Guid value))
+                {
+                    if (allcat.Contains(value))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public object OptionData(RenderContext context, string Operator)

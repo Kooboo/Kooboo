@@ -13,6 +13,8 @@ namespace Kooboo.Sites.Ecommerce.Promotion
      { 
         string Name { get;  }
 
+        string DisplayName(RenderContext context); 
+
         EnumPromotionTarget TargetObject { get;  }
          
         List<string> AvailableOperators { get; }
@@ -39,6 +41,6 @@ namespace Kooboo.Sites.Ecommerce.Promotion
         /// <param name="cart"></param>
         /// <param name="item">Null if calculating cart discount or shipping cost discount</param>
         /// <returns></returns>
-        bool IsMatch (RenderContext context, Cart cart, CartItem item);
+        bool IsMatch (RenderContext context, PromotionRule rule,  Cart cart, CartItem cartitem);
     }
 }

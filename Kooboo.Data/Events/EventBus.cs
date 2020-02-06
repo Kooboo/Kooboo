@@ -77,7 +77,7 @@ namespace Kooboo.Data.Events
                     {
                         if (_List == null)
                         {
-                            _List = new List<Ha ndlerInstance>();
+                            _List = new List<HandlerInstance>();
 
                             var alltypes = AssemblyLoader.LoadTypeByGenericInterface(typeof(IHandler<>));
 

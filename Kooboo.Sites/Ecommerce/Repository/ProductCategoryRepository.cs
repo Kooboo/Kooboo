@@ -45,9 +45,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 productcat.ProductId = ProductId;
                 productcat.CategoryId = item;
                 this.AddOrUpdate(productcat); 
-            }
-
-
+            } 
         }
 
         public List<ProductCategory> GetCatIdByProduct(Guid ProductId)
