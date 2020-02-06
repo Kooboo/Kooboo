@@ -39,7 +39,28 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
 
         public object append(object value)
         {
+            var option = new MapReduceOptions<object, object>();
+            option.OutputOptions = MapReduceOutputOptions.Inline;
+            
+            var existFields = MongoCollection.MapReduce(
+                "function() { for (var key in this) { emit(key, 1); } }",
+                "function(key, values) { return Array.sum(values); }",
+                option)
+                .ToList()
+                .Select(s =>
+                {
+                    var obj = s as IDictionary<string, object>;
+                    return obj["_id"];
+                });
+
             var dic = value as IDictionary<string, object>;
+            var removedKeys= dic.Where(w=>!existFields.Contains(w.Key)).Select(s=>s.Key);
+
+            foreach (var item in removedKeys)
+            {
+                dic.Remove(item);
+            }
+
             if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
             MongoCollection.InsertOne(value);
             return dic["_id"];
@@ -104,7 +125,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
                 case Comparer.EqualTo:
                     return GetEqFilter(condition);
                 case Comparer.GreaterThan:
-                    return Builders<object>.Filter.Gt(condition.Field, double.Parse(condition.Value)) ;
+                    return Builders<object>.Filter.Gt(condition.Field, double.Parse(condition.Value));
                 case Comparer.GreaterThanOrEqual:
                     return Builders<object>.Filter.Gte(condition.Field, double.Parse(condition.Value));
                 case Comparer.LessThan:
@@ -136,7 +157,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
             {
                 filters.Add(Builders<object>.Filter.Eq(condition.Field, number));
             }
-            
+
             return Builders<object>.Filter.Or(filters);
         }
 
