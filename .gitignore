@@ -23,3 +23,4 @@ bld/
 *.assets.json
 Kooboo.Web/_Admin/Scripts/kooboo-web-editor/kooboo-web-editor.min.js
 Kooboo.Web/_Admin/Scripts/lib/vs
+*.DS_Store
