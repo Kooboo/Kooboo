@@ -1,4 +1,5 @@
-﻿using Kooboo.Lib.Helper;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Lib.Helper;
 using KScript;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -25,7 +26,8 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         }
 
         [Description("about mongo command you can see https://docs.mongodb.com/manual/reference/command/")]
-        public object RunCommand(CommandObject commandObject)
+        [KDefineType(Params = new[] { typeof(CommandObject) }, Return = typeof(CommandResult))]
+        public object RunCommand(object commandObject)
         {
             var jsonCommand = new JsonCommand<object>(JsonHelper.Serialize(commandObject));
             return _database.RunCommand(jsonCommand);
