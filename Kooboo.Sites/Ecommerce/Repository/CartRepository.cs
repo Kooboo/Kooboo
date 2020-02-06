@@ -1,13 +1,12 @@
 ﻿using Kooboo.IndexedDB;
-using Kooboo.Sites.Ecommerce.ShoppingCart;
+using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.Repository
-{
-  
+{ 
     public class CartRepository : SiteRepositoryBase<Cart>
     {
         public override ObjectStoreParameters StoreParameters
@@ -19,9 +18,6 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 para.SetPrimaryKeyField<Cart>(o => o.Id); 
                 return para;
             }
-        }
-
-        
+        } 
     }
-
 }

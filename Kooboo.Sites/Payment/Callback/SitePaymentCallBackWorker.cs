@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System; 
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Payment.Repository;
@@ -13,8 +11,7 @@ namespace Kooboo.Sites.Payment
         {
             if (context.WebSite != null && callback.RequestId != default(Guid))
             {
-                var sitedb = context.WebSite.SiteDb();
-
+                var sitedb = context.WebSite.SiteDb(); 
                 // fire the code first...
                var callbackrepo =  sitedb.GetSiteRepository<PaymentCallBackRepository>();
 
@@ -29,10 +26,7 @@ namespace Kooboo.Sites.Payment
                 else if (callback.Cancelled || callback.Rejected)
                 {
                     requestrepo.Store.UpdateColumn<bool>(callback.RequestId, o => o.Failed, true);
-                } 
-
-
-
+                }  
             }
         }
     }

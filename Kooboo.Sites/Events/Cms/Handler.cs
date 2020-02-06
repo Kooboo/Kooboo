@@ -1,10 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
+using System.Collections.Generic; 
+using Kooboo.Sites.Models; 
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Events.Cms;
 using Kooboo.Sites.Relation;
@@ -155,8 +153,7 @@ namespace Kooboo.Sites.Events
                 }
             } 
         }
-
-
+         
         private static void HandleViewChange(SiteObjectEvent<View> ViewEvent)
         {
             if (ViewEvent.ChangeType == ChangeType.Add)

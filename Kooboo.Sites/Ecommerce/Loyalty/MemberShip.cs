@@ -15,5 +15,6 @@ namespace Kooboo.Sites.Ecommerce.Models
         public DateTime EndTime { get; set; }
 
         public Guid CustomerId { get; set; }
+
     }
 }

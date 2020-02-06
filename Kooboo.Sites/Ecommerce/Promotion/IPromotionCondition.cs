@@ -1,5 +1,5 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Sites.Ecommerce.ShoppingCart;
+using Kooboo.Sites.Ecommerce.Models;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Ecommerce.Promotion
@@ -12,6 +12,8 @@ namespace Kooboo.Sites.Ecommerce.Promotion
     public interface IPromotionCondition
      { 
         string Name { get;  }
+
+        EnumPromotionTarget TargetObject { get;  }
          
         List<string> AvailableOperators { get; }
  

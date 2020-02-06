@@ -12,7 +12,7 @@ namespace KScript
 
         public RenderContext context { get; set; }
 
-        public Kooboo.Sites.Ecommerce.ShoppingCart.Cart Cart
+        public Kooboo.Sites.Ecommerce.Models.Cart Cart
         {
             get
             {

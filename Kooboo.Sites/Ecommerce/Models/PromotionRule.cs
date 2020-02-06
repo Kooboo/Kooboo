@@ -1,11 +1,12 @@
-﻿using Kooboo.Sites.Models;
+﻿using Kooboo.Sites.Ecommerce.Promotion;
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.Models
 {
-    public class PromotionRule : CoreObject
+    public class PromotionRule : Kooboo.Sites.Contents.Models.MultipleLanguageObject
     {  
         public string ConditionName { get; set; }
 
@@ -16,9 +17,12 @@ namespace Kooboo.Sites.Ecommerce.Models
         /// </summary>
         public List<string> TargetValue { get; set; }
 
-        public bool ForShippingCost { get; set; }
+       public EnumPromotionTarget ForObject { get; set; }
 
-        public bool ForShoppingCart { get; set; }
+        /// <summary>
+        /// Can combined with other rules.
+        /// </summary>
+        public bool CanCombine { get; set; }
 
         public decimal Amount { get; set; } = 0;
 

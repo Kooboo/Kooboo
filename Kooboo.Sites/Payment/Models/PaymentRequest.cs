@@ -31,7 +31,7 @@ namespace Kooboo.Sites.Payment
             }
         }
          
-        // additional info if needed. 
+        //additional info if needed. 
         public string Description { get; set; }
 
         [KIgnore]

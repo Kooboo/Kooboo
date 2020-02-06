@@ -43,12 +43,11 @@ namespace Kooboo.Sites.Ecommerce.Service
 
         }
 
-        public List<Category> Sub(Guid ParentId)
+        public List<CategoryViewModel> Sub(Guid ParentId)
         {
             var list = this.Repo.List();
             var sub = list.Where(o => o.ParentId == ParentId).ToList(); 
-
-        }
-
+            return sub.Select(o => new CategoryViewModel(o, this.Context)).ToList();  
+        } 
     }
 }

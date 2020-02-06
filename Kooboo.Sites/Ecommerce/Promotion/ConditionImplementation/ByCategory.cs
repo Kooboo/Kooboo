@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Ecommerce.Service;
-using Kooboo.Sites.Ecommerce.ShoppingCart;
+using Kooboo.Sites.Ecommerce.Models;
 
 namespace Kooboo.Sites.Ecommerce.Promotion.ConditionImplementation
 {
@@ -20,6 +20,8 @@ namespace Kooboo.Sites.Ecommerce.Promotion.ConditionImplementation
 
         //Control type... 
         public string ControlType => "Tree";
+
+        public EnumPromotionTarget TargetObject => EnumPromotionTarget.ForProduct;
 
         public List<string> AutoComplete(RenderContext context, string wordpart)
         {

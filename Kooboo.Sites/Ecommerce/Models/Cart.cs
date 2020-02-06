@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Interface;
+using Kooboo.Sites.Ecommerce.Promotion;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
@@ -37,15 +38,11 @@ namespace Kooboo.Sites.Ecommerce.Models
         public bool IsOrder { get; set; }
 
         public decimal TotalAmount { get; set; }
-
-        public List<Guid> DiscountRules { get; set; }
-
-        public decimal  Discount { get; set; }
-
-        public List<string> DiscountReason { get; set; }
+         
+        public Discount Discount { get; set;  }
 
         private List<CartItem> _cartitems;
-        public List<CartItem> CartItems
+        public List<CartItem> Items
         {
             get
             {
@@ -60,5 +57,6 @@ namespace Kooboo.Sites.Ecommerce.Models
                 _cartitems = value;
             }
         } 
+
     }
 }
