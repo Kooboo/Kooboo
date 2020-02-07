@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             _database = database;
         }
-        
+
         [KIgnore]
         public ITable this[string key] => GetTable(key);
 
@@ -27,7 +27,24 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
             return new MongoTable(_database.GetCollection<object>(Name));
         }
 
-        [Description("about mongo command you can see https://docs.mongodb.com/manual/reference/command/")]
+        [Description(@"
+about mongo command you can see https://docs.mongodb.com/manual/reference/command/
+For example:
+
+// insert
+k.mongo.runCommand({
+    insert:'user',
+    documents:[
+        {name:'jobs',age:23}
+    ]
+})
+
+// find
+var result= k.mongo.runCommand({
+   find:'user'
+});
+k.response.write(result);
+")]
         [KDefineType(Params = new[] { typeof(CommandObject) }, Return = typeof(CommandResult))]
         public object RunCommand(object commandObject)
         {
