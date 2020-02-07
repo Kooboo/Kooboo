@@ -1,11 +1,8 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Data.Models;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions; 
 using System;
 using System.Collections.Generic;
-using System.Text; 
-using System.ComponentModel;
 using Kooboo.Data.Attributes;
 
 namespace Kooboo.Sites.Payment
@@ -32,7 +29,14 @@ namespace Kooboo.Sites.Payment
 
             var repo = sitedb.GetSiteRepository<Repository.PaymentRequestRepository>();
             repo.AddOrUpdate(request);
+
             var result = this.PaymentMethod.Charge(request);
+
+            if (!string.IsNullOrWhiteSpace(result.paymemtMethodReferenceId))
+            {
+                request.ReferenceId = result.paymemtMethodReferenceId; 
+            }
+
             if (!string.IsNullOrWhiteSpace(request.Code) || !string.IsNullOrWhiteSpace(request.ReferenceId))
             {
                 repo.AddOrUpdate(request);
@@ -157,8 +161,4 @@ namespace Kooboo.Sites.Payment
         }
 
     }
-
-
-
-
 }

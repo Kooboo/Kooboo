@@ -95,5 +95,11 @@
       <Version>4.8.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ecommerce\Events\" />
+    <Folder Include="Ecommerce\Search\" />
+    <Folder Include="Ecommerce\Recommendation\" />
+    <Folder Include="Ecommerce\Shopping\" />
+  </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
-$(function() {
+$(function () {
   var self;
   new Vue({
     el: "#main",
-    data: function() {
+    data: function () {
       self = this;
       return {
         dataType: "",
@@ -15,11 +15,11 @@ $(function() {
       };
     },
     methods: {
-      compare: function() {
+      compare: function () {
         switch (self.dataType) {
           case 0:
             var monacoService = new MonacoEditorService();
-            monacoService.loader(function(monaco) {
+            monacoService.loader(function (monaco) {
               // https://microsoft.github.io/monaco-editor/playground.html#creating-the-diffeditor-hello-diff-world
               var diffEditor = monaco.editor.createDiffEditor(
                 document.getElementById("compare"),
@@ -40,7 +40,7 @@ $(function() {
                 original: lhsModel,
                 modified: rhsModel
               });
-            });
+            }, true);
             break;
           case 1:
 
@@ -48,11 +48,11 @@ $(function() {
         }
       }
     },
-    mounted: function() {
+    mounted: function () {
       Kooboo.SiteLog.Compare({
         id1: Kooboo.getQueryString("id1"),
         id2: Kooboo.getQueryString("id2")
-      }).then(function(res) {
+      }).then(function (res) {
         if (res.success) {
           self.dataType = res.model.dataType;
           self.title1 = res.model.title1;
@@ -74,7 +74,7 @@ $(function() {
         });
       }
     },
-    beforeDestory: function() {
+    beforeDestory: function () {
       self = null;
     }
   });

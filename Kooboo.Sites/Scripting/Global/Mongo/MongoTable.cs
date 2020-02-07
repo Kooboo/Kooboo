@@ -1,4 +1,4 @@
-﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Attributes;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.IndexedDB.Query;
 using KScript;

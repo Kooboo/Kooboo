@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using Kooboo.Data.Context;
 using System.IO;
-using System.Net;
-using Kooboo.Data.Models;
+using System.Net; 
 using Kooboo.Data.Attributes;
 using System.ComponentModel;
 using Kooboo.Sites.Payment.Response;

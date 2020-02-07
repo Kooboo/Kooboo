@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 namespace Kooboo.Sites.Ecommerce.Repository
 {
     public class ProductVariantsRepository : SiteRepositoryBase<ProductVariants>
-    {
-
+    { 
         public override ObjectStoreParameters StoreParameters
         {
             get

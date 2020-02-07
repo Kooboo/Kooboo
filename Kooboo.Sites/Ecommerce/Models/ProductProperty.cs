@@ -10,8 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Models
-{
-   
+{ 
     public class ProductProperty
     {
         public ProductProperty()
@@ -89,10 +88,5 @@ namespace Kooboo.Sites.Ecommerce.Models
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
-
-
-
-
-
-
+  
 }

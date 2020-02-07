@@ -55,6 +55,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
     <PackageReference Include="MimeMapping" Version="1.0.1.12" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />

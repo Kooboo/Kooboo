@@ -1,4 +1,4 @@
-﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Attributes;
 using Kooboo.Lib.Helper;
 using KScript;
 using MongoDB.Bson;
