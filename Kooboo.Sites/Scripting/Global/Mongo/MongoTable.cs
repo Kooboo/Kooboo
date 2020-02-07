@@ -41,7 +41,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             var option = new MapReduceOptions<object, object>();
             option.OutputOptions = MapReduceOutputOptions.Inline;
-            
+
             var existFields = MongoCollection.MapReduce(
                 "function() { for (var key in this) { emit(key, 1); } }",
                 "function(key, values) { return Array.sum(values); }",
@@ -54,7 +54,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
                 });
 
             var dic = value as IDictionary<string, object>;
-            var removedKeys= dic.Where(w=>!existFields.Contains(w.Key)).Select(s=>s.Key);
+            var removedKeys = dic.Where(w => !existFields.Contains(w.Key)).Select(s => s.Key);
 
             foreach (var item in removedKeys)
             {
@@ -220,7 +220,18 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         {
             var dic = newvalue as IDictionary<string, object>;
             if (dic.ContainsKey("_id")) dic.Remove("_id");
-            MongoCollection.FindOneAndReplace(GetIdFilter(id), dic);
+            if (dic.Count > 0)
+            {
+                var first = dic.First();
+                var update = new UpdateDefinitionBuilder<object>().Set(first.Key, first.Value);
+
+                foreach (var item in dic.Skip(1))
+                {
+                    update = update.Set(item.Key, item.Value);
+                }
+
+                MongoCollection.FindOneAndUpdate(GetIdFilter(id), update);
+            }
         }
     }
 }
