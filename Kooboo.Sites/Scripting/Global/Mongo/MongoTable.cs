@@ -1,16 +1,15 @@
 using Kooboo.Data.Attributes;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.IndexedDB.Query;
-using KScript;
+using Kooboo.Sites.Scripting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Kooboo.Sites.Scripting.Global.Mongo
+namespace KScript
 {
     public class MongoTable : ITable
     {

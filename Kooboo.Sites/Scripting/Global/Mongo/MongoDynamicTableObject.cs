@@ -4,7 +4,7 @@ using KScript;
 using System;
 using System.Collections.Generic;
 
-namespace Kooboo.Sites.Scripting.Global.Mongo
+namespace KScript
 {
     public class MongoDynamicTableObject : DynamicTableObjectBase
     {

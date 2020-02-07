@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Kooboo.Sites.Scripting.Global.Mongo
+namespace KScript
 {
     public class MongoDatabase : IDatabase
     {
@@ -28,7 +28,9 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
         }
 
         [Description(@"
-about mongo command you can see https://docs.mongodb.com/manual/reference/command/
+about mongo command you can see 
+https://docs.mongodb.com/manual/reference/command/
+
 For example:
 
 // insert

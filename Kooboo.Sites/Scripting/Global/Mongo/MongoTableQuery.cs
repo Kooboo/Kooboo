@@ -3,7 +3,7 @@ using System.Linq;
 using KScript;
 using MongoDB.Driver;
 
-namespace Kooboo.Sites.Scripting.Global.Mongo
+namespace KScript
 {
     public class MongoTableQuery : ITableQuery
     {

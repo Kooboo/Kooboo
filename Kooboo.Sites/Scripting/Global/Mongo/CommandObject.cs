@@ -1,4 +1,4 @@
-namespace Kooboo.Sites.Scripting.Global.Mongo
+namespace KScript
 {
     /// <summary>
     /// contains aggregate find insert update delete

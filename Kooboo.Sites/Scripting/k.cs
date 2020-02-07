@@ -9,7 +9,6 @@ using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.Mongo;
 using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using KScript.KscriptConfig;
