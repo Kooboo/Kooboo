@@ -407,6 +407,7 @@ var value = k.session.key; ")]
         }
 
         private SqliteDatabase _sqlite;
+        static object _sqliteLocker = new object();
 
         public SqliteDatabase Sqlite
         {
@@ -414,7 +415,7 @@ var value = k.session.key; ")]
             {
                 if (_sqlite == null)
                 {
-                    lock (_locker)
+                    lock (_sqliteLocker)
                     {
                         if (_sqlite == null)
                         {
@@ -428,6 +429,7 @@ var value = k.session.key; ")]
         }
 
         private MysqlDatabase _mysql;
+        static object _mysqlLocker = new object();
 
         public MysqlDatabase Mysql
         {
@@ -435,7 +437,7 @@ var value = k.session.key; ")]
             {
                 if (_mysql == null)
                 {
-                    lock (_locker)
+                    lock (_mysqlLocker)
                     {
                         if (_mysql == null)
                         {
@@ -455,6 +457,7 @@ var value = k.session.key; ")]
         }
 
         private SqlServerDatabase _sqlServer;
+        static object _sqlServerLocker = new object();
 
         public SqlServerDatabase SqlServer
         {
@@ -462,7 +465,7 @@ var value = k.session.key; ")]
             {
                 if (_sqlServer == null)
                 {
-                    lock (_locker)
+                    lock (_sqlServerLocker)
                     {
                         if (_sqlServer == null)
                         {
@@ -481,6 +484,7 @@ var value = k.session.key; ")]
         }
 
         private MongoDatabase _mongo;
+        static object _mongoLocker = new object();
 
         public MongoDatabase Mongo
         {
@@ -488,7 +492,7 @@ var value = k.session.key; ")]
             {
                 if (_mongo == null)
                 {
-                    lock (_locker)
+                    lock (_mongoLocker)
                     {
                         if (_mongo == null)
                         {
@@ -500,7 +504,7 @@ var value = k.session.key; ")]
                             }
 
                             var url = new MongoUrl(setting.ConnectionString);
-                            var databaseName = url.DatabaseName ?? RenderContext.WebSite.Name.ToString();
+                            var databaseName = url.DatabaseName ?? $"db_{RenderContext.WebSite.Name.ToString()}_{RenderContext.WebSite.Id.ToString()}";
                             var client = new MongoClient(url);
                             _mongo = new MongoDatabase(client.GetDatabase(databaseName));
                         }
@@ -509,9 +513,6 @@ var value = k.session.key; ")]
                 return _mongo;
             }
         }
-
-
-
 
         [KIgnore]
         public IDatabase DB
