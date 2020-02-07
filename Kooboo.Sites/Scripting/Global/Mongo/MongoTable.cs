@@ -54,7 +54,7 @@ namespace Kooboo.Sites.Scripting.Global.Mongo
                 });
 
             var dic = value as IDictionary<string, object>;
-            var removedKeys = dic.Where(w => !existFields.Contains(w.Key)).Select(s => s.Key);
+            var removedKeys = dic.Where(w => !existFields.Contains(w.Key)).Select(s => s.Key).ToArray();
 
             foreach (var item in removedKeys)
             {
