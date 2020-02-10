@@ -22,7 +22,7 @@ Vue.directive("kb-tooltip", {
         ? '<div class="tooltip error" role="tooltip" style="z-index:' +
           zIndex +
           ';width: max-content;word-wrap: break-word;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-          : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;word-wrap: break-word;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+        : '<div class="tooltip" role="tooltip" style="z-index:199999;width: max-content;word-wrap: break-word;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
       container: $el.data("container") || "body"
     });
 
@@ -51,7 +51,9 @@ Vue.directive("kb-tooltip", {
             el.scrollIntoView();
           }
         }
-      $el.tooltip("show");
+      setTimeout(function() {
+        $el.tooltip("show");
+      }, 100);
     } else {
       $el.tooltip("hide");
     }
@@ -613,7 +615,7 @@ Vue.directive("kb-hint", {
         placement: "right",
         trigger: "manual",
         template:
-            '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+          '<div class="tooltip error" role="tooltip" style="z-index:199999;width: max-content;"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
       };
       var errorContainer = element.data("container");
       if (errorContainer) {
@@ -698,9 +700,9 @@ Vue.directive("kb-select2", {
       })
       .on("change", function(e) {
         $(element)
-        .parent()
-        .find(".select2-search__field")
-        .val("");
+          .parent()
+          .find(".select2-search__field")
+          .val("");
 
         var selected = [];
         for (var i = 0; i < e.target.selectedOptions.length; i++) {
