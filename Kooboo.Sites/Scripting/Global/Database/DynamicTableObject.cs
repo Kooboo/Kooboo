@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Attributes;
+﻿using Jint;
+using Jint.Native;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions;
@@ -14,8 +16,6 @@ namespace KScript
     [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
     public class DynamicTableObject : DynamicTableObjectBase, IDynamicTableObject
     {
-        public IDictionary<string, object> obj { get; set; }
-
         private RenderContext context { get; set; }
         private Table table { get; set; }
 
