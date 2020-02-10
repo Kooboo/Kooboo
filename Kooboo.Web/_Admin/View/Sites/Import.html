@@ -300,7 +300,10 @@
       },
       uploadFile: function(data, files) {
         self.model.file = files[0];
-        self.model.siteName = files[0].name.split(".zip")[0];
+
+        if(!self.model.siteName){
+          self.model.siteName = files[0].name.split(".zip")[0];
+        }
       }
     },
     watch: {
