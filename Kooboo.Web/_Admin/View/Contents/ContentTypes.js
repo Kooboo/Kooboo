@@ -61,7 +61,8 @@ $(function() {
                         ids: ids
                     }).then(function(res) {
                         if (res.success) {
-                            self.getTableData();
+                            //self.getTableData();
+                            location.reload();
                             window.info.done(Kooboo.text.info.delete.success);
                         } else {
                             window.info.done(Kooboo.text.info.delete.fail);
