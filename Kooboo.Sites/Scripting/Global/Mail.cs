@@ -1,16 +1,18 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using KScript.Parameter;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 
-namespace Kooboo.Sites.Scripting.Global
+namespace KScript
 {
     public class Mail
     {
-
         private RenderContext context { get; set; }
 
         public Mail(RenderContext context)
@@ -18,6 +20,10 @@ namespace Kooboo.Sites.Scripting.Global
             this.context = context;
         }
 
+        [KDefineType(Params = new[] { typeof(MailMessage) })]
+        [Description(@"Send an email message using default smtp
+var msg = { to: ""guoqi@kooboo.com"", from: ""1802897953@qq.com"", subject: ""this is a test email xxxx"", body: ""some html body"" };  
+k.mail.send(msg);")]
         public void Send(object value)
         {
             var maildata = PrepareData(value);
@@ -58,7 +64,7 @@ namespace Kooboo.Sites.Scripting.Global
                 }
 
                 // check if org allowed to send.
-                if (!Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count()))
+                if (!Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Kooboo.Data.Infrastructure.InfraType.Email, allrcptos.Count()))
                 {
                     throw new Exception("No enough email sending credits");
                 }
@@ -66,7 +72,7 @@ namespace Kooboo.Sites.Scripting.Global
                 {
                     Kooboo.Mail.Transport.Incoming.Receive(maildata.From, allrcptos, messagebody);
 
-                    Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count(), string.Join(",", allrcptos));
+                    Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Kooboo.Data.Infrastructure.InfraType.Email, allrcptos.Count(), string.Join(",", allrcptos));
                 }
 
             }
@@ -129,6 +135,25 @@ namespace Kooboo.Sites.Scripting.Global
                 }
             }
 
+            if (data.ContainsKey("cc"))
+            {
+                var value = data["cc"];
+                if (value != null)
+                {
+                    string values = value.ToString();
+                    result.Cc = values.Split(sep, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+            }
+
+            if (data.ContainsKey("bcc"))
+            {
+                var value = data["bcc"];
+                if (value != null)
+                {
+                    string values = value.ToString();
+                    result.Bcc = values.Split(sep, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+            }
 
             if (data.ContainsKey("from"))
             {
@@ -198,6 +223,11 @@ namespace Kooboo.Sites.Scripting.Global
 
         }
 
+        [Description(@"Send an email using an external smtp server
+var msg = { to: ""guoqi@kooboo.com"", from: ""1802897953@qq.com"", subject: ""this is a test email xxxx"", body: ""some html body"" }; 
+var smtpserver = { host: ""smtp.qq.com"", port: 587, ssl: true, username: ""1802897953@qq.com"", password: ""xjpctnbtvsxwbige"" }; 
+k.mail.smtpSend(smtpserver, msg);")]
+        [KDefineType(Params = new[] { typeof(SmtpServer), typeof(MailMessage) })]
         public void SmtpSend(object SmtpServer, object MailMessage)
         {
             var server = GetSmtpServer(SmtpServer);
@@ -206,14 +236,29 @@ namespace Kooboo.Sites.Scripting.Global
                 var mailobj = PrepareData(MailMessage);
 
                 if (!string.IsNullOrWhiteSpace(mailobj.From) && mailobj.To != null && mailobj.To.Any())
-                {
-
+                { 
                     System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
                     msg.From = new System.Net.Mail.MailAddress(mailobj.From);
 
                     foreach (var item in mailobj.To)
                     {
                         msg.To.Add(item);
+                    }
+
+                    if (mailobj.Cc != null)
+                    {
+                        foreach (var item in mailobj.Cc)
+                        {
+                            msg.CC.Add(item);
+                        }
+                    }
+
+                    if (mailobj.Bcc != null)
+                    {
+                        foreach (var item in mailobj.Bcc)
+                        {
+                            msg.Bcc.Add(item);
+                        }
                     }
 
                     msg.Subject = mailobj.Subject;
@@ -362,8 +407,6 @@ namespace Kooboo.Sites.Scripting.Global
             return result;
 
         }
-
-
 
     }
 

@@ -7,14 +7,16 @@
   monacoService.loader(function(Monaco) {
     state.loader = true;
     monaco = Monaco;
-    var kscriptContent = Kooboo.getTemplate(
-      "/_Admin/Scripts/components/manacoService/kscript.d.ts"
-    );
-    monacoService.addExtraLib(
-      "javascript",
-      kscriptContent,
-      "kscript/kscript.d.ts"
-    );
+    Kooboo.KScript.GetDefine().then(function(rsp) {
+      if (rsp.success) {
+        monacoService.addExtraLib(
+          "javascript",
+          rsp.model,
+          "kscript/kscript.d.ts"
+        );
+        monacoService.addExtraLib("html", rsp.model, "kscript/kscript.d.ts");
+      }
+    });
     Kooboo.loadJS([
       "/_Admin/Scripts/components/manacoService/kview-complete-suggestions.js"
     ]);
@@ -24,7 +26,8 @@
   });
 
   Vue.component("kb-code-editor", {
-    template: "<div  style='width:100%;height:100%'></div>",
+    template:
+      "<h2 v-if='!loader' style='text-align:center'>{{Kooboo.text.common.loading}}...</h2> <div v-else style='width:100%;height:100%'></div>",
     props: {
       lang: {
         type: String,
@@ -87,6 +90,7 @@
           if (self.autoSize) {
             options.automaticLayout = true;
           }
+          options.fixedOverflowWidgets = true;
           var temp = monacoService.create(
             self.$el,
             self.d_code || self.code,
@@ -99,6 +103,7 @@
           self.monaco = monaco;
           self.isInit = true;
           self.isCreate = true;
+          monacoService.addManualTriggerSuggest(self.editor);
           monacoService.onModelContentChange(self.model, function(content) {
             self.d_code = content;
           });

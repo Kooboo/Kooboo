@@ -211,7 +211,9 @@ namespace Kooboo.Sites.Helper
                         }
                     }
                 }
-                model.Contents = contents.Select(o => ToView(o, language, sitedb.ContentTypes.GetPropertiesByFolder(item.FolderId))).ToList();
+                model.Contents = contents.Select(o => ToView(o, language, sitedb.ContentTypes.GetTitlePropertyByFolder(item.FolderId))).ToList();
+
+                CleanNonSummaryFields(sitedb, model, item.FolderId); 
 
                 model.Alias = item.Alias;
 
@@ -220,6 +222,34 @@ namespace Kooboo.Sites.Helper
 
             return embedded;
         }
+
+        private static void CleanNonSummaryFields(SiteDb sitedb, EmbeddedContentViewModel model, Guid FolderId)
+        {
+            var summaryfield = sitedb.ContentTypes.GetTitlePropertyByFolder(FolderId);
+
+            if (summaryfield !=null && summaryfield.Any())
+            {
+                foreach (var item in model.Contents)
+                {
+                    List<string> keysToRemove = new List<string>();
+                    foreach (var value in item.TextValues)
+                    {
+                        var find = summaryfield.Find(o => o.Name == value.Key); 
+                        if (find == null)
+                        {
+                            keysToRemove.Add(value.Key); 
+                        }
+                    }
+
+                    foreach (var key in keysToRemove)
+                    {
+                        item.TextValues.Remove(key); 
+                    }
+                }
+            }
+             
+        }
+
 
         public static string ShowText(string input)
         {

@@ -11,6 +11,7 @@ using System.Xml;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
+using Kooboo.Data.Attributes;
 
 namespace Kooboo.Sites.Scripting.Extension
 {
@@ -26,6 +27,7 @@ namespace Kooboo.Sites.Scripting.Extension
         }
 
         [Attributes.SummaryIgnore]
+        [KIgnore]
         public RenderContext context { get; set; }
 
         public string call(string url, string methodName,object data,string ns = "http://tempuri.org/")

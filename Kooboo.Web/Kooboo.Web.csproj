@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.Web</AssemblyName>
 	<RootNamespace>Kooboo.Web</RootNamespace>
@@ -13,6 +13,7 @@
     <Compile Remove="Backend\Menus\Hooker\**" />
     <Compile Remove="kooboo-web-editor\**" />
     <Compile Remove="KoobooData\**" />
+    <Compile Remove="Payment\**" />
     <Compile Remove="upgradePackage\**" />
     <Compile Remove="_Admin\**" />
     <EmbeddedResource Remove="AppData\**" />
@@ -20,6 +21,7 @@
     <EmbeddedResource Remove="Backend\Menus\Hooker\**" />
     <EmbeddedResource Remove="kooboo-web-editor\**" />
     <EmbeddedResource Remove="KoobooData\**" />
+    <EmbeddedResource Remove="Payment\**" />
     <EmbeddedResource Remove="upgradePackage\**" />
     <EmbeddedResource Remove="_Admin\**" />
     <None Remove="AppData\**" />
@@ -27,6 +29,7 @@
     <None Remove="Backend\Menus\Hooker\**" />
     <None Remove="kooboo-web-editor\**" />
     <None Remove="KoobooData\**" />
+    <None Remove="Payment\**" />
     <None Remove="upgradePackage\**" />
     <None Remove="_Admin\**" />
   </ItemGroup>
@@ -41,7 +44,6 @@
     <Compile Remove="Backend\Menus\ISideBarMenu.cs" />
     <Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
     <Compile Remove="Backend\Menus\SideBarSection.cs" />
-    <Compile Remove="Payment\PaymentRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,7 +51,6 @@
     <None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
     <None Remove="DashBoard\Resource\SiteResource.html" />
     <None Remove="DashBoard\TopPages\TopPages.html" />
-    <None Remove="Payment\Methods\Paypal_Form_doc.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,7 +60,7 @@
     <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -77,7 +78,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0-preview.19073.11" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

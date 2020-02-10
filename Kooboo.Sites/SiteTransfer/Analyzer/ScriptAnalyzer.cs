@@ -9,9 +9,7 @@ namespace Kooboo.Sites.SiteTransfer
     public class ScriptAnalyzer : ITransferAnalyzer
     {
         public void Execute(AnalyzerContext Context)
-        {
-            int embeddedItemIndex = 0;
-
+        { 
             HTMLCollection scripts = Context.Dom.getElementsByTagName("script");
 
             foreach (var item in scripts.item)
@@ -60,6 +58,25 @@ namespace Kooboo.Sites.SiteTransfer
                 }
                 else
                 {
+                    ///<script>if (document.location.protocol != "https:") {document.location = document.URL.replace(/^http:/i, "https:");}</script>
+
+                    string text = item.InnerHtml; 
+                    if (!string.IsNullOrWhiteSpace(text) && text.Length < 200)
+                    {
+                        var lower = text.ToLower(); 
+                        if (lower.Contains("document.location.protocol") && lower.Contains("document.url.replace") && lower.Contains("https"))
+                        {
+
+                            Context.Changes.Add(new AnalyzerUpdate()
+                            {
+                                StartIndex = item.location.openTokenStartIndex,
+                                EndIndex = item.location.endTokenEndIndex,
+                                NewValue = "<script>/* https redirect removed */</script>"
+                            });
+                        }
+                    }
+
+
                     //string text = item.InnerHtml;
                     //if (!string.IsNullOrEmpty(text))
                     //{

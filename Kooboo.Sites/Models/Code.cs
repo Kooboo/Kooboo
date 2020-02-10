@@ -120,7 +120,8 @@ namespace Kooboo.Sites.Models
         Job = 3,
         Api =4, 
         PageScript =5, 
-        Diagnosis =6
+        Diagnosis =6, 
+        PaymentCallBack = 7,
     } 
 
 }

@@ -1,6 +1,6 @@
 <div
   v-kb-modal="isShow"
-  class="modal fade"
+  class="modal fade test"
   data-backdrop="static"
   data-keyboard="false"
 >
@@ -34,7 +34,7 @@
               </td>
               <td>
                 <select class="form-control" v-model="toParameter">
-                  <option value="">&lt;Default context&gt;</option>
+                  <option value="">Default</option>
                   <option
                     v-for="(item,index) in fields"
                     :key="index"

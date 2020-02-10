@@ -285,14 +285,7 @@ namespace Kooboo.Data.Server
                     {
                         item.Path = "/";
                     }
-
-                    //if (item.Expires == default(DateTime))
-                    //{
-                    //    context.Features.Response.Cookies.Append(item.Name, item.Value);  
-                    //}
-                    //else
-                    //{
-
+                     
                     if (item.Expires == default(DateTime))
                     {
                         var time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
@@ -315,9 +308,7 @@ namespace Kooboo.Data.Server
 
                 if (response.Body != null && context.Features.Request.Method.ToLower() != "head")
                 {
-                    //int len = response.Body.Length;
-                    //if (len > 0)
-                    //{
+                  
                     try
                     {
                         header.ContentLength = response.Body.Length;
@@ -327,7 +318,7 @@ namespace Kooboo.Data.Server
                     {
                         context.Features.Response.Body.Close();
                     }
-                    //}
+                    
                 }
                 else
                 {
@@ -338,16 +329,16 @@ namespace Kooboo.Data.Server
 
                     else
                     {
-                        // 404.   
-                        string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
-                        if (System.IO.File.Exists(filename))
-                        {
-                            string text = System.IO.File.ReadAllText(filename);
-                            var bytes = System.Text.Encoding.UTF8.GetBytes(text);
-                            header.ContentLength = bytes.Length;
-                            context.Features.Response.StatusCode = 404;
-                            await context.Features.Response.Body.WriteAsync(bytes, 0, bytes.Length);
-                        }
+                        // 404.
+                        //string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
+                        //if (System.IO.File.Exists(filename))
+                        //{
+                        //    string text = System.IO.File.ReadAllText(filename);
+                        //    var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+                        //    header.ContentLength = bytes.Length;
+                        //    context.Features.Response.StatusCode = 404;
+                        //    await context.Features.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+                        //}
 
                     }
                 }
@@ -356,6 +347,13 @@ namespace Kooboo.Data.Server
             {
 
                 string location = response.RedirectLocation;
+
+                context.Features.Response.Headers["Server"] = "http://www.kooboo.com";
+
+                foreach (var item in response.Headers)
+                {
+                    context.Features.Response.Headers[item.Key] = item.Value;
+                }
 
                 foreach (var item in response.DeletedCookieNames)
                 {

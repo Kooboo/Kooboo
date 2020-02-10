@@ -140,12 +140,7 @@ namespace Kooboo.Web.Spa
             }
             return Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl);
         }
-
-        public static string GetRelativeUrl(Uri AbsoluteUri, SpaRenderOption option)
-        {
-            string RawRelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(AbsoluteUri);
-            return GetRelativeUrl(RawRelativeUrl, option); 
-        }
+         
         public static string GetRelativeUrl(string RawRelativeUrl, SpaRenderOption option)
         {
            string  RelativeUrl = RemoveQuestionMark(RawRelativeUrl); 

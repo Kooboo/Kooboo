@@ -8,15 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Extensions;
 using Kooboo.Sites.Models;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Repository;
+using Kooboo.Data.Interface; 
 using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Systems
 {
     public class SystemRender
     {
-        public static void Render(FrontContext context)
+        public static async Task Render(FrontContext context)
         {
             //systemroute.Name = "__kb/{objecttype}/{nameorid}"; defined in Routes. 
             var paras = context.Route.Parameters;
@@ -34,7 +33,7 @@ namespace Kooboo.Sites.Systems
                     ResourceGroupRender(context, id);
                     return;
                 case ConstObjectType.View:
-                    ViewRender(context, id, paras);
+                   await ViewRender(context, id, paras);
                     return;
                 case ConstObjectType.Image:
                     {
@@ -126,10 +125,12 @@ namespace Kooboo.Sites.Systems
                 }
             }
 
-            context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
+            string result = sb.ToString();
+            TextBodyRender.SetBody(context, result); 
+           // context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
         }
 
-        public static void ViewRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
+        public static async Task ViewRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
         {
             var action = Parameters.GetValue("action");
 
@@ -143,7 +144,7 @@ namespace Kooboo.Sites.Systems
                 }
                 context.Route.DestinationConstType = ConstObjectType.View;
                 context.Route.objectId = viewid;
-                ViewRenderer.Render(context);
+               await ViewRenderer.Render(context);
             }
             else
             {
@@ -158,7 +159,6 @@ namespace Kooboo.Sites.Systems
 
         public static void ImageRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
         {
-
             Guid ImageId;
             Image image = null;
 

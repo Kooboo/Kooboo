@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace Kooboo.Lib.IOC
 {
@@ -14,6 +15,7 @@ namespace Kooboo.Lib.IOC
             Transients = new Dictionary<string, Type>();
             Instances = new Dictionary<string, List<object>>();
             ImplementationType = new Dictionary<Type, Type>();
+            PriorityType = new Dictionary<string, Type>();
             _lock = new object();
         }
 
@@ -23,6 +25,7 @@ namespace Kooboo.Lib.IOC
 
         public static Dictionary<string, List<Object>> Instances { get; set; }
 
+        public static Dictionary<string, Type> PriorityType { get; set; }
 
         public static Dictionary<Type, Type> ImplementationType { get; set; }
 
@@ -30,7 +33,7 @@ namespace Kooboo.Lib.IOC
         public static Dictionary<string, Object> SingleTons { get; set; }
 
         public static Dictionary<string, Type> Transients { get; set; }
-          
+
         // get the Singleton instance. 
         public static T GetSingleTon<T>(bool SearchImplemention = false)
         {
@@ -53,12 +56,12 @@ namespace Kooboo.Lib.IOC
             {
                 var newinstance = (T)Activator.CreateInstance(DefaultImplementation);
                 AddSingleton<T>(newinstance);
-                return newinstance;  
+                return newinstance;
             }
             else
             {
-                return (T)result; 
-            } 
+                return (T)result;
+            }
         }
 
         public static Object GetSingleTon(Type objType, bool SearchImplementation)
@@ -68,48 +71,143 @@ namespace Kooboo.Lib.IOC
             if (!SingleTons.ContainsKey(name))
             {
                 if (SearchImplementation)
-                { 
+                {
                     lock (_lock)
                     {
                         if (!SingleTons.ContainsKey(name))
                         {
+
                             var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(objType);
 
-                            //TODO: add rule to get the right intance. 
-                            if (types != null && types.Any())
+                            if (Lib.Reflection.TypeHelper.HasInterface(objType, typeof(IPriority)))
                             {
-                                var type = types[0];
-                                var obj = Activator.CreateInstance(type);
-                                SingleTons[name] = obj;
+                                List<IPriority> list = new List<IPriority>();
+                                foreach (var item in types)
+                                {
+                                    var obj = Activator.CreateInstance(item) as IPriority;
+                                    if (obj != null)
+                                    {
+                                        list.Add(obj);
+                                    }
+                                }
+
+                                if (list.Any())
+                                {
+                                    SingleTons[name] = list.OrderByDescending(o => o.Priority).First();
+                                }
+                                else
+                                {
+                                    SingleTons[name] = null;
+                                }
                             }
                             else
                             {
-                                SingleTons[name] = null;
+                                if (types != null && types.Any())
+                                {
+                                    var type = types[0];
+                                    var obj = Activator.CreateInstance(type);
+                                    SingleTons[name] = obj;
+                                }
+                                else
+                                {
+                                    SingleTons[name] = null;
+                                }
+
                             }
+
+
                         }
                     }
                 }
                 else
                 {
-                    return null; 
+                    return null;
                 }
             }
 
             return SingleTons[name];
         }
-          
-
-   
 
         public static void AddSingleton<T>(T instance)
         {
             var name = typeof(T).Name;
             SingleTons[name] = instance;
         }
-         
+
         public static List<Type> GetImplementationTypes<T>()
         {
             return GetImplementationTypes(typeof(T));
+        }
+
+
+        //create intance based on priority.  
+        public static T CreateInstanceByPriority<T>() where T : IPriority
+        {
+            var type = typeof(T);
+            string name = type.Name;
+
+            if (!PriorityType.ContainsKey(name))
+            {
+                lock (_lock)
+                {
+                    if (!PriorityType.ContainsKey(name))
+                    {
+                        Type SelectedType=null;
+
+                        var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(type);
+
+                        long current = long.MinValue;
+
+                        if (types != null && types.Any())
+                        {
+                            foreach (var item in types)
+                            {
+                                var prio = GetTypePriority(item); 
+
+                                if (SelectedType == null)
+                                { SelectedType = item;
+                                    current = prio; 
+                                }
+                                else 
+                                {
+                                    if (prio > current)
+                                    {
+                                        prio = current;
+                                        SelectedType = item; 
+                                    }
+
+                                }
+                            }
+                        } 
+
+                        PriorityType[name] = SelectedType;
+                        
+
+                    }
+                } 
+            }
+
+            var righttype = PriorityType[name]; 
+            if (righttype !=null)
+            {
+                var instance = Activator.CreateInstance(righttype);
+                return (T)instance; 
+            }
+            return default(T); 
+        }
+
+        public static long GetTypePriority(Type objType)
+        {
+            var method = objType.GetProperty("Priority").GetGetMethod();
+            var dynamicMethod = new DynamicMethod("meide", typeof(long),
+                                                  Type.EmptyTypes);
+            var generator = dynamicMethod.GetILGenerator();
+            generator.Emit(OpCodes.Ldnull);
+            generator.Emit(OpCodes.Call, method);
+            generator.Emit(OpCodes.Ret);
+            var silly = (Func<long>)dynamicMethod.CreateDelegate(
+                           typeof(Func<long>));
+            return silly();
         }
 
         public static List<Type> GetImplementationTypes(Type InterfaceType)
@@ -136,13 +234,13 @@ namespace Kooboo.Lib.IOC
             List<T> result = new List<T>();
             foreach (var item in instances)
             {
-                var Tinstance = (T)item; 
-                if (Tinstance !=null)
+                var Tinstance = (T)item;
+                if (Tinstance != null)
                 {
-                    result.Add(Tinstance); 
+                    result.Add(Tinstance);
                 }
             }
-            return result; 
+            return result;
         }
 
         public static List<object> GetInstances(Type InterfaceType)
@@ -162,20 +260,20 @@ namespace Kooboo.Lib.IOC
                             var instance = Activator.CreateInstance(item);
                             if (instance != null)
                             {
-                                Result.Add(instance); 
+                                Result.Add(instance);
                             }
                         }
 
-                        Instances[name] = Result; 
+                        Instances[name] = Result;
                     }
                 }
             }
 
-            return Instances[name]; 
+            return Instances[name];
         }
     }
 }
- 
+
 //Transient – Created every time they are requested
 //Scoped – Created once per scope. Most of the time, scope refers to a web request. But this can also be used for any unit of work, such as the execution of an Azure Function.
 //Singleton – Created only for the first request.If a particular instance is specified at registration time, this instance will be provided to all consumers of the registration type.

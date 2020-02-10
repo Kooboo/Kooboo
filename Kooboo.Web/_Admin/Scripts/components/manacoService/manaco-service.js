@@ -2,7 +2,7 @@ Kooboo.loadJS(["/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js"]);
 
 var MonacoEditorService =
   /*#__PURE__*/
-  (function() {
+  (function () {
     "use strict";
     var monaco;
     var self;
@@ -14,9 +14,9 @@ var MonacoEditorService =
       this.isLoader = undefined;
     }
 
-    MonacoEditorService.prototype.initCssformat = function(monaco) {
+    MonacoEditorService.prototype.initCssformat = function (monaco) {
       if (window.css_beautify) {
-        var cssFormatter = function(monaco, beautyOption) {
+        var cssFormatter = function (monaco, beautyOption) {
           if (monaco === void 0) {
             monaco = window.monaco;
           }
@@ -70,7 +70,7 @@ var MonacoEditorService =
               ];
             }
           };
-          var disposeArr = ["css", "less", "scss"].map(function(language) {
+          var disposeArr = ["css", "less", "scss"].map(function (language) {
             return [
               monaco.languages.registerDocumentFormattingEditProvider(
                 language,
@@ -82,9 +82,9 @@ var MonacoEditorService =
               )
             ];
           });
-          return function() {
-            disposeArr.forEach(function(arr) {
-              return arr.forEach(function(disposable) {
+          return function () {
+            disposeArr.forEach(function (arr) {
+              return arr.forEach(function (disposable) {
                 return disposable.dispose();
               });
             });
@@ -93,58 +93,58 @@ var MonacoEditorService =
         cssFormatter(monaco);
       }
     };
-    MonacoEditorService.prototype.loader = function(callback) {
-      function loadCdn(cdn, url) {
-        return new Promise(function(resolve, reject) {
-          var script;
-          window.onload = function() {
-            if (!document.getElementById("monaco-loader")) {
-              script = document.createElement("script");
-              script.id = "monaco-loader";
-              document.head.appendChild(script);
-            } else {
-              script = document.createElement("script");
-            }
-            $.get(cdn + url, function(data, status) {
-              if (status === "success") {
-                script.innerHTML = data;
-                resolve(cdn, url);
-              } else {
-                reject(cdn, url);
-              }
-            });
-          };
-        });
-      }
-      function monacoLoad(cdnUrl) {
+    MonacoEditorService.prototype.loader = function (callback, isDiffEditor) {
+      var local = "/_admin/scripts/lib/";
+      var cdn = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
+
+      var load = function (url) {
         window.require.config({
-          paths: { vs: `${cdnUrl}monaco-editor@0.18.1/min/vs` }
+          paths: { vs: url + "vs" }
         });
-        window.require(["vs/editor/editor.main"], function() {
-          monaco = window.monaco;
-          self.isLoader = true;
-          callback(monaco);
-        });
-      }
-      var cdnList = ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"];
-      var i = 0;
-      var loaderUrl = "monaco-editor@0.18.1/min/vs/loader.js";
-      function loadHandler(cdn, url) {
-        loadCdn(cdn, url).then(
-          function(cdn) {
-            monacoLoad(cdn);
-          },
-          function(cdn) {
-            i++;
-            if (i < cdnList.length) {
-              loadHandler(cdnList[i], url);
+        if (!isDiffEditor) {
+          window.MonacoEnvironment = {
+            getWorkerUrl: function (workerId, label) {
+              return `data:text/javascript;charset=utf-8,
+                      self.MonacoEnvironment = {
+                        baseUrl:${encodeURIComponent(url)}
+                      };
+                        importScripts(${encodeURIComponent(
+                url + "/vs/base/worker/workerMain.js"
+              )})
+                      `;
             }
-          }
-        );
+          };
+        }
+        window.require(["vs/editor/editor.main"], function () {
+          monaco = window.monaco;
+          callback(monaco);
+          self.isLoader = true;
+        });
+      };
+
+      var createScript = function (url) {
+        var loaderScript = document.createElement("script");
+        loaderScript.id = "__monaco_loader";
+        loaderScript.src = url + "vs/loader.js";
+        loaderScript.onload = function () {
+          load(url);
+        };
+        return loaderScript;
+      };
+
+      var loaderScript = createScript(Kooboo.isLocal() ? local : cdn);
+
+      loaderScript.onerror = function () {
+        document.head.removeChild(loaderScript);
+        loaderScript = createScript(cdn);
+        document.head.appendChild(loaderScript);
+      };
+
+      if (!document.getElementById("__monaco_loader")) {
+        document.head.appendChild(loaderScript);
       }
-      loadHandler(cdnList[i], loaderUrl);
     };
-    MonacoEditorService.prototype.init = function(callback, files) {
+    MonacoEditorService.prototype.init = function (callback, files) {
       if (window.monaco) {
         this.initCssformat(window.monaco || monaco);
         if (callback) {
@@ -152,7 +152,7 @@ var MonacoEditorService =
         }
       }
     };
-    MonacoEditorService.prototype.create = function(
+    MonacoEditorService.prototype.create = function (
       el,
       value,
       language,
@@ -186,46 +186,46 @@ var MonacoEditorService =
       return monaco.editor.createModel(value, language, monaco.Uri.file(path));
     };
 
-    MonacoEditorService.prototype.destroy = function() {
+    MonacoEditorService.prototype.destroy = function () {
       var models = monaco.editor.getModels();
-      models.forEach(function(model) {
+      models.forEach(function (model) {
         model.dispose();
       });
       if (this.editor && this.editor.dispose) {
         this.editor.dispose();
       }
     };
-    MonacoEditorService.prototype.changeValue = function(value, model) {
+    MonacoEditorService.prototype.changeValue = function (value, model) {
       if (model) {
         model.setValue(value);
       }
     };
-    MonacoEditorService.prototype.onModelContentChange = function(
+    MonacoEditorService.prototype.onModelContentChange = function (
       model,
       callback
     ) {
       if (model) {
-        model.onDidChangeContent(function(event) {
+        model.onDidChangeContent(function (event) {
           var content = model.getValue();
           callback(content, event);
         });
       }
     };
-    MonacoEditorService.prototype.format = function(editor, callback) {
+    MonacoEditorService.prototype.format = function (editor, callback) {
       editor
         .getAction("editor.action.formatDocument")
         .run()
         .then(callback);
     };
-    MonacoEditorService.prototype.changeLanguage = function(language, model) {
+    MonacoEditorService.prototype.changeLanguage = function (language, model) {
       if (model) {
         monaco.editor.setModelLanguage(model, language);
       }
     };
-    MonacoEditorService.prototype.changeTheme = function(value) {
+    MonacoEditorService.prototype.changeTheme = function (value) {
       monaco.editor.setTheme(value);
     };
-    MonacoEditorService.prototype.replace = function(editor, text, range) {
+    MonacoEditorService.prototype.replace = function (editor, text, range) {
       if (!range) {
         var selection = editor.getSelection();
         range = new monaco.Range(
@@ -237,7 +237,7 @@ var MonacoEditorService =
       }
       editor.executeEdits("", [{ range: range, text: text }]);
     };
-    MonacoEditorService.prototype.addExtraLib = function(
+    MonacoEditorService.prototype.addExtraLib = function (
       language,
       fileContent,
       path
@@ -251,7 +251,7 @@ var MonacoEditorService =
             "." +
             monaco.languages
               .getLanguages()
-              [languagesId - 1].extensions[0].toLowerCase();
+            [languagesId - 1].extensions[0].toLowerCase();
         }
       }
       path = monaco.Uri.file(path);
@@ -268,19 +268,111 @@ var MonacoEditorService =
             path
           );
           break;
-        default:
-          if (monaco.languages[language]) {
-            monaco.languages[language].addExtraLib(fileContent, path);
-          } else {
-            console.error("monaco.languages is no " + language);
-          }
+        case "html":
+          monaco.languages[language].htmlDefaults.addExtraLib(
+            fileContent,
+            path
+          );
+          break;
       }
     };
-    MonacoEditorService.prototype.addCompleteForHtmlTag = function(
+    MonacoEditorService.prototype.addManualTriggerSuggest = function (editor) {
+      editor.addAction({
+        id: "ManualTriggerSuggest",
+        label: "ManualTriggerSuggest",
+        keybindings: [
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_J,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space,
+          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space
+        ],
+        precondition: null,
+        keybindingContext: null,
+        contextMenuGroupId: "ManualTriggerSuggest",
+        contextMenuOrder: 1.5,
+        run: function (ed) {
+          ed.getAction("editor.action.triggerSuggest").run();
+        }
+      });
+    };
+
+    MonacoEditorService.prototype.addCompleteForHtmlTag = function (
       suggestions
     ) {
       monaco.languages.registerCompletionItemProvider("html", {
-        provideCompletionItems: function(model, position) {
+        triggerCharacters: ["<"],
+        provideCompletionItems: function (model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          if (!textUntilPosition.endsWith("<")) return;
+
+          var extendTags = [
+            "view",
+            "htmlblock",
+            "layout",
+            "menu",
+            "placeholder"
+          ];
+
+          return {
+            suggestions: extendTags.map(function (item) {
+              return {
+                label: item,
+                kind: monaco.languages.CompletionItemKind.Property,
+                documentation: item,
+                insertText: item
+              };
+            })
+          };
+        }
+      });
+
+      monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: [">"],
+        provideCompletionItems: function (model, position) {
+          var textUntilPosition = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: position.column
+          });
+
+          if (
+            textUntilPosition.split("<").length !=
+            textUntilPosition.split(">").length ||
+            !textUntilPosition.endsWith(">")
+          ) {
+            return;
+          }
+
+          var regex = /<([\w\d-]+)\s?/g,
+            matches,
+            tag;
+          while ((matches = regex.exec(textUntilPosition))) {
+            tag = matches[1];
+          }
+          if (tag) {
+            tag = "</" + tag + ">";
+            return {
+              suggestions: [
+                {
+                  label: tag,
+                  kind: monaco.languages.CompletionItemKind.Property,
+                  documentation: tag,
+                  insertText: tag
+                }
+              ]
+            };
+          }
+        }
+      });
+
+      monaco.languages.registerCompletionItemProvider("html", {
+        provideCompletionItems: function (model, position) {
           var textUntilPosition = model.getValueInRange({
             startLineNumber: 1,
             startColumn: 1,
@@ -291,6 +383,7 @@ var MonacoEditorService =
             /<[\w\d-]+\s+((?!<\/).)*[a-zA-Z\-]$/
           ); // <div .... k> or <div ....> k
           if (!matchs) return;
+          if (!matchs[0].match(/\s+[a-zA-Z\-]$/)) return; // space + character
           var cleanTag = matchs[0]
             .replace(/=\s*"[^"]*"/g, "") // remove attributes ""
             .replace(/=\s*'[^"]*'/g, "") // remove attributes ''
@@ -299,12 +392,15 @@ var MonacoEditorService =
           if (!/<[\w\d-]+/.test(cleanTag)) return; // is not attribute
 
           // clone sugguestions
-          var tempSuggestions = suggestions.map(function(item) {
+          var tempSuggestions = suggestions.map(function (item) {
             return {
               label: item.label,
               kind: item.kind || monaco.languages.CompletionItemKind.Value,
               documentation: item.documentation,
-              insertText: item.insertText
+              insertText: item.insertText,
+              insertTextRules:
+                item.insertTextRules ||
+                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
             };
           });
           return {

@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Kooboo.Lib.Reflection;
-using Jint.Runtime;
-using Kooboo.Sites.Scripting.Global;
+using Jint.Runtime; 
+using KScript;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -36,7 +36,7 @@ namespace Kooboo.Sites.Scripting
             return kcontext;
         }
 
-        public static Session GetOrSetSession(RenderContext context)
+        public static KScript.Session GetOrSetSession(RenderContext context)
         {
             var ksession = context.GetItem<Session>();
             if (ksession == null)
@@ -432,7 +432,7 @@ namespace Kooboo.Sites.Scripting
                     }
                 }
 
-                kcontext.config = config;
+                kcontext.config = new KDictionary(config);
                 kcontext.ReturnValues.Clear();
 
                 engine.Execute(code.Body);
@@ -442,8 +442,7 @@ namespace Kooboo.Sites.Scripting
                 if (kcontext.ReturnValues.Count > 0)
                 {
                     result = kcontext.ReturnValues.Last();
-                }
-
+                } 
             }
             catch (Exception ex)
             {
@@ -790,10 +789,8 @@ namespace Kooboo.Sites.Scripting
                     {
 
                     }
-                }
-
-                // TODO: also get the methods...
-
+                } 
+                // TODO: also get the methods... 
             }
 
             return result;

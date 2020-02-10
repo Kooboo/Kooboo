@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,50 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 {
     public class ProductViewModel : IDynamic
     {
+
+        public   ProductViewModel(Product product, string lang, List<Models.ProductProperty> Properties)
+        {  
+            this.Id = product.Id;
+            this.ProductTypeId = product.ProductTypeId;
+            this.UserKey = product.UserKey;
+            this.LastModified = product.LastModified;
+            this.Online = product.Online;
+            this.CreationDate = product.CreationDate;
+
+            var langcontent = product.GetContentStore(lang);
+            if (langcontent != null)
+            {
+                this.Values = langcontent.FieldValues;
+            }
+
+            if (Properties != null)
+            {
+                foreach (var item in Properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
+                {
+                    if (!this.Values.ContainsKey(item.Name) || string.IsNullOrEmpty(this.Values[item.Name]))
+                    {
+                        bool found = false;
+                        foreach (var citem in product.Contents)
+                        {
+                            foreach (var fielditem in citem.FieldValues)
+                            {
+                                if (fielditem.Key == item.Name)
+                                {
+                                    this.Values[item.Name] = fielditem.Value;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found)
+                            { break; }
+                        }
+                    }
+                }
+            } 
+        
+        }
+
+
         public Guid Id { get; set; }
 
         public string UserKey { get; set; }
@@ -167,8 +212,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         public DateTime CreationDate { get; set; }
 
         public string Name { get; set; }
-
-
+        
         public string Summary { get; set; }
 
         public bool Online { get; set; }

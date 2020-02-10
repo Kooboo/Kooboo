@@ -20,7 +20,6 @@ namespace Kooboo.Web.FrontRequest
         }
         public async Task Invoke(RenderContext context)
         {
-
             FrontContext kooboocontext = new FrontContext();
             context.SetItem<FrontContext>(kooboocontext);
             kooboocontext.RenderContext = context;
@@ -166,9 +165,9 @@ namespace Kooboo.Web.FrontRequest
                 try
                 {
                     await RouteRenderers.RenderAsync(frontContext);
-                    endtime = DateTime.UtcNow; 
+                    endtime = DateTime.UtcNow;
                     // check for rights...
-                    CheckUserBandwidth(frontContext); 
+                    CheckUserBandwidth(frontContext);
                 }
                 catch (Exception ex)
                 {
@@ -182,9 +181,9 @@ namespace Kooboo.Web.FrontRequest
                     frontContext.Log.AddEntry("500", "exception", DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message);
 
 
-                    string error = frontContext.RenderContext.Request.Url + ex.Message + "\r\n" + ex.Source + "\r\n" + ex.StackTrace; 
+                    string error = frontContext.RenderContext.Request.Url + ex.Message + "\r\n" + ex.Source + "\r\n" + ex.StackTrace;
 
-                    Kooboo.Data.Log.Instance.Trace.Write(error); 
+                    Kooboo.Data.Log.Instance.Trace.Write(error);
                 }
             }
 
@@ -286,7 +285,14 @@ namespace Kooboo.Web.FrontRequest
                 {
                     if (frontContext.RenderContext.Response.Stream != null)
                     {
-                        length = frontContext.RenderContext.Response.Stream.Length;
+                        try
+                        {
+                            length = frontContext.RenderContext.Response.Stream.Length;
+                        }
+                        catch (Exception ex)
+                        {
+                            Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.Source + ex.StackTrace);
+                        }
                     }
                 }
 

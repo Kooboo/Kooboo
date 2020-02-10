@@ -1,5 +1,5 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Web.Payment;
+using Kooboo.Sites.Payment;
 
 namespace Kooboo.ServerData.ViewModel
 {
@@ -9,7 +9,7 @@ namespace Kooboo.ServerData.ViewModel
         {
             this.Icon = method.Icon;
             this.IconType = method.IconType;
-            this.DisplayName = Data.Language.Hardcoded.GetValue(method.Name, context);
+            this.DisplayName = method.Name; 
         }
 
         //???? what is this???

@@ -13,28 +13,24 @@ namespace Kooboo.Sites.Render.Functions
 
         public List<IFunction> Parameters { get; set; }
 
-
-        // TODO, improve performance. 
         public object Render(RenderContext context)
         {
-             var engine = Scripting.Manager.GetJsEngine(context);
-             
+            var engine = Scripting.Manager.GetJsEngine(context);
 
             var prog = engine.GetValue(FunctionName);
-            
-
-            if (prog != null)
+             
+            if (prog != null && prog != Jint.Native.JsValue.Undefined)
             {
                 var paras = FunctionHelper.RenderParameter(context, this.Parameters);
-                  
+
                 var result = engine.Invoke(prog, paras.ToArray());
 
-                if (result !=null)
+                if (result != null)
                 {
-                    return result.ToString(); 
-                } 
-            }  
-            return null; 
+                    return result.ToString();
+                }
+            }
+            return null;
 
         }
     }

@@ -28,7 +28,8 @@ namespace Kooboo.Sites.Render
                     _list.Add(new kExternalCacheEvaluator()); 
                     _list.Add(new UrlEvaluator());
                     _list.Add(new LabelEvaluator());
-                    _list.Add(new OmitTagEvaluator()); 
+                    _list.Add(new OmitTagEvaluator());
+                    _list.Add(new OmitOuterTagEvaluator());
                     _list.Add(new ContentEvaluator());
                     _list.Add(new ComponentEvaluator());
                     _list.Add(new HeaderEvaluator());

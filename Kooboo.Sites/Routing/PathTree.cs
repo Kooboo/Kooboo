@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using Kooboo.Extensions;
 using System;
 using Kooboo.Sites.Models;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Sites.Routing
-{ 
+{
     /// <summary>
     /// cached routing information inside a tree for fast access. 
     /// </summary>
     public class PathTree
     {
-        private object _locker = new object(); 
+        private object _locker = new object();
 
-        private string wildcard; 
+        private string wildcard;
         /// <summary>
         /// The empty root. This is only the contains without any value. 
         /// </summary>
@@ -36,7 +36,7 @@ namespace Kooboo.Sites.Routing
         {
             if (string.IsNullOrEmpty(RelativeUrl))
             {
-                RelativeUrl = "/"; 
+                RelativeUrl = "/";
             }
 
             RelativeUrl = RelativeUrl.Replace("\\", "/").ToLower().Trim();
@@ -60,7 +60,7 @@ namespace Kooboo.Sites.Routing
         {
             if (string.IsNullOrEmpty(RelativeUrl))
             {
-                RelativeUrl = "/"; 
+                RelativeUrl = "/";
             }
 
             RelativeUrl = RelativeUrl.Replace("\\", "/").ToLower().Trim();
@@ -79,20 +79,20 @@ namespace Kooboo.Sites.Routing
 
                 var subpath = item.RemoveRoutingCurlyBracket();
 
-                Path child = null; 
+                Path child = null;
 
                 if (currentslot.Children.ContainsKey(subpath))
                 {
-                    child = currentslot.Children[subpath]; 
-                }         
-              
+                    child = currentslot.Children[subpath];
+                }
+
                 if (child == null)
                 {
                     return;
                 }
                 else
-                {     
-                   currentslot = child; 
+                {
+                    currentslot = child;
                 }
             }
 
@@ -108,25 +108,25 @@ namespace Kooboo.Sites.Routing
         public Guid FindRouteId(string RelativeUrl, bool EnsureObjectId)
         {
             lock (_locker)
-            { 
+            {
                 Path path = FindPath(RelativeUrl, EnsureObjectId);
 
                 if (path == null)
-                { 
+                {
                     int QuestionMark = RelativeUrl.IndexOf("?");
                     if (QuestionMark > 0)
                     {
                         RelativeUrl = RelativeUrl.Substring(0, QuestionMark);
-                        path = FindPath(RelativeUrl, EnsureObjectId); 
+                        path = FindPath(RelativeUrl, EnsureObjectId);
                         if (path == null)
                         {
-                            return default(Guid); 
+                            return default(Guid);
                         }
                     }
-                   else
-                    { 
+                    else
+                    {
                         return default(Guid);
-                    } 
+                    }
                 }
 
                 if (!this.HasObject(path))
@@ -150,8 +150,8 @@ namespace Kooboo.Sites.Routing
         {
             if (string.IsNullOrEmpty(RelativeUrl))
             {
-                return root; 
-            }  
+                return root;
+            }
 
             RelativeUrl = RelativeUrl.Replace("\\", "/").ToLower();
             string[] segments = RelativeUrl.Split('/');
@@ -164,21 +164,31 @@ namespace Kooboo.Sites.Routing
                 {
                     continue;
                 }
-
                 Path child = _findPath(currentpath, item.RemoveRoutingCurlyBracket(), EnsureObjectId);
                 if (child == null)
-                { 
+                {
+                    if (item.StartsWith("?"))
+                    { 
+                        if (EnsureObjectId)
+                        {
+                            if (currentpath.ObjectId != default(Guid))
+                            {
+                                return currentpath;
+                            }
+                        }
+                        else
+                        {
+                            return currentpath;
+                        } 
+                    } 
                     // TODO: verify situation of this task. It breaks now of importing sites with both
                     //  pages for   [/subpath]   and [/subpath/sub/sub.html]. 
                     // if currentpath has {} sub. 
                     //if (currentpath.Children == null || !currentpath.Children.Any())
                     //{
                     //    if (currentpath.ObjectId != default(Guid))
-                    //    {
-                    //        return currentpath; 
-                    //    }
-                    //}
-                     
+                    //    { return currentpath;  }
+                    //} 
                     return null;
                 }
                 else
@@ -187,8 +197,8 @@ namespace Kooboo.Sites.Routing
                 }
             }
 
-            return currentpath; 
- 
+            return currentpath;
+
         }
 
         private void RemoveEmptySlot(Path currentPath)
@@ -224,64 +234,47 @@ namespace Kooboo.Sites.Routing
                 {
                     if (ObjectId != default(Guid))
                     {
-                        currentslot.ObjectId = ObjectId; 
+                        currentslot.ObjectId = ObjectId;
                     }
                 }
 
-                currentslot.RouteId = routeid; 
+                currentslot.RouteId = routeid;
             }
         }
 
         private Path addPath(Path parent, string currentSegment, Guid ObjectId)
-        {      
+        {
             Path newslot = new Path();
             newslot.segment = currentSegment;
             newslot.ParentPath = parent;
-            newslot.ObjectId = ObjectId; 
+            newslot.ObjectId = ObjectId;
 
             if (currentSegment.Contains("{") && currentSegment.Contains("}") && currentSegment != "{}")
             {
-                newslot.PartialWildCard = true; 
+                newslot.PartialWildCard = true;
             }
-             
+
             if (parent.Children.ContainsKey(currentSegment))
             {
-                var currentValue = parent.Children[currentSegment]; 
+                var currentValue = parent.Children[currentSegment];
                 if (currentValue.ObjectId == default(Guid))
                 {
-                    currentValue.ObjectId = ObjectId; 
+                    currentValue.ObjectId = ObjectId;
                 }
             }
             else
             {
                 parent.Children.Add(currentSegment, newslot);
-            }   
+            }
             return newslot;
 
         }
 
-        private Path _findPath(Path parent, string currentsegment, bool EnsureObjectId =false)
-        {       
+        private Path _findPath(Path parent, string currentsegment, bool EnsureObjectId = false)
+        {
             if (parent.Children.ContainsKey(currentsegment))
             {
-                var item = parent.Children[currentsegment]; 
-                
-                if (EnsureObjectId)
-                {
-                  if (item !=null && (item.ObjectId != default(Guid) || item.Children.Any()))
-                    {
-                        return item; 
-                    }
-                }
-                else
-                {
-                    return item; 
-                }  
-            }
-
-            if (parent.Children.ContainsKey(this.wildcard))
-            {       
-                var item = parent.Children[this.wildcard];
+                var item = parent.Children[currentsegment];
 
                 if (EnsureObjectId)
                 {
@@ -294,17 +287,33 @@ namespace Kooboo.Sites.Routing
                 {
                     return item;
                 }
-                   
             }
-        
+
+            if (parent.Children.ContainsKey(this.wildcard))
+            {
+                if (!currentsegment.StartsWith("?"))
+                {
+                    var item = parent.Children[this.wildcard];
+                    if (EnsureObjectId)
+                    {
+                        if (item != null && (item.ObjectId != default(Guid) || item.Children.Any()))
+                        {
+                            return item;
+                        }
+                    }
+                    else
+                    {
+                        return item;
+                    }
+                }
+            }
 
             foreach (var item in parent.Children)
             {
                 if (item.Value.PartialWildCard)
                 {
-                     if (currentsegment.ContainsAllParts(item.Value.PartialParts))
+                    if (currentsegment.ContainsAllParts(item.Value.PartialParts))
                     {
-
                         if (EnsureObjectId)
                         {
                             if (item.Value != null && (item.Value.ObjectId != default(Guid) || item.Value.Children.Any()))
@@ -315,14 +324,14 @@ namespace Kooboo.Sites.Routing
                         else
                         {
                             return item.Value;
-                        }              
+                        }
                     }
                 }
-            } 
+            }
             return null;
 
         }
-        
+
         private Path FindShortestWildCardPath(Path parent)
         {
             if (parent == null || parent.Children == null)
@@ -330,7 +339,7 @@ namespace Kooboo.Sites.Routing
                 return null;
             }
 
-            Path child; 
+            Path child;
 
             if (parent.Children.TryGetValue(this.wildcard, out child))
             {
@@ -343,7 +352,7 @@ namespace Kooboo.Sites.Routing
                     return FindShortestWildCardPath(child);
                 }
             }
-             
+
             return null;
         }
 
@@ -351,10 +360,10 @@ namespace Kooboo.Sites.Routing
         {
             if (path == null)
             {
-                return false; 
+                return false;
             }
-            return path.RouteId != default(Guid); 
-        } 
+            return path.RouteId != default(Guid);
+        }
     }
-     
+
 }

@@ -35,6 +35,26 @@ namespace Kooboo.Data.Log
         }
 
 
+        private static LogWriter _email;
+        public static LogWriter Email
+        {
+            get
+            {
+                if (_email == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_email == null)
+                        {
+                            _email = new LogWriter("email");
+                        }
+                    }
+                }
+                return _email;
+            }
+        }
+
+
         private static LogWriter _exception; 
 
         public static LogWriter Exception
@@ -90,6 +110,27 @@ namespace Kooboo.Data.Log
                 newwriter.Write(message); 
             }
         }
+
+        private static LogWriter _payment;
+        public static LogWriter Payment
+        {
+            get
+            {
+                if (_payment == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_payment == null)
+                        {
+                            _payment = new LogWriter("payment");
+                        }
+                    }
+                }
+                return _payment;
+            }
+        }
+
+
     }
  
 }

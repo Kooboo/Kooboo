@@ -754,6 +754,10 @@
     this.Update = function(para) {
       return this.executePost("Update", para);
     };
+
+    this.GetDefine = function() {
+      return this.executeGet("GetDefine", null, true);
+    };
   }
   extend(KScript, BaseModel);
 
@@ -1444,7 +1448,7 @@
     this.name = "System";
 
     this.Version = function(para) {
-      return this.executeGet("Version", para, true);
+      return this.executeGet("Version", para, true, true);
     };
 
     this.loadFile = function(para) {
@@ -2360,5 +2364,23 @@
     var e = document.createEvent("HTMLEvents");
     e.initEvent(type, true, true);
     el.dispatchEvent(e);
+  };
+
+  Kooboo.isLocal=function(){
+    return !!document.getElementById("isLocal");
+  }
+
+  Kooboo.GetCookie = function(key) {
+    var value = null;
+
+    document.cookie.split(";").find(function(m) {
+      var keyvalue = m.trim().split("=");
+      if (keyvalue[0] == key) {
+        value = keyvalue[1];
+        return true;
+      }
+    });
+
+    return value;
   };
 })(window);

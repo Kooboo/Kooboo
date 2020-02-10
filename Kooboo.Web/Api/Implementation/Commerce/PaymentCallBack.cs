@@ -1,7 +1,7 @@
 ﻿using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Api.Methods;
-using Kooboo.Web.Payment;
+using Kooboo.Sites.Payment;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +12,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
     {
         public string ModelName => "Paymentcallback";
 
-        public bool RequireSite => false;
+        public bool RequireSite => true;
 
         public bool RequireUser => false;
 
@@ -38,20 +38,22 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             return null;
         }
 
+        // To be used for above method. 
         public IResponse Callback(ApiCall call)
         {
+            log(call); 
+
             string name = call.Command.Method;
 
             int index = name.IndexOf("_");
             if (index == -1)
             {
                 return null;
-            }
-
+            } 
             var paymentname = name.Substring(0, index);
             var methodname = name.Substring(index + 1);
 
-            var paymentmethod = PaymentManager.GetMethod(paymentname);
+            var paymentmethod = PaymentManager.GetMethod(paymentname, call.Context);
 
             if (paymentmethod != null)
             {
@@ -64,11 +66,14 @@ namespace Kooboo.Web.Api.Implementation.Commerce
 
                     if (result != null)
                     {
-                        Kooboo.Web.Payment.PaymentManager.CallBack(result, call.Context);
+                        PaymentManager.CallBack(result, call.Context);
 
                         if (result.CallbackResponse != null)
                         {
-                            return result.CallbackResponse;
+                            var response = new PlainResponse();
+                            response.ContentType = result.CallbackResponse.ContentType;   
+                            response.Content = result.CallbackResponse.Content;
+                            return response; 
                         }
 
                         else
@@ -77,8 +82,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                             response.ContentType = "text/html";
                             response.Content = ""; 
                             return response; 
-                        }
-
+                        } 
                     }
                 }
             }
@@ -86,5 +90,40 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             return null;
         }
 
+        private void log(ApiCall call)
+        {
+            try
+            {
+                Dictionary<string, string[]> query = new Dictionary<string, string[]>(); 
+                foreach (var item in call.Context.Request.QueryString.Keys)
+                {
+                    var key = item.ToString(); 
+                    var value = call.Context.Request.QueryString.GetValues(key); 
+                    if (value !=null)
+                    {
+                        query[key] = value; 
+                    } 
+                }
+
+                Dictionary<string, string[]> forms = new Dictionary<string, string[]>();
+                foreach (var item in call.Context.Request.Forms.Keys)
+                {
+                    var key = item.ToString();
+                    var value = call.Context.Request.Forms.GetValues(key);
+                    if (value != null)
+                    {
+                        forms[key] = value;
+                    }
+                }
+
+                Kooboo.Data.Log.Instance.Payment.Write("---" + call.Context.Request.Url);
+                Kooboo.Data.Log.Instance.Payment.WriteObj(query);
+                Kooboo.Data.Log.Instance.Payment.WriteObj(forms);
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+            }
+        }
     }
 }

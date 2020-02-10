@@ -102,7 +102,12 @@
                   class="form-control"
                   v-model="columnModel.name"
                 />
-                <p v-else class="form-control-static" style="word-break: break-all;">{{columnModel.name}}</p>
+                <p
+                  v-else
+                  class="form-control-static"
+                  style="word-break: break-all;"
+                  >{{columnModel.name}}</p
+                >
               </div>
             </kb-form-item>
             <kb-form-item>
@@ -346,7 +351,7 @@
         selectedColumn: null,
         columnModel: {
           name: "",
-          dataType: "",
+          dataType: "String",
           isIncremental: false,
           seed: 1,
           scale: 1,
@@ -417,7 +422,7 @@
         } else {
           this.columnModel = {
             name: "",
-            dataType: "",
+            dataType: "String",
             isIncremental: false,
             seed: 1,
             scale: 1,
@@ -667,6 +672,13 @@
       "columnModel.isIncremental": function(value) {
         this.columnModel.isUnique = value;
         this.columnModel.isIndex = value;
+      },
+      "columnModel.controlType": function(value) {
+        this.columnModel.dataType = Kooboo.columnEditor.controlTypes.find(
+          function(f) {
+            return f.value == value;
+          }
+        ).dataType;
       },
       showOptionForm: function() {
         this.optionsEmptyMsg = "";

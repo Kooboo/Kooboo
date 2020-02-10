@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Definition;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -69,8 +70,9 @@ namespace Kooboo.Sites.Contents.Models
 
         public bool MultipleValue { get; set; }
 
-        public string selectionOptions { get; set; } 
+        public string selectionOptions { get; set; }
 
+        [KIgnore]
         public override int GetHashCode()
         {
             string unique = this.ControlType + this.DataType.ToString();

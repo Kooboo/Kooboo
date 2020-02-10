@@ -9,6 +9,7 @@ using Kooboo.Sites.Repository;
 using Kooboo.Sites.Render.Components;
 using System.Collections;
 using System;
+using KScript; 
 
 namespace Kooboo.Sites.FrontEvent
 {
@@ -139,7 +140,7 @@ namespace Kooboo.Sites.FrontEvent
         }
 
 
-        public static void ExecuteRule(SiteDb sitedb,   Kooboo.Sites.Scripting.k kcontext, IFrontEvent theevent, Kooboo.Sites.Models.IFElseRule rule)
+        public static void ExecuteRule(SiteDb sitedb,   KScript.k kcontext, IFrontEvent theevent, Kooboo.Sites.Models.IFElseRule rule)
         {
             if (rule.Do != null && rule.Do.Count() > 0)
             {
@@ -148,7 +149,7 @@ namespace Kooboo.Sites.FrontEvent
                     var code = sitedb.Code.Get(item.CodeId);
                     if (code != null && !string.IsNullOrWhiteSpace(code.Body))
                     {
-                        kcontext.config = CopySetting(item.Setting);
+                        kcontext.config = new KDictionary(CopySetting(item.Setting));
 
                         var outputstring = Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
                         

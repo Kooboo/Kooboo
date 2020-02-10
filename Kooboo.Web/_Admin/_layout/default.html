@@ -26,6 +26,7 @@
   </head>
 
   <body class="full-width">
+    <div k-if="kooboosetting.IsLocal==true" id="isLocal" style="display: none;"> </div>
     <kb-header id="component_container_header"></kb-header>
     <script>
       (function() {
@@ -43,9 +44,6 @@
           ],
           true
         );
-        window.onbeforeunload = function() {
-          Kooboo.VersionManager.clearCheckedTime();
-        };
       })();
     </script>
     <div class="page-loading">

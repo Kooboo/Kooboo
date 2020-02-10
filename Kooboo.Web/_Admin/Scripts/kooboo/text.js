@@ -204,8 +204,6 @@
       exit: "Are you sure you want to exit?",
       beforeReturn:
         "You have unsaved changes, do you want to leave this page and discard your changes?",
-      beforeSwitchPanel:
-        "You have unsaved changes, do you want to switch panel and discard your changes?",
       removeBinding: "Do you want to remove binging as well?",
       siteLogs: {
         blame:
@@ -226,12 +224,6 @@
         labelInside:
           "This element contains label binding, do you want to continue?"
       },
-      domains: {
-        deleteDomainHasSite:
-          "Your selected domains have binding sites. Are you sure you want to delete them?"
-      },
-      changePrimaryKey:
-        "Changing primary key may delete old data. Are you sure you want to continue?",
       restartExecution:
         "Debugger is finished, would you want to restart debugging?",
       changeDataCenter:
@@ -239,10 +231,6 @@
       siteSynchronizing:
         "You are pulling updates from remote server, are you sure you want to abort?",
       invalidMeta: "Invalid meta. Please check your meta infomation.",
-      changeCurrency:
-        "This will transfer all your balance into new currency. Are you sure you want to continue?",
-      sourceCodeChanged:
-        "The generated css code file has been modified, are you sure you want to overwrite it",
       demand: {
         takeProposal: "Are you sure you want to take this proposal?",
         acceptDelivery: "Are you sure you want to accept the job?"
@@ -259,11 +247,7 @@
 
     alert: {
       uploadZipFile: "File type error, please upload zip file.",
-      imageFileUploaded: "Image files uploaded.",
-      voucherCode: "Please input your Voucher code.",
-      payAmount: "Please input your amount of money.",
       pleaseChooseAFolder: "Please choose a folder first",
-      fileTypeInvalid: "File type invalid",
       selectBeforePushing: "You should select items before pushing",
       exceptionOccuredAndDebuggerClosed: "Exception occured, debugger closed.",
       fileUpload: {
@@ -278,31 +262,16 @@
     validation: {
       required: "Field required",
       taken: "The value has been taken",
-      notExist: "Value not found",
       tagNotAllow: "Tag not allowed.",
       notEqual: "Values are not the same.",
       usernameInvalid: "Invalid username",
       emailInvalid: "Invalid email",
       urlInvalid: "Invalid URL",
       containInvalidEmail: "The addresses have invalid email",
-      objectNameInvalid:
-        "The name doesn't allow containing # /  : * &quot; &lt; &gt; | and the length should less than 254",
       nameInvalid:
         "Name should only contains letters, digits and underscore, and should start with a letter",
-      spaceNameInvalid:
-        "Name should only contains letters, digits, space and underscore, and should start with a letter",
-      noPunctuationAllowed: "No puctuation or space is allowed",
-      onlyFollowingPunctuationAllowed:
-        "Only the following puctuation is allowed: ",
-      startWithNonPunctuation: "Please start with non-punctuation",
       folderNameInvalid: "Only letter, digits, -, _ and . is allowed",
-      fieldNameInvalid:
-        "& . &quot; ' \\ and space is not allowed and should ended with letter.",
-      domainInvalid:
-        "Domain should start with letter or digital. You can use - _ and ., but space is not allowed.",
-      numberOnly: "Only number is allowed",
       siteNameInvalid: "The name only allow letter, digits, -, _ and .",
-      couponCodeRequired: "Please input your coupon code",
       maxLength: "The maximum length is ",
       minLength: "The minimal length is ",
       earlierThan: "The start time should be earlier than end time",
@@ -319,8 +288,6 @@
         DateTime: "DateTime",
         Bool: "Bool"
       },
-      dataTypeInvalid:
-        "The type of value you input is invalid, the right type is ",
       objectNameRegex:
         "Name should start with a letter, can contain with . - _ and end with letters or digit.",
       contentTypeNameRegex:
@@ -334,7 +301,6 @@
 
     error: {
       dataType: "The data type you input is incorrect",
-      validationError: "Validation error",
       rangeError: "Range error: the min value should less than the max value."
     },
 
@@ -421,12 +387,6 @@
         success: "Recharge succeeded",
         fail: "Recharge failed"
       },
-      purchase: {
-        success: "Purchase succeeded",
-        fail: "Purchase failed"
-      },
-
-      noRemoteSiteAvaliable: "No remote sites avaliable.",
       versionLogParameterMissing:
         "Parameters missing.<br/> Redirecting to site logs...",
       parameterMissing: "Parameter missing",
@@ -434,7 +394,6 @@
       fileSizeLessThan: "File size must be less than ",
       subDomainInfo: "Give your site a domain that other people can access.",
       startPulling: "Start pulling...",
-      invalidCoupon: "Invalid coupon",
       networkError: "Network error",
       checkServer: "please check your server.",
       inProgress: "This site is still downloading, please wait.",
@@ -444,7 +403,6 @@
     },
 
     placeholder: {
-      inputValueGreaterThan: "Input a value greater than ",
       reply: "Reply content goes here",
       largeThan: "Input a amount large than 0.01"
     },
@@ -453,11 +411,9 @@
       add: "Add",
       addRelativeSource: "Add relative source",
       addAnotherRuleAfterThis: "Add another rule after this",
-      batchManagement: "Batch operation",
       pageRouterManager: "Route Setting",
       uploadNewContent: "Import package",
       exportSite: "Export site",
-      exportPackage: "Export package",
       columnSetting: "Columns setting",
       moveUp: "Move up",
       moveDown: "Move down",
@@ -474,24 +430,14 @@
         horizontalFlip: "Horizontal flip",
         verticalFlip: "Vertical flip"
       },
-      chooseItemBelow: "Please select items shown below",
       menu: {
         editTemplate: "Edit template",
         addSubMenu: "Add sub menu",
         multilingual: "Multilingual"
       },
-      styleEditor: {
-        addSelector: "Add a selector",
-        addImportRule: "Add an import rule",
-        addMediaQuery: "Add a media query"
-      },
       demand: {
         acceptProposal: "Accept this proposal"
       }
-    },
-
-    popover: {
-      searchStatusExplain: "Add to index automatically when documnent changed."
     },
 
     validationRule: {
@@ -519,7 +465,7 @@
       maximumChecked: "Maximum checked",
       minimalLength: "Minimal length",
       maximumLength: "Maximum length",
-      domainInvalid: "invalid domain",
+      domainInvalid: "invalid domain"
     },
 
     action: {
@@ -545,21 +491,6 @@
         uploading: "Uploading",
         uploaded: "Uploaded",
         pleaseWait: "please wait..."
-      },
-      dataSource: {
-        "query.Filters": "Filters",
-        "query.SortField": "Sort field",
-        "query.Limit": "Limit",
-        "query.IsAscending": "Is ascending",
-        "query.EnablePaging": "Enable paging",
-        "query.PageSize": "Page size",
-        "query.PageNumber": "Page number",
-        "request.Url": "Request URL",
-        "request.Headers": "Request Headers",
-        "request.Body": "Request body",
-        "request.SampleResponse": "Request sample response",
-        id: "id",
-        userKey: "User key"
       },
       breadCrumb: {
         sites: "Sites",
@@ -645,12 +576,6 @@
           "Unable to change self-incremental field."
       },
       header: {
-        email: {
-          viewAll: "View all",
-          unit: "EMAIL_UNIT",
-          messages: "new messages",
-          youHave: "You have"
-        },
         user: {
           profile: "Profile",
           signOut: "Sign out"
@@ -713,20 +638,11 @@
         basic: "Basic",
         contentTitle: "Content title",
         basicHelper: "The value for page html title tag",
-        urlRoute: "URL route",
-        urlPath: "URL path",
         URL: "URL",
         urlHelper: "Customize the page URL",
         htmlMeta: "HTML meta",
         content: "Content",
         parameters: "Parameters",
-        compSelector: {
-          menu: "Select menu",
-          htmlblock: "Select HTML block",
-          view: "Select view",
-          layout: "Select layout",
-          form: "Form"
-        },
         invalidRoute: "You have input a invalid url route, please check"
       },
       viewEditor: {
@@ -783,9 +699,6 @@
         alias: "Alias"
       },
       styleEditor: {
-        inputOrSelectSheet: "select or input your stylesheet",
-        go: "Go",
-        pageNum: "Page",
         pickImage: "Pick image",
         declaration: "Declaration",
         value: "Value",
@@ -812,8 +725,6 @@
         startMonth: "Start month"
       },
       cashierModal: {
-        balanceInsuffisant: "No enough balance, please topup first",
-        purchaseDomain: "Purchase domain",
         choosePaymentMethod: "Please choose a payment method"
       },
       topupModal: {
@@ -830,7 +741,6 @@
       templateModal: {
         downloads: "Downloads",
         dynamicContent: "Dynamic contents",
-        clickHere: "Click here",
         hint: "Use the selected template as the base to create this website",
         siteName: "Site name",
         siteNameHint: "Start with letters and no space allowed",
@@ -868,9 +778,6 @@
         day: "Day",
         s: "s"
       },
-      rechargeModal: {
-        coupon: "Coupon"
-      },
       dataCenterModal: {
         changeExplanation:
           "Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually."
@@ -879,7 +786,6 @@
         verify: "Verify"
       }
     },
-
     site: {
       sites: {
         takeOffline: "Take offline",
@@ -902,11 +808,9 @@
           "Share your website as a template for public users or within your organization."
       },
       setting: {
-        addNewLanguage: "Add new language",
         configuration: "Configuration"
       },
       sync: {
-        name: "Sync",
         listName: "List",
         remoteSite: "Remote site",
         server: "Server",
@@ -931,8 +835,6 @@
       page: {
         createNewLayout: "Click to create your first layout",
         design: "Inline edit",
-        mobileDesign: "Mobile edit",
-        indexPage: "Index Page",
         linked: "Linked",
         online: "Online",
         references: "References",
@@ -950,8 +852,7 @@
       share: {
         article: "article",
         corporation: "corporation",
-        category: "category",
-        noTagFound: "No tag found"
+        category: "category"
       },
       siteLog: {
         logItem: "Log item",
@@ -976,8 +877,6 @@
         timeElapsed: "Time elapsed",
         referer: "Referer",
         views: "Views",
-        errorMessage: "Error message",
-        statusCode: "Status code",
         errorCount: "Error count",
         country: "Country",
         state: "State"
@@ -1035,7 +934,6 @@
         reset: "Reset"
       },
       script: {
-        name: "Script",
         children: "Children",
         external: "External",
         embedded: "Embedded",
@@ -1046,14 +944,7 @@
         name: "Style",
         ownerType: "Owner type",
         siteObject: "Site object",
-        children: "Children",
         inline: "Inline style"
-      },
-      menu: {
-        name: "Menu"
-      },
-      menus: {
-        name: "Menus"
       },
       URL: {
         name: "URLs",
@@ -1070,11 +961,7 @@
         createANewLabel: "Create a new label",
         placeholder: "New label"
       },
-      textContents: {
-        contents: "Contents"
-      },
       htmlblock: {
-        content: "Content",
         readOnly: "Read only"
       },
       domain: {
@@ -1088,13 +975,8 @@
         expires: "Expires",
         sslEnabled: "SSL enabled"
       },
-      assembly: {
-        name: "Assembly",
-        version: "Version"
-      },
       template: {
         public: "Public",
-        private: "Private",
         personal: "Personal",
         noDescription: "No description",
         noTag: "No tag",
@@ -1106,10 +988,8 @@
         Account: "Account",
         Password: "Password",
         Organization: "Organization",
-        Balance: "Balance",
         Users: "Users",
-        DataCenter: "Data center",
-        Payment: "Payment"
+        DataCenter: "Data center"
       },
       search: {
         searchedCount: "Searched count",
@@ -1123,27 +1003,21 @@
       },
       code: {
         codeType: "Code type",
-        eventType: "Event type",
         chooseCodeType: "Choose code type",
-        chosseEventType: "Choose event type",
         noSetting: "No setting",
         noActivityAndCreate: "No activity available! Click here to create one."
       }
     },
 
     market: {
-      usageReport: "Usage report",
       Used: "Used: ",
       Total: "Total: ",
-      purchaseHistory: "Purchase history",
-      myDomains: "My domains",
       changeCurrency: "Change currency",
       demand: {
         myDemands: "My Demands",
         myProposals: "My Proposals",
         StartDate: "Start date",
         EndDate: "End date",
-        proposals: "Proposals",
         demander: "Demander",
         createTime: "Create time",
         isOpen: "Is open",
@@ -1174,19 +1048,14 @@
     mail: {
       Inbox: "Inbox",
       Sent: "Sent",
-      Draft: "Draft",
-      Trash: "Trash",
       Spam: "Spam",
       read: "Read",
       unread: "Unread",
       to: "Forward to",
       moveTo: "Move to",
-      member: "Member",
-      members: "Members",
       jumpToInbox: "Jump to inbox",
       markAsRead: "Mark as read",
       markAsUnread: "Mark as unread",
-      noReceiver: "No receiver",
       noSubject: "No subject",
       address: {
         name: "Address",
@@ -1194,9 +1063,6 @@
         wildcard: "Wildcard",
         groupMail: "Group mail",
         forwarding: "Forwarding"
-      },
-      inbox: {
-        name: "Inbox"
       },
       noAddressYet:
         "You don't have a address yet, please add a new address before composing a email.",
@@ -1215,8 +1081,7 @@
     },
 
     logical: {
-      and: "Logical and",
-      or: "Logical or"
+      and: "Logical and"
     },
 
     dashboard: {
@@ -1227,60 +1092,50 @@
       avgSize: "Avg Size"
     },
 
+    popover: {
+      searchStatusExplain: "Add to index automatically when documnent changed."
+    },
+
     inlineEditor: {
+      pageLink: "Page link",
+      outLink: "Out link",
       copyBlock: "Copy this block",
+      Copy: "Copy",
+      editImage: "Edit image",
       editLink: "Edit link",
+      editImages: "Edit Images",
+      editLinks: "Edit Links",
       editData: "Edit data",
       editHtml: "Edit html",
-      editContentList: "Edit ContentList",
-      replacewithImage: "Replace with image",
-      replacewithText: "Replace with text",
-      selectImage: "Select image",
-      sureToSave: "This will lead to a page refresh , are you sure to save it?",
+      editHtmlblock: "Edit htmlblock",
+      enterLink: "Enter link",
+      editMenu: "Edit menu",
+      editStyle: "Edit style",
       editRepeaterItem: "Edit repeater item",
+      width: "Width",
+      height: "Height",
+      editAfter: "Please edit after save",
       copyRepeaterItem: "Copy repeater item",
       removeRepeaterItem: "Remove repeater item",
-      editView: "Edit view",
-      editHtmlblock: "Edit htmlblock",
-      editImage: "Edit image",
-      editMenu: "Edit menu",
-      convertTo: "Convert to",
-      unableToConvert: "Genarated. Unable to convert.",
-      inConvert: "This element is converted,you can't edit",
-      editStyle: "Edit style",
-      editColor: "Edit color",
-      allPageAffected: "The changes will affect all pages!",
-      directToPage: "Direct to this page",
-      directToLink: "Do you want to save the changes and  direct to this link?",
-      newVariable: "New variable",
-      createVariable: "Create a new variable",
-      bindVariable: "Bind Variable",
-      moveUp: "Move Up",
-      moveDown: "Move Down",
-      external: "External",
-      linkTo: "Link to",
-      changeImage: "Change image",
-      styleEditor: "Style editor",
-      backgroundImageTitle: "Background Image",
+      replacewithImage: "Replace with image",
+      replacewithText: "Replace with text",
+      move: "Move",
+      undo: "Undo",
+      redo: "Redo",
+      alt: "Alt",
+      contentImages: "Content Images",
+      styleImages: "Style Images",
+      domImages: "DOM Images",
+      contentLinks: "Content links",
+      domLinks: "DOM links",
+      backgroundImage: "Background-image",
+      backgroundColor: "Background-color",
       color: "Color",
       font: "Font",
       fontFamily: "Font-Family",
       fontSize: "Font-Size",
-      fontStyle: "Font-Style",
       fontWeight: "Font-Weight",
-      selectAll: "Select all",
-      updateGlobal: "Update global",
-      contentImages: "Content Images",
-      styleImages: "Style Images",
-      editImages: "Edit Images",
-      editColors: "Edit Colors",
-      editLinks: "Edit Links",
-      thumbnail: "Thumbnail",
-      dimension: "Dimension",
-      note: "NOTE",
-      references: "references",
-      convertNoSettings: "This convert has no settings!",
-      pinTheMenu: "Pin this menu",
+      click: "Click",
       expandSelection: "Expand selection",
       clickCollpase: "Click to collpase actions",
       clickExpand: "Click to expand actions",
@@ -1308,6 +1163,11 @@
       yes: "paid_YES",
       no: "paid_NO"
     },
+    globalUpdate: "Global update",
+    editColor: "Edit color",
+    htmlModeTip:
+      "Failed to initialize the editor as the document is not in standards mode",
+    clickReplace: "Click to replace"
   };
   Kooboo.text = text;
 })();

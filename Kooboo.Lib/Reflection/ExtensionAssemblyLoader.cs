@@ -54,6 +54,18 @@ namespace Kooboo.Lib.Reflection
             Assemblies = LoadDlls();
         }
 
+        public Type LoadTypeByName(string name)
+        {
+            foreach (var item in Assemblies)
+            {
+                var type = item.GetTypes().ToList().Find(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                if (type != null)
+                    return type;
+            }
+
+            return null;
+        }
+
         public void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             Assembly assembly = null;

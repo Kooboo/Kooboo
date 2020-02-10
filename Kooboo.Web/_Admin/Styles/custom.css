@@ -344,7 +344,7 @@ blockquote footer,
 }
 
 .Logs-table {
-  table-layout: fixed
+  table-layout: fixed;
 }
 .Logs-table > tbody > tr > td:first-child {
   overflow: hidden;
@@ -357,7 +357,7 @@ blockquote footer,
   display: none;
 }
 
-.tox-dialog--width-lg{
+.tox-dialog--width-lg {
   height: 70% !important;
 }
 
@@ -366,4 +366,14 @@ blockquote footer,
   font-size: 12px;
   height: auto;
   padding: 5px 10px;
+}
+
+.editor-widget.parameter-hints-widget {
+  z-index: 10000000 !important;
+}
+.editor-widget.suggest-widget {
+  z-index: 10000001 !important;
+}
+.monaco-editor .parameter-hints-widget>.wrapper {
+  max-width: 100% !important;
 }

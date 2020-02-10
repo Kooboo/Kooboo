@@ -1,12 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
+using System.ComponentModel;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 
-namespace Kooboo.Sites.Scripting.Global.SiteItem
+namespace KScript.Sites
 {
     public class RoutableTextRepository : TextRepository
     {
@@ -15,6 +17,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         }
 
+        [Description(@"get the SiteObject by Url, SiteObject can be page, style or others.
+      var page = k.site.pages.getByUrl(""/pagename"");
+      var style = k.site.styles.getByUrl(""/style.css"");")]
         public ISiteObject GetByUrl(string url)
         {
             var route = this.context.WebSite.SiteDb().Routes.GetByUrl(url);
@@ -25,17 +30,24 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return null;
         }
 
-        public override void Add(object SiteObject)
+        [KDefineType(Params = new[] { typeof(Parameter.RoutableText) })]
+        [Description(@"Add a routable SiteObject, SiteObject can be page, style or others. 
+  var page = {};
+  page.name = ""pagename"";
+  page.body = ""new  body"";
+  page.url = ""/myurl""
+  k.site.pages.add(page);")]
+        public override void Add(object RoutableText)
         {
             string url = null;
 
-            var data = kHelper.GetData(SiteObject);
+            var data = Kooboo.Sites.Scripting.Global.kHelper.GetData(RoutableText);
             if (data.ContainsKey("url"))
             {
                 url = data["url"].ToString();
             }
-                  
-            var siteobject = Lib.Reflection.TypeHelper.ToObject(data, this.repo.ModelType);
+
+            var siteobject = Kooboo.Lib.Reflection.TypeHelper.ToObject(data, this.repo.ModelType);
             if (siteobject != null)
             {
                 var routeobject = siteobject as Kooboo.Sites.Models.SiteObject;
@@ -44,10 +56,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 {
                     if (string.IsNullOrEmpty(url))
                     {
-                        url = "/" +  routeobject.Name;       
+                        url = "/" + routeobject.Name;
                     }
 
-                    if (routeobject is Models.Style || routeobject is Models.Script)
+                    if (routeobject is Kooboo.Sites.Models.Style || routeobject is Kooboo.Sites.Models.Script)
                     {
                         var ext = routeobject as IExtensionable;
                         if (!url.Contains("."))
@@ -58,8 +70,8 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                             }
                             else
                             {
-                                url = url + "." + ext.Extension; 
-                             }
+                                url = url + "." + ext.Extension;
+                            }
                         }
                     }
 
@@ -71,53 +83,61 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         }
 
+        [KIgnore]
         public string getObjectUrl(object siteobj)
         {
-            var siteobject = siteobj as SiteObject; 
-            
-            if (siteobject !=null)
+            var siteobject = siteobj as SiteObject;
+
+            if (siteobject != null)
             {
-                return getUrl(siteobject.Id.ToString()); 
-            }   
+                return getUrl(siteobject.Id.ToString());
+            }
 
             if (siteobj is Guid || siteobj is String)
             {
-                return getUrl(siteobj.ToString()); 
+                return getUrl(siteobj.ToString());
             }
-             
-            return null; 
+
+            return null;
         }
 
+        [Description(@"get the SiteObject relative url, SiteObject can be page, style or others.
+      var page = k.site.pages.getByUrl(""/pagename"");
+      var url = k.site.pages.getUrl(page.id);")]
         public string getUrl(object id)
         {
-             if (id ==null)
+            if (id == null)
             {
-                return null; 
+                return null;
             }
 
             string strkey = id.ToString();
 
-            Guid guid = default(Guid); 
-            
+            Guid guid = default(Guid);
+
             if (System.Guid.TryParse(strkey, out guid))
             {
-                var route=  this.context.WebSite.SiteDb().Routes.GetByObjectId(guid); 
-                if (route !=null)
+                var route = this.context.WebSite.SiteDb().Routes.GetByObjectId(guid);
+                if (route != null)
                 {
-                    return route.Name; 
+                    return route.Name;
                 }
-            }        
-            return null; 
+            }
+            return null;
         }
 
+
+        [Description(@"get the absolute Url of this object
+      var page = k.site.pages.getByUrl(""/ pagename"");
+      var url = k.site.pages.getAbsUrl(page.id);")]
         public string getAbsUrl(object id)
         {
-            var relative = getUrl(id); 
+            var relative = getUrl(id);
             if (!string.IsNullOrWhiteSpace(relative))
             {
-                return this.context.WebSite.BaseUrl(relative); 
+                return this.context.WebSite.BaseUrl(relative);
             }
-            return null; 
+            return null;
         }
     }
 }

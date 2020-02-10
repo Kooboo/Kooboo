@@ -11,23 +11,55 @@ namespace Kooboo.Data.Helper
 {
     public static class ApiHelper
     {
+        private static Dictionary<string, bool> _serverips;
+        public static Dictionary<string, bool> ServerIps
+        {
+            get
+            {
+                if (_serverips == null)
+                {
+                    _serverips = new Dictionary<string, bool>();
+                }
+                return _serverips;
+            }
+        }
+
         public static bool IsOnlineSever(string IP)
         {
+            if (ServerIps.ContainsKey(IP))
+            {
+                return ServerIps[IP];
+            }
+
             string url = Data.Helper.AccountUrlHelper.System("VerifyServer");
             url = url += "?IP=" + IP;
-            return Lib.Helper.HttpHelper.Get<bool>(url);
+            try
+            {
+                var isServer = Lib.Helper.HttpHelper.Get<bool>(url);
+                ServerIps[IP] = isServer;
+                return isServer;
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+            }
+
+            return false; 
         }
+
+
+
 
         public static void EnsureAccountUrl(ApiResource res)
         {
             if (ShouldChangeToHttp(res))
             {
-                res.AccountUrl = ChangeHttpsToHttp(res.AccountUrl); 
+                res.AccountUrl = ChangeHttpsToHttp(res.AccountUrl);
             }
         }
         public static string ChangeHttpsToHttp(string url)
         {
-           return "http://" + url.Substring("https://".Length);
+            return "http://" + url.Substring("https://".Length);
         }
 
         public static bool TestAccountRequest(string baseurl, int trytime = 1)
@@ -36,7 +68,7 @@ namespace Kooboo.Data.Helper
 
             if (baseurl.EndsWith("/"))
             {
-                baseurl = baseurl.TrimEnd('/'); 
+                baseurl = baseurl.TrimEnd('/');
             }
 
             string url = baseurl + "/account/system/apiresource";
@@ -44,7 +76,7 @@ namespace Kooboo.Data.Helper
 
             for (int i = 0; i < trytime; i++)
             {
-                requestok = true; 
+                requestok = true;
                 try
                 {
                     testresult = Lib.Helper.HttpHelper.Get<ApiResource>(url);
@@ -57,8 +89,8 @@ namespace Kooboo.Data.Helper
                 {
                     return true;
                 }
-            }  
-            return false; 
+            }
+            return false;
         }
 
         public static bool ShouldChangeToHttp(ApiResource res)
@@ -70,17 +102,17 @@ namespace Kooboo.Data.Helper
                 string httpsurl = res.AccountUrl + "/account/system/apiresource";
                 if (TestAccountRequest(res.AccountUrl, 2))
                 {
-                    return false; 
-                } 
+                    return false;
+                }
                 else
                 {
-                    return true; 
-                } 
+                    return true;
+                }
             }
             else
             {
                 return false;
-            }  
+            }
         }
     }
 }

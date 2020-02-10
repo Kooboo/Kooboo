@@ -1,66 +1,76 @@
 ﻿using Kooboo.Sites.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.Models
 {
-  public class Customer : CoreObject
+    public class Customer : CoreObject
     {
         public Customer()
         {
-            this.ConstType = ConstObjectType.Customer;  
+            this.ConstType = ConstObjectType.Customer;
         }
 
-        private Guid _id; 
-        public override Guid Id
-        {
-            get
-            {
-                if (_id == default(Guid))
-                {
-                    if (!string.IsNullOrEmpty(this.Name))
-                    { 
-                        _id = Data.IDGenerator.GetId(Name);
-                    } 
-                }
-                return _id;
-            }
-
-            set
-            {
-                _id = value;
-            }
-        }
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
-          
-        // Hashed password..
-        public string Password { get; set; }
-         
-        public string EmailAddress { get; set; }
 
-        public Guid EmailId { get; set; }
-         
+        public long MembershipNumber { get; set; }
+
+        public string Password { get; set; }
+
+        private string _emailaddress;
+        public string EmailAddress
+        {
+            get
+            {
+                return _emailaddress;
+            }
+            set
+            {
+                _emailaddress = value;
+                EmailHash = default(Guid);
+            }
+        }
+
+        private Guid _emailhash;
+
+        public Guid EmailHash
+        {
+            get
+            {
+                if (_emailhash == default(Guid))
+                {
+                    if (!string.IsNullOrWhiteSpace(_emailaddress))
+                    {
+                        _emailhash = Lib.Security.Hash.ComputeGuidIgnoreCase(_emailaddress);
+                    }
+                }
+                return _emailhash;
+            }
+            set
+            {
+                _emailhash = value;
+            }
+        }
+
         public string Telephone { get; set; }
 
         public Guid TelHash { get; set; }
 
         public Guid DefaultShippingAddress { get; set; }
 
-        public Guid DefaultPaymentId { get; set; }
+        public Guid DefaultBankCard { get; set; }
 
-        public string Address { get; set; }
+        /// <summary>
+        ///  this is a temp user. 
+        /// </summary>
+        public bool IsTemp { get; set; }
 
-        public string PostCode { get; set; }
-
-        public string Address2 { get; set; }
-
-        public string HouseNumber { get; set; }
-
-        public string City { get; set; }
-
-        public string Country { get; set; }
+        public override int GetHashCode()
+        {
+            string unique = this.Name + this.FirstName + this.LastName + this.EmailAddress + this.Telephone;
+            unique += this.DefaultBankCard.ToString() + this.DefaultShippingAddress.ToString();
+            return Lib.Security.Hash.ComputeInt(unique); 
+        }
     }
 }

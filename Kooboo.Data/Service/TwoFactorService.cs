@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,11 +17,11 @@ namespace Kooboo.Data.Service
             provider = Lib.IOC.Service.GetSingleTon<ITwoFactorProvder>(false); 
         }
 
-        public static Dictionary<string, string> GetHeaders(Guid UserId)
+        public static Dictionary<string, string> GetHeaders(User user)
         {
             if (provider != null)
             {
-                return provider.GetHeaders(UserId);
+                return provider.GetHeaders(user);
             } 
             return null;
         }

@@ -1,9 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data;
 using System;
-using Kooboo.IndexedDB.Schedule;
-using Kooboo.Data.Models;
 using System.Timers;
 
 namespace Kooboo.Jobs
@@ -44,8 +41,7 @@ namespace Kooboo.Jobs
             catch (Exception)
             {
                 // TODO: logging to fallback log store
-            }
-
+            } 
             _running = false;
         }
 

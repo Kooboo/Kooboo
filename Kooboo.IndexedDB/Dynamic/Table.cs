@@ -616,11 +616,10 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
-            return null;
-
+            return null; 
         }
 
-        private Guid _ParseKey(object key)
+        internal Guid _ParseKey(object key)
         {
             if (key == null)
             {

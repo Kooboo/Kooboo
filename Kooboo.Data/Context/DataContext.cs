@@ -429,6 +429,11 @@ namespace Kooboo.Data.Context
                         }
                         return null;
                     }
+                    else if (jsObject is Newtonsoft.Json.Linq.JObject)
+                    {
+                        var jobj = jsObject as Newtonsoft.Json.Linq.JObject;
+                        return jobj.GetValue(PropertyName); 
+                    }
                     else
                     {
                         return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, PropertyName);

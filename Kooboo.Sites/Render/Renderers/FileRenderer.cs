@@ -21,6 +21,16 @@ namespace Kooboo.Sites.Render
             RenderFile(context, file);
         }
 
+        public static async Task RenderAsync(FrontContext context)
+        {
+            var file = await context.SiteDb.Files.GetAsync(context.Route.objectId);
+            if (file == null)
+            {
+                return;
+            } 
+            RenderFile(context, file);
+        }
+
         public static void RenderFile(FrontContext context, Models.CmsFile file)
         {
             string contentType;

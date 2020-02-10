@@ -23,6 +23,18 @@ namespace Kooboo.Data.Log
             Writer.WriteLine(line);
         }
 
+        public void WriteObj(object JsonObject)
+        {
+            var text = Lib.Helper.JsonHelper.Serialize(JsonObject);
+            Write(text); 
+        }
+
+        public void WriteException(Exception ex)
+        {
+            string text = ex.Message + ex.Source + ex.StackTrace;
+            Write(text); 
+        }
+
         private StreamWriter Writer
         {
             get

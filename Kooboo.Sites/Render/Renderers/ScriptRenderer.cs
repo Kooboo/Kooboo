@@ -12,12 +12,20 @@ namespace Kooboo.Sites.Render
         {
             var script = context.SiteDb.Scripts.Get(context.Route.objectId);
             context.RenderContext.Response.ContentType = "application/javascript;charset=utf-8";
+              
+            string result = Getbody(context, script);
 
+            TextBodyRender.SetBody(context, result);
+        }
+
+        private static string Getbody(FrontContext context, Models.Script script)
+        {
+             string result = null;
             if (script != null && script.Body != null)
             {
                 if (script.Extension == null || script.Extension == "js" || script.Extension == ".js")
                 {
-                    context.RenderContext.Response.Body = Encoding.UTF8.GetBytes(script.Body);
+                    result = script.Body;
                 }
                 else
                 {
@@ -26,16 +34,19 @@ namespace Kooboo.Sites.Render
                     var find = engines.Find(o => o.Extension == script.Extension);
                     if (find != null)
                     {
-                        var code = find.Execute(context.RenderContext, script.Body);
-                        context.RenderContext.Response.Body = Encoding.UTF8.GetBytes(code);
+                        result = find.Execute(context.RenderContext, script.Body);
+
                     }
                     else
                     {
-                        context.RenderContext.Response.Body = Encoding.UTF8.GetBytes(script.Body);
+                        result = script.Body;
                     }
                 }
             }
+
+            return result;
         }
+
 
     }
 }

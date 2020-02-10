@@ -5,24 +5,19 @@ using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Kooboo.Sites.Ecommerce.Repository
 {
-
-
     public class ProductCategoryRepository : SiteRepositoryBase<ProductCategory>
     {
-
         public override ObjectStoreParameters StoreParameters
         {
             get
             {
                 ObjectStoreParameters para = new ObjectStoreParameters();
                 para.AddIndex<ProductCategory>(o => o.ProductId);
-                para.AddIndex<ProductCategory>(o => o.CategoryId);
+                para.AddColumn<ProductCategory>(o => o.CategoryId); 
                 return para;
             }
         }
@@ -50,9 +45,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 productcat.ProductId = ProductId;
                 productcat.CategoryId = item;
                 this.AddOrUpdate(productcat); 
-            }
-
-
+            } 
         }
 
         public List<ProductCategory> GetCatIdByProduct(Guid ProductId)
@@ -62,7 +55,5 @@ namespace Kooboo.Sites.Ecommerce.Repository
 
             return list; 
         }  
-    }
-
-
+    } 
 }

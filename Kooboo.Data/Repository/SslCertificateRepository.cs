@@ -4,6 +4,7 @@ using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Kooboo.Data.Repository
@@ -102,6 +103,30 @@ namespace Kooboo.Data.Repository
         public List<SslCertificate> ListByOrganization(Guid OrganizationId)
         {
             return this.Query.Where(o => o.OrganizationId == OrganizationId).SelectAll();
+        }
+
+        public List<SslCertificate> GetAllInUsed()
+        {
+            var all = this.All(); 
+            List<SslCertificate> result = new List<SslCertificate>();
+
+            foreach (var item in all)
+            {
+                if (item.IsWildCard)
+                {
+                    //wildcard always renew...
+                    result.Add(item);
+                }
+                else
+                {
+                    var binding = GlobalDb.Bindings.GetByDomain(item.Domain);
+                    if (binding.Any())
+                    {
+                        result.Add(item);
+                    }
+                }
+            } 
+            return result;
         }
     }
 

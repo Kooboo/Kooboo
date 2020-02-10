@@ -2,11 +2,12 @@
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Kooboo.Mail
 {
     public static class Settings
-    {
+    { 
         // the mta server ip. This should only defined in the Mail Server.
         public static string Mta { get; set; }
 
@@ -33,11 +34,12 @@ namespace Kooboo.Mail
             {
                 MtaPort = 587;
             }
+
+            nextcheck = System.DateTime.Now.AddHours(-10);
         }
 
         public static async Task<SendSetting> GetSendSetting(Data.Models.ServerSetting serverSetting, bool IsOnlineServer, string MailFrom, string RcptTo)
-        {
-
+        { 
             SendSetting setting = new SendSetting();
 
             if (IsOnlineServer)
@@ -69,8 +71,7 @@ namespace Kooboo.Mail
                 {
                     setting.OkToSend = false;
                     setting.ErrorMessage = "Email Sending is prevented";
-                }
-
+                } 
             }
             else
             {
@@ -100,17 +101,72 @@ namespace Kooboo.Mail
             }
             return setting;
         }
-         
+
         public static bool ForwardRequired
         {
             get
             {
-
-               return false; 
-             ///   return !HasDefineMta; 
+                //return false; 
+                return !HasDefineMta && Data.AppSettings.IsOnlineServer;
             }
         }
 
-        public static string MailServer { get; set; }
+
+        private static string _mailserverip;
+
+        public static string MailServerIP
+        {
+            get
+            {
+                if (Kooboo.Mail.Settings.ForwardRequired)
+                {
+                    if (string.IsNullOrWhiteSpace(_mailserverip))
+                    {
+                        _mailserverip = GetMailServer();
+                        nextcheck = DateTime.Now.AddHours(10);
+                    }
+                    else
+                    {
+                        if (nextcheck < DateTime.Now)
+                        {
+                            nextcheck = DateTime.Now.AddHours(10);
+                            System.Threading.Thread t = new System.Threading.Thread(setAsync);
+                            t.Start();
+                        }
+                    }
+                    return _mailserverip;
+                }
+                return _mailserverip;
+            }
+        }
+
+
+        private static void setAsync()
+        {
+            var mailserver = GetMailServer();
+            if (!string.IsNullOrWhiteSpace(mailserver))
+            {
+                _mailserverip = mailserver;
+            }
+        }
+
+        private static System.DateTime nextcheck { get; set; }
+
+        private static string GetMailServer()
+        {
+            string url = Kooboo.Data.Helper.AccountUrlHelper.System("MailServer");
+            var ip = Lib.Helper.HttpHelper.TryGet<string>(url);
+
+            if (ip != null && Lib.Helper.IPHelper.IsIP(ip))
+            {
+                return ip;
+            }  
+            ip = Lib.Helper.HttpHelper.TryGet<string>(url); 
+            if (ip != null && Lib.Helper.IPHelper.IsIP(ip))
+            {
+                return ip;
+            } 
+            return null;
+        }
     }
 }
