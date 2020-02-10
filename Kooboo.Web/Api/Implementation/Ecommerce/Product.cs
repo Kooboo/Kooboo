@@ -152,12 +152,13 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
 
             foreach (var item in productlist)
             {
-                var type = sitedb.ProductType.Get(item.ProductTypeId);
+                var type = sitedb.ProductType.Get(item.ProductTypeId); 
 
-
-                model.List.Add(Kooboo.Sites.Ecommerce.Helper.ProductHelper.ToView(item, language, type != null ? type.Properties : null));
-            }
-
+                if (type == null)
+                {
+                    model.List.Add(new ProductViewModel(item, language, type.Properties));
+                } 
+            } 
             return model;
         }
 
@@ -381,8 +382,10 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             {
                 var type = sitedb.ProductType.Get(item.ProductTypeId);
 
-
-                model.List.Add(Kooboo.Sites.Ecommerce.Helper.ProductHelper.ToView(item, language, type != null ? type.Properties : null));
+                if (type !=null)
+                {
+                    model.List.Add(new ProductViewModel(item, language, type.Properties));
+                } 
             }
 
             return model;
