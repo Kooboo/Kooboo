@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Service
 {
-    public class ServiceBase<T> : IEcommerceService where T : class, ISiteObject
+    public class ServiceBase<T> : IEcommerceService<T> where T : class, ISiteObject
     {
         public RenderContext Context { get; set; }
         public CommerceContext CommerceContext { get; set; }
@@ -30,14 +30,24 @@ namespace Kooboo.Sites.Ecommerce.Service
             }
         }
 
-        public virtual bool AddOrUpdate(T value, Guid UserId = default(Guid))
+        public virtual bool AddOrUpdate(T value)
+        {
+            return this.Repo.AddOrUpdate(value, default(Guid));
+        }
+
+        public virtual bool AddOrUpdate(T value, Guid UserId)
         {
             return this.Repo.AddOrUpdate(value, UserId);
         }
 
-        public virtual void Delete(Guid id, Guid UserId = default(Guid))
+        public virtual void Delete(Guid id, Guid UserId)
         {
             this.Repo.Delete(id, UserId);
+        }
+
+        public virtual void Delete(Guid id)
+        {
+            this.Repo.Delete(id, default(Guid));
         }
 
         public virtual T Get(Guid id)
@@ -54,7 +64,6 @@ namespace Kooboo.Sites.Ecommerce.Service
         {
             return this.Repo.GetByNameOrId(nameorid);
         }
-
-
+         
     }
 }

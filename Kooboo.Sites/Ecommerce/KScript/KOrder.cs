@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace KScript.Model
+namespace Kooboo.Sites.Ecommerce.KScript
 {
-    public class ProductView
+   public  class KOrder
     {
     }
 }

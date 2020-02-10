@@ -6,7 +6,7 @@ using Kooboo.Sites.Ecommerce.Models;
 
 namespace Kooboo.Sites.Ecommerce.Service
 {
-    public class CartService : ServiceBase<Cart>
+    public class CartService : ServiceBase<Cart>, ICartService
     {
         public Cart GetOrCreateCart()
         {
@@ -91,8 +91,13 @@ namespace Kooboo.Sites.Ecommerce.Service
         public void UpdateCart(Cart cart)
         {
             //calculate discount before updates...
+            CalculatePromotion(cart);
+            this.Repo.AddOrUpdate(cart);
+        }
+         
+        public void CalculatePromotion(Cart cart)
+        {
             Promotion.PromotionEngine.CalculatePromotion(cart, this.Context);
-            this.Repo.AddOrUpdate(cart); 
-        } 
+        }
     }
 }

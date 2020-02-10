@@ -43,11 +43,17 @@ namespace Kooboo.Sites.Ecommerce.Service
 
         }
 
-        public List<CategoryViewModel> Sub(Guid ParentId)
+        public List<Category> Sub(Guid ParentId)
         {
-            var list = this.Repo.List();
-            var sub = list.Where(o => o.ParentId == ParentId).ToList(); 
-            return sub.Select(o => new CategoryViewModel(o, this.Context)).ToList();  
+            var list = this.Repo.All();
+            return list.Where(o => o.ParentId == ParentId).ToList();  
         } 
+
+        public List<Category> Top()
+        {
+            // category is always cached...
+            var list = this.Repo.All();
+            return list.Where(o => o.ParentId == default(Guid)).ToList();  
+        }  
     }
 }

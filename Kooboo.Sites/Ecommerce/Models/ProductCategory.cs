@@ -35,6 +35,7 @@ namespace Kooboo.Sites.Ecommerce.Models
         }
 
         public Guid ProductId { get; set; }
+         
 
         public Guid CategoryId { get; set; }
 

@@ -178,19 +178,7 @@ namespace Kooboo.Lib.IOC
 
                                 }
                             }
-                        }
-
-
-                        List<IPriority> list = new List<IPriority>();
-                        foreach (var item in types)
-                        {
-                            var obj = Activator.CreateInstance(item) as IPriority;
-                            if (obj != null)
-                            {
-                                list.Add(obj);
-                            }
-                        }
-
+                        } 
 
                         PriorityType[name] = SelectedType;
                         

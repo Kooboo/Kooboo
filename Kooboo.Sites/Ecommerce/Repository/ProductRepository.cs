@@ -48,7 +48,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             if (product != null)
             {
                 var prop = this.SiteDb.GetSiteRepository<ProductTypeRepository>().GetColumns(product.ProductTypeId);
-                return Helper.ProductHelper.ToView(product, lang, prop);
+                return new ProductViewModel(product, lang, prop);
             }
             return null;
         }
