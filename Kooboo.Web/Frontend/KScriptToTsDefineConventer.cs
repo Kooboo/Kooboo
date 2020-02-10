@@ -316,7 +316,7 @@ namespace Kooboo.Web.Frontend.KScriptDefine
             var extends = new List<Type>();
             extends.AddRange(type.GetInterfaces());
             if (type.BaseType != null) extends.Add(type.BaseType);
-            return extends.Where(w => _defines.ContainsKey(w.FullName)).Select(s => TypeString(type, s)).ToList();
+            return extends.Select(s => TypeString(type, s)).ToList();
         }
 
         internal Define ConvertClassOrInterface(Type type)
