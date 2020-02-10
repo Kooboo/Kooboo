@@ -2,6 +2,7 @@ using Kooboo.Data.Attributes;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.IndexedDB.Query;
 using Kooboo.Sites.Scripting;
+using Kooboo.Sites.Scripting.Global;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -23,6 +24,7 @@ namespace KScript
 
         public object add(object value)
         {
+            value = kHelper.CleanDynamicObject(value);
             var dic = value as IDictionary<string, object>;
             if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
             MongoCollection.InsertOne(value);
@@ -38,6 +40,7 @@ namespace KScript
 
         public object append(object value)
         {
+            value = kHelper.CleanDynamicObject(value);
             var option = new MapReduceOptions<object, object>();
             option.OutputOptions = MapReduceOutputOptions.Inline;
 
@@ -207,6 +210,7 @@ namespace KScript
 
         public void update(object newvalue)
         {
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             var dic = newvalue as IDictionary<string, object>;
             if (!dic.ContainsKey("_id")) add(newvalue);
             else
@@ -217,6 +221,7 @@ namespace KScript
 
         public void update(object id, object newvalue)
         {
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             var dic = newvalue as IDictionary<string, object>;
             if (dic.ContainsKey("_id")) dic.Remove("_id");
             if (dic.Count > 0)

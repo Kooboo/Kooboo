@@ -36,7 +36,7 @@ namespace KScript
     k.database.tablename.add(obj);")]
         public object add(object value)
         {
-            value = CleanDynamicObject(value);
+            value = kHelper.CleanDynamicObject(value);
             var result = this.table.Add(value, true);
             if (result == default(Guid))
             {
@@ -50,7 +50,7 @@ var obj = {fieldone: ""value one"", fieldtwo: ""value two""};
         var returnid = k.database.tablename.append(obj);")]
         public object append(object value)
         {
-            value = CleanDynamicObject(value);
+            value = kHelper.CleanDynamicObject(value);
             var result = this.table.Add(value, false);
             if (result == default(Guid))
             {
@@ -67,7 +67,7 @@ var id = table.add(obj);
         table.update(id, obj); ")]
         public void update(object id, object newvalue)
         {
-            newvalue = CleanDynamicObject(newvalue);
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             this.table.Update(id, newvalue);
         }
 
@@ -81,7 +81,7 @@ var item = table.get(id);
         table.update(item);")]
         public void update(object newvalue)
         {
-            newvalue = CleanDynamicObject(newvalue);
+            newvalue = kHelper.CleanDynamicObject(newvalue);
             var newdata = this.table.PrepareData(newvalue);
             if (newdata.ContainsKey("_id"))
             {
@@ -99,16 +99,6 @@ var item = table.get(id);
         public void delete(object id)
         {
             this.table.Delete(id);
-        }
-
-        private object CleanDynamicObject(object Value)
-        {
-            if (Value is DynamicTableObject)
-            {
-                var dynamictable = Value as DynamicTableObject;
-                return dynamictable.obj;
-            }
-            return Value;
         }
 
         [Description(@"Return the first itme that match query condition
