@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Context;
+using Kooboo.Sites.DataTrace;
 using Kooboo.Sites.Scripting.Global.Database;
 using KScript;
 using System;
@@ -8,10 +9,13 @@ namespace KScript
 {
     public class MongoDynamicTableObject : DynamicTableObjectBase
     {
+        public override PersistenceMode Source => PersistenceMode.mongo;
+        readonly string _collection;
 
-        public MongoDynamicTableObject(IDictionary<string, object> orgObj)
+        public MongoDynamicTableObject(IDictionary<string, object> orgObj, string collection)
         {
             obj = orgObj;
+            _collection = collection;
         }
 
         internal override object GetValueFromDict(string key)
@@ -24,7 +28,7 @@ namespace KScript
             return null;
         }
 
-        public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list)
+        public static IDynamicTableObject[] CreateList(IDictionary<string, object>[] list, string collection)
         {
             int len = list.Length;
 
@@ -32,18 +36,27 @@ namespace KScript
 
             for (int i = 0; i < len; i++)
             {
-                result[i] = Create(list[i]);
+                result[i] = Create(list[i], collection);
             }
             return result;
         }
 
-        public static IDynamicTableObject Create(IDictionary<string, object> item)
+        public static IDynamicTableObject Create(IDictionary<string, object> item, string collection)
         {
             if (item != null)
             {
-                return new MongoDynamicTableObject(item);
+                return new MongoDynamicTableObject(item, collection);
             }
             return null;
+        }
+
+        public override IDictionary<string, string> GetTraceInfo()
+        {
+            return new Dictionary<string, string>
+            {
+                { "id", obj["_id"].ToString() },
+                { "table", _collection }
+            };
         }
     }
 }

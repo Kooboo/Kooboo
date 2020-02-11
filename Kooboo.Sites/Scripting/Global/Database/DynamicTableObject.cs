@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
+using Kooboo.Sites.DataTrace;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
@@ -15,6 +16,8 @@ namespace KScript
     {
         private RenderContext context { get; set; }
         private Table table { get; set; }
+
+        public override PersistenceMode Source => PersistenceMode.indexdb;
 
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
@@ -107,6 +110,15 @@ namespace KScript
             }
             return null;
 
+        }
+
+        public override IDictionary<string, string> GetTraceInfo()
+        {
+            return new Dictionary<string, string>
+            {
+                { "id", obj["_id"].ToString() },
+                { "table", table.Name }
+            };
         }
     }
 }

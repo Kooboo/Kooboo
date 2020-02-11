@@ -23,7 +23,7 @@ namespace KScript
         {
             var pipline = GetPipline();
             var results = mongoTable.MongoCollection.Aggregate(pipline.Count()).ToList();
-            if(results.Any()) return (int)results.First().Count;
+            if (results.Any()) return (int)results.First().Count;
             return 0;
         }
 
@@ -76,7 +76,7 @@ namespace KScript
             var pipline = GetPipline();
             var data = mongoTable.MongoCollection.Aggregate(pipline.Limit(count)).ToList();
             var list = data.Select(s => s as IDictionary<string, object>).ToArray();
-            return MongoDynamicTableObject.CreateList(list);
+            return MongoDynamicTableObject.CreateList(list, mongoTable.MongoCollection.CollectionNamespace.CollectionName);
         }
 
         public ITableQuery Where(string searchCondition)

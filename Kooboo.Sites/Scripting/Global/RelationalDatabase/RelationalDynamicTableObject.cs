@@ -1,4 +1,5 @@
-﻿using Kooboo.Sites.Scripting.Global.Database;
+﻿using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.Scripting.Global.Database;
 using KScript;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         where TConnection : IDbConnection
     {
         readonly RelationalTable<TExecuter, TSchema, TConnection> _table;
+
+        public override PersistenceMode Source => _table.Database.Source;
 
         RelationalDynamicTableObject(IDictionary<string, object> orgObj, RelationalTable<TExecuter, TSchema, TConnection> table)
         {
@@ -60,6 +63,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
             return null;
 
+        }
+
+        public override IDictionary<string, string> GetTraceInfo()
+        {
+            return new Dictionary<string, string>
+            {
+                { "id", obj["_id"].ToString() },
+                { "table", _table.Name }
+            };
         }
     }
 }

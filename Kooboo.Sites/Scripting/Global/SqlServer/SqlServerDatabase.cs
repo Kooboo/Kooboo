@@ -1,4 +1,5 @@
-﻿using Kooboo.Sites.Scripting.Global.RelationalDatabase;
+﻿using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.Scripting.Global.RelationalDatabase;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         public SqlServerDatabase(string connectionString) : base(connectionString)
         {
         }
+
+        public override PersistenceMode Source => PersistenceMode.sqlserver;
     }
 }
