@@ -15,14 +15,17 @@ namespace Kooboo.Sites.Render
     public class BindingRenderTask : IRenderTask
     {
         readonly string _path;
-        readonly string _uid = Guid.NewGuid().ToString("N");
+        readonly ActOn _actOn;
+        readonly IDictionary<string, string> _addition;
         static char[] _nontraceableChars = new[] { '{', '\'', '"' };
         public BindingEndRenderTask BindingEndRenderTask;
 
-        public BindingRenderTask(string path)
+        public BindingRenderTask(string path, ActOn actOn, IDictionary<string, string> addition = null)
         {
             _path = path;
-            BindingEndRenderTask = new BindingEndRenderTask(_uid);
+            _actOn = actOn;
+            _addition = addition;
+            BindingEndRenderTask = new BindingEndRenderTask();
         }
 
         public bool ClearBefore
@@ -41,10 +44,12 @@ namespace Kooboo.Sites.Render
 
         public virtual string Render(RenderContext context)
         {
+            BindingEndRenderTask.Uid = Lib.Helper.StringHelper.GetUniqueBoundary();
             var traceability = GetTraceabilityObject(context, out var fieldPath);
             var infoList = traceability.GetTraceInfo().Select(s => $"--{s.Key}={s.Value}");
+            if (_addition != null) infoList = infoList.Union(_addition.Select(s => $"--{s.Key}={s.Value}"));
             return $@"
-<!--#kooboo--source={traceability.Source}{string.Join("", infoList)}--uid={_uid}-->
+<!--#kooboo--act={_actOn.ToString()}--source={traceability.Source.ToString()}{string.Join("", infoList)}--uid={BindingEndRenderTask.Uid}-->
 ";
         }
 

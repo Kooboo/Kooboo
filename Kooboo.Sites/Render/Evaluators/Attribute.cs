@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Dom;
+using Kooboo.Sites.DataTrace;
 
 namespace Kooboo.Sites.Render
 {
@@ -31,10 +32,10 @@ namespace Kooboo.Sites.Render
         {
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.Attribute))
             {
-                return null; 
+                return null;
             }
 
-            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             if (node.nodeType != enumNodeType.ELEMENT)
             {
@@ -85,21 +86,21 @@ namespace Kooboo.Sites.Render
 
                 if (AppendAttributes.ContainsKey(attributeName))
                 {
-                    string sep = AppendAttributes[attributeName]; 
-                    string value = element.getAttribute(attributeName); 
-                    
+                    string sep = AppendAttributes[attributeName];
+                    string value = element.getAttribute(attributeName);
+
                     if (!string.IsNullOrEmpty(value))
-                    { 
+                    {
                         if (!value.Trim().EndsWith(sep))
                         {
-                            value = value + sep; 
-                        }  
+                            value = value + sep;
+                        }
                         if (appendValues.ContainsKey(attributeName))
                         {
                             var orgvalue = appendValues[attributeName];
-                            value = orgvalue + value; 
-                        } 
-                        appendValues[attributeName] = value;  
+                            value = orgvalue + value;
+                        }
+                        appendValues[attributeName] = value;
                     }
                 }
 
@@ -110,7 +111,7 @@ namespace Kooboo.Sites.Render
                 {
                     tasks.Add(new ContentRenderTask(appendValues[attributeName]));
                 }
-                 
+
                 tasks.Add(new ValueRenderTask(attributeValue));
                 tasks.Add(new ContentRenderTask("\""));
 
@@ -127,18 +128,11 @@ namespace Kooboo.Sites.Render
 
                 if (options.RequireBindingInfo)
                 {
-                    string koobooid = element.getAttribute(SiteConstants.KoobooIdAttributeName);
-                    BindingObjectRenderTask binding = new BindingObjectRenderTask() { ObjectType = "attribute", AttributeName = attributeName, BindingValue = attributeValue, KoobooId = koobooid };
-                    List<IRenderTask> bindings = new List<IRenderTask>();
-                    bindings.Add(binding);
-                    if (response.BindingTask == null)
-                    {
-                        response.BindingTask = bindings;
-                    }
-                    else
-                    {
-                        response.BindingTask.AddRange(bindings);
-                    }
+                    if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
+                    var bindingTask = new BindingRenderTask(attributeValue, ActOn.attribute, new Dictionary<string, string> { { "attribute", attributeName } });
+                    response.BindingTask.Add(bindingTask);
+                    if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
+                    response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
                 }
             }
 
@@ -183,7 +177,7 @@ namespace Kooboo.Sites.Render
         public class AppendValues
         {
             public string AttName { get; set; }
-            public string Value { get; set; } 
+            public string Value { get; set; }
         }
     }
 

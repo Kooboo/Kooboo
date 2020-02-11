@@ -50,7 +50,7 @@ namespace Kooboo.Sites.Render
                 if (options.RequireBindingInfo)
                 {
                     if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
-                    var bindingTask = new BindingRenderTask(value);
+                    var bindingTask = new BindingRenderTask(value, ActOn.content);
                     response.BindingTask.Add(bindingTask);
                     if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
                     response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);

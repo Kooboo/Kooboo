@@ -7,12 +7,7 @@ namespace Kooboo.Sites.Render.RenderTask
 {
     public class BindingEndRenderTask : IRenderTask
     {
-        readonly string _uid;
-
-        public BindingEndRenderTask(string uid)
-        {
-            _uid = uid;
-        }
+        public string Uid { get; set; }
 
         public bool ClearBefore
         {
@@ -31,7 +26,7 @@ namespace Kooboo.Sites.Render.RenderTask
         public virtual string Render(RenderContext context)
         {
             return $@"
-<!--#kooboo--end=true--uid={_uid}-->
+<!--#kooboo--end=true--uid={Uid}-->
 ";
         }
     }
