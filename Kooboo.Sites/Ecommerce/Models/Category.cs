@@ -53,6 +53,8 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
         }
 
+        public string UserKey { get; set; }
+
         public override int GetHashCode()
         {
             string unique = this.Name + this.ParentId.ToString();

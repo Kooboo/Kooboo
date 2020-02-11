@@ -17,7 +17,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             {
                 ObjectStoreParameters para = new ObjectStoreParameters();
                 para.AddIndex<ProductCategory>(o => o.ProductId);
-                para.AddIndex<ProductCategory>(o => o.CategoryId);
+                para.AddColumn<ProductCategory>(o => o.CategoryId); 
                 return para;
             }
         }
@@ -55,7 +55,5 @@ namespace Kooboo.Sites.Ecommerce.Repository
 
             return list; 
         }  
-    }
-
-
+    } 
 }

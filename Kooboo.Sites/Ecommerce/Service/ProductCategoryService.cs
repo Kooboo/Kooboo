@@ -15,5 +15,10 @@ namespace Kooboo.Sites.Ecommerce.Service
 
             return allitems.Select(o => o.CategoryId).Distinct().ToList();
         }
+
+        public List<Guid> ProductIdList(Guid CategoryId)
+        {
+            return this.Repo.Query.Where(o => o.CategoryId == CategoryId).SelectAll().Select(o => o.ProductId).ToList(); 
+        }
     }
 }

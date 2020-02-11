@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Ecommerce.Models;
+using Kooboo.Sites.Ecommerce.Service;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,8 @@ namespace Kooboo.Sites.Ecommerce
         public CommerceContext(RenderContext context)
         {
             // init the context...
-            this.RenderContext = context; 
+            this.RenderContext = context;
+            InitContext(); 
         }
 
         private void InitContext()
@@ -19,11 +21,11 @@ namespace Kooboo.Sites.Ecommerce
             this.customer = initCustomer();
         }
          
-        public Customer initCustomer()
+        private Customer initCustomer()
         {
             if (RenderContext.Request.Cookies.ContainsKey(Constants.CustomerCookieName))
             {
-                var service = ServiceProvider.GetService<CustomerService>(this.RenderContext);
+                var service = ServiceProvider.GetService<ICustomerService>(this.RenderContext);
                 if (this.RenderContext.Request.Cookies.TryGetValue(Constants.CustomerCookieName, out string cookie))
                 {
                     if (System.Guid.TryParse(cookie, out Guid customerid))
@@ -43,7 +45,7 @@ namespace Kooboo.Sites.Ecommerce
 
         public RenderContext RenderContext { get; set; }
         
-       public bool IsLogin
+        public bool IsLogin
         {
             get
             {
@@ -67,8 +69,6 @@ namespace Kooboo.Sites.Ecommerce
                 _Customer = value;
             }
         }
-        
-        
-
+          
     }
 }
