@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Scripting.Global.Database
             }
         }
 
-        public abstract PersistenceMode Source { get; }
+        public abstract string Source { get; }
 
         internal abstract object GetValueFromDict(string key);
 

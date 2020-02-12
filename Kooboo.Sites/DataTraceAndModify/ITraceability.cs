@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Kooboo.Sites.DataTrace
 {
-    public enum ActOn
+    public interface ITraceability
     {
-        content,
-        attribute
+        string Source { get; }
+        IDictionary<string, string> GetTraceInfo();
     }
 }

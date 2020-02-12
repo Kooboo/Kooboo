@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             SqlExecuter = (TExecuter)Activator.CreateInstance(typeof(TExecuter), connectionString);
         }
 
-        public abstract PersistenceMode Source { get; }
+        public abstract string Source { get; }
 
         [KIgnore]
         public SqlExecuter<TConnection> SqlExecuter { get; }

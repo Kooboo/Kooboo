@@ -129,7 +129,7 @@ namespace Kooboo.Sites.Render
                 if (options.RequireBindingInfo)
                 {
                     if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
-                    var bindingTask = new BindingRenderTask(attributeValue, ActOn.attribute, new Dictionary<string, string> { { "attribute", attributeName } });
+                    var bindingTask = new BindingRenderTask(attributeValue, new Dictionary<string, string> { { "attribute", attributeName } });
                     response.BindingTask.Add(bindingTask);
                     if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
                     response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);

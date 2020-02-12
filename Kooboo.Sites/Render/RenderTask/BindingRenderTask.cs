@@ -14,18 +14,31 @@ namespace Kooboo.Sites.Render
 {
     public class BindingRenderTask : IRenderTask
     {
-        readonly string _path;
-        readonly ActOn _actOn;
+
         readonly IDictionary<string, string> _addition;
         static char[] _nontraceableChars = new[] { '{', '\'', '"' };
-        public BindingEndRenderTask BindingEndRenderTask;
+        readonly string _path;
+        readonly ITraceability _traceability;
 
-        public BindingRenderTask(string path, ActOn actOn, IDictionary<string, string> addition = null)
+        public BindingEndRenderTask BindingEndRenderTask { get; }
+
+
+        BindingRenderTask(IDictionary<string, string> addition = null)
         {
-            _path = path;
-            _actOn = actOn;
             _addition = addition;
             BindingEndRenderTask = new BindingEndRenderTask();
+        }
+
+        public BindingRenderTask(string path, IDictionary<string, string> addition = null)
+            : this(addition)
+        {
+            _path = path;
+        }
+
+        public BindingRenderTask(ITraceability traceability, IDictionary<string, string> addition = null)
+           : this(addition)
+        {
+            _traceability = traceability;
         }
 
         public bool ClearBefore
@@ -45,11 +58,11 @@ namespace Kooboo.Sites.Render
         public virtual string Render(RenderContext context)
         {
             BindingEndRenderTask.Uid = Lib.Helper.StringHelper.GetUniqueBoundary();
-            var traceability = GetTraceabilityObject(context, out var fieldPath);
+            var traceability = _traceability ?? GetTraceabilityObject(context, out var fieldPath);
             var infoList = traceability.GetTraceInfo().Select(s => $"--{s.Key}={s.Value}");
             if (_addition != null) infoList = infoList.Union(_addition.Select(s => $"--{s.Key}={s.Value}"));
             return $@"
-<!--#kooboo--act={_actOn.ToString()}--source={traceability.Source.ToString()}{string.Join("", infoList)}--uid={BindingEndRenderTask.Uid}-->
+<!--#kooboo--source={traceability.Source.ToString()}{string.Join("", infoList)}--uid={BindingEndRenderTask.Uid}-->
 ";
         }
 

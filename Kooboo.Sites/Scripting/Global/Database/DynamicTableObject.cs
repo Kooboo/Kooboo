@@ -17,7 +17,7 @@ namespace KScript
         private RenderContext context { get; set; }
         private Table table { get; set; }
 
-        public override PersistenceMode Source => PersistenceMode.indexdb;
+        public override string Source => "indexdb";
 
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {

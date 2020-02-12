@@ -9,7 +9,7 @@ namespace Kooboo.Sites.DataTrace
 
         public static Nontraceable Instance { get; } = new Nontraceable();
 
-        public PersistenceMode Source => PersistenceMode.none;
+        public string Source => "none";
 
         public IDictionary<string, string> GetTraceInfo()
         {

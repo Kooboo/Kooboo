@@ -16,7 +16,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
     {
         readonly RelationalTable<TExecuter, TSchema, TConnection> _table;
 
-        public override PersistenceMode Source => _table.Database.Source;
+        public override string Source => _table.Database.Source;
 
         RelationalDynamicTableObject(IDictionary<string, object> orgObj, RelationalTable<TExecuter, TSchema, TConnection> table)
         {

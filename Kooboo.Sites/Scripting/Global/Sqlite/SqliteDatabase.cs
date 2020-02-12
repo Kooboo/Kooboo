@@ -15,6 +15,6 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
         {
         }
 
-        public override PersistenceMode Source => PersistenceMode.sqlite;
+        public override string Source => "sqlite";
     }
 }

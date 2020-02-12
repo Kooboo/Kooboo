@@ -9,7 +9,7 @@ namespace KScript
 {
     public class MongoDynamicTableObject : DynamicTableObjectBase
     {
-        public override PersistenceMode Source => PersistenceMode.mongo;
+        public override string Source => "mongo";
         readonly string _collection;
 
         public MongoDynamicTableObject(IDictionary<string, object> orgObj, string collection)

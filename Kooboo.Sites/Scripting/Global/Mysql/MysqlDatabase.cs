@@ -14,6 +14,6 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         {
         }
 
-        public override PersistenceMode Source => PersistenceMode.mysql;
+        public override string Source => "mysql";
     }
 }
