@@ -75,29 +75,26 @@ namespace Kooboo.Sites.Render
 
             if (stacks.Count > 0)
             {
-                var jsValue = context.DataContext.GetValue(stacks.Dequeue());
+                var obj = context.DataContext.GetValue(stacks.Dequeue());
                 do
                 {
-                    if (jsValue == null) break;
-
-                    if (jsValue is ITraceability)
+                    if (obj is ITraceability)
                     {
                         fieldPath = string.Join(".", stacks);
-                        return jsValue as ITraceability;
+                        return obj as ITraceability;
                     }
-
-                    var prop = stacks.Dequeue();
-
-                    if (jsValue is IDynamic)
+                    else if (obj is IDynamic && stacks.Count > 0)
                     {
-                        jsValue = (jsValue as IDynamic).GetValue(prop);
+                        obj = (obj as IDynamic).GetValue(stacks.Dequeue());
+                        continue;
                     }
-                    else if (jsValue is IDictionary<string, object>)
+                    else if (obj is IDictionary<string, object> && stacks.Count > 0)
                     {
-                        jsValue = (jsValue as IDictionary<string, object>)[stacks.Dequeue()];
+                        obj = (obj as IDictionary<string, object>)[stacks.Dequeue()];
+                        continue;
                     }
-                    else break;
 
+                    break;
                 } while (stacks.Count > 0);
             }
 
