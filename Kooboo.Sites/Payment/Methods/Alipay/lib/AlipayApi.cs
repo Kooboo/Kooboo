@@ -14,21 +14,30 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
         */
         public static string Pay(AopDictionary bizContent, AlipayFormSetting setting, string returnUrl, string noticeUrl)
         {
-            Validation(bizContent);
-            var data = new AlipayData();
-            var request = RequestBase(setting, PayMethod);
-            request.Add("biz_content", data.ToJson(bizContent));
-            request.Add("notify_url", noticeUrl);
-            request.Add("return_url", returnUrl);
-            var sortDic = data.SortDictionary(request);
-            request = new AopDictionary(sortDic)
+            try
+            {
+                Validation(bizContent);
+                var data = new AlipayData();
+                var request = RequestBase(setting, PayMethod);
+                request.Add("biz_content", data.ToJson(bizContent));
+                request.Add("notify_url", noticeUrl);
+                request.Add("return_url", returnUrl);
+                var sortDic = data.SortDictionary(request);
+                request = new AopDictionary(sortDic)
             {
                 { "sign", data.RSASign(sortDic,setting.PrivateKey, setting.Charset,setting.SignType) }
             };
 
-            var body = BuildHtmlRequest(request, "POST", setting);
+                var body = BuildHtmlRequest(request, "POST", setting);
 
-            return body;
+                return body;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+
 
         }
 
