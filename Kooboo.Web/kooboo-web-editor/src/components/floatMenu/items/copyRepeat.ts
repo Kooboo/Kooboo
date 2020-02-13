@@ -7,7 +7,6 @@ import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
 import { CopyRepeatUnit } from "@/operation/recordUnits/CopyRepeatUnit";
 import { operationRecord } from "@/operation/Record";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -30,7 +29,7 @@ export default class CopyRepeatItem extends BaseMenuItem {
     this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) return this.setVisiable(false);
-    if (!getRepeatComment(comments)) return this.setVisiable(false);
+    if (!comments.find(f => f.source!.startsWith("repeat"))) return this.setVisiable(false);
   }
 
   click() {

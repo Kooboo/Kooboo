@@ -91,15 +91,6 @@ namespace Kooboo.Sites.Render
                 boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();
             }
 
-            BindingEndRenderTask bindingEndRenderTask = null;
-
-            if (options.RequireBindingInfo)
-            {
-                var bindingRenderTask = new BindingRenderTask(new RepeatItemTrace());
-                bindingEndRenderTask = bindingRenderTask.BindingEndRenderTask;
-                this.SubTasks.Add(bindingRenderTask);
-            }
-
             if (repeatself)
             {
                 string NewHtml = Service.DomService.ReSerializeElement(element, element.InnerHtml);
@@ -125,11 +116,6 @@ namespace Kooboo.Sites.Render
                     this.ContainerTask.Add(new ContentRenderTask(Service.DomService.ReSerializeOpenTag(element)));
                 }
                 this.SubTasks.AddRange(RenderEvaluator.Evaluate(element.InnerHtml, options));
-            }
-
-            if (options.RequireBindingInfo)
-            {
-                this.SubTasks.Add(bindingEndRenderTask);
             }
         }
 

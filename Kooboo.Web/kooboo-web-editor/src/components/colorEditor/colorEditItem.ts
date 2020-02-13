@@ -3,7 +3,7 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv, createCheckboxInput } from "@/dom/element";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createColorPicker } from "../common/colorPicker";
-import { Log } from "@/operation/recordLogs/Log";
+import { Log } from "@/operation/Log";
 import { TEXT } from "@/common/lang";
 
 export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, comment: KoobooComment, koobooId: string) {

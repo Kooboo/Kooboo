@@ -6,7 +6,7 @@ import { createImg } from "./img";
 import { createColor } from "./color";
 import { createFont } from "./font";
 import { createSize } from "./size";
-import { Log } from "@/operation/recordLogs/Log";
+import { Log } from "@/operation/Log";
 import { getCssRules } from "@/dom/style";
 
 export function createStyleEditor(el: HTMLElement, nameOrId: string, objectType: string, koobooId: string) {

@@ -1,14 +1,14 @@
 import context from "@/common/context";
-import { setGuid, markDirty, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
-import { getEditComment, getRepeatComment, getViewComment } from "../utils";
+import { getEditComment } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
+import { kvInfo } from "@/common/kvInfo";
 
 export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -26,33 +26,28 @@ export default class CopyItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (getRepeatComment(comments)) return this.setVisiable(false);
-    if (getRelatedRepeatComment(args.element)) return this.setVisiable(false);
-    if (!getViewComment(comments)) return this.setVisiable(false);
-    let { koobooId, parent } = getCleanParent(args.element);
-    if (!parent || !koobooId) return this.setVisiable(false);
-    if (isBody(args.element)) return this.setVisiable(false);
-    if (parent && isDynamicContent(parent)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (isBody(element)) return this.setVisiable(false);
+    if (!getEditComment(comments)) return this.setVisiable(false);
+    if (!getUnpollutedEl(element, false)) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(args.element);
-    let { koobooId, parent } = getCleanParent(args.element);
-    let cloneElement = args.element.cloneNode(true) as HTMLElement;
-    let guid = setGuid(parent!);
-    let oldValue = parent!.innerHTML;
-    args.element.parentElement!.insertBefore(cloneElement, args.element.nextSibling);
-    markDirty(parent!);
-    let value = clearKoobooInfo(parent!.innerHTML);
+    let comments = KoobooComment.getComments(element);
+    let el = getUnpollutedEl(element);
+    let cloneElement = element.cloneNode(true) as HTMLElement;
+    let guid = setGuid(el!);
+    let oldValue = el!.innerHTML;
+    element.parentElement!.insertBefore(cloneElement, element.nextSibling);
+    markDirty(el!);
+    let value = clearKoobooInfo(el!.innerHTML);
     let unit = new InnerHtmlUnit(oldValue);
     let comment = getEditComment(comments)!;
-    let log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
-
-    let operation = new operationRecord([unit], [log], guid);
+    let log = [...comment.infos, kvInfo.value(value)];
+    let operation = new operationRecord([unit], log, guid);
     context.operationManager.add(operation);
   }
 }

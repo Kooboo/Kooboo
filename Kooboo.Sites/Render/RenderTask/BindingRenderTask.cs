@@ -63,9 +63,16 @@ namespace Kooboo.Sites.Render
             var infoList = traceability.GetTraceInfo().Select(s => $"--{s.Key}={s.Value}").ToList();
             if (_addition != null) infoList.AddRange(_addition.Select(s => $"--{s.Key}={s.Value}"));
             if (!string.IsNullOrWhiteSpace(fieldPath)) infoList.Add($"--path={fieldPath}");
+            if (!string.IsNullOrWhiteSpace(_path)) infoList.Add($"--fullpath={DeleteBrace(_path)}");
             return $"{Environment.NewLine}<!--#kooboo--source={traceability.Source.ToString()}{string.Join("", infoList)}--uid={BindingEndRenderTask.Uid}-->{Environment.NewLine}";
         }
 
+        static string DeleteBrace(string str)
+        {
+            if (str.StartsWith("{")) str = str.Substring(1);
+            if (str.EndsWith("}")) str = str.Substring(0, str.Length - 2);
+            return str;
+        }
 
         public ITraceability GetTraceabilityObject(RenderContext context, out string fieldPath)
         {
@@ -73,8 +80,7 @@ namespace Kooboo.Sites.Render
             if (_path == null) return Nontraceable.Instance;
             var path = _path.Trim();
             if (path.StartsWith("'") || path.StartsWith("\"")) return Nontraceable.Instance;
-            if (path.StartsWith("{")) path = path.Substring(1);
-            if (path.EndsWith("}")) path = path.Substring(0, path.Length - 2);
+            path = DeleteBrace(path);
 
             var stacks = new Queue<string>(path.Split('.'));
 

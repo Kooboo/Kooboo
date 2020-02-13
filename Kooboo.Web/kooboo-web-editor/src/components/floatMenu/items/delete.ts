@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { setGuid, clearKoobooInfo, isDynamicContent, getCleanParent, isDirty, markDirty, getRelatedRepeatComment } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { Log } from "@/operation/recordLogs/Log";
+import { Log } from "@/operation/Log";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { getViewComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
@@ -43,7 +43,7 @@ export default class DeleteItem extends BaseMenuItem {
     this.parentMenu.hidden();
 
     let { koobooId, parent } = getCleanParent(args.element);
-    let comments = KoobooComment.getComments(args.element);
+    let comments = KoobooComment.getAroundComments(args.element);
     let comment = getViewComment(comments)!;
     parent = parent || args.element.parentElement!;
     let oldValue = parent.innerHTML;

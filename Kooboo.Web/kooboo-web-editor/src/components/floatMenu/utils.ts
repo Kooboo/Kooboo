@@ -4,23 +4,18 @@ import { operationManager } from "@/operation/Manager";
 import { getAllNode } from "@/dom/utils";
 import { setGuid, markDirty, clearKoobooInfo } from "@/kooboo/utils";
 import { createImagePicker } from "../imagePicker";
-import { DomLog } from "@/operation/recordLogs/DomLog";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
-import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createLinkPicker } from "../linkPicker";
-import { Log } from "@/operation/recordLogs/Log";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { createDiv } from "@/dom/element";
 
 export function getEditComment(comments: KoobooComment[]) {
-  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
-
   for (const i of comments) {
-    if (i.objecttype && editTypes.some(s => s == i.objecttype)) return i;
+    if (i.source == "none") return;
+    if (i.source && !i.source.startsWith("repeat") && !i.getValue("attribute")) return i;
   }
 }
 

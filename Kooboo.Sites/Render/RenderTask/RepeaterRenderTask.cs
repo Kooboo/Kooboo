@@ -63,14 +63,14 @@ namespace Kooboo.Sites.Render
             string boundary = null;
             if (options.RequireBindingInfo)
             {
-                boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary(); 
+                boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();
             }
 
             BindingEndRenderTask bindingEndRenderTask = null;
 
             if (options.RequireBindingInfo)
             {
-                var bindingRenderTask = new BindingRenderTask(new RepeatItemTrace());
+                var bindingRenderTask = new BindingRenderTask(new RepeatItemTrace(Alias));
                 bindingEndRenderTask = bindingRenderTask.BindingEndRenderTask;
                 this.SubTasks.Add(bindingRenderTask);
             }
@@ -117,7 +117,7 @@ namespace Kooboo.Sites.Render
             {
                 return null;
             }
-             
+
 
             StringBuilder sb = new StringBuilder();
 
@@ -134,11 +134,11 @@ namespace Kooboo.Sites.Render
             else if (repeatcontainer.GetType() == typeof(string))
             {
                 // this is json. 
-                repeatcontainer = Lib.Helper.JsonHelper.Deserialize<List<object>>(repeatcontainer.ToString()); 
+                repeatcontainer = Lib.Helper.JsonHelper.Deserialize<List<object>>(repeatcontainer.ToString());
             }
 
-            IList itemcollection = GetList(repeatcontainer); 
-          
+            IList itemcollection = GetList(repeatcontainer);
+
             context.DataContext.RepeatCounter.Push(itemcollection.Count);
             int counter = 0;
 
@@ -177,13 +177,13 @@ namespace Kooboo.Sites.Render
 
                 if (containerresult.Value is PagedResult)
                 {
-                    var paged = containerresult.Value as PagedResult; 
+                    var paged = containerresult.Value as PagedResult;
                     itemcollection = ((IEnumerable)paged.DataList).Cast<object>().ToList();
                 }
                 else
                 {
                     itemcollection = ((IEnumerable)containerresult.Value).Cast<object>().ToList();
-                }  
+                }
             }
             else
             {
@@ -195,15 +195,15 @@ namespace Kooboo.Sites.Render
                 else
                 {
                     itemcollection = ((IEnumerable)container).Cast<object>().ToList();
-                } 
-              
+                }
+
             }
 
             if (itemcollection == null)
             {
                 itemcollection = new List<string>();
             }
-            return itemcollection; 
+            return itemcollection;
         }
 
         private List<IRenderTask> _subtasks;

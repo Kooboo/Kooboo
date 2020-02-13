@@ -51,11 +51,3 @@ export function createContainer() {
   shadow.appendChild(root);
   return root;
 }
-
-/**
- * check document mode is standard or quirks(tinymce only work in standard mode)
- */
-export function htmlModeCheck() {
-  if (!document.doctype) alert(TEXT.HTML_MODE_TIP);
-  return !!document.doctype;
-}
