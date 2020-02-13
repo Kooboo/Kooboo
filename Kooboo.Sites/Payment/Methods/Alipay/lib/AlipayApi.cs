@@ -88,6 +88,11 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 
         private static AopDictionary RequestBase(AlipayFormSetting setting, string method)
         {
+            if (string.IsNullOrEmpty(setting.APPId))
+            {
+                throw new AliPayException("您的支付宝配置未能通过检查，详细信息：商户ID未指定！");
+            }
+
             //SignType私钥检查
             if (string.IsNullOrEmpty(setting.SignType))
             {
