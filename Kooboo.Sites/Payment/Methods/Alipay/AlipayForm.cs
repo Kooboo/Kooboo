@@ -81,7 +81,7 @@ var resForm = k.payment.alipayForm.charge(charge);
         {
             var dic = GetRequestPost(context);
             var data = new AlipayData();
-            bool signVerified = data.RSACheckV1(dic, Config.private_key, this.Setting.Charset); //调用SDK验证签名
+            bool signVerified = data.RSACheckV1(dic, this.Setting.PrivateKey, this.Setting.Charset); //调用SDK验证签名
             if (signVerified)
             {
                 var strPaymentRequestId = context.Request.GetValue("out_trade_no");

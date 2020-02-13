@@ -15,5 +15,6 @@ namespace Kooboo.Sites.Payment.Methods
         public string Version { get; set; }
         public string ReturnUrl { get; set; }
         public string ServerUrl { get; set; }
+        public string PrivateKey { get; set; }
     }
 }

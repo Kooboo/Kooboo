@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             var sortDic = data.SortDictionary(request);
             request = new AopDictionary(sortDic)
             {
-                { "sign", data.RSASign(sortDic,Config.private_key, setting.Charset,setting.SignType) }
+                { "sign", data.RSASign(sortDic,setting.PrivateKey, setting.Charset,setting.SignType) }
             };
 
             var body = BuildHtmlRequest(request, "POST", setting);
@@ -86,13 +86,13 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             }
 
             //RSA私钥检查
-            if (string.IsNullOrEmpty(Config.private_key))
+            if (string.IsNullOrEmpty(setting.PrivateKey))
             {
                 throw new AliPayException("您的支付宝配置未能通过检查，详细信息：未能获取到商户私钥！");
             }
 
             //RSA私钥格式检查
-            RSA rsaCsp = AlipaySignature.LoadCertificateString(Config.private_key, setting.SignType);
+            RSA rsaCsp = AlipaySignature.LoadCertificateString(setting.PrivateKey, setting.SignType);
 
             if (rsaCsp == null)
             {
