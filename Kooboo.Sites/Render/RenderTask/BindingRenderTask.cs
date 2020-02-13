@@ -16,7 +16,7 @@ namespace Kooboo.Sites.Render
     {
 
         readonly IDictionary<string, string> _addition;
-        static char[] _nontraceableChars = new[] { '{', '\'', '"' };
+        static char[] _nontraceableChars = new[] { '\'', '"' };
         readonly string _path;
         readonly ITraceability _traceability;
 
@@ -58,20 +58,25 @@ namespace Kooboo.Sites.Render
         public virtual string Render(RenderContext context)
         {
             BindingEndRenderTask.Uid = Lib.Helper.StringHelper.GetUniqueBoundary();
-            var traceability = _traceability ?? GetTraceabilityObject(context, out var fieldPath);
-            var infoList = traceability.GetTraceInfo().Select(s => $"--{s.Key}={s.Value}");
-            if (_addition != null) infoList = infoList.Union(_addition.Select(s => $"--{s.Key}={s.Value}"));
-            return $@"
-<!--#kooboo--source={traceability.Source.ToString()}{string.Join("", infoList)}--uid={BindingEndRenderTask.Uid}-->
-";
+            string fieldPath = null;
+            var traceability = _traceability ?? GetTraceabilityObject(context, out fieldPath);
+            var infoList = traceability.GetTraceInfo().Select(s => $"--{s.Key}={s.Value}").ToList();
+            if (_addition != null) infoList.AddRange(_addition.Select(s => $"--{s.Key}={s.Value}"));
+            if (!string.IsNullOrWhiteSpace(fieldPath)) infoList.Add($"--path={fieldPath}");
+            return $"{Environment.NewLine}<!--#kooboo--source={traceability.Source.ToString()}{string.Join("", infoList)}--uid={BindingEndRenderTask.Uid}-->{Environment.NewLine}";
         }
 
 
         public ITraceability GetTraceabilityObject(RenderContext context, out string fieldPath)
         {
             fieldPath = null;
-            if (_path == null || _path.Any(a => _nontraceableChars.Contains(a))) return Nontraceable.Instance;
-            var stacks = new Queue<string>(_path.Split('.'));
+            if (_path == null) return Nontraceable.Instance;
+            var path = _path.Trim();
+            if (path.StartsWith("'") || path.StartsWith("\"")) return Nontraceable.Instance;
+            if (path.StartsWith("{")) path = path.Substring(1);
+            if (path.EndsWith("}")) path = path.Substring(0, path.Length - 2);
+
+            var stacks = new Queue<string>(path.Split('.'));
 
             if (stacks.Count > 0)
             {

@@ -8,9 +8,11 @@ using Kooboo.Sites.Models;
 using Kooboo.Web.ViewModel;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
-using Kooboo.Lib.Utilities; 
+using Kooboo.Lib.Utilities;
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.DataTraceAndModify;
+using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -44,7 +46,7 @@ namespace Kooboo.Web.Api.Implementation
 
         [Kooboo.Attributes.RequireParameters("updates")]
         public void Update(Guid PageId, ApiCall call)
-        {  
+        {
             var page = call.WebSite.SiteDb().Pages.Get(PageId);
             if (page == null)
             {
@@ -53,32 +55,17 @@ namespace Kooboo.Web.Api.Implementation
 
             call.Context.SetItem<Page>(page);
 
-            // pageid,...updates...  
-            if (string.IsNullOrEmpty(call.Context.Request.Body))
-            {
-                return;
-            }
-            var model = Lib.Helper.JsonHelper.Deserialize<dynamic>(call.Context.Request.Body);
+            var data = Lib.Helper.JsonHelper.Deserialize<dynamic>(call.Context.Request.Body).updates;
+            var changedList = new List<ModifierBase>();
 
-            List<IInlineModel> updatemodels = new List<IInlineModel>();
-
-            foreach (var item in model.updates)
+            foreach (var item in data)
             {
-                string editortype = item.editorType;
-                var modeltype = EditorContainer.GetModelType(editortype);
-                var updatemodel = ((JObject)item).ToObject(modeltype) as IInlineModel;
-                if (updatemodel != null)
-                {
-                    updatemodels.Add(updatemodel);
-                }
+                var source = item.GetValue("source").ToString();
+                var type = ModifyExecutor.GetModifierType(source);
+                changedList.Add((ModifierBase)item.ToObject(type));
             }
 
-            UpdateManager.Execute(call.Context, updatemodels);
-
+            ModifyExecutor.Execute(call.Context, changedList);
         }
-   
-
     }
-    
-
 }

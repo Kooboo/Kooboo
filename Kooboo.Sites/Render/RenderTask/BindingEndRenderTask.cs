@@ -25,9 +25,7 @@ namespace Kooboo.Sites.Render.RenderTask
 
         public virtual string Render(RenderContext context)
         {
-            return $@"
-<!--#kooboo--end=true--uid={Uid}-->
-";
+            return $"{Environment.NewLine}<!--#kooboo--end=true--uid={Uid}-->{Environment.NewLine}";
         }
     }
 }
