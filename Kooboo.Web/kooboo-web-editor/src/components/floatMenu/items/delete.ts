@@ -1,15 +1,15 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, isDynamicContent, getCleanParent, isDirty, markDirty, getRelatedRepeatComment } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { Log } from "@/operation/Log";
-import { DomLog } from "@/operation/recordLogs/DomLog";
-import { getViewComment, getRepeatComment } from "../utils";
+import { getScopeComnent } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
+import { KOOBOO_ID } from "@/common/constants";
+import { kvInfo } from "@/common/kvInfo";
 
 export default class DeleteItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -27,36 +27,32 @@ export default class DeleteItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    let { parent } = getCleanParent(args.element);
-    if (!args.koobooId) return this.setVisiable(false);
-    let comment = getViewComment(comments);
-    if (!comment) return this.setVisiable(false);
-    if (getRepeatComment(comments)) return this.setVisiable(false);
-    if (getRelatedRepeatComment(args.element)) return this.setVisiable(false);
-    if (isDirty(args.element) && parent && isDynamicContent(parent)) return this.setVisiable(false);
-    if (isBody(args.element)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (isBody(element)) return this.setVisiable(false);
+    let el = getUnpollutedEl(element);
+    if (!el || !el.parentElement) return this.setVisiable(false);
+    if (!getScopeComnent(comments)) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-
-    let { koobooId, parent } = getCleanParent(args.element);
-    let comments = KoobooComment.getAroundComments(args.element);
-    let comment = getViewComment(comments)!;
-    parent = parent || args.element.parentElement!;
+    let el = getUnpollutedEl(element)!;
+    let comments = KoobooComment.getComments(element);
+    let comment = getScopeComnent(comments)!;
+    let parent = el == element ? element.parentElement! : el;
     let oldValue = parent.innerHTML;
     let guid = setGuid(parent);
-    args.element.parentElement!.removeChild(args.element);
-    let log!: Log;
+    element.parentElement!.removeChild(element);
     markDirty(parent);
-    if (isDirty(args.element) && parent) {
-      log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
+    var log = [...comment.infos];
+    if (el == element) {
+      log.push(kvInfo.koobooId(parent.getAttribute(KOOBOO_ID)));
+      log.push(kvInfo.delete);
     } else {
-      log = DomLog.createDelete(comment.nameorid!, args.koobooId!, comment.objecttype!);
+      log.push(kvInfo.value(clearKoobooInfo(parent.innerHTML)), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID)));
     }
-    let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [log], guid);
+    let operation = new operationRecord([new InnerHtmlUnit(oldValue)], log, guid);
     context.operationManager.add(operation);
   }
 }

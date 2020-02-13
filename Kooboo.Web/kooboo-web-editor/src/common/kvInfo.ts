@@ -8,4 +8,12 @@ export class kvInfo {
   static value(value: string | null) {
     return new kvInfo("value", value);
   }
+
+  static get delete() {
+    return new kvInfo("action", "delete");
+  }
+
+  static get copy() {
+    return new kvInfo("action", "copy");
+  }
 }

@@ -19,6 +19,13 @@ export function getEditComment(comments: KoobooComment[]) {
   }
 }
 
+export function getScopeComnent(comments: KoobooComment[]) {
+  for (const i of comments) {
+    if (i.source == "none") return;
+    if (!i.getValue("scope")) return i;
+  }
+}
+
 export function getViewComment(comments: KoobooComment[]) {
   const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
 
@@ -57,7 +64,7 @@ export const getUrlComment = (comments: KoobooComment[]) => getObjectType(commen
 
 export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
   if (KoobooComment.isComment(node) && node.nodeValue!.indexOf(oldGuid) > -1) {
-    node.nodeValue = node.nodeValue!.replace(/--nameorid='.{36,50}?'/, `--nameorid='${guid}'`);
+    node.nodeValue = node.nodeValue!.replace(/--id='.{36,50}?'/, `--id='${guid}'`);
   }
   if (node instanceof HTMLElement) {
     for (const iterator of getAllNode(node)) {

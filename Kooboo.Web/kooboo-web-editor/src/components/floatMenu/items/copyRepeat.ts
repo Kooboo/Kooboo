@@ -10,6 +10,7 @@ import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { kvInfo } from "@/common/kvInfo";
 
 export default class CopyRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -27,9 +28,9 @@ export default class CopyRepeatItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) return this.setVisiable(false);
-    if (!comments.find(f => f.source!.startsWith("repeat"))) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (isBody(element)) return this.setVisiable(false);
+    if (!this.getRepeatItemId(comments)) return this.setVisiable(false);
   }
 
   click() {
@@ -42,17 +43,32 @@ export default class CopyRepeatItem extends BaseMenuItem {
     let anchor: Node = nodes[nodes.length - 1];
     let parent = anchor.parentNode!;
     let guid = newGuid() + "_name";
-    let oldGuid = getRepeatComment(comments)!.nameorid!;
+    let oldGuid = this.getRepeatItemId(comments)!;
+
     for (const node of nodes.reverse()) {
       let insertNode = node.cloneNode(true);
       changeNameOrId(insertNode, guid, oldGuid);
       parent.insertBefore(insertNode, anchor.nextSibling);
     }
-    let comment = getRepeatComment(comments);
-    let units = [new CopyRepeatUnit(getGuidComment(guid))];
-    let logs = [ContentLog.createCopy(guid, comment!.nameorid!)];
 
-    let operation = new operationRecord(units, logs, guid);
+    let comment = getRepeatComment(comments)!;
+    let units = [new CopyRepeatUnit(getGuidComment(guid))];
+    let log = [...comment.infos, new kvInfo("old", oldGuid), new kvInfo("new", guid), kvInfo.copy];
+
+    let operation = new operationRecord(units, log, guid);
     context.operationManager.add(operation);
+  }
+
+  getRepeatItemId(comments: KoobooComment[]) {
+    var repeatComment = comments.find(f => f.source == "repeatitem");
+    if (!repeatComment) return;
+    for (const commnet of comments) {
+      var id = commnet.getValue("id");
+      if (id) {
+        let fullpathComment = commnet.getValue("fullpath");
+        let path = repeatComment.getValue("path");
+        if (fullpathComment && path && fullpathComment.startsWith(path)) return id;
+      }
+    }
   }
 }
