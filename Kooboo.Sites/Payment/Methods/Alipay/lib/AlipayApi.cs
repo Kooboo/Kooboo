@@ -37,8 +37,6 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
                 Console.WriteLine(ex.Message);
                 return null;
             }
-
-
         }
 
         private static string BuildHtmlRequest(IDictionary<string, string> dicPara, string strMethod, AlipayFormSetting setting)
