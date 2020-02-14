@@ -41,10 +41,10 @@ export default class DeleteItem extends BaseMenuItem {
     let comments = KoobooComment.getComments(element);
     let comment = getScopeComnent(comments)!;
     let parent = el == element ? element.parentElement! : el;
-    let oldValue = parent.innerHTML;
-    let guid = setGuid(parent);
+    let oldValue = element.parentElement!.innerHTML;
+    let guid = setGuid(element.parentElement!);
     element.parentElement!.removeChild(element);
-    markDirty(parent);
+    markDirty(element.parentElement!);
     var log = [...comment.infos];
     if (el == element) {
       log.push(kvInfo.koobooId(parent.getAttribute(KOOBOO_ID)));

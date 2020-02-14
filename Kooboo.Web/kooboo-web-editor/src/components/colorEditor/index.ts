@@ -8,7 +8,6 @@ import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { setGuid } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { Log } from "@/operation/Log";
 import { createColorEditItem } from "./colorEditItem";
 
 export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobooId: string) {

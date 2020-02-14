@@ -30,12 +30,17 @@ export class KoobooComment {
   }
 
   get uid() {
-    return this.getValue("uid");
+    return this.getValue("uid")!;
   }
 
   getValue(key: string) {
     var item = this.infos.find(f => f.key == key);
     if (item) return item.value;
+  }
+
+  setValue(key: string, value: string) {
+    var item = this.infos.find(f => f.key == key);
+    if (item) return (item.value = value);
   }
 
   static isComment(node: Node) {
@@ -54,18 +59,27 @@ export class KoobooComment {
     let comments: KoobooComment[] = [];
 
     while (node) {
-      comments.push(...this.getAroundComments(node));
+      comments.push(...this.getAroundComments(node, false));
       node = node.parentElement!;
     }
 
     return comments;
   }
 
-  static getAroundComments(node: Node) {
+  static getAroundComments(node: Node, strict: boolean = true) {
     let comments: KoobooComment[] = [];
+    let skipUid: string[] = [];
 
     while (node && !(node instanceof HTMLElement)) {
-      if (KoobooComment.isComment(node)) comments.push(new KoobooComment(node));
+      if (strict && node instanceof HTMLElement) break;
+      if (KoobooComment.isComment(node)) {
+        var comment = new KoobooComment(node);
+        if (KoobooComment.isEndComment(node)) {
+          skipUid.push(comment.uid);
+        } else if (skipUid.every(e => e != comment.uid)) {
+          comments.push(new KoobooComment(node));
+        }
+      }
       node = node.previousSibling!;
     }
 

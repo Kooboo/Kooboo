@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { clearKoobooInfo, isDirty, markDirty, setGuid, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
+import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { getEditComment, clearContent } from "../utils";

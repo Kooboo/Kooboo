@@ -1,10 +1,9 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { getRepeatComment, hasOperation } from "../utils";
+import { getRepeatComment, hasOperation, getRepeatItemId } from "../utils";
 import { reload } from "@/dom/utils";
 import { editRepeat } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getRelatedRepeatComment } from "@/kooboo/utils";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 
@@ -27,19 +26,17 @@ export default class EditRepeatItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!getRepeatComment(comments) && !getRelatedRepeatComment(args.element)) return this.setVisiable(false);
+    if (!getRepeatItemId(comments)) return this.setVisiable(false);
     this.setReadonly(hasOperation(context.operationManager));
   }
 
   async click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(args.element);
-    let comment = getRepeatComment(comments);
-    if (!comment) comment = getRelatedRepeatComment(args.element);
-    await editRepeat(comment!.nameorid!, comment!.folderid!);
+    let comments = KoobooComment.getComments(element);
+    let id = getRepeatItemId(comments)!;
+    await editRepeat(id, "");
     reload();
   }
 }

@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeatComment, changeNameOrId } from "../utils";
+import { getRepeatComment, changeNameOrId, getRepeatItemId } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
@@ -30,7 +30,8 @@ export default class CopyRepeatItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
-    if (!this.getRepeatItemId(comments)) return this.setVisiable(false);
+    if (!getRepeatItemId(comments)) return this.setVisiable(false);
+    if (!getRepeatComment(comments)) return this.setVisiable(false);
   }
 
   click() {
@@ -43,7 +44,7 @@ export default class CopyRepeatItem extends BaseMenuItem {
     let anchor: Node = nodes[nodes.length - 1];
     let parent = anchor.parentNode!;
     let guid = newGuid() + "_name";
-    let oldGuid = this.getRepeatItemId(comments)!;
+    let oldGuid = getRepeatItemId(comments)!;
 
     for (const node of nodes.reverse()) {
       let insertNode = node.cloneNode(true);
@@ -57,18 +58,5 @@ export default class CopyRepeatItem extends BaseMenuItem {
 
     let operation = new operationRecord(units, log, guid);
     context.operationManager.add(operation);
-  }
-
-  getRepeatItemId(comments: KoobooComment[]) {
-    var repeatComment = comments.find(f => f.source == "repeatitem");
-    if (!repeatComment) return;
-    for (const commnet of comments) {
-      var id = commnet.getValue("id");
-      if (id) {
-        let fullpathComment = commnet.getValue("fullpath");
-        let path = repeatComment.getValue("path");
-        if (fullpathComment && path && fullpathComment.startsWith(path)) return id;
-      }
-    }
   }
 }

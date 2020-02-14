@@ -1,16 +1,15 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeatComment } from "../utils";
+import { getRepeatComment, getRepeatItemId } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
-import { OBJECT_TYPE } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
 import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { kvInfo } from "@/common/kvInfo";
 
 export default class DeleteRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -28,21 +27,21 @@ export default class DeleteRepeatItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) return this.setVisiable(false);
-    if (!getRepeatComment(comments)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (isBody(element)) return this.setVisiable(false);
+    if (!getRepeatItemId(comments)) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let { nodes, startNode } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
+    let { nodes, startNode } = getWrapDom(element, "repeatitem");
     if (!nodes || nodes.length == 0 || !startNode) return;
-
-    let comment = new KoobooComment(startNode);
-    let guid = comment.nameorid!;
-    let guidComment = getGuidComment(guid);
+    let comments = KoobooComment.getComments(element);
+    let comment = getRepeatComment(comments)!;
+    let id = getRepeatItemId(comments)!;
+    let guidComment = getGuidComment(id);
     let temp = createDiv();
     startNode!.parentNode!.insertBefore(temp, startNode!);
     nodes.forEach(i => temp.appendChild(i));
@@ -50,9 +49,9 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     temp.outerHTML = guidComment;
 
     let units = [new DeleteRepeatUnit(oldValue)];
-    let logs = [ContentLog.createDelete(guid)];
+    let log = [...comment.infos, kvInfo.value(id), kvInfo.delete];
 
-    let operation = new operationRecord(units, logs, guid);
+    let operation = new operationRecord(units, log, id);
     context.operationManager.add(operation);
   }
 }

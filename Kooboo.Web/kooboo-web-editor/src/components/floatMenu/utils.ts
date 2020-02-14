@@ -1,8 +1,8 @@
-import { OBJECT_TYPE } from "@/common/constants";
+import { OBJECT_TYPE, KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationManager } from "@/operation/Manager";
 import { getAllNode } from "@/dom/utils";
-import { setGuid, markDirty, clearKoobooInfo } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { createImagePicker } from "../imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -11,11 +11,25 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { createLinkPicker } from "../linkPicker";
 import { createDiv } from "@/dom/element";
+import { kvInfo } from "@/common/kvInfo";
 
 export function getEditComment(comments: KoobooComment[]) {
   for (const i of comments) {
     if (i.source == "none") return;
     if (i.source && !i.source.startsWith("repeat") && !i.getValue("attribute")) return i;
+  }
+}
+
+export function getRepeatItemId(comments: KoobooComment[]) {
+  var repeatComment = comments.find(f => f.source == "repeatitem");
+  if (!repeatComment) return;
+  for (const commnet of comments) {
+    var id = commnet.getValue("id");
+    if (id) {
+      let fullpathComment = commnet.getValue("fullpath");
+      let path = repeatComment.getValue("path");
+      if (fullpathComment && path && fullpathComment.startsWith(path)) return id;
+    }
   }
 }
 
@@ -73,19 +87,21 @@ export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
   }
 }
 
-export async function updateDomImage(element: HTMLImageElement, closeParent: HTMLElement, parentKoobooId: string, comment: KoobooComment) {
-  setGuid(closeParent);
+export async function updateDomImage(element: HTMLImageElement) {
+  let el = getUnpollutedEl(element)!;
+  let parent = el == element ? el.parentElement! : el;
   let startContent = element.cloneNode(true) as HTMLImageElement;
+  let comments = KoobooComment.getComments(element);
+  let comment = getScopeComnent(comments)!;
   try {
     await createImagePicker(element as HTMLImageElement);
     if (startContent.outerHTML == element.outerHTML) return;
-    markDirty(closeParent);
-    let guid = setGuid(closeParent);
-    let value = clearKoobooInfo(closeParent!.innerHTML);
+    let guid = setGuid(el);
+    let value = clearKoobooInfo(parent.innerHTML);
     let oldSrc = startContent.getAttribute("src");
     let unit = new AttributeUnit(oldSrc!, "src");
-    let log = DomLog.createUpdate(comment.nameorid!, value, parentKoobooId!, comment.objecttype!);
-    let record = new operationRecord([unit], [log], guid);
+    let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
+    let record = new operationRecord([unit], log, guid);
     context.operationManager.add(record);
     return element.getAttribute("src")!;
   } catch (error) {
@@ -137,23 +153,25 @@ export async function updateAttributeImage(element: HTMLImageElement, koobooId: 
   }
 }
 
-export async function updateDomLink(closeParent: HTMLElement, parentKoobooId: string, element: HTMLElement, comment: KoobooComment) {
-  setGuid(closeParent);
-  let startContent = closeParent.innerHTML;
+export async function updateDomLink(element: HTMLElement) {
+  let el = getUnpollutedEl(element)!;
+  let parent = el == element ? el.parentElement! : el;
+  let comments = KoobooComment.getComments(element);
+  let comment = getScopeComnent(comments)!;
   let href = element.getAttribute("href")!;
 
   try {
     let url = await createLinkPicker(href);
     element.setAttribute("href", url);
-    let guid = setGuid(closeParent);
-    let value = clearKoobooInfo(closeParent.innerHTML);
-    let unit = new InnerHtmlUnit(startContent);
-    let log = DomLog.createUpdate(comment.nameorid!, value, parentKoobooId, comment.objecttype!);
-    let record = new operationRecord([unit], [log], guid);
+    let guid = setGuid(element);
+    let value = clearKoobooInfo(parent.innerHTML);
+    let unit = new AttributeUnit(href!, "href");
+    let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
+    let record = new operationRecord([unit], log, guid);
     context.operationManager.add(record);
     return url;
   } catch (error) {
-    closeParent.innerHTML = startContent;
+    element.setAttribute("href", href);
   }
 }
 

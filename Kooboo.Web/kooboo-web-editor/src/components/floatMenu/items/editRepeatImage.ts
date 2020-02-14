@@ -6,10 +6,10 @@ import { setGuid } from "@/kooboo/utils";
 import { operationRecord } from "@/operation/Record";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { kvInfo } from "@/common/kvInfo";
 
 export default class EditRepeatImageItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -25,29 +25,29 @@ export default class EditRepeatImageItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) return this.setVisiable(false);
-    let comment = getAttributeComment(comments, "src");
-    if (!comment || !comment.fieldname) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    let aroundComments = KoobooComment.getAroundComments(element);
+    if (!isImg(element)) return this.setVisiable(false);
+    if (!aroundComments.find(f => f.getValue("attribute") == "src")) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(args.element);
-    let comment = getAttributeComment(comments, "src")!;
-    let img = args.element as HTMLImageElement;
+    let comments = KoobooComment.getAroundComments(element);
+    let comment = comments.find(f => f.getValue("attribute") == "src")!;
+    let img = element as HTMLImageElement;
     let startContent = img.getAttribute("src")!;
     pickImg(path => {
       img.src = path;
       let guid = setGuid(img);
       let value = img.getAttribute("src")!;
       let unit = new AttributeUnit(startContent, "src");
-      let log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
-      let record = new operationRecord([unit], [log], guid);
+      let log = [...comment.infos, kvInfo.value(value)];
+      let record = new operationRecord([unit], log, guid);
       context.operationManager.add(record);
     });
   }

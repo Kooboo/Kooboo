@@ -1,7 +1,7 @@
 import context from "@/common/context";
 import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
-import { getEditComment } from "../utils";
+import { getEditComment, getScopeComnent } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
@@ -9,6 +9,7 @@ import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { kvInfo } from "@/common/kvInfo";
+import { KOOBOO_ID } from "@/common/constants";
 
 export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -28,8 +29,8 @@ export default class CopyItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
-    if (!getEditComment(comments)) return this.setVisiable(false);
-    if (!getUnpollutedEl(element, false)) return this.setVisiable(false);
+    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getUnpollutedEl(element)) return this.setVisiable(false);
   }
 
   click() {
@@ -37,16 +38,17 @@ export default class CopyItem extends BaseMenuItem {
     this.parentMenu.hidden();
 
     let comments = KoobooComment.getComments(element);
-    let el = getUnpollutedEl(element);
+    let el = getUnpollutedEl(element)!;
+    let parent = el == element ? el.parentElement! : el;
     let cloneElement = element.cloneNode(true) as HTMLElement;
-    let guid = setGuid(el!);
-    let oldValue = el!.innerHTML;
+    let guid = setGuid(el.parentElement!);
+    let oldValue = el.parentElement!.innerHTML;
     element.parentElement!.insertBefore(cloneElement, element.nextSibling);
-    markDirty(el!);
-    let value = clearKoobooInfo(el!.innerHTML);
+    markDirty(el.parentElement!);
+    let value = clearKoobooInfo(parent!.innerHTML);
     let unit = new InnerHtmlUnit(oldValue);
-    let comment = getEditComment(comments)!;
-    let log = [...comment.infos, kvInfo.value(value)];
+    let comment = getScopeComnent(comments)!;
+    let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
     let operation = new operationRecord([unit], log, guid);
     context.operationManager.add(operation);
   }
