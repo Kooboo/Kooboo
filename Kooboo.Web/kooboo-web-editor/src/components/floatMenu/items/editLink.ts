@@ -1,17 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { isDynamicContent, isDirty } from "@/kooboo/utils";
 import { isLink } from "@/dom/utils";
-import {
-  getViewComment,
-  getUrlComment,
-  updateDomLink,
-  updateUrlLink,
-  updateAttributeLink,
-  getAttributeComment,
-  getRepeatComment,
-  getScopeComnent
-} from "../utils";
+import { updateDomLink, getScopeComnent } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";

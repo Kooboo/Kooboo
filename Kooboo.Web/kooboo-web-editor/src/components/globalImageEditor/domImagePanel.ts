@@ -1,9 +1,8 @@
 import { getAllElement } from "@/dom/utils";
-import { getViewComment, updateDomImage, updateAttributeImage, getAttributeComment } from "../floatMenu/utils";
+import { updateDomImage, getScopeComnent } from "../floatMenu/utils";
 import { setImagePreview } from "./utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { KOOBOO_ID } from "@/common/constants";
-import { getCleanParent, isDirty } from "@/kooboo/utils";
+import { getUnpollutedEl } from "@/kooboo/utils";
 import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 
@@ -12,24 +11,18 @@ export function createDomImagePanel() {
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
+      let aroundComments = KoobooComment.getAroundComments(element);
       let comments = KoobooComment.getComments(element);
-      let koobooId = element.getAttribute(KOOBOO_ID);
-      if (getAttributeComment(comments)) continue;
-      let comment = getViewComment(comments);
-      if (!koobooId) continue;
+      if (aroundComments.find(f => f.getValue("attribute") == "src")) continue;
+      if (!getScopeComnent(comments)) continue;
+      if (!getUnpollutedEl(element)) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
       setImagePreview(imagePreview, element);
       setImage(element.src);
 
       imagePreview.onclick = async () => {
-        let src: string | undefined;
-        let { koobooId: parentKoobooId, parent } = getCleanParent(element);
-        if (isDirty(element) && parent) {
-          src = await updateDomImage(element, parent, parentKoobooId!, comment!);
-        } else {
-          src = await updateAttributeImage(element, koobooId!, comment!);
-        }
-        if (src != undefined) setImage(src);
+        let src = await updateDomImage(element as HTMLImageElement);
+        if (src) setImage(src);
       };
       contiainer.appendChild(imagePreview);
     }

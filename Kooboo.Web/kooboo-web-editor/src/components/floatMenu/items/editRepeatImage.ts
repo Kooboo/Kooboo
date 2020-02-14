@@ -1,16 +1,10 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getAttributeComment } from "../utils";
-import { setGuid } from "@/kooboo/utils";
-import { operationRecord } from "@/operation/Record";
-import { pickImg } from "@/kooboo/outsideInterfaces";
-import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
+import { updateAttributeImage } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
-import { kvInfo } from "@/common/kvInfo";
-import { Log } from "@/operation/Log";
 
 export default class EditRepeatImageItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -37,19 +31,6 @@ export default class EditRepeatImageItem extends BaseMenuItem {
   click() {
     let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-
-    let comments = KoobooComment.getAroundComments(element);
-    let comment = comments.find(f => f.getValue("attribute") == "src")!;
-    let img = element as HTMLImageElement;
-    let startContent = img.getAttribute("src")!;
-    pickImg(path => {
-      img.src = path;
-      let guid = setGuid(img);
-      let value = img.getAttribute("src")!;
-      let unit = new AttributeUnit(startContent, "src");
-      let log = [...comment.infos, kvInfo.value(value)];
-      let record = new operationRecord([unit], [new Log(log)], guid);
-      context.operationManager.add(record);
-    });
+    updateAttributeImage(element as HTMLImageElement);
   }
 }

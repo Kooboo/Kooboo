@@ -1,10 +1,8 @@
 import { getAllElement, getImportant, clearCssImageWarp } from "@/dom/utils";
 import { setGuid } from "@/kooboo/utils";
-import { getViewComment } from "../floatMenu/utils";
 import { KOOBOO_ID, BACKGROUND_IMAGE_START } from "@/common/constants";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
-import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";

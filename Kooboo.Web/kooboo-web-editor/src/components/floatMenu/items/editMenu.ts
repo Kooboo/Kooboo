@@ -1,8 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { getMenuComment } from "../utils";
 import { getWrapDom } from "@/kooboo/utils";
-import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";

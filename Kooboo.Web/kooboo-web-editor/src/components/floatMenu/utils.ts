@@ -1,18 +1,16 @@
-import { OBJECT_TYPE, KOOBOO_ID } from "@/common/constants";
+import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationManager } from "@/operation/Manager";
 import { getAllNode } from "@/dom/utils";
-import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { createImagePicker } from "../imagePicker";
-import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
-import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { createLinkPicker } from "../linkPicker";
-import { createDiv } from "@/dom/element";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
+import { pickImg } from "@/kooboo/outsideInterfaces";
 
 export function getEditComment(comments: KoobooComment[]) {
   for (const i of comments) {
@@ -81,45 +79,20 @@ export async function updateDomImage(element: HTMLImageElement) {
   }
 }
 
-export async function updateAttributeImage(element: HTMLImageElement, koobooId: string, comment: KoobooComment) {
-  let startContent = element.cloneNode(true) as HTMLImageElement;
-
-  let temp = createDiv();
-  temp.appendChild(startContent);
-  try {
-    await createImagePicker(element);
-    if (startContent.outerHTML == element.outerHTML) return;
-    let guid = setGuid(element);
-
-    let oldSrc = startContent.getAttribute("src");
-    let widthImportant = element.style.getPropertyPriority("width");
-    let heightImportant = element.style.getPropertyPriority("height");
-    let units = [
-      new AttributeUnit(startContent.title, "title"),
-      new AttributeUnit(startContent.alt, "alt"),
-      new AttributeUnit(oldSrc!, "src"),
-      new StyleUnit(startContent.style.width!, "width", widthImportant),
-      new StyleUnit(startContent.style.height!, "height", heightImportant)
-    ];
-
-    let newSrc = element.getAttribute("src")!;
-    let logs = [
-      DomLog.createUpdate(comment.nameorid!, element.title, koobooId, comment.objecttype!, "title"),
-      DomLog.createUpdate(comment.nameorid!, element.alt, koobooId, comment.objecttype!, "alt"),
-      DomLog.createUpdate(comment.nameorid!, newSrc, koobooId, comment.objecttype!, "src"),
-      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.width!, "width", koobooId, !!widthImportant),
-      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.height!, "height", koobooId, !!heightImportant)
-    ];
-
-    let record = new operationRecord(units, logs, guid);
+export async function updateAttributeImage(element: HTMLImageElement) {
+  let comments = KoobooComment.getAroundComments(element);
+  let comment = comments.find(f => f.getValue("attribute") == "src")!;
+  let img = element as HTMLImageElement;
+  let startContent = img.getAttribute("src")!;
+  pickImg(path => {
+    img.src = path;
+    let guid = setGuid(img);
+    let value = img.getAttribute("src")!;
+    let unit = new AttributeUnit(startContent, "src");
+    let log = [...comment.infos, kvInfo.value(value)];
+    let record = new operationRecord([unit], [new Log(log)], guid);
     context.operationManager.add(record);
-    return newSrc;
-  } catch (error) {
-    element.setAttribute("src", startContent.getAttribute("src")!);
-    element.setAttribute("style", startContent.getAttribute("style")!);
-    element.title = startContent.title;
-    element.alt = startContent.alt;
-  }
+  });
 }
 
 export async function updateDomLink(element: HTMLElement) {
@@ -156,24 +129,6 @@ export async function updateAttributeLink(element: HTMLElement) {
     let unit = new AttributeUnit(startContent, "href");
     let log = [...comment.infos, kvInfo.value(url)];
     let record = new operationRecord([unit], [new Log(log)], guid);
-    context.operationManager.add(record);
-    return url;
-  } catch (error) {
-    element.setAttribute("href", startContent);
-  }
-}
-
-export async function updateUrlLink(element: HTMLElement, koobooId: string, urlComment: KoobooComment, viewComment: KoobooComment) {
-  setGuid(element);
-  let startContent = element.getAttribute("href")!;
-
-  try {
-    let url = await createLinkPicker(startContent);
-    element.setAttribute("href", url);
-    let guid = setGuid(element);
-    let unit = new AttributeUnit(startContent, "href");
-    let log = DomLog.createUpdate(viewComment.nameorid!, url, koobooId, viewComment.objecttype!, urlComment.attributename);
-    let record = new operationRecord([unit], [log], guid);
     context.operationManager.add(record);
     return url;
   } catch (error) {

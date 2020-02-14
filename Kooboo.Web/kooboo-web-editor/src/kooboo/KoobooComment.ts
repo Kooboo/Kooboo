@@ -70,7 +70,7 @@ export class KoobooComment {
     let comments: KoobooComment[] = [];
     let skipUid: string[] = [];
 
-    while (node && !(node instanceof HTMLElement)) {
+    while (node) {
       if (strict && node instanceof HTMLElement) break;
       if (KoobooComment.isComment(node)) {
         var comment = new KoobooComment(node);

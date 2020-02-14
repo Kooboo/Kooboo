@@ -1,6 +1,6 @@
 import { getAllNode, getAllElement, previousNodes, nextNodes } from "../dom/utils";
 import { KoobooComment } from "./KoobooComment";
-import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
+import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
 
 export function clearKoobooInfo(domString: string) {

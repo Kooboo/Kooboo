@@ -1,8 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg, isInTable } from "@/dom/utils";
-import { getViewComment, getRepeatComment } from "../utils";
-import { isDynamicContent, setGuid, markDirty, clearKoobooInfo } from "@/kooboo/utils";
+import { isDynamicContent, setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -11,6 +10,9 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createImg } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { getScopeComnent } from "../utils";
+import { Log } from "@/operation/Log";
+import { kvInfo } from "@/common/kvInfo";
 
 export default class ReplaceToImgItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -28,45 +30,42 @@ export default class ReplaceToImgItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (getRepeatComment(comments)) return this.setVisiable(false);
-    if (getRelatedRepeatComment(args.element)) return this.setVisiable(false);
-    if (!getViewComment(comments)) return this.setVisiable(false);
-    if (isInTable(args.element)) return this.setVisiable(false);
-    let { koobooId, parent } = getCleanParent(args.element);
-    if (!parent && !koobooId) return this.setVisiable(false);
-    if (isImg(args.element)) return this.setVisiable(false);
-    if (parent && isDynamicContent(parent)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (isImg(element)) return this.setVisiable(false);
+    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (isInTable(element)) return this.setVisiable(false);
+    if (!getUnpollutedEl(element)) return this.setVisiable(false);
   }
 
   async click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(args.element);
-    let { koobooId, parent } = getCleanParent(args.element);
-    setGuid(parent!);
-    let startContent = parent!.innerHTML;
+    let comments = KoobooComment.getComments(element);
+    let el = getUnpollutedEl(element)!;
+    let parent = el == element ? element.parentElement! : el;
+    setGuid(el.parentElement!);
+    let startContent = el.parentElement!.innerHTML;
     try {
-      let style = getComputedStyle(args.element);
+      let style = getComputedStyle(element);
       let width = style.width;
-      let widthImportant = args.element.style.getPropertyPriority("width");
+      let widthImportant = element.style.getPropertyPriority("width");
       let height = style.height;
-      let heightImportant = args.element.style.getPropertyPriority("height");
+      let heightImportant = element.style.getPropertyPriority("height");
       let display = style.display;
       let img = createImg();
-      img.setAttribute(KOOBOO_ID, args.koobooId!);
-      args.element.parentElement!.replaceChild(img, args.element);
+      img.setAttribute(KOOBOO_ID, koobooId!);
+      element.parentElement!.replaceChild(img, element);
       img.style.setProperty("width", width, widthImportant);
       img.style.setProperty("height", height, heightImportant);
       img.style.display = display;
       await createImagePicker(img);
       markDirty(parent!);
-      let guid = setGuid(parent!);
-      let value = clearKoobooInfo(parent!.innerHTML);
-      let comment = getViewComment(comments)!;
+      let guid = setGuid(element.parentElement!);
+      let value = clearKoobooInfo(parent.innerHTML);
+      let comment = getScopeComnent(comments)!;
       let unit = new InnerHtmlUnit(startContent);
-      let log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
+      let log = new Log([...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     } catch (error) {

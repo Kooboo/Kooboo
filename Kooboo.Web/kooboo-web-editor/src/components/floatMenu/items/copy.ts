@@ -49,7 +49,7 @@ export default class CopyItem extends BaseMenuItem {
     let value = clearKoobooInfo(parent!.innerHTML);
     let unit = new InnerHtmlUnit(oldValue);
     let comment = getScopeComnent(comments)!;
-    let log = new Log([...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];) 
+    let log = new Log([...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
     let operation = new operationRecord([unit], [log], guid);
     context.operationManager.add(operation);
   }

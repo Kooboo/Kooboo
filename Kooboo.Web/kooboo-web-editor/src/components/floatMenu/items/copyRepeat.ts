@@ -1,9 +1,8 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeatComment, changeNameOrId, getRepeatItemId } from "../utils";
+import { changeNameOrId, getRepeatItemId } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
-import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
 import { CopyRepeatUnit } from "@/operation/recordUnits/CopyRepeatUnit";
 import { operationRecord } from "@/operation/Record";
@@ -32,7 +31,6 @@ export default class CopyRepeatItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     if (!getRepeatItemId(comments)) return this.setVisiable(false);
-    if (!getRepeatComment(comments)) return this.setVisiable(false);
   }
 
   click() {
@@ -40,7 +38,7 @@ export default class CopyRepeatItem extends BaseMenuItem {
     this.parentMenu.hidden();
 
     let comments = KoobooComment.getComments(args.element);
-    let { nodes } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
+    let { nodes } = getWrapDom(args.element, "repeatitem");
     if (!nodes || nodes.length == 0) return;
     let anchor: Node = nodes[nodes.length - 1];
     let parent = anchor.parentNode!;
@@ -53,9 +51,9 @@ export default class CopyRepeatItem extends BaseMenuItem {
       parent.insertBefore(insertNode, anchor.nextSibling);
     }
 
-    let comment = getRepeatComment(comments)!;
+    let comment = comments.find(f => f.source == "repeatitem")!;
     let units = [new CopyRepeatUnit(getGuidComment(guid))];
-    let log = new Log([...comment.infos, new kvInfo("old", oldGuid), new kvInfo("new", guid), kvInfo.copy];) 
+    let log = new Log([...comment.infos, new kvInfo("old", oldGuid), new kvInfo("new", guid), kvInfo.copy]);
     let operation = new operationRecord(units, [log], guid);
     context.operationManager.add(operation);
   }
