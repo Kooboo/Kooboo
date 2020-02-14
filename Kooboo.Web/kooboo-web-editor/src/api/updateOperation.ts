@@ -1,8 +1,8 @@
 import { getPageId } from "@/kooboo/utils";
 import { Update } from "@/kooboo/outsideInterfaces";
-import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
-export default async (operationLogs: kvInfo[]) => {
+export default async (operationLogs: Log[]) => {
   let pageId = getPageId();
   await Update(
     JSON.stringify({

@@ -10,6 +10,7 @@ import { Menu } from "../menu";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { KOOBOO_ID } from "@/common/constants";
 import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export default class DeleteItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -52,7 +53,7 @@ export default class DeleteItem extends BaseMenuItem {
     } else {
       log.push(kvInfo.value(clearKoobooInfo(parent.innerHTML)), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID)));
     }
-    let operation = new operationRecord([new InnerHtmlUnit(oldValue)], log, guid);
+    let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);
     context.operationManager.add(operation);
   }
 }

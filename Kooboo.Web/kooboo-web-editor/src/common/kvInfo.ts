@@ -9,6 +9,14 @@ export class kvInfo {
     return new kvInfo("value", value);
   }
 
+  static property(value: string | null) {
+    return new kvInfo("property", value);
+  }
+
+  static source(value: string | null) {
+    return new kvInfo("source", value);
+  }
+
   static get delete() {
     return new kvInfo("action", "delete");
   }

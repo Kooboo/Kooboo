@@ -11,6 +11,7 @@ import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { kvInfo } from "@/common/kvInfo";
 import { KOOBOO_ID } from "@/common/constants";
+import { Log } from "@/operation/Log";
 
 export default class EditItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -49,7 +50,7 @@ export default class EditItem extends BaseMenuItem {
       let units = [new InnerHtmlUnit(startContent)];
       let comment = getEditComment(comments)!;
       let log = [...comment.infos, kvInfo.koobooId(el.getAttribute(KOOBOO_ID)), kvInfo.value(clearKoobooInfo(element.innerHTML))];
-      let operation = new operationRecord(units, log, guid);
+      let operation = new operationRecord(units, [new Log(log)], guid);
       context.operationManager.add(operation);
     };
 

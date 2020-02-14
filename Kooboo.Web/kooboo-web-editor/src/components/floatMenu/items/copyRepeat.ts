@@ -11,6 +11,7 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export default class CopyRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -54,9 +55,8 @@ export default class CopyRepeatItem extends BaseMenuItem {
 
     let comment = getRepeatComment(comments)!;
     let units = [new CopyRepeatUnit(getGuidComment(guid))];
-    let log = [...comment.infos, new kvInfo("old", oldGuid), new kvInfo("new", guid), kvInfo.copy];
-
-    let operation = new operationRecord(units, log, guid);
+    let log = new Log([...comment.infos, new kvInfo("old", oldGuid), new kvInfo("new", guid), kvInfo.copy];) 
+    let operation = new operationRecord(units, [log], guid);
     context.operationManager.add(operation);
   }
 }

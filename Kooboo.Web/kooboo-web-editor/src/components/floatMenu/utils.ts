@@ -12,6 +12,7 @@ import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { createLinkPicker } from "../linkPicker";
 import { createDiv } from "@/dom/element";
 import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export function getEditComment(comments: KoobooComment[]) {
   for (const i of comments) {
@@ -40,41 +41,9 @@ export function getScopeComnent(comments: KoobooComment[]) {
   }
 }
 
-export function getViewComment(comments: KoobooComment[]) {
-  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
-
-  for (const i of comments) {
-    if (i.objecttype && editTypes.some(s => s == i.objecttype)) return i;
-  }
-}
-
-export function getAttributeComment(comments: KoobooComment[], name: string = "") {
-  for (const i of comments) {
-    if (i.objecttype && i.objecttype == OBJECT_TYPE.attribute && (!name || i.attributename == name)) {
-      return i;
-    }
-  }
-}
-
-function getObjectType(comments: KoobooComment[], type: string) {
-  for (const i of comments) {
-    if (i.objecttype && i.objecttype.toLowerCase() == type.toLowerCase()) return i;
-  }
-}
-
 export function hasOperation(operationManager: operationManager) {
   return operationManager.previousRecords.length > 0;
 }
-
-export const getMenuComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.menu);
-
-export const getFormComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.form);
-
-export const getHtmlBlockComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.htmlblock);
-
-export const getRepeatComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.contentrepeater);
-
-export const getUrlComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.Url);
 
 export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
   if (KoobooComment.isComment(node) && node.nodeValue!.indexOf(oldGuid) > -1) {
@@ -101,7 +70,7 @@ export async function updateDomImage(element: HTMLImageElement) {
     let oldSrc = startContent.getAttribute("src");
     let unit = new AttributeUnit(oldSrc!, "src");
     let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
-    let record = new operationRecord([unit], log, guid);
+    let record = new operationRecord([unit], [new Log(log)], guid);
     context.operationManager.add(record);
     return element.getAttribute("src")!;
   } catch (error) {
@@ -167,7 +136,7 @@ export async function updateDomLink(element: HTMLElement) {
     let value = clearKoobooInfo(parent.innerHTML);
     let unit = new AttributeUnit(href!, "href");
     let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
-    let record = new operationRecord([unit], log, guid);
+    let record = new operationRecord([unit], [new Log(log)], guid);
     context.operationManager.add(record);
     return url;
   } catch (error) {
@@ -175,24 +144,18 @@ export async function updateDomLink(element: HTMLElement) {
   }
 }
 
-export async function updateAttributeLink(element: HTMLElement, koobooId: string, comment: KoobooComment) {
-  setGuid(element);
+export async function updateAttributeLink(element: HTMLElement) {
   let startContent = element.getAttribute("href")!;
+  let comments = KoobooComment.getAroundComments(element);
+  let comment = comments.find(f => f.getValue("attribute") == "href")!;
 
   try {
     let url = await createLinkPicker(startContent);
     element.setAttribute("href", url);
     let guid = setGuid(element);
     let unit = new AttributeUnit(startContent, "href");
-    let log: Log;
-
-    if (isViewComment(comment)) {
-      log = DomLog.createUpdate(comment.nameorid!, url, koobooId, comment.objecttype!, "href");
-    } else {
-      log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, url);
-    }
-
-    let record = new operationRecord([unit], [log], guid);
+    let log = [...comment.infos, kvInfo.value(url)];
+    let record = new operationRecord([unit], [new Log(log)], guid);
     context.operationManager.add(record);
     return url;
   } catch (error) {
@@ -216,27 +179,6 @@ export async function updateUrlLink(element: HTMLElement, koobooId: string, urlC
   } catch (error) {
     element.setAttribute("href", startContent);
   }
-}
-
-export function getFirstComment(comments: KoobooComment[]) {
-  for (const iterator of comments) {
-    if (iterator.objecttype == OBJECT_TYPE.Url) continue;
-    return iterator;
-  }
-}
-
-export function isViewComment(comment: KoobooComment) {
-  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
-  return types.some(s => s == comment.objecttype);
-}
-
-export function isEditComment(comment: KoobooComment) {
-  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.attribute];
-  return types.some(s => s == comment.objecttype);
-}
-
-export function isRepeatComment(comment: KoobooComment) {
-  return comment.objecttype == OBJECT_TYPE.contentrepeater;
 }
 
 export const clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "");

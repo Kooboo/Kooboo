@@ -10,6 +10,7 @@ import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export default class DeleteRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -49,9 +50,9 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     temp.outerHTML = guidComment;
 
     let units = [new DeleteRepeatUnit(oldValue)];
-    let log = [...comment.infos, kvInfo.value(id), kvInfo.delete];
+    let log = new Log([...comment.infos, kvInfo.value(id), kvInfo.delete]);
 
-    let operation = new operationRecord(units, log, id);
+    let operation = new operationRecord(units, [log], id);
     context.operationManager.add(operation);
   }
 }

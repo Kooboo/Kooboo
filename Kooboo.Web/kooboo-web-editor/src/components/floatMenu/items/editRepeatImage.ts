@@ -10,6 +10,7 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export default class EditRepeatImageItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -47,7 +48,7 @@ export default class EditRepeatImageItem extends BaseMenuItem {
       let value = img.getAttribute("src")!;
       let unit = new AttributeUnit(startContent, "src");
       let log = [...comment.infos, kvInfo.value(value)];
-      let record = new operationRecord([unit], log, guid);
+      let record = new operationRecord([unit], [new Log(log)], guid);
       context.operationManager.add(record);
     });
   }

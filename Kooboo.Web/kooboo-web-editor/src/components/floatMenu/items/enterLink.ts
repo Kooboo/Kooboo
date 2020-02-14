@@ -21,8 +21,8 @@ export default class EnterLinkItem extends BaseMenuItem {
 
   update(): void {
     this.setVisiable(true);
-    let args = context.lastHoverDomEventArgs;
-    if (!canJump(args.element)) return this.setVisiable(false);
+    let { element } = context.lastHoverDomEventArgs;
+    if (!canJump(element)) return this.setVisiable(false);
   }
 
   click() {

@@ -1,11 +1,11 @@
 import { getAllNode } from "@/dom/utils";
 import { KOOBOO_GUID } from "@/common/constants";
 import { Unit } from "./recordUnits/Unit";
-import { kvInfo } from "@/common/kvInfo";
+import { Log } from "./Log";
 
 export class operationRecord {
   id?: number;
-  constructor(public units: Unit[], public infos: kvInfo[], public guid: string) {}
+  constructor(public units: Unit[], public logs: Log[], public guid: string) {}
 
   undo() {
     let node = this.getOperationNode(this.guid);

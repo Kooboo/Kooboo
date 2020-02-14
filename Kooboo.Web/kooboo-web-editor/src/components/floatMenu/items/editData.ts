@@ -10,6 +10,7 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getScopeComnent } from "../utils";
 import { operationRecord } from "@/operation/Record";
 import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export default class EditDataItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -49,7 +50,7 @@ export default class EditDataItem extends BaseMenuItem {
       markDirty(parent);
       let units = [new InnerHtmlUnit(startContent)];
       let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(koobooId)];
-      let operation = new operationRecord(units, log, guid);
+      let operation = new operationRecord(units, [new Log(log)], guid);
       context.operationManager.add(operation);
     } catch (error) {
       parent.innerHTML = startContent;

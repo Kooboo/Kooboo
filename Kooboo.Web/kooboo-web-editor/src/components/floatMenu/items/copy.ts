@@ -1,7 +1,7 @@
 import context from "@/common/context";
 import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
-import { getEditComment, getScopeComnent } from "../utils";
+import { getScopeComnent } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
@@ -10,6 +10,7 @@ import { Menu } from "../menu";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { kvInfo } from "@/common/kvInfo";
 import { KOOBOO_ID } from "@/common/constants";
+import { Log } from "@/operation/Log";
 
 export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -48,8 +49,8 @@ export default class CopyItem extends BaseMenuItem {
     let value = clearKoobooInfo(parent!.innerHTML);
     let unit = new InnerHtmlUnit(oldValue);
     let comment = getScopeComnent(comments)!;
-    let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
-    let operation = new operationRecord([unit], log, guid);
+    let log = new Log([...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];) 
+    let operation = new operationRecord([unit], [log], guid);
     context.operationManager.add(operation);
   }
 }
