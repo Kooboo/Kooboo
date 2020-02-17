@@ -9,8 +9,9 @@ namespace Kooboo.Sites.DataTraceAndModify
 {
     public static class ModifyExecutor
     {
-        static ModifierBase[] _modifiers = new[]{
-            new TextContentModifier()
+        static  List<ModifierBase> _modifiers = new List<ModifierBase>{
+            new TextContentModifier(),
+            new ViewModifier()
         };
 
 
@@ -25,7 +26,9 @@ namespace Kooboo.Sites.DataTraceAndModify
 
         public static Type GetModifierType(string source)
         {
-            return _modifiers.First(f => f.Source == source).GetType();
+            var modifier = _modifiers.FirstOrDefault(f => f.Source == source);
+            if (modifier == null) throw new NotImplementedException();
+            return modifier.GetType();
         }
     }
 }
