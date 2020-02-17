@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { getRepeatComment, hasOperation, getRepeatItemId } from "../utils";
+import { hasOperation, getRepeatItemId } from "../utils";
 import { reload } from "@/dom/utils";
 import { editRepeat } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";

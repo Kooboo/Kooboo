@@ -9,12 +9,14 @@ import context from "@/common/context";
 import { setGuid } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createColorEditItem } from "./colorEditItem";
+import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobooId: string) {
   var startStyle = el.getAttribute("style");
   var groups = getMatchedColorGroups(el);
   let container = createDiv();
-  let logGetters: (() => Log[])[] = [];
+  let logGetters: (() => kvInfo[][])[] = [];
   for (const i of groups) {
     let { item, getLogs } = createColorEditItem(i, el, comment, koobooId);
     logGetters.push(getLogs);
@@ -32,8 +34,11 @@ export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobo
   setOkHandler(() => {
     let guid = setGuid(el);
     let logs: Log[] = [];
-    for (const i of logGetters) {
-      logs.push(...i());
+    for (const getter of logGetters) {
+      for (const infos of getter()) {
+        let log = [...infos, ...comment.infos];
+        logs.push(new Log(log));
+      }
     }
     if (logs.length != 0) {
       let operation = new operationRecord(getUnits(), logs, guid);

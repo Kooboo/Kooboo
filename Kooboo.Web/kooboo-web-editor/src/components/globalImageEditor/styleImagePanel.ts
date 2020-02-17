@@ -11,6 +11,9 @@ import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import { getCssRules, CssRule, matchSelector } from "@/dom/style";
 import { BgImageUnit } from "@/operation/recordUnits/bgImageUnit";
+import { getScopeComnent } from "../floatMenu/utils";
+import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();
@@ -62,7 +65,7 @@ interface matchedRule {
 function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclaration, rules: CssRule[]) {
   let koobooId = element.getAttribute(KOOBOO_ID);
   let comments = KoobooComment.getComments(element);
-  let comment = getViewComment(comments);
+  let comment = getScopeComnent(comments);
   if (!comment || !koobooId) return;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
@@ -78,10 +81,9 @@ function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclarati
       setImage(path);
       let guid = setGuid(element);
       let unit = new AttributeUnit(startContent!, "style");
-      let log: StyleLog;
       let value = element.style.backgroundImage!.replace(/"/g, "'");
-      log = StyleLog.createUpdate(comment!.nameorid!, comment!.objecttype!, value, "background-image", koobooId!, !!important);
-      let record = new operationRecord([unit], [log], guid);
+      let log = [kvInfo.value(value), kvInfo.property("background-image"), kvInfo.koobooId(koobooId), kvInfo.important(important)];
+      let record = new operationRecord([unit], [new Log(log)], guid);
       context.operationManager.add(record);
     });
   };
@@ -107,18 +109,15 @@ function createStyleImagePreview(appendedRule: matchedRule[], element: HTMLEleme
       let guid = setGuid(element);
       let unit = new BgImageUnit(startContent!, rule.cssRule.style);
       let value = rule.cssRule.style.backgroundImage!.replace(/"/g, "'");
-      var log = StyleLog.createCssUpdate(
-        value,
-        "background-image",
-        rule.cssRule.selectorText,
-        rule.url ? "" : rule.koobooId,
-        rule.url!,
-        !!important,
-        rule.nameorid!,
-        rule.objecttype!,
-        rule.mediaRuleList!
-      );
-      let record = new operationRecord([unit], [log], guid);
+      let log = [
+        kvInfo.value(value),
+        kvInfo.property("background-image"),
+        new kvInfo("selector", rule.cssRule.selectorText),
+        kvInfo.koobooId(rule.url ? "" : rule.koobooId),
+        kvInfo.important(important),
+        kvInfo.mediaRuleList(rule.mediaRuleList!)
+      ];
+      let record = new operationRecord([unit], [new Log(log)], guid);
       context.operationManager.add(record);
     });
   };

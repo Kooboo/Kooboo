@@ -13,6 +13,14 @@ export class kvInfo {
     return new kvInfo("property", value);
   }
 
+  static important(value: string | null) {
+    return new kvInfo("important", value);
+  }
+
+  static mediaRuleList(value: string | null) {
+    return new kvInfo("mediaruleList", value);
+  }
+
   static source(value: string | null) {
     return new kvInfo("source", value);
   }

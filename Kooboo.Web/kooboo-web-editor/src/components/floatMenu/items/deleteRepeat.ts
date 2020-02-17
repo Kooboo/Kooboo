@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeatComment, getRepeatItemId } from "../utils";
+import { getRepeatItemId } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
@@ -40,7 +40,7 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     let { nodes, startNode } = getWrapDom(element, "repeatitem");
     if (!nodes || nodes.length == 0 || !startNode) return;
     let comments = KoobooComment.getComments(element);
-    let comment = getRepeatComment(comments)!;
+    let comment = comments.find(f => f.source == "repeatitem")!;
     let id = getRepeatItemId(comments)!;
     let guidComment = getGuidComment(id);
     let temp = createDiv();
