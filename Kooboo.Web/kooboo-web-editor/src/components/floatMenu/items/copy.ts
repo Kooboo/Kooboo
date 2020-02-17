@@ -1,5 +1,5 @@
 import context from "@/common/context";
-import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
 import { getScopeComnent } from "../utils";
 import { isBody } from "@/dom/utils";
@@ -37,22 +37,42 @@ export default class CopyItem extends BaseMenuItem {
   }
 
   click() {
-    let { element } = context.lastSelectedDomEventArgs;
+    let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-
     let comments = KoobooComment.getComments(element);
-    let el = getUnpollutedEl(element)!;
-    let parent = el == element ? el.parentElement! : el;
-    let cloneElement = element.cloneNode(true) as HTMLElement;
-    let guid = setGuid(el.parentElement!);
-    let oldValue = el.parentElement!.innerHTML;
-    element.parentElement!.insertBefore(cloneElement, element.nextSibling);
-    markDirty(el.parentElement!);
-    let value = clearKoobooInfo(parent!.innerHTML);
-    let unit = new InnerHtmlUnit(oldValue);
     let comment = getScopeComnent(comments)!;
-    let log = new Log([...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
-    let operation = new operationRecord([unit], [log], guid);
+    let el = getUnpollutedEl(element)!;
+    let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
+    let cloneElement = element.cloneNode(true) as HTMLElement;
+    let guid = setGuid(element.parentElement!);
+    let oldValue = element.parentElement!.innerHTML;
+    element.parentElement!.insertBefore(cloneElement, element.nextSibling);
+
+    if (aroundScopeComment) {
+      let { nodes } = getWrapDom(element, aroundScopeComment.source);
+      for (const node of nodes) {
+        if (node instanceof HTMLElement) markDirty(node, true);
+      }
+    } else {
+      markDirty(element.parentElement!);
+    }
+
+    var log = [];
+    if (aroundScopeComment) {
+      log.push(...aroundScopeComment.infos);
+      log.push(kvInfo.copy);
+      log.push(kvInfo.koobooId(koobooId));
+    } else {
+      log.push(...comment.infos);
+      if (el == element) {
+        log.push(kvInfo.copy);
+        log.push(kvInfo.koobooId(koobooId));
+      } else {
+        log.push(kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
+      }
+    }
+
+    let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);
     context.operationManager.add(operation);
   }
 }

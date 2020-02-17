@@ -94,12 +94,11 @@ namespace Kooboo.Sites.DataTraceAndModify
             switch (Action)
             {
                 case ActionType.copy:
-                    var elementStr = Service.DomService.ReSerializeOpenTag(element);
                     sourceUpdate = new SourceUpdate
                     {
                         StartIndex = element.location.openTokenStartIndex,
                         EndIndex = element.location.endTokenEndIndex,
-                        NewValue = elementStr + elementStr
+                        NewValue = element.OuterHtml + element.OuterHtml
                     };
                     break;
                 case ActionType.delete:
@@ -137,7 +136,7 @@ namespace Kooboo.Sites.DataTraceAndModify
                 sourceUpdate = new SourceUpdate
                 {
                     StartIndex = node.location.openTokenStartIndex,
-                    EndIndex = node.location.endTokenEndIndex,
+                    EndIndex = node.location.openTokenEndIndex,
                     NewValue = Service.DomService.ReSerializeOpenTag(element)
                 };
 
