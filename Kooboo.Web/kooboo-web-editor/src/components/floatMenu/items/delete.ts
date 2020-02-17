@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { getScopeComnent } from "../utils";
@@ -31,27 +31,42 @@ export default class DeleteItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
-    if (!el || !el.parentElement) return this.setVisiable(false);
+    if (!el && !KoobooComment.getAroundScopeComments(element)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (el && isDynamicContent(el)) return this.setVisiable(false);
   }
 
   click() {
-    let { element } = context.lastSelectedDomEventArgs;
+    let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    let el = getUnpollutedEl(element)!;
     let comments = KoobooComment.getComments(element);
     let comment = getScopeComnent(comments)!;
-    let parent = el == element ? element.parentElement! : el;
+    let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
+    let el = getUnpollutedEl(element)!;
     let oldValue = element.parentElement!.innerHTML;
     let guid = setGuid(element.parentElement!);
-    element.parentElement!.removeChild(element);
-    markDirty(element.parentElement!);
-    var log = [...comment.infos];
-    if (el == element) {
-      log.push(kvInfo.koobooId(parent.getAttribute(KOOBOO_ID)));
-      log.push(kvInfo.delete);
+    if (aroundScopeComment) {
+      let { nodes } = getWrapDom(element, aroundScopeComment.source);
+      for (const node of nodes) {
+        if (node instanceof HTMLElement) markDirty(node, true);
+      }
     } else {
-      log.push(kvInfo.value(clearKoobooInfo(parent.innerHTML)), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID)));
+      markDirty(element.parentElement!);
+    }
+    element.parentElement!.removeChild(element);
+    var log = [];
+    if (aroundScopeComment) {
+      log.push(...aroundScopeComment.infos);
+      log.push(kvInfo.delete);
+      log.push(kvInfo.koobooId(koobooId));
+    } else {
+      log.push(...comment.infos);
+      if (el == element) {
+        log.push(kvInfo.delete);
+        log.push(kvInfo.koobooId(koobooId));
+      } else {
+        log.push(kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
+      }
     }
     let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);
     context.operationManager.add(operation);

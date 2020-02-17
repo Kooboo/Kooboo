@@ -9,9 +9,10 @@ namespace Kooboo.Sites.DataTraceAndModify
 {
     public static class ModifyExecutor
     {
-        static  List<ModifierBase> _modifiers = new List<ModifierBase>{
+        static readonly List<ModifierBase> _modifiers = new List<ModifierBase>{
             new TextContentModifier(),
-            new ViewModifier()
+            new ViewModifier(),
+            new PageModifier()
         };
 
 
@@ -19,8 +20,7 @@ namespace Kooboo.Sites.DataTraceAndModify
         {
             foreach (var item in changedList)
             {
-                var modifier = _modifiers.First(f => f.Source == item.Source);
-                modifier.Modify(renderContext);
+                item.Modify(renderContext);
             }
         }
 

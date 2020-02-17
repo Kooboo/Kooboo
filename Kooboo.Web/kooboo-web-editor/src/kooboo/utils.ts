@@ -77,7 +77,7 @@ export function getWrapDom(el: Node, source: string) {
       nodes.push(node);
       if (KoobooComment.isComment(node)) {
         let comment = new KoobooComment(node);
-        if (comment.uid == uid) {
+        if (comment.uid == uid && KoobooComment.isEndComment(node)) {
           endNode = node;
           break;
         }
@@ -93,11 +93,12 @@ export function getWrapDom(el: Node, source: string) {
 }
 
 export function getUnpollutedEl(el: HTMLElement, includeSelf = true) {
-  if (includeSelf && el) el = el.parentElement!;
+  if (!includeSelf && el) el = el.parentElement!;
 
   while (el) {
     if (isDynamicContent(el)) break;
     if (!el.hasAttribute(KOOBOO_DIRTY)) return el;
+    if (KoobooComment.getAroundScopeComments(el)) return;
     el = el.parentElement!;
   }
 }

@@ -570,32 +570,6 @@ namespace Kooboo.Dom
                     return this.ownerDocument.HtmlSource.Substring(start, len);
                 }
             }
-
-            set
-            {
-                int start = this.location.openTokenEndIndex + 1;
-
-                int len = this.location.endTokenStartIndex - this.location.openTokenEndIndex - 1;
-                if (this.location.endTokenStartIndex == this.location.endTokenEndIndex)
-                {
-                    len = len + 1;
-                }
-
-                if (start < 1 || len < 1)
-                {
-                    return;
-                }
-
-                else
-                {
-                    var sb = new StringBuilder();
-                    sb.Append(this.ownerDocument.HtmlSource.Substring(0, start));
-                    sb.Append(value);
-                    sb.Append(this.ownerDocument.HtmlSource.Substring(start + len));
-                    this.ownerDocument.HtmlSource = sb.ToString();
-                }
-            }
-
         }
 
 

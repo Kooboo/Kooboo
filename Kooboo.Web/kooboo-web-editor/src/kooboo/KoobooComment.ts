@@ -26,11 +26,23 @@ export class KoobooComment {
   }
 
   get source() {
-    return this.getValue("source");
+    return this.getValue("source")!;
   }
 
   get uid() {
     return this.getValue("uid")!;
+  }
+
+  get path() {
+    return this.getValue("path")!;
+  }
+
+  get attribute() {
+    return this.getValue("attribute")!;
+  }
+
+  get scope() {
+    return this.getValue("scope")!;
   }
 
   getValue(key: string) {
@@ -84,5 +96,10 @@ export class KoobooComment {
     }
 
     return comments;
+  }
+
+  static getAroundScopeComments(el: HTMLElement) {
+    let aroundComments = KoobooComment.getAroundComments(el, false);
+    return aroundComments.find(f => f.scope);
   }
 }

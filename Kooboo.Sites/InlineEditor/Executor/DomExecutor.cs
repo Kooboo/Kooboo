@@ -76,7 +76,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         savepage = repo.Store.get(domobject.Id) as Page;
                     }
 
-                    domobject.Body = UpdateHelper.Update(domobject.Body, sourceupdates);
+                   // domobject.Body = UpdateHelper.Update(domobject.Body, sourceupdates);
                     repo.AddOrUpdate(domobject, context.User.Id);
                     if (savepage != null)
                     {
@@ -125,7 +125,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
                 if (itemupdates.Count() > 0)
                 {
-                    item.Body = UpdateHelper.Update(item.Body, itemupdates);
+                   // item.Body = UpdateHelper.Update(item.Body, itemupdates);
                     sitedb.Pages.AddOrUpdate(item);
                 }
 

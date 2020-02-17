@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { getEditComment, clearContent } from "../utils";
+import { getEditComment, clearContent, getScopeComnent } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -31,7 +31,9 @@ export default class EditItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
-    if (!getEditComment(comments)) return this.setVisiable(false);
+    var aroundComments = KoobooComment.getAroundComments(element);
+    if (aroundComments.find(f => (f.path || f.source == "none") && !f.attribute)) return this.setVisiable(false);
+    if (!getScopeComnent(comments)) return this.setVisiable(false);
     if (!getUnpollutedEl(element)) return this.setVisiable(false);
     if (isDynamicContent(element)) return this.setVisiable(false);
   }
@@ -45,11 +47,11 @@ export default class EditItem extends BaseMenuItem {
       if (clearContent(startContent) == clearContent(element.innerHTML)) return;
       let el = getUnpollutedEl(element)!;
       let comments = KoobooComment.getComments(element);
+      let comment = getScopeComnent(comments)!;
       markDirty(el);
       let guid = setGuid(element);
       let units = [new InnerHtmlUnit(startContent)];
-      let comment = getEditComment(comments)!;
-      let log = [...comment.infos, kvInfo.koobooId(el.getAttribute(KOOBOO_ID)), kvInfo.value(clearKoobooInfo(element.innerHTML))];
+      let log = [...comment.infos, kvInfo.koobooId(el.getAttribute(KOOBOO_ID)), kvInfo.value(clearKoobooInfo(el.innerHTML))];
       let operation = new operationRecord(units, [new Log(log)], guid);
       context.operationManager.add(operation);
     };

@@ -93,7 +93,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         }
                     }
 
-                   domobject.Body = UpdateHelper.Update(domobject.Body, inlineupdates);
+                   //domobject.Body = UpdateHelper.Update(domobject.Body, inlineupdates);
 
                     repo.AddOrUpdate(domobject, context.User.Id); 
                 }
