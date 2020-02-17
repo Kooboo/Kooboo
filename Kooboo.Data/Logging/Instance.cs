@@ -55,6 +55,26 @@ namespace Kooboo.Data.Log
         }
 
 
+        private static LogWriter _httpout;
+        public static LogWriter HttpOut
+        {
+            get
+            {
+                if (_httpout == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_httpout == null)
+                        {
+                            _httpout = new LogWriter("outgoing");
+                        }
+                    }
+                }
+                return _httpout;
+            }
+        }
+
+
         private static LogWriter _exception; 
 
         public static LogWriter Exception
