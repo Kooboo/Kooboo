@@ -9,8 +9,9 @@ namespace Kooboo.Sites.Payment
 {
     public class PaymentRequest : CoreObject, IGolbalObject
     {
-        public PaymentRequest() {
-            this.ConstType = ConstObjectType.PaymentRequest; 
+        public PaymentRequest()
+        {
+            this.ConstType = ConstObjectType.PaymentRequest;
         }
 
         private Guid _id;
@@ -30,7 +31,7 @@ namespace Kooboo.Sites.Payment
                 _id = value;
             }
         }
-         
+
         //additional info if needed. 
         public string Description { get; set; }
 
@@ -69,7 +70,7 @@ namespace Kooboo.Sites.Payment
         public string ReferenceId { get; set; }
 
         public string ReturnPath { get; set; }
-    
+
         private Dictionary<string, object> _Additional;
         public Dictionary<string, object> Additional
         {
@@ -85,7 +86,7 @@ namespace Kooboo.Sites.Payment
             {
                 _Additional = value;
             }
-        } 
+        }
 
         public override int GetHashCode()
         {
@@ -94,7 +95,11 @@ namespace Kooboo.Sites.Payment
             unique += this.Name + this.OrderId.ToString() + this.Order + this.PaymentMethod;
             unique += this.ReferenceId + this.TotalAmount.ToString() + this.UserIp;
             unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString();
-            unique += this.ReturnPath; 
+            unique += this.ReturnPath;
+            unique += CardNumber;
+            unique += CardCVV;
+            unique += CardExpiration;
+            unique += CardPostal;
 
             if (_Additional != null)
             {
@@ -113,5 +118,12 @@ namespace Kooboo.Sites.Payment
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
 
+        public string CardNumber { get; set; }
+
+        public string CardCVV { get; set; }
+
+        public string CardExpiration { get; set; }
+
+        public string CardPostal { get; set; }
     }
 }
