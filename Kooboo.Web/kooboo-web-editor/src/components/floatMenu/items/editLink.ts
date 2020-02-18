@@ -5,6 +5,7 @@ import { updateDomLink, getScopeComnent } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 
 export default class EditLinkItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -24,9 +25,11 @@ export default class EditLinkItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     let aroundComments = KoobooComment.getAroundComments(element);
+    if (aroundComments.find(f => f.getValue("attribute") == "href")) return this.setVisiable(false);
     if (!isLink(element)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
-    if (aroundComments.find(f => f.getValue("attribute") == "href")) return this.setVisiable(false);
+    let el = getUnpollutedEl(element);
+    if (!el || isDynamicContent(el)) return this.setVisiable(false);
   }
 
   click() {

@@ -46,8 +46,8 @@ export default class EditItem extends BaseMenuItem {
     const onSave = () => {
       if (clearContent(startContent) == clearContent(element.innerHTML)) return;
       let el = getUnpollutedEl(element)!;
-      let comments = KoobooComment.getComments(element);
-      let comment = getScopeComnent(comments)!;
+      let comments = KoobooComment.getComments(el);
+      let comment = comments.find(f => !f.attribute)!;
       markDirty(el);
       let guid = setGuid(element);
       let units = [new InnerHtmlUnit(startContent)];

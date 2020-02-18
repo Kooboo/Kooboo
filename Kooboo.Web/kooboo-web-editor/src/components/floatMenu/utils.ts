@@ -56,7 +56,6 @@ export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
 
 export async function updateDomImage(element: HTMLImageElement) {
   let el = getUnpollutedEl(element)!;
-  let parent = el == element ? el.parentElement! : el;
   let startContent = element.cloneNode(true) as HTMLImageElement;
   let comments = KoobooComment.getComments(element);
   let comment = getScopeComnent(comments)!;
@@ -64,11 +63,55 @@ export async function updateDomImage(element: HTMLImageElement) {
     await createImagePicker(element as HTMLImageElement);
     if (startContent.outerHTML == element.outerHTML) return;
     let guid = setGuid(el);
-    let value = clearKoobooInfo(parent.innerHTML);
-    let oldSrc = startContent.getAttribute("src");
-    let unit = new AttributeUnit(oldSrc!, "src");
-    let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
-    let record = new operationRecord([unit], [new Log(log)], guid);
+    let units = [
+      new AttributeUnit(startContent.getAttribute("src")!, "src"),
+      new AttributeUnit(startContent.getAttribute("style")!, "style"),
+      new AttributeUnit(startContent.getAttribute("title")!, "title"),
+      new AttributeUnit(startContent.getAttribute("alt")!, "alt")
+    ];
+
+    var logs = [];
+    if (el == element) {
+      logs.push(
+        new Log([
+          ...comment.infos,
+          kvInfo.attribute("src"),
+          kvInfo.value(element.getAttribute("src")),
+          kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
+        ])
+      );
+
+      logs.push(
+        new Log([
+          ...comment.infos,
+          kvInfo.attribute("style"),
+          kvInfo.value(element.getAttribute("style")),
+          kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
+        ])
+      );
+
+      logs.push(
+        new Log([
+          ...comment.infos,
+          kvInfo.attribute("alt"),
+          kvInfo.value(element.getAttribute("alt")),
+          kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
+        ])
+      );
+
+      logs.push(
+        new Log([
+          ...comment.infos,
+          kvInfo.attribute("title"),
+          kvInfo.value(element.getAttribute("title")),
+          kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
+        ])
+      );
+    } else {
+      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))]));
+    }
+
+    let record = new operationRecord(units, logs, guid);
     context.operationManager.add(record);
     return element.getAttribute("src")!;
   } catch (error) {
@@ -97,7 +140,6 @@ export async function updateAttributeImage(element: HTMLImageElement) {
 
 export async function updateDomLink(element: HTMLElement) {
   let el = getUnpollutedEl(element)!;
-  let parent = el == element ? el.parentElement! : el;
   let comments = KoobooComment.getComments(element);
   let comment = getScopeComnent(comments)!;
   let href = element.getAttribute("href")!;
@@ -106,10 +148,16 @@ export async function updateDomLink(element: HTMLElement) {
     let url = await createLinkPicker(href);
     element.setAttribute("href", url);
     let guid = setGuid(element);
-    let value = clearKoobooInfo(parent.innerHTML);
     let unit = new AttributeUnit(href!, "href");
-    let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))];
-    let record = new operationRecord([unit], [new Log(log)], guid);
+    let logs = [];
+
+    if (el == element) {
+      logs.push(new Log([...comment.infos, kvInfo.attribute("href"), kvInfo.value(url), kvInfo.koobooId(element.getAttribute(KOOBOO_ID))]));
+    } else {
+      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))]));
+    }
+
+    let record = new operationRecord([unit], logs, guid);
     context.operationManager.add(record);
     return url;
   } catch (error) {

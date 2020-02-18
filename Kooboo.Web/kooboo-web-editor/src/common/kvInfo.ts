@@ -5,6 +5,10 @@ export class kvInfo {
     return new kvInfo("koobooid", value);
   }
 
+  static attribute(value: string | null) {
+    return new kvInfo("attribute", value);
+  }
+
   static value(value: string | null) {
     return new kvInfo("value", value);
   }

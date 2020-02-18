@@ -15,11 +15,11 @@ export function initElements() {
   for (const i of getAllElement(document.body, true)) {
     if (i.id == HOVER_BORDER_SKIP) continue;
     if (i instanceof HTMLElement) {
-      if (isLink(i)) {
-        let a = i.cloneNode(true);
-        (a as any)._a = i;
-        i.parentElement!.replaceChild(a, i);
-      }
+      // if (isLink(i)) {
+      //   let a = i.cloneNode(true);
+      //   (a as any)._a = i;
+      //   i.parentElement!.replaceChild(a, i);
+      // }
       i.addEventListener("mouseover", hover);
       holdUpClick(i);
     }

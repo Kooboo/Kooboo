@@ -50,44 +50,7 @@ namespace Kooboo.Sites.DataTraceAndModify
 
         public string Id => GetValue("id");
 
-        public void HandleDom(RenderContext context)
-        {
-            if (Id == null || KoobooId == null) return;
-            var repo = context.WebSite.SiteDb().GetRepository(Source);
-            if (repo == null) return;
-            var domObject = repo.GetByNameOrId(Id) as IDomObject;
-            if (domObject == null) return;
-            var doc = DomParser.CreateDom(domObject.Body);
-            var node = Service.DomService.GetElementByKoobooId(doc, KoobooId);
-            if (node == null) return;
-            var element = node as Element;
-            if (element == null) return;
-            UpdateDomObject(domObject, element);
-            repo.AddOrUpdate(domObject, context.User.Id);
-
-            if (repo.ModelType == typeof(Page))
-            {
-                Task.Run(() =>
-                {
-                    var otherPages = context.WebSite.SiteDb().Pages.All()
-                   .Where(o => o.Id != domObject.Id && o.HasLayout == false)
-                   .ToList();
-
-                    foreach (var page in otherPages)
-                    {
-                        var sameBlock = Helper.ElementHelper.FindSameElement(element, page.Dom);
-
-                        if (sameBlock != null)
-                        {
-                            UpdateDomObject(page, sameBlock);
-                            repo.AddOrUpdate(page, context.User.Id);
-                        }
-                    }
-                });
-            }
-        }
-
-        private void UpdateDomObject(IDomObject domObject, Element element)
+        internal string GetNewDomBody(string oldDom, Element element)
         {
             SourceUpdate sourceUpdate = null;
 
@@ -115,7 +78,7 @@ namespace Kooboo.Sites.DataTraceAndModify
                     break;
             }
 
-            domObject.Body = Service.DomService.UpdateSource(domObject.Body, new List<SourceUpdate> { sourceUpdate });
+            return Service.DomService.UpdateSource(oldDom, new List<SourceUpdate> { sourceUpdate });
         }
 
         private SourceUpdate HandleDomUpdate(Node node, Element element)
