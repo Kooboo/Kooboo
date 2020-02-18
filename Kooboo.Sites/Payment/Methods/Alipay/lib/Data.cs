@@ -8,6 +8,9 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 {
     public class AlipayData
     {
+        public const string RESPONSE_SUFFIX = "_response";
+        public const string ALIPAY_QUERY = "alipay.trade.query";
+
         public AlipayData()
         {
         }
@@ -56,7 +59,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             return AlipaySignature.RSACheckContent(signContent, sign, publicKeyPem, charset, "RSA");
         }
 
-        public string ToJson(IDictionary<string,string> dic)
+        public string ToJson(IDictionary<string, string> dic)
         {
             JsonSerializerSettings jsetting = new JsonSerializerSettings
             {
@@ -65,58 +68,92 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             return JsonConvert.SerializeObject(dic, Formatting.None, jsetting);
         }
 
-        public SortedDictionary<string, object> FromJson(string Json)
+        public IDictionary<string, object> FromJson(string body, AlipayFormSetting setting)
         {
-            var json = JsonConvert.DeserializeObject<IDictionary<string,object>>(Json);
+            var json = JsonConvert.DeserializeObject<IDictionary<string, object>>(body);
 
             try
             {
-                if (!string.IsNullOrEmpty(json["sign"].ToString()))
+                string sign = json["sign"].ToString();
+                var signSourceDate = GetSignSourceData(body);
+
+                json = JsonConvert.DeserializeObject<IDictionary<string, object>>(signSourceDate);
+                if (signSourceDate.Contains("sub_code"))
                 {
-                    RSACheckV1(;
+                    throw new AliPayException(body);
                 }
-                CheckSign();//验证签名,不通过会抛异常
+
+                if (!string.IsNullOrEmpty(sign) && !string.IsNullOrEmpty(signSourceDate))
+                {
+                    CheckResponseSign(sign, body, setting);
+
+                    if (json["code"].ToString() != "10000")
+                    {
+                        throw new AliPayException(json["msg"].ToString());
+                    }
+                }
+                else
+                {
+                    throw new AliPayException("sign check fail: body or reponse content is Empty!");
+                }
             }
-            catch (WxPayException ex)
+            catch (AliPayException ex)
             {
-                throw new WxPayException(ex.Message);
+                throw new AliPayException(ex.Message);
             }
 
-            return m_values;
+            return json;
         }
 
-        public static void CheckResponseSign<T>(IAopRequest<T> request, string responseBody, bool isError, AlipayFormSetting setting)
+        public static void CheckResponseSign(string sign, string signSourceDate, AlipayFormSetting setting)
         {
-            if (string.IsNullOrEmpty(alipayPublicKey) || string.IsNullOrEmpty(charset))
-                return;
-
-            var signItem = "";
-            if (signItem == null)
-                throw new AliPayException("sign check fail: Body is Empty!");
-
-            if (!isError ||
-                isError && !string.IsNullOrEmpty(signItem.Sign))
+            if (string.IsNullOrEmpty(setting.PublicKey) || string.IsNullOrEmpty(setting.Charset))
             {
-                var rsaCheckContent = AlipaySignature.RSACheckContent(signItem.SignSourceDate, signItem.Sign, setting.PrivateKey,
-                    setting.Charset, setting.SignType);
-                if (!rsaCheckContent)
-                    if (!string.IsNullOrEmpty(signItem.SignSourceDate) && signItem.SignSourceDate.Contains("\\/"))
-                    {
-                        var srouceData = signItem.SignSourceDate.Replace("\\/", "/");
-                        var jsonCheck =
-                            AlipaySignature.RSACheckContent(srouceData, signItem.Sign, setting.PrivateKey,
-                    setting.Charset, setting.SignType);
-                        if (!jsonCheck)
-                            throw new AliPayException(
-                                "sign check fail: check Sign and Data Fail JSON also");
-                    }
-                    else
-                    {
-                        throw new AliPayException(
-                            "sign check fail: check Sign and Data Fail!");
-                    }
+                throw new AliPayException("public key or charset is Empty!");
             }
+
+            if (signSourceDate == null)
+            {
+                throw new AliPayException("sign check fail: sign is Empty!");
+            }
+
+            var rsaCheckContent = AlipaySignature.RSACheckContent(signSourceDate, sign, setting.PublicKey,
+                setting.Charset, setting.SignType);
+
+            if (!rsaCheckContent)
+            {
+                throw new AliPayException("sign check fail: check Sign and Data Fail!");
+            }
+
         }
 
+        private static string GetSignSourceData(string body)
+        {
+            string rootNode = ALIPAY_QUERY.Replace(".", "_") + RESPONSE_SUFFIX;
+            int indexOfRootNode = body.IndexOf(rootNode);
+
+            string result = null;
+            if (indexOfRootNode > 0)
+            {
+                result = ParseSignSourceData(body, rootNode, indexOfRootNode);
+            }
+
+            return result;
+        }
+
+        private static string ParseSignSourceData(string body, string rootNode, int indexOfRootNode)
+        {
+            int signDataStartIndex = indexOfRootNode + rootNode.Length + 2;
+            int indexOfSign = body.IndexOf("\"sign\"");
+            if (indexOfSign < 0)
+            {
+                return null;
+            }
+
+            int signDataEndIndex = indexOfSign - 1;
+            int length = signDataEndIndex - signDataStartIndex;
+
+            return body.Substring(signDataStartIndex, length);
+        }
     }
 }
