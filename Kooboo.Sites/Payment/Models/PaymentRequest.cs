@@ -96,10 +96,6 @@ namespace Kooboo.Sites.Payment
             unique += this.ReferenceId + this.TotalAmount.ToString() + this.UserIp;
             unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString();
             unique += this.ReturnPath;
-            unique += CardNumber;
-            unique += CardCVV;
-            unique += CardExpiration;
-            unique += CardPostal;
             unique += SquareResponseNonce;
 
             if (_Additional != null)
@@ -118,14 +114,6 @@ namespace Kooboo.Sites.Payment
             }
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
-        public string CardNumber { get; set; }
-
-        public string CardCVV { get; set; }
-
-        public string CardExpiration { get; set; }
-
-        public string CardPostal { get; set; }
 
         public string SquareResponseNonce { get; set; }
     }

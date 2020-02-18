@@ -8,12 +8,12 @@ namespace Kooboo.Sites.Payment.Methods
     {
         public string Name => "SquarePay";
 
-        public string Environment { get; set; }
-
         public string ApplicationId { get; set; }
 
         public string AccessToken { get; set; }
 
         public string LocationId { get; set; }
+
+        public string PaymentURL { get; set; }
     }
 }

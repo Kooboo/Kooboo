@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Square.lib;
+using Kooboo.Sites.Payment.Methods.Square.lib.Models;
 using Kooboo.Sites.Payment.Response;
 
 namespace Kooboo.Sites.Payment.Methods
@@ -39,14 +40,11 @@ namespace Kooboo.Sites.Payment.Methods
                 return null;
             }
 
-            PaymentsApi.Pay(request.SquareResponseNonce, Setting.AccessToken);
+            Money amount = new Money(500L, "USD");
+
+            var result = PaymentsApi.Pay(request.SquareResponseNonce, amount, Setting.AccessToken, Setting.PaymentURL);
 
             return res;
-        }
-
-        public void GetPage()
-        {
-
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)

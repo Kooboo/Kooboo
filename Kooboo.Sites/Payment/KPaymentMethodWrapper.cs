@@ -110,10 +110,6 @@ namespace Kooboo.Sites.Payment
             request.Description = GetValue<string>(idict, dynamicobj, "des", "description", "detail");
             request.Currency = GetValue<string>(idict, dynamicobj, "currency");
             request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount", "total", "totalAmount", "totalamount");
-            request.CardNumber = GetValue<string>(idict, dynamicobj, "cardNumber");
-            request.CardCVV = GetValue<string>(idict, dynamicobj, "cardCVV");
-            request.CardExpiration = GetValue<string>(idict, dynamicobj, "cardExpiration");
-            request.CardPostal = GetValue<string>(idict, dynamicobj, "cardPostal");
             request.SquareResponseNonce = GetValue<string>(idict, dynamicobj, "nonce");
 
             if (this.PaymentMethod != null)

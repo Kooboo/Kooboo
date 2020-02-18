@@ -29,38 +29,5 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models
         /// </summary>
         [JsonProperty("currency")]
         public string Currency { get; }
-
-        public Builder ToBuilder()
-        {
-            var builder = new Builder()
-                .Amount(Amount)
-                .Currency(Currency);
-            return builder;
-        }
-
-        public class Builder
-        {
-            private long? amount;
-            private string currency;
-
-            public Builder() { }
-            public Builder Amount(long? value)
-            {
-                amount = value;
-                return this;
-            }
-
-            public Builder Currency(string value)
-            {
-                currency = value;
-                return this;
-            }
-
-            public Money Build()
-            {
-                return new Money(amount,
-                    currency);
-            }
-        }
     }
 }
