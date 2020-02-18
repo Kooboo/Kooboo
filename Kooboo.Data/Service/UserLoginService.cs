@@ -119,18 +119,22 @@ namespace Kooboo.Data.Service
             {
                 return "/_Admin/Domains";
             }
-            else
+            else if (path.StartsWith("/_admin/site"))
             {
-                ///_Admin/Site?SiteId=ef9b3c71-f09b-a23c-431c-3d8d40905226
-                if (path.Contains("siteid="))
-                {
-                    var siteid = GetSiteIdFromPath(path);
-                    if (siteid != null)
-                    {
-                        return "/_Admin/Site?SiteId=" + siteid;
-                    }
-                }
+                return "/_Admin/Sites";
             }
+            //else
+            //{
+            //    ///_Admin/Site?SiteId=ef9b3c71-f09b-a23c-431c-3d8d40905226
+            //    if (path.Contains("siteid="))
+            //    {
+            //        var siteid = GetSiteIdFromPath(path);
+            //        if (siteid != null)
+            //        {
+            //            return "/_Admin/Site?SiteId=" + siteid;
+            //        }
+            //    }
+            //}
 
             return "/_Admin/Sites";
         }
