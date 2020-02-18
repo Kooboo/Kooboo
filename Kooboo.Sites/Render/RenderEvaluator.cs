@@ -184,12 +184,6 @@ namespace Kooboo.Sites.Render
                             }
                         }
 
-                        var endbinding = GetEndBinding(responseList);
-                        if (endbinding != null)
-                        {
-                            tasklist.AddRange(endbinding);
-                        }
-
                         var append = GetAppend(responseList);
                         if (append != null)
                         {
@@ -215,6 +209,12 @@ namespace Kooboo.Sites.Render
                         {
                             currentindex = nextnode.location.openTokenEndIndex + 1;
                             nextnode = iterator.nextNode();
+                        }
+
+                        var endbinding = GetEndBinding(responseList);
+                        if (endbinding != null)
+                        {
+                            tasklist.AddRange(endbinding);
                         }
 
                         responseList.Clear();

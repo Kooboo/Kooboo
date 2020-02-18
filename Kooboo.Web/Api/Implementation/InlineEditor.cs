@@ -13,6 +13,7 @@ using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.DataTraceAndModify;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -61,8 +62,17 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in data)
             {
                 var source = item.GetValue("source").ToString();
-                var type = ModifyExecutor.GetModifierType(source);
-                changedList.Add((ModifierBase)item.ToObject(type));
+
+                try
+                {
+                    var type = ModifyExecutor.GetModifierType(source);
+                    changedList.Add((ModifierBase)item.ToObject(type));
+                }
+                catch (Exception e)
+                {
+                    Debug.Fail(e.Message);
+                    continue;
+                }
             }
 
             ModifyExecutor.Execute(call.Context, changedList);

@@ -59,10 +59,6 @@ namespace Kooboo.Sites.Render
             }
 
             string attributeValues = element.getAttribute(attName);
-            if (!options.RequireBindingInfo)
-            {
-                element.removeAttribute(attName);
-            }
 
             if (string.IsNullOrEmpty(attributeValues) || attributeValues.IndexOf(' ') < 0)
             {
@@ -125,7 +121,8 @@ namespace Kooboo.Sites.Render
                 }
 
                 element.removeAttribute(attributeName);
-
+                response.ContentTask = RenderEvaluator.Evaluate(element.InnerHtml, options);
+                response.StopNextEvaluator = true;
                 if (options.RequireBindingInfo)
                 {
                     if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();

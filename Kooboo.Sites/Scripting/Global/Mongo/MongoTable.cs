@@ -81,7 +81,7 @@ namespace KScript
             MongoCollection.DeleteOne(filter);
         }
 
-        private static FilterDefinition<object> GetIdFilter(object id)
+        public static FilterDefinition<object> GetIdFilter(object id)
         {
             object objectId;
 

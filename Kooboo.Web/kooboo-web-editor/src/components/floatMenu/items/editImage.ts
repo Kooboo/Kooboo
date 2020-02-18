@@ -26,7 +26,7 @@ export default class EditImageItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     if (!isImg(element)) return this.setVisiable(false);
     let aroundComments = KoobooComment.getAroundComments(element);
-    if (aroundComments.find(f => f.getValue("attribute") == "src")) return this.setVisiable(false);
+    if (aroundComments.find(f => f.source != "none" && f.getValue("attribute") == "src")) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
     if (!el || isDynamicContent(el)) return this.setVisiable(false);
