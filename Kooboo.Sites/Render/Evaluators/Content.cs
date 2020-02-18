@@ -56,6 +56,7 @@ namespace Kooboo.Sites.Render
                     response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
                 }
 
+                options.HasContentTask = true;
                 return response;
             }
             return null;

@@ -7,19 +7,19 @@ namespace Kooboo.Sites.DataTraceAndModify
 {
     public class RepeatItemTrace : ITraceability
     {
-        public RepeatItemTrace(string path)
+        readonly string _alias;
+        public RepeatItemTrace(string alias)
         {
-            Path = path;
+            _alias = alias;
         }
 
         public string Source => "repeatitem";
 
-        public string Path { get; }
 
         public IDictionary<string, string> GetTraceInfo()
         {
             return new Dictionary<string, string>{
-                {"path",Path}
+                {"alias",_alias}
             };
         }
     }

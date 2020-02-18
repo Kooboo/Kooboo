@@ -26,8 +26,8 @@ export function getRepeatItemId(comments: KoobooComment[]) {
     var id = commnet.getValue("id");
     if (id) {
       let fullpathComment = commnet.getValue("fullpath");
-      let path = repeatComment.getValue("path");
-      if (fullpathComment && path && fullpathComment.startsWith(path)) return id;
+      let alias = repeatComment.getValue("alias");
+      if (fullpathComment && alias && fullpathComment.startsWith(alias)) return id;
     }
   }
 }
