@@ -192,6 +192,7 @@ namespace Kooboo.Data.Models
         Mta = 4, 
         DnsOnly = 5,
         PrivateWeb = 6, 
+        WWWRoot= 7,
         Converter = 8,
         TBD = 9,
         TheTheme =11,
@@ -200,7 +201,7 @@ namespace Kooboo.Data.Models
         SslServer = 64, 
         MailServer = 128,
         Monitor = 256,
-        Redirect = 512
+        Redirect = 512,  
         // Nginx is for the www root redirect. Redirect for user custom domain redirect....  
     }
     

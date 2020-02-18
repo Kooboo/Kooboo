@@ -24,7 +24,7 @@ namespace Kooboo.Data.Log
         }
 
         public void WriteObj(object JsonObject)
-        {
+        { 
             var text = Lib.Helper.JsonHelper.Serialize(JsonObject);
             Write(text); 
         }
