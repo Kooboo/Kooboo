@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Response;
 
 namespace Kooboo.Sites.Payment.Methods
@@ -33,10 +34,16 @@ namespace Kooboo.Sites.Payment.Methods
         public IPaymentResponse Charge(PaymentRequest request)
         {
             HiddenFormResponse res = new HiddenFormResponse();
+            if (this.Setting == null)
+            {
+                return null;
+            }
+
+            PaymentsApi.Pay(request.SquareResponseNonce, Setting.AccessToken);
 
             return res;
         }
-        
+
         public void GetPage()
         {
 

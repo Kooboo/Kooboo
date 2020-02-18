@@ -100,6 +100,7 @@ namespace Kooboo.Sites.Payment
             unique += CardCVV;
             unique += CardExpiration;
             unique += CardPostal;
+            unique += SquareResponseNonce;
 
             if (_Additional != null)
             {
@@ -125,5 +126,7 @@ namespace Kooboo.Sites.Payment
         public string CardExpiration { get; set; }
 
         public string CardPostal { get; set; }
+
+        public string SquareResponseNonce { get; set; }
     }
 }
