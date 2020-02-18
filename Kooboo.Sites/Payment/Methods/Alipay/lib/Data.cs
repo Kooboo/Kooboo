@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 {
     public class AlipayData
     {
-        private SortedDictionary<string, string> m_values;
-
         public AlipayData()
         {
         }
 
         public SortedDictionary<string, string> SortDictionary(AopDictionary txtParams)
         {
-            m_values = new SortedDictionary<string, string>(txtParams);
+            var m_values = new SortedDictionary<string, string>(txtParams);
 
             return m_values;
         }
@@ -65,5 +64,59 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             };
             return JsonConvert.SerializeObject(dic, Formatting.None, jsetting);
         }
+
+        public SortedDictionary<string, object> FromJson(string Json)
+        {
+            var json = JsonConvert.DeserializeObject<IDictionary<string,object>>(Json);
+
+            try
+            {
+                if (!string.IsNullOrEmpty(json["sign"].ToString()))
+                {
+                    RSACheckV1(;
+                }
+                CheckSign();//验证签名,不通过会抛异常
+            }
+            catch (WxPayException ex)
+            {
+                throw new WxPayException(ex.Message);
+            }
+
+            return m_values;
+        }
+
+        public static void CheckResponseSign<T>(IAopRequest<T> request, string responseBody, bool isError, AlipayFormSetting setting)
+        {
+            if (string.IsNullOrEmpty(alipayPublicKey) || string.IsNullOrEmpty(charset))
+                return;
+
+            var signItem = "";
+            if (signItem == null)
+                throw new AliPayException("sign check fail: Body is Empty!");
+
+            if (!isError ||
+                isError && !string.IsNullOrEmpty(signItem.Sign))
+            {
+                var rsaCheckContent = AlipaySignature.RSACheckContent(signItem.SignSourceDate, signItem.Sign, setting.PrivateKey,
+                    setting.Charset, setting.SignType);
+                if (!rsaCheckContent)
+                    if (!string.IsNullOrEmpty(signItem.SignSourceDate) && signItem.SignSourceDate.Contains("\\/"))
+                    {
+                        var srouceData = signItem.SignSourceDate.Replace("\\/", "/");
+                        var jsonCheck =
+                            AlipaySignature.RSACheckContent(srouceData, signItem.Sign, setting.PrivateKey,
+                    setting.Charset, setting.SignType);
+                        if (!jsonCheck)
+                            throw new AliPayException(
+                                "sign check fail: check Sign and Data Fail JSON also");
+                    }
+                    else
+                    {
+                        throw new AliPayException(
+                            "sign check fail: check Sign and Data Fail!");
+                    }
+            }
+        }
+
     }
 }

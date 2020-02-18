@@ -8,6 +8,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 {
     public class AlipayApi
     {
+        public const string CHARSET = "charset";
         public const string PayMethod = "alipay.trade.page.pay";
         /**
         * 跳转支付宝页面直接进行支付
@@ -16,7 +17,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
         {
             try
             {
-                Validation(bizContent);
+                PayValidation(bizContent);
                 var data = new AlipayData();
                 var request = RequestBase(setting, PayMethod);
                 request.Add("biz_content", data.ToJson(bizContent));
@@ -29,6 +30,27 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             };
 
                 var body = BuildHtmlRequest(request, "POST", setting);
+
+                return body;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public static string Query(AopDictionary bizContent, AlipayFormSetting setting)
+        {
+            try
+            {
+                QueryValidation(bizContent);
+                var data = new AlipayData();
+                var request = RequestBase(setting, PayMethod);
+                request.Add("biz_content", data.ToJson(bizContent));
+                request.Add("sign", data.RSASign(request, setting.PrivateKey, setting.Charset, setting.SignType));
+
+                var body = HttpService.DoPost(setting.ServerUrl + "?" + CHARSET + "=" + setting.Charset, request, setting.Charset);
 
                 return body;
             }
@@ -61,7 +83,15 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             return sbHtml.ToString();
         }
 
-        private static void Validation(AopDictionary data)
+        private static void QueryValidation(AopDictionary data)
+        {
+            if (!data.ContainsKey("out_trade_no") && data.ContainsKey("trade_no"))
+            {
+                throw new AliPayException("支付宝交易号trade_no和商户订单号out_trade_no不能同时为空！");
+            }
+        }
+
+        private static void PayValidation(AopDictionary data)
         {
             if (!data.ContainsKey("out_trade_no"))
             {
