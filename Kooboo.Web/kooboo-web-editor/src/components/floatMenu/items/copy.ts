@@ -11,6 +11,7 @@ import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { kvInfo } from "@/common/kvInfo";
 import { KOOBOO_ID } from "@/common/constants";
 import { Log } from "@/operation/Log";
+import { newGuid } from "@/kooboo/outsideInterfaces";
 
 export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -43,10 +44,24 @@ export default class CopyItem extends BaseMenuItem {
     let comment = getScopeComnent(comments)!;
     let el = getUnpollutedEl(element)!;
     let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
+    let aroundComments = KoobooComment.getAroundComments(element);
     let cloneElement = element.cloneNode(true) as HTMLElement;
     let guid = setGuid(element.parentElement!);
     let oldValue = element.parentElement!.innerHTML;
-    element.parentElement!.insertBefore(cloneElement, element.nextSibling);
+    if (aroundComments.length > 0) {
+      let { nodes, endNode } = getWrapDom(element, aroundComments[aroundComments.length - 1].uid);
+      for (const node of nodes.reverse()) {
+        let cloned = node.cloneNode(true);
+        if (KoobooComment.isComment(cloned)) {
+          let koobooComment = new KoobooComment(cloned);
+          koobooComment.setValue("uid", koobooComment.uid + "_copy");
+          cloned = koobooComment.ToComment();
+        }
+        element.parentElement!.insertBefore(cloned, endNode!.nextSibling);
+      }
+    } else {
+      element.parentElement!.insertBefore(cloneElement, element.nextSibling);
+    }
 
     if (aroundScopeComment) {
       let { nodes } = getWrapDom(element, aroundScopeComment.source);

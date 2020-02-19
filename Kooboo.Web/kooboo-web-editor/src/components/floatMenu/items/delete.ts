@@ -53,7 +53,15 @@ export default class DeleteItem extends BaseMenuItem {
     } else {
       markDirty(element.parentElement!);
     }
-    element.parentElement!.removeChild(element);
+
+    let aroundComments = KoobooComment.getAroundComments(element);
+    if (aroundComments.length > 0) {
+      let { nodes } = getWrapDom(element, aroundComments[aroundComments.length - 1].uid);
+      nodes.forEach(f => f.parentElement!.removeChild(f));
+    } else {
+      element.parentElement!.removeChild(element);
+    }
+
     var log = [];
     if (aroundScopeComment) {
       log.push(...aroundScopeComment.infos);

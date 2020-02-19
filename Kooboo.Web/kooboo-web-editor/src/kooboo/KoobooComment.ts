@@ -55,6 +55,10 @@ export class KoobooComment {
     if (item) return (item.value = value);
   }
 
+  ToComment() {
+    return new Comment(`#kooboo--${this.infos.map(m => `${m.key}=${m.value}`).join("--")}`);
+  }
+
   static isComment(node: Node) {
     return node.nodeType == Node.COMMENT_NODE && node.nodeValue && node.nodeValue.startsWith("#kooboo");
   }
@@ -83,7 +87,6 @@ export class KoobooComment {
     let skipUid: string[] = [];
 
     while (node) {
-      if (strict && node instanceof HTMLElement) break;
       if (KoobooComment.isComment(node)) {
         var comment = new KoobooComment(node);
         if (KoobooComment.isEndComment(node)) {
@@ -93,6 +96,7 @@ export class KoobooComment {
         }
       }
       node = node.previousSibling!;
+      if (strict && node instanceof HTMLElement) break;
     }
 
     return comments;

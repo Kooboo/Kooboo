@@ -41,7 +41,7 @@ namespace Kooboo.Sites.Render
                 if (options.RequireBindingInfo)
                 {
                     if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
-                    var traceability = new ComponentTrace(value, "lable");
+                    var traceability = new ComponentTrace(value, "label");
                     var bindingTask = new BindingRenderTask(traceability);
                     response.BindingTask.Add(bindingTask);
                     if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();

@@ -55,7 +55,7 @@ export function getPageId() {
   }
 }
 
-export function getWrapDom(el: Node, source: string) {
+export function getWrapDom(el: Node, sourceOrUid: string) {
   let startNode: Node | undefined;
   let uid;
   let endNode: Node | undefined;
@@ -64,7 +64,7 @@ export function getWrapDom(el: Node, source: string) {
   for (const node of previousNodes(el, true, true)) {
     if (KoobooComment.isComment(node)) {
       let comment = new KoobooComment(node);
-      if (comment.source == source && !KoobooComment.isEndComment(node)) {
+      if ((comment.source == sourceOrUid || comment.uid == sourceOrUid) && !KoobooComment.isEndComment(node)) {
         startNode = node;
         uid = comment.uid;
         break;

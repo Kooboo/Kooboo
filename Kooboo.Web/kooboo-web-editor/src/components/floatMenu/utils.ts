@@ -39,6 +39,10 @@ export function getScopeComnent(comments: KoobooComment[]) {
   }
 }
 
+export function getEditableComment(comments: KoobooComment[]) {
+  return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute);
+}
+
 export function hasOperation(operationManager: operationManager) {
   return operationManager.previousRecords.length > 0;
 }

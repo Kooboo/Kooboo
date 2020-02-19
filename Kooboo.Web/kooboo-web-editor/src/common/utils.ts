@@ -1,9 +1,8 @@
-import { getAllElement, isLink } from "@/dom/utils";
+import { getAllElement } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
 import { hover } from "@/dom/events";
-import { TEXT } from "./lang";
 
 export function delay(time: number) {
   return new Promise(rs => {
