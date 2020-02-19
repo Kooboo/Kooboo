@@ -25,7 +25,8 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
         public string ToStringContent(IDictionary<string, string> dic)
         {
             // 第一步：把字典按Key的字母顺序排序
-            var dem = dic.GetEnumerator();
+            IDictionary<string, string> sortedParams = new SortedDictionary<string, string>(dic);
+            IEnumerator<KeyValuePair<string, string>> dem = sortedParams.GetEnumerator();
 
             // 第二步：把所有参数名和参数值串在一起
             var query = new StringBuilder("");
@@ -56,7 +57,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             parameters.Remove("sign");
             parameters.Remove("sign_type");
             var signContent = ToStringContent(parameters);
-            return AlipaySignature.RSACheckContent(signContent, sign, publicKeyPem, charset, "RSA");
+            return AlipaySignature.RSACheckContent(signContent, sign, publicKeyPem, charset, "RSA", true);
         }
 
         public string ToJson(IDictionary<string, string> dic)
@@ -80,12 +81,12 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
                 json = JsonConvert.DeserializeObject<IDictionary<string, object>>(signSourceDate);
                 if (signSourceDate.Contains("sub_code"))
                 {
-                    throw new AliPayException(body);
+                    throw new AliPayException(json["sub_code"].ToString());
                 }
 
                 if (!string.IsNullOrEmpty(sign) && !string.IsNullOrEmpty(signSourceDate))
                 {
-                    CheckResponseSign(sign, body, setting);
+                    CheckResponseSign(sign, signSourceDate, setting);
 
                     if (json["code"].ToString() != "10000")
                     {
@@ -117,8 +118,8 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
                 throw new AliPayException("sign check fail: sign is Empty!");
             }
 
-            var rsaCheckContent = AlipaySignature.RSACheckContent(signSourceDate, sign, setting.PublicKey,
-                setting.Charset, setting.SignType);
+            var rsaCheckContent = AlipaySignature.RSACheckContent(signSourceDate, sign, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlLPFduIFgSUbSLCyHTnvdQvLfU8kR8i/6OSMjnfcoIl0ROMAAdcv7JWD1BzqMTXfvZrmFWj4yuznSqNpdqoL11lQ35EGMZSHntsu5tpCg+9iguhBnTgHn+wr7pYxF9SfJU/6MxYdfArtcyx5FzKLrtpuVkDQZRavIrfoB49NJRXzV4bMPAvhnB3k/O9xwkT1UAh5gbqbaKKYdymInKmstrhQ5kqKCSQey4js/zM14y9SXXyxIHO6BGEGWepmym/2C2BDhMqANnujHZq4bEtsV+aTob5BDA6FcPijMUrlUcFCqParu4c4X0FlhoHsG0vm5owfjpjMsetggmPKR1nzQwIDAQAB",
+                setting.Charset, setting.SignType, false);
 
             if (!rsaCheckContent)
             {
