@@ -159,7 +159,48 @@ var resForm = k.payment.alipayForm.charge(charge);
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            throw new NotImplementedException();
+            PaymentStatusResponse result = new PaymentStatusResponse();
+
+            if (request == null || request.Id == default(Guid) || this.Setting == null)
+            {
+                return result;
+            }
+
+            try
+            {
+                var dic = new AopDictionary();
+                dic.Add("out_trade_no", request.Id.ToString("N"));
+                var response = AlipayApi.Query(dic, this.Setting);
+                var data = new AlipayData();
+                var res = data.FromJson(response, Setting);
+                var trade_state = res["trade_status"];
+                //交易状态：WAIT_BUYER_PAY（交易创建，等待买家付款）、TRADE_CLOSED（未付款交易超时关闭，或支付完成后全额退款）、TRADE_SUCCESS（交易支付成功）、TRADE_FINISHED（交易结束，不可退款）
+
+                if (trade_state != null)
+                {
+                    result.HasResult = true;
+                    var code = trade_state.ToString().ToUpper();
+                    if (code == "TRADE_SUCCESS" || code == "TRADE_FINISHED")
+                    {
+                        result.Status = PaymentStatus.Paid;
+                    }
+                    else if (code == "TRADE_CLOSED")
+                    {
+                        result.Status = PaymentStatus.Cancelled;
+                    }
+                    else if (code == "WAIT_BUYER_PAY")
+                    {
+                        result.Status = PaymentStatus.Pending;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+            }
+
+            return result;
         }
     }
 }

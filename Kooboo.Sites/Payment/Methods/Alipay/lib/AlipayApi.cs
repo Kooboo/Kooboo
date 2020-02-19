@@ -8,7 +8,9 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 {
     public class AlipayApi
     {
+        public const string CHARSET = "charset";
         public const string PayMethod = "alipay.trade.page.pay";
+        public const string ALIPAY_QUERY = "alipay.trade.query";
         /**
         * 跳转支付宝页面直接进行支付
         */
@@ -16,19 +18,37 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
         {
             try
             {
-                Validation(bizContent);
+                PayValidation(bizContent);
                 var data = new AlipayData();
                 var request = RequestBase(setting, PayMethod);
                 request.Add("biz_content", data.ToJson(bizContent));
                 request.Add("notify_url", noticeUrl);
                 request.Add("return_url", returnUrl);
-                var sortDic = data.SortDictionary(request);
-                request = new AopDictionary(sortDic)
-            {
-                { "sign", data.RSASign(sortDic,setting.PrivateKey, setting.Charset,setting.SignType) }
-            };
+                request.Add("sign", data.RSASign(request, setting.PrivateKey, setting.Charset, setting.SignType));
 
                 var body = BuildHtmlRequest(request, "POST", setting);
+
+                return body;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public static string Query(AopDictionary bizContent, AlipayFormSetting setting)
+        {
+            try
+            {
+                QueryValidation(bizContent);
+                var data = new AlipayData();
+                var request = RequestBase(setting, ALIPAY_QUERY);
+                request.Add("biz_content", data.ToJson(bizContent));
+
+                request.Add("sign", data.RSASign(request, setting.PrivateKey, setting.Charset, setting.SignType));
+
+                var body = HttpService.DoPost(setting.ServerUrl + "?" + CHARSET + "=" + setting.Charset, request, setting.Charset);
 
                 return body;
             }
@@ -61,7 +81,15 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
             return sbHtml.ToString();
         }
 
-        private static void Validation(AopDictionary data)
+        private static void QueryValidation(AopDictionary data)
+        {
+            if (!data.ContainsKey("out_trade_no") && data.ContainsKey("trade_no"))
+            {
+                throw new AliPayException("支付宝交易号trade_no和商户订单号out_trade_no不能同时为空！");
+            }
+        }
+
+        private static void PayValidation(AopDictionary data)
         {
             if (!data.ContainsKey("out_trade_no"))
             {
