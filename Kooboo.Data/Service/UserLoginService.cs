@@ -31,8 +31,7 @@ namespace Kooboo.Data.Service
         }
 
         public static Database GlobalDatabase { get; set; }
-
-
+         
         public static Table LastPath { get; set; }
 
         private static List<string> IgnorePath { get; set; }
