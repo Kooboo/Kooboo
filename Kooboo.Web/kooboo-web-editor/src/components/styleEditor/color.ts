@@ -13,13 +13,13 @@ export function createColor(el: HTMLElement, rules: { cssRule: CSSStyleRule }[])
   let colorImportant = getImportant(el, "color", rules);
   let bgPicker = createColorPicker(TEXT.BACKGROUND_COLOR, style.backgroundColor!, e => {
     el.style.setProperty("background-color", e, bgColorImportant);
-    backgroundColorInfos = [new kvInfo("property", "background-color"), kvInfo.value(e), new kvInfo("important", bgColorImportant)];
+    backgroundColorInfos = [kvInfo.property("background-color"), kvInfo.value(e), kvInfo.important(bgColorImportant)];
   });
   container.appendChild(bgPicker);
 
   let frontPicker = createColorPicker(TEXT.COLOR, style.color!, e => {
     el.style.setProperty("color", e, colorImportant);
-    frontColorInfos = [new kvInfo("property", "color"), kvInfo.value(e), new kvInfo("important", colorImportant)];
+    frontColorInfos = [kvInfo.property("color"), kvInfo.value(e), kvInfo.important(colorImportant)];
   });
   container.appendChild(frontPicker);
 

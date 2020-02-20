@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg, isInTable } from "@/dom/utils";
-import { isDynamicContent, setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -41,11 +41,12 @@ export default class ReplaceToImgItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(element);
     let el = getUnpollutedEl(element)!;
     let parent = el == element ? element.parentElement! : el;
-    setGuid(el.parentElement!);
-    let startContent = el.parentElement!.innerHTML;
+    let comments = KoobooComment.getComments(parent);
+    let comment = getScopeComnent(comments)!;
+    let guid = setGuid(parent);
+    let startContent = parent.innerHTML;
     try {
       let style = getComputedStyle(element);
       let width = style.width;
@@ -61,11 +62,8 @@ export default class ReplaceToImgItem extends BaseMenuItem {
       img.style.display = display;
       await createImagePicker(img);
       markDirty(parent!);
-      let guid = setGuid(element.parentElement!);
-      let value = clearKoobooInfo(parent.innerHTML);
-      let comment = getScopeComnent(comments)!;
       let unit = new InnerHtmlUnit(startContent);
-      let log = new Log([...comment.infos, kvInfo.value(value), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
+      let log = new Log([...comment.infos, kvInfo.value(clearKoobooInfo(parent.innerHTML)), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     } catch (error) {

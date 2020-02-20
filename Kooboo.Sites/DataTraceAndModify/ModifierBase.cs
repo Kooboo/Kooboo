@@ -33,7 +33,7 @@ namespace Kooboo.Sites.DataTraceAndModify
 
             return culture;
         }
-       
+
 
         public abstract string Source { get; }
 
@@ -62,6 +62,10 @@ namespace Kooboo.Sites.DataTraceAndModify
         public string Attribute => GetValue("attribute");
 
         public string Id => GetValue("id");
+
+        public string Property => GetValue("property");
+
+        public bool Important => !string.IsNullOrWhiteSpace(GetValue("important"));
 
         internal string GetNewDomBody(string oldDom, Element element)
         {
@@ -97,16 +101,8 @@ namespace Kooboo.Sites.DataTraceAndModify
         private SourceUpdate HandleDomUpdate(Node node, Element element)
         {
             SourceUpdate sourceUpdate;
-            if (string.IsNullOrWhiteSpace(Attribute))
-            {
-                sourceUpdate = new SourceUpdate
-                {
-                    StartIndex = node.location.openTokenEndIndex + 1,
-                    EndIndex = node.location.endTokenStartIndex - 1,
-                    NewValue = Value
-                };
-            }
-            else
+
+            if (!string.IsNullOrWhiteSpace(Attribute))
             {
                 element.setAttribute(Attribute, Value);
                 sourceUpdate = new SourceUpdate
@@ -115,7 +111,50 @@ namespace Kooboo.Sites.DataTraceAndModify
                     EndIndex = node.location.openTokenEndIndex,
                     NewValue = Service.DomService.ReSerializeOpenTag(element)
                 };
+            }
+            else if (!string.IsNullOrWhiteSpace(Property))
+            {
+                var style = element.getAttribute("style");
 
+                var cssDeclar = Dom.CSS.CSSSerializer.deserializeDeclarationBlock(style);
+                var propertise = cssDeclar.item;
+                var exist = propertise.Find(o => o.propertyname.ToLower() == Property.ToLower());
+
+                if (exist == null)
+                {
+                    propertise.Add(new Dom.CSS.CSSDeclaration
+                    {
+                        important = Important,
+                        propertyname = Property,
+                        value = Value
+                    });
+                }
+                else
+                {
+                    exist.value = Value;
+                    exist.important = Important;
+                    propertise.Remove(exist);
+                    propertise.Add(exist);
+                }
+
+                cssDeclar.item = cssDeclar.item.Where(o => !string.IsNullOrWhiteSpace(o.propertyname) && !string.IsNullOrWhiteSpace(o.value)).ToList();
+                var newStyle = Dom.CSS.CSSSerializer.serializeDeclarationBlock(cssDeclar);
+                element.setAttribute("style", newStyle);
+                sourceUpdate = new SourceUpdate
+                {
+                    StartIndex = node.location.openTokenStartIndex,
+                    EndIndex = node.location.openTokenEndIndex,
+                    NewValue = Service.DomService.ReSerializeOpenTag(element)
+                };
+            }
+            else
+            {
+                sourceUpdate = new SourceUpdate
+                {
+                    StartIndex = node.location.openTokenEndIndex + 1,
+                    EndIndex = node.location.endTokenStartIndex - 1,
+                    NewValue = Value
+                };
             }
 
             return sourceUpdate;

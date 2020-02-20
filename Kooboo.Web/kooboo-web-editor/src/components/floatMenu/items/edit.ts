@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { getEditComment, clearContent, getScopeComnent, getEditableComment } from "../utils";
+import { getEditComment, clearContent, getScopeComnent, getEditableComment, isEditable } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -34,6 +34,7 @@ export default class EditItem extends BaseMenuItem {
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (!getUnpollutedEl(element)) return this.setVisiable(false);
     if (isDynamicContent(element)) return this.setVisiable(false);
+    if (!isEditable(element)) return this.setVisiable(false);
   }
 
   click() {

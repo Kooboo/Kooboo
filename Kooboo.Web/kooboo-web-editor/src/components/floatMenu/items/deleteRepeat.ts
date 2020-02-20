@@ -31,7 +31,7 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     let { nodes, startNode } = getWrapDom(element, "repeatitem");
-    let comments = nodes.filter(f => KoobooComment.isComment(f) && !KoobooComment.isEndComment(f)).map(m => new KoobooComment(m));
+    let comments = KoobooComment.getInnerComments(nodes);
     if (!startNode || !getRepeatSourceComment(comments)) return this.setVisiable(false);
   }
 
@@ -40,7 +40,7 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     this.parentMenu.hidden();
 
     let { nodes, startNode } = getWrapDom(element, "repeatitem");
-    let comments = nodes.filter(f => KoobooComment.isComment(f) && !KoobooComment.isEndComment(f)).map(m => new KoobooComment(m));
+    let comments = KoobooComment.getInnerComments(nodes);
     let repeatSourceComment = getRepeatSourceComment(comments)!;
     let guidComment = getGuidComment(repeatSourceComment.id);
     let temp = createDiv();

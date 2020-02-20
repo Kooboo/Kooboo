@@ -16,7 +16,7 @@ export function createSize(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) 
   width.setContent(style.width!);
   width.setInputHandler(content => {
     el.style.setProperty("width", (content.target! as HTMLInputElement).value, widthImportant);
-    widthInfos = [kvInfo.property("width"), kvInfo.value(el.style.width!), new kvInfo("important", widthImportant)];
+    widthInfos = [kvInfo.property("width"), kvInfo.value(el.style.width!), kvInfo.important(widthImportant)];
   });
   container.appendChild(width.input);
 
@@ -25,7 +25,7 @@ export function createSize(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) 
   height.setContent(style.height!);
   height.setInputHandler(content => {
     el.style.setProperty("height", (content.target! as HTMLInputElement).value, heightImportant);
-    heightInfos = [kvInfo.property("height"), kvInfo.value(el.style.height!), new kvInfo("important", heightImportant)];
+    heightInfos = [kvInfo.property("height"), kvInfo.value(el.style.height!), kvInfo.important(heightImportant)];
   });
   container.appendChild(height.input);
 

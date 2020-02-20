@@ -2,7 +2,7 @@ import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg, isInTable } from "@/dom/utils";
 import { getScopeComnent } from "../utils";
-import { setGuid, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, getUnpollutedEl, clearKoobooInfo } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
@@ -42,13 +42,16 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     let el = getUnpollutedEl(element)!;
     let parent = el == element ? el.parentElement! : el;
-    let startContent = el.parentElement!.innerHTML;
+    let comments = KoobooComment.getComments(parent!);
+    let comment = getScopeComnent(comments)!;
+    let startContent = parent.innerHTML;
     let text = createP();
     let style = getComputedStyle(element);
     let width = style.width;
     let widthImportant = element.style.getPropertyPriority("width");
     let height = style.height;
     let heightImportant = element.style.getPropertyPriority("height");
+    let guid = setGuid(parent);
     element.parentElement!.replaceChild(text, element);
     text.setAttribute(KOOBOO_ID, koobooId!);
     text.setAttribute(KOOBOO_DIRTY, "");
@@ -59,17 +62,14 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     emitSelectedEvent();
 
     const onSave = () => {
-      let guid = setGuid(element.parentElement!);
-      let comments = KoobooComment.getComments(parent!);
-      let comment = getScopeComnent(comments)!;
       let unit = new InnerHtmlUnit(startContent);
-      let log = new Log([...comment.infos, kvInfo.value(parent.innerHTML), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
+      let log = new Log([...comment.infos, kvInfo.value(clearKoobooInfo(parent.innerHTML)), kvInfo.koobooId(parent.getAttribute(KOOBOO_ID))]);
       let operation = new operationRecord([unit], [log], guid);
       context.operationManager.add(operation);
     };
 
     const onCancel = () => {
-      element.parentElement!.innerHTML = startContent;
+      parent.innerHTML = startContent;
     };
 
     await setInlineEditor({ selector: text, onSave, onCancel });

@@ -18,7 +18,7 @@ export function createFont(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) 
   size.setContent(style.fontSize!);
   size.setInputHandler(content => {
     el.style.setProperty("font-size", (content.target! as HTMLInputElement).value, sizeImportant);
-    fontSizeInfos = [kvInfo.property("font-size"), kvInfo.value(el.style.fontSize!), new kvInfo("important", sizeImportant)];
+    fontSizeInfos = [kvInfo.property("font-size"), kvInfo.value(el.style.fontSize!), kvInfo.important(sizeImportant)];
   });
   container.appendChild(size.input);
 
@@ -27,7 +27,7 @@ export function createFont(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) 
   weight.setContent(style.fontWeight!);
   weight.setInputHandler(content => {
     el.style.setProperty("font-weight", (content.target! as HTMLInputElement).value, weightImportant);
-    fontWeightInfos = [kvInfo.property("font-weight"), kvInfo.value(el.style.fontWeight!), new kvInfo("important", weightImportant)];
+    fontWeightInfos = [kvInfo.property("font-weight"), kvInfo.value(el.style.fontWeight!), kvInfo.important(weightImportant)];
   });
   container.appendChild(weight.input);
 
@@ -35,7 +35,7 @@ export function createFont(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) 
   family.setContent(style.fontFamily!);
   family.setInputHandler(content => {
     el.style.setProperty("font-family", (content.target! as HTMLInputElement).value, familyImportant);
-    fontFamilyInfos = [kvInfo.property("font-family"), kvInfo.value(el.style.fontFamily!), new kvInfo("important", familyImportant)];
+    fontFamilyInfos = [kvInfo.property("font-family"), kvInfo.value(el.style.fontFamily!), kvInfo.important(familyImportant)];
   });
   container.appendChild(family.input);
 

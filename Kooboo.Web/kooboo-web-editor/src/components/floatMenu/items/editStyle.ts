@@ -48,10 +48,12 @@ export default class EditStyleItem extends BaseMenuItem {
       let guid = setGuid(element);
       let unit = new AttributeUnit(startContent!, "style");
       if (logs.length == 0) return;
+
       if (element != el) {
         let infos = [...comment.infos, kvInfo.value(clearKoobooInfo(el!.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))];
         logs = [new Log(infos)];
       }
+
       let record = new operationRecord([unit], logs, guid);
       context.operationManager.add(record);
     } catch (error) {

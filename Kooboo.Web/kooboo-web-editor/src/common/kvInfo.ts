@@ -36,4 +36,8 @@ export class kvInfo {
   static get copy() {
     return new kvInfo("action", "copy");
   }
+
+  static get style() {
+    return this.source("style");
+  }
 }

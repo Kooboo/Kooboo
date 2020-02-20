@@ -1,5 +1,6 @@
 import { KOOBOO_GUID } from "@/common/constants";
 import { kvInfo } from "@/common/kvInfo";
+import { getAllNode } from "@/dom/utils";
 
 export class KoobooComment {
   infos!: kvInfo[];
@@ -109,5 +110,19 @@ export class KoobooComment {
   static getAroundScopeComments(el: HTMLElement) {
     let aroundComments = KoobooComment.getAroundComments(el, false);
     return aroundComments.find(f => f.scope);
+  }
+
+  static getInnerComments(nodes: Node[]) {
+    const comments = [];
+
+    for (const node of nodes) {
+      for (const i of getAllNode(node, true)) {
+        if (this.isComment(i) && !this.isEndComment(i)) {
+          comments.push(new KoobooComment(i));
+        }
+      }
+    }
+
+    return comments;
   }
 }

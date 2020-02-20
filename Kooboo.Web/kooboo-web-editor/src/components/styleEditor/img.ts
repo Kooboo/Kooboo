@@ -11,7 +11,7 @@ export function createImg(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) {
   const changeImg = (path: string) => {
     let stylePath = path == "none" ? path : `url('${path}')`;
     el.style.setProperty("background-image", stylePath, important);
-    infos = [new kvInfo("property", "background-image"), kvInfo.value(stylePath), new kvInfo("important", important)];
+    infos = [kvInfo.property("background-image"), kvInfo.value(stylePath), kvInfo.important(important)];
     setImage(path);
   };
 
