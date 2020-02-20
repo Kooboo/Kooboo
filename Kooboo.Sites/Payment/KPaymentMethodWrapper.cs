@@ -3,8 +3,7 @@ using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions; 
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Attributes;
-using Kooboo.Sites.Payment.Models;
+using Kooboo.Data.Attributes; 
 using Kooboo.Sites.Payment.Response;
 
 namespace Kooboo.Sites.Payment
