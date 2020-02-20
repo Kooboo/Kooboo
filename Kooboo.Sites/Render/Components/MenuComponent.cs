@@ -70,10 +70,10 @@ namespace Kooboo.Sites.Render.Components
 
             frontcontext.AddLogEntry("menu", menu.Name, logstart, 200);
 
-            if (context.Request.Channel == RequestChannel.InlineDesign)
-            {
-                returnstring = DomService.ApplyKoobooId(returnstring);
-            }
+            //if (context.Request.Channel == RequestChannel.InlineDesign)
+            //{
+            //    returnstring = DomService.ApplyKoobooId(returnstring);
+            //}
 
             return Task.FromResult(returnstring);
         }

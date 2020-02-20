@@ -15,7 +15,7 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
             var repo = context.WebSite.SiteDb().Labels;
             var label = repo.GetByNameOrId(Id);
             if (label == null || Value == null) return;
-            label.SetValue(context.Culture, Value);
+            label.SetValue(GetCulture(context), Value);
             repo.AddOrUpdate(label, context.User.Id);
         }
     }

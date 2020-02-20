@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeatItemId } from "../utils";
+import { getRepeatSourceComment } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
@@ -26,11 +26,13 @@ export default class DeleteRepeatItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
-    if (!getRepeatItemId(comments)) return this.setVisiable(false);
+    let { nodes, startNode } = getWrapDom(element, "repeatitem");
+    let comments = nodes.filter(f => KoobooComment.isComment(f) && !KoobooComment.isEndComment(f)).map(m => new KoobooComment(m));
+    if (!startNode || !getRepeatSourceComment(comments)) return this.setVisiable(false);
   }
 
   click() {
@@ -38,21 +40,17 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     this.parentMenu.hidden();
 
     let { nodes, startNode } = getWrapDom(element, "repeatitem");
-    if (!nodes || nodes.length == 0 || !startNode) return;
-    let comments = KoobooComment.getComments(element);
-    let comment = comments.find(f => f.source == "repeatitem")!;
-    let id = getRepeatItemId(comments)!;
-    let guidComment = getGuidComment(id);
+    let comments = nodes.filter(f => KoobooComment.isComment(f) && !KoobooComment.isEndComment(f)).map(m => new KoobooComment(m));
+    let repeatSourceComment = getRepeatSourceComment(comments)!;
+    let guidComment = getGuidComment(repeatSourceComment.id);
     let temp = createDiv();
     startNode!.parentNode!.insertBefore(temp, startNode!);
     nodes.forEach(i => temp.appendChild(i));
     let oldValue = temp.innerHTML;
     temp.outerHTML = guidComment;
-
     let units = [new DeleteRepeatUnit(oldValue)];
-    let log = new Log([...comment.infos, kvInfo.value(id), kvInfo.delete]);
-
-    let operation = new operationRecord(units, [log], id);
+    let log = new Log([...repeatSourceComment.infos, kvInfo.delete]);
+    let operation = new operationRecord(units, [log], repeatSourceComment.id);
     context.operationManager.add(operation);
   }
 }

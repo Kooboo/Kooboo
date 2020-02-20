@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { getScopeComnent } from "../utils";
+import { getScopeComnent, getRepeatSourceComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -33,6 +33,7 @@ export default class DeleteItem extends BaseMenuItem {
     let el = getUnpollutedEl(element);
     if (!el && !KoobooComment.getAroundScopeComments(element)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (getRepeatSourceComment(comments)) return this.setVisiable(false);
     if (el && isDynamicContent(el)) return this.setVisiable(false);
   }
 

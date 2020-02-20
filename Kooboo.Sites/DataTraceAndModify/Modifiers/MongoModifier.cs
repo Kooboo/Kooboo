@@ -1,6 +1,7 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using KScript;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,36 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
         public string Path => GetValue("path");
         public string Table => GetValue("table");
 
+        public string NewId => GetValue("new");
+
         public override void Modify(RenderContext context)
         {
+            if (Id == null) return;
             var kInstance = new k(context);
             var table = kInstance.Mongo.GetTable(Table) as MongoTable;
+
+            switch (Action)
+            {
+                case ActionType.update:
+                    Update(table);
+                    break;
+                case ActionType.delete:
+                    table.delete(Id);
+                    break;
+                case ActionType.copy:
+                    if (NewId == null) return;
+                    var entity = table.get(Id);
+                    if (entity == null) return;
+                    entity.SetValue("_id", ObjectId.Parse(NewId));
+                    table.add(entity);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Update(MongoTable table)
+        {
             var entity = table.get(Id);
             if (entity == null) return;
             var stacks = Path.Split('.');

@@ -14,18 +14,19 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 
         public override void Modify(RenderContext context)
         {
+            var culture = GetCulture(context);
             var repo = context.WebSite.SiteDb().HtmlBlocks;
             if (repo == null) return;
             var htmlblock = repo.GetByNameOrId(Id) as HtmlBlock;
             if (htmlblock == null) return;
-            var dom = htmlblock.GetValue(context.Culture).ToString();
+            var dom = htmlblock.GetValue(culture).ToString();
             var doc = DomParser.CreateDom(dom);
             var node = Service.DomService.GetElementByKoobooId(doc, KoobooId);
             if (node == null) return;
             var element = node as Element;
             if (element == null) return;
             var newBody = GetNewDomBody(dom, element);
-            htmlblock.SetValue(context.Culture, newBody);
+            htmlblock.SetValue(culture, newBody);
             repo.AddOrUpdate(htmlblock, context.User.Id);
         }
     }

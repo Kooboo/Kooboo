@@ -33,6 +33,10 @@ export class KoobooComment {
     return this.getValue("uid")!;
   }
 
+  get id() {
+    return this.getValue("id")!;
+  }
+
   get path() {
     return this.getValue("path")!;
   }

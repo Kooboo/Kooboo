@@ -22,6 +22,19 @@ namespace Kooboo.Sites.DataTraceAndModify
             copy
         }
 
+        internal string GetCulture(RenderContext context)
+        {
+            string culture = context.Culture;
+
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = context.WebSite.DefaultCulture;
+            }
+
+            return culture;
+        }
+       
+
         public abstract string Source { get; }
 
         public ActionType Action

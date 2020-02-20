@@ -19,15 +19,14 @@ export function getEditComment(comments: KoobooComment[]) {
   }
 }
 
-export function getRepeatItemId(comments: KoobooComment[]) {
+export function getRepeatSourceComment(comments: KoobooComment[], source: string | null = null) {
   var repeatComment = comments.find(f => f.source == "repeatitem");
   if (!repeatComment) return;
   for (const commnet of comments) {
-    var id = commnet.getValue("id");
-    if (id) {
+    if (commnet.id && (source ? commnet.source == source : true)) {
       let fullpathComment = commnet.getValue("fullpath");
       let alias = repeatComment.getValue("alias");
-      if (fullpathComment && alias && fullpathComment.startsWith(alias)) return id;
+      if (fullpathComment && alias && fullpathComment.startsWith(alias)) return commnet;
     }
   }
 }
@@ -45,17 +44,6 @@ export function getEditableComment(comments: KoobooComment[]) {
 
 export function hasOperation(operationManager: operationManager) {
   return operationManager.previousRecords.length > 0;
-}
-
-export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
-  if (KoobooComment.isComment(node) && node.nodeValue!.indexOf(oldGuid) > -1) {
-    node.nodeValue = node.nodeValue!.replace(/--id='.{36,50}?'/, `--id='${guid}'`);
-  }
-  if (node instanceof HTMLElement) {
-    for (const iterator of getAllNode(node)) {
-      changeNameOrId(iterator, guid, oldGuid);
-    }
-  }
 }
 
 export async function updateDomImage(element: HTMLImageElement) {
