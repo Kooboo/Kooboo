@@ -37,8 +37,6 @@ namespace Kooboo.Sites.Payment.Methods
 
         public IPaymentResponse Charge(PaymentRequest request)
         {
-            var check = checkStatus(request);
-
             PaidResponse res = new PaidResponse();
             if (this.Setting == null)
             {
