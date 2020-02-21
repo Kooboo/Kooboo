@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 
-namespace Kooboo.Sites.InlineEditor.Converter
+namespace Kooboo.Sites.Converter
 {
     public class ConvertContext
     {

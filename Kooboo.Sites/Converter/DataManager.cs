@@ -9,7 +9,7 @@ using Kooboo.Sites.Repository;
 using Kooboo.Sites.Models;
 using Kooboo.Data.Definition;
 
-namespace Kooboo.Sites.InlineEditor.Converter
+namespace Kooboo.Sites.Converter
 {
     public class DataManager
     { 

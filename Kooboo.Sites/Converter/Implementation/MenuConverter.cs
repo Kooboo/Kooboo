@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Kooboo.Sites.InlineEditor.Converter
+namespace Kooboo.Sites.Converter
 {
     public class MenuConverter : IConverter, IContinueConverter
     {

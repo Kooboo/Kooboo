@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.InlineEditor
+namespace Kooboo.Sites.DataTraceAndModify
 { 
     public class CssSelectorComparer
     {

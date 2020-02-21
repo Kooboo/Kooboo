@@ -6,7 +6,7 @@ using Kooboo.Sites.Models;
 using Newtonsoft.Json.Linq;
  
 
-namespace Kooboo.Sites.InlineEditor.Converter
+namespace Kooboo.Sites.Converter
 {
     public class HtmlBlockConverter : IConverter
     { 

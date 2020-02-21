@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.InlineEditor.Converter
+namespace Kooboo.Sites.Converter
 {
   public  interface IConverter
     {

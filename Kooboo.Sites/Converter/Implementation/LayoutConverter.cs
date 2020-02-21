@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Sites.Models; 
 
-namespace Kooboo.Sites.InlineEditor.Converter
+namespace Kooboo.Sites.Converter
 {
     public class LayoutConverter
     {

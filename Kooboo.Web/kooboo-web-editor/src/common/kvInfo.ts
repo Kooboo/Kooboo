@@ -22,7 +22,7 @@ export class kvInfo {
   }
 
   static mediaRuleList(value: string | null) {
-    return new kvInfo("mediaruleList", value);
+    return new kvInfo("mediarulelist", value);
   }
 
   static source(value: string | null) {

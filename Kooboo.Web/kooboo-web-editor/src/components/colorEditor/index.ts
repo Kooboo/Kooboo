@@ -36,8 +36,7 @@ export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobo
     let logs: Log[] = [];
     for (const getter of logGetters) {
       for (const infos of getter()) {
-        let log = [...infos, ...comment.infos];
-        logs.push(new Log(log));
+        logs.push(new Log([...infos, ...comment.infos]));
       }
     }
     if (logs.length != 0) {

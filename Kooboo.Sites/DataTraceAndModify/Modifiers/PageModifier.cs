@@ -1,5 +1,7 @@
-﻿using Kooboo.Data.Context;
+﻿using dotless.Core.Parser.Tree;
+using Kooboo.Data.Context;
 using Kooboo.Dom;
+using Kooboo.Dom.CSS;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using System;
@@ -14,25 +16,17 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
     {
         public override string Source => "page";
 
-        public override void Modify(RenderContext context)
+        internal override void UpdateSiteObject(RenderContext context)
         {
-            if (Id == null || KoobooId == null) return;
-            var repo = context.WebSite.SiteDb().Pages;
-            if (repo == null) return;
-            var page = repo.GetByNameOrId(Id) as Page;
-            if (page == null) return;
-            var doc = DomParser.CreateDom(page.Body);
-            var node = Service.DomService.GetElementByKoobooId(doc, KoobooId);
-            if (node == null) return;
-            var element = node as Element;
-            if (element == null) return;
-            page.Body = GetNewDomBody(page.Body, element);
-            repo.AddOrUpdate(page, context.User.Id);
+            var repo = GetRepo(context);
+            var domObject = GetDomObject(repo);
+            var element = GetElement(domObject);
+            HandleUpdate(context, repo, domObject, element);
 
             Task.Run(() =>
             {
                 var otherPages = context.WebSite.SiteDb().Pages.All()
-               .Where(o => o.Id != page.Id && o.HasLayout == false)
+               .Where(o => o.Id != domObject.Id && o.HasLayout == false)
                .ToList();
 
                 foreach (var otherPage in otherPages)
@@ -41,11 +35,16 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 
                     if (sameBlock != null)
                     {
-                        otherPage.Body = GetNewDomBody(otherPage.Body, sameBlock);
-                        repo.AddOrUpdate(otherPage, context.User.Id);
+                        HandleUpdate(context, repo, otherPage, sameBlock);
                     }
                 }
             });
         }
+
+        public override void Modify(RenderContext context)
+        {
+            UpdateSiteObject(context);
+        }
+
     }
 }
