@@ -201,16 +201,9 @@ namespace Kooboo.Data.Service
             user.CurrentOrgName = user.UserName;
             user.CurrentOrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(user.UserName);
 
-            if (!string.IsNullOrWhiteSpace(AppSettings.CmsLang))
-            {
-                user.Language = AppSettings.CmsLang;
-            }
-            else
-            {
-                user.Language = "en";
-            }
-
-            user.PasswordHash = System.Guid.NewGuid();  // Fake. 
+            user.Language = AppSettings.CmsLang;
+             
+            user.PasswordHash = System.Guid.NewGuid(); //Fake. 
 
             return user;
         }

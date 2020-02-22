@@ -23,15 +23,8 @@ namespace Kooboo.Data.Language
             //sep[4] = "=";
             LangSep = sep;
 
-            if (string.IsNullOrEmpty(AppSettings.CmsLang))
-            {
-                SystemLangCode = "en";
-            }
-            else
-            {
-                SystemLangCode = AppSettings.CmsLang.ToLower();
-            }
-
+            SystemLangCode = AppSettings.CmsLang.ToLower();
+             
             LangFiles = getLangFiles();
 
             CmsLangs = initcmsLangs();

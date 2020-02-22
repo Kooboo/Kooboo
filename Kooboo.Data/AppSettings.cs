@@ -27,6 +27,8 @@ namespace Kooboo.Data
             RootPath = TryRootPath();
             IsOnlineServer = GetBool("IsOnlineServer");
 
+            CmsLang = ConfigurationManager.AppSettings.Get("CmsLang");
+
             string quotavalue = ConfigurationManager.AppSettings.Get("QuotaControl");
             if (string.IsNullOrEmpty(quotavalue))
             {
@@ -108,8 +110,7 @@ namespace Kooboo.Data
                 }
             }
         }
-
-
+         
         public static bool QuotaControl { get; set; }
 
 
@@ -267,11 +268,23 @@ namespace Kooboo.Data
             get; set;
         }
 
+        private static string _cmslang; 
         public static string CmsLang
         {
             get
             {
-                return ConfigurationManager.AppSettings.Get("CmsLang");
+                if(string.IsNullOrWhiteSpace(_cmslang))
+                {
+                    return "en"; 
+                }
+                else
+                {
+                    return _cmslang; 
+                }
+            }
+            set
+            {
+                _cmslang = value; 
             }
         }
 
