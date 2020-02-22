@@ -34,8 +34,7 @@ namespace Kooboo.Data
             }
             else { QuotaControl = GetBool("QuotaControl"); }
 
-            Global = new GlobalInfo();
-            Global.IsOnlineServer = GetBool("IsOnlineServer");
+            Global = new GlobalInfo(); 
             Global.EnableLog = GetBool("Log");
 
             Global.LogPath = System.IO.Path.Combine(RootPath, "logs");
@@ -711,8 +710,7 @@ namespace Kooboo.Data
         public static GlobalInfo Global { get; set; }
 
         public class GlobalInfo
-        {
-            public bool IsOnlineServer { get; set; }
+        { 
 
             public bool EnableLog { get; set; }
 

@@ -173,7 +173,7 @@ namespace Kooboo.Web.Api.Implementation
 
             Data.GlobalDb.WebSites.UpdateBoolColumn(call.Context.WebSite.Id, o => o.EnableCluster, model.EnableCluster);
 
-            if (Data.AppSettings.Global.IsOnlineServer)
+            if (Data.AppSettings.IsOnlineServer)
             {
                 // check and update the SiteInfo of EnableCluster.  
                 var siteid = call.GetValue<Guid>("SiteId");
