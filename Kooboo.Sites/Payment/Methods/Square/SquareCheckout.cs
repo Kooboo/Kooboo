@@ -1,4 +1,6 @@
 ﻿using Kooboo.Data.Context;
+using Kooboo.Lib.Helper;
+using Kooboo.Sites.Payment.Methods.Square;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
@@ -78,6 +80,11 @@ namespace Kooboo.Sites.Payment.Methods
             result = GetPaidStatus(result, deserializeResult.Orders[0].State);
 
             return result;
+        }
+
+        public PaymentCallback Notify(RenderContext context)
+        {
+            return SquareCommon.ProcessNotify(context);
         }
 
         private static PaymentStatusResponse GetPaidStatus(PaymentStatusResponse result, string orderStatus)
