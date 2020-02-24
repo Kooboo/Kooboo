@@ -13,6 +13,7 @@ namespace Kooboo.Sites.Payment.Response
         public RedirectResponse(string redirectUrl, Guid requestId)
         {
             RedirectUrl = redirectUrl;
+            this.requestId = requestId;
             this.Type = EnumResponseType.redirect; 
         }
           
