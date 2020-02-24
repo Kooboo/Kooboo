@@ -3,6 +3,7 @@
 using Kooboo.Data;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Scripting.Global.Database;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.ComponentModel;
 
 namespace KScript
 {
-    public class kKeyValue : System.Collections.Generic.IDictionary<string, string>
+    public class kKeyValue : IDictionary<string, object>
     {
         private RenderContext context { get; set; }
 
@@ -29,20 +30,20 @@ namespace KScript
             }
         }
 
-        public ICollection<string> Values
+        public ICollection<object> Values
         {
             get
             {
-                List<string> result = new List<string>();
+                var result = new List<object>();
 
                 var all = this.table.All();
-                List<string> keys = new List<string>();
+                var keys = new List<string>();
                 foreach (var item in all)
                 {
                     var value = item["value"];
                     if (value != null)
                     {
-                        result.Add(value.ToString());
+                        result.Add(value);
                     }
                     else
                     {
@@ -97,7 +98,7 @@ namespace KScript
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public string this[string key]
+        public object this[string key]
         {
             get
             {
@@ -105,7 +106,7 @@ namespace KScript
             }
             set
             {
-                set(key, value);
+                set(key, value.ToString());
             }
         }
 
@@ -118,11 +119,11 @@ namespace KScript
     var value = k.keyValue.get(""key"");
     // or
     var value = k.keyValue.key;")]
-        public void set(string key, string value)
+        public void set(string key, object value)
         {
             if (value != null)
             {
-                var bytes = System.Text.Encoding.UTF8.GetBytes(value);
+                var bytes = System.Text.Encoding.UTF8.GetBytes(value.ToString());
                 if (bytes.Length > this.MaxValueLen)
                 {
                     throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Maximun value length reached", this.context));
@@ -156,7 +157,7 @@ namespace KScript
     var value = k.keyValue.get(""key"");
     // or
     var value = k.keyValue.key;")]
-        public string get(string key)
+        public KeyValueObject get(string key)
         {
             if (!string.IsNullOrWhiteSpace(key))
             {
@@ -167,7 +168,7 @@ namespace KScript
                     var result = value["value"];
                     if (result != null)
                     {
-                        return result.ToString();
+                        return new KeyValueObject(key, result.ToString());
                     }
                 }
             }
@@ -193,9 +194,9 @@ namespace KScript
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public void Add(string key, string value)
+        public void Add(string key, object value)
         {
-            set(key, value);
+            set(key, value?.ToString());
         }
 
         public bool Remove(string key)
@@ -212,7 +213,7 @@ namespace KScript
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public bool TryGetValue(string key, out string value)
+        public bool TryGetValue(string key, out object value)
         {
             var dbvalue = this.get(key);
             if (dbvalue != null)
@@ -226,9 +227,9 @@ namespace KScript
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public void Add(KeyValuePair<string, string> item)
+        public void Add(KeyValuePair<string, object> item)
         {
-            set(item.Key, item.Value);
+            set(item.Key, item.Value?.ToString());
         }
 
         [Kooboo.Attributes.SummaryIgnore]
@@ -240,7 +241,7 @@ namespace KScript
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public bool Contains(KeyValuePair<string, string> item)
+        public bool Contains(KeyValuePair<string, object> item)
         {
             var value = this.get(item.Key);
             return value != null && value == item.Value;
@@ -248,23 +249,23 @@ namespace KScript
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public bool Remove(KeyValuePair<string, string> item)
+        public bool Remove(KeyValuePair<string, object> item)
         {
             return Remove(item.Key);
         }
 
         [Kooboo.Attributes.SummaryIgnore]
         [KIgnore]
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            Dictionary<string, string> allvalues = new Dictionary<string, string>();
+            var allvalues = new Dictionary<string, object>();
 
             foreach (var item in this.Keys)
             {
