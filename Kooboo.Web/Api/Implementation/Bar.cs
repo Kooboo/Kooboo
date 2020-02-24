@@ -183,7 +183,7 @@ namespace Kooboo.Web.Api.Implementation
              {
                 new MenuItem { Name =Hardcoded.GetValue("Domains", call.Context), Icon = "icon fa fa-at", Url = AdminUrl("Domains") },
                 new MenuItem { Name = Hardcoded.GetValue("SiteBindings", call.Context), Icon = "icon fa fa-link", Url = AdminUrl("Domains/SiteBindings") },
-                new MenuItem { Name = Hardcoded.GetValue("SiteMirror", call.Context), Icon = "icon fa fa-sitemap", Url = AdminUrl("Domains/SiteMirror") },
+                //new MenuItem { Name = Hardcoded.GetValue("SiteMirror", call.Context), Icon = "icon fa fa-sitemap", Url = AdminUrl("Domains/SiteMirror") },
 
              }.ToList();
 

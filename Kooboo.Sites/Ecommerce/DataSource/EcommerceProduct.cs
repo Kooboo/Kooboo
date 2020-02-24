@@ -443,8 +443,7 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //    //        Id = Lib.Security.Hash.ComputeGuid(UserKey);
     //    //    }
     //    //    return ByCategoryId(Id, FolderId, Filters, PageSize, PageNumber, SortField, IsAscending);
-    //    //}
-
+    //    //} 
 
     //    //private void SetSortField(ref string sortField, List<ContentProperty> props)
     //    //{
@@ -456,11 +455,6 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //    //            sortField = SystemFields.Sequence.Name.ToLower();
     //    //        }
     //    //    }
-    //    //}
-
-
-
-    //}
-
-     
+    //    //} 
+    //} 
 }

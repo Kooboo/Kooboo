@@ -16,14 +16,18 @@ namespace Kooboo.Data.Infrastructure
         private static object _locker = new object();
 
         public static IInfrastructure instance
-        {
-
+        { 
             get
             {
                 if (_instance == null)
                 {
                     lock (_locker)
-                    {
+                    { 
+                        if (_instance == null)
+                        {
+                            _instance = Lib.IOC.Service.GetSingleTon<IInfrastructure>(true);
+                        }
+
                         if (_instance == null)
                         {
                             _instance = new LocalInfra(); 
@@ -35,8 +39,7 @@ namespace Kooboo.Data.Infrastructure
             set
             {
                 _instance = value;
-            }
-
+            } 
         }
                                                 
         public static bool Test(Guid OrganizationId, InfraType InfraType, long amount)

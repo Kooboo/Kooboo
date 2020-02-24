@@ -19,7 +19,7 @@
   <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file</key>
   <key id="Adding a domain to your account">Adding a domain to your account</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">Use below DNS server, all Dns records will be created automatically for you.</key>
-  <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.</key>
+  <key id="Or create your domain  wildcard CNAME record to below domain.">Or create your domain  wildcard CNAME record to below domain.</key>
   <key id="Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP">Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP</key>
   <key id="Domain">Domain</key>
   <key id="kooboolocal.com">kooboolocal.com</key>
@@ -948,7 +948,6 @@
   <key id="Recharge amount">Recharge amount</key>
   <key id="Customize">Customize</key>
   <key id="large than 0.01">large than 0.01</key>
-  <key id="Paied">Paied</key>
   <key id="Order date">Order date</key>
   <key id="coupon">Coupon</key>
   <key id="Downloads">Downloads</key>
@@ -1140,7 +1139,6 @@
   <key id="Domain must use Kooboo DNS server">Domain must use Kooboo DNS server</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">Old and New Password are the same</key>
-  <key id="is in use">is in use</key>
   <key id="Invalid coupon code">Invalid coupon code</key>
   <key id="Bandwidth">Bandwidth</key>
   <key id="Email sending credits">Email sending credits</key>
@@ -1152,6 +1150,7 @@
   <key id="port in use">port in use</key>
   <key id="Domain does not owned by current user">Domain does not owned by current user</key>
   <key id="Your certificate already exists">Your certificate already exists</key>
+  <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">Your ssl has been generated</key>
   <key id="Unexpected error">Unexpected error</key>
   <key id="Target Url is Protected">Target Url is Protected</key>
@@ -1220,6 +1219,14 @@
   <key id="image size">Image Size</key>
   <key id="Missing images">Missing images</key>
   <key id="missing image">missing image</key>
+  <key id="ByProductCategory">ByProductCategory</key>
+  <key id="ByTotalAmount">ByTotalAmount</key>
+  <key id="Username or email address already exists">Username or email address already exists</key>
+  <key id="Payment Method not found">Payment Method not found</key>
+  <key id="currency not supported by payment method">currency not supported by payment method</key>
+  <key id="alipay">alipay</key>
+  <key id="Paypal">Paypal</key>
+  <key id="wechat">Wechat</key>
   <key id="HtmlBlock">HtmlBlock</key>
   <key id="You have reached the max loop limitation in your account">You have reached the max loop limitation in your account</key>
   <key id="Does not support index on date time column">Does not support index on date time column</key>
@@ -1308,8 +1315,6 @@
   <key id="Emails">Emails</key>
   <key id="Visitor">Visitor</key>
   <key id="Resource">Resource</key>
-  <key id="Paypal">Paypal</key>
-  <key id="wechat">Wechat</key>
   <key id="Api method Not Found">Api method Not Found</key>
   <key id="Unauthorized access">Unauthorized access</key>
   <key id="User or website not valid">User or website not valid</key>
@@ -1318,4 +1323,5 @@
   <key id="required model type not provided">required model type not provided</key>
   <key id="Require parameter not found">Require parameter not found</key>
   <key id="Max number of sites has been reached, require service level upgrade">Max number of sites has been reached, require service level upgrade</key>
+  <key id="is in use">is in use</key>
 </Lang>
