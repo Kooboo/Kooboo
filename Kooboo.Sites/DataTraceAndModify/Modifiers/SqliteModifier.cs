@@ -1,17 +1,18 @@
 ﻿using Kooboo.Data.Context;
+using KScript;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    public class SqliteModifier : ModifierBase
+    public class SqliteModifier : DataBaseModifier
     {
         public override string Source => "sqlite";
 
-        public override void Modify(RenderContext context)
+        internal override ITable GetTable(k kInstance)
         {
-            throw new NotImplementedException();
+            return kInstance.Sqlite.GetTable(Table);
         }
     }
 }

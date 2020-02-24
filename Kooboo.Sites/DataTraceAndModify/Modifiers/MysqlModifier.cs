@@ -1,17 +1,16 @@
 ﻿using Kooboo.Data.Context;
+using KScript;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    public class MysqlModifier : ModifierBase
+    public class MysqlModifier : DataBaseModifier
     {
         public override string Source => "mysql";
 
-        public override void Modify(RenderContext context)
+        internal override ITable GetTable(k kInstance)
         {
-            throw new NotImplementedException();
+            return kInstance.Mysql.GetTable(Table);
         }
     }
 }

@@ -1,17 +1,18 @@
 ﻿using Kooboo.Data.Context;
+using KScript;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    public class SqlserverModifier : ModifierBase
+    public class SqlserverModifier : DataBaseModifier
     {
         public override string Source => "sqlserver";
 
-        public override void Modify(RenderContext context)
+        internal override ITable GetTable(k kInstance)
         {
-            throw new NotImplementedException();
+            return kInstance.SqlServer.GetTable(Table);
         }
     }
 }
