@@ -45,7 +45,7 @@ namespace Kooboo.Sites.Payment.Methods
 
             var result = PaymentsApi.CheckoutCreatOrder(checkoutRequest, Setting);
 
-            var deserializeResult = JsonConvert.DeserializeObject<CreatCheckoutResponse>(result);
+            var deserializeResult = JsonConvert.DeserializeObject<CreateCheckoutResponse>(result);
 
             return new RedirectResponse(deserializeResult.Checkout.CheckoutPageURL, Guid.Empty);
         }

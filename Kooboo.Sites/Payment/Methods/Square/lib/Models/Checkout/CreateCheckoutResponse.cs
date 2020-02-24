@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout
 {
-    public class CreatCheckoutResponse
+    public class CreateCheckoutResponse
     {
         [JsonProperty(PropertyName = "checkout")]
         public CheckoutDetail Checkout { get; set; }
