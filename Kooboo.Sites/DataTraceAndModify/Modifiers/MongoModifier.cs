@@ -18,9 +18,9 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
             return kInstance.Mongo.GetTable(Table);
         }
 
-        internal override object GetNewId()
+        internal override object GetRealId(string id)
         {
-            return ObjectId.Parse(NewId);
+            return ObjectId.Parse(id);
         }
 
         internal override void SaveUpdate(ITable table, IDynamicTableObject entity)

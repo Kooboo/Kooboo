@@ -24,7 +24,7 @@ namespace KScript
             if (type == typeof(double) || type == typeof(float) || type == typeof(decimal)) return "REAL";
             if (type == null) return "NULL";
             if (type == typeof(bool) || type == typeof(int) || type == typeof(long)) return "INTEGER";
-            throw new NotSupportedException();
+            return "TEXT";
         }
     }
 }

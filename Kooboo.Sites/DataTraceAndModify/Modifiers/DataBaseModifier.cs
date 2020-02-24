@@ -1,5 +1,7 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.RelationalDatabase;
 using KScript;
 using System;
 using System.Collections.Generic;
@@ -27,13 +29,13 @@ namespace Kooboo.Sites.DataTraceAndModify
                     Update(table);
                     break;
                 case ActionType.delete:
-                    table.delete(Id);
+                    table.delete(GetRealId(Id));
                     break;
                 case ActionType.copy:
                     if (NewId == null) return;
-                    var entity = table.get(Id);
+                    var entity = table.get(GetRealId(Id));
                     if (entity == null) return;
-                    entity.SetValue("_id", GetNewId());
+                    entity.SetValue("_id", GetRealId(NewId));
                     table.add(entity);
                     break;
                 default:
@@ -43,19 +45,14 @@ namespace Kooboo.Sites.DataTraceAndModify
 
         internal abstract ITable GetTable(k kInstance);
 
-        internal virtual object GetNewId()
+        internal virtual object GetRealId(string id)
         {
-            if (!Guid.TryParse(NewId, out var guid))
-            {
-                guid = IndexedDB.Helper.KeyHelper.ComputeGuid(NewId);
-            }
-
-            return guid;
+            return kHelper.GetId(id);
         }
 
         private void Update(ITable table)
         {
-            var entity = table.get(Id);
+            var entity = table.get(GetRealId(Id));
             if (entity == null) return;
             var stacks = Path.Split('.');
             object obj = entity;
