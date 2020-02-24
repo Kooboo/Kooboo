@@ -75,6 +75,7 @@
     <PackageReference Include="MySql.Data" Version="6.10.9">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
   </ItemGroup>
   <ItemGroup>
