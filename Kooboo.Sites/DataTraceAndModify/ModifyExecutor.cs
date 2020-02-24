@@ -11,6 +11,7 @@ namespace Kooboo.Sites.DataTraceAndModify
     {
         static readonly List<ModifierBase> _modifiers = new List<ModifierBase>{
             new TextContentModifier(),
+            new IndexdbModifier(),
             new MongoModifier(),
             new SqliteModifier(),
             new MysqlModifier(),
