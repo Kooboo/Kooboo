@@ -181,7 +181,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
         internal void NotifyDns()
         {
-            if (Kooboo.Data.AppSettings.Global.IsOnlineServer)
+            if (Kooboo.Data.AppSettings.IsOnlineServer)
             {
 
             }

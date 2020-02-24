@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KScript
 {
-  public  class Security
+    public class Security
     {
         [Description(@"Compute a 32 length text string value
 var input = ""myvalue"";  
@@ -32,9 +32,9 @@ var input = ""myvalue"";
 
             var hash = cryptoTransformSHA1.ComputeHash(bytes);
 
-            return HexStringFromBytes(hash);  
+            return HexStringFromBytes(hash);
         }
-             
+
         private string HexStringFromBytes(byte[] bytes)
         {
             var sb = new StringBuilder();
@@ -46,14 +46,14 @@ var input = ""myvalue"";
             return sb.ToString();
         }
 
-         [Description(@"Two-way encryption
+        [Description(@"Two-way encryption
 var input = ""myvalue""; 
      var key = ""hashkey"";  
      var encrptyValue = k.security.encrypt(input, key);   
      var decryptValue = k.security.decrypt(encrptyValue, key);")]
         public string encrypt(string input, string key)
         {
-            return EncryptHelper.EncryptString(input, key); 
+            return EncryptHelper.EncryptString(input, key);
         }
 
         [Description(@"Two-way encryption
@@ -63,7 +63,21 @@ var input = ""myvalue"";
      var decryptValue = k.security.decrypt(encrptyValue, key);")]
         public string decrypt(string input, string key)
         {
-            return EncryptHelper.DecryptString(input, key); 
+            return EncryptHelper.DecryptString(input, key);
+        }
+
+        [Description("Convert to base64 format string")]
+        public string ToBase64(string input)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(input); 
+            return Convert.ToBase64String(bytes);
+        }
+
+        [Description("Convert from base64 string")]
+        public string FromBase64(string base64string)
+        {
+            var bytes = Convert.FromBase64String(base64string);
+            return System.Text.Encoding.UTF8.GetString(bytes);
         }
     }
 
@@ -114,4 +128,4 @@ var input = ""myvalue"";
         }
     }
 
-}   
+}

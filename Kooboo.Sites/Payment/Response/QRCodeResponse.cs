@@ -14,11 +14,10 @@ namespace Kooboo.Sites.Payment.Response
     {
         public QRCodeResponse(string codeurl, Guid requestId)
         {
-            this.qrcode = codeurl; 
+            this.qrcode = codeurl;
             this.requestId = requestId;
-            this.Type = EnumResponseType.qrcode;
         }
-         
+
         [Description("The QR code content to scan and pay")]
         public string qrcode { get; set; }
 
@@ -32,28 +31,28 @@ namespace Kooboo.Sites.Payment.Response
         {
             get
             {
-                return this.qrcodeHTML; 
+                return this.qrcodeHTML;
             }
         }
-         
+
         [KIgnore]
         public string qrcodeHTML
         {
             get
-            { 
+            {
                 if (!string.IsNullOrWhiteSpace(this.qrcode))
-                { 
+                {
                     string html = @"<div id=""k-qrcode""></div> 
           <script type=""text/javascript"" src=""/_Admin/Scripts/lib/jquery.min.js""></script>
           <script type=""text/javascript"" src=""/_Admin/Scripts/lib/jquery.qrcode.min.js""></script>
-          <script type=""text/javascript"">$('#k-qrcode').qrcode('" + this.qrcode + "')</script>";  
-           return html;  
+          <script type=""text/javascript"">$('#k-qrcode').qrcode('" + this.qrcode + "')</script>";
+                    return html;
                 }
-                return null; 
+                return null;
             }
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public EnumResponseType Type { get; set; }
+        public EnumResponseType Type => EnumResponseType.qrcode;
     }
 }

@@ -14,7 +14,7 @@ namespace StreamExtended.Network
     /// <seealso cref="System.IO.Stream" />
     public class CustomBufferedStream : Stream, IBufferedStream
     {
-#if NET45
+#if NET45 || NET461
         private AsyncCallback readCallback;
 #endif
 
@@ -37,7 +37,7 @@ namespace StreamExtended.Network
         /// <param name="bufferSize">Size of the buffer.</param>
         public CustomBufferedStream(Stream baseStream, int bufferSize)
         {
-#if NET45
+#if NET45 || NET461
             readCallback = ReadCallback;
 #endif
             this.baseStream = baseStream;
@@ -116,7 +116,7 @@ namespace StreamExtended.Network
             baseStream.Write(buffer, offset, count);
         }
 
-#if NET45
+#if NET45 || NET461
         /// <summary>
         /// Begins an asynchronous read operation. (Consider using <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> instead; see the Remarks section.)
         /// </summary>
@@ -191,7 +191,7 @@ namespace StreamExtended.Network
             await base.CopyToAsync(destination, bufferSize, cancellationToken);
         }
 
-#if NET45
+#if NET45 || NET461
         /// <summary>
         /// Waits for the pending asynchronous read to complete. (Consider using <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> instead; see the Remarks section.)
         /// </summary>
@@ -393,7 +393,7 @@ namespace StreamExtended.Network
                 var buffer = streamBuffer;
                 streamBuffer = null;
                 BufferPool.ReturnBuffer(buffer);
-#if NET45
+#if NET45 || NET461
                 readCallback = null;
 #endif
             }

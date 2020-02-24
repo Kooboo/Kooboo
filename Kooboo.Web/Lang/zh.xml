@@ -19,7 +19,7 @@
   <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">你需要配置域名记录, Windows客户端的用户，会在你的系统host file中创建指向127.0.0.1 的域名记录</key>
   <key id="Adding a domain to your account">给您的账号添加域名</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">使用下列DNS 服务器，所有的DNS 记录将会为你自动建立。</key>
-  <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">或是创建通配符的 CNAME 记录指向以下域名. 如果要使用邮箱服务，创建指向以下域名的 MX 记录.</key>
+  <key id="Or create your domain  wildcard CNAME record to below domain.">Or create your domain  wildcard CNAME record to below domain.</key>
   <key id="Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP">或是创建通配符的 A 记录， 指向以下IP 地址, 并不推荐此选项因为我们有可能会改IP地址。</key>
   <key id="Domain">域名</key>
   <key id="kooboolocal.com">kooboolocal.com</key>
@@ -948,7 +948,6 @@
   <key id="Recharge amount">充值总额</key>
   <key id="Customize">自定义</key>
   <key id="large than 0.01">大于0.01</key>
-  <key id="Paied">Paied</key>
   <key id="Order date">下单日期</key>
   <key id="coupon">优惠券</key>
   <key id="Downloads">下载</key>
@@ -1140,7 +1139,6 @@
   <key id="Domain must use Kooboo DNS server">域名必须使用 Kooboo 的 DNS 服务器</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">新旧密码相同</key>
-  <key id="is in use">正在使用</key>
   <key id="Invalid coupon code">无效的优惠卷</key>
   <key id="Bandwidth">带宽</key>
   <key id="Email sending credits">邮件发送数</key>
@@ -1152,6 +1150,7 @@
   <key id="port in use">端口被占用</key>
   <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="Your certificate already exists">证书已经存在</key>
+  <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">你的安全证书已经生成</key>
   <key id="Unexpected error">未知错误</key>
   <key id="Target Url is Protected">目标地址被保护</key>
@@ -1220,6 +1219,14 @@
   <key id="image size">图片大小</key>
   <key id="Missing images">缺失图片</key>
   <key id="missing image">缺失图片</key>
+  <key id="ByProductCategory">ByProductCategory</key>
+  <key id="ByTotalAmount">ByTotalAmount</key>
+  <key id="Username or email address already exists">用户名或是邮件已经存在</key>
+  <key id="Payment Method not found">未找到支付方式</key>
+  <key id="currency not supported by payment method">不支持该货币</key>
+  <key id="alipay">支付宝</key>
+  <key id="Paypal">贝宝</key>
+  <key id="wechat">微信</key>
   <key id="HtmlBlock">HTML 代码块</key>
   <key id="You have reached the max loop limitation in your account">账户已达到最大循环限制</key>
   <key id="Does not support index on date time column">不支持在日期字段上建索引</key>
@@ -1308,8 +1315,6 @@
   <key id="Emails">邮件</key>
   <key id="Visitor">访客</key>
   <key id="Resource">资源</key>
-  <key id="Paypal">贝宝</key>
-  <key id="wechat">微信</key>
   <key id="Api method Not Found">未找到API方法</key>
   <key id="Unauthorized access">访问限制</key>
   <key id="User or website not valid">无效网站或用户</key>
@@ -1318,4 +1323,5 @@
   <key id="required model type not provided">未提供指定类型</key>
   <key id="Require parameter not found">参数未提供</key>
   <key id="Max number of sites has been reached, require service level upgrade">已经到达最大的站点数据， 需要生级用户级别</key>
+  <key id="is in use">正在使用</key>
 </Lang>

@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Infrastructure
 {
-  public  interface IInfrastructure
+  public  interface IInfrastructure : Kooboo.Lib.IOC.IPriority
     {
         bool Test(Guid OrganizationId, InfraType InfraType, long amount);
 
-        void Add(Guid OrganizationId, InfraType InfraType, long Amount, string Item); 
+        void Add(Guid OrganizationId, InfraType InfraType, long Amount, string Item);
+
+        int MaxSites(Guid organizationId);
+
+        int MaxPages(Guid OrganizationId);  
     }
 }

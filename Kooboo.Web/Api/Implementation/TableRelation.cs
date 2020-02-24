@@ -32,10 +32,10 @@ namespace Kooboo.Web.Api.Implementation
                         model.Name = table.Name;
                         foreach (var col in table.Setting.Columns)
                         {
-                            if (!col.IsSystem)
-                            {
-                                model.Fields.Add(col.Name);
-                            }
+                            //if (!col.IsSystem && col.Name != "_id")
+                            //{
+                            model.Fields.Add(col.Name);
+                            //}
                         }
                         Result.Add(model);
                     }

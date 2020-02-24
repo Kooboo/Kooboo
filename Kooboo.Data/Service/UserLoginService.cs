@@ -31,8 +31,7 @@ namespace Kooboo.Data.Service
         }
 
         public static Database GlobalDatabase { get; set; }
-
-
+         
         public static Table LastPath { get; set; }
 
         private static List<string> IgnorePath { get; set; }
@@ -119,18 +118,22 @@ namespace Kooboo.Data.Service
             {
                 return "/_Admin/Domains";
             }
-            else
+            else if (path.StartsWith("/_admin/site"))
             {
-                ///_Admin/Site?SiteId=ef9b3c71-f09b-a23c-431c-3d8d40905226
-                if (path.Contains("siteid="))
-                {
-                    var siteid = GetSiteIdFromPath(path);
-                    if (siteid != null)
-                    {
-                        return "/_Admin/Site?SiteId=" + siteid;
-                    }
-                }
+                return "/_Admin/Sites";
             }
+            //else
+            //{
+            //    ///_Admin/Site?SiteId=ef9b3c71-f09b-a23c-431c-3d8d40905226
+            //    if (path.Contains("siteid="))
+            //    {
+            //        var siteid = GetSiteIdFromPath(path);
+            //        if (siteid != null)
+            //        {
+            //            return "/_Admin/Site?SiteId=" + siteid;
+            //        }
+            //    }
+            //}
 
             return "/_Admin/Sites";
         }
@@ -198,16 +201,9 @@ namespace Kooboo.Data.Service
             user.CurrentOrgName = user.UserName;
             user.CurrentOrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(user.UserName);
 
-            if (!string.IsNullOrWhiteSpace(AppSettings.CmsLang))
-            {
-                user.Language = AppSettings.CmsLang;
-            }
-            else
-            {
-                user.Language = "en";
-            }
-
-            user.PasswordHash = System.Guid.NewGuid();  // Fake. 
+            user.Language = AppSettings.CmsLang;
+             
+            user.PasswordHash = System.Guid.NewGuid(); //Fake. 
 
             return user;
         }
