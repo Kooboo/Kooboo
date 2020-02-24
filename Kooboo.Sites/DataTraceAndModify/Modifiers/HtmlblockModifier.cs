@@ -15,12 +15,13 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
         public override string Source => "htmlblock";
         RenderContext _context;
         string _culture;
+        string _currentCultureDom;
 
         internal override Element GetElement(IDomObject domObject)
         {
-
-            var dom = ((HtmlBlock)domObject).GetValue(_culture).ToString();
-            var doc = DomParser.CreateDom(dom);
+            if (string.IsNullOrWhiteSpace(KoobooId)) return null;
+            _currentCultureDom = ((HtmlBlock)domObject).GetValue(_culture).ToString();
+            var doc = DomParser.CreateDom(_currentCultureDom);
             var node = Service.DomService.GetElementByKoobooId(doc, KoobooId);
             if (node == null) return null;
             return node as Element;
@@ -28,7 +29,7 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 
         internal override void UpdateDomObject(IRepository repo, RenderContext context, IDomObject domObject, SourceUpdate sourceUpdate)
         {
-            var newDom = Service.DomService.UpdateSource(domObject.Body, new List<SourceUpdate> { sourceUpdate });
+            var newDom = Service.DomService.UpdateSource(_currentCultureDom, new List<SourceUpdate> { sourceUpdate });
             ((HtmlBlock)domObject).SetValue(_culture, newDom);
             repo.AddOrUpdate(domObject, context.User.Id);
         }
