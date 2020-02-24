@@ -11,6 +11,7 @@ import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export default class DeleteRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -52,5 +53,7 @@ export default class DeleteRepeatItem extends BaseMenuItem {
     let log = new Log([...repeatSourceComment.infos, kvInfo.delete]);
     let operation = new operationRecord(units, [log], repeatSourceComment.id);
     context.operationManager.add(operation);
+    emitHoverEvent(document.body);
+    emitSelectedEvent();
   }
 }

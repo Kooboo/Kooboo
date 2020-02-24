@@ -16,7 +16,8 @@ namespace Kooboo.Sites.DataTraceAndModify
             new HtmlblockModifier(),
             new MenuModifier(),
             new LabelModifier(),
-            new PageModifier()
+            new PageModifier(),
+            new LayoutModifier()
         };
 
 

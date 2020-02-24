@@ -11,6 +11,7 @@ import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { KOOBOO_ID } from "@/common/constants";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export default class DeleteItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -79,5 +80,7 @@ export default class DeleteItem extends BaseMenuItem {
     }
     let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);
     context.operationManager.add(operation);
+    emitHoverEvent(document.body);
+    emitSelectedEvent();
   }
 }

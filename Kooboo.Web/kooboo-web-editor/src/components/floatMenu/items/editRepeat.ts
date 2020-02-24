@@ -6,6 +6,7 @@ import { editRepeat } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { getWrapDom } from "@/kooboo/utils";
 
 export default class EditRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -24,8 +25,11 @@ export default class EditRepeatItem extends BaseMenuItem {
 
   setReadonly: (readonly: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
+    let { element } = context.lastSelectedDomEventArgs;
+    let { nodes } = getWrapDom(element, "repeatitem");
+    let comments = KoobooComment.getInnerComments(nodes);
     if (!getRepeatSourceComment(comments, "textcontent")) return this.setVisiable(false);
     this.setReadonly(hasOperation(context.operationManager));
   }
@@ -34,7 +38,8 @@ export default class EditRepeatItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(element);
+    let { nodes } = getWrapDom(element, "repeatitem");
+    let comments = KoobooComment.getInnerComments(nodes);
     let comment = getRepeatSourceComment(comments, "textcontent")!;
     await editRepeat(comment.id, "");
     reload();

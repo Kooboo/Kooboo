@@ -1,7 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import BaseMenuItem from "./BaseMenuItem";
-import { KoobooComment } from "@/kooboo/KoobooComment";
 import { Menu } from "../menu";
 
 export default class ClickItem extends BaseMenuItem {
