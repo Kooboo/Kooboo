@@ -1,4 +1,5 @@
 ﻿using Kooboo.Sites.Payment.Methods.Square.lib.Models;
+using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -13,17 +14,37 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib
     public class PaymentsApi
     {
         // https://developer.squareup.com/reference/square/payments-api/create-payment
-        public static string Pay(string nonce, Money amount, string accessToken, string paymentURL)
+        public static string CreatPayment(string nonce, Money amount, SquareSetting setting)
         {
+            var queryUrl = setting.BaseURL + "/v2/payments";
+
             string uuid = Guid.NewGuid().ToString();
 
-            var body = new Models.PaymentRequest(nonce, uuid, amount);
+            var body = new Models.PaymentRequest { SourceId = nonce, IdempotencyKey = uuid, AmountMoney = amount };
 
-            return DoHttpPostRequest(paymentURL, JsonSerialize(body), accessToken);
+            return DoHttpPostRequest(queryUrl, JsonSerialize(body), setting.AccessToken);
+        }
+
+        // https://developer.squareup.com/docs/checkout-api-overview
+        public static string CheckoutCreatOrder(CreateCheckoutRequest request, SquareSetting setting)
+        {
+            var queryUrl = setting.BaseURL + "/v2/locations/" + setting.LocationId + "/checkouts";
+
+            return DoHttpPostRequest(queryUrl, JsonSerialize(request), setting.AccessToken);
+        }
+
+        // https://developer.squareup.com/reference/square/orders-api/batch-retrieve-orders#type-orderstate
+        public static string CheckOrder(CheckOrderRequest orderRequest, SquareSetting setting)
+        {
+            var queryUrl = setting.BaseURL + "/v2/locations/" + setting.LocationId + "/orders/batch-retrieve";
+
+            return DoHttpPostRequest(queryUrl, JsonSerialize(orderRequest), setting.AccessToken);
         }
 
         public static string DoHttpPostRequest(string url, string data, string accessToken, bool autoRedirect = true, Action<HttpWebResponse> callback = null)
         {
+            string result = "";
+
             var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
             httpWebRequest.Method = "POST";
             httpWebRequest.ContentType = "application/json;charset=UTF-8";
@@ -54,16 +75,16 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib
                 {
                     using (var streamReader = new StreamReader(responseStream, Encoding.UTF8))
                     {
-                        var result = streamReader.ReadToEnd();
-
-                        return result;
+                        result = streamReader.ReadToEnd();
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return "Payment failed";
+                Kooboo.Data.Log.Instance.Exception.WriteException(e);
             }
+
+            return result;
         }
 
         public static string DoHttpGetRequest(string url, string accessToken)

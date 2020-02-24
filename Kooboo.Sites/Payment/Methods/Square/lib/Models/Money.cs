@@ -7,13 +7,6 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models
 {
     public class Money
     {
-        public Money(long? amount = null,
-            string currency = null)
-        {
-            Amount = amount;
-            Currency = currency;
-        }
-
         /// <summary>
         /// The amount of money, in the smallest denomination of the currency
         /// indicated by `currency`. For example, when `currency` is `USD`, `amount` is
@@ -21,13 +14,13 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models
         /// field description to determine the meaning of the sign in a particular case.
         /// </summary>
         [JsonProperty("amount")]
-        public long? Amount { get; }
+        public long? Amount { get; set; }
 
         /// <summary>
         /// Indicates the associated currency for an amount of money. Values correspond
         /// to [ISO 4217](https://wikipedia.org/wiki/ISO_4217).
         /// </summary>
         [JsonProperty("currency")]
-        public string Currency { get; }
+        public string Currency { get; set; }
     }
 }

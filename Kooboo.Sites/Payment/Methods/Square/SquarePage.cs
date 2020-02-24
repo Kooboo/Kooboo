@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
-using Kooboo.Sites.Payment.Response;
-using System.Linq;
-using Newtonsoft.Json;
 using Kooboo.Sites.Payment.Models;
+using Kooboo.Sites.Payment.Response;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Payment.Methods
 {
@@ -45,9 +43,9 @@ namespace Kooboo.Sites.Payment.Methods
 
             // todo 需要转换为货币的最低单位 
             // square APi 使用decimal 类型会报错   必须以适用货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            Money amount = new Money((long)request.TotalAmount, request.Currency);
+            var amount = new Money { Amount = (long)request.TotalAmount * 100, Currency = request.Currency };
 
-            var result = PaymentsApi.Pay(request.SquareResponseNonce, amount, Setting.AccessToken, Setting.PaymentURL);
+            var result = PaymentsApi.CreatPayment(request.SquareResponseNonce, amount, Setting);
 
             var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
 
@@ -70,21 +68,29 @@ namespace Kooboo.Sites.Payment.Methods
             //https://connect.squareup.com/v2/payments/{payment_id} 
 
             // 创建订单后返回的订单编号  {payment_id}
-            // request.Order = "Nq0fJPzhO84gNgG1NvUR288g9TLZY";
-            if (!string.IsNullOrEmpty(request.Order))
+            // request.ReferenceId = "nn2I3hGkDrBqU2MPQy103dzET5UZY";
+            if (string.IsNullOrEmpty(request.ReferenceId))
             {
-                var requestURL = Setting.PaymentURL + "/" + request.Order;
-
-                var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
-
-                var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
-                GetPaidStatus(result, deserializeResult.Payment.Status);
+                return result;
             }
+
+            var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
+
+            var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
+
+            var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
+
+            if (deserializeResult == null)
+            {
+                return null;
+            }
+
+            result = GetPaidStatus(result, deserializeResult.Payment.Status);
 
             return result;
         }
 
-        private static void GetPaidStatus(PaymentStatusResponse result, string paymentStatus)
+        private static PaymentStatusResponse GetPaidStatus(PaymentStatusResponse result, string paymentStatus)
         {
             switch (paymentStatus)
             {
@@ -103,6 +109,8 @@ namespace Kooboo.Sites.Payment.Methods
                 default:
                     break;
             }
+
+            return result;
         }
     }
 }

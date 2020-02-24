@@ -14,6 +14,8 @@ namespace Kooboo.Sites.Payment.Methods
 
         public string LocationId { get; set; }
 
-        public string PaymentURL { get; set; }
+        public string BaseURL { get; set; }
+
+        public string SucceedRedirectURL { get; set; }
     }
 }
