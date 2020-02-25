@@ -33,8 +33,6 @@ namespace Kooboo.Sites.Payment
 
         IPaymentResponse Charge(PaymentRequest request);
 
-        //IPaymentResponse GetHtmlDetail(PaymentRequest request);
-
         PaymentStatusResponse checkStatus(PaymentRequest request);
 
     }
