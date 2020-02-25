@@ -1315,9 +1315,6 @@
   <key id="Emails">Почта</key>
   <key id="Visitor">Посетители.</key>
   <key id="Resource">Ресурсы</key>
-  <key id="Paypal">PayPal</key>
-  <key id="wechat">WeChat</key>
-  <key id="square">square</key>
   <key id="Api method Not Found">Метод API не найден</key>
   <key id="Unauthorized access">Unauthorized access</key>
   <key id="User or website not valid">Недопустимый веб-сайт или пользователь</key>
