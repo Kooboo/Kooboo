@@ -1315,6 +1315,9 @@
   <key id="Emails">Emails</key>
   <key id="Visitor">Bezoeker</key>
   <key id="Resource">Hulpbron</key>
+  <key id="Paypal">Paypal</key>
+  <key id="wechat">Wechat</key>
+  <key id="square">square</key>
   <key id="Api method Not Found">Api-methode niet gevonden</key>
   <key id="Unauthorized access">Onbevoegde toegang</key>
   <key id="User or website not valid">Gebruiker of website niet geldig</key>

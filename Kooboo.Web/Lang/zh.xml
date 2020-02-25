@@ -1315,6 +1315,9 @@
   <key id="Emails">邮件</key>
   <key id="Visitor">访客</key>
   <key id="Resource">资源</key>
+  <key id="Paypal">贝宝</key>
+  <key id="wechat">微信</key>
+  <key id="square">square</key>
   <key id="Api method Not Found">未找到API方法</key>
   <key id="Unauthorized access">访问限制</key>
   <key id="User or website not valid">无效网站或用户</key>
