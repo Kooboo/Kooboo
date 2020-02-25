@@ -14,8 +14,21 @@ namespace Kooboo.Sites.Payment.Methods
         public string SignType { get; set; }
         public string Version { get; set; }
         public string ReturnUrl { get; set; }
-        public string ServerUrl { get; set; }
+        public bool UseSandBox { get; set; }
         public string PrivateKey { get; set; }
         public string PublicKey { get; set; }
+
+        public string ServerUrl
+        {
+            get
+            {
+                if (UseSandBox)
+                {
+                    return "https://openapi.alipaydev.com/gateway.do";
+                }
+                return "https://openapi.alipay.com/gateway.do";
+
+            }
+        }
     }
 }
