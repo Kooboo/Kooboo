@@ -2,7 +2,7 @@ import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg, isInTable } from "@/dom/utils";
 import { getScopeComnent } from "../utils";
-import { setGuid, getUnpollutedEl, clearKoobooInfo } from "@/kooboo/utils";
+import { setGuid, getUnpollutedEl, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
@@ -35,7 +35,10 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     if (!isImg(element)) return this.setVisiable(false);
     if (isInTable(element)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
-    if (!getUnpollutedEl(element)) return this.setVisiable(false);
+    let el = getUnpollutedEl(element);
+    let parent = el == element ? element.parentElement! : el;
+    if (!parent) return this.setVisiable(false);
+    if (isDynamicContent(parent)) return this.setVisiable(false);
   }
 
   async click() {
