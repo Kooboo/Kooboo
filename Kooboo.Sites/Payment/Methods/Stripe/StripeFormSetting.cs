@@ -9,5 +9,13 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         private const string name = "StripPayment";
 
         public string Name => name;
-     }
+
+        public string SuccessUrl { get; set; }
+
+        public string CancelUrl { get; set; }
+
+        public string Secretkey { get; set; }
+
+        public string Publishablekey { get; set; }
+    }
 }
