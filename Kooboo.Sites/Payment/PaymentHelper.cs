@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Kooboo.Sites.Payment
 {
-   public static class PaymentHelper
+    public static class PaymentHelper
     {
         public static string GetCallbackUrl(IPaymentMethod paymentMethod, string MethodName, RenderContext context)
         {
-            var baseurl = GetBaseUrl(context);
-            return baseurl + "/_api/paymentcallback/" + paymentMethod.Name + "_" + MethodName; 
+            var baseurl = GetBaseUrl(context).TrimEnd('/');
+            return baseurl + "/_api/paymentcallback/" + paymentMethod.Name + "_" + MethodName;
         }
-         
+
         private static string GetBaseUrl(RenderContext context)
         {
             string baseurl = null;
@@ -51,10 +51,6 @@ namespace Kooboo.Sites.Payment
 
             var baseurl = GetBaseUrl(context);
             return Lib.Helper.UrlHelper.Combine(baseurl, AbsOrRelativeUrl);
-        } 
- 
-         
-
-
+        }
     }
 }
