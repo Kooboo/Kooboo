@@ -1310,6 +1310,7 @@
   <key id="Resource">Resource</key>
   <key id="Paypal">Paypal</key>
   <key id="wechat">Wechat</key>
+  <key id="square">square</key>
   <key id="Api method Not Found">Api method Not Found</key>
   <key id="Unauthorized access">Unauthorized access</key>
   <key id="User or website not valid">User or website not valid</key>

@@ -17,11 +17,11 @@ namespace Kooboo.Sites.Payment.Methods
 
         public string Name => "SquareCheckout";
 
-        public string DisplayName => throw new NotImplementedException();
+        public string DisplayName => Data.Language.Hardcoded.GetValue("square", Context);
 
-        public string Icon => throw new NotImplementedException();
+        public string Icon => "/_Admin/View/Market/Images/payment-square.png";
 
-        public string IconType => throw new NotImplementedException();
+        public string IconType => "img";
 
         public List<string> supportedCurrency
         {
