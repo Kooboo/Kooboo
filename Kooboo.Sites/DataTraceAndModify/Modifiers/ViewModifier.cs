@@ -5,7 +5,7 @@ using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    public class ViewModifier : ModifierBase
+    public class ViewModifier : DomModifier
     {
         public override string Source => "view";
 

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    public class HtmlblockModifier : ModifierBase
+    public class HtmlblockModifier : DomModifier
     {
         public override string Source => "htmlblock";
         RenderContext _context;

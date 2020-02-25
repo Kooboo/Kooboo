@@ -8,16 +8,16 @@ using System.Text;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    public class MenuModifier : ModifierBase
+    public class MenuModifier : DomModifier
     {
         public override string Source => "menu";
 
         public override void Modify(RenderContext context)
         {
-            var repo = context.WebSite.SiteDb().Menus;
-            if (repo == null) return;
-            var menu = repo.GetByNameOrId(Id) as Menu;
-            if (menu == null) return;
+            //var repo = context.WebSite.SiteDb().Menus;
+            //if (repo == null) return;
+            //var menu = repo.GetByNameOrId(Id) as Menu;
+            //if (menu == null) return;
             //var dom = menu.
             //var doc = DomParser.CreateDom(dom);
             //var node = Service.DomService.GetElementByKoobooId(doc, KoobooId);

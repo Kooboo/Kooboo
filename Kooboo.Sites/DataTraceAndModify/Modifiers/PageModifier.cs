@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
-    class PageModifier : ModifierBase
+    class PageModifier : DomModifier
     {
         public override string Source => "page";
 
