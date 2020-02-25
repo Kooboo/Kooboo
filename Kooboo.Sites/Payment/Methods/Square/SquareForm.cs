@@ -46,7 +46,7 @@ namespace Kooboo.Sites.Payment.Methods
         }
 
         [KDefineType(Return = typeof(HiddenFormResponse))]
-        public IPaymentResponse GetHtmlDetail(RenderContext request)
+        public IPaymentResponse GetHtmlDetail(RenderContext context)
         {
             var res = new PaidResponse();
             if (this.Setting == null)
@@ -55,35 +55,83 @@ namespace Kooboo.Sites.Payment.Methods
             }
 
             // todo 需要转换为货币的最低单位 
-            //// square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            //var amount = new Money { Amount = SquareCommon.GetSquareAmount(request.Request.Get("nonce"), Currency = request.Currency };
+            // square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
+            var amount = new Money { Amount = SquareCommon.GetSquareAmount(decimal.Parse(context.Request.Get("totalAmount"))),  Currency = context.Request.Get("currency") };
 
-            //object squareResponseNonce;
-            //if (!request.Additional.TryGetValue("nonce", out squareResponseNonce))
-            //{
-            //    return new FailedResponse("Not get nonce");
-            //}
+            var squareResponseNonce = context.Request.Get("nonce");
 
-            //var result = PaymentsApi.CreatPayment(squareResponseNonce.ToString(), amount, Setting);
+            var result = PaymentsApi.CreatPayment(squareResponseNonce, amount, Setting);
 
-            //var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
+            var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
 
-            //if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
-            //{
-            //    res.Type = EnumResponseType.paid;
-            //    res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
-            //}
-            //else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
-            //{
-            //    return new FailedResponse("FAILED");
-            //}
+            if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
+            {
+                res.Type = EnumResponseType.paid;
+                res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
+            }
+            else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
+            {
+                return new FailedResponse("FAILED");
+            }
 
             return res;
+        }
 
-            //HiddenFormResponse res = new HiddenFormResponse();
-            //res.html = GetForm(request);
+        public PaymentStatusResponse checkStatus(PaymentRequest request)
+        {
+            PaymentStatusResponse result = new PaymentStatusResponse();
 
-            //return res;
+            //https://connect.squareup.com/v2/payments/{payment_id} 
+
+            // 创建订单后返回的订单编号  {payment_id}
+            // request.ReferenceId = "nn2I3hGkDrBqU2MPQy103dzET5UZY";
+            if (string.IsNullOrEmpty(request.ReferenceId))
+            {
+                return result;
+            }
+
+            var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
+
+            var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
+
+            var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
+
+            if (deserializeResult == null)
+            {
+                return null;
+            }
+
+            result = GetPaidStatus(result, deserializeResult.Payment.Status);
+
+            return result;
+        }
+
+        public PaymentCallback Notify(RenderContext context)
+        {
+            return SquareCommon.ProcessNotify(context);
+        }
+
+        private PaymentStatusResponse GetPaidStatus(PaymentStatusResponse result, string paymentStatus)
+        {
+            switch (paymentStatus)
+            {
+                case "APPROVED":
+                    result.Status = PaymentStatus.Authorized;
+                    break;
+                case "COMPLETED":
+                    result.Status = PaymentStatus.Paid;
+                    break;
+                case "CANCELED":
+                    result.Status = PaymentStatus.Cancelled;
+                    break;
+                case "FAILED":
+                    result.Status = PaymentStatus.Rejected;
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
         }
 
         private string GetForm(PaymentRequest request)
@@ -94,15 +142,13 @@ namespace Kooboo.Sites.Payment.Methods
 
             var kscriptAPIURL = PaymentHelper.GetCallbackUrl(this, nameof(GetHtmlDetail), this.Context);
 
-            html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, kscriptAPIURL, request.TotalAmount, currencySymbol);
+            html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, kscriptAPIURL, request.TotalAmount, request.Currency, currencySymbol);
 
             return html;
         }
 
-        private string GenerateHtml(string applicationId, string locationId, string kscriptAPIURL, decimal amount, string currencySymbol)
+        private string GenerateHtml(string applicationId, string locationId, string kscriptAPIURL, decimal amount, string currency, string currencySymbol)
         {
-
-
             return @"<script type='text/javascript' src='https://js.squareupsandbox.com/v2/paymentform'></script>
 <script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
 <style>
@@ -361,69 +407,12 @@ var paymentForm = new SqPaymentForm({
     // POST the nonce form to the payment processing page
     // document.getElementById('nonce-form').submit();
     alert(document.getElementById('card-nonce').value)
-                     $.get('" + kscriptAPIURL + @"?nonce=' + nonce, function(data, status){ });
+                     $.get('" + kscriptAPIURL + "?totalAmount=" + amount + "&currency="+ currency + @"&nonce=' + nonce, function(data, status){ });
               }
             }
         });
 </script>
 ";
-        }
-
-        public PaymentStatusResponse checkStatus(PaymentRequest request)
-        {
-            PaymentStatusResponse result = new PaymentStatusResponse();
-
-            //https://connect.squareup.com/v2/payments/{payment_id} 
-
-            // 创建订单后返回的订单编号  {payment_id}
-            // request.ReferenceId = "nn2I3hGkDrBqU2MPQy103dzET5UZY";
-            if (string.IsNullOrEmpty(request.ReferenceId))
-            {
-                return result;
-            }
-
-            var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
-
-            var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
-
-            var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
-
-            if (deserializeResult == null)
-            {
-                return null;
-            }
-
-            result = GetPaidStatus(result, deserializeResult.Payment.Status);
-
-            return result;
-        }
-
-        public PaymentCallback Notify(RenderContext context)
-        {
-            return SquareCommon.ProcessNotify(context);
-        }
-
-        private PaymentStatusResponse GetPaidStatus(PaymentStatusResponse result, string paymentStatus)
-        {
-            switch (paymentStatus)
-            {
-                case "APPROVED":
-                    result.Status = PaymentStatus.Authorized;
-                    break;
-                case "COMPLETED":
-                    result.Status = PaymentStatus.Paid;
-                    break;
-                case "CANCELED":
-                    result.Status = PaymentStatus.Cancelled;
-                    break;
-                case "FAILED":
-                    result.Status = PaymentStatus.Rejected;
-                    break;
-                default:
-                    break;
-            }
-
-            return result;
         }
     }
 }
