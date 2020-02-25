@@ -95,33 +95,41 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
                 }
 
                 var eventType = DataHelper.GetValue("event", context.Request.Body);
-                var purchaseId = DataHelper.GetValue("purchase_id", context.Request.Body);
-                result.RequestId = DataHelper.GenerateRequestId(purchaseId);
-                if (string.Equals(eventType, CheckoutSuccessEvent))
-                {
+                var purchaseIds = DataHelper.GetValue("data.transactions.purchase_id", context.Request.Body);
 
-                    result.Status = PaymentStatus.Pending;
-                }
-                else
+                if (string.IsNullOrEmpty(purchaseIds))
+                    return null;
+                var purchaseArray = purchaseIds.Split(',');
+                for (int i = 0; i < purchaseArray.Length; i++)
                 {
-                    result.Status = PaymentStatus.NotAvailable;
-                }
-
-                if (string.Equals(eventType, TransactionUpdatedEvent))
-                {
-                    string code = DataHelper.GetValue("tran_status", context.Request.Body);
-                    if (code == "S")
+                    result.RequestId = DataHelper.GenerateRequestId(purchaseArray[i]);
+                    if (string.Equals(eventType, CheckoutSuccessEvent))
                     {
-                        result.Status = PaymentStatus.Paid;
+                        result.Status = PaymentStatus.Pending;
+                    }
+                    else
+                    {
+                        result.Status = PaymentStatus.NotAvailable;
                     }
 
-                    if (code == "R")
+                    if (string.Equals(eventType, TransactionUpdatedEvent))
                     {
-                        result.Status = PaymentStatus.Rejected;
-                    }
-                }
+                        string code = DataHelper.GetValue("tran_status", context.Request.Body);
+                        if (code == "S")
+                        {
+                            result.Status = PaymentStatus.Paid;
+                        }
 
+                        if (code == "R")
+                        {
+                            result.Status = PaymentStatus.Rejected;
+                        }
+                    }
+
+                }
+                return result;
             }
+
             return null;
         }
 
