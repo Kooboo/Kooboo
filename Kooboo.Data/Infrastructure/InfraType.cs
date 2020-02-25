@@ -14,6 +14,7 @@ namespace Kooboo.Data.Infrastructure
 
         Bandwidth = 2,
 
-        Disk = 3   
+        Disk = 3,
+
     }
 }

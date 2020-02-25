@@ -12,15 +12,13 @@ namespace Kooboo.Sites.Payment.Response
     {
         public FailedResponse(string error)
         {
-            this.Message = error;
-            this.Type = EnumResponseType.failed;
+            this.Message = error; 
         } 
         public string Message { get; set; }
         public Guid requestId { get; set; }
         public string paymemtMethodReferenceId { get; set; }
-
-
+         
         [JsonConverter(typeof(StringEnumConverter))]
-        public EnumResponseType Type { get; set; }
+        public EnumResponseType Type  => EnumResponseType.failed;
     }
 }

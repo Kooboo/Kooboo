@@ -106,7 +106,7 @@ namespace Kooboo.Data.Repository
         public override bool AddOrUpdate(WebSite value)
         {
             // check quota control.
-            var maxsites = Kooboo.Data.Authorization.QuotaControl.MaxSites(value.OrganizationId); 
+            var maxsites = Kooboo.Data.Infrastructure.InfraManager.instance.MaxSites(value.OrganizationId); 
             if (maxsites != int.MaxValue)
             {
                 var counts = this.ListByOrg(value.OrganizationId).Count(); 

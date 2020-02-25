@@ -23,14 +23,14 @@ namespace Kooboo.Web.Api.Implementation.Mails
         public static T Get<T>(string modelName, string method, User user, Dictionary<string, string> param = null)
         {
             var url = GetForwardUrl(modelName, method);
-            var headers = TwoFactorUserCache.GetHeaders(user);
+            var headers = Kooboo.Data.Service.TwoFactorService.GetHeaders(user);
             return EmailHttpHelper.Get<T>(url, param, headers);
         }
 
         public static T Post<T>(string modelName, string method, User user, Dictionary<string, string> param)
         {
             var url = GetForwardUrl(modelName, method);
-            var headers = TwoFactorUserCache.GetHeaders(user);
+            var headers = Kooboo.Data.Service.TwoFactorService.GetHeaders(user);
             return EmailHttpHelper.Post<T>(url, param, headers);
         }
 
@@ -42,7 +42,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         public static T Post<T>(string modelName, string method, User user, byte[] bytes, Dictionary<string, string> param = null)
         {
             var url = GetForwardUrl(modelName, method);
-            var headers = TwoFactorUserCache.GetHeaders(user);
+            var headers = Kooboo.Data.Service.TwoFactorService.GetHeaders(user);
             if (param != null)
             {
                 foreach (var p in param)
@@ -82,33 +82,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             return EmailHttpHelper.PostBytes(url, bytes, headers);
         }
 
-    }
-
-    public class TwoFactorUserCache
-    {
-        private static Dictionary<Guid, Dictionary<string, string>> Cache = new Dictionary<Guid, Dictionary<string, string>>();
-
-        private static object _lockObj = new object();
-        public static Dictionary<string, string> GetHeaders(User user)
-        {
-            if (Cache.ContainsKey(user.Id))
-            {
-                return Cache[user.Id];
-            }
-            if (!Cache.ContainsKey(user.Id))
-            {
-                lock (_lockObj)
-                {
-                    if (!Cache.ContainsKey(user.Id))
-                    {
-                        Cache[user.Id] = Kooboo.Data.Service.TwoFactorService.GetHeaders(user); 
-                    }
-                }
-            }
-
-            return Cache[user.Id];
-        }
-    }
-
+    } 
 
 }
