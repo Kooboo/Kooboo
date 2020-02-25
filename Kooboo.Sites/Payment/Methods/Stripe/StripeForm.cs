@@ -72,15 +72,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             request.Additional.TryGetValue("successUrl", out var successUrl);
             request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
 
-            var lineItems = new List<SessionLineItemOptions> {
-                    new SessionLineItemOptions {
-                        Name = request.Name,
-                        Description = request.Description,
-                        Amount = long.Parse(request.TotalAmount.ToString()),
-                        Currency = request.Currency,
-                        Quantity = long.Parse(quantity.ToString())
-                    }
-                };
+            var lineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions {
+                    Name = request.Name,
+                    Description = request.Description,
+                    Amount = long.Parse(request.TotalAmount.ToString()),
+                    Currency = request.Currency,
+                    Quantity = long.Parse(quantity.ToString())
+                }
+            };
 
             var options = new SessionCreateOptions
             {
@@ -92,26 +93,13 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 LineItems = lineItems
             };
 
-            var sessionId = CreateSession(options).Result;
+            var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
             var response = new HiddenFormResponse
             {
                 paymemtMethodReferenceId = sessionId
             };
             response.setFieldValues("publishableKey", Setting.Publishablekey);
             return response;
-        }
-
-        private async Task<string> CreateSession(SessionCreateOptions options)
-        {
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + Setting.Secretkey);
-                
-                var result = await httpClient.PostAsync("https://api.stripe.com/v1/checkout/sessions", new StringContent(StripeUtility.SessionDataToContentString(options), Encoding.UTF8, "application/x-www-form-urlencoded"));
-                var response = await result.Content.ReadAsStringAsync();
-                JObject json = JObject.Parse(response);
-                return json.Value<string>("id");
-            }
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
