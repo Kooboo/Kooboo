@@ -33,8 +33,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 <div k-content=""res.html""></div>
 <div id = ""sessionId"" style=""display:none;"" k-content=""res.paymemtMethodReferenceId""></div>
 <div id = ""publishableKey"" style=""display:none;"" k-content=""publishableKey""></div>
-<script src = ""https://js.stripe.com/v3/"" ></ script >
-< script >
+<script src = ""https://js.stripe.com/v3/"" ></script>
+<script>
   var stripe = Stripe(document.getElementById('publishableKey').innerText);
   stripe.redirectToCheckout({
     sessionId: document.getElementById('sessionId').innerText
@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         public string DisplayName => Data.Language.Hardcoded.GetValue("Stripe", Context);
 
-        public string Icon => "/_Admin/View/Market/Images/payment-wechat.jpg";
+        public string Icon => "https://s3.us-east-2.amazonaws.com/upload-icon/uploads/icons/png/63467571551952112-64.png";
 
         public string IconType => "img";
 
