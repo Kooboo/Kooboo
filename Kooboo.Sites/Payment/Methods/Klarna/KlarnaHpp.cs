@@ -37,7 +37,6 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
     k.response.redirect(res.redirectUrl);
     // var hppSessionId = res.paymemtMethodReferenceId;
 </script>")]
-        [KDefineType(Return = typeof(HiddenFormResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             try
