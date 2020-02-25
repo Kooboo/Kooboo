@@ -23,9 +23,9 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
                 string body = JsonConvert.SerializeObject(request);
                 var response = ApiClient.Post(setting.ServerUrl + "/platform/checkout", body, setting.SecurityKey);
                 var result = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
-                if (result["code"].ToString() != "0")
+                if (DataHelper.GetValue("code", response) != "0")
                 {
-                    throw new QualPayException(result["message"].ToString());
+                    throw new QualPayException(DataHelper.GetValue("message", response));
                 }
 
                 var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(result["data"].ToString());

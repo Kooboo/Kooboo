@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Kooboo.Sites.Payment.Methods.qualpay.lib
@@ -12,74 +14,37 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
         {
             if (body != null)
             {
-                if (body is JArray)
-                {
-                    var array = (JArray)body;
-                    foreach (var item in array)
-                    {
-                        if (item is JObject)
-                        {
-                            var itemobject = (JObject)item;
-                            if (itemobject != null)
-                            {
-                                foreach (var itemproperty in itemobject.Properties())
-                                {
-                                    if (itemproperty.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(itemproperty.Value.ToString()))
-                                    {
-                                        return itemproperty.Value.ToString();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (body is JObject)
-                {
-                    var data = (JObject)body;
+                var converted = JsonConvert.DeserializeObject<Dictionary<string, object>>(body);
 
-                    if (data != null)
-                    {
-                        foreach (var item in data.Properties())
-                        {
-                            if (item.Value is JObject)
-                            {
-                                var node = (JObject)item.Value;
-                                foreach (var nodeValue in node)
-                                {
-                                    if (item.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(item.Value.ToString()))
-                                    {
-                                        return item.Value.ToString();
-                                    }
-                                }
-                            }
-                            else if (item.Value is JArray)
-                            {
-                                var array = (JArray)item.Value;
-                                foreach (var value in item.Value)
-                                {
-                                    if (value is JObject)
-                                    {
-                                        var itemobject = (JObject)value;
-                                        if (itemobject != null)
-                                        {
-                                            foreach (var itemproperty in itemobject.Properties())
-                                            {
-                                                if (itemproperty.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(itemproperty.Value.ToString()))
-                                                {
-                                                    return itemproperty.Value.ToString();
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else if (item.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(item.Value.ToString()))
-                            {
-                                return item.Value.ToString();
-                            }
-                        }
-                    }
+                string[] keys = name.Split('.');
+                if (!converted.ContainsKey(keys[0]))
+                    return "";
+
+                if(keys.Length == 1)
+                {
+                    return converted[keys[0]].ToString();
                 }
+
+                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(converted[keys[0]].ToString());
+                if (!data.ContainsKey(keys[1].TrimEnd()))
+                    return "";
+                if (data[keys[1]] is JArray)
+                {
+                    var array = (JArray)data[keys[1]];
+                    var tokens = array.Select(it => it.SelectToken(keys[2]).Value<string>()).ToArray();
+                    return string.Join(",", tokens);
+
+                }
+                else if (data[keys[1]] is JObject)
+                {
+                    var obj = (JObject)data[keys[1]];
+                    return obj[keys[2]].ToString();
+                }
+                else
+                {
+                    return data[keys[1]].ToString();
+                }
+
             }
             return "";
         }
