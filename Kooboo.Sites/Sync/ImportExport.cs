@@ -578,23 +578,9 @@ namespace Kooboo.Sites.Sync
             string fileiopath = Lib.Helper.IOHelper.CombinePath(diskpath, "__fileio__");
 
             string currentPath = Kooboo.Data.AppSettings.GetFileIORoot(website);
-
-            var files = System.IO.Directory.GetFiles(currentPath, "*.*", SearchOption.AllDirectories);
-            foreach (var item in files)
-            {
-                string fullfilename = item;
-                var index = item.IndexOf(currentPath, StringComparison.OrdinalIgnoreCase);
-                if (index > -1)
-                {
-                    fullfilename = item.Substring(index + currentPath.Length + 1);
-                    if (!string.IsNullOrWhiteSpace(fullfilename))
-                    {
-                        string rightname = Lib.Helper.IOHelper.CombinePath(fileiopath, fullfilename);
-                        Lib.Helper.IOHelper.Copy(item, rightname);
-                    }
-                }
-            }
-        }
+             
+            Kooboo.Lib.Helper.IOHelper.DirectoryCopy(currentPath, fileiopath, true);  
+        } 
 
         public static string InterCopySelected(SiteDb SiteDb, List<string> StoretNames)
         {

@@ -45,6 +45,10 @@ namespace KScript
             string output;
             if (!(value is string) && value.GetType().IsClass)
             { 
+
+                // 
+
+
                 output = Kooboo.Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
             }
             else
