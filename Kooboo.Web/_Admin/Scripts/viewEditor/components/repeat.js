@@ -134,7 +134,7 @@
         Kooboo.EventBus.publish("action/edit", {
           parentId: null,
           context: {
-            actions: ko.observableArray(DataStore.getAll())
+            actions: DataStore.getAll()
           }
         });
       },
