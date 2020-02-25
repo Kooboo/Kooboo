@@ -33,14 +33,13 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
                 CheckResult(data, request);
 
                 return data;
-
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
             }
 
+            return null;
         }
 
         private static void CheckResult(Dictionary<string, string> data, Dictionary<string, object> req)
