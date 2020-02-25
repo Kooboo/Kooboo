@@ -652,7 +652,6 @@ namespace Kooboo.IndexedDB.Dynamic
                 result.ShouldRebuild = true;
             }
 
-
             foreach (var item in columns)
             {
                 if (item.IsSystem)
@@ -740,6 +739,12 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
+            //
+            if (result.HasChange || result.ShouldRebuild)
+            {
+                EnsureColumnRelativePosition(result.NewSetting.Columns);
+            }
+
             return result;
         }
 
@@ -753,6 +758,27 @@ namespace Kooboo.IndexedDB.Dynamic
 
             return back;
         }
+
+
+
+        public static void EnsureColumnRelativePosition(HashSet<TableColumn> columns)
+        {
+            int nextposition = 0;
+            foreach (var item in columns.OrderBy(o => o.relativePosition))
+            {
+                item.relativePosition = nextposition;
+
+                if (nextposition != int.MaxValue && item.Length != int.MaxValue)
+                {
+                    nextposition = nextposition + item.Length + 8;
+                }
+                else
+                {
+                    nextposition = int.MaxValue;
+                }
+            }
+        }
+
 
     }
 

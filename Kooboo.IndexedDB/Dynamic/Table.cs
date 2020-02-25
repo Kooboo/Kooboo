@@ -142,8 +142,13 @@ namespace Kooboo.IndexedDB.Dynamic
             this.Setting = setting;
             var primary = this.Indexs.Find(o => o.IsPrimaryKey);
             this.PrimaryKey = primary.FieldName;
+
+           SettingHelper.EnsureColumnRelativePosition(this.Setting.Columns);
+
             ObjectConverter = new Dynamic.Converter.ObjectConverter(this.Setting.Columns.ToList(), this.PrimaryKey);
         }
+
+      
 
         private long _addBlock(Dictionary<string, object> data)
         {
@@ -616,7 +621,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
-            return null; 
+            return null;
         }
 
         internal Guid _ParseKey(object key)
@@ -1561,7 +1566,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public void CheckOut(Int64 VersionId, Table destinationTable, bool SelfIncluded, bool UpdateSetting = true)
         {
             if (UpdateSetting)
-            { 
+            {
                 UpdateCheckOutTableSetting(destinationTable);
             }
 
