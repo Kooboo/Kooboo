@@ -16,6 +16,33 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
     {
         public StripeFormSetting Setting { get; set; }
 
+        private const string Description = @"Pay by stripe. Example:
+<script engine=""kscript"">
+  var charge = {};
+  charge.successUrl = 'https://example.com/success'
+  charge.cancelUrl = 'https://example.com/cancel'
+  charge.name = 'T-shirt'
+  charge.description = 'Comfortable cotton t-shirt'
+  charge.totalAmount = 1500
+  charge.currency = 'USD'
+  charge.quantity = 2
+  charge.paymentMethodType = 'card'
+  var res = k.payment.stripeForm.charge(charge);
+  var publishableKey = res.fieldValues.get(""publishableKey"");
+</script>
+<div k-content=""res.html""></div>
+<div id = ""sessionId"" style=""display:none;"" k-content=""res.paymemtMethodReferenceId""></div>
+<div id = ""publishableKey"" style=""display:none;"" k-content=""publishableKey""></div>
+<script src = ""https://js.stripe.com/v3/"" ></ script >
+< script >
+  var stripe = Stripe(document.getElementById('publishableKey').innerText);
+  stripe.redirectToCheckout({
+    sessionId: document.getElementById('sessionId').innerText
+}).then(function (result) {
+    console.log(result.error.message)
+});
+</script>";
+
         public string Name => "StripeForm";
 
         public string DisplayName => Data.Language.Hardcoded.GetValue("Stripe", Context);
@@ -37,7 +64,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public RenderContext Context { get; set; }
 
 
-        [Description(@"Pay by stripe.")]
+        [Description(Description)]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             request.Additional.TryGetValue("quantity", out var quantity);
@@ -66,9 +93,12 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             };
 
             var sessionId = CreateSession(options).Result;
-            return new HiddenFormResponse { 
+            var response = new HiddenFormResponse
+            {
                 paymemtMethodReferenceId = sessionId
             };
+            response.setFieldValues("publishableKey", Setting.Publishablekey);
+            return response;
         }
 
         private async Task<string> CreateSession(SessionCreateOptions options)
