@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Context;
+using Kooboo.Sites.Payment.Methods.Stripe.lib;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json.Linq;
 using System;
@@ -36,33 +37,47 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public RenderContext Context { get; set; }
 
 
-        [Description(@"Pay by stripe. Example:")]
+        [Description(@"Pay by stripe.")]
         public IPaymentResponse Charge(PaymentRequest request)
         {
-            var id = CreateSession(request).Result;
+            request.Additional.TryGetValue("quantity", out var quantity);
+            request.Additional.TryGetValue("cancelUrl", out var cancelUrl);
+            request.Additional.TryGetValue("successUrl", out var successUrl);
+            request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
+
+            var lineItems = new List<SessionLineItemOptions> {
+                    new SessionLineItemOptions {
+                        Name = request.Name,
+                        Description = request.Description,
+                        Amount = long.Parse(request.TotalAmount.ToString()),
+                        Currency = request.Currency,
+                        Quantity = long.Parse(quantity.ToString())
+                    }
+                };
+
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = (string)cancelUrl,
+                CancelUrl = (string)successUrl,
+                PaymentMethodTypes = new List<string> {
+                    (string)paymentMethodType
+                },
+                LineItems = lineItems
+            };
+
+            var sessionId = CreateSession(options).Result;
             return new HiddenFormResponse { 
-                paymemtMethodReferenceId = id
+                paymemtMethodReferenceId = sessionId
             };
         }
 
-        private async Task<string> CreateSession(PaymentRequest request)
+        private async Task<string> CreateSession(SessionCreateOptions options)
         {
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + Setting.Secretkey);
-                var contentList = new List<string>();
-                request.Additional.TryGetValue("successUrl", out var successUrl);
-                request.Additional.TryGetValue("cancelUrl", out var cancelUrl);
-                contentList.Add("success_url=" + HttpUtility.UrlEncode((string)successUrl));
-                contentList.Add("cancel_url=" + HttpUtility.UrlEncode((string)cancelUrl));
-                contentList.Add("payment_method_types[0]=card");
-                contentList.Add("line_items[0][name]=T-shirt");
-                contentList.Add("line_items[0][description]=Comfortable cotton t - shirt");
-                contentList.Add("line_items[0][amount]=1500");
-                contentList.Add("line_items[0][currency]=usd");
-                contentList.Add("line_items[0][quantity]=2");
-                var body = string.Join("&", contentList);
-                var result = await httpClient.PostAsync("https://api.stripe.com/v1/checkout/sessions", new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded"));
+                
+                var result = await httpClient.PostAsync("https://api.stripe.com/v1/checkout/sessions", new StringContent(StripeUtility.SessionDataToContentString(options), Encoding.UTF8, "application/x-www-form-urlencoded"));
                 var response = await result.Content.ReadAsStringAsync();
                 JObject json = JObject.Parse(response);
                 return json.Value<string>("id");
