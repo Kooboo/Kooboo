@@ -17,5 +17,7 @@ namespace Kooboo.Sites.Payment.Methods
         public string BaseURL { get; set; }
 
         public string SucceedRedirectURL { get; set; }
+
+        public string KscriptAPIURL { get; set; }
     }
 }

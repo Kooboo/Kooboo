@@ -1,6 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
-using Kooboo.Sites.Extensions; 
+using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using Kooboo.Data.Attributes;
@@ -34,7 +34,7 @@ namespace Kooboo.Sites.Payment
 
             if (!string.IsNullOrWhiteSpace(result.paymemtMethodReferenceId))
             {
-                request.ReferenceId = result.paymemtMethodReferenceId; 
+                request.ReferenceId = result.paymemtMethodReferenceId;
             }
 
             if (!string.IsNullOrWhiteSpace(request.Code) || !string.IsNullOrWhiteSpace(request.ReferenceId))
@@ -42,6 +42,12 @@ namespace Kooboo.Sites.Payment
                 repo.AddOrUpdate(request);
             }
             return result;
+        }
+
+        public IPaymentResponse GetHtmlDetail(object value)
+        {
+            var request = ParseRequest(value);
+            return this.PaymentMethod.GetHtmlDetail(request);
         }
 
         public PaymentStatusResponse checkStatus(object requestId)
@@ -110,7 +116,6 @@ namespace Kooboo.Sites.Payment
             request.Description = GetValue<string>(idict, dynamicobj, "des", "description", "detail");
             request.Currency = GetValue<string>(idict, dynamicobj, "currency");
             request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount", "total", "totalAmount", "totalamount");
-            request.SquareResponseNonce = GetValue<string>(idict, dynamicobj, "nonce");
 
             if (this.PaymentMethod != null)
             {

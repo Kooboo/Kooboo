@@ -96,7 +96,6 @@ namespace Kooboo.Sites.Payment
             unique += this.ReferenceId + this.TotalAmount.ToString() + this.UserIp;
             unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString();
             unique += this.ReturnPath;
-            unique += SquareResponseNonce;
 
             if (_Additional != null)
             {
@@ -114,7 +113,5 @@ namespace Kooboo.Sites.Payment
             }
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
-        public string SquareResponseNonce { get; set; }
     }
 }

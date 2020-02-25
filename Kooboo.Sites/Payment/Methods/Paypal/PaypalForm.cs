@@ -391,6 +391,11 @@ var resForm = k.payment.paypalForm.charge(charge);
         {
             throw new NotImplementedException();
         }
+
+        public IPaymentResponse GetHtmlDetail(PaymentRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

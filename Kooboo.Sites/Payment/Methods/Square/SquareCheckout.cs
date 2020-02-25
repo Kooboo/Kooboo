@@ -113,8 +113,8 @@ namespace Kooboo.Sites.Payment.Methods
         private CreateCheckoutRequest GetCheckoutRequest(PaymentRequest request)
         {
             string uuid = Guid.NewGuid().ToString();
-            // square APi 使用decimal 类型会报错   必须以适用货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            var amount = new Money { Amount = (long)(request.TotalAmount * 100), Currency = request.Currency };
+            // square APi  货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
+            var amount = new Money { Amount = SquareCommon.GetSquareAmount(request.TotalAmount), Currency = request.Currency };
 
             return new CreateCheckoutRequest
             {
@@ -133,6 +133,11 @@ namespace Kooboo.Sites.Payment.Methods
                     }
                 }
             };
+        }
+
+        public IPaymentResponse GetHtmlDetail(PaymentRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }
