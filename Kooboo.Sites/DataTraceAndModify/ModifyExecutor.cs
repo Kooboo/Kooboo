@@ -22,7 +22,8 @@ namespace Kooboo.Sites.DataTraceAndModify
             new LabelModifier(),
             new PageModifier(),
             new LayoutModifier(),
-            new KeyValueModifier()
+            new KeyValueModifier(),
+            new KConfigModifier()
         };
 
 

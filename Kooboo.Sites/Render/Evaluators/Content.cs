@@ -1,12 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom;
-using Kooboo.Sites.DataTrace;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
 {
@@ -37,7 +32,7 @@ namespace Kooboo.Sites.Render
             if (!string.IsNullOrEmpty(attName))
             {
                 var response = new EvaluatorResponse();
-                List<IRenderTask> result = new List<IRenderTask>();
+                var result = new List<IRenderTask>();
                 string value = element.getAttribute(attName);
                 element.removeAttribute(attName);
                 result.Add(new ValueRenderTask(value));
