@@ -274,11 +274,6 @@ var timerid = setInterval(checkStatus, 1000);
 
             return result;
         }
-
-        public IPaymentResponse GetHtmlDetail(PaymentRequest request)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }

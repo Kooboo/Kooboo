@@ -44,12 +44,6 @@ namespace Kooboo.Sites.Payment
             return result;
         }
 
-        public IPaymentResponse GetHtmlDetail(object value)
-        {
-            var request = ParseRequest(value);
-            return this.PaymentMethod.GetHtmlDetail(request);
-        }
-
         public PaymentStatusResponse checkStatus(object requestId)
         {
             if (requestId == null)

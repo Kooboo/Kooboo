@@ -39,6 +39,15 @@ namespace Kooboo.Sites.Payment.Methods
 
         public IPaymentResponse Charge(PaymentRequest request)
         {
+            HiddenFormResponse res = new HiddenFormResponse();
+            res.html = GetForm(request);
+
+            return res;
+        }
+
+        [KDefineType(Return = typeof(HiddenFormResponse))]
+        public IPaymentResponse GetHtmlDetail(RenderContext request)
+        {
             var res = new PaidResponse();
             if (this.Setting == null)
             {
@@ -46,39 +55,35 @@ namespace Kooboo.Sites.Payment.Methods
             }
 
             // todo 需要转换为货币的最低单位 
-            // square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            var amount = new Money { Amount = SquareCommon.GetSquareAmount(request.TotalAmount), Currency = request.Currency };
+            //// square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
+            //var amount = new Money { Amount = SquareCommon.GetSquareAmount(request.Request.Get("nonce"), Currency = request.Currency };
 
-            object squareResponseNonce;
-            if (!request.Additional.TryGetValue("nonce", out squareResponseNonce))
-            {
-                return new FailedResponse("Not get nonce");
-            }
+            //object squareResponseNonce;
+            //if (!request.Additional.TryGetValue("nonce", out squareResponseNonce))
+            //{
+            //    return new FailedResponse("Not get nonce");
+            //}
 
-            var result = PaymentsApi.CreatPayment(squareResponseNonce.ToString(), amount, Setting);
+            //var result = PaymentsApi.CreatPayment(squareResponseNonce.ToString(), amount, Setting);
 
-            var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
+            //var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
 
-            if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
-            {
-                res.Type = EnumResponseType.paid;
-                res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
-            }
-            else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
-            {
-                return new FailedResponse("FAILED");
-            }
-
-            return res;
-        }
-
-        [KDefineType(Return = typeof(HiddenFormResponse))]
-        public IPaymentResponse GetHtmlDetail(PaymentRequest request)
-        {
-            HiddenFormResponse res = new HiddenFormResponse();
-            res.html = GetForm(request);
+            //if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
+            //{
+            //    res.Type = EnumResponseType.paid;
+            //    res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
+            //}
+            //else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
+            //{
+            //    return new FailedResponse("FAILED");
+            //}
 
             return res;
+
+            //HiddenFormResponse res = new HiddenFormResponse();
+            //res.html = GetForm(request);
+
+            //return res;
         }
 
         private string GetForm(PaymentRequest request)
@@ -87,13 +92,17 @@ namespace Kooboo.Sites.Payment.Methods
 
             var currencySymbol = CurrencyHelper.GetCurrencySymbol(request.Currency);
 
-            html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, Setting.KscriptAPIURL, request.TotalAmount, currencySymbol);
+            var kscriptAPIURL = PaymentHelper.GetCallbackUrl(this, nameof(GetHtmlDetail), this.Context);
+
+            html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, kscriptAPIURL, request.TotalAmount, currencySymbol);
 
             return html;
         }
 
         private string GenerateHtml(string applicationId, string locationId, string kscriptAPIURL, decimal amount, string currencySymbol)
         {
+
+
             return @"<script type='text/javascript' src='https://js.squareupsandbox.com/v2/paymentform'></script>
 <script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
 <style>
