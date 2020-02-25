@@ -1,6 +1,6 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
-using Kooboo.Sites.Extensions; 
+using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using Kooboo.Data.Attributes; 
@@ -35,7 +35,7 @@ namespace Kooboo.Sites.Payment
 
             if (!string.IsNullOrWhiteSpace(result.paymemtMethodReferenceId))
             {
-                request.ReferenceId = result.paymemtMethodReferenceId; 
+                request.ReferenceId = result.paymemtMethodReferenceId;
             }
 
             if (!string.IsNullOrWhiteSpace(request.Code) || !string.IsNullOrWhiteSpace(request.ReferenceId))
