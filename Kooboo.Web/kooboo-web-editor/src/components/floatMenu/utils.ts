@@ -1,7 +1,6 @@
 import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationManager } from "@/operation/Manager";
-import { getAllNode } from "@/dom/utils";
 import { setGuid, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { createImagePicker } from "../imagePicker";
 import { operationRecord } from "@/operation/Record";
