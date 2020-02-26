@@ -147,8 +147,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             ObjectConverter = new Dynamic.Converter.ObjectConverter(this.Setting.Columns.ToList(), this.PrimaryKey);
         }
-
-      
+         
 
         private long _addBlock(Dictionary<string, object> data)
         {

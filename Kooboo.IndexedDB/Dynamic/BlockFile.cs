@@ -118,6 +118,12 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public byte[] GetCol(long position, int relativePos, int len)
         {
+            if (relativePos == int.MaxValue)
+            {
+                throw new Exception("Non supported column"); 
+            }
+
+
             if (len > 0)
             {
                 if (len == int.MaxValue)
@@ -130,11 +136,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 {
                     return GetPartial(position, relativePos + 10 + 8, len);
                 }
-            }
-            else
-            {
-                // TODO: This should not needed.... 
-            }
+            } 
             return null;
         }
 
