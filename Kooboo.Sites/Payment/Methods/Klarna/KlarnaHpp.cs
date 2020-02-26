@@ -82,7 +82,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex.InnerException);
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
             }
 
             return result;

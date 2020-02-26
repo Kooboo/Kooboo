@@ -34,7 +34,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
 
         public CheckStatusResponse CheckStatus(string hppSessionId)
         {
-            var response = _client.GetAsync($"https://{_endpoint}/hpp/v1/sessions/{hppSessionId}", withAuth: false).Result;
+            var response = _client.GetAsync($"https://{_endpoint}/hpp/v1/sessions/{hppSessionId}").Result;
 
             return DeserializeResponse<CheckStatusResponse>(response);
         }
