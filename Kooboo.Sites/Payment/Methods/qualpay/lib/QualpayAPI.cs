@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.qualpay.lib
@@ -20,8 +19,11 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
                 };
 
                 request.Add("preferences", preferences);
-                string body = JsonConvert.SerializeObject(request);
-                var response = ApiClient.Post(setting.ServerUrl + "/platform/checkout", body, setting.SecurityKey);
+                var body = JsonConvert.SerializeObject(request);
+                var response = ApiClient.Create("Basic", setting.SecurityKey)
+                    .PostAsync(setting.ServerUrl + "/platform/checkout", body)
+                    .Result.EnsureSuccessStatusCode().Content;
+
                 var result = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
                 if (DataHelper.GetValue("code", response) != "0")
                 {

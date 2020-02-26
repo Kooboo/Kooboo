@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using Kooboo.Data.Context;
-using Kooboo.Lib.Helper;
-using Kooboo.Sites.Payment.Methods.Klarna.lib;
 using Kooboo.Sites.Payment.Methods.Mollie.Lib;
 using Kooboo.Sites.Payment.Response;
 
@@ -55,7 +52,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                 WebhookUrl = callbackUrl
             };
 
-            var resp = MollieApi.CreatePayment(req, Setting.ApiToken).Result;
+            var resp = new MollieApi(Setting.ApiToken).CreatePayment(req);
 
             return new RedirectResponse(resp.Links.Checkout.Href, Guid.Empty)
             {
@@ -69,7 +66,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
             try
             {
                 var paymentId = request.ReferenceId;
-                var statusResponse = MollieApi.CheckStatus(paymentId, Setting.ApiToken).Result;
+                var statusResponse = new MollieApi(Setting.ApiToken).CheckStatus(paymentId);
 
                 result.Status = ConvertStatus(statusResponse.Status);
             }
@@ -91,7 +88,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                 return null;
             }
 
-            var statusResponse = MollieApi.CheckStatus(molliePaymentId, Setting.ApiToken).Result;
+            var statusResponse = new MollieApi(Setting.ApiToken).CheckStatus(molliePaymentId);
 
             var status = ConvertStatus(statusResponse.Status);
 
