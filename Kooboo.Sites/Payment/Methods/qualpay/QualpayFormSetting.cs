@@ -8,7 +8,7 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
     {
         public string Name => "QualpayFormPayment";
 
-        public string ServerUrl { get; set; }
+        public bool UseSandBox { get; set; }
 
         public string SuccessUrl { get; set; }
 
@@ -19,5 +19,20 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
         public string CheckoutProfileId { get; set; }
 
         public string SecurityKey { get; set; }
+
+        public string WebHookKey { get; set; }
+
+        public string ServerUrl
+        {
+            get
+            {
+                if (UseSandBox)
+                {
+                    return "https://app-test.qualpay.com";
+                }
+                return "https://api.qualpay.com";
+
+            }
+        }
     }
 }
