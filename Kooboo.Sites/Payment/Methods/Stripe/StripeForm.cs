@@ -114,12 +114,12 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         {
             switch (status)
             {
-                case "charge.succeded":
+                case "payment_intent.succeeded":
                     return PaymentStatus.Paid;
-                case "charge.failed":
+                case "payment_intent.payment_failed":
                     return PaymentStatus.Rejected;
                 case "payment_intent.canceled":
-                    return PaymentStatus.Rejected;
+                    return PaymentStatus.Cancelled;
                 case "payment_intent.created":
                     return PaymentStatus.Pending;
                 default:
