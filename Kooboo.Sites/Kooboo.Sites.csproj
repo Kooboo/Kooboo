@@ -41,6 +41,8 @@
   <ItemGroup>
     <Compile Remove="Engine\CoffeeScript.cs" />
     <Compile Remove="Engine\TypeScript.cs" />
+    <Compile Remove="Payment\Methods\Stripe\lib\EventConverter.cs" />
+    <Compile Remove="Payment\Methods\Stripe\lib\IHasId.cs" />
     <Compile Remove="Service\Suggestion.cs" />
     <Compile Remove="SiteElements\MenuElement.cs" />
     <Compile Remove="SiteElements\PageElementExtension.cs" />

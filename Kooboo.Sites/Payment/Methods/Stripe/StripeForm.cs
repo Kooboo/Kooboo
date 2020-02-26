@@ -1,14 +1,8 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Stripe.lib;
 using Kooboo.Sites.Payment.Response;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Kooboo.Sites.Payment.Methods.Stripe
 {
@@ -63,7 +57,6 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         public RenderContext Context { get; set; }
 
-
         [Description(Description)]
         public IPaymentResponse Charge(PaymentRequest request)
         {
@@ -85,8 +78,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
             var options = new SessionCreateOptions
             {
-                SuccessUrl = (string)cancelUrl,
-                CancelUrl = (string)successUrl,
+                SuccessUrl = (string)successUrl,
+                CancelUrl = (string)cancelUrl,
                 PaymentMethodTypes = new List<string> {
                     (string)paymentMethodType
                 },
@@ -100,6 +93,38 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             };
             response.setFieldValues("publishableKey", Setting.Publishablekey);
             return response;
+        }
+
+        public PaymentCallback Notify(RenderContext context)
+        {
+            var body = context.Request.Body;
+            var signi = context.Request.Headers.Get("Stripe-Signature");
+
+            var stripeEvent = EventUtility.ConstructEvent(body, signi, Setting.WebhookSigningSecret);
+            var result = new PaymentCallback
+            {
+                Status = ConvertStatus(stripeEvent.Type),
+                RawData = body,
+                CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
+            };
+            return result;
+        }
+
+        private PaymentStatus ConvertStatus(string status)
+        {
+            switch (status)
+            {
+                case "payment_intent.succeeded":
+                    return PaymentStatus.Paid;
+                case "payment_intent.payment_failed":
+                    return PaymentStatus.Rejected;
+                case "payment_intent.canceled":
+                    return PaymentStatus.Cancelled;
+                case "payment_intent.created":
+                    return PaymentStatus.Pending;
+                default:
+                    return PaymentStatus.NotAvailable;
+            }
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
