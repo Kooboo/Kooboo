@@ -32,7 +32,7 @@ export function getRepeatSourceComment(comments: KoobooComment[], source: string
 
 export function getScopeComnent(comments: KoobooComment[]) {
   for (const i of comments) {
-    if (i.source == "none") return;
+    // if (i.source == "none") return;
     if (i.getValue("scope")) return i;
   }
 }
