@@ -17,5 +17,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public string Secretkey { get; set; }
 
         public string Publishablekey { get; set; }
+
+        public string WebhookSigningSecret { get; set; }
     }
 }
