@@ -4,8 +4,6 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Methods.Square;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
-using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
-using Kooboo.Sites.Payment.Models;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json;
 using System;
@@ -56,7 +54,7 @@ namespace Kooboo.Sites.Payment.Methods
 
             // todo 需要转换为货币的最低单位 
             // square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            var amount = new Money { Amount = SquareCommon.GetSquareAmount(decimal.Parse(context.Request.Get("totalAmount"))),  Currency = context.Request.Get("currency") };
+            var amount = new Money { Amount = SquareCommon.GetSquareAmount(decimal.Parse(context.Request.Get("totalAmount"))), Currency = context.Request.Get("currency") };
 
             var squareResponseNonce = context.Request.Get("nonce");
 
@@ -66,7 +64,6 @@ namespace Kooboo.Sites.Payment.Methods
 
             if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
             {
-                res.Type = EnumResponseType.paid;
                 res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
             }
             else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
@@ -92,7 +89,8 @@ namespace Kooboo.Sites.Payment.Methods
 
             var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
 
-            var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
+            var httpResult = ApiClient.Create("Bearer", Setting.AccessToken)
+                .GetAsync(requestURL).Result.Content;
 
             var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
 
@@ -407,7 +405,7 @@ var paymentForm = new SqPaymentForm({
     // POST the nonce form to the payment processing page
     // document.getElementById('nonce-form').submit();
     alert(document.getElementById('card-nonce').value)
-                     $.get('" + kscriptAPIURL + "?totalAmount=" + amount + "&currency="+ currency + @"&nonce=' + nonce, function(data, status){ });
+                     $.get('" + kscriptAPIURL + "?totalAmount=" + amount + "&currency=" + currency + @"&nonce=' + nonce, function(data, status){ });
               }
             }
         });
