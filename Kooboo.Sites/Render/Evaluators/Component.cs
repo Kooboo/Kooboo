@@ -1,7 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Dom;
-using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using System;
 using System.Collections.Generic;
 

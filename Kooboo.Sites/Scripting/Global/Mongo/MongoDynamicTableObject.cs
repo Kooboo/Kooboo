@@ -1,5 +1,4 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Sites.DataTrace;
 using Kooboo.Sites.Scripting.Global.Database;
 using KScript;
 using System;

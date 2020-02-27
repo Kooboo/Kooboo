@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Kooboo.Data.Attributes;
-using Kooboo.Sites.DataTrace;
 using KScript;
 using System;
 using System.Collections.Concurrent;

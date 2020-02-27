@@ -1,9 +1,8 @@
-﻿using Kooboo.Sites.DataTrace;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Sites.DataTraceAndModify
+namespace Kooboo.Sites.DataTraceAndModify.CustomTraces
 {
     public class RepeatTrace : ITraceability
     {

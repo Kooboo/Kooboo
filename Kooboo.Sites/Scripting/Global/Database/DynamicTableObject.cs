@@ -1,6 +1,5 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
-using Kooboo.Sites.DataTrace;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;

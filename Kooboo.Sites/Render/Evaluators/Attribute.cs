@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Dom;
-using Kooboo.Sites.DataTrace;
 
 namespace Kooboo.Sites.Render
 {

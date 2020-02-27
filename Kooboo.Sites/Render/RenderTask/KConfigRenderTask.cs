@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.DataTraceAndModify;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using System;

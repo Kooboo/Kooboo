@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Sites.DataTraceAndModify
+namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
 
 

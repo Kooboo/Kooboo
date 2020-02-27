@@ -2,7 +2,6 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Dom;
-using Kooboo.Sites.DataTrace;
 using System;
 using System.Collections.Generic;
 using System.Linq;

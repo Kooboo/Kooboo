@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kooboo.Sites.DataTraceAndModify
+namespace Kooboo.Sites.DataTraceAndModify.Modifiers
 {
     public abstract class DataBaseModifier : ModifierBase
     {

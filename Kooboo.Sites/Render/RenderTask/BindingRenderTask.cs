@@ -6,7 +6,8 @@ using System.Linq;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
-using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.DataTraceAndModify;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using Kooboo.Sites.Render.RenderTask;
 using Kooboo.Sites.ViewModel;
 

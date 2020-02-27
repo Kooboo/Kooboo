@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Sites.DataTrace
+namespace Kooboo.Sites.DataTraceAndModify.CustomTraces
 {
     public class ComponentTrace : ITraceability
     {

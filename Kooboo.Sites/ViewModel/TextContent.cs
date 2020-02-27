@@ -7,7 +7,7 @@ using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using System.Linq;
 using Kooboo.Sites.Contents.Models;
-using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.DataTraceAndModify;
 
 namespace Kooboo.Sites.ViewModel
 {

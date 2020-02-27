@@ -1,5 +1,4 @@
-﻿using Kooboo.Sites.DataTrace;
-using Kooboo.Sites.Scripting.Global.RelationalDatabase;
+﻿using Kooboo.Sites.Scripting.Global.RelationalDatabase;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;

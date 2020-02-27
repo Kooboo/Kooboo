@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Kooboo.Sites.Service;
 using System;
-using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 
 namespace Kooboo.Sites.Render
 {

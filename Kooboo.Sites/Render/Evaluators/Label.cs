@@ -2,7 +2,7 @@
 //All rights reserved.
 using System.Collections.Generic;
 using Kooboo.Dom;
-using Kooboo.Sites.DataTrace;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 
 namespace Kooboo.Sites.Render
 {
