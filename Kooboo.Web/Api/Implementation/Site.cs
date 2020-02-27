@@ -485,27 +485,21 @@ namespace Kooboo.Web.Api.Implementation
 
         public Guid ImportSite(ApiCall call)
         {
-            var formresult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
+            var files = call.Context.Request.Files;
 
-            if (formresult.Files.Count() == 0)
+            if (files !=null && files.Count() == 0)
             {
                 return default(Guid);
             }
-
+            
             string RootDomain = null;
             string SubDomain = null;
             string SiteName = null;
-            if (formresult.FormData.ContainsKey("RootDomain"))
+            if (call.Context.Request.Forms != null)
             {
-                RootDomain = formresult.FormData["RootDomain"];
-            }
-            if (formresult.FormData.ContainsKey("SubDomain"))
-            {
-                SubDomain = formresult.FormData["SubDomain"];
-            }
-            if (formresult.FormData.ContainsKey("SiteName"))
-            {
-                SiteName = formresult.FormData["SiteName"];
+                RootDomain = call.Context.Request.Forms["RootDomain"];
+                SubDomain = call.Context.Request.Forms["SubDomain"];
+                SiteName = call.Context.Request.Forms["SiteName"];
             }
 
             if (string.IsNullOrEmpty(SiteName) || string.IsNullOrEmpty(RootDomain))
@@ -515,8 +509,7 @@ namespace Kooboo.Web.Api.Implementation
 
             string fulldomain = string.IsNullOrEmpty(SubDomain) ? RootDomain : SubDomain + "." + RootDomain;
 
-            var newsite = ImportExport.ImportZip(new MemoryStream(formresult.Files[0].Bytes), call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
-
+            var newsite = ImportExport.ImportZip(new MemoryStream(files[0].Bytes), call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
             return newsite.Id;
         }
 
