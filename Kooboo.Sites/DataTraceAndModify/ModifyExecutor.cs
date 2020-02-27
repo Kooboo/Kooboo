@@ -1,4 +1,5 @@
-﻿using Kooboo.Data.Context;
+﻿using Jint.Native.Number.Dtoa;
+using Kooboo.Data.Context;
 using Kooboo.Sites.DataTraceAndModify.Modifiers;
 using System;
 using System.Collections.Generic;
@@ -9,22 +10,24 @@ namespace Kooboo.Sites.DataTraceAndModify
 {
     public static class ModifyExecutor
     {
-        static readonly List<ModifierBase> _modifiers = new List<ModifierBase>{
-            new TextContentModifier(),
-            new IndexdbModifier(),
-            new MongoModifier(),
-            new SqliteModifier(),
-            new MysqlModifier(),
-            new SqlserverModifier(),
-            new ViewModifier(),
-            new HtmlblockModifier(),
-            new MenuModifier(),
-            new LabelModifier(),
-            new PageModifier(),
-            new LayoutModifier(),
-            new KeyValueModifier(),
-            new KConfigModifier()
-        };
+        static readonly Lazy<ModifierBase[]> _modifiers = new Lazy<ModifierBase[]>(() =>
+        {
+            bool basedModifierBase(Type type)
+            {
+                if (type == null) return false;
+                else if (type == typeof(ModifierBase)) return true;
+                else
+                {
+                    return basedModifierBase(type.BaseType);
+                }
+            }
+
+            return Lib.Reflection.AssemblyLoader.AllAssemblies
+            .SelectMany(s => s.GetTypes())
+            .Where(s => !s.IsAbstract && basedModifierBase(s))
+            .Select(s => (ModifierBase)Activator.CreateInstance(s))
+            .ToArray();
+        }, true);
 
 
         public static void Execute(RenderContext renderContext, List<ModifierBase> changedList)
@@ -37,7 +40,7 @@ namespace Kooboo.Sites.DataTraceAndModify
 
         public static Type GetModifierType(string source)
         {
-            var modifier = _modifiers.FirstOrDefault(f => f.Source == source);
+            var modifier = _modifiers.Value.FirstOrDefault(f => f.Source == source);
             if (modifier == null) throw new NotImplementedException();
             return modifier.GetType();
         }
