@@ -13,15 +13,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         private const string Description = @"Pay by stripe. Example:
 <script engine=""kscript"">
-  var charge = {};
-  charge.successUrl = 'https://example.com/success'
-  charge.cancelUrl = 'https://example.com/cancel'
-  charge.name = 'T-shirt'
-  charge.description = 'Comfortable cotton t-shirt'
-  charge.totalAmount = 1500
-  charge.currency = 'USD'
-  charge.quantity = 2
-  charge.paymentMethodType = 'card'
+  var charge = {
+    successUrl: 'https://example.com/success',
+    cancelUrl: 'https://example.com/cancel',
+    name: 'T-shirt',
+    description: 'Comfortable cotton t-shirt',
+    totalAmount: 1500,
+    currency: 'eur',
+    quantity: 2,
+    paymentMethodType: ['card', 'ideal']
+  };
   var res = k.payment.stripeForm.charge(charge);
   var publishableKey = res.fieldValues.get(""publishableKey"");
 </script>
@@ -67,7 +68,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             request.Additional.TryGetValue("quantity", out var quantity);
             request.Additional.TryGetValue("cancelUrl", out var cancelUrl);
             request.Additional.TryGetValue("successUrl", out var successUrl);
-            request.Additional.TryGetValue("paymentMethodType", out object paymentMethodType);
+            request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
 
             var lineItems = new List<SessionLineItemOptions>
             {
