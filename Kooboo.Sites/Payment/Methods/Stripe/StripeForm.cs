@@ -1,6 +1,7 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Stripe.lib;
 using Kooboo.Sites.Payment.Response;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -49,8 +50,11 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         {
             get
             {
-                var list = new List<string>();
-                list.Add("USD");
+                var list = new List<string> 
+                {
+                    "USD",
+                    "EUR"
+                };
                 return list;
             }
         }
@@ -63,7 +67,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             request.Additional.TryGetValue("quantity", out var quantity);
             request.Additional.TryGetValue("cancelUrl", out var cancelUrl);
             request.Additional.TryGetValue("successUrl", out var successUrl);
-            request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
+            request.Additional.TryGetValue("paymentMethodType", out object paymentMethodType);
 
             var lineItems = new List<SessionLineItemOptions>
             {
@@ -76,14 +80,24 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 }
             };
 
+            var paymentMethodTypesList = new List<string>();
+            
+            if(paymentMethodType is object[])
+            {
+                var paymentMethodTypeArray = Array.ConvertAll((object[])paymentMethodType, x => x.ToString());
+                paymentMethodTypesList.AddRange(paymentMethodTypeArray);
+            }
+            else if (paymentMethodType is object)
+            {
+                paymentMethodTypesList.Add((string)paymentMethodType);
+            }
+            
             var options = new SessionCreateOptions
             {
                 SuccessUrl = (string)successUrl,
                 CancelUrl = (string)cancelUrl,
-                PaymentMethodTypes = new List<string> {
-                    (string)paymentMethodType
-                },
-                LineItems = lineItems
+                LineItems = lineItems,
+                PaymentMethodTypes = paymentMethodTypesList
             };
 
             var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
