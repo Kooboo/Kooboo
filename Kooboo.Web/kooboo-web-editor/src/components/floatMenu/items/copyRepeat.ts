@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { isBody } from "@/dom/utils";
+import { isBody, getAllNode } from "@/dom/utils";
 import { getRepeatSourceComment } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { newGuid } from "@/kooboo/outsideInterfaces";
@@ -49,15 +49,22 @@ export default class CopyRepeatItem extends BaseMenuItem {
       guid = objectId();
     }
 
-    for (const node of nodes.reverse()) {
-      let cloned = node.cloneNode(true);
-      if (KoobooComment.isComment(cloned)) {
-        let koobooComment = new KoobooComment(cloned);
-        koobooComment.setValue("uid", koobooComment.uid + "_copy");
-        koobooComment.setValue("id", guid);
-        cloned = koobooComment.ToComment();
+    let copiedNodes = nodes.reverse().map(m => m.cloneNode(true));
+
+    for (const node of copiedNodes) {
+      for (const i of getAllNode(node, true)) {
+        if (KoobooComment.isComment(i)) {
+          let koobooComment = new KoobooComment(i);
+          koobooComment.setValue("uid", koobooComment.uid + "_copy");
+
+          if (koobooComment.id == repeatSourceComment.id) {
+            koobooComment.setValue("id", guid);
+          }
+
+          i.nodeValue = koobooComment.ToComment().nodeValue;
+        }
       }
-      endNode!.parentElement!.insertBefore(cloned, endNode!.nextSibling);
+      endNode!.parentElement!.insertBefore(node, endNode!.nextSibling);
     }
 
     let units = [new CopyRepeatUnit(getGuidComment(guid))];
