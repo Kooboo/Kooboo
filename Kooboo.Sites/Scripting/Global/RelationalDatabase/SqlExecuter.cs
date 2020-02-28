@@ -108,8 +108,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             var dic = data as IDictionary<string, object>;
             var keyValues = string.Join(",", dic.Select(s => $@"{WarpField(s.Key)}=@{s.Key}"));
-            dic.Add("__id", id);
-            var sql = $@"UPDATE {WarpField(name)} SET {keyValues} WHERE {primaryKey} = @__id";
+            dic.Add(primaryKey, id);
+            var sql = $@"UPDATE {WarpField(name)} SET {keyValues} WHERE {primaryKey} = @{primaryKey}";
 
             using (var connection = CreateConnection())
             {
