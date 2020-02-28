@@ -37,7 +37,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe.lib
         /// Time at which the object was created.
         /// </summary>
         [JsonProperty("created")]
-        [JsonConverter(typeof(EpochDateTimeConverter))]
+        [JsonConverter(typeof(Newtonsoft.Json.Converters.UnixDateTimeConverter))]
         public DateTime Created { get; set; }
 
         /// <summary>

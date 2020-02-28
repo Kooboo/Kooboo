@@ -220,7 +220,7 @@ namespace Kooboo.Data.Context
 
         public static WebSite GetWebSite(RenderContext context)
         {
-            var siteid = new Guid("335d0305-f808-c51b-9869-66dde503a306");//_GetSiteIdByUrl(context.Request);
+            var siteid = _GetSiteIdByUrl(context.Request);
 
             if (siteid == default(Guid))
             {
