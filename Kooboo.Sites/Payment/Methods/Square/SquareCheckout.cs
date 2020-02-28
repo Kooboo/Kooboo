@@ -122,6 +122,7 @@ namespace Kooboo.Sites.Payment.Methods
                 RedirectUrl = Setting.RedirectURL,
                 Order = new CreateOrderRequest
                 {
+                    ReferenceId = request.Id.ToString(),
                     LineItems = new List<CreateOrderRequestLineItem> {
                         new CreateOrderRequestLineItem
                         {

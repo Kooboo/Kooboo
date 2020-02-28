@@ -221,7 +221,8 @@ namespace Kooboo.Data.Context
         public static WebSite GetWebSite(RenderContext context)
         {
             var siteid = _GetSiteIdByUrl(context.Request);
-              
+            // to be remove siteid = new Guid("50ecb05f-e985-7b0d-78de-c10ee111eb30");
+
             if (siteid == default(Guid))
             {
                 siteid = Kooboo.Data.Service.WebSiteService.GetTempUrlSiteId(context.Request.Host); 
