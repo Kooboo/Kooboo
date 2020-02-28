@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { getScopeComnent, getRepeatSourceComment, getEditableComment } from "../utils";
+import { getEditableComment, getRepeatSourceComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";

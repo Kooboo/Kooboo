@@ -7,7 +7,7 @@ import { getEditableData } from "@/components/dataEditor/utils";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { setGuid, clearKoobooInfo, markDirty } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getScopeComnent } from "../utils";
+import { getEditableComment } from "../utils";
 import { operationRecord } from "@/operation/Record";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
@@ -32,7 +32,7 @@ export default class EditDataItem extends BaseMenuItem {
     let editableData = getEditableData(element);
     if (!editableData) return this.setVisiable(false);
     let comments = KoobooComment.getComments(editableData.parent);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
   }
 
   async click() {
@@ -40,7 +40,7 @@ export default class EditDataItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     let { parent, koobooId, list } = getEditableData(element)!;
     let comments = KoobooComment.getComments(parent);
-    let comment = getScopeComnent(comments)!;
+    let comment = getEditableComment(comments)!;
     let startContent = parent.innerHTML;
     try {
       await createDataEdtor(list);

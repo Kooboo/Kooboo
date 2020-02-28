@@ -23,13 +23,6 @@ export function getRepeatSourceComment(comments: KoobooComment[], source: string
   }
 }
 
-export function getScopeComnent(comments: KoobooComment[]) {
-  for (const i of comments) {
-    // if (i.source == "none") return;
-    if (i.getValue("scope")) return i;
-  }
-}
-
 export function getEditableComment(comments: KoobooComment[]) {
   return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute);
 }
@@ -42,7 +35,7 @@ export async function updateDomImage(element: HTMLImageElement) {
   let el = getUnpollutedEl(element)!;
   let startContent = element.cloneNode(true) as HTMLImageElement;
   let comments = KoobooComment.getComments(element);
-  let comment = getScopeComnent(comments)!;
+  let comment = getEditableComment(comments)!;
   try {
     await createImagePicker(element as HTMLImageElement);
     if (startContent.outerHTML == element.outerHTML) return;
@@ -125,7 +118,7 @@ export async function updateAttributeImage(element: HTMLImageElement) {
 export async function updateDomLink(element: HTMLElement) {
   let el = getUnpollutedEl(element)!;
   let comments = KoobooComment.getComments(element);
-  let comment = getScopeComnent(comments)!;
+  let comment = getEditableComment(comments)!;
   let href = element.getAttribute("href")!;
 
   try {

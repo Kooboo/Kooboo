@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isLink } from "@/dom/utils";
-import { updateDomLink, getScopeComnent } from "../utils";
+import { updateDomLink, getEditableComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -27,7 +27,7 @@ export default class EditLinkItem extends BaseMenuItem {
     let aroundComments = KoobooComment.getAroundComments(element);
     if (aroundComments.find(f => f.getValue("attribute") == "href")) return this.setVisiable(false);
     if (!isLink(element)) return this.setVisiable(false);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
     if (!el || isDynamicContent(el)) return this.setVisiable(false);
   }

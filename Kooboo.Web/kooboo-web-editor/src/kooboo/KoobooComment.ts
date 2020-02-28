@@ -97,7 +97,9 @@ export class KoobooComment {
         if (KoobooComment.isEndComment(node)) {
           skipUid.push(comment.uid);
         } else if (skipUid.every(e => e != comment.uid)) {
-          comments.push(new KoobooComment(node));
+          if (!strict || (!comment.scope && !comment.source.startsWith("repeat"))) {
+            comments.push(new KoobooComment(node));
+          }
         }
       }
       node = node.previousSibling!;

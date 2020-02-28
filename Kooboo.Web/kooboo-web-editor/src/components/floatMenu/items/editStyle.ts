@@ -4,7 +4,7 @@ import { createStyleEditor } from "@/components/styleEditor";
 import { setGuid, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
-import { getScopeComnent } from "../utils";
+import { getEditableComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { isImg } from "@/dom/utils";
 import BaseMenuItem from "./BaseMenuItem";
@@ -31,7 +31,7 @@ export default class EditStyleItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     if (isImg(element)) return this.setVisiable(false);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     if (!getUnpollutedEl(element)) return this.setVisiable(false);
   }
 
@@ -40,7 +40,7 @@ export default class EditStyleItem extends BaseMenuItem {
     this.parentMenu.hidden();
 
     let comments = KoobooComment.getComments(element);
-    let comment = getScopeComnent(comments)!;
+    let comment = getEditableComment(comments)!;
     let el = getUnpollutedEl(element)!;
     const startContent = element.getAttribute("style");
     try {

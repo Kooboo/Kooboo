@@ -10,7 +10,7 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createImg } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
-import { getScopeComnent } from "../utils";
+import { getEditableComment } from "../utils";
 import { Log } from "@/operation/Log";
 import { kvInfo } from "@/common/kvInfo";
 
@@ -32,7 +32,7 @@ export default class ReplaceToImgItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     if (isImg(element)) return this.setVisiable(false);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     if (isInTable(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
     let parent = el == element ? element.parentElement! : el;
@@ -47,7 +47,7 @@ export default class ReplaceToImgItem extends BaseMenuItem {
     let el = getUnpollutedEl(element)!;
     let parent = el == element ? element.parentElement! : el;
     let comments = KoobooComment.getComments(parent);
-    let comment = getScopeComnent(comments)!;
+    let comment = getEditableComment(comments)!;
     let guid = setGuid(parent);
     let startContent = parent.innerHTML;
     try {

@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg, isInTable } from "@/dom/utils";
-import { getScopeComnent } from "../utils";
+import { getEditableComment } from "../utils";
 import { setGuid, getUnpollutedEl, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
@@ -34,7 +34,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     if (!isImg(element)) return this.setVisiable(false);
     if (isInTable(element)) return this.setVisiable(false);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
     let parent = el == element ? element.parentElement! : el;
     if (!parent) return this.setVisiable(false);
@@ -46,7 +46,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     let el = getUnpollutedEl(element)!;
     let parent = el == element ? el.parentElement! : el;
     let comments = KoobooComment.getComments(parent!);
-    let comment = getScopeComnent(comments)!;
+    let comment = getEditableComment(comments)!;
     let startContent = parent.innerHTML;
     let text = createP();
     let style = getComputedStyle(element);

@@ -3,7 +3,7 @@ import { colorProps, ColorProp } from "./colorProps";
 import { sortStylePriority } from "./stylePriority";
 import { colorEnum } from "./colorEnum";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getScopeComnent } from "@/components/floatMenu/utils";
+import { getEditableComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 
@@ -47,7 +47,7 @@ export function getCssRules() {
   for (const style of getStyles()) {
     if (!(style.ownerNode instanceof HTMLElement)) continue;
     let comments = KoobooComment.getComments(style.ownerNode);
-    let comment = getScopeComnent(comments);
+    let comment = getEditableComment(comments);
     if (!comment) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");

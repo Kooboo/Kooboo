@@ -11,7 +11,7 @@ import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import { getCssRules, CssRule, matchSelector } from "@/dom/style";
 import { BgImageUnit } from "@/operation/recordUnits/bgImageUnit";
-import { getScopeComnent } from "../floatMenu/utils";
+import { getEditableComment } from "../floatMenu/utils";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
 
@@ -65,7 +65,7 @@ interface matchedRule {
 function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclaration, rules: CssRule[]) {
   let koobooId = element.getAttribute(KOOBOO_ID);
   let comments = KoobooComment.getComments(element);
-  let comment = getScopeComnent(comments);
+  let comment = getEditableComment(comments);
   if (!comment || !koobooId) return;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);

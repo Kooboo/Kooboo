@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { updateDomImage, getScopeComnent } from "../utils";
+import { updateDomImage, getEditableComment } from "../utils";
 import { getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
@@ -27,7 +27,7 @@ export default class EditImageItem extends BaseMenuItem {
     if (!isImg(element)) return this.setVisiable(false);
     let aroundComments = KoobooComment.getAroundComments(element);
     if (aroundComments.find(f => f.getValue("attribute") == "src")) return this.setVisiable(false);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
     if (!el || isDynamicContent(el)) return this.setVisiable(false);
   }

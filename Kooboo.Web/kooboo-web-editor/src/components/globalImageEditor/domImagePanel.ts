@@ -1,5 +1,5 @@
 import { getAllElement } from "@/dom/utils";
-import { updateDomImage, getScopeComnent } from "../floatMenu/utils";
+import { updateDomImage, getEditableComment } from "../floatMenu/utils";
 import { setImagePreview } from "./utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getUnpollutedEl } from "@/kooboo/utils";
@@ -14,7 +14,7 @@ export function createDomImagePanel() {
       let aroundComments = KoobooComment.getAroundComments(element);
       let comments = KoobooComment.getComments(element);
       if (aroundComments.find(f => f.getValue("attribute") == "src")) continue;
-      if (!getScopeComnent(comments)) continue;
+      if (!getEditableComment(comments)) continue;
       if (!getUnpollutedEl(element)) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
       setImagePreview(imagePreview, element);

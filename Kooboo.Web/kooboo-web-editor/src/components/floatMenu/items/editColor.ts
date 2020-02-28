@@ -3,7 +3,7 @@ import context from "@/common/context";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getScopeComnent } from "../utils";
+import { getEditableComment } from "../utils";
 import { createColorEditor } from "@/components/colorEditor";
 import { isDirty } from "@/kooboo/utils";
 
@@ -28,14 +28,14 @@ export default class EditColorItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.setReadonly(isDirty(element));
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     if (!koobooId) return this.setVisiable(false);
   }
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    createColorEditor(args.element, getScopeComnent(comments)!, args.koobooId!);
+    createColorEditor(args.element, getEditableComment(comments)!, args.koobooId!);
     this.parentMenu.hidden();
   }
 }
