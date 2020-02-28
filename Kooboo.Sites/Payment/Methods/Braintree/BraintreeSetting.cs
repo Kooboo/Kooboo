@@ -24,9 +24,9 @@ namespace Kooboo.Sites.Payment.Methods.Braintree
             {
                 if (UseSandBox)
                 {
-                    return "https://sandbox.braintreegateway.com/";
+                    return "https://api.sandbox.braintreegateway.com";
                 }
-                return "https://www.braintreegateway.com/";
+                return "https://api.braintreegateway.com";
 
             }
         }

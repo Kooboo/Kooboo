@@ -30,9 +30,9 @@ namespace Kooboo.Sites.Payment
             };
         }
 
-        public static ApiClient CreateWithBasicAuth(string userName, string password)
+        public static ApiClient CreateWithBasicAuth(string userName, string password, Encoding encoding)
         {
-            var b64 = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{password}"));
+            var b64 = Convert.ToBase64String(encoding.GetBytes($"{userName}:{password}"));
             return Create(new AuthenticationHeaderValue("Basic", b64));
         }
 

@@ -95,7 +95,7 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
 
         private XmlNode GetXmlResponse(string url, string method, Request requestBody)
         {
-            var request = GetHttpRequest(url, method, null, setting.PrivateKey, setting.PublicKey);
+            var request = GetHttpRequest(url, method, null, setting.PublicKey, setting.PrivateKey);
 
             if (requestBody != null)
             {
@@ -116,7 +116,7 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
 
         private async Task<XmlNode> GetXmlResponseAsync(string url, string method, Request requestBody)
         {
-            var request = GetHttpRequest(url, method, null, setting.PrivateKey, setting.PublicKey);
+            var request = GetHttpRequest(url, method, null, setting.PublicKey, setting.PrivateKey);
 
             if (requestBody != null)
             {

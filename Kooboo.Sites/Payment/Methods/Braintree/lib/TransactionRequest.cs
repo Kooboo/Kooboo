@@ -2,58 +2,37 @@
 using System.Collections.Generic;
 using System.Text;
 using Kooboo.Sites.Payment.Methods.XMLCommon;
+using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.Braintree.lib
 {
-    public class TransactionRequest : Request
+    public class TransactionRequest
     {
-        public const string CREATE_TRANSACTION = "create_transaction";
+        [JsonProperty("transaction")]
+        public TransactionRequestChildren Transaction { get; set; }
+    }
 
-        public TransactionCreditCardRequest CreditCard { get; set; }
+    public class TransactionRequestChildren
+    {
+        [JsonProperty("order-id")]
+        public string OrderId { get; set; }
+
+        [JsonProperty("amount")]
         public decimal Amount { get; set; }
+
+        [JsonProperty("options")]
         public TransactionOptionsRequest Options { get; set; }
+
+        [JsonProperty("payment-method-nonce")]
         public string PaymentMethodNonce { get; set; }
+
+        [JsonProperty("type")]
         public string Type { get; set; }
+    }
 
-        public TransactionRequest()
-        {
-        }
-
-        public override string Kind()
-        {
-            return CREATE_TRANSACTION;
-        }
-
-        public override string ToXml()
-        {
-            return ToXml("transaction");
-        }
-
-        public override string ToXml(string root)
-        {
-            return BuildRequest(root).ToXml();
-        }
-
-        public override string ToQueryString()
-        {
-            return ToQueryString("transaction");
-        }
-
-        public override string ToQueryString(string root)
-        {
-            return BuildRequest(root).ToQueryString();
-        }
-
-        protected virtual RequestBuilder BuildRequest(string root)
-        {
-            var builder = new RequestBuilder(root);
-
-            if (Amount != 0) builder.AddElement("amount", Amount);
-            builder.AddElement("payment-method-nonce", PaymentMethodNonce);
-            if (!string.IsNullOrEmpty(Type))
-                builder.AddElement("type", Type.ToString().ToLower());
-            builder.AddElement("options", Options);
-            return builder;
-        }
+    public class TransactionOptionsRequest
+    {
+        [JsonProperty("submit-for-settlement")]
+        public bool? SubmitForSettlement { get; set; }
     }
 }

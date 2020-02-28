@@ -48,13 +48,15 @@ var resForm = k.payment.braintreeForm.charge(charge);
             HiddenFormResponse res = new HiddenFormResponse();
             var token = GenerateClientToken();
 
-            res.html = GenerateHtml(token);
+            res.html = GenerateHtml(token, request.TotalAmount, request.Id);
 
             return res;
         }
 
-        public string CreateTransaction(RenderContext context)
+        [KDefineType(Return = typeof(HiddenFormResponse))]
+        public IPaymentResponse CreateTransaction(RenderContext context)
         {
+            var res = new PaidResponse();
             if (this.Setting == null)
             {
                 return null;
@@ -69,22 +71,27 @@ var resForm = k.payment.braintreeForm.charge(charge);
                 var nonce = context.Request.Forms["payment_method_nonce"];
                 var request = new TransactionRequest
                 {
-                    Amount = amount,
-                    PaymentMethodNonce = nonce,
-                    Options = new TransactionOptionsRequest
+                    Transaction = new TransactionRequestChildren
                     {
-                        SubmitForSettlement = true
+                        Amount = amount,
+                        PaymentMethodNonce = nonce,
+                        Options = new TransactionOptionsRequest
+                        {
+                            SubmitForSettlement = true
+                        },
+                        OrderId = context.Request.Forms["orderId"]
                     }
                 };
 
-                return new BraintreeAPI(Setting).Sale(request);
+                var result = new BraintreeAPI(Setting).Sale(request);
+                res.paymemtMethodReferenceId = result.Transaction.Id;
             }
             catch (FormatException e)
             {
                 Kooboo.Data.Log.Instance.Exception.WriteException(e);
             }
 
-            return null;
+            return res;
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
@@ -94,22 +101,49 @@ var resForm = k.payment.braintreeForm.charge(charge);
 
         public PaymentCallback Notify(RenderContext context)
         {
-            throw new NotImplementedException();
+            var forms = context.Request.Forms;
+            var data = new BraintreeAPI(Setting).Parse(forms["bt_signature"],
+                forms["bt_payload"]);
+            // https://developer.squareup.com/reference/square/objects/LaborShiftCreatedWebhookObject
+            var status = new PaymentStatus();
+            foreach (var item in collection)
+            {
+
+            }
+
+            var result = new PaymentCallback
+            {
+                // to do  该字段不是guid，无法转换赋值
+                //  "merchant_id": "6SSW7HV8K2ST5",
+                //RequestId = data.MerchantID,
+                RawData = body,
+                Status = status
+            };
+
+            return result;
         }
 
         private string GenerateClientToken()
         {
-            if (this.Setting == null)
+            try
             {
+                if (this.Setting == null)
+                {
+                    return null;
+                }
+
+                var service = new BraintreeAPI(Setting);
+
+                return service.Generate();
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
                 return null;
             }
-
-            var service = new BraintreeAPI(Setting);
-
-            return service.Generate();
         }
 
-        private string GenerateHtml(string clientToken)
+        private string GenerateHtml(string clientToken, decimal amount, Guid orderId)
         {
             var createTransactionUrl = PaymentHelper.GetCallbackUrl(this, nameof(CreateTransaction), this.Context);
             return @"<script src='https://js.braintreegateway.com/web/dropin/1.22.1/js/dropin.js'></script>
@@ -149,18 +183,21 @@ var resForm = k.payment.braintreeForm.charge(charge);
 }
 
 </style>
-<form id='payment-form' method='post' action=' / checkouts'>
+<form id='payment-form' method='post' action='" + createTransactionUrl + @"'>
+    <input id='amount' name='amount' type='hidden' value='" + amount + @"'/>
+    <input id='orderId' name='orderId' type='hidden' value='" + orderId + @"'/>
     <div id='dropin-container'></div>
     <input id='nonce' name='payment_method_nonce' type='hidden' />
-    <button id ='submit-button' class='button button--small button--green' type='submit'>Purchase</button>
-</form>
+    <button style='display: none;' id ='submit-button' class='button button--small button--green' type='submit'>Purchase</button>
+  </form>
 <script>
 var form = document.querySelector('#payment-form');
 
 braintree.dropin.create({
-  authorization: '"+ clientToken + @"',
+  authorization: '" + clientToken + @"',
   selector: '#dropin-container'
 }, function (createErr, instance) {
+        document.getElementById('submit-button').style.display = 'block';
         form.addEventListener('submit', function (event) {
             event.preventDefault();
 
