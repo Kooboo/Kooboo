@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { getScopeComnent, getRepeatSourceComment } from "../utils";
+import { getScopeComnent, getRepeatSourceComment, getEditableComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -33,7 +33,7 @@ export default class DeleteItem extends BaseMenuItem {
     if (isBody(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
     if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
-    if (!getScopeComnent(comments)) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
     if (el && isDynamicContent(el)) return this.setVisiable(false);
   }
@@ -42,7 +42,7 @@ export default class DeleteItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
     let comments = KoobooComment.getComments(element);
-    let comment = getScopeComnent(comments)!;
+    let comment = getEditableComment(comments)!;
     let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
     let el = getUnpollutedEl(element)!;
     let oldValue = element.parentElement!.innerHTML;
