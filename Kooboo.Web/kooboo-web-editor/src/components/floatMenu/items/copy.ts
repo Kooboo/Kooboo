@@ -29,10 +29,10 @@ export default class CopyItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let { element } = context.lastSelectedDomEventArgs;
+    let { element, koobooId } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
-    if (!el && !KoobooComment.getAroundScopeComments(element)) return this.setVisiable(false);
+    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
     if (el && isDynamicContent(el)) return this.setVisiable(false);
@@ -49,6 +49,7 @@ export default class CopyItem extends BaseMenuItem {
     let cloneElement = element.cloneNode(true) as HTMLElement;
     let guid = setGuid(element.parentElement!);
     let oldValue = element.parentElement!.innerHTML;
+
     if (aroundComments.length > 0) {
       let { nodes, endNode } = getWrapDom(element, aroundComments[aroundComments.length - 1].uid);
       for (const node of nodes.reverse()) {

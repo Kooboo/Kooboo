@@ -25,7 +25,7 @@ export default class EditRepeatImageItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     let aroundComments = KoobooComment.getAroundComments(element);
     if (!isImg(element)) return this.setVisiable(false);
-    if (!aroundComments.find(f => f.getValue("attribute") == "src")) return this.setVisiable(false);
+    if (!aroundComments.find(f => f.attribute == "src" && f.source != "none")) return this.setVisiable(false);
   }
 
   click() {

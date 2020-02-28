@@ -37,11 +37,7 @@ namespace Kooboo.Sites.Render
             if (!string.IsNullOrEmpty(attName))
             {
                 url = element.getAttribute(attName);
-
-                if (!options.RequireBindingInfo)
-                {
-                    element.removeAttribute(attName);
-                }
+                element.removeAttribute(attName);
 
                 if (options.RequireBindingInfo)
                 {

@@ -25,7 +25,7 @@ export default class EditRepeatLinkItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     let aroundComments = KoobooComment.getAroundComments(element);
     if (!isLink(element)) return this.setVisiable(false);
-    if (!aroundComments.find(f => f.getValue("attribute") == "href")) return this.setVisiable(false);
+    if (!aroundComments.find(f => f.attribute == "href" && f.source != "none")) return this.setVisiable(false);
   }
 
   click() {

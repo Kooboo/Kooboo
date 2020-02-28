@@ -29,10 +29,10 @@ export default class DeleteItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let { element } = context.lastSelectedDomEventArgs;
+    let { element, koobooId } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
-    if (!el && !KoobooComment.getAroundScopeComments(element)) return this.setVisiable(false);
+    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
     if (el && isDynamicContent(el)) return this.setVisiable(false);
@@ -65,7 +65,7 @@ export default class DeleteItem extends BaseMenuItem {
     }
 
     var log = [];
-    if (aroundScopeComment) {
+    if (aroundScopeComment && koobooId) {
       log.push(...aroundScopeComment.infos);
       log.push(kvInfo.delete);
       log.push(kvInfo.koobooId(koobooId));

@@ -25,7 +25,7 @@ export default class EditLinkItem extends BaseMenuItem {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     let aroundComments = KoobooComment.getAroundComments(element);
-    if (aroundComments.find(f => f.source != "none" && f.getValue("attribute") == "href")) return this.setVisiable(false);
+    if (aroundComments.find(f => f.getValue("attribute") == "href")) return this.setVisiable(false);
     if (!isLink(element)) return this.setVisiable(false);
     if (!getScopeComnent(comments)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
