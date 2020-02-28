@@ -50,7 +50,7 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
             return kHelper.GetId(id);
         }
 
-        private void Update(ITable table)
+        internal void Update(ITable table)
         {
             var entity = table.get(GetRealId(Id));
             if (entity == null) return;

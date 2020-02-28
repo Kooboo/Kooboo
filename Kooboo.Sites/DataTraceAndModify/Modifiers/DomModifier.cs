@@ -91,13 +91,13 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
             {
                 var style = element.getAttribute("style");
 
-                var cssDeclar = Dom.CSS.CSSSerializer.deserializeDeclarationBlock(style);
+                var cssDeclar = CSSSerializer.deserializeDeclarationBlock(style);
                 var propertise = cssDeclar.item;
                 var exist = propertise.Find(o => o.propertyname.ToLower() == Property.ToLower());
 
                 if (exist == null)
                 {
-                    propertise.Add(new Dom.CSS.CSSDeclaration
+                    propertise.Add(new CSSDeclaration
                     {
                         important = Important,
                         propertyname = Property,
@@ -113,7 +113,7 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
                 }
 
                 cssDeclar.item = cssDeclar.item.Where(o => !string.IsNullOrWhiteSpace(o.propertyname) && !string.IsNullOrWhiteSpace(o.value)).ToList();
-                var newStyle = Dom.CSS.CSSSerializer.serializeDeclarationBlock(cssDeclar);
+                var newStyle = CSSSerializer.serializeDeclarationBlock(cssDeclar);
                 element.setAttribute("style", newStyle);
                 sourceUpdate = new SourceUpdate
                 {

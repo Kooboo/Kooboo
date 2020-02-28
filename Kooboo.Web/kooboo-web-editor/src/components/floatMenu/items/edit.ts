@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { getEditComment, clearContent, getScopeComnent, getEditableComment, isEditable } from "../utils";
+import { clearContent, getEditableComment, isEditable } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";

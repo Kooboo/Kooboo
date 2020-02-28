@@ -11,13 +11,6 @@ import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 
-export function getEditComment(comments: KoobooComment[]) {
-  for (const i of comments) {
-    if (i.source == "none") return;
-    if (i.source && !i.source.startsWith("repeat") && !i.getValue("attribute")) return i;
-  }
-}
-
 export function getRepeatSourceComment(comments: KoobooComment[], source: string | null = null) {
   var repeatComment = comments.find(f => f.source == "repeatitem");
   if (!repeatComment) return;
