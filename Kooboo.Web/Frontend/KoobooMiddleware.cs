@@ -170,7 +170,10 @@ namespace Kooboo.Web.FrontRequest
                     CheckUserBandwidth(frontContext);
                 }
                 catch (Exception ex)
-                {
+                { 
+                    Kooboo.Data.Log.Instance.Exception.Write(frontContext.RenderContext.WebSite.Name + " "+ frontContext.RenderContext.Request.Url);   
+                    Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+
                     frontContext.RenderContext.Response.StatusCode = 500;
 
                     var errorbody = await WebSiteService.RenderCustomError(frontContext, 500);
@@ -178,12 +181,7 @@ namespace Kooboo.Web.FrontRequest
                     {
                         frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
                     }
-                    frontContext.Log.AddEntry("500", "exception", DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message);
-
-
-                    string error = frontContext.RenderContext.Request.Url + ex.Message + "\r\n" + ex.Source + "\r\n" + ex.StackTrace;
-
-                    Kooboo.Data.Log.Instance.Trace.Write(error);
+                    frontContext.Log.AddEntry("500",ex.Message, DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message); 
                 }
             }
 

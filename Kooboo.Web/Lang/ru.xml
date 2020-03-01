@@ -19,7 +19,7 @@
   <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">Необходимо настроить записи DNS. Для пользователей рабочего стола Windows, сопоставление домена веб-сайта 127.0.0.1 могут быть созданы на хост-файл системы</key>
   <key id="Adding a domain to your account">Добавьте доменное имя в свою учетную запись</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">С помощью следующих DNS-серверов все записи DNS будут установлены автоматически.</key>
-  <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">Или создайте подстановочный знак для записи CNAME, указывающей на следующее доменное имя. При использовании службы почтовых ящиков создайте запись MX, указывающую на следующее доменное имя.</key>
+  <key id="Or create your domain  wildcard CNAME record to below domain.">Or create your domain  wildcard CNAME record to below domain.</key>
   <key id="Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP">Или создайте подстановочную запись A, указывающую на следующий IP-адрес, Этот параметр не рекомендуется, так как мы можем изменить IP-адрес.</key>
   <key id="Domain">Доменное имя</key>
   <key id="kooboolocal.com">kooboolocal.com</key>
@@ -948,7 +948,6 @@
   <key id="Recharge amount">Общая сумма пополнения</key>
   <key id="Customize">Настройка</key>
   <key id="large than 0.01">Больше 0. 01</key>
-  <key id="Paied">Paied</key>
   <key id="Order date">Дата размещения заказа</key>
   <key id="coupon">Купоны</key>
   <key id="Downloads">Скачать</key>
@@ -1140,7 +1139,6 @@
   <key id="Domain must use Kooboo DNS server">Доменное имя должно использовать DNS-сервер Kooboo</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">Тот же старый и новый пароль</key>
-  <key id="is in use">Используется</key>
   <key id="Invalid coupon code">Недействительный объем предложения</key>
   <key id="Bandwidth">Пропускная способность</key>
   <key id="Email sending credits">Количество отправленных сообщений</key>
@@ -1152,6 +1150,7 @@
   <key id="port in use">Порт занят</key>
   <key id="Domain does not owned by current user">У пользователя нет прав на доменное имя</key>
   <key id="Your certificate already exists">Сертификат уже существует</key>
+  <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">Your ssl has been generated</key>
   <key id="Unexpected error">Неизвестная ошибка</key>
   <key id="Target Url is Protected">Адрес назначения защищен.</key>
@@ -1220,6 +1219,14 @@
   <key id="image size">Размер изображения</key>
   <key id="Missing images">Недостающие фотографии</key>
   <key id="missing image">Недостающие фотографии</key>
+  <key id="ByProductCategory">ByProductCategory</key>
+  <key id="ByTotalAmount">ByTotalAmount</key>
+  <key id="Username or email address already exists">Username or email address already exists</key>
+  <key id="Payment Method not found">Payment Method not found</key>
+  <key id="currency not supported by payment method">currency not supported by payment method</key>
+  <key id="alipay">alipay</key>
+  <key id="Paypal">PayPal</key>
+  <key id="wechat">WeChat</key>
   <key id="HtmlBlock">Блок кода HTML</key>
   <key id="You have reached the max loop limitation in your account">Учетная запись достигла максимального лимита цикла</key>
   <key id="Does not support index on date time column">Does not support index on date time column</key>
@@ -1308,8 +1315,6 @@
   <key id="Emails">Почта</key>
   <key id="Visitor">Посетители.</key>
   <key id="Resource">Ресурсы</key>
-  <key id="Paypal">PayPal</key>
-  <key id="wechat">WeChat</key>
   <key id="Api method Not Found">Метод API не найден</key>
   <key id="Unauthorized access">Unauthorized access</key>
   <key id="User or website not valid">Недопустимый веб-сайт или пользователь</key>
@@ -1318,4 +1323,5 @@
   <key id="required model type not provided">Указанный тип не указан</key>
   <key id="Require parameter not found">Параметр не указан</key>
   <key id="Max number of sites has been reached, require service level upgrade">Для достижения максимального уровня данных сайта требуется уровень пользователя</key>
+  <key id="is in use">Используется</key>
 </Lang>

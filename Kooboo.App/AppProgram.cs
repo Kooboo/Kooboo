@@ -9,46 +9,55 @@ namespace Kooboo.App
 {
     public class AppProgram
     {
-        [STAThreadAttribute]
+        [STAThread]
         public static void Main()
-        {  
-            var assemblies = new Dictionary<string, Assembly>();
-            var executingAssembly = Assembly.GetExecutingAssembly();
-            var resources = executingAssembly.GetManifestResourceNames().Where(n => n.EndsWith(".dll"));
+        {
+#if !DEBUG
+            var dir = new System.IO.DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            var files = dir.GetFiles("Kooboo.*.dll", System.IO.SearchOption.TopDirectoryOnly);
+            var isDebugMode = files.Length > 0;
 
-            foreach (string resource in resources)
+            if (!isDebugMode)
             {
-                using (var stream = executingAssembly.GetManifestResourceStream(resource))
-                {
-                    if (stream == null)
-                        continue;
+                var assemblies = new Dictionary<string, Assembly>();
+                var executingAssembly = Assembly.GetExecutingAssembly();
+                var resources = executingAssembly.GetManifestResourceNames().Where(n => n.EndsWith(".dll"));
 
-                    var bytes = new byte[stream.Length];
-                    stream.Read(bytes, 0, bytes.Length);
-                    try
+                foreach (string resource in resources)
+                {
+                    using (var stream = executingAssembly.GetManifestResourceStream(resource))
                     {
-                        assemblies.Add(resource, Assembly.Load(bytes));
-                    }
-                    catch (Exception ex)
-                    {
-                        
+                        if (stream == null)
+                            continue;
+
+                        var bytes = new byte[stream.Length];
+                        stream.Read(bytes, 0, bytes.Length);
+                        try
+                        {
+                            assemblies.Add(resource, Assembly.Load(bytes));
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     }
                 }
-            } 
-          
 
-            AppDomain.CurrentDomain.AssemblyResolve += (s, ev) =>
-            {
-                var assemblyName = new AssemblyName(ev.Name);
-
-                var path = string.Format("{0}.dll", assemblyName.Name);
-
-                if (assemblies.ContainsKey(path))
+                AppDomain.CurrentDomain.AssemblyResolve += (s, ev) =>
                 {
-                    return assemblies[path];
-                } 
-                return null;
-            };
+                    var assemblyName = new AssemblyName(ev.Name);
+
+                    var path = string.Format("{0}.dll", assemblyName.Name);
+
+                    if (assemblies.ContainsKey(path))
+                    {
+                        return assemblies[path];
+                    }
+                    return null;
+                };
+            }
+
+#endif
             App.Main();
         }
     }

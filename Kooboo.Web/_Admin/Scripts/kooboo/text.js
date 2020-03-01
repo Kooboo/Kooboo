@@ -734,7 +734,7 @@
         rechargeAmount: "Recharge amount",
         customize: "Customize",
         largeThan: "large than 0.01",
-        paied: "Paied",
+        paid: "paid",
         orderDate: "Order date",
         coupon: "coupon"
       },

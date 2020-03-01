@@ -26,7 +26,8 @@ namespace Kooboo.Sites.Payment
                 else if (callback.Cancelled || callback.Rejected)
                 {
                     requestrepo.Store.UpdateColumn<bool>(callback.RequestId, o => o.Failed, true);
-                }  
+                }
+                // update the order information.... 
             }
         }
     }

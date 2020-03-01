@@ -158,7 +158,7 @@ namespace Kooboo.Sites.Cache
                 return true;
             }
 
-            if (!Kooboo.Data.AppSettings.Global.IsOnlineServer)
+            if (!Kooboo.Data.AppSettings.IsOnlineServer)
             {
                 if (TValueType == typeof(Page)
               || TValueType == typeof(HtmlBlock)
