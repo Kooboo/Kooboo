@@ -4,7 +4,7 @@
     {
         public string Name => "MolliePayment";
 
-        public string BackUrl { get; set; }
+        public string RedirectUrl { get; set; }
 
         public string ApiToken { get; set; }
     }
