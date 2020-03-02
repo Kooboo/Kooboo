@@ -48,6 +48,8 @@ var resForm = k.payment.braintreeForm.charge(charge);
             HiddenFormResponse res = new HiddenFormResponse();
             var token = GenerateClientToken();
 
+            if (string.IsNullOrEmpty(token))
+                return null;
             res.html = GenerateHtml(token, request.TotalAmount, request.Id);
 
             return res;
@@ -56,14 +58,13 @@ var resForm = k.payment.braintreeForm.charge(charge);
         [KDefineType(Return = typeof(HiddenFormResponse))]
         public IPaymentResponse CreateTransaction(RenderContext context)
         {
-            var res = new PaidResponse();
             if (this.Setting == null)
             {
                 return null;
             }
 
-            Decimal amount;
-
+            decimal amount;
+            RedirectResponse res = null;
             try
             {
                 amount = Convert.ToDecimal(context.Request.Forms["amount"]);
@@ -84,7 +85,17 @@ var resForm = k.payment.braintreeForm.charge(charge);
                 };
 
                 var result = new BraintreeAPI(Setting).Sale(request);
-                res.paymemtMethodReferenceId = result.Transaction.Id;
+                
+                var strPaymentRequestId = context.Request.Forms["orderId"];
+                Guid paymentRequestId;
+                if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
+                {
+                    if (result != null && result.Transaction.Status.Equals("submitted_for_settlement", StringComparison.OrdinalIgnoreCase))
+                    {
+                        res = new RedirectResponse(Setting.SucceedRedirectURL, paymentRequestId);
+                        res.paymemtMethodReferenceId = result.Transaction.Id;
+                    }
+                }
             }
             catch (FormatException e)
             {
@@ -96,7 +107,13 @@ var resForm = k.payment.braintreeForm.charge(charge);
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            throw new NotImplementedException();
+            PaymentStatusResponse result = new PaymentStatusResponse();
+            var id = request.ReferenceId;
+            var resp = new BraintreeAPI(Setting).Find(id);
+
+            result = GetPaidStatus(result, resp.Transaction.Status);
+
+            return result;
         }
 
         public PaymentCallback Notify(RenderContext context)
@@ -104,21 +121,52 @@ var resForm = k.payment.braintreeForm.charge(charge);
             var forms = context.Request.Forms;
             var data = new BraintreeAPI(Setting).Parse(forms["bt_signature"],
                 forms["bt_payload"]);
-            // https://developer.squareup.com/reference/square/objects/LaborShiftCreatedWebhookObject
-            var status = new PaymentStatus();
-            foreach (var item in collection)
-            {
 
+            var result = new PaymentCallback();
+            if (data != null)
+            {
+                var transactions = data.Subject.Subscription.Transactions;
+                for (int i = 0; i < transactions.Length; i++)
+                {
+                    var strPaymentRequestId = transactions[i].Transaction.OrderId;
+                    Guid paymentRequestId;
+                    if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
+                    {
+                        result.RequestId = paymentRequestId;
+                        if (string.Equals(data.kind, "transaction_settled", StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Status = PaymentStatus.Paid;
+                        }
+                        else
+                        {
+                            result.Status = PaymentStatus.Cancelled;
+                        }
+                    }
+
+                }
+            }
+            return result;
+        }
+
+        private static PaymentStatusResponse GetPaidStatus(PaymentStatusResponse result, string orderStatus)
+        {
+            if (orderStatus.Equals("failed", StringComparison.OrdinalIgnoreCase)
+                || orderStatus.Equals("gateway_rejected", StringComparison.OrdinalIgnoreCase)
+                || orderStatus.Equals("settlement_declined", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Status = PaymentStatus.NotAvailable;
             }
 
-            var result = new PaymentCallback
+            if (orderStatus.Equals("authorized", StringComparison.OrdinalIgnoreCase)
+                || orderStatus.Equals("submitted_for_settlement", StringComparison.OrdinalIgnoreCase))
             {
-                // to do  该字段不是guid，无法转换赋值
-                //  "merchant_id": "6SSW7HV8K2ST5",
-                //RequestId = data.MerchantID,
-                RawData = body,
-                Status = status
-            };
+                result.Status = PaymentStatus.Pending;
+            }
+
+            if (orderStatus.Equals("settled", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Status = PaymentStatus.Paid;
+            }
 
             return result;
         }

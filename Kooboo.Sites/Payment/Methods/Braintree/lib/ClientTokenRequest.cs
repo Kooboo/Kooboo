@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Sites.Payment.Methods.XMLCommon;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.Braintree.lib
 {

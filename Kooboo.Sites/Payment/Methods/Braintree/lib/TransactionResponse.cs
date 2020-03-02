@@ -5,14 +5,6 @@ using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.Braintree.lib
 {
-    public enum TransactionStatus
-    {
-        AUTHORIZED,
-        FAILED,
-        SETTLED,
-        SUBMITTED_FOR_SETTLEMENT
-    }
-
     public class TransactionResponse
     {
         [JsonProperty("transaction")]
@@ -26,7 +18,7 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
         [JsonProperty("amount")]
         public virtual decimal? Amount { get; protected set; }
         [JsonProperty("status")]
-        public virtual TransactionStatus Status { get; protected set; }
+        public string Status { get; protected set; }
         [JsonProperty("currencyIsoCode")]
         public virtual string CurrencyIsoCode { get; protected set; }
         [JsonProperty("orderId")]
@@ -35,7 +27,7 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
         public virtual decimal? TaxAmount { get; protected set; }
         [JsonProperty("type")]
         public virtual string Type { get; protected set; }
-        [JsonProperty("createdAt")]
+        [JsonProperty("updatedAt")]
         public virtual DateTime? UpdatedAt { get; protected set; }
         [JsonProperty("createdAt")]
         public virtual DateTime? CreatedAt { get; protected set; }

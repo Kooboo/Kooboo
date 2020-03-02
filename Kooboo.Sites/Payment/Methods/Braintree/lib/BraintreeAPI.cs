@@ -11,27 +11,55 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
     {
         private const string SALE = "sale";
 
-        private readonly BraintreeService Service;
-
         public BraintreeSetting setting;
+
+        public const string TRANSACTION_SETTLED = "transaction_settled";
+        public const string TRANSACTION_SETTLEMENT_DECLINED = "transaction_settlement_declined";
 
         public BraintreeAPI(BraintreeSetting setting)
         {
             this.setting = setting;
-            Service = new BraintreeService(setting);
         }
 
-        public virtual TransactionResponse Sale(TransactionRequest request)
+        public TransactionResponse Sale(TransactionRequest request)
         {
             try
             {
                 request.Transaction.Type = SALE;
                 string response = Post(string.Format("{0}/merchants/{1}/transactions", setting.ServerUrl, setting.MerchantId),
                     JsonConvert.SerializeObject(request));
+                if (!string.IsNullOrEmpty(response))
+                {
+                    var result = JsonConvert.DeserializeObject<TransactionResponse>(response);
 
-                var result = JsonConvert.DeserializeObject<TransactionResponse>(response);
+                    return result;
+                }
 
-                return result;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public TransactionResponse Find(string id)
+        {
+            try
+            {
+                if (id != null || !id.Trim().Equals(""))
+                {
+                    string response = Get(string.Format("{0}/merchants/{1}/transactions/{2}", setting.ServerUrl, setting.MerchantId, id));
+
+                    if (!string.IsNullOrEmpty(response))
+                    {
+                        var result = JsonConvert.DeserializeObject<TransactionResponse>(response);
+
+                        return result;
+                    }
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -63,14 +91,21 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
             }
         }
 
-        public virtual Notification Parse(string signature, string payload)
+        public Notification Parse(string signature, string payload)
         {
             ValidateSignature(signature, payload);
             var stringPayload = Encoding.GetEncoding(0).GetString(Convert.FromBase64String(payload));
             try
             {
                 var res = JsonConvert.DeserializeObject<Notification>(stringPayload);
-                return res;
+
+                if (string.Equals(res.kind, TRANSACTION_SETTLED, StringComparison.OrdinalIgnoreCase)
+               || string.Equals(res.kind, TRANSACTION_SETTLEMENT_DECLINED, StringComparison.OrdinalIgnoreCase))
+                {
+                    return res;
+                }
+
+                return null;
             }
             catch (Exception)
             {
@@ -138,11 +173,27 @@ namespace Kooboo.Sites.Payment.Methods.Braintree.lib
                                 { "Accept", "application/json" },
                                 { "X-ApiVersion", "5" }
                             }).Result;
-            if (resp.IsSuccessStatusCode)
+            if (!resp.IsSuccessStatusCode)
             {
-                var content = JsonConvert.DeserializeObject<Dictionary<string, string>>(resp.Content);
-                var apiErrorResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(content["apiErrorResponse"]);
-                throw new Exception(apiErrorResponse["message"]);
+                var content = JsonConvert.DeserializeObject<Dictionary<string, object>>(resp.Content);
+                var apiErrorResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(content["apiErrorResponse"].ToString());
+                throw new Exception(apiErrorResponse["message"].ToString());
+            }
+
+            return resp.Content;
+
+        }
+
+        private string Get(string url)
+        {
+            var resp = ApiClient.CreateWithBasicAuth(setting.PublicKey, setting.PrivateKey, Encoding.Default)
+                            .GetAsync(url, new Dictionary<string, string> {
+                                { "Accept", "application/json" },
+                                { "X-ApiVersion", "5" }
+                            }).Result;
+            if (!resp.IsSuccessStatusCode)
+            {
+                throw new Exception("找不到订单！");
             }
 
             return resp.Content;
