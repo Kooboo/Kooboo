@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Smart2Pay.Lib
 {
@@ -9,7 +10,7 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay.Lib
 
         public Smart2PayApi(Smart2PaySetting setting)
         {
-            _client = ApiClient.CreateWithBasicAuth(setting.RestApiSiteId, setting.RestApiApiKey);
+            _client = ApiClient.CreateWithBasicAuth(setting.RestApiSiteId, setting.RestApiApiKey, Encoding.UTF8);
             _endpoint = setting.Endpoint;
         }
 
