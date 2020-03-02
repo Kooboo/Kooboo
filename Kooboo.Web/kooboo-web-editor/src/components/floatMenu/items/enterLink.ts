@@ -26,7 +26,8 @@ export default class EnterLinkItem extends BaseMenuItem {
   }
 
   click() {
-    let url = context.lastHoverDomEventArgs.element.getAttribute("href")!;
+    let url = context.lastHoverDomEventArgs.element.getAttribute("href")!.trim();
+    if (!url.startsWith("/")) url = "/" + url;
     this.parentMenu.hidden();
     let pageId = getPageId();
     let siteId = getQueryString("SiteId");
