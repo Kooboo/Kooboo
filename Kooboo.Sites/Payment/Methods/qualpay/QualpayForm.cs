@@ -61,6 +61,13 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             var currency = GetCurrencyCode(request.Currency);
             dic.Add("tran_currency", currency);
             dic.Add("purchase_id", DataHelper.GeneratePurchaseId(request.Id));
+            var preferences = new Dictionary<string, string>
+                {
+                    { "success_url", PaymentHelper.GetCallbackUrl(this, nameof(CheckoutFinished), Context)},
+                    { "failure_url", Setting.FailureUrl }
+                };
+
+            dic.Add("preferences", preferences);
             var result = QualpayAPI.CheckOutUrl(dic, Setting);
             if (result == null)
                 return null;
@@ -83,6 +90,16 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             return currentCodes[currency];
         }
 
+        [KDefineType(Return = typeof(HiddenFormResponse))]
+        public IPaymentResponse CheckoutFinished(RenderContext context)
+        {
+            var result = new PaidResponse();
+
+            var trasactionId = context.Request.QueryString["pg_id"];
+            result.paymemtMethodReferenceId = trasactionId;
+            return result;
+        }
+
         protected PaymentCallback NofityUrl(RenderContext context)
         {
             var result = new PaymentCallback();
@@ -100,33 +117,23 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
                 if (string.IsNullOrEmpty(purchaseIds))
                     return null;
                 var purchaseArray = purchaseIds.Split(',');
-                for (int i = 0; i < purchaseArray.Length; i++)
+
+                result.RequestId = DataHelper.GenerateRequestId(purchaseArray[0]);
+                if (string.Equals(eventType, CheckoutSuccessEvent))
                 {
-                    result.RequestId = DataHelper.GenerateRequestId(purchaseArray[i]);
-                    if (string.Equals(eventType, CheckoutSuccessEvent))
-                    {
-                        result.Status = PaymentStatus.Pending;
-                    }
-                    else
-                    {
-                        result.Status = PaymentStatus.NotAvailable;
-                    }
-
-                    if (string.Equals(eventType, TransactionUpdatedEvent))
-                    {
-                        string code = DataHelper.GetValue("tran_status", context.Request.Body);
-                        if (code == "S")
-                        {
-                            result.Status = PaymentStatus.Paid;
-                        }
-
-                        if (code == "R")
-                        {
-                            result.Status = PaymentStatus.Rejected;
-                        }
-                    }
-
+                    result.Status = PaymentStatus.Pending;
                 }
+                else
+                {
+                    result.Status = PaymentStatus.NotAvailable;
+                }
+
+                if (string.Equals(eventType, TransactionUpdatedEvent))
+                {
+                    string code = DataHelper.GetValue("tran_status", context.Request.Body);
+                    result.Status = ConvertStatus(code);
+                }
+
                 return result;
             }
 
@@ -135,7 +142,45 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            throw new NotImplementedException();
+            var resp = new PaymentStatusResponse();
+
+            var code = QualpayAPI.GetTransaction(request.ReferenceId, Setting);
+
+            if (code != null)
+            {
+                resp.Status = ConvertStatus(code);
+            }
+            else
+            {
+                resp.Status = PaymentStatus.NotAvailable;
+            }
+
+            return resp;
+        }
+
+        private PaymentStatus ConvertStatus(string code)
+        {
+            var status = PaymentStatus.Pending;
+            switch (code.ToUpper())
+            {
+                case "S":
+                    status = PaymentStatus.Paid;
+                    break;
+                case "R":
+                    status = PaymentStatus.Rejected;
+                    break;
+                case "C ":
+                    status = PaymentStatus.Pending;
+                    break;
+                case "V":
+                    status = PaymentStatus.NotAvailable;
+                    break;
+                case "K":
+                    status = PaymentStatus.Cancelled;
+                    break;
+            }
+
+            return status;
         }
 
         private bool Validate(string secret, string header, string postData)
