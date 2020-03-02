@@ -4,6 +4,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,13 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 {
     public class ProductViewModel : IDynamic
     {
+        
+        private RenderContext context { get; set; }
 
-        public   ProductViewModel(Product product, string lang, List<Models.ProductProperty> Properties)
-        {  
+        public ProductViewModel(Product product, RenderContext context, List<Models.ProductProperty> Properties)
+        {
+            this.context = context;
+
             this.Id = product.Id;
             this.ProductTypeId = product.ProductTypeId;
             this.UserKey = product.UserKey;
@@ -24,7 +29,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             this.Online = product.Online;
             this.CreationDate = product.CreationDate;
 
-            var langcontent = product.GetContentStore(lang);
+            var langcontent = product.GetContentStore(context.Culture);
             if (langcontent != null)
             {
                 this.Values = langcontent.FieldValues;
@@ -53,19 +58,19 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
                         }
                     }
                 }
-            } 
-        
+            }
+
         }
 
 
         public Guid Id { get; set; }
 
         public string UserKey { get; set; }
-                                              
+
         public Guid ProductTypeId { get; set; }
 
         public int Order { get; set; }
-                                             
+
         public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public Object GetValue(string FieldName)
@@ -76,7 +81,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             {
                 return this.UserKey;
             }
-        
+
             else if (lower == "id")
             {
                 return this.Id;
@@ -89,8 +94,8 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             if (Values.ContainsKey(FieldName))
             {
                 return Values[FieldName];
-            }             
-     
+            }
+
             else if (lower == "contenttypeid")
             {
                 return this.ProductTypeId;
@@ -126,6 +131,8 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             var result = GetValue(FieldName);
             if (result == null && Context != null)
             {
+
+
                 //// check category and embedded. 
                 //var sitedb = Context.WebSite.SiteDb();
                 //var folder = sitedb.ContentFolders.Get(this.FolderId);
@@ -212,7 +219,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         public DateTime CreationDate { get; set; }
 
         public string Name { get; set; }
-        
+
         public string Summary { get; set; }
 
         public bool Online { get; set; }
@@ -221,8 +228,20 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         {
             get
             {
-                return this.Values.ToDictionary(o=>o.Key, o=>(object)o.Value);
+                return this.Values.ToDictionary(o => o.Key, o => (object)o.Value);
             }
         }
-    } 
+
+        [JsonIgnore]
+        public ProductVariantsViewModel[] Variants
+        {
+            get
+            {
+                var variants = ServiceProvider.ProductVariants(this.context).ListByProduct(this.Id);
+
+                return variants.Select(o => new ProductVariantsViewModel(o)).ToArray(); 
+            }
+        }
+
+    }
 }

@@ -25,14 +25,14 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             if (producttype == null || producttypeid == default(Guid))
             { return default(Guid); }
 
-            string userkey = ExtraValue(model, "userkey");
+            string userkey = ExtractValue(model, "userkey");
 
             if (!string.IsNullOrEmpty(userkey))
             {
                 userkey = Kooboo.Sites.Contents.UserKeyHelper.ToSafeUserKey(userkey);
             }
 
-            string stronline = ExtraValue(model, "online");
+            string stronline = ExtractValue(model, "online");
             bool online = true;
             if (!string.IsNullOrEmpty(stronline) && stronline.ToLower() == "false")
             {
@@ -40,7 +40,7 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             }
 
             int sequence = 0;
-            var strsequence = ExtraValue(model, "sequence");
+            var strsequence = ExtractValue(model, "sequence");
             if (!string.IsNullOrEmpty(strsequence))
             {
                 int.TryParse(strsequence, out sequence);
@@ -68,7 +68,7 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
 
             foreach (var item in producttype.Properties.Where(o => !o.MultipleLanguage))
             {
-                var value = ExtraValue(model, item.Name);
+                var value = ExtractValue(model, item.Name);
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     newproduct.SetValue(item.Name, value, call.WebSite.DefaultCulture);
@@ -154,9 +154,9 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             {
                 var type = sitedb.ProductType.Get(item.ProductTypeId); 
 
-                if (type == null)
+                if (type != null)
                 {
-                    model.List.Add(new ProductViewModel(item, language, type.Properties));
+                    model.List.Add(new ProductViewModel(item, call.Context, type.Properties));
                 } 
             } 
             return model;
@@ -295,7 +295,7 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
             return model;
         }
 
-        public string ExtraValue(ProductUpdateViewModel updatemodel, string FieldName)
+        public string ExtractValue(ProductUpdateViewModel updatemodel, string FieldName)
         {
             if (string.IsNullOrWhiteSpace(FieldName))
             {
@@ -384,7 +384,7 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
 
                 if (type !=null)
                 {
-                    model.List.Add(new ProductViewModel(item, language, type.Properties));
+                    model.List.Add(new ProductViewModel(item, call.Context, type.Properties));
                 } 
             }
 

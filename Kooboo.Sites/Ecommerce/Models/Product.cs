@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Ecommerce.Models
         {
             get
             {
-                if (_id == default(Guid))
+                if (_id == default(Guid) && !string.IsNullOrWhiteSpace(this.UserKey))
                 {
                     _id = Lib.Security.Hash.ComputeGuidIgnoreCase(this.UserKey);
                 }
@@ -37,9 +37,18 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
         }
 
-
-        // can be used for url.. 
-        public string UserKey { get; set; }
+        private string _userkey; 
+        public string UserKey {
+            get
+            {
+                return _userkey;
+            }
+            set
+            {
+                _userkey = value;
+                _id = default(Guid); 
+            }
+        }
 
         public Guid ProductTypeId { get; set; }
 
@@ -299,7 +308,6 @@ namespace Kooboo.Sites.Ecommerce.Models
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-           
-
+            
     }
 }

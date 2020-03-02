@@ -37,53 +37,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
             return base.AddOrUpdate(product, UserId);
         }
-
-        public  ProductViewModel GetView(Guid id, string lang)
-        {
-            return GetView(this.Get(id), lang);
-        }
-
-        public ViewModel.ProductViewModel GetView(Product product, string lang)
-        {
-            if (product != null)
-            {
-                var prop = this.SiteDb.GetSiteRepository<ProductTypeRepository>().GetColumns(product.ProductTypeId);
-                return new ProductViewModel(product, lang, prop);
-            }
-            return null;
-        }
-
-        // get the default content item...search for all possible text repositories..
-        //public TextContentViewModel GetDefaultContentFromFolder(Guid FolderId, string CurrentCulture = null)
-        //{
-        //    if (string.IsNullOrWhiteSpace(CurrentCulture))
-        //    {
-        //        CurrentCulture = this.WebSite.DefaultCulture;
-        //    }
-
-        //    var list = this.Query.Where(o => o.FolderId == FolderId).Take(10);
-
-        //    foreach (var item in list.Where(o => o.Online))
-        //    {
-        //        var view = GetView(item, CurrentCulture);
-        //        if (view != null && view.Values.Count() > 0)
-        //        {
-        //            return view;
-        //        }
-        //    }
-
-        //    foreach (var item in list.Where(o => !o.Online))
-        //    {
-        //        var view = GetView(item, CurrentCulture);
-        //        if (view != null && view.Values.Count() > 0)
-        //        {
-        //            return view;
-        //        }
-        //    }
-
-        //    return null;
-        //}
-
+          
         public string GenerateUserKey(Product proudct)
         {
             string lang = this.SiteDb.WebSite.DefaultCulture;
@@ -141,7 +95,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 return key;
             }
             string newkey = string.Empty;
-            for (int i = 0; i < 99; i++)
+            for (int i = 2; i < 99; i++)
             {
                 newkey = key + i.ToString();
                 if (!IsUserKeyExists(newkey))

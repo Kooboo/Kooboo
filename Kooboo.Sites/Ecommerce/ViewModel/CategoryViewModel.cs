@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Ecommerce.Models;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 
@@ -9,6 +10,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 {
     public class CategoryViewModel
     {
+        [JsonIgnore]
         public RenderContext context { get; set; }
 
         public CategoryViewModel(Category cat, RenderContext context)
@@ -33,9 +35,10 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 
         public string DisplayName { get; set; }
 
+
         public ProductViewModel[] Products(int skip, int take)
         {
-            var products = ServiceProvider.Product(this.context).ListByCategory(this.Id, skip, take);
+            var products = ServiceProvider.Product(this.context).ByCategory(this.Id.ToString(), skip, take);
 
             if (products == null || !products.Any())
             {
@@ -46,7 +49,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 
             if (producttype != null)
             {
-                return products.Select(o => new ProductViewModel(o, this.context.Culture, producttype.Properties)).ToArray();  
+                return products.Select(o => new ProductViewModel(o, this.context, producttype.Properties)).ToArray();  
             }
 
             return null;

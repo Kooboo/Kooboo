@@ -1,26 +1,24 @@
 ﻿using Kooboo.Data.Context;
-// using Kooboo.Sites.Ecommerce.KScript.Model;
-using Kooboo.Sites.Ecommerce.Repository;
+using Kooboo.Sites.Ecommerce.Service;
 using Kooboo.Sites.Ecommerce.ViewModel;
-using Kooboo.Sites.Extensions; 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Kooboo.Sites.Ecommerce.Service;
+using System.Text;
 
-namespace KScript.Ecommerce
+namespace Kooboo.Sites.Ecommerce.KScript
 {
-    public class KCategory
+   
+    public class KProduct
     {
         private RenderContext context { get; set; }
 
-        private CategoryService service { get; set; }
+        private ProductService service { get; set; }
 
-        public KCategory(RenderContext context)
+        public KProduct(RenderContext context)
         {
             this.context = context;
-            this.service = Kooboo.Sites.Ecommerce.ServiceProvider.GetService<CategoryService>(this.context);
+            this.service = Kooboo.Sites.Ecommerce.ServiceProvider.GetService<ProductService>(this.context);
         }
 
         private List<CategoryViewModel> SubCategories(Guid ParentId)
@@ -36,22 +34,27 @@ namespace KScript.Ecommerce
                 {
                     result.Add(view);
                 }
-            } 
+            }
             return result;
         }
-         
-        public CategoryViewModel[] Top()
-        { 
-            var subcates = service.Top();  
 
-            return subcates.Select(o => new CategoryViewModel(o, this.context)).ToArray(); 
+        public ProductViewModel[] Top()
+        {
+            var products = service.Top();
+
+            return products.Select(o => new ProductViewModel(o, this.context, null)).ToArray();
         }
-            
+
         public CategoryViewModel[] Sub(string ParentKeyOrPath)
         {
-             var subs = service.Sub(ParentKeyOrPath);
+            var subs = service.Sub(ParentKeyOrPath);
             return subs.Select(o => new CategoryViewModel(o, this.context)).ToArray();
         }
-         
+
     }
+
+
+
+
+
 }

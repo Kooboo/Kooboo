@@ -7,11 +7,18 @@ namespace Kooboo.Sites.Ecommerce.Service
 {
     public class ProductService : ServiceBase<Product>
     { 
-        public List<Product> ListByCategory(Guid CategoryId, int skip, int count)
+        public List<Product> ByCategory(string CategorykeyIdOrPath, int skip=0, int count=50)
         {
             //TODO: sort product here...
-            var list = ServiceProvider.ProductCategory(this.Context).ProductIdList(CategoryId); 
+            var categoryid = ServiceProvider.Category(this.Context).GetCategoryId(CategorykeyIdOrPath);  
+            var list = ServiceProvider.ProductCategory(this.Context).ProductIdList(categoryid); 
             return this.Repo.Query.WhereIn<Guid>(o => o.Id, list).Skip(skip).Take(count);
+        }
+         
+        public List<Product> Top(int count = 10)
+        {
+            // TODO: add sort product here. 
+            return this.Repo.Query.OrderByDescending(o => o.Order).Take(count); 
         }
     }
 }

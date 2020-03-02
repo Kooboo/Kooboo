@@ -6,6 +6,7 @@ using Kooboo.IndexedDB;
 using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Repository;
 using System.Linq;
+using Kooboo.Sites.Contents;
 
 namespace Kooboo.Sites.Ecommerce.Repository
 {
@@ -20,7 +21,16 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 return para;
             }
         }
-         
+
+        public override bool AddOrUpdate(Category cat, Guid UserId = default(Guid))
+        {
+            if (string.IsNullOrWhiteSpace(cat.UserKey))
+            {
+                cat.UserKey = this.GenerateUserKey(cat);
+            }
+            return base.AddOrUpdate(cat, UserId);
+        }
+
         public override void Delete(Guid id)
         {
             var allcate = this.SiteDb.GetSiteRepository<CategoryRepository>().All();
@@ -38,7 +48,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             base.Delete(id);
         }
 
-        public List<Category> RootCategories()
+        public List<Category> TopCategories()
         {
             return this.Query.Where(o => o.ParentId == default(Guid)).SelectAll();
         }
@@ -69,7 +79,86 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 Filtersub(All, item.Id, ref result);
             }
         }
-           
+         
+        public string GenerateUserKey(Category category)
+        {
+            if (category == null)
+            {
+                return System.Guid.NewGuid().ToString();
+            }
+            
+            if  (Lib.Helper.CharHelper.isAsciiDigit(category.Name))
+            {
+                return GetUserKey(category.Name); 
+            }
+
+            // try use default or english.
+            if (category.Values.ContainsKey("en"))
+            {
+                var value = category.Values["en"];
+                if (value !=null)
+                {
+                    return GetUserKey(value.ToString());
+                } 
+            }
+            string lang = this.SiteDb.WebSite.DefaultCulture;
+            if (category.Values.ContainsKey(lang))
+            {
+                var value = category.Values[lang];
+                if (value != null)
+                {
+                    return GetUserKey(value.ToString());
+                }
+            }
+
+            return GetUserKey(category.Name);  
+            //foreach (var item in category.Values)
+            //{  
+            //     if (item.Value !=null)
+            //    {
+            //        return GetUserKey(item.Value.ToString()); 
+            //    }
+            //} 
+            // return Guid.NewGuid().ToString();
+        }
+
+        private string GetUserKey(string key)
+        {
+            key = UserKeyHelper.ToSafeUserKey(key);
+            if (!IsUserKeyExists(key))
+            {
+                return key;
+            }
+            string newkey = string.Empty;
+            for (int i = 2; i < 99; i++)
+            {
+                newkey = key + i.ToString();
+                if (!IsUserKeyExists(newkey))
+                {
+                    return newkey;
+                }
+            }
+            Random rnd = new Random();
+            for (int i = 0; i < 9999; i++)
+            {
+                newkey = key + rnd.Next(i, int.MaxValue).ToString();
+                if (!IsUserKeyExists(newkey))
+                {
+                    return newkey;
+                }
+            }
+            return null;
+        }
+
+        internal bool IsUserKeyExists(string userKey)
+        {
+            if (string.IsNullOrEmpty(userKey))
+            { return true; }
+            Guid id = Lib.Security.Hash.ComputeGuidIgnoreCase(userKey);
+            return this.Get(id) != null;
+        }
+         
+
     }
 
 

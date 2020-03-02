@@ -17,43 +17,37 @@ namespace Kooboo.Sites.Ecommerce.Models
             this.ConstType = ConstObjectType.Cateogry;
         }
         public Guid ParentId { get; set; }
-         
-        private Guid _id;
-        [Kooboo.Attributes.SummaryIgnore]
+
+        private Guid _Id;
         public override Guid Id
         {
             get
             {
-                if (_id == default(Guid))
+                if (_Id == default(Guid) && !string.IsNullOrWhiteSpace(this.UserKey))
                 {
-                    if (!string.IsNullOrEmpty(this.Name))
-                    {
-                        string unique = this.Name; 
-                         
-                        if (this.ParentId == default(Guid))
-                        {
-                            unique += this.ParentId.ToString(); 
-                        }
-
-                        unique += this.ConstType.ToString(); 
-                                                         
-                        _id = Data.IDGenerator.GetId(unique);
-                    }
-                    else
-                    {
-                        _id = System.Guid.NewGuid();
-                    }
+                    _Id = Lib.Security.Hash.ComputeGuidIgnoreCase(this.UserKey);
                 }
-                return _id;
+                return _Id;
             }
-
             set
             {
-                _id = value;
+                _Id = value;
             }
         }
 
-        public string UserKey { get; set; }
+        private string _userkey;
+        public string UserKey
+        {
+            get
+            {
+                return _userkey;
+            }
+            set
+            {
+                _userkey = value;
+                _Id = default(Guid);
+            }
+        }
 
         public override int GetHashCode()
         {
@@ -63,7 +57,7 @@ namespace Kooboo.Sites.Ecommerce.Models
             {
                 foreach (var item in this.Values)
                 {
-                    unique += item.Key + item.Value; 
+                    unique += item.Key + item.Value;
                 }
             }
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);

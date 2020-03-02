@@ -32,6 +32,11 @@ namespace Kooboo.Sites.Ecommerce
             return GetService<ProductService>(context);
         }
 
+        public static ProductVariantsService ProductVariants(RenderContext context)
+        {
+            return GetService<ProductVariantsService>(context); 
+        }
+
         public static ICustomerService Customer(RenderContext context)
         {
             return GetService<ICustomerService>(context);
@@ -55,7 +60,6 @@ namespace Kooboo.Sites.Ecommerce
         public static ShippingService Shipping(RenderContext context)
         {
             return GetService<ShippingService>(context);
-        }
-
+        } 
     }
 }
