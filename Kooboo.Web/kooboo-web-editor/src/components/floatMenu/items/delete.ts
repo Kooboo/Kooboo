@@ -70,11 +70,12 @@ export default class DeleteItem extends BaseMenuItem {
       log.push(kvInfo.delete);
       log.push(kvInfo.koobooId(koobooId));
     } else {
-      log.push(...comment.infos);
       if (el == element) {
+        log.push(...comments.find(f => f.scope)!.infos);
         log.push(kvInfo.delete);
         log.push(kvInfo.koobooId(koobooId));
       } else {
+        log.push(...comment.infos);
         log.push(kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
       }
     }
