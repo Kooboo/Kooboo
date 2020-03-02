@@ -61,8 +61,7 @@ namespace Kooboo.IndexedDB.Helper
 
             return isUtc;
         }
-
-
+         
         public static bool Compare(Kooboo.IndexedDB.Query.Comparer Compare, DateTime DateA, DateTime DateB)
         {
             switch (Compare)
