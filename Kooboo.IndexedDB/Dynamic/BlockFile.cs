@@ -89,7 +89,7 @@ namespace Kooboo.IndexedDB.Dynamic
             Stream.Position = blockposition + 2;
 
             Stream.Write(counter, 0, 4);
-            
+
             Stream.Position = blockposition + 10;
             Stream.Write(bytes, 0, bytes.Length);
 
@@ -118,22 +118,26 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public byte[] GetCol(long position, int relativePos, int len)
         {
-            if (len > 0)
+            if (relativePos == int.MaxValue)
+            {
+                throw new Exception("Non supported column");
+            }
+
+            if (len > 0 && relativePos >= 0)
             {
                 if (len == int.MaxValue)
                 {
                     byte[] header = GetPartial(position, relativePos + 10, 8);
                     int counter = BitConverter.ToInt32(header, 4);
-                    return GetPartial(position, relativePos + 10 + 8, counter);
+                    if (counter > 0)
+                    { 
+                        return GetPartial(position, relativePos + 10 + 8, counter);
+                    }
                 }
                 else
                 {
                     return GetPartial(position, relativePos + 10 + 8, len);
                 }
-            }
-            else
-            {
-                // TODO: This should not needed.... 
             }
             return null;
         }
@@ -144,7 +148,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             var hashone = Helper.KeyHelper.ComputeGuid(currentbytes);
 
-            var hashnew = Helper.KeyHelper.ComputeGuid(values); 
+            var hashnew = Helper.KeyHelper.ComputeGuid(values);
 
             if (hashone == hashnew)
             {

@@ -46,6 +46,7 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
                     converter.FieldNameHash = ObjectHelper.GetHashCode(item.Name);
 
                     converter.Length = item.Length;
+
                     converter.RelativePosition = item.relativePosition;
 
                     if (item.isComplex)

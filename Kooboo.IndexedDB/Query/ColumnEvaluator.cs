@@ -10,25 +10,22 @@ namespace Kooboo.IndexedDB.Query
 {
     public class ColumnEvaluator
     {
-        private Type DataType;
-        private Comparer compareType;
-        private IComparer<byte[]> byteCompare;
-        private byte[] ValueBytes;
+        private Type DataType { get; set; }
+        private Comparer compareType { get; set; }
+        private IComparer<byte[]> byteCompare { get; set; }
+        private byte[] ValueBytes { get; set; }
+         
+        private bool IsString { get; set; }
 
-        private DateTime _datetimeValue; 
-        private DateTime DateTimeValue
+        private bool IsDateTime { get; set; }
+        private string TargetString
         {
-            get
-            {
-                if (_datetimeValue == default(DateTime))
-                {
-                    if (this.ValueBytes !=null)
-                    {
-                        _datetimeValue = DateTimeUtcHelper.ToDateTime(this.ValueBytes); 
-                    }
-                }
-                return _datetimeValue; 
-            }
+            get;set;
+        }
+         
+        private DateTime TargetDate
+        {
+            get;set;
         }
 
         private int columnLength; // the actually column length. Maybe adjusted by different compare type. 
@@ -42,10 +39,30 @@ namespace Kooboo.IndexedDB.Query
             this.ValueBytes = valuebytes;
             this.columnLength = columnlength;
             this.maxColumnLength = maxcolumnlength;
-        }
 
+            if (this.DataType == typeof(DateTime))
+            {
+                this.TargetDate =   DateTimeUtcHelper.ToDateTime(this.ValueBytes);
+                this.IsDateTime = true; 
+            }
+             
+            if (this.DataType == typeof(string))
+            {
+                this.TargetString = System.Text.Encoding.UTF8.GetString(this.ValueBytes);
+                if (this.TargetString !=null)
+                {
+                    this.TargetString = this.TargetString.Trim('\0');
+                    this.TargetString = this.TargetString.Trim();
+                }
+
+                this.IsString = true; 
+            }
+        }
+  
         public ColumnEvaluator()
-        { }
+        {
+
+        }
 
         /// <summary>
         /// test column value match the condition. 
@@ -58,11 +75,20 @@ namespace Kooboo.IndexedDB.Query
             {
                 return false;
             }
-            if (this.DataType == typeof(DateTime))
+            if (this.IsDateTime)
             {
-                var coltime = DateTimeUtcHelper.ToDateTime(columnbytes);
-
-                return DateTimeUtcHelper.Compare(compareType, coltime, this.DateTimeValue);  
+                var coltime = DateTimeUtcHelper.ToDateTime(columnbytes); 
+                return DateTimeUtcHelper.Compare(compareType, coltime, this.TargetDate);  
+            }
+            else if (this.IsString)
+            {
+                var currentValue = System.Text.Encoding.UTF8.GetString(columnbytes);
+                if (currentValue !=null)
+                {
+                    currentValue = currentValue.Trim('\0');
+                    currentValue = currentValue.Trim();
+                }
+                return Helper.StringHelper.Compare(this.compareType, currentValue, this.TargetString); 
             }
             else
             {
@@ -86,8 +112,7 @@ namespace Kooboo.IndexedDB.Query
                     case Comparer.NotEqualTo:
 
                         return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this.ValueBytes, columnLength);
-
-
+                         
                     case Comparer.StartWith:
                         return Btree.Comparer.MoreComparer.StartWith(columnbytes, this.ValueBytes, this.columnLength);
 
