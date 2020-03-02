@@ -17,7 +17,7 @@ export function createContentImagePanel() {
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
       let aroundComments = KoobooComment.getAroundComments(element);
-      if (!aroundComments.find(f => f.getValue("attribute") == "src")) continue;
+      if (!aroundComments.find(f => f.getValue("attribute") == "src" && f.source != "none")) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
       setImagePreview(imagePreview, element);
       setImage(element.src);

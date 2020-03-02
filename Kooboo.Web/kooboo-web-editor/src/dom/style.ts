@@ -36,6 +36,7 @@ export function getRules(style: CSSStyleSheet, href?: string | null) {
         rules.push(...getRules(rule.styleSheet, rule.styleSheet.href));
       }
     }
+    // eslint-disable-next-line no-empty
   } catch (error) {}
 
   return rules;
@@ -212,6 +213,7 @@ export function isOneColor(color: string): boolean {
 
 export function splitPseudo(selector: string) {
   for (const i of pseudoes) {
+    // eslint-disable-next-line no-useless-escape
     let pseudo = selector.match(`:+${i}\s*$`);
     if (!pseudo) continue;
     return {
@@ -238,6 +240,7 @@ export function matchSelector(el: HTMLElement, selector: string) {
           pseudo: ""
         });
       }
+      // eslint-disable-next-line no-empty
     } catch (error) {}
   }
   return matcheds;

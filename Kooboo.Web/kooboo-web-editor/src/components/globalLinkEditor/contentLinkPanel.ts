@@ -10,7 +10,7 @@ export function createContentLinkPanel() {
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {
       let aroundComments = KoobooComment.getAroundComments(element);
-      if (!aroundComments.find(f => f.getValue("attribute") == "href")) continue;
+      if (!aroundComments.find(f => f.getValue("attribute") == "href" && f.source != "none")) continue;
       let { item, setLabel } = createLinkItem(element, async () => {
         let newValue = await updateAttributeLink(element);
         if (newValue) setLabel(newValue);

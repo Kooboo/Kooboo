@@ -26,7 +26,6 @@ export function createStyleImagePanel() {
     if (!style.backgroundImage || style.backgroundImage == "none") continue;
     let matchedRules = getRule(element, rules);
     if (matchedRules.length > 0) {
-      debugger;
       for (const matchedRule of matchedRules) {
         let styleImagePreview = createStyleImagePreview(appendedRule, element, matchedRule);
         if (styleImagePreview) contiainer.appendChild(styleImagePreview);
