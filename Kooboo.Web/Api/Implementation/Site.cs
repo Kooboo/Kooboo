@@ -487,7 +487,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var files = call.Context.Request.Files;
 
-            if (files !=null && files.Count() == 0)
+            if (files == null || files.Count() == 0)
             {
                 return default(Guid);
             }
