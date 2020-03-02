@@ -51,7 +51,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                     Value = request.TotalAmount.ToString("#.00")
                 },
                 Description = request.Description,
-                RedirectUrl = Setting.BackUrl,
+                RedirectUrl = Setting.RedirectUrl,
                 WebhookUrl = callbackUrl
             };
 
