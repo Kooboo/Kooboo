@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Methods.Klarna.lib;
@@ -39,48 +38,35 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 </script>")]
         public IPaymentResponse Charge(PaymentRequest request)
         {
-            try
+            request.Additional.TryGetValue("country", out var country);
+            var req = new KpSessionRequest
             {
-                request.Additional.TryGetValue("country", out var country);
-                var req = new KpSessionRequest
+                PurchaseCurrency = request.Currency,
+                PurchaseCountry = (string)country,
+                OrderAmount = request.TotalAmount,
+                OrderLines = new[]
                 {
-                    PurchaseCurrency = request.Currency,
-                    PurchaseCountry = (string)country,
-                    OrderAmount = request.TotalAmount,
-                    OrderLines = new[]
+                    new KpSessionRequest.OrderLine
                     {
-                        new KpSessionRequest.OrderLine
-                        {
-                            Name = request.Name,
-                            Quantity = 1,
-                            UnitPrice = request.TotalAmount,
-                            TotalAmount = request.TotalAmount
-                        }
-                    },
-                };
+                        Name = request.Name,
+                        Quantity = 1,
+                        UnitPrice = request.TotalAmount,
+                        TotalAmount = request.TotalAmount
+                    }
+                },
+            };
 
-                var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-                var requestId = Guid.NewGuid();
-                var endpoint = Setting.GetEndpoint((string)country);
+            var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+            var requestId = Guid.NewGuid();
 
-                var kpSession = KlarnaApi.CreateKpSession(endpoint, req, Setting.UserName, Setting.Password);
-                var hppSession = KlarnaApi.CreateHppSession(endpoint, kpSession.SessionId, Setting.UserName,
-                    Setting.Password, Setting.GetGetMerchantUrls(callbackUrl, requestId));
+            var apiClient = new KlarnaApi(Setting, (string)country);
+            var kpSession = apiClient.CreateKpSession(req);
+            var hppSession = apiClient.CreateHppSession(kpSession.SessionId, Setting.GetGetMerchantUrls(callbackUrl, requestId));
 
-                return new RedirectResponse(hppSession.RedirectUrl, requestId)
-                {
-                    paymemtMethodReferenceId = hppSession.SessionId
-                };
-            }
-            catch (AggregateException ex)
+            return new RedirectResponse(hppSession.RedirectUrl, requestId)
             {
-                if (ex.InnerException != null)
-                {
-                    throw ex.InnerException;
-                }
-
-                throw;
-            }
+                paymemtMethodReferenceId = hppSession.SessionId
+            };
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
@@ -90,13 +76,13 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
             {
                 request.Additional.TryGetValue("country", out var country);
                 var hppSessionId = request.ReferenceId;
-                var statusResponse = KlarnaApi.CheckStatus(Setting.GetEndpoint((string)country), hppSessionId);
+                var statusResponse = new KlarnaApi(Setting, (string)country).CheckStatus(hppSessionId);
 
                 result.Status = ConvertStatus(statusResponse.Status);
             }
-            catch (AggregateException ex)
+            catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex.InnerException);
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
             }
 
             return result;

@@ -1,93 +1,52 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Lib.Helper;
+﻿using System.Net.Http;
 
 namespace Kooboo.Sites.Payment.Methods.Klarna.lib
 {
     public class KlarnaApi
     {
-        public static KpSessionResponse CreateKpSession(string endpoint, KpSessionRequest request, string userName,
-            string password)
-        {
-            var response = Post(
-                    $"https://{endpoint}/payments/v1/sessions",
-                    JsonHelper.Serialize(request),
-                    userName,
-                    password)
-                .Result;
+        private readonly string _endpoint;
+        private readonly ApiClient _client;
 
-            return JsonHelper.Deserialize<KpSessionResponse>(response);
+        public KlarnaApi(KlarnaHppSetting klarnaHppSetting, string country)
+        {
+            _endpoint = klarnaHppSetting.GetEndpoint(country);
+            _client = ApiClient.CreateWithBasicAuth(klarnaHppSetting.UserName, klarnaHppSetting.Password);
         }
 
-        public static HppSessionResponse CreateHppSession(string endpoint, string kpSessionId, string userName,
-            string password, MerchantUrls merchantUrls)
+        public KpSessionResponse CreateKpSession(KpSessionRequest request)
+        {
+            var response = _client.PostJsonAsync($"https://{_endpoint}/payments/v1/sessions", request).Result;
+
+            return DeserializeResponse<KpSessionResponse>(response);
+        }
+
+        public HppSessionResponse CreateHppSession(string kpSessionId, MerchantUrls merchantUrls)
         {
             var request = new HppSessionRequest
             {
-                PaymentSessionUrl = $"https://{endpoint}/payments/v1/sessions/{kpSessionId}",
+                PaymentSessionUrl = $"https://{_endpoint}/payments/v1/sessions/{kpSessionId}",
                 MerchantUrls = merchantUrls,
             };
-            var response = Post(
-                    $"https://{endpoint}/hpp/v1/sessions",
-                    JsonHelper.Serialize(request),
-                    userName,
-                    password)
-                .Result;
+            var response = _client.PostJsonAsync($"https://{_endpoint}/hpp/v1/sessions", request).Result;
 
-            return JsonHelper.Deserialize<HppSessionResponse>(response);
+            return DeserializeResponse<HppSessionResponse>(response);
         }
 
-        public static CheckStatusResponse CheckStatus(string endpoint, string hppSessionId)
+        public CheckStatusResponse CheckStatus(string hppSessionId)
         {
-            var response = Get($"https://{endpoint}/hpp/v1/sessions/{hppSessionId}")
-                .Result;
+            var response = _client.GetAsync($"https://{_endpoint}/hpp/v1/sessions/{hppSessionId}").Result;
 
-            return JsonHelper.Deserialize<CheckStatusResponse>(response);
+            return DeserializeResponse<CheckStatusResponse>(response);
         }
 
-        public static async Task<string> Post(string url, string jsonBody, string userName = null,
-            string password = null)
+        private T DeserializeResponse<T>(ApiClient.ApiResponse resp) where T : class
         {
-            using (var client = new HttpClient())
-            {
-                if (userName != null && password != null)
-                {
-                    var b64 = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", b64);
-                }
-
-                var resp = await client.PostAsync(url, new StringContent(jsonBody, Encoding.UTF8, "application/json"));
-                return await ReadResponse(resp);
-            }
-        }
-
-        public static async Task<string> Get(string url, string userName = null, string password = null)
-        {
-            using (var client = new HttpClient())
-            {
-                if (userName != null && password != null)
-                {
-                    var b64 = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", b64);
-                }
-
-                var resp = await client.GetAsync(url);
-                return await ReadResponse(resp);
-            }
-        }
-
-        private static async Task<string> ReadResponse(HttpResponseMessage resp)
-        {
-            var response = await resp.Content.ReadAsStringAsync();
             if (resp.IsSuccessStatusCode)
             {
-                return response;
+                return resp.ReadAs<T>();
             }
 
-            var error = JsonHelper.Deserialize<ErrorResponse>(response);
+            var error = resp.ReadAs<ErrorResponse>();
             throw new HttpRequestException(string.Join(";", error.ErrorMessages));
         }
     }

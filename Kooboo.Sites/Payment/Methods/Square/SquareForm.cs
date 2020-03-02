@@ -94,7 +94,8 @@ namespace Kooboo.Sites.Payment.Methods
 
             var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
 
-            var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
+            var httpResult = ApiClient.Create("Bearer", Setting.AccessToken)
+                .GetAsync(requestURL).Result.Content;
 
             var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
 
