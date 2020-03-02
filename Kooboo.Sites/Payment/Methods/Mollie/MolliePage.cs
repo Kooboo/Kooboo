@@ -57,7 +57,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
 
             var resp = MollieApi.CreatePayment(req, Setting.ApiToken).Result;
 
-            return new RedirectResponse(resp.Links.Checkout.Href, Guid.Empty)
+            return new RedirectResponse(resp.Links.Checkout.Href, request.Id)
             {
                 paymemtMethodReferenceId = resp.Id
             };
