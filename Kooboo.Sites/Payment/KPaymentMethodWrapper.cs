@@ -3,7 +3,7 @@ using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Attributes; 
+using Kooboo.Data.Attributes;
 using Kooboo.Sites.Payment.Response;
 
 namespace Kooboo.Sites.Payment
@@ -42,10 +42,10 @@ namespace Kooboo.Sites.Payment
             {
                 repo.AddOrUpdate(request);
             }
-            
+
             if (result is PaidResponse)
             {
-                PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Paid }, this.Context); 
+                PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Paid }, this.Context);
             }
             else if (result is FailedResponse)
             {
@@ -67,10 +67,10 @@ namespace Kooboo.Sites.Payment
 
                     if (request != null)
                     {
-                        var status =  this.PaymentMethod.checkStatus(request);
+                        var status = this.PaymentMethod.checkStatus(request);
                         if (status.Paid)
                         {
-                            PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Paid, ResponseMessage = "kscript check status"}, this.Context);
+                            PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Paid, ResponseMessage = "kscript check status" }, this.Context);
                         }
                         else if (status.Failed)
                         {
@@ -128,6 +128,7 @@ namespace Kooboo.Sites.Payment
             request.Name = GetValue<string>(idict, dynamicobj, "name", "title");
             request.Description = GetValue<string>(idict, dynamicobj, "des", "description", "detail");
             request.Currency = GetValue<string>(idict, dynamicobj, "currency");
+            request.Country = GetValue<string>(idict, dynamicobj, "country", "countryCode");
             request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount", "total", "totalAmount", "totalamount");
 
             if (this.PaymentMethod != null)
