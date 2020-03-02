@@ -1,14 +1,9 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Stripe.lib;
 using Kooboo.Sites.Payment.Response;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Kooboo.Sites.Payment.Methods.Stripe
 {
@@ -18,15 +13,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         private const string Description = @"Pay by stripe. Example:
 <script engine=""kscript"">
-  var charge = {};
-  charge.successUrl = 'https://example.com/success'
-  charge.cancelUrl = 'https://example.com/cancel'
-  charge.name = 'T-shirt'
-  charge.description = 'Comfortable cotton t-shirt'
-  charge.totalAmount = 1500
-  charge.currency = 'USD'
-  charge.quantity = 2
-  charge.paymentMethodType = 'card'
+  var charge = {
+    successUrl: 'https://example.com/success',
+    cancelUrl: 'https://example.com/cancel',
+    name: 'T-shirt',
+    description: 'Comfortable cotton t-shirt',
+    totalAmount: 1500,
+    currency: 'eur',
+    quantity: 2,
+    paymentMethodType: ['card', 'ideal']
+  };
   var res = k.payment.stripeForm.charge(charge);
   var publishableKey = res.fieldValues.get(""publishableKey"");
 </script>
@@ -55,14 +51,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         {
             get
             {
-                var list = new List<string>();
-                list.Add("USD");
+                var list = new List<string> 
+                {
+                    "USD",
+                    "EUR"
+                };
                 return list;
             }
         }
 
         public RenderContext Context { get; set; }
-
 
         [Description(Description)]
         public IPaymentResponse Charge(PaymentRequest request)
@@ -72,27 +70,38 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             request.Additional.TryGetValue("successUrl", out var successUrl);
             request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
 
-            var lineItems = new List<SessionLineItemOptions> {
-                    new SessionLineItemOptions {
-                        Name = request.Name,
-                        Description = request.Description,
-                        Amount = long.Parse(request.TotalAmount.ToString()),
-                        Currency = request.Currency,
-                        Quantity = long.Parse(quantity.ToString())
-                    }
-                };
-
-            var options = new SessionCreateOptions
+            var lineItems = new List<SessionLineItemOptions>
             {
-                SuccessUrl = (string)cancelUrl,
-                CancelUrl = (string)successUrl,
-                PaymentMethodTypes = new List<string> {
-                    (string)paymentMethodType
-                },
-                LineItems = lineItems
+                new SessionLineItemOptions {
+                    Name = request.Name,
+                    Description = request.Description,
+                    Amount = long.Parse(request.TotalAmount.ToString()),
+                    Currency = request.Currency,
+                    Quantity = long.Parse(quantity.ToString())
+                }
             };
 
-            var sessionId = CreateSession(options).Result;
+            var paymentMethodTypesList = new List<string>();
+            
+            if(paymentMethodType is object[])
+            {
+                var paymentMethodTypeArray = Array.ConvertAll((object[])paymentMethodType, x => x.ToString());
+                paymentMethodTypesList.AddRange(paymentMethodTypeArray);
+            }
+            else if (paymentMethodType is object)
+            {
+                paymentMethodTypesList.Add((string)paymentMethodType);
+            }
+            
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = (string)successUrl,
+                CancelUrl = (string)cancelUrl,
+                LineItems = lineItems,
+                PaymentMethodTypes = paymentMethodTypesList
+            };
+
+            var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
             var response = new HiddenFormResponse
             {
                 paymemtMethodReferenceId = sessionId
@@ -100,20 +109,39 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             response.setFieldValues("publishableKey", Setting.Publishablekey);
             return response;
         }
-
-        private async Task<string> CreateSession(SessionCreateOptions options)
+ 
+        public PaymentCallback Notify(RenderContext context)
         {
-            using (var httpClient = new HttpClient())
+            var body = context.Request.Body;
+            var signi = context.Request.Headers.Get("Stripe-Signature");
+
+            var stripeEvent = EventUtility.ConstructEvent(body, signi, Setting.WebhookSigningSecret);
+            var result = new PaymentCallback
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + Setting.Secretkey);
-                
-                var result = await httpClient.PostAsync("https://api.stripe.com/v1/checkout/sessions", new StringContent(StripeUtility.SessionDataToContentString(options), Encoding.UTF8, "application/x-www-form-urlencoded"));
-                var response = await result.Content.ReadAsStringAsync();
-                JObject json = JObject.Parse(response);
-                return json.Value<string>("id");
-            }
+                Status = ConvertStatus(stripeEvent.Type),
+                RawData = body,
+                CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
+            };
+            return result;
         }
 
+        private PaymentStatus ConvertStatus(string status)
+        {
+            switch (status)
+            {
+                case "payment_intent.succeeded":
+                    return PaymentStatus.Paid;
+                case "payment_intent.payment_failed":
+                    return PaymentStatus.Rejected;
+                case "payment_intent.canceled":
+                    return PaymentStatus.Cancelled;
+                case "payment_intent.created":
+                    return PaymentStatus.Pending;
+                default:
+                    return PaymentStatus.NotAvailable;
+            }
+        } 
+ 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();

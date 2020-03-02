@@ -45,8 +45,7 @@ namespace Kooboo.Mail
             foreach (var each in Workers)
             {
                 each.Start();
-            } 
-
+            }  
             Mail.Queue.MailQueueWorker.Instance.Start(); 
         }
 

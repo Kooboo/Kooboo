@@ -6,7 +6,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 {
     public class StripeFormSetting : IPaymentSetting
     {
-        private const string name = "StripPayment";
+        private const string name = "StripePayment";
 
         public string Name => name;
 
@@ -17,5 +17,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public string Secretkey { get; set; }
 
         public string Publishablekey { get; set; }
+
+        public string WebhookSigningSecret { get; set; }
     }
 }

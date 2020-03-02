@@ -1,6 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json.Linq; 
+using System.Collections.Generic; 
+using System; 
+using System.Net.Http;
+using System.Text; 
+using System.Threading.Tasks;
 using System.Web;
 
 namespace Kooboo.Sites.Payment.Methods.Stripe.lib
@@ -35,6 +38,17 @@ namespace Kooboo.Sites.Payment.Methods.Stripe.lib
             
             var content = string.Join("&", contentList);
             return content;
+        }
+
+        public static async Task<string> CreateSession(SessionCreateOptions options, string Secretkey)
+        { 
+            var client = ApiClient.Create();
+            var headers = new Dictionary<string, string>();
+            headers.Add("Authorization", "Bearer " + Secretkey);
+            var result = await client.PostAsync("https://api.stripe.com/v1/checkout/sessions", SessionDataToContentString(options), "application/x-www-form-urlencoded", headers);
+            var response =  result.Content;
+            JObject json = JObject.Parse(response);
+            return json.Value<string>("id"); 
         }
     }
 }
