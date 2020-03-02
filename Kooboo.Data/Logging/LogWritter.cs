@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 namespace Kooboo.Data.Log
 {
     public class LogWriter
-    { 
+    {
         private string Folder { get; set; }
 
         public LogWriter(string FolderName)
@@ -24,15 +25,24 @@ namespace Kooboo.Data.Log
         }
 
         public void WriteObj(object JsonObject)
-        { 
+        {
             var text = Lib.Helper.JsonHelper.Serialize(JsonObject);
-            Write(text); 
+            Write(text);
         }
 
         public void WriteException(Exception ex)
         {
             string text = ex.Message + ex.Source + ex.StackTrace;
-            Write(text); 
+
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(0);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+
+            text += " line number: " + line.ToString();
+
+            Write(text);
         }
 
         private StreamWriter Writer
@@ -79,7 +89,7 @@ namespace Kooboo.Data.Log
             return wr;
         }
 
-    }  
+    }
 
 }
 
