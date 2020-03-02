@@ -64,7 +64,7 @@ interface matchedRule {
 function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclaration, rules: CssRule[]) {
   let koobooId = element.getAttribute(KOOBOO_ID);
   let comments = KoobooComment.getComments(element);
-  let comment = getEditableComment(comments);
+  let comment = getEditableComment(comments)!;
   if (!comment || !koobooId) return;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
@@ -81,7 +81,7 @@ function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclarati
       let guid = setGuid(element);
       let unit = new AttributeUnit(startContent!, "style");
       let value = element.style.backgroundImage!.replace(/"/g, "'");
-      let log = [kvInfo.value(value), kvInfo.property("background-image"), kvInfo.koobooId(koobooId), kvInfo.important(important)];
+      let log = [...comment.infos, kvInfo.value(value), kvInfo.property("background-image"), kvInfo.koobooId(koobooId), kvInfo.important(important)];
       let record = new operationRecord([unit], [new Log(log)], guid);
       context.operationManager.add(record);
     });
