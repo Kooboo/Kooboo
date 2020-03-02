@@ -18,7 +18,7 @@ export function getRepeatSourceComment(comments: KoobooComment[], source: string
     if (commnet.id && (source ? commnet.source == source : true)) {
       let fullpathComment = commnet.getValue("fullpath");
       let alias = repeatComment.getValue("alias");
-      if (fullpathComment && alias && fullpathComment.startsWith(alias)) return commnet;
+      if (fullpathComment && alias && fullpathComment.indexOf(alias) > -1) return commnet;
     }
   }
 }

@@ -95,6 +95,7 @@ function createStyleImagePreview(appendedRule: matchedRule[], element: HTMLEleme
   let rule = matchedRule.rule;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
+  var comments = KoobooComment.getComments(element);
   let src = clearCssImageWarp(rule.cssRule.style.backgroundImage!);
   if (!src) return;
   setImage(src);
@@ -109,10 +110,12 @@ function createStyleImagePreview(appendedRule: matchedRule[], element: HTMLEleme
       let unit = new BgImageUnit(startContent!, rule.cssRule.style);
       let value = rule.cssRule.style.backgroundImage!.replace(/"/g, "'");
       let log = [
+        ...comments.find(f => f.scope)!.infos,
         kvInfo.value(value),
         kvInfo.property("background-image"),
+        new kvInfo("url", rule.url!),
         new kvInfo("selector", rule.cssRule.selectorText),
-        kvInfo.koobooId(rule.url ? "" : rule.koobooId),
+        kvInfo.koobooId(rule.koobooId),
         kvInfo.important(important),
         kvInfo.mediaRuleList(rule.mediaRuleList!)
       ];
