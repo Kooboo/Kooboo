@@ -4,6 +4,7 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Methods.Square;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
+using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json;
 using System;
@@ -46,7 +47,6 @@ namespace Kooboo.Sites.Payment.Methods
         [KDefineType(Return = typeof(HiddenFormResponse))]
         public IPaymentResponse GetHtmlDetail(RenderContext context)
         {
-            var res = new PaidResponse();
             if (this.Setting == null)
             {
                 return null;
@@ -64,14 +64,19 @@ namespace Kooboo.Sites.Payment.Methods
 
             if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
             {
+                var res = new PaidResponse();
                 res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
+                return res;
             }
             else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
             {
                 return new FailedResponse("FAILED");
             }
-
-            return res;
+            else
+            {
+                // TODO: please check.
+                return new FailedResponse("No response");
+            }
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)

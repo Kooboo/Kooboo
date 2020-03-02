@@ -8,7 +8,7 @@ using System.Text;
 namespace Kooboo.IndexedDB.Helper
 {
     public static class StringHelper
-    {  
+    {
         public static bool IsSameValue(string x, string y)
         {
             if (string.IsNullOrWhiteSpace(x) && string.IsNullOrWhiteSpace(y))
@@ -22,7 +22,7 @@ namespace Kooboo.IndexedDB.Helper
             }
             return x.Trim().ToLower() == y.Trim().ToLower();
         }
-          
+
         public static string ToValidFileName(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -49,7 +49,7 @@ namespace Kooboo.IndexedDB.Helper
             return string.Empty;
         }
 
-      
+
         public static bool IsString(string input)
         {
             input = input.Trim();
@@ -114,6 +114,51 @@ namespace Kooboo.IndexedDB.Helper
         {
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
         }
-   
+
+
+        public static bool Compare(Kooboo.IndexedDB.Query.Comparer Compare, string CurrentValue, string TargetValue)
+        {
+            if (TargetValue == null || CurrentValue == null)
+            {
+                return (TargetValue == null && CurrentValue == null);
+            }
+
+            switch (Compare)
+            {
+                case Query.Comparer.EqualTo:
+                    return string.Compare(CurrentValue, TargetValue) == 0;
+
+                case Query.Comparer.GreaterThan:
+                    return string.Compare(CurrentValue, TargetValue) > 0;
+
+                case Query.Comparer.GreaterThanOrEqual:
+                    return string.Compare(CurrentValue, TargetValue) >= 0;
+
+                case Query.Comparer.LessThan:
+                    return string.Compare(CurrentValue, TargetValue) < 0;
+
+                case Query.Comparer.LessThanOrEqual:
+                    return string.Compare(CurrentValue, TargetValue) <= 0;
+
+                case Query.Comparer.NotEqualTo:
+
+                    return string.Compare(CurrentValue, TargetValue) != 0;
+
+                case Query.Comparer.StartWith:
+                    {
+                        return CurrentValue.StartsWith(TargetValue);
+                    }
+
+                case Query.Comparer.Contains:
+                    {
+                        return CurrentValue.Contains(TargetValue); 
+                    }
+
+                default:
+                    return false;
+            }
+
+        }
+
     }
 }

@@ -181,7 +181,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     col.Length = SettingHelper.GetColumnLen(col.ClrType, col.Length);
                     // get all the relative positive without the complex flxiable position.
 
-
                     if (col.Length == int.MaxValue)
                     {
                         col.relativePosition = int.MaxValue;
@@ -315,6 +314,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
         // The position that this will be stored in the block data file. 
         // Int.maxvalue means dynamic.. can not be searched....
+        // When set to INT.Max. it is only for the sorting. 
         public int relativePosition { get; set; }
 
         private Type _clrtype;
