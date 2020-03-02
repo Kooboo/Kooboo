@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Klarna.lib
 {
@@ -10,7 +11,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
         public KlarnaApi(KlarnaHppSetting klarnaHppSetting, string country)
         {
             _endpoint = klarnaHppSetting.GetEndpoint(country);
-            _client = ApiClient.CreateWithBasicAuth(klarnaHppSetting.UserName, klarnaHppSetting.Password);
+            _client = ApiClient.CreateWithBasicAuth(klarnaHppSetting.UserName, klarnaHppSetting.Password, Encoding.UTF8);
         }
 
         public KpSessionResponse CreateKpSession(KpSessionRequest request)

@@ -109,7 +109,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             response.setFieldValues("publishableKey", Setting.Publishablekey);
             return response;
         }
-
+ 
         public PaymentCallback Notify(RenderContext context)
         {
             var body = context.Request.Body;
@@ -140,8 +140,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 default:
                     return PaymentStatus.NotAvailable;
             }
-        }
-
+        } 
+ 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();

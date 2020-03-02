@@ -14,7 +14,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
         public string DisplayName => Data.Language.Hardcoded.GetValue("Mollie", Context);
 
         // https://www.mollie.com/en/resources
-        public string Icon => "/_Admin/View/Market/Images/mollie.svg";
+        public string Icon => "/_Admin/View/Market/Images/payment-mollie.svg";
 
         public string IconType => "img";
 
@@ -48,13 +48,13 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                     Value = request.TotalAmount.ToString("#.00")
                 },
                 Description = request.Description,
-                RedirectUrl = Setting.BackUrl,
+                RedirectUrl = Setting.RedirectUrl,
                 WebhookUrl = callbackUrl
             };
 
             var resp = new MollieApi(Setting.ApiToken).CreatePayment(req);
 
-            return new RedirectResponse(resp.Links.Checkout.Href, Guid.Empty)
+            return new RedirectResponse(resp.Links.Checkout.Href, request.Id)
             {
                 paymemtMethodReferenceId = resp.Id
             };

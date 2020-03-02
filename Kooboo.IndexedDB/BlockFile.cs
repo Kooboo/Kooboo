@@ -39,10 +39,10 @@ namespace Kooboo.IndexedDB
 
         private byte[] GetPartial(long position, int offset, int count)
         {
-            byte[] partial = new byte[count];
-            Stream.Position = position + offset;
+            byte[] partial = new byte[count]; 
             if (Stream.Length >= position + offset + count)
             {
+                Stream.Position = position + offset;
                 Stream.Read(partial, 0, count);
                 return partial;
             }
@@ -52,9 +52,10 @@ namespace Kooboo.IndexedDB
         private async Task<byte[]> GetPartialAsync(long position, int offset, int count)
         {
             byte[] partial = new byte[count];
-            Stream.Position = position + offset;
+        
             if (Stream.Length >= position + offset + count)
             {
+                Stream.Position = position + offset;
                 await Stream.ReadAsync(partial, 0, count);
                 return partial;
             }

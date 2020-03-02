@@ -120,11 +120,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public virtual string GetRegisterRedirectUrl(User user, string currentrequesturl)
-        {
-
+        { 
             var newuser = Kooboo.Data.GlobalDb.Users.Validate(user.UserName, user.Password);  // this is to ensure that local has the user detail info like username, password, orgname, etc...  
-            return Lib.Helper.UrlHelper.Combine(currentrequesturl, "/_admin/sites");
-
+            return Lib.Helper.UrlHelper.Combine(currentrequesturl, "/_admin/sites"); 
         }
 
         public virtual MetaResponse Register(string UserName, string Password, string email, ApiCall apiCall)
