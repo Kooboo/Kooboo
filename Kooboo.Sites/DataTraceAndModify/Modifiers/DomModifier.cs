@@ -175,7 +175,7 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
                 var bodyhash = Lib.Security.Hash.ComputeIntCaseSensitive(element.InnerHtml);
                 styleId = context.WebSite.SiteDb().Styles.Query.Where(o => o.OwnerObjectId == domObject.Id && o.BodyHash == bodyhash).FirstOrDefault()?.Id;
             }
-            else if (!Service.DomUrlService.IsExternalLink(StyleSheetUrl))
+            else
             {
                 styleId = context.WebSite.SiteDb().Styles.GetByUrl(Lib.Helper.UrlHelper.RelativePath(StyleSheetUrl))?.Id;
             }

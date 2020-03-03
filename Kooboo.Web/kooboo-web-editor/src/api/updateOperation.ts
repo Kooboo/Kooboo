@@ -4,10 +4,13 @@ import { Log } from "@/operation/Log";
 
 export default async (operationLogs: Log[]) => {
   let pageId = getPageId();
+  let logs = Log.simplify(operationLogs);
+  // eslint-disable-next-line no-console
+  console.log(logs);
   await Update(
     JSON.stringify({
       pageId: pageId,
-      updates: operationLogs
+      updates: logs
     })
   );
 };

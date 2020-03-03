@@ -73,7 +73,7 @@ namespace Kooboo.Sites.Render
             fieldPath = null;
             if (_path == null) return Nontraceable.Instance;
             var path = _path.Trim();
-            if (path.StartsWith("'") || path.StartsWith("\"") || path.Contains("{")) return Nontraceable.Instance;
+            if (path.StartsWith("'") || path.StartsWith("\"") || (path.Contains("{") && !(path.StartsWith("{") && path.EndsWith("}")))) return Nontraceable.Instance;
 
             var stacks = new Queue<string>(path.Split('.'));
 

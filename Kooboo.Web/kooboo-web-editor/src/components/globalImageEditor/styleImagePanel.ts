@@ -9,11 +9,12 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
-import { getCssRules, CssRule, matchSelector } from "@/dom/style";
+import { getCssRules, CssRule, matchSelector, CssColor } from "@/dom/style";
 import { BgImageUnit } from "@/operation/recordUnits/bgImageUnit";
 import { getEditableComment } from "../floatMenu/utils";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
+import { sortStylePriority } from "@/dom/stylePriority";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();
@@ -25,14 +26,15 @@ export function createStyleImagePanel() {
     let style = getComputedStyle(element);
     if (!style.backgroundImage || style.backgroundImage == "none") continue;
     let matchedRules = getRule(element, rules);
-    if (matchedRules.length > 0) {
-      for (const matchedRule of matchedRules) {
-        let styleImagePreview = createStyleImagePreview(appendedRule, element, matchedRule);
-        if (styleImagePreview) contiainer.appendChild(styleImagePreview);
-      }
-    } else if (element.style.backgroundImage) {
+    let inlineImportant = element.style.getPropertyPriority("background-image");
+    let rule = matchedRules.find(f => f.rule.cssRule.style.getPropertyPriority("background-image"));
+    if (element.style.backgroundImage && (inlineImportant || !rule)) {
       let inlineImagePreview = createInlineImagePreview(element, style, rules);
       if (inlineImagePreview) contiainer.appendChild(inlineImagePreview);
+    } else if (matchedRules.length > 0) {
+      if (!rule) rule = matchedRules.sort(f => f.rule.styleSequence).pop()!;
+      let styleImagePreview = createStyleImagePreview(appendedRule, element, rule);
+      if (styleImagePreview) contiainer.appendChild(styleImagePreview);
     }
   }
 
