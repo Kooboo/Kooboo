@@ -23,5 +23,7 @@
         public string NotifyUrlUserName { get; set; }
 
         public string NotifyUrlPassword { get; set; }
+
+        public string HmacKey { get; set; }
     }
 }

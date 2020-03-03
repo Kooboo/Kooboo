@@ -93,6 +93,15 @@ namespace Kooboo.Sites.Payment.Methods.Adyen
                     // JSON and HTTP POST notifications always contain a single NotificationRequestItem object.
                     var notifyItem = notification.NotificationItems[0].NotificationRequestItem;
 
+                    // check signiture
+                    if (!string.IsNullOrWhiteSpace(Setting.HmacKey))
+                    {
+                        if (!new AdyenSignatureValidator(Setting.HmacKey).Validate(notifyItem))
+                        {
+                            return paymentCallback;
+                        }
+                    }
+
                     if (!Guid.TryParse(notifyItem.MerchantReference, out var guid) ||
                         PaymentManager.GetRequest(guid, context) == null)
                     {
