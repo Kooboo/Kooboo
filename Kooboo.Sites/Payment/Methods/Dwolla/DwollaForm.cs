@@ -48,7 +48,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             };
 
             var apiClient = new DwollaApi(Setting);
-            var customer = apiClient.CreateCustomer().Result;
+            var customer = apiClient.CreateCustomer(customerParameters).Result;
             var iavToken = apiClient.CreateIavToken(customer.Location.ToString()).Result;
             var response = new HiddenFormResponse
             {

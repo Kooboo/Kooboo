@@ -43,11 +43,11 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             return response;
         }
 
-        public async Task<ApiResponse> CreateCustomer()
+        public async Task<ApiResponse> CreateCustomer(Customer customer)
         {
             await GetToken();
             var client = Create();
-            var format = "{\"firstName\": \"Jane\",\"lastName\": \"Doe\",\"email\": \"" + Guid.NewGuid().ToString() + "@mail.net\", \"ipAddress\": \"99.99.99.99\"}";
+            var format = string.Format("{{\"firstName\": \"{0}\",\"lastName\": \"{1}\",\"email\": \"{2}\"}}", customer.FirstName, customer.LastName, customer.Email);
             var headers = new Dictionary<string, string>
             {
                 { "Authorization", "Bearer " + Token },
