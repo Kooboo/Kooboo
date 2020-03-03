@@ -713,8 +713,7 @@ namespace Kooboo.Sites.Sync
 
             return DiskPath;
         }
-
-        // TODO: 
+         
         public static string InterCopyTime(SiteDb SiteDb, Int64 timetick)
         {
             string DiskPath = Kooboo.Data.AppSettings.TempDataPath;

@@ -13,6 +13,8 @@ namespace Kooboo.Sites.Payment
     {
         public AuthenticationHeaderValue AuthenticationHeaderValue { get; private set; }
 
+        public Dictionary<string, string> DefaultHeaders { get; private set; } = new Dictionary<string, string>();
+
         #region Create
 
         private ApiClient() { }
@@ -30,9 +32,9 @@ namespace Kooboo.Sites.Payment
             };
         }
 
-        public static ApiClient CreateWithBasicAuth(string userName, string password)
+        public static ApiClient CreateWithBasicAuth(string userName, string password, Encoding encoding)
         {
-            var b64 = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{password}"));
+            var b64 = Convert.ToBase64String(encoding.GetBytes($"{userName}:{password}"));
             return Create(new AuthenticationHeaderValue("Basic", b64));
         }
 
@@ -95,6 +97,14 @@ namespace Kooboo.Sites.Payment
                     request.Headers.Authorization = AuthenticationHeaderValue;
                 }
 
+                if (DefaultHeaders.Count > 0)
+                {
+                    foreach (var header in DefaultHeaders)
+                    {
+                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                    }
+                }
+
                 if (headers?.Count > 0)
                 {
                     foreach (var header in headers)
@@ -106,6 +116,37 @@ namespace Kooboo.Sites.Payment
                 var resp = await client.SendAsync(request);
                 return await ReadResponse(resp);
             }
+        }
+
+        /// <summary>
+        /// default header will be added to all the requests. overrided by headers provided per single request
+        /// </summary>
+        public ApiClient SetDefaultHeader(string name, string value)
+        {
+            DefaultHeaders[name] = value;
+            return this;
+        }
+
+        /// <summary>
+        /// default header will be added to all the requests. overrided by headers provided per single request
+        /// </summary>
+        /// <param name="headers"></param>
+        /// <param name="merge">true: merge, false: replace</param>
+        public ApiClient SetDefaultHeaders(Dictionary<string, string> headers, bool merge = false)
+        {
+            if (merge)
+            {
+                foreach (var header in headers)
+                {
+                    DefaultHeaders[header.Key] = header.Value;
+                }
+            }
+            else
+            {
+                DefaultHeaders = headers;
+            }
+
+            return this;
         }
 
         private static async Task<ApiResponse> ReadResponse(HttpResponseMessage resp)

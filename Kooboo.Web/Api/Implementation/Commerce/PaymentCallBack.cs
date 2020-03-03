@@ -41,7 +41,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         // To be used for above method. 
         public IResponse Callback(ApiCall call)
         {
-            log(call); 
+            log(call);
 
             string name = call.Command.Method;
 
@@ -49,7 +49,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             if (index == -1)
             {
                 return null;
-            } 
+            }
             var paymentname = name.Substring(0, index);
             var methodname = name.Substring(index + 1);
 
@@ -71,18 +71,19 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                         if (result.CallbackResponse != null)
                         {
                             var response = new PlainResponse();
-                            response.ContentType = result.CallbackResponse.ContentType;   
+                            response.ContentType = result.CallbackResponse.ContentType;
                             response.Content = result.CallbackResponse.Content;
-                            return response; 
+                            response.statusCode = result.CallbackResponse.StatusCode;
+                            return response;
                         }
 
                         else
-                        { 
+                        {
                             var response = new PlainResponse();
                             response.ContentType = "text/html";
-                            response.Content = ""; 
-                            return response; 
-                        } 
+                            response.Content = "";
+                            return response;
+                        }
                     }
                 }
             }
@@ -94,15 +95,15 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         {
             try
             {
-                Dictionary<string, string[]> query = new Dictionary<string, string[]>(); 
+                Dictionary<string, string[]> query = new Dictionary<string, string[]>();
                 foreach (var item in call.Context.Request.QueryString.Keys)
                 {
-                    var key = item.ToString(); 
-                    var value = call.Context.Request.QueryString.GetValues(key); 
-                    if (value !=null)
+                    var key = item.ToString();
+                    var value = call.Context.Request.QueryString.GetValues(key);
+                    if (value != null)
                     {
-                        query[key] = value; 
-                    } 
+                        query[key] = value;
+                    }
                 }
 
                 Dictionary<string, string[]> forms = new Dictionary<string, string[]>();
@@ -122,7 +123,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
             }
         }
     }

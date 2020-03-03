@@ -495,14 +495,38 @@ namespace Kooboo.IndexedDB
 
         internal string TableFolder(string TableName)
         {
+            string basefolder = null;
+            string tablename = TableName.ToValidPath().ToLower();
+
             if (string.IsNullOrWhiteSpace(TablePath))
             {
-                return System.IO.Path.Combine(this.AbsolutePath, TableName.ToValidPath());
+                basefolder = this.AbsolutePath;
             }
             else
             {
-                return System.IO.Path.Combine(this.AbsolutePath, TablePath, TableName.ToValidPath());
+                basefolder = System.IO.Path.Combine(this.AbsolutePath, TablePath);
             }
+
+            string fullpath = System.IO.Path.Combine(basefolder, tablename);
+
+            if (!System.IO.Directory.Exists(fullpath))
+            {
+                // check capital letter etc.
+                if (System.IO.Directory.Exists(basefolder))
+                {
+                    var dirinfo = new System.IO.DirectoryInfo(basefolder);
+                    var subs = dirinfo.GetDirectories();
+                    foreach (var item in subs)
+                    {
+                        if (item.Name != null && item.Name.ToLower() == tablename)
+                        {
+                            fullpath = item.FullName;
+                            break;
+                        }
+                    }
+                } 
+            }
+            return fullpath;
         }
 
         [Obsolete]
