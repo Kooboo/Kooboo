@@ -25,6 +25,10 @@ export class Log {
     return this.getValue("id");
   }
 
+  get attribute() {
+    return this.getValue("attribute");
+  }
+
   get url() {
     return this.getValue("url");
   }
@@ -57,6 +61,10 @@ export class Log {
 
       if (log.action == "copy" || log.action == "delete") {
         children = children.filter(f => f.koobooId!.length > log.koobooId!.length);
+      }
+
+      if (log.attribute) {
+        children = children.filter(f => f.attribute == log.attribute);
       }
 
       if (log.property) {
