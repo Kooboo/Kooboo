@@ -23,6 +23,8 @@ namespace Kooboo.Sites.DataTraceAndModify.Modifiers
             var element = GetElement(domObject);
             HandleUpdate(context, repo, domObject, element);
 
+            if (element == null) return;
+
             Task.Run(() =>
             {
                 var otherPages = context.WebSite.SiteDb().Pages.All()
