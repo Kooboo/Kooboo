@@ -1,4 +1,5 @@
-﻿using Kooboo.Sites.Ecommerce.Models;
+﻿using Kooboo.Data.Context;
+using Kooboo.Sites.Ecommerce.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,7 @@ namespace Kooboo.Sites.Ecommerce.Service
         bool IsUSerNameAvailable(string username);
 
         bool IsEmailAddressAvailable(string emailaddress);
+
+        Customer GetFromContext(RenderContext context); 
     }
 }

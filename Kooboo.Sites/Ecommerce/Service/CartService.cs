@@ -100,6 +100,17 @@ namespace Kooboo.Sites.Ecommerce.Service
             Promotion.PromotionEngine.CalculatePromotion(cart, this.Context);
         }
 
+        /// <summary>
+        /// lastest list.
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <returns></returns>
+        public List<Cart> List(int skip, int take)
+        {
+            var list = this.Repo.Store.Where().OrderByDescending().Skip(skip).Take(take);
+            return list; 
+        }
 
     }
 }

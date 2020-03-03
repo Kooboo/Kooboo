@@ -6,6 +6,14 @@ namespace Kooboo.Sites.Ecommerce.Models
 {
    public class CartItem 
     { 
+        public Guid Id
+        {
+            get
+            {
+                return this.ProductVariantId; 
+            }
+        }
+
         public Guid ProductVariantId { get; set; }
 
         /// <summary>

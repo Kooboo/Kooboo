@@ -41,8 +41,7 @@ namespace Kooboo.Sites.Ecommerce.KScript
             Guid id = Lib.Helper.IDHelper.GetGuid(ProductVariantId);
             this.service.ChangeQuantity(id, newQuantity);
         }
-
-
+         
         public CartItemViewModel[] Items
         {
             get

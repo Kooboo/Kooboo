@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Ecommerce.Models
             {
                 if (_id == default(Guid))
                 {
-                    _id = Guid.NewGuid();
+                    _id = Lib.Helper.IDHelper.NewTimeGuid(DateTime.Now); 
                 }
                 return _id;
             }

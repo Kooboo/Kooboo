@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
 {
-  public static  class IDHelper
+    public static class IDHelper
     {
-        private static Random RND = new Random(); 
+        private static Random RND = new Random();
 
         private static object _locker = new object();
 
-        private static long _currentId = 100; 
+        private static long _currentId = 100;
 
         public static long NewLongId()
         {
-            lock(_locker)
+            lock (_locker)
             {
                 _currentId += 1;
                 return _currentId;
             }
-        } 
+        }
 
         public static int NextRandom(int begin, int end)
         {
-            return RND.Next(begin, end); 
+            return RND.Next(begin, end);
         }
 
 
@@ -49,9 +49,9 @@ namespace Kooboo.Lib.Helper
 
             System.Buffer.BlockCopy(idbytes, 8, lastid, 8, 8);
 
-            return new Guid(lastid); 
+            return new Guid(lastid);
         }
-         
+
         public static DateTime ExtractTimeFromGuid(Guid id)
         {
             var bytes = id.ToByteArray();
@@ -72,12 +72,12 @@ namespace Kooboo.Lib.Helper
 
         // two way int to guid. 
         public static Guid NewIntGuid(int id)
-        { 
+        {
             byte[] intbytes = BitConverter.GetBytes(id);
-             
+
             intbytes = intbytes.Reverse().ToArray();
 
-            var newid = Security.Hash.ComputeGuidIgnoreCase(id.ToString()); 
+            var newid = Security.Hash.ComputeGuidIgnoreCase(id.ToString());
 
             var idbytes = newid.ToByteArray();
 
@@ -87,7 +87,7 @@ namespace Kooboo.Lib.Helper
 
             System.Buffer.BlockCopy(idbytes, 0, lastid, 4, 12);
 
-            return new Guid(lastid);       
+            return new Guid(lastid);
         }
 
         // two way int to guid. 
@@ -97,7 +97,7 @@ namespace Kooboo.Lib.Helper
 
             intbytes = intbytes.Reverse().ToArray();
 
-            var newid = System.Guid.NewGuid(); 
+            var newid = System.Guid.NewGuid();
 
             var idbytes = newid.ToByteArray();
 
@@ -120,10 +120,8 @@ namespace Kooboo.Lib.Helper
 
             intbytes = intbytes.Reverse().ToArray();
 
-           return BitConverter.ToInt32(intbytes, 0);      
-
-        }
-
+            return BitConverter.ToInt32(intbytes, 0); 
+        } 
 
         public static Guid ParseKey(object key)
         {
@@ -155,7 +153,7 @@ namespace Kooboo.Lib.Helper
 
         public static Guid GetGuid(object value)
         {
-            if(value == null)
+            if (value == null)
             {
                 return default(Guid);
             }
@@ -167,9 +165,37 @@ namespace Kooboo.Lib.Helper
             {
                 return guidkey;
             }
-            return default(Guid); 
+            return default(Guid);
         }
 
+        public static Guid TempGuid()
+        {
+            byte[] bytes = System.Text.Encoding.ASCII.GetBytes("TEMP");
 
+            var newid = System.Guid.NewGuid();
+
+            var idbytes = newid.ToByteArray();
+
+            byte[] lastid = new byte[16];
+
+            System.Buffer.BlockCopy(bytes, 0, lastid, 0, 4);
+
+            System.Buffer.BlockCopy(idbytes, 0, lastid, 4, 12);
+
+            return new Guid(lastid);
+        }
+
+        public static bool IsTempGuid(Guid Id)
+        {
+            var bytes = Id.ToByteArray();
+
+            byte[] tempbytes = new byte[4];
+
+            System.Buffer.BlockCopy(bytes, 0, tempbytes, 0, 4);
+
+            var text = System.Text.Encoding.ASCII.GetString(tempbytes);
+
+            return text == "TEMP";
+        }
     }
 }

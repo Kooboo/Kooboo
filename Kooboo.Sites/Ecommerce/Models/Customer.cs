@@ -64,7 +64,7 @@ namespace Kooboo.Sites.Ecommerce.Models
         /// <summary>
         ///  this is a temp user. 
         /// </summary>
-        public bool IsTemp { get; set; }
+        public bool NoLogin { get; set; }
 
         public override int GetHashCode()
         {

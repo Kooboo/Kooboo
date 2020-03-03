@@ -17,43 +17,11 @@ namespace Kooboo.Sites.Ecommerce
         }
 
         private void InitContext()
-        {
-            this.customer = initCustomer();
-        }
-         
-        private Customer initCustomer()
-        {
-            if (this.RenderContext.Request.Cookies.ContainsKey(Constants.CustomerCookieName))
-            {
-                var service = ServiceProvider.GetService<ICustomerService>(this.RenderContext);
-                if (this.RenderContext.Request.Cookies.TryGetValue(Constants.CustomerCookieName, out string cookie))
-                {
-                    if (System.Guid.TryParse(cookie, out Guid customerid))
-                    {
-                        var customer = service.Get(customerid);
-                        if (customer != null)
-                        {
-                            return customer;
-                        }
-                    }
-                }
-            }
+        { 
+            var customerService = ServiceProvider.GetService<ICustomerService>(this.RenderContext);
+            this.customer = customerService.GetFromContext(this.RenderContext); 
 
-            else if (this.RenderContext.Request.Cookies.ContainsKey(Constants.CustomerTempCookieName))
-            {
-                var idvalue = this.RenderContext.Request.Cookies[Constants.CustomerTempCookieName]; 
-
-                if (System.Guid.TryParse(idvalue, out Guid guidvalue))
-                {
-                    var tempuser = new Customer() { IsTemp = true };
-                    tempuser.Id = guidvalue;
-                    return tempuser; 
-                }  
-            }
-            var newtemp = new Customer() { IsTemp = true } ;
-            this.RenderContext.Response.AppendCookie(Constants.CustomerTempCookieName, newtemp.Id.ToString(), DateTime.Now.AddDays(10));
-            return newtemp;
-        }
+        } 
 
         public RenderContext RenderContext { get; set; }
         
@@ -61,25 +29,13 @@ namespace Kooboo.Sites.Ecommerce
         {
             get
             {
-                return !this.customer.IsTemp; 
+                return !this.customer.NoLogin; 
             }
-        }
+        } 
 
-        private Customer _Customer;
         public Customer customer
         {
-            get
-            {
-                if (_Customer == null)
-                {
-                    _Customer = initCustomer();
-                }
-                return _Customer;
-            }
-            set
-            {
-                _Customer = value;
-            }
+            get;set;
         }
           
     }

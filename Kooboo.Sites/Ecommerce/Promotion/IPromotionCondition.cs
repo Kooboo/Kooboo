@@ -4,11 +4,7 @@ using System.Collections.Generic;
 
 namespace Kooboo.Sites.Ecommerce.Promotion
 {
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
+     
     public interface IPromotionCondition
      { 
         string Name { get;  }

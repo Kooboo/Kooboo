@@ -65,9 +65,6 @@ namespace Kooboo.Sites.Ecommerce.KScript
 
 
     }
-
-
-
-
+      
 
 }

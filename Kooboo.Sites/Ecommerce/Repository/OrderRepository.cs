@@ -13,6 +13,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 ObjectStoreParameters para = new ObjectStoreParameters();
                 para.AddIndex<Order>(o => o.CustomerId);
                 para.AddColumn<Order>(o => o.IsPaid);
+                para.AddColumn<Order>(o => o.AddressId);
                 return para;
             }
         } 
