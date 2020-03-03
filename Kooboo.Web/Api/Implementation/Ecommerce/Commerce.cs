@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Web.ViewModel.Ecommerce;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,11 +30,11 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce
 
             var sites = Kooboo.Sites.Service.WebSiteService.ListByUser(user);
 
-            List<ViewModel.Ecommerce.CommerceSiteViewModel> result = new List<ViewModel.Ecommerce.CommerceSiteViewModel>();
+            List<CommerceSiteViewModel> result = new List<CommerceSiteViewModel>();
 
             foreach (var item in sites)
             {
-                ViewModel.Ecommerce.CommerceSiteViewModel model = new ViewModel.Ecommerce.CommerceSiteViewModel();
+                 CommerceSiteViewModel model = new  CommerceSiteViewModel();
                 model.Id = item.Id;
                 model.Name = item.Name;
                 model.Enable = item.EnableECommerce;  

@@ -176,7 +176,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             }
         }
 
-
+        [JsonIgnore]
         public CategoryViewModel[] Categories
         {
             get

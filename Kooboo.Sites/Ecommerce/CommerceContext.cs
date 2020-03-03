@@ -13,14 +13,7 @@ namespace Kooboo.Sites.Ecommerce
         {
             // init the context...
             this.RenderContext = context;
-            InitContext(); 
-        }
-
-        private void InitContext()
-        { 
-            var customerService = ServiceProvider.GetService<ICustomerService>(this.RenderContext);
-            this.customer = customerService.GetFromContext(this.RenderContext); 
-
+        
         } 
 
         public RenderContext RenderContext { get; set; }
@@ -31,11 +24,24 @@ namespace Kooboo.Sites.Ecommerce
             {
                 return !this.customer.NoLogin; 
             }
-        } 
+        }
 
+        private Customer _customer; 
         public Customer customer
         {
-            get;set;
+            get
+            {
+                if (_customer == null)
+                {
+                    var customerService = ServiceProvider.GetService<ICustomerService>(this.RenderContext);
+                    _customer = customerService.GetFromContext(this.RenderContext);
+                }
+                return _customer; 
+            }
+            set
+            {
+                _customer = value; 
+            }
         }
           
     }

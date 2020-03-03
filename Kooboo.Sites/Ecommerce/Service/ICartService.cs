@@ -21,7 +21,9 @@ namespace Kooboo.Sites.Ecommerce.Service
         /// <param name="cart"></param>
         void UpdateCart(Cart cart);
 
-        void CalculatePromotion(Cart cart); 
+        void CalculatePromotion(Cart cart);
+
+        List<Cart> List(int skip, int count); 
 
     }
 }

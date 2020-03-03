@@ -33,8 +33,7 @@ namespace Kooboo.Sites.Ecommerce.KScript
             }
             return null;
         }
-
-      
+         
         public Order CreateSelected(object[] selected)
         {
             List<Guid> selectedCartItem = new List<Guid>();
@@ -61,8 +60,19 @@ namespace Kooboo.Sites.Ecommerce.KScript
 
             return null;
         }
-        
-        
+         
+        public void Paid(object OrderId)
+        {
+            var guid = Lib.Helper.IDHelper.GetGuid(OrderId); 
+            if (guid != default(Guid))
+            {
+                var order = this.service.Get(guid); 
+                if (order !=null)
+                {
+                    order.IsPaid = true; 
+                }
+            }
+        }
     }
 
 
