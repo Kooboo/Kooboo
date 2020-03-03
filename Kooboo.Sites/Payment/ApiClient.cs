@@ -155,13 +155,16 @@ namespace Kooboo.Sites.Payment
             return new ApiResponse
             {
                 StatusCode = resp.StatusCode,
-                Content = response
+                Content = response,
+                Location = resp.Headers.Location
             };
         }
 
         public class ApiResponse
         {
             public HttpStatusCode StatusCode { get; set; }
+
+            public Uri Location { get; set; }
 
             public bool IsSuccessStatusCode =>
                 (StatusCode >= HttpStatusCode.OK) && (StatusCode <= (HttpStatusCode)299);
