@@ -32,7 +32,21 @@ export function createStyleImagePanel() {
       let inlineImagePreview = createInlineImagePreview(element, style, rules);
       if (inlineImagePreview) contiainer.appendChild(inlineImagePreview);
     } else if (matchedRules.length > 0) {
-      if (!rule) rule = matchedRules.sort(f => f.rule.styleSequence).pop()!;
+      let cssColors = matchedRules.map(m => {
+        return {
+          cssStyleRule: m.rule.cssRule,
+          inline: false,
+          styleSequence: m.rule.styleSequence,
+          rawSelector: m.rule.cssRule.selectorText,
+          targetSelector: m.selector,
+          important: !!m.rule.cssRule.style.getPropertyPriority("background-image"),
+          koobooId: m.rule.koobooId,
+          mediaRuleList: m.rule.mediaRuleList,
+          pseudo: m.pseudo
+        } as CssColor;
+      });
+      let topRule = sortStylePriority(cssColors).pop()!.cssStyleRule;
+      rule = matchedRules.find(f => f.rule.cssRule == topRule!)!;
       let styleImagePreview = createStyleImagePreview(appendedRule, element, rule);
       if (styleImagePreview) contiainer.appendChild(styleImagePreview);
     }
