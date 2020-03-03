@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Kooboo.Sites.Ecommerce.KScript
 {
-   
+
     public class KProduct
     {
         private RenderContext context { get; set; }
@@ -21,35 +21,48 @@ namespace Kooboo.Sites.Ecommerce.KScript
             this.service = Kooboo.Sites.Ecommerce.ServiceProvider.GetService<ProductService>(this.context);
         }
 
-        private List<CategoryViewModel> SubCategories(Guid ParentId)
+        public ProductViewModel[] Top(int count)
         {
-            var subcates = context.WebSite.SiteDb().GetSiteRepository<CategoryRepository>().AllCategories(ParentId);
-
-            List<CategoryViewModel> result = new List<CategoryViewModel>();
-
-            foreach (var item in subcates)
-            {
-                var view = new Kooboo.Sites.Ecommerce.ViewModel.CategoryViewModel(item, this.context);
-                if (view != null)
-                {
-                    result.Add(view);
-                }
-            }
-            return result;
-        }
-
-        public ProductViewModel[] Top()
-        {
-            var products = service.Top();
+            var products = service.Top(count);
 
             return products.Select(o => new ProductViewModel(o, this.context, null)).ToArray();
         }
 
-        public CategoryViewModel[] Sub(string ParentKeyOrPath)
+        public ProductViewModel Get(string keyorid)
         {
-            var subs = service.Sub(ParentKeyOrPath);
-            return subs.Select(o => new CategoryViewModel(o, this.context)).ToArray();
+            var p = this.service.Get(keyorid);
+
+            if (p != null)
+            {
+                var ptype = ServiceProvider.ProductType(this.context).Get(p.ProductTypeId);
+                if (ptype != null)
+                {
+                    return new ProductViewModel(p, this.context, ptype.Properties);
+                }
+
+            }
+            return null;
         }
+
+        public ProductViewModel[] ByCategory(string CatNameIdOrPath, int skip, int take)
+        {
+            var products = this.service.ByCategory(CatNameIdOrPath, skip, take);
+
+            if (products == null || !products.Any())
+            {
+                return null;
+            }
+
+            var producttype = ServiceProvider.ProductType(context).Get(products[0].ProductTypeId);
+
+            if (producttype != null)
+            {
+                return products.Select(o => new ProductViewModel(o, this.context, producttype.Properties)).ToArray();
+            }
+
+            return null;
+        }
+
 
     }
 

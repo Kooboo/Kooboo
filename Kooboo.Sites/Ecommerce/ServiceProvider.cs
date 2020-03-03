@@ -16,10 +16,22 @@ namespace Kooboo.Sites.Ecommerce
             return (T)obj;
         }
 
+        private static object _locker = new object(); 
+
         public static CommerceContext GetCommerceContext(RenderContext context)
         {
-            CommerceContext commerceContext = new CommerceContext(context);
-            return commerceContext;
+            if (!context.HasItem<CommerceContext>())
+            {
+                lock(_locker)
+                {
+                    if (!context.HasItem<CommerceContext>())
+                    { 
+                        CommerceContext commerceContext = new CommerceContext(context);
+                        context.SetItem<CommerceContext>(commerceContext); 
+                    } 
+                } 
+            }
+            return context.GetItem<CommerceContext>();
         }
 
         public static CategoryService Category(RenderContext context)
@@ -34,7 +46,7 @@ namespace Kooboo.Sites.Ecommerce
 
         public static ProductVariantsService ProductVariants(RenderContext context)
         {
-            return GetService<ProductVariantsService>(context); 
+            return GetService<ProductVariantsService>(context);
         }
 
         public static ICustomerService Customer(RenderContext context)
@@ -60,6 +72,6 @@ namespace Kooboo.Sites.Ecommerce
         public static ShippingService Shipping(RenderContext context)
         {
             return GetService<ShippingService>(context);
-        } 
+        }
     }
 }

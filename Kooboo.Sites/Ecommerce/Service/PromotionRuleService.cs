@@ -17,7 +17,7 @@ namespace Kooboo.Sites.Ecommerce.Service
         public List<PromotionRule> ActiveRules()
         {
 
-            var allrules = this.Repo.All();
+            var allrules = this.Repo.List();
 
             return allrules.Where(o => IsRuleActive(o)).ToList();
 

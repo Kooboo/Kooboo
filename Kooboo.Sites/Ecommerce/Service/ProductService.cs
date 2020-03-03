@@ -6,19 +6,41 @@ using System.Text;
 namespace Kooboo.Sites.Ecommerce.Service
 {
     public class ProductService : ServiceBase<Product>
-    { 
-        public List<Product> ByCategory(string CategorykeyIdOrPath, int skip=0, int count=50)
+    {
+        public List<Product> ByCategory(string CategorykeyIdOrPath, int skip = 0, int count = 50)
         {
             //TODO: sort product here...
-            var categoryid = ServiceProvider.Category(this.Context).GetCategoryId(CategorykeyIdOrPath);  
-            var list = ServiceProvider.ProductCategory(this.Context).ProductIdList(categoryid); 
-            return this.Repo.Query.WhereIn<Guid>(o => o.Id, list).Skip(skip).Take(count);
+            var category = ServiceProvider.Category(this.Context).Get(CategorykeyIdOrPath);
+            if (category != null)
+            {
+                var list = ServiceProvider.ProductCategory(this.Context).ProductIdList(category.Id);
+                return this.Repo.Query.WhereIn<Guid>(o => o.Id, list).Skip(skip).Take(count);
+            }
+            return new List<Product>();
         }
-         
+
         public List<Product> Top(int count = 10)
         {
             // TODO: add sort product here. 
-            return this.Repo.Query.OrderByDescending(o => o.Order).Take(count); 
+            return this.Repo.Query.OrderByDescending(o => o.Order).Take(count);
+        }
+
+        public List<Category> CategoryList(Guid ProductId)
+        {
+            var cates = ServiceProvider.ProductCategory(this.Context).FindCategoies(ProductId);
+
+            List<Category> result = new List<Category>();
+
+            foreach (var item in cates)
+            {
+                var cat = ServiceProvider.Category(this.Context).Get(item);
+                if (cat != null)
+                {
+                    result.Add(cat);
+                }
+            }
+
+            return result; 
         }
     }
 }

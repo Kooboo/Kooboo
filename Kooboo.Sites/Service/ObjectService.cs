@@ -65,6 +65,11 @@ namespace Kooboo.Sites.Service
             info.ConstType = siteobject.ConstType;
             info.ModelType = ConstTypeService.GetModelType(siteobject.ConstType);
 
+            if(info.ModelType == null)
+            {
+                info.ModelType = siteobject.GetType(); 
+            }
+
             if (siteobject is IBinaryFile)
             {
                 info.Size = ((IBinaryFile)siteobject).Size;

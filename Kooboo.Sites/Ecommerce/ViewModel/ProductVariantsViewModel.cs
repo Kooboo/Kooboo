@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Attributes;
 using Kooboo.Sites.Ecommerce.Models;
+using KScript;
 using System;
 using System.Collections.Generic;
 
@@ -14,11 +15,11 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             this.ProductId = variants.ProductId;
             this.Price = variants.Price;
             this.Groups = variants.Groups;
-            this.Spec = variants.Variants;
+            this.Spec = new KDictionary(variants.Variants);
             this.Images = variants.Images;
             this.Thumbnail = variants.Thumbnail;
             this.Stock = variants.Stock;
-            this.Order = variants.Order; 
+            this.Order = variants.Order;
         }
 
         public Guid Id
@@ -33,10 +34,10 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         // can have additional things to group  
         public List<Guid> Groups { get; set; }
 
-        public Dictionary<String, string> Spec { get; set; }
+        public KDictionary Spec { get; set; }
 
         [KIgnore]
-        public Dictionary<String, string> Specification
+        public KDictionary Specification
         {
             get
             {

@@ -1,5 +1,4 @@
-﻿using Kooboo.Data.Interface;
-using Kooboo.Sites.Ecommerce.Promotion;
+﻿using Kooboo.Sites.Ecommerce.Promotion;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;

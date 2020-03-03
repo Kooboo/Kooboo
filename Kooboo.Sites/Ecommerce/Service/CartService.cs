@@ -99,5 +99,7 @@ namespace Kooboo.Sites.Ecommerce.Service
         {
             Promotion.PromotionEngine.CalculatePromotion(cart, this.Context);
         }
+
+
     }
 }

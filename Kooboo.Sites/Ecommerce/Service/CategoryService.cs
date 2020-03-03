@@ -39,50 +39,33 @@ namespace Kooboo.Sites.Ecommerce.Service
                 var children = all.Where(o => o.ParentId == item.Id).ToList();
 
                 SetSub(data, children, ref all);
-            }
-
+            } 
         }
 
         private List<Category> Sub(Guid ParentId)
         {
-            var list = this.Repo.All();
+            var list = this.Repo.List();
             return list.Where(o => o.ParentId == ParentId).ToList();
-        }
+        } 
 
+        /// <summary>
+        ///  Key, guid or \root\sub\subsub like path. 
+        /// </summary>
+        /// <param name="ParentKeyOrIdOrPath"></param>
+        /// <returns></returns>
         public List<Category> Sub(string ParentKeyOrIdOrPath)
         {
             if (ParentKeyOrIdOrPath == null)
             {
-                return new List<Category>();
-            }
+               return new List<Category>();
+            } 
+            var category = Get(ParentKeyOrIdOrPath);
 
-            Guid parentid = GetCategoryId(ParentKeyOrIdOrPath);
-
-
-            var list = this.Repo.All();
-            return list.Where(o => o.ParentId == parentid).ToList();
-        }
-
-        /// <summary>
-        /// Key, guid or \root\sub\subsub like path. 
-        /// </summary>
-        /// <param name="ParentKeyOrIdOrPath"></param>
-        /// <returns></returns>
-        public Guid GetCategoryId(string ParentKeyOrIdOrPath)
-        {
-            if (ParentKeyOrIdOrPath.Contains("/") || ParentKeyOrIdOrPath.Contains("\\"))
+            if (category != null)
             {
-                var current = GetByPath(ParentKeyOrIdOrPath);
-                if (current != null)
-                {
-                    return current.Id;
-                }
-            }
-            else
-            {
-                return Lib.Helper.IDHelper.ParseKey(ParentKeyOrIdOrPath);
-            }
-            return default(Guid);
+                return Sub(category.Id);
+            } 
+            return new List<Category>();
         }
 
         public override Category Get(string NameKeyIdOrPath)
@@ -94,8 +77,20 @@ namespace Kooboo.Sites.Ecommerce.Service
             else
             {
                 var id = Lib.Helper.IDHelper.ParseKey(NameKeyIdOrPath);
-                return this.Get(id);
-            } 
+                var item = this.Get(id);
+
+                if (item != null)
+                {
+                    return item;
+                }
+                // else match by name. 
+
+                var all = this.Repo.List();
+
+                var find = all.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, NameKeyIdOrPath));
+
+                return find;
+            }
         }
 
         private Category GetByPath(string path)
@@ -155,7 +150,7 @@ namespace Kooboo.Sites.Ecommerce.Service
         public List<Category> Top()
         {
             // category is always cached...
-            return this.Repo.All().Where(o => o.ParentId == default(Guid)).ToList();
+            return this.Repo.List().Where(o => o.ParentId == default(Guid)).ToList();
         }
     }
 }

@@ -34,8 +34,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         public string userkey { get; set; }
 
         public string DisplayName { get; set; }
-
-
+         
         public ProductViewModel[] Products(int skip, int take)
         {
             var products = ServiceProvider.Product(this.context).ByCategory(this.Id.ToString(), skip, take);

@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 {
     public class ProductViewModel : IDynamic
     {
-        
+
         private RenderContext context { get; set; }
 
         public ProductViewModel(Product product, RenderContext context, List<Models.ProductProperty> Properties)
@@ -131,84 +131,17 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             var result = GetValue(FieldName);
             if (result == null && Context != null)
             {
+                var lower = FieldName.ToLower();
+                if (lower == "variants")
+                {
+                    return this.Variants;
+                }
 
-
-                //// check category and embedded. 
-                //var sitedb = Context.WebSite.SiteDb();
-                //var folder = sitedb.ContentFolders.Get(this.FolderId);
-                //if (folder != null)
-                //{
-                //    //check category.
-                //    var category = folder.Category.Find(o => o.Alias == FieldName);
-                //    if (category != null)
-                //    {
-                //        List<TextContentViewModel> mulresult = new List<TextContentViewModel>();
-                //        var ids = sitedb.ContentCategories.Query.Where(o => o.ContentId == this.Id && o.CategoryFolder == category.FolderId).SelectAll().Select(o => o.CategoryId).ToList();
-
-                //        foreach (var item in ids)
-                //        {
-                //            var contentview = sitedb.TextContent.GetView(item, culture);
-
-                //            if (contentview != null)
-                //            {
-                //                if (category.Multiple)
-                //                {
-                //                    mulresult.Add(contentview);
-                //                }
-                //                else
-                //                {
-                //                    return contentview;
-                //                }
-                //            }
-                //        }
-
-                //        if (mulresult.Count() > 0)
-                //        {
-                //            return mulresult;
-                //        }
-                //        else
-                //        { return null; }
-                //    }
-                //    //check embedded.
-
-                //    var embed = folder.Embedded.Find(o => o.Alias == FieldName);
-                //    if (embed != null)
-                //    {
-                //        List<TextContentViewModel> emresult = new List<TextContentViewModel>();
-
-                //        if (this.Embedded.ContainsKey(embed.FolderId))
-                //        {
-                //            var ids = this.Embedded[embed.FolderId];
-
-                //            if (ids != null && ids.Count() > 0)
-                //            {
-                //                foreach (var item in ids)
-                //                {
-                //                    var view = sitedb.TextContent.GetView(item, culture);
-                //                    if (view != null)
-                //                    {
-                //                        emresult.Add(view);
-                //                    }
-                //                }
-
-                //            }
-                //        }
-
-                //        var byParentIds = sitedb.TextContent.Query.Where(o => o.FolderId == embed.FolderId && o.ParentId == this.Id).SelectAll();
-
-                //        if (byParentIds != null && byParentIds.Count() > 0)
-                //        {
-                //            foreach (var subitem in byParentIds)
-                //            {
-                //                if (emresult.Find(o => o.Id == subitem.Id) == null)
-                //                {
-                //                    emresult.Add(sitedb.TextContent.GetView(subitem, Context.Request.Culture));
-                //                }
-                //            }
-                //        }
-                //        return emresult.OrderByDescending(o => o.LastModified).ToList();
-                //    }
-                //}
+                // check cateogry? 
+                else if (lower == "categories")
+                {
+                    return this.Categories; 
+                }
             }
 
             return result;
@@ -239,9 +172,19 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             {
                 var variants = ServiceProvider.ProductVariants(this.context).ListByProduct(this.Id);
 
-                return variants.Select(o => new ProductVariantsViewModel(o)).ToArray(); 
+                return variants.Select(o => new ProductVariantsViewModel(o)).ToArray();
             }
         }
 
+
+        public CategoryViewModel[] Categories
+        {
+            get
+            {
+                var cats = ServiceProvider.Product(this.context).CategoryList(this.Id);
+
+                return cats.Select(o => new CategoryViewModel(o, this.context)).ToArray();
+            }
+        }
     }
 }

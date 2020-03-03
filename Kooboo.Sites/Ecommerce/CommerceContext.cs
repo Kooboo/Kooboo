@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Ecommerce
          
         private Customer initCustomer()
         {
-            if (RenderContext.Request.Cookies.ContainsKey(Constants.CustomerCookieName))
+            if (this.RenderContext.Request.Cookies.ContainsKey(Constants.CustomerCookieName))
             {
                 var service = ServiceProvider.GetService<ICustomerService>(this.RenderContext);
                 if (this.RenderContext.Request.Cookies.TryGetValue(Constants.CustomerCookieName, out string cookie))
@@ -37,6 +37,18 @@ namespace Kooboo.Sites.Ecommerce
                         }
                     }
                 }
+            }
+
+            else if (this.RenderContext.Request.Cookies.ContainsKey(Constants.CustomerTempCookieName))
+            {
+                var idvalue = this.RenderContext.Request.Cookies[Constants.CustomerTempCookieName]; 
+
+                if (System.Guid.TryParse(idvalue, out Guid guidvalue))
+                {
+                    var tempuser = new Customer() { IsTemp = true };
+                    tempuser.Id = guidvalue;
+                    return tempuser; 
+                }  
             }
             var newtemp = new Customer() { IsTemp = true } ;
             this.RenderContext.Response.AppendCookie(Constants.CustomerTempCookieName, newtemp.Id.ToString(), DateTime.Now.AddDays(10));

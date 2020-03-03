@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.AddColumn<Product>(it => it.Id);   
                 paras.AddColumn<Product>(it => it.Online);
-                paras.AddColumn<Product>(it => it.LastModified);
+                paras.AddColumn<Product>(it => it.LastModified); 
                 paras.SetPrimaryKeyField<Product>(o => o.Id);
                 return paras;
             }

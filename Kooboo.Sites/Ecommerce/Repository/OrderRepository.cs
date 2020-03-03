@@ -1,9 +1,6 @@
 ﻿using Kooboo.IndexedDB;
 using Kooboo.Sites.Ecommerce.Models;
-using Kooboo.Sites.Repository;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Kooboo.Sites.Repository; 
 
 namespace Kooboo.Sites.Ecommerce.Repository
 {

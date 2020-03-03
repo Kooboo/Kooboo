@@ -152,5 +152,24 @@ namespace Kooboo.Lib.Helper
                 return Lib.Security.Hash.ComputeGuidIgnoreCase(strkey);
             }
         }
+
+        public static Guid GetGuid(object value)
+        {
+            if(value == null)
+            {
+                return default(Guid);
+            }
+            if (value is System.Guid)
+            {
+                return (Guid)value;
+            }
+            if (System.Guid.TryParse(value.ToString(), out Guid guidkey))
+            {
+                return guidkey;
+            }
+            return default(Guid); 
+        }
+
+
     }
 }
