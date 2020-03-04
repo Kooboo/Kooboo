@@ -27,7 +27,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 
         [Description(@"<script engine='kscript'>
     var charge = {};
-    charge.total = 150; // $1.50
+    charge.total = 1.50;
     charge.currency='USD';
     charge.country='US';
     charge.name = 'green tea order'; 
@@ -38,19 +38,20 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 </script>")]
         public IPaymentResponse Charge(PaymentRequest request)
         {
+            var amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount);
             var req = new KpSessionRequest
             {
                 PurchaseCurrency = request.Currency,
                 PurchaseCountry = request.Country,
-                OrderAmount = request.TotalAmount,
+                OrderAmount = amount,
                 OrderLines = new[]
                 {
                     new KpSessionRequest.OrderLine
                     {
                         Name = request.Name,
                         Quantity = 1,
-                        UnitPrice = request.TotalAmount,
-                        TotalAmount = request.TotalAmount
+                        UnitPrice = amount,
+                        TotalAmount = amount
                     }
                 },
             };
