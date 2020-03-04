@@ -35,7 +35,7 @@ export default class EditColorItem extends BaseMenuItem {
   async click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    createColorEditor(args.element, getEditableComment(comments)!, args.koobooId!);
+    createColorEditor(args.element, comments.find(f => f.scope)!, args.koobooId!);
     this.parentMenu.hidden();
   }
 }
