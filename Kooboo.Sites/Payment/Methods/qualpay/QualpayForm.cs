@@ -57,7 +57,7 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
         public IPaymentResponse Charge(PaymentRequest request)
         {
             var dic = new Dictionary<string, object>();
-            dic.Add("amt_tran", request.TotalAmount.ToString("0.0"));
+            dic.Add("amt_tran", request.TotalAmount.ToString("0.00"));
             var currency = GetCurrencyCode(request.Currency);
             dic.Add("tran_currency", currency);
             dic.Add("purchase_id", DataHelper.GeneratePurchaseId(request.Id));

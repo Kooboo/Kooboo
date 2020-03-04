@@ -71,10 +71,13 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
             {
                 throw new QualPayException("API返回的支付链接为空！");
             }
-
-            if (!string.Equals(data["amt_tran"], req["amt_tran"]))
+            decimal amt_tran = 0;
+            if (!decimal.TryParse(data["amt_tran"], out amt_tran))
             {
-                throw new QualPayException("支付价格不一致！");
+                if (!string.Equals(amt_tran.ToString("0.00"), req["amt_tran"]))
+                {
+                    throw new QualPayException("支付价格不一致！");
+                }
             }
 
             if (!string.Equals(data["tran_currency"], req["tran_currency"]))
