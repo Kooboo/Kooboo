@@ -19,7 +19,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency => new List<string> { "USD", "EUR", "GBP", "DKK", "NOK", "SEK" };
+        public List<string> supportedCurrency => new List<string> { "AUD", "CAD", "CHF", "DKK", "EUR", "GBP", "NOK", "SEK", "USD" };
 
         public RenderContext Context { get; set; }
 
