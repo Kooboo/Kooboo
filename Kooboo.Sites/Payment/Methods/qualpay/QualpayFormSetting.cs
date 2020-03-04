@@ -10,8 +10,6 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
 
         public bool UseSandBox { get; set; }
 
-        public string SuccessUrl { get; set; }
-
         public string FailureUrl { get; set; }
 
         public string MerchantId { get; set; }

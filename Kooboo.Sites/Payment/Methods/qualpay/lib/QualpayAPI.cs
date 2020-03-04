@@ -12,13 +12,7 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
             {
                 request.Add("checkout_profile_id", setting.CheckoutProfileId);
                 Validtion(request);
-                var preferences = new Dictionary<string, string>
-                {
-                    { "success_url", setting.SuccessUrl },
-                    { "failure_url", setting.FailureUrl }
-                };
-
-                request.Add("preferences", preferences);
+                
                 var body = JsonConvert.SerializeObject(request);
                 var response = ApiClient.Create("Basic", setting.SecurityKey)
                     .PostAsync(setting.ServerUrl + "/platform/checkout", body)
@@ -35,6 +29,33 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
                 CheckResult(data, request);
 
                 return data;
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+            }
+
+            return null;
+        }
+
+        public static string GetTransaction(string id, QualpayFormSetting setting)
+        {
+            try
+            {
+                var response = ApiClient.Create("Basic", setting.SecurityKey)
+                    .GetAsync(setting.ServerUrl + "/platform/reporting/transactions/bypgid/" + id)
+                    .Result.EnsureSuccessStatusCode().Content;
+                var result = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
+
+                if (DataHelper.GetValue("code", response) != "0")
+                {
+                    throw new QualPayException(DataHelper.GetValue("message", response));
+                }
+
+                var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(result["data"].ToString());
+
+
+                return data["tran_status"];
             }
             catch (Exception ex)
             {
