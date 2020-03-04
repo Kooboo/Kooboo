@@ -11,6 +11,13 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
             try
             {
                 request.Add("checkout_profile_id", setting.CheckoutProfileId);
+                var preferences = new Dictionary<string, string>
+                {
+                    { "success_url", setting.SuccessUrl},
+                    { "failure_url", setting.FailureUrl }
+                };
+
+                request.Add("preferences", preferences);
                 Validtion(request);
                 
                 var body = JsonConvert.SerializeObject(request);

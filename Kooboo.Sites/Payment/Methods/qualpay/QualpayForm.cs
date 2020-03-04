@@ -64,7 +64,7 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             dic.Add("purchase_id", DataHelper.GeneratePurchaseId(request.Id));
             var preferences = new Dictionary<string, string>
                 {
-                    { "success_url", PaymentHelper.GetCallbackUrl(this, nameof(CheckoutFinished), Context) + "/" + request.Id},
+                    { "success_url", Setting.SuccessUrl},
                     { "failure_url", Setting.FailureUrl }
                 };
 
@@ -91,21 +91,6 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             return currentCodes[currency];
         }
 
-        public void CheckoutFinished(RenderContext context)
-        {
-            var path = context.Request.Path;
-            string[] paths = path.Split('/');
-            var requestId = paths[paths.Length - 1];
-            Guid paymentRequestId;
-            if (Guid.TryParse(requestId, out paymentRequestId))
-            {
-                var request = PaymentManager.GetRequest(paymentRequestId, context);
-                var trasactionId = context.Request.QueryString["pg_id"];
-                request.ReferenceId = trasactionId;
-                PaymentManager.UpdateRequest(request, context);
-            }
-        }
-
         public PaymentCallback NofityUrl(RenderContext context)
         {
             var result = new PaymentCallback();
@@ -119,13 +104,17 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
 
                 var eventType = DataHelper.GetValue("event", context.Request.Body);
                 var purchaseId = DataHelper.GetValue("data.purchase_id", context.Request.Body);
-
+                var transationId = DataHelper.GetValue("data.pg_id", context.Request.Body);
                 if (string.IsNullOrEmpty(purchaseId))
                     return null;
 
-                result.RequestId = DataHelper.GenerateRequestId(purchaseId);
+                var requestId = DataHelper.GenerateRequestId(purchaseId);
+                result.RequestId = requestId;
                 if (string.Equals(eventType, CheckoutSuccessEvent))
                 {
+                    var request = PaymentManager.GetRequest(requestId, context);
+                    request.ReferenceId = transationId;
+                    PaymentManager.UpdateRequest(request, context);
                     result.Status = PaymentStatus.Pending;
                 }
                 else
