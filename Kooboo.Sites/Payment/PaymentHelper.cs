@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Payment
         public static string GetCallbackUrl(IPaymentMethod paymentMethod, string MethodName, RenderContext context)
         {
             var baseurl = GetBaseUrl(context).TrimEnd('/');
-            return baseurl + "/_api/paymentcallback/" + paymentMethod.Name + "_" + MethodName;
+            return "http://paytest.kooboo:81" + "/_api/paymentcallback/" + paymentMethod.Name + "_" + MethodName;
         }
 
         private static string GetBaseUrl(RenderContext context)
@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Payment
             {
                 if (Data.AppSettings.IsOnlineServer && Data.AppSettings.ServerSetting != null)
                 {
-                    baseurl = "https://" + Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
+                    baseurl = "http://" + Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
                 }
             }
 

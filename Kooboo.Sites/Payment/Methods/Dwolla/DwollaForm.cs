@@ -1,6 +1,8 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Dwolla.lib;
 using Kooboo.Sites.Payment.Response;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,15 +49,47 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                 Email = (string)email
             };
 
-            var apiClient = new DwollaApi(Setting);
-            var customer = apiClient.CreateCustomer(customerParameters).Result;
-            var iavToken = apiClient.CreateIavToken(customer.Location.ToString()).Result;
+            var dwollaApi = new DwollaApi(Setting);
+            var customer = dwollaApi.CreateCustomer(customerParameters).Result;
+            var iavToken = dwollaApi.CreateIavToken(customer.Location.ToString()).Result;
             var response = new HiddenFormResponse
             {
                 paymemtMethodReferenceId = Guid.NewGuid().ToString()
             };
             response.html = GetHtml(Setting.IsUsingSanbox, iavToken.Token);
             response.setFieldValues("iavToken", iavToken.Token);
+            return response;
+        }
+
+        [KDefineType(Return = typeof(HiddenFormResponse))]
+        public IPaymentResponse GetFundingSourceAddingStatus(RenderContext context)
+        {
+            var result = JsonConvert.DeserializeObject<FundingSourceAddingStatus>(context.Request.Body);
+            IPaymentResponse response;
+            if (result.FundingSource.Href != null)
+            {
+                var dwollaApi = new DwollaApi(Setting);
+                var request = new CreateTransferRequest()
+                {
+                    Links = new Dictionary<string, Link>
+                    {
+                        { "source", new Link { Href = result.FundingSource.Href } },
+                        { "destination", new Link { Href = new Uri(dwollaApi.ApiBaseAddress + "/funding-sources/" + Setting.FundingSourceId) }}
+                    },
+                    Amount = new Money
+                    {
+                        Currency = "USD",
+                        Value = 100.00M
+                    }
+                };
+                var createTransferResult = dwollaApi.CreateTransfer(request);
+                response = new PaidResponse();
+            }
+            else
+            {
+                response = new FailedResponse("IAV failed");
+            }
+
             return response;
         }
 
@@ -66,13 +100,13 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
 
         private string GetHtml(bool isisUsingSanbox, string iavToken)
         {
-            var html = GenerateHtml(iavToken, isisUsingSanbox);
-            var kscriptAPIURL = PaymentHelper.GetCallbackUrl(this, nameof(checkStatus), this.Context);
+            var apiUrl = PaymentHelper.GetCallbackUrl(this, nameof(GetFundingSourceAddingStatus), Context);
+            var html = GenerateHtml(iavToken, isisUsingSanbox, apiUrl);
 
             return html;
         }
 
-        private string GenerateHtml(string iavToken, bool isUsingSanbox)
+        private string GenerateHtml(string iavToken, bool isUsingSanbox, string apiUrl)
         {
             var sanboxConfig = isUsingSanbox ? "dwolla.configure('sandbox')" : "";
             var html = string.Format(@"
@@ -90,8 +124,12 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
     fallbackToMicroDeposits: 'true'
   }}, function(err, res) {{
     console.log('Error: ' + JSON.stringify(err) + ' -- Response: ' + JSON.stringify(res));
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST','{2}',true);
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp.send(JSON.stringify(res._links));
   }});
- </script> ", sanboxConfig, iavToken);
+ </script> ", sanboxConfig, iavToken, apiUrl);
 
             return html;
         }

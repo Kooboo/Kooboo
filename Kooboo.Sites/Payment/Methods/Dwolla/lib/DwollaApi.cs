@@ -68,5 +68,19 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
 
             return JsonConvert.DeserializeObject<IavTokenResponse>(result.Content);
         }
+
+        public async Task<TransferResponse> CreateTransfer(CreateTransferRequest request)
+        {
+            await GetToken();
+            var client = Create("Bearer", Token);
+            var headers = new Dictionary<string, string>
+            {
+                { "Accept", contentType },
+                { "Idempotency-Key", Guid.NewGuid().ToString() }
+            };
+            var body = JsonConvert.SerializeObject(request);
+            var result = await client.PostAsync($"{ApiBaseAddress}/transfers", body, contentType, headers);
+            return new TransferResponse();
+        }
     }
 }
