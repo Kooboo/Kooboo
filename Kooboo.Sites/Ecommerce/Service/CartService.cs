@@ -112,5 +112,9 @@ namespace Kooboo.Sites.Ecommerce.Service
             return list; 
         }
 
+        public int Count()
+        {
+            return this.Repo.Store.Filter.Count();
+        }
     }
 }

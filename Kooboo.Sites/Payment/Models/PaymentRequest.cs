@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Payment
             {
                 if (_id == default(Guid))
                 {
-                    _id = System.Guid.NewGuid();
+                    _id = Lib.Helper.IDHelper.NewTimeGuid(DateTime.Now);  
                 }
                 return _id;
             }

@@ -7,8 +7,7 @@ using Kooboo.Sites.Ecommerce.Service;
 namespace Kooboo.Web.Api.Implementation.Ecommerce.ViewModel
 {
     public class ShoppingCartWebViewModel
-    {
-
+    { 
         public ShoppingCartWebViewModel(Cart cart, Kooboo.Data.Context.RenderContext context)
         {  
             if (Lib.Helper.IDHelper.IsTempGuid(cart.CustomerId))
@@ -57,7 +56,6 @@ namespace Kooboo.Web.Api.Implementation.Ecommerce.ViewModel
 
         public string Products { get; set; }
 
-        public DateTime CreationDate { get; set; }
-
+        public DateTime CreationDate { get; set; } 
     }
 }

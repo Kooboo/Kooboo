@@ -23,7 +23,9 @@ namespace Kooboo.Sites.Ecommerce.Service
 
         void CalculatePromotion(Cart cart);
 
-        List<Cart> List(int skip, int count); 
+        List<Cart> List(int skip, int count);
+
+        int Count(); 
 
     }
 }
