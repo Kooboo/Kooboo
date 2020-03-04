@@ -19,9 +19,9 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
         public string IconType => "img";
 
         // Mollie supports multiple payment method suppliers.
-        // e.g. for PayPal, all currencies supported by PayPal are also supported by Mollie. So the supported currency have to be all.
+        // e.g. for PayPal, all currencies supported by PayPal are also supported by Mollie.
         // https://docs.mollie.com/payments/multicurrency
-        public List<string> supportedCurrency => new List<string>();
+        public List<string> supportedCurrency => new List<string> { "AED", "AUD", "BGN", "BRL", "CAD", "CHF", "CZK", "DKK", "EUR", "GBP", "HKD", "HRK", "HUF", "ILS", "ISK", "JPY", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TWD", "USD", "ZAR", };
 
         public RenderContext Context { get; set; }
 
@@ -45,11 +45,12 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                 Amount = new Amount
                 {
                     Currency = request.Currency,
-                    Value = request.TotalAmount.ToString("#.00")
+                    Value = CurrencyDecimalPlaceConverter.ToDecimalPlaceString(request.Currency, request.TotalAmount)
                 },
                 Description = request.Description,
                 RedirectUrl = Setting.RedirectUrl,
-                WebhookUrl = callbackUrl
+                WebhookUrl = callbackUrl,
+                Metadata = request.Id.ToString()
             };
 
             var resp = new MollieApi(Setting.ApiToken).CreatePayment(req);
@@ -89,6 +90,11 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
             }
 
             var statusResponse = new MollieApi(Setting.ApiToken).CheckStatus(molliePaymentId);
+            if (!Guid.TryParse(statusResponse.Metadata, out var requestId) ||
+                PaymentManager.GetRequest(requestId, context) == null)
+            {
+                return null;
+            }
 
             var status = ConvertStatus(statusResponse.Status);
 
@@ -103,6 +109,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
             };
         }
 
+        // https://docs.mollie.com/payments/status-changes
         private PaymentStatus ConvertStatus(MollieStatus mollieStatus)
         {
             switch (mollieStatus)
