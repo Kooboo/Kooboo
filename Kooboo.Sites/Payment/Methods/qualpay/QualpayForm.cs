@@ -62,13 +62,6 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             var currency = GetCurrencyCode(request.Currency);
             dic.Add("tran_currency", currency);
             dic.Add("purchase_id", DataHelper.GeneratePurchaseId(request.Id));
-            var preferences = new Dictionary<string, string>
-                {
-                    { "success_url", Setting.SuccessUrl},
-                    { "failure_url", Setting.FailureUrl }
-                };
-
-            dic.Add("preferences", preferences);
             var result = QualpayAPI.CheckOutUrl(dic, Setting);
             if (result == null)
                 return null;
