@@ -80,7 +80,17 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             };
             var body = JsonConvert.SerializeObject(request);
             var result = await client.PostAsync($"{ApiBaseAddress}/transfers", body, contentType, headers);
-            return new TransferResponse();
+            var transferResult = new TransferResponse();
+            if (result.IsSuccessStatusCode)
+            {
+                transferResult.Status = result.StatusCode.ToString();
+                transferResult.TransferURL = result.Location;
+            }
+            else
+            {
+                transferResult.Status = "failed";
+            }
+            return transferResult;
         }
     }
 }

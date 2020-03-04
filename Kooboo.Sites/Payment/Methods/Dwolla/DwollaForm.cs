@@ -82,8 +82,15 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                         Value = 100.00M
                     }
                 };
-                var createTransferResult = dwollaApi.CreateTransfer(request);
-                response = new PaidResponse();
+                var createTransferResult = dwollaApi.CreateTransfer(request).Result;
+                if (createTransferResult.Status == "Created")
+                {
+                    response = new PaidResponse();
+                }
+                else
+                {
+                    response = new FailedResponse("Create transfer failed");
+                }
             }
             else
             {

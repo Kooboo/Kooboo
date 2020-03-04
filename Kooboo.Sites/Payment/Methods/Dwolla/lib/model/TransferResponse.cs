@@ -12,5 +12,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
         public DateTime Created { get; set; }
         public Dictionary<string, string> Metadata { get; set; }
         public string CorrelationId { get; set; }
+        public Uri TransferURL { get; set; }
     }
 }
