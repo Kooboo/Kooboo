@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.Adyen.Lib
@@ -20,7 +21,7 @@ namespace Kooboo.Sites.Payment.Methods.Adyen.Lib
         public class NotificationRequestItem
         {
             [JsonProperty("additionalData")]
-            public object AdditionalData { get; set; }
+            public Dictionary<string, object> AdditionalData { get; set; }
 
             [JsonProperty("eventCode")]
             public string EventCode { get; set; }
@@ -42,6 +43,9 @@ namespace Kooboo.Sites.Payment.Methods.Adyen.Lib
 
             [JsonProperty("pspReference")]
             public string PspReference { get; set; }
+
+            [JsonProperty("originalReference")]
+            public string OriginalReference { get; set; }
 
             [JsonProperty("reason")]
             public string Reason { get; set; }
