@@ -47,6 +47,11 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
                 return resp.ReadAs<T>();
             }
 
+            if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new HttpRequestException("The request is Unauthorized.");
+            }
+
             var error = resp.ReadAs<ErrorResponse>();
             throw new HttpRequestException(string.Join(";", error.ErrorMessages));
         }
