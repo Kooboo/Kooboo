@@ -1,0 +1,95 @@
+<!-- #layout name=noMenu --sideType='domain'-->
+<div id="app" v-cloak>
+    <div class="page-header">
+        <h1 class="title"><span>Shopping Cart</span>: </h1>
+    </div>
+    <kb-breadcrumb :breads="breads"></kb-breadcrumb>
+
+    <kb-table :show-select="false" :data="tableData" :selected.sync="tableDataSelected">
+        <kb-table-column :label="Kooboo.text.commerce.UserName" body-class="summary">
+            <template v-slot="row">
+                {{row.userName}}
+            </template>
+        </kb-table-column>
+        <kb-table-column :label="Kooboo.text.commerce.Products" body-class="summary">
+            <template v-slot="row">
+                {{row.products}}
+            </template>
+        </kb-table-column>
+        <kb-table-column :label="Kooboo.text.commerce.Total" body-class="summary">
+            <template v-slot="row">
+                <span class="badge blue">{{row.total}}</span>
+            </template>
+        </kb-table-column>
+        <kb-table-column :label="Kooboo.text.commerce.CreationDate" body-class="summary">
+            <template v-slot="row">
+                <span>
+                    {{ new Date(row.creationDate).toDefaultLangString() }}
+                </span>
+            </template>
+        </kb-table-column>
+    </kb-table>
+    <kb-pager :page-nr="pager.pageNr" :total-pages="pager.totalPages" @change="changePager"></kb-pager>
+
+</div>
+
+<script>
+    (function () {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/components/kbPager.js"
+        ]);
+        var self = new Vue({
+            el: "#app",
+            data: function () {
+                return {
+                    breads: [
+                        {
+                            name: "SITES"
+                        },
+                        {
+                            name: "DASHBOARD"
+                        },
+                        {
+                            name: Kooboo.text.common.ShoppingCart
+                        }
+                    ],
+                    tableData: [],
+                    tableDataSelected: [],
+                    pager: { list: [], pageNr: 1, totalPages: 1 },
+                }
+            },
+            mounted: function () {
+                this.getDatas()
+            },
+            methods: {
+
+                getDatas: function () {
+                    var self = this;
+                    Kooboo.Cart.All({
+                        pageNr: self.pager.pageNr
+                    }).then(function (res) {
+                        if (res.success) {
+                            self.tableData = res.model.list;
+                            self.pager.pageNr = res.model.pageNr;
+                            self.pager.totalPages = res.model.totalPages;
+                        }
+                    });
+                },
+                changePager: function (pageNr) {
+                    Kooboo.Cart.All({
+                        pageNr: pageNr
+                    }).then(function (res) {
+                        if (res.success) {
+                            self.tableData = res.model.list;
+                            self.pager.pageNr = res.model.pageNr;
+                            self.pager.totalPages = res.model.totalPages;
+                        }
+                    });
+                }
+            }
+        });
+    })();
+</script>

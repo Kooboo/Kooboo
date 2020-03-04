@@ -1074,6 +1074,11 @@
 
     commerce: {
       isEnabled: "E-commerce enabled",
+      ShoppingCar: "Shopping Car",
+      UserName: "UserName",
+      Products: "Products",
+      Total: "Total",
+      CreationDate: "CreationDate",
       product: {
         inStock: "In stock",
         dropOff: "Drop off"

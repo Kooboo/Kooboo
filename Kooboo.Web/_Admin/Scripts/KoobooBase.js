@@ -1830,6 +1830,16 @@
     };
   }
   extend(Customer, BaseModel);
+  function Cart(){
+    this.name = "cart";
+    this.List = function(para) {
+      return this.executeGet("List", para);
+    };
+    this.All = function(para) {
+      return this.executeGet("All", para);
+    };
+  }
+  extend(Cart, BaseModel);
 
   wind.Kooboo = {
     APIGeneration: new APIGeneration(),
@@ -1902,7 +1912,8 @@
     Url: new Url(),
     View: new View(),
     Order: new Order(),
-    Customer: new Customer()
+    Customer: new Customer(),
+    Cart: new Cart()
   };
   wind.Kooboo.TextContent = new TextContent();
 
