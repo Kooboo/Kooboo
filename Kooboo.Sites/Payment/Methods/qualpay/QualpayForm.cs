@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Payment.Methods.qualpay.lib;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json.Linq;
@@ -63,7 +64,7 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             dic.Add("purchase_id", DataHelper.GeneratePurchaseId(request.Id));
             var preferences = new Dictionary<string, string>
                 {
-                    { "success_url", PaymentHelper.GetCallbackUrl(this, nameof(CheckoutFinished), Context)},
+                    { "success_url", PaymentHelper.GetCallbackUrl(this, nameof(CheckoutFinished), Context) + "/" + request.Id},
                     { "failure_url", Setting.FailureUrl }
                 };
 
@@ -90,20 +91,25 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             return currentCodes[currency];
         }
 
-        [KDefineType(Return = typeof(HiddenFormResponse))]
-        public IPaymentResponse CheckoutFinished(RenderContext context)
+        public void CheckoutFinished(RenderContext context)
         {
-            var result = new PaidResponse();
-
-            var trasactionId = context.Request.QueryString["pg_id"];
-            result.paymemtMethodReferenceId = trasactionId;
-            return result;
+            var path = context.Request.Path;
+            string[] paths = path.Split('/');
+            var requestId = paths[paths.Length - 1];
+            Guid paymentRequestId;
+            if (Guid.TryParse(requestId, out paymentRequestId))
+            {
+                var request = PaymentManager.GetRequest(paymentRequestId, context);
+                var trasactionId = context.Request.QueryString["pg_id"];
+                request.ReferenceId = trasactionId;
+                PaymentManager.UpdateRequest(request, context);
+            }
         }
 
-        protected PaymentCallback NofityUrl(RenderContext context)
+        public PaymentCallback NofityUrl(RenderContext context)
         {
             var result = new PaymentCallback();
-            var headers = context.Request.Headers["x-qualpay-webhook-request"];
+            var headers = context.Request.Headers["x-qualpay-webhook-signature"];
             if (Validate(Setting.WebHookKey, headers, context.Request.Body))
             {
                 if (this.Setting == null)
@@ -112,13 +118,12 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
                 }
 
                 var eventType = DataHelper.GetValue("event", context.Request.Body);
-                var purchaseIds = DataHelper.GetValue("data.transactions.purchase_id", context.Request.Body);
+                var purchaseId = DataHelper.GetValue("data.purchase_id", context.Request.Body);
 
-                if (string.IsNullOrEmpty(purchaseIds))
+                if (string.IsNullOrEmpty(purchaseId))
                     return null;
-                var purchaseArray = purchaseIds.Split(',');
 
-                result.RequestId = DataHelper.GenerateRequestId(purchaseArray[0]);
+                result.RequestId = DataHelper.GenerateRequestId(purchaseId);
                 if (string.Equals(eventType, CheckoutSuccessEvent))
                 {
                     result.Status = PaymentStatus.Pending;
