@@ -20,11 +20,20 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
                 if (!converted.ContainsKey(keys[0]))
                     return "";
 
-                if(keys.Length == 1)
+                if (keys.Length == 1)
                 {
                     return converted[keys[0]].ToString();
                 }
 
+                if (converted[keys[0]] is JArray)
+                {
+                    var dataAr = (JArray)converted[keys[0]];
+
+                    if (dataAr.Count < 1)
+                    {
+                        return null;
+                    }
+                }
                 var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(converted[keys[0]].ToString());
                 if (!data.ContainsKey(keys[1].TrimEnd()))
                     return "";
