@@ -15,11 +15,11 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
 
         public string Name => "DwollaForm";
 
-        public string DisplayName => throw new NotImplementedException();
+        public string DisplayName => Name;
 
-        public string Icon => throw new NotImplementedException();
+        public string Icon => "https://cdn.dwolla.com/com/dist/images/footer/dwolla-logo-footer_d9270fdf.svg";
 
-        public string IconType => throw new NotImplementedException();
+        public string IconType => "img";
 
         public List<string> supportedCurrency
         {
