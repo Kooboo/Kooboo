@@ -147,8 +147,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
  
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            PaymentStatusResponse result = new PaymentStatusResponse();
-            return result;
+            throw new NotSupportedException("Stripe dose not implement API to check status");
         }
     }
 }
