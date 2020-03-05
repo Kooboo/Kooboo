@@ -12,6 +12,8 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
 
         public string FailureUrl { get; set; }
 
+        public string SuccessUrl { get; set; }
+
         public string MerchantId { get; set; }
 
         public string CheckoutProfileId { get; set; }
