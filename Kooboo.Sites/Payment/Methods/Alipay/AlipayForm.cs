@@ -80,7 +80,7 @@ var resForm = k.payment.alipayForm.charge(charge);
         public PaymentCallback Notify(RenderContext context)
         {
             var dic = GetRequestPost(context);
-            if (dic.Count > 1)
+            if (dic.Count > 0)
             {
                 var data = new AlipayData();
                 bool signVerified = data.RSACheckV1(dic, this.Setting.PublicKey, this.Setting.Charset); //调用SDK验证签名
