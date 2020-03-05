@@ -87,10 +87,10 @@
 
                   <label
                     class="checkbox-inline"
+                    style="padding-left: 0"
                     v-if="item.controlType=='Boolean'"
                   >
-                    <input type="checkbox" v-model="item.value" />
-                    <span>{{item.name}}</span>
+                    <kb-switch type="checkbox" v-model="item.value" />
                   </label>
 
                   <input
@@ -122,14 +122,18 @@
   </div>
 </div>
 <script>
-  (function() {
+  (function () {
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
       "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
-      "/_Admin/Scripts/components/kb-media-dialog.js"
+      "/_Admin/Scripts/components/kb-media-dialog.js",
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+      "/_Admin/Scripts/components/kbSwitch.js"
     ]);
-    Kooboo.loadCSS(["/_Admin/Styles/bootstrap-datetimepicker.min.css"]);
+
+    Kooboo.loadCSS(["/_Admin/Styles/bootstrap-datetimepicker.min.css",
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"]);
   })();
 
   new Vue({

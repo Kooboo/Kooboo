@@ -11,7 +11,7 @@ namespace Kooboo.Sites.Payment.Response
     public class HiddenFormResponse : IPaymentResponse
     {
         [JsonConverter(typeof(StringEnumConverter))]
-        public EnumResponseType Type { get; set; } = EnumResponseType.hiddenform;
+        public EnumResponseType Type   => EnumResponseType.hiddenform;
  
         public Guid requestId { get; set; }
 

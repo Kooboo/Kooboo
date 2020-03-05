@@ -90,14 +90,14 @@ namespace Kooboo.Data.Context
             {
                 user = _GetUserFromCookie(request);
             }
- 
+
             if (user == null)
             {
                 //Two factors is only use to validate access to remote servers. 
-                user = Kooboo.Data.Service.TwoFactorService.Validate(request); 
-                if (user !=null)
+                user = Kooboo.Data.Service.TwoFactorService.Validate(request);
+                if (user != null)
                 {
-                    return user; 
+                    return user;
                 }
             }
 
@@ -169,14 +169,14 @@ namespace Kooboo.Data.Context
                 {
                     return Validate(basicuser.UserName, basicuser.Password);
                 }
-            } 
+            }
             return null;
         }
 
 
         internal static User _GetUserFromTwoFactor(HttpRequest request)
         {
-            return Kooboo.Data.Service.TwoFactorService.Validate(request); 
+            return Kooboo.Data.Service.TwoFactorService.Validate(request);
         }
 
 
@@ -224,11 +224,11 @@ namespace Kooboo.Data.Context
 
             if (siteid == default(Guid))
             {
-                siteid = Kooboo.Data.Service.WebSiteService.GetTempUrlSiteId(context.Request.Host); 
+                siteid = Kooboo.Data.Service.WebSiteService.GetTempUrlSiteId(context.Request.Host);
             }
-             
+
             if (siteid == default(Guid))
-            {   
+            {
                 siteid = _GetSiteIdBySiteIdQuery(context.Request);
             }
             else
@@ -272,8 +272,8 @@ namespace Kooboo.Data.Context
                                 }
                                 newurl += context.Request.RawRelativeUrl;
                                 context.Response.Redirect(301, newurl);
-                                context.Response.End = true; 
-                            } 
+                                context.Response.End = true;
+                            }
                         }
                     }
 
@@ -352,7 +352,7 @@ namespace Kooboo.Data.Context
             }
 
 
-           
+
             return default(Guid);
         }
 

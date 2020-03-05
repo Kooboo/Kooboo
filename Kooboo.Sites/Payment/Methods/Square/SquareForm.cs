@@ -5,7 +5,6 @@ using Kooboo.Sites.Payment.Methods.Square;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
-using Kooboo.Sites.Payment.Models;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json;
 using System;
@@ -40,7 +39,6 @@ namespace Kooboo.Sites.Payment.Methods
         [KDefineType(Return = typeof(HiddenFormResponse))]
         public IPaymentResponse CreatPayment(RenderContext context)
         {
-            var res = new PaidResponse();
             if (this.Setting == null)
             {
                 return null;
@@ -68,15 +66,19 @@ namespace Kooboo.Sites.Payment.Methods
 
             if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
             {
-                res.Type = EnumResponseType.paid;
+                var res = new PaidResponse();
                 res.paymemtMethodReferenceId = deserializeResult.Payment.ID;
+                return res;
             }
             else if (deserializeResult.Payment.Status == "CANCELED" || deserializeResult.Payment.Status == "FAILED")
             {
                 return new FailedResponse("FAILED");
             }
-
-            return res;
+            else
+            {
+                // TODO: please check.
+                return new FailedResponse("No response");
+            }
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
@@ -93,7 +95,8 @@ namespace Kooboo.Sites.Payment.Methods
 
             var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
 
-            var httpResult = PaymentsApi.DoHttpGetRequest(requestURL, Setting.AccessToken);
+            var httpResult = ApiClient.Create("Bearer", Setting.AccessToken)
+                .GetAsync(requestURL).Result.Content;
 
             var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
 

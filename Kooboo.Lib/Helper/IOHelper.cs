@@ -1049,9 +1049,7 @@ namespace Kooboo.Lib.Helper
 
             if (!dir.Exists)
             {
-                throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
-                    + sourceDirName);
+                return;
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();

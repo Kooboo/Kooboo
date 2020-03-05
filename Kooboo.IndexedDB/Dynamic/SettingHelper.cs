@@ -370,12 +370,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         int len = 0;
                         if (valuetype == typeof(string))
                         {
-                            if (value.ToString().Length > (Constants.DefaultColLen - 300))
-                            {
-                                len = int.MaxValue;
-                            }
-                            else
-                            { len = Constants.DefaultColLen; }
+                            len = DetermineStringLen(value.ToString());
                         }
                         else
                         {
@@ -398,12 +393,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         int len = 0;
                         if (valuetype == typeof(string))
                         {
-                            if (item.Value.ToString().Length > (Constants.DefaultColLen - 300))
-                            {
-                                len = int.MaxValue;
-                            }
-                            else
-                            { len = Constants.DefaultColLen; }
+                            DetermineStringLen(item.Value.ToString());
                         }
                         else
                         {
@@ -423,15 +413,32 @@ namespace Kooboo.IndexedDB.Dynamic
                 foreach (var item in AllProperties)
                 {
                     setting.AppendColumn(item.Key, item.Value, 0);
-
-
+                     
                 }
             }
 
             return setting.Columns.ToList();
         }
 
+        private static int DetermineStringLen(object objvalue)
+        {
+            if (objvalue == null)
+            {
+                return Constants.DefaultColLen; 
+            }
 
+            var value = objvalue.ToString(); 
+              
+            int len = Constants.DefaultColLen;
+
+            int valuelen = value.Length;
+
+            while (valuelen +100> len)
+            {
+                len = len + Constants.DefaultColLen;
+            }
+            return len;
+        }
 
         private static bool QuickCheckChange(List<TableColumn> newcols, Setting setting)
         {
@@ -511,7 +518,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         if (item.DataType == typeof(double).FullName || item.DataType == typeof(decimal).FullName || item.DataType == typeof(long).FullName)
                         {
-                            continue; // does not change the datatime, because JS 
+                            continue; // does not change the datatime, because JS
                         }
                     }
 
@@ -652,7 +659,6 @@ namespace Kooboo.IndexedDB.Dynamic
                 result.ShouldRebuild = true;
             }
 
-
             foreach (var item in columns)
             {
                 if (item.IsSystem)
@@ -740,6 +746,12 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
+            //
+            if (result.HasChange || result.ShouldRebuild)
+            {
+                EnsureColumnRelativePosition(result.NewSetting.Columns);
+            }
+
             return result;
         }
 
@@ -753,6 +765,29 @@ namespace Kooboo.IndexedDB.Dynamic
 
             return back;
         }
+
+
+
+        public static void EnsureColumnRelativePosition(HashSet<TableColumn> columns)
+        {
+            int nextposition = 0;
+            foreach (var item in columns.OrderBy(o => o.relativePosition))
+            {
+                item.relativePosition = nextposition;
+
+                if (nextposition != int.MaxValue && item.Length != int.MaxValue)
+                {
+                    nextposition = nextposition + item.Length + 8;
+                }
+                else
+                {
+                    nextposition = int.MaxValue;
+                }
+            }
+
+            // move the large item to the ends.  
+        }
+
 
     }
 

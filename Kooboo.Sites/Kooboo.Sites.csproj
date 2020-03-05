@@ -41,6 +41,8 @@
   <ItemGroup>
     <Compile Remove="Engine\CoffeeScript.cs" />
     <Compile Remove="Engine\TypeScript.cs" />
+    <Compile Remove="Payment\Methods\Stripe\lib\EventConverter.cs" />
+    <Compile Remove="Payment\Methods\Stripe\lib\IHasId.cs" />
     <Compile Remove="Service\Suggestion.cs" />
     <Compile Remove="SiteElements\MenuElement.cs" />
     <Compile Remove="SiteElements\PageElementExtension.cs" />
@@ -75,6 +77,7 @@
     <PackageReference Include="MySql.Data" Version="6.10.9">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
+    <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
   </ItemGroup>
   <ItemGroup>

@@ -512,7 +512,7 @@ namespace Kooboo.Sites.Repository
         {
             if (this.SiteObjectType == typeof(Page))
             {
-                var maxpages = Kooboo.Data.Authorization.QuotaControl.MaxPages(this.SiteDb.WebSite.OrganizationId);
+                var maxpages = Kooboo.Data.Infrastructure.InfraManager.instance.MaxPages(this.SiteDb.WebSite.OrganizationId);
                 if (maxpages != int.MaxValue)
                 {
                     var count = this.SiteDb.Pages.Count();

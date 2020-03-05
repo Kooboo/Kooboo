@@ -57,8 +57,5 @@ namespace Kooboo.Data.Models
             string unique = this.DomainId.ToString() + this.Host + this.Value + this.Type + this.Priority.ToString(); 
             return base.GetHashCode();
         }
-    }
-
-
-
+    } 
 }

@@ -199,8 +199,9 @@ namespace Kooboo.Lib.Helper
         {
             if (query != null)
             {
-                url = UrlHelper.AppendQueryString(url, query);
+                url = UrlHelper.AppendQueryString(url, query); 
             }
+
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);

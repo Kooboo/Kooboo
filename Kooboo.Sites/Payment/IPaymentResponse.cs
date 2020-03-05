@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Payment
         qrCode: pay by scan a QR code,
         HiddenForm = return hidden form value with html to post and redirect user.")]
         [JsonConverter(typeof(StringEnumConverter))]
-        EnumResponseType Type { get; set; }
+        EnumResponseType Type { get; }
          
         [Description(@"Kooboo Payment request reference id, used to query payment status at: /_api/payment/checkstatus?id={requestId}")]
         Guid requestId { get; set; }
