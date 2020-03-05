@@ -92,5 +92,18 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             }
             return transferResult;
         }
+
+        public async Task<TransferResponse> GetTransfer(string transfersUrl)
+        {
+            await GetToken();
+            var client = Create("Bearer", Token);
+            var headers = new Dictionary<string, string>
+            {
+                { "Accept", contentType }
+            };
+            var result = await client.GetAsync(transfersUrl, headers);
+            var response = JsonConvert.DeserializeObject<TransferResponse>(result.Content);
+            return response;
+        }
     }
 }

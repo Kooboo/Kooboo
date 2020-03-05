@@ -96,13 +96,33 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             {
                 response = new FailedResponse("IAV failed");
             }
-
+            
             return response;
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
-        { 
-            throw new NotImplementedException();
+        {
+            var result = new PaymentStatusResponse();
+            var dwollaApi = new DwollaApi(Setting);
+            var response = dwollaApi.GetTransfer(request.Order).Result;
+            if (response.Status == "processed")
+            {
+                result.Status = PaymentStatus.Paid;
+            } 
+            else if (response.Status == "failed")
+            {
+                result.Status = PaymentStatus.Rejected;
+            } 
+            else if (response.Status == "pending")
+            {
+                result.Status = PaymentStatus.Pending;
+            }
+            else if (response.Status == "cancelled")
+            {
+                result.Status = PaymentStatus.Cancelled;
+            }
+            
+            return result;
         }
 
         private string GetHtml(bool isisUsingSanbox, string iavToken)
@@ -115,7 +135,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
 
         private string GenerateHtml(string iavToken, bool isUsingSanbox, string apiUrl)
         {
-            var sanboxConfig = isUsingSanbox ? "dwolla.configure('sandbox')" : "";
+            var sanboxConfig = isUsingSanbox ? "dwolla.configure('sandbox')" : string.Empty;
             var html = string.Format(@"
 <script src=""https://cdn.dwolla.com/1/dwolla.js""></script>
 <div id=""iavContainer""></div>
