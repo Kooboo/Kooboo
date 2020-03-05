@@ -23,15 +23,7 @@ namespace Kooboo.Sites.Payment.Methods
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency
-        {
-            get
-            {
-                var list = new List<string>();
-                list.Add("USD");
-                return list;
-            }
-        }
+        public List<string> supportedCurrency { get; set; }
 
         public RenderContext Context { get; set; }
 
@@ -48,6 +40,10 @@ namespace Kooboo.Sites.Payment.Methods
             var result = PaymentsApi.CheckoutCreatOrder(checkoutRequest, Setting);
 
             var deserializeResult = JsonConvert.DeserializeObject<CreateCheckoutResponse>(result);
+
+            // 把OrderID赋值到request referenceID 为了后面 checkStatus 使用
+            request.ReferenceId = deserializeResult.Checkout.Order.ID;
+            PaymentManager.UpdateRequest(request, Context);
 
             return new RedirectResponse(deserializeResult.Checkout.CheckoutPageURL, Guid.Empty);
         }
