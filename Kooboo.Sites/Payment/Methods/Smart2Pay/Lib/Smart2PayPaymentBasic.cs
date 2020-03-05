@@ -7,6 +7,9 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay.Lib
         [JsonProperty("MerchantTransactionID")]
         public string MerchantTransactionId { get; set; }
 
+        /// <summary>
+        /// amount in minor units
+        /// </summary>
         public long? Amount { get; set; }
 
         public string Currency { get; set; }

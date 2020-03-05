@@ -32,30 +32,24 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
         }
 
         public static bool RSACheckContent(string signContent, string sign, string publicKeyPem, string charset,
-            string signType, bool callback)
+            string signType)
         {
             try
             {
                 if (string.IsNullOrEmpty(charset))
                     charset = DEFAULT_CHARSET;
 
-                string sPublicKeyPem;
-                if (callback)
-                {
-                    sPublicKeyPem = File.ReadAllText(publicKeyPem);
-                }
-                else
-                {
-                    sPublicKeyPem = "-----BEGIN PUBLIC KEY-----\r\n";
-                    sPublicKeyPem += publicKeyPem;
-                    sPublicKeyPem += "-----END PUBLIC KEY-----\r\n\r\n";
-                }
+                string sPublicKeyPEM;
+                sPublicKeyPEM = "-----BEGIN PUBLIC KEY-----\r\n";
+                sPublicKeyPEM += publicKeyPem;
+                sPublicKeyPEM += "-----END PUBLIC KEY-----\r\n\r\n";
+
 
                 if ("RSA2".Equals(signType))
                 {
                     RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
                     rsa.PersistKeyInCsp = false;
-                    RSACryptoServiceProviderExtension.LoadPublicKeyPEM(rsa, sPublicKeyPem);
+                    RSACryptoServiceProviderExtension.LoadPublicKeyPEM(rsa, sPublicKeyPEM);
 
                     bool bVerifyResultOriginal = rsa.VerifyData(Encoding.GetEncoding(charset).GetBytes(signContent), "SHA256", Convert.FromBase64String(sign));
                     return bVerifyResultOriginal;
@@ -65,7 +59,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 
                     RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
                     rsa.PersistKeyInCsp = false;
-                    RSACryptoServiceProviderExtension.LoadPublicKeyPEM(rsa, sPublicKeyPem);
+                    RSACryptoServiceProviderExtension.LoadPublicKeyPEM(rsa, sPublicKeyPEM);
 
                     SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider();
                     bool bVerifyResultOriginal = rsa.VerifyData(Encoding.GetEncoding(charset).GetBytes(signContent), sha1, Convert.FromBase64String(sign));

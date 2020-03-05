@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Kooboo.Sites.Payment.Methods.Mollie.Lib
@@ -37,6 +34,13 @@ namespace Kooboo.Sites.Payment.Methods.Mollie.Lib
         [JsonProperty("sequenceType")]
         [JsonConverter(typeof(StringEnumConverter))]
         public PaymentSequenceType SequenceType { get; set; }
+
+        /// <summary>
+        /// Provide any data you like, for example a string or a JSON object. We will save the data alongside the payment.
+        /// Whenever you fetch the payment with our API, we’ll also include the metadata. You can use up to approximately 1kB.
+        /// </summary>
+        [JsonProperty("metadata")]
+        public string Metadata { get; set; }
 
         public enum PaymentSequenceType
         {
