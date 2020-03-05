@@ -26,7 +26,7 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay
 
         [Description(@"<script engine='kscript'>
     var charge = {};
-    charge.total = 150; // $1.50
+    charge.total = 1.50;
     charge.currency='USD';
     charge.name = 'green tea order'; 
     charge.description = 'The best tea from Xiamen';  
@@ -44,7 +44,7 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay
                 Payment = new Smart2PayPaymentBasic
                 {
                     MerchantTransactionId = request.Id.ToString(),
-                    Amount = (long)request.TotalAmount,
+                    Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount),
                     Currency = request.Currency,
                     Description = request.Description,
                     ReturnUrl = Setting.ReturnUrl,

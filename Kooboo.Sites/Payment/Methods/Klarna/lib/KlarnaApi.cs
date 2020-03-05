@@ -10,8 +10,9 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
 
         public KlarnaApi(KlarnaHppSetting klarnaHppSetting, string country)
         {
-            _endpoint = klarnaHppSetting.GetEndpoint(country);
-            _client = ApiClient.CreateWithBasicAuth(klarnaHppSetting.UserName, klarnaHppSetting.Password, Encoding.UTF8);
+            var credential = klarnaHppSetting.GetCredential(country);
+            _endpoint = credential.Endpoint;
+            _client = ApiClient.CreateWithBasicAuth(credential.UserName, credential.Password, Encoding.UTF8);
         }
 
         public KpSessionResponse CreateKpSession(KpSessionRequest request)
@@ -45,6 +46,11 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
             if (resp.IsSuccessStatusCode)
             {
                 return resp.ReadAs<T>();
+            }
+
+            if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new HttpRequestException("The request is Unauthorized.");
             }
 
             var error = resp.ReadAs<ErrorResponse>();

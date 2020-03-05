@@ -13,11 +13,14 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
         [JsonProperty("locale")]
         public string Locale { get; set; }
 
+        /// <summary>
+        /// Non-negative, minor units. Total amount of the order, including tax and any discounts.
+        /// </summary>
         [JsonProperty("order_amount")]
-        public decimal OrderAmount { get; set; }
+        public long OrderAmount { get; set; }
 
         [JsonProperty("order_tax_amount")]
-        public decimal OrderTaxAmount { get; set; }
+        public long OrderTaxAmount { get; set; }
 
         [JsonProperty("order_lines")]
         public OrderLine[] OrderLines { get; set; }
@@ -40,31 +43,19 @@ namespace Kooboo.Sites.Payment.Methods.Klarna.lib
             public int Quantity { get; set; }
 
             [JsonProperty("unit_price")]
-            public decimal UnitPrice { get; set; }
+            public long UnitPrice { get; set; }
 
             [JsonProperty("tax_rate")]
             public double TaxRate { get; set; }
 
             [JsonProperty("total_amount")]
-            public decimal TotalAmount { get; set; }
+            public long TotalAmount { get; set; }
 
             [JsonProperty("total_discount_amount")]
-            public decimal TotalDiscountAmount { get; set; }
+            public long TotalDiscountAmount { get; set; }
 
             [JsonProperty("total_tax_amount")]
-            public decimal TotalTaxAmount { get; set; }
+            public long TotalTaxAmount { get; set; }
         }
-
-        //public (string,string,string) GetCountryAndLocale(string currency)
-        //{
-        //    switch (currency.ToUpper())
-        //    {
-        //        case"GBP": return ("GBP", "GB", "en-GB");
-        //        case"GBP": return ("GBP", "GB", "en-GB");
-        //        case"GBP": return ("GBP", "GB", "en-GB");
-        //        case"GBP": return ("GBP", "GB", "en-GB");
-        //        case"GBP": return ("GBP", "GB", "en-GB");
-        //    }
-        //}
     }
 }
