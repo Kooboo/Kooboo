@@ -57,7 +57,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                 paymemtMethodReferenceId = Guid.NewGuid().ToString()
             };
             response.html = GetHtml(Setting.IsUsingSanbox, iavToken.Token);
-            response.setFieldValues("iavToken", iavToken.Token);
             return response;
         }
 
