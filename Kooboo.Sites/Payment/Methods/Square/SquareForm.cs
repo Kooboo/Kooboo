@@ -46,7 +46,14 @@ namespace Kooboo.Sites.Payment.Methods
 
             // todo 需要转换为货币的最低单位 
             // square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            var amount = new Money { Amount = SquareCommon.GetSquareAmount(decimal.Parse(context.Request.Get("totalAmount"))), Currency = context.Request.Get("currency") };
+
+            var currency = context.Request.Get("currency");
+            var totalAmount = decimal.Parse(context.Request.Get("totalAmount"));
+            var amount = new Money
+            {
+                Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(currency, totalAmount),
+                Currency = currency
+            };
 
             var squareResponseNonce = context.Request.Get("nonce");
 

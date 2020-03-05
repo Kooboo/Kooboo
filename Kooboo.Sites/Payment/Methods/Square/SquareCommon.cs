@@ -43,10 +43,5 @@ namespace Kooboo.Sites.Payment.Methods.Square
 
             return result;
         }
-
-        public static long GetSquareAmount(decimal totalAmount)
-        {
-            return (long)(totalAmount * 100);
-        }
     }
 }

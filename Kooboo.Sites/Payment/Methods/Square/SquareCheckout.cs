@@ -110,7 +110,8 @@ namespace Kooboo.Sites.Payment.Methods
         {
             string uuid = Guid.NewGuid().ToString();
             // square APi  货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            var amount = new Money { Amount = SquareCommon.GetSquareAmount(request.TotalAmount), Currency = request.Currency };
+
+            var amount = new Money { Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount), Currency = request.Currency };
 
             return new CreateCheckoutRequest
             {
