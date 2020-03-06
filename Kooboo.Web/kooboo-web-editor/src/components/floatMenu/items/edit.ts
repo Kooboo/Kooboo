@@ -32,9 +32,9 @@ export default class EditItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
-    if (!getUnpollutedEl(element)) return this.setVisiable(false);
-    if (isDynamicContent(element)) return this.setVisiable(false);
-    if (!isEditable(element)) return this.setVisiable(false);
+    var el = getUnpollutedEl(element);
+    if (!el || isDynamicContent(el)) return this.setVisiable(false);
+    if (!isEditable(el)) return this.setVisiable(false);
     let aroundComments = KoobooComment.getAroundComments(element);
     if (aroundComments.find(f => f.source == "none" && !f.attribute)) return this.setVisiable(false);
   }
