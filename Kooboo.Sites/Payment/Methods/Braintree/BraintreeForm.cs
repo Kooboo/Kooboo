@@ -278,13 +278,13 @@ braintree.dropin.create({
             if (!string.IsNullOrEmpty(Setting.FailureRedirectURL))
             {
                 html += @"if (data && !data.success)
-                       { ;window.location.replace('" + Setting.FailureRedirectURL + @"'); } ;";
+                       { window.location.replace('" + Setting.FailureRedirectURL + @"'); } ;";
             }
 
             if (!string.IsNullOrEmpty(Setting.SucceedRedirectURL))
             {
                 html += @"if (!data)
-                       { ;window.location.replace('" + Setting.SucceedRedirectURL + @"'); } ;";
+                       { window.location.replace('" + Setting.SucceedRedirectURL + @"'); } ;";
             }
 
             return html;
