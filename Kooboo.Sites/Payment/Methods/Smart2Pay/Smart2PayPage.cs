@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay
                     Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount),
                     Currency = request.Currency,
                     Description = request.Description,
-                    ReturnUrl = Setting.ReturnUrl,
+                    ReturnUrl = string.IsNullOrWhiteSpace(request.ReturnUrl) ? request.ReturnUrl : Setting.ReturnUrl,
                     Customer = new Smart2PayPaymentBasic.CustomerInfo
                     {
                         Email = (string)email

@@ -54,7 +54,7 @@ namespace Kooboo.Sites.Payment.Methods.Adyen
                 MerchantAccount = Setting.MerchantAccount,
                 Reference = referenceId,
                 Description = request.Description,
-                ReturnUrl = Setting.ReturnUrl
+                ReturnUrl = string.IsNullOrWhiteSpace(request.ReturnUrl) ? request.ReturnUrl : Setting.ReturnUrl
             };
 
             var resp = new AdyenApi(Setting).CreatePayment(req);

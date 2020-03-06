@@ -30,8 +30,13 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
     charge.total = 1.50;
     charge.currency='USD';
     charge.country='US';
-    charge.name = 'green tea order'; 
+    charge.name = 'green tea order';
     charge.description = 'The best tea from Xiamen';  
+    charge.back='http://example.com/backUrl';
+    charge.cancel='http://example.com/cancelUrl';
+    charge.error='http://example.com/errorUrl';
+    charge.failure='http://example.com/failureUrl';
+    charge.success='http://example.com/successUrl';
     var res = k.payment.klarnaHpp.charge(charge);  
     k.response.redirect(res.redirectUrl);
     // var hppSessionId = res.paymemtMethodReferenceId;
@@ -56,11 +61,10 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
                 },
             };
 
-            var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-
             var apiClient = new KlarnaApi(Setting, request.Country);
             var kpSession = apiClient.CreateKpSession(req);
-            var hppSession = apiClient.CreateHppSession(kpSession.SessionId, Setting.GetGetMerchantUrls(callbackUrl, request.Id));
+            var urls = GetGetMerchantUrls(request);
+            var hppSession = apiClient.CreateHppSession(kpSession.SessionId, urls);
 
             return new RedirectResponse(hppSession.RedirectUrl, request.Id)
             {
@@ -123,6 +127,36 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
                 default:
                     return PaymentStatus.NotAvailable;
             }
+        }
+        
+        // https://developers.klarna.com/documentation/hpp/api/create-session/#merchants-urls
+        private MerchantUrls GetGetMerchantUrls(PaymentRequest request)
+        {
+            var additional = new Dictionary<string, object>(request.Additional, StringComparer.OrdinalIgnoreCase);
+            var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+            return new MerchantUrls
+            {
+                Back = GetValue(additional, "back", Setting.Back),
+                Cancel = GetValue(additional, "cancel", Setting.Cancel),
+                Error = GetValue(additional, "error", Setting.Error),
+                Failure = GetValue(additional, "failure", Setting.Failure),
+                StatusUpdate = UrlHelper.AppendQueryString(callbackUrl, "secretToken", request.Id.ToString()),
+                Success = GetValue(additional, "success", Setting.Success)
+            };
+        }
+
+        private string GetValue(Dictionary<string, object> additional, string key, string fallbackValue)
+        {
+            if (additional.TryGetValue(key, out var o) && o != null)
+            {
+                var value = o.ToString();
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    return value;
+                }
+            }
+
+            return fallbackValue;
         }
     }
 }
