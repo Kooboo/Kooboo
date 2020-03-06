@@ -24,7 +24,15 @@ namespace Kooboo.Sites.Payment.Methods
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency { get; set; }
+        public List<string> supportedCurrency
+        {
+            get
+            {
+                var list = new List<string>();
+                list.Add("USD");
+                return list;
+            }
+        }
 
         public RenderContext Context { get; set; }
 
@@ -44,9 +52,7 @@ namespace Kooboo.Sites.Payment.Methods
                 return null;
             }
 
-            // todo 需要转换为货币的最低单位 
-            // square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-
+            // square 货币的最小面额指定。https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
             var currency = context.Request.Get("currency");
             var totalAmount = decimal.Parse(context.Request.Get("totalAmount"));
             var amount = new Money
@@ -55,11 +61,7 @@ namespace Kooboo.Sites.Payment.Methods
                 Currency = currency
             };
 
-            var squareResponseNonce = context.Request.Get("nonce");
-
-            var result = PaymentsApi.CreatPayment(squareResponseNonce, amount, Setting);
-
-            var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
+            var deserializeResult = PaymentsApi.CreatPayment(context.Request.Get("nonce"), amount, Setting);
 
             // 把paymentID赋值到request referenceID 为了后面 checkStatus 使用
             var paymentRequestIdStr = context.Request.Get("paymentRequestId");
@@ -93,7 +95,6 @@ namespace Kooboo.Sites.Payment.Methods
             PaymentStatusResponse result = new PaymentStatusResponse();
 
             //https://connect.squareup.com/v2/payments/{payment_id} 
-
             // 创建订单后返回的订单编号  {payment_id}
             if (string.IsNullOrEmpty(request.ReferenceId))
             {
@@ -101,12 +102,10 @@ namespace Kooboo.Sites.Payment.Methods
             }
 
             var requestURL = Setting.BaseURL + "/v2/payments/" + request.ReferenceId;
-
             var httpResult = ApiClient.Create("Bearer", Setting.AccessToken)
                 .GetAsync(requestURL).Result.Content;
 
             var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(httpResult);
-
             if (deserializeResult == null)
             {
                 return null;
@@ -150,7 +149,6 @@ namespace Kooboo.Sites.Payment.Methods
             var html = string.Empty;
 
             var currencySymbol = CurrencyHelper.GetCurrencySymbol(request.Currency);
-
             var kscriptAPIURL = PaymentHelper.GetCallbackUrl(this, nameof(CreatPayment), this.Context);
 
             html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, kscriptAPIURL, request.TotalAmount, request.Currency, currencySymbol, request.Id);
