@@ -35,18 +35,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency
-        {
-            get
-            {
-                var list = new List<string> 
-                {
-                    "USD",
-                    "EUR"
-                };
-                return list;
-            }
-        }
+        public List<string> supportedCurrency => new List<string> {
+            "USD", "EUR", "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
+            "BAM", "BBD", "BDT", "BGN", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BWP", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", "COP", "CRC", "CVE",
+            "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ETB", "FJD", "FKP", "GBP", "GEL", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG",
+            "HUF", "IDR", "ILS", "INR", "ISK", "JMD", "JPY", "KES", "KGS", "KHR", "KMF", "KRW", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "MAD",
+            "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "PAB",
+            "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD",
+            "STD", "SZL", "THB", "TJS", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "UYU", "UZS", "VND", "VUV", "WST", "XAF", "XCD", "XOF", "XPF",
+            "YER", "ZAR", "ZMW"
+        };
 
         public RenderContext Context { get; set; }
 
@@ -70,8 +68,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             };
 
             var paymentMethodTypesList = new List<string>();
-            
-            if(paymentMethodType is object[])
+
+            if (paymentMethodType is object[])
             {
                 var paymentMethodTypeArray = Array.ConvertAll((object[])paymentMethodType, x => x.ToString());
                 paymentMethodTypesList.AddRange(paymentMethodTypeArray);
@@ -80,7 +78,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             {
                 paymentMethodTypesList.Add((string)paymentMethodType);
             }
-            
+
             var options = new SessionCreateOptions
             {
                 SuccessUrl = (string)successUrl,
@@ -98,7 +96,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             response.html = GenerateHtml(Setting.Publishablekey, sessionId);
             return response;
         }
- 
+
         public PaymentCallback Notify(RenderContext context)
         {
             var body = context.Request.Body;
@@ -150,8 +148,8 @@ alert(JSON.stringify(result))
                 default:
                     return PaymentStatus.NotAvailable;
             }
-        } 
- 
+        }
+
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
             throw new NotSupportedException("Stripe dose not implement API to check status");
