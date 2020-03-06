@@ -71,7 +71,7 @@ var resForm = k.payment.alipayForm.charge(charge);
             dic.Add("time_expire", DateTime.Now.AddMinutes(10));
 
             string notifurl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-            string returnurl = PaymentHelper.EnsureHttpUrl(this.Setting.ReturnUrl, Context);
+            string returnurl = request.ReturnUrl ?? PaymentHelper.EnsureHttpUrl(this.Setting.ReturnUrl, Context);
             res.html = AlipayApi.Pay(dic, this.Setting, returnurl, notifurl);
 
             return res;
