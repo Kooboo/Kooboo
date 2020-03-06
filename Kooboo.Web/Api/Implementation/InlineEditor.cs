@@ -1,16 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Sites.DataTraceAndModify;
+using Kooboo.Sites.DataTraceAndModify.Modifiers;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.InlineEditor;
-using Newtonsoft.Json.Linq;
-using Kooboo.Sites.Models;
-using Kooboo.Web.ViewModel;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Service;
-using Kooboo.Lib.Utilities; 
-using Kooboo.Api;
-using Kooboo.Sites.Extensions;
+using System.Diagnostics;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -44,7 +41,7 @@ namespace Kooboo.Web.Api.Implementation
 
         [Kooboo.Attributes.RequireParameters("updates")]
         public void Update(Guid PageId, ApiCall call)
-        {  
+        {
             var page = call.WebSite.SiteDb().Pages.Get(PageId);
             if (page == null)
             {
@@ -53,32 +50,26 @@ namespace Kooboo.Web.Api.Implementation
 
             call.Context.SetItem<Page>(page);
 
-            // pageid,...updates...  
-            if (string.IsNullOrEmpty(call.Context.Request.Body))
-            {
-                return;
-            }
-            var model = Lib.Helper.JsonHelper.Deserialize<dynamic>(call.Context.Request.Body);
+            var data = Lib.Helper.JsonHelper.Deserialize<dynamic>(call.Context.Request.Body).updates;
+            var changedList = new List<ModifierBase>();
 
-            List<IInlineModel> updatemodels = new List<IInlineModel>();
-
-            foreach (var item in model.updates)
+            foreach (var item in data)
             {
-                string editortype = item.editorType;
-                var modeltype = EditorContainer.GetModelType(editortype);
-                var updatemodel = ((JObject)item).ToObject(modeltype) as IInlineModel;
-                if (updatemodel != null)
+                var source = item.GetValue("source").ToString();
+
+                try
                 {
-                    updatemodels.Add(updatemodel);
+                    var type = ModifyExecutor.GetModifierType(source);
+                    changedList.Add((ModifierBase)item.ToObject(type));
+                }
+                catch (Exception e)
+                {
+                    Debug.Fail(e.Message);
+                    continue;
                 }
             }
 
-            UpdateManager.Execute(call.Context, updatemodels);
-
+            ModifyExecutor.Execute(call.Context, changedList);
         }
-   
-
     }
-    
-
 }

@@ -1,5 +1,4 @@
 import ClickItem from "@/components/floatMenu/items/click";
-import { KoobooComment } from "@/kooboo/KoobooComment";
 import { Menu } from "@/components/floatMenu/menu";
 
 describe("click", () => {
@@ -11,7 +10,7 @@ describe("click", () => {
     let elementObject = new ClickItem(new Menu());
     expect(elementObject.el.style.display).equal("");
 
-    elementObject.update([]);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("block");
   });
 });

@@ -4,8 +4,8 @@ import { createButton } from "./button";
 import context from "@/common/context";
 import updateOperation from "@/api/updateOperation";
 import { reload } from "@/dom/utils";
-import { Log } from "@/operation/recordLogs/Log";
 import { TEXT } from "@/common/lang";
+import { Log } from "@/operation/Log";
 
 export function createSaveButton() {
   var saveBtn = createButton(saveIcon, TEXT.SAVE);
@@ -13,12 +13,13 @@ export function createSaveButton() {
     saveBtn.changeIcon(e.operationCount > 0 ? saveEnableIcon : saveIcon);
   });
   saveBtn.onclick = async () => {
-    let logs: Log[] = [];
-    for (const iterator of context.operationManager.previousRecords) {
-      logs.push(...iterator.logs);
-    }
-    if (logs.length == 0) return;
     try {
+      var logs: Log[] = [];
+
+      for (const record of context.operationManager.previousRecords) {
+        logs.push(...record.logs);
+      }
+
       await updateOperation(logs);
       reload();
     } catch (error) {

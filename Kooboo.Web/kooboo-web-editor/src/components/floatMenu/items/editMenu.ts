@@ -1,8 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { getMenuComment } from "../utils";
 import { getWrapDom } from "@/kooboo/utils";
-import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
@@ -25,20 +23,21 @@ export default class EditMenuItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    if (!getMenuComment(comments)) return this.setVisiable(false);
+    if (!comments.find(f => f.source == "menu")) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(args.element);
-    let comment = getMenuComment(comments)!;
-    var { startNode, endNode } = getWrapDom(args.element, OBJECT_TYPE.menu);
+    let comments = KoobooComment.getComments(element);
+    let comment = comments.find(f => f.source == "menu")!;
+    var { startNode, endNode } = getWrapDom(element, "menu");
     if (!startNode || !endNode) return;
-    editMenu(comment.nameorid!, c => {
+    editMenu(comment.getValue("id")!, c => {
       let temp = createDiv();
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         if (startNode!.nextSibling == endNode) {
           startNode!.parentElement!.insertBefore(temp, endNode!);

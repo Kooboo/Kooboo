@@ -2,7 +2,7 @@
 //All rights reserved.
 using Kooboo.Dom;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Sites.Render
 {
     public class UrlEvaluator : IEvaluator
@@ -19,9 +19,10 @@ namespace Kooboo.Sites.Render
                 return null;
             }
             var element = node as Element;
+            var response = new EvaluatorResponse();
 
             string url = string.Empty;
-            string attName = null; 
+            string attName = null;
 
             foreach (var item in element.attributes)
             {
@@ -36,9 +37,15 @@ namespace Kooboo.Sites.Render
             if (!string.IsNullOrEmpty(attName))
             {
                 url = element.getAttribute(attName);
-                if (!options.RequireBindingInfo)
+                element.removeAttribute(attName);
+
+                if (options.RequireBindingInfo)
                 {
-                    element.removeAttribute(attName);
+                    if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
+                    var bindingTask = new BindingRenderTask(url, new Dictionary<string, string> { { "attribute", "href" } });
+                    response.BindingTask.Add(bindingTask);
+                    if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
+                    response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
                 }
             }
 
@@ -63,30 +70,25 @@ namespace Kooboo.Sites.Render
 
                 if (Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(url))
                 {
-                    return null; 
+                    return null;
                 }
 
-                var response = new EvaluatorResponse();
-                List<IRenderTask> result = new List<IRenderTask>();
+                var result = new List<IRenderTask>();
                 result.Add(new ContentRenderTask(" href=\""));
                 result.Add(new UrlRenderTask(url));
                 result.Add(new ContentRenderTask("\""));
                 response.AttributeTask = result;
+                element.removeAttribute("href");
 
-                if (options.RequireBindingInfo)
+                if (!options.HasContentTask)
                 {
-                    string attributeName = string.IsNullOrEmpty(attName) ? "href" : attName;
-                    string koobooid = element.getAttribute(SiteConstants.KoobooIdAttributeName);
-                    BindingObjectRenderTask binding = new BindingObjectRenderTask() { ObjectType = "Url", AttributeName = attributeName, BindingValue = url, KoobooId = koobooid };
-                    List<IRenderTask> bindings = new List<IRenderTask>();
-                    bindings.Add(binding);
-                    response.BindingTask = bindings;
+                    response.ContentTask = RenderEvaluator.Evaluate(element.InnerHtml, options);
+                    response.StopNextEvaluator = true;
                 }
-
-                element.removeAttribute("href"); 
 
                 return response;
             }
+
 
             return null;
         }

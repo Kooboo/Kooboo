@@ -163,9 +163,9 @@ namespace Kooboo.Dom
                 return _textcontent;
             }
 
-//Note that while textContent gets the content of all elements, including <script> and <style> elements, the mostly equivalent IE-specific property, innerText, does not.
-//innerText is also aware of style and will not return the text of hidden elements, whereas textContent will.
-//As innerText is aware of CSS styling, it will trigger a reflow, whereas textContent will not.
+            //Note that while textContent gets the content of all elements, including <script> and <style> elements, the mostly equivalent IE-specific property, innerText, does not.
+            //innerText is also aware of style and will not return the text of hidden elements, whereas textContent will.
+            //As innerText is aware of CSS styling, it will trigger a reflow, whereas textContent will not.
         }
 
         private void _getTextContent(Node node, ref string content)
@@ -291,7 +291,7 @@ namespace Kooboo.Dom
 
             if (thisstart > 0 && thisend > 0 && nodestart > 0 && nodeend > 0)
             {
-                return (thisstart == nodestart && thisend == nodeend); 
+                return (thisstart == nodestart && thisend == nodeend);
             }
 
 
@@ -558,7 +558,7 @@ namespace Kooboo.Dom
                 int len = this.location.endTokenStartIndex - this.location.openTokenEndIndex - 1;
                 if (this.location.endTokenStartIndex == this.location.endTokenEndIndex)
                 {
-                    len = len + 1; 
+                    len = len + 1;
                 }
                 if (start < 1 || len < 1)
                 {
@@ -566,11 +566,10 @@ namespace Kooboo.Dom
                 }
 
                 else
-                { 
-                    return this.ownerDocument.HtmlSource.Substring(start, len); 
-                } 
+                {
+                    return this.ownerDocument.HtmlSource.Substring(start, len);
+                }
             }
-
         }
 
 
@@ -578,29 +577,29 @@ namespace Kooboo.Dom
         {
             get
             {
-                int start = this.location.openTokenStartIndex; 
+                int start = this.location.openTokenStartIndex;
                 //if (this.location.endTokenStartIndex < start)
                 //{
                 //    start = this.location.endTokenStartIndex; 
                 //}
 
-                int end = this.location.endTokenEndIndex; 
+                int end = this.location.endTokenEndIndex;
                 if (this.location.openTokenEndIndex > end)
                 {
-                    end = this.location.openTokenEndIndex; 
+                    end = this.location.openTokenEndIndex;
                 }
 
-                int len = end - start + 1; 
+                int len = end - start + 1;
 
-                if (start <0 || len <1)
+                if (start < 0 || len < 1)
                 {
-                    return null; 
+                    return null;
                 }
                 else
                 {
-                    return this.ownerDocument.HtmlSource.Substring(start, len); 
-                } 
-                 
+                    return this.ownerDocument.HtmlSource.Substring(start, len);
+                }
+
             }
         }
 
@@ -639,9 +638,9 @@ namespace Kooboo.Dom
 
             foreach (var item in childNodes.item)
             {
-                item.Dispose(); 
+                item.Dispose();
             }
-         
+
         }
     }
 }

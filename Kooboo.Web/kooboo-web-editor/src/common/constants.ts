@@ -11,29 +11,3 @@ export const KOOBOO_GUID = "kooboo-guid";
 export const EMPTY_COMMENT = "<!--empty-->";
 export const BACKGROUND_IMAGE_START = /^\s*url\s*\(\s*[\',\"]?/i;
 export const BACKGROUND_IMAGE_END = /[\',\"]?\)\s*$/i;
-
-export const OBJECT_TYPE = {
-  content: "content",
-  contentrepeater: "contentrepeater",
-  htmlblock: "htmlblock",
-  Label: "Label",
-  view: "view",
-  menu: "menu",
-  page: "page",
-  style: "style", //update image-obsolete
-  dom: "dom", //update image-obsolete
-  attribute: "attribute",
-  layout: "layout",
-  form: "form",
-  Url: "Url"
-};
-
-export const EDITOR_TYPE = {
-  dom: "dom",
-  htmlblock: "htmlblock",
-  label: "label",
-  content: "content",
-  attribute: "attribute",
-  style: "style",
-  converter: "converter"
-};

@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
             if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return "NUMERIC";
             if (type == null) return "NULL";
             if (type == typeof(bool)) return "BIT";
-            throw new NotSupportedException();
+            return "NVARCHAR(MAX)";
         }
     }
 }

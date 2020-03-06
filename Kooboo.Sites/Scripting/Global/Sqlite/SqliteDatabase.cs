@@ -13,5 +13,7 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
         public SqliteDatabase(string connectionString) : base(connectionString)
         {
         }
+
+        public override string Source => "sqlite";
     }
 }

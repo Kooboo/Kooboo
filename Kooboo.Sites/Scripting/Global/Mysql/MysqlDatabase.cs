@@ -12,5 +12,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
         public MysqlDatabase(string connectionString) : base(connectionString)
         {
         }
+
+        public override string Source => "mysql";
     }
 }

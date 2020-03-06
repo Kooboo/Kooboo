@@ -1,13 +1,16 @@
 import { getPageId } from "@/kooboo/utils";
-import { Log } from "@/operation/recordLogs/Log";
 import { Update } from "@/kooboo/outsideInterfaces";
+import { Log } from "@/operation/Log";
 
-export default async (operationLogs: Array<Log>) => {
+export default async (operationLogs: Log[]) => {
   let pageId = getPageId();
+  let logs = Log.simplify(operationLogs);
+  // eslint-disable-next-line no-console
+  console.log(logs);
   await Update(
     JSON.stringify({
       pageId: pageId,
-      updates: operationLogs
+      updates: logs
     })
   );
 };

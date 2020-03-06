@@ -1,13 +1,13 @@
 import { createLabelInput, createDiv } from "@/dom/element";
 import { TEXT } from "@/common/lang";
-import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { getImportant } from "@/dom/utils";
+import { kvInfo } from "@/common/kvInfo";
 
-export function createSize(el: HTMLElement, nameOrId: string, objectType: string, koobooId: string, rules: { cssRule: CSSStyleRule }[]) {
+export function createSize(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) {
   const container = createDiv();
   let style = getComputedStyle(el);
-  let widthLog: StyleLog | undefined;
-  let heightLog: StyleLog | undefined;
+  let widthInfos: kvInfo[] | undefined;
+  let heightInfos: kvInfo[] | undefined;
   let widthImportant = getImportant(el, "width", rules);
   let heightImportant = getImportant(el, "height", rules);
 
@@ -16,7 +16,7 @@ export function createSize(el: HTMLElement, nameOrId: string, objectType: string
   width.setContent(style.width!);
   width.setInputHandler(content => {
     el.style.setProperty("width", (content.target! as HTMLInputElement).value, widthImportant);
-    widthLog = StyleLog.createUpdate(nameOrId, objectType, el.style.width!, "width", koobooId, !!widthImportant);
+    widthInfos = [kvInfo.property("width"), kvInfo.value(el.style.width!), kvInfo.important(widthImportant)];
   });
   container.appendChild(width.input);
 
@@ -25,10 +25,10 @@ export function createSize(el: HTMLElement, nameOrId: string, objectType: string
   height.setContent(style.height!);
   height.setInputHandler(content => {
     el.style.setProperty("height", (content.target! as HTMLInputElement).value, heightImportant);
-    heightLog = StyleLog.createUpdate(nameOrId, objectType, el.style.height!, "height", koobooId, !!heightImportant);
+    heightInfos = [kvInfo.property("height"), kvInfo.value(el.style.height!), kvInfo.important(heightImportant)];
   });
   container.appendChild(height.input);
 
-  const getLogs = () => [widthLog, heightLog];
+  const getLogs = () => [widthInfos, heightInfos];
   return { el: container, getLogs };
 }

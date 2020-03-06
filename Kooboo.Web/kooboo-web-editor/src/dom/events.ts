@@ -10,7 +10,7 @@ export function hover(e: MouseEvent) {
   let el = e.target as HTMLElement;
   if (args && args.element == el) return;
   let closeElement = getCloseElement(el);
-  if (closeElement == null) return;
+  if (!closeElement) return;
   args = new HoverDomEventArgs(el, closeElement);
   context.lastMouseEventArg = e;
   context.hoverDomEvent.emit(args);

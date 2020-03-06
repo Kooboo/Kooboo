@@ -1,6 +1,6 @@
 import { operationRecord } from "@/operation/Record";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
-import { Log } from "@/operation/recordLogs/Log";
+import { Log } from "@/operation/Log";
 import { KOOBOO_GUID } from "@/common/constants";
 
 describe("operationRecord", () => {
