@@ -12,9 +12,9 @@ namespace Kooboo.Sites.Payment.Methods.Stripe.lib
         /// <c>invoice.created</c> event will have a full invoice object (<see cref="Invoice"/>) as
         /// the value of the object key.
         /// </summary>
-        //[JsonProperty("object")]
-        //[JsonConverter(typeof(StripeObjectConverter))]
-        //public IHasObject Object { get; set; }
+        [JsonProperty("object")]
+        [JsonConverter(typeof(StripeObjectConverter))]
+        public IHasObject Object { get; set; }
 
         /// <summary>
         /// Object containing the names of the attributes that have changed, and their previous

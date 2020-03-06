@@ -86,13 +86,14 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 SuccessUrl = (string)successUrl,
                 CancelUrl = (string)cancelUrl,
                 LineItems = lineItems,
-                PaymentMethodTypes = paymentMethodTypesList
+                PaymentMethodTypes = paymentMethodTypesList,
+                ClientReferenceId = request.Id.ToString()
             };
 
             var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
             var response = new HiddenFormResponse
             {
-                paymemtMethodReferenceId = sessionId
+                paymemtMethodReferenceId = request.Id.ToString()
             };
             response.html = GenerateHtml(Setting.Publishablekey, sessionId);
             return response;
@@ -110,6 +111,11 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 RawData = body,
                 CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
             };
+            if (stripeEvent.Type == lib.Events.CheckoutSessionCompleted)
+            {
+                var session = stripeEvent.Data.Object as Session;
+                result.RequestId = new Guid(session.ClientReferenceId);
+            }
             return result;
         }
 
@@ -122,6 +128,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
   stripe.redirectToCheckout({{
     sessionId: '{1}'
 }}).then(function (result) {{
+alert(JSON.stringify(result))
     console.log(result.error.message)
 }});
 </script>", publishableKey, sessionId);
@@ -132,13 +139,13 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         {
             switch (status)
             {
-                case "payment_intent.succeeded":
+                case lib.Events.CheckoutSessionCompleted:
                     return PaymentStatus.Paid;
-                case "payment_intent.payment_failed":
+                case lib.Events.PaymentIntentPaymentFailed:
                     return PaymentStatus.Rejected;
-                case "payment_intent.canceled":
+                case lib.Events.PaymentIntentCanceled:
                     return PaymentStatus.Cancelled;
-                case "payment_intent.created":
+                case lib.Events.PaymentIntentCreated:
                     return PaymentStatus.Pending;
                 default:
                     return PaymentStatus.NotAvailable;

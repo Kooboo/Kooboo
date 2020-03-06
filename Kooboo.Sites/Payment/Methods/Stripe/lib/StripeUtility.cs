@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe.lib
             var contentList = new List<string>();
             contentList.Add("success_url=" + HttpUtility.UrlEncode((string)options.SuccessUrl));
             contentList.Add("cancel_url=" + HttpUtility.UrlEncode((string)options.CancelUrl));
-            
+            contentList.Add("client_reference_id=" + HttpUtility.UrlEncode((string)options.ClientReferenceId));
             var index = 0;
             foreach(var option in options.LineItems)
             {
