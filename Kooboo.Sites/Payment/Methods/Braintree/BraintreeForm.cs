@@ -265,7 +265,7 @@ braintree.dropin.create({
                  },
                  function(data)
                  {" + Redirect() + @"
-                 });;
+                 });
             });
         });
 });
