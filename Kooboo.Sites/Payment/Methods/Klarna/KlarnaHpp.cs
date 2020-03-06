@@ -90,10 +90,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
         {
             var body = context.Request.Body;
             var requestId = context.Request.Get("secretToken");
-            if (!Guid.TryParse(requestId, out var id) || PaymentManager.GetRequest(id, context) == null)
-            {
-                return null;
-            }
+            Guid.TryParse(requestId, out var id);
 
             var data = JsonHelper.Deserialize<CallbackRequest>(body);
             var result = new PaymentCallback

@@ -96,11 +96,9 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay
             {
                 var body = context.Request.Body;
                 var notification = JsonHelper.Deserialize<Smart2PayNotification>(body);
-                if (notification.Payment.MerchantTransactionId == null ||
-                    !Guid.TryParse(notification.Payment.MerchantTransactionId, out var requestId) ||
-                    PaymentManager.GetRequest(requestId, context) == null)
+                if (Guid.TryParse(notification.Payment.MerchantTransactionId, out var requestId))
                 {
-                    return response;
+                    response.RequestId = requestId;
                 }
 
                 response.Status = ConvertStatus(notification.Payment.Status.Info);

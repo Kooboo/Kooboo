@@ -100,6 +100,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
 
             return new PaymentCallback
             {
+                RequestId = requestId,
                 Status = status,
                 RawData = context.Request.Body,
                 CallbackResponse = new Callback.CallbackResponse

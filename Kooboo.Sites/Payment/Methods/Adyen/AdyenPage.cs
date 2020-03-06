@@ -22,6 +22,7 @@ namespace Kooboo.Sites.Payment.Methods.Adyen
 
         public string IconType => "img";
 
+        // https://docs.adyen.com/development-resources/currency-codes#page-introduction
         public List<string> supportedCurrency => new List<string> { "AED", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BMD", "BND", "BOB", "BRL", "BSD", "BWP", "BYN", "BZD", "CAD", "CHF", "CLP", "CNY", "COP", "CRC", "CSD", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EEK", "EGP", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LTL", "LVL", "LYD", "MAD", "MDL", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SEK", "SGD", "SHP", "SKK", "SLL", "SOS", "SRD", "STN", "SVC", "SZL", "THB", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VEF", "VND", "VUV", "WST", "XAF", "XCD", "XOF", "XPF", "YER", "ZAR", "ZMW" };
 
         public RenderContext Context { get; set; }
@@ -102,10 +103,9 @@ namespace Kooboo.Sites.Payment.Methods.Adyen
                         }
                     }
 
-                    if (!Guid.TryParse(notifyItem.MerchantReference, out var guid) ||
-                        PaymentManager.GetRequest(guid, context) == null)
+                    if (Guid.TryParse(notifyItem.MerchantReference, out var guid))
                     {
-                        return paymentCallback;
+                        paymentCallback.RequestId = guid;
                     }
 
                     paymentCallback.Status = ConvertStatus(notifyItem.EventCode, notifyItem.Success);
