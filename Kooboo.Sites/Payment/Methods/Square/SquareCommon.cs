@@ -14,13 +14,20 @@ namespace Kooboo.Sites.Payment.Methods.Square
             var body = context.Request.Body;
             var data = JsonHelper.Deserialize<CallbackRequest>(body);
 
+            // to refactor charge order ID to match webhook order_id
+            var orderID = "";  // get form somewhere
+            if (data.Data.Object.Payment.OrderId != orderID)
+            {
+                return null;
+            }
+
             // https://developer.squareup.com/reference/square/objects/LaborShiftCreatedWebhookObject
             var status = new PaymentStatus();
-            if (data.Data.Object.Status == "OPEN")
+            if (data.Data.Object.Payment.Status == "COMPLETED")
             {
                 status = PaymentStatus.Pending;
             }
-            if (data.Data.Object.Status == "CLOSED")
+            if (data.Data.Object.Payment.Status == "APPROVED")
             {
                 status = PaymentStatus.Paid;
             }
@@ -35,11 +42,6 @@ namespace Kooboo.Sites.Payment.Methods.Square
             };
 
             return result;
-        }
-
-        public static long GetSquareAmount(decimal totalAmount)
-        {
-            return (long)(totalAmount * 100);
         }
     }
 }

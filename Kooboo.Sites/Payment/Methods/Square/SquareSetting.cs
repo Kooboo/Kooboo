@@ -19,7 +19,5 @@ namespace Kooboo.Sites.Payment.Methods
         public string BaseURL => UseSandBox ? "https://connect.squareupsandbox.com" : "https://connect.squareup.com";
 
         public string RedirectURL { get; set; }
-
-        public string KscriptAPIURL { get; set; }
     }
 }

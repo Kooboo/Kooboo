@@ -24,15 +24,7 @@ namespace Kooboo.Sites.Payment.Methods
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency
-        {
-            get
-            {
-                var list = new List<string>();
-                list.Add("USD");
-                return list;
-            }
-        }
+        public List<string> supportedCurrency { get; set; }
 
         public RenderContext Context { get; set; }
 
@@ -45,7 +37,7 @@ namespace Kooboo.Sites.Payment.Methods
         }
 
         [KDefineType(Return = typeof(HiddenFormResponse))]
-        public IPaymentResponse GetHtmlDetail(RenderContext context)
+        public IPaymentResponse CreatPayment(RenderContext context)
         {
             if (this.Setting == null)
             {
@@ -54,13 +46,30 @@ namespace Kooboo.Sites.Payment.Methods
 
             // todo 需要转换为货币的最低单位 
             // square APi 货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-            var amount = new Money { Amount = SquareCommon.GetSquareAmount(decimal.Parse(context.Request.Get("totalAmount"))), Currency = context.Request.Get("currency") };
+
+            var currency = context.Request.Get("currency");
+            var totalAmount = decimal.Parse(context.Request.Get("totalAmount"));
+            var amount = new Money
+            {
+                Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(currency, totalAmount),
+                Currency = currency
+            };
 
             var squareResponseNonce = context.Request.Get("nonce");
 
             var result = PaymentsApi.CreatPayment(squareResponseNonce, amount, Setting);
 
             var deserializeResult = JsonConvert.DeserializeObject<PaymentResponse>(result);
+
+            // 把paymentID赋值到request referenceID 为了后面 checkStatus 使用
+            var paymentRequestIdStr = context.Request.Get("paymentRequestId");
+            Guid paymentRequestId;
+            if (Guid.TryParse(paymentRequestIdStr, out paymentRequestId))
+            {
+                var request = PaymentManager.GetRequest(paymentRequestId, context);
+                request.ReferenceId = deserializeResult.Payment.ID;
+                PaymentManager.UpdateRequest(request, context);
+            }
 
             if (deserializeResult.Payment.Status == "APPROVED" || deserializeResult.Payment.Status == "COMPLETED")
             {
@@ -86,7 +95,6 @@ namespace Kooboo.Sites.Payment.Methods
             //https://connect.squareup.com/v2/payments/{payment_id} 
 
             // 创建订单后返回的订单编号  {payment_id}
-            // request.ReferenceId = "nn2I3hGkDrBqU2MPQy103dzET5UZY";
             if (string.IsNullOrEmpty(request.ReferenceId))
             {
                 return result;
@@ -143,14 +151,14 @@ namespace Kooboo.Sites.Payment.Methods
 
             var currencySymbol = CurrencyHelper.GetCurrencySymbol(request.Currency);
 
-            var kscriptAPIURL = PaymentHelper.GetCallbackUrl(this, nameof(GetHtmlDetail), this.Context);
+            var kscriptAPIURL = PaymentHelper.GetCallbackUrl(this, nameof(CreatPayment), this.Context);
 
-            html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, kscriptAPIURL, request.TotalAmount, request.Currency, currencySymbol);
+            html = GenerateHtml(Setting.ApplicationId, Setting.LocationId, kscriptAPIURL, request.TotalAmount, request.Currency, currencySymbol, request.Id);
 
             return html;
         }
 
-        private string GenerateHtml(string applicationId, string locationId, string kscriptAPIURL, decimal amount, string currency, string currencySymbol)
+        private string GenerateHtml(string applicationId, string locationId, string kscriptAPIURL, decimal amount, string currency, string currencySymbol, Guid requestId)
         {
             return @"<script type='text/javascript' src='https://js.squareupsandbox.com/v2/paymentform'></script>
 <script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
@@ -410,7 +418,7 @@ var paymentForm = new SqPaymentForm({
     // POST the nonce form to the payment processing page
     // document.getElementById('nonce-form').submit();
     alert(document.getElementById('card-nonce').value)
-                     $.get('" + kscriptAPIURL + "?totalAmount=" + amount + "&currency=" + currency + @"&nonce=' + nonce, function(data, status){ });
+                     $.get('" + kscriptAPIURL + "?totalAmount=" + amount + "&currency=" + currency + "&paymentRequestId=" + requestId + @"&nonce=' + nonce, function(data, status){ });
               }
             }
         });
