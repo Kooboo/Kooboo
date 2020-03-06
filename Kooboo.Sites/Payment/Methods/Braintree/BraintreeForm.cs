@@ -55,21 +55,17 @@ var resForm = k.payment.braintreeForm.charge(charge);
             return res;
         }
 
-        [KDefineType(Return = typeof(HiddenFormResponse))]
-        public IPaymentResponse CreateTransaction(RenderContext context)
+        public PaymentCallback CreateTransaction(RenderContext context)
         {
-            if (this.Setting == null)
-            {
-                return null;
-            }
-
             decimal amount;
-            RedirectResponse res = null;
+            PaymentCallback res = null;
+
             try
             {
-                amount = Convert.ToDecimal(context.Request.Forms["amount"]);
+                amount = Convert.ToDecimal(context.Request.GetValue("amount"));
 
-                var nonce = context.Request.Forms["payment_method_nonce"];
+                var nonce = context.Request.GetValue("nonce");
+                var orderId = context.Request.GetValue("orderId");
                 var request = new TransactionRequest
                 {
                     Transaction = new TransactionRequestChildren
@@ -80,20 +76,24 @@ var resForm = k.payment.braintreeForm.charge(charge);
                         {
                             SubmitForSettlement = true
                         },
-                        OrderId = context.Request.Forms["orderId"]
+                        OrderId = orderId
                     }
                 };
 
                 var result = new BraintreeAPI(Setting).Sale(request);
-                
-                var strPaymentRequestId = context.Request.Forms["orderId"];
+
+                var strPaymentRequestId = orderId;
                 Guid paymentRequestId;
+
                 if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
                 {
+
                     if (result != null && result.Transaction.Status.Equals("submitted_for_settlement", StringComparison.OrdinalIgnoreCase))
                     {
-                        res = new RedirectResponse(Setting.SucceedRedirectURL, paymentRequestId);
-                        res.paymemtMethodReferenceId = result.Transaction.Id;
+                        res = new PaymentCallback();
+                        var paymentRequest = PaymentManager.GetRequest(paymentRequestId, context);
+                        paymentRequest.ReferenceId = result.Transaction.Id;
+                        PaymentManager.UpdateRequest(paymentRequest, context);
                     }
                 }
             }
@@ -195,6 +195,7 @@ var resForm = k.payment.braintreeForm.charge(charge);
         {
             var createTransactionUrl = PaymentHelper.GetCallbackUrl(this, nameof(CreateTransaction), this.Context);
             return @"<script src='https://js.braintreegateway.com/web/dropin/1.22.1/js/dropin.js'></script>
+<script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
 <style>
 .button {
   cursor: pointer;
@@ -231,24 +232,24 @@ var resForm = k.payment.braintreeForm.charge(charge);
 }
 
 </style>
-<form id='payment-form' method='post' action='" + createTransactionUrl + @"'>
     <input id='amount' name='amount' type='hidden' value='" + amount + @"'/>
     <input id='orderId' name='orderId' type='hidden' value='" + orderId + @"'/>
     <div id='dropin-container'></div>
     <input id='nonce' name='payment_method_nonce' type='hidden' />
     <button style='display: none;' id ='submit-button' class='button button--small button--green' type='submit'>Purchase</button>
-  </form>
+
 <script>
-var form = document.querySelector('#payment-form');
+var button = document.querySelector('#submit-button');
 
 braintree.dropin.create({
   authorization: '" + clientToken + @"',
   selector: '#dropin-container'
 }, function (createErr, instance) {
         document.getElementById('submit-button').style.display = 'block';
-        form.addEventListener('submit', function (event) {
+        button.addEventListener('click', function (event) {
+            document.getElementById('submit-button').style.display = 'none';
             event.preventDefault();
-
+             
             instance.requestPaymentMethod(function (err, payload) {
                 if (err) {
                     console.log('Error', err);
@@ -256,11 +257,37 @@ braintree.dropin.create({
                 }
 
                 document.querySelector('#nonce').value = payload.nonce;
-                form.submit();
+                $.post('" + createTransactionUrl + @"',
+                 {
+                      amount:'" + amount + @"',
+                      nonce:payload.nonce,
+                      orderId:'" + orderId + @"'
+                 },
+                 function(data)
+                 {" + Redirect() + @"
+                 });
             });
         });
 });
 </script>";
+        }
+
+        public string Redirect()
+        {
+            string html = "";
+            if (!string.IsNullOrEmpty(Setting.FailureRedirectURL))
+            {
+                html += @"if (data && !data.success)
+                       { window.location.replace('" + Setting.FailureRedirectURL + @"'); } ;";
+            }
+
+            if (!string.IsNullOrEmpty(Setting.SucceedRedirectURL))
+            {
+                html += @"if (!data)
+                       { window.location.replace('" + Setting.SucceedRedirectURL + @"'); } ;";
+            }
+
+            return html;
         }
     }
 }
