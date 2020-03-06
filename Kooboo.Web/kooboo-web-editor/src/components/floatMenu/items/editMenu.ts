@@ -32,19 +32,18 @@ export default class EditMenuItem extends BaseMenuItem {
 
     let comments = KoobooComment.getComments(element);
     let comment = comments.find(f => f.source == "menu")!;
-    var { startNode, nodes, endNode } = getWrapDom(element, "menu");
+    var { startNode, endNode } = getWrapDom(element, "menu");
     if (!startNode || !endNode) return;
     editMenu(comment.getValue("id")!, c => {
       let temp = createDiv();
 
-      for (const i of nodes) {
-        if (i == startNode) continue;
-
-        if (i == endNode) {
-          i.parentElement!.insertBefore(temp, endNode!);
-        } else {
-          i.parentElement!.removeChild(i);
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        if (startNode!.nextSibling == endNode) {
+          startNode!.parentElement!.insertBefore(temp, endNode!);
+          break;
         }
+        startNode!.parentElement!.removeChild(startNode!.nextSibling!);
       }
 
       temp.outerHTML = c;

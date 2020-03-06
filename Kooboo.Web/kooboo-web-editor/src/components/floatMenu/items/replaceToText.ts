@@ -55,6 +55,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     let width = style.width;
     let widthImportant = element.style.getPropertyPriority("width");
     let height = style.height;
+    let display = style.display;
     let heightImportant = element.style.getPropertyPriority("height");
     let guid = setGuid(parent);
     element.parentElement!.replaceChild(text, element);
@@ -62,7 +63,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     text.setAttribute(KOOBOO_DIRTY, "");
     text.style.setProperty("width", width, widthImportant);
     text.style.setProperty("height", height, heightImportant);
-    text.style.display = "inline-block";
+    text.style.display = display!.startsWith("inline") ? "inline-block" : "block";
     emitHoverEvent(text);
     emitSelectedEvent();
 
