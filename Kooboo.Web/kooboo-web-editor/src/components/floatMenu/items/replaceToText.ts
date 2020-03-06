@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { isImg, isInTable } from "@/dom/utils";
+import { isImg, isInTable, getParentElements } from "@/dom/utils";
 import { getEditableComment } from "../utils";
 import { setGuid, getUnpollutedEl, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
@@ -32,6 +32,8 @@ export default class ReplaceToTextItem extends BaseMenuItem {
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
+    let parents = getParentElements(element);
+    if (parents.find(f => f.tagName.toLowerCase() == "p")) return this.setVisiable(false);
     if (!isImg(element)) return this.setVisiable(false);
     if (isInTable(element)) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
@@ -60,7 +62,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     text.setAttribute(KOOBOO_DIRTY, "");
     text.style.setProperty("width", width, widthImportant);
     text.style.setProperty("height", height, heightImportant);
-    text.style.display = "block";
+    text.style.display = "inline-block";
     emitHoverEvent(text);
     emitSelectedEvent();
 

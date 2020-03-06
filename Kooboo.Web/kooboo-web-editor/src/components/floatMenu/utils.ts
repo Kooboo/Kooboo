@@ -24,7 +24,7 @@ export function getRepeatSourceComment(comments: KoobooComment[], source: string
 }
 
 export function getEditableComment(comments: KoobooComment[]) {
-  return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute);
+  return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute && f.source != "innerform");
 }
 
 export function hasOperation(operationManager: operationManager) {

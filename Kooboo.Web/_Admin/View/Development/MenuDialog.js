@@ -642,6 +642,7 @@ $(function () {
       saveMenuCodeEvent: function (item) {
         if (window.parent.__gl && window.parent.__gl.saveMenuFinish) {
           var current = self.mark.markSubItems;
+          debugger
           var value = self.renderPreview(current, self.menuItems[0], item);
           window.parent.__gl.saveMenuFinish(value);
         }
