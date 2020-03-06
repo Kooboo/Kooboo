@@ -24,20 +24,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
     paymentMethodType: ['card', 'ideal']
   };
   var res = k.payment.stripeForm.charge(charge);
-  var publishableKey = res.fieldValues.get(""publishableKey"");
 </script>
-<div k-content=""res.html""></div>
-<div id = ""sessionId"" style=""display:none;"" k-content=""res.paymemtMethodReferenceId""></div>
-<div id = ""publishableKey"" style=""display:none;"" k-content=""publishableKey""></div>
-<script src = ""https://js.stripe.com/v3/"" ></script>
-<script>
-  var stripe = Stripe(document.getElementById('publishableKey').innerText);
-  stripe.redirectToCheckout({
-    sessionId: document.getElementById('sessionId').innerText
-}).then(function (result) {
-    console.log(result.error.message)
-});
-</script>";
+<div k-content=""res.html""></div>";
 
         public string Name => "StripeForm";
 
@@ -98,15 +86,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 SuccessUrl = (string)successUrl,
                 CancelUrl = (string)cancelUrl,
                 LineItems = lineItems,
-                PaymentMethodTypes = paymentMethodTypesList
+                PaymentMethodTypes = paymentMethodTypesList,
+                ClientReferenceId = request.Id.ToString()
             };
 
             var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
             var response = new HiddenFormResponse
             {
-                paymemtMethodReferenceId = sessionId
+                paymemtMethodReferenceId = request.Id.ToString()
             };
-            response.setFieldValues("publishableKey", Setting.Publishablekey);
+            response.html = GenerateHtml(Setting.Publishablekey, sessionId);
             return response;
         }
  
@@ -122,20 +111,41 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 RawData = body,
                 CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
             };
+            if (stripeEvent.Type == lib.Events.CheckoutSessionCompleted)
+            {
+                var session = stripeEvent.Data.Object as Session;
+                result.RequestId = new Guid(session.ClientReferenceId);
+            }
             return result;
+        }
+
+        private string GenerateHtml(string publishableKey, string sessionId)
+        {
+            var html = string.Format(@"
+<script src = ""https://js.stripe.com/v3/"" ></script>
+<script>
+  var stripe = Stripe('{0}');
+  stripe.redirectToCheckout({{
+    sessionId: '{1}'
+}}).then(function (result) {{
+alert(JSON.stringify(result))
+    console.log(result.error.message)
+}});
+</script>", publishableKey, sessionId);
+            return html;
         }
 
         private PaymentStatus ConvertStatus(string status)
         {
             switch (status)
             {
-                case "payment_intent.succeeded":
+                case lib.Events.CheckoutSessionCompleted:
                     return PaymentStatus.Paid;
-                case "payment_intent.payment_failed":
+                case lib.Events.PaymentIntentPaymentFailed:
                     return PaymentStatus.Rejected;
-                case "payment_intent.canceled":
+                case lib.Events.PaymentIntentCanceled:
                     return PaymentStatus.Cancelled;
-                case "payment_intent.created":
+                case lib.Events.PaymentIntentCreated:
                     return PaymentStatus.Pending;
                 default:
                     return PaymentStatus.NotAvailable;
@@ -144,8 +154,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
  
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            PaymentStatusResponse result = new PaymentStatusResponse();
-            return result;
+            throw new NotSupportedException("Stripe dose not implement API to check status");
         }
     }
 }
