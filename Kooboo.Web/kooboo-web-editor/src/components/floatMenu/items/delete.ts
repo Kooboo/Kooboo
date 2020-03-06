@@ -30,8 +30,8 @@ export default class DeleteItem extends BaseMenuItem {
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let { element, koobooId } = context.lastSelectedDomEventArgs;
-    if (isBody(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
+    if (el && isBody(el)) return this.setVisiable(false);
     if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);

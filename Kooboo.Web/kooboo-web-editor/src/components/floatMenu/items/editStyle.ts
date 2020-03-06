@@ -6,7 +6,7 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
 import { getEditableComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { isImg } from "@/dom/utils";
+import { isImg, isBody } from "@/dom/utils";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { Log } from "@/operation/Log";
@@ -30,6 +30,8 @@ export default class EditStyleItem extends BaseMenuItem {
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
+    let el = getUnpollutedEl(element);
+    if (!el || isBody(el)) return this.setVisiable(false);
     if (isImg(element)) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (!getUnpollutedEl(element)) return this.setVisiable(false);
