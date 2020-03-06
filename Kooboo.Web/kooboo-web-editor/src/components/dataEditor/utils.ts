@@ -11,7 +11,7 @@ export function getEditableData(element: HTMLElement): editableData | undefined 
     let element = getUnpollutedEl(el);
     if (!element) return;
     let parent = el == element ? element.parentElement : element;
-    if (!parent || !isEditable(el) || isDynamicContent(parent)) return;
+    if (!parent || !isEditable(el) || isDynamicContent(parent)) continue;
     let koobooId = parent.getAttribute(KOOBOO_ID);
     if (!koobooId) return;
     let list: HTMLElement[] = [];
