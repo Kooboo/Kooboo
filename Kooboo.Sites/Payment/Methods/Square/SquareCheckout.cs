@@ -23,7 +23,15 @@ namespace Kooboo.Sites.Payment.Methods
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency { get; set; }
+        public List<string> supportedCurrency
+        {
+            get
+            {
+                var list = new List<string>();
+                list.Add("USD");
+                return list;
+            }
+        }
 
         public RenderContext Context { get; set; }
 
@@ -34,12 +42,8 @@ namespace Kooboo.Sites.Payment.Methods
                 return null;
             }
 
-            // todo 需要转换为货币的最低单位 
             CreateCheckoutRequest checkoutRequest = GetCheckoutRequest(request);
-
-            var result = PaymentsApi.CheckoutCreatOrder(checkoutRequest, Setting);
-
-            var deserializeResult = JsonConvert.DeserializeObject<CreateCheckoutResponse>(result);
+            var deserializeResult = PaymentsApi.CheckoutCreatOrder(checkoutRequest, Setting);
 
             // 把OrderID赋值到request referenceID 为了后面 checkStatus 使用
             request.ReferenceId = deserializeResult.Checkout.Order.ID;
@@ -53,10 +57,6 @@ namespace Kooboo.Sites.Payment.Methods
             PaymentStatusResponse result = new PaymentStatusResponse();
 
             // POST  https://connect.squareup.com/v2/locations/{location_id}/orders/batch-retrieve 
-            // Body string[] order_ids
-
-            // order_id    this line to be remove
-            // request.ReferenceId = "oNtObOW0XqUxAKEU9a6xCC6VxvbZY";
             if (string.IsNullOrEmpty(request.ReferenceId))
             {
                 return result;
@@ -65,9 +65,7 @@ namespace Kooboo.Sites.Payment.Methods
             var orderRequest = new CheckOrderRequest { OrderIDs = new List<string>() };
             orderRequest.OrderIDs.Add(request.ReferenceId);
 
-            var httpResult = PaymentsApi.CheckOrder(orderRequest, Setting);
-
-            var deserializeResult = JsonConvert.DeserializeObject<CheckOrderResponse>(httpResult);
+            var deserializeResult = PaymentsApi.CheckOrder(orderRequest, Setting);
             if (deserializeResult == null)
             {
                 return result;
@@ -109,8 +107,7 @@ namespace Kooboo.Sites.Payment.Methods
         private CreateCheckoutRequest GetCheckoutRequest(PaymentRequest request)
         {
             string uuid = Guid.NewGuid().ToString();
-            // square APi  货币的最小面额指定。例如，美元金额以美分指定，https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
-
+            // square货币的最小面额指定。https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
             var amount = new Money { Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount), Currency = request.Currency };
 
             return new CreateCheckoutRequest
@@ -131,11 +128,6 @@ namespace Kooboo.Sites.Payment.Methods
                     }
                 }
             };
-        }
-
-        public IPaymentResponse GetHtmlDetail(PaymentRequest request)
-        {
-            throw new NotImplementedException();
         }
     }
 }
