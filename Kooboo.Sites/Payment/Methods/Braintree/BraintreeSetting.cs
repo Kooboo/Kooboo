@@ -16,6 +16,8 @@ namespace Kooboo.Sites.Payment.Methods.Braintree
 
         public string SucceedRedirectURL { get; set; }
 
+        public string FailureRedirectURL { get; set; }
+
         public bool UseSandBox { get; set; }
 
         public string ServerUrl
