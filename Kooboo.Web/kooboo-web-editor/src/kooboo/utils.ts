@@ -96,7 +96,6 @@ export function getUnpollutedEl(el: HTMLElement, includeSelf = true) {
   if (!includeSelf && el) el = el.parentElement!;
 
   while (el) {
-    if (isDynamicContent(el)) break;
     if (!el.hasAttribute(KOOBOO_DIRTY) && el.hasAttribute(KOOBOO_ID)) return el;
     if (KoobooComment.getAroundScopeComments(el)) return;
     el = el.parentElement!;

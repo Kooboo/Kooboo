@@ -35,7 +35,6 @@ export default class DeleteItem extends BaseMenuItem {
     if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
-    if (el && isDynamicContent(el)) return this.setVisiable(false);
   }
 
   click() {
