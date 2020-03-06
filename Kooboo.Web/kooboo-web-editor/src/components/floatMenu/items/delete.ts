@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { getEditableComment, getRepeatSourceComment } from "../utils";
@@ -32,7 +32,7 @@ export default class DeleteItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     let el = getUnpollutedEl(element);
     if (el && isBody(el)) return this.setVisiable(false);
-    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
+    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
   }

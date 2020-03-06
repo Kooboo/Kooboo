@@ -1,5 +1,5 @@
 import context from "@/common/context";
-import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent, getWrapDom } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
 import { getRepeatSourceComment, getEditableComment } from "../utils";
 import { isBody } from "@/dom/utils";
@@ -31,7 +31,7 @@ export default class CopyItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     if (isBody(element)) return this.setVisiable(false);
     let el = getUnpollutedEl(element);
-    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId)) return this.setVisiable(false);
+    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
     if (el && isDynamicContent(el)) return this.setVisiable(false);
