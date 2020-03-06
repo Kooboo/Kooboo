@@ -252,7 +252,7 @@ var resForm = k.payment.paypalForm.charge(charge);
             return name;
         }
 
-        protected PaymentCallback NofityUrl(RenderContext context)
+        public PaymentCallback NofityUrl(RenderContext context)
         {
             // PayPal HTTPS POSTs an IPN message to your listener that notifies it of an event.
             //Your listener returns an empty HTTP 200 response to PayPal.

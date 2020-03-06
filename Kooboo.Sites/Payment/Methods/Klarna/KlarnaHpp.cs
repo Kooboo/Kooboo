@@ -19,7 +19,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency => new List<string> { "USD", "EUR", "GBP", "DKK", "NOK", "SEK" };
+        public List<string> supportedCurrency => new List<string> { "AUD", "CAD", "CHF", "DKK", "EUR", "GBP", "NOK", "SEK", "USD" };
 
         public RenderContext Context { get; set; }
 
@@ -27,7 +27,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 
         [Description(@"<script engine='kscript'>
     var charge = {};
-    charge.total = 1.50; 
+    charge.total = 1.50;
     charge.currency='USD';
     charge.country='US';
     charge.name = 'green tea order'; 
@@ -38,32 +38,31 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 </script>")]
         public IPaymentResponse Charge(PaymentRequest request)
         {
-            request.Additional.TryGetValue("country", out var country);
+            var amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount);
             var req = new KpSessionRequest
             {
                 PurchaseCurrency = request.Currency,
-                PurchaseCountry = (string)country,
-                OrderAmount = request.TotalAmount,
+                PurchaseCountry = request.Country,
+                OrderAmount = amount,
                 OrderLines = new[]
                 {
                     new KpSessionRequest.OrderLine
                     {
                         Name = request.Name,
                         Quantity = 1,
-                        UnitPrice = request.TotalAmount,
-                        TotalAmount = request.TotalAmount
+                        UnitPrice = amount,
+                        TotalAmount = amount
                     }
                 },
             };
 
             var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-            var requestId = Guid.NewGuid();
 
-            var apiClient = new KlarnaApi(Setting, (string)country);
+            var apiClient = new KlarnaApi(Setting, request.Country);
             var kpSession = apiClient.CreateKpSession(req);
-            var hppSession = apiClient.CreateHppSession(kpSession.SessionId, Setting.GetGetMerchantUrls(callbackUrl, requestId));
+            var hppSession = apiClient.CreateHppSession(kpSession.SessionId, Setting.GetGetMerchantUrls(callbackUrl, request.Id));
 
-            return new RedirectResponse(hppSession.RedirectUrl, requestId)
+            return new RedirectResponse(hppSession.RedirectUrl, request.Id)
             {
                 paymemtMethodReferenceId = hppSession.SessionId
             };
@@ -74,9 +73,8 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
             var result = new PaymentStatusResponse { HasResult = true };
             try
             {
-                request.Additional.TryGetValue("country", out var country);
                 var hppSessionId = request.ReferenceId;
-                var statusResponse = new KlarnaApi(Setting, (string)country).CheckStatus(hppSessionId);
+                var statusResponse = new KlarnaApi(Setting, request.Country).CheckStatus(hppSessionId);
 
                 result.Status = ConvertStatus(statusResponse.Status);
             }

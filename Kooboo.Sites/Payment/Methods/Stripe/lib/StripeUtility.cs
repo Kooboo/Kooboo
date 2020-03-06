@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe.lib
             var contentList = new List<string>();
             contentList.Add("success_url=" + HttpUtility.UrlEncode((string)options.SuccessUrl));
             contentList.Add("cancel_url=" + HttpUtility.UrlEncode((string)options.CancelUrl));
-            
+            contentList.Add("client_reference_id=" + HttpUtility.UrlEncode((string)options.ClientReferenceId));
             var index = 0;
             foreach(var option in options.LineItems)
             {
@@ -43,8 +43,10 @@ namespace Kooboo.Sites.Payment.Methods.Stripe.lib
         public static async Task<string> CreateSession(SessionCreateOptions options, string Secretkey)
         { 
             var client = ApiClient.Create();
-            var headers = new Dictionary<string, string>();
-            headers.Add("Authorization", "Bearer " + Secretkey);
+            var headers = new Dictionary<string, string>
+            {
+                { "Authorization", "Bearer " + Secretkey }
+            };
             var result = await client.PostAsync("https://api.stripe.com/v1/checkout/sessions", SessionDataToContentString(options), "application/x-www-form-urlencoded", headers);
             var response =  result.Content;
             JObject json = JObject.Parse(response);
