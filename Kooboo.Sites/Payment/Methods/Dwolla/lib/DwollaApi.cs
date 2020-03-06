@@ -21,9 +21,10 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
         public DwollaApi(DwollaSetting setting)
         {
             Setting = setting;
+            GetToken();
         }
 
-        public async Task<TokenResponse> GetToken()
+        public async void GetToken()
         {
             var client = new HttpClient();
             var headers = new Dictionary<string, string>();
@@ -40,12 +41,10 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             var result = await client.SendAsync(requestMessage).Result.Content.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<TokenResponse>(result);
             Token = response.Token;
-            return response;
         }
 
         public async Task<ApiResponse> CreateCustomer(Customer customer)
         {
-            await GetToken();
             var client = Create();
             var format = string.Format("{{\"firstName\": \"{0}\",\"lastName\": \"{1}\",\"email\": \"{2}\"}}", customer.FirstName, customer.LastName, customer.Email);
             var headers = new Dictionary<string, string>
@@ -71,7 +70,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
 
         public async Task<TransferResponse> CreateTransfer(CreateTransferRequest request)
         {
-            await GetToken();
             var client = Create("Bearer", Token);
             var headers = new Dictionary<string, string>
             {
@@ -95,7 +93,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
 
         public async Task<TransferResponse> GetTransfer(string transfersUrl)
         {
-            await GetToken();
             var client = Create("Bearer", Token);
             var headers = new Dictionary<string, string>
             {
