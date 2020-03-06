@@ -16,6 +16,7 @@ namespace Kooboo.Sites.Payment.Repository
                 para.AddIndex<PaymentRequest>(o => o.OrderId);
                 para.AddColumn<PaymentRequest>(o => o.Paid);
                 para.AddColumn<PaymentRequest>(o => o.Failed);
+                para.AddColumn<PaymentRequest>(o => o.ReferenceIdHash);
                 return para;
             }
         }

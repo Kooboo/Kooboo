@@ -71,7 +71,32 @@ namespace Kooboo.Sites.Payment
         /// </summary>
         public string ReferenceId { get; set; }
 
+        private Guid _referenceIdHash;
+        public Guid ReferenceIdHash
+        {
+            get
+            {
+                if (_referenceIdHash == default(Guid))
+                {
+                    if (!string.IsNullOrWhiteSpace(this.ReferenceId))
+                    {
+                        _referenceIdHash = Lib.Security.Hash.ComputeHashGuid(this.ReferenceId); 
+                    } 
+                }
+                return _referenceIdHash; 
+            }
+            set
+            {
+                _referenceIdHash = value;
+            }
+        }
+
+        [Obsolete]
         public string ReturnPath { get; set; }
+
+        public string ReturnUrl { get; set; }
+
+        public string CancelUrl { get; set; }
 
         private Dictionary<string, object> _Additional;
         public Dictionary<string, object> Additional
