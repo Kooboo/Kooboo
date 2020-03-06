@@ -63,7 +63,8 @@ namespace Kooboo.Web.Api.Implementation
                 else
                 {
                     var values = GetValues(value.Values, item.Value)
-                        .ToDictionary(x => x.Name, x => x.Value);
+                        .ToDictionary(x => x.Name,
+                            x => x.Type == "file" ? new SettingFile(x.Value?.ToString()).Name : x.Value);
                     var json = Lib.Helper.JsonHelper.Serialize(values);
 
                     result.Add(new CoreSettingViewModel() { Name = value.Name, Value = json, lastModify = value.LastModified });
@@ -90,6 +91,11 @@ namespace Kooboo.Web.Api.Implementation
                     item.Type = "checkbox";
                     bool.TryParse(rawValue, out var boolValue);
                     item.Value = boolValue;
+                }
+
+                if (valueType == typeof(SettingFile))
+                {
+                    item.Type = "file";
                 }
 
                 result.Add(item);

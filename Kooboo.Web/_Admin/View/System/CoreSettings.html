@@ -67,6 +67,10 @@
               >{{ field.name }}</label>
               <div class="col-md-9">
                 <kb-switch v-if="field.type=='checkbox'" v-model="field.value"></kb-switch>
+                <span v-else-if="field.type=='file'" class="btn btn-default btn-file" class="form-control" style="width: 100%;">
+                  {{getFileName(field.value)||Kooboo.text.common.selectFile}}
+                  <input type="file"  @change="getFile($event, field)"/>
+                </span>
                 <input v-else 
                   :type="field.type"
                   class="form-control"
