@@ -217,6 +217,15 @@ namespace Kooboo.Sites.Payment
             return new PaymentStatusResponse() { Message = "" };
         }
 
+        public static void UpdateRequest(PaymentRequest request, RenderContext context)
+        {
+            if (context.WebSite != null)
+            {
+                var sitedb = context.WebSite.SiteDb();
+                var repo = sitedb.GetSiteRepository<Repository.PaymentRequestRepository>();
+                repo.AddOrUpdate(request);
+            }
+        }
     }
 
 }
