@@ -137,6 +137,8 @@ namespace Kooboo.Mail.Multipart
             {
                 value = value.Replace("\"", "");
                 value = value.Replace("'", "");
+                value = value.Replace("<", "&lt;");
+                value = value.Replace(">", "&gt;");
             }
             return value;
         }
