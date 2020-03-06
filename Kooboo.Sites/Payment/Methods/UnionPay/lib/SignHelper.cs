@@ -1,123 +1,74 @@
-﻿////using Kooboo.Sites.Payment.Methods.Alipay.lib;
-////using System;
-////using System.Collections.Generic;
-////using System.Text;
+﻿using Kooboo.Sites.Payment.Methods.Alipay.lib;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-////namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
-////{
-////    public class SignHelper
-////    {
-////        const string VERSION_1_0_0 = "1.0.0";
-////        const string VERSION_5_0_0 = "5.0.0";
+namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
+{
+    public class SignHelper
+    {
+        const string VERSION_1_0_0 = "1.0.0";
+        const string VERSION_5_0_0 = "5.0.0";
 
-////        /// <summary>
-////        /// 使用配置文件配置的证书/密钥签名
-////        /// </summary>
-////        /// <param name="reqData"></param>
-////        /// <param name="encoding"></param>
-////        /// <returns></returns>
-////        public static void Sign(Dictionary<string, string> reqData, Encoding encoding)
-////        {
-////            if (!reqData.ContainsKey("version"))
-////            {
-////                throw new UnionPayException("version cannot by null.");
-////            }
-////            string version = reqData["version"];
+        const string SignCertPwd = "000000"; // to be remove to setting 
+        const string SignCertPath = "d:/certs/acp_test_sign.pfx"; // to be remove to setting
 
-////            string signMethod = null;
-////            if (reqData.ContainsKey("signMethod"))
-////            {
-////                signMethod = reqData["signMethod"];
-////            }
-////            else if (!VERSION_1_0_0.Equals(version))
-////            {
-////                throw new UnionPayException("signMethod cannot be null.");
-////            }
+        /// <summary>
+        /// 使用配置文件配置的证书/密钥签名
+        /// </summary>
+        /// <param name="reqData"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static void Sign(Dictionary<string, string> reqData, Encoding encoding)
+        {
+            if (!reqData.ContainsKey("version"))
+            {
+                throw new UnionPayException("version cannot by null.");
+            }
+            string version = reqData["version"];
 
-////            if ("01".Equals(signMethod) || VERSION_1_0_0.Equals(version))
-////            {
-////                SignByCertInfo(reqData, SDKConfig.SignCertPath, SDKConfig.SignCertPwd, encoding);
-////            }
-////            else if ("11".Equals(signMethod) || "12".Equals(signMethod))
-////            {
-////                SignBySecureKey(reqData, SDKConfig.SecureKey, encoding);
-////            }
-////            else
-////            {
-////                log.Error("Error signMethod [" + signMethod + "], " + "version [" + version + "] in Sign. ");
-////            }
-////        }
+            if (!reqData.ContainsKey("signMethod"))
+            {
+                throw new UnionPayException("signMethod cannot be null.");
+            }
 
-////        /// <summary>
-////        /// 证书方式签名（多证书时使用），指定证书路径。
-////        /// </summary>
-////        /// <param name="reqData"></param>
-////        /// <param name="encoding">编码</param>
-////        /// <param name="certPath">证书路径</param>
-////        /// <param name="certPwd">证书密码</param>
-////        /// <returns></returns>
-////        public static void SignByCertInfo(Dictionary<string, string> reqData, string certPath, string certPwd, Encoding encoding)
-////        {
-////            if (!reqData.ContainsKey("version"))
-////            {
-////                throw new UnionPayException("version cannot by null.");
-////            }
-////            string version = reqData["version"];
+            string signMethod = reqData["signMethod"];
 
-////            string signMethod = null;
-////            if (reqData.ContainsKey("signMethod"))
-////            {
-////                signMethod = reqData["signMethod"];
-////            }
-////            else if (!VERSION_1_0_0.Equals(version))
-////            {
-////                throw new UnionPayException("signMethod cannot be null.");
-////            }
+            if (signMethod == "01")
+            {
+                SignByCertInfo(reqData, SignCertPath, SignCertPwd, encoding);
+            }
+        }
 
-////            if ("01".Equals(signMethod) || VERSION_1_0_0.Equals(version))
-////            {
-////                reqData["certId"] = CertUtil.GetSignCertId(certPath, certPwd);
+        /// <summary>
+        /// 证书方式签名（多证书时使用），指定证书路径。
+        /// </summary>
+        /// <param name="reqData"></param>
+        /// <param name="encoding">编码</param>
+        /// <param name="certPath">证书路径</param>
+        /// <param name="certPwd">证书密码</param>
+        /// <returns></returns>
+        public static void SignByCertInfo(Dictionary<string, string> reqData, string certPath, string certPwd, Encoding encoding)
+        {
+            string version = reqData["version"];
+            string signMethod = reqData["signMethod"];
 
-////                //将Dictionary信息转换成key1=value1&key2=value2的形式
-////                string stringData = SDKUtil.CreateLinkString(reqData, true, false, encoding);
-////                //log.Info("待签名排序串：[" + stringData + "]");
+            //  以下这个方式可以得到 certId
+            var x5092 = new System.Security.Cryptography.X509Certificates.X509Certificate2(certPath, certPwd);
+            var ar = x5092.GetSerialNumber();
+            reqData["certId"] = new System.Numerics.BigInteger(ar).ToString();
 
-////                if (VERSION_5_0_0.Equals(version) || VERSION_1_0_0.Equals(version))
-////                {
-////                    byte[] signDigest = SecurityUtil.Sha1(stringData, encoding);
+            //将Dictionary信息转换成key1=value1&key2=value2的形式
+            string stringData = SDKUtil.CreateLinkString(reqData, true, false, encoding);
+            byte[] signDigest = System.Security.Cryptography.SHA256.Create().ComputeHash(encoding.GetBytes(stringData));
+            string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
 
-////                    string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
-////                    //log.Info("sha1结果：[" + stringSignDigest + "]");
+            //byte[] byteSign = SecurityUtil.SignSha256WithRsa(CertUtil.GetSignKeyFromPfx(certPath, certPwd), encoding.GetBytes(stringSignDigest));
 
-////                    byte[] byteSign = SecurityUtil.SignSha1WithRsa(CertUtil.GetSignKeyFromPfx(certPath, certPwd), encoding.GetBytes(stringSignDigest));
+            //string stringSign = Convert.ToBase64String(byteSign);
 
-////                    string stringSign = Convert.ToBase64String(byteSign);
-////                    //log.Info("5.0.0报文sha1RSA签名结果：[" + stringSign + "]");
-
-////                    //设置签名域值
-////                    reqData["signature"] = stringSign;
-////                }
-////                else
-////                {
-////                    byte[] signDigest = SecurityUtil.Sha256(stringData, encoding);
-
-////                    string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
-////                    //log.Info("sha256结果：[" + stringSignDigest + "]");
-
-////                    byte[] byteSign = SecurityUtil.SignSha256WithRsa(CertUtil.GetSignKeyFromPfx(certPath, certPwd), encoding.GetBytes(stringSignDigest));
-
-////                    string stringSign = Convert.ToBase64String(byteSign);
-////                    //log.Info("5.1.0报文sha256RSA签名结果：[" + stringSign + "]");
-
-////                    //设置签名域值
-////                    reqData["signature"] = stringSign;
-
-////                }
-////            }
-////            else
-////            {
-////                throw new UnionPayException("Error signMethod [" + signMethod + "] in SignByCertInfo. ");
-////            }
-////        }
-////    }
-////}
+            //设置签名域值
+            //reqData["signature"] = stringSign;
+        }
+    }
+}

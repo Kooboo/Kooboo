@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Payment.Methods.UnionPay.lib;
 using Kooboo.Sites.Payment.Response;
 
 namespace Kooboo.Sites.Payment.Methods.UnionPay
@@ -18,16 +19,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency
-        {
-            get
-            {
-                var list = new List<string>();
-                list.Add("CNY");
-                list.Add("USD");
-                return list;
-            }
-        }
+        public List<string> supportedCurrency { get; set; }
 
         public RenderContext Context { get; set; }
 
@@ -43,7 +35,6 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             res.method = "POST";
             return res;
         }
-
 
         private string GetHtmlForm(PaymentRequest request)
         {
@@ -87,6 +78,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
             param["riskRateInfo"] = "{commodityName=测试商品名称}";//
 
+            SignHelper.Sign(param, System.Text.Encoding.UTF8);
             string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, System.Text.Encoding.UTF8);
 
             return formHtml;
