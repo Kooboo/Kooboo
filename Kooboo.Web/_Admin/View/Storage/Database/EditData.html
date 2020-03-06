@@ -87,6 +87,7 @@
 
                   <label
                     class="checkbox-inline"
+                    style="padding-left: 0"
                     v-if="item.controlType=='Boolean'"
                   >
                     <kb-switch type="checkbox" v-model="item.value" />
@@ -120,11 +121,6 @@
     <a :href="dataPageUrl" class="btn gray">Cancel</a>
   </div>
 </div>
-<style>
-  .checkbox-inline {
-    padding-left: 0;
-  }
-</style>
 <script>
   (function () {
     Kooboo.loadJS([

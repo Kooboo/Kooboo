@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Payment.Methods.qualpay.lib;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json.Linq;
@@ -57,7 +58,7 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
         public IPaymentResponse Charge(PaymentRequest request)
         {
             var dic = new Dictionary<string, object>();
-            dic.Add("amt_tran", request.TotalAmount.ToString());
+            dic.Add("amt_tran", request.TotalAmount.ToString("0.00"));
             var currency = GetCurrencyCode(request.Currency);
             dic.Add("tran_currency", currency);
             dic.Add("purchase_id", DataHelper.GeneratePurchaseId(request.Id));
@@ -83,10 +84,10 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
             return currentCodes[currency];
         }
 
-        protected PaymentCallback NofityUrl(RenderContext context)
+        public PaymentCallback NofityUrl(RenderContext context)
         {
             var result = new PaymentCallback();
-            var headers = context.Request.Headers["x-qualpay-webhook-request"];
+            var headers = context.Request.Headers["x-qualpay-webhook-signature"];
             if (Validate(Setting.WebHookKey, headers, context.Request.Body))
             {
                 if (this.Setting == null)
@@ -95,38 +96,31 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
                 }
 
                 var eventType = DataHelper.GetValue("event", context.Request.Body);
-                var purchaseIds = DataHelper.GetValue("data.transactions.purchase_id", context.Request.Body);
-
-                if (string.IsNullOrEmpty(purchaseIds))
+                var purchaseId = DataHelper.GetValue("data.purchase_id", context.Request.Body);
+                var transationId = DataHelper.GetValue("data.pg_id", context.Request.Body);
+                if (string.IsNullOrEmpty(purchaseId))
                     return null;
-                var purchaseArray = purchaseIds.Split(',');
-                for (int i = 0; i < purchaseArray.Length; i++)
+
+                var requestId = DataHelper.GenerateRequestId(purchaseId);
+                result.RequestId = requestId;
+                if (string.Equals(eventType, CheckoutSuccessEvent))
                 {
-                    result.RequestId = DataHelper.GenerateRequestId(purchaseArray[i]);
-                    if (string.Equals(eventType, CheckoutSuccessEvent))
-                    {
-                        result.Status = PaymentStatus.Pending;
-                    }
-                    else
-                    {
-                        result.Status = PaymentStatus.NotAvailable;
-                    }
-
-                    if (string.Equals(eventType, TransactionUpdatedEvent))
-                    {
-                        string code = DataHelper.GetValue("tran_status", context.Request.Body);
-                        if (code == "S")
-                        {
-                            result.Status = PaymentStatus.Paid;
-                        }
-
-                        if (code == "R")
-                        {
-                            result.Status = PaymentStatus.Rejected;
-                        }
-                    }
-
+                    var request = PaymentManager.GetRequest(requestId, context);
+                    request.ReferenceId = transationId;
+                    PaymentManager.UpdateRequest(request, context);
+                    result.Status = PaymentStatus.Pending;
                 }
+                else
+                {
+                    result.Status = PaymentStatus.NotAvailable;
+                }
+
+                if (string.Equals(eventType, TransactionUpdatedEvent))
+                {
+                    string code = DataHelper.GetValue("tran_status", context.Request.Body);
+                    result.Status = ConvertStatus(code);
+                }
+
                 return result;
             }
 
@@ -135,7 +129,45 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            throw new NotImplementedException();
+            var resp = new PaymentStatusResponse();
+
+            var code = QualpayAPI.GetTransaction(request.ReferenceId, Setting);
+
+            if (code != null)
+            {
+                resp.Status = ConvertStatus(code);
+            }
+            else
+            {
+                resp.Status = PaymentStatus.NotAvailable;
+            }
+
+            return resp;
+        }
+
+        private PaymentStatus ConvertStatus(string code)
+        {
+            var status = PaymentStatus.Pending;
+            switch (code.ToUpper())
+            {
+                case "S":
+                    status = PaymentStatus.Paid;
+                    break;
+                case "R":
+                    status = PaymentStatus.Rejected;
+                    break;
+                case "C ":
+                    status = PaymentStatus.Pending;
+                    break;
+                case "V":
+                    status = PaymentStatus.NotAvailable;
+                    break;
+                case "K":
+                    status = PaymentStatus.Cancelled;
+                    break;
+            }
+
+            return status;
         }
 
         private bool Validate(string secret, string header, string postData)

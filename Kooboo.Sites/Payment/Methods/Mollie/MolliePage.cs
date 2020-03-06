@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using Kooboo.Data.Context;
-using Kooboo.Lib.Helper;
-using Kooboo.Sites.Payment.Methods.Klarna.lib;
 using Kooboo.Sites.Payment.Methods.Mollie.Lib;
 using Kooboo.Sites.Payment.Response;
 
@@ -17,14 +14,14 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
         public string DisplayName => Data.Language.Hardcoded.GetValue("Mollie", Context);
 
         // https://www.mollie.com/en/resources
-        public string Icon => "/_Admin/View/Market/Images/mollie.svg";
+        public string Icon => "/_Admin/View/Market/Images/payment-mollie.svg";
 
         public string IconType => "img";
 
         // Mollie supports multiple payment method suppliers.
-        // e.g. for PayPal, all currencies supported by PayPal are also supported by Mollie. So the supported currency have to be all.
+        // e.g. for PayPal, all currencies supported by PayPal are also supported by Mollie.
         // https://docs.mollie.com/payments/multicurrency
-        public List<string> supportedCurrency => new List<string>();
+        public List<string> supportedCurrency => new List<string> { "AED", "AUD", "BGN", "BRL", "CAD", "CHF", "CZK", "DKK", "EUR", "GBP", "HKD", "HRK", "HUF", "ILS", "ISK", "JPY", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TWD", "USD", "ZAR", };
 
         public RenderContext Context { get; set; }
 
@@ -48,16 +45,17 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                 Amount = new Amount
                 {
                     Currency = request.Currency,
-                    Value = request.TotalAmount.ToString("#.00")
+                    Value = CurrencyDecimalPlaceConverter.ToDecimalPlaceString(request.Currency, request.TotalAmount)
                 },
                 Description = request.Description,
-                RedirectUrl = Setting.BackUrl,
-                WebhookUrl = callbackUrl
+                RedirectUrl = Setting.RedirectUrl,
+                WebhookUrl = callbackUrl,
+                Metadata = request.Id.ToString()
             };
 
-            var resp = MollieApi.CreatePayment(req, Setting.ApiToken).Result;
+            var resp = new MollieApi(Setting.ApiToken).CreatePayment(req);
 
-            return new RedirectResponse(resp.Links.Checkout.Href, Guid.Empty)
+            return new RedirectResponse(resp.Links.Checkout.Href, request.Id)
             {
                 paymemtMethodReferenceId = resp.Id
             };
@@ -69,7 +67,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
             try
             {
                 var paymentId = request.ReferenceId;
-                var statusResponse = MollieApi.CheckStatus(paymentId, Setting.ApiToken).Result;
+                var statusResponse = new MollieApi(Setting.ApiToken).CheckStatus(paymentId);
 
                 result.Status = ConvertStatus(statusResponse.Status);
             }
@@ -91,7 +89,12 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                 return null;
             }
 
-            var statusResponse = MollieApi.CheckStatus(molliePaymentId, Setting.ApiToken).Result;
+            var statusResponse = new MollieApi(Setting.ApiToken).CheckStatus(molliePaymentId);
+            if (!Guid.TryParse(statusResponse.Metadata, out var requestId) ||
+                PaymentManager.GetRequest(requestId, context) == null)
+            {
+                return null;
+            }
 
             var status = ConvertStatus(statusResponse.Status);
 
@@ -106,6 +109,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
             };
         }
 
+        // https://docs.mollie.com/payments/status-changes
         private PaymentStatus ConvertStatus(MollieStatus mollieStatus)
         {
             switch (mollieStatus)

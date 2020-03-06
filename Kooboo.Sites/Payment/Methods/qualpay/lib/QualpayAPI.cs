@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.qualpay.lib
@@ -12,16 +11,20 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
             try
             {
                 request.Add("checkout_profile_id", setting.CheckoutProfileId);
-                Validtion(request);
                 var preferences = new Dictionary<string, string>
                 {
-                    { "success_url", setting.SuccessUrl },
+                    { "success_url", setting.SuccessUrl},
                     { "failure_url", setting.FailureUrl }
                 };
 
                 request.Add("preferences", preferences);
-                string body = JsonConvert.SerializeObject(request);
-                var response = ApiClient.Post(setting.ServerUrl + "/platform/checkout", body, setting.SecurityKey);
+                Validtion(request);
+                
+                var body = JsonConvert.SerializeObject(request);
+                var response = ApiClient.Create("Basic", setting.SecurityKey)
+                    .PostAsync(setting.ServerUrl + "/platform/checkout", body)
+                    .Result.EnsureSuccessStatusCode().Content;
+
                 var result = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
                 if (DataHelper.GetValue("code", response) != "0")
                 {
@@ -42,16 +45,46 @@ namespace Kooboo.Sites.Payment.Methods.qualpay.lib
             return null;
         }
 
+        public static string GetTransaction(string id, QualpayFormSetting setting)
+        {
+            try
+            {
+                var response = ApiClient.Create("Basic", setting.SecurityKey)
+                    .GetAsync(setting.ServerUrl + "/platform/reporting/transactions/bypgid/" + id)
+                    .Result.EnsureSuccessStatusCode().Content;
+                var result = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
+
+                if (DataHelper.GetValue("code", response) != "0")
+                {
+                    throw new QualPayException(DataHelper.GetValue("message", response));
+                }
+
+                var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(result["data"].ToString());
+
+
+                return data["tran_status"];
+            }
+            catch (Exception ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+            }
+
+            return null;
+        }
+
         private static void CheckResult(Dictionary<string, string> data, Dictionary<string, object> req)
         {
             if (data == null)
             {
                 throw new QualPayException("API返回的支付链接为空！");
             }
-
-            if (!string.Equals(data["amt_tran"], req["amt_tran"]))
+            decimal amt_tran = 0;
+            if (!decimal.TryParse(data["amt_tran"], out amt_tran))
             {
-                throw new QualPayException("支付价格不一致！");
+                if (!string.Equals(amt_tran.ToString("0.00"), req["amt_tran"]))
+                {
+                    throw new QualPayException("支付价格不一致！");
+                }
             }
 
             if (!string.Equals(data["tran_currency"], req["tran_currency"]))

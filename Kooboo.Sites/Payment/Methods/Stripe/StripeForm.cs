@@ -1,14 +1,9 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Stripe.lib;
 using Kooboo.Sites.Payment.Response;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Kooboo.Sites.Payment.Methods.Stripe
 {
@@ -18,30 +13,19 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         private const string Description = @"Pay by stripe. Example:
 <script engine=""kscript"">
-  var charge = {};
-  charge.successUrl = 'https://example.com/success'
-  charge.cancelUrl = 'https://example.com/cancel'
-  charge.name = 'T-shirt'
-  charge.description = 'Comfortable cotton t-shirt'
-  charge.totalAmount = 1500
-  charge.currency = 'USD'
-  charge.quantity = 2
-  charge.paymentMethodType = 'card'
+  var charge = {
+    successUrl: 'https://example.com/success',
+    cancelUrl: 'https://example.com/cancel',
+    name: 'T-shirt',
+    description: 'Comfortable cotton t-shirt',
+    totalAmount: 1500,
+    currency: 'eur',
+    quantity: 2,
+    paymentMethodType: ['card', 'ideal']
+  };
   var res = k.payment.stripeForm.charge(charge);
-  var publishableKey = res.fieldValues.get(""publishableKey"");
 </script>
-<div k-content=""res.html""></div>
-<div id = ""sessionId"" style=""display:none;"" k-content=""res.paymemtMethodReferenceId""></div>
-<div id = ""publishableKey"" style=""display:none;"" k-content=""publishableKey""></div>
-<script src = ""https://js.stripe.com/v3/"" ></script>
-<script>
-  var stripe = Stripe(document.getElementById('publishableKey').innerText);
-  stripe.redirectToCheckout({
-    sessionId: document.getElementById('sessionId').innerText
-}).then(function (result) {
-    console.log(result.error.message)
-});
-</script>";
+<div k-content=""res.html""></div>";
 
         public string Name => "StripeForm";
 
@@ -51,18 +35,18 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency
-        {
-            get
-            {
-                var list = new List<string>();
-                list.Add("USD");
-                return list;
-            }
-        }
+        public List<string> supportedCurrency => new List<string> {
+            "USD", "EUR", "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
+            "BAM", "BBD", "BDT", "BGN", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BWP", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", "COP", "CRC", "CVE",
+            "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ETB", "FJD", "FKP", "GBP", "GEL", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG",
+            "HUF", "IDR", "ILS", "INR", "ISK", "JMD", "JPY", "KES", "KGS", "KHR", "KMF", "KRW", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "MAD",
+            "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "PAB",
+            "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD",
+            "STD", "SZL", "THB", "TJS", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "UYU", "UZS", "VND", "VUV", "WST", "XAF", "XCD", "XOF", "XPF",
+            "YER", "ZAR", "ZMW"
+        };
 
         public RenderContext Context { get; set; }
-
 
         [Description(Description)]
         public IPaymentResponse Charge(PaymentRequest request)
@@ -72,52 +56,103 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             request.Additional.TryGetValue("successUrl", out var successUrl);
             request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
 
-            var lineItems = new List<SessionLineItemOptions> {
-                    new SessionLineItemOptions {
-                        Name = request.Name,
-                        Description = request.Description,
-                        Amount = long.Parse(request.TotalAmount.ToString()),
-                        Currency = request.Currency,
-                        Quantity = long.Parse(quantity.ToString())
-                    }
-                };
+            var lineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions {
+                    Name = request.Name,
+                    Description = request.Description,
+                    Amount = long.Parse(request.TotalAmount.ToString()),
+                    Currency = request.Currency,
+                    Quantity = long.Parse(quantity.ToString())
+                }
+            };
+
+            var paymentMethodTypesList = new List<string>();
+
+            if (paymentMethodType is object[])
+            {
+                var paymentMethodTypeArray = Array.ConvertAll((object[])paymentMethodType, x => x.ToString());
+                paymentMethodTypesList.AddRange(paymentMethodTypeArray);
+            }
+            else if (paymentMethodType is object)
+            {
+                paymentMethodTypesList.Add((string)paymentMethodType);
+            }
 
             var options = new SessionCreateOptions
             {
-                SuccessUrl = (string)cancelUrl,
-                CancelUrl = (string)successUrl,
-                PaymentMethodTypes = new List<string> {
-                    (string)paymentMethodType
-                },
-                LineItems = lineItems
+                SuccessUrl = (string)successUrl,
+                CancelUrl = (string)cancelUrl,
+                LineItems = lineItems,
+                PaymentMethodTypes = paymentMethodTypesList,
+                ClientReferenceId = request.Id.ToString()
             };
 
-            var sessionId = CreateSession(options).Result;
+            var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
             var response = new HiddenFormResponse
             {
-                paymemtMethodReferenceId = sessionId
+                paymemtMethodReferenceId = request.Id.ToString()
             };
-            response.setFieldValues("publishableKey", Setting.Publishablekey);
+            response.html = GenerateHtml(Setting.Publishablekey, sessionId);
             return response;
         }
 
-        private async Task<string> CreateSession(SessionCreateOptions options)
+        public PaymentCallback Notify(RenderContext context)
         {
-            using (var httpClient = new HttpClient())
+            var body = context.Request.Body;
+            var signi = context.Request.Headers.Get("Stripe-Signature");
+
+            var stripeEvent = EventUtility.ConstructEvent(body, signi, Setting.WebhookSigningSecret);
+            var result = new PaymentCallback
             {
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + Setting.Secretkey);
-                
-                var result = await httpClient.PostAsync("https://api.stripe.com/v1/checkout/sessions", new StringContent(StripeUtility.SessionDataToContentString(options), Encoding.UTF8, "application/x-www-form-urlencoded"));
-                var response = await result.Content.ReadAsStringAsync();
-                JObject json = JObject.Parse(response);
-                return json.Value<string>("id");
+                Status = ConvertStatus(stripeEvent.Type),
+                RawData = body,
+                CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
+            };
+            if (stripeEvent.Type == lib.Events.CheckoutSessionCompleted)
+            {
+                var session = stripeEvent.Data.Object as Session;
+                result.RequestId = new Guid(session.ClientReferenceId);
+            }
+            return result;
+        }
+
+        private string GenerateHtml(string publishableKey, string sessionId)
+        {
+            var html = string.Format(@"
+<script src = ""https://js.stripe.com/v3/"" ></script>
+<script>
+  var stripe = Stripe('{0}');
+  stripe.redirectToCheckout({{
+    sessionId: '{1}'
+}}).then(function (result) {{
+alert(JSON.stringify(result))
+    console.log(result.error.message)
+}});
+</script>", publishableKey, sessionId);
+            return html;
+        }
+
+        private PaymentStatus ConvertStatus(string status)
+        {
+            switch (status)
+            {
+                case lib.Events.CheckoutSessionCompleted:
+                    return PaymentStatus.Paid;
+                case lib.Events.PaymentIntentPaymentFailed:
+                    return PaymentStatus.Rejected;
+                case lib.Events.PaymentIntentCanceled:
+                    return PaymentStatus.Cancelled;
+                case lib.Events.PaymentIntentCreated:
+                    return PaymentStatus.Pending;
+                default:
+                    return PaymentStatus.NotAvailable;
             }
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            PaymentStatusResponse result = new PaymentStatusResponse();
-            return result;
+            throw new NotSupportedException("Stripe dose not implement API to check status");
         }
     }
 }
