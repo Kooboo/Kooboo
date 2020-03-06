@@ -27,7 +27,7 @@ export default class EditColorItem extends BaseMenuItem {
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let { element, koobooId } = context.lastSelectedDomEventArgs;
-    this.setReadonly(isDirty(element));
+    this.setVisiable(!isDirty(element));
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (!koobooId) return this.setVisiable(false);
   }
