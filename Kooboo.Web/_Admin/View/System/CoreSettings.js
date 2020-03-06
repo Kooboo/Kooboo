@@ -57,7 +57,7 @@ $(function() {
         Kooboo.CoreSetting.get({
           name: name
         }).then(function(res) {
-          self.fields = Kooboo.objToArr(res.model, "name", "value");
+          self.fields = res.model
           self.showModal = true;
           self.getList();
         });
