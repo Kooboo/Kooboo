@@ -48,7 +48,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                     Value = CurrencyDecimalPlaceConverter.ToDecimalPlaceString(request.Currency, request.TotalAmount)
                 },
                 Description = request.Description,
-                RedirectUrl = string.IsNullOrWhiteSpace(request.ReturnUrl) ? request.ReturnUrl : Setting.RedirectUrl,
+                RedirectUrl = !string.IsNullOrWhiteSpace(request.ReturnUrl) ? request.ReturnUrl : Setting.RedirectUrl,
                 WebhookUrl = callbackUrl,
                 Metadata = request.Id.ToString()
             };
