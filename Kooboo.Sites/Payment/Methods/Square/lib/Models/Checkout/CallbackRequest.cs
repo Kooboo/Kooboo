@@ -54,5 +54,8 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout
 
         [JsonProperty("updated_at")]
         public DateTimeOffset UpdatedAt { get; set; }
+
+        [JsonProperty("reference_id")]
+        public string ReferenceId { get; set; }
     }
 }
