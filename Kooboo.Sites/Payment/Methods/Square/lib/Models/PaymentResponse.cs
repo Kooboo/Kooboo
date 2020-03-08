@@ -26,6 +26,9 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models
 
             [JsonProperty("amount_money")]
             public Models.Money AmountMoney { get; set; }
+
+            [JsonProperty(PropertyName = "order_id")]
+            public string OrderID { get; set; }
         }
     }
 }

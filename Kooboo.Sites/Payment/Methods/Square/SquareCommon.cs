@@ -14,9 +14,23 @@ namespace Kooboo.Sites.Payment.Methods.Square
             var body = context.Request.Body;
             var data = JsonHelper.Deserialize<CallbackRequest>(body);
 
-            // to refactor charge order ID to match webhook order_id
-            var orderID = "";  // get form somewhere
-            if (data.Data.Object.Payment.OrderId != orderID)
+            if (data.Data == null || data.Data.Object == null || data.Data.Object.Payment == null)
+            {
+                return null;
+            }
+
+            PaymentRequest paymentRequest;
+            Guid paymentRequestId;
+            if (data.Data.Object.Payment.ReferenceId != null && Guid.TryParse(data.Data.Object.Payment.ReferenceId, out paymentRequestId))
+            {
+                paymentRequest = PaymentManager.GetRequest(paymentRequestId, context);
+            }
+            else
+            {
+                paymentRequest = PaymentManager.GetRequestByReferece(data.Data.Object.Payment.OrderId, context);
+            }
+
+            if (paymentRequest == null)
             {
                 return null;
             }
@@ -34,9 +48,7 @@ namespace Kooboo.Sites.Payment.Methods.Square
 
             var result = new PaymentCallback
             {
-                // to do  该字段不是guid，无法转换赋值
-                //  "merchant_id": "6SSW7HV8K2ST5",
-                //RequestId = data.MerchantID,
+                RequestId = paymentRequest.Id,
                 RawData = body,
                 Status = status
             };
