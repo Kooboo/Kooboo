@@ -50,7 +50,7 @@ var resForm = k.payment.braintreeForm.charge(charge);
 
             if (string.IsNullOrEmpty(token))
                 return null;
-            res.html = GenerateHtml(token, request.TotalAmount, request.Id);
+            res.html = GenerateHtml(token, request.TotalAmount, request.Id, request.ReturnUrl);
 
             return res;
         }
@@ -191,7 +191,7 @@ var resForm = k.payment.braintreeForm.charge(charge);
             }
         }
 
-        private string GenerateHtml(string clientToken, decimal amount, Guid orderId)
+        private string GenerateHtml(string clientToken, decimal amount, Guid orderId, string returnUrl)
         {
             var createTransactionUrl = PaymentHelper.GetCallbackUrl(this, nameof(CreateTransaction), this.Context);
             return @"<script src='https://js.braintreegateway.com/web/dropin/1.22.1/js/dropin.js'></script>
@@ -264,7 +264,7 @@ braintree.dropin.create({
                       orderId:'" + orderId + @"'
                  },
                  function(data)
-                 {" + Redirect() + @"
+                 {" + Redirect(returnUrl) + @"
                  });
             });
         });
@@ -272,7 +272,7 @@ braintree.dropin.create({
 </script>";
         }
 
-        public string Redirect()
+        public string Redirect(string returnUrl)
         {
             string html = "";
             if (!string.IsNullOrEmpty(Setting.FailureRedirectURL))
@@ -281,10 +281,10 @@ braintree.dropin.create({
                        { window.location.replace('" + Setting.FailureRedirectURL + @"'); } ;";
             }
 
-            if (!string.IsNullOrEmpty(Setting.SucceedRedirectURL))
+            if (!string.IsNullOrEmpty(Setting.SucceedRedirectURL) || !string.IsNullOrEmpty(returnUrl))
             {
                 html += @"if (!data)
-                       { window.location.replace('" + Setting.SucceedRedirectURL + @"'); } ;";
+                       { window.location.replace('" + returnUrl ?? Setting.SucceedRedirectURL + @"'); } ;";
             }
 
             return html;

@@ -52,9 +52,9 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public IPaymentResponse Charge(PaymentRequest request)
         {
             request.Additional.TryGetValue("quantity", out var quantity);
-            request.Additional.TryGetValue("cancelUrl", out var cancelUrl);
-            request.Additional.TryGetValue("successUrl", out var successUrl);
             request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
+            string cancelUrl = string.IsNullOrEmpty(request.CancelUrl) ? Setting.CancelUrl : request.CancelUrl;
+            string successUrl = string.IsNullOrEmpty(request.ReturnUrl) ? Setting.SuccessUrl : request.ReturnUrl;
 
             var lineItems = new List<SessionLineItemOptions>
             {
@@ -81,8 +81,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
             var options = new SessionCreateOptions
             {
-                SuccessUrl = (string)successUrl,
-                CancelUrl = (string)cancelUrl,
+                SuccessUrl = successUrl,
+                CancelUrl = cancelUrl,
                 LineItems = lineItems,
                 PaymentMethodTypes = paymentMethodTypesList,
                 ClientReferenceId = request.Id.ToString()
