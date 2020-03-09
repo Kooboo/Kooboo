@@ -257,6 +257,65 @@ Vue.directive("kb-collapsein", {
 (function() {
   var languageManager = Kooboo.LanguageManager;
 
+  var doScope = function(html) {
+    var str = `.mce-content-body`;
+    var scoper = function(css, prefix) {
+      var re = new RegExp("([^\r\n,{}]+)(,(?=[^}]*{)|s*{)", "g");
+      css = css.replace(re, function(g0, g1, g2) {
+        if (
+          g1.match(/^\s*(@media|@.*keyframes|to|from|@font-face|1?[0-9]?[0-9])/)
+        ) {
+          return g1 + g2;
+        }
+
+        if (g1.match(/:scope/)) {
+          g1 = g1.replace(/([^\s]*):scope/, function(h0, h1) {
+            if (h1 === "") {
+              return "> *";
+            } else {
+              return "> " + h1;
+            }
+          });
+        }
+
+        g1 = g1.replace(/^(\s*)/, "$1" + prefix + " ");
+
+        return g1 + g2;
+      });
+
+      return css;
+    };
+
+    // /* */ | <!-- --> || //
+    let commentRegx = /(\/\*(\s|.)*?\*\/|<!--(\s|.)*?-->|\/\/.*)/g;
+    let StyleTagRegx = /<style(([\s\S])*?)<\/style>/g;
+    var commentList = html.match(commentRegx);
+    var noCommentStr = html.replace(commentRegx, "/*KB_COMMENT_HOLDER*/");
+    var scopedStr = noCommentStr.replace(StyleTagRegx, function($0) {
+      var index1 = $0.indexOf(">") + 1;
+      var index2 = $0.lastIndexOf("<");
+      var pre = $0.slice(0, index1);
+      var suf = $0.slice(index2);
+      var styleContent = $0.slice(index1, index2);
+      var scopedContent = scoper(styleContent, str);
+      return pre + scopedContent + suf;
+    });
+    if (commentList && commentList.forEach && commentList.length > 0) {
+      commentList.forEach(function(item) {
+        scopedStr = scopedStr.replace(/\/\*KB_COMMENT_HOLDER\*\//, item);
+      });
+    }
+
+    return scopedStr;
+  };
+  var unScope = function(html) {
+    var str = `.mce-content-body`;
+    html = html.replace(str, "");
+    return html;
+  };
+  //source.html has useful
+  window.Kooboo_scoper = { doScope, unScope };
+
   var SITE_ID = Kooboo.getQueryString("SiteId"),
     SITE_ID_STRING = "?SiteId=" + SITE_ID;
   Vue.directive("kb-richeditor", {
@@ -305,6 +364,7 @@ Vue.directive("kb-collapsein", {
               } else {
                 content = editor.getContent();
               }
+              content = unScope(content);
               binding.value.value = content;
               element.value = content;
               Kooboo.trigger(element, "input");
@@ -415,7 +475,9 @@ Vue.directive("kb-collapsein", {
       // Ensure the valueAccessor's value has been applied to the underlying element, before instanciating the tinymce plugin
       if (binding.value.value || element.value) {
         var _tempParent = $("<div>");
-        $(_tempParent).append(binding.value.value || element.value);
+        let codeContent = binding.value.value || element.value;
+        codeContent = doScope(codeContent);
+        $(_tempParent).append(codeContent);
         var imgDoms = $(_tempParent).find("img");
         imgDoms.each(function(idx, el) {
           $(el).attr("src", $(el).attr("src") + SITE_ID_STRING);

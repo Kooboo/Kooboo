@@ -15,6 +15,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
     {
         readonly RelationalTable<TExecuter, TSchema, TConnection> _table;
 
+        public override string Source => _table.Database.Source;
+
         RelationalDynamicTableObject(IDictionary<string, object> orgObj, RelationalTable<TExecuter, TSchema, TConnection> table)
         {
             this.obj = orgObj;
@@ -60,6 +62,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
             return null;
 
+        }
+
+        public override IDictionary<string, string> GetTraceInfo()
+        {
+            return new Dictionary<string, string>
+            {
+                { "id", obj["_id"].ToString() },
+                { "table", _table.Name }
+            };
         }
     }
 }

@@ -1,12 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Dom;
-using Kooboo.Sites.Render.RenderTask;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render.Evaluators
 {
@@ -67,32 +65,42 @@ namespace Kooboo.Sites.Render.Evaluators
                 element.removeAttribute("k-repeat-self");
             }
 
-            var para = PrasePara(repeatitems); 
+            var para = PrasePara(repeatitems);
 
-            if(para == null)
+            if (para == null)
             {
-                return null; 
+                return null;
             }
 
-            ForRenderTask task = new ForRenderTask(para.DataKey, para.LowBound, para.HighBound, repeatself, element, options); 
-             
+            ForRenderTask task = new ForRenderTask(para.DataKey, para.LowBound, para.HighBound, repeatself, element, options);
+
             var response = new EvaluatorResponse();
-            List<IRenderTask> result = new List<IRenderTask>();
+            var result = new List<IRenderTask>();
             result.Add(task);
             response.ContentTask = result;
             response.OmitTag = true;
             response.StopNextEvaluator = true;
 
+            if (options.RequireBindingInfo)
+            {
+                if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
+                var traceability = new RepeatTrace();
+                var bindingTask = new BindingRenderTask(traceability);
+                response.BindingTask.Add(bindingTask);
+                if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
+                response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
+            }
+
             return response;
 
         }
 
-        private  ForPara PrasePara(string input)
+        private ForPara PrasePara(string input)
         {
-            string[] items = input.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries); 
-            if (items == null || items.Count() <2)
+            string[] items = input.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            if (items == null || items.Count() < 2)
             {
-                return null; 
+                return null;
             }
 
             if (items.Count() == 2)
@@ -100,16 +108,16 @@ namespace Kooboo.Sites.Render.Evaluators
                 ForPara para = new ForPara();
                 para.LowBound = items[0].Trim();
                 para.HighBound = items[1].Trim();
-                return para; 
+                return para;
             }
             else
             {
                 ForPara para = new ForPara();
                 para.LowBound = items[0].Trim();
                 para.HighBound = items[1].Trim();
-                para.DataKey = items[2].Trim(); 
+                para.DataKey = items[2].Trim();
                 return para;
-            } 
+            }
         }
 
         private class ForPara

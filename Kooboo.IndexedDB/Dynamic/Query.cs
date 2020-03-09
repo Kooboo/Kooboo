@@ -47,7 +47,14 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else
             {
-                throw new Exception("only  column are allowed in the where condition, consider adding the field into columns in order to search");
+                string message = "only column are allowed in the where condition, consider adding the field into columns in order to search, table: " + this.table.Name +", field: " + FieldOrPropertyName;
+                message += "\r\ncurrent fields:";
+                foreach (var f in this.table.ObjectConverter.Fields)
+                {
+                    message += f.FieldName;
+                }
+
+                throw new Exception(message);
             }
 
             item.Compare = comparer;
@@ -381,7 +388,7 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         public List<IDictionary<string, object>> Take(int count)
-        { 
+        {
             ExecutionPlan executionplan = QueryPraser.GetExecutionPlan(this);
 
             List<long> list = GetList(executionplan, count);
@@ -392,39 +399,39 @@ namespace Kooboo.IndexedDB.Dynamic
                 var record = this.table._getvalue(item);
                 listvalue.Add(record);
             }
-      
+
             if (!executionplan.RequireOrderBy)
             {
                 return listvalue;
             }
             else
             {
-                if (!string.IsNullOrEmpty(this.OrderByFieldName) && this.table.Setting.Columns.Any(o=>o.Name == this.OrderByFieldName))
+                if (!string.IsNullOrEmpty(this.OrderByFieldName) && this.table.Setting.Columns.Any(o => o.Name == this.OrderByFieldName))
                 {
-                    var col = this.table.Setting.Columns.First(o => o.Name == this.OrderByFieldName); 
+                    var col = this.table.Setting.Columns.First(o => o.Name == this.OrderByFieldName);
 
-                    if (col !=null)
+                    if (col != null)
                     {
-                         if (this.Ascending)
+                        if (this.Ascending)
                         {
-                          return  listvalue.OrderBy(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList(); 
+                            return listvalue.OrderBy(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList();
                         }
-                       else
+                        else
                         {
-                           return listvalue.OrderByDescending(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList(); 
+                            return listvalue.OrderByDescending(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList();
                         }
-                        
-                    }  
-                     
+
+                    }
+
                 }
-              
+
                 return listvalue.Skip(this.SkipCount).Take(count).ToList();
-            } 
-        } 
-  
+            }
+        }
+
         public List<T> Take<T>(int count)
         {
-            List<T> result = new List<T>(); 
+            List<T> result = new List<T>();
 
             var dictvalues = this.Take(count);
 
@@ -434,17 +441,17 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 var type = typeof(T);
                 var cls = Activator.CreateInstance<T>();
-                 
+
                 foreach (var item in dict)
                 {
                     Accessor.GetSetter(type, item.Key)?.Invoke(cls, item.Value);
                 }
 
-                result.Add(cls); 
-            } 
-            return result;  
+                result.Add(cls);
+            }
+            return result;
         }
-         
+
 
         private object GetValue(IDictionary<string, object> obj, string fieldName, Type datatype)
         {
@@ -540,7 +547,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     }
                     else
-                    { 
+                    {
 
                         if (skipped < this.SkipCount)
                         {
@@ -571,7 +578,7 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 int skipped = 0;
                 int taken = 0;
-                 
+
                 List<List<long>> rangelist = new List<List<long>>();
 
                 List<long> returnlist = new List<long>();
@@ -633,7 +640,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     if (executionplan.RequireOrderBy)
                     {
 
-                        returnlist.Add(item); 
+                        returnlist.Add(item);
                     }
                     else
                     {
@@ -654,7 +661,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
                     }
                 }
-                 
+
                 return returnlist;
             }
         }

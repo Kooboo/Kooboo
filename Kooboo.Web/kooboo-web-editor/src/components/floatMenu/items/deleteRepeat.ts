@@ -1,16 +1,17 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeatComment } from "../utils";
+import { getRepeatSourceComment } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
-import { OBJECT_TYPE } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
 import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export default class DeleteRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -26,33 +27,33 @@ export default class DeleteRepeatItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) return this.setVisiable(false);
-    if (!getRepeatComment(comments)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (isBody(element)) return this.setVisiable(false);
+    let { nodes, startNode } = getWrapDom(element, "repeatitem");
+    let comments = KoobooComment.getInnerComments(nodes);
+    if (!startNode || !getRepeatSourceComment(comments)) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let { nodes, startNode } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
-    if (!nodes || nodes.length == 0 || !startNode) return;
-
-    let comment = new KoobooComment(startNode);
-    let guid = comment.nameorid!;
-    let guidComment = getGuidComment(guid);
+    let { nodes, startNode } = getWrapDom(element, "repeatitem");
+    let comments = KoobooComment.getInnerComments(nodes);
+    let repeatSourceComment = getRepeatSourceComment(comments)!;
+    let guidComment = getGuidComment(repeatSourceComment.id);
     let temp = createDiv();
     startNode!.parentNode!.insertBefore(temp, startNode!);
     nodes.forEach(i => temp.appendChild(i));
     let oldValue = temp.innerHTML;
     temp.outerHTML = guidComment;
-
     let units = [new DeleteRepeatUnit(oldValue)];
-    let logs = [ContentLog.createDelete(guid)];
-
-    let operation = new operationRecord(units, logs, guid);
+    let log = new Log([...repeatSourceComment.infos, kvInfo.delete]);
+    let operation = new operationRecord(units, [log], repeatSourceComment.id);
     context.operationManager.add(operation);
+    emitHoverEvent(document.body);
+    emitSelectedEvent();
   }
 }

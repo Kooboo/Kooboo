@@ -3,7 +3,7 @@ import { colorProps, ColorProp } from "./colorProps";
 import { sortStylePriority } from "./stylePriority";
 import { colorEnum } from "./colorEnum";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getViewComment } from "@/components/floatMenu/utils";
+import { getEditableComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 
@@ -36,6 +36,7 @@ export function getRules(style: CSSStyleSheet, href?: string | null) {
         rules.push(...getRules(rule.styleSheet, rule.styleSheet.href));
       }
     }
+    // eslint-disable-next-line no-empty
   } catch (error) {}
 
   return rules;
@@ -47,7 +48,7 @@ export function getCssRules() {
   for (const style of getStyles()) {
     if (!(style.ownerNode instanceof HTMLElement)) continue;
     let comments = KoobooComment.getComments(style.ownerNode);
-    let comment = getViewComment(comments);
+    let comment = getEditableComment(comments);
     if (!comment) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");
@@ -59,8 +60,6 @@ export function getCssRules() {
         koobooId,
         url: url,
         cssRule,
-        nameorid: comment.nameorid,
-        objecttype: comment.objecttype,
         mediaRuleList
       });
     }
@@ -73,8 +72,6 @@ export interface CssRule {
   koobooId: string | null;
   url: string | undefined;
   cssRule: CSSStyleRule;
-  nameorid: string | undefined;
-  objecttype: string | undefined;
   mediaRuleList: string | undefined;
 }
 
@@ -88,8 +85,6 @@ export interface CssColor {
   inline: boolean;
   rawSelector: string;
   targetSelector: string;
-  nameorid: string | undefined;
-  objecttype: string | undefined;
   url: string | null;
   koobooId: string | null;
   pseudo: string | null;
@@ -160,8 +155,6 @@ export function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[
       koobooId: "",
       rawSelector: "",
       targetSelector: "",
-      nameorid: undefined,
-      objecttype: undefined,
       url: "",
       value: i.value,
       pseudo: "",
@@ -189,8 +182,6 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
           value: color.value,
           pseudo: matched.pseudo,
           cssStyleRule: i.cssRule,
-          nameorid: i.nameorid,
-          objecttype: i.objecttype,
           mediaRuleList: i.mediaRuleList!
         });
       }
@@ -222,6 +213,7 @@ export function isOneColor(color: string): boolean {
 
 export function splitPseudo(selector: string) {
   for (const i of pseudoes) {
+    // eslint-disable-next-line no-useless-escape
     let pseudo = selector.match(`:+${i}\s*$`);
     if (!pseudo) continue;
     return {
@@ -248,6 +240,7 @@ export function matchSelector(el: HTMLElement, selector: string) {
           pseudo: ""
         });
       }
+      // eslint-disable-next-line no-empty
     } catch (error) {}
   }
   return matcheds;
@@ -272,8 +265,6 @@ export function addDefaultColor(groups: CssColorGroup[], prop: string, value: st
           targetSelector: "",
           url: "",
           value: value,
-          nameorid: undefined,
-          objecttype: undefined,
           mediaRuleList: null
         }
       ]

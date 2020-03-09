@@ -1,18 +1,20 @@
 import { getAllElement, getImportant, clearCssImageWarp } from "@/dom/utils";
 import { setGuid } from "@/kooboo/utils";
-import { getViewComment } from "../floatMenu/utils";
 import { KOOBOO_ID, BACKGROUND_IMAGE_START } from "@/common/constants";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
-import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
-import { getCssRules, CssRule, matchSelector } from "@/dom/style";
+import { getCssRules, CssRule, matchSelector, CssColor } from "@/dom/style";
 import { BgImageUnit } from "@/operation/recordUnits/bgImageUnit";
+import { getEditableComment } from "../floatMenu/utils";
+import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
+import { sortStylePriority } from "@/dom/stylePriority";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();
@@ -24,15 +26,29 @@ export function createStyleImagePanel() {
     let style = getComputedStyle(element);
     if (!style.backgroundImage || style.backgroundImage == "none") continue;
     let matchedRules = getRule(element, rules);
-    if (matchedRules.length > 0) {
-      debugger;
-      for (const matchedRule of matchedRules) {
-        let styleImagePreview = createStyleImagePreview(appendedRule, element, matchedRule);
-        if (styleImagePreview) contiainer.appendChild(styleImagePreview);
-      }
-    } else if (element.style.backgroundImage) {
+    let inlineImportant = element.style.getPropertyPriority("background-image");
+    let rule = matchedRules.find(f => f.rule.cssRule.style.getPropertyPriority("background-image"));
+    if (element.style.backgroundImage && (inlineImportant || !rule)) {
       let inlineImagePreview = createInlineImagePreview(element, style, rules);
       if (inlineImagePreview) contiainer.appendChild(inlineImagePreview);
+    } else if (matchedRules.length > 0) {
+      let cssColors = matchedRules.map(m => {
+        return {
+          cssStyleRule: m.rule.cssRule,
+          inline: false,
+          styleSequence: m.rule.styleSequence,
+          rawSelector: m.rule.cssRule.selectorText,
+          targetSelector: m.selector,
+          important: !!m.rule.cssRule.style.getPropertyPriority("background-image"),
+          koobooId: m.rule.koobooId,
+          mediaRuleList: m.rule.mediaRuleList,
+          pseudo: m.pseudo
+        } as CssColor;
+      });
+      let topRule = sortStylePriority(cssColors).pop()!.cssStyleRule;
+      rule = matchedRules.find(f => f.rule.cssRule == topRule!)!;
+      let styleImagePreview = createStyleImagePreview(appendedRule, element, rule);
+      if (styleImagePreview) contiainer.appendChild(styleImagePreview);
     }
   }
 
@@ -64,7 +80,7 @@ interface matchedRule {
 function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclaration, rules: CssRule[]) {
   let koobooId = element.getAttribute(KOOBOO_ID);
   let comments = KoobooComment.getComments(element);
-  let comment = getViewComment(comments);
+  let comment = getEditableComment(comments)!;
   if (!comment || !koobooId) return;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
@@ -80,10 +96,9 @@ function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclarati
       setImage(path);
       let guid = setGuid(element);
       let unit = new AttributeUnit(startContent!, "style");
-      let log: StyleLog;
       let value = element.style.backgroundImage!.replace(/"/g, "'");
-      log = StyleLog.createUpdate(comment!.nameorid!, comment!.objecttype!, value, "background-image", koobooId!, !!important);
-      let record = new operationRecord([unit], [log], guid);
+      let log = [...comment.infos, kvInfo.value(value), kvInfo.property("background-image"), kvInfo.koobooId(koobooId), kvInfo.important(important)];
+      let record = new operationRecord([unit], [new Log(log)], guid);
       context.operationManager.add(record);
     });
   };
@@ -96,6 +111,7 @@ function createStyleImagePreview(appendedRule: matchedRule[], element: HTMLEleme
   let rule = matchedRule.rule;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
+  var comments = KoobooComment.getComments(element);
   let src = clearCssImageWarp(rule.cssRule.style.backgroundImage!);
   if (!src) return;
   setImage(src);
@@ -109,18 +125,17 @@ function createStyleImagePreview(appendedRule: matchedRule[], element: HTMLEleme
       let guid = setGuid(element);
       let unit = new BgImageUnit(startContent!, rule.cssRule.style);
       let value = rule.cssRule.style.backgroundImage!.replace(/"/g, "'");
-      var log = StyleLog.createCssUpdate(
-        value,
-        "background-image",
-        rule.cssRule.selectorText,
-        rule.url ? "" : rule.koobooId,
-        rule.url!,
-        !!important,
-        rule.nameorid!,
-        rule.objecttype!,
-        rule.mediaRuleList!
-      );
-      let record = new operationRecord([unit], [log], guid);
+      let log = [
+        ...comments.find(f => f.scope)!.infos,
+        kvInfo.value(value),
+        kvInfo.property("background-image"),
+        new kvInfo("url", rule.url!),
+        new kvInfo("selector", rule.cssRule.selectorText),
+        kvInfo.koobooId(rule.koobooId),
+        kvInfo.important(important),
+        kvInfo.mediaRuleList(rule.mediaRuleList!)
+      ];
+      let record = new operationRecord([unit], [new Log(log)], guid);
       context.operationManager.add(record);
     });
   };

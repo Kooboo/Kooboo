@@ -3,35 +3,37 @@ import { setGuid } from "@/kooboo/utils";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import context from "@/common/context";
 import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getAttributeComment } from "../floatMenu/utils";
 import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
+import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export function createContentImagePanel() {
   let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
-      let comments = KoobooComment.getComments(element);
-      let comment = getAttributeComment(comments, "src");
-      if (!comment || !comment.fieldname) continue;
+      let aroundComments = KoobooComment.getAroundComments(element);
+      if (!aroundComments.find(f => f.getValue("attribute") == "src" && f.source != "none")) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
       setImagePreview(imagePreview, element);
       setImage(element.src);
       imagePreview.onclick = () => {
-        let startContent = element.src;
+        let comments = KoobooComment.getAroundComments(element);
+        let comment = comments.find(f => f.getValue("attribute") == "src")!;
+        let img = element as HTMLImageElement;
+        let startContent = img.getAttribute("src")!;
         pickImg(path => {
-          element.src = path;
+          img.src = path;
           setImage(path);
-          let guid = setGuid(element);
-          let value = element.src;
+          let guid = setGuid(img);
+          let value = img.getAttribute("src")!;
           let unit = new AttributeUnit(startContent, "src");
-          let log = ContentLog.createUpdate(comment!.nameorid!, comment!.fieldname!, value);
-          let record = new operationRecord([unit], [log], guid);
+          let log = [...comment.infos, kvInfo.value(value)];
+          let record = new operationRecord([unit], [new Log(log)], guid);
           context.operationManager.add(record);
         });
       };

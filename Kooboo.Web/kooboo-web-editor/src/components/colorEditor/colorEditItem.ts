@@ -1,10 +1,9 @@
 import { CssColorGroup, CssColor } from "@/dom/style";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv, createCheckboxInput } from "@/dom/element";
-import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createColorPicker } from "../common/colorPicker";
-import { Log } from "@/operation/recordLogs/Log";
 import { TEXT } from "@/common/lang";
+import { kvInfo } from "@/common/kvInfo";
 
 export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, comment: KoobooComment, koobooId: string) {
   let container = createDiv();
@@ -17,9 +16,9 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
   colorTextSpan.style.width = "160px";
 
   // 内联日志
-  let inlineCssLog: StyleLog | undefined;
+  let inlineCssLog: kvInfo[] | undefined;
   // 类日志
-  let classCssLog: StyleLog | undefined;
+  let classCssLog: kvInfo[] | undefined;
 
   // 最高优先级cssColor
   let firstCssColor = colorGroup.cssColors[0];
@@ -37,20 +36,18 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
     if (isGlobalUpdate) {
       if (!classCssColor) return;
       let value = updateClassCss(classCssColor, s);
-      classCssLog = StyleLog.createCssUpdate(
-        value,
-        classCssColor.prop.prop,
-        classCssColor.rawSelector,
-        classCssColor.url ? "" : classCssColor.koobooId,
-        classCssColor.url!,
-        !!classCssColor.newImportant,
-        classCssColor.nameorid!,
-        classCssColor.objecttype!,
-        classCssColor.mediaRuleList
-      );
+      classCssLog = [
+        kvInfo.value(value),
+        kvInfo.property(classCssColor.prop.prop),
+        new kvInfo("selector", classCssColor.rawSelector),
+        kvInfo.koobooId(classCssColor.url ? "" : classCssColor.koobooId),
+        new kvInfo("url", classCssColor.url!),
+        kvInfo.important(classCssColor.newImportant!),
+        kvInfo.mediaRuleList(classCssColor.mediaRuleList)
+      ];
     } else {
       let { important, value } = updateInlineCss(updateColor, s, el);
-      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, value, updateColor.prop.prop, koobooId, !!important);
+      inlineCssLog = [kvInfo.value(value), kvInfo.property(updateColor.prop.prop), kvInfo.koobooId(koobooId), kvInfo.important(important)];
     }
   });
   picker.style.width = "200px";
@@ -67,18 +64,16 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
       value = updateColor.prop.getColor(value);
       value = updateClassCss(classCssColor, value);
       el.style.removeProperty(updateColor.prop.prop);
-      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, "", updateColor.prop.prop, koobooId);
-      classCssLog = StyleLog.createCssUpdate(
-        value,
-        classCssColor.prop.prop,
-        classCssColor.rawSelector,
-        classCssColor.url ? "" : classCssColor.koobooId,
-        classCssColor.url!,
-        !!classCssColor.newImportant,
-        classCssColor.nameorid!,
-        classCssColor.objecttype!,
-        classCssColor.mediaRuleList
-      );
+      inlineCssLog = [kvInfo.value(""), kvInfo.property(updateColor.prop.prop), kvInfo.koobooId(koobooId)];
+      classCssLog = [
+        kvInfo.value(value),
+        kvInfo.property(classCssColor.prop.prop),
+        new kvInfo("selector", classCssColor.rawSelector),
+        kvInfo.koobooId(classCssColor.url ? "" : classCssColor.koobooId),
+        new kvInfo("url", classCssColor.url!),
+        kvInfo.important(classCssColor.newImportant!),
+        kvInfo.mediaRuleList(classCssColor.mediaRuleList)
+      ];
       isGlobalUpdate = true;
     } else {
       let important = classCssColor.cssStyleRule!.style.getPropertyPriority(classCssColor.prop.prop);
@@ -93,7 +88,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
       classCssColor.newImportant = undefined;
 
       classCssLog = undefined;
-      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, value, updateColor.prop.prop, koobooId, !!important);
+      inlineCssLog = [kvInfo.value(value), kvInfo.property(updateColor.prop.prop), kvInfo.koobooId(koobooId), kvInfo.important(important)];
       isGlobalUpdate = false;
     }
   };
@@ -105,7 +100,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
   container.appendChild(checkbox);
 
   const getLogs = () => {
-    let logs: Log[] = [];
+    let logs: kvInfo[][] = [];
     if (inlineCssLog) logs.push(inlineCssLog);
     if (classCssLog) logs.push(classCssLog);
     return logs;

@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isLink } from "@/dom/utils";
-import { getAttributeComment, updateAttributeLink } from "../utils";
+import { updateAttributeLink } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -20,20 +20,17 @@ export default class EditRepeatLinkItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!isLink(args.element)) return this.setVisiable(false);
-    let comment = getAttributeComment(comments, "href");
-    if (!comment || !comment.fieldname) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    let aroundComments = KoobooComment.getAroundComments(element);
+    if (!isLink(element)) return this.setVisiable(false);
+    if (!aroundComments.find(f => f.attribute == "href" && f.source != "none")) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-
-    let comments = KoobooComment.getComments(args.element);
-    let comment = getAttributeComment(comments, "href");
-    updateAttributeLink(args.element, args.koobooId!, comment!);
+    updateAttributeLink(element);
   }
 }

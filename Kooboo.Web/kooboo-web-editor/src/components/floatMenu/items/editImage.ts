@@ -1,8 +1,8 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment, getViewComment, updateAttributeImage, updateDomImage, getAttributeComment } from "../utils";
-import { isDynamicContent, getCleanParent, isDirty } from "@/kooboo/utils";
+import { updateDomImage, getEditableComment } from "../utils";
+import { getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -23,24 +23,18 @@ export default class EditImageItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) return this.setVisiable(false);
-    if (getAttributeComment(comments)) return this.setVisiable(false);
-    if (!getViewComment(comments)) return this.setVisiable(false);
-    if (isDynamicContent(args.element)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    if (!isImg(element)) return this.setVisiable(false);
+    let aroundComments = KoobooComment.getAroundComments(element);
+    if (aroundComments.find(f => f.getValue("attribute") == "src")) return this.setVisiable(false);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
+    let el = getUnpollutedEl(element);
+    if (!el || isDynamicContent(el)) return this.setVisiable(false);
   }
 
   click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-
-    let comments = KoobooComment.getComments(args.element);
-    let el = args.element as HTMLImageElement;
-    let { koobooId, parent } = getCleanParent(args.element);
-    if (isDirty(args.element) && parent) {
-      updateDomImage(el, parent, koobooId!, getViewComment(comments)!);
-    } else {
-      updateAttributeImage(el, args.koobooId!, getEditComment(comments)!);
-    }
+    updateDomImage(element as HTMLImageElement);
   }
 }

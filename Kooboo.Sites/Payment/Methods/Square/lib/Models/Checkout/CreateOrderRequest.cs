@@ -27,7 +27,7 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout
         /// This value cannot exceed 40 characters.
         /// </summary>
         [JsonProperty("reference_id")]
-        public string ReferenceId { get; }
+        public string ReferenceId { get; set; }
 
         /// <summary>
         /// __Deprecated__: Please set the line_items on the nested [order](#type-order) field

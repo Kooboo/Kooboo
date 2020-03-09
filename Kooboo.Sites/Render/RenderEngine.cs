@@ -3,12 +3,13 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Kooboo.Sites.Service;
-using System; 
+using System;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 
 namespace Kooboo.Sites.Render
 {
     public static class RenderEngine
-    { 
+    {
 
         public static async Task<string> RenderPageAsync(FrontContext context)
         {
@@ -20,7 +21,7 @@ namespace Kooboo.Sites.Render
             string result = string.Empty;
 
             List<IRenderTask> RenderPlan = null;
-            
+
             if (context.RenderContext.Request.Channel != Data.Context.RequestChannel.InlineDesign)
             {
                 RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, GetPageOption(context)));
@@ -31,12 +32,14 @@ namespace Kooboo.Sites.Render
             {
                 string html = DomService.ApplyKoobooId(context.Page.Body);
                 RenderPlan = RenderEvaluator.Evaluate(html, GetPageOption(context));
-                RenderPlan.Insert(0, new BindingObjectRenderTask() { ObjectType = "page", NameOrId = context.Page.Id.ToString() });
-
+                var traceability = new ComponentTrace(context.Page.Id.ToString(), "page");
+                var bindingTask = new BindingRenderTask(traceability, new Dictionary<string, string> { { "scope", "true" } });
+                RenderPlan.Insert(0, bindingTask);
+                RenderPlan.Add(bindingTask.BindingEndRenderTask);
                 result = RenderHelper.Render(RenderPlan, context.RenderContext);
-                result = DomService.EnsureDocType(result); 
+                result = DomService.EnsureDocType(result);
             }
-            
+
 
             if (context.Page.Type == Models.PageType.RichText)
             {
@@ -79,7 +82,7 @@ namespace Kooboo.Sites.Render
             else
             {
                 renderoption.RenderHeader = false;
-            } 
+            }
 
             //renderoption.RenderHeader = context.Page.Headers.HasValue();     
 

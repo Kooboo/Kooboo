@@ -3,13 +3,14 @@
 using Kooboo.Dom;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
+using System.Text.RegularExpressions;
 
 namespace Kooboo.Sites.SiteTransfer
 {
     public class ScriptAnalyzer : ITransferAnalyzer
     {
         public void Execute(AnalyzerContext Context)
-        { 
+        {
             HTMLCollection scripts = Context.Dom.getElementsByTagName("script");
 
             foreach (var item in scripts.item)
@@ -30,7 +31,7 @@ namespace Kooboo.Sites.SiteTransfer
 
                     if (issamehost)
                     {
-                      
+
                         string relativeurl = UrlHelper.RelativePath(fullurl, issamehost);
                         relativeurl = TransferHelper.TrimQuestionMark(relativeurl);
 
@@ -54,17 +55,19 @@ namespace Kooboo.Sites.SiteTransfer
                             ConstType = ConstObjectType.Script,
                             OwnerObjectId = Context.ObjectId
                         });
-                    }  
+                    }
                 }
                 else
                 {
                     ///<script>if (document.location.protocol != "https:") {document.location = document.URL.replace(/^http:/i, "https:");}</script>
 
-                    string text = item.InnerHtml; 
+                    string text = item.InnerHtml;
                     if (!string.IsNullOrWhiteSpace(text) && text.Length < 200)
                     {
-                        var lower = text.ToLower(); 
-                        if (lower.Contains("document.location.protocol") && lower.Contains("document.url.replace") && lower.Contains("https"))
+                        var lower = text.ToLower();
+                        var hasProtocolOperator = lower.Contains("document.location.protocol") && lower.Contains("document.url.replace") && lower.Contains("https");
+                        var hasLocationOperator = Regex.IsMatch(lower, "window.top.location\\s*=");
+                        if (hasProtocolOperator || hasLocationOperator)
                         {
 
                             Context.Changes.Add(new AnalyzerUpdate()

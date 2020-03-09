@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
             if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return "DOUBLE";
             if (type == null) return "NULL";
             if (type == typeof(bool)) return "TINYINT";
-            throw new NotSupportedException();
+            return "TEXT";
         }
     }
 }

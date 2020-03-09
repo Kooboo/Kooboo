@@ -101,7 +101,7 @@ namespace Kooboo.Sites.Payment
 
             throw new Exception(MethodName + " missing setting infomatoin");
         }
-         
+
         [Obsolete]
         public static IPaymentResponse MakePayment(PaymentRequest request, RenderContext context)
         {
@@ -139,7 +139,7 @@ namespace Kooboo.Sites.Payment
             //return payment;
             return null;
         }
-         
+
         public static void ValidateRequest(IPaymentMethod paymentMethod, PaymentRequest request, RenderContext context)
         {
 
@@ -185,7 +185,7 @@ namespace Kooboo.Sites.Payment
                 item.Process(callback, context);
             }
         }
-         
+
         public static PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
         {
             if (context.WebSite != null)
@@ -199,13 +199,13 @@ namespace Kooboo.Sites.Payment
                 {
                     return result;
                 }
-            } 
+            }
             return null;
         }
-          
+
         public static PaymentStatusResponse EnquireStatus(PaymentRequest Request, RenderContext context)
         {
-            var paymentmethod =PaymentManager.GetMethod(Request.PaymentMethod, context);
+            var paymentmethod = PaymentManager.GetMethod(Request.PaymentMethod, context);
             if (paymentmethod != null)
             {
                 paymentmethod.Context = context;
@@ -217,6 +217,34 @@ namespace Kooboo.Sites.Payment
             return new PaymentStatusResponse() { Message = "" };
         }
 
+        public static void UpdateRequest(PaymentRequest request, RenderContext context)
+        {
+            if (context.WebSite != null)
+            {
+                var sitedb = context.WebSite.SiteDb();
+                var repo = sitedb.GetSiteRepository<Repository.PaymentRequestRepository>();
+                repo.AddOrUpdate(request);
+            }
+        }
+
+        public static PaymentRequest GetRequestByReferece(string ReferenceId, RenderContext context)
+        {
+            if (context.WebSite != null)
+            {
+                var sitedb = context.WebSite.SiteDb();
+                var repo = sitedb.GetSiteRepository<Repository.PaymentRequestRepository>();
+
+                var hash = Lib.Security.Hash.ComputeHashGuid(ReferenceId); 
+
+                var result = repo.Query.Where(o => o.ReferenceIdHash == hash).FirstOrDefault(); 
+
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
     }
 
 }

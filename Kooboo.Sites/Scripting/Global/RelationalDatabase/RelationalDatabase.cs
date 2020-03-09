@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public class RelationalDatabase<TExecuter, TSchema, TConnection> : IDatabase
+    public abstract class RelationalDatabase<TExecuter, TSchema, TConnection> : IDatabase
         where TExecuter : SqlExecuter<TConnection>
         where TSchema : RelationalSchema
         where TConnection : IDbConnection
@@ -21,6 +21,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             _tables = new ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>>();
             SqlExecuter = (TExecuter)Activator.CreateInstance(typeof(TExecuter), connectionString);
         }
+
+        public abstract string Source { get; }
 
         [KIgnore]
         public SqlExecuter<TConnection> SqlExecuter { get; }

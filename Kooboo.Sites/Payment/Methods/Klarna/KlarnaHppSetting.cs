@@ -7,8 +7,7 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
 {
     public class KlarnaHppSetting : IPaymentSetting
     {
-        private const string name = "KlarnaHppPayment";
-        public string Name => name;
+        public string Name => "KlarnaHppPayment";
 
         public bool UseSandBox { get; set; }
 
@@ -21,9 +20,17 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
         public string EndpointOceania =>
             UseSandBox ? "api-oc.playground.klarna.com" : "api-oc.klarna.com";
 
-        public string UserName { get; set; }
+        public string UserNameEurope { get; set; }
 
-        public string Password { get; set; }
+        public string PasswordEurope { get; set; }
+
+        public string UserNameNorthAmerica { get; set; }
+
+        public string PasswordNorthAmerica { get; set; }
+
+        public string UserNameOceania { get; set; }
+
+        public string PasswordOceania { get; set; }
 
         /// <summary>
         /// Consumer will get redirected there after a successful authorization of payment for both KP and KCO. When using KP as Payment Provider, a place holder will be required to get the KP Authorization Token to place the order.
@@ -50,28 +57,24 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
         /// </summary>
         public string Error { get; set; }
 
-        // https://developers.klarna.com/documentation/hpp/api/create-session/#merchants-urls
-        public MerchantUrls GetGetMerchantUrls(string callbackUrl, Guid requestId)
-        {
-            return new MerchantUrls
-            {
-                Back = Back,
-                Cancel = Cancel,
-                Error = Error,
-                Failure = Failure,
-                StatusUpdate = UrlHelper.AppendQueryString(callbackUrl, "secretToken", requestId.ToString()),
-                Success = Success
-            };
-        }
-
-        public string GetEndpoint(string country)
+        public Credentials GetCredential(string country)
         {
             switch (country.Trim().ToUpper())
             {
                 case "US":
-                    return EndpointNorthAmerica;
+                    return new Credentials
+                    {
+                        UserName = UserNameNorthAmerica,
+                        Password = PasswordNorthAmerica,
+                        Endpoint = EndpointNorthAmerica
+                    };
                 case "AU":
-                    return EndpointOceania;
+                    return new Credentials
+                    {
+                        UserName = UserNameOceania,
+                        Password = PasswordOceania,
+                        Endpoint = EndpointOceania
+                    };
                 case "GB":
                 case "UK":
                 case "CH":
@@ -84,8 +87,22 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
                 case "FI":
                 case "SE":
                 default:
-                    return EndpointEurope;
+                    return new Credentials
+                    {
+                        UserName = UserNameEurope,
+                        Password = PasswordEurope,
+                        Endpoint = EndpointEurope
+                    };
             }
+        }
+
+        public class Credentials
+        {
+            public string UserName { get; set; }
+
+            public string Password { get; set; }
+
+            public string Endpoint { get; set; }
         }
     }
 }

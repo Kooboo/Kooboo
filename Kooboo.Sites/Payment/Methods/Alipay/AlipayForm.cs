@@ -71,7 +71,7 @@ var resForm = k.payment.alipayForm.charge(charge);
             dic.Add("time_expire", DateTime.Now.AddMinutes(10));
 
             string notifurl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-            string returnurl = PaymentHelper.EnsureHttpUrl(this.Setting.ReturnUrl, Context);
+            string returnurl = request.ReturnUrl ?? PaymentHelper.EnsureHttpUrl(this.Setting.ReturnUrl, Context);
             res.html = AlipayApi.Pay(dic, this.Setting, returnurl, notifurl);
 
             return res;
@@ -80,66 +80,66 @@ var resForm = k.payment.alipayForm.charge(charge);
         public PaymentCallback Notify(RenderContext context)
         {
             var dic = GetRequestPost(context);
-            var data = new AlipayData();
-            bool signVerified = data.RSACheckV1(dic, this.Setting.PrivateKey, this.Setting.Charset); //调用SDK验证签名
-            if (signVerified)
+            if (dic.Count > 0)
             {
-                var strPaymentRequestId = context.Request.GetValue("out_trade_no");
-                Guid paymentRequestId;
-                if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
+                var data = new AlipayData();
+                bool signVerified = data.RSACheckV1(dic, this.Setting.PublicKey, this.Setting.Charset); //调用SDK验证签名
+                if (signVerified)
                 {
-                    var paymentRequest = PaymentManager.GetRequest(paymentRequestId, context);
-
-                    decimal totalAmount = 0;//total amount
-                    decimal.TryParse(context.Request.Get("total_amount"), out totalAmount);
-                    var subject = context.Request.Get("subject");
-                    var paymentStatus = context.Request.Get("trade_status");
-
-                    if (paymentRequest == null || this.Setting == null)
+                    var strPaymentRequestId = context.Request.GetValue("out_trade_no");
+                    Guid paymentRequestId;
+                    if (Guid.TryParse(strPaymentRequestId, out paymentRequestId))
                     {
-                        return null;
-                    }
+                        var paymentRequest = PaymentManager.GetRequest(paymentRequestId, context);
 
-                    var callback = new PaymentCallback()
-                    {
-                        RequestId = paymentRequestId,
-                    };
+                        decimal totalAmount = 0;//total amount
+                        decimal.TryParse(context.Request.Get("total_amount"), out totalAmount);
+                        var subject = context.Request.Get("subject");
+                        var paymentStatus = context.Request.Get("trade_status");
 
-                    if (totalAmount == Math.Round(paymentRequest.TotalAmount, 2) || subject == paymentRequest.Name)
-                    {
-                        if (paymentStatus == TradeStatus.TRADE_CLOSED)
+                        if (paymentRequest == null || this.Setting == null)
                         {
-                            callback.Status = PaymentStatus.Cancelled;
-                        }
-                        else if (paymentStatus == TradeStatus.TRADE_SUCCESS || paymentStatus == TradeStatus.TRADE_FINISHED)
-                        {
-                            callback.Status = PaymentStatus.Paid;
-                        }
-                        else if (paymentStatus == TradeStatus.WAIT_BUYER_PAY)
-                        {
-                            callback.Status = PaymentStatus.Pending;
+                            return null;
                         }
 
+                        var callback = new PaymentCallback()
+                        {
+                            RequestId = paymentRequestId,
+                        };
+
+                        if (totalAmount == Math.Round(paymentRequest.TotalAmount, 2) || subject == paymentRequest.Name)
+                        {
+                            if (paymentStatus == TradeStatus.TRADE_CLOSED)
+                            {
+                                callback.Status = PaymentStatus.Cancelled;
+                            }
+                            else if (paymentStatus == TradeStatus.TRADE_SUCCESS || paymentStatus == TradeStatus.TRADE_FINISHED)
+                            {
+                                callback.Status = PaymentStatus.Paid;
+                            }
+                            else if (paymentStatus == TradeStatus.WAIT_BUYER_PAY)
+                            {
+                                callback.Status = PaymentStatus.Pending;
+                            }
+
+                        }
+                        else
+                        {
+                            callback.Status = PaymentStatus.NotAvailable;
+                            //怎么让kooboo的前端打印输出“fail”
+                        }
+
+                        return callback;
                     }
                     else
                     {
-                        callback.Status = PaymentStatus.NotAvailable;
+                        return null;
                         //怎么让kooboo的前端打印输出“fail”
                     }
+                }
+            }
 
-                    return callback;
-                }
-                else
-                {
-                    return null;
-                    //怎么让kooboo的前端打印输出“fail”
-                }
-            }
-            else
-            {
-                return null;
-                //怎么让kooboo的前端打印输出“fail”
-            }
+            return null;
         }
 
         public Dictionary<string, string> GetRequestPost(RenderContext context)
