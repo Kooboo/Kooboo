@@ -69,7 +69,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             }
 
             var iavToken = dwollaApi.CreateIavToken(customer.Location.ToString()).Result;
-            if (!string.IsNullOrEmpty(iavToken.Token))
+            if (string.IsNullOrEmpty(iavToken.Token))
             {
                 failedResponse.Message = "Getting IAV token failed";
                 return failedResponse;
@@ -183,8 +183,8 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
     stylesheets: [
       'https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext'
     ],
-    microDeposits: 'true',
-    fallbackToMicroDeposits: 'true'
+    microDeposits: 'false',
+    fallbackToMicroDeposits: 'false'
   }}, function(err, res) {{
     console.log('Error: ' + JSON.stringify(err) + ' -- Response: ' + JSON.stringify(res));
     request._links = res._links
