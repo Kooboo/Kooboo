@@ -211,7 +211,7 @@ namespace Kooboo.Sites.Payment
         public static string GetNumericCode(string alphabeticCode, string fallbackNumericCode = null)
         {
             var code = GetCurrencyCode(alphabeticCode);
-            return code?.AlphabeticCode ?? fallbackNumericCode;
+            return code?.NumericCode ?? fallbackNumericCode;
         }
 
         /// <param name="numericCode">e.g. 156->CNY, 840->USD, 392->JPY, 978->EUR...</param>
