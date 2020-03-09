@@ -46,7 +46,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             {
                 FirstName = (string)firstName,
                 LastName = (string)lastName,
-                Email = "964034@mail.net"
+                Email = email
             };
 
             var money = new Money
@@ -56,9 +56,11 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             };
 
             var dwollaApi = new DwollaApi(Setting);
-            var failedResponse = new FailedResponse("Payment failed");
-            failedResponse.requestId = request.Id;
-            
+            var failedResponse = new FailedResponse("Payment failed")
+            {
+                requestId = request.Id
+            };
+
             var customer = dwollaApi.CreateCustomer(customerParameters).Result;
             if (!customer.IsSuccessStatusCode)
             {
