@@ -62,7 +62,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             };
 
             var customer = dwollaApi.CreateCustomer(customerParameters).Result;
-            failedResponse.paymemtMethodReferenceId = customer.Location.ToString();
             if (!customer.IsSuccessStatusCode)
             {
                 failedResponse.Message = customer.Content;
@@ -79,8 +78,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
 
             var response = new HiddenFormResponse
             {
-                requestId = request.Id,
-                paymemtMethodReferenceId = customer.Location.ToString()
+                requestId = request.Id
             };
             response.html = GetHtml(Setting.IsUsingSanbox, iavToken.Token, money, request);
             return response;
@@ -109,14 +107,16 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                 {
                     response = new PaidResponse
                     {
-                        requestId = fundingSourceResponse.RequestId
+                        requestId = fundingSourceResponse.RequestId,
+                        paymemtMethodReferenceId = createTransferResult.TransferURL.ToString()
                     };
                 }
                 else
                 {
                     response = new FailedResponse("Create transfer failed")
                     {
-                        requestId = fundingSourceResponse.RequestId
+                        requestId = fundingSourceResponse.RequestId,
+                        paymemtMethodReferenceId = createTransferResult.TransferURL.ToString()
                     };
                 }
             }
@@ -135,6 +135,11 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         {
             var result = new PaymentStatusResponse();
             var dwollaApi = new DwollaApi(Setting);
+
+            if (string.IsNullOrEmpty(request.ReferenceId))
+            {
+                return result;
+            }
             var response = dwollaApi.GetTransfer(request.ReferenceId).Result;
             if (response.Status == "processed")
             {
