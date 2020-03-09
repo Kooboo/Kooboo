@@ -40,13 +40,13 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         {
             request.Additional.TryGetValue("firstName", out var firstName);
             request.Additional.TryGetValue("lastName", out var lastName);
-            request.Additional.TryGetValue("email", out var email);
+            var email = Guid.NewGuid().ToString() + "@email.com";
 
             var customerParameters = new Customer()
             {
                 FirstName = (string)firstName,
                 LastName = (string)lastName,
-                Email = (string)email
+                Email = email
             };
 
             var dwollaApi = new DwollaApi(Setting);
@@ -54,7 +54,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             var iavToken = dwollaApi.CreateIavToken(customer.Location.ToString()).Result;
             var response = new HiddenFormResponse
             {
-                paymemtMethodReferenceId = Guid.NewGuid().ToString()
+                paymemtMethodReferenceId = request.Id.ToString()
             };
             response.html = GetHtml(Setting.IsUsingSanbox, iavToken.Token);
             return response;
