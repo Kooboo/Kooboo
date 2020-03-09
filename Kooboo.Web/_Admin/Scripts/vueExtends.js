@@ -300,9 +300,12 @@ Vue.directive("kb-collapsein", {
       var scopedContent = scoper(styleContent, str);
       return pre + scopedContent + suf;
     });
-    commentList.forEach(function(item) {
-      scopedStr = scopedStr.replace(/\/\*KB_COMMENT_HOLDER\*\//, item);
-    });
+    if (commentList && commentList.forEach && commentList.length > 0) {
+      commentList.forEach(function(item) {
+        scopedStr = scopedStr.replace(/\/\*KB_COMMENT_HOLDER\*\//, item);
+      });
+    }
+
     return scopedStr;
   };
   var unScope = function(html) {
