@@ -102,5 +102,16 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             var response = JsonConvert.DeserializeObject<TransferResponse>(result.Content);
             return response;
         }
+
+        public async void SubscriptionWebhook(string endpoint)
+        {
+            var client = Create("Bearer", Token);
+            var headers = new Dictionary<string, string>
+            {
+                { "Accept", contentType }
+            };
+            var body = string.Format("{{\"url\": \"{0}\",\"secret\": \"{1}\"}", endpoint, "secret");
+            var result = await client.PostAsync($"{ApiBaseAddress}/webhook-subscriptions", body, contentType, headers);
+        }
     }
 }

@@ -62,6 +62,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             };
 
             var customer = dwollaApi.CreateCustomer(customerParameters).Result;
+            failedResponse.paymemtMethodReferenceId = customer.Location.ToString();
             if (!customer.IsSuccessStatusCode)
             {
                 failedResponse.Message = customer.Content;
@@ -72,12 +73,14 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             if (string.IsNullOrEmpty(iavToken.Token))
             {
                 failedResponse.Message = "Getting IAV token failed";
+                
                 return failedResponse;
             }
 
             var response = new HiddenFormResponse
             {
-                requestId = request.Id
+                requestId = request.Id,
+                paymemtMethodReferenceId = customer.Location.ToString()
             };
             response.html = GetHtml(Setting.IsUsingSanbox, iavToken.Token, money, request);
             return response;
@@ -132,7 +135,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         {
             var result = new PaymentStatusResponse();
             var dwollaApi = new DwollaApi(Setting);
-            var response = dwollaApi.GetTransfer(request.Order).Result;
+            var response = dwollaApi.GetTransfer(request.ReferenceId).Result;
             if (response.Status == "processed")
             {
                 result.Status = PaymentStatus.Paid;
