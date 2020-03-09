@@ -46,7 +46,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             {
                 FirstName = (string)firstName,
                 LastName = (string)lastName,
-                Email = email
+                Email = "964034@mail.net"
             };
 
             var money = new Money
@@ -56,11 +56,26 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             };
 
             var dwollaApi = new DwollaApi(Setting);
+            var failedResponse = new FailedResponse("Payment failed");
+            failedResponse.requestId = request.Id;
+            
             var customer = dwollaApi.CreateCustomer(customerParameters).Result;
+            if (!customer.IsSuccessStatusCode)
+            {
+                failedResponse.Message = customer.Content;
+                return failedResponse;
+            }
+
             var iavToken = dwollaApi.CreateIavToken(customer.Location.ToString()).Result;
+            if (!string.IsNullOrEmpty(iavToken.Token))
+            {
+                failedResponse.Message = "Getting IAV token failed";
+                return failedResponse;
+            }
+
             var response = new HiddenFormResponse
             {
-                paymemtMethodReferenceId = request.Id.ToString()
+                requestId = request.Id
             };
             response.html = GetHtml(Setting.IsUsingSanbox, iavToken.Token, money, request);
             return response;
