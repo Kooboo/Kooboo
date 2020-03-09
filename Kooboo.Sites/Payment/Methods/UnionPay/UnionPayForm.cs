@@ -26,12 +26,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
         public IPaymentResponse Charge(PaymentRequest request)
         {
             HiddenFormResponse res = new HiddenFormResponse();
-            string currency = request.Currency;
-            decimal total = request.TotalAmount;
-            //var data = GetFieldValues(request);
-            //res.fieldValues = new KScript.KDictionary(data);
             res.html = GetHtmlForm(request);
-            //res.SubmitUrl = this.Setting.PaypalUrl;
             res.method = "POST";
             return res;
         }
@@ -99,12 +94,10 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             }
             html.AppendLine("</form>");
             html.AppendLine("<script type=\"text/javascript\">");
-            //html.AppendLine("<!--");
             html.AppendLine("function OnLoadSubmit()");
             html.AppendLine("{");
             html.AppendLine("document.getElementById(\"pay_form\").submit();");
             html.AppendLine("}");
-            //html.AppendLine("//-->");
             html.AppendLine("</script>");
             html.AppendLine("</body>");
             html.AppendLine("</html>");
