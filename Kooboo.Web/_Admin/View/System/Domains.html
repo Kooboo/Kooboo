@@ -9,12 +9,23 @@
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="navbar navbar-default">
     <div class="container-fluid">
-      <a class="btn green navbar-btn" @click="showDialog" data-toggle="modal"><span>New binding</span></a>
-      <a v-if="tableDataSelected.length > 0" @click="onDelete" class="btn red navbar-btn">Delete</a>
+      <a class="btn green navbar-btn" @click="showDialog" data-toggle="modal"
+        ><span>New binding</span></a
+      >
+      <a
+        v-if="tableDataSelected.length > 0"
+        @click="onDelete"
+        class="btn red navbar-btn"
+        >Delete</a
+      >
     </div>
   </div>
 
-  <kb-table :show-select="true" :data="domainsData" :selected.sync="tableDataSelected">
+  <kb-table
+    :show-select="true"
+    :data="domainsData"
+    :selected.sync="tableDataSelected"
+  >
     <kb-table-column :label="Kooboo.text.site.domain.name">
       <template v-slot="row">
         {{ row.fullName }}
@@ -22,25 +33,32 @@
     </kb-table-column>
     <kb-table-column :label="Kooboo.text.site.domain.sslEnabled">
       <template v-slot="row">
-        <span :class="row.enableSsl?'label label-sm  green':'label label-sm  gray'  ">
-          {{
-            row.enableSsl ? Kooboo.text.common.yes : Kooboo.text.common.no
-          }}</span>
+        <span
+          :class="row.enableSsl?'label label-sm  green':'label label-sm  gray'  "
+        >
+          {{ row.enableSsl ? Kooboo.text.common.yes : Kooboo.text.common.no
+          }}</span
+        >
       </template>
     </kb-table-column>
     <kb-table-column :head-class="'table-action'">
       <template v-slot="row">
-        <a @click.stop="startSSLHandle($event,row.id)"
-          :class="row.enableSsl?'btn btn-sm gray disabled':'btn btn-sm blue'">
-          {{
-            row.enableSsl
-              ? Kooboo.text.common.enabled
-              : Kooboo.text.common.enable
-          }}</a>
+        <a
+          @click.stop="startSSLHandle($event,row.id)"
+          :class="row.enableSsl?'btn btn-sm gray disabled':'btn btn-sm blue'"
+        >
+          {{ row.enableSsl ? Kooboo.text.common.enabled :
+          Kooboo.text.common.enable }}</a
+        >
       </template>
     </kb-table-column>
   </kb-table>
-  <div class="modal fade" data-backdrop="static" data-keyboard="false" v-kb-modal="modalShow">
+  <div
+    class="modal fade"
+    data-backdrop="static"
+    data-keyboard="false"
+    v-kb-modal="modalShow"
+  >
     <div class="modal-dialog" v-if="modalShow">
       <div class="modal-content">
         <div class="modal-header">
@@ -55,15 +73,22 @@
               <label class="col-md-3 control-label">Binding to</label>
               <div class="col-md-9" k-if="kooboosetting.IsLocal = true">
                 <label class="radio-inline">
-                  <input type="radio" value="domain" :checked="defaultBinding =='domain'"
-                    @click="defaultBindingCheckboxHandle" /><span>Domain</span>
+                  <input
+                    type="radio"
+                    value="domain"
+                    :checked="defaultBinding =='domain'"
+                    @click="defaultBindingCheckboxHandle"
+                  /><span>Domain</span>
                 </label>
                 <label class="radio-inline">
-                  <input type="radio" value="port" :checked="defaultBinding =='port'"
-                    @click="defaultBindingCheckboxHandle" /><span>Port</span>
+                  <input
+                    type="radio"
+                    value="port"
+                    :checked="defaultBinding =='port'"
+                    @click="defaultBindingCheckboxHandle"
+                  /><span>Port</span>
                 </label>
               </div>
-
             </div>
             <div class="form-group" k-if="kooboosetting.IsLocal = true">
               <div class="col-md-9 col-md-offset-3">
@@ -71,28 +96,41 @@
                   <kb-form-item v-if="defaultBinding === 'domain'">
                     <div>
                       <div class="input-group">
-
-                        <input v-model="formModel.subdomain" class="form-control" name="SubDomain"
-                          placeholder="example: www" type="text" />
+                        <input
+                          v-model="formModel.subdomain"
+                          class="form-control"
+                          name="SubDomain"
+                          placeholder="example: www"
+                          type="text"
+                        />
                         <span class="input-group-addon">.</span>
-                        <select v-kb-hint="validateModel.subdomain.msg" v-model="formModel.root" class="form-control"
-                          name="RootDomain">
-                          <option v-for="item in rootDomain">{{ item.domainName }}</option>
+                        <select
+                          v-kb-hint="validateModel.subdomain.msg"
+                          v-model="formModel.root"
+                          class="form-control"
+                          name="RootDomain"
+                        >
+                          <option v-for="item in rootDomain"
+                            >{{ item.domainName }}</option
+                          >
                         </select>
                       </div>
                     </div>
-
                   </kb-form-item>
 
                   <kb-form-item v-if="defaultBinding === 'port'">
                     <div>
                       <div>
-                        <input v-kb-hint="validateModel.port.msg" v-model.number="formModel.port" class="form-control"
-                          placeholder="example: 81" type="number" min="0" />
+                        <input
+                          v-kb-hint="validateModel.port.msg"
+                          v-model.number="formModel.port"
+                          class="form-control"
+                          placeholder="example: 81"
+                          type="number"
+                          min="0"
+                        />
                       </div>
-
                     </div>
-
                   </kb-form-item>
                 </kb-form>
               </div>
@@ -102,11 +140,23 @@
                 <kb-form :model="formModel" align="inline">
                   <kb-form-item v-if="defaultBinding === 'domain'">
                     <div class="input-group">
-                      <input v-model="formModel.subdomain" class="form-control" name="SubDomain"
-                        placeholder="example: www" type="text" />
+                      <input
+                        v-model="formModel.subdomain"
+                        class="form-control"
+                        name="SubDomain"
+                        placeholder="example: www"
+                        type="text"
+                      />
                       <span class="input-group-addon">.</span>
-                      <select v-kb-hint="validateModel.subdomain.msg" class="form-control" name="RootDomain">
-                        <option v-for="domain in rootDomain">{{ domain.domainName }}</option>
+                      <select
+                        v-kb-hint="validateModel.subdomain.msg"
+                        v-model="formModel.root"
+                        class="form-control"
+                        name="RootDomain"
+                      >
+                        <option v-for="domain in rootDomain"
+                          >{{ domain.domainName }}</option
+                        >
                       </select>
                     </div>
                   </kb-form-item>
@@ -129,7 +179,7 @@
   }
 </style>
 <script>
-  (function () {
+  (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kbBreadcrumb.js",
       "/_Admin/Scripts/components/kbTable.js",
