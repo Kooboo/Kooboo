@@ -98,19 +98,25 @@ $(function() {
       this.getDomainsData();
       this.getDomainData();
       this.getsiteNameData();
-      self.createValidateModel()
+      self.createValidateModel();
     },
-    watch:{
-      formModel:{handler:function () {
-          self.createValidateModel()
-        },deep:true},
-      defaultBinding:function () {
-        self.createValidateModel()
+    watch: {
+      formModel: {
+        handler: function() {
+          self.createValidateModel();
+        },
+        deep: true
+      },
+      defaultBinding: function() {
+        self.createValidateModel();
       }
     },
-    methods:{
-      createValidateModel:function() {
-        this.validateModel = {subdomain:{valid:true,msg:''},port:{valid:true,msg:''}};;
+    methods: {
+      createValidateModel: function() {
+        this.validateModel = {
+          subdomain: { valid: true, msg: "" },
+          port: { valid: true, msg: "" }
+        };
       },
       getsiteNameData: function() {
         Kooboo.Site.getName().then(function(res) {
@@ -132,15 +138,21 @@ $(function() {
       },
       onSave: function() {
         var valid = true;
-        if(self.defaultBinding === "domain") {
-          self.validateModel.subdomain = Kooboo.validField(self.formModel.subdomain,self.formRules.subdomain)
-          if(!self.validateModel.subdomain.valid) {
-            valid = false
+        if (self.defaultBinding === "domain") {
+          self.validateModel.subdomain = Kooboo.validField(
+            self.formModel.subdomain,
+            self.formRules.subdomain
+          );
+          if (!self.validateModel.subdomain.valid) {
+            valid = false;
           }
-        }else if(self.defaultBinding === "port") {
-          self.validateModel.port= Kooboo.validField(self.formModel.port,self.formRules.port);
-          if(!self.validateModel.port.valid) {
-            valid = false
+        } else if (self.defaultBinding === "port") {
+          self.validateModel.port = Kooboo.validField(
+            self.formModel.port,
+            self.formRules.port
+          );
+          if (!self.validateModel.port.valid) {
+            valid = false;
           }
         }
         if (valid) {
@@ -150,6 +162,11 @@ $(function() {
             port: self.formModel.port + "",
             defaultBinding: self.defaultBinding === "port"
           }).then(function() {
+            self.formModel.subdomain = "";
+            if (self.rootDomain[0] && self.rootDomain[0].domainName) {
+              self.formModel.root = self.rootDomain[0].domainName;
+            }
+
             self.getDomainsData();
             self.cancelDialog();
           });
