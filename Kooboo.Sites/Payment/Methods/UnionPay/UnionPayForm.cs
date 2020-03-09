@@ -48,8 +48,8 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["signMethod"] = "01";//签名方法 （表示采用RSA签名）
             param["channelType"] = "08";//渠道类型
             param["accessType"] = "0";//接入类型 0：商户直连接入
-            param["frontUrl"] = Setting.ReturnUrl;  //前台通知地址      
-            param["backUrl"] = Setting.NotifyURL;  //后台通知地址
+            param["frontUrl"] = Setting.FrontUrl;  //前台通知地址      
+            param["backUrl"] = Setting.BackUrl;  //后台通知地址
             param["currencyCode"] = GetCurrencyCode(request.Currency);//交易币种 156 人民币
 
             // 订单超时时间。
@@ -59,7 +59,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");
 
             param["merId"] = Setting.MerchantID;//商户号
-            param["orderId"] = Guid.NewGuid().ToString("N");//商户订单号，8-32位数字字母，不能含“-”或“_”
+            param["orderId"] = request.Id.ToString("N");//商户订单号，8-32位数字字母，不能含“-”或“_”
 
             param["txnTime"] = DateTime.Now.ToString("yyyyMMddHHmmss");//订单发送时间，格式为YYYYMMDDhhmmss，取北京时间
             param["txnAmt"] = GetSquareAmount(request.TotalAmount).ToString();//交易金额，单位分
@@ -76,9 +76,9 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             //    查询、通知等接口解析时使用System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(reqReserved))解base64后再对数据做后续解析。
             //param["reqReserved"] = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("任意格式的信息都可以"));
 
-            param["riskRateInfo"] = "{commodityName=测试商品名称}";//
+            param["riskRateInfo"] = "{}";//
 
-            SignHelper.Sign(param, System.Text.Encoding.UTF8);
+            SignHelper.Sign(param, System.Text.Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
             string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, System.Text.Encoding.UTF8);
 
             return formHtml;
@@ -99,12 +99,12 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             }
             html.AppendLine("</form>");
             html.AppendLine("<script type=\"text/javascript\">");
-            html.AppendLine("<!--");
+            //html.AppendLine("<!--");
             html.AppendLine("function OnLoadSubmit()");
             html.AppendLine("{");
             html.AppendLine("document.getElementById(\"pay_form\").submit();");
             html.AppendLine("}");
-            html.AppendLine("//-->");
+            //html.AppendLine("//-->");
             html.AppendLine("</script>");
             html.AppendLine("</body>");
             html.AppendLine("</html>");

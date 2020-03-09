@@ -7,11 +7,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
 {
     public class SignHelper
     {
-        const string VERSION_1_0_0 = "1.0.0";
         const string VERSION_5_0_0 = "5.0.0";
-
-        const string SignCertPwd = "000000"; // to be remove to setting 
-        const string SignCertPath = "d:/certs/acp_test_sign.pfx"; // to be remove to setting
 
         /// <summary>
         /// 使用配置文件配置的证书/密钥签名
@@ -19,7 +15,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         /// <param name="reqData"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static void Sign(Dictionary<string, string> reqData, Encoding encoding)
+        public static void Sign(Dictionary<string, string> reqData, Encoding encoding, byte[] certRawData, string certPassword)
         {
             if (!reqData.ContainsKey("version"))
             {
@@ -36,7 +32,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
 
             if (signMethod == "01")
             {
-                SignByCertInfo(reqData, SignCertPath, SignCertPwd, encoding);
+                SignByCertInfo(reqData, certRawData, certPassword, encoding);
             }
         }
 
@@ -45,30 +41,31 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         /// </summary>
         /// <param name="reqData"></param>
         /// <param name="encoding">编码</param>
-        /// <param name="certPath">证书路径</param>
+        /// <param name="certRawData">证书数据</param>
         /// <param name="certPwd">证书密码</param>
         /// <returns></returns>
-        public static void SignByCertInfo(Dictionary<string, string> reqData, string certPath, string certPwd, Encoding encoding)
+        public static void SignByCertInfo(Dictionary<string, string> reqData, byte[] certRawData, string certPwd, Encoding encoding)
         {
-            string version = reqData["version"];
-            string signMethod = reqData["signMethod"];
-
-            //  以下这个方式可以得到 certId
-            var x5092 = new System.Security.Cryptography.X509Certificates.X509Certificate2(certPath, certPwd);
-            var ar = x5092.GetSerialNumber();
-            reqData["certId"] = new System.Numerics.BigInteger(ar).ToString();
+            var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(certRawData, certPwd, System.Security.Cryptography.X509Certificates.X509KeyStorageFlags.Exportable);
+            reqData["certId"] = new System.Numerics.BigInteger(cert.GetSerialNumber()).ToString();
 
             //将Dictionary信息转换成key1=value1&key2=value2的形式
             string stringData = SDKUtil.CreateLinkString(reqData, true, false, encoding);
             byte[] signDigest = System.Security.Cryptography.SHA256.Create().ComputeHash(encoding.GetBytes(stringData));
             string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
 
-            //byte[] byteSign = SecurityUtil.SignSha256WithRsa(CertUtil.GetSignKeyFromPfx(certPath, certPwd), encoding.GetBytes(stringSignDigest));
+            var rsa = cert.PrivateKey as System.Security.Cryptography.RSACryptoServiceProvider;
+            // Create a new RSACryptoServiceProvider
+            var rsaClear = new System.Security.Cryptography.RSACryptoServiceProvider();
 
-            //string stringSign = Convert.ToBase64String(byteSign);
+            // Export RSA parameters from 'rsa' and import them into 'rsaClear'
+            rsaClear.ImportParameters(rsa.ExportParameters(true));
+            byte[] byteSign = rsaClear.SignData(encoding.GetBytes(stringSignDigest), System.Security.Cryptography.SHA256.Create());
+
+            string stringSign = Convert.ToBase64String(byteSign);
 
             //设置签名域值
-            //reqData["signature"] = stringSign;
+            reqData["signature"] = stringSign;
         }
     }
 }

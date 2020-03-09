@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,11 +11,20 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         public string FrontTransactionUrl { get; set; }
 
-        // need kooboo create a page to show pay result
-        public string ReturnUrl { get; set; }
+        /// <summary>
+        /// 前台通知地址  need kooboo create a page to show pay result
+        /// </summary>
+        public string FrontUrl { get; set; }
 
-        public string NotifyURL { get; set; }
+        /// <summary>
+        /// 后台通知地址
+        /// </summary>
+        public string BackUrl { get; set; }
 
         public string MerchantID { get; set; }
+
+        public SettingFile SignCertPFX { get; set; }
+
+        public string SignCertPasswrod { get; set; }
     }
 }
