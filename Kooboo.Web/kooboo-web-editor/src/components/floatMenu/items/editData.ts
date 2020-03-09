@@ -6,10 +6,11 @@ import { createDataEdtor } from "@/components/dataEditor";
 import { getEditableData } from "@/components/dataEditor/utils";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { setGuid, clearKoobooInfo, markDirty } from "@/kooboo/utils";
-import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getEditComment } from "../utils";
+import { getEditableComment } from "../utils";
 import { operationRecord } from "@/operation/Record";
+import { kvInfo } from "@/common/kvInfo";
+import { Log } from "@/operation/Log";
 
 export default class EditDataItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -30,29 +31,29 @@ export default class EditDataItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     let editableData = getEditableData(element);
     if (!editableData) return this.setVisiable(false);
-    let comments = KoobooComment.getComments(editableData.cleanParent);
-    if (!getEditComment(comments)) return this.setVisiable(false);
+    let comments = KoobooComment.getComments(editableData.parent);
+    if (!getEditableComment(comments)) return this.setVisiable(false);
   }
 
   async click() {
     this.parentMenu.hidden();
     let { element } = context.lastSelectedDomEventArgs;
-    let { cleanParent, koobooId, list } = getEditableData(element)!;
-    let comments = KoobooComment.getComments(cleanParent);
-    let comment = getEditComment(comments)!;
-    let startContent = cleanParent.innerHTML;
+    let { parent, koobooId, list } = getEditableData(element)!;
+    let comments = KoobooComment.getComments(parent);
+    let comment = getEditableComment(comments)!;
+    let startContent = parent.innerHTML;
     try {
       await createDataEdtor(list);
-      let value = clearKoobooInfo(cleanParent.innerHTML);
+      let value = clearKoobooInfo(parent.innerHTML);
       if (value == clearKoobooInfo(startContent)) return;
-      let guid = setGuid(cleanParent);
-      markDirty(cleanParent);
+      let guid = setGuid(parent);
+      markDirty(parent);
       let units = [new InnerHtmlUnit(startContent)];
-      let logs = [DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!)];
-      let operation = new operationRecord(units, logs, guid);
+      let log = [...comment.infos, kvInfo.value(value), kvInfo.koobooId(koobooId)];
+      let operation = new operationRecord(units, [new Log(log)], guid);
       context.operationManager.add(operation);
     } catch (error) {
-      cleanParent.innerHTML = startContent;
+      parent.innerHTML = startContent;
     }
   }
 }

@@ -57,7 +57,7 @@ namespace Kooboo.Sites.Payment
 
         public PaymentStatusResponse checkStatus(object requestId)
         {
-            if (requestId == null)
+            if (requestId != null)
             {
                 string strid = requestId.ToString();
                 Guid id;
@@ -67,15 +67,33 @@ namespace Kooboo.Sites.Payment
 
                     if (request != null)
                     {
-                        var status = this.PaymentMethod.checkStatus(request);
-                        if (status.Paid)
+                        bool notsupport = false; 
+                        try
                         {
-                            PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Paid, ResponseMessage = "kscript check status" }, this.Context);
+                            var status = this.PaymentMethod.checkStatus(request);
+                            if (status.Paid)
+                            {
+                                PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Paid, ResponseMessage = "kscript check status" }, this.Context);
+                            }
+                            else if (status.Failed)
+                            {
+                                PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Rejected, ResponseMessage = "kscript check status" }, this.Context);
+                            }
                         }
-                        else if (status.Failed)
+                        catch (Exception ex)
                         {
-                            PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Rejected, ResponseMessage = "kscript check status" }, this.Context);
+                             if (ex is NotImplementedException || ex is NotSupportedException)
+                            {
+                                notsupport = true; 
+                            }
                         }
+
+                        if (notsupport)
+                        {
+                            // TODO: check paymentrequest or callback for information... 
+
+                        }
+                    
                     }
                 }
             }
@@ -114,8 +132,7 @@ namespace Kooboo.Sites.Payment
             }
 
             request.Additional = additionals;
-
-
+             
             var id = GetValue<string>(idict, dynamicobj, "id", "requestId", "paymentrequestid");
             if (!string.IsNullOrWhiteSpace(id))
             {
@@ -130,6 +147,9 @@ namespace Kooboo.Sites.Payment
             request.Currency = GetValue<string>(idict, dynamicobj, "currency");
             request.Country = GetValue<string>(idict, dynamicobj, "country", "countryCode");
             request.TotalAmount = GetValue<Decimal>(idict, dynamicobj, "amount", "total", "totalAmount", "totalamount");
+
+            request.ReturnUrl = GetValue<string>(idict, dynamicobj, "return", "returnurl", "returnpath");
+            request.CancelUrl = GetValue<string>(idict, dynamicobj, "return", "cancelurl", "cancelurl");
 
             if (this.PaymentMethod != null)
             {

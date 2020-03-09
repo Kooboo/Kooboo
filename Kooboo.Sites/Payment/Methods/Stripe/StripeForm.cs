@@ -24,20 +24,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
     paymentMethodType: ['card', 'ideal']
   };
   var res = k.payment.stripeForm.charge(charge);
-  var publishableKey = res.fieldValues.get(""publishableKey"");
 </script>
-<div k-content=""res.html""></div>
-<div id = ""sessionId"" style=""display:none;"" k-content=""res.paymemtMethodReferenceId""></div>
-<div id = ""publishableKey"" style=""display:none;"" k-content=""publishableKey""></div>
-<script src = ""https://js.stripe.com/v3/"" ></script>
-<script>
-  var stripe = Stripe(document.getElementById('publishableKey').innerText);
-  stripe.redirectToCheckout({
-    sessionId: document.getElementById('sessionId').innerText
-}).then(function (result) {
-    console.log(result.error.message)
-});
-</script>";
+<div k-content=""res.html""></div>";
 
         public string Name => "StripeForm";
 
@@ -47,18 +35,16 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
 
         public string IconType => "img";
 
-        public List<string> supportedCurrency
-        {
-            get
-            {
-                var list = new List<string> 
-                {
-                    "USD",
-                    "EUR"
-                };
-                return list;
-            }
-        }
+        public List<string> supportedCurrency => new List<string> {
+            "USD", "EUR", "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
+            "BAM", "BBD", "BDT", "BGN", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BWP", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", "COP", "CRC", "CVE",
+            "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ETB", "FJD", "FKP", "GBP", "GEL", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG",
+            "HUF", "IDR", "ILS", "INR", "ISK", "JMD", "JPY", "KES", "KGS", "KHR", "KMF", "KRW", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "MAD",
+            "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "PAB",
+            "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD",
+            "STD", "SZL", "THB", "TJS", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "UYU", "UZS", "VND", "VUV", "WST", "XAF", "XCD", "XOF", "XPF",
+            "YER", "ZAR", "ZMW"
+        };
 
         public RenderContext Context { get; set; }
 
@@ -66,9 +52,9 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public IPaymentResponse Charge(PaymentRequest request)
         {
             request.Additional.TryGetValue("quantity", out var quantity);
-            request.Additional.TryGetValue("cancelUrl", out var cancelUrl);
-            request.Additional.TryGetValue("successUrl", out var successUrl);
             request.Additional.TryGetValue("paymentMethodType", out var paymentMethodType);
+            string cancelUrl = string.IsNullOrEmpty(request.CancelUrl) ? Setting.CancelUrl : request.CancelUrl;
+            string successUrl = string.IsNullOrEmpty(request.ReturnUrl) ? Setting.SuccessUrl : request.ReturnUrl;
 
             var lineItems = new List<SessionLineItemOptions>
             {
@@ -82,8 +68,8 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             };
 
             var paymentMethodTypesList = new List<string>();
-            
-            if(paymentMethodType is object[])
+
+            if (paymentMethodType is object[])
             {
                 var paymentMethodTypeArray = Array.ConvertAll((object[])paymentMethodType, x => x.ToString());
                 paymentMethodTypesList.AddRange(paymentMethodTypeArray);
@@ -92,24 +78,25 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
             {
                 paymentMethodTypesList.Add((string)paymentMethodType);
             }
-            
+
             var options = new SessionCreateOptions
             {
-                SuccessUrl = (string)successUrl,
-                CancelUrl = (string)cancelUrl,
+                SuccessUrl = successUrl,
+                CancelUrl = cancelUrl,
                 LineItems = lineItems,
-                PaymentMethodTypes = paymentMethodTypesList
+                PaymentMethodTypes = paymentMethodTypesList,
+                ClientReferenceId = request.Id.ToString()
             };
 
             var sessionId = StripeUtility.CreateSession(options, Setting.Secretkey).Result;
             var response = new HiddenFormResponse
             {
-                paymemtMethodReferenceId = sessionId
+                paymemtMethodReferenceId = request.Id.ToString()
             };
-            response.setFieldValues("publishableKey", Setting.Publishablekey);
+            response.html = GenerateHtml(Setting.Publishablekey, sessionId);
             return response;
         }
- 
+
         public PaymentCallback Notify(RenderContext context)
         {
             var body = context.Request.Body;
@@ -122,30 +109,50 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
                 RawData = body,
                 CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
             };
+            if (stripeEvent.Type == lib.Events.CheckoutSessionCompleted)
+            {
+                var session = stripeEvent.Data.Object as Session;
+                result.RequestId = new Guid(session.ClientReferenceId);
+            }
             return result;
+        }
+
+        private string GenerateHtml(string publishableKey, string sessionId)
+        {
+            var html = string.Format(@"
+<script src = ""https://js.stripe.com/v3/"" ></script>
+<script>
+  var stripe = Stripe('{0}');
+  stripe.redirectToCheckout({{
+    sessionId: '{1}'
+}}).then(function (result) {{
+alert(JSON.stringify(result))
+    console.log(result.error.message)
+}});
+</script>", publishableKey, sessionId);
+            return html;
         }
 
         private PaymentStatus ConvertStatus(string status)
         {
             switch (status)
             {
-                case "payment_intent.succeeded":
+                case lib.Events.CheckoutSessionCompleted:
                     return PaymentStatus.Paid;
-                case "payment_intent.payment_failed":
+                case lib.Events.PaymentIntentPaymentFailed:
                     return PaymentStatus.Rejected;
-                case "payment_intent.canceled":
+                case lib.Events.PaymentIntentCanceled:
                     return PaymentStatus.Cancelled;
-                case "payment_intent.created":
+                case lib.Events.PaymentIntentCreated:
                     return PaymentStatus.Pending;
                 default:
                     return PaymentStatus.NotAvailable;
             }
-        } 
- 
+        }
+
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            PaymentStatusResponse result = new PaymentStatusResponse();
-            return result;
+            throw new NotSupportedException("Stripe dose not implement API to check status");
         }
     }
 }

@@ -226,6 +226,25 @@ namespace Kooboo.Sites.Payment
                 repo.AddOrUpdate(request);
             }
         }
+
+        public static PaymentRequest GetRequestByReferece(string ReferenceId, RenderContext context)
+        {
+            if (context.WebSite != null)
+            {
+                var sitedb = context.WebSite.SiteDb();
+                var repo = sitedb.GetSiteRepository<Repository.PaymentRequestRepository>();
+
+                var hash = Lib.Security.Hash.ComputeHashGuid(ReferenceId); 
+
+                var result = repo.Query.Where(o => o.ReferenceIdHash == hash).FirstOrDefault(); 
+
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
     }
 
 }

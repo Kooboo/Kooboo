@@ -30,6 +30,15 @@ namespace Kooboo.Sites.Scripting.Global
 
             return result;
         }
+        public static string GetId(string key)
+        {
+            if (!Guid.TryParse(key, out var guid))
+            {
+                guid = IndexedDB.Helper.KeyHelper.ComputeGuid(key);
+            }
+
+            return guid.ToString();
+        }
 
         public static Dictionary<string, object> GetData(object dataobj)
         {

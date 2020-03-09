@@ -16,6 +16,8 @@ namespace KScript
         private RenderContext context { get; set; }
         private Table table { get; set; }
 
+        public override string Source => "indexdb";
+
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
             this.obj = orgObj;
@@ -107,6 +109,15 @@ namespace KScript
             }
             return null;
 
+        }
+
+        public override IDictionary<string, string> GetTraceInfo()
+        {
+            return new Dictionary<string, string>
+            {
+                { "id", obj["_id"].ToString() },
+                { "table", table.Name }
+            };
         }
     }
 }

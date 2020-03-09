@@ -28,6 +28,7 @@ export class operationManager {
   add(operation: operationRecord) {
     operation.id = ++this.idCounter;
     this.previousRecords.push(operation);
+    console.log(this.previousRecords);
     this.nextRecords.splice(0, this.nextRecords.length);
     this.emit();
     return operation.id;

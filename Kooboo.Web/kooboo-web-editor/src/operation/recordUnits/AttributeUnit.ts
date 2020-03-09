@@ -8,11 +8,13 @@ export class AttributeUnit extends Unit {
   undo(node: Node): void {
     let el = node as HTMLElement;
     this.newValue = el.getAttribute(this.attribute)!;
-    el.setAttribute(this.attribute, this.oldValue);
+    if (this.oldValue) el.setAttribute(this.attribute, this.oldValue);
+    else el.removeAttribute(this.attribute);
   }
   redo(node: Node): void {
     let el = node as HTMLElement;
     this.oldValue = el.getAttribute(this.attribute)!;
-    el.setAttribute(this.attribute, this.newValue);
+    if (this.newValue) el.setAttribute(this.attribute, this.newValue);
+    else el.removeAttribute(this.attribute);
   }
 }

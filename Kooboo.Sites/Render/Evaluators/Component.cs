@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Dom;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +13,7 @@ namespace Kooboo.Sites.Render
         {
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.Component))
             {
-                return null; 
+                return null;
             }
             if (node.nodeType != enumNodeType.ELEMENT)
             {
@@ -21,33 +22,26 @@ namespace Kooboo.Sites.Render
             var element = node as Element;
 
             if (Components.Manager.IsComponent(element))
-            { 
+            {
                 var response = new EvaluatorResponse();
-                List<IRenderTask> result = new List<IRenderTask>(); 
-                result.Add(new  ComponentRenderTask(element));
+                var result = new List<IRenderTask>();
+                result.Add(new ComponentRenderTask(element));
                 response.ContentTask = result;
                 response.OmitTag = true;
                 response.StopNextEvaluator = true;
 
                 if (options.RequireBindingInfo)
                 {
-                    string boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();  
-                    var startbinding = new BindingObjectRenderTask()
-                    {  ObjectType = element.tagName, Boundary= boundary, NameOrId = element.id};
-                    List<IRenderTask> bindingstarts = new List<IRenderTask>();
-                    bindingstarts.Add(startbinding);
-                    response.BindingTask = bindingstarts;
-
-                    var endbinding = new BindingObjectRenderTask()
-                    { ObjectType = element.tagName, IsEndBinding = true, Boundary = boundary, NameOrId = element.id };
-
-                    List<IRenderTask> bindingends = new List<IRenderTask>();
-                    bindingends.Add(endbinding); 
-                    response.EndBindingTask = bindingends;  
-                } 
+                    if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
+                    var traceability = new ComponentTrace(element.id, element.tagName);
+                    var bindingTask = new BindingRenderTask(traceability, new Dictionary<string, string> { { "scope", "true" } });
+                    response.BindingTask.Add(bindingTask);
+                    if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
+                    response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
+                }
                 return response;
-            } 
-           
+            }
+
             return null;
         }
     }

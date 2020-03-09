@@ -18,7 +18,6 @@ import { getMaxHeight, getMaxWidth, getParentElements, getScrollLeft, getScrollT
 import ClickItem from "./items/click";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
-import InlineEditHtmlBlockItem from "./items/inlineEditHtmlBlock";
 import BaseMenuItem from "./items/BaseMenuItem";
 import { createDiv } from "@/dom/element";
 import { STANDARD_Z_INDEX } from "@/common/constants";
@@ -49,7 +48,6 @@ export function createMenu() {
   menu.addItem(new EditRepeatImageItem(menu));
   menu.addItem(new EditRepeatLinkItem(menu));
   menu.addItem(new ClickItem(menu));
-  menu.addItem(new InlineEditHtmlBlockItem(menu));
   menu.addItem(new EditColorItem(menu));
   menu.addItem(new EditDataItem(menu));
 

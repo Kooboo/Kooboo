@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Kooboo.Sites.Payment
 {
+    /// <summary>
+    /// refer to  https://en.wikipedia.org/wiki/ISO_4217
+    /// </summary>
     public class CurrencyDecimalPlaceConverter
     {
         private static readonly Dictionary<string, int> CurrencyCodes

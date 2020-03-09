@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { getHtmlBlockComment, hasOperation } from "../utils";
+import { hasOperation } from "../utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
@@ -26,18 +26,17 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
-    if (!getHtmlBlockComment(comments)) return this.setVisiable(false);
+    if (!comments.find(f => f.source == "htmlblock")) return this.setVisiable(false);
     this.setReadonly(hasOperation(context.operationManager));
   }
 
   async click() {
-    let args = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
 
-    let comments = KoobooComment.getComments(args.element);
-    let comment = getHtmlBlockComment(comments)!;
-    let nameorid = comment.nameorid;
-    await editHtmlBlock(nameorid!);
+    let comments = KoobooComment.getComments(element);
+    let comment = comments.find(f => f.source == "htmlblock")!;
+    await editHtmlBlock(comment.getValue("id")!);
     reload();
   }
 }

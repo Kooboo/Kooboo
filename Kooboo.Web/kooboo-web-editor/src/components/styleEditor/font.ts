@@ -1,14 +1,14 @@
 import { createDiv, createLabelInput } from "@/dom/element";
 import { TEXT } from "@/common/lang";
-import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { getImportant } from "@/dom/utils";
+import { kvInfo } from "@/common/kvInfo";
 
-export function createFont(el: HTMLElement, nameOrId: string, objectType: string, koobooId: string, rules: { cssRule: CSSStyleRule }[]) {
+export function createFont(el: HTMLElement, rules: { cssRule: CSSStyleRule }[]) {
   const container = createDiv();
   let style = getComputedStyle(el);
-  let fontSizeLog: StyleLog | undefined;
-  let fontWeightLog: StyleLog | undefined;
-  let fontFamilyLog: StyleLog | undefined;
+  let fontSizeInfos: kvInfo[] | undefined;
+  let fontWeightInfos: kvInfo[] | undefined;
+  let fontFamilyInfos: kvInfo[] | undefined;
   let sizeImportant = getImportant(el, "font-size", rules);
   let weightImportant = getImportant(el, "font-weight", rules);
   let familyImportant = getImportant(el, "font-family", rules);
@@ -18,7 +18,7 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   size.setContent(style.fontSize!);
   size.setInputHandler(content => {
     el.style.setProperty("font-size", (content.target! as HTMLInputElement).value, sizeImportant);
-    fontSizeLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontSize!, "font-size", koobooId, !!sizeImportant);
+    fontSizeInfos = [kvInfo.property("font-size"), kvInfo.value(el.style.fontSize!), kvInfo.important(sizeImportant)];
   });
   container.appendChild(size.input);
 
@@ -27,7 +27,7 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   weight.setContent(style.fontWeight!);
   weight.setInputHandler(content => {
     el.style.setProperty("font-weight", (content.target! as HTMLInputElement).value, weightImportant);
-    fontWeightLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontWeight!, "font-weight", koobooId, !!weightImportant);
+    fontWeightInfos = [kvInfo.property("font-weight"), kvInfo.value(el.style.fontWeight!), kvInfo.important(weightImportant)];
   });
   container.appendChild(weight.input);
 
@@ -35,10 +35,10 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   family.setContent(style.fontFamily!);
   family.setInputHandler(content => {
     el.style.setProperty("font-family", (content.target! as HTMLInputElement).value, familyImportant);
-    fontFamilyLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontFamily!, "font-family", koobooId, !!familyImportant);
+    fontFamilyInfos = [kvInfo.property("font-family"), kvInfo.value(el.style.fontFamily!), kvInfo.important(familyImportant)];
   });
   container.appendChild(family.input);
 
-  const getLogs = () => [fontSizeLog, fontWeightLog, fontFamilyLog];
+  const getLogs = () => [fontSizeInfos, fontWeightInfos, fontFamilyInfos];
   return { el: container, getLogs };
 }

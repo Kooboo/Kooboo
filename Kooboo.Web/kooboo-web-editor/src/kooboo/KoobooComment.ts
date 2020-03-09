@@ -1,9 +1,9 @@
-import { isSingleCommentWrap, previousComment, getWrapDom } from "./utils";
-import { getAllNode } from "@/dom/utils";
 import { KOOBOO_GUID } from "@/common/constants";
+import { kvInfo } from "@/common/kvInfo";
+import { getAllNode } from "@/dom/utils";
 
 export class KoobooComment {
-  private _infos!: string[];
+  infos!: kvInfo[];
 
   constructor(comment: string | Node | null) {
     let str = "";
@@ -15,53 +15,53 @@ export class KoobooComment {
     }
 
     if (comment) {
-      this._infos = str.split("--").map(m => m.replace(/'/g, ""));
+      this.infos = str
+        .split("--")
+        .map(m => m.replace(/'/g, ""))
+        .filter(f => f.indexOf("=") != -1)
+        .map(m => {
+          let arr = m.split("=");
+          return new kvInfo(arr[0], arr[1]);
+        });
     }
   }
 
-  get objecttype() {
-    return this.getValue("objecttype");
+  get source() {
+    return this.getValue("source")!;
   }
 
-  get nameorid() {
-    return this.getValue("nameorid");
+  get uid() {
+    return this.getValue("uid")!;
   }
 
-  get folderid() {
-    return this.getValue("folderid");
+  get id() {
+    return this.getValue("id")!;
   }
 
-  get bindingvalue() {
-    return this.getValue("bindingvalue");
-  }
-  get boundary() {
-    return this.getValue("boundary");
-  }
-  get fieldname() {
-    let result = this.getValue("fieldname");
-    if (!result && this.bindingvalue && this.bindingvalue.indexOf(".") > -1) {
-      result = this.bindingvalue.split(".").pop();
-      result = result!.replace("}", "");
-    }
-    return result;
-  }
-  get koobooid() {
-    return this.getValue("koobooid");
+  get path() {
+    return this.getValue("path")!;
   }
 
-  get attributename() {
-    return this.getValue("attributename");
+  get attribute() {
+    return this.getValue("attribute")!;
   }
 
-  get end() {
-    return Boolean(this.getValue("end"));
+  get scope() {
+    return this.getValue("scope")!;
   }
 
-  private getValue(key: string) {
-    var item = this._infos.find(f => f.startsWith(key));
-    if (item && item.indexOf("=") != -1) {
-      return item.split("=")[1];
-    }
+  getValue(key: string) {
+    var item = this.infos.find(f => f.key == key);
+    if (item) return item.value;
+  }
+
+  setValue(key: string, value: string) {
+    var item = this.infos.find(f => f.key == key);
+    if (item) return (item.value = value);
+  }
+
+  ToComment() {
+    return new Comment(`#kooboo--${this.infos.map(m => `${m.key}=${m.value}`).join("--")}`);
   }
 
   static isComment(node: Node) {
@@ -76,44 +76,55 @@ export class KoobooComment {
     return this.isComment(node) && node.nodeValue!.indexOf(KOOBOO_GUID) > -1;
   }
 
-  static getComments(el: Element) {
-    let self = el;
-    let comments: Comment[] = this.getSingleWrapComment(el);
-    let comment: Comment | undefined;
+  static getComments(node: Node) {
+    let comments: KoobooComment[] = [];
 
-    while (el) {
-      comment = previousComment(el);
-      while (comment) {
-        if (this.isEndComment(comment) || this.isGuidComment(comment)) break;
-        if (!isSingleCommentWrap(comment) && this.isInWrap(comment, self)) {
-          comments.push(comment);
-        }
-        comment = previousComment(comment);
-      }
-      el = el.previousElementSibling ? el.previousElementSibling : el.parentElement!;
+    while (node) {
+      comments.push(...this.getAroundComments(node, false));
+      node = node.parentElement!;
     }
 
-    return comments.map(m => new KoobooComment(m));
-  }
-
-  private static getSingleWrapComment(el: Element) {
-    let comments: Comment[] = [];
-    let comment: Comment | undefined;
-    comment = previousComment(el);
-    while (comment && isSingleCommentWrap(comment)) {
-      comments.push(comment);
-      comment = previousComment(comment);
-    }
     return comments;
   }
 
-  private static isInWrap(comment: Comment, self: Element) {
-    let koobooComment = new KoobooComment(comment);
-    let { nodes } = getWrapDom(comment, koobooComment.objecttype!);
-    return nodes.some(s => {
-      for (const i of getAllNode(s, true)) {
-        if (i == self) return true;
+  static getAroundComments(node: Node, strict: boolean = true) {
+    let comments: KoobooComment[] = [];
+    let skipUid: string[] = [];
+
+    while (node) {
+      if (KoobooComment.isComment(node)) {
+        var comment = new KoobooComment(node);
+        if (KoobooComment.isEndComment(node)) {
+          skipUid.push(comment.uid);
+        } else if (skipUid.every(e => e != comment.uid)) {
+          if (!strict || (!comment.scope && !comment.source.startsWith("repeat"))) {
+            comments.push(new KoobooComment(node));
+          }
+        }
       }
-    });
+      node = node.previousSibling!;
+      if (strict && node instanceof HTMLElement) break;
+    }
+
+    return comments;
+  }
+
+  static getAroundScopeComments(el: HTMLElement) {
+    let aroundComments = KoobooComment.getAroundComments(el, false);
+    return aroundComments.find(f => f.scope);
+  }
+
+  static getInnerComments(nodes: Node[]) {
+    const comments = [];
+
+    for (const node of nodes) {
+      for (const i of getAllNode(node, true)) {
+        if (this.isComment(i) && !this.isEndComment(i)) {
+          comments.push(new KoobooComment(i));
+        }
+      }
+    }
+
+    return comments;
   }
 }

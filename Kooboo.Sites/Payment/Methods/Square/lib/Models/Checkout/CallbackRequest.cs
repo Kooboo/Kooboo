@@ -20,16 +20,22 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout
         public string CreatedAt { get; set; }
 
         [JsonProperty("data")]
-        public DataObject Data { get; set; }
+        public Data Data { get; set; }
     }
 
-    public class DataObject
+    public class Data
     {
         [JsonProperty("object")]
-        public Shift Object { get; set; }
+        public Object Object { get; set; }
     }
 
-    public class Shift
+    public class Object
+    {
+        [JsonProperty("payment")]
+        public Payment Payment { get; set; }
+    }
+
+    public class Payment
     {
         [JsonProperty("id")]
         public string ID { get; set; }
@@ -37,22 +43,19 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout
         [JsonProperty("location_id")]
         public string LocationID { get; set; }
 
+        [JsonProperty("order_id")]
+        public string OrderId { get; set; }
+
         [JsonProperty("status")]
         public string Status { get; set; }
 
+        [JsonProperty("total_money")]
+        public Money TotalMoney { get; set; }
+
         [JsonProperty("updated_at")]
-        public string UpdatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
 
-        [JsonProperty("wage")]
-        public HourlyRateDetail WageDetail { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-    }
-
-    public class HourlyRateDetail
-    {
-        [JsonProperty("hourly_rate")]
-        public Money HourlyRate { get; set; }
+        [JsonProperty("reference_id")]
+        public string ReferenceId { get; set; }
     }
 }

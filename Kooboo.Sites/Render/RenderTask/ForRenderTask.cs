@@ -3,6 +3,8 @@
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Dom;
+using Kooboo.Sites.DataTraceAndModify;
+using Kooboo.Sites.Render.RenderTask;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ using System.Text;
 
 
 namespace Kooboo.Sites.Render
-{  
+{
     public class ForRenderTask : IRenderTask
     {
         /// <summary>
@@ -28,7 +30,7 @@ namespace Kooboo.Sites.Render
 
         public long LowBound { get; set; } = long.MinValue;
 
-        public long HighBound { get; set; } =long.MinValue; 
+        public long HighBound { get; set; } = long.MinValue;
 
         /// <summary>
         /// whether the self container element needs to be repeated or not. 
@@ -58,30 +60,30 @@ namespace Kooboo.Sites.Render
 
         public string ContainerEndTag { get; set; }
 
-        public ForRenderTask(string DataKey, string lowbound, string highbound,  bool RepeatSelf, Element element, EvaluatorOption options)
+        public ForRenderTask(string DataKey, string lowbound, string highbound, bool RepeatSelf, Element element, EvaluatorOption options)
         {
             this.datakey = DataKey;
 
-            long low; 
+            long low;
             if (long.TryParse(lowbound, out low))
             {
-                this.LowBound = low; 
+                this.LowBound = low;
             }
             else
             {
-                this.LowBoundKey = lowbound; 
+                this.LowBoundKey = lowbound;
             }
 
-            long high; 
+            long high;
             if (long.TryParse(highbound, out high))
             {
-                this.HighBound = high; 
+                this.HighBound = high;
             }
             else
             {
-                this.HighBoundKey = highbound; 
+                this.HighBoundKey = highbound;
             }
-          
+
             this.repeatself = RepeatSelf;
             string boundary = null;
             if (options.RequireBindingInfo)
@@ -92,17 +94,7 @@ namespace Kooboo.Sites.Render
             if (repeatself)
             {
                 string NewHtml = Service.DomService.ReSerializeElement(element, element.InnerHtml);
-
-                if (options.RequireBindingInfo)
-                {
-                  //  this.SubTasks.Add(new BindingTextContentItemRenderTask(this.alias, boundary, false));
-                }
                 this.SubTasks.AddRange(RenderEvaluator.Evaluate(NewHtml, options));
-
-                if (options.RequireBindingInfo)
-                {
-                    //this.SubTasks.Add(new BindingTextContentItemRenderTask(this.alias, boundary, true));
-                }
             }
             else
             {
@@ -123,36 +115,24 @@ namespace Kooboo.Sites.Render
                 {
                     this.ContainerTask.Add(new ContentRenderTask(Service.DomService.ReSerializeOpenTag(element)));
                 }
-
-
-                if (options.RequireBindingInfo)
-                {
-                   // this.SubTasks.Add(new BindingTextContentItemRenderTask(this.alias, boundary, false));
-                }
-
                 this.SubTasks.AddRange(RenderEvaluator.Evaluate(element.InnerHtml, options));
-
-                if (options.RequireBindingInfo)
-                {
-                   // this.SubTasks.Add(new BindingTextContentItemRenderTask(this.alias, boundary, true));
-                }
             }
         }
 
         public string Render(RenderContext context)
         {
-            long low = this.LowBound; 
+            long low = this.LowBound;
             if (low == long.MinValue && !string.IsNullOrEmpty(this.LowBoundKey))
             {
-                var lowvalue = context.DataContext.GetValue(this.LowBoundKey); 
-                
+                var lowvalue = context.DataContext.GetValue(this.LowBoundKey);
+
                 if (lowvalue == null || !long.TryParse(lowvalue.ToString(), out low))
                 {
-                    return null; 
-                } 
+                    return null;
+                }
             }
 
-            long high = this.HighBound; 
+            long high = this.HighBound;
             if (high == long.MinValue && !string.IsNullOrEmpty(this.HighBoundKey))
             {
                 var highvalue = context.DataContext.GetValue(this.HighBoundKey);
@@ -164,33 +144,33 @@ namespace Kooboo.Sites.Render
 
             if (high == long.MinValue || low == long.MinValue)
             {
-                return null; 
+                return null;
             }
             int count = (int)(high - low);
 
-            if (count <1)
+            if (count < 1)
             {
-                return null; 
-            } 
+                return null;
+            }
 
-           StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             string container = RenderHelper.Render(this.ContainerTask, context);
             if (!string.IsNullOrEmpty(container))
             {
                 sb.Append(container);
             }
-              
+
             context.DataContext.RepeatCounter.Push(count);
             int counter = 0;
 
-            for (long i =low; i < high; i++)
+            for (long i = low; i < high; i++)
             {
                 counter = counter + 1;
 
-                if (counter> Kooboo.Data.AppSettings.MaxForEachLoop)
+                if (counter > Kooboo.Data.AppSettings.MaxForEachLoop)
                 {
-                    throw new System.Exception(Data.Language.Hardcoded.GetValue("You have reached the max loop limitation in your account", context)); 
+                    throw new System.Exception(Data.Language.Hardcoded.GetValue("You have reached the max loop limitation in your account", context));
                 }
 
                 context.DataContext.RepeatCounter.CurrentCounter.Current = counter;
@@ -207,7 +187,7 @@ namespace Kooboo.Sites.Render
                     context.DataContext.Pop();
                 }
             }
-             
+
             context.DataContext.RepeatCounter.Pop();
 
             if (!string.IsNullOrEmpty(this.ContainerEndTag))
@@ -245,7 +225,7 @@ namespace Kooboo.Sites.Render
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
-        { 
+        {
 
             long low = this.LowBound;
             if (low == long.MinValue && !string.IsNullOrEmpty(this.LowBoundKey))
@@ -283,7 +263,7 @@ namespace Kooboo.Sites.Render
             {
                 item.AppendResult(context, result);
             }
-             
+
 
             context.DataContext.RepeatCounter.Push(count);
             int counter = 0;
@@ -316,9 +296,9 @@ namespace Kooboo.Sites.Render
             if (!string.IsNullOrEmpty(this.ContainerEndTag))
             {
                 result.Add(new RenderResult() { Value = this.ContainerEndTag });
-            } 
+            }
         }
 
     }
-      
+
 }
