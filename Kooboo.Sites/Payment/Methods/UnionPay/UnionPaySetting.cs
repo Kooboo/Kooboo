@@ -16,11 +16,6 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
         /// </summary>
         public string FrontUrl { get; set; }
 
-        /// <summary>
-        /// 后台通知地址
-        /// </summary>
-        public string BackUrl { get; set; }
-
         public string MerchantID { get; set; }
 
         public SettingFile SignCertPFX { get; set; }

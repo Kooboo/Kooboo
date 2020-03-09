@@ -67,5 +67,57 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
             //设置签名域值
             reqData["signature"] = stringSign;
         }
+
+        /// <summary>
+        /// 验证签名
+        /// </summary>
+        /// <param name="rspData"></param>
+        /// <param name="encoder"></param>
+        /// <returns></returns>
+        public static bool Validate(Dictionary<string, string> rspData, Encoding encoding)
+        {
+            if (!rspData.ContainsKey("version"))
+            {
+                return false;
+            }
+            string version = rspData["version"];
+
+            if (!rspData.ContainsKey("signature"))
+            {
+                return false;
+            }
+            string signature = rspData["signature"];
+
+            if (!rspData.ContainsKey("signMethod"))
+            {
+                return false;
+            }
+            string signMethod = rspData["signMethod"];
+
+            bool result = false;
+
+            if ("01".Equals(signMethod))
+            {
+                byte[] signByte = Convert.FromBase64String(signature);
+                rspData.Remove("signature");
+                string stringData = SDKUtil.CreateLinkString(rspData, true, false, encoding);
+
+                // need todo 
+                //byte[] signDigest = SecurityUtil.Sha256(stringData, encoding);
+                //string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
+
+                //string signPubKeyCert = rspData["signPubKeyCert"];
+                //X509Certificate x509Cert = CertUtil.VerifyAndGetPubKey(signPubKeyCert);
+                //if (x509Cert == null)
+                //{
+                //    return false;
+                //}
+                //result = SecurityUtil.ValidateSha256WithRsa(x509Cert.GetPublicKey(), signByte, encoding.GetBytes(stringSignDigest));
+
+                result = true;
+            }
+
+            return result;
+        }
     }
 }

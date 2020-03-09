@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.UnionPay.lib;
@@ -33,6 +34,8 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         private string GetHtmlForm(PaymentRequest request)
         {
+            var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+
             // https://open.unionpay.com/tjweb/acproduct/APIList?acpAPIId=275&apiservId=448&version=V2.2&bussType=0#nav04
             Dictionary<string, string> param = new Dictionary<string, string>();
             param["version"] = "5.1.0";//版本号
@@ -44,34 +47,18 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["channelType"] = "08";//渠道类型
             param["accessType"] = "0";//接入类型 0：商户直连接入
             param["frontUrl"] = Setting.FrontUrl;  //前台通知地址      
-            param["backUrl"] = Setting.BackUrl;  //后台通知地址
-            param["currencyCode"] = GetCurrencyCode(request.Currency);//交易币种 156 人民币
 
-            // 订单超时时间。
-            // 超过此时间后，除网银交易外，其他交易银联系统会拒绝受理，提示超时。 跳转银行网银交易如果超时后交易成功，会自动退款，大约5个工作日金额返还到持卡人账户。
-            // 此时间建议取支付时的北京时间加15分钟。
-            // 超过超时时间调查询接口应答origRespCode不是A6或者00的就可以判断为失败。
-            param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");
+            // 需要用这行
+            //param["backUrl"] = callbackUrl;  //后台通知地址
+            param["backUrl"] = "https://b72dcda6.ngrok.io/_api/paymentcallback/UnionPayForm_Notify";
 
+            param["currencyCode"] = CurrencyCodes.GetNumericCode(request.Currency, string.Empty);//交易币种 156 人民币
+            param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");  // 订单超时时间。
             param["merId"] = Setting.MerchantID;//商户号
             param["orderId"] = request.Id.ToString("N");//商户订单号，8-32位数字字母，不能含“-”或“_”
-
             param["txnTime"] = DateTime.Now.ToString("yyyyMMddHHmmss");//订单发送时间，格式为YYYYMMDDhhmmss，取北京时间
             param["txnAmt"] = GetSquareAmount(request.TotalAmount).ToString();//交易金额，单位分
-
-            // 请求方保留域，
-            // 透传字段，查询、通知、对账文件中均会原样出现，如有需要请启用并修改自己希望透传的数据。
-            // 出现部分特殊字符时可能影响解析，请按下面建议的方式填写：
-            // 1. 如果能确定内容不会出现&={}[]"'等符号时，可以直接填写数据，建议的方法如下。
-            //param["reqReserved"] = "透传信息1|透传信息2|透传信息3";
-            // 2. 内容可能出现&={}[]"'符号时：
-            // 1) 如果需要对账文件里能显示，可将字符替换成全角＆＝｛｝【】“‘字符（自己写代码，此处不演示）；
-            // 2) 如果对账文件没有显示要求，可做一下base64（如下）。
-            //    注意控制数据长度，实际传输的数据长度不能超过1024位。
-            //    查询、通知等接口解析时使用System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(reqReserved))解base64后再对数据做后续解析。
-            //param["reqReserved"] = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("任意格式的信息都可以"));
-
-            param["riskRateInfo"] = "{}";//
+            param["riskRateInfo"] = "{}";  // 请求方保留域 {}
 
             SignHelper.Sign(param, System.Text.Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
             string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, System.Text.Encoding.UTF8);
@@ -115,23 +102,45 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             return (int)(totalAmount * 100);
         }
 
-        private string GetCurrencyCode(string currency)
+
+        public PaymentCallback Notify(RenderContext context)
         {
-            var result = string.Empty;
+            //  to do 验签还没做完
 
-            var currentCodes = new Dictionary<string, string>
+            Dictionary<string, string> resData = new Dictionary<string, string>();
+            NameValueCollection coll = context.Request.Forms;
+            string[] requestItem = coll.AllKeys;
+            for (int i = 0; i < requestItem.Length; i++)
             {
-                {"CNY", "156"},
-                {"JPY", "392"},
-                {"CAD", "124"},
-                {"GBP", "826"},
-                {"USD", "840"},
-                {"EUR", "978"}
-            };
+                resData.Add(requestItem[i], context.Request.Forms[requestItem[i]]);
+            }
 
-            currentCodes.TryGetValue(currency, out result);
+            Guid orderId;
+            if (SignHelper.Validate(resData, System.Text.Encoding.UTF8) && Guid.TryParse(context.Request.Forms["orderId"], out orderId))
+            {
+                var response = new PaymentCallback
+                {
+                    RequestId = orderId,
+                    RawData = context.Request.Body,
+                };
 
-            return result;
+                //00、A6为成功，其余为失败。其他字段也可按此方式获取。 https://open.unionpay.com/tjweb/support/faq/mchlist?id=327
+                string respcode = resData["respCode"];
+                if (respcode == "00" || respcode == "A6")
+                {
+                    response.Status = PaymentStatus.Paid;
+                }
+                else
+                {
+                    response.Status = PaymentStatus.Rejected;
+                }
+
+                return response;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
