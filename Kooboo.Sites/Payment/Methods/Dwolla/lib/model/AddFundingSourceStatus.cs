@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
 {
-    public class FundingSourceAddingStatus
+    public class AddFundingSourceStatus
     {
         [JsonProperty(PropertyName = "funding-source")]
         public Link FundingSource { get; set; }
