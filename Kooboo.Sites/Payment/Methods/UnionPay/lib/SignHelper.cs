@@ -9,8 +9,6 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
 {
     public class SignHelper
     {
-        const string VERSION_5_0_0 = "5.0.0";
-
         /// <summary>
         /// 使用配置文件配置的证书/密钥签名
         /// </summary>
