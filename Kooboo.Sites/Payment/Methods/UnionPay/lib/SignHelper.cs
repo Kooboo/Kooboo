@@ -1,6 +1,8 @@
 ﻿using Kooboo.Sites.Payment.Methods.Alipay.lib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
@@ -101,6 +103,39 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
                 byte[] signByte = Convert.FromBase64String(signature);
                 rspData.Remove("signature");
                 string stringData = SDKUtil.CreateLinkString(rspData, true, false, encoding);
+
+
+                byte[] signDigest = System.Security.Cryptography.SHA256.Create().ComputeHash(encoding.GetBytes(stringData));
+                string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
+                string signPubKeyCert = rspData["signPubKeyCert"];
+
+                signPubKeyCert = signPubKeyCert.Replace("-----END CERTIFICATE-----", "").Replace("-----BEGIN CERTIFICATE-----", "");
+                byte[] x509CertBytes = Convert.FromBase64String(signPubKeyCert);
+
+
+                var roby=File.ReadAllBytes(@"D:\certs\acp_test_root.cer");
+                var rootCert = new System.Security.Cryptography.X509Certificates.X509Certificate2(roby);
+
+                var miby=File.ReadAllBytes(@"D:\certs\acp_test_middle.cer");
+                var micert = new System.Security.Cryptography.X509Certificates.X509Certificate2(miby);
+
+                var cert = new X509Certificate2(x509CertBytes);
+
+                var chain = new X509Chain();
+                chain.ChainPolicy.ExtraStore.Add(cert);
+                chain.ChainPolicy.ExtraStore.Add(micert);
+
+                //foreach (var cert in additionalCertificates.Select(x => new X509Certificate2(x)))
+                //{
+                //    chain.ChainPolicy.ExtraStore.Add(cert);
+                //}
+
+                // You can alter how the chain is built/validated.
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreWrongUsage;
+
+
+                var isBulid = chain.Build(rootCert);
 
                 // need todo 
                 //byte[] signDigest = SecurityUtil.Sha256(stringData, encoding);
