@@ -50,7 +50,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
             // 需要用这行
             //param["backUrl"] = callbackUrl;  //后台通知地址
-            param["backUrl"] = "https://a10bc216.ngrok.io/_api/paymentcallback/UnionPayForm_Notify?SiteId=50ecb05f-e985-7b0d-78de-c10ee111eb30";
+            param["backUrl"] = "https://287301a2.ngrok.io/_api/paymentcallback/UnionPayForm_Notify?SiteId=50ecb05f-e985-7b0d-78de-c10ee111eb30";
 
             param["currencyCode"] = CurrencyCodes.GetNumericCode(request.Currency, string.Empty);//交易币种 156 人民币
             param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");  // 订单超时时间。
@@ -115,7 +115,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             }
 
             Guid orderId;
-            if (SignHelper.Validate(resData, System.Text.Encoding.UTF8) && Guid.TryParse(context.Request.Forms["orderId"], out orderId))
+            if (SignHelper.Validate(resData, Encoding.UTF8) && Guid.TryParse(context.Request.Forms["orderId"], out orderId))
             {
                 var response = new PaymentCallback
                 {

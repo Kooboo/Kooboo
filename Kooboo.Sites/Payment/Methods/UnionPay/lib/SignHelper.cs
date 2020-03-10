@@ -48,7 +48,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         /// <returns></returns>
         public static void SignByCertInfo(Dictionary<string, string> reqData, byte[] certRawData, string certPwd, Encoding encoding)
         {
-            var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(certRawData, certPwd, System.Security.Cryptography.X509Certificates.X509KeyStorageFlags.Exportable);
+            var cert = new X509Certificate2(certRawData, certPwd, X509KeyStorageFlags.Exportable);
             reqData["certId"] = new System.Numerics.BigInteger(cert.GetSerialNumber()).ToString();
 
             //将Dictionary信息转换成key1=value1&key2=value2的形式
@@ -104,7 +104,6 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
                 rspData.Remove("signature");
                 string stringData = SDKUtil.CreateLinkString(rspData, true, false, encoding);
 
-
                 byte[] signDigest = System.Security.Cryptography.SHA256.Create().ComputeHash(encoding.GetBytes(stringData));
                 string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
                 string signPubKeyCert = rspData["signPubKeyCert"];
@@ -112,44 +111,30 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
                 signPubKeyCert = signPubKeyCert.Replace("-----END CERTIFICATE-----", "").Replace("-----BEGIN CERTIFICATE-----", "");
                 byte[] x509CertBytes = Convert.FromBase64String(signPubKeyCert);
 
+                var roby = File.ReadAllBytes(@"D:\certs\acp_test_root.cer");
+                var rootCert = new X509Certificate2(roby);
 
-                var roby=File.ReadAllBytes(@"D:\certs\acp_test_root.cer");
-                var rootCert = new System.Security.Cryptography.X509Certificates.X509Certificate2(roby);
-
-                var miby=File.ReadAllBytes(@"D:\certs\acp_test_middle.cer");
-                var micert = new System.Security.Cryptography.X509Certificates.X509Certificate2(miby);
+                var miby = File.ReadAllBytes(@"D:\certs\acp_test_middle.cer");
+                var micert = new X509Certificate2(miby);
 
                 var cert = new X509Certificate2(x509CertBytes);
 
                 var chain = new X509Chain();
-                chain.ChainPolicy.ExtraStore.Add(cert);
+                chain.ChainPolicy.ExtraStore.Add(rootCert);
                 chain.ChainPolicy.ExtraStore.Add(micert);
-
-                //foreach (var cert in additionalCertificates.Select(x => new X509Certificate2(x)))
-                //{
-                //    chain.ChainPolicy.ExtraStore.Add(cert);
-                //}
-
+                
                 // You can alter how the chain is built/validated.
                 chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreWrongUsage;
+                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
+                chain.Build(cert);
 
-                var isBulid = chain.Build(rootCert);
+                if (chain.ChainElements.Count != chain.ChainPolicy.ExtraStore.Count + 1)
+                    return false;
 
-                // need todo 
-                //byte[] signDigest = SecurityUtil.Sha256(stringData, encoding);
-                //string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
+                var rsa = cert.PublicKey.Key as System.Security.Cryptography.RSACryptoServiceProvider;
 
-                //string signPubKeyCert = rspData["signPubKeyCert"];
-                //X509Certificate x509Cert = CertUtil.VerifyAndGetPubKey(signPubKeyCert);
-                //if (x509Cert == null)
-                //{
-                //    return false;
-                //}
-                //result = SecurityUtil.ValidateSha256WithRsa(x509Cert.GetPublicKey(), signByte, encoding.GetBytes(stringSignDigest));
-
-                result = true;
+                result = rsa.VerifyData(encoding.GetBytes(stringSignDigest), System.Security.Cryptography.SHA256.Create(), signByte);
             }
 
             return result;
