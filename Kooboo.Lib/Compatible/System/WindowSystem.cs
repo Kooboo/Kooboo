@@ -106,7 +106,7 @@ namespace Kooboo.Lib.Compatible
             trypaths.Add(@"..\..\");
             trypaths.Add(@"..\..\..\");
             trypaths.Add(@"..\..\..\..\");
-
+            trypaths.Add(@"..\..\..\..\Kooboo\Kooboo.Web");
             return trypaths;
         }
 

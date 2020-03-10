@@ -2,6 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,8 +14,23 @@ namespace Kooboo.Render.Controller
     {
         static ModuleFile()
         {
-            ModuleRoots.Add(System.IO.Path.Combine(Data.AppSettings.RootPath, "modules"));
-            ModuleRoots.Add(System.IO.Path.Combine(Data.AppSettings.RootPath, "view"));
+            ModuleRoots.Add(Path.Combine(Data.AppSettings.RootPath, "view"));
+            var moduleDir = Path.Combine(Data.AppSettings.RootPath, "modules");
+
+            if (!Directory.Exists(moduleDir))
+            {
+                moduleDir = Path.Combine(AppContext.BaseDirectory, "modules");
+            }
+
+            if (!Directory.Exists(moduleDir)) return;
+
+            ModuleRoots.Add(moduleDir);
+
+            foreach (var item in Directory.GetDirectories(moduleDir))
+            {
+                ModuleRoots.Add(item);
+            }
+
         }
 
         public static List<string> ModuleRoots { get; set; } = new List<string>();
@@ -31,7 +47,7 @@ namespace Kooboo.Render.Controller
                 string relative = FullFilePath.Substring(root.Length);
                 if (string.IsNullOrWhiteSpace(relative))
                 {
-                    return null; 
+                    return null;
                 }
 
                 if (relative.StartsWith("/") || relative.StartsWith("\\"))
@@ -41,7 +57,7 @@ namespace Kooboo.Render.Controller
 
                 if (string.IsNullOrWhiteSpace(relative))
                 {
-                    return null; 
+                    return null;
                 }
 
                 if (relative.ToLower().StartsWith(AdminPath))
@@ -51,11 +67,11 @@ namespace Kooboo.Render.Controller
 
                 if (string.IsNullOrWhiteSpace(relative))
                 {
-                    return null; 
+                    return null;
                 }
 
                 var paths = relative.Split(seps, StringSplitOptions.RemoveEmptyEntries).ToList();
-                foreach(var moduleRoot in ModuleRoots)
+                foreach (var moduleRoot in ModuleRoots)
                 {
                     paths.Insert(0, moduleRoot);
 
@@ -66,10 +82,10 @@ namespace Kooboo.Render.Controller
                         return fullpath;
                     }
                     paths.RemoveAt(0);
-                }  
+                }
             }
 
-            return null; 
+            return null;
         }
     }
 }

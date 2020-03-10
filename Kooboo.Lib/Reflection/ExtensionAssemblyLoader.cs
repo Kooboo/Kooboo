@@ -43,6 +43,8 @@ namespace Kooboo.Lib.Reflection
                 var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder);
                 if (!Directory.Exists(dir)) continue;
 
+
+
                 var watcher = new FileSystemWatcher(dir);
                 watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
                 watcher.Changed += new FileSystemEventHandler(OnFileChanged);
