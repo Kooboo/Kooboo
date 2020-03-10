@@ -292,7 +292,7 @@ var value = k.session.key; ")]
                     {
                         if (_url == null)
                         {
-                            _url = new Curl();
+                            _url = new Curl(RenderContext);
                         }
                     }
                 }

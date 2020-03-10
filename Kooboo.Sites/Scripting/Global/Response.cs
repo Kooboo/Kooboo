@@ -113,7 +113,7 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
 
             if (url.ToLower().StartsWith("https://") || url.ToLower().StartsWith("http://"))
             {
-                Curl curl = new Curl();
+                Curl curl = new Curl(context);
                 value =   curl.get(url); 
             }
 

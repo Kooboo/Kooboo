@@ -10,12 +10,18 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.ComponentModel;
+using Kooboo.Data.Context;
 
 namespace KScript
 {
 
     public class Curl
     {
+        private RenderContext context { get; set; }
+        public Curl(RenderContext context)
+        {
+            this.context = context;
+        }
 
         [Description(@"Get data string from the url
 var webcontent = k.url.get(""http://www.kooboo.com""); ")]
@@ -161,6 +167,22 @@ var data = ""name=myname&field=value"";
                 return ex.Message;
             }
 
+        }
+        [Description(@"Download zip package by url.")]
+        public void DownloadZip(string url)
+        {
+            HttpClient client = HttpClientHelper.Client;
+            var requestMessage = new HttpRequestMessage
+            {
+                RequestUri = new Uri(url),
+                Method = HttpMethod.Get,
+            };
+
+            var response = client.SendAsync(requestMessage).Result;
+            var bytes = response.Content.ReadAsByteArrayAsync().Result;
+            context.Response.Headers.Add("Content-Disposition", response.Content.Headers.ContentDisposition.ToString());
+            context.Response.ContentType = "application/zip";
+            context.Response.Body = bytes;
         }
 
         private static async Task<string> _get(string url, Dictionary<string, string> query = null, string UserName = null, string Password = null)
