@@ -103,15 +103,20 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             return response;
         }
 
-        public async void SubscriptionWebhook(string endpoint)
+        public async Task<bool> SubscriptionWebhook(string endpoint, string webhookSecret)
         {
             var client = Create("Bearer", Token);
             var headers = new Dictionary<string, string>
             {
                 { "Accept", contentType }
             };
-            var body = string.Format("{{\"url\": \"{0}\",\"secret\": \"{1}\"}", endpoint, "secret");
-            var result = await client.PostAsync($"{ApiBaseAddress}/webhook-subscriptions", body, contentType, headers);
+            var body = string.Format("{{\"url\": \"{0}\",\"secret\": \"{1}\"}}", endpoint, webhookSecret);
+            var response = await client.PostAsync($"{ApiBaseAddress}/webhook-subscriptions", body, contentType, headers);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

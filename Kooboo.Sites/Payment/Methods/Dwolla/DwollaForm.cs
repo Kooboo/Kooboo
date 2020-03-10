@@ -101,17 +101,68 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                     },
                     Amount = fundingSourceResponse.Money
                 };
+
+                var webhookApi = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+                // need to delete
+                webhookApi = "https://80d092dc.ngrok.io/_api/paymentcallback/DwollaForm_Notify?SiteId=335d0305-f808-c51b-9869-66dde503a306";
+                var isSubscriptionWebhook = dwollaApi.SubscriptionWebhook(webhookApi, Guid.NewGuid().ToString()).Result;
+
                 var createTransferResult = dwollaApi.CreateTransfer(request).Result;
                 if (createTransferResult.Status == "Created")
                 {
                     response = new PaymentCallback();
                     var storedRequest = PaymentManager.GetRequest(fundingSourceResponse.RequestId, context);
                     storedRequest.ReferenceId = createTransferResult.TransferURL.ToString();
+                    storedRequest.Id = GetTransferId(createTransferResult.TransferURL);
                     PaymentManager.UpdateRequest(storedRequest, context);
                 }
             }
             
             return response;
+        }
+
+        public PaymentCallback Notify(RenderContext context)
+        {
+            var body = context.Request.Body;
+            var request = JsonConvert.DeserializeObject<WebhookCallback>(body);
+
+            var result = new PaymentCallback
+            {
+                Status = ConvertStatus(request.Topic),
+                RawData = body,
+                CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
+            };
+
+            request.Links.TryGetValue("resource", out var transfer);
+            if (transfer != null && !string.IsNullOrEmpty(transfer.Href.ToString())) {
+                result.RequestId = GetTransferId(transfer.Href);
+            }
+            return result;
+        }
+
+        private Guid GetTransferId(Uri transferUrl)
+        {
+            var transferUrlArray = transferUrl.ToString().Split('/');
+            var transferId = transferUrlArray[transferUrlArray.Length - 1];
+            Guid.TryParse(transferId, out Guid guid);
+            return guid;
+        }
+
+        private PaymentStatus ConvertStatus(string status)
+        {
+            switch (status)
+            {
+                case "transfer_completed":
+                    return PaymentStatus.Paid;
+                case "transfer_failed":
+                    return PaymentStatus.Rejected;
+                case "transfer_cancelled":
+                    return PaymentStatus.Cancelled;
+                case "transfer_created":
+                    return PaymentStatus.Pending;
+                default:
+                    return PaymentStatus.NotAvailable;
+            }
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
@@ -157,6 +208,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         {
             var sanboxConfig = isUsingSanbox ? "dwolla.configure('sandbox')" : string.Empty;
             var redirect = string.IsNullOrEmpty(Setting.TransferCreatedUrl) ? "" : $"window.location.replace('{Setting.TransferCreatedUrl}')";
+
             var html = string.Format(@"
 <script src=""https://cdn.dwolla.com/1/dwolla.js""></script>
 <div id=""iavContainer""></div>
