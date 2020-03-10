@@ -15,5 +15,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         public bool IsUsingSanbox { get; set; }
 
         public string FundingSourceId { get; set; }
+
+        public string TransferCreatedUrl { get; set; }
     }
 }

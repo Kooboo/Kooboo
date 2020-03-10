@@ -84,11 +84,10 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             return response;
         }
 
-        [KDefineType(Return = typeof(HiddenFormResponse))]
-        public IPaymentResponse CreateTransfer(RenderContext context)
+        public PaymentCallback CreateTransfer(RenderContext context)
         {
             var fundingSourceResponse = JsonConvert.DeserializeObject<AddFundingSourceResponse>(context.Request.Body);
-            IPaymentResponse response;
+            PaymentCallback response = null;
             var fundingSourceLink = fundingSourceResponse.Links.FundingSource.Href;
             if (fundingSourceLink != null)
             {
@@ -105,27 +104,11 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                 var createTransferResult = dwollaApi.CreateTransfer(request).Result;
                 if (createTransferResult.Status == "Created")
                 {
-                    response = new PaidResponse
-                    {
-                        requestId = fundingSourceResponse.RequestId,
-                        paymemtMethodReferenceId = createTransferResult.TransferURL.ToString()
-                    };
+                    response = new PaymentCallback();
+                    var storedRequest = PaymentManager.GetRequest(fundingSourceResponse.RequestId, context);
+                    storedRequest.ReferenceId = createTransferResult.TransferURL.ToString();
+                    PaymentManager.UpdateRequest(storedRequest, context);
                 }
-                else
-                {
-                    response = new FailedResponse("Create transfer failed")
-                    {
-                        requestId = fundingSourceResponse.RequestId,
-                        paymemtMethodReferenceId = createTransferResult.TransferURL.ToString()
-                    };
-                }
-            }
-            else
-            {
-                response = new FailedResponse("IAV failed")
-                {
-                    requestId = fundingSourceResponse.RequestId
-                };
             }
             
             return response;
@@ -141,6 +124,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                 return result;
             }
             var response = dwollaApi.GetTransfer(request.ReferenceId).Result;
+            
             if (response.Status == "processed")
             {
                 result.Status = PaymentStatus.Paid;
@@ -172,6 +156,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         private string GenerateHtml(string iavToken, bool isUsingSanbox, string apiUrl, Money money, PaymentRequest request)
         {
             var sanboxConfig = isUsingSanbox ? "dwolla.configure('sandbox')" : string.Empty;
+            var redirect = string.IsNullOrEmpty(Setting.TransferCreatedUrl) ? "" : $"window.location.replace('{Setting.TransferCreatedUrl}')";
             var html = string.Format(@"
 <script src=""https://cdn.dwolla.com/1/dwolla.js""></script>
 <div id=""iavContainer""></div>
@@ -200,8 +185,9 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
     xmlhttp.open('POST','{2}',true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.send(JSON.stringify(request));
+    {6}
   }});
- </script> ", sanboxConfig, iavToken, apiUrl, money.Currency, money.Value, request.Id.ToString());
+ </script> ", sanboxConfig, iavToken, apiUrl, money.Currency, money.Value, request.Id.ToString(), redirect);
 
             return html;
         }
