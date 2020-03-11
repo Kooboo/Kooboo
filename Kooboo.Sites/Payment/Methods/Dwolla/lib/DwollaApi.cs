@@ -103,7 +103,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             return response;
         }
 
-        public async Task<bool> SubscriptionWebhook(string endpoint, string webhookSecret)
+        public async Task<bool> CreateWebhookSubscription(string endpoint, string webhookSecret)
         {
             var client = Create("Bearer", Token);
             var headers = new Dictionary<string, string>
@@ -112,6 +112,39 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             };
             var body = string.Format("{{\"url\": \"{0}\",\"secret\": \"{1}\"}}", endpoint, webhookSecret);
             var response = await client.PostAsync($"{ApiBaseAddress}/webhook-subscriptions", body, contentType, headers);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<GetWebhookSubscriptionsResponse> GetWebhookSubscription()
+        {
+            var result = new GetWebhookSubscriptionsResponse();
+            var client = Create("Bearer", Token);
+            var headers = new Dictionary<string, string>
+            {
+                { "Accept", contentType }
+            };
+            var response = await client.GetAsync($"{ApiBaseAddress}/webhook-subscriptions", headers);
+            if (response.IsSuccessStatusCode)
+            {
+                result = JsonConvert.DeserializeObject<GetWebhookSubscriptionsResponse>(response.Content);
+                return result;
+            }
+            return result;
+        }
+
+        public async Task<bool> DeleteWebhookSubscriptions(string id)
+        {
+            var client = Create("Bearer", Token);
+            var headers = new Dictionary<string, string>
+            {
+                { "Accept", contentType }
+            };
+
+            var response = await client.DeleteAsync($"{ApiBaseAddress}/webhook-subscriptions/" + id, headers);
             if (response.IsSuccessStatusCode)
             {
                 return true;

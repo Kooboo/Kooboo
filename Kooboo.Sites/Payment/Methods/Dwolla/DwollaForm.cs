@@ -92,6 +92,22 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             if (fundingSourceLink != null)
             {
                 var dwollaApi = new DwollaApi(Setting);
+
+                var webhookApi = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+                var isNeedSubscribe = true;
+                var webhookSubscriptionList = dwollaApi.GetWebhookSubscription().Result;
+                foreach (var subscription in webhookSubscriptionList.Embedded.WebhookSubscriptions)
+                {
+                    if (subscription.Url == webhookApi)
+                    {
+                        isNeedSubscribe = false;
+                    }
+                }
+                if (isNeedSubscribe)
+                {
+                    var isSubscribed = dwollaApi.CreateWebhookSubscription(webhookApi, "kooboodwollasecret").Result;
+                }
+
                 var request = new CreateTransferRequest()
                 {
                     Links = new Dictionary<string, Link>
@@ -101,12 +117,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                     },
                     Amount = fundingSourceResponse.Money
                 };
-
-                var webhookApi = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-                // need to delete
-                webhookApi = "https://80d092dc.ngrok.io/_api/paymentcallback/DwollaForm_Notify?SiteId=335d0305-f808-c51b-9869-66dde503a306";
-                var isSubscriptionWebhook = dwollaApi.SubscriptionWebhook(webhookApi, Guid.NewGuid().ToString()).Result;
-
                 var createTransferResult = dwollaApi.CreateTransfer(request).Result;
                 if (createTransferResult.Status == "Created")
                 {
@@ -115,6 +125,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                     storedRequest.ReferenceId = createTransferResult.TransferURL.ToString();
                     storedRequest.Id = GetTransferId(createTransferResult.TransferURL);
                     PaymentManager.UpdateRequest(storedRequest, context);
+                    response.RequestId = storedRequest.Id;
                 }
             }
             

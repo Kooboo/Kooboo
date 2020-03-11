@@ -75,6 +75,14 @@ namespace Kooboo.Sites.Payment
             return await SendAsync(HttpMethod.Get, url, null, headers, withAuth);
         }
 
+        public async Task<ApiResponse> DeleteAsync(
+            string url,
+            Dictionary<string, string> headers = null,
+            bool withAuth = true)
+        {
+            return await SendAsync(HttpMethod.Delete, url, null, headers, withAuth);
+        }
+
         /// <summary>
         /// Send custom api request
         /// </summary>
