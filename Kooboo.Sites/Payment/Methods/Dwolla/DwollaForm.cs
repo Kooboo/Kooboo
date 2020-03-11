@@ -5,6 +5,7 @@ using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Dwolla
@@ -36,6 +37,18 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
 
         public RenderContext Context { get; set; }
 
+        [Description(@"
+<script engine='kscript'>
+	var charge = {
+    firstName: 'Jane',
+    lastName: 'Doe',
+    currency: 'usd',
+    totalAmount: 100.80
+  }
+  var res = k.payment.dwollaForm.charge(charge)
+</script>
+
+<div k-content='res.html'></div>")]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             request.Additional.TryGetValue("firstName", out var firstName);

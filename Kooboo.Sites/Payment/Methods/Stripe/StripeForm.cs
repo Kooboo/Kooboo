@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public StripeFormSetting Setting { get; set; }
 
         private const string Description = @"Pay by stripe. Example:
-<script engine=""kscript"">
+<script engine='kscript'>
   var charge = {
     successUrl: 'https://example.com/success',
     cancelUrl: 'https://example.com/cancel',
@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
   };
   var res = k.payment.stripeForm.charge(charge);
 </script>
-<div k-content=""res.html""></div>";
+<div k-content='res.html'></div>";
 
         public string Name => "StripeForm";
 
