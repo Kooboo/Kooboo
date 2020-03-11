@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Sites.Payment.Methods.UnionPay.lib;
+using Kooboo.Sites.Payment.Response;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
-using Kooboo.Data.Context;
-using Kooboo.Sites.Payment.Methods.UnionPay.lib;
-using Kooboo.Sites.Payment.Response;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Payment.Methods.UnionPay
 {
@@ -26,13 +27,19 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         public IPaymentResponse Charge(PaymentRequest request)
         {
+            var txnTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+            request.ReferenceId = txnTime;
+
             HiddenFormResponse res = new HiddenFormResponse();
-            res.html = GetHtmlForm(request);
+            res.html = GetHtmlForm(request, txnTime);
             res.method = "POST";
+
+            request.Id = new Guid("cc13100e4fdf4dd59c7a25de1ffdef6d");
+            checkStatus(request);
             return res;
         }
 
-        private string GetHtmlForm(PaymentRequest request)
+        private string GetHtmlForm(PaymentRequest request, string txnTime)
         {
             var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
 
@@ -44,7 +51,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["txnSubType"] = "01";//交易子类  01：自助消费
             param["bizType"] = "000201";//业务类型
             param["signMethod"] = "01";//签名方法 （表示采用RSA签名）
-            param["channelType"] = "08";//渠道类型
+            param["channelType"] = "07";//渠道类型
             param["accessType"] = "0";//接入类型 0：商户直连接入
             param["frontUrl"] = Setting.FrontUrl;  //前台通知地址      
 
@@ -56,12 +63,12 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");  // 订单超时时间。
             param["merId"] = Setting.MerchantID;//商户号
             param["orderId"] = request.Id.ToString("N");//商户订单号，8-32位数字字母，不能含“-”或“_”
-            param["txnTime"] = DateTime.Now.ToString("yyyyMMddHHmmss");//订单发送时间，格式为YYYYMMDDhhmmss，取北京时间
+            param["txnTime"] = txnTime;//订单发送时间，格式为YYYYMMDDhhmmss，取北京时间
             param["txnAmt"] = GetAmount(request.TotalAmount).ToString();//交易金额，单位分
             param["riskRateInfo"] = "{}";  // 请求方保留域 {}
 
-            SignHelper.Sign(param, System.Text.Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
-            string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, System.Text.Encoding.UTF8);
+            SignHelper.Sign(param, Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
+            string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, Encoding.UTF8);
 
             return formHtml;
         }
@@ -94,7 +101,37 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            throw new NotImplementedException();
+            PaymentStatusResponse result = new PaymentStatusResponse();
+            Dictionary<string, string> param = new Dictionary<string, string>();
+
+            // https://open.unionpay.com/tjweb/acproduct/APIList?acpAPIId=278&apiservId=448&version=V2.2&bussType=0
+            param["version"] = "5.1.0";//版本号
+            param["encoding"] = "UTF-8";//编码方式
+            param["signMethod"] = "01";//签名方法
+            param["txnType"] = "00";//交易类型
+            param["txnSubType"] = "00";//交易子类
+            param["bizType"] = "000000";//业务类型
+            param["accessType"] = "0";//接入类型
+            param["channelType"] = "07";//渠道类型
+            param["orderId"] = request.Id.ToString("N");//商户订单号
+            param["merId"] = Setting.MerchantID;//商户号
+            param["txnTime"] = request.ReferenceId;
+
+            SignHelper.Sign(param, Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
+
+            string postData = SDKUtil.CreateLinkString(param, false, true, Encoding.UTF8);
+
+            var resxxxx = Create(Setting.SingleQueryUrl, postData).Result;
+
+            return result;
+        }
+
+        public static async Task<string> Create(string singleQueryUrl, string postData)
+        {
+            var client = ApiClient.Create();
+            var result = await client.PostAsync(singleQueryUrl, postData, "application/x-www-form-urlencoded");
+            var response = result.Content;
+            return response;
         }
 
         private static int GetAmount(decimal totalAmount)
@@ -102,10 +139,8 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             return (int)(totalAmount * 100);
         }
 
-
         public PaymentCallback Notify(RenderContext context)
         {
-            //  to do 验签还没做完
             Dictionary<string, string> resData = new Dictionary<string, string>();
             NameValueCollection coll = context.Request.Forms;
             string[] requestItem = coll.AllKeys;
