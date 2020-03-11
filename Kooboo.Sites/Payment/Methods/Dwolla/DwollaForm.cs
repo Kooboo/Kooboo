@@ -72,7 +72,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             if (string.IsNullOrEmpty(iavToken.Token))
             {
                 failedResponse.Message = "Getting IAV token failed";
-                
                 return failedResponse;
             }
 
@@ -93,20 +92,20 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
             {
                 var dwollaApi = new DwollaApi(Setting);
 
-                var webhookApi = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-                var isNeedSubscribe = true;
-                var webhookSubscriptionList = dwollaApi.GetWebhookSubscription().Result;
-                foreach (var subscription in webhookSubscriptionList.Embedded.WebhookSubscriptions)
-                {
-                    if (subscription.Url == webhookApi)
-                    {
-                        isNeedSubscribe = false;
-                    }
-                }
-                if (isNeedSubscribe)
-                {
-                    var isSubscribed = dwollaApi.CreateWebhookSubscription(webhookApi, "kooboodwollasecret").Result;
-                }
+                //var webhookApi = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+                //var isNeedSubscribe = true;
+                //var webhookSubscriptionList = dwollaApi.GetWebhookSubscription().Result;
+                //foreach (var subscription in webhookSubscriptionList.Embedded.WebhookSubscriptions)
+                //{
+                //    if (subscription.Url == webhookApi)
+                //    {
+                //        isNeedSubscribe = false;
+                //    }
+                //}
+                //if (isNeedSubscribe)
+                //{
+                //    var isSubscribed = dwollaApi.CreateWebhookSubscription(webhookApi, "kooboodwollasecret").Result;
+                //}
 
                 var request = new CreateTransferRequest()
                 {
@@ -123,33 +122,30 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                     response = new PaymentCallback();
                     var storedRequest = PaymentManager.GetRequest(fundingSourceResponse.RequestId, context);
                     storedRequest.ReferenceId = createTransferResult.TransferURL.ToString();
-                    storedRequest.Id = GetTransferId(createTransferResult.TransferURL);
                     PaymentManager.UpdateRequest(storedRequest, context);
-                    response.RequestId = storedRequest.Id;
                 }
             }
-            
             return response;
         }
 
-        public PaymentCallback Notify(RenderContext context)
-        {
-            var body = context.Request.Body;
-            var request = JsonConvert.DeserializeObject<WebhookCallback>(body);
+        //public PaymentCallback Notify(RenderContext context)
+        //{
+        //    var body = context.Request.Body;
+        //    var request = JsonConvert.DeserializeObject<WebhookCallback>(body);
 
-            var result = new PaymentCallback
-            {
-                Status = ConvertStatus(request.Topic),
-                RawData = body,
-                CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 },
-            };
+        //    var result = new PaymentCallback
+        //    {
+        //        Status = ConvertStatus(request.Topic),
+        //        RawData = body,
+        //        CallbackResponse = new Callback.CallbackResponse { StatusCode = 204 }
+        //    };
 
-            request.Links.TryGetValue("resource", out var transfer);
-            if (transfer != null && !string.IsNullOrEmpty(transfer.Href.ToString())) {
-                result.RequestId = GetTransferId(transfer.Href);
-            }
-            return result;
-        }
+        //    request.Links.TryGetValue("resource", out var transfer);
+        //    if (transfer != null && !string.IsNullOrEmpty(transfer.Href.ToString())) {
+        //        result.RequestId = GetTransferId(transfer.Href);
+        //    }
+        //    return result;
+        //}
 
         private Guid GetTransferId(Uri transferUrl)
         {

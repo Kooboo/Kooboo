@@ -13,7 +13,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
         [JsonProperty(PropertyName = "amount")]
         public Money Amount { get; set; }
 
-        //public Dictionary<string, string> Metadata { get; set; }
+        public Dictionary<string, string> Metadata { get; set; }
 
         //public string CorrelationId { get; set; }
     }
