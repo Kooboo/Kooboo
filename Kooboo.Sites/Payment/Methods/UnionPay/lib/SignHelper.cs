@@ -12,9 +12,10 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         /// <summary>
         /// 使用配置文件配置的证书/密钥签名
         /// </summary>
-        /// <param name="reqData"></param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
+        /// <param name="reqData">请求的数据源</param>
+        /// <param name="encoding">编码格式</param>
+        /// <param name="certRawData">加密证书的数据源</param>
+        /// <param name="certPassword">加密证书的密码</param>
         public static void Sign(Dictionary<string, string> reqData, Encoding encoding, byte[] certRawData, string certPassword)
         {
             if (!reqData.ContainsKey("version"))
@@ -39,11 +40,10 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         /// <summary>
         /// 证书方式签名（多证书时使用），指定证书路径。
         /// </summary>
-        /// <param name="reqData"></param>
-        /// <param name="encoding">编码</param>
+        /// <param name="reqData">请求的数据源</param>
         /// <param name="certRawData">证书数据</param>
         /// <param name="certPwd">证书密码</param>
-        /// <returns></returns>
+        /// <param name="encoding">编码方式</param>
         public static void SignByCertInfo(Dictionary<string, string> reqData, byte[] certRawData, string certPwd, Encoding encoding)
         {
             var cert = new X509Certificate2(certRawData, certPwd, X509KeyStorageFlags.Exportable);
@@ -71,68 +71,55 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         /// <summary>
         /// 验证签名
         /// </summary>
-        /// <param name="rspData"></param>
-        /// <param name="encoder"></param>
+        /// <param name="rspData">数据源</param>
+        /// <param name="encoding">编码格式</param>
+        /// <param name="rootCertRawData">根证书的数据</param>
+        /// <param name="middleCertRawData">中级证书数据</param>
         /// <returns></returns>
-        public static bool Validate(Dictionary<string, string> rspData, Encoding encoding)
+        public static bool Validate(Dictionary<string, string> rspData, Encoding encoding, byte[] rootCertRawData, byte[] middleCertRawData)
         {
-            if (!rspData.ContainsKey("version"))
+            if (!ValidateBaseData(rspData))
             {
                 return false;
             }
-            string version = rspData["version"];
 
-            if (!rspData.ContainsKey("signature"))
-            {
+            byte[] signByte = Convert.FromBase64String(rspData["signature"]);
+            rspData.Remove("signature");
+
+            string stringData = SDKUtil.CreateLinkString(rspData, true, false, encoding);
+            byte[] signDigest = System.Security.Cryptography.SHA256.Create().ComputeHash(encoding.GetBytes(stringData));
+            string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
+
+            string signPubKeyCert = rspData["signPubKeyCert"];
+            signPubKeyCert = signPubKeyCert.Replace("-----END CERTIFICATE-----", "").Replace("-----BEGIN CERTIFICATE-----", "");
+
+            var signCert = new X509Certificate2(Convert.FromBase64String(signPubKeyCert));
+            var rootCert = new X509Certificate2(rootCertRawData);
+            var middleCert = new X509Certificate2(middleCertRawData);
+
+            var chain = new X509Chain();
+            chain.ChainPolicy.ExtraStore.Add(rootCert);
+            chain.ChainPolicy.ExtraStore.Add(middleCert);
+
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+
+            chain.Build(signCert);
+            if (chain.ChainElements.Count != chain.ChainPolicy.ExtraStore.Count + 1)
                 return false;
-            }
-            string signature = rspData["signature"];
 
-            if (!rspData.ContainsKey("signMethod"))
+            var rsa = signCert.PublicKey.Key as System.Security.Cryptography.RSACryptoServiceProvider;
+
+            return rsa.VerifyData(encoding.GetBytes(stringSignDigest), System.Security.Cryptography.SHA256.Create(), signByte);
+        }
+
+        public static bool ValidateBaseData(Dictionary<string, string> rspData)
+        {
+            var result = false;
+
+            if (rspData.ContainsKey("version") && rspData.ContainsKey("signature") && rspData.ContainsKey("signMethod") && "01".Equals(rspData["signMethod"]))
             {
-                return false;
-            }
-            string signMethod = rspData["signMethod"];
-
-            bool result = false;
-
-            if ("01".Equals(signMethod))
-            {
-                byte[] signByte = Convert.FromBase64String(signature);
-                rspData.Remove("signature");
-                string stringData = SDKUtil.CreateLinkString(rspData, true, false, encoding);
-
-                byte[] signDigest = System.Security.Cryptography.SHA256.Create().ComputeHash(encoding.GetBytes(stringData));
-                string stringSignDigest = SDKUtil.ByteArray2HexString(signDigest);
-                string signPubKeyCert = rspData["signPubKeyCert"];
-
-                signPubKeyCert = signPubKeyCert.Replace("-----END CERTIFICATE-----", "").Replace("-----BEGIN CERTIFICATE-----", "");
-                byte[] x509CertBytes = Convert.FromBase64String(signPubKeyCert);
-
-                var roby = File.ReadAllBytes(@"D:\certs\acp_test_root.cer");
-                var rootCert = new X509Certificate2(roby);
-
-                var miby = File.ReadAllBytes(@"D:\certs\acp_test_middle.cer");
-                var micert = new X509Certificate2(miby);
-
-                var cert = new X509Certificate2(x509CertBytes);
-
-                var chain = new X509Chain();
-                chain.ChainPolicy.ExtraStore.Add(rootCert);
-                chain.ChainPolicy.ExtraStore.Add(micert);
-                
-                // You can alter how the chain is built/validated.
-                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-
-                chain.Build(cert);
-
-                if (chain.ChainElements.Count != chain.ChainPolicy.ExtraStore.Count + 1)
-                    return false;
-
-                var rsa = cert.PublicKey.Key as System.Security.Cryptography.RSACryptoServiceProvider;
-
-                result = rsa.VerifyData(encoding.GetBytes(stringSignDigest), System.Security.Cryptography.SHA256.Create(), signByte);
+                return true;
             }
 
             return result;

@@ -50,14 +50,14 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
             // 需要用这行
             //param["backUrl"] = callbackUrl;  //后台通知地址
-            param["backUrl"] = "https://287301a2.ngrok.io/_api/paymentcallback/UnionPayForm_Notify?SiteId=50ecb05f-e985-7b0d-78de-c10ee111eb30";
+            param["backUrl"] = "https://22109a78.ngrok.io/_api/paymentcallback/UnionPayForm_Notify?SiteId=50ecb05f-e985-7b0d-78de-c10ee111eb30";
 
             param["currencyCode"] = CurrencyCodes.GetNumericCode(request.Currency, string.Empty);//交易币种 156 人民币
             param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");  // 订单超时时间。
             param["merId"] = Setting.MerchantID;//商户号
             param["orderId"] = request.Id.ToString("N");//商户订单号，8-32位数字字母，不能含“-”或“_”
             param["txnTime"] = DateTime.Now.ToString("yyyyMMddHHmmss");//订单发送时间，格式为YYYYMMDDhhmmss，取北京时间
-            param["txnAmt"] = GetSquareAmount(request.TotalAmount).ToString();//交易金额，单位分
+            param["txnAmt"] = GetAmount(request.TotalAmount).ToString();//交易金额，单位分
             param["riskRateInfo"] = "{}";  // 请求方保留域 {}
 
             SignHelper.Sign(param, System.Text.Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
@@ -97,7 +97,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             throw new NotImplementedException();
         }
 
-        private static int GetSquareAmount(decimal totalAmount)
+        private static int GetAmount(decimal totalAmount)
         {
             return (int)(totalAmount * 100);
         }
@@ -115,7 +115,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             }
 
             Guid orderId;
-            if (SignHelper.Validate(resData, Encoding.UTF8) && Guid.TryParse(context.Request.Forms["orderId"], out orderId))
+            if (SignHelper.Validate(resData, Encoding.UTF8, Setting.RootCertCER.Bytes, Setting.MiddleCertCER.Bytes) && Guid.TryParse(context.Request.Forms["orderId"], out orderId))
             {
                 var response = new PaymentCallback
                 {
