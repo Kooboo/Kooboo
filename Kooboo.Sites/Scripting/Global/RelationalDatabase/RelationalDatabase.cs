@@ -50,11 +50,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        public int Execute(string sql)
+        public int Execute(string sql, object param = null)
         {
             using (var connection = SqlExecuter.CreateConnection())
             {
-                return connection.Execute(sql);
+                return connection.Execute(sql, param);
             }
         }
     }
