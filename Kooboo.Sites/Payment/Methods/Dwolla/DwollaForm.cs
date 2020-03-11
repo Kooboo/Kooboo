@@ -81,7 +81,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
                 return failedResponse;
             }
 
-            var iavToken = dwollaApi.CreateIavToken(customer.Location.ToString()).Result;
+            var iavToken = dwollaApi.CreateIavToken(customer.Headers.Location.ToString()).Result;
             if (string.IsNullOrEmpty(iavToken.Token))
             {
                 failedResponse.Message = "Getting IAV token failed";

@@ -164,7 +164,7 @@ namespace Kooboo.Sites.Payment
             {
                 StatusCode = resp.StatusCode,
                 Content = response,
-                Location = resp.Headers.Location
+                Headers = resp.Headers
             };
         }
 
@@ -172,7 +172,7 @@ namespace Kooboo.Sites.Payment
         {
             public HttpStatusCode StatusCode { get; set; }
 
-            public Uri Location { get; set; }
+            public HttpResponseHeaders Headers { get; set; }
 
             public bool IsSuccessStatusCode =>
                 (StatusCode >= HttpStatusCode.OK) && (StatusCode <= (HttpStatusCode)299);

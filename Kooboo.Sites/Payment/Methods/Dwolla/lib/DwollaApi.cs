@@ -82,7 +82,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
             if (result.IsSuccessStatusCode)
             {
                 transferResult.Status = result.StatusCode.ToString();
-                transferResult.TransferURL = result.Location;
+                transferResult.TransferURL = result.Headers.Location;
             }
             else
             {
