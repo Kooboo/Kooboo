@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VirtualFile;
 
 namespace Kooboo.Render.Controller
 {
@@ -17,16 +18,16 @@ namespace Kooboo.Render.Controller
             ModuleRoots.Add(Path.Combine(Data.AppSettings.RootPath, "view"));
             var moduleDir = Path.Combine(Data.AppSettings.RootPath, "modules");
 
-            if (!Directory.Exists(moduleDir))
+            if (!VirtualResources.DirectoryExists(moduleDir))
             {
                 moduleDir = Path.Combine(AppContext.BaseDirectory, "modules");
             }
 
-            if (!Directory.Exists(moduleDir)) return;
+            if (!VirtualResources.DirectoryExists(moduleDir)) return;
 
             ModuleRoots.Add(moduleDir);
 
-            foreach (var item in Directory.GetDirectories(moduleDir))
+            foreach (var item in VirtualResources.GetDirectories(moduleDir))
             {
                 ModuleRoots.Add(item);
             }
@@ -75,9 +76,9 @@ namespace Kooboo.Render.Controller
                 {
                     paths.Insert(0, moduleRoot);
 
-                    var fullpath = System.IO.Path.Combine(paths.ToArray());
+                    var fullpath = Path.Combine(paths.ToArray());
 
-                    if (System.IO.File.Exists(fullpath))
+                    if (VirtualResources.FileExists(fullpath))
                     {
                         return fullpath;
                     }

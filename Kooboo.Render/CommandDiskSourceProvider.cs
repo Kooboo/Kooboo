@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using VirtualFile;
 
 namespace Kooboo.Render.ObjectSource
 {
@@ -81,7 +82,7 @@ namespace Kooboo.Render.ObjectSource
                     if (files2 != null && files2.Any())
                     {
                         return files2[0].FullName;
-                    } 
+                    }
                 }
             }
             return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);
@@ -253,7 +254,7 @@ namespace Kooboo.Render.ObjectSource
                 byte[] bytes = null;
 #if DEBUG
                 {
-                    bytes = System.IO.File.ReadAllBytes(FullFileName);
+                    bytes = VirtualResources.ReadAllBytes(FullFileName);
                     key = Lib.Security.Hash.ComputeGuid(bytes);
                 }
 #endif
@@ -262,7 +263,7 @@ namespace Kooboo.Render.ObjectSource
                 {
                     if (bytes == null)
                     {
-                        bytes = System.IO.File.ReadAllBytes(FullFileName);
+                        bytes = VirtualResources.ReadAllBytes(FullFileName);
                     }
                     values = Kooboo.Data.Cache.MultiLingualRender.SetGetJs(context, bytes);
                 }
@@ -273,7 +274,7 @@ namespace Kooboo.Render.ObjectSource
                 byte[] result = null;
 #if DEBUG
                 {
-                    result = System.IO.File.ReadAllBytes(FullFileName);
+                    result = VirtualResources.ReadAllBytes(FullFileName);
                 }
 #endif
                 if (result == null)
@@ -282,7 +283,7 @@ namespace Kooboo.Render.ObjectSource
                     result = Kooboo.Data.Cache.RenderCache.GetBinary(key);
                     if (result == null)
                     {
-                        result = System.IO.File.ReadAllBytes(FullFileName);
+                        result = VirtualResources.ReadAllBytes(FullFileName);
                         Kooboo.Data.Cache.RenderCache.SetBinary(key, result);
                     }
                 }
@@ -302,7 +303,7 @@ namespace Kooboo.Render.ObjectSource
                 {
 #if DEBUG
                     {
-                        text = System.IO.File.ReadAllText(FullFileName);
+                        text = VirtualResources.ReadAllText(FullFileName);
                         key = Lib.Security.Hash.ComputeHashGuid(text);
                     }
 #endif
@@ -310,14 +311,14 @@ namespace Kooboo.Render.ObjectSource
                 }
                 else
                 {
-                    text = System.IO.File.ReadAllText(FullFileName);
+                    text = VirtualResources.ReadAllText(FullFileName);
                     key = Lib.Security.Hash.ComputeHashGuid(text);
                 }
 
             }
             else
             {
-                text = System.IO.File.ReadAllText(FullFileName);
+                text = VirtualResources.ReadAllText(FullFileName);
                 key = Lib.Security.Hash.ComputeHashGuid(text);
             }
 
@@ -329,7 +330,7 @@ namespace Kooboo.Render.ObjectSource
                 {
                     if (text == null)
                     {
-                        text = File.ReadAllText(FullFileName);
+                        text = VirtualResources.ReadAllText(FullFileName);
                     }
                     htmlbody = Kooboo.Data.Cache.MultiLingualRender.SetGetHtml(context, key, text);
                 }
@@ -342,7 +343,7 @@ namespace Kooboo.Render.ObjectSource
                     text = Kooboo.Data.Cache.RenderCache.GetHtml(key);
                     if (text == null)
                     {
-                        text = File.ReadAllText(FullFileName);
+                        text = VirtualResources.ReadAllText(FullFileName);
                     }
                     Kooboo.Data.Cache.RenderCache.SetHtml(key, text);
                 }

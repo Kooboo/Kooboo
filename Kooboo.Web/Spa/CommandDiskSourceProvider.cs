@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using VirtualFile;
 
 namespace Kooboo.Web.Spa
 {
@@ -232,7 +233,7 @@ namespace Kooboo.Web.Spa
             byte[] result = null;
 #if DEBUG
             {
-                result = System.IO.File.ReadAllBytes(FullFileName);
+                result = VirtualResources.ReadAllBytes(FullFileName);
             }
 #endif
             if (result == null)
@@ -241,7 +242,7 @@ namespace Kooboo.Web.Spa
                 result = Kooboo.Data.Cache.RenderCache.GetBinary(key);
                 if (result == null)
                 {
-                    result = System.IO.File.ReadAllBytes(FullFileName);
+                    result = VirtualResources.ReadAllBytes(FullFileName);
                     Kooboo.Data.Cache.RenderCache.SetBinary(key, result);
                 }
             }
@@ -255,7 +256,7 @@ namespace Kooboo.Web.Spa
             string text = null;
 #if DEBUG
             {
-                text = System.IO.File.ReadAllText(FullFileName);
+                text = VirtualResources.ReadAllText(FullFileName);
                 key = Lib.Security.Hash.ComputeGuidIgnoreCase(text);
             }
 #endif
@@ -267,7 +268,7 @@ namespace Kooboo.Web.Spa
                 {
                     if (text == null)
                     {
-                        text = File.ReadAllText(FullFileName);
+                        text = VirtualResources.ReadAllText(FullFileName);
                     }
                     htmlbody = Kooboo.Data.Cache.MultiLingualRender.SetGetHtml(context, key, text);
                 }
@@ -280,7 +281,7 @@ namespace Kooboo.Web.Spa
                     text = Kooboo.Data.Cache.RenderCache.GetHtml(key);
                     if (text == null)
                     {
-                        text = File.ReadAllText(FullFileName);
+                        text = VirtualResources.ReadAllText(FullFileName);
                     }
                     Kooboo.Data.Cache.RenderCache.SetHtml(key, text);
                 }

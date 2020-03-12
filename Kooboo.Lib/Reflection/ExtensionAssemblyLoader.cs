@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Linq;
+using VirtualFile;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -119,13 +120,13 @@ namespace Kooboo.Lib.Reflection
                 string folder = Path.Combine(path, item);
                 if (!Directory.Exists(folder)) continue;
 
-                var allsubdlls = Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
+                var allsubdlls = VirtualResources.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
 
                 foreach (var filename in allsubdlls)
                 {
                     try
                     {
-                        var otherAssembly = Assembly.Load(File.ReadAllBytes(filename));
+                        var otherAssembly = Assembly.Load(VirtualResources.ReadAllBytes(filename));
 
                         if (otherAssembly != null)
                         {
