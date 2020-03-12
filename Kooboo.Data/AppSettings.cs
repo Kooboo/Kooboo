@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Kooboo.Data.Context;
 using System.Linq;
 using Kooboo.Data.Service;
+using System.Reflection;
 
 namespace Kooboo.Data
 {
@@ -22,7 +23,7 @@ namespace Kooboo.Data
 
         public static void LoadSetting()
         {
-            Version = typeof(Kooboo.Data.Models.WebSite).Assembly.GetName().Version;
+            Version = Assembly.GetEntryAssembly().GetName().Version;
 
             RootPath = TryRootPath();
             IsOnlineServer = GetBool("IsOnlineServer");

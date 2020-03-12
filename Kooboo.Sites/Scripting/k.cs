@@ -292,7 +292,7 @@ var value = k.session.key; ")]
                     {
                         if (_url == null)
                         {
-                            _url = new Curl();
+                            _url = new Curl(RenderContext);
                         }
                     }
                 }
@@ -503,7 +503,7 @@ var value = k.session.key; ")]
                             }
 
                             var url = new MongoUrl(setting.ConnectionString);
-                            var databaseName = url.DatabaseName ?? $"db_{RenderContext.WebSite.Name.ToString()}_{RenderContext.WebSite.Id.ToString()}";
+                            var databaseName = url.DatabaseName ?? $"db_{RenderContext.WebSite.Name.ToString()}";
                             var client = new MongoClient(url);
                             _mongo = new MongoDatabase(client.GetDatabase(databaseName));
                         }

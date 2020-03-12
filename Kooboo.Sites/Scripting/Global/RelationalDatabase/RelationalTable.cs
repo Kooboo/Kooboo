@@ -135,6 +135,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void delete(object id)
         {
             EnsureTableCreated();
+            if (_schema.PrimaryKey == "_id") id = kHelper.GetId(id.ToString());
             Database.SqlExecuter.Delete(Name, _schema.PrimaryKey, id);
         }
 
@@ -196,9 +197,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
             ClearNullField(dic);
-            if (dic.ContainsKey("_id")) dic.Remove("_id");
+            if (_schema.PrimaryKey == "_id" && dic.ContainsKey("_id")) dic.Remove("_id");
             EnsureTableCreated();
             TryUpgradeSchema(dic);
+            if (_schema.PrimaryKey == "_id") id = kHelper.GetId(id.ToString());
             Database.SqlExecuter.UpdateData(Name, _schema.PrimaryKey, id, dic);
         }
 

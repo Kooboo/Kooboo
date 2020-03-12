@@ -85,7 +85,7 @@ namespace Kooboo.Mail.Imap
 
         public virtual async Task WriteLineAsync(string line)
         {
-            await _writer.WriteLineAsync(line);
+            await _writer.WriteAsync(line + "\r\n");
 
             LogWrite(line);
         }
@@ -105,12 +105,18 @@ namespace Kooboo.Mail.Imap
 
         private void LogRead(string line)
         {
-            _logger.LogDebug("C: " + line);
+            if (String.IsNullOrEmpty(line))
+                return;
+
+            _logger.LogDebug($"{_remote.Address} C: " + line);
         }
 
         private void LogWrite(string line)
         {
-            _logger.LogDebug("S: " + line);
+            if (line == "* BAD Empty command line")
+                return;
+
+            _logger.LogDebug($"{_remote.Address} S: " + line);
         }
     }
 

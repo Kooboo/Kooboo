@@ -55,13 +55,14 @@ namespace Kooboo.Sites.Payment.Methods
             // square 货币的最小面额指定。https://developer.squareup.com/docs/build-basics/working-with-monetary-amounts
             var currency = context.Request.Get("currency");
             var totalAmount = decimal.Parse(context.Request.Get("totalAmount"));
+            var requestIdStr = context.Request.Get("paymentRequestId");
             var amount = new Money
             {
                 Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(currency, totalAmount),
                 Currency = currency
             };
 
-            var deserializeResult = PaymentsApi.CreatPayment(context.Request.Get("nonce"), amount, Setting);
+            var deserializeResult = PaymentsApi.CreatPayment(context.Request.Get("nonce"), amount, Setting, requestIdStr);
 
             // 把paymentID赋值到request referenceID 为了后面 checkStatus 使用
             var paymentRequestIdStr = context.Request.Get("paymentRequestId");

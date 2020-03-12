@@ -1,4 +1,5 @@
 ﻿using Kooboo.Data.Context;
+using Kooboo.Sites.DataTraceAndModify;
 using KScript;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,8 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Database
 {
-    public abstract class DynamicTableObjectBase : IDynamicTableObject
+    public abstract class DynamicTableObjectBase : IDynamicTableObject,
+        ITraceability
     {
         public IDictionary<string, object> obj { get; set; }
 
@@ -18,6 +20,8 @@ namespace Kooboo.Sites.Scripting.Global.Database
                 return this.obj.ToDictionary(o => o.Key, o => o.Value);
             }
         }
+
+        public abstract string Source { get; }
 
         internal abstract object GetValueFromDict(string key);
 
@@ -47,5 +51,8 @@ namespace Kooboo.Sites.Scripting.Global.Database
         {
             obj[FieldName] = Value;
         }
+
+        public abstract IDictionary<string, string> GetTraceInfo();
+
     }
 }

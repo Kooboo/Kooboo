@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Dom;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
@@ -31,20 +32,13 @@ namespace Kooboo.Sites.Render
                  
                 if (options.RequireBindingInfo)
                 {
-                    string boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();
 
-                    var startbinding = new BindingObjectRenderTask()
-                    { ObjectType = "layout", Boundary = boundary, NameOrId = element.id };
-                    List<IRenderTask> bindingstarts = new List<IRenderTask>();
-                    bindingstarts.Add(startbinding);
-                    response.BindingTask = bindingstarts;
-
-                    var endbinding = new BindingObjectRenderTask()
-                    { ObjectType = "layout", IsEndBinding = true, Boundary = boundary, NameOrId = element.id };
-
-                    List<IRenderTask> bindingends = new List<IRenderTask>();
-                    bindingends.Add(endbinding);
-                    response.EndBindingTask = bindingends;
+                    if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
+                    var traceability = new ComponentTrace(element.id, element.tagName);
+                    var bindingTask = new BindingRenderTask(traceability, new Dictionary<string, string> { { "scope", "true" } });
+                    response.BindingTask.Add(bindingTask);
+                    if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
+                    response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
                 }
                 return response;
             }

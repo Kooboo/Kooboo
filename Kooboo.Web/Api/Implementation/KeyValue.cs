@@ -32,7 +32,7 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in store)
             {
-                allvalues.Add(item.Key, item.Value); 
+                allvalues.Add(item.Key, item.Value?.ToString()); 
             }
             return allvalues;  
         }
@@ -40,7 +40,7 @@ namespace Kooboo.Web.Api.Implementation
         public string Get(string key, ApiCall call)
         {
             kKeyValue store = new kKeyValue(call.Context); 
-            return store.get(key); 
+            return store.get(key)?.ToString(); 
         }
 
         public void Update(string key, string value, ApiCall call)

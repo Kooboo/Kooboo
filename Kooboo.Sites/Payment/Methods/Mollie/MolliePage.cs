@@ -48,7 +48,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
                     Value = CurrencyDecimalPlaceConverter.ToDecimalPlaceString(request.Currency, request.TotalAmount)
                 },
                 Description = request.Description,
-                RedirectUrl = Setting.RedirectUrl,
+                RedirectUrl = !string.IsNullOrWhiteSpace(request.ReturnUrl) ? request.ReturnUrl : Setting.RedirectUrl,
                 WebhookUrl = callbackUrl,
                 Metadata = request.Id.ToString()
             };
@@ -100,6 +100,7 @@ namespace Kooboo.Sites.Payment.Methods.Mollie
 
             return new PaymentCallback
             {
+                RequestId = requestId,
                 Status = status,
                 RawData = context.Request.Body,
                 CallbackResponse = new Callback.CallbackResponse

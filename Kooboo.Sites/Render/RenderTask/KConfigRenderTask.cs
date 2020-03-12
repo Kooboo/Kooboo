@@ -1,6 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Sites.DataTraceAndModify;
+using Kooboo.Sites.DataTraceAndModify.CustomTraces;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using System;
@@ -21,6 +23,8 @@ namespace Kooboo.Sites.Render.RenderTask
         private string OrgHtml { get; set; }
 
         public List<KConfigValues> RenderValues { get; set; }
+
+        public List<KConfigTrace> KConfigTraces { get; set; } = new List<KConfigTrace>();
 
         public bool ClearBefore
         {
@@ -66,6 +70,7 @@ namespace Kooboo.Sites.Render.RenderTask
                     RenderValues.Add(new KConfigValues() { Value = start });
                     RenderValues.Add(new KConfigValues() { Key = item.name, Value = item.value, IsBinding = true });
                     RenderValues.Add(new KConfigValues() { Value = "\"" });
+                    KConfigTraces.Add(new KConfigTrace(key, item.name));
                 }
             }
 
@@ -79,6 +84,7 @@ namespace Kooboo.Sites.Render.RenderTask
                 RenderValues.Add(new KConfigValues() { Key = "innerHtml", Value = configEl.InnerHtml, IsBinding = true });
                 string endtag = "</" + configEl.tagName + ">";
                 RenderValues.Add(new KConfigValues() { Value = endtag });
+                KConfigTraces.Add(new KConfigTrace(key, null));
             }
         }
 

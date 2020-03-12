@@ -4,7 +4,7 @@ using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -56,7 +56,7 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 if (call.Context.User != null)
-                { 
+                {
                     var sites = Data.GlobalDb.WebSites.AllSites.Where(o => o.Value.OrganizationId == call.Context.User.CurrentOrgId).ToList();
 
                     foreach (var item in sites)
@@ -99,10 +99,17 @@ namespace Kooboo.Web.Api.Implementation
             string root = Kooboo.Data.AppSettings.RootPath;
 
             string fullpath = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(root, url);
+
             if (System.IO.File.Exists(fullpath))
             {
                 return System.IO.File.ReadAllText(fullpath);
             }
+            else
+            {
+                fullpath = Kooboo.Render.Controller.ModuleFile.FindFile(fullpath);
+                if (!string.IsNullOrEmpty(fullpath)) return System.IO.File.ReadAllText(fullpath);
+            }
+
             return null;
         }
 

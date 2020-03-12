@@ -57,10 +57,39 @@ $(function() {
         Kooboo.CoreSetting.get({
           name: name
         }).then(function(res) {
-          self.fields = Kooboo.objToArr(res.model, "name", "value");
+          self.fields = res.model;
           self.showModal = true;
           self.getList();
         });
+      },
+      getFile(event, field) {
+        console.log(event);
+        var file = event.target.files[0];
+        if (!file) {
+          return;
+        }
+
+        if (file.size > 10 * 1024) {
+          info.fail(Kooboo.text.info.fileSizeLessThan + "10KB");
+          event.target.value = "";
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+          var b64 = e.target.result;
+          field.value =
+            file.name + "|" + b64.substr(b64.indexOf("base64,") + 7);
+        };
+      },
+      getFileName(nameAndBase64) {
+        if (!nameAndBase64) {
+          return nameAndBase64;
+        }
+        var idx = nameAndBase64.indexOf("|");
+        idx = idx < 0 ? 0 : idx;
+        return nameAndBase64.substr(0, idx);
       }
     },
     mounted: function() {

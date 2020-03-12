@@ -1,9 +1,8 @@
-import { getAllElement, isLink } from "@/dom/utils";
+import { getAllElement } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
 import { hover } from "@/dom/events";
-import { TEXT } from "./lang";
 
 export function delay(time: number) {
   return new Promise(rs => {
@@ -15,11 +14,11 @@ export function initElements() {
   for (const i of getAllElement(document.body, true)) {
     if (i.id == HOVER_BORDER_SKIP) continue;
     if (i instanceof HTMLElement) {
-      if (isLink(i)) {
-        let a = i.cloneNode(true);
-        (a as any)._a = i;
-        i.parentElement!.replaceChild(a, i);
-      }
+      // if (isLink(i)) {
+      //   let a = i.cloneNode(true);
+      //   (a as any)._a = i;
+      //   i.parentElement!.replaceChild(a, i);
+      // }
       i.addEventListener("mouseover", hover);
       holdUpClick(i);
     }
@@ -50,12 +49,4 @@ export function createContainer() {
   root.classList.add("kb_web_editor_root");
   shadow.appendChild(root);
   return root;
-}
-
-/**
- * check document mode is standard or quirks(tinymce only work in standard mode)
- */
-export function htmlModeCheck() {
-  if (!document.doctype) alert(TEXT.HTML_MODE_TIP);
-  return !!document.doctype;
 }

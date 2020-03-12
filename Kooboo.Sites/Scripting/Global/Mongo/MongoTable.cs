@@ -35,7 +35,7 @@ namespace KScript
         {
             var data = MongoCollection.AsQueryable().ToArray();
             var list = data.Select(s => s as IDictionary<string, object>).ToArray();
-            return MongoDynamicTableObject.CreateList(list);
+            return MongoDynamicTableObject.CreateList(list, MongoCollection.CollectionNamespace.CollectionName);
         }
 
         public object append(object value)
@@ -81,7 +81,7 @@ namespace KScript
             MongoCollection.DeleteOne(filter);
         }
 
-        private static FilterDefinition<object> GetIdFilter(object id)
+        public static FilterDefinition<object> GetIdFilter(object id)
         {
             object objectId;
 
@@ -102,7 +102,7 @@ namespace KScript
         {
             var filter = QueryToFilter(query);
             var data = MongoCollection.Find(filter).FirstOrDefault();
-            return MongoDynamicTableObject.Create(data as IDictionary<string, object>);
+            return MongoDynamicTableObject.Create(data as IDictionary<string, object>, MongoCollection.CollectionNamespace.CollectionName);
         }
 
         public static FilterDefinition<object> QueryToFilter(string query)
@@ -173,7 +173,7 @@ namespace KScript
             var filter = QueryToFilter(query);
             var data = MongoCollection.Find(filter).ToList();
             var list = data.Select(s => s as IDictionary<string, object>).ToArray();
-            return MongoDynamicTableObject.CreateList(list);
+            return MongoDynamicTableObject.CreateList(list, MongoCollection.CollectionNamespace.CollectionName);
         }
 
         public IDynamicTableObject[] findAll(string field, object value)
@@ -185,7 +185,7 @@ namespace KScript
         {
             var filter = GetIdFilter(id);
             var data = MongoCollection.Find(filter).FirstOrDefault();
-            return MongoDynamicTableObject.Create(data as IDictionary<string, object>);
+            return MongoDynamicTableObject.Create(data as IDictionary<string, object>, MongoCollection.CollectionNamespace.CollectionName);
         }
 
         public IDynamicTableObject GetByLog(long LogId)

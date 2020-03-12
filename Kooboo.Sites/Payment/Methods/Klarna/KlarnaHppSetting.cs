@@ -57,20 +57,6 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
         /// </summary>
         public string Error { get; set; }
 
-        // https://developers.klarna.com/documentation/hpp/api/create-session/#merchants-urls
-        public MerchantUrls GetGetMerchantUrls(string callbackUrl, Guid requestId)
-        {
-            return new MerchantUrls
-            {
-                Back = Back,
-                Cancel = Cancel,
-                Error = Error,
-                Failure = Failure,
-                StatusUpdate = UrlHelper.AppendQueryString(callbackUrl, "secretToken", requestId.ToString()),
-                Success = Success
-            };
-        }
-
         public Credentials GetCredential(string country)
         {
             switch (country.Trim().ToUpper())

@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay
                     Amount = CurrencyDecimalPlaceConverter.ToMinorUnit(request.Currency, request.TotalAmount),
                     Currency = request.Currency,
                     Description = request.Description,
-                    ReturnUrl = Setting.ReturnUrl,
+                    ReturnUrl = !string.IsNullOrWhiteSpace(request.ReturnUrl) ? request.ReturnUrl : Setting.ReturnUrl,
                     Customer = new Smart2PayPaymentBasic.CustomerInfo
                     {
                         Email = (string)email
@@ -96,11 +96,9 @@ namespace Kooboo.Sites.Payment.Methods.Smart2Pay
             {
                 var body = context.Request.Body;
                 var notification = JsonHelper.Deserialize<Smart2PayNotification>(body);
-                if (notification.Payment.MerchantTransactionId == null ||
-                    !Guid.TryParse(notification.Payment.MerchantTransactionId, out var requestId) ||
-                    PaymentManager.GetRequest(requestId, context) == null)
+                if (Guid.TryParse(notification.Payment.MerchantTransactionId, out var requestId))
                 {
-                    return response;
+                    response.RequestId = requestId;
                 }
 
                 response.Status = ConvertStatus(notification.Payment.Status.Info);

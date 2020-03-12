@@ -14,13 +14,13 @@ namespace Kooboo.Sites.Payment.Methods.Square.lib
     public class PaymentsApi
     {
         // https://developer.squareup.com/reference/square/payments-api/create-payment
-        public static PaymentResponse CreatPayment(string nonce, Money amount, SquareSetting setting)
+        public static PaymentResponse CreatPayment(string nonce, Money amount, SquareSetting setting, string requestIdStr)
         {
             var queryUrl = setting.BaseURL + "/v2/payments";
 
             var uuid = Guid.NewGuid().ToString();
 
-            var body = new Models.PaymentRequest { SourceId = nonce, IdempotencyKey = uuid, AmountMoney = amount };
+            var body = new Models.PaymentRequest { SourceId = nonce, IdempotencyKey = uuid, AmountMoney = amount, ReferenceId = requestIdStr };
 
             var response = ApiClient.Create("Bearer", setting.AccessToken)
                 .PostJsonAsync(queryUrl, body).Result;

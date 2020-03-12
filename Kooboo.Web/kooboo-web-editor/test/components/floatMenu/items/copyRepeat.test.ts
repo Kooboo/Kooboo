@@ -28,9 +28,6 @@ describe("copyRepeat", () => {
 
     let elementObject = new CopyRepeatItem(new Menu());
     expect(elementObject.el.style.display).equal("");
-
-    let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
     expect(elementObject.el.style.display).equal("block");
   });
 
@@ -53,9 +50,6 @@ describe("copyRepeat", () => {
 
     let elementObject = new CopyRepeatItem(new Menu());
     expect(elementObject.el.style.display).equal("");
-
-    let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
     expect(elementObject.el.style.display).equal("none");
   });
 });

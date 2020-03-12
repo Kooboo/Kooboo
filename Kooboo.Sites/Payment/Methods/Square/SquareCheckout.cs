@@ -113,7 +113,7 @@ namespace Kooboo.Sites.Payment.Methods
             return new CreateCheckoutRequest
             {
                 IdempotencyKey = uuid,
-                RedirectUrl = Setting.RedirectURL,
+                RedirectUrl = string.IsNullOrEmpty(request.ReturnUrl) ? Setting.RedirectURL : request.ReturnUrl,
                 Order = new CreateOrderRequest
                 {
                     ReferenceId = request.Id.ToString(),
