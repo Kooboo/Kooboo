@@ -80,7 +80,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["txnAmt"] = GetAmount(request.TotalAmount).ToString();//交易金额，单位分
             param["riskRateInfo"] = "{}";  // 请求方保留域 {}
 
-            SignHelper.Sign(param, Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
+            SignHelper.Sign(param, Encoding.UTF8, Setting.MerchantSignCertPFX.Bytes, Setting.SignCertPasswrod);
             string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, Encoding.UTF8);
 
             return formHtml;
@@ -130,7 +130,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["merId"] = Setting.MerchantID;//商户号
             param["txnTime"] = request.ReferenceId;
 
-            SignHelper.Sign(param, Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
+            SignHelper.Sign(param, Encoding.UTF8, Setting.MerchantSignCertPFX.Bytes, Setting.SignCertPasswrod);
 
             string postData = SDKUtil.CreateLinkString(param, false, true, Encoding.UTF8);
             var apiResponse = DoPost(Setting.SingleQueryUrl, postData).Result;

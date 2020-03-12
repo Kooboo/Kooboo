@@ -20,7 +20,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         public string MerchantID { get; set; }
 
-        public SettingFile SignCertPFX { get; set; }
+        public SettingFile MerchantSignCertPFX { get; set; }
 
         public SettingFile RootCertCER { get; set; }
 
