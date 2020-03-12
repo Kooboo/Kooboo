@@ -86,8 +86,6 @@ namespace Kooboo.Sites.Payment.Methods
             switch (orderStatus)
             {
                 case "OPEN":
-                    result.Status = PaymentStatus.NotAvailable;
-                    break;
                 case "CAPTURE":
                     result.Status = PaymentStatus.Pending;
                     break;
@@ -96,6 +94,9 @@ namespace Kooboo.Sites.Payment.Methods
                     break;
                 case "CANCELED":
                     result.Status = PaymentStatus.Cancelled;
+                    break;
+                case "FAILED":
+                    result.Status = PaymentStatus.Rejected;
                     break;
                 default:
                     break;
