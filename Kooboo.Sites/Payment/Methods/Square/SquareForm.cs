@@ -4,11 +4,11 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Methods.Square;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
-using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
 using Kooboo.Sites.Payment.Response;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Kooboo.Sites.Payment.Methods
 {
@@ -36,6 +36,18 @@ namespace Kooboo.Sites.Payment.Methods
 
         public RenderContext Context { get; set; }
 
+        [Description(@"<script engine='kscript'>
+    var charge = {};
+    charge.total = 2.59; 
+    charge.currency='USD';
+    charge.desciption='tea';
+    var resForm = k.payment.squareForm.charge(charge);
+</script>
+
+<div class='jumbotron'>
+	<div k-content='resForm.html'></div>
+</div>")]
+        [KDefineType(Return = typeof(HiddenFormResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             HiddenFormResponse res = new HiddenFormResponse();
