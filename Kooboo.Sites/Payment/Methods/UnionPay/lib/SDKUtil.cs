@@ -50,5 +50,101 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
         {
             return BitConverter.ToString(data).Replace("-", "").ToLower();
         }
+
+        /// <summary>
+        /// 将字符串key1=value1&key2=value2转换为Dictionary数据结构。
+        /// deprecated：为兼容原始sdk没加中文编码，遇到中文乱码请改调用parseQString。
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> CoverStringToDictionary(string str, Encoding encoding)
+        {
+            return parseQString(str, encoding);
+        }
+
+        /// <summary>
+        /// 将字符串key1=value1&key2=value2转换为Dictionary数据结构。
+        /// 这个故事告诉我们，应答报文不带url编码是一件无比蛋疼的事。
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> parseQString(string str, Encoding encoding)
+        {
+            Dictionary<String, String> Dictionary = new Dictionary<String, String>();
+            int len = str.Length;
+            StringBuilder temp = new StringBuilder();
+            char curChar;
+            String key = null;
+            bool isKey = true;
+            bool isOpen = false;//值里有嵌套
+            char openName = '\0'; //关闭符
+
+            for (int i = 0; i < len; i++)
+            {// 遍历整个带解析的字符串
+                curChar = str[i];// 取当前字符
+                if (isOpen)
+                {
+                    if (curChar == openName)
+                    {
+                        isOpen = false;
+                    }
+                    temp.Append(curChar);
+                }
+                else if (curChar == '{')
+                {
+                    isOpen = true;
+                    openName = '}';
+                    temp.Append(curChar);
+                }
+                else if (curChar == '[')
+                {
+                    isOpen = true;
+                    openName = ']';
+                    temp.Append(curChar);
+                }
+                else if (isKey && curChar == '=')
+                {// 如果当前生成的是key且如果读取到=分隔符
+                    key = temp.ToString();
+                    temp = new StringBuilder();
+                    isKey = false;
+                }
+                else if (curChar == '&' && !isOpen)
+                {// 如果读取到&分割符
+                    putKeyValueToDictionary(temp, isKey, key, Dictionary, encoding);
+                    temp = new StringBuilder();
+                    isKey = true;
+                }
+                else
+                {
+                    temp.Append(curChar);
+                }
+            }
+            if (key != null)
+                putKeyValueToDictionary(temp, isKey, key, Dictionary, encoding);
+            return Dictionary;
+        }
+
+        private static void putKeyValueToDictionary(StringBuilder temp, bool isKey, String key, Dictionary<String, String> Dictionary, Encoding encoding)
+        {
+            if (isKey)
+            {
+                key = temp.ToString();
+                if (key.Length == 0)
+                {
+                    throw new System.Exception("QString format illegal");
+                }
+                Dictionary[key] = "";
+            }
+            else
+            {
+                if (key.Length == 0)
+                {
+                    throw new System.Exception("QString format illegal");
+                }
+                //Dictionary[key] = HttpUtility.UrlDecode(temp.ToString(), encoding);
+                Dictionary[key] = temp.ToString();
+            }
+        }
     }
 }

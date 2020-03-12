@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 using System.Threading.Tasks;
+using static Kooboo.Sites.Payment.ApiClient;
 
 namespace Kooboo.Sites.Payment.Methods.UnionPay
 {
@@ -34,8 +35,6 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             res.html = GetHtmlForm(request, txnTime);
             res.method = "POST";
 
-            request.Id = new Guid("cc13100e4fdf4dd59c7a25de1ffdef6d");
-            checkStatus(request);
             return res;
         }
 
@@ -120,18 +119,33 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             SignHelper.Sign(param, Encoding.UTF8, Setting.SignCertPFX.Bytes, Setting.SignCertPasswrod);
 
             string postData = SDKUtil.CreateLinkString(param, false, true, Encoding.UTF8);
+            var apiResponse = DoPost(Setting.SingleQueryUrl, postData).Result;
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                Dictionary<String, String> rspData = SDKUtil.CoverStringToDictionary(apiResponse.Content, Encoding.UTF8);
 
-            var resxxxx = Create(Setting.SingleQueryUrl, postData).Result;
+                var isValid = SignHelper.Validate(rspData, Encoding.UTF8, Setting.RootCertCER.Bytes, Setting.MiddleCertCER.Bytes);
+
+                if (rspData.Count != 0 && isValid && rspData["respCode"] == "00")
+                {
+                    result.Status = PaymentStatus.Paid;
+                }
+                else
+                {
+                    result.Status = PaymentStatus.Rejected;
+                }
+
+                return result;
+            }
 
             return result;
         }
 
-        public static async Task<string> Create(string singleQueryUrl, string postData)
+        public static async Task<ApiResponse> DoPost(string singleQueryUrl, string postData)
         {
             var client = ApiClient.Create();
             var result = await client.PostAsync(singleQueryUrl, postData, "application/x-www-form-urlencoded");
-            var response = result.Content;
-            return response;
+            return result;
         }
 
         private static int GetAmount(decimal totalAmount)
