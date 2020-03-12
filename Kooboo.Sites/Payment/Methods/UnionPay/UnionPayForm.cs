@@ -1,9 +1,11 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.UnionPay.lib;
 using Kooboo.Sites.Payment.Response;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using static Kooboo.Sites.Payment.ApiClient;
@@ -26,6 +28,18 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
 
         public RenderContext Context { get; set; }
 
+        [Description(@"<script engine = 'kscript' >
+    var charge = {};
+    charge.total = 2.59; 
+    charge.currency='CNY';
+    charge.desciption='tea';
+    var resForm = k.payment.unionPayForm.charge(charge);
+</script>
+
+<div class='jumbotron'>
+	<div k-content='resForm.html'></div>
+</div>")]
+        [KDefineType(Return = typeof(HiddenFormResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             var txnTime = DateTime.Now.ToString("yyyyMMddHHmmss");
