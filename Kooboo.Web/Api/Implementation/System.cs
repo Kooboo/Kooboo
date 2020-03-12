@@ -5,6 +5,7 @@ using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VirtualFile;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -100,14 +101,18 @@ namespace Kooboo.Web.Api.Implementation
 
             string fullpath = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(root, url);
 
-            if (System.IO.File.Exists(fullpath))
+            if (VirtualResources.FileExists(fullpath))
             {
-                return System.IO.File.ReadAllText(fullpath);
+                return VirtualResources.ReadAllText(fullpath);
             }
             else
             {
                 fullpath = Kooboo.Render.Controller.ModuleFile.FindFile(fullpath);
-                if (!string.IsNullOrEmpty(fullpath)) return System.IO.File.ReadAllText(fullpath);
+
+                if (!string.IsNullOrWhiteSpace(fullpath) && VirtualResources.FileExists(fullpath))
+                {
+                    return VirtualResources.ReadAllText(fullpath);
+                }
             }
 
             return null;

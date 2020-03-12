@@ -94,7 +94,7 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.loader = function (callback, isDiffEditor) {
-      var local = "/_admin/scripts/lib/";
+      var local = "/_admin/kooboo.monaco.module/";
       var cdn = "https://cdn.jsdelivr.net/gh/kooboo/monaco@master/";
 
       var load = function (url) {
