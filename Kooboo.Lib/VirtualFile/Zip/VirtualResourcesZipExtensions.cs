@@ -43,10 +43,8 @@ namespace VirtualFile.Zip
                         var virtualFile = new ZipFile(item, fileMapFrom, zipPath, cache);
                         virtualResources._fileMaps[fileMapFrom] = virtualFile;
                     }
-                    else
-                    {
-                        virtualResources._entries[path] = new ZipFile(item, path, zipPath, cache); ;
-                    }
+
+                    virtualResources._entries[path] = new ZipFile(item, path, zipPath, cache); ;
                 }
             }
         }
