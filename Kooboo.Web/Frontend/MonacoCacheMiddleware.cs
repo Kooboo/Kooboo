@@ -51,7 +51,7 @@ namespace Kooboo.Web.Frontend
         {
             var currentMonacoVersion = Data.AppSettings.MonacoVersion ?? "";
 
-            IOHelper.EnsureFileDirectoryExists(ModulesPath);
+            IOHelper.EnsureFileDirectoryExists(MonacoZipPath);
             var fileBakName = MonacoZipPath + ".bak";
 
             if (currentMonacoVersion != _monacoVersion || !_zipExist)
@@ -70,12 +70,21 @@ namespace Kooboo.Web.Frontend
                             VirtualResources.Setup(s => s.UnloadZip(MonacoZipPath));
                             File.Move(MonacoZipPath, fileBakName);
                         }
+
                         File.WriteAllBytes(MonacoZipPath, bytes);
-                        VirtualResources.Setup(s => s.LoadZip(MonacoZipPath, AppSettings.RootPath, true));
+
+                        VirtualResources.Setup(s => s.LoadZip(
+                            MonacoZipPath,
+                            AppSettings.RootPath,
+                            new Lib.VirtualFile.Zip.ZipOption
+                            {
+                                Cache = true,
+                                Encoding = Encoding.ASCII
+                            }));
                         _zipExist = true;
                     }
 
-                    Data.AppSettings.SetConfigValue("MonacoVersion", _monacoVersion);
+                    AppSettings.SetConfigValue("MonacoVersion", _monacoVersion);
                     if (File.Exists(fileBakName)) File.Delete(fileBakName);
                     _isLoadding = false;
                 }
@@ -83,7 +92,7 @@ namespace Kooboo.Web.Frontend
                 {
                     _isLoadding = false;
                     if (File.Exists(fileBakName)) File.Move(fileBakName, MonacoZipPath);
-                    Data.AppSettings.SetConfigValue("MonacoVersion", currentMonacoVersion);
+                    AppSettings.SetConfigValue("MonacoVersion", currentMonacoVersion);
                     _zipExist = File.Exists(MonacoZipPath);
                     throw e;
                 }

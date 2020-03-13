@@ -15,7 +15,7 @@ namespace VirtualFile.Zip
     {
         static ConcurrentDictionary<string, ZipArchive> _zipArchives = new ConcurrentDictionary<string, ZipArchive>();
 
-        public static void LoadZip(this VirtualResources virtualResources, string zipPath, string rootPath, bool cache = false)
+        public static void LoadZip(this VirtualResources virtualResources, string zipPath, string rootPath, ZipOption zipOption)
         {
             if (!File.Exists(zipPath)) throw new FileNotFoundException();
             zipPath = Helper.NormalizePath(zipPath);
@@ -44,11 +44,11 @@ namespace VirtualFile.Zip
                     {
                         var fromPath = Path.Combine(rootPath, fileMap.From);
                         var fileMapFrom = Helper.NormalizePath(fromPath);
-                        var virtualFile = new ZipFile(item, fileMapFrom, zipPath, cache);
+                        var virtualFile = new ZipFile(item, fileMapFrom, zipPath, zipOption);
                         virtualResources._fileMaps[fileMapFrom] = virtualFile;
                     }
 
-                    virtualResources._entries[path] = new ZipFile(item, path, zipPath, cache); ;
+                    virtualResources._entries[path] = new ZipFile(item, path, zipPath, zipOption); ;
                 }
             }
         }

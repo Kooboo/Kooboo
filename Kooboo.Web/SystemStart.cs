@@ -85,7 +85,10 @@ namespace Kooboo.Web
                     var files = Directory.GetFiles(dir, "*.zip");
                     foreach (var item in files)
                     {
-                        v.LoadZip(item, AppSettings.RootPath, true);
+                        v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
+                        {
+                            Cache = true
+                        });
                     }
                 }
             });

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kooboo.Lib.VirtualFile.Zip;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -9,13 +10,13 @@ namespace VirtualFile.Zip
     public class ZipFile : VirtualFile
     {
         readonly ZipArchiveEntry _zipArchiveEntry;
-        readonly bool _useCache;
+        ZipOption _zipOption;
         byte[] _cache;
 
-        public ZipFile(ZipArchiveEntry zipArchiveEntry, string path, string zipPath, bool useCache) : base(path, "zip")
+        public ZipFile(ZipArchiveEntry zipArchiveEntry, string path, string zipPath, ZipOption zipOption = null) : base(path, "zip")
         {
             _zipArchiveEntry = zipArchiveEntry;
-            _useCache = useCache;
+            _zipOption = zipOption ?? new ZipOption();
             ZipPath = zipPath;
         }
 
@@ -35,22 +36,27 @@ namespace VirtualFile.Zip
                 var bytes = new byte[_zipArchiveEntry.Length];
                 if (_zipArchiveEntry.Length > Int32.MaxValue) throw new IOException();
                 stream.Read(bytes, 0, (int)_zipArchiveEntry.Length);
-                if (_useCache) _cache = bytes;
+                if (_zipOption.Cache) _cache = bytes;
                 return bytes;
             }
         }
 
         public override string ReadAllText()
         {
+            return ReadAllText(_zipOption.Encoding ?? Encoding.Default);
+        }
+
+        public override string ReadAllText(Encoding encoding)
+        {
             var bytes = _cache;
 
             if (bytes == null)
             {
                 bytes = ReadAllBytes();
-                if (_useCache) _cache = bytes;
+                if (_zipOption.Cache) _cache = bytes;
             }
 
-            return Encoding.Default.GetString(bytes);
+            return encoding.GetString(bytes);
         }
     }
 }
