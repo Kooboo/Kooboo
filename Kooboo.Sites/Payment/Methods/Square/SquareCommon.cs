@@ -37,13 +37,24 @@ namespace Kooboo.Sites.Payment.Methods.Square
 
             // https://developer.squareup.com/reference/square/objects/LaborShiftCreatedWebhookObject
             var status = new PaymentStatus();
-            if (data.Data.Object.Payment.Status == "COMPLETED")
+
+            switch (data.Data.Object.Payment.Status)
             {
-                status = PaymentStatus.Pending;
-            }
-            if (data.Data.Object.Payment.Status == "APPROVED")
-            {
-                status = PaymentStatus.Paid;
+                case "OPEN":
+                case "APPROVED":
+                    status = PaymentStatus.Pending;
+                    break;
+                case "COMPLETED":
+                    status = PaymentStatus.Paid;
+                    break;
+                case "CANCELED":
+                    status = PaymentStatus.Cancelled;
+                    break;
+                case "FAILED":
+                    status = PaymentStatus.Rejected;
+                    break;
+                default:
+                    break;
             }
 
             var result = new PaymentCallback

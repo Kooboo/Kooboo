@@ -1,13 +1,13 @@
-﻿using Kooboo.Data.Context;
-using Kooboo.Lib.Helper;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using Kooboo.Sites.Payment.Methods.Square;
 using Kooboo.Sites.Payment.Methods.Square.lib;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models;
 using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
 using Kooboo.Sites.Payment.Response;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Kooboo.Sites.Payment.Methods
 {
@@ -35,6 +35,16 @@ namespace Kooboo.Sites.Payment.Methods
 
         public RenderContext Context { get; set; }
 
+        [Description(@"<script engine='kscript'>
+    var charge = {};
+    charge.total = 2.60; 
+    charge.currency='USD';
+    charge.name = 'green tea order'; 
+    charge.description = 'The best tea from Xiamen';  
+    var resForm = k.payment.squareCheckout.charge(charge);
+    k.response.redirect(resForm.RedirectUrl)
+</script>")]
+        [KDefineType(Return = typeof(RedirectResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             if (this.Setting == null)
@@ -86,8 +96,6 @@ namespace Kooboo.Sites.Payment.Methods
             switch (orderStatus)
             {
                 case "OPEN":
-                    result.Status = PaymentStatus.NotAvailable;
-                    break;
                 case "CAPTURE":
                     result.Status = PaymentStatus.Pending;
                     break;
@@ -96,6 +104,9 @@ namespace Kooboo.Sites.Payment.Methods
                     break;
                 case "CANCELED":
                     result.Status = PaymentStatus.Cancelled;
+                    break;
+                case "FAILED":
+                    result.Status = PaymentStatus.Rejected;
                     break;
                 default:
                     break;
