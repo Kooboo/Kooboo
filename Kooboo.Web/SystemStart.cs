@@ -16,6 +16,7 @@ using Kooboo.Web.Spa;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using VirtualFile;
 using VirtualFile.Zip;
 

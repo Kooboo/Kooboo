@@ -36,7 +36,7 @@ namespace VirtualFile
 
         public abstract byte[] ReadAllBytes();
 
-        public virtual string ReadAllText() => ReadAllText(Encoding.Default);
+        public virtual string ReadAllText() => ReadAllText(Encoding.UTF8);
 
         public abstract string ReadAllText(Encoding encoding);
     }

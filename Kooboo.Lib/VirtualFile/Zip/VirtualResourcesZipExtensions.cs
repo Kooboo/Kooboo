@@ -20,7 +20,7 @@ namespace VirtualFile.Zip
             if (!File.Exists(zipPath)) throw new FileNotFoundException();
             zipPath = Helper.NormalizePath(zipPath);
             var file = File.OpenRead(zipPath);
-            var zipArchive = new ZipArchive(file);
+            var zipArchive = new ZipArchive(file, ZipArchiveMode.Read, false, zipOption.Encoding ?? Encoding.UTF8);
             _zipArchives[zipPath] = zipArchive;
 
             var dir = GetZipVirtualPath(zipPath);

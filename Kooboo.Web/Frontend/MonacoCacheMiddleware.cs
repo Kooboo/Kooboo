@@ -78,8 +78,7 @@ namespace Kooboo.Web.Frontend
                             AppSettings.RootPath,
                             new Lib.VirtualFile.Zip.ZipOption
                             {
-                                Cache = true,
-                                Encoding = Encoding.ASCII
+                                Cache = true
                             }));
                         _zipExist = true;
                     }

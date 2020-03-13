@@ -43,7 +43,7 @@ namespace VirtualFile.Zip
 
         public override string ReadAllText()
         {
-            return ReadAllText(_zipOption.Encoding ?? Encoding.Default);
+            return ReadAllText(_zipOption.Encoding ?? Encoding.UTF8);
         }
 
         public override string ReadAllText(Encoding encoding)
