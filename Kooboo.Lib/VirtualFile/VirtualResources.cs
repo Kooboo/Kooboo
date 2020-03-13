@@ -87,13 +87,15 @@ namespace VirtualFile
             return (entry as VirtualFile).Open();
         }
 
-        public static string ReadAllText(string path)
+        public static string ReadAllText(string path) => ReadAllText(path, Encoding.UTF8);
+
+        public static string ReadAllText(string path, Encoding encoding)
         {
             var normalPath = Helper.NormalizePath(path);
 
             if (_instance._fileMaps.TryGetValue(normalPath, out var mapFile))
             {
-                return mapFile.ReadAllText();
+                return mapFile.ReadAllText(encoding);
             }
 
             if (_instance.IncludePhysical && File.Exists(path))
@@ -106,7 +108,7 @@ namespace VirtualFile
                 throw new FileNotFoundException();
             }
 
-            return (entry as VirtualFile).ReadAllText();
+            return (entry as VirtualFile).ReadAllText(encoding);
         }
 
         public static string[] GetFiles(string path)

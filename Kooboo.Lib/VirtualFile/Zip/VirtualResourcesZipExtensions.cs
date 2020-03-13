@@ -13,14 +13,14 @@ namespace VirtualFile.Zip
 {
     public static class VirtualResourcesZipExtensions
     {
-        static ConcurrentDictionary<string, ZipArchive> _zipArchives = new ConcurrentDictionary<string, ZipArchive>();
+        static ConcurrentDictionary<string, Ionic.Zip.ZipFile> _zipArchives = new ConcurrentDictionary<string, Ionic.Zip.ZipFile>();
 
         public static void LoadZip(this VirtualResources virtualResources, string zipPath, string rootPath, ZipOption zipOption)
         {
             if (!File.Exists(zipPath)) throw new FileNotFoundException();
-            zipPath = Helper.NormalizePath(zipPath);
             var file = File.OpenRead(zipPath);
-            var zipArchive = new ZipArchive(file, ZipArchiveMode.Read, false, zipOption.Encoding ?? Encoding.UTF8);
+            var zipArchive = Ionic.Zip.ZipFile.Read(file);
+            zipPath = Helper.NormalizePath(zipPath);
             _zipArchives[zipPath] = zipArchive;
 
             var dir = GetZipVirtualPath(zipPath);
@@ -28,17 +28,17 @@ namespace VirtualFile.Zip
 
             foreach (var item in zipArchive.Entries)
             {
-                var path = Path.Combine(dir, item.FullName);
+                var path = Path.Combine(dir, item.FileName);
                 path = Helper.NormalizePath(path);
 
-                if (item.Name == string.Empty)
+                if (item.IsDirectory)
                 {
                     var virtualDirectory = new VirtualDirectory(path, "zip");
                     virtualResources._entries[path] = virtualDirectory;
                 }
                 else
                 {
-                    var fileMap = fileMaps.FirstOrDefault(f => f.To == item.FullName);
+                    var fileMap = fileMaps.FirstOrDefault(f => f.To == item.FileName);
 
                     if (fileMap != null)
                     {
@@ -106,15 +106,15 @@ namespace VirtualFile.Zip
             }
         }
 
-        static FileMapping[] GetFileMaps(ZipArchive zipArchive)
+        static FileMapping[] GetFileMaps(Ionic.Zip.ZipFile zipArchive)
         {
             try
             {
-                var entry = zipArchive.Entries.FirstOrDefault(f => f.FullName.ToLower() == "config.json");
+                var entry = zipArchive.Entries.FirstOrDefault(f => f.FileName.ToLower() == "config.json");
 
                 if (entry != null)
                 {
-                    using (var stream = entry.Open())
+                    using (var stream = entry.OpenReader())
                     {
                         using (var sr = new StreamReader(stream))
                         {
