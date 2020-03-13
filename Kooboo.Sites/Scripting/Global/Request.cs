@@ -197,6 +197,7 @@ var value = k.request.form.queryname")]
         }
     }
 
+    [Serializable]
     public class KDictionary : IDictionary<string, string>, System.Collections.IDictionary
     {
         public KDictionary()

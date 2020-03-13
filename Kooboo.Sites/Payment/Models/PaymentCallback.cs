@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Payment
 {
+    [Serializable]
     public class PaymentCallback : IGolbalObject, ISiteObject
     {
         private Guid _id;

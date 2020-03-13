@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Kooboo.Sites.Payment.Callback
 {
+    [Serializable]
     public class CallbackResponse
     {
         public string ContentType { get; set; } = "text/plain";
