@@ -143,11 +143,11 @@ namespace Kooboo.IndexedDB.Dynamic
             var primary = this.Indexs.Find(o => o.IsPrimaryKey);
             this.PrimaryKey = primary.FieldName;
 
-           SettingHelper.EnsureColumnRelativePosition(this.Setting.Columns);
+            SettingHelper.EnsureColumnRelativePosition(this.Setting.Columns);
 
             ObjectConverter = new Dynamic.Converter.ObjectConverter(this.Setting.Columns.ToList(), this.PrimaryKey);
         }
-         
+
 
         private long _addBlock(Dictionary<string, object> data)
         {
@@ -339,6 +339,13 @@ namespace Kooboo.IndexedDB.Dynamic
                 objecttype = dataobj.GetType();
             }
 
+            Guid DefaultId = default(Guid);
+            var DefaultIdObj = _GetObjValue(idict, dynamicobj, Dynamic.Constants.DefaultIdFieldName, typeof(Guid), dataobj, objecttype);
+            if (DefaultIdObj != null)
+            {
+                System.Guid.TryParse(DefaultIdObj.ToString(), out DefaultId);
+            }
+
             foreach (var item in this.Setting.Columns)
             {
                 if (item.IsSystem)
@@ -347,8 +354,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     object Value = null;
 
                     if (this.PrimaryKey != Dynamic.Constants.DefaultIdFieldName)
-                    {
-
+                    { 
                         if (idict != null)
                         {
                             Value = Accessor.GetValueIDict(idict, this.PrimaryKey, item.ClrType);
@@ -368,17 +374,28 @@ namespace Kooboo.IndexedDB.Dynamic
                             var col = this.Setting.Columns.First(o => o.Name == this.PrimaryKey);
                             if (col != null)
                             {
-                                Value = IndexHelper.DefaultValue(col.ClrType);
+                                if (col.ClrType == typeof(string))
+                                {
+                                    Value = default(Guid);
+                                }
+                                else
+                                { 
+                                    Value = IndexHelper.DefaultValue(col.ClrType);
+                                }
                             }
                         }
-                    }
-                    if (Value == null || _ParseKey(Value) == default(Guid))
-                    {
 
+                        if (Update == false && Value !=null )
+                        {
+                            DefaultId = _ParseKey(Value);
+                        } 
+                    }
+
+                    if (Value == null)
+                    {
                         if (idict != null)
                         {
                             Value = Accessor.GetValueIDict(idict, item.Name, item.ClrType);
-
                         }
                         else if (dynamicobj != null)
                         {
@@ -390,8 +407,9 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
                     }
 
-                    if (Value == null || _ParseKey(Value) == default(Guid))
+                    if (Value == null)
                     {
+                        // the only possible null value value for key is string.   
                         Value = Helper.IndexHelper.NewTimeGuid();
                     }
                     else
@@ -453,13 +471,37 @@ namespace Kooboo.IndexedDB.Dynamic
                     if (Value == null && (item.IsIndex || item.IsPrimaryKey))
                     {
                         Value = IndexHelper.DefaultValue(item.ClrType);
-                    }
-
+                    } 
                     // var rightvalue = Accessor.ChangeType(Value, item.ClrType);  
                     data.Add(item.Name, Value);
                 }
             }
+
+
+            if (DefaultId != default(Guid))
+            {
+                data[Dynamic.Constants.DefaultIdFieldName] = DefaultId;
+            }
+
             return data;
+        }
+
+
+        private object _GetObjValue(System.Collections.IDictionary idict, IDictionary<string, object> dynamicobj, string key, Type clrType, object dataobj, Type objecttype)
+        {
+            if (idict != null)
+            {
+                return Accessor.GetValueIDict(idict, key, clrType);
+
+            }
+            else if (dynamicobj != null)
+            {
+                return Accessor.GetValue(dynamicobj, key, clrType);
+            }
+            else
+            {
+                return Accessor.GetValue(dataobj, objecttype, key, clrType);
+            }
         }
 
         private void CheckAddConstraints(Dictionary<string, object> data)

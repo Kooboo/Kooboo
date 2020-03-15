@@ -168,7 +168,7 @@ namespace Kooboo.Sites.Routing
                 if (child == null)
                 {
                     if (item.StartsWith("?"))
-                    { 
+                    {
                         if (EnsureObjectId)
                         {
                             if (currentpath.ObjectId != default(Guid))
@@ -179,11 +179,18 @@ namespace Kooboo.Sites.Routing
                         else
                         {
                             return currentpath;
-                        } 
-                    } 
+                        }
+                    }
                     // TODO: verify situation of this task. It breaks now of importing sites with both
                     //  pages for   [/subpath]   and [/subpath/sub/sub.html]. 
+
+
                     // if currentpath has {} sub. 
+                    if (currentpath.segment == "{}" && currentpath.ObjectId != default(Guid))
+                    {
+                        return currentpath;
+                    }
+
                     //if (currentpath.Children == null || !currentpath.Children.Any())
                     //{
                     //    if (currentpath.ObjectId != default(Guid))
