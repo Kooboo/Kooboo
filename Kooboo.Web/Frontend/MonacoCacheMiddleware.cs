@@ -22,8 +22,7 @@ namespace Kooboo.Web.Frontend
         static bool _isLoadding = false;
         readonly static string _monacoVersion = "1.1";
         static bool _zipExist = false;
-        static string ModulesPath => Path.Combine(AppContext.BaseDirectory, "modules");
-        static string MonacoZipPath => Path.Combine(ModulesPath, "Kooboo.Monaco.Module.zip");
+        static string MonacoZipPath => Path.Combine(AppSettings.ModulePath, "Kooboo.Monaco.Module.zip");
 
         public MonacoCacheMiddleware()
         {

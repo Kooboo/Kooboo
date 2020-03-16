@@ -79,11 +79,10 @@ namespace Kooboo.Web
         {
             VirtualResources.Setup(v =>
             {
-                var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modules");
-
-                if (Directory.Exists(dir))
+                if (Directory.Exists(AppSettings.ModulePath))
                 {
-                    var files = Directory.GetFiles(dir, "*.zip");
+                    var files = Directory.GetFiles(AppSettings.ModulePath, "*.zip");
+
                     foreach (var item in files)
                     {
                         v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
