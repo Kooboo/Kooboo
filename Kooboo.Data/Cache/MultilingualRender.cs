@@ -115,8 +115,7 @@ namespace Kooboo.Data.Cache
         {
             var sb = new System.Text.StringBuilder();
             sb.AppendLine(langjs);
-            var modulePath = Path.Combine(AppContext.BaseDirectory, "modules");
-            var configs = VirtualResources.GetFiles(modulePath, "*config.json", SearchOption.AllDirectories);
+            var configs = VirtualResources.GetFiles(AppSettings.ModulePath, "*config.json", SearchOption.AllDirectories);
 
             foreach (var item in configs)
             {

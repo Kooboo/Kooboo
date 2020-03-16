@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace VirtualFile
 {
-    static class Helper
+    public static class Helper
     {
         public static string NormalizePath(string path)
         {

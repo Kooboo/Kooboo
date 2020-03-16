@@ -26,6 +26,7 @@ namespace Kooboo.Data
         public static void LoadSetting()
         {
             ModulePath = Path.Combine(AppContext.BaseDirectory, "modules");
+            if (!Directory.Exists(ModulePath)) Directory.CreateDirectory(ModulePath);
             var modulesHash = GetModulesHash();
             Version = Assembly.GetEntryAssembly().GetName().Version;
             var build = Version.Build + modulesHash.Take(8).Sum(s => s);

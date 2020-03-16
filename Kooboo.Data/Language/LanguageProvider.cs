@@ -90,8 +90,7 @@ namespace Kooboo.Data.Language
 
         private static void LoadModuleLangPack(Dictionary<string, string> values, string langCode)
         {
-            var modulePath = Path.Combine(AppContext.BaseDirectory, "modules");
-            var configs = VirtualResources.GetFiles(modulePath, "*config.json", SearchOption.AllDirectories);
+            var configs = VirtualResources.GetFiles(AppSettings.ModulePath, "*config.json", SearchOption.AllDirectories);
 
             foreach (var item in configs)
             {

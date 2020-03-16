@@ -49,8 +49,6 @@ namespace Kooboo.Web.Frontend
         private static async Task DownloadMonacoAsync()
         {
             var currentMonacoVersion = Data.AppSettings.MonacoVersion ?? "";
-
-            IOHelper.EnsureFileDirectoryExists(MonacoZipPath);
             var fileBakName = MonacoZipPath + ".bak";
 
             if (currentMonacoVersion != _monacoVersion || !_zipExist)
