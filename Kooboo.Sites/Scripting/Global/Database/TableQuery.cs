@@ -84,6 +84,11 @@ namespace KScript
 
         }
 
+        public IDynamicTableObject[] All()
+        {
+            return take(999999); 
+        }
+
         public int count()
         {
             // TODO: improve performance.

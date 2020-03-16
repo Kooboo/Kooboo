@@ -102,7 +102,7 @@ namespace Kooboo.Sites.Scripting
             kcontext.ReturnValues.Clear();
             try
             {
-                engine.Execute(code.Config);
+                engine.Execute(code.Config, new Jint.Parser.ParserOptions() { Tolerant = true });
             }
             catch (System.Exception ex)
             {
@@ -221,11 +221,10 @@ namespace Kooboo.Sites.Scripting
             if (string.IsNullOrEmpty(JsCode))
             {
                 return null;
-            }
-
+            } 
 
             Jint.Engine engine = null;
-
+            
             var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, CodeId);
 
             if (debugsession == null)
@@ -250,7 +249,8 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.Execute(JsCode);
+                engine.Execute(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true
+            });
                
             }
             catch (Exception ex)
@@ -347,7 +347,7 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.Execute(InnerJsCode);
+                engine.Execute(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true }); 
             }
             catch (Exception ex)
             {
@@ -435,7 +435,7 @@ namespace Kooboo.Sites.Scripting
                 kcontext.config = new KDictionary(config);
                 kcontext.ReturnValues.Clear();
 
-                engine.Execute(code.Body);
+                engine.Execute(code.Body, new Jint.Parser.ParserOptions() { Tolerant = true });
 
                 kcontext.config = null;
 
