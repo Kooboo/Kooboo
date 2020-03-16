@@ -22,8 +22,8 @@ namespace Kooboo.Data
         }
 
         public static void LoadSetting()
-        {
-            Version = Assembly.GetEntryAssembly().GetName().Version;
+        { 
+            Version = typeof(Kooboo.Data.Models.WebSite).Assembly.GetName().Version;
 
             RootPath = TryRootPath();
             IsOnlineServer = GetBool("IsOnlineServer");
