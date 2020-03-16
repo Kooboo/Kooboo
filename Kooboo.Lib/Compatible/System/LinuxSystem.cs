@@ -10,6 +10,21 @@ namespace Kooboo.Lib.Compatible
 {
     public class LinuxSystem : ISystem
     {
+        public static List<string> TryPath { get; set; }
+
+        static LinuxSystem()
+        {
+            TryPath = new List<string>
+            {
+                @"../../../Github/Kooboo.Web",
+                @"../../../../Kooboo/Kooboo.Web",
+                @"../Kooboo.Web",
+                @"../",
+                @"../../",
+                @"../../../"
+            };
+        }
+
         public int GetLastSlash(string path)
         {
             return path.LastIndexOf('/');
@@ -38,7 +53,7 @@ namespace Kooboo.Lib.Compatible
 
             #region get new segments
             var segments = relativePath.Split('/');
-            
+
             for (int i = 0; i < segments.Length; i++)
             {
                 string segment = segments[i];
@@ -59,7 +74,7 @@ namespace Kooboo.Lib.Compatible
                 else
                 {
                     var extension = Path.GetExtension(segment);
-                    
+
                     if (!string.IsNullOrEmpty(extension))
                     {
                         var fileInfo = folder.GetFiles().FirstOrDefault(file =>
@@ -148,17 +163,7 @@ namespace Kooboo.Lib.Compatible
         }
         #endregion
 
-        public List<string> GetTryPaths()
-        {
-            List<string> trypaths = new List<string>();
-            trypaths.Add(@"../../../Github/Kooboo.Web");
-            trypaths.Add(@"../../../../Kooboo/Kooboo.Web");
-            trypaths.Add(@"../Kooboo.Web");
-            trypaths.Add(@"../");
-            trypaths.Add(@"../../");
-            trypaths.Add(@"../../../");
-            return trypaths;
-        }
+        public List<string> GetTryPaths() => TryPath;
 
         public string GetUpgradeUrl(string convertApiUrl)
         {
