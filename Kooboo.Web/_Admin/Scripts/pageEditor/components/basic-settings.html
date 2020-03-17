@@ -57,12 +57,12 @@
           v-model="urlPath"
           @input="urlInput"
         />
-        <div v-if="routeHelpers.lentgh" class="btn-group margin-top-10">
+        <div v-if="routeHelpers.length" class="btn-group margin-top-10">
           <a
             v-for="($data,index) in routeHelpers"
             :key="index"
             class="btn btn-xs btn-default"
-            @click="routeHelp($data)"
+            @click.prevent="routeHelp($data)"
             href="#"
             >{{$data}}</a
           >

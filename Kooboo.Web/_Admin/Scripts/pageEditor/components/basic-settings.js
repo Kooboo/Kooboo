@@ -154,7 +154,12 @@
     },
     methods: {
       routeHelp: function(data) {
-        this.urlPath = this.urlPath + data;
+        var tokens = this.urlPath.split("");
+        if (tokens[this.urlPath.length - 1] == "/") {
+          this.urlPath += data;
+        } else {
+          this.urlPath += "/" + data;
+        }
       },
       metaHelp: function(title, meta) {
         title.value = (title.value ? title.value : "") + "{" + meta + "}";
