@@ -104,7 +104,7 @@ namespace Kooboo.Sites.Render
 
             while (nextnode != null)
             {
-                options.HasContentTask = false;
+               /// options.HasContentTask = false;
                 if (ShouldTryRender(nextnode))
                 {
 
