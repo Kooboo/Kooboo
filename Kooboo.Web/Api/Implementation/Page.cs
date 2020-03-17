@@ -261,7 +261,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             //----
-                  
             if (model.Id == default(Guid))
             {    
                 sitedb.Routes.AddOrUpdate(routename, page, call.Context.User.Id);
@@ -282,8 +281,9 @@ namespace Kooboo.Web.Api.Implementation
 
                 var route = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, oldpage);
 
-                if (route == null)
+                if (string.IsNullOrWhiteSpace(route))
                 {
+                    sitedb.Routes.AddOrUpdate(routename, page, call.Context.User.Id);
                     return page.Id;
                 }
 

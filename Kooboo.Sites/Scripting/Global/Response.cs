@@ -1,13 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context; 
+using Kooboo.Data.Context;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Extensions;
 using System.ComponentModel;
- 
+
 
 namespace KScript
-{ 
+{
     public class Response
     {
         private RenderContext context { get; set; }
@@ -26,7 +26,7 @@ namespace KScript
             {
                 return;
             }
-            string output = ToJson(value); 
+            string output = ToJson(value);
 
             var item = this.context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
             if (item == null)
@@ -44,17 +44,13 @@ namespace KScript
         {
             string output;
             if (!(value is string) && value.GetType().IsClass)
-            { 
-
-                // 
-
-
-                output = Kooboo.Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert()); 
+            {
+                output = Kooboo.Lib.Helper.JsonHelper.SerializeCaseSensitive(value, new Kooboo.Lib.Helper.IntJsonConvert());
             }
             else
             {
                 output = value.ToString();
-            } 
+            }
             return output;
         }
 
@@ -74,7 +70,7 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
         public void redirect(string url)
         {
             this.context.Response.Redirect(302, url);
-        } 
+        }
 
         [Description(@"Print object in Json format
  var obj = {fieldone:""valueone"", fieldtwo:""valuetwo""};
@@ -87,34 +83,38 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
         }
 
 
-        public void binary(string contentType,byte[] bytes)
+        public void binary(string contentType, byte[] bytes, string filename = null)
         {
+            if (!string.IsNullOrWhiteSpace(filename))
+            {
+              this.context.Response.Headers.Add("Content-Disposition", $"attachment;filename=" + filename);
+            }
             this.context.Response.ContentType = contentType;
             this.context.Response.Body = bytes;
         }
-       
+
         [Description(@"Set the status code
   k.response.statusCode(301);")]
         public void StatusCode(int code)
         {
-            this.context.Response.StatusCode = code; 
+            this.context.Response.StatusCode = code;
         }
-         
+
         [Description(@"Excute another Url, and write the response within current context
  k.response.execute(""/anotherpage"");")]
         public void Execute(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                return; 
+                return;
             }
 
-            string value = null; 
+            string value = null;
 
             if (url.ToLower().StartsWith("https://") || url.ToLower().StartsWith("http://"))
             {
                 Curl curl = new Curl(context);
-                value =   curl.get(url); 
+                value = curl.get(url);
             }
 
             else
@@ -126,8 +126,8 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
                     newcontext.Request = context.Request;
                     newcontext.User = context.User;
                     newcontext.WebSite = context.WebSite;
-                    newcontext.Culture = context.Culture; 
-                     
+                    newcontext.Culture = context.Culture;
+
                     FrontContext kooboocontext = new FrontContext();
                     newcontext.SetItem<FrontContext>(kooboocontext);
                     kooboocontext.RenderContext = newcontext;
@@ -141,7 +141,7 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
                         value = System.Text.Encoding.UTF8.GetString(newcontext.Response.Body);
                     }
                 }
-            } 
+            }
 
 
             var item = this.context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
