@@ -496,7 +496,9 @@ namespace Kooboo.IndexedDB
         internal string TableFolder(string TableName)
         {
             string basefolder = null;
-            string tablename = TableName.ToValidPath().ToLower();
+            string tablename = TableName.ToValidPath();
+
+            string lowername = tablename.ToLower();
 
             if (string.IsNullOrWhiteSpace(TablePath))
             {
@@ -509,6 +511,7 @@ namespace Kooboo.IndexedDB
 
             string fullpath = System.IO.Path.Combine(basefolder, tablename);
 
+
             if (!System.IO.Directory.Exists(fullpath))
             {
                 // check capital letter etc.
@@ -518,14 +521,21 @@ namespace Kooboo.IndexedDB
                     var subs = dirinfo.GetDirectories();
                     foreach (var item in subs)
                     {
-                        if (item.Name != null && item.Name.ToLower() == tablename)
+                        if (item.Name != null && item.Name.ToLower() == lowername)
                         {
-                            fullpath = item.FullName;
-                            break;
+                           return item.FullName; 
                         }
                     }
-                } 
+                }
             }
+
+            // this directory does not existrs. 
+
+            if (!System.IO.Directory.Exists(fullpath))
+            { 
+                System.IO.Directory.CreateDirectory(fullpath);
+            }
+
             return fullpath;
         }
 
