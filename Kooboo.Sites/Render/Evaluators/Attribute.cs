@@ -122,13 +122,6 @@ namespace Kooboo.Sites.Render
 
                 element.removeAttribute(attributeName);
 
-
-                if (!options.HasContentTask)
-                {
-                    response.ContentTask = RenderEvaluator.Evaluate(element.InnerHtml, options);
-                    response.StopNextEvaluator = true;
-                }
-
                 if (options.RequireBindingInfo)
                 {
                     if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();

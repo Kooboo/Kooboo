@@ -104,7 +104,6 @@ namespace Kooboo.Sites.Render
 
             while (nextnode != null)
             {
-               /// options.HasContentTask = false;
                 if (ShouldTryRender(nextnode))
                 {
 
@@ -120,7 +119,6 @@ namespace Kooboo.Sites.Render
                             }
                         }
                     }
-
                     int len = nextnode.location.openTokenStartIndex - currentindex;
                     //document parse error,may cause nextnode openTokenStartIndex less than currentindex.
                     //then get repeated content
@@ -186,6 +184,12 @@ namespace Kooboo.Sites.Render
                             }
                         }
 
+                        var endbinding = GetEndBinding(responseList);
+                        if (endbinding != null)
+                        {
+                            tasklist.AddRange(endbinding);
+                        }
+
                         var append = GetAppend(responseList);
                         if (append != null)
                         {
@@ -211,12 +215,6 @@ namespace Kooboo.Sites.Render
                         {
                             currentindex = nextnode.location.openTokenEndIndex + 1;
                             nextnode = iterator.nextNode();
-                        }
-
-                        var endbinding = GetEndBinding(responseList);
-                        if (endbinding != null)
-                        {
-                            tasklist.AddRange(endbinding);
                         }
 
                         responseList.Clear();

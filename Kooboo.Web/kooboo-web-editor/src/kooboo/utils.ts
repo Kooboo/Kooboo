@@ -41,7 +41,7 @@ export function getGuidComment(guid: string) {
 }
 
 export function isDynamicContent(el: HTMLElement) {
-  return el.innerHTML.indexOf("#kooboo") > -1;
+  return el.innerHTML.indexOf("#kooboo--source") > -1;
 }
 
 export function getPageId() {
@@ -75,6 +75,13 @@ export function getWrapDom(el: Node, sourceOrUid: string) {
   if (startNode) {
     for (const node of nextNodes(startNode, true, false)) {
       nodes.push(node);
+      if (startNode!.nodeValue!.indexOf("attribute")) {
+        if (node instanceof Element) {
+          endNode = node;
+          break;
+        }
+      }
+
       if (KoobooComment.isComment(node)) {
         let comment = new KoobooComment(node);
         if (comment.uid == uid && KoobooComment.isEndComment(node)) {

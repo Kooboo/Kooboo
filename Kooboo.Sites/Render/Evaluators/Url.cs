@@ -80,12 +80,6 @@ namespace Kooboo.Sites.Render
                 response.AttributeTask = result;
                 element.removeAttribute("href");
 
-                if (!options.HasContentTask)
-                {
-                    response.ContentTask = RenderEvaluator.Evaluate(element.InnerHtml, options);
-                    response.StopNextEvaluator = true;
-                }
-
                 return response;
             }
 
