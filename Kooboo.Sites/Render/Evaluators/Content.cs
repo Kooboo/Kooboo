@@ -49,8 +49,8 @@ namespace Kooboo.Sites.Render
                     response.BindingTask.Add(bindingTask);
                     if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
                     response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
-                }
-
+                } 
+          
                 return response;
             }
             return null;
