@@ -124,8 +124,10 @@ namespace Kooboo.Data.Cache
                     var moduleName = Path.GetDirectoryName(item);
                     moduleName = Path.GetFileName(moduleName).ToLower();
                     var json = VirtualResources.ReadAllText(item);
-                    var dic = JsonHelper.DeserializeJObject(json)["langs"][lang].ToObject<Dictionary<string, string>>();
-                    if (dic == null || dic.Count == 0) continue;
+                    var dic = JsonHelper.DeserializeJObject(json)["langs"][lang]
+                        .ToObject<Dictionary<string, string>>()
+                        .Where(w => !string.IsNullOrEmpty(w.Value));
+                    if (dic == null || dic.Count() == 0) continue;
                     var properties = string.Join(",", dic.Select(s => $"['{s.Key}']:'{s.Value}'"));
 
                     sb.AppendLine($@"
