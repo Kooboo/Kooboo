@@ -100,7 +100,7 @@ namespace Kooboo.Data.Language
                     var dic = JsonHelper.DeserializeJObject(json)["langs"][langCode].ToObject<Dictionary<string, string>>();
                     foreach (var kv in dic)
                     {
-                        values[kv.Key] = kv.Value;
+                        if (!values.ContainsKey(kv.Key)) values[kv.Key] = kv.Value;
                     }
                 }
                 catch (Exception)
