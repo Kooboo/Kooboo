@@ -58,7 +58,6 @@ export default class CopyItem extends BaseMenuItem {
           koobooComment.setValue("uid", koobooComment.uid + "_copy");
           cloned = koobooComment.ToComment();
         }
-        if (!endNode) endNode = nodes[nodes.length - 1];
         element.parentElement!.insertBefore(cloned, endNode!.nextSibling);
       }
     } else {

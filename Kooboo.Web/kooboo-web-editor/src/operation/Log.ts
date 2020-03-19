@@ -59,7 +59,11 @@ export class Log {
         f => logs.indexOf(f) > index && f.source == log.source && f.id == log.id && f.koobooId && f.koobooId!.startsWith(log.koobooId!)
       );
 
-      if (log.action == "copy" || log.action == "delete") {
+      if (log.action == "copy") {
+        children = [];
+      }
+
+      if (log.action == "delete") {
         children = children.filter(f => f.koobooId!.length > log.koobooId!.length);
       }
 
