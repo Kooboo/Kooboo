@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
@@ -31,7 +32,7 @@ namespace Kooboo.Sites.Payment.Methods.Ogone
 var charge = {};
 charge.total = 1500; 
 charge.currency='USD';
-charge.Country='US';
+charge.country='US';
 charge.UserIp = 'kooboo',
 charge.name = 'Tea from Xiamen'; 
 var resForm = k.payment.ogoneForm.charge(charge);  
@@ -42,13 +43,39 @@ k.response.redirect(url);
         public IPaymentResponse Charge(PaymentRequest request)
         {
             RedirectResponse res = null;
+            var additional = new Dictionary<string, object>(request.Additional, StringComparer.OrdinalIgnoreCase);
+            var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
+
+            var variant = GetValue(additional, "variant", null);
+            var locale = GetValue(additional, "locale", null);
+            var paymentIds = GetValue(additional, "paymentIds", null);
             if (Setting == null)
                 return res;
 
             var ogoneApi = new OgoneApi(Setting);
-
+            PaymentProductFiltersHostedCheckout PaymentProductFilters = null;
+            if (paymentIds != null)
+            {
+                PaymentProductFilters = new PaymentProductFiltersHostedCheckout
+                {
+                    RestrictTo = new PaymentProductFilter
+                    {
+                        Products = paymentIds.Split(',').Select(Int32.Parse).ToList()
+                    }
+                };
+            }
             var checkoutRequest = new CreateHostedCheckoutRequest
             {
+                HostedCheckoutSpecificInput = new HostedCheckoutSpecificInput
+                {
+                    Variant = variant,
+                    Locale = locale,
+
+                },
+                CardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInputBase
+                {
+                    AuthorizationMode = "SALE"
+                },
                 Order = new Order
                 {
                     AmountOfMoney = new AmountOfMoney
@@ -68,18 +95,83 @@ k.response.redirect(url);
             };
             var result = ogoneApi.Hostedcheckouts(checkoutRequest);
             if (result != null)
+            {
                 res = new RedirectResponse(string.Format("{0}.{1}", Setting.BaseUrl(), result.PartialRedirectUrl), request.Id);
+                request.ReferenceId = result.HostedCheckoutId;
+            }
+
             return res;
         }
 
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
-            throw new NotImplementedException();
+            var ogoneApi = new OgoneApi(Setting);
+            var resp = new PaymentStatusResponse();
+
+            var result = ogoneApi.GetHostedcheckouts(request.ReferenceId);
+
+            if (request != null)
+            {
+                if (string.Equals(result.Status, "PAYMENT_CREATED", StringComparison.OrdinalIgnoreCase))
+                {
+                    resp.Status = ConvertStatus(result.CreatedPaymentOutput?.Payment.StatusOutput.StatusCategory);
+                }
+                else
+                {
+                    resp.Status = PaymentStatus.NotAvailable;
+                }
+
+            }
+            else
+            {
+                resp.Status = PaymentStatus.NotAvailable;
+            }
+
+            return resp;
         }
 
         public PaymentCallback Notify(RenderContext context)
         {
             throw new NotImplementedException();
+        }
+
+        private PaymentStatus ConvertStatus(string code)
+        {
+            var status = PaymentStatus.Pending;
+            switch (code.ToUpper())
+            {
+                case "ACCOUNT_VERIFIED":
+                    status = PaymentStatus.NotAvailable;
+                    break;
+                case "PENDING_MERCHANT":
+                    status = PaymentStatus.Pending;
+                    break;
+                case "PENDING_CONNECT_OR_3RD_PARTY":
+                    status = PaymentStatus.Pending;
+                    break;
+                case "COMPLETED":
+                    status = PaymentStatus.Paid;
+                    break;
+                case "UNSUCCESSFUL":
+                    status = PaymentStatus.NotAvailable;
+                    break;
+            }
+
+            return status;
+        }
+
+        private string GetValue(Dictionary<string, object> additional, string key, string fallbackValue)
+        {
+            if (additional.TryGetValue(key, out var o) && o != null)
+            {
+                var value = o.ToString();
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    return value;
+                }
+            }
+
+            return fallbackValue;
         }
     }
 }

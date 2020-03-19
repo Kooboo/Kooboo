@@ -45,13 +45,45 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
             }
         }
 
+        public GetHostedCheckoutResponse GetHostedcheckouts(string hostedCheckoutId)
+        {
+            try
+            {
+                string response = Get(string.Format("/v1/{0}/hostedcheckouts/{1}", setting.MerchantId, hostedCheckoutId));
+
+                return JsonConvert.DeserializeObject<GetHostedCheckoutResponse>(response);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private string Get(string url)
+        {
+            var date = DateTime.UtcNow.ToString("r");
+            var resp = ApiClient.Create("GCS", GetAuthorization(url, date, "", HttpMethod.Get))
+                            .SendAsync(HttpMethod.Get, setting.ServerURL + url,
+                             headers: new Dictionary<string, string>
+                            {
+                                { "Date", date }
+                            }).Result;
+            if (!resp.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"Error Status: {resp.StatusCode}; content: {resp.Content}.");
+            }
+
+            return resp.Content;
+        }
+
         private string Post(string url, string body)
         {
             var date = DateTime.UtcNow.ToString("r");
             string contentType = "application/json";
             var httpContent = new StringContent(body, null, contentType);
             httpContent.Headers.ContentType.CharSet = null;
-            var resp = ApiClient.Create("GCS", GetAuthorization(url, date, contentType))
+            var resp = ApiClient.Create("GCS", GetAuthorization(url, date, contentType, HttpMethod.Post))
                             .SendAsync(HttpMethod.Post, setting.ServerURL + url,
                             httpContent, headers: new Dictionary<string, string>
                             {
@@ -65,9 +97,9 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
             return resp.Content;
         }
 
-        private string GetAuthorization(string url, string date, string contentType)
+        private string GetAuthorization(string url, string date, string contentType, HttpMethod method)
         {
-            var dataToSign = ToDataToSign(HttpMethod.Post, url, date, contentType);
+            var dataToSign = ToDataToSign(method, url, date, contentType);
             var authenticationSignature = SignatureString + ":" + setting.ApiKeyId + ":" + SignData(dataToSign);
 
             return authenticationSignature;
