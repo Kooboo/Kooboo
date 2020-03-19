@@ -1,7 +1,7 @@
 import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationManager } from "@/operation/Manager";
-import { setGuid, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, getUnpollutedEl, getWarpContent } from "@/kooboo/utils";
 import { createImagePicker } from "../imagePicker";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
@@ -52,7 +52,8 @@ export async function updateDomImage(element: HTMLImageElement) {
     ];
 
     var logs = [];
-    if (el == element) {
+    let koobooId = element.getAttribute(KOOBOO_ID);
+    if (el == element && koobooId) {
       logs.push(
         new Log([
           ...comment.infos,
@@ -89,7 +90,9 @@ export async function updateDomImage(element: HTMLImageElement) {
         ])
       );
     } else {
-      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))]));
+      let content = el.innerHTML;
+      if (!koobooId) content = getWarpContent(element);
+      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId)]));
     }
 
     let record = new operationRecord(units, logs, guid);
@@ -131,11 +134,13 @@ export async function updateDomLink(element: HTMLElement) {
     let guid = setGuid(element);
     let unit = new AttributeUnit(href!, "href");
     let logs = [];
-
-    if (el == element) {
+    let koobooId = el.getAttribute(KOOBOO_ID);
+    if (el == element && koobooId) {
       logs.push(new Log([...comment.infos, kvInfo.attribute("href"), kvInfo.value(url), kvInfo.koobooId(element.getAttribute(KOOBOO_ID))]));
     } else {
-      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))]));
+      let content = el.innerHTML;
+      if (!koobooId) content = getWarpContent(element);
+      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId)]));
     }
 
     let record = new operationRecord([unit], logs, guid);

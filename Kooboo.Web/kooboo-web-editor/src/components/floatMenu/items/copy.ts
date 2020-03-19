@@ -1,5 +1,5 @@
 import context from "@/common/context";
-import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty, getWarpContent } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
 import { getRepeatSourceComment, getEditableComment } from "../utils";
 import { isBody } from "@/dom/utils";
@@ -79,13 +79,15 @@ export default class CopyItem extends BaseMenuItem {
       log.push(kvInfo.copy);
       log.push(kvInfo.koobooId(koobooId));
     } else {
-      if (el == element) {
+      if (el == element && koobooId) {
         log.push(...comments.find(f => f.scope)!.infos);
         log.push(kvInfo.copy);
         log.push(kvInfo.koobooId(koobooId));
       } else {
+        let content = el.innerHTML;
+        if (!koobooId) content = getWarpContent(element);
         log.push(...comment.infos);
-        log.push(kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
+        log.push(kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
       }
     }
 
