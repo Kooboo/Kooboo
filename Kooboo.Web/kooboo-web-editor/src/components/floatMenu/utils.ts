@@ -27,6 +27,10 @@ export function getEditableComment(comments: KoobooComment[]) {
   return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute && f.source != "innerform");
 }
 
+export function getScopeComment(comments: KoobooComment[]) {
+  return comments.find(f => f.scope);
+}
+
 export function hasOperation(operationManager: operationManager) {
   return operationManager.previousRecords.length > 0;
 }

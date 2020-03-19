@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty, getWarpContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { getEditableComment, getRepeatSourceComment } from "../utils";
@@ -32,6 +32,7 @@ export default class DeleteItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     let el = getUnpollutedEl(element);
     if (el && isBody(el)) return this.setVisiable(false);
+    if (el && isDynamicContent(el)) return this.setVisiable(false);
     if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
@@ -55,11 +56,14 @@ export default class DeleteItem extends BaseMenuItem {
       markDirty(element.parentElement!);
     }
 
+    let placeholder = new Text("");
     let aroundComments = KoobooComment.getAroundComments(element);
     if (aroundComments.length > 0) {
       let { nodes } = getWrapDom(element, aroundComments[aroundComments.length - 1].uid);
+      nodes[0].parentNode!.insertBefore(placeholder, nodes[0]);
       nodes.forEach(f => f.parentElement!.removeChild(f));
     } else {
+      element.parentElement!.insertBefore(placeholder, element);
       element.parentElement!.removeChild(element);
     }
 
@@ -69,13 +73,16 @@ export default class DeleteItem extends BaseMenuItem {
       log.push(kvInfo.delete);
       log.push(kvInfo.koobooId(koobooId));
     } else {
-      if (el == element) {
+      if (el == element && koobooId) {
         log.push(...comments.find(f => f.scope)!.infos);
         log.push(kvInfo.delete);
         log.push(kvInfo.koobooId(koobooId));
       } else {
         log.push(...comment.infos);
-        log.push(kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
+        let koobooId = el.getAttribute(KOOBOO_ID);
+        let content = el.innerHTML;
+        if (!koobooId) content = getWarpContent(placeholder);
+        log.push(kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId));
       }
     }
     let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);

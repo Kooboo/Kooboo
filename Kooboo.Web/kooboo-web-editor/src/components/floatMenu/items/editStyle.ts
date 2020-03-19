@@ -1,7 +1,7 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { createStyleEditor } from "@/components/styleEditor";
-import { setGuid, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, getUnpollutedEl, getWarpContent, isDynamicContent } from "@/kooboo/utils";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
 import { getEditableComment } from "../utils";
@@ -32,6 +32,7 @@ export default class EditStyleItem extends BaseMenuItem {
     let { element } = context.lastSelectedDomEventArgs;
     let el = getUnpollutedEl(element);
     if (!el || isBody(el)) return this.setVisiable(false);
+    if (el && isDynamicContent(el)) return this.setVisiable(false);
     if (isImg(element)) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (!getUnpollutedEl(element)) return this.setVisiable(false);
@@ -51,8 +52,11 @@ export default class EditStyleItem extends BaseMenuItem {
       let unit = new AttributeUnit(startContent!, "style");
       if (logs.length == 0) return;
 
-      if (element != el) {
-        let infos = [...comment.infos, kvInfo.value(clearKoobooInfo(el!.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))];
+      let koobooId = el.getAttribute(KOOBOO_ID);
+      let content = el.innerHTML;
+      if (!koobooId) content = getWarpContent(el);
+      if (element != el || !koobooId) {
+        let infos = [...comment.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId)];
         logs = [new Log(infos)];
       }
 

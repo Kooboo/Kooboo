@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent } from "@/kooboo/utils";
+import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent, getWarpContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { clearContent, getEditableComment, isEditable } from "../utils";
@@ -52,7 +52,10 @@ export default class EditItem extends BaseMenuItem {
       markDirty(el);
       let guid = setGuid(element);
       let units = [new InnerHtmlUnit(startContent)];
-      let log = [...comment.infos, kvInfo.koobooId(el.getAttribute(KOOBOO_ID)), kvInfo.value(clearKoobooInfo(el.innerHTML))];
+      let koobooId = el.getAttribute(KOOBOO_ID);
+      let content = el.innerHTML;
+      if (!koobooId) content = getWarpContent(element);
+      let log = [...comment.infos, kvInfo.koobooId(koobooId), kvInfo.value(clearKoobooInfo(content))];
       let operation = new operationRecord(units, [new Log(log)], guid);
       context.operationManager.add(operation);
     };

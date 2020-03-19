@@ -9,7 +9,7 @@ import { createSize } from "./size";
 import { getCssRules } from "@/dom/style";
 import { Log } from "@/operation/Log";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { getEditableComment } from "../floatMenu/utils";
+import { getScopeComment } from "../floatMenu/utils";
 import { KOOBOO_ID } from "@/common/constants";
 import { kvInfo } from "@/common/kvInfo";
 
@@ -17,7 +17,7 @@ export function createStyleEditor(el: HTMLElement) {
   const container = createDiv();
   let rules = getCssRules();
   let comments = KoobooComment.getComments(el);
-  let comment = getEditableComment(comments)!;
+  let comment = getScopeComment(comments)!;
 
   const spliter = createSpliter(TEXT.BACKGROUND_IMAGE);
   spliter.style.margin = "0 0 15px 0";
