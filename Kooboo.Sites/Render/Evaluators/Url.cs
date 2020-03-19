@@ -78,11 +78,10 @@ namespace Kooboo.Sites.Render
                 result.Add(new UrlRenderTask(url));
                 result.Add(new ContentRenderTask("\""));
                 response.AttributeTask = result;
-                element.removeAttribute("href");
+                element.removeAttribute("href"); 
 
                 return response;
-            }
-
+            } 
 
             return null;
         }
