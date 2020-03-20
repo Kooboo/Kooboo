@@ -34,7 +34,7 @@ export default class CopyItem extends BaseMenuItem {
     if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
-    if (el && isDynamicContent(el)) return this.setVisiable(false);
+    if (el && isDynamicContent(el.parentElement!)) return this.setVisiable(false);
   }
 
   click() {

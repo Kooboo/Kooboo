@@ -43,9 +43,9 @@ export function getGuidComment(guid: string) {
 
 export function isDynamicContent(el: HTMLElement) {
   let innerHtml = el.innerHTML.trim();
-  if (innerHtml.startsWith("<!--#kooboo--source")) {
-    innerHtml = innerHtml.substring(19);
-  }
+  // if (innerHtml.startsWith("<!--#kooboo--source")) {
+  //   innerHtml = innerHtml.substring(19);
+  // }
   return innerHtml.indexOf("#kooboo--source") > -1;
 }
 

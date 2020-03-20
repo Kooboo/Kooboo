@@ -26,13 +26,14 @@ export default class EditDataItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(): void {
+  update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
     let editableData = getEditableData(element);
     if (!editableData) return this.setVisiable(false);
-    let comments = KoobooComment.getComments(editableData.parent);
-    if (!getEditableComment(comments)) return this.setVisiable(false);
+    let patentComments = KoobooComment.getComments(editableData.parent);
+    if (comments.find(f => f.source.startsWith("repeat"))) return this.setVisiable(false);
+    if (!getEditableComment(patentComments)) return this.setVisiable(false);
   }
 
   async click() {

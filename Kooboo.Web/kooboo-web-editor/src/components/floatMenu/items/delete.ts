@@ -32,7 +32,7 @@ export default class DeleteItem extends BaseMenuItem {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     let el = getUnpollutedEl(element);
     if (el && isBody(el)) return this.setVisiable(false);
-    if (el && isDynamicContent(el)) return this.setVisiable(false);
+    if (el && isDynamicContent(el.parentElement!)) return this.setVisiable(false);
     if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
     if (!getEditableComment(comments)) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
