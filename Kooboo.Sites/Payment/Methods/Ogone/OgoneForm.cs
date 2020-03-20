@@ -132,7 +132,18 @@ k.response.redirect(url);
 
         public PaymentCallback Notify(RenderContext context)
         {
-            throw new NotImplementedException();
+            var ogoneApi = new OgoneApi(Setting);
+            var webHook = ogoneApi.Unmarshal(context.Request.Body, context.Request.Headers);
+            var request = PaymentManager.GetRequestByReferece(webHook.Payment.HostedCheckoutSpecificOutput.HostedCheckoutId.ToString(), context);
+
+            var status = ConvertStatus(webHook.Payment.StatusOutput.StatusCategory);
+
+            return new PaymentCallback
+            {
+                RequestId = request.Id,
+                Status = status,
+                RawData = context.Request.Body
+            };
         }
 
         private PaymentStatus ConvertStatus(string code)

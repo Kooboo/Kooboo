@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -45,6 +46,13 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
             }
         }
 
+        public WebhooksEvent Unmarshal(string body, NameValueCollection requestHeaders)
+        {
+            Validate(body, requestHeaders);
+            WebhooksEvent unmarshalledEvent = JsonConvert.DeserializeObject<WebhooksEvent>(body);
+            return unmarshalledEvent;
+        }
+
         public GetHostedCheckoutResponse GetHostedcheckouts(string hostedCheckoutId)
         {
             try
@@ -57,6 +65,53 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+
+        private void Validate(string body, NameValueCollection requestHeaders)
+        {
+            Validate(StringUtils.Encoding.GetBytes(body), requestHeaders);
+        }
+
+        protected void Validate(byte[] body, NameValueCollection requestHeaders)
+        {
+            var numberOfSignatureHeaders = requestHeaders.GetValues("X-GCS-Signature");
+
+            if (numberOfSignatureHeaders.Count() == 0)
+            {
+                throw new Exception("Missing X-GCS-Signature header");
+            }
+            if (numberOfSignatureHeaders.Count() != 1)
+            {
+                throw new Exception("Duplicate X-GCS-Signature header");
+            }
+
+            var numberOfKeyIdHeaders = requestHeaders.GetValues("X-GCS-KeyId");
+
+            if (numberOfKeyIdHeaders.Count() == 0)
+            {
+                throw new Exception("Missing X-GCS-KeyId header");
+            }
+            if (numberOfKeyIdHeaders.Count() != 1)
+            {
+                throw new Exception("Duplicate X-GCS-KeyId header");
+            }
+
+            var signature = numberOfKeyIdHeaders[0];
+
+            var keyId = numberOfKeyIdHeaders[0];
+
+            using (var mac = new HMACSHA256(StringUtils.Encoding.GetBytes(setting.KeyId)))
+            {
+                mac.Initialize();
+                byte[] unencodedResult = mac.ComputeHash(body);
+                var expectedSignature = Convert.ToBase64String(unencodedResult);
+                bool isValid = signature.CompareWithoutTimingLeak(expectedSignature);
+                if (!isValid)
+                {
+                    throw new Exception("failed to validate signature '" + signature + "'");
+                }
             }
         }
 
