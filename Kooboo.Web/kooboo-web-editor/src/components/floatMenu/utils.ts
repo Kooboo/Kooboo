@@ -24,7 +24,7 @@ export function getRepeatSourceComment(comments: KoobooComment[], source: string
 }
 
 export function getEditableComment(comments: KoobooComment[]) {
-  if (comments.find(f => f.source == "menu")) return null;
+  if (comments.find(f => f.source == "menu" || f.source == "innerform")) return null;
   return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute && f.source != "innerform");
 }
 
