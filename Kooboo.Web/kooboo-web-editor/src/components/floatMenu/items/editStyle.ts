@@ -1,12 +1,11 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { createStyleEditor } from "@/components/styleEditor";
-import { setGuid, clearKoobooInfo, getUnpollutedEl, getWarpContent, isDynamicContent } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, getWarpContent } from "@/kooboo/utils";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
-import { getEditableComment } from "../utils";
-import { KoobooComment } from "@/kooboo/KoobooComment";
-import { isImg, isBody } from "@/dom/utils";
+import { ElementAnalyze } from "../utils";
+import { isImg } from "@/dom/utils";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
 import { Log } from "@/operation/Log";
@@ -27,24 +26,19 @@ export default class EditStyleItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
-    let el = getUnpollutedEl(element);
-    if (!el || isBody(el)) return this.setVisiable(false);
-    if (el && isDynamicContent(el)) return this.setVisiable(false);
-    if (isImg(element)) return this.setVisiable(false);
-    if (!getEditableComment(comments)) return this.setVisiable(false);
-    if (!getUnpollutedEl(element)) return this.setVisiable(false);
+    let { operability, kooobooIdEl, fieldComment } = ElementAnalyze(element);
+    if (isImg(element) || !operability) return this.setVisiable(false);
+    if (!kooobooIdEl && !fieldComment) return this.setVisiable(false);
   }
 
   async click() {
     let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
+    let { kooobooIdEl, fieldComment, koobooId, scopeComment } = ElementAnalyze(element);
 
-    let comments = KoobooComment.getComments(element);
-    let comment = getEditableComment(comments)!;
-    let el = getUnpollutedEl(element)!;
     const startContent = element.getAttribute("style");
     try {
       let logs = await createStyleEditor(element);
@@ -52,11 +46,11 @@ export default class EditStyleItem extends BaseMenuItem {
       let unit = new AttributeUnit(startContent!, "style");
       if (logs.length == 0) return;
 
-      let koobooId = el.getAttribute(KOOBOO_ID);
-      let content = el.innerHTML;
-      if (!koobooId) content = getWarpContent(el);
-      if (element != el || !koobooId) {
-        let infos = [...comment.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId)];
+      if (element != kooobooIdEl || (!kooobooIdEl && fieldComment)) {
+        koobooId = kooobooIdEl ? kooobooIdEl!.getAttribute(KOOBOO_ID) : koobooId;
+        let content = kooobooIdEl ? kooobooIdEl.innerHTML : getWarpContent(element!);
+        let comment = fieldComment ? fieldComment : scopeComment;
+        let infos = [...comment!.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId)];
         logs = [new Log(infos)];
       }
 

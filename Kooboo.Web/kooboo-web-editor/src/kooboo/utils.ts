@@ -126,6 +126,15 @@ export function getUnpollutedEl(el: HTMLElement, includeSelf = true) {
   }
 }
 
+export function getHasKoobooIdEl(el: HTMLElement, includeSelf = true) {
+  if (!includeSelf && el) el = el.parentElement!;
+
+  while (el) {
+    if (el.hasAttribute(KOOBOO_ID)) return el;
+    el = el.parentElement!;
+  }
+}
+
 export function previousComment(node: Node) {
   for (const i of previousNodes(node)) {
     if (i instanceof Comment && KoobooComment.isComment(i)) {

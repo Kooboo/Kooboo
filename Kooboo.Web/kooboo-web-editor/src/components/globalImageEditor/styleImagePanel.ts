@@ -1,5 +1,5 @@
 import { getAllElement, getImportant, clearCssImageWarp } from "@/dom/utils";
-import { setGuid, getWarpContent } from "@/kooboo/utils";
+import { setGuid } from "@/kooboo/utils";
 import { KOOBOO_ID, BACKGROUND_IMAGE_START } from "@/common/constants";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -11,7 +11,7 @@ import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import { getCssRules, CssRule, matchSelector, CssColor } from "@/dom/style";
 import { BgImageUnit } from "@/operation/recordUnits/bgImageUnit";
-import { getEditableComment, getScopeComment } from "../floatMenu/utils";
+import { getScopeComment } from "../floatMenu/utils";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
 import { sortStylePriority } from "@/dom/stylePriority";

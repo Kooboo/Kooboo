@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { clearKoobooInfo, markDirty, setGuid, getUnpollutedEl, isDynamicContent, getWarpContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { clearContent, getEditableComment, isEditable } from "../utils";
+import { clearContent, getEditableComment, isEditable, ElementAnalyze } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -27,35 +27,28 @@ export default class EditItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
     let { element } = context.lastSelectedDomEventArgs;
-    if (isBody(element)) return this.setVisiable(false);
-    if (!getEditableComment(comments)) return this.setVisiable(false);
-    var el = getUnpollutedEl(element);
-    if (!el || isDynamicContent(el)) return this.setVisiable(false);
-    if (!isEditable(element)) return this.setVisiable(false);
-    let aroundComments = KoobooComment.getAroundComments(element);
-    if (aroundComments.find(f => f.source == "none" && !f.attribute)) return this.setVisiable(false);
+    let { operability, comments, kooobooIdEl, fieldComment } = ElementAnalyze(element);
+    if (!operability || !comments || !isEditable(element)) return this.setVisiable(false);
+    if (!kooobooIdEl && !fieldComment) return this.setVisiable(false);
   }
 
   click() {
     let { element } = context.lastSelectedDomEventArgs;
+    let { kooobooIdEl, fieldComment, koobooId, scopeComment } = ElementAnalyze(element);
     this.parentMenu.hidden();
-
     let startContent = element.innerHTML;
     const onSave = () => {
       if (clearContent(startContent) == clearContent(element.innerHTML)) return;
-      let el = getUnpollutedEl(element)!;
-      let comments = KoobooComment.getComments(el);
-      let comment = getEditableComment(comments)!;
-      markDirty(el);
+      if (kooobooIdEl) markDirty(kooobooIdEl);
       let guid = setGuid(element);
       let units = [new InnerHtmlUnit(startContent)];
-      let koobooId = el.getAttribute(KOOBOO_ID);
-      let content = el.innerHTML;
-      if (!koobooId) content = getWarpContent(element);
-      let log = [...comment.infos, kvInfo.koobooId(koobooId), kvInfo.value(clearKoobooInfo(content))];
+      koobooId = kooobooIdEl ? kooobooIdEl!.getAttribute(KOOBOO_ID) : koobooId;
+      let content = kooobooIdEl ? kooobooIdEl.innerHTML : getWarpContent(element!);
+      let comment = fieldComment ? fieldComment : scopeComment;
+      let log = [...comment!.infos, kvInfo.koobooId(koobooId), kvInfo.value(clearKoobooInfo(content))];
       let operation = new operationRecord(units, [new Log(log)], guid);
       context.operationManager.add(operation);
     };

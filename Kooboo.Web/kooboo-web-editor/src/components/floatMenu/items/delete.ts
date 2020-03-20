@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { setGuid, clearKoobooInfo, markDirty, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty, getWarpContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { getEditableComment, getRepeatSourceComment } from "../utils";
+import { getEditableComment, getRepeatSourceComment, ElementAnalyze } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
@@ -27,26 +27,24 @@ export default class DeleteItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
-    let { element, koobooId } = context.lastSelectedDomEventArgs;
-    let el = getUnpollutedEl(element);
-    if (el && isBody(el)) return this.setVisiable(false);
-    if (el && isDynamicContent(el.parentElement!)) return this.setVisiable(false);
-    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
-    if (!getEditableComment(comments)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    let { operability, comments, kooobooIdEl, fieldComment } = ElementAnalyze(element);
+    if (!operability || !comments) return this.setVisiable(false);
+    if (!kooobooIdEl && !fieldComment) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
   }
 
   click() {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
+    let { kooobooIdEl, fieldComment, scopeComment } = ElementAnalyze(element);
     this.parentMenu.hidden();
-    let comments = KoobooComment.getComments(element);
-    let comment = getEditableComment(comments)!;
-    let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
-    let el = getUnpollutedEl(element)!;
+    var log = [];
     let oldValue = element.parentElement!.innerHTML;
     let guid = setGuid(element.parentElement!);
+    let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
+
     if (aroundScopeComment) {
       let { nodes } = getWrapDom(element, aroundScopeComment.source);
       for (const node of nodes) {
@@ -67,24 +65,15 @@ export default class DeleteItem extends BaseMenuItem {
       element.parentElement!.removeChild(element);
     }
 
-    var log = [];
-    if (aroundScopeComment && koobooId) {
-      log.push(...aroundScopeComment.infos);
-      log.push(kvInfo.delete);
-      log.push(kvInfo.koobooId(koobooId));
+    if (element == kooobooIdEl) {
+      log.push(...scopeComment!.infos, kvInfo.delete, kvInfo.koobooId(koobooId));
     } else {
-      if (el == element && koobooId) {
-        log.push(...comments.find(f => f.scope)!.infos);
-        log.push(kvInfo.delete);
-        log.push(kvInfo.koobooId(koobooId));
-      } else {
-        log.push(...comment.infos);
-        let koobooId = el.getAttribute(KOOBOO_ID);
-        let content = el.innerHTML;
-        if (!koobooId) content = getWarpContent(placeholder);
-        log.push(kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId));
-      }
+      let content = kooobooIdEl ? kooobooIdEl.innerHTML : getWarpContent(placeholder!);
+      let comment = fieldComment ? fieldComment : scopeComment;
+      koobooId = kooobooIdEl ? kooobooIdEl!.getAttribute(KOOBOO_ID) : koobooId;
+      log.push(...comment!.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId));
     }
+
     let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);
     context.operationManager.add(operation);
     emitHoverEvent(document.body);
