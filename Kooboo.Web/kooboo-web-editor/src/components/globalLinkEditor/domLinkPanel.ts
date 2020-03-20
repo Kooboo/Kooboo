@@ -10,7 +10,7 @@ export function createDomLinkPanel() {
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {
       let comments = KoobooComment.getComments(element);
-      if (!getEditableComment(comments)) continue;
+      if (!getEditableComment(comments) || comments.find(f => f.source == "menu")) continue;
       let aroundComments = KoobooComment.getAroundComments(element);
       if (aroundComments.find(f => f.getValue("attribute") == "href")) continue;
 

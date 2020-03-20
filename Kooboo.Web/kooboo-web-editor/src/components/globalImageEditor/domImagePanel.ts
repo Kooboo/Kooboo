@@ -13,7 +13,7 @@ export function createDomImagePanel() {
     if (element instanceof HTMLImageElement) {
       let aroundComments = KoobooComment.getAroundComments(element);
       let comments = KoobooComment.getComments(element);
-      if (aroundComments.find(f => f.getValue("attribute") == "src")) continue;
+      if (aroundComments.find(f => f.getValue("attribute") == "src") || comments.find(f => f.source == "menu")) continue;
       if (!getEditableComment(comments)) continue;
       if (!getUnpollutedEl(element)) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
