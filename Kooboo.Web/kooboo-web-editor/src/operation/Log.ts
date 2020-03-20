@@ -56,23 +56,24 @@ export class Log {
       if (!log.koobooId) continue;
       var index = logs.indexOf(log);
       var children = logs.filter(
-        f => logs.indexOf(f) > index && f.source == log.source && f.id == log.id && f.koobooId && f.koobooId!.startsWith(log.koobooId!)
+        f =>
+          logs.indexOf(f) > index &&
+          f.source == log.source &&
+          f.id == log.id &&
+          f.koobooId &&
+          f.koobooId!.startsWith(log.koobooId!) &&
+          f.attribute == log.attribute &&
+          f.property == log.property
       );
 
-      if (log.action == "copy") {
-        children = [];
-      }
+      if (log.action == "copy") children = [];
 
       if (log.action == "delete") {
         children = children.filter(f => f.koobooId!.length > log.koobooId!.length);
       }
 
-      if (log.attribute) {
-        children = children.filter(f => f.attribute == log.attribute);
-      }
-
-      if (log.property) {
-        children = children.filter(f => f.property == log.property);
+      if (log.attribute || log.property) {
+        children = children.filter(f => f.koobooId == log.koobooId);
       }
 
       if (log.url) {
