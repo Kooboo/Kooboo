@@ -136,6 +136,7 @@ export async function updateDomLink(element: HTMLElement) {
     let logs = [];
     let koobooId = el.getAttribute(KOOBOO_ID);
     if (el == element && koobooId) {
+      comment = getScopeComment(comments)!;
       logs.push(new Log([...comment.infos, kvInfo.attribute("href"), kvInfo.value(url), kvInfo.koobooId(element.getAttribute(KOOBOO_ID))]));
     } else {
       let content = el.innerHTML;
