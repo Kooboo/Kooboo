@@ -83,7 +83,7 @@ namespace Kooboo.Sites.SiteTransfer
 
                     if (!string.IsNullOrEmpty(itemurl))
                     {
-                        itemurl = TransferHelper.TrimQuestionMark(itemurl);
+                       /// itemurl = TransferHelper.TrimQuestionMark(itemurl);
 
                         string absoluteUrl = UrlHelper.Combine(Context.AbsoluteUrl, itemurl);
 

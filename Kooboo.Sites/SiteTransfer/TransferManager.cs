@@ -113,8 +113,7 @@ namespace Kooboo.Sites.SiteTransfer
             if (history.Count() == 0)
             {
                 return null;
-            }
-
+            } 
 
             /// track failed history...
             Guid downloadid = RelativeUrl.ToHashGuid();
@@ -162,6 +161,13 @@ namespace Kooboo.Sites.SiteTransfer
                     fullurl = UrlHelper.Combine(findurl, newrelative);
                     var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl); 
                     download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer); 
+                }
+                else
+                { 
+                    //string newrelative = RelativeUrl.Replace(hostname + "/", "");
+                    //fullurl = UrlHelper.Combine(findurl, newrelative);
+                    //var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
+                    //download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer); 
                 }
             }
             
