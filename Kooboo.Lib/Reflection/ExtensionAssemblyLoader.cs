@@ -18,6 +18,11 @@ namespace Kooboo.Lib.Reflection
         private static object _lockObj = new object();
         private static ExtensionAssemblyLoader _instance;
 
+        public static void AddAssembly(Assembly assembly)
+        {
+            if (Instance.Assemblies.All(a => a.FullName != assembly.FullName)) Instance.Assemblies.Add(assembly);
+        }
+
         public static Action AssemblyChangeAction;
         public static ExtensionAssemblyLoader Instance
         {
