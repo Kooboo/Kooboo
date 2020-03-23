@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Kooboo.Data.Attributes;
+using Kooboo.Sites.Scripting.Interfaces;
 using KScript;
 using System;
 using System.Collections.Concurrent;
@@ -9,14 +10,14 @@ using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
-    public abstract class RelationalDatabase<TExecuter, TSchema, TConnection> : IDatabase
+    public abstract class RelationalDatabase<TExecuter, TSchema, TConnection> : IRelationalDatabase
         where TExecuter : SqlExecuter<TConnection>
         where TSchema : RelationalSchema
         where TConnection : IDbConnection
     {
         internal readonly ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>> _tables;
 
-        public RelationalDatabase(string connectionString)
+        protected RelationalDatabase(string connectionString)
         {
             _tables = new ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>>();
             SqlExecuter = (TExecuter)Activator.CreateInstance(typeof(TExecuter), connectionString);
@@ -25,7 +26,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public abstract string Source { get; }
 
         [KIgnore]
-        public SqlExecuter<TConnection> SqlExecuter { get; }
+        public ISqlExecuter SqlExecuter { get; }
 
         [KIgnore]
         public ITable this[string key]
@@ -54,7 +55,12 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             using (var connection = SqlExecuter.CreateConnection())
             {
-                return connection.Execute(sql, param);
+                using (var transaction = connection.BeginTransaction())
+                {
+                    var affectedRows = connection.Execute(sql, param, transaction);
+                    transaction.Commit();
+                    return affectedRows;
+                }
             }
         }
     }
