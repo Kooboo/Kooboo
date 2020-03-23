@@ -9,7 +9,19 @@ namespace Kooboo.Lib.Reflection
 {
     public class ExtensionAssemblyLoader
     {
-        private static List<string> extensionFolders = new List<string> { "modules", "dll", "packages" };
+        private static readonly List<string> extensionFolders = new List<string>();
+
+        static ExtensionAssemblyLoader()
+        {
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+            extensionFolders.Add(Path.Combine(path, "modules"));
+            extensionFolders.Add(Path.Combine(path, "dll"));
+            extensionFolders.Add(Path.Combine(path, "packages"));
+        }
+        public static void AddExtensionFolder(string path)
+        {
+            extensionFolders.Add(path);
+        }
 
         public List<Assembly> Assemblies { get; private set; } = new List<Assembly>();
 
@@ -17,11 +29,6 @@ namespace Kooboo.Lib.Reflection
 
         private static object _lockObj = new object();
         private static ExtensionAssemblyLoader _instance;
-
-        public static void AddAssembly(Assembly assembly)
-        {
-            if (Instance.Assemblies.All(a => a.FullName != assembly.FullName)) Instance.Assemblies.Add(assembly);
-        }
 
         public static Action AssemblyChangeAction;
         public static ExtensionAssemblyLoader Instance
@@ -46,12 +53,8 @@ namespace Kooboo.Lib.Reflection
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             foreach (var folder in extensionFolders)
             {
-                var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder);
-                if (!Directory.Exists(dir)) continue;
-
-
-
-                var watcher = new FileSystemWatcher(dir);
+                if (!Directory.Exists(folder)) continue;
+                var watcher = new FileSystemWatcher(folder);
                 watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
                 watcher.Changed += new FileSystemEventHandler(OnFileChanged);
                 watcher.Created += new FileSystemEventHandler(OnFileChanged);
@@ -118,11 +121,9 @@ namespace Kooboo.Lib.Reflection
         private List<Assembly> LoadDlls()
         {
             var dlls = new List<Assembly>();
-            var path = AppDomain.CurrentDomain.BaseDirectory;
 
-            foreach (var item in extensionFolders)
+            foreach (var folder in extensionFolders)
             {
-                string folder = Path.Combine(path, item);
                 if (!Directory.Exists(folder)) continue;
 
                 var allsubdlls = VirtualResources.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
