@@ -20,6 +20,8 @@ namespace Kooboo.Sites.Payment.Methods.Ogone
 
         public string RedirectURL { get; set; }
 
+        public string KeyId { get; set; }
+
         public string BaseUrl()
         {
             return "https://payment";
