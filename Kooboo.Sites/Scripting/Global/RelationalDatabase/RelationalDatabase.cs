@@ -55,6 +55,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             using (var connection = SqlExecuter.CreateConnection())
             {
+                connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
                     var affectedRows = connection.Execute(sql, param, transaction);
