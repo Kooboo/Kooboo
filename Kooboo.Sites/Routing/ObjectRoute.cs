@@ -27,18 +27,24 @@ namespace Kooboo.Sites.Routing
                     {
                         var relativeUrl = context.RenderContext.Request.RelativeUrl;
                         int questionMarkIndex = relativeUrl.IndexOf("?");
-                        if (questionMarkIndex>0)
+                        if (questionMarkIndex > 0)
                         {
                             relativeUrl = relativeUrl.Substring(0, questionMarkIndex);
                         }
-                        var lastSlashIndex= relativeUrl.LastIndexOf("/");
-                        if (lastSlashIndex > -1)
+                        var lastSlashIndex = relativeUrl.LastIndexOf("/");
+                        if (lastSlashIndex > 1)
                         {
                             var url = relativeUrl.Substring(0, lastSlashIndex);
-                            nameOrId = relativeUrl.Substring(lastSlashIndex + 1);
-                            foundroute = GetRoute(context, url);
+                            if (!string.IsNullOrWhiteSpace(url))
+                            {
+                                foundroute = GetRoute(context, url);
+                                if (foundroute != null)
+                                {
+                                    nameOrId = relativeUrl.Substring(lastSlashIndex + 1);
+                                }
+                            }
                         }
-                        
+
                     }
                     if (foundroute != null && foundroute.objectId != default(Guid))
                     // if (foundroute != null)

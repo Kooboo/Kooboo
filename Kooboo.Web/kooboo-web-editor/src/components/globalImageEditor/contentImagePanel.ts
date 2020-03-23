@@ -10,14 +10,17 @@ import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
+import { ElementAnalyze } from "../floatMenu/utils";
 
 export function createContentImagePanel() {
   let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
+      let { kooobooIdEl, fieldComment, operability } = ElementAnalyze(element);
       let aroundComments = KoobooComment.getAroundComments(element);
       if (!aroundComments.find(f => f.getValue("attribute") == "src" && f.source != "none")) continue;
+      if (!operability || (!kooobooIdEl && !fieldComment)) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
       setImagePreview(imagePreview, element);
       setImage(element.src);

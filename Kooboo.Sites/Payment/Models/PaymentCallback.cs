@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Payment
 {
+    [Serializable]
     public class PaymentCallback : IGolbalObject, ISiteObject
     {
         private Guid _id;
@@ -39,7 +40,8 @@ namespace Kooboo.Sites.Payment
         public string PostData { get; set; }
 
         [Description("Orginal request data")]
-        public KScript.KDictionary Request;
+        [KoobooIgnore]
+        public KScript.KDictionary Request { get; set; }
 
         // when reponse with paid, set this to true and update the related order. 
         public bool Paid

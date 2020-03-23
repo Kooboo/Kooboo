@@ -1,6 +1,6 @@
 import { getAllElement, isLink } from "@/dom/utils";
 import { createLinkItem } from "./utils";
-import { updateDomLink, getEditableComment } from "../floatMenu/utils";
+import { updateDomLink, getEditableComment, ElementAnalyze } from "../floatMenu/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 
@@ -9,10 +9,10 @@ export function createDomLinkPanel() {
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {
-      let comments = KoobooComment.getComments(element);
-      if (!getEditableComment(comments)) continue;
+      let { kooobooIdEl, fieldComment, operability } = ElementAnalyze(element);
       let aroundComments = KoobooComment.getAroundComments(element);
       if (aroundComments.find(f => f.getValue("attribute") == "href")) continue;
+      if (!operability || (!kooobooIdEl && !fieldComment)) continue;
 
       let { item, setLabel } = createLinkItem(element, async () => {
         var url = await updateDomLink(element);

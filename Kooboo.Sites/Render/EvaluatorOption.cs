@@ -19,9 +19,7 @@ namespace Kooboo.Sites.Render
         public Guid OwnerObjectId { get; set; } 
 
         public EnumEvaluator IgnoreEvaluators { get; set; }
-
-        // Ensure BindingRenderTask can wrap element
-        public bool HasContentTask { get; set; }
+        
 
         public  EvaluatorOption Clone()
         {
@@ -29,8 +27,7 @@ namespace Kooboo.Sites.Render
             newoption.RenderHeader = this.RenderHeader;
             newoption.RenderUrl = this.RenderUrl;
             newoption.RequireBindingInfo = this.RequireBindingInfo;
-            newoption.OwnerObjectId = this.OwnerObjectId;
-            newoption.HasContentTask = this.HasContentTask;
+            newoption.OwnerObjectId = this.OwnerObjectId; 
             return newoption; 
         }
           

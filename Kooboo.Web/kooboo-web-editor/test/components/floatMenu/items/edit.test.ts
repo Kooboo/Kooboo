@@ -29,12 +29,12 @@ describe("edit", () => {
     // 不能是body元素
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
     let comments = KoobooComment.getComments(document.body);
-    elementObject.update(comments);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("none");
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
     comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("block");
   });
 
@@ -58,7 +58,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).equal("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("none");
   });
 
@@ -84,7 +84,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).equal("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("block");
   });
 
@@ -110,7 +110,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).equal("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("none");
   });
 
@@ -141,7 +141,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).equal("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-    elementObject.update(comments);
+    elementObject.update();
     expect(elementObject.el.style.display).equal("none");
   });
 });

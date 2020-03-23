@@ -28,7 +28,7 @@ namespace Kooboo.Data
             ModulePath = Path.Combine(AppContext.BaseDirectory, "modules");
             if (!Directory.Exists(ModulePath)) Directory.CreateDirectory(ModulePath);
             var modulesHash = GetModulesHash();
-            Version = Assembly.GetEntryAssembly().GetName().Version;
+            Version = typeof(Kooboo.Data.Models.WebSite).Assembly.GetName().Version;
             var build = Version.Build + modulesHash.Take(8).Sum(s => s);
             var revision = Version.Revision + modulesHash.Skip(8).Sum(s => s);
             Version = new Version(Version.Major, Version.Minor, build, revision);

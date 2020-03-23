@@ -75,6 +75,14 @@ namespace Kooboo.Sites.Payment
             return await SendAsync(HttpMethod.Get, url, null, headers, withAuth);
         }
 
+        public async Task<ApiResponse> DeleteAsync(
+            string url,
+            Dictionary<string, string> headers = null,
+            bool withAuth = true)
+        {
+            return await SendAsync(HttpMethod.Delete, url, null, headers, withAuth);
+        }
+
         /// <summary>
         /// Send custom api request
         /// </summary>
@@ -155,13 +163,16 @@ namespace Kooboo.Sites.Payment
             return new ApiResponse
             {
                 StatusCode = resp.StatusCode,
-                Content = response
+                Content = response,
+                Headers = resp.Headers
             };
         }
 
         public class ApiResponse
         {
             public HttpStatusCode StatusCode { get; set; }
+
+            public HttpResponseHeaders Headers { get; set; }
 
             public bool IsSuccessStatusCode =>
                 (StatusCode >= HttpStatusCode.OK) && (StatusCode <= (HttpStatusCode)299);

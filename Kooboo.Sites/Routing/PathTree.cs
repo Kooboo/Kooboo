@@ -145,61 +145,7 @@ namespace Kooboo.Sites.Routing
                 }
             }
         }
-
-        public Path FindPath(String RelativeUrl, bool EnsureObjectId)
-        {
-            if (string.IsNullOrEmpty(RelativeUrl))
-            {
-                return root;
-            }
-
-            RelativeUrl = RelativeUrl.Replace("\\", "/").ToLower();
-            string[] segments = RelativeUrl.Split('/');
-
-            Path currentpath = root;
-
-            foreach (var item in segments)
-            {
-                if (string.IsNullOrEmpty(item))
-                {
-                    continue;
-                }
-                Path child = _findPath(currentpath, item.RemoveRoutingCurlyBracket(), EnsureObjectId);
-                if (child == null)
-                {
-                    if (item.StartsWith("?"))
-                    { 
-                        if (EnsureObjectId)
-                        {
-                            if (currentpath.ObjectId != default(Guid))
-                            {
-                                return currentpath;
-                            }
-                        }
-                        else
-                        {
-                            return currentpath;
-                        } 
-                    } 
-                    // TODO: verify situation of this task. It breaks now of importing sites with both
-                    //  pages for   [/subpath]   and [/subpath/sub/sub.html]. 
-                    // if currentpath has {} sub. 
-                    //if (currentpath.Children == null || !currentpath.Children.Any())
-                    //{
-                    //    if (currentpath.ObjectId != default(Guid))
-                    //    { return currentpath;  }
-                    //} 
-                    return null;
-                }
-                else
-                {
-                    currentpath = child;
-                }
-            }
-
-            return currentpath;
-
-        }
+         
 
         private void RemoveEmptySlot(Path currentPath)
         {
@@ -218,7 +164,12 @@ namespace Kooboo.Sites.Routing
 
                 foreach (string item in seglist)
                 {
-                    Path child = _findPath(currentslot, item);
+                    if (item == null)
+                    {
+                        continue; 
+                    } 
+                    var key = item.ToLower();  
+                    Path child = currentslot.Children.Values.ToList().Find(o => o.segment.ToLower() == key);
                     if (child == null)
                     {
                         child = addPath(currentslot, item, ObjectId);
@@ -270,6 +221,70 @@ namespace Kooboo.Sites.Routing
 
         }
 
+
+        public Path FindPath(String RelativeUrl, bool EnsureObjectId)
+        {
+            if (string.IsNullOrEmpty(RelativeUrl))
+            {
+                return root;
+            }
+
+            RelativeUrl = RelativeUrl.Replace("\\", "/").ToLower();
+            string[] segments = RelativeUrl.Split('/');
+
+            Path currentpath = root;
+
+            foreach (var item in segments)
+            {
+                if (string.IsNullOrEmpty(item))
+                {
+                    continue;
+                }
+                Path child = _findPath(currentpath, item.RemoveRoutingCurlyBracket(), EnsureObjectId);
+                if (child == null)
+                {
+                    if (item.StartsWith("?"))
+                    {
+                        if (EnsureObjectId)
+                        {
+                            if (currentpath.ObjectId != default(Guid))
+                            {
+                                return currentpath;
+                            }
+                        }
+                        else
+                        {
+                            return currentpath;
+                        }
+                    }
+                    // TODO: verify situation of this task. It breaks now of importing sites with both
+                    //  pages for   [/subpath]   and [/subpath/sub/sub.html]. 
+                    // if currentpath has {} sub. 
+                    if (currentpath.segment == "{}" && currentpath.ObjectId != default(Guid))
+                    {
+                        if (!currentpath.Children.Any())
+                        {
+                            return currentpath;
+                        } 
+                    }
+
+                    //if (currentpath.Children == null || !currentpath.Children.Any())
+                    //{
+                    //    if (currentpath.ObjectId != default(Guid))
+                    //    { return currentpath;  }
+                    //} 
+                    return null;
+                }
+                else
+                {
+                    currentpath = child;
+                }
+            }
+
+            return currentpath;
+
+        }
+         
         private Path _findPath(Path parent, string currentsegment, bool EnsureObjectId = false)
         {
             if (parent.Children.ContainsKey(currentsegment))

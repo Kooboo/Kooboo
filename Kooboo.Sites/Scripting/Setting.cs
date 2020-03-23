@@ -18,6 +18,7 @@ namespace Kooboo.Sites.Scripting
 
         public static void SetOption(Jint.Options option)
         {
+           
             option.MaxStatements(MaxStatements);
 
             option.Strict(false);

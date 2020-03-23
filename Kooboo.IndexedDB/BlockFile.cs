@@ -187,8 +187,7 @@ namespace Kooboo.IndexedDB
         }
 
         public FileStream Stream
-        {
-
+        { 
             get
             {
 

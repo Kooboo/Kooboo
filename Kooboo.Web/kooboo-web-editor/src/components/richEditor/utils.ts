@@ -2,10 +2,11 @@ import tinymce from "tinymce-declaration";
 import { STANDARD_Z_INDEX, EMPTY_COMMENT } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { getAllElement, isTextArea } from "../../dom/utils";
+import { getAllElement, isTextArea, getAllNode } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
 import { createDiv } from "@/dom/element";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export async function impoveEditorUI(editor: tinymce.Editor) {
   editor.focus(false);
@@ -91,6 +92,14 @@ export function onBeforeSetContent(e: any) {
   }
 
   e.format = "raw";
+
+  for (let i = 0; i < targetElm.childNodes.length; i++) {
+    const element = targetElm.childNodes[i];
+    if (KoobooComment.isComment(element)) {
+      (targetElm as any).kbComment = new KoobooComment(element);
+      break;
+    }
+  }
 }
 
 export function getToolbar(el: HTMLElement) {
@@ -122,6 +131,11 @@ export function savePluginCallback(e: tinymce.Editor, callBack: () => void) {
   clearTinymceElements(document.body);
   context.editing = false;
   callBack();
+
+  let kbComment = (element as any).kbComment as KoobooComment;
+  if (kbComment && !element.innerHTML.trim().startsWith("<!--#kooboo")) {
+    element.insertBefore(kbComment.ToComment(), element.firstChild);
+  }
 }
 
 export function clearTinymceElements(root: HTMLElement) {

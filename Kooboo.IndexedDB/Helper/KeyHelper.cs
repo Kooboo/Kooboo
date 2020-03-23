@@ -106,7 +106,8 @@ namespace Kooboo.IndexedDB.Helper
         {
             if (string.IsNullOrEmpty(input))
             {
-                input = string.Empty;
+                return default(Guid); 
+                //input = string.Empty;
             }
             input = input.ToLower();
 

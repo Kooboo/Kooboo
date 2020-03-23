@@ -227,7 +227,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     try
                     {
-                        session.JsEngine.Execute(JsStatement);
+                        session.JsEngine.Execute(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
                         result.Success = true;
                         var value = Lib.Helper.JintHelper.GetAssignmentValue(JsStatement);
                         result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
@@ -244,7 +244,7 @@ namespace Kooboo.Web.Api.Implementation
                     try
                     {
 
-                        session.JsEngine.Execute(JsStatement);
+                        session.JsEngine.Execute(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
                         result.Success = true;
                     }
                     catch (Exception ex)

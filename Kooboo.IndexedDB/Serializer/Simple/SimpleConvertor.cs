@@ -98,7 +98,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         }
 
         private void AddFields(Type valuetype, string FieldName)
-        {  
+        {
             var converter = ConverterHelper.GetFieldConverter<T>(valuetype, FieldName);
 
             if (converter != null)
@@ -187,17 +187,20 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 int len = BitConverter.ToInt32(bytes, startposition);
                 startposition += 4;
 
-                if (len <=0)
+                if (len <= 0)
                 {
-                    break; 
+                    break;
                 }
 
                 var item = Fields.Find(o => o.FieldNameHash == FieldNameHash);
                 if (item != null)
                 {
                     byte[] FieldValueBytes = new byte[len];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
-                    item.SetByteValues(value, FieldValueBytes);
+                    if (totallength >= startposition + len)
+                    {
+                        System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                        item.SetByteValues(value, FieldValueBytes);
+                    }
                 }
                 else
                 {
@@ -208,8 +211,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                         if (col != null)
                         {
                             byte[] FieldValueBytes = new byte[len];
-                            System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
-                            col.SetBytes(value, FieldValueBytes);
+                            if (totallength >= startposition + len)
+                            {
+                                System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                                col.SetBytes(value, FieldValueBytes);
+                            }
                         }
                     }
                 }
@@ -271,7 +277,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             return value;
         }
 
-        private List<IFieldConverter<T>> _Fields; 
+        private List<IFieldConverter<T>> _Fields;
 
         public List<IFieldConverter<T>> Fields
         {
@@ -279,11 +285,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 if (_Fields == null)
                 {
-                    _Fields = new List<IFieldConverter<T>>(); 
+                    _Fields = new List<IFieldConverter<T>>();
                 }
-                return _Fields; 
+                return _Fields;
             }
-          set { _Fields = value;  }
+            set { _Fields = value; }
         }
 
         public List<IColumn<T>> Columns { get; set; }

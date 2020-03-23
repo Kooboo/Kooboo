@@ -17,7 +17,7 @@ namespace Kooboo.Logging
             Level = LogProvider.Level;
 
             _writer = new SimpleDateRollingLogWriter(d =>
-                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", group, $"{name}-{d.ToString("yyyy-MM-dd")}.txt")
+                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log", group, $"{name}-{d.ToString("yyyy-MM-dd")}.txt")
             );
         }
 

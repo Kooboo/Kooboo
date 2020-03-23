@@ -1,7 +1,7 @@
 import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationManager } from "@/operation/Manager";
-import { setGuid, clearKoobooInfo, getUnpollutedEl } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, getUnpollutedEl, getWarpContent, isDynamicContent, getHasKoobooIdEl } from "@/kooboo/utils";
 import { createImagePicker } from "../imagePicker";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
@@ -10,6 +10,7 @@ import { createLinkPicker } from "../linkPicker";
 import { kvInfo } from "@/common/kvInfo";
 import { Log } from "@/operation/Log";
 import { pickImg } from "@/kooboo/outsideInterfaces";
+import { isBody } from "@/dom/utils";
 
 export function getRepeatSourceComment(comments: KoobooComment[], source: string | null = null) {
   var repeatComment = comments.find(f => f.source == "repeatitem");
@@ -24,7 +25,12 @@ export function getRepeatSourceComment(comments: KoobooComment[], source: string
 }
 
 export function getEditableComment(comments: KoobooComment[]) {
+  if (comments.find(f => f.source == "menu" || f.source == "innerform")) return null;
   return comments.find(f => !f.source.startsWith("repeat") && f.source != "none" && !f.attribute && f.source != "innerform");
+}
+
+export function getScopeComment(comments: KoobooComment[]) {
+  return comments.find(f => f.scope);
 }
 
 export function hasOperation(operationManager: operationManager) {
@@ -32,14 +38,13 @@ export function hasOperation(operationManager: operationManager) {
 }
 
 export async function updateDomImage(element: HTMLImageElement) {
-  let el = getUnpollutedEl(element)!;
+  let { kooobooIdEl, fieldComment, koobooId, scopeComment } = ElementAnalyze(element);
   let startContent = element.cloneNode(true) as HTMLImageElement;
-  let comments = KoobooComment.getComments(element);
-  let comment = getEditableComment(comments)!;
+
   try {
     await createImagePicker(element as HTMLImageElement);
     if (startContent.outerHTML == element.outerHTML) return;
-    let guid = setGuid(el);
+    let guid = setGuid(element);
     let units = [
       new AttributeUnit(startContent.getAttribute("src")!, "src"),
       new AttributeUnit(startContent.getAttribute("style")!, "style"),
@@ -48,10 +53,11 @@ export async function updateDomImage(element: HTMLImageElement) {
     ];
 
     var logs = [];
-    if (el == element) {
+
+    if (kooobooIdEl == element && !fieldComment) {
       logs.push(
         new Log([
-          ...comment.infos,
+          ...scopeComment!.infos,
           kvInfo.attribute("src"),
           kvInfo.value(element.getAttribute("src")),
           kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
@@ -60,7 +66,7 @@ export async function updateDomImage(element: HTMLImageElement) {
 
       logs.push(
         new Log([
-          ...comment.infos,
+          ...scopeComment!.infos,
           kvInfo.attribute("style"),
           kvInfo.value(element.getAttribute("style")),
           kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
@@ -69,7 +75,7 @@ export async function updateDomImage(element: HTMLImageElement) {
 
       logs.push(
         new Log([
-          ...comment.infos,
+          ...scopeComment!.infos,
           kvInfo.attribute("alt"),
           kvInfo.value(element.getAttribute("alt")),
           kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
@@ -78,14 +84,17 @@ export async function updateDomImage(element: HTMLImageElement) {
 
       logs.push(
         new Log([
-          ...comment.infos,
+          ...scopeComment!.infos,
           kvInfo.attribute("title"),
           kvInfo.value(element.getAttribute("title")),
           kvInfo.koobooId(element.getAttribute(KOOBOO_ID))
         ])
       );
     } else {
-      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))]));
+      koobooId = kooobooIdEl ? kooobooIdEl!.getAttribute(KOOBOO_ID) : koobooId;
+      let content = kooobooIdEl ? kooobooIdEl.innerHTML : getWarpContent(element!);
+      let comment = fieldComment ? fieldComment : scopeComment;
+      logs.push(new Log([...comment!.infos, kvInfo.koobooId(koobooId), kvInfo.value(clearKoobooInfo(content))]));
     }
 
     let record = new operationRecord(units, logs, guid);
@@ -116,9 +125,7 @@ export async function updateAttributeImage(element: HTMLImageElement) {
 }
 
 export async function updateDomLink(element: HTMLElement) {
-  let el = getUnpollutedEl(element)!;
-  let comments = KoobooComment.getComments(element);
-  let comment = getEditableComment(comments)!;
+  let { kooobooIdEl, fieldComment, koobooId, scopeComment } = ElementAnalyze(element);
   let href = element.getAttribute("href")!;
 
   try {
@@ -128,10 +135,13 @@ export async function updateDomLink(element: HTMLElement) {
     let unit = new AttributeUnit(href!, "href");
     let logs = [];
 
-    if (el == element) {
-      logs.push(new Log([...comment.infos, kvInfo.attribute("href"), kvInfo.value(url), kvInfo.koobooId(element.getAttribute(KOOBOO_ID))]));
+    if (kooobooIdEl == element) {
+      logs.push(new Log([...scopeComment!.infos, kvInfo.attribute("href"), kvInfo.value(url), kvInfo.koobooId(element.getAttribute(KOOBOO_ID))]));
     } else {
-      logs.push(new Log([...comment.infos, kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID))]));
+      koobooId = kooobooIdEl ? kooobooIdEl!.getAttribute(KOOBOO_ID) : koobooId;
+      let content = kooobooIdEl ? kooobooIdEl.innerHTML : getWarpContent(element!);
+      let comment = fieldComment ? fieldComment : scopeComment;
+      logs.push(new Log([...comment!.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId)]));
     }
 
     let record = new operationRecord([unit], logs, guid);
@@ -166,4 +176,44 @@ export const clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "")
 export function isEditable(el: HTMLElement) {
   var reExcept = /^(img|button|input|textarea|hr|area|canvas|meter|progress|select|tr|td|tbody|thead|tfoot|th|table)$/i;
   return !reExcept.test(el.tagName);
+}
+
+function getFieldComment(comments: KoobooComment[]) {
+  for (const iterator of comments) {
+    if (iterator.attribute) continue;
+    if (iterator.scope) return;
+    if (iterator.source == "innerform") continue;
+    if (iterator.source.startsWith("repeat") || iterator.source == "none") return;
+    return iterator;
+  }
+}
+
+export function ElementAnalyze(element: HTMLElement) {
+  let unpollutedEl = getUnpollutedEl(element);
+  let comments = null;
+  let operability = false;
+  let koobooId = null;
+  let fieldComment = null;
+  let scopeComment = null;
+  let kooobooIdEl = null;
+  if (unpollutedEl && !isBody(unpollutedEl)) {
+    if (!isDynamicContent(unpollutedEl)) operability = true;
+    koobooId = unpollutedEl.getAttribute(KOOBOO_ID);
+    comments = KoobooComment.getComments(unpollutedEl);
+    if (comments.find(f => f.source == "menu")) operability = false;
+    fieldComment = getFieldComment(comments);
+    scopeComment = comments.find(f => f.scope);
+    kooobooIdEl = getHasKoobooIdEl(unpollutedEl);
+    if (kooobooIdEl && isDynamicContent(kooobooIdEl)) kooobooIdEl = null;
+  }
+
+  return {
+    unpollutedEl,
+    comments,
+    operability,
+    koobooId,
+    fieldComment,
+    scopeComment,
+    kooobooIdEl
+  };
 }

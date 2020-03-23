@@ -1,8 +1,7 @@
 import context from "@/common/context";
-import { setGuid, markDirty, clearKoobooInfo, getUnpollutedEl, isDynamicContent, getWrapDom, isDirty } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, getWrapDom, getWarpContent } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
-import { getRepeatSourceComment, getEditableComment } from "../utils";
-import { isBody } from "@/dom/utils";
+import { getRepeatSourceComment, ElementAnalyze } from "../utils";
 import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
@@ -26,31 +25,27 @@ export default class CopyItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  update(comments: KoobooComment[]): void {
+  update(): void {
     this.setVisiable(true);
-    let { element, koobooId } = context.lastSelectedDomEventArgs;
-    if (isBody(element)) return this.setVisiable(false);
-    let el = getUnpollutedEl(element);
-    if (!el && (!KoobooComment.getAroundScopeComments(element) || !koobooId || isDirty(element))) return this.setVisiable(false);
-    if (!getEditableComment(comments)) return this.setVisiable(false);
+    let { element } = context.lastSelectedDomEventArgs;
+    let { operability, comments, kooobooIdEl, fieldComment } = ElementAnalyze(element);
+    if (!operability || !comments) return this.setVisiable(false);
+    if (!kooobooIdEl && !fieldComment) return this.setVisiable(false);
     if (getRepeatSourceComment(comments)) return this.setVisiable(false);
-    if (el && isDynamicContent(el)) return this.setVisiable(false);
   }
 
   click() {
-    let { element, koobooId } = context.lastSelectedDomEventArgs;
+    let { element } = context.lastSelectedDomEventArgs;
+    let { unpollutedEl, koobooId, kooobooIdEl, scopeComment, fieldComment } = ElementAnalyze(element);
     this.parentMenu.hidden();
-    let comments = KoobooComment.getComments(element);
-    let comment = getEditableComment(comments)!;
-    let el = getUnpollutedEl(element)!;
-    let aroundScopeComment = KoobooComment.getAroundScopeComments(element);
-    let aroundComments = KoobooComment.getAroundComments(element);
+    var log = [];
     let cloneElement = element.cloneNode(true) as HTMLElement;
     let guid = setGuid(element.parentElement!);
     let oldValue = element.parentElement!.innerHTML;
+    let aroundComments = KoobooComment.getAroundComments(element!);
 
     if (aroundComments.length > 0) {
-      let { nodes, endNode } = getWrapDom(element, aroundComments[aroundComments.length - 1].uid);
+      let { nodes, endNode } = getWrapDom(element!, aroundComments[aroundComments.length - 1].uid);
       for (const node of nodes.reverse()) {
         let cloned = node.cloneNode(true);
         if (KoobooComment.isComment(cloned)) {
@@ -64,6 +59,16 @@ export default class CopyItem extends BaseMenuItem {
       element.parentElement!.insertBefore(cloneElement, element.nextSibling);
     }
 
+    if (element == kooobooIdEl) {
+      log.push(...scopeComment!.infos, kvInfo.copy, kvInfo.koobooId(koobooId));
+    } else {
+      let content = kooobooIdEl ? kooobooIdEl.innerHTML : getWarpContent(unpollutedEl!);
+      let comment = fieldComment ? fieldComment : scopeComment;
+      koobooId = kooobooIdEl ? kooobooIdEl!.getAttribute(KOOBOO_ID) : koobooId;
+      log.push(...comment!.infos, kvInfo.value(clearKoobooInfo(content)), kvInfo.koobooId(koobooId));
+    }
+
+    let aroundScopeComment = KoobooComment.getAroundScopeComments(element!);
     if (aroundScopeComment) {
       let { nodes } = getWrapDom(element, aroundScopeComment.source);
       for (const node of nodes) {
@@ -71,22 +76,6 @@ export default class CopyItem extends BaseMenuItem {
       }
     } else {
       markDirty(element.parentElement!);
-    }
-
-    var log = [];
-    if (aroundScopeComment) {
-      log.push(...aroundScopeComment.infos);
-      log.push(kvInfo.copy);
-      log.push(kvInfo.koobooId(koobooId));
-    } else {
-      if (el == element) {
-        log.push(...comments.find(f => f.scope)!.infos);
-        log.push(kvInfo.copy);
-        log.push(kvInfo.koobooId(koobooId));
-      } else {
-        log.push(...comment.infos);
-        log.push(kvInfo.value(clearKoobooInfo(el.innerHTML)), kvInfo.koobooId(el.getAttribute(KOOBOO_ID)));
-      }
     }
 
     let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [new Log(log)], guid);
