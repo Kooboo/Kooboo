@@ -14,10 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Kooboo.App.Upgrade\Kooboo.App.Upgrade.csproj" />
     <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
     <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
