@@ -145,14 +145,19 @@ namespace Kooboo.IndexedDB.Helper
                     return string.Compare(CurrentValue, TargetValue) != 0;
 
                 case Query.Comparer.StartWith:
-                    {
-                        return CurrentValue.StartsWith(TargetValue);
-                    }
+                {
+                    return CurrentValue.StartsWith(TargetValue);
+                }
 
                 case Query.Comparer.Contains:
-                    {
-                        return CurrentValue.Contains(TargetValue); 
-                    }
+                {
+                    return CurrentValue.Contains(TargetValue);
+                }
+
+                case Query.Comparer.In:
+                    return TargetValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Trim('\'', '\"', ' '))
+                        .Contains(CurrentValue);
 
                 default:
                     return false;

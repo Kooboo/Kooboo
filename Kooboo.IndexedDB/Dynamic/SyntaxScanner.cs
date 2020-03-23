@@ -3,11 +3,11 @@
 using System.Collections.Generic;
 
 namespace Kooboo.IndexedDB.Dynamic
-{ 
+{
 
     public class SyntaxScanner
     {
-        private static HashSet<char> _singleoperator; 
+        private static HashSet<char> _singleoperator;
         public static HashSet<char> SingleOperator
         {
             get
@@ -21,7 +21,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     _singleoperator.Add('!');
                     _singleoperator.Add('&');
                 }
-                return _singleoperator; 
+                return _singleoperator;
             }
         }
 
@@ -44,13 +44,13 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         private bool IsSeperator(char current)
-        { 
-            return SingleOperator.Contains(current);   
+        {
+            return SingleOperator.Contains(current);
         }
 
         public bool IsTwoCharSperator(string input)
         {
-            return DoubleOperator.Contains(input); 
+            return DoubleOperator.Contains(input);
         }
 
         public SyntaxScanner(string text)
@@ -71,7 +71,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public string nexttoken { get; set; }
 
         public string ConsumeNext()
-        {  
+        {
             while (currentIndex < totalLength)
             {
                 var currentChar = this.Source[currentIndex];
@@ -81,21 +81,21 @@ namespace Kooboo.IndexedDB.Dynamic
                     if (!string.IsNullOrEmpty(currentValue))
                     {
                         string newvalue = currentValue;
-                        currentValue = string.Empty; 
-                        currentIndex += 1;  
+                        currentValue = string.Empty;
+                        currentIndex += 1;
                         return newvalue;
                     }
                     else
                     {
-                        currentIndex += 1; 
+                        currentIndex += 1;
                     }
                 }
-                else if  (IsSeperator(currentChar))
+                else if (IsSeperator(currentChar))
                 {
                     if (!string.IsNullOrEmpty(currentValue))
                     {
                         string newvalue = currentValue;
-                        currentValue = string.Empty; 
+                        currentValue = string.Empty;
                         return newvalue;
                     }
                     else
@@ -116,12 +116,12 @@ namespace Kooboo.IndexedDB.Dynamic
                                 return currentChar.ToString();
                             }
                         }
-                        currentIndex += 1; 
-                        return currentChar.ToString(); 
-                    } 
+                        currentIndex += 1;
+                        return currentChar.ToString();
+                    }
                 }
 
-                else if (currentChar=='"' || currentChar == '\'') 
+                else if (currentChar == '"' || currentChar == '\'' || currentChar == '(')
                 {
                     if (!string.IsNullOrEmpty(currentValue))
                     {
@@ -131,19 +131,20 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                     else
                     {
-                        string value = LookTill(currentChar);
+                        var endChar = currentChar == '(' ? ')' : currentChar;
+                        string value = LookTill(endChar);
 
-                        return value;   
+                        return value;
                     }
                 }
-                 
+
 
                 else
                 {
                     this.currentValue += currentChar;
                     currentIndex += 1;
                 }
-             
+
             }
 
             if (!string.IsNullOrEmpty(this.currentValue))
@@ -152,45 +153,45 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 this.currentValue = string.Empty;
 
-                return newvalue;  
-            } 
+                return newvalue;
+            }
             return null;
-        }  
-        
+        }
+
         private char LookAhead()
         {
-            int next = this.currentIndex + 1; 
-           
+            int next = this.currentIndex + 1;
+
             if (next < this.totalLength)
             {
-                return this.Source[next]; 
+                return this.Source[next];
             }
 
-            return default(char); 
+            return default(char);
         }
 
         public string LookTill(char endchar)
         {
-            string value = string.Empty; 
+            string value = string.Empty;
 
             int next = this.currentIndex + 1;
 
             while (next < this.totalLength)
             {
-                var current = this.Source[next]; 
+                var current = this.Source[next];
                 if (current == endchar)
                 {
-                    break; 
+                    break;
                 }
                 else
                 {
-                    value += current; 
+                    value += current;
                 }
-                next += 1;  
+                next += 1;
             }
 
-            this.currentIndex = next+1; 
-            return value;   
-        }  
+            this.currentIndex = next + 1;
+            return value;
+        }
     }
 }
