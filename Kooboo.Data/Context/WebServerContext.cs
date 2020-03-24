@@ -222,8 +222,6 @@ namespace Kooboo.Data.Context
         {
             var siteid = _GetSiteIdByUrl(context.Request);
 
-            siteid = new Guid("933752c9-b60d-dcdc-5371-0279b8b1f63d");
-
             if (siteid == default(Guid))
             {
                 siteid = Kooboo.Data.Service.WebSiteService.GetTempUrlSiteId(context.Request.Host);

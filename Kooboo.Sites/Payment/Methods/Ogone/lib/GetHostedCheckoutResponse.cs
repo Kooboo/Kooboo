@@ -25,7 +25,7 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
 
     public class Payment
     {
-        public HostedCheckoutSpecificOutput HostedCheckoutSpecificOutput { get; set; }
+        public HostedCheckoutSpecificOutput HostedCheckoutSpecificOutput { get; set; } = null;
 
         public string Status { get; set; }
 
