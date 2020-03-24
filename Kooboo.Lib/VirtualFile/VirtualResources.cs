@@ -17,6 +17,7 @@ namespace VirtualFile
         public bool IncludePhysical { get; set; } = true;
 
         public static ConcurrentDictionary<string, IEntry> Entries => _instance._entries;
+        public static ConcurrentDictionary<string, VirtualFile> Mappings => _instance._fileMaps;
 
         public static void Setup(Action<VirtualResources> action)
         {
