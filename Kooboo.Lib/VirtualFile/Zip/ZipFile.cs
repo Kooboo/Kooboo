@@ -1,4 +1,5 @@
-﻿using Kooboo.Lib.VirtualFile.Zip;
+﻿using ICSharpCode.SharpZipLib.Core;
+using Kooboo.Lib.VirtualFile.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,13 +10,19 @@ namespace VirtualFile.Zip
 {
     public class ZipFile : VirtualFile
     {
-        readonly Ionic.Zip.ZipEntry _zipArchiveEntry;
+        readonly ICSharpCode.SharpZipLib.Zip.ZipEntry _zipArchiveEntry;
+        readonly ICSharpCode.SharpZipLib.Zip.ZipFile _zipArchive;
         ZipOption _zipOption;
         byte[] _cache;
 
-        public ZipFile(Ionic.Zip.ZipEntry zipArchiveEntry, string path, string zipPath, ZipOption zipOption = null) : base(path, "zip")
+        public ZipFile(
+            ICSharpCode.SharpZipLib.Zip.ZipEntry zipArchiveEntry,
+            ICSharpCode.SharpZipLib.Zip.ZipFile zipArchive,
+            string path, string zipPath,
+            ZipOption zipOption = null) : base(path, "zip")
         {
             _zipArchiveEntry = zipArchiveEntry;
+            _zipArchive = zipArchive;
             _zipOption = zipOption ?? new ZipOption();
             ZipPath = zipPath;
         }
@@ -25,20 +32,21 @@ namespace VirtualFile.Zip
 
         public override Stream Open()
         {
-            return _zipArchiveEntry.OpenReader();
+            return _zipArchive.GetInputStream(_zipArchiveEntry);
         }
 
         public override byte[] ReadAllBytes()
         {
             if (_cache != null) return _cache;
-            using (var stream = _zipArchiveEntry.OpenReader())
+            var temp = new byte[_zipArchiveEntry.Size];
+
+            using (var stream = _zipArchive.GetInputStream(_zipArchiveEntry))
             {
-                var bytes = new byte[stream.Length];
-                if (stream.Length > Int32.MaxValue) throw new IOException();
-                stream.Read(bytes, 0, (int)stream.Length);
-                if (_zipOption.Cache) _cache = bytes;
-                return bytes;
+                StreamUtils.ReadFully(stream, temp);
             }
+
+            if (_zipOption.Cache) _cache = temp;
+            return temp;
         }
 
         public override string ReadAllText(Encoding encoding)

@@ -1,7 +1,10 @@
-﻿using Kooboo.Lib.CrossPlatform;
+﻿using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using Kooboo.Lib.CrossPlatform;
 using Kooboo.Lib.Helper;
 using Kooboo.Lib.VirtualFile.Zip;
 using System;
+using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -13,22 +16,21 @@ namespace VirtualFile.Zip
 {
     public static class VirtualResourcesZipExtensions
     {
-        static ConcurrentDictionary<string, Ionic.Zip.ZipFile> _zipArchives = new ConcurrentDictionary<string, Ionic.Zip.ZipFile>();
+        static ConcurrentDictionary<string, ICSharpCode.SharpZipLib.Zip.ZipFile> _zipArchives = new ConcurrentDictionary<string, ICSharpCode.SharpZipLib.Zip.ZipFile>();
 
         public static void LoadZip(this VirtualResources virtualResources, string zipPath, string rootPath, ZipOption zipOption)
         {
             if (!File.Exists(zipPath)) throw new FileNotFoundException();
-            var file = File.OpenRead(zipPath);
-            var zipArchive = Ionic.Zip.ZipFile.Read(file);
+            var zipArchive = new ICSharpCode.SharpZipLib.Zip.ZipFile(zipPath);
             zipPath = Helper.NormalizePath(zipPath);
             _zipArchives[zipPath] = zipArchive;
 
             var dir = GetZipVirtualPath(zipPath);
             var fileMaps = GetFileMaps(zipArchive);
 
-            foreach (var item in zipArchive.Entries)
+            foreach (ZipEntry item in zipArchive)
             {
-                var path = Path.Combine(dir, item.FileName);
+                var path = Path.Combine(dir, item.Name);
                 path = Helper.NormalizePath(path);
 
                 if (item.IsDirectory)
@@ -38,17 +40,17 @@ namespace VirtualFile.Zip
                 }
                 else
                 {
-                    var fileMap = fileMaps.FirstOrDefault(f => f.To == item.FileName);
+                    var fileMap = fileMaps.FirstOrDefault(f => f.To == item.Name);
 
                     if (fileMap != null)
                     {
                         var fromPath = Path.Combine(rootPath, fileMap.From);
                         var fileMapFrom = Helper.NormalizePath(fromPath);
-                        var virtualFile = new ZipFile(item, fileMapFrom, zipPath, zipOption);
+                        var virtualFile = new ZipFile(item, zipArchive, fileMapFrom, zipPath, zipOption);
                         virtualResources._fileMaps[fileMapFrom] = virtualFile;
                     }
 
-                    virtualResources._entries[path] = new ZipFile(item, path, zipPath, zipOption); ;
+                    virtualResources._entries[path] = new ZipFile(item, zipArchive, path, zipPath, zipOption); ;
                 }
             }
         }
@@ -69,7 +71,7 @@ namespace VirtualFile.Zip
 
             if (_zipArchives.TryGetValue(zipPath, out var zipArchive))
             {
-                zipArchive.Dispose();
+                zipArchive.Close();
                 _zipArchives.TryRemove(zipPath, out _);
             }
         }
@@ -106,26 +108,27 @@ namespace VirtualFile.Zip
             }
         }
 
-        static FileMapping[] GetFileMaps(Ionic.Zip.ZipFile zipArchive)
+        static FileMapping[] GetFileMaps(ICSharpCode.SharpZipLib.Zip.ZipFile zipArchive)
         {
             try
             {
-                var entry = zipArchive.Entries.FirstOrDefault(f => f.FileName.ToLower() == "config.json");
+                var entry = zipArchive.Cast<ZipEntry>().FirstOrDefault(f => f.Name.ToLower() == "config.json");
 
                 if (entry != null)
                 {
-                    using (var stream = entry.OpenReader())
-                    {
-                        using (var sr = new StreamReader(stream))
-                        {
-                            var json = sr.ReadToEnd();
-                            var jObject = JsonHelper.DeserializeJObject(json);
+                    var buffer = new byte[entry.Size];
 
-                            if (jObject.TryGetValue("mappings", out var obj))
-                            {
-                                return obj.ToObject<FileMapping[]>();
-                            }
-                        }
+                    using (var stream = zipArchive.GetInputStream(entry))
+                    {
+                        StreamUtils.ReadFully(stream, buffer);
+                    }
+
+                    var json = Encoding.UTF8.GetString(buffer);
+                    var jObject = JsonHelper.DeserializeJObject(json);
+
+                    if (jObject.TryGetValue("mappings", out var obj))
+                    {
+                        return obj.ToObject<FileMapping[]>();
                     }
                 }
             }
