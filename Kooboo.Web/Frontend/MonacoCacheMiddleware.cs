@@ -65,6 +65,7 @@ namespace Kooboo.Web.Frontend
                         if (File.Exists(MonacoZipPath))
                         {
                             VirtualResources.Setup(s => s.UnloadZip(MonacoZipPath));
+                            if (File.Exists(fileBakName)) File.Delete(fileBakName);
                             File.Move(MonacoZipPath, fileBakName);
                         }
 

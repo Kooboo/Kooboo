@@ -86,7 +86,10 @@ namespace Kooboo.Lib.Reflection
                 {
                     //file can be replaced。
                     //Now can't unload assembly from current domain,so we still need to restart server
-                    assembly = Assembly.Load(File.ReadAllBytes(e.FullPath));
+                    if (!string.IsNullOrEmpty(e.FullPath) && e.FullPath.ToLower().Trim().EndsWith(".dll"))
+                    {
+                        assembly = Assembly.Load(File.ReadAllBytes(e.FullPath));
+                    }
                 }
                 catch (Exception ex)
                 {
