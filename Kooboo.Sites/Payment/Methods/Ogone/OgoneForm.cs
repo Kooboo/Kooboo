@@ -126,24 +126,35 @@ k.response.redirect(url);
             var verifyCode = context.Request.Headers.Get("X-GCS-Webhooks-Endpoint-Verification");
             if (!string.IsNullOrEmpty(verifyCode))
             {
-                return null;
+                return new PaymentCallback
+                {
+                    CallbackResponse = new Callback.CallbackResponse
+                    {
+                        Content = verifyCode,
+                    }
+                };
             }
 
-            var webHook = ogoneApi.Unmarshal(context.Request.Body, context.Request.Headers);
-            var request = PaymentManager.GetRequestByReferece(webHook.Payment.HostedCheckoutSpecificOutput.HostedCheckoutId.ToString(), context);
+            var webHook = ogoneApi.Unmarshal(context.Request.PostData, context.Request.Headers);
+            var request = PaymentManager.GetRequestByReferece(webHook.Payment.HostedCheckoutSpecificOutput?.HostedCheckoutId?.ToString(), context);
 
-            var status = ConvertStatus(webHook.Payment.StatusOutput.StatusCategory);
-
-            return new PaymentCallback
+            if (request != null)
             {
-                RequestId = request.Id,
-                Status = status,
-                RawData = context.Request.Body,
-                CallbackResponse = new Callback.CallbackResponse
+                var status = ConvertStatus(webHook.Payment.StatusOutput.StatusCategory);
+
+                return new PaymentCallback
                 {
-                    Content = verifyCode,
-                }
-            };
+                    RequestId = request.Id,
+                    Status = status,
+                    RawData = context.Request.Body,
+                    CallbackResponse = new Callback.CallbackResponse
+                    {
+                        Content = verifyCode,
+                    }
+                };
+            }
+
+            return null;
         }
 
         private PaymentStatus ConvertStatus(string code)

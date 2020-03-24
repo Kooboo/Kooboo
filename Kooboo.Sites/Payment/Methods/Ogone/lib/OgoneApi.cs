@@ -46,9 +46,10 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
             }
         }
 
-        public WebhooksEvent Unmarshal(string body, NameValueCollection requestHeaders)
+        public WebhooksEvent Unmarshal(byte[] postData, NameValueCollection requestHeaders)
         {
-            Validate(body, requestHeaders);
+            Validate(postData, requestHeaders);
+            var body = Encoding.UTF8.GetString(postData);
             WebhooksEvent unmarshalledEvent = JsonConvert.DeserializeObject<WebhooksEvent>(body);
             return unmarshalledEvent;
         }
@@ -69,12 +70,7 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
         }
 
 
-        private void Validate(string body, NameValueCollection requestHeaders)
-        {
-            Validate(StringUtils.Encoding.GetBytes(body), requestHeaders);
-        }
-
-        protected void Validate(byte[] body, NameValueCollection requestHeaders)
+        protected void Validate(byte[] postData, NameValueCollection requestHeaders)
         {
             var numberOfSignatureHeaders = requestHeaders.GetValues("X-GCS-Signature");
 
@@ -103,10 +99,9 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
             using (var mac = new HMACSHA256(StringUtils.Encoding.GetBytes(setting.SecretKey)))
             {
                 mac.Initialize();
-                byte[] unencodedResult = mac.ComputeHash(body);
+                byte[] unencodedResult = mac.ComputeHash(postData);
                 var expectedSignature = Convert.ToBase64String(unencodedResult);
-                bool isValid = signature.CompareWithoutTimingLeak(expectedSignature);
-                if (!isValid)
+                if (!signature.Equals(expectedSignature))
                 {
                     throw new Exception("failed to validate signature '" + signature + "'");
                 }
