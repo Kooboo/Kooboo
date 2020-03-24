@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Ogone.lib
@@ -14,9 +15,6 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
 
         internal static Encoding Encoding
             => Encoding.UTF8;
-
-        internal static string NullIfEmpty(this string input)
-            => ((IEnumerable<char>)input).NullIfEmpty() as string;
 
         internal static bool CompareWithoutTimingLeak(this string input, string expected)
         {

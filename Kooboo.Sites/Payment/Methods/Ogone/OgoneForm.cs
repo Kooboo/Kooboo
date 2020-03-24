@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
@@ -44,7 +45,6 @@ k.response.redirect(url);
         {
             RedirectResponse res = null;
             var additional = new Dictionary<string, object>(request.Additional, StringComparer.OrdinalIgnoreCase);
-            var callbackUrl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
 
             var variant = GetValue(additional, "variant", null);
             var locale = GetValue(additional, "locale", null);
@@ -66,16 +66,6 @@ k.response.redirect(url);
             }
             var checkoutRequest = new CreateHostedCheckoutRequest
             {
-                HostedCheckoutSpecificInput = new HostedCheckoutSpecificInput
-                {
-                    Variant = variant,
-                    Locale = locale,
-
-                },
-                CardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInputBase
-                {
-                    AuthorizationMode = "SALE"
-                },
                 Order = new Order
                 {
                     AmountOfMoney = new AmountOfMoney
@@ -133,6 +123,12 @@ k.response.redirect(url);
         public PaymentCallback Notify(RenderContext context)
         {
             var ogoneApi = new OgoneApi(Setting);
+            var verifyCode = context.Request.Headers.Get("X-GCS-Webhooks-Endpoint-Verification");
+            if (!string.IsNullOrEmpty(verifyCode))
+            {
+                return null;
+            }
+
             var webHook = ogoneApi.Unmarshal(context.Request.Body, context.Request.Headers);
             var request = PaymentManager.GetRequestByReferece(webHook.Payment.HostedCheckoutSpecificOutput.HostedCheckoutId.ToString(), context);
 
@@ -142,7 +138,11 @@ k.response.redirect(url);
             {
                 RequestId = request.Id,
                 Status = status,
-                RawData = context.Request.Body
+                RawData = context.Request.Body,
+                CallbackResponse = new Callback.CallbackResponse
+                {
+                    Content = verifyCode,
+                }
             };
         }
 

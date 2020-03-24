@@ -98,11 +98,9 @@ namespace Kooboo.Sites.Payment.Methods.Ogone.lib
                 throw new Exception("Duplicate X-GCS-KeyId header");
             }
 
-            var signature = numberOfKeyIdHeaders[0];
+            var signature = numberOfSignatureHeaders[0];
 
-            var keyId = numberOfKeyIdHeaders[0];
-
-            using (var mac = new HMACSHA256(StringUtils.Encoding.GetBytes(setting.KeyId)))
+            using (var mac = new HMACSHA256(StringUtils.Encoding.GetBytes(setting.SecretKey)))
             {
                 mac.Initialize();
                 byte[] unencodedResult = mac.ComputeHash(body);
