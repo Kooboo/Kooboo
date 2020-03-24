@@ -97,7 +97,8 @@ namespace Kooboo.Data.Language
                 try
                 {
                     var json = VirtualResources.ReadAllText(item);
-                    var dic = JsonHelper.DeserializeJObject(json)["langs"][langCode].ToObject<Dictionary<string, string>>();
+                    var dic = JsonHelper.DeserializeJObject(json)?["langs"]?[langCode]?.ToObject<Dictionary<string, string>>();
+                    if (dic == null) continue;
                     foreach (var kv in dic)
                     {
                         if (!values.ContainsKey(kv.Key) && !string.IsNullOrEmpty(kv.Value)) values[kv.Key] = kv.Value;

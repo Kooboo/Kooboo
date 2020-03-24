@@ -1,14 +1,11 @@
 ﻿using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using Kooboo.Lib.CrossPlatform;
 using Kooboo.Lib.Helper;
 using Kooboo.Lib.VirtualFile.Zip;
 using System;
-using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
@@ -44,6 +41,8 @@ namespace VirtualFile.Zip
 
                     if (fileMap != null)
                     {
+                        fileMap.From = fileMap.From.Trim();
+                        if (fileMap.From.StartsWith("/")) fileMap.From = fileMap.From.Substring(1);
                         var fromPath = Path.Combine(rootPath, fileMap.From);
                         var fileMapFrom = Helper.NormalizePath(fromPath);
                         var virtualFile = new ZipFile(item, zipArchive, fileMapFrom, zipPath, zipOption);
