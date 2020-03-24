@@ -213,9 +213,6 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                 case Comparer.Contains:
                     value = $"'%{value}%'";
                     break;
-                case Comparer.In:
-                    value = $"({value})";
-                    break;
                 default:
                     break;
             }
