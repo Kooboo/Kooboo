@@ -49,7 +49,17 @@ namespace VirtualFile.Zip
                         virtualResources._fileMaps[fileMapFrom] = virtualFile;
                     }
 
-                    virtualResources._entries[path] = new ZipFile(item, zipArchive, path, zipPath, zipOption); ;
+                    virtualResources._entries[path] = new ZipFile(item, zipArchive, path, zipPath, zipOption);
+
+                    while (true)
+                    {
+                        if (path == dir) break;
+                        path = Path.GetDirectoryName(path);
+                        if (virtualResources._entries.Where(w => w.Value is VirtualDirectory).All(a => a.Key != path))
+                        {
+                            virtualResources._entries[path] = new VirtualDirectory(path, "zip");
+                        }
+                    }
                 }
             }
         }

@@ -18,12 +18,12 @@ namespace Kooboo.Render.Controller
             ModuleRoots.Add(Path.Combine(Data.AppSettings.RootPath, "view"));
             var moduleDir = Path.Combine(Data.AppSettings.RootPath, "modules");
 
-            if (!VirtualResources.DirectoryExists(moduleDir))
+            if (!Directory.Exists(moduleDir))
             {
                 moduleDir = Path.Combine(AppContext.BaseDirectory, "modules");
             }
 
-            if (!VirtualResources.DirectoryExists(moduleDir)) return;
+            if (!Directory.Exists(moduleDir)) return;
 
             ModuleRoots.Add(moduleDir);
 
