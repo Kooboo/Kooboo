@@ -16,6 +16,6 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
 
         public string FundingSourceId { get; set; }
 
-        public string TransferCreatedUrl { get; set; }
+        public string ReturnUrl { get; set; }
     }
 }
