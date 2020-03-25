@@ -76,11 +76,6 @@ namespace Kooboo.Lib.Reflection
             return dlls;
         }
 
-        public static void AddAssembly(Assembly assembly)
-        {
-            if (allAssemblies.All(a => a.FullName != assembly.FullName)) allAssemblies.Add(assembly);
-        }
-
         public static List<Assembly> AllAssemblies
         {
             get

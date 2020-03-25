@@ -15,6 +15,10 @@ using Kooboo.Web.JsTest;
 using Kooboo.Web.Spa;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using VirtualFile;
+using VirtualFile.Zip;
 
 namespace Kooboo.Web
 {
@@ -26,13 +30,14 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
+            LoadModuleZip();
 
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
 
-            Kooboo.Data.AppSettings.SetCustomSslCheck(); 
+            Kooboo.Data.AppSettings.SetCustomSslCheck();
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
 
@@ -50,7 +55,7 @@ namespace Kooboo.Web
                 }
             }
 
-            var sslport = Data.AppSettings.SslPort; 
+            var sslport = Data.AppSettings.SslPort;
 
             if (!WebServers.ContainsKey(sslport))
             {
@@ -70,6 +75,24 @@ namespace Kooboo.Web
             Service.UpGradeService.UpgradeFix();
         }
 
+        private static void LoadModuleZip()
+        {
+            VirtualResources.Setup(v =>
+            {
+                if (Directory.Exists(AppSettings.ModulePath))
+                {
+                    var files = Directory.GetFiles(AppSettings.ModulePath, "*.zip");
+
+                    foreach (var item in files)
+                    {
+                        v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
+                        {
+                            Cache = true
+                        });
+                    }
+                }
+            });
+        }
 
         public static void StartNewWebServer(int port)
         {
@@ -109,7 +132,7 @@ namespace Kooboo.Web
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
 
-                            _middlewares.Add(new SslCertMiddleWare()); 
+                            _middlewares.Add(new SslCertMiddleWare());
 
                             _middlewares.Add(new EndMiddleWare());
                         }

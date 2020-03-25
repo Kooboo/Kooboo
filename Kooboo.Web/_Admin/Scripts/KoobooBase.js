@@ -2296,4 +2296,5 @@
 
     return value;
   };
+  Kooboo.HttpClientModel = BaseModel;
 })(window);

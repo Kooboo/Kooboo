@@ -10,6 +10,23 @@ namespace Kooboo.Lib.Compatible
 {
     public class WindowSystem : ISystem
     {
+        public static List<string> TryPath { get; set; }
+
+        static WindowSystem()
+        {
+            TryPath = new List<string>
+            {
+                @"..\..\..\..\Github\Kooboo.Web",
+                @"..\..\..\Github\Kooboo.Web",
+                @"..\..\..\..\Kooboo.Web",
+                @"..\..\..\Kooboo.Web",
+                @"..\..\",
+                @"..\..\..\",
+                @"..\..\..\..\",
+                @"..\..\..\..\Kooboo\Kooboo.Web"
+            };
+        }
+
         public int GetLastSlash(string path)
         {
             return path.LastIndexOf('\\');
@@ -95,24 +112,11 @@ namespace Kooboo.Lib.Compatible
         }
         #endregion
 
-        public List<string> GetTryPaths()
-        {
-            List<string> trypaths = new List<string>();
-
-            trypaths.Add(@"..\..\..\..\Github\Kooboo.Web");
-            trypaths.Add(@"..\..\..\Github\Kooboo.Web");
-            trypaths.Add(@"..\..\..\..\Kooboo.Web");
-            trypaths.Add(@"..\..\..\Kooboo.Web");
-            trypaths.Add(@"..\..\");
-            trypaths.Add(@"..\..\..\");
-            trypaths.Add(@"..\..\..\..\");
-            trypaths.Add(@"..\..\..\..\Kooboo\Kooboo.Web");
-            return trypaths;
-        }
+        public List<string> GetTryPaths() => TryPath;
 
         public string GetUpgradeUrl(string convertApiUrl)
         {
-           return convertApiUrl + "/_api/converter/WindowServerPackage";
+            return convertApiUrl + "/_api/converter/WindowServerPackage";
         }
 
     }

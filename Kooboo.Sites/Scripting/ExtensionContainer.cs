@@ -14,11 +14,6 @@ namespace Kooboo.Sites.Scripting
     {
         private static object _locker = new object();
 
-        static ExtensionContainer()
-        {
-            ExtensionAssemblyLoader.AssemblyChangeAction = Clear;
-        }
-
 
         private static Dictionary<string, Type> _list;
         public static Dictionary<string, Type> List
@@ -90,11 +85,11 @@ namespace Kooboo.Sites.Scripting
             return null;
         }
 
-        private static void Clear()
-        {
-            _list = null;
-            KscriptConfigContainer.Clear();
-        }
+        //private static void Clear()
+        //{
+        //    _list = null;
+        //    KscriptConfigContainer.Clear();
+        //}
 
         private static void SetDataContext(Type type,RenderContext context)
         {

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using VirtualFile;
 
 namespace Kooboo.Render.Components
 {
@@ -32,9 +33,9 @@ namespace Kooboo.Render.Components
             {
                 if (_rendertask== null)
                 {
-                    if (System.IO.File.Exists(this.FullDiskPath))
+                    if (VirtualResources.FileExists(this.FullDiskPath))
                     {
-                        var html = System.IO.File.ReadAllText(this.FullDiskPath);
+                        var html = VirtualResources.ReadAllText(this.FullDiskPath);
                         var option = new EvaluatorOption();
                         option.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
                         _rendertask = Kooboo.Sites.Render.RenderEvaluator.Evaluate(html, option); 

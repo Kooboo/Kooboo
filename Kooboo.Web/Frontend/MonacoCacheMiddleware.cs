@@ -1,4 +1,5 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data;
+using Kooboo.Data.Context;
 using Kooboo.Data.Server;
 using Kooboo.Lib.Compatible;
 using Kooboo.Lib.Helper;
@@ -10,6 +11,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using VirtualFile;
+using VirtualFile.Zip;
 
 namespace Kooboo.Web.Frontend
 {
@@ -17,10 +20,13 @@ namespace Kooboo.Web.Frontend
     {
 
         static bool _isLoadding = false;
-        readonly static string _monacoVersion = "1.0";
+        readonly static string _monacoVersion = "1.1";
+        static bool _zipExist = false;
+        static string MonacoZipPath => Path.Combine(AppSettings.ModulePath, "Kooboo.Monaco.Module.zip");
 
         public MonacoCacheMiddleware()
         {
+            _zipExist = File.Exists(MonacoZipPath);
             Task.Run(DownloadMonacoAsync);
         }
 
@@ -31,7 +37,7 @@ namespace Kooboo.Web.Frontend
 
         public async Task Invoke(RenderContext context)
         {
-            if (context.Request.Path.ToLower().StartsWith("/_admin/scripts/lib/vs"))
+            if (context.Request.Path.ToLower().StartsWith("/_admin/kooboo.monaco.module"))
             {
                 if (_isLoadding) throw new Exception("resource is loadding");
                 await DownloadMonacoAsync();
@@ -42,11 +48,10 @@ namespace Kooboo.Web.Frontend
 
         private static async Task DownloadMonacoAsync()
         {
-            var dir = Path.Combine(Data.AppSettings.RootPath, "_Admin/Scripts/lib/");
-            var extractDir = Path.Combine(dir, "vs");
-            var fileName = dir + $"vs{_monacoVersion}.zip";
             var currentMonacoVersion = Data.AppSettings.MonacoVersion ?? "";
-            if (currentMonacoVersion != _monacoVersion)
+            var fileBakName = MonacoZipPath + ".bak";
+
+            if (currentMonacoVersion != _monacoVersion || !_zipExist)
             {
                 try
                 {
@@ -55,24 +60,37 @@ namespace Kooboo.Web.Frontend
                     var uri = new Uri($"https://cdn.jsdelivr.net/gh/kooboo/monaco@master/vs{_monacoVersion}.zip");
                     var bytes = await client.DownloadDataTaskAsync(uri);
 
-                    if (bytes != null)
+                    if (bytes != null && bytes.Length > 0)
                     {
-                        if (Directory.Exists(extractDir)) Directory.Delete(extractDir, true);
-                        IOHelper.EnsureFileDirectoryExists(dir);
-                        if (bytes.Length > 0) File.WriteAllBytes(fileName, bytes);
+                        if (File.Exists(MonacoZipPath))
+                        {
+                            VirtualResources.Setup(s => s.UnloadZip(MonacoZipPath));
+                            if (File.Exists(fileBakName)) File.Delete(fileBakName);
+                            File.Move(MonacoZipPath, fileBakName);
+                        }
+
+                        File.WriteAllBytes(MonacoZipPath, bytes);
+
+                        VirtualResources.Setup(s => s.LoadZip(
+                            MonacoZipPath,
+                            AppSettings.RootPath,
+                            new Lib.VirtualFile.Zip.ZipOption
+                            {
+                                Cache = true
+                            }));
+                        _zipExist = true;
                     }
 
-                    ZipFile.ExtractToDirectory(fileName, dir);
-                    if (File.Exists(fileName)) File.Delete(fileName);
-                    Data.AppSettings.SetConfigValue("MonacoVersion", _monacoVersion);
+                    AppSettings.SetConfigValue("MonacoVersion", _monacoVersion);
+                    if (File.Exists(fileBakName)) File.Delete(fileBakName);
                     _isLoadding = false;
                 }
                 catch (Exception e)
                 {
                     _isLoadding = false;
-                    if (Directory.Exists(extractDir)) Directory.Delete(extractDir, true);
-                    if (File.Exists(fileName)) File.Delete(fileName);
-                    Data.AppSettings.SetConfigValue("MonacoVersion", currentMonacoVersion);
+                    if (File.Exists(fileBakName)) File.Move(fileBakName, MonacoZipPath);
+                    AppSettings.SetConfigValue("MonacoVersion", currentMonacoVersion);
+                    _zipExist = File.Exists(MonacoZipPath);
                     throw e;
                 }
             }

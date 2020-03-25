@@ -5,6 +5,7 @@ using Kooboo.Render.ObjectSource;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VirtualFile;
 
 namespace Kooboo.Render.ServerSide
 {
@@ -71,7 +72,7 @@ namespace Kooboo.Render.ServerSide
                 //either not key found not hash not the same. 
                 if (renderplan == null)
                 {
-                    string fulltext = System.IO.File.ReadAllText(fullname);
+                    string fulltext = VirtualResources.ReadAllText(fullname);
 
                     renderplan = new JsRenderPlan();
                     renderplan.Tasks = GetJsRenderPlan(fulltext);
@@ -106,7 +107,7 @@ namespace Kooboo.Render.ServerSide
             if (values == null)
             {
 
-                var bytes = System.IO.File.ReadAllBytes(FullFileName);
+                var bytes = VirtualResources.ReadAllBytes(FullFileName);
 
                 values = Kooboo.Data.Cache.MultiLingualRender.SetGetJs(context, bytes);
             }
@@ -122,7 +123,7 @@ namespace Kooboo.Render.ServerSide
 
             List<preTask> pretask = new List<preTask>();
 
-            string source = System.IO.File.ReadAllText(fullfilename);
+            string source = VirtualResources.ReadAllText(fullfilename);
 
             if (string.IsNullOrWhiteSpace(source))
             {
