@@ -25,12 +25,10 @@ namespace Kooboo.Lib.Reflection
 
         public List<Assembly> Assemblies { get; private set; } = new List<Assembly>();
 
-        private static List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
 
         private static object _lockObj = new object();
         private static ExtensionAssemblyLoader _instance;
 
-        public static Action AssemblyChangeAction;
         public static ExtensionAssemblyLoader Instance
         {
             get
@@ -50,75 +48,7 @@ namespace Kooboo.Lib.Reflection
 
         private ExtensionAssemblyLoader()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            foreach (var folder in extensionFolders)
-            {
-                if (!Directory.Exists(folder)) continue;
-                var watcher = new FileSystemWatcher(folder);
-                watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-                watcher.Changed += new FileSystemEventHandler(OnFileChanged);
-                watcher.Created += new FileSystemEventHandler(OnFileChanged);
-                watcher.Deleted += new FileSystemEventHandler(OnFileChanged);
-                watcher.EnableRaisingEvents = true;
-                watchers.Add(watcher);
-            }
             Assemblies = LoadDlls();
-        }
-
-        public Type LoadTypeByName(string name)
-        {
-            foreach (var item in Assemblies)
-            {
-                var type = item.GetTypes().ToList().Find(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                if (type != null)
-                    return type;
-            }
-
-            return null;
-        }
-
-        public void OnFileChanged(object sender, FileSystemEventArgs e)
-        {
-            Assembly assembly = null;
-            if (File.Exists(e.FullPath))
-            {
-                try
-                {
-                    //file can be replaced。
-                    //Now can't unload assembly from current domain,so we still need to restart server
-                    if (!string.IsNullOrEmpty(e.FullPath) && e.FullPath.ToLower().Trim().EndsWith(".dll"))
-                    {
-                        assembly = Assembly.Load(File.ReadAllBytes(e.FullPath));
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                }
-
-            }
-
-            lock (_lockObj)
-            {
-                Assemblies.RemoveAll(a =>
-                {
-                    if (assembly == null)
-                    {
-                        var assemblyName = a.GetName();
-                        return e.Name.StartsWith(assemblyName.Name);
-                    }
-                    return a.FullName == assembly.FullName;
-                });
-
-                if (assembly != null && (e.ChangeType == WatcherChangeTypes.Changed || e.ChangeType == WatcherChangeTypes.Created))
-                {
-                    Assemblies.Add(assembly);
-                }
-
-                AssemblyChangeAction?.Invoke();
-
-            }
-
         }
 
         private List<Assembly> LoadDlls()
@@ -188,45 +118,5 @@ namespace Kooboo.Lib.Reflection
                 }
             }
         }
-
-        public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            var assemblyName = new AssemblyName(args.Name);
-            var name = assemblyName.Name;
-
-            var assembly = Assemblies.Find(a =>
-            {
-                return assemblyName.FullName == a.FullName;
-            });
-            if (assembly != null)
-            {
-                return assembly;
-            }
-
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var path = extensionFolders.Select(folder =>
-            {
-                var dllpath = Path.Combine(baseDirectory, folder, string.Format("{0}.dll", name));
-                if (File.Exists(dllpath)) return dllpath;
-
-                return string.Empty;
-            }).FirstOrDefault();
-
-            if (!string.IsNullOrEmpty(path))
-            {
-                assembly = Assembly.Load(File.ReadAllBytes(path));
-                lock (_lockObj)
-                {
-                    if (!Assemblies.Exists(a => a.FullName == assemblyName.FullName))
-                    {
-                        Assemblies.Add(assembly);
-                    }
-                }
-                return assembly;
-            }
-
-            return null;
-        }
     }
-
 }
