@@ -42,11 +42,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             return _tables.GetOrAdd(name, new RelationalTable<TExecuter, TSchema, TConnection>(name, this));
         }
 
-        public IDynamicTableObject[] Query(string sql)
+        public IDynamicTableObject[] Query(string sql, object param = null)
         {
             using (var connection = SqlExecuter.CreateConnection())
             {
-                var data = connection.Query<object>(sql).ToArray();
+                var data = connection.Query<object>(sql, param).ToArray();
                 return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), null);
             }
         }
