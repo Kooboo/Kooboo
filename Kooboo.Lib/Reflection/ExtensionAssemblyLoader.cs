@@ -48,6 +48,7 @@ namespace Kooboo.Lib.Reflection
 
         private ExtensionAssemblyLoader()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Assemblies = LoadDlls();
         }
 
@@ -117,6 +118,45 @@ namespace Kooboo.Lib.Reflection
                     }
                 }
             }
+        }
+
+        public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var assemblyName = new AssemblyName(args.Name);
+            var name = assemblyName.Name;
+
+            var assembly = Assemblies.Find(a =>
+            {
+                return assemblyName.FullName == a.FullName;
+            });
+            if (assembly != null)
+            {
+                return assembly;
+            }
+
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var path = extensionFolders.Select(folder =>
+            {
+                var dllpath = Path.Combine(baseDirectory, folder, string.Format("{0}.dll", name));
+                if (File.Exists(dllpath)) return dllpath;
+
+                return string.Empty;
+            }).FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                assembly = Assembly.Load(File.ReadAllBytes(path));
+                lock (_lockObj)
+                {
+                    if (!Assemblies.Exists(a => a.FullName == assemblyName.FullName))
+                    {
+                        Assemblies.Add(assembly);
+                    }
+                }
+                return assembly;
+            }
+
+            return null;
         }
     }
 }
