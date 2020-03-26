@@ -41,7 +41,7 @@
       if (this.isCacheObject(objectName)) {
         var key = this.getKey(objectName, method, paradata);
         var item = localStorage.getItem(key);
-        if (item) {
+        if (item && key) {
           var result = {
             model: JSON.parse(item),
             success: true
@@ -51,7 +51,7 @@
           return this.requestData(objectName, method, paradata).done(function(
             res
           ) {
-            if (res && res.success) {
+            if (res && res.success && key) {
               localStorage.setItem(key, JSON.stringify(res.model));
             }
           });
@@ -267,7 +267,9 @@
     },
 
     getKey: function(objectName, method, paradata) {
-      var key = this.getSiteId() + "_cache_" + objectName.toLowerCase();
+      var siteId = this.getSiteId();
+      if (!siteId) return null;
+      var key = siteId + "_cache_" + objectName.toLowerCase();
       if (this.isMultilingualObject(objectName)) {
         // TODO: add the user language here for multilingual objects.
       }
