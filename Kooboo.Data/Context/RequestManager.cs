@@ -208,6 +208,18 @@ namespace Kooboo.Data.Context
                 }
             }
 
+            if (context.User !=null)
+            {
+                if (context.User.Language !=null)
+                {
+                    var userlang = context.User.Language; 
+                    if (WebSite.Culture.ContainsKey(userlang))
+                    {
+                        SetCultureCookie(context, userlang);
+                        return userlang; 
+                    } 
+                } 
+            }
 
             if (context.Request.Cookies.ContainsKey("_kooboo_culture"))
             {
