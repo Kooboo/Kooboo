@@ -127,7 +127,7 @@ namespace Kooboo.Lib.Reflection
 
             var assembly = Assemblies.Find(a =>
             {
-                return assemblyName.FullName == a.FullName;
+                return assemblyName.Name == a.GetName().Name;
             });
             if (assembly != null)
             {
@@ -135,17 +135,17 @@ namespace Kooboo.Lib.Reflection
             }
 
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var path = extensionFolders.Select(folder =>
-            {
-                var dllpath = Path.Combine(baseDirectory, folder, string.Format("{0}.dll", name));
-                if (File.Exists(dllpath)) return dllpath;
+            var path = extensionFolders.Union(new[] { baseDirectory }).Select(folder =>
+             {
+                 var dllpath = Path.Combine(folder, string.Format("{0}.dll", name));
+                 if (VirtualResources.FileExists(dllpath)) return dllpath;
 
-                return string.Empty;
-            }).FirstOrDefault();
+                 return string.Empty;
+             }).FirstOrDefault(f => f.Length > 0);
 
             if (!string.IsNullOrEmpty(path))
             {
-                assembly = Assembly.Load(File.ReadAllBytes(path));
+                assembly = Assembly.Load(VirtualResources.ReadAllBytes(path));
                 lock (_lockObj)
                 {
                     if (!Assemblies.Exists(a => a.FullName == assemblyName.FullName))
