@@ -250,8 +250,7 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.Execute(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true
-            });
+                engine.Execute(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true  });
                
             }
             catch (Exception ex)
@@ -354,6 +353,8 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+
                 return ex.Message;
             }
 
@@ -449,6 +450,7 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
                 return ex.Message;
             }
 
