@@ -17,11 +17,14 @@ namespace Kooboo.Data.Log
         private StreamWriter _writer;
         private DateTime _date;
         private object _createLock = new object();
-
+        private object _writeLock = new object();
 
         public void Write(string line)
         {
-            Writer.WriteLine(line);
+            lock (_writeLock)
+            {
+                Writer.WriteLine(line);
+            }
         }
 
         public void WriteObj(object JsonObject)
