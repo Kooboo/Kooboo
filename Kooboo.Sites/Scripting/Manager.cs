@@ -106,6 +106,7 @@ namespace Kooboo.Sites.Scripting
             }
             catch (System.Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
             }
 
             if (kcontext.ReturnValues.Count() > 0)
@@ -255,6 +256,8 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+
                 if (debugsession != null)
                 {
                     var info = new ScriptDebugger.DebugInfo

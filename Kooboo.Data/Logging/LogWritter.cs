@@ -32,8 +32,8 @@ namespace Kooboo.Data.Log
 
         public void WriteException(Exception ex)
         {
-            string text = ex.Message + ex.Source + ex.StackTrace;
-
+            string text = ex.ToString(); 
+             
             var st = new StackTrace(ex, true);
             // Get the top stack frame
             var frame = st.GetFrame(0);
