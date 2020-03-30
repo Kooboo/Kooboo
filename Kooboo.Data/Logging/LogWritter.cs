@@ -17,11 +17,14 @@ namespace Kooboo.Data.Log
         private StreamWriter _writer;
         private DateTime _date;
         private object _createLock = new object();
-
+        private object _writeLock = new object();
 
         public void Write(string line)
         {
-            Writer.WriteLine(line);
+            lock (_writeLock)
+            {
+                Writer.WriteLine(line);
+            }
         }
 
         public void WriteObj(object JsonObject)
@@ -32,8 +35,8 @@ namespace Kooboo.Data.Log
 
         public void WriteException(Exception ex)
         {
-            string text = ex.Message + ex.Source + ex.StackTrace;
-
+            string text = ex.ToString(); 
+             
             var st = new StackTrace(ex, true);
             // Get the top stack frame
             var frame = st.GetFrame(0);
