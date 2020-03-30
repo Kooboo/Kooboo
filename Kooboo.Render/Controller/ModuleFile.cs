@@ -15,23 +15,18 @@ namespace Kooboo.Render.Controller
     {
         static ModuleFile()
         {
-            ModuleRoots.Add(Path.Combine(Data.AppSettings.RootPath, "view"));
-            var moduleDir = Path.Combine(Data.AppSettings.RootPath, "modules");
+            AddModuleRoot(Path.Combine(Data.AppSettings.RootPath, "view"));
+            AddModuleRoot(Path.Combine(Data.AppSettings.RootPath, "modules"));
+            AddModuleRoot(Path.Combine(AppContext.BaseDirectory, "modules"));
+        }
 
-            if (!Directory.Exists(moduleDir))
-            {
-                moduleDir = Path.Combine(AppContext.BaseDirectory, "modules");
-            }
-
-            if (!Directory.Exists(moduleDir)) return;
-
-            ModuleRoots.Add(moduleDir);
-
-            foreach (var item in VirtualResources.GetDirectories(moduleDir))
+        private static void AddModuleRoot(string path)
+        {
+            if (Directory.Exists(path)) ModuleRoots.Add(path);
+            foreach (var item in VirtualResources.GetDirectories(path))
             {
                 ModuleRoots.Add(item);
             }
-
         }
 
         public static List<string> ModuleRoots { get; set; } = new List<string>();
