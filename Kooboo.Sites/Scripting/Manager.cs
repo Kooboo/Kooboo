@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Kooboo.Lib.Reflection;
-using Jint.Runtime;
+using Jint.Runtime; 
 using KScript;
 
 namespace Kooboo.Sites.Scripting
@@ -106,7 +106,7 @@ namespace Kooboo.Sites.Scripting
             }
             catch (System.Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
             }
 
             if (kcontext.ReturnValues.Count() > 0)
@@ -146,7 +146,7 @@ namespace Kooboo.Sites.Scripting
                             }
                             else if (lowerkey == "tooltip")
                             {
-                                setting.ToolTip = keyvalue.Value.ToString();
+                                setting.ToolTip = keyvalue.Value.ToString(); 
                             }
                             else if (lowerkey == "controltype")
                             {
@@ -222,10 +222,10 @@ namespace Kooboo.Sites.Scripting
             if (string.IsNullOrEmpty(JsCode))
             {
                 return null;
-            }
+            } 
 
             Jint.Engine engine = null;
-
+            
             var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, CodeId);
 
             if (debugsession == null)
@@ -250,13 +250,12 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.Execute(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
-
+                engine.Execute(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true  });
+               
             }
             catch (Exception ex)
             {
-                var traceCode = Guid.NewGuid();
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex, traceCode);
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
 
                 if (debugsession != null)
                 {
@@ -285,7 +284,7 @@ namespace Kooboo.Sites.Scripting
                     debugsession.DebugInfo = info;
                 }
 
-                return $"trace code:'{traceCode}' {ex.Message} {ex.Source}";
+                return ex.Message + " " + ex.Source;
 
             }
 
@@ -315,7 +314,7 @@ namespace Kooboo.Sites.Scripting
             }
             return output;
         }
-
+         
 
         public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
         {
@@ -350,13 +349,13 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.Execute(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
+                engine.Execute(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true }); 
             }
             catch (Exception ex)
             {
-                var traceCode = Guid.NewGuid();
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex, traceCode);
-                return $"trace code:'{traceCode}' {ex.Message}";
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+
+                return ex.Message;
             }
 
             if (debugsession != null)
@@ -447,11 +446,11 @@ namespace Kooboo.Sites.Scripting
                 if (kcontext.ReturnValues.Count > 0)
                 {
                     result = kcontext.ReturnValues.Last();
-                }
+                } 
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
                 return ex.Message;
             }
 
@@ -795,7 +794,7 @@ namespace Kooboo.Sites.Scripting
                     {
 
                     }
-                }
+                } 
                 // TODO: also get the methods... 
             }
 
