@@ -33,9 +33,20 @@ namespace Kooboo.Data.Log
             Write(text);
         }
 
-        public void WriteException(Exception ex)
+        public void WriteException(Exception ex, string traceId = null)
         {
-            string text = ex.ToString(); 
+            // Output UTC event time
+            var builder = new System.Text.StringBuilder()
+                .Append(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff")).Append("z");
+
+            // Output trace ID
+            if (!String.IsNullOrEmpty(traceId))
+            {
+                builder.Append(" [").Append(traceId).Append("]");
+            }
+
+            // Output exception
+            builder.Append("  ").Append(ex.ToString());
              
             var st = new StackTrace(ex, true);
             // Get the top stack frame
@@ -43,9 +54,13 @@ namespace Kooboo.Data.Log
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
 
-            text += " line number: " + line.ToString();
+            // Output line number
+            builder.Append(" line number: ").Append(line.ToString());
 
-            Write(text);
+            // Exception all has a big stack trace, add a line for easier human reading
+            builder.AppendLine();
+             
+            Write(builder.ToString());
         }
 
         private StreamWriter Writer
