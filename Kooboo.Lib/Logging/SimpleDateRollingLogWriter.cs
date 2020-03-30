@@ -24,7 +24,7 @@ namespace Kooboo.Logging
 
         public void Log(string line)
         {
-            Write($"{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff")}z  {line}");
+            Write($"{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff")}Z  {line}");
         }
 
         public void Write(string line)

@@ -37,7 +37,7 @@ namespace Kooboo.Data.Log
         {
             // Output UTC event time
             var builder = new System.Text.StringBuilder()
-                .Append(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff")).Append("z");
+                .Append(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff")).Append("Z");
 
             // Output trace ID
             if (!String.IsNullOrEmpty(traceId))
