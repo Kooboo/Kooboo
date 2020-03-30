@@ -197,7 +197,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
             ClearNullField(dic);
-            if (_schema.PrimaryKey == "_id" && dic.ContainsKey("_id")) dic.Remove("_id");
+            if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) dic.Remove(_schema.PrimaryKey);
             EnsureTableCreated();
             TryUpgradeSchema(dic);
             if (_schema.PrimaryKey == "_id") id = kHelper.GetId(id.ToString());
