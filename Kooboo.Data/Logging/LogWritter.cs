@@ -33,10 +33,15 @@ namespace Kooboo.Data.Log
             Write(text);
         }
 
-        public void WriteException(Exception ex)
+        public void WriteException(Exception ex, Guid? traceCode = null)
         {
-            string text = ex.ToString(); 
-             
+            string text = ex.ToString();
+
+            if (traceCode != null)
+            {
+                text = $"{traceCode} {text}";
+            }
+
             var st = new StackTrace(ex, true);
             // Get the top stack frame
             var frame = st.GetFrame(0);
