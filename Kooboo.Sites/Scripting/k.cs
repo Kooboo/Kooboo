@@ -179,6 +179,12 @@ var value = k.session.key; ")]
                                 _siteinfo.Name = this.RenderContext.WebSite.Name;
                                 _siteinfo.Setting = new KDictionary(this.RenderContext.WebSite.CustomSettings);
                                 _siteinfo.User = new UserModel(this.RenderContext.User);
+
+                               var db = this.RenderContext.WebSite.SiteDb().DatabaseDb; 
+
+                                var last = db.Log.Store.LastKey;
+
+                                _siteinfo.Version = last; 
                             }
                         }
                     }
@@ -244,6 +250,8 @@ var value = k.session.key; ")]
             public string BaseUrl { get; set; }
 
             public RenderContext RenderContext { get; set; }
+
+            public long Version { get; set; }
              
         }
 

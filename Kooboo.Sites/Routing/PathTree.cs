@@ -111,6 +111,12 @@ namespace Kooboo.Sites.Routing
             {
                 Path path = FindPath(RelativeUrl, EnsureObjectId);
 
+                if (EnsureObjectId && !this.HasObject(path))
+                {
+                    path = FindShortestWildCardPath(path);
+                }
+                
+
                 if (path == null)
                 {
                     int QuestionMark = RelativeUrl.IndexOf("?");
@@ -128,11 +134,7 @@ namespace Kooboo.Sites.Routing
                         return default(Guid);
                     }
                 }
-
-                if (!this.HasObject(path))
-                {
-                    path = FindShortestWildCardPath(path);
-                }
+                 
 
                 if (path == null)
                 {

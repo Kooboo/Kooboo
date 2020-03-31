@@ -5,28 +5,29 @@ using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.Scripting.Extension
 {
-    //public class SiteUser : IkScript
-    //{
-    //    [Attributes.SummaryIgnore]
-    //    public string Name
-    //    {
-    //        get
-    //        {
-    //            return "SampleUser";
-    //        }
-    //    }
+    public class SiteUser : IkScript
+    {
+        [Attributes.SummaryIgnore]
+        public string Name
+        {
+            get
+            {
+                return "SampleUser";
+            }
+        }
 
-    //    [Attributes.SummaryIgnore]
-    //    public RenderContext context { get; set; }
+        [Attributes.SummaryIgnore]
+        public RenderContext context { get; set; }
 
-    //    public bool validate(string UserName, string Password)
-    //    {
-    //        return true; 
-    //    } 
+        public bool validate(string UserName, string Password)
+        {
+            return true;
+        }
 
-    //    public string get(string username)
-    //    {
-    //        return username + " sample"; 
-    //    }
-    //}
+        public string get(string username)
+        {
+            throw new System.Exception("this is the exception");
+           // return username + " sample";
+        }
+    }
 }

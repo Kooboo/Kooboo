@@ -577,17 +577,33 @@ namespace Kooboo.Lib.Helper
             }
         }
 
-        public static List<string> getSegments(string input)
+        public static List<string> getSegments(string input, bool toLower = true)
         {
             string[] segments;
             if (RuntimeSystemHelper.IsWindow())
-            {
-                input = input.Replace("/", "\\").ToLower();
+            { 
+                if (toLower)
+                {
+                    input = input.Replace("/", "\\").ToLower();
+                }
+                else
+                {
+                    input = input.Replace("/", "\\");
+                }
+              
                 segments = input.Split('\\');
             }
             else
             {
-                input = input.Replace("\\", "/").ToLower();
+                if (toLower)
+                {
+                    input = input.Replace("\\", "/").ToLower();
+                }
+                else
+                {
+                    input = input.Replace("\\", "/");
+                }
+             
                 segments = input.Split('/');
             }
 
