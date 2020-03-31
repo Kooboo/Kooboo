@@ -68,5 +68,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                 }
             }
         }
+
+        public object Procedure(string sql) => Procedure(sql, null);
+        public object Procedure(string sql, object param = null)
+        {
+            using (var connection = SqlExecuter.CreateConnection())
+            {
+                connection.Open();
+                return connection.Query(sql, param, commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }
