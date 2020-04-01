@@ -64,6 +64,7 @@ k.response.redirect(url);
                     }
                 };
             }
+
             var checkoutRequest = new CreateHostedCheckoutRequest
             {
                 Order = new Order
@@ -83,6 +84,15 @@ k.response.redirect(url);
                     }
                 }
             };
+
+            if (Setting.ReturnUrl != null)
+            {
+                checkoutRequest.HostedCheckoutSpecificInput = new HostedCheckoutSpecificInput
+                {
+                    ReturnUrl = Setting.ReturnUrl
+                };
+            }
+
             var result = ogoneApi.Hostedcheckouts(checkoutRequest);
             if (result != null)
             {

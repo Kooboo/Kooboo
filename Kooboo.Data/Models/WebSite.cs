@@ -232,6 +232,8 @@ namespace Kooboo.Data.Models
 
         public bool EnableFileIOUrl { get; set; } = true;
 
+        public bool EnableJsCssCompress { get; set; }
+
         // the version of Kooboo application. 
         // public int KoobooVersion { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
@@ -315,7 +317,7 @@ namespace Kooboo.Data.Models
         {
             string unique = string.Empty;
             unique += this.Name + this.DisplayName + this.OrganizationId;
-            unique += this.ContinueConvert.ToString() + this.ContinueDownload.ToString() + this.EnableCache.ToString() + this.EnableCluster.ToString() + this.EnableConstraintChecker.ToString() + this.EnableConstraintFixOnSave.ToString() + this.EnableDiskSync.ToString() + this.EnableFrontEvents.ToString() + this.EnableMultilingual.ToString() + this.EnableSitePath.ToString() + this.EnableVisitorLog.ToString() + this.EnableFullTextSearch.ToString();
+            unique += this.ContinueConvert.ToString() + this.ContinueDownload.ToString() + this.EnableCache.ToString() + this.EnableCluster.ToString() + this.EnableConstraintChecker.ToString() + this.EnableConstraintFixOnSave.ToString() + this.EnableDiskSync.ToString() + this.EnableFrontEvents.ToString() + this.EnableMultilingual.ToString() + this.EnableSitePath.ToString() + this.EnableVisitorLog.ToString() + this.EnableFullTextSearch.ToString() + this.EnableJsCssCompress.ToString();
 
             unique += this.EnableSystemRoute.ToString();
 

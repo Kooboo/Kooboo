@@ -5,9 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Kooboo.Lib.Helper;
 
-namespace Kooboo.Sites.Payment
+namespace Kooboo.Lib.Helper
 {
     public class ApiClient
     {
@@ -175,7 +174,7 @@ namespace Kooboo.Sites.Payment
             public HttpResponseHeaders Headers { get; set; }
 
             public bool IsSuccessStatusCode =>
-                (StatusCode >= HttpStatusCode.OK) && (StatusCode <= (HttpStatusCode)299);
+                StatusCode >= HttpStatusCode.OK && StatusCode <= (HttpStatusCode)299;
 
             public string Content { get; set; }
 

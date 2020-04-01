@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Payment.Methods.Ogone
 
         public string ServerURL => UseSandBox ? "https://eu.sandbox.api-ingenico.com" : "https://world.api-ingenico.com";
 
-        public string RedirectURL { get; set; }
+        public string ReturnUrl { get; set; }
 
         public string SecretKey { get; set; }
 

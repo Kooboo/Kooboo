@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using static Kooboo.Sites.Payment.ApiClient;
+using static Kooboo.Lib.Helper.ApiClient;
 
 namespace Kooboo.Sites.Payment.Methods.Dwolla.lib
 {

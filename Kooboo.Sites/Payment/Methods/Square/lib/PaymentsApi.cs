@@ -8,6 +8,7 @@ using Kooboo.Sites.Payment.Methods.Square.lib.Models.Checkout;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Linq;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Payment.Methods.Square.lib
 {

@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json.Linq; 
-using System.Collections.Generic; 
-using System; 
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System;
 using System.Net.Http;
-using System.Text; 
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Payment.Methods.Stripe.lib
 {

@@ -331,6 +331,8 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.AutoDetectCulture = newinfo.AutoDetectCulture;
                 currentsite.ForceSSL = newinfo.ForceSSL;
 
+                currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress; 
+
                 currentsite.SiteType = newinfo.SiteType;
 
                 // the cluster... 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Kooboo.Lib.Helper;
 using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Payment.Methods.Braintree.lib

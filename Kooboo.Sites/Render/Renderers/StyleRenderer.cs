@@ -1,5 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved. 
+using Kooboo.Sites.Render.Renderers;
+using System;
 using System.Text;
 
 namespace Kooboo.Sites.Render
@@ -15,7 +17,22 @@ namespace Kooboo.Sites.Render
             {
                 var body = GetBody(css);
 
+                if (context.RenderContext.WebSite != null && context.RenderContext.WebSite.EnableJsCssCompress)
+                {
+                    if (css != null)
+                    {
+                        body = CompressCache.Get(css.Id, css.Version, body, CompressType.css);
+                    }
+                } 
+
                 TextBodyRender.SetBody(context, body); 
+
+                var version = context.RenderContext.Request.GetValue("version");
+
+                if (!string.IsNullOrWhiteSpace(version))
+                {
+                    context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                }
             }
         }
 
