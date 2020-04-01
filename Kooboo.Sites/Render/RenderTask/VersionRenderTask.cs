@@ -28,7 +28,14 @@ namespace Kooboo.Sites.Render.RenderTask
         public string Render(RenderContext context)
         { 
             var version = GetVersion(context); 
-            return Url += "?version=" + version; 
+            if (Url.Contains("?"))
+            {
+                return Url + "&version=" + version;
+            }
+            else
+            {
+                return Url + "?version=" + version;
+            } 
         }
 
         public string GetVersion(RenderContext context)
@@ -60,6 +67,7 @@ namespace Kooboo.Sites.Render.RenderTask
                 if (route != null && route.objectId != default(Guid))
                 {
                     siteobject = repo.Get(route.objectId);
+                    this.ObjectId = siteobject.Id; 
                 }
             }
             else
