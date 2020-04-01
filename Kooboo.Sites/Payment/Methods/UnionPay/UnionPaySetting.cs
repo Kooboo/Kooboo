@@ -9,7 +9,20 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
     {
         public string Name => "UnionPay";
 
-        public string FrontTransactionUrl { get; set; }
+        public bool UseSandBox { get; set; }
+
+        public string FrontTransactionUrl
+        {
+            get
+            {
+                if (UseSandBox)
+                {
+                    return "https://gateway.test.95516.com/gateway/api/frontTransReq.do";
+                }
+                return "https://gateway.95516.com/gateway/api/frontTransReq.do";
+
+            }
+        }
 
         /// <summary>
         /// 前台通知地址  need kooboo create a page to show pay result

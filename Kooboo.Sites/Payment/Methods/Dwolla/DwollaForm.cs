@@ -232,7 +232,7 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         private string GenerateHtml(string iavToken, bool isUsingSanbox, string apiUrl, Money money, PaymentRequest request)
         {
             var sanboxConfig = isUsingSanbox ? "dwolla.configure('sandbox')" : string.Empty;
-            var redirect = string.IsNullOrEmpty(Setting.TransferCreatedUrl) ? "" : $"window.location.replace('{Setting.TransferCreatedUrl}')";
+            var redirect = string.IsNullOrEmpty(Setting.ReturnUrl) ? "" : $"window.location.replace('{Setting.ReturnUrl}')";
 
             var html = string.Format(@"
 <script src=""https://cdn.dwolla.com/1/dwolla.js""></script>
