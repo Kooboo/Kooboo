@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Kooboo.Lib.Helper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
