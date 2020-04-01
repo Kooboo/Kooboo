@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using Kooboo.Lib.NUglify.JavaScript;
 using NUglify.Helpers;
 using NUglify.JavaScript.Syntax;
 using NUglify.JavaScript.Visitors;

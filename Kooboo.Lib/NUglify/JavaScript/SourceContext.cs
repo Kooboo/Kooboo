@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using Kooboo.Lib.NUglify;
+using Kooboo.Lib.NUglify.JavaScript;
 using NUglify.Helpers;
 using NUglify.JavaScript.Syntax;
 

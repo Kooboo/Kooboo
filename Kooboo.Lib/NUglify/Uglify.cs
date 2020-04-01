@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Kooboo.Lib.NUglify;
 using NUglify.Css;
 using NUglify.Helpers;
 using NUglify.Html;

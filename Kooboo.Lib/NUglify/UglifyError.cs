@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using Kooboo.Lib.NUglify;
 using NUglify.Helpers;
 
 namespace NUglify

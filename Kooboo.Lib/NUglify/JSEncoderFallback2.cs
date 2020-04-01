@@ -16,6 +16,7 @@
 
 using System;
 using System.Text;
+using Kooboo.Lib.NUglify;
 using NUglify.Helpers;
 
 namespace NUglify

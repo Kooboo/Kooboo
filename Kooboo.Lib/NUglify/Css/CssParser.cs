@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Kooboo.Lib.NUglify.Css;
 using NUglify.Helpers;
 using NUglify.JavaScript;
 using NUglify.JavaScript.Visitors;

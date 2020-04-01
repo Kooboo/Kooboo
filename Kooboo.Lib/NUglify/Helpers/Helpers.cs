@@ -16,6 +16,8 @@
 
 using System.Collections;
 using System.Globalization;
+using Kooboo.Lib.NUglify.Css;
+using Kooboo.Lib.NUglify.JavaScript;
 using NUglify.Css;
 using NUglify.JavaScript;
 

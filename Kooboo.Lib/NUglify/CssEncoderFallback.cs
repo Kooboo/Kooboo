@@ -16,6 +16,8 @@
 
 using System;
 using System.Text;
+using Kooboo.Lib.NUglify;
+using Kooboo.Lib.NUglify.Css;
 using NUglify.Css;
 using NUglify.Helpers;
 

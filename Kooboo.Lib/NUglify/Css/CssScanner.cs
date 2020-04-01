@@ -18,6 +18,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Kooboo.Lib.NUglify.Css;
 using NUglify.Helpers;
 
 namespace NUglify.Css
