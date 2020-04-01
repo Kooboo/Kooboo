@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
-namespace Kooboo.Mail.Smtp
+namespace Kooboo.Mail
 {
     public class Heartbeat : IDisposable
     {
@@ -9,18 +10,30 @@ namespace Kooboo.Mail.Smtp
 
         private Timer _timer;
         private int _executingOnHeartbeat;
-        private SmtpConnectionManager _connectionManager;
-        private Action<SmtpConnector> _walk;
+        private List<ConnectionManager> _connectionManagers;
+        private Action<IManagedConnection> _walk;
         private DateTime _utcNow;
+        private bool _started;
 
-        public Heartbeat(SmtpConnectionManager connectionManager)
+        public static Heartbeat Instance = new Heartbeat();
+
+        public Heartbeat()
         {
-            _connectionManager = connectionManager;
+            _connectionManagers = new List<ConnectionManager>();
             _walk = Walk;
+        }
+
+        public void Add(ConnectionManager connectionManager)
+        {
+            _connectionManagers.Add(connectionManager);
         }
 
         public void Start()
         {
+            if (_started)
+                throw new InvalidOperationException("Heartbeat can only be started one time");
+
+            _started = true;
             _timer = new Timer(OnHeartbeat, state: this, dueTime: Interval, period: Interval);
         }
 
@@ -40,7 +53,10 @@ namespace Kooboo.Mail.Smtp
                 _utcNow = utcNow;
                 try
                 {
-                    _connectionManager.Walk(_walk);
+                    foreach (var each in _connectionManagers)
+                    {
+                        each.Walk(_walk);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -53,7 +69,7 @@ namespace Kooboo.Mail.Smtp
             }
             else
             {
-                Kooboo.Data.Log.Instance.Exception.Write(DateTime.UtcNow.ToString() + " SMTP heartbeat slow " + utcNow.ToString());
+                Kooboo.Data.Log.Instance.Exception.Write("SMTP heartbeat slow " + utcNow.ToString());
             }
         }
 
@@ -62,7 +78,7 @@ namespace Kooboo.Mail.Smtp
             _timer?.Dispose();
         }
 
-        private void Walk(SmtpConnector connection)
+        private void Walk(IManagedConnection connection)
         {
             connection.CheckTimeout();
         }
