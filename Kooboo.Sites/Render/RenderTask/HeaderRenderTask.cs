@@ -79,6 +79,7 @@ namespace Kooboo.Sites.Render
                         }
                         result.Add(headerItem);
                     }
+                    else if ()
                     else
                     {
                         HeaderRenderItem headeritem = new HeaderRenderItem();
@@ -154,6 +155,11 @@ namespace Kooboo.Sites.Render
 
         private string RenderHeaderMetaItem(HeaderRenderItem item, List<HeaderBindings> bindings, RenderContext context)
         {
+            if (item.IsRenderTask)
+            {
+                return item.renderTask.Render(context); 
+            }
+
             if (bindings == null || bindings.Count() == 0)
             {
                 return item.OriginalHtml;
@@ -271,6 +277,24 @@ namespace Kooboo.Sites.Render
         {
             return binding.GetContent(context);    
         }
+
+        public bool IsRenderTask(Element el)
+        {
+            // only process style and script now. 
+            if (el.tagName == "script" || el.tagName == "link")
+            {
+                if(Kooboo.Sites.Render.Components.Manager.IsComponent(el))
+                {
+                    return true; 
+                }
+
+                if (el.hasAttribute("k-version"))
+                {
+                    return true; 
+                }
+            }
+            return false; 
+        }
     }
 
     public class HeaderLazyRender
@@ -295,6 +319,10 @@ namespace Kooboo.Sites.Render
         public bool isTitle { get; set; }
 
         public bool IsMeta { get; set; }
+
+        public bool IsRenderTask { get; set; }
+
+        public IRenderTask renderTask { get; set; }
 
         /// <summary>
         ///  Node that does not require render... 
