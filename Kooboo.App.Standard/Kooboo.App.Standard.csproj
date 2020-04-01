@@ -26,6 +26,6 @@
   </ItemGroup>
 
   <Target Name="generateLinuxZip" AfterTargets="Publish">
-    <Exec Command="$(SolutionDir)generateLinuxZip.bat"></Exec>
+    <Exec Command="$(ProjectDir)../generateLinuxZip.bat"></Exec>
   </Target>
 </Project>
