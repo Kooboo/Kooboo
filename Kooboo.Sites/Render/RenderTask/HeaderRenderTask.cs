@@ -79,7 +79,7 @@ namespace Kooboo.Sites.Render
                         }
                         result.Add(headerItem);
                     }
-                    else if ()
+                   // else if ()
                     else
                     {
                         HeaderRenderItem headeritem = new HeaderRenderItem();

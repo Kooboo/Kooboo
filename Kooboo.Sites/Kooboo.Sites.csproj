@@ -43,6 +43,7 @@
     <Compile Remove="Engine\TypeScript.cs" />
     <Compile Remove="Payment\Methods\Stripe\lib\EventConverter.cs" />
     <Compile Remove="Payment\Methods\Stripe\lib\IHasId.cs" />
+    <Compile Remove="Render\Evaluators\Version.cs" />
     <Compile Remove="Service\Suggestion.cs" />
     <Compile Remove="SiteElements\MenuElement.cs" />
     <Compile Remove="SiteElements\PageElementExtension.cs" />
