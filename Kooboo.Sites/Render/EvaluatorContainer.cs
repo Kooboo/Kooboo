@@ -17,8 +17,7 @@ namespace Kooboo.Sites.Render
             get
             {
                 if (_list == null)
-                {
-
+                { 
                     _list = new List<IEvaluator>();
                     _list.Add(new PlaceHolderEvaluator());
                     _list.Add(new SiteLayoutEvaluator());
@@ -36,9 +35,8 @@ namespace Kooboo.Sites.Render
                     _list.Add(new HeaderEvaluator());
                     _list.Add(new FormEvaluator());
                     _list.Add(new CommandEvaluator());
-                    _list.Add(new KConfigContentEvaluator()); 
- 
-
+                    _list.Add(new KConfigContentEvaluator());
+                    _list.Add(new VersionEvaluator());  
                 }
                 return _list;
             }

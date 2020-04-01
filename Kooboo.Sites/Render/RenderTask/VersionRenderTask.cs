@@ -26,47 +26,58 @@ namespace Kooboo.Sites.Render.RenderTask
         }
 
         public string Render(RenderContext context)
+        { 
+            var version = GetVersion(context); 
+            return Url += "?version=" + version; 
+        }
+
+        public string GetVersion(RenderContext context)
         {
+            if (context == null || context.WebSite == null)
+            {
+                return Data.AppSettings.Version.ToString();
+            }
+
             var sitedb = context.WebSite.SiteDb();
 
-            IRepository repo = null; 
+            IRepository repo = null;
 
             if (IsStyle)
             {
-                repo = sitedb.Styles; 
+                repo = sitedb.Styles;
             }
             else
             {
-                repo = sitedb.Scripts; 
+                repo = sitedb.Scripts;
             }
 
-            ISiteObject siteobject = null; 
+            ISiteObject siteobject = null;
             // get current version. 
             if (HasCheckId == false)
             {
-                HasCheckId = true; 
-                var route = sitedb.Routes.GetByUrl(this.Url); 
-                if (route !=null && route.objectId != default(Guid))
+                HasCheckId = true;
+                var route = sitedb.Routes.GetByUrl(this.Url);
+                if (route != null && route.objectId != default(Guid))
                 {
-                    siteobject = repo.Get(route.objectId); 
+                    siteobject = repo.Get(route.objectId);
                 }
             }
             else
             {
-                siteobject = repo.Get(this.ObjectId); 
+                siteobject = repo.Get(this.ObjectId);
             }
 
-            if (siteobject !=null)
+            if (siteobject != null)
             {
-                var core = siteobject as ICoreObject; 
-                if (core !=null)
-                { 
-                    Url = Url += "?version=" + core.Version.ToString(); 
-                } 
+                var core = siteobject as ICoreObject;
+                if (core != null)
+                {
+                    return core.Version.ToString();
+                }
             }
 
-            return Url; 
+            return Data.AppSettings.Version.ToString();
         }
     }
-     
+
 }
