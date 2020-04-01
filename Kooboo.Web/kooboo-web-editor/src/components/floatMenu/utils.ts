@@ -40,6 +40,8 @@ export function hasOperation(operationManager: operationManager) {
 export async function updateDomImage(element: HTMLImageElement) {
   let { kooobooIdEl, fieldComment, koobooId, scopeComment } = ElementAnalyze(element);
   let startContent = element.cloneNode(true) as HTMLImageElement;
+  var hasSrcset = element.hasAttribute("srcset");
+  element.removeAttribute("srcset");
 
   try {
     await createImagePicker(element as HTMLImageElement);
@@ -55,6 +57,10 @@ export async function updateDomImage(element: HTMLImageElement) {
     var logs = [];
 
     if (kooobooIdEl == element && !fieldComment) {
+      if (hasSrcset) {
+        logs.push(new Log([...scopeComment!.infos, kvInfo.attribute("srcset"), kvInfo.value(""), kvInfo.koobooId(element.getAttribute(KOOBOO_ID))]));
+      }
+
       logs.push(
         new Log([
           ...scopeComment!.infos,
