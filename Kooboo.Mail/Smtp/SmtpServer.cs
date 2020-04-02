@@ -29,7 +29,6 @@ namespace Kooboo.Mail.Smtp
         private CancellationTokenSource _cancellationTokenSource;
         private TcpListener _listener;
         private Task _listenTask;
-        private Heartbeat _heartbeat;
         internal ConnectionManager _connectionManager;
 
         public SmtpServer(string name)
@@ -101,8 +100,6 @@ namespace Kooboo.Mail.Smtp
             }
 
             _listenTask = Task.Run(() => Loop());
-
-            _heartbeat.Start();
         }
 
         public void Stop()
