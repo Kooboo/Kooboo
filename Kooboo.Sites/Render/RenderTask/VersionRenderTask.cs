@@ -9,16 +9,18 @@ namespace Kooboo.Sites.Render.RenderTask
 {
     public class VersionRenderTask : IRenderTask
     {
+        
+
         // only has style or script now. 
         public bool IsStyle { get; set; }
 
         public string Url { get; set; }
 
         public Guid ObjectId { get; set; }
-
-        public bool HasCheckId { get; set; } = false;
+         
 
         public bool ClearBefore => false;
+         
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {
@@ -60,15 +62,18 @@ namespace Kooboo.Sites.Render.RenderTask
 
             ISiteObject siteobject = null;
             // get current version. 
-            if (HasCheckId == false)
-            {
-                HasCheckId = true;
+            if (this.ObjectId == default(Guid))
+            {  
                 var route = sitedb.Routes.GetByUrl(this.Url);
                 if (route != null && route.objectId != default(Guid))
                 {
                     siteobject = repo.Get(route.objectId);
-                    this.ObjectId = siteobject.Id; 
-                }
+
+                    if (siteobject !=null)
+                    {
+                        this.ObjectId = siteobject.Id; 
+                    }  
+                }  
             }
             else
             {
