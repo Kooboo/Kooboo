@@ -118,14 +118,11 @@ namespace Kooboo.Mail.Imap
     {
         public ImapServerOptions()
         {
-            this.LiveTimeout = TimeSpan.FromMinutes(1);
-
 #if DEBUG
-            {
-                this.LiveTimeout = TimeSpan.FromHours(1);
-            }
+            this.LiveTimeout = TimeSpan.FromHours(1);
+#else
+            this.LiveTimeout = TimeSpan.FromMinutes(1);
 #endif
-
         }
 
         public TimeSpan LiveTimeout { get; set; }

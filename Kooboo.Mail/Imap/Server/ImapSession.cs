@@ -138,7 +138,7 @@ namespace Kooboo.Mail.Imap
             }
             catch (SessionCloseException)
             {
-                Dispose();
+                // No need to dispose for finally block will do it
             }
             catch (Exception ex)
             {
