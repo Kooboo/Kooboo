@@ -42,6 +42,7 @@ namespace Kooboo.Mail
 
         public static void Start()
         {
+            Heartbeat.Instance.Start();
             foreach (var each in Workers)
             {
                 each.Start();
@@ -51,6 +52,7 @@ namespace Kooboo.Mail
 
         public static void Stop()
         {
+            Heartbeat.Instance.Dispose();
             foreach (var each in Workers)
             {
                 each.Stop();

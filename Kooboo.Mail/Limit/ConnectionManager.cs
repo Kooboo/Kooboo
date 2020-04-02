@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Kooboo.Mail.Smtp
+namespace Kooboo.Mail
 {
-    public class SmtpConnectionManager
+    public class ConnectionManager
     {
-        private readonly ConcurrentDictionary<long, SmtpConnectionReference> _connectionReferences = new ConcurrentDictionary<long, SmtpConnectionReference>();
+        private readonly ConcurrentDictionary<long, ConnectionReference> _connectionReferences = new ConcurrentDictionary<long, ConnectionReference>();
 
-        public SmtpConnectionManager(long? maxConnetions)
+        public ConnectionManager(long? maxConnetions)
         {
             ConnectionCount = GetCounter(maxConnetions);
         }
@@ -18,9 +18,9 @@ namespace Kooboo.Mail.Smtp
         /// </summary>
         public ResourceCounter ConnectionCount { get; set;  }
 
-        public void AddConnection(SmtpConnector connection)
+        public void AddConnection(IManagedConnection connection)
         {
-            if (!_connectionReferences.TryAdd(connection.Id, new SmtpConnectionReference(connection)))
+            if (!_connectionReferences.TryAdd(connection.Id, new ConnectionReference(connection)))
             {
                 throw new ArgumentException(nameof(connection));
             }
@@ -34,7 +34,7 @@ namespace Kooboo.Mail.Smtp
             }
         }
 
-        public void Walk(Action<SmtpConnector> callback)
+        public void Walk(Action<IManagedConnection> callback)
         {
             foreach (var kvp in _connectionReferences)
             {

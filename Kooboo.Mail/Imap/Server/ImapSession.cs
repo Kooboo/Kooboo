@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -14,13 +15,20 @@ using LumiSoft.Net;
 
 namespace Kooboo.Mail.Imap
 {
-    public class ImapSession
-    {     
-        public ImapSession(ImapServer server, TcpClient client)
+    public class ImapSession : IManagedConnection, IDisposable
+    {
+        private CancellationTokenSource _cancellationTokenSource;
+        private long _timeoutTimestamp = Int64.MaxValue;    // To check connection alive timeout
+        private int _disposing;
+
+        public ImapSession(ImapServer server, TcpClient client, long connectionId)
         {
             Server = server;
-            TcpClient = client; 
+            TcpClient = client;
+            Id = connectionId;
         }
+
+        public long Id { get; set; }
 
         public ImapServer Server { get; private set; }
 
@@ -48,7 +56,6 @@ namespace Kooboo.Mail.Imap
                 return AuthenticatedUserIdentity != null;
             }
         }
-         
 
         public GenericIdentity AuthenticatedUserIdentity { get; set; }
 
@@ -97,6 +104,10 @@ namespace Kooboo.Mail.Imap
 
         public async Task Start()
         {
+            Server._connectionManager.AddConnection(this);
+            _cancellationTokenSource = new CancellationTokenSource();
+            Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(Server.Options.LiveTimeout).Ticks);
+
             try
             {
                 if (Server.SslMode == SslMode.SSL)
@@ -110,7 +121,8 @@ namespace Kooboo.Mail.Imap
 
                 await OnStart();
 
-                while (true)
+                var cancellationToken = _cancellationTokenSource.Token;
+                while (!cancellationToken.IsCancellationRequested)
                 {
                     var commandLine = await Stream.ReadCommandAsync();
                     if (commandLine == null)
@@ -120,12 +132,13 @@ namespace Kooboo.Mail.Imap
                     else
                     {
                         await Kooboo.Mail.Imap.Commands.CommandManager.Execute(this, commandLine.Tag, commandLine.Name, commandLine.Args);
+                        OnCommandExecuted();
                     }
                 }
             }
             catch (SessionCloseException)
             {
-                Close();
+                Dispose();
             }
             catch (Exception ex)
             {
@@ -135,6 +148,11 @@ namespace Kooboo.Mail.Imap
                 {
                     TcpClient.Close();
                 }
+            }
+            finally
+            {
+                Server._connectionManager.RemoveConnection(Id);
+                Dispose();
             }
         }
 
@@ -148,9 +166,24 @@ namespace Kooboo.Mail.Imap
             Stream = new ImapStream(TcpClient, sslStream);
         }
 
-        public void Close()
+        public void Dispose()
         {
-            TcpClient.Close();
+            if (Interlocked.Exchange(ref _disposing, 1) == 0)
+            {
+                _cancellationTokenSource.Cancel();
+                Stream.Dispose();
+                TcpClient.Close();
+            }
+        }
+
+        public void CheckTimeout()
+        {
+            var timestamp = Server.Heartbeat.UtcNow.Ticks;
+            if (timestamp > Interlocked.Read(ref _timeoutTimestamp))
+            {
+                _timeoutTimestamp = Int64.MaxValue;
+                Dispose();
+            }
         }
 
         protected virtual Task OnStart()
@@ -197,6 +230,15 @@ namespace Kooboo.Mail.Imap
 
             return result;
         }
+
+        private void OnCommandExecuted()
+        {
+            // Todo: Could add max connection period limit with max connections limit later
+
+            Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(Server.Options.LiveTimeout).Ticks);
+        }
     }
 }
+
+
 

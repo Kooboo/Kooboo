@@ -12,7 +12,7 @@ using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Smtp
 {
-    public class SmtpConnector : IDisposable
+    public class SmtpConnector : IManagedConnection, IDisposable
     {
         private TcpClient _client;
         private Stream _stream;
@@ -192,7 +192,7 @@ namespace Kooboo.Mail.Smtp
 
         public void CheckTimeout()
         {
-            var timestamp = _server.Heatbeat.UtcNow.Ticks;
+            var timestamp = _server.Heartbeat.UtcNow.Ticks;
             if (timestamp > Interlocked.Read(ref _timeoutTimestamp))
             {
                 _timeoutTimestamp = Int64.MaxValue;

@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,18 +17,22 @@ namespace Kooboo.Mail.Imap
     {
         internal static Logging.ILogger _logger;
         private static long _nextConnectionId;
-
-        private CancellationTokenSource _cancellationTokenSource;
-        private TcpListener _listener;
-
         static ImapServer()
         {
             _logger = Logging.LogProvider.GetLogger("imap", "socket");
         }
 
+        private CancellationTokenSource _cancellationTokenSource;
+        private TcpListener _listener;
+        internal ConnectionManager _connectionManager;
+
         public ImapServer(int port)
         {
             Port = port;
+
+            Heartbeat = Heartbeat.Instance;
+            _connectionManager = new ConnectionManager(Options.MaxConnections);
+            Heartbeat.Add(_connectionManager);
         }
 
         public ImapServer(int port, SslMode mode, X509Certificate certificate)
@@ -60,6 +65,10 @@ namespace Kooboo.Mail.Imap
 
         public SslMode SslMode { get; private set; }
 
+        public ImapServerOptions Options { get; set; } = new ImapServerOptions();
+
+        internal Heartbeat Heartbeat { get; }
+
         public async void Start()
         {
             if (Lib.Helper.NetworkHelper.IsPortInUse(Port))
@@ -79,7 +88,7 @@ namespace Kooboo.Mail.Imap
                     var tcpClient = await _listener.AcceptTcpClientAsync();
                     _logger.LogInformation($">ac {cid} {Thread.CurrentThread.ManagedThreadId} {tcpClient.Client.RemoteEndPoint}");
 
-                    var session = new ImapSession(this, tcpClient);
+                    var session = new ImapSession(this, tcpClient, cid);
                     _ = session.Start();
                 }
                 catch
@@ -103,5 +112,24 @@ namespace Kooboo.Mail.Imap
                 _listener.Stop();
             }
         }
+    }
+
+    public class ImapServerOptions
+    {
+        public ImapServerOptions()
+        {
+            this.LiveTimeout = TimeSpan.FromMinutes(1);
+
+#if DEBUG
+            {
+                this.LiveTimeout = TimeSpan.FromHours(1);
+            }
+#endif
+
+        }
+
+        public TimeSpan LiveTimeout { get; set; }
+
+        public int? MaxConnections { get; set; }
     }
 }

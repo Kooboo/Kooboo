@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace Kooboo.Mail.Smtp
+namespace Kooboo.Mail
 {
     public abstract class ResourceCounter
     {
