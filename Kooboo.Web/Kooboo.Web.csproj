@@ -104,7 +104,7 @@
 
   <ItemGroup>
     <None Update="modules\SqlEx.Module.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -15,6 +15,7 @@ using Kooboo.Web.JsTest;
 using Kooboo.Web.Spa;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using VirtualFile;
 using VirtualFile.Zip;
 
@@ -77,7 +78,7 @@ namespace Kooboo.Web
         {
             VirtualResources.Setup(v =>
             {
-                foreach (var item in ModuleHelper.GetModuleZips())
+                foreach (var item in Directory.GetFiles(AppSettings.ModulePath, "*.zip"))
                 {
                     v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
                     {
