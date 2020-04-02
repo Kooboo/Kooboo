@@ -3,6 +3,7 @@
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Context;
+using Kooboo.Data.Helper;
 using Kooboo.Data.Server;
 using Kooboo.Data.SSL;
 using Kooboo.Jobs;
@@ -10,13 +11,10 @@ using Kooboo.Render;
 using Kooboo.Sites.Extensions;
 using Kooboo.Web.Api;
 using Kooboo.Web.Frontend;
-using Kooboo.Web.Frontend.KScriptDefine;
 using Kooboo.Web.JsTest;
 using Kooboo.Web.Spa;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using VirtualFile;
 using VirtualFile.Zip;
 
@@ -79,17 +77,12 @@ namespace Kooboo.Web
         {
             VirtualResources.Setup(v =>
             {
-                if (Directory.Exists(AppSettings.ModulePath))
+                foreach (var item in ModuleHelper.GetModuleZips())
                 {
-                    var files = Directory.GetFiles(AppSettings.ModulePath, "*.zip");
-
-                    foreach (var item in files)
+                    v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
                     {
-                        v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
-                        {
-                            Cache = true
-                        });
-                    }
+                        Cache = true
+                    });
                 }
             });
         }

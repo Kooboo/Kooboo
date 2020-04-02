@@ -34,6 +34,8 @@ C:\Windows\System32\robocopy  %adminPath%\kbtest %copyAdminPath%\kbtest /e
 C:\Windows\System32\robocopy  %dllPath% %copyDllPath% *.dll *.exe *.config *.json
 ::copy language
 C:\Windows\System32\robocopy  %langPath% %copyLangPath%
+::copy modules
+C:\Windows\System32\robocopy  %basePath%Kooboo.Web\modules %copyFolder%\modules
 ::copy runtimes
 C:\Windows\System32\robocopy  %dllPath%\runtimes %copyRuntimesPath% /e
 ::copy Kooboo.ServerUpgrade.runtimeconfig.json

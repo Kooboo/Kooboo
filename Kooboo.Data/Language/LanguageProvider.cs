@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Data.Helper;
 using Kooboo.Lib.Helper;
 using System;
 using System.Collections.Generic;
@@ -90,9 +91,7 @@ namespace Kooboo.Data.Language
 
         private static void LoadModuleLangPack(Dictionary<string, string> values, string langCode)
         {
-            var configs = VirtualResources.GetFiles(AppSettings.ModulePath, "*config.json", SearchOption.AllDirectories);
-
-            foreach (var item in configs)
+            foreach (var item in ModuleHelper.GetConfigs())
             {
                 try
                 {

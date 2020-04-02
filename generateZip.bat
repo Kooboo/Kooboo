@@ -36,6 +36,8 @@ C:\Windows\System32\robocopy  %dllPath% %copyDllPath% Kooboo.exe
 C:\Windows\System32\robocopy  %dllPath% %copyDllPath%\Upgrade  Kooboo.Upgrade.exe 
 ::copy language
 C:\Windows\System32\robocopy  %langPath% %copyLangPath%
+::copy modules
+C:\Windows\System32\robocopy  %batPath%Kooboo.Web\modules %copyFolder%\modules
 ::copy sqlite
 C:\Windows\System32\robocopy  %koobooPath%\bin\%buildType%\x64 %copyDllPath%\x64
 

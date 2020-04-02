@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Data.Helper;
 using Kooboo.Data.Language;
 using Kooboo.Lib.Helper;
 using System;
@@ -115,9 +116,8 @@ namespace Kooboo.Data.Cache
         {
             var sb = new System.Text.StringBuilder();
             sb.AppendLine(langjs);
-            var configs = VirtualResources.GetFiles(AppSettings.ModulePath, "*config.json", SearchOption.AllDirectories);
 
-            foreach (var item in configs)
+            foreach (var item in ModuleHelper.GetConfigs())
             {
                 try
                 {
