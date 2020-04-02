@@ -10,6 +10,7 @@ using Kooboo.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Data.Interface; 
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.Render.Renderers;
 
 namespace Kooboo.Sites.Systems
 {
@@ -110,24 +111,62 @@ namespace Kooboo.Sites.Systems
 
             StringBuilder sb = new StringBuilder();
 
+            long totalversion = 0; 
+
             foreach (var item in group.Children.OrderBy(o => o.Value))
             {
                 var route = context.SiteDb.Routes.Get(item.Key);
                 if (route != null)
                 {
                     var siteobject = repo.Get(route.objectId);
-                    if (siteobject != null && siteobject is ITextObject)
+                    if (siteobject != null)
                     {
-                        var text = siteobject as ITextObject;
-                        sb.Append(text.Body);
-                        sb.Append(spliter);
-                    }
+                        if (siteobject is ITextObject)
+                        {
+                            var text = siteobject as ITextObject;
+                            sb.Append(text.Body);
+                            sb.Append(spliter);
+                        }
+
+                        if (siteobject is ICoreObject)
+                        {
+                            var core = siteobject as ICoreObject;
+                            totalversion += core.Version; 
+                        } 
+                    } 
+
                 }
             }
 
             string result = sb.ToString();
-            TextBodyRender.SetBody(context, result); 
-           // context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
+
+            if (context.RenderContext.WebSite != null && context.RenderContext.WebSite.EnableJsCssCompress)
+            {
+
+                if (!string.IsNullOrWhiteSpace(result))
+                {
+                    if (group.Type == ConstObjectType.Style)
+                    { 
+                        result = CompressCache.Get(group.Id, totalversion, result, CompressType.css); 
+                    }
+                    else if (group.Type == ConstObjectType.Script)
+                    {
+                        result = CompressCache.Get(group.Id, totalversion, result, CompressType.css);
+                    } 
+                }  
+            }
+
+
+            TextBodyRender.SetBody(context, result);
+            // context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
+             
+            var version = context.RenderContext.Request.GetValue("version");
+
+            if (!string.IsNullOrWhiteSpace(version))
+            {
+                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+            }
+
         }
 
         public static async Task ViewRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
