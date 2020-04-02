@@ -102,4 +102,10 @@
     <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="modules\SqlEx.Module.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
