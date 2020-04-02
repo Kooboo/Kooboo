@@ -143,11 +143,6 @@ namespace Kooboo.Mail.Imap
             catch (Exception ex)
             {
                 await Stream.WriteLineAsync("Local server error occured, bye!");
-
-                if (TcpClient.Connected)
-                {
-                    TcpClient.Close();
-                }
             }
             finally
             {
