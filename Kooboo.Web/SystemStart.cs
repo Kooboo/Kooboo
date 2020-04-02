@@ -29,8 +29,6 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
-            LoadModuleZip();
-
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
@@ -72,20 +70,6 @@ namespace Kooboo.Web
             JobWorker.Instance.Start();
 
             Service.UpGradeService.UpgradeFix();
-        }
-
-        private static void LoadModuleZip()
-        {
-            VirtualResources.Setup(v =>
-            {
-                foreach (var item in Directory.GetFiles(AppSettings.ModulePath, "*.zip"))
-                {
-                    v.LoadZip(item, AppSettings.RootPath, new Lib.VirtualFile.Zip.ZipOption
-                    {
-                        Cache = true
-                    });
-                }
-            });
         }
 
         public static void StartNewWebServer(int port)

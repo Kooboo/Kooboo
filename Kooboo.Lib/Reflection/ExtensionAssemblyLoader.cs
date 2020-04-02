@@ -4,6 +4,8 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using VirtualFile;
+using Kooboo.Lib.Utilities;
+using VirtualFile.Zip;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -17,6 +19,8 @@ namespace Kooboo.Lib.Reflection
             extensionFolders.Add(Path.Combine(path, "modules"));
             extensionFolders.Add(Path.Combine(path, "dll"));
             extensionFolders.Add(Path.Combine(path, "packages"));
+            LoadModuleZip();
+
         }
         public static void AddExtensionFolder(string path)
         {
@@ -157,6 +161,22 @@ namespace Kooboo.Lib.Reflection
             }
 
             return null;
+        }
+
+        private static void LoadModuleZip()
+        {
+            var rootPath = PathUtility.TryRootPath();
+
+            VirtualResources.Setup(v =>
+            {
+                foreach (var item in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "modules"), "*.zip"))
+                {
+                    v.LoadZip(item, rootPath, new Lib.VirtualFile.Zip.ZipOption
+                    {
+                        Cache = true
+                    });
+                }
+            });
         }
     }
 }
