@@ -291,24 +291,22 @@ namespace Jint
             CallStack.Clear();
         }
 
-        public Engine Execute(string source)
-        {
-            var parser = new JavaScriptParser();
-            string error = null; 
+        Engine HandleExecuteError(Func<Engine> execute) {
+            string error = null;
             try
             {
-                return Execute(parser.Parse(source));
+                return execute();
             }
             catch (Exception ex)
             {
                 if (ex is JavaScriptException)
                 {
-                    var jsex = ex as JavaScriptException; 
-                    if (jsex !=null)
+                    var jsex = ex as JavaScriptException;
+                    if (jsex != null)
                     {
-                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message; 
+                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message;
                     }
-                }      
+                }
                 else if (ex is ParserException)
                 {
                     var pex = ex as ParserException;
@@ -327,18 +325,24 @@ namespace Jint
                 }
             }
 
-            if (error !=null)
+            if (error != null)
             {
-                throw new Exception(error); 
+                throw new Exception(error);
             }
 
-            return null;  
+            return null;
+        }
+
+        public Engine Execute(string source)
+        {
+            var parser = new JavaScriptParser();
+            return HandleExecuteError(() => Execute(parser.Parse(source))); 
         }
 
         public Engine Execute(string source, ParserOptions parserOptions)
         {
             var parser = new JavaScriptParser();
-            return Execute(parser.Parse(source, parserOptions));
+            return HandleExecuteError(() => Execute(parser.Parse(source, parserOptions)));
         }
 
         public Engine Execute(Program program)
