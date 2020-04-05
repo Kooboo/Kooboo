@@ -13,6 +13,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             public string Type { get; set; }
 
+            public int Length { get; set; }
+
             public bool IsPrimaryKey { get; set; }
         }
 
@@ -26,7 +28,16 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public RelationalSchema(IDictionary<string, object> keyValuePairs)
         {
-            _items = keyValuePairs.Select(s => new Item { Name = s.Key, Type = ConventType(s.Value?.GetType()) }).ToList();
+            _items = keyValuePairs.Select(s =>
+            {
+                var item = new Item { Name = s.Key, Type = ConventType(s.Value?.GetType()) };
+                if (s.Value is string)
+                {
+                    var valueLength = s.Value.ToString().Length;
+                    item.Length = ((valueLength / 1024) + 1) * 1024;
+                }
+                return item;
+            }).ToList();
         }
 
         public RelationalSchema(IEnumerable<Item> items)

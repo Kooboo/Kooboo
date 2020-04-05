@@ -108,7 +108,8 @@ WHERE
 
             foreach (var item in items)
             {
-                sb.AppendLine($@"ALTER TABLE {WarpField(name)} ADD {WarpField(item.Name)} {item.Type.ToString()};");
+                var length = item.Length > 0 ? $"({item.Length})" : string.Empty;
+                sb.AppendLine($@"ALTER TABLE {WarpField(name)} ADD {WarpField(item.Name)} {item.Type.ToString()}{length};");
             }
 
             using (var connection = CreateConnection())

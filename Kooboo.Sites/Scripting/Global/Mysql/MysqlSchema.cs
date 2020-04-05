@@ -24,12 +24,12 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         internal override string ConventType(Type type)
         {
-            if (type == typeof(string) || type == typeof(Regex)) return "TEXT";
+            if (type == typeof(string) || type == typeof(Regex)) return "VARCHAR";
             if (type == typeof(DateTime)) return "DATETIME";
             if (type == typeof(double) || type == typeof(int) || type == typeof(float) || type == typeof(decimal)) return "DOUBLE";
             if (type == null) return "NULL";
             if (type == typeof(bool)) return "TINYINT";
-            return "TEXT";
+            return "VARCHAR";
         }
     }
 }
