@@ -57,7 +57,7 @@
         })
         .done(function(res) {
           if (!res.success) {
-            Kooboo.handleFailMessages(res.messages);
+            if (!hideError) Kooboo.handleFailMessages(res.messages);
           }
         });
     },
@@ -82,7 +82,7 @@
         .done(function(res) {
           // clean cache...
           if (!res.success) {
-            Kooboo.handleFailMessages(res.messages);
+            if (!hideError)  Kooboo.handleFailMessages(res.messages);
           } else {
             // data cached
           }
