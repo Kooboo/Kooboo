@@ -151,15 +151,14 @@ namespace Kooboo.Sites.Systems
                     }
                     else if (group.Type == ConstObjectType.Script)
                     {
-                        result = CompressCache.Get(group.Id, totalversion, result, CompressType.css);
+                        result = CompressCache.Get(group.Id, totalversion, result, CompressType.js);
                     } 
                 }  
             }
 
 
             TextBodyRender.SetBody(context, result);
-            // context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
-             
+ 
             var version = context.RenderContext.Request.GetValue("version");
 
             if (!string.IsNullOrWhiteSpace(version))
