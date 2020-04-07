@@ -22,6 +22,8 @@ namespace Kooboo.Sites.Events.Handlers
             {
                 Sync.DiskSyncFolderWatcher.StopDiskWatcher(theEvent.WebSite);
             }
+             
+            Kooboo.Sites.Cache.RenderPlan.RemoveSiteDb(theEvent.WebSite.Id);  
         }
     }
 }

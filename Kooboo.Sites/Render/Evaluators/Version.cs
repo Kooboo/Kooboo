@@ -35,6 +35,22 @@ namespace Kooboo.Sites.Render.Evaluators
                 return null;
             }
 
+            if (element.tagName == "img")
+            {
+                if (!options.EnableImageBrowserCache)
+                {
+                    return null;
+                }
+            }
+
+            if (element.tagName == "script" || element.tagName == "style")
+            {
+                if (!options.EnableJsCssBrowserCache)
+                {
+                    return null;
+                }
+            } 
+
             if (element.tagName == "link")
             {
                 var rel = element.getAttribute("rel");

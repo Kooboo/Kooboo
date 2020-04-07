@@ -114,8 +114,7 @@ namespace Kooboo.Sites.Routing
                 if (EnsureObjectId && !this.HasObject(path))
                 {
                     path = FindShortestWildCardPath(path);
-                }
-                
+                } 
 
                 if (path == null)
                 {
