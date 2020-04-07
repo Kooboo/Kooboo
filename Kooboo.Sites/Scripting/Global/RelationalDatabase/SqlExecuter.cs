@@ -34,8 +34,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             foreach (var item in items)
             {
-                var length = item.Length > 0 ? $"({item.Length})" : string.Empty;
-                sb.AppendLine($@"ALTER TABLE {WarpField(name)} ADD COLUMN {WarpField(item.Name)} {item.Type.ToString()}{length};");
+                var type = item.Type;
+                var length = item.Length > 0 && type.ToLower() != "text" ? $"({item.Length})" : string.Empty;
+                sb.AppendLine($@"ALTER TABLE {WarpField(name)} ADD COLUMN {WarpField(item.Name)} {type}{length};");
             }
 
             using (var connection = CreateConnection())
