@@ -191,8 +191,7 @@ namespace Kooboo.Data.Models
         public bool EnableVisitorLog { get; set; } = true;
 
         public bool EnableImageLog { get; set; } = true;
-
-
+         
 
         private bool _enabledisksync;
         public bool EnableDiskSync
@@ -234,6 +233,16 @@ namespace Kooboo.Data.Models
 
         public bool EnableJsCssCompress { get; set; }
 
+        //by append a version to js css file. 
+        public bool EnableJsCssBrowerCache { get; set; }
+
+        public bool EnableImageBrowserCache { get; set; }
+
+        public int ImageCacheDays { get; set; } = 1; 
+
+//      public bool ImageBrowserVersion { get; set; } = false; 
+//      public int ImageExpireDays  { get; set; } = 365;
+
         // the version of Kooboo application. 
         // public int KoobooVersion { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
@@ -256,7 +265,7 @@ namespace Kooboo.Data.Models
         public string DiskSyncFolder
         {
             get
-            { 
+            {
 
                 if (string.IsNullOrEmpty(this._LocalDiskSyncFolder))
                 {
@@ -318,6 +327,10 @@ namespace Kooboo.Data.Models
             string unique = string.Empty;
             unique += this.Name + this.DisplayName + this.OrganizationId;
             unique += this.ContinueConvert.ToString() + this.ContinueDownload.ToString() + this.EnableCache.ToString() + this.EnableCluster.ToString() + this.EnableConstraintChecker.ToString() + this.EnableConstraintFixOnSave.ToString() + this.EnableDiskSync.ToString() + this.EnableFrontEvents.ToString() + this.EnableMultilingual.ToString() + this.EnableSitePath.ToString() + this.EnableVisitorLog.ToString() + this.EnableFullTextSearch.ToString() + this.EnableJsCssCompress.ToString();
+
+            unique += this.EnableJsCssBrowerCache.ToString();
+            unique += this.EnableImageBrowserCache.ToString();
+            unique += this.ImageCacheDays.ToString(); 
 
             unique += this.EnableSystemRoute.ToString();
 

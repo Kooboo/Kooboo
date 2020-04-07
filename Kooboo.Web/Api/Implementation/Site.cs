@@ -331,6 +331,10 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.AutoDetectCulture = newinfo.AutoDetectCulture;
                 currentsite.ForceSSL = newinfo.ForceSSL;
 
+                currentsite.EnableJsCssBrowerCache = newinfo.EnableJsCssBrowerCache;
+                currentsite.EnableImageBrowserCache = newinfo.EnableImageBrowserCache;
+                currentsite.ImageCacheDays = newinfo.ImageCacheDays; 
+
                 currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress; 
 
                 currentsite.SiteType = newinfo.SiteType;

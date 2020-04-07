@@ -11,12 +11,17 @@ namespace Kooboo.Sites.Render.Evaluators
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
         {
+            //Kooboo.Lib.Utilities.DataUriService.isDataUri
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.Version))
             {
                 return null;
             }
 
-            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            if (!options.EnableImageBrowserCache && !options.EnableJsCssBrowserCache)
+            {
+                return null;
+            }
+
 
             if (node.nodeType != enumNodeType.ELEMENT)
             {
@@ -24,7 +29,8 @@ namespace Kooboo.Sites.Render.Evaluators
             }
             var element = node as Element;
 
-            if (element.tagName != "script" && element.tagName != "link")
+            // only for style, script and image. 
+            if (element.tagName != "script" && element.tagName != "link" && element.tagName != "img")
             {
                 return null;
             }
@@ -38,16 +44,12 @@ namespace Kooboo.Sites.Render.Evaluators
                 }
             }
 
-            if (!element.hasAttribute("k-version"))
-            {
-                return null;
-            }
-
-            element.removeAttribute("k-version");
+            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             string attname = null;
 
             bool IsStyle = false;
+            bool IsImage = false;
 
             if (element.tagName == "script")
             {
@@ -58,8 +60,18 @@ namespace Kooboo.Sites.Render.Evaluators
                 attname = "href";
                 IsStyle = true;
             }
+            else if (element.tagName == "img")
+            {
+                attname = "src";
+                IsImage = true;
+            }
 
             string value = element.getAttribute(attname);
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
 
             element.removeAttribute(attname);
 
@@ -68,8 +80,8 @@ namespace Kooboo.Sites.Render.Evaluators
             List<IRenderTask> tasks = new List<IRenderTask>();
             tasks.Add(new ContentRenderTask(" " + attname + "=\""));
 
-            tasks.Add(new VersionRenderTask() { IsStyle = IsStyle, Url = value }); 
- 
+            tasks.Add(new VersionRenderTask(value, IsStyle, IsImage));
+
             tasks.Add(new ContentRenderTask("\""));
 
             if (response.AttributeTask == null)
@@ -81,7 +93,6 @@ namespace Kooboo.Sites.Render.Evaluators
                 response.AttributeTask.AddRange(tasks);
             }
 
-
             if (response.AttributeTask == null || response.AttributeTask.Count() == 0)
             {
                 return null;
@@ -90,7 +101,7 @@ namespace Kooboo.Sites.Render.Evaluators
             {
                 return response;
             }
-        } 
+        }
     }
 
 

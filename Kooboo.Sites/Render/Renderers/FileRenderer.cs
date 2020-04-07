@@ -5,6 +5,7 @@ using Kooboo.Extensions;
 using Kooboo.Sites.Extensions;
 using Kooboo.Lib;
 using Kooboo.Lib.Helper;
+using System;
 
 namespace Kooboo.Sites.Render
 {
@@ -54,6 +55,13 @@ namespace Kooboo.Sites.Render
             {
                 context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(file.ContentString);
             }
+
+            // cache for font.
+            if (contentType !=null && contentType.ToLower().Contains("font"))
+            {
+                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+            }
+
         }
     }
 }

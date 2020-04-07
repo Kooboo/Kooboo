@@ -68,9 +68,9 @@ namespace Kooboo.Sites.Render.Components
                 foreach (var item in el.attributes)
                 {
                     this.FormAttributes.Add(item.name, item.value);
-                } 
-                this.bodyRenderTask =  RenderEvaluator.Evaluate(el.InnerHtml, new EvaluatorOption());
-
+                }
+                var option = RenderOptionHelper.GetFormOption(context, form.Id); 
+                this.bodyRenderTask =  RenderEvaluator.Evaluate(el.InnerHtml, option); 
             }
 
             string submiturl = Kooboo.Sites.HtmlForm.FormManager.GetSubmitUrl(form, formsetting, context);
@@ -101,9 +101,7 @@ namespace Kooboo.Sites.Render.Components
                 opentag = opentag + "<input type='hidden' name=\"" + Sites.HtmlForm.FormManager.FormUrlName + "\" value=\"" + context.Request.RawRelativeUrl + "\" />";
             }
 
-            // If ajax, append the additional text here... 
-
-      
+            // If ajax, append the additional text here...  
 
             //opentag += JsString(key, formsetting.SuccessCallBack, formsetting.FailedCallBack);
 

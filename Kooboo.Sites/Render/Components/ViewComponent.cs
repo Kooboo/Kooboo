@@ -181,15 +181,11 @@ namespace Kooboo.Sites.Render.Components
             List<IRenderTask> renderplan;
             string returnstring = string.Empty;
 
-            EvaluatorOption options = new EvaluatorOption();
-            options.RenderUrl = true;
-            options.RenderHeader = false;
-            options.OwnerObjectId = view.Id;
-
-            if (frontcontext.RenderContext.Request.Channel == RequestChannel.InlineDesign)
+            var options = RenderOptionHelper.GetViewOption(context, viewid); 
+             
+            if (options.RequireBindingInfo)
             {
-                viewBody = DomService.ApplyKoobooId(viewBody);
-                options.RequireBindingInfo = true;
+                viewBody = DomService.ApplyKoobooId(viewBody); 
                 renderplan = RenderEvaluator.Evaluate(viewBody, options); 
             }
             else

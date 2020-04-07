@@ -8,29 +8,34 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render
 {
-   public class EvaluatorOption
+    public class EvaluatorOption
     {
         public bool RenderHeader { get; set; }
 
         public bool RenderUrl { get; set; }
 
-        public bool RequireBindingInfo { get; set;} 
+        public bool RequireBindingInfo { get; set; }
 
-        public Guid OwnerObjectId { get; set; } 
+        public Guid OwnerObjectId { get; set; }
 
         public EnumEvaluator IgnoreEvaluators { get; set; }
-        
 
-        public  EvaluatorOption Clone()
+        public bool EnableJsCssBrowserCache { get; set; }
+
+        public bool EnableImageBrowserCache { get; set; }
+
+        public EvaluatorOption Clone()
         {
             EvaluatorOption newoption = new EvaluatorOption();
             newoption.RenderHeader = this.RenderHeader;
             newoption.RenderUrl = this.RenderUrl;
             newoption.RequireBindingInfo = this.RequireBindingInfo;
-            newoption.OwnerObjectId = this.OwnerObjectId; 
-            return newoption; 
+            newoption.OwnerObjectId = this.OwnerObjectId;
+            newoption.EnableImageBrowserCache = this.EnableImageBrowserCache;
+            newoption.EnableJsCssBrowserCache = this.EnableJsCssBrowserCache;
+            return newoption;
         }
-          
+
         public List<IEvaluator> Evaluators { get; set; }
 
     }
@@ -39,7 +44,7 @@ namespace Kooboo.Sites.Render
     public enum EnumEvaluator
     {
         Attribute = 1,
-        LayoutCommand = 2, 
+        LayoutCommand = 2,
         Component = 4,
         Condition = 5,
         Content = 6,
@@ -52,7 +57,7 @@ namespace Kooboo.Sites.Render
         Repeater = 13,
         SiteLayout = 14,
         Url = 15,
-        KFrom = 16, 
+        KFrom = 16,
         kConfig = 17,
         kCache = 18,
         OmitOuterTag = 19,

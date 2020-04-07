@@ -17,41 +17,49 @@ namespace Kooboo.Sites.Render
             {
                 image = await context.SiteDb.Images.GetAsync(context.Route.objectId);
             }
-            //  var image = context.SiteDb.Images.Get(context.Route.objectId);
-
+            //var image = context.SiteDb.Images.Get(context.Route.objectId); 
             if (context.RenderContext.WebSite.EnableImageLog)
             {
-               if (context.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
+                if (context.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
                 {
                     Kooboo.Data.Models.ImageLog log = new Data.Models.ImageLog();
                     log.ClientIP = context.RenderContext.Request.IP;
                     log.Url = context.RenderContext.Request.RawRelativeUrl;
-                    log.StartTime = DateTime.Now; 
-                    
+                    log.StartTime = DateTime.Now;
+
                     if (image != null)
                     {
                         log.Size = image.Size;
-                        log.ImageId = image.Id; 
+                        log.ImageId = image.Id;
                     }
-                    context.RenderContext.WebSite.SiteDb().ImageLog.Add(log); 
+                    context.RenderContext.WebSite.SiteDb().ImageLog.Add(log);
                 }
             }
 
             if (image == null)
             {
                 return;
-            } 
+            }
+
             RenderImage(context, image);
+
+            if (context.RenderContext.WebSite.EnableImageBrowserCache)
+            {
+                if (context.RenderContext.WebSite.ImageCacheDays >= 0)
+                {
+                    context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(context.RenderContext.WebSite.ImageCacheDays).ToString("r");
+                }
+            }
         }
-         
-        public   static  void Render(FrontContext context)
+
+        public static void Render(FrontContext context)
         {
-            var image =   context.SiteDb.ImagePool.Get(context.Route.objectId);
+            var image = context.SiteDb.ImagePool.Get(context.Route.objectId);
 
             if (image == null || image.ContentBytes == null)
             {
-                image =   context.SiteDb.Images.Get(context.Route.objectId);
-            } 
+                image = context.SiteDb.Images.Get(context.Route.objectId);
+            }
             if (context.RenderContext.WebSite.EnableImageLog)
             {
                 if (context.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
@@ -94,13 +102,13 @@ namespace Kooboo.Sites.Render
             //"image/svg+xml"
             if (image.Extension == "svg" || image.Extension == ".svg")
             {
-                context.RenderContext.Response.ContentType +=  "+xml";
+                context.RenderContext.Response.ContentType += "+xml";
             }
 
             context.RenderContext.Response.Body = image.ContentBytes;
         }
 
-    
+
 
     }
 }

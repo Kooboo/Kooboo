@@ -82,21 +82,22 @@ namespace Kooboo.Sites.Render
                     else if (element.tagName == "script" || element.tagName == "link")
                     {
                         // get the render task. 
-                        var plan = Kooboo.Sites.Render.RenderEvaluator.Evaluate(element.OuterHtml, new EvaluatorOption());
-                        if (plan != null)
-                        {
-                            HeaderRenderItem headeritem = new HeaderRenderItem();
-                            headeritem.IsRenderTask = true;
-                            headeritem.renderTasks = plan;
-                            result.Add(headeritem);
-                        }
-                        else
-                        {
-                            HeaderRenderItem headeritem = new HeaderRenderItem();
-                            headeritem.OriginalHtml = element.OuterHtml;
-                            headeritem.NoRender = true;
-                            result.Add(headeritem);
-                        }
+                        //var plan = Kooboo.Sites.Render.RenderEvaluator.Evaluate(element.OuterHtml, new EvaluatorOption());
+                        //if (plan != null)
+                        //{
+                        HeaderRenderItem headeritem = new HeaderRenderItem();
+                        headeritem.IsRenderTask = true;
+                        headeritem.OriginalHtml = element.OuterHtml;
+                        // headeritem.renderTasks = plan;
+                        result.Add(headeritem);
+                        //}
+                        //else
+                        //{
+                        //    HeaderRenderItem headeritem = new HeaderRenderItem();
+                        //    headeritem.OriginalHtml = element.OuterHtml;
+                        //    headeritem.NoRender = true;
+                        //    result.Add(headeritem);
+                        //}
                     }
                     else
                     {
@@ -156,8 +157,27 @@ namespace Kooboo.Sites.Render
                     }
                     else if (item.IsRenderTask)
                     {
-                        var renderresult = Kooboo.Sites.Render.RenderHelper.Render(item.renderTasks, context);
-                        sb.Append(renderresult);
+                        if (item.renderTasks == null)
+                        {
+                            var option = RenderOptionHelper.GetHeaderOption(context);
+                            var plan = Kooboo.Sites.Render.RenderEvaluator.Evaluate(item.OriginalHtml, option);
+                            if (plan == null) 
+                            {
+                                item.NoRender = true;
+                                sb.Append(item.OriginalHtml); 
+                            }
+                            else
+                            {
+                                item.renderTasks = plan;
+                                var renderresult = Kooboo.Sites.Render.RenderHelper.Render(item.renderTasks, context);
+                                sb.Append(renderresult);
+                            }
+                        }
+                        else
+                        { 
+                            var renderresult = Kooboo.Sites.Render.RenderHelper.Render(item.renderTasks, context);
+                            sb.Append(renderresult);
+                        }  
                     }
                 }
             }

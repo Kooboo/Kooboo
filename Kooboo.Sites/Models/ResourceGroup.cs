@@ -35,7 +35,7 @@ namespace Kooboo.Sites.Models
         }
           
         /// <summary>
-        /// Target source type
+        /// Target source type, the constobjecttype. 
         /// </summary>
         public byte Type { get; set; }
 

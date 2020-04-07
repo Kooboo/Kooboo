@@ -22,22 +22,23 @@ namespace Kooboo.Sites.Render
 
             List<IRenderTask> RenderPlan = null;
 
-            if (context.RenderContext.Request.Channel != Data.Context.RequestChannel.InlineDesign)
-            {
-                RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, GetPageOption(context)));
+            var option = RenderOptionHelper.GetPageOption(context); 
 
-                result = RenderHelper.Render(RenderPlan, context.RenderContext);
-            }
-            else
+            if (option.RequireBindingInfo)
             {
                 string html = DomService.ApplyKoobooId(context.Page.Body);
-                RenderPlan = RenderEvaluator.Evaluate(html, GetPageOption(context));
+                RenderPlan = RenderEvaluator.Evaluate(html, option);
                 var traceability = new ComponentTrace(context.Page.Id.ToString(), "page");
                 var bindingTask = new BindingRenderTask(traceability, new Dictionary<string, string> { { "scope", "true" } });
                 RenderPlan.Insert(0, bindingTask);
                 RenderPlan.Add(bindingTask.BindingEndRenderTask);
                 result = RenderHelper.Render(RenderPlan, context.RenderContext);
                 result = DomService.EnsureDocType(result);
+            }
+            else
+            {
+                RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, option));
+                result = RenderHelper.Render(RenderPlan, context.RenderContext);
             }
 
 
@@ -55,40 +56,6 @@ namespace Kooboo.Sites.Render
             return result;
         }
 
-        private static EvaluatorOption GetPageOption(FrontContext context)
-        {
-            EvaluatorOption renderoption = new EvaluatorOption();
 
-            if (context.WebSite != null && context.WebSite.EnableSitePath)
-            {
-                renderoption.RenderUrl = true;
-            }
-            else
-            {
-                renderoption.RenderUrl = false;
-            }
-
-            if (context.Page.Headers.HasValue())
-            {
-                if (context.Page.HasLayout)
-                {
-                    renderoption.RenderHeader = false;
-                }
-                else
-                {
-                    renderoption.RenderHeader = true;
-                }
-            }
-            else
-            {
-                renderoption.RenderHeader = false;
-            }
-
-            //renderoption.RenderHeader = context.Page.Headers.HasValue();     
-
-            renderoption.RequireBindingInfo = context.RenderContext.Request.Channel == Data.Context.RequestChannel.InlineDesign;
-            renderoption.OwnerObjectId = context.Page.Id;
-            return renderoption;
-        }
     }
 }
