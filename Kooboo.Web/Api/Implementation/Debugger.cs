@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Data.Extensions;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.ScriptDebugger;
 using System;
@@ -227,7 +228,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     try
                     {
-                        session.JsEngine.Execute(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                        session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
                         result.Success = true;
                         var value = Lib.Helper.JintHelper.GetAssignmentValue(JsStatement);
                         result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
@@ -243,8 +244,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     try
                     {
-
-                        session.JsEngine.Execute(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                        session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
                         result.Success = true;
                     }
                     catch (Exception ex)
