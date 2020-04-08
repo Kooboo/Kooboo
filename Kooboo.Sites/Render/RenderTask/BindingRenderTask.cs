@@ -93,26 +93,34 @@ namespace Kooboo.Sites.Render
             {
                 var obj = context.DataContext.GetValue(stacks.Dequeue());
 
-                do
+                try
                 {
-                    if (obj is ITraceability)
+                    do
                     {
-                        fieldPath = string.Join(".", stacks);
-                        return obj as ITraceability;
-                    }
-                    else if (obj is IDynamic && stacks.Count > 0)
-                    {
-                        obj = (obj as IDynamic).GetValue(stacks.Dequeue());
-                        continue;
-                    }
-                    else if (obj is IDictionary<string, object> && stacks.Count > 0)
-                    {
-                        obj = (obj as IDictionary<string, object>)[stacks.Dequeue()];
-                        continue;
-                    }
+                        if (obj is ITraceability)
+                        {
+                            fieldPath = string.Join(".", stacks);
+                            return obj as ITraceability;
+                        }
+                        else if (obj is IDynamic && stacks.Count > 0)
+                        {
+                            obj = (obj as IDynamic).GetValue(stacks.Dequeue());
+                            continue;
+                        }
+                        else if (obj is IDictionary<string, object> && stacks.Count > 0)
+                        {
+                            obj = (obj as IDictionary<string, object>)[stacks.Dequeue()];
+                            continue;
+                        }
 
-                    break;
-                } while (stacks.Count > 0);
+                        break;
+                    } while (stacks.Count > 0);
+                }
+                catch (Exception)
+                {
+                    return Nontraceable.Instance;
+                }
+               
             }
 
             return Nontraceable.Instance;
