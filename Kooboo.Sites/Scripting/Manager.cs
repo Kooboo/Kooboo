@@ -284,7 +284,7 @@ namespace Kooboo.Sites.Scripting
                     debugsession.DebugInfo = info;
                 }
 
-                return ex.Message + " " + ex.Source;
+                return ex.Message;
 
             }
 
