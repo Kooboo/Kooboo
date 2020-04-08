@@ -353,16 +353,8 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
-                var traceId = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=');
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex, traceId);
-
-#if DEBUG
-                var e = ex;
-                while (e.InnerException != null) e = e.InnerException;
-                return e.Message;
-#else
-                return $"Server script error occured with trace ID [{traceId}], contact server administrator to use the trace ID and exception log for troubleshooting";
-#endif
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+                return ex.Message;
             }
 
             if (debugsession != null)
