@@ -291,25 +291,25 @@ namespace Jint
             CallStack.Clear();
         }
 
-        public Engine Execute(string source)
+
+        Program Parse(string source, ParserOptions parserOptions = null)
         {
-            var parser = new JavaScriptParser();
-            string error = null; 
             try
             {
-                return Execute(parser.Parse(source));
+                var parser = new JavaScriptParser();
+
+                if (parserOptions != null)
+                {
+                    return parser.Parse(source, parserOptions);
+                }
+
+                return parser.Parse(source);
             }
             catch (Exception ex)
             {
-                if (ex is JavaScriptException)
-                {
-                    var jsex = ex as JavaScriptException; 
-                    if (jsex !=null)
-                    {
-                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message; 
-                    }
-                }      
-                else if (ex is ParserException)
+                string error = null;
+
+                if (ex is ParserException)
                 {
                     var pex = ex as ParserException;
                     if (pex != null)
@@ -319,52 +319,81 @@ namespace Jint
                 }
                 else
                 {
-                    error = ex.Message;
-                    if (ex.InnerException != null && !string.IsNullOrEmpty(ex.InnerException.Message))
-                    {
-                        error += " " + ex.InnerException.Message;
-                    }
+                    error = GetInnerError(ex);
                 }
-            }
 
-            if (error !=null)
+                throw new Exception(error);
+            }
+        }
+
+        private static string GetInnerError(Exception ex)
+        {
+            var error = ex.Message;
+            if (ex.InnerException != null && !string.IsNullOrEmpty(ex.InnerException.Message))
             {
-                throw new Exception(error); 
+                error += " " + ex.InnerException.Message;
             }
 
-            return null;  
+            return error;
+        }
+
+        public Engine Execute(string source)
+        {
+            return Execute(Parse(source));
         }
 
         public Engine Execute(string source, ParserOptions parserOptions)
         {
-            var parser = new JavaScriptParser();
-            return Execute(parser.Parse(source, parserOptions));
+            return Execute(Parse(source, parserOptions));
         }
 
         public Engine Execute(Program program)
         {
-            ResetStatementsCount();
-            ResetTimeoutTicks();
-            ResetLastStatement();
-            ResetCallStack();
-
-            using (new StrictModeScope(Options._IsStrict || program.Strict))
+            try
             {
-                DeclarationBindingInstantiation(DeclarationBindingType.GlobalCode, program.FunctionDeclarations, program.VariableDeclarations, null, null);
+                ResetStatementsCount();
+                ResetTimeoutTicks();
+                ResetLastStatement();
+                ResetCallStack();
 
-                var result = _statements.ExecuteProgram(program);
-                if (result.Type == Completion.Throw)
+                using (new StrictModeScope(Options._IsStrict || program.Strict))
                 {
-                    throw new JavaScriptException(result.GetValueOrDefault())
+                    DeclarationBindingInstantiation(DeclarationBindingType.GlobalCode, program.FunctionDeclarations, program.VariableDeclarations, null, null);
+
+                    var result = _statements.ExecuteProgram(program);
+                    if (result.Type == Completion.Throw)
                     {
-                        Location = result.Location
-                    };
+                        throw new JavaScriptException(result.GetValueOrDefault())
+                        {
+                            Location = result.Location
+                        };
+                    }
+
+                    _completionValue = result.GetValueOrDefault();
                 }
 
-                _completionValue = result.GetValueOrDefault();
-            }
+                return this;
 
-            return this;
+            }
+            catch (Exception ex)
+            {
+                string error = null;
+
+                if (ex is JavaScriptException)
+                {
+                    var jsex = ex as JavaScriptException;
+                    if (jsex != null)
+                    {
+                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message;
+                    }
+                }
+                else
+                {
+                    error = GetInnerError(ex);
+                }
+
+                throw new Exception(error);
+            }
         }
 
         private void ResetLastStatement()
