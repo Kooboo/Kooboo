@@ -307,34 +307,19 @@ namespace Jint
             }
             catch (Exception ex)
             {
-                string error = null;
 
                 if (ex is ParserException)
                 {
                     var pex = ex as ParserException;
                     if (pex != null)
                     {
-                        error = "JavaScript error on line" + pex.LineNumber.ToString() + ", cloumn: " + pex.Column.ToString() + " " + ex.Message;
+                        var error = "JavaScript error on line" + pex.LineNumber.ToString() + ", cloumn: " + pex.Column.ToString() + " " + ex.Message;
+                        throw new Exception(error, ex.InnerException);
                     }
                 }
-                else
-                {
-                    error = GetInnerError(ex);
-                }
 
-                throw new Exception(error);
+                throw;
             }
-        }
-
-        private static string GetInnerError(Exception ex)
-        {
-            var error = ex.Message;
-            if (ex.InnerException != null && !string.IsNullOrEmpty(ex.InnerException.Message))
-            {
-                error += " " + ex.InnerException.Message;
-            }
-
-            return error;
         }
 
         public Engine Execute(string source)
@@ -377,22 +362,17 @@ namespace Jint
             }
             catch (Exception ex)
             {
-                string error = null;
-
                 if (ex is JavaScriptException)
                 {
                     var jsex = ex as JavaScriptException;
                     if (jsex != null)
                     {
-                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message;
+                        var error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message;
+                        throw new Exception(error, ex.InnerException);
                     }
                 }
-                else
-                {
-                    error = GetInnerError(ex);
-                }
 
-                throw new Exception(error);
+                throw;
             }
         }
 
