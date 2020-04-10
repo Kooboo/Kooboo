@@ -24,6 +24,7 @@ using Jint.Runtime.Descriptors;
 using Jint.Runtime.Environments;
 using Jint.Runtime.Interop;
 using Jint.Runtime.References;
+using Kooboo.Lib.Exceptions;
 
 namespace Jint
 {
@@ -362,14 +363,16 @@ namespace Jint
             }
             catch (Exception ex)
             {
-                if (ex is JavaScriptException)
+                Location location = null;
+                var isJsError = ex is JavaScriptException;
+                var isDotnetError = ex is DotnetOnJavaScriptException;
+                if (isJsError) location = (ex as JavaScriptException).Location;
+                if (isDotnetError) location = (ex as DotnetOnJavaScriptException).Location;
+
+                if (location != null)
                 {
-                    var jsex = ex as JavaScriptException;
-                    if (jsex != null)
-                    {
-                        var error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message;
-                        throw new Exception(error, ex.InnerException);
-                    }
+                    var error = "JavaScript error on line" + location.Start.Line.ToString() + ", cloumn: " + location.Start.Column.ToString() + " " + ex.Message;
+                    throw new Exception(error, ex.InnerException);
                 }
 
                 throw;

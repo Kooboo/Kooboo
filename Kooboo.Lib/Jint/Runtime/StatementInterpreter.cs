@@ -6,6 +6,7 @@ using Jint.Parser.Ast;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Environments;
 using Jint.Runtime.References;
+using Kooboo.Lib.Exceptions;
 
 namespace Jint.Runtime
 {
@@ -439,6 +440,10 @@ namespace Jint.Runtime
                 c = new Completion(Completion.Throw, v.Error, null);
                 c.Location = v.Location ?? s.Location;
                 return c;
+            }
+            catch (Exception ex) //custom code
+            {
+                throw new DotnetOnJavaScriptException(s.Location ?? c.Location, ex.Message, ex.InnerException);
             }
 
             return new Completion(c.Type, c.GetValueOrDefault(), c.Identifier);
