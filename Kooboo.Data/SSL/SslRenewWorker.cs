@@ -1,5 +1,6 @@
 ﻿using Kooboo.Data.Interface;
 using System;
+using System.Linq;
 
 namespace Kooboo.Data.SSL
 {
@@ -13,24 +14,30 @@ namespace Kooboo.Data.SSL
 
         public void Execute()
         {
-            var now = DateTime.Now;
-             
-            var todayInt = now.DayOfYear;
+            Log.Instance.Ssl.Write("try renewing at: " + DateTime.Now.ToLongTimeString());
+
+            var todayInt = DateTime.Now.DayOfYear;
             if (todayInt != lastCheckDay)
             {
-                if (now.Hour == 2 || now.Hour == 3 || now.Hour == 4 || now.Hour == 5 || now.Hour == 6)
-                {
-                    foreach (var item in Kooboo.Data.GlobalDb.SslCertificate.GetAllInUsed())
-                    {
-                        if (item.Expiration < DateTime.Now.AddDays(10))
-                        {
-                            SslService.SetSsl(item.Domain, item.OrganizationId);
-                        }
-                    }
+                lastCheckDay = todayInt;
 
-                    lastCheckDay = todayInt;
+                var list = GlobalDb.SslCertificate.GetAllInUsed();
+
+                var checkbefore = DateTime.Now.AddDays(10);
+
+                var items = list.Where(o => o.Expiration < checkbefore).ToList();
+
+                var logitems = items.Select(o => o.Domain).ToList();
+
+                if (logitems != null && logitems.Any())
+                {
+                    Kooboo.Data.Log.Instance.Ssl.WriteObj(logitems);
                 }
 
+                foreach (var item in items)
+                { 
+                    SslService.SetSsl(item.Domain, item.OrganizationId); 
+                }
             }
         }
     }

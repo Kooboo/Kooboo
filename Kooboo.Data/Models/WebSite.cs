@@ -191,7 +191,7 @@ namespace Kooboo.Data.Models
         public bool EnableVisitorLog { get; set; } = true;
 
         public bool EnableImageLog { get; set; } = true;
-         
+
 
         private bool _enabledisksync;
         public bool EnableDiskSync
@@ -234,14 +234,14 @@ namespace Kooboo.Data.Models
         public bool EnableJsCssCompress { get; set; }
 
         //by append a version to js css file. 
-        public bool EnableJsCssBrowerCache { get; set; }
+        public bool EnableJsCssBrowerCache { get; set; } = true;
 
-        public bool EnableImageBrowserCache { get; set; }
+        public bool EnableImageBrowserCache { get; set; } = true;
 
-        public int ImageCacheDays { get; set; } = 1; 
+        public int ImageCacheDays { get; set; } = 1;
 
-//      public bool ImageBrowserVersion { get; set; } = false; 
-//      public int ImageExpireDays  { get; set; } = 365;
+        // public bool ImageBrowserVersion { get; set; } = false; 
+        // public int ImageExpireDays  { get; set; } = 365;
 
         // the version of Kooboo application. 
         // public int KoobooVersion { get; set; }
@@ -330,7 +330,7 @@ namespace Kooboo.Data.Models
 
             unique += this.EnableJsCssBrowerCache.ToString();
             unique += this.EnableImageBrowserCache.ToString();
-            unique += this.ImageCacheDays.ToString(); 
+            unique += this.ImageCacheDays.ToString();
 
             unique += this.EnableSystemRoute.ToString();
 

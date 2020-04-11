@@ -106,9 +106,11 @@ namespace Kooboo.Sites.Scripting
             {
                 engine.ExecuteWithErrorHandle(code.Config, new Jint.Parser.ParserOptions() { Tolerant = true });
             }
-            catch (System.Exception )
+            catch (System.Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
             }
+             
 
             if (kcontext.ReturnValues.Count() > 0)
             {
@@ -255,6 +257,8 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+
                 if (debugsession != null)
                 {
                     var info = new ScriptDebugger.DebugInfo
@@ -305,12 +309,7 @@ namespace Kooboo.Sites.Scripting
                 }
             }
 
-            string output = context.GetItem<string>(Constants.OutputName);
-            if (!string.IsNullOrWhiteSpace(output))
-            {
-                context.SetItem<string>(null, Constants.OutputName);
-            }
-            return output;
+            return ReturnValue(context, engine);
         }
          
 
@@ -347,10 +346,11 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.ExecuteWithErrorHandle(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true }); 
+                engine.ExecuteWithErrorHandle(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
             }
             catch (Exception ex)
             {
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
                 return ex.Message;
             }
 
@@ -366,12 +366,34 @@ namespace Kooboo.Sites.Scripting
                 debugsession.DebugInfo = info;
             }
 
-            string output = context.GetItem<string>(Kooboo.Sites.Scripting.Constants.OutputName);
+            return ReturnValue(context, engine);
+        }
+
+        private static string ReturnValue(RenderContext context, Jint.Engine engine)
+        {
+            string writeout = EngingReturnValue(engine);
+
+            string output = context.GetItem<string>(Constants.OutputName);
             if (!string.IsNullOrWhiteSpace(output))
             {
-                context.SetItem<string>(null, Kooboo.Sites.Scripting.Constants.OutputName);
+                context.SetItem<string>(null, Constants.OutputName);
             }
-            return output;
+
+            if (output != null)
+            {
+                writeout += output;
+            }
+            return writeout;
+        }
+
+        private static string EngingReturnValue(Jint.Engine engine)
+        {
+            var returnitem = engine.GetCompletionValue();
+            if (returnitem != null)
+            {
+               return returnitem.ToString(); 
+            } 
+            return null;
         }
 
         public static object ExecuteDataSource(RenderContext context, Guid CodeId, Dictionary<string, object> parameters)

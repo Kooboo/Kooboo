@@ -119,11 +119,15 @@ namespace Kooboo.Data.Repository
                 }
                 else
                 {
-                    var binding = GlobalDb.Bindings.GetByDomain(item.Domain);
+                    var binding = GlobalDb.Bindings.GetByFullDomain(item.Domain);
+                    if (!binding.Any())
+                    {
+                        binding = GlobalDb.Bindings.GetByDomain(item.Domain);  
+                    }
                     if (binding.Any())
                     {
                         result.Add(item);
-                    }
+                    } 
                 }
             } 
             return result;

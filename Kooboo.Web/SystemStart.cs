@@ -69,7 +69,7 @@ namespace Kooboo.Web
 
             JobWorker.Instance.Start();
 
-            Service.UpGradeService.UpgradeFix();
+            Service.UpGradeService.UpgradeFix();  
         }
 
         public static void StartNewWebServer(int port)

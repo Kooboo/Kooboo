@@ -151,6 +151,25 @@ namespace Kooboo.Data.Log
         }
 
 
+        private static LogWriter _ssl; 
+
+        public static LogWriter Ssl
+        {
+            get
+            {
+                if (_ssl == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_ssl == null)
+                        {
+                            _ssl = new LogWriter("ssl");
+                        }
+                    }
+                }
+                return _ssl;
+            }
+        }
     }
  
 }

@@ -54,6 +54,9 @@ namespace Kooboo.Data.Server
                 }
             }
 
+            // 
+            
+
             return Kooboo.Data.Server.SslCertificate.DefaultCert;
             // return null;    
         }
@@ -98,8 +101,7 @@ namespace Kooboo.Data.Server
             return Kooboo.Data.Server.SslCertificate.DefaultCert;
             // return null;    
         }
-
-
+         
         public static Dictionary<string, X509Certificate2> LoadDisk()
         {
             Dictionary<string, X509Certificate2> result = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
@@ -156,10 +158,5 @@ namespace Kooboo.Data.Server
 
         }
 
-    }
-
-
-
-
-
+    } 
 }
