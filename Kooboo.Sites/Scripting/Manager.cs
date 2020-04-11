@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Kooboo.Lib.Reflection;
-using Jint.Runtime; 
+using Jint.Runtime;
 using KScript;
 using Kooboo.Data.Extensions;
 
@@ -108,16 +108,45 @@ namespace Kooboo.Sites.Scripting
             }
             catch (System.Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
             }
-             
 
             if (kcontext.ReturnValues.Count() > 0)
             {
                 return kcontext.ReturnValues.Last();
             }
+            else
+            {
+                var obj = EngingConfigObject(engine);
+                return obj; 
+            } 
+        }
+
+        private static object EngingConfigObject(Jint.Engine engine)
+        {
+            var returnitem = engine.GetCompletionValue();
+            if (returnitem != null)
+            {
+                var jsvalue = returnitem as JsValue;
+                if (jsvalue != null)
+                {
+                    if (jsvalue.IsString() || jsvalue.IsPrimitive())
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        var obj = jsvalue.ToObject();
+                        if (obj != null)
+                        {
+                            return obj;
+                        }
+                    }
+                }
+            }
             return null;
         }
+
 
         public static List<Data.Models.SimpleSetting> GetSetting(WebSite website, Models.Code code)
         {
@@ -149,7 +178,7 @@ namespace Kooboo.Sites.Scripting
                             }
                             else if (lowerkey == "tooltip")
                             {
-                                setting.ToolTip = keyvalue.Value.ToString(); 
+                                setting.ToolTip = keyvalue.Value.ToString();
                             }
                             else if (lowerkey == "controltype")
                             {
@@ -225,10 +254,10 @@ namespace Kooboo.Sites.Scripting
             if (string.IsNullOrEmpty(JsCode))
             {
                 return null;
-            } 
+            }
 
             Jint.Engine engine = null;
-            
+
             var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, CodeId);
 
             if (debugsession == null)
@@ -253,11 +282,11 @@ namespace Kooboo.Sites.Scripting
             }
             try
             {
-                engine.ExecuteWithErrorHandle(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true  });
+                engine.ExecuteWithErrorHandle(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
 
                 if (debugsession != null)
                 {
@@ -311,7 +340,7 @@ namespace Kooboo.Sites.Scripting
 
             return ReturnValue(context, engine);
         }
-         
+
 
         public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
         {
@@ -350,7 +379,7 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex); 
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
                 return ex.Message;
             }
 
@@ -391,10 +420,28 @@ namespace Kooboo.Sites.Scripting
             var returnitem = engine.GetCompletionValue();
             if (returnitem != null)
             {
-               return returnitem.ToString(); 
-            } 
+                var jsvalue = returnitem as JsValue;
+                if (jsvalue != null)
+                {
+                    if (jsvalue.IsString() || jsvalue.IsPrimitive())
+                    {
+                        return jsvalue.ToString();
+                    }
+                    else
+                    {
+                        var obj = jsvalue.ToObject();
+                        if (obj != null)
+                        {
+                            return Lib.Helper.JsonHelper.Serialize(obj);
+                        }
+                    }
+                }
+                return returnitem.ToString();
+            }
             return null;
         }
+
+
 
         public static object ExecuteDataSource(RenderContext context, Guid CodeId, Dictionary<string, object> parameters)
         {
@@ -464,7 +511,7 @@ namespace Kooboo.Sites.Scripting
                 if (kcontext.ReturnValues.Count > 0)
                 {
                     result = kcontext.ReturnValues.Last();
-                } 
+                }
             }
             catch (Exception ex)
             {
@@ -811,7 +858,7 @@ namespace Kooboo.Sites.Scripting
                     {
 
                     }
-                } 
+                }
                 // TODO: also get the methods... 
             }
 
