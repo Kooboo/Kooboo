@@ -547,6 +547,10 @@
   <key id="Enable Visitor Log">Bezoekerslogboek inschakelen</key>
   <key id="Enable Constraint Fix On Save">Constraint Fix inschakelen bij opslaan</key>
   <key id="Enable Front Events">Front-evenementen inschakelen</key>
+  <key id="Enable Js Css Compression">Enable Js Css Compression</key>
+  <key id="Enable Js CSS Browser Cache">Enable Js CSS Browser Cache</key>
+  <key id="Enable image Browser Cache">Enable image Browser Cache</key>
+  <key id="number of expiration days, using 0 or -1 to use version control">number of expiration days, using 0 or -1 to use version control</key>
   <key id="Enable Disk Sync">Schakel schijfsynchronisatie in</key>
   <key id="Enable Multilingual">Meertalig inschakelen</key>
   <key id="Default Language">Standaard taal</key>
@@ -603,8 +607,6 @@
   <key id="Maximum value">Maximale waarde</key>
   <key id="Pattern">Patroon</key>
   <key id="Previous">Vorige</key>
-  <key id="Data type">Data type</key>
-  <key id="Error message">Foutmelding</key>
   <key id="Current page">Huidige pagina</key>
   <key id="Meta">Meta</key>
   <key id="HTTP-equiv">HTTP-equiv</key>
@@ -808,6 +810,7 @@
   <key id="Required">Verplicht</key>
   <key id="String length">Stringlengte</key>
   <key id="Regex">Regex</key>
+  <key id="Data type">Data type</key>
   <key id="Range">Bereik</key>
   <key id="Min">Min</key>
   <key id="Max">Max</key>
@@ -869,6 +872,7 @@
   <key id="TextBox">Tekstveld</key>
   <key id="TextArea">Tekstvak</key>
   <key id="MediaFile">Media bestand</key>
+  <key id="Error message">Foutmelding</key>
   <key id="Error message when validation failed">Foutmelding wanneer validatie mislukt</key>
   <key id="Categories">Categorieën</key>
   <key id="Column settings">Kolominstellingen</key>
@@ -1152,6 +1156,7 @@
   <key id="Your certificate already exists">Uw certificaat bestaat al</key>
   <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">Uw ssl is gegenereerd</key>
+  <key id="Table">Tabel</key>
   <key id="Unexpected error">Onverwachte fout</key>
   <key id="Target Url is Protected">Doel-URL is beschermd</key>
   <key id="user not found">gebruiker niet gevonden</key>
@@ -1224,8 +1229,18 @@
   <key id="Username or email address already exists">Username or email address already exists</key>
   <key id="Payment Method not found">Payment Method not found</key>
   <key id="currency not supported by payment method">currency not supported by payment method</key>
+  <key id="Adyen">Adyen</key>
   <key id="alipay">alipay</key>
+  <key id="braintree">braintree</key>
+  <key id="KlarnaHpp">KlarnaHpp</key>
+  <key id="Mollie">Mollie</key>
+  <key id="ogone">ogone</key>
   <key id="Paypal">Paypal</key>
+  <key id="qualpay">qualpay</key>
+  <key id="Smart2Pay">Smart2Pay</key>
+  <key id="square">square</key>
+  <key id="Stripe">Stripe</key>
+  <key id="UnionPay">UnionPay</key>
   <key id="wechat">Wechat</key>
   <key id="HtmlBlock">HTML-blok</key>
   <key id="You have reached the max loop limitation in your account">Je hebt de maximale loop-limiet in je account bereikt</key>
@@ -1272,7 +1287,6 @@
   <key id="Name already exists">Naam bestaat al</key>
   <key id="Default account can not add user">Standaardaccount kan geen gebruiker toevoegen</key>
   <key id="Page body and Url are required">Hoofdpagina en URL zijn verplicht</key>
-  <key id="Table">Tabel</key>
   <key id="Hash validation failed">Hash-validatie mislukt</key>
   <key id="member">Lid</key>
   <key id="ContentType">Inhoudstype</key>

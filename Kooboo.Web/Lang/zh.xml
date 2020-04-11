@@ -547,6 +547,10 @@
   <key id="Enable Visitor Log">启用访客日志</key>
   <key id="Enable Constraint Fix On Save">启用保存时约束修复</key>
   <key id="Enable Front Events">启用前台事件</key>
+  <key id="Enable Js Css Compression">启用 JS/CSS 压缩</key>
+  <key id="Enable Js CSS Browser Cache">启用JS/CSS 浏览器缓存</key>
+  <key id="Enable image Browser Cache">启用图片浏览器缓存</key>
+  <key id="number of expiration days, using 0 or -1 to use version control">图片过期天数，设置为0或-1时启用版本缓存</key>
   <key id="Enable Disk Sync">启用磁盘镜像</key>
   <key id="Enable Multilingual">启用多语言</key>
   <key id="Default Language">默认语言</key>
@@ -603,8 +607,6 @@
   <key id="Maximum value">最大值</key>
   <key id="Pattern">规则</key>
   <key id="Previous">上一步</key>
-  <key id="Data type">数据类型</key>
-  <key id="Error message">错误信息</key>
   <key id="Current page">当前页</key>
   <key id="Meta">Meta</key>
   <key id="HTTP-equiv">HTTP-equiv</key>
@@ -808,6 +810,7 @@
   <key id="Required">必填</key>
   <key id="String length">字符串长度</key>
   <key id="Regex">正则</key>
+  <key id="Data type">数据类型</key>
   <key id="Range">范围</key>
   <key id="Min">最小</key>
   <key id="Max">最大</key>
@@ -869,6 +872,7 @@
   <key id="TextBox">输入框</key>
   <key id="TextArea">输入区</key>
   <key id="MediaFile">图片文件</key>
+  <key id="Error message">错误信息</key>
   <key id="Error message when validation failed">验证失败时的错误信息</key>
   <key id="Categories">分类</key>
   <key id="Column settings">字段设置</key>
@@ -1152,6 +1156,7 @@
   <key id="Your certificate already exists">证书已经存在</key>
   <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">你的安全证书已经生成</key>
+  <key id="Table">表格</key>
   <key id="Unexpected error">未知错误</key>
   <key id="Target Url is Protected">目标地址被保护</key>
   <key id="user not found">没有找到用户</key>
@@ -1224,8 +1229,18 @@
   <key id="Username or email address already exists">用户名或是邮件已经存在</key>
   <key id="Payment Method not found">未找到支付方式</key>
   <key id="currency not supported by payment method">不支持该货币</key>
+  <key id="Adyen">Adyen</key>
   <key id="alipay">支付宝</key>
+  <key id="braintree">braintree</key>
+  <key id="KlarnaHpp">KlarnaHpp</key>
+  <key id="Mollie">Mollie</key>
+  <key id="ogone">ogone</key>
   <key id="Paypal">贝宝</key>
+  <key id="qualpay">qualpay</key>
+  <key id="Smart2Pay">Smart2Pay</key>
+  <key id="square">square</key>
+  <key id="Stripe">Stripe</key>
+  <key id="UnionPay">UnionPay</key>
   <key id="wechat">微信</key>
   <key id="HtmlBlock">HTML 代码块</key>
   <key id="You have reached the max loop limitation in your account">账户已达到最大循环限制</key>
@@ -1272,7 +1287,6 @@
   <key id="Name already exists">名字已存在</key>
   <key id="Default account can not add user">默认帐号不能添加用户</key>
   <key id="Page body and Url are required">页面内容与URL是必填的</key>
-  <key id="Table">表格</key>
   <key id="Hash validation failed">哈希验证失败</key>
   <key id="member">成员</key>
   <key id="ContentType">数据类型</key>

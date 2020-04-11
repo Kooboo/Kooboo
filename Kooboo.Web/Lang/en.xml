@@ -547,6 +547,10 @@
   <key id="Enable Visitor Log">Enable Visitor Log</key>
   <key id="Enable Constraint Fix On Save">Enable Constraint Fix On Save</key>
   <key id="Enable Front Events">Enable Front Events</key>
+  <key id="Enable Js Css Compression">Enable Js Css Compression</key>
+  <key id="Enable Js CSS Browser Cache">Enable Js CSS Browser Cache</key>
+  <key id="Enable image Browser Cache">Enable image Browser Cache</key>
+  <key id="number of expiration days, using 0 or -1 to use version control">number of expiration days, using 0 or -1 to use version control</key>
   <key id="Enable Disk Sync">Enable Disk Mirror</key>
   <key id="Enable Multilingual">Enable Multilingual</key>
   <key id="Default Language">Default Language</key>
@@ -603,8 +607,6 @@
   <key id="Maximum value">Maximum value</key>
   <key id="Pattern">Pattern</key>
   <key id="Previous">Previous</key>
-  <key id="Data type">Data type</key>
-  <key id="Error message">Error message</key>
   <key id="Current page">Current page</key>
   <key id="Meta">Meta</key>
   <key id="HTTP-equiv">HTTP-equiv</key>
@@ -808,6 +810,7 @@
   <key id="Required">Required</key>
   <key id="String length">String length</key>
   <key id="Regex">Regex</key>
+  <key id="Data type">Data type</key>
   <key id="Range">Range</key>
   <key id="Min">Min</key>
   <key id="Max">Max</key>
@@ -869,6 +872,7 @@
   <key id="TextBox">TextBox</key>
   <key id="TextArea">TextArea</key>
   <key id="MediaFile">MediaFile</key>
+  <key id="Error message">Error message</key>
   <key id="Error message when validation failed">Error message when validation failed</key>
   <key id="Categories">Categories</key>
   <key id="Column settings">Column settings</key>
@@ -1152,6 +1156,7 @@
   <key id="Your certificate already exists">Your certificate already exists</key>
   <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">Your ssl has been generated</key>
+  <key id="Table">Table</key>
   <key id="Unexpected error">Unexpected error</key>
   <key id="Target Url is Protected">Target Url is Protected</key>
   <key id="user not found">user not found</key>
@@ -1224,8 +1229,18 @@
   <key id="Username or email address already exists">Username or email address already exists</key>
   <key id="Payment Method not found">Payment Method not found</key>
   <key id="currency not supported by payment method">currency not supported by payment method</key>
+  <key id="Adyen">Adyen</key>
   <key id="alipay">alipay</key>
+  <key id="braintree">braintree</key>
+  <key id="KlarnaHpp">KlarnaHpp</key>
+  <key id="Mollie">Mollie</key>
+  <key id="ogone">ogone</key>
   <key id="Paypal">Paypal</key>
+  <key id="qualpay">qualpay</key>
+  <key id="Smart2Pay">Smart2Pay</key>
+  <key id="square">square</key>
+  <key id="Stripe">Stripe</key>
+  <key id="UnionPay">UnionPay</key>
   <key id="wechat">Wechat</key>
   <key id="HtmlBlock">HtmlBlock</key>
   <key id="You have reached the max loop limitation in your account">You have reached the max loop limitation in your account</key>
@@ -1272,7 +1287,6 @@
   <key id="Name already exists">Name already exists</key>
   <key id="Default account can not add user">Default account can not add user</key>
   <key id="Page body and Url are required">Page body and Url are required</key>
-  <key id="Table">Table</key>
   <key id="Hash validation failed">Hash validation failed</key>
   <key id="member">Member</key>
   <key id="ContentType">ContentType</key>

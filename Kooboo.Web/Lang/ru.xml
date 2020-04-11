@@ -547,6 +547,10 @@
   <key id="Enable Visitor Log">Включить журнал посетителей</key>
   <key id="Enable Constraint Fix On Save">Включить исправление ограничений при сохранении</key>
   <key id="Enable Front Events">Включение событий на переднем плане</key>
+  <key id="Enable Js Css Compression">Enable Js Css Compression</key>
+  <key id="Enable Js CSS Browser Cache">Enable Js CSS Browser Cache</key>
+  <key id="Enable image Browser Cache">Enable image Browser Cache</key>
+  <key id="number of expiration days, using 0 or -1 to use version control">number of expiration days, using 0 or -1 to use version control</key>
   <key id="Enable Disk Sync">Включение зеркального отображения диска</key>
   <key id="Enable Multilingual">Включение нескольких языков</key>
   <key id="Default Language">Язык по умолчанию</key>
@@ -603,8 +607,6 @@
   <key id="Maximum value">Максимальное значение</key>
   <key id="Pattern">Правила</key>
   <key id="Previous">Предыдущий шаг.</key>
-  <key id="Data type">Тип данных</key>
-  <key id="Error message">Сообщение об ошибке</key>
   <key id="Current page">Текущая страница</key>
   <key id="Meta">Мета</key>
   <key id="HTTP-equiv">HTTP-equiv</key>
@@ -808,6 +810,7 @@
   <key id="Required">Требуется</key>
   <key id="String length">Длина строки</key>
   <key id="Regex">Регулярные</key>
+  <key id="Data type">Тип данных</key>
   <key id="Range">Объем</key>
   <key id="Min">Минимум</key>
   <key id="Max">Макс</key>
@@ -869,6 +872,7 @@
   <key id="TextBox">Поле ввода</key>
   <key id="TextArea">Область ввода</key>
   <key id="MediaFile">Файлы изображений</key>
+  <key id="Error message">Сообщение об ошибке</key>
   <key id="Error message when validation failed">Сообщение об ошибке при сбое проверки</key>
   <key id="Categories">Классификация</key>
   <key id="Column settings">Настройка поля</key>
@@ -1152,6 +1156,7 @@
   <key id="Your certificate already exists">Сертификат уже существует</key>
   <key id="Third level domain are not supported">Third level domain are not supported</key>
   <key id="Your ssl has been generated">Your ssl has been generated</key>
+  <key id="Table">Формы</key>
   <key id="Unexpected error">Неизвестная ошибка</key>
   <key id="Target Url is Protected">Адрес назначения защищен.</key>
   <key id="user not found">Пользователь не найден</key>
@@ -1224,8 +1229,18 @@
   <key id="Username or email address already exists">Username or email address already exists</key>
   <key id="Payment Method not found">Payment Method not found</key>
   <key id="currency not supported by payment method">currency not supported by payment method</key>
+  <key id="Adyen">Adyen</key>
   <key id="alipay">alipay</key>
+  <key id="braintree">braintree</key>
+  <key id="KlarnaHpp">KlarnaHpp</key>
+  <key id="Mollie">Mollie</key>
+  <key id="ogone">ogone</key>
   <key id="Paypal">PayPal</key>
+  <key id="qualpay">qualpay</key>
+  <key id="Smart2Pay">Smart2Pay</key>
+  <key id="square">square</key>
+  <key id="Stripe">Stripe</key>
+  <key id="UnionPay">UnionPay</key>
   <key id="wechat">WeChat</key>
   <key id="HtmlBlock">Блок кода HTML</key>
   <key id="You have reached the max loop limitation in your account">Учетная запись достигла максимального лимита цикла</key>
@@ -1272,7 +1287,6 @@
   <key id="Name already exists">Имя уже существует</key>
   <key id="Default account can not add user">Учетная запись по умолчанию не может добавить пользователя</key>
   <key id="Page body and Url are required">Содержимое страницы и URL-адрес являются обязательными</key>
-  <key id="Table">Формы</key>
   <key id="Hash validation failed">Ошибка проверки хэша</key>
   <key id="member">Члены</key>
   <key id="ContentType">Тип данных</key>
