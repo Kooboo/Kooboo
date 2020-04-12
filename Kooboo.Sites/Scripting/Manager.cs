@@ -117,31 +117,24 @@ namespace Kooboo.Sites.Scripting
             }
             else
             {
-                var obj = EngingConfigObject(engine);
+                var obj = EngingConfigReturnObject(engine);
                 return obj;
             }
         }
 
-        private static object EngingConfigObject(Jint.Engine engine)
+        private static object EngingConfigReturnObject(Jint.Engine engine)
         {
             var returnitem = engine.GetCompletionValue();
             if (returnitem != null)
             {
                 var jsvalue = returnitem as JsValue;
                 if (jsvalue != null)
-                {
-                    if (jsvalue.IsString() || jsvalue.IsPrimitive())
-                    {
-                        return null;
-                    }
-                    else
+                { 
+                    if (jsvalue.Type == Types.Object)
                     {
                         var obj = jsvalue.ToObject();
-                        if (obj != null)
-                        {
-                            return obj;
-                        }
-                    }
+                        return obj;
+                    } 
                 }
             }
             return null;
@@ -423,11 +416,11 @@ namespace Kooboo.Sites.Scripting
                 var jsvalue = returnitem as JsValue;
                 if (jsvalue != null)
                 {
-                    if (jsvalue.IsString() || jsvalue.IsPrimitive())
+                    if (jsvalue.Type == Types.Null || jsvalue.Type == Types.None)
                     {
-                        return jsvalue.ToString();
+                        return null;
                     }
-                    else
+                    else if (jsvalue.Type == Types.Object)
                     {
                         var obj = jsvalue.ToObject();
                         if (obj != null)
@@ -435,6 +428,11 @@ namespace Kooboo.Sites.Scripting
                             return Lib.Helper.JsonHelper.Serialize(obj);
                         }
                     }
+                    else
+                    {
+                        return jsvalue.ToString();
+                    }
+
                 }
                 return returnitem.ToString();
             }

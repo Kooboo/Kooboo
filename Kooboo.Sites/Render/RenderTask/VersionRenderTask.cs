@@ -44,14 +44,10 @@ namespace Kooboo.Sites.Render.RenderTask
         public string Render(RenderContext context)
         {
             var version = GetVersion(context);
-            if (Url.Contains("?"))
-            {
-                return Url + "&version=" + version;
-            }
-            else
-            {
-                return Url + "?version=" + version;
-            }
+
+            Dictionary<string, string> para = new Dictionary<string, string>();
+            para.Add("version", version); 
+            return Lib.Helper.UrlHelper.AppendQueryString(Url, para);  
         }
 
         public string GetVersion(RenderContext context)
@@ -93,10 +89,10 @@ namespace Kooboo.Sites.Render.RenderTask
             }
 
             ISiteObject siteobject = null;
-            // get current version. 
+            // get current version
             if (this.ObjectId == default(Guid))
             {
-                var route = sitedb.Routes.GetByUrl(this.Url);
+                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(sitedb, this.Url);
                 if (route != null && route.objectId != default(Guid))
                 {
                     siteobject = repo.Get(route.objectId);
