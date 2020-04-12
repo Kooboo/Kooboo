@@ -118,8 +118,8 @@ namespace Kooboo.Sites.Scripting
             else
             {
                 var obj = EngingConfigObject(engine);
-                return obj; 
-            } 
+                return obj;
+            }
         }
 
         private static object EngingConfigObject(Jint.Engine engine)
@@ -418,7 +418,7 @@ namespace Kooboo.Sites.Scripting
         private static string EngingReturnValue(Jint.Engine engine)
         {
             var returnitem = engine.GetCompletionValue();
-            if (returnitem != null)
+            if (returnitem != null && !returnitem.IsNull())
             {
                 var jsvalue = returnitem as JsValue;
                 if (jsvalue != null)
