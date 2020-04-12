@@ -111,10 +111,14 @@ namespace Kooboo.Sites.Routing
             {
                 Path path = FindPath(RelativeUrl, EnsureObjectId);
 
-                if (EnsureObjectId && !this.HasObject(path))
+                if (path !=null && !this.HasObject(path))
                 {
-                    path = FindShortestWildCardPath(path);
-                } 
+                    var sub = FindShortestWildCardPath(path);
+                    if (sub != null && this.HasObject(sub))
+                    {
+                        path = sub;
+                    }
+                }
 
                 if (path == null)
                 {
@@ -127,13 +131,21 @@ namespace Kooboo.Sites.Routing
                         {
                             return default(Guid);
                         }
+                        else if (!this.HasObject(path))
+                        {
+                            var sub = FindShortestWildCardPath(path);
+                            if (sub != null && this.HasObject(sub))
+                            {
+                                path = sub;
+                            }
+                        }
                     }
                     else
                     {
                         return default(Guid);
                     }
                 }
-                 
+
 
                 if (path == null)
                 {
@@ -146,7 +158,7 @@ namespace Kooboo.Sites.Routing
                 }
             }
         }
-         
+
 
         private void RemoveEmptySlot(Path currentPath)
         {
@@ -167,9 +179,9 @@ namespace Kooboo.Sites.Routing
                 {
                     if (item == null)
                     {
-                        continue; 
-                    } 
-                    var key = item.ToLower();  
+                        continue;
+                    }
+                    var key = item.ToLower();
                     Path child = currentslot.Children.Values.ToList().Find(o => o.segment.ToLower() == key);
                     if (child == null)
                     {
@@ -266,7 +278,7 @@ namespace Kooboo.Sites.Routing
                         if (!currentpath.Children.Any())
                         {
                             return currentpath;
-                        } 
+                        }
                     }
 
                     //if (currentpath.Children == null || !currentpath.Children.Any())
@@ -285,7 +297,7 @@ namespace Kooboo.Sites.Routing
             return currentpath;
 
         }
-         
+
         private Path _findPath(Path parent, string currentsegment, bool EnsureObjectId = false)
         {
             if (parent.Children.ContainsKey(currentsegment))
@@ -307,7 +319,7 @@ namespace Kooboo.Sites.Routing
 
             if (parent.Children.ContainsKey(this.wildcard))
             {
-                if (!currentsegment.StartsWith("?"))
+                if (!currentsegment.Contains("?"))
                 {
                     var item = parent.Children[this.wildcard];
                     if (EnsureObjectId)

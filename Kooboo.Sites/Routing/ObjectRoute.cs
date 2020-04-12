@@ -202,11 +202,8 @@ namespace Kooboo.Sites.Routing
             if (routeid != default(Guid))
             {
                 return sitedb.Routes.Get(routeid);
-            }
-
-            // find system route...  
-            return GetSystemRoute(relativeurl);
-            // return null;
+            } 
+            return GetSystemRoute(relativeurl); 
         }
 
         // if other routes does not match... find the system route. 
