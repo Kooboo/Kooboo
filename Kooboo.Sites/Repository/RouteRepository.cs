@@ -5,11 +5,11 @@ using Kooboo.IndexedDB;
 using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Sites.Repository
 {
     public class RouteRepository : SiteRepositoryBase<Kooboo.Sites.Routing.Route>
-    { 
+    {
 
         public override ObjectStoreParameters StoreParameters
         {
@@ -22,17 +22,17 @@ namespace Kooboo.Sites.Repository
                 return paras;
             }
         }
-         
+
         public void AddOrUpdate(string relativeUrl, byte ConstType, Guid objectId, Guid UserId = default(Guid))
         {
             Route newroute = new Route();
             newroute.DestinationConstType = ConstType;
             newroute.objectId = objectId;
-            newroute.Name = relativeUrl; 
+            newroute.Name = relativeUrl;
             AddOrUpdate(newroute, UserId);
         }
 
-        public void AddOrUpdate(string relativeUrl,  Models.SiteObject siteobject, Guid UserId = default(Guid))
+        public void AddOrUpdate(string relativeUrl, Models.SiteObject siteobject, Guid UserId = default(Guid))
         {
             Route newroute = new Route();
             newroute.DestinationConstType = siteobject.ConstType;
@@ -64,40 +64,40 @@ namespace Kooboo.Sites.Repository
 
         public void appendRoute(Route route, Guid UserId)
         {
-            base.AddOrUpdate(route, UserId); 
+            base.AddOrUpdate(route, UserId);
         }
-          
+
         public void EnsureExists(string relativeUrl, byte ConstType)
-        { 
-            var route = _getbyurl(relativeUrl); 
+        {
+            var route = _getbyurl(relativeUrl);
 
             if (route == null)
             {
-                lock(_locker)
+                lock (_locker)
                 {
-                    route = _getbyurl(relativeUrl); 
+                    route = _getbyurl(relativeUrl);
                     if (route == null)
                     {
                         AddOrUpdate(relativeUrl, ConstType, default(Guid), default(Guid));
                     }
                 }
-            }  
+            }
         }
 
         private Route _getbyurl(string url)
-        { 
+        {
             Route route = GetByUrl(url);
             if (route == null)
             {
-                route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(this.SiteDb, url); 
+                route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(this.SiteDb, url);
             }
-            return route; 
+            return route;
         }
 
-          
+
         public List<Route> GetByType(byte ConstType)
         {
-            return this.Query.Where(o => o.DestinationConstType == ConstType).SelectAll();  
+            return this.Query.Where(o => o.DestinationConstType == ConstType).SelectAll();
         }
 
         /// <summary>
@@ -108,11 +108,11 @@ namespace Kooboo.Sites.Repository
         public void ChangeRoute(string OldRelativeUrl, string NewRelativeUrl)
         {
             ///TODO: this is a rename, should change 
-            var oldroute = GetByUrl(OldRelativeUrl); 
-            
+            var oldroute = GetByUrl(OldRelativeUrl);
+
             if (oldroute != null)
             {
-                Route newroute = new Route(); 
+                Route newroute = new Route();
                 newroute.DestinationConstType = oldroute.DestinationConstType;
                 newroute.objectId = oldroute.objectId;
                 newroute.Name = NewRelativeUrl;
@@ -120,18 +120,18 @@ namespace Kooboo.Sites.Repository
                 AddOrUpdate(newroute);
                 Delete(oldroute.Id);
 
-                Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, OldRelativeUrl, newroute.Name); 
+                Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, OldRelativeUrl, newroute.Name);
 
             }
 
         }
 
         public override Route GetByUrl(string relativeUrl)
-        { 
+        {
             return Get(Data.IDGenerator.GetRouteId(relativeUrl));
         }
 
-        public Route GetByObjectId(Guid objectId, byte DestinationConstType=0)
+        public Route GetByObjectId(Guid objectId, byte DestinationConstType = 0)
         {
             if (DestinationConstType == 0)
             {
@@ -140,7 +140,7 @@ namespace Kooboo.Sites.Repository
             else
             {
                 return Store.Where(o => o.objectId == objectId && o.DestinationConstType == DestinationConstType).FirstOrDefault();
-            } 
+            }
         }
 
         public void Delete(string RelativeUrl)
@@ -154,83 +154,88 @@ namespace Kooboo.Sites.Repository
 
         public override void Delete(Guid id, Guid UserId)
         {
-            lock(_locker)
+            lock (_locker)
             {
                 base.Delete(id, UserId);
                 DeleteAlias(id, UserId);
             }
-  
+
         }
 
         public override void Delete(Guid id)
         {
-            this.Delete(id, default(Guid)); 
+            this.Delete(id, default(Guid));
         }
 
         internal void DeleteAlias(Guid routeid, Guid Userid)
         {
-            var list = Store.Where(o => o.objectId == routeid && o.DestinationConstType == ConstObjectType.Route).SelectAll(); 
+            var list = Store.Where(o => o.objectId == routeid && o.DestinationConstType == ConstObjectType.Route).SelectAll();
             foreach (var item in list)
-            { 
-                this.Delete(item.Id, Userid); 
+            {
+                this.Delete(item.Id, Userid);
             }
             // delete resource group.. 
-            var relations = this.SiteDb.Relations.GetReferredBy(typeof(Route), routeid, ConstObjectType.ResourceGroup); 
-            if (relations!=null && relations.Count>0)
+            var relations = this.SiteDb.Relations.GetReferredBy(typeof(Route), routeid, ConstObjectType.ResourceGroup);
+            if (relations != null && relations.Count > 0)
             {
                 foreach (var item in relations)
                 {
-                    var group = this.SiteDb.ResourceGroups.Get(item.objectXId); 
-                    if (group !=null && group.Children !=null &&  group.Children.ContainsKey(routeid)) 
+                    var group = this.SiteDb.ResourceGroups.Get(item.objectXId);
+                    if (group != null && group.Children != null && group.Children.ContainsKey(routeid))
                     {
                         group.Children.Remove(routeid);
-                        SiteDb.ResourceGroups.AddOrUpdate(group); 
+                        SiteDb.ResourceGroups.AddOrUpdate(group);
                     }
                 }
             }
         }
 
         public string GetObjectPrimaryRelativeUrl(Guid objectId)
-        { 
+        {
+            if (objectId == default(Guid))
+            {
+                return string.Empty;
+            }
+
             var route = this.Store.Where(o => o.objectId == objectId).FirstOrDefault();
 
             if (route != null && !string.IsNullOrEmpty(route.Name))
             {
                 return route.Name;
-            } 
+            }
             return string.Empty;
         }
-        
+
 
         public bool Validate(string RouteName, Guid ObjectId)
-        { 
+        {
             if (!RouteName.StartsWith("/"))
             {
-                RouteName = "/" + RouteName; 
+                RouteName = "/" + RouteName;
             }
 
-            var route = this.GetByUrl(RouteName); 
+            var route = this.GetByUrl(RouteName);
             if (route == null)
             {
-                return true; 
+                return true;
             }
             else
             {
-               if (route.objectId == default(Guid))
+                if (route.objectId == default(Guid))
                 {
-                    return true; 
+                    return true;
                 }
-               else
+                else
                 {
                     if (route.objectId == ObjectId)
                     {
-                        return true; 
+                        return true;
                     }
                     else
                     {
-                        return false; 
-                    } 
-                }  
+                        return false;
+                    }
+                }
             }
 
         }

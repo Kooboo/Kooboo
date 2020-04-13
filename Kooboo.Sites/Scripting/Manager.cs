@@ -117,24 +117,24 @@ namespace Kooboo.Sites.Scripting
             }
             else
             {
-                var obj = EngingConfigReturnObject(engine);
+                var obj = EngineConfigReturnObject(engine);
                 return obj;
             }
         }
 
-        private static object EngingConfigReturnObject(Jint.Engine engine)
+        private static object EngineConfigReturnObject(Jint.Engine engine)
         {
             var returnitem = engine.GetCompletionValue();
             if (returnitem != null && !returnitem.IsNull())
             {
                 var jsvalue = returnitem as JsValue;
                 if (jsvalue != null)
-                { 
+                {
                     if (jsvalue.Type == Types.Object)
                     {
                         var obj = jsvalue.ToObject();
                         return obj;
-                    } 
+                    }
                 }
             }
             return null;
@@ -393,22 +393,21 @@ namespace Kooboo.Sites.Scripting
 
         private static string ReturnValue(RenderContext context, Jint.Engine engine)
         {
-            string writeout = EngingReturnValue(engine);
+            // string writeout = EngineReturnValue(engine);
 
             string output = context.GetItem<string>(Constants.OutputName);
             if (!string.IsNullOrWhiteSpace(output))
             {
                 context.SetItem<string>(null, Constants.OutputName);
-            }
 
-            if (output != null)
-            {
-                writeout += output;
-            }
-            return writeout;
+                return output; 
+            } 
+    
+           return null;
+         
         }
 
-        private static string EngingReturnValue(Jint.Engine engine)
+        private static string EngineReturnValue(Jint.Engine engine)
         {
             var returnitem = engine.GetCompletionValue();
             if (returnitem != null && !returnitem.IsNull())
@@ -431,8 +430,8 @@ namespace Kooboo.Sites.Scripting
                     else
                     {
                         return jsvalue.ToString();
-                    } 
-                } 
+                    }
+                }
             }
             return null;
         }

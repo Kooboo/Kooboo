@@ -15,7 +15,7 @@ namespace Kooboo.Sites.HtmlForm
     {
         public string Name
         {
-            get { return "SubmitToPage"; }
+            get { return "SubmitToExternal"; }
         }
 
         public string CustomActionUrl(RenderContext context, Dictionary<string, string> settings)

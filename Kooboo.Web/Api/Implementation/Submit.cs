@@ -46,7 +46,7 @@ namespace Kooboo.Web.Api.Implementation
                 var submitter = Sites.HtmlForm.FormManager.GetSubmitter(formsetting.FormSubmitter);
                 submitter.Submit(call.Context, formsetting.FormId, formsetting.Setting);
 
-                if (call.Context.Response.End)
+                if (call.Context.Response.End || call.Context.Response.StatusCode >= 300)
                 {
                     return new NoResponse(); 
                 }

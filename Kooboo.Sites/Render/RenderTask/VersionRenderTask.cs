@@ -32,8 +32,6 @@ namespace Kooboo.Sites.Render.RenderTask
 
         public string Url { get; set; }
 
-        public Guid ObjectId { get; set; }
-
         public bool ClearBefore => false;
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
@@ -45,9 +43,32 @@ namespace Kooboo.Sites.Render.RenderTask
         {
             var version = GetVersion(context);
 
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("version", version); 
-            return Lib.Helper.UrlHelper.AppendQueryString(Url, para);  
+            if (version == null)
+            {
+                return this.Url;
+            }
+
+            if (this.Url == null)
+            {
+                return null;
+            }
+
+            string result = null;
+
+            if (this.Url.Contains("?"))
+            {
+                result = this.Url + "&version=" + version;
+            }
+            else
+            {
+                result = this.Url + "?version=" + version;
+            }
+
+            return result;
+
+            //Dictionary<string, string> para = new Dictionary<string, string>();
+            //para.Add("version", version);
+            //return Lib.Helper.UrlHelper.AppendQueryString(Url, para);
         }
 
         public string GetVersion(RenderContext context)
@@ -58,15 +79,6 @@ namespace Kooboo.Sites.Render.RenderTask
             }
 
             var sitedb = context.WebSite.SiteDb();
-
-            // get the store.lastkey is faster because it is cached. 
-            if (this.LastMaxVersion > 0 && sitedb.Log.Store.LastKey == this.LastMaxVersion)
-            {
-                if (this.LastObjectVersion >= 0)
-                {
-                    return this.LastObjectVersion.ToString();
-                }
-            }
 
             IRepository repo = null;
 
@@ -90,30 +102,20 @@ namespace Kooboo.Sites.Render.RenderTask
 
             ISiteObject siteobject = null;
             // get current version
-            if (this.ObjectId == default(Guid))
+            var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(sitedb, this.Url);
+            if (route != null && route.objectId != default(Guid))
             {
-                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(sitedb, this.Url);
-                if (route != null && route.objectId != default(Guid))
+                siteobject = repo.Get(route.objectId);
+
+                if (siteobject != null)
                 {
-                    siteobject = repo.Get(route.objectId);
+                    var core = siteobject as ICoreObject;
 
-                    if (siteobject != null)
+                    if (core != null)
                     {
-                        var core = siteobject as ICoreObject;
-
-                        if (core != null)
-                        {
-                            this.ObjectId = siteobject.Id; 
-                            this.LastObjectVersion = GetVersion(sitedb, core); 
-                            this.LastMaxVersion = sitedb.Log.Store.LastKey; 
-                            return this.LastObjectVersion.ToString();
-                        }
-                    } 
+                        return GetVersion(sitedb, core).ToString();
+                    }
                 }
-            }
-            else
-            {
-                siteobject = repo.Get(this.ObjectId);
             }
 
             if (siteobject != null)
@@ -121,24 +123,28 @@ namespace Kooboo.Sites.Render.RenderTask
                 var core = siteobject as ICoreObject;
                 if (core != null)
                 {
-                    this.ObjectId = siteobject.Id;
-                    this.LastObjectVersion = GetVersion(sitedb, core);
-                    this.LastMaxVersion = sitedb.Log.Store.LastKey;
-                    return this.LastObjectVersion.ToString();
+                    return GetVersion(sitedb, core).ToString();
                 }
             }
 
-            return Data.AppSettings.Version.ToString();
+            return null;
         }
-         
+
         // get object version. when it is group. it is complicated!
         public long GetVersion(SiteDb sitedb, ICoreObject coreobject)
         {
             long version = 0;
 
+            if (coreobject == null)
+            {
+                return 0;
+            }
+
             if (this.IsGroup)
             {
                 var group = coreobject as ResourceGroup;
+
+                version += group.Version;
 
                 IRepository repo = null;
                 if (group.Type == ConstObjectType.Style)
@@ -176,9 +182,6 @@ namespace Kooboo.Sites.Render.RenderTask
             return version;
         }
 
-        public long LastMaxVersion { get; set; }
-
-        public long LastObjectVersion { get; set; } = -1;
     }
 
 }

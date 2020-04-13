@@ -28,12 +28,7 @@ k.mail.send(msg);")]
         {
             var maildata = PrepareData(value);
             if (maildata != null)
-            {
-                if (Kooboo.Data.AppSettings.IsOnlineServer && !isLocalFromAddress(maildata))
-                {
-                    throw new Exception("From address not local");
-                }
-
+            { 
                 if (this.context.WebSite == null)
                 {
                     throw new Exception("invalid context");
