@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Extensions;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.ScriptDebugger;
 using System;
@@ -24,23 +25,23 @@ namespace Kooboo.Web.Api.Implementation
             if (CodeId != default(Guid))
             {
                 var code = call.WebSite.SiteDb().Code.Get(CodeId);
-                 
+
                 if (code != null && !string.IsNullOrEmpty(code.Body))
-                { 
+                {
                     var sesssion = Kooboo.Sites.ScriptDebugger.SessionManager.CreateSession(call.Context, CodeId);
 
                     return code.Body.Split("\n".ToCharArray()).ToList();
-                } 
-            } 
-            return null; 
+                }
+            }
+            return null;
         }
 
         public void StopSession(Guid CodeId, ApiCall call)
         {
             if (CodeId != default(Guid))
             {
-                Kooboo.Sites.ScriptDebugger.SessionManager.RemoveSession(call.Context, CodeId, call.Context.Request.IP); 
-            } 
+                Kooboo.Sites.ScriptDebugger.SessionManager.RemoveSession(call.Context, CodeId, call.Context.Request.IP);
+            }
         }
 
         public void SetBreakPoints(Guid CodeId, List<int> Points, ApiCall call)
@@ -210,7 +211,8 @@ namespace Kooboo.Web.Api.Implementation
                         result.Success = true;
                         if (value == null)
                         {
-                            result.Model = "undefined";
+                            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                            result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
                         }
                         else
                         {
@@ -245,6 +247,7 @@ namespace Kooboo.Web.Api.Implementation
                     try
                     {
                         session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                        result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
                         result.Success = true;
                     }
                     catch (Exception ex)
@@ -281,6 +284,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             return new Sites.ScriptDebugger.DebugVariables();
         }
-        
+
     }
 }

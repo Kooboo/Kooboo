@@ -76,7 +76,7 @@ namespace Jint.Runtime.Debugger
             {
                 return;
             }
-            
+
             BreakPoint breakpoint = _engine.BreakPoints.FirstOrDefault(breakPoint => BpTest(statement, breakPoint));
             bool breakpointFound = false;
 
@@ -101,11 +101,12 @@ namespace Jint.Runtime.Debugger
                 }
             }
 
-            if (old == StepMode.Into && _stepMode == StepMode.Out)
+            //add StepMode.None to fix line 22 changed on this document
+            if ((old == StepMode.Into || old == StepMode.None) && _stepMode == StepMode.Out)
             {
                 _callBackStepOverDepth = _debugCallStack.Count;
             }
-            else if (old == StepMode.Into && _stepMode == StepMode.Over)
+            else if ((old == StepMode.Into || old == StepMode.None) && _stepMode == StepMode.Over)
             {
                 var expressionStatement = statement as ExpressionStatement;
                 if (expressionStatement != null && expressionStatement.Expression is CallExpression)
@@ -127,7 +128,7 @@ namespace Jint.Runtime.Debugger
             //afterStart = (breakpoint.Line == statement.Location.Start.Line &&
             //                 breakpoint.Char >= statement.Location.Start.Column);
             //our breakpoint column always start with zero,so it don't need to compare the start column
-            afterStart = (breakpoint.Line == statement.Location.Start.Line );
+            afterStart = (breakpoint.Line == statement.Location.Start.Line);
 
             if (!afterStart)
             {
