@@ -211,7 +211,7 @@ namespace Kooboo.Web.Api.Implementation
                         result.Success = true;
                         if (value == null)
                         {
-                            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                            ExecuteRepl(JsStatement, session);
                             result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
                         }
                         else
@@ -230,7 +230,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     try
                     {
-                        session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                        ExecuteRepl(JsStatement, session);
                         result.Success = true;
                         var value = Lib.Helper.JintHelper.GetAssignmentValue(JsStatement);
                         result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
@@ -246,7 +246,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     try
                     {
-                        session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+                        ExecuteRepl(JsStatement, session);
                         result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
                         result.Success = true;
                     }
@@ -271,6 +271,13 @@ namespace Kooboo.Web.Api.Implementation
 
             return result;
 
+        }
+
+        private static void ExecuteRepl(string JsStatement, DebugSession session)
+        {
+            var old = session.JsEngine.SetDebugHandlerMode(Jint.Runtime.Debugger.StepMode.None);
+            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+            session.JsEngine.SetDebugHandlerMode(old);
         }
 
         // call to get the update variables after exe code. 

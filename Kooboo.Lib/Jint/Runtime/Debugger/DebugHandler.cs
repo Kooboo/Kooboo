@@ -24,6 +24,13 @@ namespace Jint.Runtime.Debugger
             _stepMode = StepMode.None;
         }
 
+        public StepMode SetMode(StepMode stepMode)
+        {
+            var old = _stepMode;
+            _stepMode = stepMode;
+            return old;
+        }
+
         internal void PopDebugCallStack()
         {
             if (_debugCallStack.Count > 0)

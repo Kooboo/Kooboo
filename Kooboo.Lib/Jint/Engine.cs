@@ -201,6 +201,11 @@ namespace Jint
         internal DebugHandler DebugHandler { get; private set; }
         public List<BreakPoint> BreakPoints { get; private set; }
 
+        public StepMode SetDebugHandlerMode(StepMode stepMode)
+        {
+            return DebugHandler.SetMode(stepMode);
+        }
+
         internal StepMode? InvokeStepEvent(DebugInformation info)
         {
             if (Step != null)
