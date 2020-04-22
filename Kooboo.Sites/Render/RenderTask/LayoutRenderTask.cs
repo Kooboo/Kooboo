@@ -85,10 +85,28 @@ namespace Kooboo.Sites.Render
 
         public string Render(RenderContext context)
         {
-            RenderComponent(context);
             var plans = RenderPlanManager.GetLayoutPlan(this.LayoutName, context);
+            PreRenderLayout(context, plans); 
+            RenderComponent(context); 
             var result = RenderHelper.Render(plans, context);
             return result; 
+        }
+
+        private void PreRenderLayout(RenderContext context, List<IRenderTask> layoutplan)
+        {
+            for (int i = 0; i < layoutplan.Count; i++)
+            {
+                var item = layoutplan[i]; 
+                if (item is HeaderRenderTask || item is PlaceHolderRenderTask)
+                {
+                    //do nothing.
+                }
+                else
+                {
+                    var result = item.Render(context);
+                    layoutplan[i] = new ContentRenderTask(result);
+                }
+            } 
         }
 
         private void RenderComponent(RenderContext context)
