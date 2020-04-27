@@ -2,10 +2,10 @@ function monacoDatabaseQueryHint(monaco) {
   var _dbs = ["database", "mysql", "sqlserver", "sqlite", "mongo"];
   var _hintMethods = [
     ".find('",
-    ".findAll('",
+    ".findall('",
     ".query('",
-    ".orderBy('",
-    ".orderByDescending('",
+    ".orderby('",
+    ".orderbydescending('",
     ".where('",
   ];
 
