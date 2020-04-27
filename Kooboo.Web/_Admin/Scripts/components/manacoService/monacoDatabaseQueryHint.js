@@ -1,10 +1,19 @@
 function monacoDatabaseQueryHint(monaco) {
   var _dbs = ["database", "mysql", "sqlserver", "sqlite"];
+  var _hintMethods = [
+    ".find('",
+    ".findAll('",
+    ".query('",
+    ".orderBy('",
+    ".orderByDescending('",
+    ".where('",
+  ];
+
   var _dbTables = {};
   var _table_cols = {};
 
   monaco.languages.registerCompletionItemProvider("javascript", {
-    triggerCharacters: ['"', "'", " ", "(","."],
+    triggerCharacters: ['"', "'", " ", "(", "."],
     provideCompletionItems: function (model, position) {
       var str = model.getValueInRange({
         startLineNumber: position.lineNumber,
@@ -12,7 +21,6 @@ function monacoDatabaseQueryHint(monaco) {
         endLineNumber: position.lineNumber,
         endColumn: position.column,
       });
-
 
       str = str.replace(/\s+/g, "").toLowerCase();
 
@@ -68,25 +76,31 @@ function monacoDatabaseQueryHint(monaco) {
           : [];
       }
 
-      var endsWithCol = _table_cols[tableKey].find(function (f) {
-        return str.endsWith(f.toLowerCase());
-      });
+      if (
+        _hintMethods.find(function (f) {
+          return str.indexOf(f) > -1;
+        })
+      ) {
+        var endsWithCol = _table_cols[tableKey].find(function (f) {
+          return str.endsWith(f.toLowerCase());
+        });
 
-      if (endsWithCol) {
-        return getResult([
-          ">",
-          ">=",
-          "<",
-          "<=",
-          "=",
-          "==",
-          "!=",
-          "contains",
-          "startwith",
-        ]);
+        if (endsWithCol) {
+          return getResult([
+            ">",
+            ">=",
+            "<",
+            "<=",
+            "=",
+            "==",
+            "!=",
+            "contains",
+            "startwith",
+          ]);
+        }
+
+        return getResult(_table_cols[tableKey]);
       }
-
-      return getResult(_table_cols[tableKey]);
     },
   });
 
