@@ -1,5 +1,6 @@
 function monacoDatabaseQueryHint(monaco) {
   var _dbs = ["database", "mysql", "sqlserver", "sqlite", "mongo"];
+
   var _hintMethods = [
     ".find('",
     ".findall('",
@@ -7,6 +8,18 @@ function monacoDatabaseQueryHint(monaco) {
     ".orderby('",
     ".orderbydescending('",
     ".where('",
+  ];
+
+  var _comparers = [
+    ">",
+    ">=",
+    "<",
+    "<=",
+    "=",
+    "==",
+    "!=",
+    "contains",
+    "startwith",
   ];
 
   var _noHintMehods = [".skip(", ".take(", ".count("];
@@ -83,41 +96,28 @@ function monacoDatabaseQueryHint(monaco) {
               });
           }
         }).then(function () {
-          if (
-            _hintMethods.find(function (f) {
-              return str.indexOf(f) > -1;
-            }) &&
-            !_noHintMehods.find(function (f) {
-              return str.indexOf(f) > -1;
-            })
-          ) {
+          if (canHintCol(str)) {
             var endsWithCol = _table_cols[tableKey].find(function (f) {
               return str.endsWith(f.toLowerCase());
             });
 
-            if (endsWithCol) {
-              return rs(
-                getResult([
-                  ">",
-                  ">=",
-                  "<",
-                  "<=",
-                  "=",
-                  "==",
-                  "!=",
-                  "contains",
-                  "startwith",
-                ])
-              );
-            } else {
-              return rs(getResult(_table_cols[tableKey]));
-            }
-          }
-
-          rj();
+            if (endsWithCol) rs(getResult(_comparers));
+            else rs(getResult(_table_cols[tableKey]));
+          } else rj();
         });
       });
     });
+  }
+
+  function canHintCol(str) {
+    return (
+      _hintMethods.find(function (f) {
+        return str.indexOf(f) > -1;
+      }) &&
+      !_noHintMehods.find(function (f) {
+        return str.indexOf(f) > -1;
+      })
+    );
   }
 
   function getStr(model, position) {
