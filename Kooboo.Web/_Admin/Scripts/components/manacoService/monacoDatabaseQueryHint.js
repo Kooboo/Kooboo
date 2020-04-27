@@ -1,5 +1,5 @@
 function monacoDatabaseQueryHint(monaco) {
-  var _dbs = ["database", "mysql", "sqlserver", "sqlite"];
+  var _dbs = ["database", "mysql", "sqlserver", "sqlite", "mongo"];
   var _hintMethods = [
     ".find('",
     ".findAll('",
@@ -28,9 +28,9 @@ function monacoDatabaseQueryHint(monaco) {
       if (!dbName) return;
 
       if (!_dbTables[dbName]) {
-        var tables = new Kooboo.HttpClientModel(dbName).executeGet(
-          "tables",
-          null,
+        var tables = new Kooboo.HttpClientModel("kscript").executeGet(
+          "gettables",
+          { database: dbName },
           true,
           true,
           true
@@ -56,21 +56,18 @@ function monacoDatabaseQueryHint(monaco) {
       var tableKey = dbName + "_" + table;
 
       if (!_table_cols[tableKey]) {
-        var cols = new Kooboo.HttpClientModel(dbName).executeGet(
-          "columns",
+        _table_cols[tableKey] = new Kooboo.HttpClientModel(
+          "kscript"
+        ).executeGet(
+          "getcolumns",
           {
+            database: dbName,
             table: table,
           },
           true,
           true,
           true
         ).responseJSON.model;
-
-        _table_cols[tableKey] = cols
-          ? cols.map(function (f) {
-              return f.name;
-            })
-          : [];
       }
 
       if (
