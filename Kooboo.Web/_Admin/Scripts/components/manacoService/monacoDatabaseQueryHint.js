@@ -40,7 +40,7 @@ function monacoDatabaseQueryHint(monaco) {
         "gettables",
         { database: dbName },
         true,
-        false,
+        true,
         true
       ).responseJSON.model;
 
