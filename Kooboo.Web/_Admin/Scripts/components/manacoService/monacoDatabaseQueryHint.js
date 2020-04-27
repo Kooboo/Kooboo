@@ -4,7 +4,7 @@ function monacoDatabaseQueryHint(monaco) {
   var _table_cols = {};
 
   monaco.languages.registerCompletionItemProvider("javascript", {
-    triggerCharacters: ['"', "'", " ", "(", ")", "."],
+    triggerCharacters: ['"', "'", " ", "(","."],
     provideCompletionItems: function (model, position) {
       var str = model.getValueInRange({
         startLineNumber: position.lineNumber,
