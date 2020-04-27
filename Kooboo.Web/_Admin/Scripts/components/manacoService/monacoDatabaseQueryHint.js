@@ -9,18 +9,15 @@ function monacoDatabaseQueryHint(monaco) {
     ".where('",
   ];
 
+  var _noHintMehods = [".skip(", ".take(", ".count("];
+
   var _dbTables = {};
   var _table_cols = {};
 
   monaco.languages.registerCompletionItemProvider("javascript", {
     triggerCharacters: ['"', "'", " ", "(", "."],
     provideCompletionItems: function (model, position) {
-      var str = model.getValueInRange({
-        startLineNumber: position.lineNumber,
-        startColumn: 1,
-        endLineNumber: position.lineNumber,
-        endColumn: position.column,
-      });
+      var str = getStr(model, position);
 
       str = str.replace(/\s+/g, "").toLowerCase();
 
@@ -79,6 +76,9 @@ function monacoDatabaseQueryHint(monaco) {
       if (
         _hintMethods.find(function (f) {
           return str.indexOf(f) > -1;
+        }) &&
+        !_noHintMehods.find(function (f) {
+          return str.indexOf(f) > -1;
         })
       ) {
         var endsWithCol = _table_cols[tableKey].find(function (f) {
@@ -103,6 +103,38 @@ function monacoDatabaseQueryHint(monaco) {
       }
     },
   });
+
+  function getStr(model, position) {
+    var startLine = position.lineNumber;
+    while (startLine > 0) {
+      var firstChar = model.getValueInRange({
+        startLineNumber: startLine,
+        startColumn: model.getLineFirstNonWhitespaceColumn(startLine),
+        endLineNumber: startLine,
+        endColumn: model.getLineFirstNonWhitespaceColumn(startLine) + 1,
+      });
+
+      var preLineLastChat = model.getValueInRange({
+        startLineNumber: startLine - 1,
+        startColumn: model.getLineLastNonWhitespaceColumn(startLine),
+        endLineNumber: startLine - 1,
+        endColumn: model.getLineLastNonWhitespaceColumn(startLine) + 1,
+      });
+
+      if (firstChar == "." || preLineLastChat == ".") {
+        startLine--;
+      } else {
+        break;
+      }
+    }
+
+    return model.getValueInRange({
+      startLineNumber: startLine,
+      startColumn: 1,
+      endLineNumber: position.lineNumber,
+      endColumn: position.column,
+    });
+  }
 
   function getResult(arr) {
     return {
