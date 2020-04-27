@@ -35,75 +35,89 @@ function monacoDatabaseQueryHint(monaco) {
 
     if (!dbName) return;
 
-    if (!_dbTables[dbName]) {
-      var tables = new Kooboo.HttpClientModel("kscript").executeGet(
-        "gettables",
-        { database: dbName },
-        true,
-        true,
-        true
-      ).responseJSON.model;
+    return new Promise(function (rs, rj) {
+      new Promise(function (tableRs) {
+        if (_dbTables[dbName]) tableRs();
+        else {
+          new Kooboo.HttpClientModel("kscript")
+            .executeGet("gettables", { database: dbName }, true, false, true)
+            .then(function (rsp) {
+              _dbTables[dbName] = rsp.model ? rsp.model : [];
+              tableRs();
+            });
+        }
+      }).then(function () {
+        if (str.endsWith("k." + dbName + ".")) {
+          rs(getResult(_dbTables[dbName]));
+        }
 
-      _dbTables[dbName] = tables ? tables : [];
-    }
+        str = str.replace(/\"+/g, "'");
 
-    if (str.endsWith("k." + dbName + ".")) {
-      return getResult(_dbTables[dbName]);
-    }
+        var table = _dbTables[dbName].find(function (f) {
+          return (
+            str.indexOf("k." + dbName + "." + f) > -1 ||
+            str.indexOf("k." + dbName + ".gettable('" + f + "')") > -1
+          );
+        });
 
-    str = str.replace(/\"+/g, "'");
+        if (!table) return rs();
+        var tableKey = dbName + "_" + table;
 
-    var table = _dbTables[dbName].find(function (f) {
-      return (
-        str.indexOf("k." + dbName + "." + f) > -1 ||
-        str.indexOf("k." + dbName + ".gettable('" + f + "')") > -1
-      );
-    });
+        new Promise(function (colRs) {
+          if (_table_cols[tableKey]) colRs();
+          else {
+            new Kooboo.HttpClientModel("kscript")
+              .executeGet(
+                "getcolumns",
+                {
+                  database: dbName,
+                  table: table,
+                },
+                true,
+                false,
+                true
+              )
+              .then(function (rsp) {
+                _table_cols[tableKey] = rsp.model;
+                colRs();
+              });
+          }
+        }).then(function () {
+          if (
+            _hintMethods.find(function (f) {
+              return str.indexOf(f) > -1;
+            }) &&
+            !_noHintMehods.find(function (f) {
+              return str.indexOf(f) > -1;
+            })
+          ) {
+            var endsWithCol = _table_cols[tableKey].find(function (f) {
+              return str.endsWith(f.toLowerCase());
+            });
 
-    if (!table) return;
-    var tableKey = dbName + "_" + table;
+            if (endsWithCol) {
+              return rs(
+                getResult([
+                  ">",
+                  ">=",
+                  "<",
+                  "<=",
+                  "=",
+                  "==",
+                  "!=",
+                  "contains",
+                  "startwith",
+                ])
+              );
+            } else {
+              return rs(getResult(_table_cols[tableKey]));
+            }
+          }
 
-    if (!_table_cols[tableKey]) {
-      _table_cols[tableKey] = new Kooboo.HttpClientModel("kscript").executeGet(
-        "getcolumns",
-        {
-          database: dbName,
-          table: table,
-        },
-        true,
-        true,
-        true
-      ).responseJSON.model;
-    }
-
-    if (
-      _hintMethods.find(function (f) {
-        return str.indexOf(f) > -1;
-      }) &&
-      !_noHintMehods.find(function (f) {
-        return str.indexOf(f) > -1;
-      })
-    ) {
-      var endsWithCol = _table_cols[tableKey].find(function (f) {
-        return str.endsWith(f.toLowerCase());
+          rj();
+        });
       });
-
-      if (endsWithCol) {
-        return getResult([
-          ">",
-          ">=",
-          "<",
-          "<=",
-          "=",
-          "==",
-          "!=",
-          "contains",
-          "startwith",
-        ]);
-      }
-
-      return getResult(_table_cols[tableKey]);
-    }
+    });
   }
 
   function getStr(model, position) {
