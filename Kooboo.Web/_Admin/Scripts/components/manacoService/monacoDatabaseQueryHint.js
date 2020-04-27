@@ -16,90 +16,95 @@ function monacoDatabaseQueryHint(monaco) {
 
   monaco.languages.registerCompletionItemProvider("javascript", {
     triggerCharacters: ['"', "'", " ", "(", "."],
-    provideCompletionItems: function (model, position) {
-      var str = getStr(model, position);
-
-      str = str.replace(/\s+/g, "").toLowerCase();
-
-      var dbName = _dbs.find(function (f) {
-        return str.indexOf("k." + f) > -1;
-      });
-
-      if (!dbName) return;
-
-      if (!_dbTables[dbName]) {
-        var tables = new Kooboo.HttpClientModel("kscript").executeGet(
-          "gettables",
-          { database: dbName },
-          true,
-          true,
-          true
-        ).responseJSON.model;
-
-        _dbTables[dbName] = tables ? tables : [];
-      }
-
-      if (str.endsWith("k." + dbName + ".")) {
-        return getResult(_dbTables[dbName]);
-      }
-
-      str = str.replace(/\"+/g, "'");
-
-      var table = _dbTables[dbName].find(function (f) {
-        return (
-          str.indexOf("k." + dbName + "." + f) > -1 ||
-          str.indexOf("k." + dbName + ".gettable('" + f + "')") > -1
-        );
-      });
-
-      if (!table) return;
-      var tableKey = dbName + "_" + table;
-
-      if (!_table_cols[tableKey]) {
-        _table_cols[tableKey] = new Kooboo.HttpClientModel(
-          "kscript"
-        ).executeGet(
-          "getcolumns",
-          {
-            database: dbName,
-            table: table,
-          },
-          true,
-          true,
-          true
-        ).responseJSON.model;
-      }
-
-      if (
-        _hintMethods.find(function (f) {
-          return str.indexOf(f) > -1;
-        }) &&
-        !_noHintMehods.find(function (f) {
-          return str.indexOf(f) > -1;
-        })
-      ) {
-        var endsWithCol = _table_cols[tableKey].find(function (f) {
-          return str.endsWith(f.toLowerCase());
-        });
-
-        if (endsWithCol) {
-          return getResult([
-            ">",
-            ">=",
-            "<",
-            "<=",
-            "=",
-            "==",
-            "!=",
-            "contains",
-            "startwith",
-          ]);
-        }
-
-        return getResult(_table_cols[tableKey]);
-      }
-    },
+    provideCompletionItems: provideCompletionItems,
   });
+
+  monaco.languages.registerCompletionItemProvider("html", {
+    triggerCharacters: ['"', "'", " ", "(", "."],
+    provideCompletionItems: provideCompletionItems,
+  });
+
+  function provideCompletionItems(model, position) {
+    var str = getStr(model, position);
+
+    str = str.replace(/\s+/g, "").toLowerCase();
+
+    var dbName = _dbs.find(function (f) {
+      return str.indexOf("k." + f) > -1;
+    });
+
+    if (!dbName) return;
+
+    if (!_dbTables[dbName]) {
+      var tables = new Kooboo.HttpClientModel("kscript").executeGet(
+        "gettables",
+        { database: dbName },
+        true,
+        false,
+        true
+      ).responseJSON.model;
+
+      _dbTables[dbName] = tables ? tables : [];
+    }
+
+    if (str.endsWith("k." + dbName + ".")) {
+      return getResult(_dbTables[dbName]);
+    }
+
+    str = str.replace(/\"+/g, "'");
+
+    var table = _dbTables[dbName].find(function (f) {
+      return (
+        str.indexOf("k." + dbName + "." + f) > -1 ||
+        str.indexOf("k." + dbName + ".gettable('" + f + "')") > -1
+      );
+    });
+
+    if (!table) return;
+    var tableKey = dbName + "_" + table;
+
+    if (!_table_cols[tableKey]) {
+      _table_cols[tableKey] = new Kooboo.HttpClientModel("kscript").executeGet(
+        "getcolumns",
+        {
+          database: dbName,
+          table: table,
+        },
+        true,
+        true,
+        true
+      ).responseJSON.model;
+    }
+
+    if (
+      _hintMethods.find(function (f) {
+        return str.indexOf(f) > -1;
+      }) &&
+      !_noHintMehods.find(function (f) {
+        return str.indexOf(f) > -1;
+      })
+    ) {
+      var endsWithCol = _table_cols[tableKey].find(function (f) {
+        return str.endsWith(f.toLowerCase());
+      });
+
+      if (endsWithCol) {
+        return getResult([
+          ">",
+          ">=",
+          "<",
+          "<=",
+          "=",
+          "==",
+          "!=",
+          "contains",
+          "startwith",
+        ]);
+      }
+
+      return getResult(_table_cols[tableKey]);
+    }
+  }
 
   function getStr(model, position) {
     var startLine = position.lineNumber;
@@ -113,9 +118,9 @@ function monacoDatabaseQueryHint(monaco) {
 
       var preLineLastChat = model.getValueInRange({
         startLineNumber: startLine - 1,
-        startColumn: model.getLineLastNonWhitespaceColumn(startLine),
+        startColumn: model.getLineLastNonWhitespaceColumn(startLine - 1),
         endLineNumber: startLine - 1,
-        endColumn: model.getLineLastNonWhitespaceColumn(startLine) + 1,
+        endColumn: model.getLineLastNonWhitespaceColumn(startLine - 1) + 1,
       });
 
       if (firstChar == "." || preLineLastChat == ".") {
