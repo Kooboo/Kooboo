@@ -49,6 +49,8 @@ namespace Kooboo.Data.Models
         // This is an user that belongs to one agency.. 
         public Guid AgencyOrgId { get; set; }
 
+        public Boolean IsAgency { get; set; }
+
         public bool IsBanned { get; set; }
 
         public override int GetHashCode()

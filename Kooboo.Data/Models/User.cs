@@ -21,8 +21,7 @@ namespace Kooboo.Data.Models
         }
 
         public Guid CurrentOrgId { get; set; }
-
- 
+         
         // redundant
         public string CurrentOrgName { get; set; }
 
@@ -155,13 +154,15 @@ namespace Kooboo.Data.Models
             } 
         }
 
+        public string Tel { get; set; }
+
         public override int GetHashCode()
         {
             string unique =  this.CurrentOrgId.ToString() + this.CurrentOrgName;
             unique += this.EmailAddress + this.FirstName + this.LastName + this.Language;
             unique += this.Password + this.PasswordHash.ToString();
             unique += this.IsEmailVerified.ToString();
-            unique += this.EmailId.ToString(); 
+            unique += this.EmailId.ToString() + this.Tel; 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }

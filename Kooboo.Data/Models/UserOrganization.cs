@@ -44,9 +44,7 @@ namespace Kooboo.Data.Models
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
 
-    }
-
- 
+    } 
 
 }
 

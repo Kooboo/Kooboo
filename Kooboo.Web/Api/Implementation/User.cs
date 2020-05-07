@@ -5,7 +5,7 @@ using Kooboo.Data.Models;
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
-using Kooboo.Api; 
+using Kooboo.Api;
 using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Api.Implementation
@@ -41,18 +41,18 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(UserName, apiCall.Context.Request.IP))
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("user or ip temporarily lockout", apiCall.Context)); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("user or ip temporarily lockout", apiCall.Context));
             }
 
             var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, Password);
 
             if (user == null)
             {
-                Data.Service.UserLoginProtection.AddLoginFail(UserName, apiCall.Context.Request.IP); 
+                Data.Service.UserLoginProtection.AddLoginFail(UserName, apiCall.Context.Request.IP);
             }
             else
             {
-                Data.Service.UserLoginProtection.AddLoginOK(UserName, apiCall.Context.Request.IP); 
+                Data.Service.UserLoginProtection.AddLoginOK(UserName, apiCall.Context.Request.IP);
             }
 
             if (user != null)
@@ -60,14 +60,14 @@ namespace Kooboo.Web.Api.Implementation
                 string remember = apiCall.GetValue("remember");
 
                 bool SameSiteRedirect = false;
-                string type = apiCall.GetValue("type"); 
-                if (type !=null && type == "site")
+                string type = apiCall.GetValue("type");
+                if (type != null && type == "site")
                 {
-                    SameSiteRedirect = true; 
-                } 
+                    SameSiteRedirect = true;
+                }
 #if DEBUG
                 {
-                SameSiteRedirect = true; 
+                    SameSiteRedirect = true;
                 }
 #endif 
 
@@ -75,14 +75,14 @@ namespace Kooboo.Web.Api.Implementation
                 if (returnUrl != null)
                 {
                     returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl);
-                    returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl); 
+                    returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl);
                     // the redirect from access token. 
                     if (returnUrl != null && returnUrl.ToLower().Contains("accesstoken"))
                     {
-                        returnUrl = null; 
+                        returnUrl = null;
                     }
                     else
-                    { 
+                    {
                         var lower = returnUrl.ToLower();
 
                         if (lower == "/_admin" || lower == "/_admin/" || lower == "\\_admin" || lower == "\\_admin\\")
@@ -101,14 +101,14 @@ namespace Kooboo.Web.Api.Implementation
                 int days = isRemember ? 60 : 0;
                 var response = new MetaResponse();
 
-                response.Success = true; 
+                response.Success = true;
 
                 string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, SameSiteRedirect);
 
                 if (isRemember)
                 {
                     redirct = Lib.Helper.UrlHelper.AppendQueryString(redirct, "remember", "yes");
-                }      
+                }
                 response.Model = redirct;
                 // resposne redirect url. for online and local version...  
                 return response;
@@ -120,9 +120,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public virtual string GetRegisterRedirectUrl(User user, string currentrequesturl)
-        { 
+        {
             var newuser = Kooboo.Data.GlobalDb.Users.Validate(user.UserName, user.Password);  // this is to ensure that local has the user detail info like username, password, orgname, etc...  
-            return Lib.Helper.UrlHelper.Combine(currentrequesturl, "/_admin/sites"); 
+            return Lib.Helper.UrlHelper.Combine(currentrequesturl, "/_admin/sites");
         }
 
         public virtual MetaResponse Register(string UserName, string Password, string email, ApiCall apiCall)
@@ -132,11 +132,12 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Data.Language.Hardcoded.GetValue("Username or password not provided", apiCall.Context));
             }
             UserName = Lib.Helper.StringHelper.ToValidUserNames(UserName);
-            var currentuser = Kooboo.Data.GlobalDb.Users.Get(UserName);
-            if (currentuser != null)
+
+            if (UserName.Length <5 || Kooboo.Data.GlobalDb.Users.Get(UserName) !=null)
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("user exists", apiCall.Context));
-            }
+            } 
+        
             var user = new User();
             user.UserName = UserName;
             user.Password = Password;
@@ -163,59 +164,59 @@ namespace Kooboo.Web.Api.Implementation
 
 
         public virtual MetaResponse OnlineServer(ApiCall call)
-        { 
+        {
             if (call.Context.User == null)
             {
-                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("User not login", call.Context)); 
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("User not login", call.Context));
             }
 
-            var user = call.Context.User; 
+            var user = call.Context.User;
             if (string.IsNullOrWhiteSpace(Data.Service.UserLoginService.GetUserPassword(user)))
             {
-                var dbuser = GlobalDb.Users.Get(user.Id); 
-                if (dbuser !=null)
+                var dbuser = GlobalDb.Users.Get(user.Id);
+                if (dbuser != null)
                 {
-                    user = dbuser; 
+                    user = dbuser;
                 }
             }
 
             var url = Kooboo.Data.Helper.AccountUrlHelper.User("GetMarketServerHost");
-            url += "?UserId=" + user.Id.ToString(); 
+            url += "?UserId=" + user.Id.ToString();
 
-            var serverurl = Lib.Helper.HttpHelper.Get<string>(url); 
+            var serverurl = Lib.Helper.HttpHelper.Get<string>(url);
 
-            if (serverurl !=null && !serverurl.ToLower().StartsWith("http"))
+            if (serverurl != null && !serverurl.ToLower().StartsWith("http"))
             {
                 serverurl = "https://" + serverurl;
             }
 
-            if (serverurl !=null)
+            if (serverurl != null)
             {
                 serverurl += "/_admin/market/index";
 
-                var token = Service.UserService.GetTokenFromOnline(user); 
-                 if (!string.IsNullOrWhiteSpace(token))
+                var token = Service.UserService.GetTokenFromOnline(user);
+                if (!string.IsNullOrWhiteSpace(token))
                 {
-                    serverurl += "?accesstoken=" + token; 
+                    serverurl += "?accesstoken=" + token;
                 }
 
-               return new MetaResponse() { RedirectUrl = serverurl, StatusCode = 302 }; 
+                return new MetaResponse() { RedirectUrl = serverurl, StatusCode = 302 };
             }
             else
             {
-                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));  
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));
             }
-              
+
         }
-         
+
         public bool UpdateProfile(User newuser, ApiCall call)
-        { 
+        {
             var user = call.Context.User;
             user.UserName = newuser.UserName;
             user.Language = newuser.Language;
             user.EmailAddress = newuser.EmailAddress;
 
-            var localuser = Kooboo.Data.GlobalDb.Users.Get(newuser.Id); 
+            var localuser = Kooboo.Data.GlobalDb.Users.Get(newuser.Id);
 
             if (GlobalDb.Users.AddOrUpdate(user))
             {
@@ -237,7 +238,7 @@ namespace Kooboo.Web.Api.Implementation
                     if (org.AdminUser == user.Id)
                     {
                         user.IsAdmin = true;
-                    } 
+                    }
                 }
                 else
                 {
@@ -253,7 +254,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Default User can not reset password", call.Context)); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("Default User can not reset password", call.Context));
             }
 
             bool isSuccess = GlobalDb.Users.ChangePassword(UserName, OldPassword, NewPassword);
@@ -310,10 +311,16 @@ namespace Kooboo.Web.Api.Implementation
             response.Success = true;
             return response;
         }
-         
+
         public bool IsUniqueName(string name, ApiCall apiCall)
         {
-            name = Lib.Helper.StringHelper.ToValidUserNames(name); 
+            name = Lib.Helper.StringHelper.ToValidUserNames(name);
+
+            if (name.Length < 5)
+            {
+                return false;
+            }
+
             var user = Kooboo.Data.GlobalDb.Users.Get(name);
             if (user != null)
             {
