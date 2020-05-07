@@ -41,19 +41,7 @@ namespace KScript
         public object append(object value)
         {
             value = kHelper.CleanDynamicObject(value);
-            var option = new MapReduceOptions<object, object>();
-            option.OutputOptions = MapReduceOutputOptions.Inline;
-
-            var existFields = MongoCollection.MapReduce(
-                "function() { for (var key in this) { emit(key, 1); } }",
-                "function(key, values) { return Array.sum(values); }",
-                option)
-                .ToList()
-                .Select(s =>
-                {
-                    var obj = s as IDictionary<string, object>;
-                    return obj["_id"];
-                });
+            var existFields = GetAllField();
 
             var dic = value as IDictionary<string, object>;
             var removedKeys = dic.Where(w => !existFields.Contains(w.Key)).Select(s => s.Key).ToArray();
@@ -66,6 +54,23 @@ namespace KScript
             if (!dic.ContainsKey("_id")) dic["_id"] = ObjectId.GenerateNewId();
             MongoCollection.InsertOne(value);
             return dic["_id"];
+        }
+
+        [KIgnore]
+        public IEnumerable<object> GetAllField()
+        {
+            var option = new MapReduceOptions<object, object>();
+            option.OutputOptions = MapReduceOutputOptions.Inline;
+            return MongoCollection.MapReduce(
+                            "function() { for (var key in this) { emit(key, 1); } }",
+                            "function(key, values) { return Array.sum(values); }",
+                            option)
+                            .ToList()
+                            .Select(s =>
+                            {
+                                var obj = s as IDictionary<string, object>;
+                                return obj["_id"];
+                            });
         }
 
         public void createIndex(string fieldname)

@@ -20,6 +20,9 @@ namespace KScript
         }
 
         [KIgnore]
+        public IEnumerable<string> Tables => _database.ListCollectionNames().ToList();
+
+        [KIgnore]
         public ITable this[string key] => GetTable(key);
 
         public ITable GetTable(string Name)

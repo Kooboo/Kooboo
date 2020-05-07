@@ -1,4 +1,7 @@
-Kooboo.loadJS(["/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js"]);
+Kooboo.loadJS([
+  "/_Admin/Scripts/lib/js-beautify/lib/beautify-css.js",
+  "/_Admin/Scripts/components/manacoService/monacoDatabaseQueryHint.js",
+]);
 
 var MonacoEditorService =
   /*#__PURE__*/
@@ -45,10 +48,10 @@ var MonacoEditorService =
                     lineCount,
                     model.getLineMaxColumn(lineCount) + 1
                   ),
-                  text: css_beautify(model.getValue(), beautyOption)
-                }
+                  text: css_beautify(model.getValue(), beautyOption),
+                },
               ];
-            }
+            },
           };
           var rangeProvider = {
             provideDocumentRangeFormattingEdits: function provideDocumentRangeFormattingEdits(
@@ -65,10 +68,10 @@ var MonacoEditorService =
               return [
                 {
                   range: fullLineRange,
-                  text: css_beautify(code, beautyOption)
-                }
+                  text: css_beautify(code, beautyOption),
+                },
               ];
-            }
+            },
           };
           var disposeArr = ["css", "less", "scss"].map(function (language) {
             return [
@@ -79,7 +82,7 @@ var MonacoEditorService =
               monaco.languages.registerDocumentRangeFormattingEditProvider(
                 language,
                 rangeProvider
-              )
+              ),
             ];
           });
           return function () {
@@ -99,7 +102,7 @@ var MonacoEditorService =
 
       var load = function (url) {
         window.require.config({
-          paths: { vs: url + "vs" }
+          paths: { vs: url + "vs" },
         });
         if (!isDiffEditor) {
           window.MonacoEnvironment = {
@@ -109,10 +112,10 @@ var MonacoEditorService =
                         baseUrl:${encodeURIComponent(url)}
                       };
                         importScripts(${encodeURIComponent(
-                url + "/vs/base/worker/workerMain.js"
-              )})
+                          url + "/vs/base/worker/workerMain.js"
+                        )})
                       `;
-            }
+            },
           };
         }
         window.require(["vs/editor/editor.main"], function () {
@@ -212,10 +215,7 @@ var MonacoEditorService =
       }
     };
     MonacoEditorService.prototype.format = function (editor, callback) {
-      editor
-        .getAction("editor.action.formatDocument")
-        .run()
-        .then(callback);
+      editor.getAction("editor.action.formatDocument").run().then(callback);
     };
     MonacoEditorService.prototype.changeLanguage = function (language, model) {
       if (model) {
@@ -251,7 +251,7 @@ var MonacoEditorService =
             "." +
             monaco.languages
               .getLanguages()
-            [languagesId - 1].extensions[0].toLowerCase();
+              [languagesId - 1].extensions[0].toLowerCase();
         }
       }
       path = monaco.Uri.file(path);
@@ -283,7 +283,7 @@ var MonacoEditorService =
         keybindings: [
           monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_J,
           monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space,
-          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space
+          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.Space,
         ],
         precondition: null,
         keybindingContext: null,
@@ -291,7 +291,7 @@ var MonacoEditorService =
         contextMenuOrder: 1.5,
         run: function (ed) {
           ed.getAction("editor.action.triggerSuggest").run();
-        }
+        },
       });
     };
 
@@ -305,7 +305,7 @@ var MonacoEditorService =
             startLineNumber: position.lineNumber,
             startColumn: 1,
             endLineNumber: position.lineNumber,
-            endColumn: position.column
+            endColumn: position.column,
           });
 
           if (!textUntilPosition.endsWith("<")) return;
@@ -315,7 +315,7 @@ var MonacoEditorService =
             "htmlblock",
             "layout",
             "menu",
-            "placeholder"
+            "placeholder",
           ];
 
           return {
@@ -324,11 +324,11 @@ var MonacoEditorService =
                 label: item,
                 kind: monaco.languages.CompletionItemKind.Property,
                 documentation: item,
-                insertText: item
+                insertText: item,
               };
-            })
+            }),
           };
-        }
+        },
       });
 
       monaco.languages.registerCompletionItemProvider("html", {
@@ -338,12 +338,12 @@ var MonacoEditorService =
             startLineNumber: position.lineNumber,
             startColumn: 1,
             endLineNumber: position.lineNumber,
-            endColumn: position.column
+            endColumn: position.column,
           });
 
           if (
             textUntilPosition.split("<").length !=
-            textUntilPosition.split(">").length ||
+              textUntilPosition.split(">").length ||
             !textUntilPosition.endsWith(">")
           ) {
             return;
@@ -363,12 +363,12 @@ var MonacoEditorService =
                   label: tag,
                   kind: monaco.languages.CompletionItemKind.Property,
                   documentation: tag,
-                  insertText: tag
-                }
-              ]
+                  insertText: tag,
+                },
+              ],
             };
           }
-        }
+        },
       });
 
       monaco.languages.registerCompletionItemProvider("html", {
@@ -377,7 +377,7 @@ var MonacoEditorService =
             startLineNumber: 1,
             startColumn: 1,
             endLineNumber: position.lineNumber,
-            endColumn: position.column
+            endColumn: position.column,
           });
           var matchs = textUntilPosition.match(
             /<[\w\d-]+\s+((?!<\/).)*[a-zA-Z\-]$/
@@ -400,14 +400,16 @@ var MonacoEditorService =
               insertText: item.insertText,
               insertTextRules:
                 item.insertTextRules ||
-                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             };
           });
           return {
-            suggestions: tempSuggestions
+            suggestions: tempSuggestions,
           };
-        }
+        },
       });
+
+      monacoDatabaseQueryHint(monaco);
     };
     return MonacoEditorService;
   })();
