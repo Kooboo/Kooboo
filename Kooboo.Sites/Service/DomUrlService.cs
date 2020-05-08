@@ -243,7 +243,7 @@ namespace Kooboo.Sites.Service
             }
 
             url = url.ToLower();
-            if (url.StartsWith("//") || url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://") )
+            if (url.StartsWith("//") || url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://") || url.StartsWith("tel:"))
             {
                 return true;
             }
