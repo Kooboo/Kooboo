@@ -90,5 +90,7 @@ namespace Kooboo
         public const byte TableRelation = 82;
 
         public const byte DatabaseTable = 83;
+
+        public const byte TableSchemaMapping = 84;
     }
 }
