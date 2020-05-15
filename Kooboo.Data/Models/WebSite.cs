@@ -236,7 +236,7 @@ namespace Kooboo.Data.Models
         //by append a version to js css file. 
         public bool EnableJsCssBrowerCache { get; set; } = true;
 
-        public bool EnableImageBrowserCache { get; set; } = true;
+        public bool EnableImageBrowserCache { get; set; } = false;
 
         public int ImageCacheDays { get; set; } = 1;
 
