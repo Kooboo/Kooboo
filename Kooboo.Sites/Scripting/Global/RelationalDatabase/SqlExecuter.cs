@@ -90,7 +90,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public virtual void CreateIndex(string name, string fieldname)
         {
-            var sql = $@"CREATE INDEX {fieldname} on {WarpField(name)}({WarpField(fieldname)})";
+            var sql = $@"CREATE INDEX {name}_{fieldname} on {WarpField(name)}({WarpField(fieldname)})";
 
             using (var connection = CreateConnection())
             {
