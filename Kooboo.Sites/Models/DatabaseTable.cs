@@ -81,7 +81,8 @@ namespace Kooboo.Sites.Models
         public override int GetHashCode()
         {
             string unique = this.Name + this.DataType + this.IsIncremental.ToString() + this.Seed.ToString() + this.Scale.ToString() + this.IsIndex.ToString();
-            unique += this.IsPrimaryKey.ToString() + this.IsUnique.ToString() + this.ControlType.ToString() + this.Setting + this.IsSystem.ToString() + this.Length.ToString();
+
+            unique += this.IsPrimaryKey.ToString() + this.IsUnique.ToString() + this.ControlType + this.Setting + this.IsSystem.ToString() + this.Length.ToString();
             return Lib.Security.Hash.ComputeInt(unique);
         }
     }
