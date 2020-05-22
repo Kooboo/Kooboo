@@ -4,6 +4,7 @@ using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using KScript.Sites;
+using System.Linq;
 
 namespace KScript
 {
@@ -11,12 +12,47 @@ namespace KScript
     {
         private RenderContext context { get; set; }
 
+        private Kooboo.Sites.Repository.SiteDb sitedb { get; set; }
+
         public kSiteDb(RenderContext context)
         {
             this.context = context;
+            this.sitedb = this.context.WebSite.SiteDb(); 
             _locker = new object();
         }
 
+
+        public kSiteDb Get(string SiteName)
+        {
+            var orgid = this.context.WebSite.OrganizationId;
+            var allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid); 
+             
+            if (allsites == null || !allsites.Any())
+            {
+                return null; 
+            }
+
+            var find = allsites.Find(o => o.Name == SiteName); 
+            if (find == null)
+            {
+                find = allsites.Find(o => o.DisplayName == SiteName); 
+            }
+
+            if (find == null)
+            {
+                return null; 
+            }
+
+            RenderContext newcontext = new RenderContext();
+            newcontext.Request = this.context.Request;
+            newcontext.User = this.context.User;
+            newcontext.WebSite = find;
+            newcontext.IsSiteBinding = true;
+
+            return new kSiteDb(newcontext); 
+
+        }
+  
         private object _locker;
         RoutableTextRepository _page;
 
@@ -30,7 +66,7 @@ namespace KScript
                     {
                         if (_page == null)
                         {
-                            _page = new RoutableTextRepository(this.context.WebSite.SiteDb().Pages, this.context);
+                            _page = new RoutableTextRepository(sitedb.Pages, this.context);
                         }
                     }
                 }
@@ -68,7 +104,7 @@ namespace KScript
                     {
                         if (_layout == null)
                         {
-                            _layout = new TextRepository(this.context.WebSite.SiteDb().Layouts, this.context);
+                            _layout = new TextRepository(this.sitedb.Layouts, this.context);
                         }
                     }
                 }
@@ -87,7 +123,7 @@ namespace KScript
                     {
                         if (_textcontents == null)
                         {
-                            _textcontents = new TextContentObjectRepository(this.context.WebSite.SiteDb().TextContent, this.context);
+                            _textcontents = new TextContentObjectRepository(this.sitedb.TextContent, this.context);
                         }
                     }
                 }
@@ -118,7 +154,7 @@ namespace KScript
                     {
                         if (_htmlblock == null)
                         {
-                            _htmlblock = new MultilingualRepository(this.context.WebSite.SiteDb().HtmlBlocks, this.context);
+                            _htmlblock = new MultilingualRepository(this.sitedb.HtmlBlocks, this.context);
                         }
                     }
                 }
@@ -138,7 +174,7 @@ namespace KScript
                     {
                         if (_labels == null)
                         {
-                            _labels = new MultilingualRepository(this.context.WebSite.SiteDb().Labels, this.context);
+                            _labels = new MultilingualRepository(this.sitedb.Labels, this.context);
                         }
                     }
                 }
@@ -159,7 +195,7 @@ namespace KScript
                     {
                         if (_script == null)
                         {
-                            _script = new RoutableTextRepository(this.context.WebSite.SiteDb().Scripts, this.context);
+                            _script = new RoutableTextRepository(this.sitedb.Scripts, this.context);
                         }
                     }
                 }
@@ -180,7 +216,7 @@ namespace KScript
                     {
                         if (_styles == null)
                         {
-                            _styles = new RoutableTextRepository(this.context.WebSite.SiteDb().Styles, this.context);
+                            _styles = new RoutableTextRepository(this.sitedb.Styles, this.context);
                         }
                     }
                 }
@@ -200,7 +236,7 @@ namespace KScript
                     {
                         if (_images == null)
                         {
-                            _images = new BinaryRepository(this.context.WebSite.SiteDb().Images, this.context);
+                            _images = new BinaryRepository(this.sitedb.Images, this.context);
                         }
                     }
                 }
@@ -219,7 +255,7 @@ namespace KScript
                     {
                         if (_files == null)
                         {
-                            _files = new BinaryRepository(this.context.WebSite.SiteDb().Files, this.context);
+                            _files = new BinaryRepository(this.sitedb.Files, this.context);
                         }
                     }
                 }
@@ -238,7 +274,7 @@ namespace KScript
                     {
                         if (_routes == null)
                         {
-                            _routes = new RouteObjectRepository(this.context.WebSite.SiteDb().Routes, this.context);
+                            _routes = new RouteObjectRepository(this.sitedb.Routes, this.context);
                         }
                     }
                 }
@@ -258,7 +294,7 @@ namespace KScript
                     {
                         if (_formValues == null)
                         {
-                            _formValues = new FormValuesRepository(this.context.WebSite.SiteDb().FormValues, this.context);
+                            _formValues = new FormValuesRepository(this.sitedb.FormValues, this.context);
                         }
                     }
                 }
