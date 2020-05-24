@@ -202,20 +202,7 @@ var value = k.session.key; ")]
                     {
                         if (_siteinfo == null)
                         {
-                            _siteinfo = new InfoModel();
-                            if (this.RenderContext.WebSite != null)
-                            {
-                                _siteinfo.Culture = this.RenderContext.Culture;
-                                _siteinfo.Name = this.RenderContext.WebSite.Name;
-                                _siteinfo.Setting = new KDictionary(this.RenderContext.WebSite.CustomSettings);
-                                _siteinfo.User = new UserModel(this.RenderContext.User);
-
-                               var db = this.RenderContext.WebSite.SiteDb().DatabaseDb; 
-
-                                var last = db.Log.Store.LastKey;
-
-                                _siteinfo.Version = last; 
-                            }
+                            _siteinfo = new InfoModel(this.RenderContext); 
                         }
                     }
 
@@ -251,40 +238,7 @@ var value = k.session.key; ")]
             }
         }
 
-        public class InfoModel
-        {
-            public string Culture { get; set; }
-
-            [Description("WebSite name")]
-            public string Name { get; set; }
-
-            private KDictionary _setting;
-            public KDictionary Setting
-            {
-                get
-                {
-                    if (_setting == null)
-                    {
-                        _setting = new KDictionary();
-                    }
-                    return _setting;
-                }
-                set { _setting = value; }
-            }
-             
-            public UserModel User
-            {
-                get; set;
-            }
-
-            public string BaseUrl { get; set; }
-
-            public RenderContext RenderContext { get; set; }
-
-            public long Version { get; set; }
-             
-        }
-
+         
         private kSiteDb _sitedb;
 
         [KIgnore]
