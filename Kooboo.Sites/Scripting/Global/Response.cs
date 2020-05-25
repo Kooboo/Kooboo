@@ -4,7 +4,9 @@ using Kooboo.Data.Context;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Extensions;
 using System.ComponentModel;
-
+using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Service;
+using System;
 
 namespace KScript
 {
@@ -83,11 +85,28 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
         }
 
 
+        public void RenderView(string ViewBody)
+        { 
+            var options = RenderOptionHelper.GetViewOption(context, default(Guid));
+
+            var renderplan = RenderEvaluator.Evaluate(ViewBody, options);
+
+
+            var result = RenderHelper.Render(renderplan, this.context);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                write(result);
+            } 
+        }
+
+
+
         public void binary(string contentType, byte[] bytes, string filename = null)
         {
             if (!string.IsNullOrWhiteSpace(filename))
             {
-              this.context.Response.Headers.Add("Content-Disposition", $"attachment;filename=" + filename);
+                this.context.Response.Headers.Add("Content-Disposition", $"attachment;filename=" + filename);
             }
             this.context.Response.ContentType = contentType;
             this.context.Response.Body = bytes;
@@ -98,6 +117,7 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
         public void StatusCode(int code)
         {
             this.context.Response.StatusCode = code;
+            this.context.SetItem<CustomStatusCode>(new CustomStatusCode() { IsCustomSet = true, Code = code });
         }
 
         [Description(@"Excute another Url, and write the response within current context
