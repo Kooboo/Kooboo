@@ -144,7 +144,7 @@ namespace Kooboo.Sites.Models
                 }
             }
 
-            return Lib.Security.Hash.ComputeInt(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
     }
 

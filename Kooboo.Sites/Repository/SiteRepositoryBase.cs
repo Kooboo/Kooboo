@@ -682,6 +682,8 @@ namespace Kooboo.Sites.Repository
             ///close database
             if (value is ICoreObject)
             {
+                this.Store.OwnerDatabase.Flush();
+
                 this.Store.Close();
                 if (this.SiteObjectType == typeof(Image))
                 {
@@ -690,10 +692,11 @@ namespace Kooboo.Sites.Repository
                         this.SiteDb.ImagePool.ClearAll();
                     }
                 }
+                 
+
             }
             else
             {
-
                 //{
                 //    this.Store.Close();
                 //    if (this.SiteObjectType == typeof(Image))
@@ -704,9 +707,7 @@ namespace Kooboo.Sites.Repository
                 //        }
                 //    }
                 //}
-
-            }
-
+            } 
         }
 
 
@@ -951,7 +952,7 @@ namespace Kooboo.Sites.Repository
 
             public override int GetHashCode()
             {
-                return Lib.Security.Hash.ComputeInt(this.Id.ToString());
+                return Lib.Security.Hash.ComputeIntCaseSensitive(this.Id.ToString());
             }
 
             public bool Equals(ExclLogItem other)

@@ -81,7 +81,7 @@ namespace Kooboo.Sites.Routing
                 }
             }
         
-            return Lib.Security.Hash.ComputeInt(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
          
     }

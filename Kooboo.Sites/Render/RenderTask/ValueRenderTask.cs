@@ -178,8 +178,7 @@ namespace Kooboo.Sites.Render
             }
             return null;
         }
-         
-
+        
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {
             result.Add(new RenderResult() { Value = Render(context) });

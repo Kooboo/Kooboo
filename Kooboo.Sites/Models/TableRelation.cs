@@ -28,7 +28,7 @@ namespace Kooboo.Sites.Models
         public override int GetHashCode()
         {
             string unique = this.TableA + this.TableB + this.FieldA + this.FieldB + this.Relation.ToString();
-            return Lib.Security.Hash.ComputeInt(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
 
     }

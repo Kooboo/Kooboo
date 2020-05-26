@@ -465,7 +465,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
             if (hashcode == default(int))
             {
                 string unique = this.IsDelete.ToString() + this.ObjectId.ToString() + this.StoreName + this.ClusterId.ToString() + this.Version.ToString();
-                hashcode = Lib.Security.Hash.ComputeInt(unique);
+                hashcode = Lib.Security.Hash.ComputeIntCaseSensitive(unique);
             }
             return hashcode;
         }

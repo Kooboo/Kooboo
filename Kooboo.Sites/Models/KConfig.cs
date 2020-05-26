@@ -46,7 +46,7 @@ namespace Kooboo.Sites.Models
                     unique += item.Key + item.Value; 
                 }
             }
-            return Lib.Security.Hash.ComputeInt(unique);  
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
 
     }

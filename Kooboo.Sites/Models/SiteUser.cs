@@ -72,7 +72,7 @@ namespace Kooboo.Sites.Models
 
         public override int GetHashCode()
         {
-            return Lib.Security.Hash.ComputeInt(this.SiteRole);
+            return Lib.Security.Hash.ComputeIntCaseSensitive(this.SiteRole);
         }
     }
 }
