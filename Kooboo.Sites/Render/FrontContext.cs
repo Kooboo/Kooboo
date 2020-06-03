@@ -15,25 +15,25 @@ namespace Kooboo.Sites.Render
 {
     public class FrontContext
     {
-        public FrontContext()
+        public FrontContext(RenderContext renderContext)
         { 
-            Items = new Dictionary<string, object>();
+           this.Items = new Dictionary<string, object>();
+            this.RenderContext = renderContext; 
             this.RenderContext.SetItem<FrontContext>(this);
             this.StartTime = DateTime.UtcNow; 
         }
 
-        private RenderContext _rendercontext;
+        public FrontContext()
+        {
+            this.Items = new Dictionary<string, object>();
+            this.RenderContext = new RenderContext();
+            this.RenderContext.SetItem<FrontContext>(this);
+            this.StartTime = DateTime.UtcNow; 
+        }
+         
         public RenderContext RenderContext
         {
-            get
-            {
-                if (_rendercontext == null)
-                {
-                    _rendercontext = new RenderContext();
-                }
-                return _rendercontext;
-            }
-            set { _rendercontext = value; }
+            get;set;
         }
 
         public DateTime StartTime { get; set; }
@@ -52,9 +52,9 @@ namespace Kooboo.Sites.Render
                     {
                         _website = _sitedb.WebSite;
                     }
-                   else  if (_rendercontext != null && _rendercontext.WebSite != null)
+                   else  if (RenderContext != null && RenderContext.WebSite != null)
                     {
-                        _website = _rendercontext.WebSite;
+                        _website = RenderContext.WebSite;
                     }
                       
                 }

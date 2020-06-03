@@ -15,12 +15,7 @@ namespace Kooboo.Data.Context
     {
 
         private RenderContext renderContext;
-
-        public DataContext()
-        {
-
-        }
-
+         
         public DataContext(RenderContext context)
         {
             this.renderContext = context;
@@ -724,14 +719,7 @@ namespace Kooboo.Data.Context
         }
 
         public void Push(IDictionary data)
-        {
-            foreach (var item in data.Keys)
-            {
-                if (item.ToString() == "id")
-                {
-                    var fuck = item;
-                }
-            }
+        { 
             stack.AddFirst(data);
             OnDataPush?.Invoke(data);
         }

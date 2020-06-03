@@ -32,12 +32,14 @@ namespace Kooboo.Sites.Render
                 var bindingTask = new BindingRenderTask(traceability, new Dictionary<string, string> { { "scope", "true" } });
                 RenderPlan.Insert(0, bindingTask);
                 RenderPlan.Add(bindingTask.BindingEndRenderTask);
+                 
                 result = RenderHelper.Render(RenderPlan, context.RenderContext);
                 result = DomService.EnsureDocType(result);
             }
             else
             {
                 RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, option));
+
                 result = RenderHelper.Render(RenderPlan, context.RenderContext);
             }
 

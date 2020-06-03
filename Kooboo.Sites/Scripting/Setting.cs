@@ -10,17 +10,15 @@ namespace Kooboo.Sites.Scripting
 {
     public static class JintSetting
     {
-        public static int MaxStatements { get; set; } = 5000;
+        public static int MaxStatements { get; set; } = 70000;
 
-        public static int LimitRecursion { get; set; } = 300;
+        public static int LimitRecursion { get; set; } = 5000;
 
         public static int TimeOutSeconds { get; set; } = 300;
 
         public static void SetOption(Jint.Options option)
-        {
-           
-            option.MaxStatements(MaxStatements);
-
+        { 
+            option.MaxStatements(MaxStatements); 
             option.Strict(false);
             option.TimeoutInterval(new TimeSpan(0, 0, TimeOutSeconds));
             option.LimitRecursion(LimitRecursion);

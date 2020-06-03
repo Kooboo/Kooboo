@@ -31,6 +31,10 @@ namespace Kooboo.Lib.Helper
 
         public static int ToInt(string ip)
         {
+            if (string.IsNullOrWhiteSpace(ip))
+            {
+                return 0; 
+            }
             string[] segs = ip.Split('.');
             if (segs != null && segs.Length == 4)
             {

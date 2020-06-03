@@ -148,10 +148,8 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
                     newcontext.WebSite = context.WebSite;
                     newcontext.Culture = context.Culture;
 
-                    FrontContext kooboocontext = new FrontContext();
-                    newcontext.SetItem<FrontContext>(kooboocontext);
-                    kooboocontext.RenderContext = newcontext;
-
+                    FrontContext kooboocontext = new FrontContext(newcontext);
+                 
                     kooboocontext.Route = route;
 
                     Kooboo.Sites.Render.RouteRenderers.RenderAsync(kooboocontext);
