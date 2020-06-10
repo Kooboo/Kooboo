@@ -15,17 +15,48 @@ namespace Kooboo.Sites.Render
         public static string Render(this List<IRenderTask> task, RenderContext context)
         {
             StringBuilder sb = new StringBuilder();
+
+            IRenderTask headertask = null;
+            int headerpos = 0; 
+            
             foreach (var item in task)
             {
                 if (item.ClearBefore)
                 {
+                    if (headertask != null)
+                    {
+                        var header = headertask.Render(context);
+                        sb.Insert(headerpos, header);
+                        headertask = null;
+                        headerpos = 0; 
+                    }
+
                     string currentvalue = sb.ToString();
+                     
                     sb.Clear();
                     context.AddPlaceHolderContent("", currentvalue);
-                }
 
-                sb.Append(item.Render(context));
+
+                } 
+
+                if (item is HeaderRenderTask)
+                {
+                    headertask = item;
+                    headerpos = sb.Length; 
+                }
+                else
+                {
+                    sb.Append(item.Render(context));
+                }
+          
+            } 
+
+            if (headertask !=null)
+            {
+                var header = headertask.Render(context);
+                sb.Insert(headerpos, header); 
             }
+
             return sb.ToString();
         }
 
