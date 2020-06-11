@@ -240,7 +240,14 @@ namespace Kooboo.Data.Hosts
             {
                 string alltext = System.IO.File.ReadAllText(HostFile, Encoding.UTF8);
                 alltext = alltext.Replace(oldline, newline);
-                System.IO.File.WriteAllText(HostFile, alltext, Encoding.UTF8);
+                try
+                {
+                    System.IO.File.WriteAllText(HostFile, alltext, Encoding.UTF8);
+                }
+                catch (Exception ex)
+                { 
+
+                } 
             }
         }
 
