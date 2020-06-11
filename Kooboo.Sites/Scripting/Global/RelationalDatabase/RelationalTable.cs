@@ -189,6 +189,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void update(object newvalue)
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
+            EnsureTableCreated();
             if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) update(dic[_schema.PrimaryKey], dic);
             else add(dic);
         }
@@ -197,8 +198,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
             ClearNullField(dic);
-            if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) dic.Remove(_schema.PrimaryKey);
             EnsureTableCreated();
+            if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) dic.Remove(_schema.PrimaryKey);
             TryUpgradeSchema(dic);
             if (_schema.PrimaryKey == "_id") id = kHelper.GetId(id.ToString());
             Database.SqlExecuter.UpdateData(Name, _schema.PrimaryKey, id, dic);
