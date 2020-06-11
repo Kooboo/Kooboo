@@ -35,7 +35,7 @@ namespace KScript
         {
             this.RenderContext = context;
         }
-         
+
         public k GetBySite(string SiteName)
         {
             var orgid = this.RenderContext.WebSite.OrganizationId;
@@ -61,8 +61,8 @@ namespace KScript
             newcontext.Request = this.RenderContext.Request;
             newcontext.User = this.RenderContext.User;
             newcontext.WebSite = find;
-            newcontext.IsSiteBinding = true; 
-            return new k(newcontext);  
+            newcontext.IsSiteBinding = true;
+            return new k(newcontext);
         }
 
 
@@ -167,6 +167,24 @@ var value = k.session.key; ")]
             }
         }
 
+        private DocumentObjectModel _dom;
+
+        [Description("Document objecgt model")]
+        public DocumentObjectModel Dom
+        {
+            get
+            {
+                if (_dom == null)
+                {
+                    _dom = new DocumentObjectModel();
+                }
+                return _dom;
+            }
+            set
+            {
+                _dom = value;
+            }
+        }
 
         private KDictionary _viewdata;
 
@@ -202,7 +220,7 @@ var value = k.session.key; ")]
                     {
                         if (_siteinfo == null)
                         {
-                            _siteinfo = new InfoModel(this.RenderContext); 
+                            _siteinfo = new InfoModel(this.RenderContext);
                         }
                     }
 
@@ -238,7 +256,7 @@ var value = k.session.key; ")]
             }
         }
 
-         
+
         private kSiteDb _sitedb;
 
         [KIgnore]
