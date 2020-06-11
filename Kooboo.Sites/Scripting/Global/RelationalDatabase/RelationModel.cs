@@ -10,5 +10,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public string TableB { get; set; }
         public string From { get; set; }
         public string To { get; set; }
+
+        public DateTime CreateTime { get; set; } = DateTime.Now;
     }
 }

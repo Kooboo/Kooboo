@@ -16,9 +16,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         where TConnection : IDbConnection
     {
         internal readonly ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>> _tables;
+        public string ConnectionString { get; private set; }
 
         protected RelationalDatabase(string connectionString)
         {
+            ConnectionString = connectionString;
             _tables = new ConcurrentDictionary<string, RelationalTable<TExecuter, TSchema, TConnection>>();
             SqlExecuter = (TExecuter)Activator.CreateInstance(typeof(TExecuter), connectionString);
         }
