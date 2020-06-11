@@ -22,8 +22,8 @@ namespace Kooboo.Data.Repository
         public Organization Get(Guid id)
         {
             var org = GetFromLocal(id); 
-              
-            if (org == null)
+
+            if (org == null || org.LastModified == default(DateTime) || org.LastModified < DateTime.Now.AddHours(-12))
             {
                 org = GetFromAccount(id);
                 if (org != null)
@@ -57,7 +57,7 @@ namespace Kooboo.Data.Repository
             if (lastfail.ContainsKey(id))
             {
                 var lasttime = lastfail[id];
-                if (lasttime > DateTime.Now.AddHours(-4))
+                if (lasttime > DateTime.Now.AddHours(-1))
                 {
                     return null;
                 }
@@ -179,6 +179,8 @@ namespace Kooboo.Data.Repository
 
         public void AddOrUpdateLocal(Organization Organization)
         {
+            Organization.LastModified = DateTime.Now; 
+
             GlobalDb.LocalOrganization.AddOrUpdate(Organization);
             Cache[Organization.Id] = Organization;
         }

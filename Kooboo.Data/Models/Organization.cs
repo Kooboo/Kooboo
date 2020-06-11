@@ -53,13 +53,17 @@ namespace Kooboo.Data.Models
 
         public bool IsBanned { get; set; }
 
+        public DateTime LastModified { get; set; }
+
+
         public override int GetHashCode()
         {
             string unique = this.DisplayName;
             unique += this.ServerId.ToString() + this.ServiceLevel.ToString();
             unique += this.AdminUser.ToString() + this.IsBanned.ToString();
             unique += this.Introduction;
-            unique += this.AgencyOrgId.ToString(); 
+            unique += this.AgencyOrgId.ToString();
+            unique += this.LastModified.ToShortTimeString(); 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
     }
