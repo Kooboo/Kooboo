@@ -131,8 +131,7 @@ namespace Kooboo.Sites.Render
                         {  
                             int intheight =   (int)intwidth * image.Height / image.Width;  
                             bytes = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(bytes, intwidth, intheight);
-                        }
-                         
+                        } 
                     }
                 }
             }
