@@ -132,9 +132,14 @@ function monacoDatabaseQueryHint(monaco) {
 
       var preLineLastChat = model.getValueInRange({
         startLineNumber: startLine - 1,
-        startColumn: model.getLineLastNonWhitespaceColumn(startLine - 1),
+        startColumn: model.getLineLastNonWhitespaceColumn(
+          startLine == 1 ? 1 : startLine - 1
+        ),
         endLineNumber: startLine - 1,
-        endColumn: model.getLineLastNonWhitespaceColumn(startLine - 1) + 1,
+        endColumn:
+          model.getLineLastNonWhitespaceColumn(
+            startLine == 1 ? 1 : startLine - 1
+          ) + 1,
       });
 
       if (firstChar == "." || preLineLastChat == ".") {
