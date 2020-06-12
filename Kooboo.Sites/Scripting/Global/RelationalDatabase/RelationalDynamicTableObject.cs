@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 {
@@ -15,6 +16,18 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
     {
         readonly RelationalTable<TExecuter, TSchema, TConnection> _table;
         readonly static Dictionary<string, RelationModel> _relationCache = new Dictionary<string, RelationModel>();
+
+        static RelationalDynamicTableObject()
+        {
+            Task.Run(() =>
+            {
+                var expireds = _relationCache.Where(w => DateTime.Now - w.Value.CreateTime > new TimeSpan(5, 0, 0));
+                foreach (var item in expireds)
+                {
+                    _relationCache.Remove(item.Key);
+                }
+            });
+        }
 
         public override string Source => _table.Database.Source;
 
@@ -35,11 +48,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var cacheKey = $"{_table.Database.ConnectionString}_{_table.Name}_{key}";
             _relationCache.TryGetValue(cacheKey, out var relation);
 
-            if (relation != null && DateTime.Now - relation.CreateTime < new TimeSpan(0, 5, 0))
-            {
-                relation = _relationCache[cacheKey];
-            }
-            else
+            if (relation == null || DateTime.Now - relation.CreateTime > new TimeSpan(0, 5, 0))
             {
                 relation = _table.Database.SqlExecuter.GetRelation(key, _table.Name);
                 _relationCache[cacheKey] = relation ?? new RelationModel();
