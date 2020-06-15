@@ -188,7 +188,7 @@ namespace Kooboo.Sites.Routing
                 string value = item.Value;
                 string expressionkey = value;
 
-                object ValueResult = GetValueFromContext(key, value, context);
+                object ValueResult = GetValueFromContext(key, value, context.RenderContext);
 
                 if (ValueResult != null)
                 {
@@ -242,7 +242,7 @@ namespace Kooboo.Sites.Routing
                             {
                                 if (!result.ContainsKey(eachbinding.Key))
                                 {
-                                    object ValueResult = GetValueFromContext(eachbinding.Key, eachbinding.Value.Binding, Context);
+                                    object ValueResult = GetValueFromContext(eachbinding.Key, eachbinding.Value.Binding, Context.RenderContext);
 
                                     if (ValueResult != null)
                                     {
@@ -269,7 +269,7 @@ namespace Kooboo.Sites.Routing
 
                     if (!result.ContainsKey(pkey))
                     {
-                        object ValueResult = GetValueFromContext(pkey, "{" + pkey + "}", Context);
+                        object ValueResult = GetValueFromContext(pkey, "{" + pkey + "}", Context.RenderContext);
 
                         if (ValueResult != null)
                         {
@@ -283,57 +283,59 @@ namespace Kooboo.Sites.Routing
             return result;
         }
 
-        private static object GetValueFromContext(string Key, string Value, FrontContext context)
+        public static object GetValueFromContext(string Key, string Value, RenderContext   context)
         {
 
-            if (!DataSources.ParameterBinder.IsValueBinding(Value))
-            {
-                return Value;
-            }
-            object ValueResult = null;
+            //if (!DataSources.ParameterBinder.IsValueBinding(Value))
+            //{
+            //    return Value;
+            //}
+            //object ValueResult = null;
 
-            string expression = DataSources.ParameterBinder.GetBindingKey(Value);
+            //string expression = DataSources.ParameterBinder.GetBindingKey(Value);
 
-            // rule 1, get the value directly from context.. 
-            ValueResult = context.RenderContext.DataContext.GetValue(expression);
+            //// rule 1, get the value directly from context.. 
+            //ValueResult = context.RenderContext.DataContext.GetValue(expression);
 
-            // TODO: this is new method... should be replaced by this only in the near future... 
-            if (ValueResult == null)
-            {
-                ValueResult = RenderContextHelper.GetValue(Key, Value, context.RenderContext);
-            }
+            //// TODO: this is new method... should be replaced by this only in the near future... 
+            //if (ValueResult == null)
+            //{
+            //    ValueResult = RenderContextHelper.GetValue(Key, Value, context.RenderContext);
+            //}
 
-            if (ValueResult == null)
-            {
-                // rule 2, get the value as field value from all data objects... 
-                // first check the value that has the same type as the datamethod return type.
-                ValueResult = GetValueByMethodReturnType(Key, Value, context);
-            }
+           var ValueResult = RenderContextHelper.GetValue(Key, Value, context);
 
-            if (ValueResult == null)
-            {
-                ValueResult = GetValueByNamingConvention(Key, Value, context);
-            }
+            //if (ValueResult == null)
+            //{
+            //    // rule 2, get the value as field value from all data objects... 
+            //    // first check the value that has the same type as the datamethod return type.
+            //    ValueResult = GetValueByMethodReturnType(Key, Value, context);
+            //}
+
+            //if (ValueResult == null)
+            //{
+            //    ValueResult = GetValueByNamingConvention(Key, Value, context);
+            //}
 
             // last try to id alternative. 
             if (ValueResult == null)
             {
                 //check for id == _id convertion. 
-                string lower = expression.ToLower();
+                string lower = Key.ToLower();
                 if (lower == "_id")
                 {
-                    ValueResult = context.RenderContext.DataContext.GetValue("id"); 
+                    ValueResult = context.DataContext.GetValue("id"); 
                     if (ValueResult == null)
                     {
-                        ValueResult = RenderContextHelper.GetValue("{id}", Value, context.RenderContext);
+                        ValueResult = RenderContextHelper.GetValue("{id}", Value, context);
                     }
                 }
                 else if (lower == "id")
                 {
-                    ValueResult = context.RenderContext.DataContext.GetValue("_id");
+                    ValueResult = context.DataContext.GetValue("_id");
                     if (ValueResult == null)
                     {
-                        ValueResult = RenderContextHelper.GetValue("{_id}", Value, context.RenderContext);
+                        ValueResult = RenderContextHelper.GetValue("{_id}", Value, context);
                     }
                 }
             }
@@ -506,6 +508,11 @@ namespace Kooboo.Sites.Routing
             string expression = DataSources.ParameterBinder.GetBindingKey(value);
 
             var frontcontext = context.GetItem<FrontContext>();
+
+            if (frontcontext == null)
+            {
+                return null; 
+            }
 
             object result = null;
 

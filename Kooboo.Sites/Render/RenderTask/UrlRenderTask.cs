@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System;
 using Kooboo.Sites.Relation;
 using Kooboo.Sites.Models;
+using System.Linq;
 
 namespace Kooboo.Sites.Render
 {
@@ -22,6 +23,10 @@ namespace Kooboo.Sites.Render
         // special, no change. 
         private bool IsSpecial { get; set; }
 
+        private bool IsCustomize { get; set; }
+
+        public CustomizeUrl customize { get; set; }
+
         public bool ClearBefore
         {
             get
@@ -34,7 +39,7 @@ namespace Kooboo.Sites.Render
         {
             this.Url = Url;
 
-          this.IsSpecial = Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(Url);
+           this.IsSpecial = Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(Url);
 
             if (!IsSpecial)
             {
@@ -43,7 +48,11 @@ namespace Kooboo.Sites.Render
                     /// might be a function.  
                     this.RenderUrlValueTask = new ValueRenderTask(this.Url); 
                 }
-
+                else if (CustomizeUrl.IsCustomized(this.Url))
+                {
+                    this.IsCustomize = true;
+                    this.customize = new CustomizeUrl(this.Url);
+                }
                 if (Service.DomUrlService.IsExternalLink(Url) || Url == "#")
                 {
                     this.IsExternalLink = true;
@@ -66,11 +75,16 @@ namespace Kooboo.Sites.Render
             {
                 return this.Url;
             }
+            else if (this.customize != null)
+            {
+                return this.customize.Render(context);
+            }
 
             else if (this.RenderUrlValueTask != null)
             {
                 result = RenderUrlValueTask.Render(context);
             }
+ 
             else
             {
                 if (this.IsExternalLink || context.WebSite == null)
@@ -267,7 +281,8 @@ namespace Kooboo.Sites.Render
             if (end > start && start > -1)
             {
                 string key = result.Substring(start + 1, end - start - 1);
-                object value = context.DataContext.GetValue(key);
+
+                object value =  context.DataContext.GetValue(key);
 
                 string strvalue = null;
                 if (value != null)
@@ -357,8 +372,7 @@ namespace Kooboo.Sites.Render
         {
             result.Add(new RenderResult() { Value = Render(context) });
         }
-
-
+         
         // relation cache... 
         private long lastLog { get; set; } = 0; 
         public List<ObjectRelation> GetViewPageRelation(RenderContext context, View view, long LastChange)
@@ -381,6 +395,95 @@ namespace Kooboo.Sites.Render
         }
 
         public Dictionary<Guid, List<ObjectRelation>> ViewPageRelationCache { get; set; } = new Dictionary<Guid, List<ObjectRelation>>(); 
+
+    }
+
+    public class CustomizeUrl
+    {
+    
+        public CustomizeUrl(string url)
+        {
+            this.Raw = url;
+            this.paras = new Dictionary<string, string>();
+            var list = ParseBracket(url); 
+            if (list.Any())
+            {
+                foreach (var item in list)
+                {
+                    var key = item;
+                    var value = "{" + key + "}";
+                    paras.Add(key, value); 
+                }
+            }
+        }
+
+        public Dictionary<string, string> paras { get; set; }
+
+        public string Raw { get; set; }
+
+        public static bool IsCustomized (string url)
+        {
+            if (url.Contains("{") && url.Contains("}"))
+            {
+                return true; 
+            }
+
+            return false; 
+        }
+
+        public string Render(RenderContext context)
+        {
+            var result = this.Raw; 
+
+            foreach (var item in this.paras)
+            {
+            
+                var value = PageRoute.GetValueFromContext(item.Key, item.Value, context); 
+                if (value != null)
+                {
+                    result = result.Replace(item.Value, value.ToString()); 
+                }
+               
+            }
+
+            return result; 
+        }
+
+        public List<string> ParseBracket(string url)
+        {
+            List<string> result = new List<string>();
+            _PraseBracket(url, ref result);
+
+            return result;  
+        }
+
+        private void _PraseBracket(string url, ref List<string> paras)
+        {
+            if (url == null)
+            {
+                return;
+            }
+            int start = url.IndexOf("{");
+            if (start == -1)
+            {
+                return;
+            }
+
+            int end = url.IndexOf("}", start);
+
+            if (end > start && start > -1)
+            {
+                string key = url.Substring(start + 1, end - start - 1);
+
+                string rest = url.Substring(end +1); 
+
+                paras.Add(key);
+
+                _PraseBracket(rest, ref paras); 
+            } 
+        }
+         
+
 
     }
 }
