@@ -57,10 +57,35 @@ namespace Kooboo.Sites.Render
             }
 
             // cache for font.
-            if (contentType !=null && contentType.ToLower().Contains("font"))
+            if (contentType !=null)
             {
-                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+
+                if (contentType.ToLower().Contains("font"))
+                {
+                    context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                }
+                else if (contentType.ToLower().Contains("image"))
+                {
+                    if (context.RenderContext.WebSite.EnableImageBrowserCache)
+                    { 
+                        if (context.RenderContext.WebSite.ImageCacheDays >= 0)
+                        {
+                            context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(context.RenderContext.WebSite.ImageCacheDays).ToString("r");
+                        }
+                        else
+                        {
+                            // double verify...
+                            var version = context.RenderContext.Request.GetValue("version");
+                            if (!string.IsNullOrWhiteSpace(version))
+                            {
+                                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                            }
+                        }
+                    }
+
+                }
             }
+             
 
         }
     }

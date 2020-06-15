@@ -45,9 +45,19 @@ namespace Kooboo.Sites.Render
 
             if (context.RenderContext.WebSite.EnableImageBrowserCache)
             {
+
                 if (context.RenderContext.WebSite.ImageCacheDays >= 0)
                 {
                     context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(context.RenderContext.WebSite.ImageCacheDays).ToString("r");
+                }
+                else
+                {
+                    // double verify...
+                    var version = context.RenderContext.Request.GetValue("version"); 
+                    if (!string.IsNullOrWhiteSpace(version))
+                    {
+                        context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                    } 
                 }
             }
         }

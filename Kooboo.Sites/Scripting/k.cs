@@ -454,7 +454,7 @@ var value = k.session.key; ")]
 
                             if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
                             {
-                                throw new Exception("  ->Please add the mysql connection string to the system configuration of the site<-  ");
+                                throw new InitException("  ->Please add the mysql connection string to the system configuration of the site<-  ");
                             }
 
                             _mysql = new MysqlDatabase(setting.ConnectionString);
@@ -481,8 +481,8 @@ var value = k.session.key; ")]
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<SqlServerSetting>();
 
                             if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
-                            {
-                                throw new Exception("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
+                            { 
+                                throw new InitException("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
                             _sqlServer = new SqlServerDatabase(setting.ConnectionString);
                         }
@@ -508,8 +508,8 @@ var value = k.session.key; ")]
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MongoSetting>();
 
                             if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
-                            {
-                                throw new Exception("  ->Please add the mongodb connection string to the system configuration of the site<-  ");
+                            { 
+                                throw new InitException("  ->Please add the mongodb connection string to the system configuration of the site<-  ");
                             }
 
                             var url = new MongoUrl(setting.ConnectionString);
