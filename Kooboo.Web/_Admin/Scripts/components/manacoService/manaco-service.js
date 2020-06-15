@@ -356,14 +356,16 @@ var MonacoEditorService =
             tag = matches[1];
           }
           if (tag) {
-            tag = "</" + tag + ">";
+            var label = "</" + tag + ">";
+            var insertText = "${1:}" + label;
             return {
               suggestions: [
                 {
-                  label: tag,
+                  label: label,
                   kind: monaco.languages.CompletionItemKind.Property,
-                  documentation: tag,
-                  insertText: tag,
+                  documentation: insertText,
+                  insertText: insertText,
+                  insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                 },
               ],
             };
