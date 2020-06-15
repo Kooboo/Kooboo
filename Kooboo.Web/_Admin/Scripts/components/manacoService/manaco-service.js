@@ -357,7 +357,7 @@ var MonacoEditorService =
           }
           if (tag) {
             var label = "</" + tag + ">";
-            var insertText = "${1:}" + label;
+            var insertText = "$0" + label;
             return {
               suggestions: [
                 {
