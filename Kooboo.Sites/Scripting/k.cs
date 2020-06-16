@@ -241,7 +241,22 @@ var value = k.session.key; ")]
                 return _user;
             }
         }
+         
+        private FileVersion _version;
 
+        [Description("append a version nr to image url for caching. Only valid when system set to image version cache")]
+        public FileVersion Version
+        {
+            get
+            {
+                if (_version == null)
+                {
+                    _version = new FileVersion(this.RenderContext);
+                }
+                return _version;
+            }
+        }
+         
         private KTemplate _template;
         [KIgnore]
         public KTemplate Template
@@ -481,7 +496,7 @@ var value = k.session.key; ")]
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<SqlServerSetting>();
 
                             if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
-                            { 
+                            {
                                 throw new InitException("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
                             _sqlServer = new SqlServerDatabase(setting.ConnectionString);
@@ -508,7 +523,7 @@ var value = k.session.key; ")]
                             var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<MongoSetting>();
 
                             if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
-                            { 
+                            {
                                 throw new InitException("  ->Please add the mongodb connection string to the system configuration of the site<-  ");
                             }
 

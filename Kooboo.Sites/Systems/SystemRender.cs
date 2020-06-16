@@ -11,6 +11,7 @@ using Kooboo.Sites.Models;
 using Kooboo.Data.Interface;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Render.Renderers;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Systems
 {
@@ -321,22 +322,11 @@ namespace Kooboo.Sites.Systems
 
             string relative = context.RenderContext.Request.RelativeUrl;
 
-            relative = Lib.Helper.StringHelper.ReplaceIgnoreCase(relative, "__kb/kfile/", "");
+            string fullpath;
 
-            var root = Kooboo.Data.AppSettings.GetFileIORoot(context.RenderContext.WebSite);
+            fullpath = GetFileFullPath(context.RenderContext, relative);
 
-            string fullpath = Kooboo.Lib.Helper.IOHelper.CombinePath(root, relative);
-
-            if (!System.IO.File.Exists(fullpath))
-            {
-                if (fullpath.Contains("?"))
-                {
-                    var markpos = fullpath.IndexOf("?");
-                    fullpath = fullpath.Substring(0, markpos);
-                }
-            }
-
-            if (System.IO.File.Exists(fullpath))
+            if (!string.IsNullOrWhiteSpace(fullpath))
             {
                 string contentType = IOHelper.MimeType(relative);
 
@@ -350,14 +340,38 @@ namespace Kooboo.Sites.Systems
 
                 if (contentType.ToLower().Contains("image"))
                 {
-                    allbytes = setImageBytes(context, allbytes); 
-                }
-                 
-                context.RenderContext.Response.Body = allbytes;
-                
+                    allbytes = setImageBytes(context, allbytes);
+                    SetImageCache(context.RenderContext); 
+                } 
+                context.RenderContext.Response.Body = allbytes; 
             }
         }
 
+        public static string GetFileFullPath(RenderContext context, string relative)
+        {
+            string fullpath;
+            relative = Lib.Helper.StringHelper.ReplaceIgnoreCase(relative, "__kb/kfile/", "");
+
+            var root = Kooboo.Data.AppSettings.GetFileIORoot(context.WebSite);
+
+            fullpath = Kooboo.Lib.Helper.IOHelper.CombinePath(root, relative);
+
+            if (!System.IO.File.Exists(fullpath))
+            {
+                if (fullpath.Contains("?"))
+                {
+                    var markpos = fullpath.IndexOf("?");
+                    fullpath = fullpath.Substring(0, markpos);
+                }
+            }
+
+            if (System.IO.File.Exists(fullpath))
+            {
+                return fullpath; 
+            }
+
+            return null;  
+        }
 
         public static byte[] setImageBytes(FrontContext context, byte[] currentbyes)
         { 
@@ -389,6 +403,25 @@ namespace Kooboo.Sites.Systems
             return currentbyes; 
         }
 
+        public static void SetImageCache(RenderContext context)
+        {
+            if (context.WebSite.EnableImageBrowserCache)
+            {
+                if (context.WebSite.ImageCacheDays > 0)
+                {
+                    context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(context.WebSite.ImageCacheDays).ToString("r");
+                }
+                else
+                {
+                    // double verify...
+                    var version = context.Request.GetValue("version");
+                    if (!string.IsNullOrWhiteSpace(version))
+                    {
+                        context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                    }
+                }
+            }
 
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace Kooboo.Sites.Render
                 {
                     if (context.RenderContext.WebSite.EnableImageBrowserCache)
                     { 
-                        if (context.RenderContext.WebSite.ImageCacheDays >= 0)
+                        if (context.RenderContext.WebSite.ImageCacheDays > 0)
                         {
                             context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(context.RenderContext.WebSite.ImageCacheDays).ToString("r");
                         }
