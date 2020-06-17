@@ -35,7 +35,10 @@ namespace Kooboo.Sites.Scripting.Extension
 
             string api = Data.AppSettings.ConvertApiUrl + "/_api/converter/Convert";
 
-             filename = Kooboo.Lib.Security.ShortGuid.GetNewShortId() + "_" + filename;
+            var lastdot = filename.LastIndexOf(".");
+            var extens = filename.Substring(lastdot); 
+
+            filename = Kooboo.Lib.Security.ShortGuid.GetNewShortId() + extens;
 
             string html = null;
 
@@ -74,7 +77,16 @@ namespace Kooboo.Sites.Scripting.Extension
                                 }
                                 else
                                 {
-                                    manager.SyncToDb(target, sitedb, bytes, false);
+                                    var mime = Lib.Helper.IOHelper.MimeType(target);
+
+                                    var resultfilename = target; 
+
+                                    if (mime !=null && mime.ToLower().Contains("image"))
+                                    {
+                                        resultfilename = System.IO.Path.Combine("officeconverter", target);
+                                    } 
+
+                                    manager.SyncToDb(resultfilename, sitedb, bytes, false);
 
                                 } 
                             } 
@@ -110,7 +122,29 @@ namespace Kooboo.Sites.Scripting.Extension
                     }
 
                     string RelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(item.Value);
-  
+
+
+                    if (string.IsNullOrWhiteSpace(RelativeUrl))
+                    {
+                        continue; 
+                    }
+
+                    // add converter folder. 
+                   /// RelativeUrl = Lib.Helper.UrlHelper.Combine("officeconverter", RelativeUrl); 
+
+                    if (RelativeUrl.StartsWith("/") || RelativeUrl.Contains("/"))
+                    {
+                        RelativeUrl = "/officeconverter" + RelativeUrl; 
+                    }
+                    else if (RelativeUrl.StartsWith("\\") || RelativeUrl.Contains("\\"))
+                    {
+                        RelativeUrl = "\\officeconverter" + RelativeUrl; 
+                    }
+                    else
+                    {
+                        RelativeUrl = "/officeconverter/" + RelativeUrl;
+                    }
+                     
 
                     if (item.Value != RelativeUrl)
                     {
