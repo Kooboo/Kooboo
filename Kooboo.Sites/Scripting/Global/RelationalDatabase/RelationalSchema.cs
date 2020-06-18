@@ -53,7 +53,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             foreach (var item in schema._items)
             {
-                var findItem = _items.FirstOrDefault(f => f.Name == item.Name);
+                var findItem = _items.Find(f => Lib.Helper.StringHelper.IsSameValue(f.Name,  item.Name));
 
                 if (findItem == null)
                 {
