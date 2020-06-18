@@ -41,6 +41,12 @@ C:\Windows\System32\robocopy  %batPath%Kooboo.Web\modules %copyFolder%\modules
 ::copy sqlite
 C:\Windows\System32\robocopy  %koobooPath%\bin\%buildType%\x64 %copyDllPath%\x64
 
+for %%i in (%copyFolder%\modules\*.zip) do (
+    for /f %%b in (%koobooPath%\ignoremodules.txt) do (
+      if %%~nxb == %%~nxi (del %%i)
+    )
+)
+
 rd /s /q %copyAdminPath%\Scripts\lib\vs
 :: delete minifier admin
 if exist "%minifierAmdinPath%" ( rd /s /q %batPath%Kooboo.Web\Minifier)
@@ -50,4 +56,4 @@ set zipExePath=%batPath%\tools\7z\
 ::zip folder
 %zipExePath%\7z.exe a -tzip %zipFile% %copyBasePath%\* -r
 
-rd /s /q %copyBasePath%
+::rd /s /q %copyBasePath%
