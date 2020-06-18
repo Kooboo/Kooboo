@@ -6,6 +6,8 @@ using System.Linq;
 using VirtualFile;
 using Kooboo.Lib.Utilities;
 using VirtualFile.Zip;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -59,6 +61,7 @@ namespace Kooboo.Lib.Reflection
         private List<Assembly> LoadDlls()
         {
             var dlls = new List<Assembly>();
+            var isNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
 
             foreach (var folder in extensionFolders)
             {
@@ -71,6 +74,13 @@ namespace Kooboo.Lib.Reflection
                     try
                     {
                         var otherAssembly = Assembly.Load(VirtualResources.ReadAllBytes(filename));
+                        var targetFrameworkAttribute = otherAssembly?.CustomAttributes?.FirstOrDefault(f => f.AttributeType == typeof(TargetFrameworkAttribute));
+                        var netVersion = targetFrameworkAttribute?.ConstructorArguments?.FirstOrDefault().Value;
+
+                        if (isNetFramework && netVersion != null && netVersion.ToString().StartsWith(".NETCoreApp"))
+                        {
+                            continue;
+                        }
 
                         if (otherAssembly != null)
                         {
