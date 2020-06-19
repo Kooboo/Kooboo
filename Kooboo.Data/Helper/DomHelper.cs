@@ -12,7 +12,7 @@ namespace Kooboo.Data.Helper
 public static    class DomHelper
     {
           
-        public static string CleanBodyStyle(string html)
+        private static string _clearBodyStyle (string html)
         {
             var doc = Kooboo.Dom.DomParser.CreateDom(html);
             var iterator = doc.createNodeIterator(doc.body, enumWhatToShow.ELEMENT, null);
@@ -74,7 +74,27 @@ public static    class DomHelper
             }  
             return sb.ToString();
 
-        } 
+        }
+
+        public static string CleanBodyStyle(string html)
+        {
+            var result = _clearBodyStyle(html);
+
+             if (result == null)
+            {
+                return null; 
+            }
+
+            if (result.IndexOf("</html>", StringComparison.OrdinalIgnoreCase)>-1)
+            {
+                var dom = Kooboo.Dom.DomParser.CreateDom(result);
+                var clear = dom.body.InnerHtml;
+                return clear; 
+            }
+
+            return result; 
+        }
+
 
         public static bool IsSelfCloseTag(string tagName)
         {
