@@ -103,6 +103,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="modules\DaFang.Module.zip">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="modules\SqlEx.Module.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

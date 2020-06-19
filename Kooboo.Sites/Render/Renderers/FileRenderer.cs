@@ -66,6 +66,9 @@ namespace Kooboo.Sites.Render
                 }
                 else if (contentType.ToLower().Contains("image"))
                 {
+                    context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                    context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+
                     if (context.RenderContext.WebSite.EnableImageBrowserCache)
                     { 
                         if (context.RenderContext.WebSite.ImageCacheDays > 0)

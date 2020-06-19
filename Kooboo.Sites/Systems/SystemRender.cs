@@ -405,6 +405,9 @@ namespace Kooboo.Sites.Systems
 
         public static void SetImageCache(RenderContext context)
         {
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+
             if (context.WebSite.EnableImageBrowserCache)
             {
                 if (context.WebSite.ImageCacheDays > 0)
