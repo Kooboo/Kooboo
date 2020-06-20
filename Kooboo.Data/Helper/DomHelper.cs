@@ -29,12 +29,19 @@ public static    class DomHelper
             {
                 if (nextnode.nodeType != enumNodeType.ELEMENT)
                 {
+                    nextnode = iterator.nextNode(); 
                     continue; 
                 }
 
                 var el = nextnode as Element; 
 
-                if (el.hasAttribute("style"))
+                if (el.tagName == "img")
+                {
+                    nextnode = iterator.nextNode();
+                    continue; 
+                }
+
+                if (el.hasAttribute("style") || el.hasAttribute("class"))
                 { 
                     int len = nextnode.location.openTokenStartIndex - currentindex;
                      
@@ -47,6 +54,7 @@ public static    class DomHelper
                         }
 
                     el.removeAttribute("style");
+                    el.removeAttribute("class"); 
 
                     sb.Append(ReSerializeOpenTag(el));  // if selfclosed, already closed. 
                      
@@ -80,21 +88,27 @@ public static    class DomHelper
         {
             var result = _clearBodyStyle(html);
 
-             if (result == null)
+            if (result == null)
             {
-                return null; 
-            }
-
-            if (result.IndexOf("</html>", StringComparison.OrdinalIgnoreCase)>-1)
-            {
-                var dom = Kooboo.Dom.DomParser.CreateDom(result);
-                var clear = dom.body.InnerHtml;
-                return clear; 
-            }
-
-            return result; 
+                return null;
+            } 
+            result = RemoveBodyTag(result); 
+            return result;
         }
 
+        public static string RemoveBodyTag(string result)
+        {
+            int bodybegin = result.IndexOf("<body>", StringComparison.OrdinalIgnoreCase);
+            int bodyend = result.IndexOf("</body>", StringComparison.OrdinalIgnoreCase);
+
+
+            if (bodybegin > -1 && bodyend > bodybegin + 5)
+            {
+                result = result.Substring(bodybegin + 6, bodyend - bodybegin - 6);
+            }
+
+            return result;
+        }
 
         public static bool IsSelfCloseTag(string tagName)
         {
