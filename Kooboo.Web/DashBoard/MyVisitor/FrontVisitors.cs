@@ -32,11 +32,7 @@ namespace Kooboo.Web.DashBoard.MyVisitor
         {
             var sitedb = Context.WebSite.SiteDb();
 
-             
-            var repo = sitedb.LogByWeek<VisitorLog>();
-
-            var logs = repo.Take(false, 0, 2000);
-            repo.Close();
+            var logs = DashBoardHelper.GetLogs(Context); 
               
             SiteVisitorModel model = new SiteVisitorModel();
             if (logs.Count() > 0)
