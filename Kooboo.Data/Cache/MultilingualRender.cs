@@ -133,7 +133,7 @@ namespace Kooboo.Data.Cache
                     sb.AppendLine($@"
 (function(){{
     Kooboo.text[""{moduleName}""]={{{properties}}}
-}})()
+}})();
 ");
                 }
                 catch (Exception)
