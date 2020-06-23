@@ -71,16 +71,26 @@ namespace Kooboo.Lib.Reflection
 
                 foreach (var filename in allsubdlls)
                 {
+#if DEBUG
+
+                    if (isNetFramework && File.Exists("ignoremodules.txt"))
+                    {
+                        var modules = File.ReadAllText("ignoremodules.txt")
+                            .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(s =>
+                            {
+                                var module = s.ToUpper().Trim();
+                                if (module.EndsWith(".ZIP")) module = module.Substring(0, module.Length - 4);
+                                return module;
+                            });
+
+                        if (modules.Any(a => filename.Contains(a))) continue;
+                    }
+#endif
+
                     try
                     {
                         var otherAssembly = Assembly.Load(VirtualResources.ReadAllBytes(filename));
-                        var targetFrameworkAttribute = otherAssembly?.CustomAttributes?.FirstOrDefault(f => f.AttributeType == typeof(TargetFrameworkAttribute));
-                        var netVersion = targetFrameworkAttribute?.ConstructorArguments?.FirstOrDefault().Value;
-
-                        if (isNetFramework && netVersion != null && netVersion.ToString().StartsWith(".NETCoreApp"))
-                        {
-                            continue;
-                        }
 
                         if (otherAssembly != null)
                         {

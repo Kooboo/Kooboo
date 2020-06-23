@@ -333,7 +333,9 @@
     <Resource Include="Resources\Images\upgrade-normal.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ignoremodules.txt" />
+    <None Include="ignoremodules.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences" Condition="'$(Configuration)' == 'Release'">
