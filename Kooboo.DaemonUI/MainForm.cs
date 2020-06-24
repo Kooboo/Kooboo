@@ -84,13 +84,21 @@ namespace Kooboo.DaemonUI
 
         private void AddMsg(string msg)
         {
-            Invoke(new Action(() =>
+            try
             {
-                StringBuilder sb = new StringBuilder(textBox1.Text);
-                textBox1.Text = sb.AppendLine(msg).ToString();
-                textBox1.SelectionStart = this.textBox1.Text.Length;
-                textBox1.ScrollToCaret();
-            }));
+                Invoke(new Action(() =>
+                {
+                    StringBuilder sb = new StringBuilder(textBox1.Text);
+                    textBox1.Text = sb.AppendLine(msg).ToString();
+                    textBox1.SelectionStart = this.textBox1.Text.Length;
+                    textBox1.ScrollToCaret();
+                }));
+            }
+            catch (Exception)
+            {
+
+            }
+
         }
 
         private void StartApp()
@@ -108,6 +116,44 @@ namespace Kooboo.DaemonUI
             _process.Start();
             _process.BeginOutputReadLine();
             AddMsg("启动成功");
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+                Activate();
+                ShowInTaskbar = true;
+                notifyIcon1.Visible = false;
+            }
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                ShowInTaskbar = false;
+                notifyIcon1.Visible = true;
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            WindowState = FormWindowState.Minimized;
+        }
+
+        private void Show(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Normal;
+        }
+
+        private void Close(object sender, EventArgs e)
+        {
+            ReleaseProcess();
+            Dispose();
+            Close();
         }
     }
 }
