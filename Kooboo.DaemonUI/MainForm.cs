@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Kooboo.DaemonUI
@@ -13,11 +15,17 @@ namespace Kooboo.DaemonUI
     public partial class MainForm : Form
     {
         Process _process;
+        bool _running;
 
         private bool Running
         {
+            get
+            {
+                return _running;
+            }
             set
             {
+                _running = value;
                 startBtn.Enabled = !value;
                 stopBtn.Enabled = value;
                 statusTxt.Text = value ? "运行中.." : "已停止";
@@ -33,8 +41,20 @@ namespace Kooboo.DaemonUI
 
         private void Start(object sender, EventArgs e)
         {
-            // Task
+            Running = true;
             StartApp();
+            Task.Factory.StartNew(() =>
+            {
+                while (Running)
+                {
+                    Thread.Sleep(1000);
+                    if (_process == null) continue;
+                    if (_process.HasExited)
+                    {
+                        StartApp();
+                    }
+                }
+            });
         }
 
         private void _process_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -44,14 +64,22 @@ namespace Kooboo.DaemonUI
 
         private void Stop(object sender, EventArgs e)
         {
-            if (_process != null && !_process.HasExited)
-            {
-                AddMsg("正在停止");
-                _process.Kill();
-                Running = false;
-                AddMsg("停止成功");
-            }
+            AddMsg("正在停止");
+            ReleaseProcess();
+            Running = false;
+            AddMsg("停止成功");
+        }
 
+        void ReleaseProcess()
+        {
+            var last = _process;
+            _process = null;
+
+            if (last != null && !last.HasExited)
+            {
+                last.Kill();
+                last.Close();
+            }
         }
 
         private void AddMsg(string msg)
@@ -67,6 +95,8 @@ namespace Kooboo.DaemonUI
 
         private void StartApp()
         {
+            ReleaseProcess();
+            AddMsg("正在启动");
             _process = new Process();
             _process.StartInfo.FileName = "dotnet";
             _process.StartInfo.Arguments = "Kooboo.App.dll";
@@ -77,7 +107,7 @@ namespace Kooboo.DaemonUI
             _process.OutputDataReceived += _process_OutputDataReceived;
             _process.Start();
             _process.BeginOutputReadLine();
-            Running = true;
+            AddMsg("启动成功");
         }
     }
 }
