@@ -66,9 +66,11 @@ namespace Kooboo.Render
             var currentwebsite = context.WebSite;
             if (this.options.RequireSpeicalSite)
             {
-                var website = new Kooboo.Data.Models.WebSite();
-                website.Name = "_____kooboorendertempspecialsitename";
-                context.WebSite = website;
+                context.WebSite = null; 
+
+                //var website = new Kooboo.Data.Models.WebSite();
+                //website.Name = "_____kooboorendertempspecialsitename";
+                //context.WebSite = website;
             }
 
             if (this.options.RequireUser && !IsIgnorePath(context.Request.RelativeUrl))

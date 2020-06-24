@@ -15,6 +15,9 @@ namespace Kooboo.Web.Api.Implementation
     {
         public virtual CodeEditViewModel GetEdit(string codetype, ApiCall call)
         {
+            call.Context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            call.Context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+
             var sitedb = call.WebSite.SiteDb();
             
             if (call.ObjectId != default(Guid))
