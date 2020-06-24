@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.App.Standard", "Koob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.App.Upgrade", "Kooboo.App.Upgrade\Kooboo.App.Upgrade.csproj", "{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.DaemonUI", "Kooboo.DaemonUI\Kooboo.DaemonUI.csproj", "{7D1D004E-48AD-4B64-8F9A-943ADC8F0E6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D1D004E-48AD-4B64-8F9A-943ADC8F0E6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D1D004E-48AD-4B64-8F9A-943ADC8F0E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D1D004E-48AD-4B64-8F9A-943ADC8F0E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D1D004E-48AD-4B64-8F9A-943ADC8F0E6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
