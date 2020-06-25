@@ -147,6 +147,7 @@ namespace Kooboo.DaemonUI
         private void Show(object sender, EventArgs e)
         {
             WindowState = FormWindowState.Normal;
+            BringToFront();
         }
 
         private void Close(object sender, EventArgs e)
