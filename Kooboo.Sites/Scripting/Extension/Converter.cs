@@ -95,10 +95,10 @@ namespace Kooboo.Sites.Scripting.Extension
                 } 
             }
 
-            return CorrectHtml(html);
+            return CorrectImageHtml(html);
         }
 
-        public  string CorrectHtml(string input)
+        private  string CorrectImageHtml(string input)
         {
             if(string.IsNullOrWhiteSpace(input))
             {
@@ -169,6 +169,11 @@ namespace Kooboo.Sites.Scripting.Extension
             return input;  
         }
 
+        public string OfficeToCleanHTML(byte[] officebytes, string filename)
+        {
+            var result = officeToHTML(officebytes, filename);
 
+            return Kooboo.Data.Helper.DomHelper.CleanBodyStyle(result); 
+        }
     }
 }

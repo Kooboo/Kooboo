@@ -44,7 +44,7 @@ namespace Kooboo.Web.Api.Implementation
                 PreviewUrl = PageService.GetPreviewUrl(sitedb, item),
                 Linked = sitedb.Relations.GetReferredBy(item).Count(),
                 LayoutId = GetLayoutId(item),
-                PageView = sitedb.VisitorLog.QueryDescending(o => o.ObjectId == item.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
+               // PageView = sitedb.VisitorLog.QueryDescending(o => o.ObjectId == item.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
                 LastModified = item.LastModified,
                 StartPage = item.DefaultStart,
                 InlineUrl = "/_api/redirect/inline?siteid=" + sitedb.WebSite.Id + "&pageid=" + item.Id

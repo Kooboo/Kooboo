@@ -677,6 +677,12 @@ namespace Kooboo.Sites.Repository
 
         }
 
+        /// <summary>
+        /// No assign weekname will use this week data.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="weekname"></param>
+        /// <returns></returns>
         public Sequence<T> LogByWeek<T>(string weekname = null)
         {
             if (string.IsNullOrEmpty(weekname))

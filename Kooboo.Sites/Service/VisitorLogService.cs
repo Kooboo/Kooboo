@@ -259,7 +259,7 @@ namespace Kooboo.Sites.Service
 
         public int Count { get; set; }
 
-        public long Size { get; set; }
+        public long Size { get; set; } 
     }
 
 }

@@ -43,6 +43,9 @@ namespace Kooboo.Sites.Render
 
             RenderImage(context, image);
 
+            context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+
             if (context.RenderContext.WebSite.EnableImageBrowserCache)
             {
 

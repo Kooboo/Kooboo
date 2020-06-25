@@ -10,6 +10,8 @@ namespace Kooboo.Data.Context
 {
     public class RenderContext
     {
+        private object _locker = new object();
+
         private HttpRequest _request;
         public HttpRequest Request
         {
@@ -26,7 +28,7 @@ namespace Kooboo.Data.Context
 
         private HttpResponse _response;
 
-        public bool EnableTextGZip { get; set; } = true; 
+        public bool EnableTextGZip { get; set; } = true;
 
         public HttpResponse Response
         {
@@ -112,19 +114,19 @@ namespace Kooboo.Data.Context
             get
             {
                 if (_culture == null)
-                {             
+                {
                     _culture = RequestManager.GetSetCulture(this.WebSite, this);
                     if (_culture == null)
                     {
-                        if (this.WebSite !=null)
+                        if (this.WebSite != null)
                         {
                             _culture = this.WebSite.DefaultCulture;
                         }
                         else
                         {
                             _culture = AppSettings.CmsLang; // default
-                        } 
-                    } 
+                        }
+                    }
                 }
                 return _culture;
             }
@@ -203,6 +205,30 @@ namespace Kooboo.Data.Context
             return default(T);
         }
 
+        public T GetItem<T>(string keyname, Func<RenderContext, T> Setter)
+        {
+            if (!this.Items.ContainsKey(keyname))
+            {
+                lock (_locker)
+                {
+                    if (!this.Items.ContainsKey(keyname))
+                    {
+                        var obj = Setter(this);
+                        this.Items[keyname] = obj;
+                    }
+                }
+            }
+
+            var result = this.Items[keyname];
+            if (result == null)
+            {
+                return default(T);
+            }
+            else
+            {
+                return (T)this.Items[keyname];
+            }
+        }
         public bool HasItem<T>(string KeyName = null)
         {
             if (this._items == null)
@@ -248,7 +274,7 @@ namespace Kooboo.Data.Context
                 {
                     if (item.RequireBinding)
                     {
-                        item.ValueQuery.TryAssignValue(data, this);  
+                        item.ValueQuery.TryAssignValue(data, this);
                     }
                 }
             }
@@ -262,7 +288,7 @@ namespace Kooboo.Data.Context
                 {
                     if (item.RequireBinding)
                     {
-                        item.ValueQuery.InitValue(this);  
+                        item.ValueQuery.InitValue(this);
                     }
                 }
             }
@@ -272,6 +298,6 @@ namespace Kooboo.Data.Context
 
         public bool IsApp { get; set; }
 
-        public string AppParentUrl { get; set; }    
+        public string AppParentUrl { get; set; }
     }
 }

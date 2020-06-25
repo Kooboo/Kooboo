@@ -242,7 +242,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="app.Release.config" />
-    <None Include="app.Server.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

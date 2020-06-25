@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
+using Kooboo.Data.Models;
 
 namespace Kooboo.Web.DashBoard.MyVisitor
 {
@@ -30,8 +31,9 @@ namespace Kooboo.Web.DashBoard.MyVisitor
         public IDashBoardResponse Render(RenderContext Context)
         {
             var sitedb = Context.WebSite.SiteDb();
-            var logs = sitedb.VisitorLog.AllItemList();
 
+            var logs = DashBoardHelper.GetLogs(Context); 
+              
             SiteVisitorModel model = new SiteVisitorModel();
             if (logs.Count() > 0)
             {

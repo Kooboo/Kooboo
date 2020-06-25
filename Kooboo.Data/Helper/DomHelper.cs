@@ -11,6 +11,104 @@ namespace Kooboo.Data.Helper
 {
 public static    class DomHelper
     {
+          
+        private static string _clearBodyStyle (string html)
+        {
+            var doc = Kooboo.Dom.DomParser.CreateDom(html);
+            var iterator = doc.createNodeIterator(doc.body, enumWhatToShow.ELEMENT, null);
+
+            var nextnode = iterator.nextNode();
+
+            StringBuilder sb = new StringBuilder();
+
+            int totallen = html.Length; 
+
+            int currentindex = 0; 
+
+            while (nextnode != null)
+            {
+                if (nextnode.nodeType != enumNodeType.ELEMENT)
+                {
+                    nextnode = iterator.nextNode(); 
+                    continue; 
+                }
+
+                var el = nextnode as Element; 
+
+                if (el.tagName == "img")
+                {
+                    nextnode = iterator.nextNode();
+                    continue; 
+                }
+
+                if (el.hasAttribute("style") || el.hasAttribute("class"))
+                { 
+                    int len = nextnode.location.openTokenStartIndex - currentindex;
+                     
+                        var element = nextnode as Element;
+                        bool IsSelfClosed = IsSelfCloseTag(el.tagName);
+                  
+                        if (len > 0)
+                        {
+                          sb.Append(doc.HtmlSource.Substring(currentindex, len));
+                        }
+
+                    el.removeAttribute("style");
+                    el.removeAttribute("class"); 
+
+                    sb.Append(ReSerializeOpenTag(el));  // if selfclosed, already closed. 
+                     
+                    if (IsSelfClosed)
+                    {
+                        currentindex = nextnode.location.endTokenEndIndex + 1;
+                        nextnode = iterator.NextSibling(nextnode);
+                    }
+                    else
+                    {
+                        currentindex = nextnode.location.openTokenEndIndex + 1;
+                        nextnode = iterator.nextNode();
+                    } 
+                }
+                else
+                {
+                    nextnode = iterator.nextNode();
+                }
+
+            }
+
+            if (currentindex < totallen - 1)
+            {
+               sb.Append(doc.HtmlSource.Substring(currentindex, totallen - currentindex));
+            }  
+            return sb.ToString();
+
+        }
+
+        public static string CleanBodyStyle(string html)
+        {
+            var result = _clearBodyStyle(html);
+
+            if (result == null)
+            {
+                return null;
+            } 
+            result = RemoveBodyTag(result); 
+            return result;
+        }
+
+        public static string RemoveBodyTag(string result)
+        {
+            int bodybegin = result.IndexOf("<body>", StringComparison.OrdinalIgnoreCase);
+            int bodyend = result.IndexOf("</body>", StringComparison.OrdinalIgnoreCase);
+
+
+            if (bodybegin > -1 && bodyend > bodybegin + 5)
+            {
+                result = result.Substring(bodybegin + 6, bodyend - bodybegin - 6);
+            }
+
+            return result;
+        }
 
         public static bool IsSelfCloseTag(string tagName)
         {
