@@ -86,11 +86,18 @@ namespace Kooboo.DaemonUI
             var last = _process;
             _process = null;
 
-            if (last != null && !last.HasExited)
+            try
             {
-                last.Kill();
-                last.Close();
+                if (last != null && !last.HasExited)
+                {
+                    last.Kill();
+                    last.Close();
+                }
             }
+            catch (Exception)
+            {
+            }
+
         }
 
         private void AddMsg(string msg)
