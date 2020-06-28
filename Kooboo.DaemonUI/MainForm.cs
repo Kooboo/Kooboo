@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,20 +42,30 @@ namespace Kooboo.DaemonUI
 
         private void Start(object sender, EventArgs e)
         {
-            Running = true;
-            StartApp();
-            Task.Factory.StartNew(() =>
+            try
             {
-                while (Running)
+                StartApp();
+                Running = true;
+
+                Task.Factory.StartNew(() =>
                 {
-                    Thread.Sleep(1000);
-                    if (_process == null) continue;
-                    if (_process.HasExited)
+                    while (Running)
                     {
-                        StartApp();
+                        Thread.Sleep(1000);
+                        if (_process == null) continue;
+                        if (_process.HasExited)
+                        {
+                            StartApp();
+                        }
                     }
-                }
-            });
+                });
+            }
+            catch (Exception)
+            {
+                AddMsg("启动失败");
+                ReleaseProcess();
+            }
+
         }
 
         private void _process_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -115,6 +126,8 @@ namespace Kooboo.DaemonUI
             _process.OutputDataReceived += _process_OutputDataReceived;
             _process.Start();
             _process.BeginOutputReadLine();
+            Thread.Sleep(300);
+            if (_process.HasExited) throw new ServerException();
             AddMsg("启动成功");
         }
 
