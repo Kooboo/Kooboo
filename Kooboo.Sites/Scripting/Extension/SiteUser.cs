@@ -25,9 +25,8 @@ namespace Kooboo.Sites.Scripting.Extension
         }
 
         public string get(string username)
-        {
-            throw new System.Exception("this is the exception");
-           // return username + " sample";
+        { 
+           return username + " sample";
         }
     }
 }
