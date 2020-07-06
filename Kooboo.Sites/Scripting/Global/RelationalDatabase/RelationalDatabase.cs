@@ -5,6 +5,7 @@ using KScript;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 
@@ -71,7 +72,30 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
+        [Description(@"Procedure define:
+CREATE PROCEDURE [dbo].[abc] @p = 0,
+AS
+    SELECT @p
+
+Invoke:
+k.datebase.procedure(""abc"")
+
+Result:
+[ { ""a"": 0} ]")]
         public object Procedure(string sql) => Procedure(sql, null);
+
+        [Description(@"Procedure define:
+CREATE PROCEDURE [dbo].[abc] @p1 int = 0, @p2 int
+AS
+    SELECT a=@p1, b=@p2
+
+Invoke:
+k.datebase.procedure(""abc"",{
+param2: 34
+})
+
+Result:
+[ { ""a"": 0, ""b"": 34 } ]")]
         public object Procedure(string sql, object param = null)
         {
             using (var connection = SqlExecuter.CreateConnection())
