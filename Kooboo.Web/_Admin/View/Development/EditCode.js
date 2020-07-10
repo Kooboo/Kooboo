@@ -93,7 +93,11 @@ $(function() {
                                     value: item
                                 }
                             });
+                            if(self.availableEventType.length && self.availableEventType[0].value ){
+                                self.eventType = self.availableEventType[0].value
+                            }
 
+                            debugger
                             var codeTypeParams = Kooboo.getQueryString('codeType'),
                                 eventTypeParma = Kooboo.getQueryString('eventType');
 
