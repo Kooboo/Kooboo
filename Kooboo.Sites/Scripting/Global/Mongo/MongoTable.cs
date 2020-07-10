@@ -242,5 +242,10 @@ namespace KScript
                 MongoCollection.FindOneAndUpdate(GetIdFilter(id), update);
             }
         }
+
+        public long Count(string query)
+        {
+            return this.Query(query).count();  
+        }
     }
 }

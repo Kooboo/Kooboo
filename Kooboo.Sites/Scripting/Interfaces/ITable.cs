@@ -54,6 +54,9 @@ var item = k.database.tablename.find(""fieldname"", ""matchvalue"");")]
         var items = table.findAll(""name startwith 'matchedvalue'""); ")]
         IDynamicTableObject[] findAll(string query);
 
+        [Description(@"return counter based on the query condition")]
+        long Count(string query);
+         
         [Description(@"return all items that have the field value equal the match value
 var items = k.database.tablename.findAll(""fieldname"", ""matchvalue"");")]
         IDynamicTableObject[] findAll(string field, object value);

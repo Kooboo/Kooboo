@@ -212,6 +212,9 @@ use the same query syntax as find or findAll")]
             return null;
         }
 
-
+        public long Count(string query)
+        {
+            return this.Query(query).count();  
+        }
     }
 }
