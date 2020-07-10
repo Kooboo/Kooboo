@@ -7,7 +7,7 @@
     "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
     "/_Admin/Scripts/lib/bootstrap-datetimepicker.js",
 
-    "/_Admin/Scripts/tableModel.js",
+/*    "/_Admin/Scripts/tableModel.js",*/
     "/_Admin/Scripts/viewEditor/components/modal.js",
     "/_Admin/Scripts/textContent/embeddedDialog.js",
     "/_Admin/Scripts/components/kbTable.js",
