@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
   var CACHE_STORAGE_KEY = "KB_CONTENT_GRIPPER_STATUS";
 
   var FOLDER_ID = Kooboo.getQueryString("folder"),
@@ -13,7 +13,7 @@ $(function() {
     NORMAL: "normal",
     CONTENT_TYPE_REQUIRED: "contentTypeRequired",
     FIELD_REQUIRED: "fieldRequired",
-    FOLDER_REQUIRED: "folderRequired"
+    FOLDER_REQUIRED: "folderRequired",
   };
   var cachedFlag = localStorage.getItem(CACHE_STORAGE_KEY);
   if (cachedFlag == null) {
@@ -25,7 +25,7 @@ $(function() {
   var self;
   new Vue({
     el: "#main",
-    data: function() {
+    data: function () {
       self = this;
       return {
         contentId: CONTENT_ID || Kooboo.Guid.Empty,
@@ -60,37 +60,37 @@ $(function() {
         newFolder: {
           name: "",
           displayName: "",
-          contentTypeId: ""
+          contentTypeId: "",
         },
         newFolderRules: {
           name: [
             {
               required: true,
-              message: Kooboo.text.validation.required
+              message: Kooboo.text.validation.required,
             },
             {
               pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-              message: Kooboo.text.validation.objectNameRegex
-            }
+              message: Kooboo.text.validation.objectNameRegex,
+            },
           ],
           contentTypeId: [
             {
               required: true,
-              message: Kooboo.text.validation.required
-            }
-          ]
+              message: Kooboo.text.validation.required,
+            },
+          ],
         },
         // Content Type
         editingFieldIndex: -1,
         showContentTypeModal: false,
         contentTypeForm: {
-          name: ""
+          name: "",
         },
         contentTypeRules: {
           name: [
             {
               required: true,
-              message: Kooboo.text.validation.required
+              message: Kooboo.text.validation.required,
             },
             {
               min: 1,
@@ -100,20 +100,20 @@ $(function() {
                 1 +
                 ", " +
                 Kooboo.text.validation.maxLength +
-                64
+                64,
             },
             {
               remote: {
                 url: Kooboo.ContentType.isUniqueName(),
-                data: function() {
+                data: function () {
                   return {
-                    name: self.contentTypeForm.name
+                    name: self.contentTypeForm.name,
                   };
-                }
+                },
               },
-              message: Kooboo.text.validation.taken
-            }
-          ]
+              message: Kooboo.text.validation.taken,
+            },
+          ],
         },
         contentValues: {},
         fieldEditorOptions: {
@@ -128,25 +128,25 @@ $(function() {
             "mediafile",
             "file",
             "datetime",
-            "number"
+            "number",
           ],
           modifiedField: "isSummaryField",
           modifiedFieldText: Kooboo.text.component.fieldEditor.summaryField,
           showMultilingualOption: true,
           showPreviewPanel: true,
-          getFieldNames: self.getFieldNames
-        }
+          getFieldNames: self.getFieldNames,
+        },
       };
     },
-    mounted: function() {
+    mounted: function () {
       self.refreshSidebar(true);
 
-      Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(ctx) {
-        Kooboo.Media.getList().then(function(res) {
+      Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function (ctx) {
+        Kooboo.Media.getList().then(function (res) {
           if (res.success) {
             res.model["show"] = true;
             res.model["context"] = ctx;
-            res.model["onAdd"] = function(selected) {
+            res.model["onAdd"] = function (selected) {
               ctx.settings.file_browser_callback(
                 ctx.field_name,
                 selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
@@ -161,14 +161,14 @@ $(function() {
       });
     },
     methods: {
-      onAllowModify: function() {
+      onAllowModify: function () {
         self.allowModify = true;
       },
-      changeAvaliableFolders: function() {
+      changeAvaliableFolders: function () {
         self.avaliableFolders = [];
         self.choosedFolderId = null;
 
-        var list = _.filter(self.allFolders, function(folder) {
+        var list = _.filter(self.allFolders, function (folder) {
           return folder.contentTypeId == self.contentType;
         });
         self.avaliableFolders = list;
@@ -183,7 +183,7 @@ $(function() {
           self.getContentFields();
         }
       },
-      editProperty: function(m, index, isSystemField) {
+      editProperty: function (m, index, isSystemField) {
         self.isNewField = false;
         self.fieldData = m;
         self.editingFieldIndex = index;
@@ -194,46 +194,46 @@ $(function() {
         }
         self.onFieldModalShow = true;
       },
-      deleteProperty: function(m, e) {
+      deleteProperty: function (m, e) {
         if (confirm(Kooboo.text.confirm.deleteItem)) {
           self.typeProperties = _.without(self.typeProperties, m);
-          self.saveContentFields(function() {
+          self.saveContentFields(function () {
             self.refreshContent();
           });
         }
       },
-      afterSortProperty: function() {
+      afterSortProperty: function () {
         self.typeProperties = self.userTypeProperties.concat(
           self.systemTypeProperties
         );
-        self.saveContentFields(function() {
+        self.saveContentFields(function () {
           self.refreshContent();
         });
       },
-      refreshContent: function() {
+      refreshContent: function () {
         var tempSaveData = self.getSaveTextContent();
         var params;
         if (self.choosedFolderId) {
           if (self.isNewContent) {
             params = {
-              folderId: self.choosedFolderId
+              folderId: self.choosedFolderId,
             };
           } else {
             params = {
               folderId: self.choosedFolderId,
-              id: self.contentId
+              id: self.contentId,
             };
           }
         }
 
         if (params) {
-          Kooboo.TextContent.getEdit(params).then(function(res) {
+          Kooboo.TextContent.getEdit(params).then(function (res) {
             if (res.success) {
               var data = res.model;
-              data.properties.forEach(function(prop) {
+              data.properties.forEach(function (prop) {
                 if (prop.name == "Online") {
                   var langs = Object.keys(prop.values);
-                  langs.forEach(function(lang) {
+                  langs.forEach(function (lang) {
                     prop.values[lang] =
                       tempSaveData.Online || prop.values[lang];
                   });
@@ -244,10 +244,10 @@ $(function() {
               });
 
               var langs = Object.keys(tempSaveData.values);
-              langs.forEach(function(lang) {
+              langs.forEach(function (lang) {
                 var keys = Object.keys(tempSaveData.values[lang]);
-                keys.forEach(function(key) {
-                  data.properties.forEach(function(prop) {
+                keys.forEach(function (key) {
+                  data.properties.forEach(function (prop) {
                     if (prop.name == key) {
                       prop.values[lang] = tempSaveData.values[lang][key];
                     }
@@ -268,7 +268,7 @@ $(function() {
           });
         }
       },
-      contentTypeChanged: function(e) {
+      contentTypeChanged: function (e) {
         if (e && e.target) {
           if (confirm(Kooboo.text.site.textContent.changeContentTypeConfirm)) {
             self.contentType = e.target.value;
@@ -277,21 +277,21 @@ $(function() {
           }
         }
       },
-      toggleAllFields: function() {
+      toggleAllFields: function () {
         self.allFieldsShow = !self.allFieldsShow;
       },
-      onCreateField: function() {
+      onCreateField: function () {
         self.isNewField = true;
         self.fieldData = undefined;
         self.fieldEditorOptions.isSystemField = false;
         self.onFieldModalShow = true;
         self.editingFieldIndex = -1;
       },
-      onFieldSave: function(fm) {
+      onFieldSave: function (fm) {
         if (self.fieldEditorOptions.isSystemField) {
           self.systemTypeProperties[fm.editingIndex] = fm.data;
           self.typeProperties = self.userTypeProperties.concat(
-              self.systemTypeProperties
+            self.systemTypeProperties
           );
         } else {
           if (self.isNewField) {
@@ -304,20 +304,20 @@ $(function() {
           }
         }
         self.fieldEditorOptions.isSystemField = false;
-        self.saveContentFields(function() {
+        self.saveContentFields(function () {
           self.refreshContent();
         });
       },
-      saveContentFields: function(cb) {
+      saveContentFields: function (cb) {
         var properties = self.typeProperties;
-        var name = self.contentTypes.find(function(ct) {
+        var name = self.contentTypes.find(function (ct) {
           return ct.id == self.contentType;
         }).name;
         Kooboo.ContentType.save({
           id: self.contentType,
           name: name,
-          properties: properties
-        }).then(function(res) {
+          properties: properties,
+        }).then(function (res) {
           if (res.success) {
             window.info.done(Kooboo.text.info.save.success);
             if (cb && typeof cb == "function") {
@@ -326,27 +326,27 @@ $(function() {
           }
         });
       },
-      getFieldNames: function() {
-        return self.typeProperties.map(function(f) {
+      getFieldNames: function () {
+        return self.typeProperties.map(function (f) {
           return f.name == "UserKey" ? "" : f.name;
         });
       },
       // New Folder
-      onCreateFolder: function() {
+      onCreateFolder: function () {
         self.showFolderModal = true;
         self.newFolder.contentTypeId = self.contentType;
       },
-      onHideFolderModal: function() {
+      onHideFolderModal: function () {
         self.showFolderModal = false;
         self.newFolder.name = "";
         self.newFolder.displayName = "";
         self.newFolder.contentTypeId = "";
         self.$refs.newFolderForm.clearValid();
       },
-      isNewFolderValid: function() {
+      isNewFolderValid: function () {
         return self.$refs.newFolderForm.validate();
       },
-      onCreateNewFolder: function() {
+      onCreateNewFolder: function () {
         if (self.isNewFolderValid()) {
           Kooboo.ContentFolder.post({
             id: Kooboo.Guid.Empty,
@@ -354,15 +354,15 @@ $(function() {
             displayName: self.newFolder.displayName,
             contentTypeId: self.newFolder.contentTypeId,
             embedded: [],
-            category: []
-          }).then(function(res) {
+            category: [],
+          }).then(function (res) {
             if (res.success) {
-              Kooboo.ContentFolder.getList().then(function(r) {
+              Kooboo.ContentFolder.getList().then(function (r) {
                 if (r.success) {
                   var folders = _.sortBy(r.model, [
-                    function(o) {
+                    function (o) {
                       return o.creationDate;
-                    }
+                    },
                   ]);
                   self.allFolders = folders.reverse();
                   self.changeAvaliableFolders();
@@ -374,16 +374,16 @@ $(function() {
           });
         }
       },
-      getContentFields: function() {
+      getContentFields: function () {
         var params = { folderId: FOLDER_ID || self.choosedFolderId };
         if (CONTENT_ID) {
           params.id = CONTENT_ID;
         }
-        Kooboo.TextContent.getEdit(params).then(function(res) {
+        Kooboo.TextContent.getEdit(params).then(function (res) {
           if (res.success) {
             var data = res.model;
             // TEST ONLY
-            data.properties.forEach(function(prop) {
+            data.properties.forEach(function (prop) {
               if (prop.name == "Online") {
                 prop.controlType = "Boolean";
               }
@@ -402,24 +402,24 @@ $(function() {
           }
         });
       },
-      createContentType: function() {
+      createContentType: function () {
         self.showContentTypeModal = true;
       },
-      onContentTypeModalHide: function() {
+      onContentTypeModalHide: function () {
         self.contentTypeForm.name = "";
         self.showContentTypeModal = false;
         self.$refs.contentTypeForm.clearValid();
       },
-      onCreateNewContentType: function() {
+      onCreateNewContentType: function () {
         if (self.isAbleToCreateType()) {
           Kooboo.ContentType.get({
-            id: Kooboo.Guid.Empty
-          }).then(function(res) {
+            id: Kooboo.Guid.Empty,
+          }).then(function (res) {
             if (res.success) {
               var data = res.model;
               data.id = Kooboo.Guid.Empty;
               data.name = self.contentTypeForm.name;
-              Kooboo.ContentType.save(data).then(function(re) {
+              Kooboo.ContentType.save(data).then(function (re) {
                 if (re.success) {
                   window.info.done(Kooboo.text.info.save.success);
                   self.refreshSidebar();
@@ -434,19 +434,21 @@ $(function() {
           });
         }
       },
-      getSaveTextContent: function() {
+      getSaveTextContent: function () {
         return {
-          id: self.contentId,
+          id: Kooboo.getQueryString("copy")
+            ? Kooboo.Guid.Empty
+            : self.contentId,
           folderId: self.choosedFolderId,
           values: self.contentValues.fieldsValue || {},
           categories: self.contentValues.categories || {},
-          embedded: self.contentValues.embedded || {}
+          embedded: self.contentValues.embedded || {},
         };
       },
-      isAbleToCreateType: function() {
+      isAbleToCreateType: function () {
         return self.$refs.contentTypeForm.validate();
       },
-      isAbleToSaveTextContent: function() {
+      isAbleToSaveTextContent: function () {
         if (!self.contentTypes.length) {
           window.info.fail(Kooboo.text.site.textContent.createTypeFieldHint);
           return false;
@@ -461,21 +463,20 @@ $(function() {
         }
         return this.$refs.fieldPanel.validate() || undefined;
       },
-      onSubmit: function(cb) {
-        if(self.isAbleToSaveTextContent()==undefined){
-          if(self.siteLangs&&self.siteLangs.cultures){
+      onSubmit: function (cb) {
+        if (self.isAbleToSaveTextContent() == undefined) {
+          if (self.siteLangs && self.siteLangs.cultures) {
             for (var key in self.siteLangs.cultures) {
               Kooboo.EventBus.publish("kb/multilang/change", {
                 name: key,
                 fullName: self.siteLangs.cultures[key],
-                selected: true
+                selected: true,
               });
             }
           }
-        }
-        else if (self.isAbleToSaveTextContent()) {
+        } else if (self.isAbleToSaveTextContent()) {
           Kooboo.TextContent.langupdate(self.getSaveTextContent()).then(
-            function(res) {
+            function (res) {
               if (res.success) {
                 if (cb && typeof cb == "function") {
                   cb(res.model);
@@ -485,65 +486,65 @@ $(function() {
           );
         }
       },
-      onContentSave: function() {
-        self.onSubmit(function(id) {
+      onContentSave: function () {
+        self.onSubmit(function (id) {
           location.href = Kooboo.Route.Get(
             Kooboo.Route.TextContent.DetailPage,
             _.assign(
               {
                 folder: self.choosedFolderId,
-                id: id
+                id: id,
               },
               LANG ? { lang: LANG } : {}
             )
           );
         });
       },
-      onContentSaveAndCreate: function() {
-        self.onSubmit(function() {
+      onContentSaveAndCreate: function () {
+        self.onSubmit(function () {
           window.info.done(Kooboo.text.info.save.success);
-          setTimeout(function() {
+          setTimeout(function () {
             location.href = Kooboo.Route.Get(
               Kooboo.Route.TextContent.DetailPage,
               {
-                folder: self.choosedFolderId
+                folder: self.choosedFolderId,
               }
             );
           }, 300);
         });
       },
-      onContentSaveAndReturn: function() {
-        self.onSubmit(function() {
+      onContentSaveAndReturn: function () {
+        self.onSubmit(function () {
           location.href = self.isMultiContent
             ? Kooboo.Route.Get(Kooboo.Route.TextContent.ByLangFolder, {
                 folder: self.choosedFolderId,
-                lang: LANG
+                lang: LANG,
               })
             : Kooboo.Route.Get(Kooboo.Route.TextContent.ByFolder, {
-                folder: self.choosedFolderId
+                folder: self.choosedFolderId,
               });
         });
       },
-      userCancel: function() {
+      userCancel: function () {
         if (self.hasFolder) {
           location.href = self.isMultiContent
             ? Kooboo.Route.Get(Kooboo.Route.TextContent.ByLangFolder, {
                 folder: self.choosedFolderId,
-                lang: LANG
+                lang: LANG,
               })
             : Kooboo.Route.Get(Kooboo.Route.TextContent.ByFolder, {
-                folder: self.choosedFolderId
+                folder: self.choosedFolderId,
               });
         } else {
           location.href = Kooboo.Route.Get(Kooboo.Route.TextContent.ListPage);
         }
       },
-      refreshSidebar: function(initLoad) {
+      refreshSidebar: function (initLoad) {
         $.when(
           Kooboo.ContentType.getList(),
           Kooboo.ContentFolder.getList(),
           Kooboo.Site.Langs()
-        ).then(function(r1, r2, r3) {
+        ).then(function (r1, r2, r3) {
           var typeRes = r1[0],
             folderRes = r2[0],
             langRes = r3[0];
@@ -554,9 +555,9 @@ $(function() {
               self.contentMode = ContentMode.FOLDER_REQUIRED;
             } else {
               var folders = _.sortBy(folderRes.model, [
-                function(o) {
+                function (o) {
                   return o.creationDate;
-                }
+                },
               ]);
               self.allFolders = folders.reverse();
             }
@@ -565,9 +566,9 @@ $(function() {
               self.contentMode = ContentMode.CONTENT_TYPE_REQUIRED;
             } else {
               var types = _.sortBy(typeRes.model, [
-                function(o) {
+                function (o) {
                   return o.lastModified;
-                }
+                },
               ]);
               self.contentTypes = types.reverse();
             }
@@ -575,7 +576,7 @@ $(function() {
             self.siteLangs = langRes.model;
 
             if (self.hasFolder) {
-              var folder = _.find(self.allFolders, function(f) {
+              var folder = _.find(self.allFolders, function (f) {
                 return f.id == self.folderId;
               });
               if (folder) {
@@ -583,8 +584,8 @@ $(function() {
                 self.choosedFolderId = folder.id;
                 self.contentType = folder.contentTypeId;
                 Kooboo.ContentType.Get({
-                  id: folder.contentTypeId
-                }).then(function(res) {
+                  id: folder.contentTypeId,
+                }).then(function (res) {
                   if (res.success) {
                     self.contentTypeModel = res.model;
                     self.typeProperties = res.model.properties;
@@ -604,35 +605,35 @@ $(function() {
           }
         });
       },
-      togglePanel: function() {
+      togglePanel: function () {
         this.isPanelHidden = !this.isPanelHidden;
         localStorage.setItem(
           CACHE_STORAGE_KEY,
           JSON.stringify(this.isPanelHidden)
         );
       },
-      onFieldEditorClose: function() {
+      onFieldEditorClose: function () {
         this.onFieldModalShow = false;
-      }
+      },
     },
     computed: {
-      userTypeProperties: function() {
-        return _.filter(self.typeProperties, function(prop) {
+      userTypeProperties: function () {
+        return _.filter(self.typeProperties, function (prop) {
           return !prop.isSystemField;
         });
       },
-      systemTypeProperties: function() {
-        return _.filter(self.typeProperties, function(prop) {
+      systemTypeProperties: function () {
+        return _.filter(self.typeProperties, function (prop) {
           return prop.isSystemField;
         });
-      }
+      },
     },
     watch: {
-      contentType: function(typeId) {
+      contentType: function (typeId) {
         if (!self.hasFolder) {
           Kooboo.ContentType.Get({
-            id: typeId
-          }).then(function(res) {
+            id: typeId,
+          }).then(function (res) {
             if (res.success) {
               self.contentTypeModel = res.model;
               self.typeProperties = res.model.properties;
@@ -640,13 +641,13 @@ $(function() {
             }
           });
         }
-      }
-    }
+      },
+    },
   });
 
   function URLFolderCheck(folders) {
     if (FOLDER_ID) {
-      var selectedFolder = _.find(folders, function(folder) {
+      var selectedFolder = _.find(folders, function (folder) {
         return folder.id == FOLDER_ID;
       });
 

@@ -33,6 +33,9 @@
       <a :href="newTextContent" v-else class="btn green navbar-btn">{{
         Kooboo.text.site.textContent.new + " " + folderName
       }}</a>
+      <a v-if="selected.length == 1" @click="onCopy" class="btn green navbar-btn"
+        >Copy</a
+      >
       <a v-if="selected.length > 0" @click="onDelete" class="btn red navbar-btn"
         >Delete</a
       >
