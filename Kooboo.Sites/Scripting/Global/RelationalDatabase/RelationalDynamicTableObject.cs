@@ -44,22 +44,22 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                 return obj[key];
             }
 
-            //if (_table == null) return null;
-            //var cacheKey = $"{_table.Database.ConnectionString}_{_table.Name}_{key}";
-            //_relationCache.TryGetValue(cacheKey, out var relation);
+            if (_table == null) return null;
+            var cacheKey = $"{_table.Database.ConnectionString}_{_table.Name}_{key}";
+            _relationCache.TryGetValue(cacheKey, out var relation);
 
-            //if (relation == null || DateTime.Now - relation.CreateTime > new TimeSpan(0, 5, 0))
-            //{
-            //    relation = _table.Database.SqlExecuter.GetRelation(key, _table.Name);
-            //    _relationCache[cacheKey] = relation ?? new RelationModel();
-            //}
+            if (relation == null || DateTime.Now - relation.CreateTime > new TimeSpan(0, 5, 0))
+            {
+                relation = _table.Database.SqlExecuter.GetRelation(key, _table.Name);
+                _relationCache[cacheKey] = relation ?? new RelationModel();
+            }
 
 
-            //if (relation != null && relation.To != null && _table.Name != null && obj.ContainsKey(relation.To))
-            //{
-            //    var data = _table.Database.SqlExecuter.QueryData(relation.TableA, $"{relation.From} == {obj[relation.To]}").Take(999);
-            //    return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table.Database.GetTable(relation.TableA) as RelationalTable<TExecuter, TSchema, TConnection>);
-            //}
+            if (relation != null && relation.To != null && _table.Name != null && obj.ContainsKey(relation.To))
+            {
+                var data = _table.Database.SqlExecuter.QueryData(relation.TableA, $"{relation.From} == {obj[relation.To]}").Take(999);
+                return CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), _table.Database.GetTable(relation.TableA) as RelationalTable<TExecuter, TSchema, TConnection>);
+            }
 
             return null;
         }
