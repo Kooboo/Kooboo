@@ -68,18 +68,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         /// because we can't know null field type
         /// </summary>
         /// <param name="value"></param>
-        void ClearNullField(IDictionary<string, object> value)
+        IDictionary<string, object> ClearNullField(IDictionary<string, object> value)
         {
-            foreach (var item in value.Where(w => w.Value == null).Select(s => s.Key).ToArray())
-            {
-                value.Remove(item);
-            }
+            return value.Where(w => w.Value != null).ToDictionary(k => k.Key, v => v.Value);
         }
 
         public object add(object value)
         {
             var dic = kHelper.CleanDynamicObject(value);
-            ClearNullField(dic);
+            dic = ClearNullField(dic);
             EnsureTableCreated();
             TryUpgradeSchema(dic);
             object newId = null;
@@ -197,7 +194,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void update(object id, object newvalue)
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
-            ClearNullField(dic);
+            dic = ClearNullField(dic);
             EnsureTableCreated();
             if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) dic.Remove(_schema.PrimaryKey);
             TryUpgradeSchema(dic);
