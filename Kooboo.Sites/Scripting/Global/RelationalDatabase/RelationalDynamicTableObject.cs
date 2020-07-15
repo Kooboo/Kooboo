@@ -33,7 +33,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         RelationalDynamicTableObject(IDictionary<string, object> orgObj, RelationalTable<TExecuter, TSchema, TConnection> table)
         {
-            this.obj = orgObj;
+            this.obj = orgObj.ToDictionary(k => k.Key, v => v.Value);
             _table = table;
         }
 
