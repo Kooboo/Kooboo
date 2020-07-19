@@ -203,7 +203,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
             while(transferingPages.Count()>0)
             {
-                System.Threading.Thread.Sleep(300);
+                System.Threading.Thread.Sleep(1000);
                 UpdateTransferPage(transferingPages, manager); 
             }  
         } 
@@ -233,6 +233,14 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                 transpages.RemoveAt(item); 
             }
 
+            //if (runningobjects.Count()==0)
+            //{
+            //    System.Threading.Thread.Sleep(3000); 
+            //    if (runningobjects.Count()==0)
+            //    {
+            //        transpages.RemoveAll(o => true);
+            //    } 
+            //} 
         }
 
         /// <summary>
