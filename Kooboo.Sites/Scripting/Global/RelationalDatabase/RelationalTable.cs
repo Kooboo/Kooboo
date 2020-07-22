@@ -80,18 +80,31 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             EnsureTableCreated();
             TryUpgradeSchema(dic);
             object newId = null;
+            bool returnId = false;
 
             if (_schema.PrimaryKey == "_id")
             {
                 newId = Guid.NewGuid().ToString();
                 EnsureHaveId(dic, newId.ToString());
             }
-            else if (!string.IsNullOrWhiteSpace(_schema.PrimaryKey) && dic.ContainsKey(_schema.PrimaryKey))
+            else if (!string.IsNullOrWhiteSpace(_schema.PrimaryKey))
             {
-                newId = dic[_schema.PrimaryKey];
+                if (dic.ContainsKey(_schema.PrimaryKey))
+                {
+                    newId = dic[_schema.PrimaryKey];
+                }
+                else
+                {
+                    returnId = true;
+                }
             }
 
-            Database.SqlExecuter.Insert(Name, dic);
+            var newIdFromSql = Database.SqlExecuter.Insert(Name, dic, _schema, returnId);
+            if (returnId)
+            {
+                newId = newIdFromSql;
+            }
+
             return newId;
         }
 
@@ -108,18 +121,31 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             EnsureTableCreated();
             GetNewSchemaItems(dic);
             object newId = null;
+            bool returnId = false;
 
             if (_schema.PrimaryKey == "_id")
             {
                 newId = Guid.NewGuid().ToString();
                 EnsureHaveId(dic, newId.ToString());
             }
-            else if (!string.IsNullOrWhiteSpace(_schema.PrimaryKey) && dic.ContainsKey(_schema.PrimaryKey))
+            else if (!string.IsNullOrWhiteSpace(_schema.PrimaryKey))
             {
-                newId = dic[_schema.PrimaryKey];
+                if (dic.ContainsKey(_schema.PrimaryKey))
+                {
+                    newId = dic[_schema.PrimaryKey];
+                }
+                else
+                {
+                    returnId = true;
+                }
             }
 
-            Database.SqlExecuter.Append(Name, dic, _schema);
+            var newIdFromSql = Database.SqlExecuter.Append(Name, dic, _schema, returnId);
+            if (returnId)
+            {
+                newId = newIdFromSql;
+            }
+
             return newId;
         }
 
