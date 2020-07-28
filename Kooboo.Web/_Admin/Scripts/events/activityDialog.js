@@ -1,4 +1,4 @@
-﻿(function() {
+﻿﻿(function() {
   Kooboo.loadJS([
     "/_Admin/Scripts/components/kbForm.js",
     "/_Admin/Scripts/components/controlType/TextBox.js",
@@ -26,9 +26,9 @@
     },
     methods: {
       submit: function() {
-        if (self.$refs.form.validate()) {
+        if (self.$refs.form && self.$refs.form.validate()) {
           var data = self.cacheData,
-            values = {};
+                   values = {};
           self.settings.forEach(function(setting) {
             values[setting.name] = self.model[setting.prop];
             // var orig = _.find(data.settings, function(s) {
@@ -55,6 +55,8 @@
           //     self.container.push(self.activity);
           // }
           // self.close()
+        }else {
+          self.close();
         }
       },
       close: function() {
