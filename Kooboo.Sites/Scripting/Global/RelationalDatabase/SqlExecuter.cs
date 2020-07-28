@@ -205,21 +205,26 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
                     if (!decimal.TryParse(value, out var _) && !bool.TryParse(value, out var _))
                     {
-                        value = $"'{value}'";
+                        value = $"'{RemoveQuote(value)}'";
                     }
 
                     break;
                 case Comparer.StartWith:
-                    value = $"'{value}%'";
+                    value = $"'{RemoveQuote(value)}%'";
                     break;
                 case Comparer.Contains:
-                    value = $"'%{value}%'";
+                    value = $"'%{RemoveQuote(value)}%'";
                     break;
                 default:
                     break;
             }
 
             return value;
+        }
+
+        private static string RemoveQuote(string value)
+        {
+            return value.TrimStart('\'').TrimEnd('\'');
         }
     }
 }

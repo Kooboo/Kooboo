@@ -238,13 +238,14 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        public static List<ConditionItem> ParseConditoin(string expression)
+        public static List<ConditionItem> ParseConditoin(string expression, bool keepStringQuote = false)
         {
             if (string.IsNullOrWhiteSpace(expression))
             {
                 return new List<ConditionItem>(); 
             }
             var scanner = new SyntaxScanner(expression);
+            scanner.KeepStringQuote = keepStringQuote;
 
             var token = scanner.ConsumeNext();
 

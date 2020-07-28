@@ -70,6 +70,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public string nexttoken { get; set; }
 
+        public bool KeepStringQuote { get; set; }
+
         public string ConsumeNext()
         {  
             while (currentIndex < totalLength)
@@ -133,7 +135,14 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         string value = LookTill(currentChar);
 
-                        return value;   
+                        if (KeepStringQuote)
+                        {
+                            return currentChar + value + currentChar;
+                        }
+                        else
+                        {
+                            return value;
+                        }
                     }
                 }
                  
