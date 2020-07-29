@@ -213,5 +213,10 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             return null;
         }
+
+        public long Count(string query)
+        {
+          return  this.Query(query).count();  
+        }
     }
 }

@@ -62,7 +62,7 @@
             class="form-group"
             v-if="codeType && codeType.toLowerCase() === 'event'"
           >
-            <select class="form-control">
+            <select class="form-control" v-model="eventType">
               <option v-for="item in availableEventType" :value="item.value"
                 >{{item.displayText}}</option
               >
@@ -73,7 +73,7 @@
           <div class="form-group">
             <label for="">Code type:</label>
             <p class="form-control-static">
-              <label for="" class="label label-sm green">{{codeType}}</label>
+                    <label for="" class="label label-sm green">{{codeType}}</label>
             </p>
           </div>
           <div

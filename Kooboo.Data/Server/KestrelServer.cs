@@ -201,8 +201,7 @@ namespace Kooboo.Data.Server
             }
 
             private static Context.HttpRequest GetRequest(IFeatureCollection requestFeature)
-            {
-                // var header = context.Features.Request.Headers as Kooboo.HttpServer.Http.HttpRequestHeaders; 
+            { 
                 Context.HttpRequest httprequest = new Context.HttpRequest();
                 var req = requestFeature.Get<IHttpRequestFeature>();
 
