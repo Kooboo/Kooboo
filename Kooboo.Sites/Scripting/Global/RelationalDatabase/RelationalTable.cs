@@ -65,18 +65,20 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         }
 
         /// <summary>
-        /// because we can't know null field type
+        /// clear null field  and repeat field
         /// </summary>
         /// <param name="value"></param>
-        IDictionary<string, object> ClearNullField(IDictionary<string, object> value)
+        IDictionary<string, object> StandardizingField(IDictionary<string, object> value)
         {
-            return value.Where(w => w.Value != null).ToDictionary(k => k.Key, v => v.Value);
+            return value.Where(w => w.Value != null)
+                        .GroupBy(g => g.Key.ToLower())
+                        .ToDictionary(k => k.Key, v => v.Last().Value);
         }
 
         public object add(object value)
         {
             var dic = kHelper.CleanDynamicObject(value);
-            dic = ClearNullField(dic);
+            dic = StandardizingField(dic);
             EnsureTableCreated();
             TryUpgradeSchema(dic);
             object newId = null;
@@ -194,7 +196,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void update(object id, object newvalue)
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
-            dic = ClearNullField(dic);
+            dic = StandardizingField(dic);
             EnsureTableCreated();
             if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) dic.Remove(_schema.PrimaryKey);
             TryUpgradeSchema(dic);
