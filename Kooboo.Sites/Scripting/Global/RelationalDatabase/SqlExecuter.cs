@@ -163,7 +163,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         internal string ConditionsToSql(List<ConditionItem> conditions)
         {
-            return string.Join(" and ", conditions.Select(s => $@" {WarpField(s.Field)} {ComparerToString(s.Comparer)} {ConventValue(s.Comparer, s.Value)} "));
+            return string.Join(" and ", conditions.Select(s => $@" {WarpField(s.Field)} {ComparerToString(s.Comparer)} {ConventValue(s)} "));
         }
 
         internal string WarpField(string field)
@@ -196,35 +196,26 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             }
         }
 
-        static string ConventValue(Comparer comparer, string value)
+        static string ConventValue(ConditionItem condition)
         {
-            switch (comparer)
+            switch (condition.Comparer)
             {
                 case Comparer.EqualTo:
                 case Comparer.NotEqualTo:
-
-                    if (!decimal.TryParse(value, out var _) && !bool.TryParse(value, out var _))
+                    if (condition.IsString)
                     {
-                        value = $"'{RemoveQuote(value)}'";
+                        return $"'{condition.Value}'";
                     }
-
                     break;
                 case Comparer.StartWith:
-                    value = $"'{RemoveQuote(value)}%'";
-                    break;
+                    return $"'{condition.Value}%'";
                 case Comparer.Contains:
-                    value = $"'%{RemoveQuote(value)}%'";
-                    break;
+                    return $"'%{condition.Value}%'";
                 default:
                     break;
             }
 
-            return value;
-        }
-
-        private static string RemoveQuote(string value)
-        {
-            return value.TrimStart('\'').TrimEnd('\'');
+            return condition.Value;
         }
     }
 }

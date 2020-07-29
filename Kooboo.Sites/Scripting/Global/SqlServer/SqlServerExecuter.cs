@@ -88,7 +88,7 @@ WHERE
 
         public override object[] QueryData(string name, string where = null, long? limit = null, long? offset = null, string orderBy = null, object @params = null)
         {
-            var conditions = IndexedDB.Dynamic.QueryPraser.ParseConditoin(where, keepStringQuote:true);
+            var conditions = IndexedDB.Dynamic.QueryPraser.ParseConditoin(where);
             var whereStr = where == null ? string.Empty : $"WHERE {ConditionsToSql(conditions)}";
             var limitStr = limit.HasValue ? $"ROW FETCH NEXT {limit} ROWS ONLY" : string.Empty;
             var orderByStr = orderBy == null ? string.Empty : $"ORDER BY {orderBy}";
