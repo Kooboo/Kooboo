@@ -3,6 +3,8 @@
 using Kooboo.IndexedDB.Query;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -246,11 +248,13 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             var scanner = new SyntaxScanner(expression);
 
-            var token = scanner.ConsumeNext();
+            var tokenRet = scanner.ConsumeNext();
+            var token = tokenRet?.Value;
 
             string field = null;
             string compare = null;
             string value = null;
+            bool isValueString = false;
 
             List<ConditionItem> result = new List<ConditionItem>();
 
@@ -266,6 +270,7 @@ namespace Kooboo.IndexedDB.Dynamic
                             item.Field = field;
                             item.Comparer = GetComparer(compare);
                             item.Value = value;
+                            item.IsString = isValueString;
                             result.Add(item);
                         }
                         else
@@ -301,6 +306,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     else if (value == null)
                     {
                         value = token;
+                        isValueString = tokenRet.IsString;
                     }
 
                     if (field != null && compare != null && value != null)
@@ -309,6 +315,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         item.Field = field;
                         item.Comparer = GetComparer(compare);
                         item.Value = value;
+                        item.IsString = isValueString;
                         result.Add(item);
 
                         field = null;
@@ -317,7 +324,8 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
 
-                token = scanner.ConsumeNext();
+                tokenRet = scanner.ConsumeNext();
+                token = tokenRet?.Value;
             }
 
             if (field != null && compare != null)
@@ -379,8 +387,9 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public Comparer Comparer { get; set; }
 
-        public string Value { get; set; }
+        public bool IsString { get; set; }
 
+        public string Value { get; set; }
     }
 
 }
