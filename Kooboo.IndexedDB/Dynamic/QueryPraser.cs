@@ -249,7 +249,7 @@ namespace Kooboo.IndexedDB.Dynamic
             var scanner = new SyntaxScanner(expression);
 
             var tokenRet = scanner.ConsumeNext();
-            var token = tokenRet.Value;
+            var token = tokenRet?.Value;
 
             string field = null;
             string compare = null;
@@ -325,7 +325,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
 
                 tokenRet = scanner.ConsumeNext();
-                token = tokenRet.Value;
+                token = tokenRet?.Value;
             }
 
             if (field != null && compare != null)
