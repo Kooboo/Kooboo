@@ -97,11 +97,11 @@ namespace Kooboo.Api
 
             try
             {
-                var excute = true;
+                var execute = true;
 
                 if (isApi)
                 {
-                    excute = (bool)apimethod.DeclareType.GetMethod(
+                    execute = (bool)apimethod.DeclareType.GetMethod(
                         "OnActionExecuting",
                         BindingFlags.Instance | BindingFlags.NonPublic,
                         Type.DefaultBinder,
@@ -110,7 +110,7 @@ namespace Kooboo.Api
                     ).Invoke(apimethod.ClassInstance, new[] { call });
                 }
 
-                if (excute) response = Methods.ApiMethodManager.Execute(apimethod, call);
+                if (execute) response = Methods.ApiMethodManager.Execute(apimethod, call);
             }
             catch (Exception)
             {
