@@ -2,10 +2,29 @@
 //All rights reserved.
 namespace Kooboo.Api
 {
-   public interface IApi
-    {  
-        string ModelName { get; } 
+    public interface IApi
+    {
+        string ModelName { get; }
         bool RequireSite { get; }
-        bool RequireUser { get;  }
+        bool RequireUser { get; }
+    }
+
+    public abstract class Api : IApi
+    {
+
+        public abstract string ModelName { get; }
+
+        public abstract bool RequireSite { get; }
+
+        public abstract bool RequireUser { get; }
+
+
+        protected virtual void OnActionExecuting(ApiCall ApiCall)
+        {
+        }
+
+        protected virtual void OnActionExecuted(ApiCall ApiCall)
+        {
+        }
     }
 }

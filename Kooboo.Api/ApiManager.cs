@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Kooboo.Data.Language;
 using Kooboo.Data.Context;
+using System.Reflection;
 
 namespace Kooboo.Api
 {
@@ -73,7 +74,7 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = false };
                 result.Messages.AddRange(errors);
                 return result;
-            } 
+            }
             try
             {
                 return ExecuteMethod(call, apimethod);
@@ -83,7 +84,7 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(ex.Message);
 
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);  
+                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
 
                 return result;
             }
@@ -91,7 +92,41 @@ namespace Kooboo.Api
 
         private static IResponse ExecuteMethod(ApiCall call, ApiMethod apimethod)
         {
-            var response = Methods.ApiMethodManager.Execute(apimethod, call);
+            var isApi = apimethod.ClassInstance is Api;
+            object response;
+
+            try
+            {
+                if (isApi)
+                {
+                    apimethod.DeclareType.GetMethod(
+                        "OnActionExecuting",
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        Type.DefaultBinder,
+                        new[] { typeof(ApiCall) },
+                        null
+                    ).Invoke(apimethod.ClassInstance, new[] { call });
+                }
+                response = Methods.ApiMethodManager.Execute(apimethod, call);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (isApi)
+                {
+                    apimethod.DeclareType.GetMethod(
+                         "OnActionExecuted",
+                         BindingFlags.Instance | BindingFlags.NonPublic,
+                         Type.DefaultBinder,
+                         new[] { typeof(ApiCall) },
+                         null
+                    ).Invoke(apimethod.ClassInstance, new[] { call });
+                }
+            }
+
 
             if (apimethod.IsVoid)
             {
