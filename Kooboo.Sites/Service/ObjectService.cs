@@ -63,7 +63,16 @@ namespace Kooboo.Sites.Service
             ObjectInfo info = new ObjectInfo();
             info.ObjectId = siteobject.Id;
             info.ConstType = siteobject.ConstType;
-            info.ModelType = ConstTypeService.GetModelType(siteobject.ConstType);
+
+            if (info.ConstType >0)
+            {
+                info.ModelType = ConstTypeService.GetModelType(siteobject.ConstType);
+            }
+            
+            if (info.ModelType == null)
+            {
+                info.ModelType =  siteobject.GetType(); 
+            }
 
             if (siteobject is IBinaryFile)
             {

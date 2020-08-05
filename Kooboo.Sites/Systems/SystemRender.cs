@@ -386,7 +386,8 @@ namespace Kooboo.Sites.Systems
                     int intheight = 0;
                     if (int.TryParse(width, out intwidth) && int.TryParse(height, out intheight))
                     {
-                      return  Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intheight);
+                        return Kooboo.Sites.Render.ImageRenderer.GetImageThumbnail(context.RenderContext, currentbyes, intwidth, intheight, 0);   
+                        //Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intheight);
                     }
                 } 
                 else
@@ -394,8 +395,9 @@ namespace Kooboo.Sites.Systems
                     int intwidth = 0;
 
                     if (int.TryParse(width, out intwidth))
-                    {
-                        return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intwidth);
+                    { 
+                        return Kooboo.Sites.Render.ImageRenderer.GetImageThumbnail(context.RenderContext, currentbyes, intwidth, intwidth, 0); 
+                         //return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intwidth);
                     }
                 }
             }

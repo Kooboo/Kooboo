@@ -4,11 +4,19 @@ using System.Threading.Tasks;
 using Kooboo.Extensions;
 using Kooboo.Sites.Extensions;
 using System;
+using Kooboo.Data.Context;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
 {
     public class ImageRenderer
     {
+        static ImageRenderer()
+        {
+            ThumbnailCache = new Dictionary<Guid, Dictionary<Guid, byte[]>>();
+        }
+
         public async static Task RenderAsync(FrontContext context)
         {
             var image = await context.SiteDb.ImagePool.GetAsync(context.Route.objectId);
@@ -56,11 +64,11 @@ namespace Kooboo.Sites.Render
                 else
                 {
                     // double verify...
-                    var version = context.RenderContext.Request.GetValue("version"); 
+                    var version = context.RenderContext.Request.GetValue("version");
                     if (!string.IsNullOrWhiteSpace(version))
                     {
                         context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
-                    } 
+                    }
                 }
             }
         }
@@ -119,41 +127,115 @@ namespace Kooboo.Sites.Render
             }
 
             var bytes = image.ContentBytes;
-             
-            var width = context.RenderContext.Request.Get("width"); 
+
+            var width = context.RenderContext.Request.Get("width");
             if (!string.IsNullOrEmpty(width))
             {
-                var height = context.RenderContext.Request.Get("height"); 
-                 
-                 if (!string.IsNullOrWhiteSpace(height))
+                var height = context.RenderContext.Request.Get("height");
+
+                if (!string.IsNullOrWhiteSpace(height))
                 {
                     int intwidth = 0;
-                    int intheight = 0; 
+                    int intheight = 0;
                     if (int.TryParse(width, out intwidth) && int.TryParse(height, out intheight))
                     {
-                     bytes = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(bytes, intwidth, intheight);
+                        bytes = GetImageThumbnail(context.RenderContext, bytes, intwidth, intheight, image.Version);  
                     }
                 }
-                 else
+                else
                 {
                     int intwidth = 0;
-         
+
                     if (int.TryParse(width, out intwidth))
                     {
-                        if (image.Height>0 && image.Width >0)
-                        {  
-                            int intheight =   (int)intwidth * image.Height / image.Width;  
-                            bytes = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(bytes, intwidth, intheight);
-                        } 
+                        if (image.Height > 0 && image.Width > 0)
+                        {
+                            int intheight = (int)intwidth * image.Height / image.Width;
+                          
+                            bytes = GetImageThumbnail(context.RenderContext, bytes, intwidth, intheight, image.Version);
+                        }
                     }
                 }
             }
-             
+
 
             context.RenderContext.Response.Body = bytes;
         }
 
+        public static byte[] GetImageThumbnail(RenderContext context, byte[] OrgBytes, int width, int height, long version)
+        {
+            Guid siteid = default(Guid);
+            if (context != null && context.WebSite != null)
+            {
+                siteid = context.WebSite.Id;
+            }
+
+            Guid Hash = default(Guid);
+
+            if (version != 0)
+            {
+                var bytes = BitConverter.GetBytes(version);
+
+                byte[] all = new byte[16];
+
+                System.Buffer.BlockCopy(bytes, 0, all, 0, 8);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(height), 0, all, 8, 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(width), 0, all, 12, 4);
+                Hash = Lib.Security.Hash.ComputeGuid(all);
+            }
+            else
+            {
+                // no version,  file based. 
+                var filehash = Lib.Security.Hash.ComputeGuid(OrgBytes);
+                var unique = filehash.ToString() + height.ToString() + width.ToString();
+
+                Hash = Lib.Security.Hash.ComputeHashGuid(unique);
+            }
+
+            var cache = GetThumbnailCache(siteid, Hash); 
+            
+            if (cache !=null)
+            {
+                return cache; 
+            }
+
+           var result = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(OrgBytes, width,  height);
+
+            SetThumbnailCache(siteid, Hash, result);
+            return result; 
+        }
+
+        private static byte[] GetThumbnailCache(Guid SiteId, Guid HashId)
+        {
+            if (ThumbnailCache.ContainsKey(SiteId))
+            {
+                var list = ThumbnailCache[SiteId];
+                if (list.ContainsKey(HashId))
+                {
+                    return list[HashId];
+                }
+            }
+            return null;
+        }
+
+        private static void SetThumbnailCache(Guid SiteId, Guid HashId, byte[] thumbnail)
+        {
+            Dictionary<Guid, byte[]> sitecache;
+            if (ThumbnailCache.ContainsKey(SiteId))
+            {
+                sitecache = ThumbnailCache[SiteId];
+                sitecache[HashId] = thumbnail; 
+            }
+            else
+            { 
+                sitecache = new Dictionary<Guid, byte[]>();
+                ThumbnailCache[SiteId] = sitecache;
+                sitecache[HashId] = thumbnail;  
+            }
+        }
 
 
+        private static Dictionary<Guid, Dictionary<Guid, byte[]>> ThumbnailCache { get; set; }
     }
+
 }

@@ -103,6 +103,7 @@
     <Folder Include="Ecommerce\Search\" />
     <Folder Include="Ecommerce\Recommendation\" />
     <Folder Include="Ecommerce\Shopping\" />
+    <Folder Include="SMS\" />
   </ItemGroup>
 
 </Project>

@@ -28,5 +28,10 @@ namespace Kooboo.Sites.Scripting.Extension
         { 
            return username + " sample";
         }
+
+        public string xxxcccyang(string xyazddd)
+        {
+            return xyazddd + "endded"; 
+        }
     }
 }

@@ -1,8 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using Kooboo.Data;
-using Kooboo.Lib; 
 using Kooboo.IndexedDB;
 
 namespace Kooboo.App.CrossPlatform
@@ -24,13 +22,16 @@ namespace Kooboo.App.CrossPlatform
             Kooboo.Data.Hosts.WindowsHost.change = new Data.Hosts.HostChange() { NoChange = true }; 
             Kooboo.Data.AppSettings.DefaultLocalHost = "localkooboo.com";
             Kooboo.Data.AppSettings.StartHost = "127.0.0.1"; 
-            
+             
             Web.SystemStart.Start(initport.HttpPort);
             Console.WriteLine("Web Server Started at port:" + initport.HttpPort.ToString());
         
-            Mail.EmailWorkers.Start();  
-            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait(); 
-        }
+            if (!Kooboo.Data.AppSettings.DisableMail)
+            {
+                Mail.EmailWorkers.Start();
+            }
 
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait(); 
+        } 
     }
 }

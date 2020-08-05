@@ -10,6 +10,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.Mysql;
+using Kooboo.Sites.Scripting.Global.SMS;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using KScript.KscriptConfig;
 using KScript.Sites;
@@ -183,6 +184,15 @@ var value = k.session.key; ")]
             set
             {
                 _dom = value;
+            }
+        }
+
+        [Description("Send SMS notification")]
+        public SMS sms
+        {
+            get
+            {
+                return new SMS(this.RenderContext); 
             }
         }
 

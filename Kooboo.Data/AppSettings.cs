@@ -77,7 +77,11 @@ namespace Kooboo.Data
             _serversetting = null; // reset server setting. 
 
             KscriptConfig = KscriptConfigReader.GetConfig();
+
+            DisableMail = GetBool("DisableMail"); 
         }
+
+        public static bool DisableMail { get; set; }
 
         private static byte[] GetModulesHash()
         {
@@ -356,6 +360,9 @@ namespace Kooboo.Data
             }
             set { _screenShotUrl = value; }
         }
+
+
+
 
         #region "resource url"
 

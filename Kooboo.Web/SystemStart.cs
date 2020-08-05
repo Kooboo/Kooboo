@@ -3,7 +3,6 @@
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Context;
-using Kooboo.Data.Helper;
 using Kooboo.Data.Server;
 using Kooboo.Data.SSL;
 using Kooboo.Jobs;
@@ -20,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VirtualFile;
 using VirtualFile.Zip;
+
 
 namespace Kooboo.Web
 {
@@ -73,7 +73,7 @@ namespace Kooboo.Web
 
             JobWorker.Instance.Start();
 
-            Service.UpGradeService.UpgradeFix();  
+            Service.UpGradeService.UpgradeFix();
         }
 
         public static void StartNewWebServer(int port)
@@ -123,7 +123,6 @@ namespace Kooboo.Web
                 return _middlewares;
             }
         }
-
 
         // only call this before shut down the server. 
         public static void Stop(int port = 0)
@@ -221,7 +220,6 @@ namespace Kooboo.Web
         {
             return AppSettings.RootPath;
         }
-
         private static string LocalServerRoot(RenderContext context)
         {
             if (context.WebSite != null)
