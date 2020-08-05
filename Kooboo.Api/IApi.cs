@@ -19,8 +19,9 @@ namespace Kooboo.Api
         public abstract bool RequireUser { get; }
 
 
-        protected virtual void OnActionExecuting(ApiCall ApiCall)
+        protected virtual bool OnActionExecuting(ApiCall ApiCall)
         {
+            return true;
         }
 
         protected virtual void OnActionExecuted(ApiCall ApiCall)

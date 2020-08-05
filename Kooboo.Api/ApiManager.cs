@@ -93,13 +93,15 @@ namespace Kooboo.Api
         private static IResponse ExecuteMethod(ApiCall call, ApiMethod apimethod)
         {
             var isApi = apimethod.ClassInstance is Api;
-            object response;
+            object response = null;
 
             try
             {
+                var excute = true;
+
                 if (isApi)
                 {
-                    apimethod.DeclareType.GetMethod(
+                    excute = (bool)apimethod.DeclareType.GetMethod(
                         "OnActionExecuting",
                         BindingFlags.Instance | BindingFlags.NonPublic,
                         Type.DefaultBinder,
@@ -107,7 +109,8 @@ namespace Kooboo.Api
                         null
                     ).Invoke(apimethod.ClassInstance, new[] { call });
                 }
-                response = Methods.ApiMethodManager.Execute(apimethod, call);
+
+                if (excute) response = Methods.ApiMethodManager.Execute(apimethod, call);
             }
             catch (Exception)
             {
