@@ -16,6 +16,8 @@ using Kooboo.Web.Spa;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using VirtualFile;
 using VirtualFile.Zip;
 
@@ -29,6 +31,8 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
+            ThreadPool.SetMinThreads(9600, 500);
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
