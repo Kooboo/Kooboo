@@ -18,6 +18,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public abstract char QuotationLeft { get; }
         public abstract char QuotationRight { get; }
+        public virtual char StatementDelimiter => ';';
 
         protected SqlExecuter(string connectionSring)
         {
@@ -47,20 +48,31 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public abstract void CreateTable(string name);
 
-        public virtual void Insert(string name, object data)
+        public virtual object Insert(string name, object data, RelationalSchema schema, bool returnId = false)
         {
             var dic = data as IDictionary<string, object>;
             var columns = string.Join(",", dic.Select(s => $@"{WarpField(s.Key)}"));
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
             var sql = $@"INSERT INTO {WarpField(name)}({columns}) VALUES ({values})";
 
+            if (!returnId)
+            {
+                using (var connection = CreateConnection())
+                {
+                    connection.Execute(sql, new[] { data });
+                    return null;
+                }
+            }
+
+            var whereCaluse = String.Join(" and ", dic.Select(o => $"{WarpField(o.Key)}=@{o.Key}"));
+            sql += StatementDelimiter + $"SELECT {WarpField(schema.PrimaryKey)} FROM {WarpField(name)} WHERE {whereCaluse}";
             using (var connection = CreateConnection())
             {
-                connection.Execute(sql, new[] { data });
+                return connection.ExecuteScalar(sql, data);
             }
         }
 
-        public virtual void Append(string name, object data, RelationalSchema schema)
+        public virtual object Append(string name, object data, RelationalSchema schema, bool returnId = false)
         {
             var dic = data as IDictionary<string, object>;
             var removeKeys = new List<string>();
@@ -82,9 +94,20 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             var values = string.Join(",", dic.Select(s => $"@{s.Key}"));
             var sql = $@"INSERT INTO {WarpField(name)} ({columns}) VALUES ({values})";
 
+            if (!returnId)
+            {
+                using (var connection = CreateConnection())
+                {
+                    connection.Execute(sql, data);
+                    return null;
+                }
+            }
+
+            var whereCaluse = String.Join(" and ", dic.Select(o => $"{WarpField(o.Key)}=@{o.Key}"));
+            sql += StatementDelimiter + $"SELECT {WarpField(schema.PrimaryKey)} FROM {WarpField(name)} WHERE {whereCaluse}";
             using (var connection = CreateConnection())
             {
-                connection.Execute(sql, data);
+                return connection.ExecuteScalar(sql, data);
             }
         }
 

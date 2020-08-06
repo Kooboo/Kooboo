@@ -11,8 +11,8 @@ namespace Kooboo.Sites.Scripting.Interfaces
         RelationalSchema GetSchema(string name);
         void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items);
         void CreateTable(string name);
-        void Insert(string name, object data);
-        void Append(string name, object data, RelationalSchema schema);
+        object Insert(string name, object data, RelationalSchema schema, bool returnId = false);
+        object Append(string name, object data, RelationalSchema schema, bool returnId = false);
         void CreateIndex(string name, string fieldname);
         void Delete(string name, string primaryKey, object id);
         void UpdateData(string name, string primaryKey, object id, object data);
