@@ -61,7 +61,13 @@ namespace Kooboo.Lib.Reflection
         private List<Assembly> LoadDlls()
         {
             var dlls = new List<Assembly>();
-            var isNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+            bool isNetFramework = false;  // = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+
+#if NET461
+            {
+            isNetFramework = true; 
+            }
+#endif
 
             foreach (var folder in extensionFolders)
             {

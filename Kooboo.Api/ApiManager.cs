@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Kooboo.Data.Language;
 using Kooboo.Data.Context;
-using System.Reflection;
 
 namespace Kooboo.Api
 {
@@ -92,44 +91,34 @@ namespace Kooboo.Api
 
         private static IResponse ExecuteMethod(ApiCall call, ApiMethod apimethod)
         {
-            var isApi = apimethod.ClassInstance is Api;
-            object response = null;
+            object response =null; 
 
-            try
+            if (apimethod.ClassInstance is Api)
             {
-                var execute = true;
+                var instance = Activator.CreateInstance(apimethod.DeclareType) as Api;
 
-                if (isApi)
+                try
                 {
-                    execute = (bool)apimethod.DeclareType.GetMethod(
-                        "OnActionExecuting",
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        Type.DefaultBinder,
-                        new[] { typeof(ApiCall) },
-                        null
-                    ).Invoke(apimethod.ClassInstance, new[] { call });
+                    var ok = instance.OnActionExecuting(call);
+                    if (ok)
+                    {
+                        response = Methods.ApiMethodManager.Execute(apimethod, call);
+                    }
                 }
-
-                if (execute) response = Methods.ApiMethodManager.Execute(apimethod, call);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (isApi)
+                catch (Exception ex)
                 {
-                    apimethod.DeclareType.GetMethod(
-                         "OnActionExecuted",
-                         BindingFlags.Instance | BindingFlags.NonPublic,
-                         Type.DefaultBinder,
-                         new[] { typeof(ApiCall) },
-                         null
-                    ).Invoke(apimethod.ClassInstance, new[] { call });
+                    throw ex; 
                 }
+                finally
+                {
+                     instance.OnActionExecuted(call);
+                }  
             }
-
+            else
+            {
+                response = Methods.ApiMethodManager.Execute(apimethod, call);
+            }
+         
 
             if (apimethod.IsVoid)
             {
