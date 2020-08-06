@@ -15,6 +15,7 @@ namespace Kooboo.Sites.Render
         static ImageRenderer()
         {
             ThumbnailCache = new Dictionary<Guid, Dictionary<Guid, byte[]>>();
+            _locker = new object();
         }
 
         public async static Task RenderAsync(FrontContext context)
@@ -139,7 +140,7 @@ namespace Kooboo.Sites.Render
                     int intheight = 0;
                     if (int.TryParse(width, out intwidth) && int.TryParse(height, out intheight))
                     {
-                        bytes = GetImageThumbnail(context.RenderContext, bytes, intwidth, intheight, image.Version);  
+                        bytes = GetImageThumbnail(context.RenderContext, bytes, intwidth, intheight, image.Version);
                     }
                 }
                 else
@@ -151,7 +152,7 @@ namespace Kooboo.Sites.Render
                         if (image.Height > 0 && image.Width > 0)
                         {
                             int intheight = (int)intwidth * image.Height / image.Width;
-                          
+
                             bytes = GetImageThumbnail(context.RenderContext, bytes, intwidth, intheight, image.Version);
                         }
                     }
@@ -192,17 +193,17 @@ namespace Kooboo.Sites.Render
                 Hash = Lib.Security.Hash.ComputeHashGuid(unique);
             }
 
-            var cache = GetThumbnailCache(siteid, Hash); 
-            
-            if (cache !=null)
+            var cache = GetThumbnailCache(siteid, Hash);
+
+            if (cache != null)
             {
-                return cache; 
+                return cache;
             }
 
-           var result = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(OrgBytes, width,  height);
+            var result = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(OrgBytes, width, height);
 
             SetThumbnailCache(siteid, Hash, result);
-            return result; 
+            return result;
         }
 
         private static byte[] GetThumbnailCache(Guid SiteId, Guid HashId)
@@ -218,19 +219,24 @@ namespace Kooboo.Sites.Render
             return null;
         }
 
+        private static object _locker;
+
         private static void SetThumbnailCache(Guid SiteId, Guid HashId, byte[] thumbnail)
         {
-            Dictionary<Guid, byte[]> sitecache;
-            if (ThumbnailCache.ContainsKey(SiteId))
-            {
-                sitecache = ThumbnailCache[SiteId];
-                sitecache[HashId] = thumbnail; 
-            }
-            else
+            lock (_locker)
             { 
-                sitecache = new Dictionary<Guid, byte[]>();
-                ThumbnailCache[SiteId] = sitecache;
-                sitecache[HashId] = thumbnail;  
+                Dictionary<Guid, byte[]> sitecache;
+                if (ThumbnailCache.ContainsKey(SiteId))
+                {
+                    sitecache = ThumbnailCache[SiteId];
+                    sitecache[HashId] = thumbnail;
+                }
+                else
+                {
+                    sitecache = new Dictionary<Guid, byte[]>();
+                    ThumbnailCache[SiteId] = sitecache;
+                    sitecache[HashId] = thumbnail;
+                }
             }
         }
 

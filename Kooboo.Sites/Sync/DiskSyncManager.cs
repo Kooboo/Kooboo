@@ -711,7 +711,7 @@ namespace Kooboo.Sites.Sync
                         }
                         catch (Exception)
                         {
-                            System.Threading.Thread.Sleep(10);
+                            System.Threading.Thread.Sleep(100);
                         }
                         i += 1;
                     }

@@ -12,18 +12,18 @@ using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.SMS
 {
-   public class Ali
+    public class Ali
     {
         public Ali(RenderContext context)
         {
-            this.Context = context; 
+            this.Context = context;
         }
 
         public RenderContext Context { get; set; }
 
         [Description("k.sms.aliSMS.send(\"your_ali_template_code\", \"+8615312345678\", \"MergeContent\");")]
-        public bool Send(string templateCode, string ToPhoneNumber, string message)
-        {   
+        public bool Send(string templateCode, string ToPhoneNumber, string bindingkey, string bindingvalue)
+        {
             var setting = this.Context.WebSite.SiteDb().CoreSetting.GetSetting<AliSMSSetting>();
 
             if (setting == null || string.IsNullOrWhiteSpace(setting.accessId) || string.IsNullOrWhiteSpace(setting.accessSecret) || string.IsNullOrWhiteSpace(setting.signName))
@@ -34,12 +34,12 @@ namespace Kooboo.Sites.Scripting.Global.SMS
             if (string.IsNullOrWhiteSpace(setting.regionId))
             {
                 setting.regionId = "cn-hangzhou";
-            } 
-             
+            }
+
             if (!ToPhoneNumber.StartsWith("+"))
             {
-                ToPhoneNumber = "+86" + ToPhoneNumber; 
-            } 
+                ToPhoneNumber = "+86" + ToPhoneNumber;
+            }
 
             var profile = DefaultProfile.GetProfile(setting.regionId, setting.accessId, setting.accessSecret);
             profile.AddEndpoint(setting.regionId, setting.regionId, "Dysmsapi", "dysmsapi.aliyuncs.com");
@@ -47,35 +47,41 @@ namespace Kooboo.Sites.Scripting.Global.SMS
             var acsClient = new DefaultAcsClient(profile);
             var request = new SendSmsRequest();
 
-            string errormsg = null; 
+            string errormsg = null;
             try
             {
                 request.PhoneNumbers = ToPhoneNumber;
                 request.SignName = setting.signName;
                 request.TemplateCode = templateCode;
 
-                request.TemplateParam = JsonConvert.SerializeObject(new
-                {
-                    message
-                });
+                string bindingpara = "";
 
-                var res = acsClient.GetAcsResponse(request);
-                
-                if (res== null || res.Code !="OK")
+                if (!string.IsNullOrWhiteSpace(bindingkey) && !string.IsNullOrWhiteSpace(bindingvalue))
                 {
-                    string err = ""; 
+                    Dictionary<string, string> para = new Dictionary<string, string>();
+                    para.Add(bindingkey, bindingvalue);
+                    bindingpara = JsonConvert.SerializeObject(para);
+
+                }
+                request.TemplateParam = bindingpara;
+                 
+                var res = acsClient.GetAcsResponse(request);
+
+                if (res == null || res.Code != "OK")
+                {
+                    string err = "";
                     if (res == null)
                     {
                         err = "no response";
                     }
                     else
                     {
-                        err = res.Message; 
+                        err = res.Message;
                     }
 
-                    throw new Exception(err); 
+                    throw new Exception(err);
                 }
-                
+
             }
             catch (ServerException e)
             {
@@ -88,13 +94,13 @@ namespace Kooboo.Sites.Scripting.Global.SMS
 
             if (errormsg == null)
             {
-                return true; 
+                return true;
             }
             else
             {
-                throw new Exception(errormsg); 
-            } 
-        } 
+                throw new Exception(errormsg);
+            }
+        }
 
     }
 }

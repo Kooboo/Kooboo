@@ -81,9 +81,12 @@ namespace Kooboo.Sites.Scripting.Extension
 
                                     var resultfilename = target; 
 
-                                    if (mime !=null && mime.ToLower().Contains("image"))
+                                    if (mime !=null)
                                     {
-                                        resultfilename = System.IO.Path.Combine("officeconverter", target);
+                                        if (mime.ToLower().Contains("image") || mime.ToLower().Contains("css"))
+                                        {
+                                            resultfilename = System.IO.Path.Combine("officeconverter", target);
+                                        }
                                     } 
 
                                     manager.SyncToDb(resultfilename, sitedb, bytes, false);
@@ -95,10 +98,10 @@ namespace Kooboo.Sites.Scripting.Extension
                 } 
             }
 
-            return CorrectImageHtml(html);
+            return CorrectHtmlLink(html);
         }
 
-        private  string CorrectImageHtml(string input)
+        private  string CorrectHtmlLink(string input)
         {
             if(string.IsNullOrWhiteSpace(input))
             {
@@ -161,6 +164,16 @@ namespace Kooboo.Sites.Scripting.Extension
                      
                 }
             }
+
+
+            var list = dom.getElementsByTagName("link"); 
+           
+
+            
+
+            var embeds = dom.getElementsByTagName("embed"); 
+
+
 
              if (updates.Any())
             {
