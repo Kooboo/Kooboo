@@ -134,7 +134,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     else
                     {
                         string value = LookTill(currentChar);
-                        return new TokenResult { Value = value, IsString = true };
+                        return new TokenResult { Value = value, IsQuoted = true };
                     }
                 }
 
@@ -201,11 +201,11 @@ namespace Kooboo.IndexedDB.Dynamic
     {
         public string Value { get; set; }
 
-        public bool IsString { get; set; }
+        public bool IsQuoted { get; set; }
 
         public static implicit operator TokenResult(string str)
         {
-            return new TokenResult { Value = str, IsString = false };
+            return new TokenResult { Value = str, IsQuoted = false };
         }
     }
 }
