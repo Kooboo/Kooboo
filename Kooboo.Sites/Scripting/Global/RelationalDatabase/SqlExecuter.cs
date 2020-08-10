@@ -225,7 +225,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             {
                 case Comparer.EqualTo:
                 case Comparer.NotEqualTo:
-                    if (condition.IsString)
+                    if (condition.IsString || (!decimal.TryParse(condition.Value, out _) && !bool.TryParse(condition.Value, out _)))
                     {
                         return $"'{condition.Value}'";
                     }
