@@ -72,7 +72,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             return value.Where(w => w.Value != null)
                         .GroupBy(g => g.Key.ToLower())
-                        .ToDictionary(k => k.Key, v => v.Last().Value);
+                        .ToDictionary(k => k.Last().Key, v => v.Last().Value);
         }
 
         public object add(object value)
