@@ -39,11 +39,14 @@ namespace Kooboo.IndexedDB
 
         private byte[] GetPartial(long position, int offset, int count)
         {
-            byte[] partial = new byte[count]; 
+
+            byte[] partial = new byte[count];
             if (Stream.Length >= position + offset + count)
             {
-                Stream.Position = position + offset;
-                Stream.Read(partial, 0, count);
+                var _stream = StreamManager.GetReadonlyFileStream(this._fullfilename);
+                _stream.Position = position + offset;
+                _stream.Read(partial, 0, count);
+                _stream.Dispose();
                 return partial;
             }
             return null;
@@ -52,11 +55,14 @@ namespace Kooboo.IndexedDB
         private async Task<byte[]> GetPartialAsync(long position, int offset, int count)
         {
             byte[] partial = new byte[count];
-        
+
+
             if (Stream.Length >= position + offset + count)
             {
-                Stream.Position = position + offset;
-                await Stream.ReadAsync(partial, 0, count);
+                var _stream = StreamManager.GetReadonlyFileStream(this._fullfilename);
+                _stream.Position = position + offset;
+                await _stream.ReadAsync(partial, 0, count);
+                _stream.Dispose();
                 return partial;
             }
             return null;
@@ -107,10 +113,12 @@ namespace Kooboo.IndexedDB
         public async Task<byte[]> GetAsync(long position)
         {
             byte[] counterbytes = GetPartial(position, 2, 4);
+
             if (counterbytes == null)
             {
                 return null;
             }
+
             int counter = BitConverter.ToInt32(counterbytes, 0);
             return await GetPartialAsync(position, 10, counter);
         }
@@ -172,7 +180,7 @@ namespace Kooboo.IndexedDB
                 {
                     System.IO.File.Delete(this._fullfilename);
                 }
-            }  
+            }
         }
 
         public void Flush()
@@ -187,7 +195,7 @@ namespace Kooboo.IndexedDB
         }
 
         public FileStream Stream
-        { 
+        {
             get
             {
 

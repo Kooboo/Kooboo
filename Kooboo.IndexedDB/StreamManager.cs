@@ -19,13 +19,20 @@ namespace Kooboo.IndexedDB
 
            // return new FileStream(FullFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, 4096, FileOptions.WriteThrough); 
         }
-        
+
+        public static FileStream GetReadonlyFileStream(string FullFileName)
+        {
+            return File.Open(FullFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+            // return new FileStream(FullFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, 4096, FileOptions.WriteThrough); 
+        }
+
         //public static FileStream GetFileStream(string FullFileName)
         //{
         //    return new FileStream(FullFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, 4096*2, 
         //    FileFlagNoBuffering | FileOptions.WriteThrough);
 
         //}
-       
+
     }
 }
