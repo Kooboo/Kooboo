@@ -602,6 +602,11 @@ namespace Kooboo.Sites.Sync
                 else
                 {
                     var repo = SiteDb.GetRepository(item);
+                    
+                    if (repo== null)
+                    {
+                        continue; 
+                    }
 
                     if (!Attributes.AttributeHelper.IsCoreObject(repo.ModelType))
                     {

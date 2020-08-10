@@ -2,7 +2,10 @@
 //All rights reserved.
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Sync;
+using System;
 using System.ComponentModel;
+using System.IO;
 
 namespace KScript
 {
@@ -41,5 +44,7 @@ namespace KScript
         {
             return this.context.DataContext.GetValue(key); 
         }
+
+ 
     }
 }

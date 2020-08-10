@@ -79,6 +79,20 @@ var input = ""myvalue"";
             var bytes = Convert.FromBase64String(base64string);
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
+         
+        [Description("Generate a new Guid")]
+        public string NewGuid()
+        {
+           var id =  System.Guid.NewGuid();
+            return id.ToString().Replace("-", ""); 
+        }
+
+        [Description("Generate a new Guid, encrypt to short length")]
+        public string ShortGuid()
+        {
+            return Kooboo.Lib.Security.ShortGuid.GetNewShortId(); 
+        }
+
     }
 
 

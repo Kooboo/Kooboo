@@ -10,6 +10,7 @@ namespace Kooboo.Sites.Models
 {
     [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Text)] 
     [Attributes.NameAsID]
+    [Kooboo.Attributes.Routable]
     public class Code : CoreObject, ITextObject, IEmbeddable, IExtensionable
     {
         public Code()

@@ -3,7 +3,10 @@
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Sync;
 using KScript.Sites;
+using System;
+using System.IO;
 using System.Linq;
 
 namespace KScript
@@ -52,7 +55,49 @@ namespace KScript
             return new kSiteDb(newcontext); 
 
         }
-  
+
+
+        public kSiteDb CreatSite(string siteName, string fullDomain, byte[] Binary)
+        {
+            var orgid = this.context.WebSite.OrganizationId;
+            var orgname = siteName;
+            bool nameok = false;
+
+            for (int i = 0; i < 99; i++)
+            {
+                if (Kooboo.Data.GlobalDb.WebSites.CheckNameAvailable(siteName, orgid))
+                {
+                    nameok = true;
+                    break;
+                }
+                else
+                {
+                    siteName = orgname + i.ToString();
+                }
+            }
+
+            if (!nameok)
+            {
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("SiteName is taken", this.context));
+            }
+
+            MemoryStream memory = new MemoryStream(Binary);
+            var newsite = ImportExport.ImportZip(memory, orgid, siteName, fullDomain, orgid);
+
+
+            RenderContext newcontext = new RenderContext();
+            newcontext.Request = this.context.Request;
+            newcontext.User = this.context.User;
+            newcontext.WebSite = newsite;
+            newcontext.IsSiteBinding = true;
+
+            return new kSiteDb(newcontext);
+
+        }
+
+
+
+
         private object _locker;
         RoutableTextRepository _page;
 

@@ -14,6 +14,7 @@ using System.Linq;
 using Kooboo.Api;
 using Kooboo.Lib.Helper;
 using Kooboo.Data.Language;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -227,7 +228,8 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public List<ExportStoreNameViewModel> ExportStoreNames(ApiCall call)
-        {
+        { 
+
             List<ExportStoreNameViewModel> names = new List<ExportStoreNameViewModel>();
             names.Add(new ExportStoreNameViewModel() { Name = "Page", DisplayName = Hardcoded.GetValue("Page", call.Context) });
             names.Add(new ExportStoreNameViewModel() { Name = "View", DisplayName = Hardcoded.GetValue("View", call.Context) });
@@ -250,6 +252,10 @@ namespace Kooboo.Web.Api.Implementation
             names.Add(new ExportStoreNameViewModel() { Name = "Label", DisplayName = Hardcoded.GetValue("Label", call.Context) });
 
             names.Add(new ExportStoreNameViewModel() { Name = "Menu", DisplayName = Hardcoded.GetValue("Menu", call.Context) });
+
+            names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context) });
+
+            names.Add(new ExportStoreNameViewModel() { Name = typeof(Code).Name, DisplayName = Hardcoded.GetValue("Code", call.Context) }); 
 
             names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context) });
 
