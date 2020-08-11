@@ -177,6 +177,19 @@ namespace Kooboo.Sites.Repository
             }
         }
 
+        private StorePool<CmsFile> _filepool;
+        public StorePool<CmsFile> FilePool
+        {
+            get
+            {
+                if (_filepool == null)
+                {
+                    _filepool = new StorePool<CmsFile>(this.Files);
+                }
+                return _filepool;
+            }
+        }
+
 
         private SynchronizationRepository _sychronization;
         public SynchronizationRepository Synchronization
