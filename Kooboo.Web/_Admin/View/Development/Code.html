@@ -70,7 +70,12 @@
         <th>{{Kooboo.text.common.usedBy}}</th>
         <th>{{Kooboo.text.common.preview}}</th>
         <th>{{Kooboo.text.common.lastModified}}</th>
-        <th></th>
+        <th>
+          <div class="tree-ctrl-bar">
+            <a class="btn btn-xs" @click="expandAll">expandAll</a>
+            <a class="btn btn-xs" @click="collapseAll">collapseAll</a>
+          </div>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -275,6 +280,9 @@
     vertical-align: middle;
     margin-right: 5px;
     margin-top: -2px;
+  }
+  .tree-ctrl-bar {
+    text-align: right;
   }
 </style>
 
@@ -483,6 +491,12 @@
         } else {
           this.selectedRows.push(item);
         }
+      },
+      expandAll: function () {
+        $(".tree").treegrid("expandAll");
+      },
+      collapseAll: function () {
+        $(".tree").treegrid("collapseAll");
       },
     },
     watch: {

@@ -1338,4 +1338,6 @@
   <key id="Require parameter not found">参数未提供</key>
   <key id="Max number of sites has been reached, require service level upgrade">已经到达最大的站点数据， 需要生级用户级别</key>
   <key id="is in use">正在使用</key>
+  <key id="expandAll">展开</key>
+  <key id="collapseAll">折叠</key>
 </Lang>

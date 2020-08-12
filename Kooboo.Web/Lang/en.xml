@@ -1338,4 +1338,6 @@
   <key id="Require parameter not found">Require parameter not found</key>
   <key id="Max number of sites has been reached, require service level upgrade">Max number of sites has been reached, require service level upgrade</key>
   <key id="is in use">is in use</key>
+  <key id="expandAll">expand</key>
+  <key id="collapseAll">collapse</key>
 </Lang>
