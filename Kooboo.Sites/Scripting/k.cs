@@ -67,6 +67,36 @@ namespace KScript
         }
 
 
+        public k GetBySiteId(object SiteId)
+        {
+            var id = Kooboo.Lib.Helper.IDHelper.ParseKey(SiteId); 
+
+
+            var orgid = this.RenderContext.WebSite.OrganizationId;
+            var allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid);
+
+            if (allsites == null || !allsites.Any())
+            {
+                return null;
+            }
+
+            var find = allsites.Find(o => o.Id == id);
+         
+            if (find == null)
+            {
+                return null;
+            }
+
+            RenderContext newcontext = new RenderContext();
+            newcontext.Request = this.RenderContext.Request;
+            newcontext.User = this.RenderContext.User;
+            newcontext.WebSite = find;
+            newcontext.IsSiteBinding = true;
+            return new k(newcontext);
+        }
+
+
+
         [KIgnore]
         public object this[string key] { get { return ExtensionContainer.Get(key, RenderContext); } set { ExtensionContainer.Set(value); } }
 

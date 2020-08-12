@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Render
         }
 
         public static async Task RenderAsync(FrontContext context)
-        {
+        { 
             var file = await context.SiteDb.FilePool.GetAsync(context.Route.objectId);
             if (file == null)
             {

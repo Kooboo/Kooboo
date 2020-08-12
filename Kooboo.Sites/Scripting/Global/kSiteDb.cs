@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Sync;
 using KScript.Sites;
@@ -20,11 +21,28 @@ namespace KScript
         public kSiteDb(RenderContext context)
         {
             this.context = context;
-            this.sitedb = this.context.WebSite.SiteDb(); 
+            this.sitedb = this.context.WebSite.SiteDb();
             _locker = new object();
         }
 
+        public WebSite WebSite {
 
+            get
+            {
+                if (this.context !=null && this.context.WebSite !=null)
+                {
+                    return this.context.WebSite; 
+                }
+
+                if (this.sitedb !=null)
+                {
+                    return this.sitedb.WebSite; 
+                }
+
+                return null; 
+            }
+        }
+ 
         public kSiteDb Get(string SiteName)
         {
             var orgid = this.context.WebSite.OrganizationId;
@@ -55,8 +73,7 @@ namespace KScript
             return new kSiteDb(newcontext); 
 
         }
-
-
+         
         public kSiteDb CreatSite(string siteName, string fullDomain, byte[] Binary)
         {
             var orgid = this.context.WebSite.OrganizationId;
@@ -94,9 +111,7 @@ namespace KScript
             return new kSiteDb(newcontext);
 
         }
-
-
-
+         
 
         private object _locker;
         RoutableTextRepository _page;
