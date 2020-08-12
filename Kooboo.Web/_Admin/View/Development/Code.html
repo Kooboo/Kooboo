@@ -52,62 +52,85 @@
       >
     </li>
   </ul>
-  <kb-table :data="model" show-select :selected.sync="selectedRows">
-    <kb-table-column :label="Kooboo.text.common.name" prop="name">
-    </kb-table-column>
-
-    <kb-table-column :label="Kooboo.text.site.code.codeType">
-      <template v-slot="row">
-        <span class="label label-sm label-success">
-          {{ row.codeType }}
-        </span>
-      </template>
-    </kb-table-column>
-
-    <kb-table-column :label="Kooboo.text.common.usedBy">
-      <template v-slot="row">
-        <a
-          class="label label-sm kb-table-label-refer"
-          :style="{
-                              background: Kooboo.getLabelColor(item.key.toLowerCase())
-                            }"
-          v-for="(item, index) in Kooboo.objToArr(row.references)"
-          :key="index"
-          @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Code.name)"
-        >
-          {{ item.value + " " +
-          Kooboo.text.component.table[item.key.toLowerCase()] }}
-        </a>
-      </template>
-    </kb-table-column>
-
-    <kb-table-column :label="Kooboo.text.common.preview">
-      <template v-slot="row">
-        <a :href="row.previewUrl" target="_blank">
-          {{ row.previewUrl }}
-        </a>
-      </template>
-    </kb-table-column>
-
-    <kb-table-column :label="Kooboo.text.common.lastModified">
-      <template v-slot="row">
-        <span>
-          {{ new Date(row.lastModified).toDefaultLangString() }}
-        </span>
-      </template>
-    </kb-table-column>
-
-    <kb-table-column align="right" width="200px">
-      <template v-slot="row">
-        <a class="btn btn-sm blue" :href="getEditUrl(row)" @click.stop>
-          {{ Kooboo.text.common.edit }}
-        </a>
-        <a class="btn btn-sm blue" :href="getDebugUrl(row.id)" target="_blank" @click.stop>
-          {{ Kooboo.text.common.Debug }}
-        </a>
-      </template>
-    </kb-table-column>
-  </kb-table>
+  <table class="table tree table-hover">
+    <thead>
+      <tr>
+        <th>
+          <div class="tree-checkbox">
+            <input
+              type="checkbox"
+              :disabled="model.length==0"
+              @click="selectedAll"
+              :checked="allRows.length == selectedRows.length && allRows.length > 0"
+            />
+            {{Kooboo.text.common.name}}
+          </div>
+        </th>
+        <th>{{Kooboo.text.site.code.codeType}}</th>
+        <th>{{Kooboo.text.common.usedBy}}</th>
+        <th>{{Kooboo.text.common.preview}}</th>
+        <th>{{Kooboo.text.common.lastModified}}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="row in model" :key="row.id" :class="row.__class">
+        <template v-if="row.directory">
+          <td colspan="100">{{row.directory}}</td>
+        </template>
+        <template v-else>
+          <td @click="selectRow(row)">
+            <div class="tree-checkbox">
+              <input type="checkbox" :checked="selectedRows.indexOf(row)>-1" />
+              {{row.name}}
+            </div>
+          </td>
+          <td>
+            <span class="label label-sm label-success">
+              {{ row.codeType }}
+            </span>
+          </td>
+          <td>
+            <a
+              class="label label-sm kb-table-label-refer"
+              :style="{
+                                background: Kooboo.getLabelColor(item.key.toLowerCase())
+                              }"
+              v-for="(item, index) in Kooboo.objToArr(row.references)"
+              :key="index"
+              @click.stop="onShowRelationModal(item.key, row.id, Kooboo.Code.name)"
+            >
+              {{ item.value + " " +
+              Kooboo.text.component.table[item.key.toLowerCase()] }}
+            </a>
+          </td>
+          <td>
+            <a :href="row.previewUrl" target="_blank">
+              {{ row.previewUrl }}
+            </a>
+          </td>
+          <td>
+            <span>
+              {{ new Date(row.lastModified).toDefaultLangString() }}
+            </span>
+          </td>
+          <td :style="{width: '200px', textAlign: 'right'}">
+            <a class="btn btn-sm blue" :href="getEditUrl(row)" @click.stop>
+              {{ Kooboo.text.common.edit }}
+            </a>
+            <a
+              class="btn btn-sm blue"
+              :href="getDebugUrl(row.id)"
+              target="_blank"
+              @click.stop
+            >
+              {{ Kooboo.text.common.Debug }}
+            </a>
+          </td>
+        </template>
+      </tr>
+    </tbody>
+  </table>
   <kb-relation-modal></kb-relation-modal>
   <div
     class="modal fade"
@@ -158,7 +181,10 @@
                     :key="index+'_'+i"
                   >
                     <td>
-                      <span class="table-tree-indent" style="width:22px"></span>
+                      <span
+                        class="table-tree-indent"
+                        style="width: 22px;"
+                      ></span>
                       <input type="checkbox" v-model="item.selected" />
                       <a href="javascript:;">{{ item.name }}</a>
                     </td>
@@ -219,23 +245,20 @@
             </template>
           </div>
         </div>
-        <div class="modal-footer ">
+        <div class="modal-footer">
           <button
-            class="btn green "
+            class="btn green"
             v-if="currentStepIndex==1||currentStepIndex==2"
             @click="currentStepIndex--"
             >{{ Kooboo.text.common.previous }}</button
           >
           <button
-            class="btn green "
+            class="btn green"
             v-if="currentStepIndex==0||currentStepIndex==1"
             @click="currentStepIndex++"
             >{{ Kooboo.text.common.next }}</button
           >
-          <button
-            class="btn blue "
-            v-if="currentStepIndex==2"
-            @click="onConfirm"
+          <button class="btn blue" v-if="currentStepIndex==2" @click="onConfirm"
             >{{ Kooboo.text.common.save }}</button
           >
         </div>
@@ -243,27 +266,40 @@
     </div>
   </div>
 </div>
+<style>
+  .tree-checkbox {
+    display: contents;
+    margin-left: 10px;
+  }
+  .tree-checkbox input {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -2px;
+  }
+</style>
+
 <script>
   Kooboo.loadJS([
     "/_Admin/Scripts/components/kbBreadcrumb.js",
     "/_Admin/Scripts/components/kbTable.js",
-    "/_Admin/Scripts/components/kbRelationModal.js"
+    "/_Admin/Scripts/components/kbRelationModal.js",
+    "/_Admin/Scripts/lib/treegrid/jquery.treegrid.min.js",
   ]);
 
   new Vue({
     el: "#app",
-    data: function() {
+    data: function () {
       return {
         breads: [
           {
-            name: "SITES"
+            name: "SITES",
           },
           {
-            name: "DASHBOARD"
+            name: "DASHBOARD",
           },
           {
-            name: Kooboo.text.common.Code
-          }
+            name: Kooboo.text.common.Code,
+          },
         ],
         currentTab: "all",
         codeTypes: [],
@@ -274,29 +310,29 @@
         steps: [
           Kooboo.text.common.chooseObject,
           Kooboo.text.common.chooseAction,
-          Kooboo.text.common.confirm
+          Kooboo.text.common.confirm,
         ],
-        types: []
+        types: [],
       };
     },
-    mounted: function() {
+    mounted: function () {
       var me = this;
-      Kooboo.Code.getCodeType().then(function(res) {
+      Kooboo.Code.getCodeType().then(function (res) {
         if (res.success) {
           var types = Kooboo.objToArr(res.model, "value", "displayName");
           types = _.orderBy(types, [
-            function(o) {
+            function (o) {
               return o.value;
-            }
+            },
           ]);
-          types.forEach(function(type) {
+          types.forEach(function (type) {
             type.editUrl = Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
-              codeType: type.value
+              codeType: type.value,
             });
           });
           types.splice(0, 0, {
             displayName: Kooboo.text.common.all,
-            value: "all"
+            value: "all",
           });
           me.codeTypes = types;
           me.onTabClick(me.currentTab);
@@ -304,30 +340,35 @@
       });
     },
     computed: {
-      codeCreateUrl: function() {
+      codeCreateUrl: function () {
         return Kooboo.Route.Get(
           Kooboo.Route.Code.EditPage,
           this.currentTab !== "all"
             ? {
-                codeType: this.currentTab
+                codeType: this.currentTab,
               }
             : null
         );
       },
-      createBtnText: function() {
+      createBtnText: function () {
         var me = this;
         var result = Kooboo.text.common.create + " ";
-        var type = me.codeTypes.find(function(f) {
+        var type = me.codeTypes.find(function (f) {
           return f.value == me.currentTab;
         });
         if (type) result += type.displayName;
         return result;
-      }
+      },
+      allRows: function () {
+        return this.model.filter(function (f) {
+          return f.directory === undefined;
+        });
+      },
     },
     methods: {
-      onDelete: function() {
+      onDelete: function () {
         var me = this;
-        var haveRelations = this.selectedRows.some(function(s) {
+        var haveRelations = this.selectedRows.some(function (s) {
           return s.relations && Object.keys(s.relations).length;
         });
 
@@ -335,16 +376,16 @@
           ? Kooboo.text.confirm.deleteItemsWithRef
           : Kooboo.text.confirm.deleteItems;
 
-        var ids = this.selectedRows.map(function(m) {
+        var ids = this.selectedRows.map(function (m) {
           return m.id;
         });
 
         if (!confirm(confirmStr)) return;
         Kooboo[Kooboo.Code.name]
           .Deletes({
-            ids: ids
+            ids: ids,
           })
-          .then(function(res) {
+          .then(function (res) {
             if (res.success) {
               me.onTabClick(me.currentTab);
               window.info.done(Kooboo.text.info.delete.success);
@@ -353,51 +394,59 @@
             }
           });
       },
-      onTabClick: function(type) {
+      onTabClick: function (type) {
         var me = this;
         Kooboo.Code.getListByType({
-          codeType: type
-        }).then(function(res) {
+          codeType: type,
+        }).then(function (res) {
           if (res.success) {
-            me.model = res.model;
+            me.model = treeGrid(res.model);
             me.currentTab = type;
+            me.selectedRows = [];
+            me.$nextTick(function () {
+              $(".tree").treegrid({
+                expanderExpandedClass: "fa fa-caret-down",
+                expanderCollapsedClass: "fa fa-caret-right",
+                initialState: "collapsed",
+              });
+            });
           }
         });
       },
-      onShowRelationModal: function(by, id, type) {
+      onShowRelationModal: function (by, id, type) {
         Kooboo.EventBus.publish("kb/relation/modal/show", {
           by: by,
           type: type,
-          id: id
+          id: id,
         });
       },
-      getEditUrl: function(item) {
+      getEditUrl: function (item) {
         return Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
           id: item.id,
-          codeType: item.codeType
+          codeType: item.codeType,
         });
       },
-      getDebugUrl: function(id) {
+      getDebugUrl: function (id) {
         return Kooboo.Route.Get(Kooboo.Route.Code.DebugPage, {
-          id: id
+          id: id,
         });
       },
-      onConfirm: function() {
+      onConfirm: function () {
         var list = [];
         var me = this;
-        me.types.forEach(function(type) {
-          type.items.forEach(function(item) {
+        me.types.forEach(function (type) {
+          type.items.forEach(function (item) {
             if (item.selected) {
               var model = {
                 type: type.name,
                 name: item.name,
                 actions: item.actions
-                  .filter(function(action) {
+                  .filter(function (action) {
                     return action.selected;
                   })
-                  .map(function(action) {
+                  .map(function (action) {
                     return action.type;
-                  })
+                  }),
               };
 
               model.actions.length && list.push(model);
@@ -406,43 +455,136 @@
         });
 
         Kooboo.APIGeneration.Generate({
-          updateModel: list
-        }).then(function(res) {
+          updateModel: list,
+        }).then(function (res) {
           if (res.success) {
             window.info.done("Generate successful");
             me.showApiModal = false;
             me.onTabClick(me.currentTab);
           }
         });
-      }
+      },
+      selectedAll: function () {
+        if (this.allRows.length == this.selectedRows.length) {
+          this.selectedRows = [];
+        } else {
+          this.selectedRows = this.allRows;
+        }
+      },
+      selectRow: function (item) {
+        var arr = this.selectedRows.filter(function (i) {
+          return i == item;
+        })[0];
+
+        if (arr) {
+          this.selectedRows = this.selectedRows.filter(function (i) {
+            return i != item;
+          });
+        } else {
+          this.selectedRows.push(item);
+        }
+      },
     },
     watch: {
-      showApiModal: function() {
+      showApiModal: function () {
         var me = this;
-        Kooboo.APIGeneration.getObjects().then(function(res) {
+        Kooboo.APIGeneration.getObjects().then(function (res) {
           if (res.success) {
             var list = _.groupBy(res.model, "type");
-            me.types = Kooboo.objToArr(list).map(function(data) {
+            me.types = Kooboo.objToArr(list).map(function (data) {
               return {
                 name: data.key,
                 displayName: data.value.length
                   ? data.value[0].typeDisplayName
                   : data.key,
-                items: data.value.map(function(item) {
+                items: data.value.map(function (item) {
                   item.selected = false;
-                  item.actions = item.actions.map(function(action) {
+                  item.actions = item.actions.map(function (action) {
                     return {
                       selected: false,
-                      type: action
+                      type: action,
                     };
                   });
                   return item;
-                })
+                }),
               };
             });
           }
         });
+      },
+    },
+  });
+
+  function treeGrid(model) {
+    var a = document.createElement("a");
+    function createNode(name) {
+      return {
+        name: name,
+        directories: [],
+        files: [],
+      };
+    }
+
+    var tree = createNode("root");
+
+    for (var i = 0; i < model.length; i++) {
+      var item = model[i];
+      var previewUrl = item.previewUrl;
+      if (!previewUrl) {
+        tree.files.push(item);
+      } else {
+        a.href = previewUrl;
+        var paths = a.pathname.split("/").filter(function (f) {
+          return f;
+        });
+        insertIntoNode(paths, item, tree);
       }
     }
-  });
+
+    function insertIntoNode(paths, item, node) {
+      if (paths.length == 1) {
+        node.files.push(item);
+      } else {
+        var dirname = paths.shift();
+        var dir = node.directories.filter(function (f) {
+          return f.name == dirname;
+        })[0];
+        if (!dir) {
+          dir = createNode(dirname);
+          node.directories.push(dir);
+        }
+        insertIntoNode(paths, item, dir);
+      }
+    }
+
+    var result = [];
+
+    function buildResult(node, parent) {
+      for (var i = 0; i < node.directories.length; i++) {
+        var dirNode = node.directories[i];
+        var dir = { directory: dirNode.name };
+        dir.__class = [];
+        var id = parent + "split" + dirNode.name;
+        dir.__class.push("treegrid-" + id);
+        if (parent) {
+          dir.__class.push("treegrid-parent-" + parent);
+        }
+        result.push(dir);
+        buildResult(dirNode, id);
+      }
+
+      for (var j = 0; j < node.files.length; j++) {
+        var file = node.files[j];
+        file.__class = [];
+        if (parent) {
+          file.__class.push("treegrid-parent-" + parent);
+        }
+        result.push(file);
+      }
+    }
+
+    buildResult(tree, "");
+
+    return result;
+  }
 </script>
