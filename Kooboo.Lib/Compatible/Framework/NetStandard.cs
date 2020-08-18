@@ -9,9 +9,9 @@ using Kooboo.Lib.Utilities;
 using System.Security.Cryptography;
 using System.Xml;
 using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using Kooboo.Lib.Helper;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -158,7 +158,7 @@ namespace Kooboo.Lib.Compatible
             return cordx.GetDistanceTo(cordy);
         }
 
-        #region image
+#region image
         public SizeMeansurement GetImageSize(byte[] imagebytes)
         {
             SizeMeansurement measure = new SizeMeansurement();
@@ -166,8 +166,7 @@ namespace Kooboo.Lib.Compatible
             try
             {
                 MemoryStream stream = new MemoryStream(imagebytes);
-                System.Drawing.Image image = null;
-                image = System.Drawing.Image.FromStream(stream);
+                var image = Image.Identify(stream);
                 measure.Height = image.Height;
                 measure.Width = image.Width;
             }
@@ -184,30 +183,31 @@ namespace Kooboo.Lib.Compatible
 
             MemoryStream stream = new MemoryStream(contentBytes);
 
-            System.Drawing.Image image = null;
-            System.Drawing.Image systhumbnail = null;
-
-            image = System.Drawing.Image.FromStream(stream);
-
+            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> systhumbnail = null;
+            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = Image.Load(stream);
             if (image.Width < width && image.Height < height)
             {
                 return contentBytes;
             }
 
-            systhumbnail = image.GetThumbnailImage(width, height, null, new IntPtr());
+            image.Mutate(x => x.Resize(width, height));
+            systhumbnail = image;
 
             MemoryStream memstream = new MemoryStream();
-            systhumbnail.Save(memstream, System.Drawing.Imaging.ImageFormat.Png);
+            systhumbnail.Save(memstream, ImageFormats.Png);
+
             return memstream.ToArray();
         }
 
         public void SaveThumbnailImage(byte[] contentBytes, int width, int height, string path)
         {
             if (contentBytes == null) return;
-            Image image = Image.FromStream(new System.IO.MemoryStream(contentBytes));
+            MemoryStream stream = new MemoryStream(contentBytes);
 
-            var thumbnail = image.GetThumbnailImage(width, height, null, new IntPtr());
-            thumbnail.Save(path);
+            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = Image.Load(stream);
+
+            image.Mutate(x => x.Resize(width, height));
+            image.Save(path);
         }
 
         public string GetThumbnailImage(string base64Str, ImageSize size)
@@ -215,15 +215,15 @@ namespace Kooboo.Lib.Compatible
             byte[] imageBytes = Convert.FromBase64String(base64Str);
 
             MemoryStream memoryStream = new MemoryStream(imageBytes, 0, imageBytes.Length);
-            Image image = Image.FromStream(memoryStream, false);
+            var image = Image.Load(memoryStream);
+
             memoryStream.Close();
 
             using (MemoryStream ms = new MemoryStream())
             {
-                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width, image.Height, size);
-                Image thumbImage = image.GetThumbnailImage(size.Width, size.Height, null, IntPtr.Zero);
-                //generate thumbImage
-                thumbImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width,image.Height, size);
+                image.Mutate(x => x.Resize(size.Width, size.Height));
+                image.Save(ms, ImageFormats.Png);
 
                 var length = Convert.ToInt32(ms.Length);
                 byte[] data = new byte[length];
@@ -234,7 +234,7 @@ namespace Kooboo.Lib.Compatible
             }
         }
 
-        #endregion
+#endregion
 
         public void OpenDefaultUrl(string url)
         {
