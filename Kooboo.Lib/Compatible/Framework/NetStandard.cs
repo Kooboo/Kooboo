@@ -12,6 +12,8 @@ using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Kooboo.Lib.Helper;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -183,8 +185,8 @@ namespace Kooboo.Lib.Compatible
 
             MemoryStream stream = new MemoryStream(contentBytes);
 
-            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> systhumbnail = null;
-            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = Image.Load(stream);
+            Image systhumbnail = null;
+            var image = Image.Load(stream);
             if (image.Width < width && image.Height < height)
             {
                 return contentBytes;
@@ -194,7 +196,7 @@ namespace Kooboo.Lib.Compatible
             systhumbnail = image;
 
             MemoryStream memstream = new MemoryStream();
-            systhumbnail.Save(memstream, ImageFormats.Png);
+            systhumbnail.Save(memstream,PngFormat.Instance);
 
             return memstream.ToArray();
         }
@@ -204,7 +206,7 @@ namespace Kooboo.Lib.Compatible
             if (contentBytes == null) return;
             MemoryStream stream = new MemoryStream(contentBytes);
 
-            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = Image.Load(stream);
+            var image = Image.Load(stream);
 
             image.Mutate(x => x.Resize(width, height));
             image.Save(path);
@@ -223,7 +225,7 @@ namespace Kooboo.Lib.Compatible
             {
                 size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width,image.Height, size);
                 image.Mutate(x => x.Resize(size.Width, size.Height));
-                image.Save(ms, ImageFormats.Png);
+                image.Save(ms, PngFormat.Instance);
 
                 var length = Convert.ToInt32(ms.Length);
                 byte[] data = new byte[length];
