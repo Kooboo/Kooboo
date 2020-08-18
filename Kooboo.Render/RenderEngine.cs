@@ -5,6 +5,7 @@ using Kooboo.Render.ObjectSource;
 using Kooboo.Sites.Render;
 using Kooboo.Lib;
 using Kooboo.Lib.Helper;
+using System;
 
 namespace Kooboo.Render
 {
@@ -36,13 +37,15 @@ namespace Kooboo.Render
             {
                 case UrlFileType.Image:
 
-                    return RenderImage(Context, option, relativeurl);
+                    response = RenderImage(Context, option, relativeurl);
+                     
+                    break; 
 
                 case UrlFileType.JavaScript:
 
                     if (sourceprovider is CommandDiskSourceProvider)
                     {
-                        return ServerSide.ServerEngine.RenderJs(sourceprovider as CommandDiskSourceProvider, option, Context, relativeurl); 
+                        response = ServerSide.ServerEngine.RenderJs(sourceprovider as CommandDiskSourceProvider, option, Context, relativeurl); 
                     }
                     else
                     {
@@ -83,6 +86,11 @@ namespace Kooboo.Render
                     else
                     {
                         response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+
+                        if (contenttype.ToLower().Contains("font"))
+                        { 
+                            Context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                        }
                     }
                      
                     break;
@@ -93,6 +101,14 @@ namespace Kooboo.Render
                     break;
             }
 
+            var version = Context.Request.Get("version"); 
+            if(!string.IsNullOrEmpty(version))
+            {
+                if (Lib.Helper.CharHelper.isAsciiDigit(version))
+                {
+                    Context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                }
+            } 
             return response;
         }
 
@@ -115,6 +131,13 @@ namespace Kooboo.Render
                 {
                     response.ContentType = response.ContentType + "+xml";
                 }
+
+                if (extension.ToLower() == "ico")
+                {
+                    // favorite icon. 
+                   Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
+                }
+
             }
 
             var provider = GetSourceProvider(Context, option);
@@ -152,6 +175,9 @@ namespace Kooboo.Render
             var hashid = Lib.Security.Hash.ComputeHashGuid(htmlbody);
 
             var EvaluatorOption = new EvaluatorOption();
+            EvaluatorOption.EnableImageBrowserCache = true;
+            EvaluatorOption.EnableJsCssBrowserCache = true; 
+             
             EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
              
             var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));

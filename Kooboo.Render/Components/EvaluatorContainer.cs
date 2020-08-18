@@ -27,12 +27,14 @@ namespace Kooboo.Render.Components
                     _list.Add(new OmitOuterTagEvaluator());
                     _list.Add(new ContentEvaluator());
                     _list.Add(new ComponentEvaluator());
-                    _list.Add(new HeaderEvaluator());
+                  //_list.Add(new HeaderEvaluator());
                     _list.Add(new FormEvaluator());
                     _list.Add(new CommandEvaluator());
                     _list.Add(new KConfigContentEvaluator());
 
-                    _list.Add(new ServerComponentEvaluator()); 
+                    _list.Add(new ServerComponentEvaluator());
+
+                    _list.Add(new VersionEvaluator());
                     //add the 
                 }
                 return _list;

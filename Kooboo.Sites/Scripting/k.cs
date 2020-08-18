@@ -6,6 +6,7 @@ using Kooboo.Data;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
@@ -66,22 +67,24 @@ namespace KScript
             return new k(newcontext);
         }
 
-
-        public k GetBySiteId(object SiteId)
+        private WebSite _findsite(Guid id)
         {
-            var id = Kooboo.Lib.Helper.IDHelper.ParseKey(SiteId); 
-
-
-            var orgid = this.RenderContext.WebSite.OrganizationId;
-            var allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid);
+            Guid orgid = this.RenderContext.WebSite.OrganizationId;
+            List<WebSite> allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid);
 
             if (allsites == null || !allsites.Any())
             {
                 return null;
             }
 
-            var find = allsites.Find(o => o.Id == id);
-         
+            return allsites.Find(o => o.Id == id);
+        }
+
+        public k GetBySiteId(object SiteId)
+        {  
+            Guid id = Kooboo.Lib.Helper.IDHelper.ParseKey(SiteId);
+            WebSite find = _findsite(id); 
+
             if (find == null)
             {
                 return null;
@@ -94,8 +97,7 @@ namespace KScript
             newcontext.IsSiteBinding = true;
             return new k(newcontext);
         }
-
-
+         
 
         [KIgnore]
         public object this[string key] { get { return ExtensionContainer.Get(key, RenderContext); } set { ExtensionContainer.Set(value); } }

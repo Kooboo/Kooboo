@@ -7,6 +7,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Sync;
 using KScript.Sites;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -25,43 +26,44 @@ namespace KScript
             _locker = new object();
         }
 
-        public WebSite WebSite {
+        public WebSite WebSite
+        {
 
             get
             {
-                if (this.context !=null && this.context.WebSite !=null)
+                if (this.context != null && this.context.WebSite != null)
                 {
-                    return this.context.WebSite; 
+                    return this.context.WebSite;
                 }
 
-                if (this.sitedb !=null)
+                if (this.sitedb != null)
                 {
-                    return this.sitedb.WebSite; 
+                    return this.sitedb.WebSite;
                 }
 
-                return null; 
+                return null;
             }
         }
- 
+
         public kSiteDb Get(string SiteName)
         {
             var orgid = this.context.WebSite.OrganizationId;
-            var allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid); 
-             
+            var allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid);
+
             if (allsites == null || !allsites.Any())
             {
-                return null; 
+                return null;
             }
 
-            var find = allsites.Find(o => o.Name == SiteName); 
+            var find = allsites.Find(o => o.Name == SiteName);
             if (find == null)
             {
-                find = allsites.Find(o => o.DisplayName == SiteName); 
+                find = allsites.Find(o => o.DisplayName == SiteName);
             }
 
             if (find == null)
             {
-                return null; 
+                return null;
             }
 
             RenderContext newcontext = new RenderContext();
@@ -70,10 +72,35 @@ namespace KScript
             newcontext.WebSite = find;
             newcontext.IsSiteBinding = true;
 
-            return new kSiteDb(newcontext); 
+            return new kSiteDb(newcontext);
 
         }
-         
+
+        private WebSite _findsite(Guid id)
+        {
+            Guid orgid = this.context.WebSite.OrganizationId;
+            List<WebSite> allsites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgid);
+
+            if (allsites == null || !allsites.Any())
+            {
+                return null;
+            }
+
+            return allsites.Find(o => o.Id == id);
+        }
+
+        public void DeleteSite(object SiteId)
+        { 
+            Guid id = Kooboo.Lib.Helper.IDHelper.ParseKey(SiteId);
+            WebSite find = _findsite(id);
+
+            if (find != null)
+            {
+                Kooboo.Sites.Service.WebSiteService.Delete(find.Id);
+            }
+        }
+
+
         public kSiteDb CreatSite(string siteName, string fullDomain, byte[] Binary)
         {
             var orgid = this.context.WebSite.OrganizationId;
@@ -111,7 +138,7 @@ namespace KScript
             return new kSiteDb(newcontext);
 
         }
-         
+
 
         private object _locker;
         RoutableTextRepository _page;
@@ -199,7 +226,6 @@ namespace KScript
                 return this.TextContents;
             }
         }
-
 
 
         private MultilingualRepository _htmlblock;

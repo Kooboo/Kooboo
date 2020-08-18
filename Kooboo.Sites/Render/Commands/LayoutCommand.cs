@@ -51,7 +51,9 @@ namespace Kooboo.Sites.Render.Commands
                     List<IRenderTask> renderplan;
                     EvaluatorOption options = new EvaluatorOption();
                     options.RenderUrl = false;
-                    options.RenderHeader = true;
+                    options.RenderHeader = false;
+                    options.EnableImageBrowserCache = true;
+                    options.EnableJsCssBrowserCache = true; 
 
                     Guid sourceid = Lib.Security.Hash.ComputeHashGuid(layoutbody);  // GetLayoutGuid(layoutNameOrId); 
 
