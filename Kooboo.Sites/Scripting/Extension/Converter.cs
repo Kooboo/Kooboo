@@ -36,7 +36,7 @@ namespace Kooboo.Sites.Scripting.Extension
             string api = Data.AppSettings.ConvertApiUrl + "/_api/converter/Convert";
 
             var lastdot = filename.LastIndexOf(".");
-            var extens = filename.Substring(lastdot); 
+            var extens = filename.Substring(lastdot);
 
             filename = Kooboo.Lib.Security.ShortGuid.GetNewShortId() + extens;
 
@@ -64,53 +64,53 @@ namespace Kooboo.Sites.Scripting.Extension
                             MemoryStream memory = new MemoryStream();
                             entry.Open().CopyTo(memory);
                             var bytes = memory.ToArray();
-                             
+
                             if (bytes != null && bytes.Length > 0)
-                            { 
+                            {
                                 var lower = entry.Name.ToLower();
                                 if (lower.EndsWith(".htm") || lower.EndsWith(".html"))
                                 {
                                     if (string.IsNullOrEmpty(html))
                                     {
                                         html = System.Text.Encoding.UTF8.GetString(bytes);
-                                    } 
+                                    }
                                 }
                                 else
                                 {
                                     var mime = Lib.Helper.IOHelper.MimeType(target);
 
-                                    var resultfilename = target; 
+                                    var resultfilename = target;
 
-                                    if (mime !=null)
+                                    if (mime != null)
                                     {
                                         if (mime.ToLower().Contains("image") || mime.ToLower().Contains("css"))
                                         {
                                             resultfilename = System.IO.Path.Combine("officeconverter", target);
                                         }
-                                    } 
+                                    }
 
                                     manager.SyncToDb(resultfilename, sitedb, bytes, false);
 
-                                } 
-                            } 
+                                }
+                            }
                         }
-                    }  
-                } 
+                    }
+                }
             }
 
             return CorrectHtmlLink(html);
         }
 
-        private  string CorrectHtmlLink(string input)
+        private string CorrectHtmlLink(string input)
         {
-            if(string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(input))
             {
-                return null; 
+                return null;
             }
 
             var dom = Kooboo.Dom.DomParser.CreateDom(input);
 
-            List<SourceUpdate> updates = new List<SourceUpdate>(); 
+            List<SourceUpdate> updates = new List<SourceUpdate>();
 
             var imgurls = Kooboo.Sites.Service.DomUrlService.GetImageSrcs(dom);
 
@@ -154,44 +154,10 @@ namespace Kooboo.Sites.Scripting.Extension
             foreach (var item in list.item)
             {
                 //  < link rel = "stylesheet" href = " " >
-                var rel = item.getAttribute("rel"); 
-                if (rel !=null && rel.ToLower() == "stylesheet")
+                var rel = item.getAttribute("rel");
+                if (rel != null && rel.ToLower() == "stylesheet")
                 {
-                    var href = item.getAttribute("href"); 
-                    if (string.IsNullOrWhiteSpace(href))
-                    {
-                        continue; 
-                    }
-                    else
-                    { 
-                        string RelativeUrl = AppendPath(href); 
-                        if (href != RelativeUrl)
-                        {
-                            string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
-                            string newstring = oldstring.Replace(href, RelativeUrl);
-
-                            updates.Add(new SourceUpdate()
-                            {
-                                StartIndex = item.location.openTokenStartIndex,
-                                EndIndex = item.location.openTokenEndIndex,
-                                NewValue = newstring
-                            });
-                        }  
-                    }
-
-                }
-            }
-            
-
-            var embeds = dom.getElementsByTagName("embed");
-            //<embed src = "UpcE1I9h3kCZ1P2oBSKRpw_files/img_01.svg" type = "image/svg+xml" class="stl_03" />
-
-            foreach (var item in embeds.item)
-            {
-                var type = item.getAttribute("type");
-                if (type !=null & type.ToLower().Contains("image"))
-                {
-                    var href = item.getAttribute("src");
+                    var href = item.getAttribute("href");
                     if (string.IsNullOrWhiteSpace(href))
                     {
                         continue;
@@ -211,17 +177,88 @@ namespace Kooboo.Sites.Scripting.Extension
                                 NewValue = newstring
                             });
                         }
+                    }
+
+                }
+            }
+
+
+            var embeds = dom.getElementsByTagName("embed");
+            //<embed src = "UpcE1I9h3kCZ1P2oBSKRpw_files/img_01.svg" type = "image/svg+xml" class="stl_03" />
+
+            foreach (var item in embeds.item)
+            {
+                var type = item.getAttribute("type");
+                if (type != null & type.ToLower().Contains("image"))
+                {
+                    var href = item.getAttribute("src");
+                    if (string.IsNullOrWhiteSpace(href))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        string RelativeUrl = AppendPath(href);
+                        if (href != RelativeUrl)
+                        {
+                            var svgatt = new Dom.Attr();
+                            svgatt.name = "pluginspage";
+                            svgatt.value = "http://www.adobe.com/svg/viewer/install/";
+                            item.attributes.Add(svgatt);
+                            string oldstring = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(item);
+                            string newstring = oldstring.Replace(href, RelativeUrl);
+
+                            updates.Add(new SourceUpdate()
+                            {
+                                StartIndex = item.location.openTokenStartIndex,
+                                EndIndex = item.location.openTokenEndIndex,
+                                NewValue = newstring
+                            });
+                        }
+                    }
+                }
+            }
+
+
+            var objs = dom.getElementsByTagName("object");
+            //<embed src = "UpcE1I9h3kCZ1P2oBSKRpw_files/img_01.svg" type = "image/svg+xml" class="stl_03" />
+
+            foreach (var item in objs.item)
+            {
+                var type = item.getAttribute("type");
+                if (type == null || !type.ToLower().Contains("image"))
+                {
+                    continue;
+                }
+
+                var href = item.getAttribute("data");
+                if (string.IsNullOrWhiteSpace(href) || !href.ToLower().EndsWith(".svg"))
+                {
+                    continue;
+                }
+                else
+                {
+                    string RelativeUrl = AppendPath(href);
+                    if (href != RelativeUrl)
+                    {
+                        string oldstring = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(item);
+                        string newstring = oldstring.Replace(href, RelativeUrl);
+
+                        updates.Add(new SourceUpdate()
+                        {
+                            StartIndex = item.location.openTokenStartIndex,
+                            EndIndex = item.location.openTokenEndIndex,
+                            NewValue = newstring
+                        });
                     } 
                 }
-          
             }
 
-
-             if (updates.Any())
+            if (updates.Any())
             {
-                return Kooboo.Sites.Service.DomService.UpdateSource(input, updates);  
+                return Kooboo.Sites.Service.DomService.UpdateSource(input, updates);
             }
-            return input;  
+            return input;
         }
 
         private static string AppendPath(string urlpath)
@@ -248,7 +285,7 @@ namespace Kooboo.Sites.Scripting.Extension
         {
             var result = officeToHTML(officebytes, filename);
 
-            return Kooboo.Data.Helper.DomHelper.CleanBodyStyle(result); 
+            return Kooboo.Data.Helper.DomHelper.CleanBodyStyle(result);
         }
     }
 }
