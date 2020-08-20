@@ -220,8 +220,29 @@ namespace Kooboo.Web.Api.Implementation
                 
                 }
 
-                // check if it only return Json... 
+                // check if it only return Json...
                 code.IsJson = Lib.Helper.JsonHelper.IsJson(code.Body);
+
+
+                string url = model.Url;
+                if (!string.IsNullOrEmpty(url))
+                {
+                    var route = new Kooboo.Sites.Routing.Route();
+                    route.Name = url;
+                    route.objectId = code.Id;
+                    route.DestinationConstType = ConstObjectType.Code;
+                    sitedb.Routes.AddOrUpdate(route);
+                }
+                else
+                {
+                    // delete the route. 
+                    var route = sitedb.Routes.GetByObjectId(code.Id);
+                    if (route != null)
+                    {
+                        sitedb.Routes.Delete(route.Id);
+                    }
+                }
+
             }
              
 
@@ -252,29 +273,7 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 sitedb.Code.AddOrUpdate(code);
-            }
-
-            if (code.CodeType == Sites.Models.CodeType.Api)
-            {
-                string url = model.Url;
-                if (!string.IsNullOrEmpty(url))
-                {
-                    var route = new Kooboo.Sites.Routing.Route();
-                    route.Name = url;
-                    route.objectId = code.Id;
-                    route.DestinationConstType = ConstObjectType.Code;
-                    sitedb.Routes.AddOrUpdate(route);
-                }
-                else
-                {
-                    // delete the route. 
-                    var route = sitedb.Routes.GetByObjectId(code.Id);
-                    if (route != null)
-                    {
-                        sitedb.Routes.Delete(route.Id);
-                    }
-                }
-            }
+            } 
 
             return code.Id;
         }

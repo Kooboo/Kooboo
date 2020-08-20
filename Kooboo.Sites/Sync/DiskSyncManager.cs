@@ -555,7 +555,8 @@ namespace Kooboo.Sites.Sync
                 if (!this.SyncMediator.CheckDbLocked(Value.Id))
                 {
                     var value = Value as ISiteObject;
-                    string relativeurl = DiskPathService.GetObjectRelativeUrl(value, SiteDb, StoreName);
+                    string relativeurl = DiskPathService.GetObjectRelativeUrlForDiskSync(value, SiteDb, StoreName);
+                     
 
                     if (!string.IsNullOrEmpty(relativeurl))
                     {
