@@ -1,26 +1,20 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Events.Global;
-using Kooboo.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Kooboo.Data.Models; 
 
 namespace Kooboo.Sites.Sync.DiskSyncLog
-{
-  
-
+{  
     public class HardCodeUpgrade : Data.Events.IHandler<ApplicationStartUp>
     {  
         public void Handle(ApplicationStartUp theEvent, RenderContext context)
         {
            if (context == null || context.WebSite == null)
             {
-                var allsites = Kooboo.Data.GlobalDb.WebSites.AllSites;
+                var allsites = Kooboo.Data.GlobalDb.WebSites.All();
                 foreach (var item in allsites)
                 {
                     CheckWebSiteDisk(item); 
-                }
-
+                } 
             }
            else
             {
