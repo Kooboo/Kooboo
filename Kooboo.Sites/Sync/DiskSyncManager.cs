@@ -142,6 +142,7 @@ namespace Kooboo.Sites.Sync
             if (this.CanAccept && this.ChangeTasks.Count > 0)
             {
                 Task.Factory.StartNew(ProcessFromDisk);
+                // ProcessFromDisk(); 
             }
         }
         internal void ProcessFromDisk()
@@ -163,10 +164,14 @@ namespace Kooboo.Sites.Sync
                             if (DiskPathService.IsDirectory(website, task.OldFullPath) && DiskPathService.IsDirectory(website, task.FullPath))
                             {
                                 SyncService.DiskFolderRename(sitedb, task.OldFullPath, task.FullPath);
+
+                                DiskSyncLog.DiskLogManager.RenameFolder(task.OldFullPath, task.FullPath, sitedb.WebSite.Id);
                             }
                             else
                             {
                                 SyncService.DiskFileRename(sitedb, task.OldFullPath, task.FullPath);
+
+                                DiskSyncLog.DiskLogManager.RenameFile(task.OldFullPath, task.FullPath, sitedb.WebSite.Id);
                             }
                         }
                         else if (task.ChangeType == DiskChangeType.Deleted)
@@ -178,16 +183,13 @@ namespace Kooboo.Sites.Sync
                             else
                             {
                                 this.DeleteFromDb(task.FullPath, sitedb);
+                                DiskSyncLog.DiskLogManager.Delete(task.FullPath, sitedb.WebSite.Id);
                             }
                         }
                         else
                         {
-                            //if (task.ChangeType == DiskChangeType.Created)
-                            //{
-                            //    contentbytes = new byte[0];
-                            //}
-
                             this.SyncToDb(task.FullPath, sitedb, null);
+                            DiskSyncLog.DiskLogManager.Add(task.FullPath, sitedb.WebSite.Id);
                         }
 
                     }
@@ -346,8 +348,8 @@ namespace Kooboo.Sites.Sync
             //{
             //    return;
             //}          
-            string OldRelativeUrl=null;
-            string RelativeUrl=null;
+            string OldRelativeUrl = null;
+            string RelativeUrl = null;
 
             IRepository repo = null;
             ISiteObject result = null;
@@ -397,8 +399,8 @@ namespace Kooboo.Sites.Sync
             }
             else
             {
-                  OldRelativeUrl = DiskPathService.GetRelativeUrl(SiteDb.WebSite, FullPath);
-                  RelativeUrl = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(OldRelativeUrl);
+                OldRelativeUrl = DiskPathService.GetRelativeUrl(SiteDb.WebSite, FullPath);
+                RelativeUrl = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(OldRelativeUrl);
 
                 route = SiteDb.Routes.GetByUrl(RelativeUrl);
                 if (route != null)
@@ -440,8 +442,8 @@ namespace Kooboo.Sites.Sync
             {
                 SiteDb.Routes.AddOrUpdate(RelativeUrl, result as SiteObject);
             }
-                 
-            if  (!isSameName(result.Name, NameFromFile, extension)|| OldRelativeUrl != RelativeUrl)
+
+            if (!isSameName(result.Name, NameFromFile, extension) || OldRelativeUrl != RelativeUrl)
             {
                 if (File.Exists(FullPath))
                 {
@@ -556,7 +558,6 @@ namespace Kooboo.Sites.Sync
                 {
                     var value = Value as ISiteObject;
                     string relativeurl = DiskPathService.GetObjectRelativeUrlForDiskSync(value, SiteDb, StoreName);
-                     
 
                     if (!string.IsNullOrEmpty(relativeurl))
                     {
@@ -568,11 +569,10 @@ namespace Kooboo.Sites.Sync
                             {
                                 diskpath = fullpath;
 
-                                // this.SyncMediator.AcquireDeletionLock(fullpath);
-
+                                // this.SyncMediator.AcquireDeletionLock(fullpath); 
                                 this.SyncMediator.AbsoluteLock(fullpath);
-
                                 File.Delete(fullpath);
+                                DiskSyncLog.DiskLogManager.Delete(fullpath, SiteDb.Id);
 
                                 this.SyncMediator.LockDisk3Seconds(fullpath);
                                 this.SyncMediator.ReleaseAbsoluteLock(fullpath);
@@ -641,6 +641,8 @@ namespace Kooboo.Sites.Sync
                                         diskpath = fullpath;
                                     }
 
+                                    DiskSyncLog.DiskLogManager.Add(fullpath, SiteDb.Id);
+
                                 }
                             }
 
@@ -678,6 +680,31 @@ namespace Kooboo.Sites.Sync
                     }
                 }
             }
+        }
+
+        public void InitSyncToDB()
+        {
+            var website = Kooboo.Data.GlobalDb.WebSites.Get(this.WebSiteId);
+            if (website != null && website.EnableDiskSync)
+            {
+                var basefolder = website.DiskSyncFolder;
+
+                var allfiles = System.IO.Directory.GetFiles(basefolder, "*.*", SearchOption.AllDirectories);
+
+                if (allfiles != null && allfiles.Any())
+                {
+                    var events = DiskSyncLog.DiskLogManager.QueryEvents(allfiles.ToList(), this.WebSiteId);
+
+                    foreach (var item in events)
+                    {
+                        this.AddTask(item);
+                    }
+
+                    startNewFromDisk();
+                }
+
+            }
+
         }
 
         private bool IsEmbedded(ISiteObject Value)
