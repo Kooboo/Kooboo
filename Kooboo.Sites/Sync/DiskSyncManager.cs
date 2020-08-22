@@ -571,11 +571,12 @@ namespace Kooboo.Sites.Sync
 
                                 // this.SyncMediator.AcquireDeletionLock(fullpath); 
                                 this.SyncMediator.AbsoluteLock(fullpath);
-                                File.Delete(fullpath);
-                                DiskSyncLog.DiskLogManager.Delete(fullpath, SiteDb.Id);
+                                File.Delete(fullpath); 
 
                                 this.SyncMediator.LockDisk3Seconds(fullpath);
                                 this.SyncMediator.ReleaseAbsoluteLock(fullpath);
+
+                                DiskSyncLog.DiskLogManager.Delete(fullpath, SiteDb.Id);
 
                             }
                         }
@@ -641,7 +642,7 @@ namespace Kooboo.Sites.Sync
                                         diskpath = fullpath;
                                     }
 
-                                    DiskSyncLog.DiskLogManager.Add(fullpath, SiteDb.Id);
+                                    DiskSyncLog.DiskLogManager.Add(fullpath, SiteDb.Id, true);
 
                                 }
                             }
@@ -660,6 +661,12 @@ namespace Kooboo.Sites.Sync
             }
 
             return diskpath;
+        }
+
+        public void InitSync()
+        {
+            this.InitSyncToDisk();
+            this.InitSyncToDB(); 
         }
 
         public void InitSyncToDisk()

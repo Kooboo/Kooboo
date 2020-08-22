@@ -10,6 +10,8 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
 {
     public static class DiskLogManager
     {
+        private static Kooboo.Data.Log.LogWriter logwrite { get; set; }
+
         private static string DBPath { get; set; }
         private static Database DB { get; set; }
         static DiskLogManager()
@@ -17,6 +19,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             DBPath = Path.Combine(AppSettings.RootPath, "AppData", "DiskSyncLog");
             IOHelper.EnsureDirectoryExists(DBPath);
             DB = new Database(DBPath);
+            logwrite = new Data.Log.LogWriter("DiskSyncWriteLog"); 
         }
 
         public static ObjectStore<Guid, DiskFileLog> GetSiteStore(Guid SiteId)
@@ -29,13 +32,17 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             var store = GetSiteStore(SiteId);
             var id = Lib.Security.Hash.ComputeGuidIgnoreCase(fullpath);
             store.delete(id);
+            store.Close();
+
+            logwrite.Write("Time: " + DateTime.Now.ToShortTimeString() + " siteid: " + SiteId.ToString() + " del: " + fullpath);  
         }
 
-        public static void Add(string fullpath, Guid SiteId)
+        public static void Add(string fullpath, Guid SiteId, Boolean ToDisk = true)
         {
             DiskFileLog log = new DiskFileLog();
             log.FullPath = fullpath;
             log.LastModify = DateTime.Now;
+            log.ToDisk = ToDisk; 
 
             var store = GetSiteStore(SiteId);
 
@@ -45,12 +52,19 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             if (current == null)
             {
                 store.add(log);
+
+                logwrite.Write("Time: " + DateTime.Now.ToShortTimeString() + " siteid: " + SiteId.ToString() + " add: " + fullpath);
             }
             else
             {
                 current.LastModify = DateTime.Now;
+                current.ToDisk = ToDisk;
                 store.update(current.Id, current);
+
+                logwrite.Write("Time: " + DateTime.Now.ToShortTimeString() + " siteid: " + SiteId.ToString() + " update: " + fullpath);
             }
+
+            store.Close(); 
         }
 
         public static DiskFileLog Get(string fullpath, Guid SiteId)
@@ -61,8 +75,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
 
             return store.get(id);
         }
-
-
+         
         public static List<DiskFileLog> All(Guid SiteId)
         {
             var store = GetSiteStore(SiteId);
@@ -70,6 +83,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             return store.Filter.SelectAll();
         }
 
+        //Disk rename....
         public static void RenameFile(string oldFilePath, string newFilePath, Guid SiteId)
         {
             Delete(oldFilePath, SiteId); 
@@ -87,8 +101,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                 var oldpath = item.FullPath;
                 var newpath = oldpath.Replace(oldfoler, newfolder);
                 RenameFile(oldpath, newpath, SiteId);
-            }
-
+            } 
         }
           
         public static List<DiskChangeEvent> QueryEvents(List<string> fullpath, Guid SiteId)
@@ -148,6 +161,11 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                 update.FullPath = item;
 
                 result.Add(update);
+            }
+
+            foreach (var item in deleted)
+            {
+                store.delete(item.Id); 
             }
 
             return result;

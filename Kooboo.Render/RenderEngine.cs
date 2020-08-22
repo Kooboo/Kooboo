@@ -182,6 +182,13 @@ namespace Kooboo.Render
              
             var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));
 
+            // set the culture...
+            string culture = Context.Culture; 
+            if (string.IsNullOrEmpty(culture))
+            {
+                Context.DataContext.Push("culture", culture); 
+            }
+
             string result = Kooboo.Sites.Render.RenderHelper.Render(RenderPlan, Context);
 
             string finalreseult = null;

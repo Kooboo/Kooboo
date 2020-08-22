@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Kooboo.Dom;
+using Kooboo.Sites.Render;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Kooboo.Dom;
-using Kooboo.Sites.Render.RenderTask;
+using System.Linq; 
 
-namespace Kooboo.Sites.Render.Evaluators
-{
-    public class VersionEvaluator : IEvaluator
+namespace Kooboo.Render.Customized
+{ 
+
+    public class AdminVersionEvaluator : IEvaluator
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
-        { 
+        {
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.Version))
             {
                 return null;
@@ -48,7 +49,7 @@ namespace Kooboo.Sites.Render.Evaluators
                 {
                     return null;
                 }
-            } 
+            }
 
             if (element.tagName == "link")
             {
@@ -95,7 +96,7 @@ namespace Kooboo.Sites.Render.Evaluators
             List<IRenderTask> tasks = new List<IRenderTask>();
             tasks.Add(new ContentRenderTask(" " + attname + "=\""));
 
-            tasks.Add(new VersionRenderTask(value, IsStyle, IsImage));
+            tasks.Add(new AdminVersionRenderTask(value, IsStyle, IsImage));
 
             tasks.Add(new ContentRenderTask("\""));
 
@@ -118,6 +119,7 @@ namespace Kooboo.Sites.Render.Evaluators
             }
         }
     }
+
 
 
 }

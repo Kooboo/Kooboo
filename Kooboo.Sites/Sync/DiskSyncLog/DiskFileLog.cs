@@ -33,5 +33,15 @@ namespace Kooboo.Sites.Sync
         public  DateTime LastModify { get; set; }
 
         public Guid ByteHash { get; set; }
+
+        public bool ToDisk { get; set; } = true;
+
+        public override int GetHashCode()
+        {
+            string unique = this.FullPath + this.ObjectId.ToString() + this.LastModify.ToShortTimeString() + this.ToDisk.ToString() + this.ByteHash.ToString();
+
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+             
+        }
     }
 }

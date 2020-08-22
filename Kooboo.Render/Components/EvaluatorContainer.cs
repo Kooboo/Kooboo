@@ -1,4 +1,5 @@
-﻿using Kooboo.Sites.Render;
+﻿using Kooboo.Render.Customized;
+using Kooboo.Sites.Render;
 using Kooboo.Sites.Render.Evaluators;
 using System.Collections.Generic;
 
@@ -34,7 +35,7 @@ namespace Kooboo.Render.Components
 
                     _list.Add(new ServerComponentEvaluator());
 
-                    _list.Add(new VersionEvaluator());
+                    _list.Add(new AdminVersionEvaluator());
                     //add the 
                 }
                 return _list;
