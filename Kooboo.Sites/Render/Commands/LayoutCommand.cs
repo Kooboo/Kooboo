@@ -21,8 +21,8 @@ namespace Kooboo.Sites.Render.Commands
             }
         }
 
-        public string Execute(RenderContext context, Dictionary<string, string> Paras)
-        { 
+        public string Execute(RenderContext context, Dictionary<string, string> Paras, EvaluatorOption options)
+        {
             if (Paras != null && Paras.Count() > 0)
             {
                 Dictionary<string, string> datavalue = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -49,11 +49,16 @@ namespace Kooboo.Sites.Render.Commands
                 if (!string.IsNullOrEmpty(layoutbody))
                 {
                     List<IRenderTask> renderplan;
-                    EvaluatorOption options = new EvaluatorOption();
-                    options.RenderUrl = false;
-                    options.RenderHeader = false;
-                    options.EnableImageBrowserCache = true;
-                    options.EnableJsCssBrowserCache = true; 
+
+                    if (options == null)
+                    {
+                        options = new EvaluatorOption();
+                        options.RenderUrl = false;
+                        options.RenderHeader = false;
+                        options.EnableImageBrowserCache = true;
+                        options.EnableJsCssBrowserCache = true;
+                    }
+                     
 
                     Guid sourceid = Lib.Security.Hash.ComputeHashGuid(layoutbody);  // GetLayoutGuid(layoutNameOrId); 
 
@@ -61,7 +66,7 @@ namespace Kooboo.Sites.Render.Commands
                     {
                         layoutbody = DomService.ApplyKoobooId(layoutbody);
                         options.RequireBindingInfo = true;
-                        renderplan = RenderEvaluator.Evaluate(layoutbody, options);  
+                        renderplan = RenderEvaluator.Evaluate(layoutbody, options);
                     }
                     else
                     {
@@ -81,21 +86,21 @@ namespace Kooboo.Sites.Render.Commands
                     return RenderHelper.Render(renderplan, context);
                 }
             }
-             
+
             return null;
         }
 
         private Guid GetLayoutGuid(string LayoutNameOrId)
         {
             // Guid LayoutId = Data.IDGenerator.Generate(this.Name, this.ConstType);
-            Guid LayoutId; 
+            Guid LayoutId;
             if (System.Guid.TryParse(LayoutNameOrId, out LayoutId))
             {
-                return LayoutId; 
+                return LayoutId;
             }
             else
             {
-                return Kooboo.Data.IDGenerator.Generate(LayoutNameOrId, ConstObjectType.Layout); 
+                return Kooboo.Data.IDGenerator.Generate(LayoutNameOrId, ConstObjectType.Layout);
             }
         }
 
@@ -133,7 +138,7 @@ namespace Kooboo.Sites.Render.Commands
                 sourceprovider = new DBCommandSourceProvider();
             }
 
-            return sourceprovider.GetLayout(context, layoutNameOrId); 
+            return sourceprovider.GetLayout(context, layoutNameOrId);
         }
 
         private static string GetPrefixLayoutSource(RenderContext context, string filename)

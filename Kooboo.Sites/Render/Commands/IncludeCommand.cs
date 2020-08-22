@@ -22,7 +22,7 @@ namespace Kooboo.Sites.Render.Commands
             }
         }
           
-        public string Execute(RenderContext context, Dictionary<string, string> Paras)
+        public string Execute(RenderContext context, Dictionary<string, string> Paras, EvaluatorOption options)
         { 
             if (Paras != null && Paras.Count() > 0)
             {
@@ -47,10 +47,15 @@ namespace Kooboo.Sites.Render.Commands
             if (!string.IsNullOrEmpty(source))
             {
                 List<IRenderTask> renderplan; 
-                EvaluatorOption options = new EvaluatorOption();
-                options.RenderUrl = true;
-                options.RenderHeader = false;
 
+                if (options == null)
+                {
+                    options = new EvaluatorOption();
+                    options.RenderUrl = true;
+                    options.RenderHeader = false;
+                }
+
+                
                 Guid sourceid = Lib.Security.Hash.ComputeGuidIgnoreCase(source); 
             
                 if (context.Request.Channel == RequestChannel.InlineDesign)

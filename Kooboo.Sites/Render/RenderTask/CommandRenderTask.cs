@@ -11,6 +11,7 @@ namespace Kooboo.Sites.Render.RenderTask
     public class CommandRenderTask : IRenderTask
     {
         private Command command { get; set; }
+        private EvaluatorOption options { get; set; }
 
         public bool ClearBefore
         {
@@ -22,9 +23,10 @@ namespace Kooboo.Sites.Render.RenderTask
         {
             this.command = CommandParser.ParseCommand(commentline);
         }
-        public CommandRenderTask(Comment comment)
+        public CommandRenderTask(Comment comment, EvaluatorOption options)
         {
             this.command = CommandParser.ParseCommand(comment);
+            this.options = options; 
         }
 
         public string Render(RenderContext context)
@@ -38,7 +40,7 @@ namespace Kooboo.Sites.Render.RenderTask
             var command = CommandManager.GetCommand(this.command.Name);
             if (command != null)
             {
-                return command.Execute(context, this.command.Attributes);
+                return command.Execute(context, this.command.Attributes, this.options);
             }
             return null;
         }

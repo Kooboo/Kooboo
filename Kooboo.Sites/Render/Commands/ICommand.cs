@@ -9,7 +9,7 @@ namespace Kooboo.Sites.Render.Commands
     {
         string Name { get; }
          
-        string Execute(RenderContext context, Dictionary<string, string> Paras);
+        string Execute(RenderContext context, Dictionary<string, string> Paras, EvaluatorOption options);
          
     }
 }

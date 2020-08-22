@@ -56,7 +56,7 @@ namespace Kooboo.Sites.Render
                             tasklist.Add(new ContentRenderTask(doc.HtmlSource.Substring(currentindex,
                          comment.location.openTokenStartIndex - currentindex)));
 
-                            var commandtask = new CommandRenderTask(comment);
+                            var commandtask = new CommandRenderTask(comment, options);
                             if (command.Name.ToLower() == "layout")
                             {
                                 commandtask.ClearBefore = true;
@@ -71,7 +71,7 @@ namespace Kooboo.Sites.Render
                         }
                         else
                         {
-                            var commandtask = new CommandRenderTask(comment);
+                            var commandtask = new CommandRenderTask(comment, options);
                             if (command.Name.ToLower() == "layout")
                             {
                                 commandtask.ClearBefore = true;

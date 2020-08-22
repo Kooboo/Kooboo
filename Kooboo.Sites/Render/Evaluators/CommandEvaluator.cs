@@ -34,14 +34,14 @@ namespace Kooboo.Sites.Render.Evaluators
                     {
                         return null;
                     }
-                    var task = new CommandRenderTask(node as Comment);
+                    var task = new CommandRenderTask(node as Comment, options);
                     task.ClearBefore = true;
                     result.Add(task);
                     response.AppendTask = result;
                 }
                 else
                 {
-                    var task = new CommandRenderTask(node as Comment);
+                    var task = new CommandRenderTask(node as Comment, options);
                     result.Add(task);
                     response.ContentTask = result;
                 }
