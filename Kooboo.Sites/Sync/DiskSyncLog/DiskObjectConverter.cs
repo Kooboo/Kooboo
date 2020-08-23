@@ -178,5 +178,41 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             }
             return null;
         }
+
+        //TODO: move somewhere else.
+        public static string GetNewRoute(SiteDb sitedb, string routename)
+        {
+           if (routename == null)
+            {
+                return null; 
+            }
+
+           if (!routename.StartsWith("/"))
+            {
+                routename = "/" + routename; 
+            }
+
+            var route = sitedb.Routes.Get(routename);
+            if (route == null)
+            {
+                return routename; 
+            }
+            else
+            {
+                for (int i = 1; i < 999; i++)
+                {
+                    var name = routename + i.ToString();
+
+                    route = sitedb.Routes.Get(name); 
+                    if (route == null)
+                    {
+                        return name; 
+                    }
+                    
+                } 
+            }
+
+            return null; 
+        }
     }
 }

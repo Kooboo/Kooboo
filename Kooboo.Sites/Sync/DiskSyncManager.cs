@@ -435,10 +435,64 @@ namespace Kooboo.Sites.Sync
                 result.Name = Lib.Helper.StringHelper.ToValidFileName(NameFromFile);
             }
 
+            #region "Routing"
+
             if (!string.IsNullOrEmpty(RelativeUrl))
             {
                 SiteDb.Routes.AddOrUpdate(RelativeUrl, result as SiteObject);
             }
+            else
+            {
+                // # Rule1, only the API is different...
+                if (result is Kooboo.Sites.Models.Code)
+                {
+                    var code = result as Code; 
+                    if (code.CodeType == CodeType.Api)
+                    {
+                        bool shouldUpdateCodeRouteText = false; 
+                      
+                        var diskroute = DiskObjectConverter.GetRouteFromCodeBytes(diskbytes); 
+                        if (string.IsNullOrWhiteSpace(diskroute))
+                        {
+                            // # Rule2, Api must have a route defined, otherwise it is a new api. 
+                            var newroute = DiskObjectConverter.GetNewRoute(SiteDb, code.Name);
+                            SiteDb.Routes.AddOrUpdate(newroute, code);
+                            shouldUpdateCodeRouteText = true; 
+                        }
+                        else
+                        {
+                            // # Rule 3, Check if this is its own route, or someelse routes. 
+                            // Own rule, do nothing. 
+                            var coderoute = SiteDb.Routes.Get(diskroute);
+                            if (coderoute == null)
+                            {
+                                //#Rule 4, If route does not exists yet. Add and end. 
+                                SiteDb.Routes.AddOrUpdate(diskroute, code);  
+                            }
+                            else
+                            { 
+                                if (coderoute.objectId != default(Guid) && coderoute.objectId != code.Id)
+                                {
+                                    // #Rule 5, This is route for others... get a new route.
+                                    var newcoderoute = DiskObjectConverter.GetNewRoute(SiteDb, diskroute);
+                                    SiteDb.Routes.AddOrUpdate(newcoderoute, code);
+                                    shouldUpdateCodeRouteText = true; 
+                                } 
+                            }
+
+                        }
+
+                        if (shouldUpdateCodeRouteText)
+                        {
+                            this.SyncToDisk(SiteDb, code, ChangeType.Update, SiteDb.Code.StoreName); 
+                        }
+                        
+                    }
+
+                }
+            }
+
+            #endregion
 
             if (!isSameName(result.Name, NameFromFile, extension) || OldRelativeUrl != RelativeUrl)
             {
@@ -463,11 +517,8 @@ namespace Kooboo.Sites.Sync
                 repo.AddOrUpdate(result);
 
                 this.SyncMediator.ReleaseDbLock(result.Id);
-            }
-
-
-            // TODO: one exception of Code, that is non_routable....but API has a route. 
-
+            } 
+              
             if (logSync)
             {
                 var coreobject = result as CoreObject;
@@ -668,6 +719,7 @@ namespace Kooboo.Sites.Sync
             }
 
         }
+         
 
         private bool IsEmbedded(ISiteObject Value)
         {
