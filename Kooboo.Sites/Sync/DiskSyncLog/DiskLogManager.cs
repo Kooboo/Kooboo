@@ -3,8 +3,7 @@ using Kooboo.IndexedDB;
 using Kooboo.Lib.Helper;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.IO; 
 
 namespace Kooboo.Sites.Sync.DiskSyncLog
 {
@@ -16,7 +15,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
         private static Database DB { get; set; }
         static DiskLogManager()
         {
-            DBPath = Path.Combine(AppSettings.RootPath, "AppData", "DiskSyncLog");
+            DBPath = Path.Combine(AppSettings.RootPath, "AppData", "logs", "DiskSync");
             IOHelper.EnsureDirectoryExists(DBPath);
             DB = new Database(DBPath);
             logwrite = new Data.Log.LogWriter("DiskSyncWriteLog"); 

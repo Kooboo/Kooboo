@@ -4,7 +4,7 @@ using Kooboo.Data.Models;
 
 namespace Kooboo.Sites.Sync.DiskSyncLog
 {  
-    public class HardCodeUpgrade : Data.Events.IHandler<ApplicationStartUp>
+    public class CheckDisk : Data.Events.IHandler<ApplicationStartUp>
     {  
         public void Handle(ApplicationStartUp theEvent, RenderContext context)
         {

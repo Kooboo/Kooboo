@@ -344,7 +344,7 @@ namespace Kooboo.Sites.Sync
             {
                 return;
             }
-     
+
             string OldRelativeUrl = null;
             string RelativeUrl = null;
 
@@ -446,18 +446,18 @@ namespace Kooboo.Sites.Sync
                 // # Rule1, only the API is different...
                 if (result is Kooboo.Sites.Models.Code)
                 {
-                    var code = result as Code; 
+                    var code = result as Code;
                     if (code.CodeType == CodeType.Api)
                     {
-                        bool shouldUpdateCodeRouteText = false; 
-                      
-                        var diskroute = DiskObjectConverter.GetRouteFromCodeBytes(diskbytes); 
+                        bool shouldUpdateCodeRouteText = false;
+
+                        var diskroute = DiskObjectConverter.GetRouteFromCodeBytes(diskbytes);
                         if (string.IsNullOrWhiteSpace(diskroute))
                         {
                             // # Rule2, Api must have a route defined, otherwise it is a new api. 
                             var newroute = DiskObjectConverter.GetNewRoute(SiteDb, code.Name);
                             SiteDb.Routes.AddOrUpdate(newroute, code);
-                            shouldUpdateCodeRouteText = true; 
+                            shouldUpdateCodeRouteText = true;
                         }
                         else
                         {
@@ -467,26 +467,26 @@ namespace Kooboo.Sites.Sync
                             if (coderoute == null)
                             {
                                 //#Rule 4, If route does not exists yet. Add and end. 
-                                SiteDb.Routes.AddOrUpdate(diskroute, code);  
+                                SiteDb.Routes.AddOrUpdate(diskroute, code);
                             }
                             else
-                            { 
+                            {
                                 if (coderoute.objectId != default(Guid) && coderoute.objectId != code.Id)
                                 {
                                     // #Rule 5, This is route for others... get a new route.
                                     var newcoderoute = DiskObjectConverter.GetNewRoute(SiteDb, diskroute);
                                     SiteDb.Routes.AddOrUpdate(newcoderoute, code);
-                                    shouldUpdateCodeRouteText = true; 
-                                } 
+                                    shouldUpdateCodeRouteText = true;
+                                }
                             }
 
                         }
 
                         if (shouldUpdateCodeRouteText)
                         {
-                            this.SyncToDisk(SiteDb, code, ChangeType.Update, SiteDb.Code.StoreName); 
+                            this.SyncToDisk(SiteDb, code, ChangeType.Update, SiteDb.Code.StoreName);
                         }
-                        
+
                     }
 
                 }
@@ -517,8 +517,8 @@ namespace Kooboo.Sites.Sync
                 repo.AddOrUpdate(result);
 
                 this.SyncMediator.ReleaseDbLock(result.Id);
-            } 
-              
+            }
+
             if (logSync)
             {
                 var coreobject = result as CoreObject;
@@ -556,9 +556,9 @@ namespace Kooboo.Sites.Sync
 
                 return x.ToLower() == y.ToLower();
 
-            } 
+            }
         }
-         
+
         public string SyncToDisk(SiteDb SiteDb, ISiteObject Value, ChangeType ChangeType, string StoreName)
         {
             string diskpath = null;
@@ -579,9 +579,9 @@ namespace Kooboo.Sites.Sync
                             if (File.Exists(fullpath))
                             {
                                 diskpath = fullpath;
-                                 
+
                                 this.SyncMediator.AbsoluteLock(fullpath);
-                                File.Delete(fullpath); 
+                                File.Delete(fullpath);
 
                                 this.SyncMediator.LockDisk3Seconds(fullpath);
                                 this.SyncMediator.ReleaseAbsoluteLock(fullpath);
@@ -636,7 +636,7 @@ namespace Kooboo.Sites.Sync
                                         }
                                     }
                                     else
-                                    { 
+                                    {
                                         this.SyncMediator.AbsoluteLock(fullpath);
                                         this.SyncMediator.ContentHashLock(fullpath, contentbytes);
 
@@ -672,7 +672,7 @@ namespace Kooboo.Sites.Sync
         public void InitSync()
         {
             this.InitSyncToDisk();
-            this.InitSyncToDB(); 
+            this.InitSyncToDB();
         }
 
         public void InitSyncToDisk()
@@ -704,22 +704,32 @@ namespace Kooboo.Sites.Sync
 
                 var allfiles = System.IO.Directory.GetFiles(basefolder, "*.*", SearchOption.AllDirectories);
 
-                if (allfiles != null && allfiles.Any())
+                List<string> filelist = new List<string>();
+                if (allfiles != null)
                 {
-                    var events = DiskSyncLog.DiskLogManager.QueryEvents(allfiles.ToList(), this.WebSiteId);
+                    filelist = allfiles.ToList();
+                } 
 
+                var events = DiskSyncLog.DiskLogManager.QueryEvents(filelist, this.WebSiteId);
+
+                if (events !=null && events.Any())
+                {
                     foreach (var item in events)
                     {
                         this.AddTask(item);
-                    }
 
+                        if (item.ChangeType == DiskChangeType.Deleted)
+                        {
+
+                        } 
+                    } 
                     startNewFromDisk();
-                }
+                } 
 
             }
 
         }
-         
+
 
         private bool IsEmbedded(ISiteObject Value)
         {
