@@ -6,6 +6,7 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Sync.DiskSyncLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -343,11 +344,7 @@ namespace Kooboo.Sites.Sync
             {
                 return;
             }
-
-            //if (!this.SyncMediator.CheckAndAcquireDiskLock(FullPath, diskbytes))
-            //{
-            //    return;
-            //}          
+     
             string OldRelativeUrl = null;
             string RelativeUrl = null;
 
@@ -422,7 +419,7 @@ namespace Kooboo.Sites.Sync
                 result = Activator.CreateInstance(repo.ModelType) as ISiteObject;
             }
 
-            if (!CheckAssignObject(ref result, diskbytes))
+            if (!DiskObjectConverter.FromBytes(ref result, diskbytes))
             {
                 return;
             }
@@ -469,6 +466,8 @@ namespace Kooboo.Sites.Sync
             }
 
 
+            // TODO: one exception of Code, that is non_routable....but API has a route. 
+
             if (logSync)
             {
                 var coreobject = result as CoreObject;
@@ -506,48 +505,9 @@ namespace Kooboo.Sites.Sync
 
                 return x.ToLower() == y.ToLower();
 
-            }
-
+            } 
         }
-
-        public bool CheckAssignObject(ref ISiteObject SiteObject, byte[] DiskBytes)
-        {
-            var modeltype = SiteObject.GetType();
-            var SerializerType = Attributes.AttributeHelper.GetDiskType(modeltype);
-
-            if (SerializerType == Kooboo.Attributes.DiskType.Binary)
-            {
-                var binaryfile = SiteObject as IBinaryFile;
-                if (DiskBytes == null || IOHelper.IsEqualBytes(binaryfile.ContentBytes, DiskBytes))
-                {
-                    return false;
-                }
-                binaryfile.ContentBytes = DiskBytes;
-            }
-            else if (SerializerType == Kooboo.Attributes.DiskType.Text)
-            {
-                var textfile = SiteObject as ITextObject;
-                string textbody = System.Text.Encoding.UTF8.GetString(DiskBytes);
-                if (StringHelper.IsSameValue(textbody, textfile.Body))
-                {
-                    return false;
-                }
-                textfile.Body = textbody;
-            }
-            else
-            {
-                string fulltext = System.Text.Encoding.UTF8.GetString(DiskBytes);
-                var generatedbody = Lib.Helper.JsonHelper.Serialize(SiteObject);
-
-                if (StringHelper.IsSameValue(generatedbody, fulltext))
-                {
-                    return false;
-                }
-                SiteObject = JsonHelper.Deserialize(fulltext, modeltype) as ISiteObject;
-            }
-            return true;
-        }
-
+         
         public string SyncToDisk(SiteDb SiteDb, ISiteObject Value, ChangeType ChangeType, string StoreName)
         {
             string diskpath = null;
@@ -568,8 +528,7 @@ namespace Kooboo.Sites.Sync
                             if (File.Exists(fullpath))
                             {
                                 diskpath = fullpath;
-
-                                // this.SyncMediator.AcquireDeletionLock(fullpath); 
+                                 
                                 this.SyncMediator.AbsoluteLock(fullpath);
                                 File.Delete(fullpath); 
 
@@ -604,7 +563,7 @@ namespace Kooboo.Sites.Sync
 
                                 if (!hasPast)
                                 {
-                                    var contentbytes = SyncService.GetObjectBytes(value);
+                                    var contentbytes = DiskObjectConverter.ToBytes(SiteDb, value);
 
                                     if (File.Exists(fullpath))
                                     {
@@ -626,11 +585,7 @@ namespace Kooboo.Sites.Sync
                                         }
                                     }
                                     else
-                                    {
-                                        // this.SyncMediator.AcquireDiskWriteLock(fullpath, contentbytes);
-
-                                        // this.SyncMediator.LockDisk3Seconds(fullpath); 
-
+                                    { 
                                         this.SyncMediator.AbsoluteLock(fullpath);
                                         this.SyncMediator.ContentHashLock(fullpath, contentbytes);
 
