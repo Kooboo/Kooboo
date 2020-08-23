@@ -22,79 +22,79 @@ namespace Kooboo.Sites.Sync
 
         public static void StartDiskWatcher(Data.Models.WebSite WebSite)
         {
-            if (!WebSite.EnableDiskSync)
-            { return; }
+            //if (!WebSite.EnableDiskSync)
+            //{ return; }
 
-            if (!watchers.ContainsKey(WebSite.Id))
-            {
-                lock (_lockobject)
-                {
+            //if (!watchers.ContainsKey(WebSite.Id))
+            //{
+            //    lock (_lockobject)
+            //    {
 
-                    if (!watchers.ContainsKey(WebSite.Id))
-                    {
+            //        if (!watchers.ContainsKey(WebSite.Id))
+            //        {
 
-                        var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(WebSite.DiskSyncFolder);
+            //            var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(WebSite.DiskSyncFolder);
 
-                        if (PathHash.Contains(hash))
-                        {
-                            return;
-                        }
+            //            if (PathHash.Contains(hash))
+            //            {
+            //                return;
+            //            }
 
-                        try
-                        {
-                            IOHelper.EnsureDirectoryExists(WebSite.DiskSyncFolder);
-                        }
-                        catch (Exception)
-                        {
-                            return;
-                        }
+            //            try
+            //            {
+            //                IOHelper.EnsureDirectoryExists(WebSite.DiskSyncFolder);
+            //            }
+            //            catch (Exception)
+            //            {
+            //                return;
+            //            }
 
-                        FileSystemWatcher watcher = new System.IO.FileSystemWatcher(WebSite.DiskSyncFolder);
+            //            FileSystemWatcher watcher = new System.IO.FileSystemWatcher(WebSite.DiskSyncFolder);
 
-                        watcher.IncludeSubdirectories = true;
+            //            watcher.IncludeSubdirectories = true;
 
-                        watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName;
+            //            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName;
 
-                        DiskSyncManager manager = DiskSyncHelper.GetSyncManager(WebSite.Id);
+            //            DiskSyncManager manager = DiskSyncHelper.GetSyncManager(WebSite.Id);
 
-                        watcher.Changed += new FileSystemEventHandler(manager.OnChanged);
-                        watcher.Created += new FileSystemEventHandler(manager.OnChanged);
-                        watcher.Deleted += new FileSystemEventHandler(manager.OnChanged);
-                        watcher.Renamed += new RenamedEventHandler(manager.OnRenamed);
+            //            watcher.Changed += new FileSystemEventHandler(manager.OnChanged);
+            //            watcher.Created += new FileSystemEventHandler(manager.OnChanged);
+            //            watcher.Deleted += new FileSystemEventHandler(manager.OnChanged);
+            //            watcher.Renamed += new RenamedEventHandler(manager.OnRenamed);
 
-                        watcher.EnableRaisingEvents = true;
+            //            watcher.EnableRaisingEvents = true;
 
-                        watchers[WebSite.Id] = watcher;
+            //            watchers[WebSite.Id] = watcher;
 
-                        PathHash.Add(hash);
+            //            PathHash.Add(hash);
 
-                    }    
-                }
+            //        }    
+            //    }
 
 
-            }
+            //}
 
 
         }
 
         public static void StopDiskWatcher(Data.Models.WebSite website)
         {
-            lock (_lockobject)
-            {
-                if (watchers.ContainsKey(website.Id))
-                {
-                    var watcher = watchers[website.Id];
-                    watcher.EnableRaisingEvents = false;
-                    watchers.Remove(website.Id);
-                    watcher.Dispose();
-                    DiskSyncHelper.RemoveDiskSyncManager(website.Id);
+            //lock (_lockobject)
+            //{
+            //    if (watchers.ContainsKey(website.Id))
+            //    {
+            //        var watcher = watchers[website.Id];
+            //        watcher.EnableRaisingEvents = false;
+            //        watchers.Remove(website.Id);
+            //        watcher.Dispose();
+            //        DiskSyncHelper.RemoveDiskSyncManager(website.Id);
 
-                    var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(website.DiskSyncFolder);
+            //        var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(website.DiskSyncFolder);
 
-                    PathHash.Remove(hash);
+            //        PathHash.Remove(hash);
 
-                }
-            }
+            //    }
+            //}
         }
     }
 

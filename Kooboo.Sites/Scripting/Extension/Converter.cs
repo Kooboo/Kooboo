@@ -3,6 +3,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Service;
 using Kooboo.Sites.Sync;
+using Kooboo.Sites.Sync.Disk;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,7 +51,7 @@ namespace Kooboo.Sites.Scripting.Extension
             {
                 MemoryStream zipfile = new MemoryStream(response);
 
-                var manager = DiskSyncHelper.GetSyncManager(this.context.WebSite.Id);
+                var manager = new SyncManager(this.context.WebSite.Id);
 
                 using (var archive = new ZipArchive(zipfile, ZipArchiveMode.Read))
                 {
@@ -89,7 +90,7 @@ namespace Kooboo.Sites.Scripting.Extension
                                         }
                                     }
 
-                                    manager.SyncToDb(resultfilename, sitedb, bytes, false);
+                                    manager.SyncToDb(resultfilename, sitedb, bytes);
 
                                 }
                             }
@@ -250,7 +251,7 @@ namespace Kooboo.Sites.Scripting.Extension
                             EndIndex = item.location.openTokenEndIndex,
                             NewValue = newstring
                         });
-                    } 
+                    }
                 }
             }
 

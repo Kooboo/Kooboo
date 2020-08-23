@@ -13,18 +13,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Sync.Disk
-{
-
-
+{ 
 
     public class SyncManager
-    {
-        public SyncMediator SyncMediator { get; set; }
-
+    {  
         public SyncManager(Guid WebSiteId)
         {
-            this.WebSiteId = WebSiteId;
-            this.SyncMediator = new SyncMediator();
+            this.WebSiteId = WebSiteId; 
         }
 
         private Guid WebSiteId { get; set; }
@@ -290,10 +285,8 @@ namespace Kooboo.Sites.Sync.Disk
 
         public string SyncToDisk(SiteDb SiteDb, ISiteObject Value, ChangeType ChangeType, string StoreName)
         {
-            string diskpath = null;
-
             if (Attributes.AttributeHelper.IsDiskable(Value) && !IsEmbedded(Value) && !string.IsNullOrEmpty(StoreName))
-            { 
+            {
                 var value = Value as ISiteObject;
                 string relativeurl = DiskPathService.GetObjectRelativeUrl(value, SiteDb, StoreName);
 
@@ -305,9 +298,9 @@ namespace Kooboo.Sites.Sync.Disk
                     {
                         if (File.Exists(fullpath))
                         {
-                            diskpath = fullpath; 
-                            File.Delete(fullpath);
-                            DiskSyncLog.DiskLogManager.Delete(fullpath, SiteDb.Id); 
+                            this.Delete(fullpath);
+                            DiskSyncLog.DiskLogManager.Delete(fullpath, SiteDb.Id);
+                            return fullpath;
                         }
                     }
 
@@ -317,54 +310,22 @@ namespace Kooboo.Sites.Sync.Disk
 
                         if (coreobject != null)
                         {
-
                             var contentbytes = DiskObjectConverter.ToBytes(SiteDb, value);
 
-                            if (File.Exists(fullpath))
-                            {
-                                var bytes = IOHelper.ReadAllBytes(fullpath);
-                                diskpath = fullpath;
+                            this.WriteBytes(fullpath, contentbytes);
 
-                                if (!IOHelper.IsEqualBytes(bytes, contentbytes))
-                                {
+                            DiskSyncLog.DiskLogManager.Add(fullpath, SiteDb.Id);
 
-                                    this.SyncMediator.AbsoluteLock(fullpath);
-
-                                    this.SyncMediator.ContentHashLock(fullpath, contentbytes);
-
-                                    this.WriteBytes(fullpath, contentbytes);
-
-                                    this.SyncMediator.LockDisk3Seconds(fullpath);
-                                    this.SyncMediator.ReleaseAbsoluteLock(fullpath);
-
-                                }
-                            }
-                            else
-                            {
-                                this.SyncMediator.AbsoluteLock(fullpath);
-                                this.SyncMediator.ContentHashLock(fullpath, contentbytes);
-
-                                this.WriteBytes(fullpath, contentbytes);
-
-                                this.SyncMediator.LockDisk3Seconds(fullpath);
-                                this.SyncMediator.ReleaseAbsoluteLock(fullpath);
-
-                                diskpath = fullpath;
-                            }
-
-                            DiskSyncLog.DiskLogManager.Add(fullpath, SiteDb.Id, true);
-
+                            return fullpath;
                         }
-
                     }
                 }
 
             }
 
-            return diskpath;
+            return null;
         }
-
-
+         
         public void InitSyncToDisk()
         {
             var website = Kooboo.Data.GlobalDb.WebSites.Get(this.WebSiteId);
@@ -441,11 +402,9 @@ namespace Kooboo.Sites.Sync.Disk
                 {
                     try
                     {
-
                         System.IO.FileStream stream = new FileStream(FullPath, FileMode.Create);
 
                         stream.Write(Value, 0, Value.Length);
-
                         stream.Close();
                         stream.Dispose();
 
@@ -460,5 +419,16 @@ namespace Kooboo.Sites.Sync.Disk
             }
         }
 
+        internal void Delete(string fullpath)
+        {
+            try
+            {
+                System.IO.File.Delete(fullpath);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
     }
 }

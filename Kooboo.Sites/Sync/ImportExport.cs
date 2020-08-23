@@ -15,6 +15,7 @@ using System.Linq;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
 using Kooboo.IndexedDB;
+using Kooboo.Sites.Sync.Disk;
 
 namespace Kooboo.Sites.Sync
 {
@@ -383,7 +384,7 @@ namespace Kooboo.Sites.Sync
 
         public static WebSite ImportHtmlZip(ZipArchive archive, SiteDb siteDb)
         {
-            var manager = DiskSyncHelper.GetSyncManager(siteDb.WebSite.Id);
+            var manager = new  SyncManager(siteDb.WebSite.Id);
             foreach (var entry in archive.Entries)
             {
                 var target = entry.FullName;
@@ -395,24 +396,7 @@ namespace Kooboo.Sites.Sync
                     var bytes = memory.ToArray();
                     if (bytes != null && bytes.Length > 0)
                     {
-                        manager.SyncToDb(target, siteDb, bytes, false);
-
-                        if (siteDb.WebSite.EnableDiskSync)
-                        {
-
-                            string fullpath = Lib.Helper.IOHelper.CombinePath(siteDb.WebSite.DiskSyncFolder, target);
-
-
-                            manager.SyncMediator.AbsoluteLock(fullpath);
-
-                            manager.WriteBytes(fullpath, bytes);
-
-                            manager.SyncMediator.LockDisk3Seconds(fullpath);
-                            manager.SyncMediator.ReleaseAbsoluteLock(fullpath);
-
-
-                        }
-
+                        manager.SyncToDb(target, siteDb, bytes);
                     }
                 }
             }

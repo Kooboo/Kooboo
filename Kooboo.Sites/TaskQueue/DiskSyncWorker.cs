@@ -3,6 +3,7 @@
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Sync.Disk;
 using System;
 using System.Linq;
 
@@ -30,19 +31,10 @@ namespace Kooboo.Sites.TaskQueue
         {
             if (Data.AppSettings.IsOnlineServer)
             {
-                return; // only available for local version... 
+                return;  
             }
 
-            //if (WebSiteId != default(Guid))
-            //{
-            //    var website = Kooboo.Data.GlobalDb.WebSites.Get(WebSiteId);
-            //    if (website != null)
-            //    {
-            //        Execute(website.SiteDb());
-            //    }
-            //}
-            //else
-            //{
+           
             var allwebsites = Kooboo.Data.GlobalDb.WebSites.AllSites.Values.ToList();
             for (int i = 0; i < allwebsites.Count; i++)
             {
@@ -51,15 +43,14 @@ namespace Kooboo.Sites.TaskQueue
                 {
                     Execute(item.SiteDb());
                 }
-            }
-            // }
+            } 
         }
 
         public void Execute(SiteDb sitedb)
         {
             lock (_locker)
             {
-                var manager = Sync.DiskSyncHelper.GetSyncManager(sitedb.WebSite.Id);
+                var manager = new SyncManager(sitedb.WebSite.Id);
                 var items = sitedb.Synchronization.GetPushItems(sitedb.Synchronization.DiskSyncSettingId);
                 foreach (var item in items)
                 {

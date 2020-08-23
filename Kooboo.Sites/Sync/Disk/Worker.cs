@@ -6,8 +6,7 @@ using Kooboo.Data.Models;
 
 namespace Kooboo.Sites.Sync.Disk
 {
-     
-
+      
     public class Worker
     {
         public static Worker Instance = new Worker();

@@ -36,12 +36,12 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             logwrite.Write("Time: " + DateTime.Now.ToShortTimeString() + " siteid: " + SiteId.ToString() + " del: " + fullpath);  
         }
 
-        public static void Add(string fullpath, Guid SiteId, Boolean ToDisk = true)
+        public static void Add(string fullpath, Guid SiteId)
         {
             DiskFileLog log = new DiskFileLog();
             log.FullPath = fullpath;
-            log.LastModify = DateTime.Now;
-            log.ToDisk = ToDisk; 
+            log.LastModify = DateTime.Now.AddSeconds(2); // this is to give time for disk to write. 
+            log.ToDisk = true; 
 
             var store = GetSiteStore(SiteId);
 
@@ -57,7 +57,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             else
             {
                 current.LastModify = DateTime.Now;
-                current.ToDisk = ToDisk;
+                current.ToDisk = true;
                 store.update(current.Id, current);
 
                 logwrite.Write("Time: " + DateTime.Now.ToShortTimeString() + " siteid: " + SiteId.ToString() + " update: " + fullpath);

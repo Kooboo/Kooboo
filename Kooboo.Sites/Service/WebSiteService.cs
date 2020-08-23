@@ -5,6 +5,7 @@ using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
+using Kooboo.Sites.Sync.Disk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -144,7 +145,7 @@ namespace Kooboo.Sites.Service
         {
             lock (Sites.TaskQueue.DiskSyncWorker._locker)
             {
-                var manager = Sync.DiskSyncHelper.GetSyncManager(website.Id);
+                var manager = new SyncManager(website.Id);
 
                 if (newThread)
                 {
