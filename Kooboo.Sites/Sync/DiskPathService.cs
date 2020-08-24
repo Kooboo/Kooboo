@@ -246,47 +246,7 @@ namespace Kooboo.Sites.Sync
                 return "/" + PathPrefix + "/" + typepath + "/" + name;  
             }
         }
-
-        public static string GetObjectRelativeUrlForDiskSync(ISiteObject siteobject, SiteDb sitedb, string StoreName = null)
-        {
-            if (siteobject == null)
-            {
-                return null;
-            }
-
-            if (Attributes.AttributeHelper.IsRoutable(siteobject) && !(siteobject is Kooboo.Sites.Models.Code))
-            {
-                return sitedb.Routes.GetObjectPrimaryRelativeUrl(siteobject.Id);
-            }
-            else
-            {
-                string typepath = string.IsNullOrEmpty(StoreName) ? siteobject.GetType().Name : StoreName;
-                string name = Attributes.AttributeHelper.IsNameAsId(siteobject) ? siteobject.Name : siteobject.Id.ToString();
-
-                string extension = DefaultExtension;
-                if (siteobject is IExtensionable)
-                {
-                    var extensionboject = siteobject as IExtensionable;
-                    if (!string.IsNullOrEmpty(extensionboject.Extension))
-                    {
-                        extension = extensionboject.Extension;
-                    }
-                }
-                if (!extension.StartsWith("."))
-                {
-                    extension = "." + extension;
-                }
-
-                if (!name.ToLower().EndsWith(extension))
-                {
-                    name = name + extension;
-                }
-
-                return "/" + PathPrefix + "/" + typepath + "/" + name;
-            }
-        }
-
-
+         
 
         public static string GetNonRoutableFolder(string FullOrRelativePath)
         {

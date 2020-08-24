@@ -659,6 +659,19 @@ namespace Kooboo.Sites.Repository
                 {
                     Sites.Helper.ChangeHelper.DeleteRoutableObject(SiteDb, this, objectvalue);
                 }
+
+                else
+                {
+                    if (objectvalue != null && objectvalue is Kooboo.Sites.Models.Code)
+                    {
+                        var code = objectvalue as Code; 
+                        if (code.CodeType == CodeType.Api)
+                        {
+                            Sites.Helper.ChangeHelper.DeleteRoutableObject(SiteDb, this, objectvalue);
+                        }
+                    }
+                }
+
                 Sites.Helper.ChangeHelper.DeleteComponentFromSource(SiteDb, objectvalue); 
             }
 
