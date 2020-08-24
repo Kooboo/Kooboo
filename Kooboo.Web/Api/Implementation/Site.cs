@@ -344,6 +344,7 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress; 
 
                 currentsite.SiteType = newinfo.SiteType;
+                currentsite.EnableCORS = newinfo.EnableCORS;
 
                 // the cluster... 
 

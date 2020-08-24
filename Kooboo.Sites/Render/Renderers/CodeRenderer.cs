@@ -8,17 +8,22 @@ namespace Kooboo.Sites.Render
     {
         public static void Render(FrontContext context)
         {
-            var start = System.DateTime.Now; 
+            var start = System.DateTime.Now;
 
             var code = context.SiteDb.Code.Get(context.Route.objectId);
 
             if (code != null)
             {
                 string result = string.Empty;
+                var enableCORS = context?.WebSite?.EnableCORS ?? false;
 
                 if (code.IsJson)
                 {
                     result = code.Body;
+                }
+                else if (context?.RenderContext?.Request?.Method?.ToUpper() == "OPTIONS" && enableCORS)
+                {
+                    result = "";
                 }
                 else
                 {
@@ -27,10 +32,15 @@ namespace Kooboo.Sites.Render
 
                 //context.RenderContext.Response.ContentType = "application/javascript";
 
-                if (code.Cors)
+                if (code.Cors || enableCORS)
                 {
-                    context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                    context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+                    var origin = context?.RenderContext?.Request?.Headers?.Get("Origin");
+                    var method = context?.RenderContext?.Request?.Headers?.Get("Access-Control-Request-Method");
+                    var headers = context?.RenderContext?.Request?.Headers?.Get("Access-Control-Request-Headers");
+                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Origin", origin ?? "*");
+                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Methods", method ?? "*");
+                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Headers", headers ?? "*");
+                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Credentials", "true");
                 }
 
                 if (!string.IsNullOrEmpty(result))
@@ -42,7 +52,7 @@ namespace Kooboo.Sites.Render
             {
                 context.RenderContext.Response.StatusCode = 404;
             }
-             
+
             if (context.WebSite.EnableVisitorLog)
             {
                 string detail = "";
@@ -51,10 +61,10 @@ namespace Kooboo.Sites.Render
                     detail = context.RenderContext.Request.Body;
                 }
 
-                context.Log.AddEntry("API call", context.RenderContext.Request.RawRelativeUrl, start, System.DateTime.Now, (short)context.RenderContext.Response.StatusCode, detail); 
-           
-                context.Page = new Models.Page() { Name = "system api page" };  
-            } 
+                context.Log.AddEntry("API call", context.RenderContext.Request.RawRelativeUrl, start, System.DateTime.Now, (short)context.RenderContext.Response.StatusCode, detail);
+
+                context.Page = new Models.Page() { Name = "system api page" };
+            }
         }
-    } 
+    }
 }
