@@ -7,7 +7,7 @@ using System.Linq;
 namespace Kooboo.Sites.Sync.Disk
 {
     public static class SiteManager
-    {  
+    {
         private static Dictionary<Guid, DateTime> LastCheck { get; set; } = new Dictionary<Guid, DateTime>();
 
         public static DateTime GetLastCheck(Guid SiteId)
@@ -32,7 +32,7 @@ namespace Kooboo.Sites.Sync.Disk
             var list = GetSitesToCheck();
             foreach (var item in list)
             {
-                SiteChecker.Check(item); 
+                SiteChecker.Check(item);
             }
         }
 
@@ -75,8 +75,18 @@ namespace Kooboo.Sites.Sync.Disk
             }
 
             var dir = new System.IO.DirectoryInfo(fulldir);
+            var files = dir.GetFiles("*.*", System.IO.SearchOption.AllDirectories);
 
-            return HasNewer(dir, CompareTime);
+            foreach (var item in files)
+            {
+                if (item.LastWriteTime > CompareTime)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+            // return HasNewer(dir, CompareTime);
         }
 
         private static bool HasNewer(System.IO.DirectoryInfo dir, DateTime CompareTime)
@@ -98,6 +108,6 @@ namespace Kooboo.Sites.Sync.Disk
             }
             return false;
         }
-         
+
     }
 }

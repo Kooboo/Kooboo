@@ -50,7 +50,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             var current = store.get(id);
             if (current == null)
             {
-                store.add(log);
+                store.add(log.Id, log);
 
                 logwrite.Write("Time: " + DateTime.Now.ToShortTimeString() + " siteid: " + SiteId.ToString() + " add: " + fullpath);
             }
