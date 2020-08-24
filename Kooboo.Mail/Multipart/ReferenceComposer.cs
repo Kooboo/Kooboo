@@ -38,12 +38,15 @@ namespace Kooboo.Mail.Multipart
             ComposeViewModel model = new ComposeViewModel();
 
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(context.User);
-
+             
             var msg = maildb.Messages.Get(MsgId);
 
-            model.Subject = msg.Subject;
-           // model.Attachments = msg.Attachments;
+            model.Subject = msg.Subject; 
             model.From = msg.AddressId;
+            if (model.Subject ==null)
+            {
+                model.Subject = "Re:";  
+            }
 
             if (!model.Subject.ToLower().StartsWith("re:"))
             {
