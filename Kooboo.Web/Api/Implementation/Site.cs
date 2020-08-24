@@ -438,9 +438,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 // init disk.. 
                 if (!hasSamePath)
-                {
-                    DiskSyncFolderWatcher.StopDiskWatcher(website);
-                    DiskSyncFolderWatcher.StartDiskWatcher(website);
+                { 
                 }
                 WebSiteService.InitDiskSync(website, true);
             }
