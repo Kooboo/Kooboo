@@ -1,20 +1,19 @@
 ﻿using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace Kooboo.Sites.Sync.Disk
 {
     public static class SiteManager
     {
-        private static Dictionary<Guid, DateTime> LastCheck { get; set; } = new Dictionary<Guid, DateTime>();
+        private static Dictionary<Guid, CheckResult> LastCheck { get; set; } = new Dictionary<Guid, CheckResult>();
 
-        public static DateTime GetLastCheck(Guid SiteId)
+        public static CheckResult GetLastCheck(Guid SiteId)
         {
             if (!LastCheck.ContainsKey(SiteId))
             {
-                return default(DateTime);
+                return new CheckResult() { AccessTime = default(DateTime), FileCount = 0 };
             }
             else
             {
@@ -22,9 +21,22 @@ namespace Kooboo.Sites.Sync.Disk
             }
         }
 
-        public static void SetLastCheck(Guid SiteId, DateTime time)
+        public static void SetLastCheck(Guid SiteId, DateTime accesstime, int filecount)
         {
-            LastCheck[SiteId] = time;
+            CheckResult result;
+            if (LastCheck.ContainsKey(SiteId))
+            {
+                result = LastCheck[SiteId];
+                result.AccessTime = accesstime;
+                result.FileCount = filecount;
+            }
+            else
+            {
+                result = new CheckResult();
+                result.AccessTime = accesstime;
+                result.FileCount = filecount;
+                LastCheck[SiteId] = result;
+            }
         }
 
         public static void CheckDisk()
@@ -44,70 +56,33 @@ namespace Kooboo.Sites.Sync.Disk
 
             foreach (var item in list)
             {
+                if (!System.IO.Directory.Exists(item.DiskSyncFolder))
+                {
+                    continue;
+                }
+
+                var dir = new System.IO.DirectoryInfo(item.DiskSyncFolder);
+                var files = dir.GetFiles("*.*", System.IO.SearchOption.AllDirectories);
+
+                var filecount = files.Count();
+
                 var lastcheck = GetLastCheck(item.Id);
-                if (lastcheck == default(DateTime))
+                var lastchecktime = lastcheck.AccessTime;
+
+                if (filecount != lastcheck.FileCount || files.Any(o => o.LastWriteTime > lastchecktime))
                 {
                     toCheck.Add(item);
-                }
-                else
-                {
-                    if (HasChange(item.DiskSyncFolder, lastcheck))
-                    {
-                        toCheck.Add(item);
-                    }
-                }
+                    SetLastCheck(item.Id, DateTime.Now, filecount);
+                } 
             }
-
-            foreach (var item in toCheck)
-            {
-                SetLastCheck(item.Id, DateTime.Now);
-            }
-
             return toCheck;
         }
+    }
 
-        // check if there is any change of this folder since last check. 
-        public static bool HasChange(string fulldir, DateTime CompareTime)
-        {
-            if (!System.IO.Directory.Exists(fulldir))
-            {
-                return false;
-            }
+    public class CheckResult
+    {
+        public DateTime AccessTime { get; set; }
 
-            var dir = new System.IO.DirectoryInfo(fulldir);
-            var files = dir.GetFiles("*.*", System.IO.SearchOption.AllDirectories);
-
-            foreach (var item in files)
-            {
-                if (item.LastWriteTime > CompareTime)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-            // return HasNewer(dir, CompareTime);
-        }
-
-        private static bool HasNewer(System.IO.DirectoryInfo dir, DateTime CompareTime)
-        {
-            if (dir.LastWriteTime > CompareTime)
-            {
-                return true;
-            }
-            else
-            {
-                var subs = dir.GetDirectories();
-                foreach (var item in subs)
-                {
-                    if (HasNewer(item, CompareTime))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
+        public int FileCount { get; set; }
     }
 }
