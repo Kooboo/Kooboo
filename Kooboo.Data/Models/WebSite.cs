@@ -218,6 +218,8 @@ namespace Kooboo.Data.Models
 
         public bool EnableConstraintFixOnSave { get; set; } = true;
 
+        public bool EnableCORS { get; set; } = true;
+
         public bool EnableFrontEvents { get; set; } = false;
 
         public bool EnableConstraintChecker { get; set; }
