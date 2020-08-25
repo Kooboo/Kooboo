@@ -51,6 +51,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         {
             using (var connection = SqlExecuter.CreateConnection())
             {
+                SqlExecuter.OnSqlExecute(sql, param);
                 var data = connection.Query<object>(sql, param).ToArray();
                 return RelationalDynamicTableObject<TExecuter, TSchema, TConnection>.CreateList(data.Select(s => s as IDictionary<string, object>).ToArray(), null);
             }
@@ -65,6 +66,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
                 connection.Open();
                 using (var transaction = connection.BeginTransaction())
                 {
+                    SqlExecuter.OnSqlExecute(sql, param);
                     var affectedRows = connection.Execute(sql, param, transaction);
                     transaction.Commit();
                     return affectedRows;
@@ -100,7 +102,9 @@ Result:
         {
             using (var connection = SqlExecuter.CreateConnection())
             {
+                SqlExecuter.OnSqlExecute(sql, param);
                 connection.Open();
+                SqlExecuter.OnSqlExecute(sql, param);
                 return connection.Query(sql, param, commandType: CommandType.StoredProcedure);
             }
         }

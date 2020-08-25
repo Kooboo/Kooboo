@@ -11,6 +11,7 @@ namespace Kooboo.Sites.Scripting.Interfaces
         char QuotationRight { get; }
         RelationalSchema GetSchema(string name);
         event Action<string, object> Event;
+        void OnSqlExecute(string sql, object @params);
         void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items);
         void CreateTable(string name);
         object Insert(string name, object data, RelationalSchema schema, bool returnId = false);

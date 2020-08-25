@@ -32,7 +32,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public abstract RelationalSchema GetSchema(string name);
 
-        protected virtual void OnSqlExecute(string sql, object @params)
+        public virtual void OnSqlExecute(string sql, object @params)
         {
             Event?.Invoke(sql, @params);
         }
