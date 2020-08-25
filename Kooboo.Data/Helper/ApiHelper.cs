@@ -46,10 +46,7 @@ namespace Kooboo.Data.Helper
 
             return false; 
         }
-
-
-
-
+          
         public static void EnsureAccountUrl(ApiResource res)
         {
             if (ShouldChangeToHttp(res))
