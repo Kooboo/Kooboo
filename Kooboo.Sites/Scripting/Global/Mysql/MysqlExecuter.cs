@@ -24,6 +24,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, null);
                 connection.Execute(sql);
             }
         }
@@ -55,7 +56,8 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
             {
                 using (var connection = CreateConnection())
                 {
-                    var result = connection.Query<object>($"DESCRIBE `{name}`");
+                    var sql = $"DESCRIBE `{name}`";
+                    var result = connection.Query<object>(sql);
 
                     items = result.Select(s =>
                     {

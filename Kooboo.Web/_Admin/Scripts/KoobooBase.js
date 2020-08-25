@@ -1627,6 +1627,19 @@
   }
   extend(SiteUser, BaseModel);
 
+  function SqlLog() {
+    this.name = "SqlLog";
+
+    this.list = function(para) {
+      return this.executeGet("List", para);
+    };
+
+    this.weeks = function(para) {
+      return this.executeGet("Weeks", para);
+    };
+  }
+  extend(SqlLog, BaseModel);
+
   function Certificate() {
     this.name = "Certificate";
   }
@@ -1815,7 +1828,8 @@
     User: new User(),
     UserPublish: new UserPublish(),
     Url: new Url(),
-    View: new View()
+    View: new View(),
+    SqlLog:new SqlLog()
   };
   wind.Kooboo.TextContent = new TextContent();
 

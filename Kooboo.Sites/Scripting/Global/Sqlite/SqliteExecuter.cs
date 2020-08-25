@@ -25,6 +25,7 @@ namespace Kooboo.Sites.Scripting.Global.Sqlite
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, null);
                 connection.Execute(sql);
             }
 
