@@ -1,4 +1,4 @@
-(function() {
+(function () {
   var text = {
     common: {
       date: "Date",
@@ -84,6 +84,7 @@
       diagnosis: "Diagnosis",
       sync: "Sync",
       siteLogs: "Site logs",
+      sqlLogs: "SQL logs",
       visitorLogs: "Visitor logs",
       logVersions: "Versions",
       Disk: "Disk",
@@ -172,24 +173,24 @@
       endMonth: "End month",
       renew: "Renew",
       chooseObject: "Choose object",
-      chooseAction: "Choose action"
+      chooseAction: "Choose action",
     },
 
     system: {
       serverName: "Server name",
-      serverAddress: "Server address"
+      serverAddress: "Server address",
     },
 
     account: {
       sendResetEmailTip:
         "After submiting your request, we will send you a verification mail, please check in time",
       youAreNotAdmin:
-        "You are not administrator of current organization, you do not have access to organization profile."
+        "You are not administrator of current organization, you do not have access to organization profile.",
     },
 
     online: {
       yes: "online_YES",
-      no: "online_NO"
+      no: "online_NO",
     },
 
     confirm: {
@@ -207,21 +208,21 @@
       siteLogs: {
         blame:
           "You have selected multiple items, are you sure you want to continue?",
-        restore: "Are you sure you want to restore the site to this point?"
+        restore: "Are you sure you want to restore the site to this point?",
       },
       disk: {
         clearLogs:
           "Are you sure you want to clean both system and visitor logs?",
         clearRepository: "Are you sure you want to clean system logs?",
-        clearVisitorLog: "Are you sure you want to clean visitor logs"
+        clearVisitorLog: "Are you sure you want to clean visitor logs",
       },
       search: {
         clean: "Are you sure you want to clean all the search index?",
-        rebuild: "Are you sure you want to rebuild site's index?"
+        rebuild: "Are you sure you want to rebuild site's index?",
       },
       layoutEditor: {
         labelInside:
-          "This element contains label binding, do you want to continue?"
+          "This element contains label binding, do you want to continue?",
       },
       restartExecution:
         "Debugger is finished, would you want to restart debugging?",
@@ -232,7 +233,7 @@
       invalidMeta: "Invalid meta. Please check your meta infomation.",
       demand: {
         takeProposal: "Are you sure you want to take this proposal?",
-        acceptDelivery: "Are you sure you want to accept the job?"
+        acceptDelivery: "Are you sure you want to accept the job?",
       },
       deleteCategory:
         "This category is related to some products. Would you want to delete?",
@@ -240,8 +241,8 @@
         changeCurrency:
           "Changing the default currency will transfer all your balance to new currency. Would you want to continue?",
         sure: "Are you sure?",
-        completedOrder: "Are you sure your order has been completed?"
-      }
+        completedOrder: "Are you sure your order has been completed?",
+      },
     },
 
     alert: {
@@ -252,10 +253,10 @@
       fileUpload: {
         emptyFile: "is(are) empty file.",
         invalidSuffix: "has(have) invalid suffix",
-        invalidType: "is(are) invalid"
+        invalidType: "is(are) invalid",
       },
       verificationEmailSent:
-        "A verification Email has sent to the email you input. Please check in time."
+        "A verification Email has sent to the email you input. Please check in time.",
     },
 
     validation: {
@@ -285,7 +286,7 @@
         Guid: "Guid",
         String: "String",
         DateTime: "DateTime",
-        Bool: "Bool"
+        Bool: "Bool",
       },
       objectNameRegex:
         "Name should start with a letter, can contain with . - _ and end with letters or digit.",
@@ -295,96 +296,96 @@
         "Name should start with a letter or digit, can contain with - _ and end with letters or digit.",
       invaildPort: "Invalid port value. Only number is allowed.",
       portRange: "Port range: 0~65535",
-      noValidIP: "Invalid IP"
+      noValidIP: "Invalid IP",
     },
 
     error: {
       dataType: "The data type you input is incorrect",
-      rangeError: "Range error: the min value should less than the max value."
+      rangeError: "Range error: the min value should less than the max value.",
     },
 
     correct: {
       dataType: {
-        number: "The right data type is number"
-      }
+        number: "The right data type is number",
+      },
     },
 
     info: {
       upload: {
         success: "Upload succeeded.",
-        fail: "Upload failed."
+        fail: "Upload failed.",
       },
       update: {
         success: "Update succeeded.",
-        fail: "Update failed."
+        fail: "Update failed.",
       },
       delete: {
         success: "Delete succeeded.",
-        fail: "Delete failed."
+        fail: "Delete failed.",
       },
       save: {
         success: "Saved.",
-        fail: "Save failed."
+        fail: "Save failed.",
       },
       checkout: {
         success: "Checkout succeeded.",
-        fail: "Checkout failed."
+        fail: "Checkout failed.",
       },
       clean: {
         success: "Clean succeeded.",
-        fail: "Clean failed."
+        fail: "Clean failed.",
       },
       payment: {
         success: "Payment succeeded.",
         fail: "Payment failed.",
         cancel: "Payment canceled.",
-        tryAgain: "Make sure you have paid successfully and try again"
+        tryAgain: "Make sure you have paid successfully and try again",
       },
       copy: {
         success: "Copy succeeded.",
-        fail: "Copy failed."
+        fail: "Copy failed.",
       },
       pull: {
         success: "Pull succeeded.",
-        fail: "Pull failed."
+        fail: "Pull failed.",
       },
       push: {
         success: "Push succeeded.",
-        fail: "Push failed."
+        fail: "Push failed.",
       },
       moveTo: {
         Trash: {
           success: "Move to Trash succeeded.",
-          fail: "Move to Trash failed."
+          fail: "Move to Trash failed.",
         },
         Spam: {
           success: "Move to Spam succeeded.",
-          fail: "Move to Spam failed."
+          fail: "Move to Spam failed.",
         },
         Sent: {
           success: "Move to Sent succeeded.",
-          fail: "Move to Sent failed."
+          fail: "Move to Sent failed.",
         },
         Inbox: {
           success: "Move to Inbox succeeded.",
-          fail: "Move to Inbox failed."
-        }
+          fail: "Move to Inbox failed.",
+        },
       },
       rebuild: {
         success: "Rebuild succeeded.",
-        fail: "Rebuild failed."
+        fail: "Rebuild failed.",
       },
       enable: {
         success: "Enable succeeded.",
-        fail: "Enable failed."
+        fail: "Enable failed.",
       },
       disable: {
         success: "Disable succeeded.",
-        fail: "Disable failed."
+        fail: "Disable failed.",
       },
       recharge: {
         success: "Recharge succeeded",
-        fail: "Recharge failed"
+        fail: "Recharge failed",
       },
       versionLogParameterMissing:
         "Parameters missing.<br/> Redirecting to site logs...",
@@ -398,12 +399,12 @@
       inProgress: "This site is still downloading, please wait.",
       seleteExportStoreName:
         "Please select the content you want before exporting.",
-      domainMissing: "Domain missing"
+      domainMissing: "Domain missing",
     },
 
     placeholder: {
       reply: "Reply content goes here",
-      largeThan: "Input a amount large than 0.01"
+      largeThan: "Input a amount large than 0.01",
     },
 
     tooltip: {
@@ -427,16 +428,16 @@
         rotateLeft: "Rotate left",
         rotateRight: "Rotate right",
         horizontalFlip: "Horizontal flip",
-        verticalFlip: "Vertical flip"
+        verticalFlip: "Vertical flip",
       },
       menu: {
         editTemplate: "Edit template",
         addSubMenu: "Add sub menu",
-        multilingual: "Multilingual"
+        multilingual: "Multilingual",
       },
       demand: {
-        acceptProposal: "Accept this proposal"
-      }
+        acceptProposal: "Accept this proposal",
+      },
     },
 
     validationRule: {
@@ -453,7 +454,7 @@
       stringLengthRange: "String length range",
       minChecked: "Min checked",
       maxChecked: "Max checked",
-      regex: "Regex"
+      regex: "Regex",
     },
 
     validate: {
@@ -464,13 +465,13 @@
       maximumChecked: "Maximum checked",
       minimalLength: "Minimal length",
       maximumLength: "Maximum length",
-      domainInvalid: "invalid domain"
+      domainInvalid: "invalid domain",
     },
 
     action: {
       add: "Add",
       update: "Update",
-      delete: "Delete"
+      delete: "Delete",
     },
 
     component: {
@@ -478,26 +479,26 @@
         tableA: "Table A",
         fieldA: "Field A",
         tableB: "Table B",
-        fieldB: "Field B"
+        fieldB: "Field B",
       },
       event: {
         noCondition: "No condition",
         noActivity: "No activity",
         addActivity: "Add activity",
-        editActivity: "Edit activity"
+        editActivity: "Edit activity",
       },
       progress: {
         uploading: "Uploading",
         uploaded: "Uploaded",
-        pleaseWait: "please wait..."
+        pleaseWait: "please wait...",
       },
       breadCrumb: {
         sites: "Sites",
         dashboard: "Dashboard",
-        market: "Market"
+        market: "Market",
       },
       events: {
-        editCondition: "Edit condition"
+        editCondition: "Edit condition",
       },
       controlType: {
         textBox: "Text Box",
@@ -523,10 +524,10 @@
         boolean: "Boolean",
         tinymce: "Tinymce",
         dynamicSpec: "Dynamic specification",
-        fixedSpec: "Fixed specification"
+        fixedSpec: "Fixed specification",
       },
       modal: {
-        embeddedFolder: "Embedded Folder"
+        embeddedFolder: "Embedded Folder",
       },
       fieldEditor: {
         title: "Field Editor",
@@ -558,10 +559,10 @@
         Boolean: "Bool",
         errorMsg: "Error message",
         errorMsgHint: "Error message when validation failed",
-        userEditable: "User editable"
+        userEditable: "User editable",
       },
       fieldPanel: {
-        categories: "Categories"
+        categories: "Categories",
       },
       columnEditor: {
         title: "Column settings",
@@ -572,13 +573,13 @@
         seed: "Seed",
         scale: "Scale",
         unableToChangeSelfIncrementField:
-          "Unable to change self-incremental field."
+          "Unable to change self-incremental field.",
       },
       header: {
         user: {
           profile: "Profile",
-          signOut: "Sign out"
-        }
+          signOut: "Sign out",
+        },
       },
       table: {
         page: "Page",
@@ -622,16 +623,16 @@
         synchronization: "Synchronization",
         disksync: "Disk Sync",
         api: "API",
-        url: "URL"
+        url: "URL",
       },
       sidebar: {
-        currentSite: "current site"
+        currentSite: "current site",
       },
       htmlViewer: {
-        code: "Code"
+        code: "Code",
       },
       multilingualselector: {
-        default: "(Default)"
+        default: "(Default)",
       },
       pageEditor: {
         basic: "Basic",
@@ -642,7 +643,7 @@
         htmlMeta: "HTML meta",
         content: "Content",
         parameters: "Parameters",
-        invalidRoute: "You have input a invalid url route, please check"
+        invalidRoute: "You have input a invalid url route, please check",
       },
       viewEditor: {
         selectHint: "-- Select field --",
@@ -656,7 +657,7 @@
           even: "Even",
           first: "First",
           last: "Last",
-          number: "Number"
+          number: "Number",
         },
         data: "Data",
         bindTo: "Bind to",
@@ -668,22 +669,22 @@
         repeatedItem: "Repeated item",
         repeatSelf: "Repeat self",
         dynamicParam: "Dynamic parameters",
-        currentPage: "Current page"
+        currentPage: "Current page",
       },
       layoutEditor: {
         position: "Position",
-        replaceOuterTag: "Replace outer tag"
+        replaceOuterTag: "Replace outer tag",
       },
       styleScript: {
         files: "Files",
-        groups: "Groups"
+        groups: "Groups",
       },
       actionDialog: {
         parameter: "Parameter",
         mapTo: "Map to",
         aliasName: "Alias name",
         global: "Global",
-        local: "Local"
+        local: "Local",
       },
       folderEditor: {
         folder: "Folder",
@@ -695,7 +696,7 @@
         EmbeddedFolders: "Embedded folders",
         chooseItemBelow: "Please select items shown below",
         noFolderAvailable: "No folder available",
-        alias: "Alias"
+        alias: "Alias",
       },
       styleEditor: {
         pickImage: "Pick image",
@@ -704,27 +705,27 @@
         showRelation: "Show relation",
         pickStyle: "Pick style",
         addProperty: "Add Property",
-        removeSelector: "Remove this selector"
+        removeSelector: "Remove this selector",
       },
       exportModal: {
         title: "Export",
         exportType: "Export type",
         exportContent: "Export content",
         complete: "Complete",
-        custom: "Custom"
+        custom: "Custom",
       },
       conditionModal: {
         title: "Conditions",
         condition: "Condition",
-        add: "Add condition"
+        add: "Add condition",
       },
       hardwareModal: {
         quantity: "Quantity",
         selectTypeFirst: "Select type first",
-        startMonth: "Start month"
+        startMonth: "Start month",
       },
       cashierModal: {
-        choosePaymentMethod: "Please choose a payment method"
+        choosePaymentMethod: "Please choose a payment method",
       },
       topupModal: {
         title: "Topup",
@@ -735,7 +736,7 @@
         largeThan: "large than 0.01",
         paid: "paid",
         orderDate: "Order date",
-        coupon: "coupon"
+        coupon: "coupon",
       },
       templateModal: {
         downloads: "Downloads",
@@ -745,28 +746,28 @@
         siteNameHint: "Start with letters and no space allowed",
         domainHint: "Give your site a domain that other people can access.",
         useThisTemplate: "Use this template",
-        subDomain: "SubDomain"
+        subDomain: "SubDomain",
       },
       demandModal: {
         publishDemand: "Publish a demand",
         requireSkill: "Required skills",
         startTime: "Start time",
-        endTime: "End time"
+        endTime: "End time",
       },
       discussionModal: {
-        addDiscussion: "Add a discussion"
+        addDiscussion: "Add a discussion",
       },
       expertiseModal: {
-        expertise: "Expertise"
+        expertise: "Expertise",
       },
       objectionModal: {
         objection: "Objection",
         receiveObjection: "We have receive your objection",
-        contact: "Contact"
+        contact: "Contact",
       },
       orderModal: {
         supplier: "Supplier:",
-        order: "Buy it"
+        order: "Buy it",
       },
       proposalModal: {
         proposal: "Proposal",
@@ -775,15 +776,15 @@
         bidder: "Bidder",
         accept: "Accept",
         day: "Day",
-        s: "s"
+        s: "s",
       },
       dataCenterModal: {
         changeExplanation:
-          "Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually."
+          "Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.",
       },
       userVerifyModal: {
-        verify: "Verify"
-      }
+        verify: "Verify",
+      },
     },
     site: {
       sites: {
@@ -804,10 +805,10 @@
         automatically:
           "System will add thumbnails automatically if user don't upload any thumbnail.",
         shareTip:
-          "Share your website as a template for public users or within your organization."
+          "Share your website as a template for public users or within your organization.",
       },
       setting: {
-        configuration: "Configuration"
+        configuration: "Configuration",
       },
       sync: {
         listName: "List",
@@ -819,8 +820,8 @@
         pushLog: "Push log",
         pushType: {
           all: "Push all",
-          update: "Push update only"
-        }
+          update: "Push update only",
+        },
       },
       images: {
         all: "All",
@@ -829,7 +830,7 @@
         view: "View",
         layout: "Layout",
         content: "Content",
-        free: "Free"
+        free: "Free",
       },
       page: {
         createNewLayout: "Click to create your first layout",
@@ -843,25 +844,25 @@
         fromLayout: "From layout",
         previewInMobile: "Preview in mobile",
         redirectRoutesTip:
-          "Set the redirect pages for default home page, 404 and error pages"
+          "Set the redirect pages for default home page, 404 and error pages",
       },
       layout: {
-        copyLayout: "Copy layout"
+        copyLayout: "Copy layout",
       },
       share: {
         article: "article",
         corporation: "corporation",
-        category: "category"
+        category: "category",
       },
       siteLog: {
         logItem: "Log item",
         action: "Action",
         type: "Type",
         version: "Version",
-        currentVersion: "Current version"
+        currentVersion: "Current version",
       },
       siteUser: {
-        role: "Role"
+        role: "Role",
       },
       visitorLog: {
         all: "All",
@@ -878,10 +879,10 @@
         views: "Views",
         errorCount: "Error count",
         country: "Country",
-        state: "State"
+        state: "State",
       },
       disk: {
-        count: "Count"
+        count: "Count",
       },
       job: {
         startTime: "Start at",
@@ -890,20 +891,20 @@
         completed: "Completed",
         jobName: "Job name",
         executionTime: "Execution time",
-        message: "Message"
+        message: "Message",
       },
       diagnostic: {
         information: "Information",
         warning: "Warning",
         critical: "Critical",
         scanAgain: "Scan again",
-        scanning: "scanning!"
+        scanning: "scanning!",
       },
       contentType: {
         fields: "Fields",
         showSystemField: "Click to show/hide system fields",
         systemFieldUndeletable: "You cann't remove system field.",
-        editContentType: "Edit content type"
+        editContentType: "Edit content type",
       },
       textContent: {
         new: "New",
@@ -914,43 +915,43 @@
         saveWidthNoFieldHint:
           "You don't have any field yet. Use 'New field' button to create your field.",
         createFolderHint:
-          "You dont't have folder yet. Use 'New folder' button to create a folder first."
+          "You dont't have folder yet. Use 'New folder' button to create a folder first.",
       },
       view: {
         dataSource: "Data Source",
         configureDataSource: "Configure datasource",
         copyView: "Copy view",
         dummy: "Dummy",
-        current: "Current"
+        current: "Current",
       },
       dataSource: {
-        methodName: "Method Name"
+        methodName: "Method Name",
       },
       form: {
         refreshSelf: "Refresh self",
         globalStyle: "Global style",
         submit: "Submit",
-        reset: "Reset"
+        reset: "Reset",
       },
       script: {
         children: "Children",
         external: "External",
         embedded: "Embedded",
         group: "Group",
-        groupName: "Group name"
+        groupName: "Group name",
       },
       style: {
         name: "Style",
         ownerType: "Owner type",
         siteObject: "Site object",
-        inline: "Inline style"
+        inline: "Inline style",
       },
       URL: {
         name: "URLs",
         internal: "Internal",
         external: "External",
         resourceType: "Resource type",
-        hasObject: "Has object"
+        hasObject: "Has object",
       },
       label: {
         key: "Key",
@@ -958,10 +959,10 @@
         originalValue: "Original value",
         translatedValue: "Translated value",
         createANewLabel: "Create a new label",
-        placeholder: "New label"
+        placeholder: "New label",
       },
       htmlblock: {
-        readOnly: "Read only"
+        readOnly: "Read only",
       },
       domain: {
         name: "Domain",
@@ -972,7 +973,7 @@
         email: "Email",
         records: "Records",
         expires: "Expires",
-        sslEnabled: "SSL enabled"
+        sslEnabled: "SSL enabled",
       },
       template: {
         public: "Public",
@@ -981,31 +982,31 @@
         noTag: "No tag",
         noDynamic: "No dynamic content",
         weHaveFound: "We have found ",
-        templateUnit: " template(s)"
+        templateUnit: " template(s)",
       },
       profile: {
         Account: "Account",
         Password: "Password",
         Organization: "Organization",
         Users: "Users",
-        DataCenter: "Data center"
+        DataCenter: "Data center",
       },
       search: {
         searchedCount: "Searched count",
         keywords: "Keywords",
-        docFound: "Document found"
+        docFound: "Document found",
       },
 
       multiLang: {
         noTranslation: "No translation",
-        translationState: "Translation state"
+        translationState: "Translation state",
       },
       code: {
         codeType: "Code type",
         chooseCodeType: "Choose code type",
         noSetting: "No setting",
-        noActivityAndCreate: "No activity available! Click here to create one."
-      }
+        noActivityAndCreate: "No activity available! Click here to create one.",
+      },
     },
 
     market: {
@@ -1020,14 +1021,14 @@
         demander: "Demander",
         createTime: "Create time",
         isOpen: "Is open",
-        proposalCount: "proposalCount"
+        proposalCount: "proposalCount",
       },
       discussion: {
         myThreads: "My Threads",
-        Comments: "Comments"
+        Comments: "Comments",
       },
       hardware: {
-        usageReport: "Usage Report"
+        usageReport: "Usage Report",
       },
       supplier: {
         myOffers: "My Offers",
@@ -1036,12 +1037,12 @@
         service: "Service",
         status: "Status",
         orderUser: "Order user",
-        me: "Me"
+        me: "Me",
       },
       template: {
         myTemplate: "My Template",
-        privateTemplate: "Private Template"
-      }
+        privateTemplate: "Private Template",
+      },
     },
 
     mail: {
@@ -1061,26 +1062,26 @@
         normal: "Normal",
         wildcard: "Wildcard",
         groupMail: "Group mail",
-        forwarding: "Forwarding"
+        forwarding: "Forwarding",
       },
       noAddressYet:
         "You don't have a address yet, please add a new address before composing a email.",
       attachments: " Attachment(s)",
       noAddressFound: "No address found",
       wildcardTip:
-        "Use * to represent any characters. * is required and only one * is allowed"
+        "Use * to represent any characters. * is required and only one * is allowed",
     },
 
     commerce: {
       isEnabled: "E-commerce enabled",
       product: {
         inStock: "In stock",
-        dropOff: "Drop off"
-      }
+        dropOff: "Drop off",
+      },
     },
 
     logical: {
-      and: "Logical and"
+      and: "Logical and",
     },
 
     dashboard: {
@@ -1088,11 +1089,11 @@
       total: "Total",
       IPs: "IPs",
       Pages: "Pages",
-      avgSize: "Avg Size"
+      avgSize: "Avg Size",
     },
 
     popover: {
-      searchStatusExplain: "Add to index automatically when documnent changed."
+      searchStatusExplain: "Add to index automatically when documnent changed.",
     },
 
     inlineEditor: {
@@ -1140,8 +1141,8 @@
       editColor: "Edit color",
       htmlModeTip:
         "Failed to initialize the editor as the document is not in standards mode",
-      clickReplace: "Click to replace"
-    }
+      clickReplace: "Click to replace",
+    },
   };
   Kooboo.text = text;
 })();

@@ -5,6 +5,7 @@ using Kooboo.Sites.Scripting.Interfaces;
 using KScript;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         where T : IDbConnection
     {
         readonly string _connectionString;
+
+        public event Action<string, object> Event;
 
         public abstract char QuotationLeft { get; }
         public abstract char QuotationRight { get; }
@@ -29,6 +32,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public abstract RelationalSchema GetSchema(string name);
 
+        protected virtual void OnSqlExecute(string sql, object @params)
+        {
+            Event?.Invoke(sql, @params);
+        }
+
         public virtual void UpgradeSchema(string name, IEnumerable<RelationalSchema.Item> items)
         {
             var sb = new StringBuilder();
@@ -42,7 +50,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
-                connection.Execute(sb.ToString());
+                var sql = sb.ToString();
+                OnSqlExecute(sql, null);
+                connection.Execute(sql);
             }
         }
 
@@ -59,7 +69,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             {
                 using (var connection = CreateConnection())
                 {
-                    connection.Execute(sql, new[] { data });
+                    var @params = new[] { data };
+                    OnSqlExecute(sql, @params);
+                    connection.Execute(sql, @params);
                     return null;
                 }
             }
@@ -68,6 +80,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             sql += StatementDelimiter + $"SELECT {WarpField(schema.PrimaryKey)} FROM {WarpField(name)} WHERE {whereCaluse}";
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, data);
                 return connection.ExecuteScalar(sql, data);
             }
         }
@@ -98,6 +111,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             {
                 using (var connection = CreateConnection())
                 {
+                    OnSqlExecute(sql, data);
                     connection.Execute(sql, data);
                     return null;
                 }
@@ -107,6 +121,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             sql += StatementDelimiter + $"SELECT {WarpField(schema.PrimaryKey)} FROM {WarpField(name)} WHERE {whereCaluse}";
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, data);
                 return connection.ExecuteScalar(sql, data);
             }
         }
@@ -117,6 +132,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, null);
                 connection.Execute(sql);
             }
         }
@@ -127,7 +143,9 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
-                connection.Execute(sql, new { Id = id });
+                var data = new { Id = id };
+                OnSqlExecute(sql, data);
+                connection.Execute(sql, data);
             }
         }
 
@@ -140,6 +158,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, data);
                 connection.Execute(sql, data);
             }
         }
@@ -157,6 +176,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, @params);
                 return connection.Query<object>(sql, @params).ToArray();
             }
         }
@@ -170,6 +190,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, null);
                 count = connection.Query<int>(sql).FirstOrDefault();
             }
 

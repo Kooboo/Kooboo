@@ -25,6 +25,7 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, null);
                 connection.Execute(sql);
             }
         }
@@ -51,7 +52,8 @@ WHERE
 ";
             using (var connection = CreateConnection())
             {
-                var result = connection.Query<RelationModel>(sql, new { Name = name }).FirstOrDefault();
+                var @params = new { Name = name };
+                var result = connection.Query<RelationModel>(sql, @params).FirstOrDefault();
 
                 if (result != null && result.TableA == relation)
                 {
@@ -69,7 +71,7 @@ WHERE
         {
             using (var connection = CreateConnection())
             {
-                var result = connection.Query<RelationalSchema.Item>($@"
+                var sql = $@"
 SELECT
 	TCol.COLUMN_NAME AS [name],
 	TCol.DATA_TYPE AS [type],
@@ -80,7 +82,9 @@ FROM
          ON TKey.TABLE_NAME = TCol.TABLE_NAME AND TKey.COLUMN_NAME = TCol.COLUMN_NAME
 WHERE
 	TCol.TABLE_NAME= @Name
-", new { Name = name });
+";
+                var @params = new { Name = name };
+                var result = connection.Query<RelationalSchema.Item>(sql, @params);
 
                 return new SqlServerSchema(result);
             }
@@ -98,6 +102,7 @@ WHERE
 
             using (var connection = CreateConnection())
             {
+                OnSqlExecute(sql, @params);
                 return connection.Query<object>(sql, @params).ToArray();
             }
         }
@@ -114,7 +119,9 @@ WHERE
 
             using (var connection = CreateConnection())
             {
-                connection.Execute(sb.ToString());
+                var sql = sb.ToString();
+                OnSqlExecute(sql, null);
+                connection.Execute(sql);
             }
         }
     }

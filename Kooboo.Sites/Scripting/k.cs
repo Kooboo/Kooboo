@@ -13,6 +13,7 @@ using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.SMS;
 using Kooboo.Sites.Scripting.Global.Sqlite;
+using Kooboo.Sites.Service;
 using KScript.KscriptConfig;
 using KScript.Sites;
 using MongoDB.Driver;
@@ -81,9 +82,9 @@ namespace KScript
         }
 
         public k GetBySiteId(object SiteId)
-        {  
+        {
             Guid id = Kooboo.Lib.Helper.IDHelper.ParseKey(SiteId);
-            WebSite find = _findsite(id); 
+            WebSite find = _findsite(id);
 
             if (find == null)
             {
@@ -97,7 +98,7 @@ namespace KScript
             newcontext.IsSiteBinding = true;
             return new k(newcontext);
         }
-         
+
 
         [KIgnore]
         public object this[string key] { get { return ExtensionContainer.Get(key, RenderContext); } set { ExtensionContainer.Set(value); } }
@@ -224,7 +225,7 @@ var value = k.session.key; ")]
         {
             get
             {
-                return new SMS(this.RenderContext); 
+                return new SMS(this.RenderContext);
             }
         }
 
@@ -283,7 +284,7 @@ var value = k.session.key; ")]
                 return _user;
             }
         }
-         
+
         private FileVersion _version;
 
         [Description("append a version nr to image url for caching. Only valid when system set to image version cache")]
@@ -298,7 +299,7 @@ var value = k.session.key; ")]
                 return _version;
             }
         }
-         
+
         private KTemplate _template;
         [KIgnore]
         public KTemplate Template
@@ -487,6 +488,11 @@ var value = k.session.key; ")]
                         {
                             var path = Path.Combine(AppSettings.GetFileIORoot(RenderContext.WebSite), "sqlite.db");
                             _sqlite = new SqliteDatabase($"Data source='{path}';");
+
+                            _sqlite.SqlExecuter.Event += (sql, @params) =>
+                            {
+                                SqlLogService.AddLog(sql, @params, _sqlite.Source, RenderContext?.WebSite?.Id ?? Guid.Empty);
+                            };
                         }
                     }
                 }
@@ -515,6 +521,11 @@ var value = k.session.key; ")]
                             }
 
                             _mysql = new MysqlDatabase(setting.ConnectionString);
+
+                            _mysql.SqlExecuter.Event += (sql, @params) =>
+                            {
+                                SqlLogService.AddLog(sql, @params, _mysql.Source, RenderContext?.WebSite?.Id ?? Guid.Empty);
+                            };
                         }
                     }
                 }
@@ -542,6 +553,11 @@ var value = k.session.key; ")]
                                 throw new InitException("  ->Please add the sqlserver connection string to the system configuration of the site<-  ");
                             }
                             _sqlServer = new SqlServerDatabase(setting.ConnectionString);
+
+                            _sqlServer.SqlExecuter.Event += (sql, @params) =>
+                            {
+                                SqlLogService.AddLog(sql, @params, _sqlServer.Source, RenderContext?.WebSite?.Id ?? Guid.Empty);
+                            };
                         }
                     }
                 }
