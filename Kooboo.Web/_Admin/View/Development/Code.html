@@ -110,9 +110,7 @@
             </a>
           </td>
           <td>
-            <a :href="row.previewUrl" target="_blank">
-              {{ row.previewUrl }}
-            </a>
+            <a :href="row.previewUrl" target="_blank"> {{ row.previewUrl }} </a>
           </td>
           <td>
             <span>
@@ -152,8 +150,8 @@
           <h4 class="modal-title">API Generation</h4>
         </div>
         <div class="modal-body" v-if="showApiModal">
-          <div style="overflow: hidden;">
-            <div class="row" style="min-width: 600px;">
+          <div style="overflow: hidden">
+            <div class="row" style="min-width: 600px">
               <div class="wizard">
                 <div class="wrapper">
                   <span
@@ -188,7 +186,7 @@
                     <td>
                       <span
                         class="table-tree-indent"
-                        style="width: 22px;"
+                        style="width: 22px"
                       ></span>
                       <input type="checkbox" v-model="item.selected" />
                       <a href="javascript:;">{{ item.name }}</a>
@@ -556,7 +554,7 @@
     }
 
     function insertIntoNode(paths, item, node) {
-      if (paths.length == 1) {
+      if (paths.length <= 1) {
         node.files.push(item);
       } else {
         var dirname = paths.shift();
