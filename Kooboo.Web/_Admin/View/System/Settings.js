@@ -29,6 +29,7 @@ $(function () {
           displayName: "",
           siteType: "",
           enableVisitorLog: false,
+          enableSqlLog: false,
           enableConstraintFixOnSave: false,
           enableFrontEvents: false,
           enableJsCssCompress: false,

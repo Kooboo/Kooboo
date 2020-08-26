@@ -491,6 +491,7 @@ var value = k.session.key; ")]
 
                             _sqlite.SqlExecuter.Event += (sql, @params) =>
                             {
+                                if (!RenderContext.WebSite.EnableSqlLog) return;
                                 SqlLogService.AddLog(sql, @params, _sqlite.Source, RenderContext?.WebSite?.Id ?? Guid.Empty);
                             };
                         }
@@ -524,6 +525,7 @@ var value = k.session.key; ")]
 
                             _mysql.SqlExecuter.Event += (sql, @params) =>
                             {
+                                if (!RenderContext.WebSite.EnableSqlLog) return;
                                 SqlLogService.AddLog(sql, @params, _mysql.Source, RenderContext?.WebSite?.Id ?? Guid.Empty);
                             };
                         }
@@ -556,6 +558,7 @@ var value = k.session.key; ")]
 
                             _sqlServer.SqlExecuter.Event += (sql, @params) =>
                             {
+                                if (!RenderContext.WebSite.EnableSqlLog) return;
                                 SqlLogService.AddLog(sql, @params, _sqlServer.Source, RenderContext?.WebSite?.Id ?? Guid.Empty);
                             };
                         }

@@ -1341,4 +1341,6 @@
   <key id="expandAll">expand</key>
   <key id="collapseAll">collapse</key>
   <key id="SQL logs">SQL logs</key>
+  <key id="Enable Sql Log">Enable Sql Log</key>
+  <key id="Enable CORS">Enable CORS</key>
 </Lang>

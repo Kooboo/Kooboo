@@ -345,6 +345,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 currentsite.SiteType = newinfo.SiteType;
                 currentsite.EnableCORS = newinfo.EnableCORS;
+                currentsite.EnableSqlLog = newinfo.EnableSqlLog;
 
                 // the cluster... 
 

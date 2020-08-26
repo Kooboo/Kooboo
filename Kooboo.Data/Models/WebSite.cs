@@ -192,6 +192,7 @@ namespace Kooboo.Data.Models
 
         public bool EnableImageLog { get; set; } = true;
 
+        public bool EnableSqlLog { get; set; }
 
         private bool _enabledisksync;
         public bool EnableDiskSync

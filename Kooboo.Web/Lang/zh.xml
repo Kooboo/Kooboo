@@ -1341,4 +1341,6 @@
   <key id="expandAll">展开</key>
   <key id="collapseAll">折叠</key>
   <key id="SQL logs">SQL 日志</key>
+  <key id="Enable Sql Log">启用 SQL 日志</key>
+  <key id="Enable CORS">启用 CORS</key>
 </Lang>
