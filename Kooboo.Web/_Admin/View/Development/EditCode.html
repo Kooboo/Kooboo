@@ -327,11 +327,7 @@
         },
         validate: function() {
           var urlRule = [
-            { required: true, message: Kooboo.text.validation.required },
-            {
-              pattern: /^(\/[A-z0-9]+)+/,
-              message: Kooboo.text.validation.urlInvalid
-            }
+            { required: true, message: Kooboo.text.validation.required }
           ];
           var nameRule = [
             {

@@ -73,13 +73,16 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                 {
                     var currentcode = SiteObject as Models.Code;
 
-                    var bytes = CodeToBytes(sitedb, currentcode); 
-                      
+                    var bytes = CodeToBytes(sitedb, currentcode);
 
+                    if (IOHelper.IsEqualBytes(bytes, DiskBytes))
+                    {
+                        return false;
+                    } 
                     var currentbody = currentcode.Body;
 
                     var ok = FromCodeBytes(currentcode, DiskBytes);
-                    if (!ok || currentbody == currentcode.Body)
+                    if (!ok)
                     {
                         return false;
                     }
@@ -186,20 +189,20 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
         //TODO: move somewhere else.
         public static string GetNewRoute(SiteDb sitedb, string routename)
         {
-           if (routename == null)
+            if (routename == null)
             {
-                return null; 
+                return null;
             }
 
-           if (!routename.StartsWith("/"))
+            if (!routename.StartsWith("/"))
             {
-                routename = "/" + routename; 
+                routename = "/" + routename;
             }
 
             var route = sitedb.Routes.Get(routename);
             if (route == null)
             {
-                return routename; 
+                return routename;
             }
             else
             {
@@ -207,16 +210,16 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                 {
                     var name = routename + i.ToString();
 
-                    route = sitedb.Routes.Get(name); 
+                    route = sitedb.Routes.Get(name);
                     if (route == null)
                     {
-                        return name; 
+                        return name;
                     }
-                    
-                } 
+
+                }
             }
 
-            return null; 
+            return null;
         }
     }
 }

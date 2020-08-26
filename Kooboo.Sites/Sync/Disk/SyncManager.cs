@@ -13,13 +13,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Sync.Disk
-{ 
+{
 
     public class SyncManager
-    {  
+    {
         public SyncManager(Guid WebSiteId)
         {
-            this.WebSiteId = WebSiteId; 
+            this.WebSiteId = WebSiteId;
         }
 
         private Guid WebSiteId { get; set; }
@@ -203,20 +203,28 @@ namespace Kooboo.Sites.Sync.Disk
                             // # Rule 3, Check if this is its own route, or someelse routes. 
                             // Own rule, do nothing. 
                             var coderoute = SiteDb.Routes.Get(diskroute);
+
+                            if (coderoute != null && coderoute.objectId != default(Guid) && coderoute.objectId != code.Id)
+                            {
+                                //Someone else route already. make a new one 
+                                diskroute = DiskObjectConverter.GetNewRoute(SiteDb, diskroute);
+                                coderoute = null;
+                                shouldUpdateCodeRouteText = true;
+                            }
+
                             if (coderoute == null)
                             {
-                                //#Rule 4, If route does not exists yet. Add and end. 
-                                SiteDb.Routes.AddOrUpdate(diskroute, code);
+                                //#Rule 4, If route does not exists yet. Add and delte old one if any. 
+                                var oldroute = SiteDb.Routes.GetByObjectId(code.Id); 
+                                SiteDb.Routes.AddOrUpdate(diskroute, code); 
+                                if (oldroute !=null)
+                                {
+                                    SiteDb.Routes.Delete(oldroute.Id); 
+                                } 
                             }
                             else
-                            {
-                                if (coderoute.objectId != default(Guid) && coderoute.objectId != code.Id)
-                                {
-                                    // #Rule 5, This is route for others... get a new route.
-                                    var newcoderoute = DiskObjectConverter.GetNewRoute(SiteDb, diskroute);
-                                    SiteDb.Routes.AddOrUpdate(newcoderoute, code);
-                                    shouldUpdateCodeRouteText = true;
-                                }
+                            { 
+                                // donothing. 
                             }
 
                         }
@@ -325,7 +333,7 @@ namespace Kooboo.Sites.Sync.Disk
 
             return null;
         }
-         
+
         public void InitSyncToDisk()
         {
             var website = Kooboo.Data.GlobalDb.WebSites.Get(this.WebSiteId);

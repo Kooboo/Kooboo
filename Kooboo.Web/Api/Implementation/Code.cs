@@ -182,11 +182,10 @@ namespace Kooboo.Web.Api.Implementation
                     model.Url = "/" + model.Url;
                 }
             }
-            //else
-            //{
-            //    throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Url is required", call.Context));
-            //}
-
+            else
+            {
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Url is required", call.Context));
+            }
 
             var sitedb = call.WebSite.SiteDb();
 
