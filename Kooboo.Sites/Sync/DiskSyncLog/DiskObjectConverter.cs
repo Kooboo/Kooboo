@@ -51,7 +51,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             return null;
         }
 
-        public static bool FromBytes(ref ISiteObject SiteObject, byte[] DiskBytes)
+        public static bool FromBytes(ref ISiteObject SiteObject, byte[] DiskBytes, SiteDb sitedb)
         {
             var modeltype = SiteObject.GetType();
             var SerializerType = Attributes.AttributeHelper.GetDiskType(modeltype);
@@ -72,6 +72,10 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                 if (SiteObject is Kooboo.Sites.Models.Code)
                 {
                     var currentcode = SiteObject as Models.Code;
+
+                    var bytes = CodeToBytes(sitedb, currentcode); 
+                      
+
                     var currentbody = currentcode.Body;
 
                     var ok = FromCodeBytes(currentcode, DiskBytes);

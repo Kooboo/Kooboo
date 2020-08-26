@@ -171,20 +171,20 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual Guid Post(CodeEditViewModel model, ApiCall call)
         {
-            if (model.Url !=null)
+            if (model.Url != null)
             {
                 if (model.Url.StartsWith("\\"))
                 {
-                    model.Url = "/" + model.Url.Substring(1); 
+                    model.Url = "/" + model.Url.Substring(1);
                 }
                 if (!model.Url.StartsWith("/"))
                 {
                     model.Url = "/" + model.Url;
-                } 
+                }
             }
             else
             {
-                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Url is required", call.Context)); 
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Url is required", call.Context));
             }
 
 

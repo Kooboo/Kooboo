@@ -158,7 +158,7 @@ namespace Kooboo.Sites.Sync.Disk
                 result = Activator.CreateInstance(repo.ModelType) as ISiteObject;
             }
 
-            if (!DiskObjectConverter.FromBytes(ref result, diskbytes))
+            if (!DiskObjectConverter.FromBytes(ref result, diskbytes, SiteDb))
             {
                 return;
             }
