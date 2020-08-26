@@ -120,7 +120,7 @@ namespace Kooboo.Sites.Repository
                 AddOrUpdate(newroute);
                 Delete(oldroute.Id);
 
-                Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, OldRelativeUrl, newroute.Name);
+                Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, newroute, OldRelativeUrl, newroute.Name);
 
             }
 

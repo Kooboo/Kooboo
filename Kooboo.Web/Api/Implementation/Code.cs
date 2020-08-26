@@ -171,6 +171,23 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual Guid Post(CodeEditViewModel model, ApiCall call)
         {
+            if (model.Url !=null)
+            {
+                if (model.Url.StartsWith("\\"))
+                {
+                    model.Url = "/" + model.Url.Substring(1); 
+                }
+                if (!model.Url.StartsWith("/"))
+                {
+                    model.Url = "/" + model.Url;
+                } 
+            }
+            else
+            {
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Url is required", call.Context)); 
+            }
+
+
             var sitedb = call.WebSite.SiteDb();
 
             Code code = new Code();
@@ -218,39 +235,26 @@ namespace Kooboo.Web.Api.Implementation
                         }
                     } 
                 
-                }
-
+                } 
                 // check if it only return Json...
-                code.IsJson = Lib.Helper.JsonHelper.IsJson(code.Body);
-
-
-                string url = model.Url;
-                if (!string.IsNullOrEmpty(url))
-                {
-                    var route = new Kooboo.Sites.Routing.Route();
-                    route.Name = url;
-                    route.objectId = code.Id;
-                    route.DestinationConstType = ConstObjectType.Code;
-                    sitedb.Routes.AddOrUpdate(route);
-                }
-                else
-                {
-                    // delete the route. 
-                    var route = sitedb.Routes.GetByObjectId(code.Id);
-                    if (route != null)
-                    {
-                        sitedb.Routes.Delete(route.Id);
-                    }
-                }
-
+                code.IsJson = Lib.Helper.JsonHelper.IsJson(code.Body); 
             }
-             
-
+              
             if (model.Id != default(Guid))
-            {
+            {  
                 var oldcode = sitedb.Code.Get(model.Id);
                 if (oldcode != null)
                 {
+                    // check if needed to change route. 
+                    if (code.CodeType == Sites.Models.CodeType.Api)
+                    {
+                        var oldroute = sitedb.Routes.GetByObjectId(oldcode.Id); 
+                        if (oldroute !=null && oldroute.Name != model.Url)
+                        {
+                            sitedb.Routes.ChangeRoute(oldroute.Name, model.Url); 
+                        }
+                    }
+                     
                     oldcode.Name = model.Name;
                     oldcode.Body = model.Body;
                     oldcode.Config = model.Config;
@@ -272,6 +276,18 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
+                //Api add route.
+               if (code.CodeType == Sites.Models.CodeType.Api)
+                {
+                    // add a new route. 
+                    var route = new Kooboo.Sites.Routing.Route();
+                    route.Name = model.Url;
+                    route.objectId = code.Id;
+                    route.DestinationConstType = ConstObjectType.Code;
+                    sitedb.Routes.AddOrUpdate(route);
+
+                }
+
                 sitedb.Code.AddOrUpdate(code);
             } 
 
