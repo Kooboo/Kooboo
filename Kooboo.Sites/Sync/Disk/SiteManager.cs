@@ -46,7 +46,7 @@ namespace Kooboo.Sites.Sync.Disk
             {
                 SiteChecker.Check(item);
             }
-        }
+        } 
 
         public static List<WebSite> GetSitesToCheck()
         {

@@ -187,7 +187,6 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Url is required", call.Context));
             }
 
-
             var sitedb = call.WebSite.SiteDb();
 
             Code code = new Code();
