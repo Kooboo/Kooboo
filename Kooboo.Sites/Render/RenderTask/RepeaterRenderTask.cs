@@ -4,6 +4,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Dom;
 using Kooboo.Sites.DataTraceAndModify.CustomTraces;
+using Kooboo.Sites.Render.Functions;
 using Kooboo.Sites.Render.RenderTask;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +30,10 @@ namespace Kooboo.Sites.Render
         /// whether the self container element needs to be repeated or not. 
         /// </summary>
         public bool repeatself { get; set; }
+
+        public bool IsFunction { get; set; }
+
+        public IFunction function { get; set; }
 
         private List<IRenderTask> _containerTask;
 
@@ -58,6 +63,15 @@ namespace Kooboo.Sites.Render
             this.datakey = DataKey;
             this.alias = Alias;
             this.repeatself = RepeatSelf;
+
+
+            if (FunctionHelper.IsFunction(this.datakey))
+            {
+                this.IsFunction = true;
+                this.function = FunctionHelper.Parse(datakey); 
+            }
+
+
             string boundary = null;
             if (options.RequireBindingInfo)
             {
@@ -109,13 +123,12 @@ namespace Kooboo.Sites.Render
         public string Render(RenderContext context)
         {
             // step get the repeat object. and push to datacontext every time. 
-            object repeatcontainer = context.DataContext.GetValue(this.datakey);
+            object repeatcontainer = GetContainerValue(context);
 
             if (repeatcontainer == null)
             {
                 return null;
-            }
-
+            } 
 
             StringBuilder sb = new StringBuilder();
 
@@ -164,6 +177,24 @@ namespace Kooboo.Sites.Render
             }
 
             return sb.ToString();
+        }
+
+
+        public object GetContainerValue(RenderContext context)
+        { 
+            if (this.IsFunction && function != null)
+            {
+                var funcresult = this.function.Render(context);
+                if (funcresult != null)
+                {
+                    return funcresult; 
+                }
+            }
+            else
+            {
+              return context.DataContext.GetValue(this.datakey);
+            }
+            return null; 
         }
 
         public IList GetList(object container)
