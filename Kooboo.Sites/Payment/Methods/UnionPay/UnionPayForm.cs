@@ -79,6 +79,9 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["txnAmt"] = GetAmount(request.TotalAmount).ToString();//交易金额，单位分
             param["riskRateInfo"] = "{}";  // 请求方保留域 {}
 
+            // 显示给用户看的商品名称
+            param["riskRateInfo"] = "{commodityName=" + request.Name + "}";
+
             SignHelper.Sign(param, Encoding.UTF8, Setting.MerchantSignCertPFX.Bytes, Setting.SignCertPasswrod);
             string formHtml = CreateAutoFormHtml(Setting.FrontTransactionUrl, param, Encoding.UTF8);
 
