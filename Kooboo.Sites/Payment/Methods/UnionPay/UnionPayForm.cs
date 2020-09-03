@@ -70,8 +70,7 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["frontUrl"] = Setting.FrontUrl;  //前台通知地址      
 
             // 需要用这行
-            //param["backUrl"] = callbackUrl;  //后台通知地址
-            param["backUrl"] = "https://46094a7d.ngrok.io/_api/paymentcallback/UnionPayForm_Notify?SiteId=50ecb05f-e985-7b0d-78de-c10ee111eb30";
+            param["backUrl"] = callbackUrl;  //后台通知地址
 
             param["currencyCode"] = CurrencyCodes.GetNumericCode(request.Currency, string.Empty);//交易币种 156 人民币
             param["payTimeout"] = DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");  // 订单超时时间。

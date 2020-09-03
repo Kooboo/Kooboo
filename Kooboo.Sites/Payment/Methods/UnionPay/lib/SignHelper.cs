@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -110,9 +111,9 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay.lib
             if (chain.ChainElements.Count != chain.ChainPolicy.ExtraStore.Count + 1)
                 return false;
 
-            var rsa = signCert.PublicKey.Key as System.Security.Cryptography.RSACryptoServiceProvider;
-
-            return rsa.VerifyData(encoding.GetBytes(stringSignDigest), System.Security.Cryptography.SHA256.Create(), signByte);
+            //bug 修复，类型对不上， 直接继承公共的基类，避免类型错误。
+            var rsa = signCert.PublicKey.Key as System.Security.Cryptography.RSA;
+            return rsa.VerifyData(encoding.GetBytes(stringSignDigest), signByte, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
         public static bool ValidateBaseData(Dictionary<string, string> rspData)
