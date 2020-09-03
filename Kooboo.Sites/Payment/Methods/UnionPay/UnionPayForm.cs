@@ -69,7 +69,6 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
             param["accessType"] = "0";//接入类型 0：商户直连接入
             param["frontUrl"] = Setting.FrontUrl;  //前台通知地址      
 
-            // 需要用这行
             param["backUrl"] = callbackUrl;  //后台通知地址
 
             param["currencyCode"] = CurrencyCodes.GetNumericCode(request.Currency, string.Empty);//交易币种 156 人民币
