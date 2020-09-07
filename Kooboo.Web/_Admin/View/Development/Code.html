@@ -33,6 +33,7 @@
         class="btn navbar-btn green"
         >API Generator</a
       >
+      <a class="btn navbar-btn green" @click="onDebug">Debug</a>
       <a
         v-show="selectedRows.length"
         @click="onDelete"
@@ -120,14 +121,6 @@
           <td :style="{width: '200px', textAlign: 'right'}">
             <a class="btn btn-sm blue" :href="getEditUrl(row)" @click.stop>
               {{ Kooboo.text.common.edit }}
-            </a>
-            <a
-              class="btn btn-sm blue"
-              :href="getDebugUrl(row.id)"
-              target="_blank"
-              @click.stop
-            >
-              {{ Kooboo.text.common.Debug }}
             </a>
           </td>
         </template>
@@ -495,6 +488,10 @@
       },
       collapseAll: function () {
         $(".tree").treegrid("collapseAll");
+      },
+      onDebug: function () {
+        window.location.href =
+          "CodeDebugger.html?SiteId=" + Kooboo.getQueryString("SiteId");
       },
     },
     watch: {

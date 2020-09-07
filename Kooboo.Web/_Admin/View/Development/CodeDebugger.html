@@ -1,0 +1,153 @@
+<!-- #layout name=default -->
+<div id="main" class="code-container">
+  <div class="code-tree">
+    <div>
+      <input class="code-search" placeholder="search" />
+    </div>
+    <div>
+      <div v-for="code in codes" :key="code.id" class="code-item"
+        >{{code.name}}/</div
+      >
+    </div>
+  </div>
+  <div class="code-content">
+    <table>
+      <tr>
+        <td class="breackpoint">
+          <span><i></i>1</span>
+        </td>
+        <td class="code-line">
+          <code> 323432432432434324324324343323432432432434324dsfsffffffffffffffffffffffffff324324 2434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff324</code>
+        </td>
+      </tr>
+      <tr>
+        <td class="breackpoint">
+          <span><i class="checked-bk"></i>13</span>
+        </td>
+        <td class="code-line current-executing">
+          <code> 323432432</code>
+        </td>
+      </tr>
+    </table>
+
+    <style></style>
+  </div>
+</div>
+
+<script>
+  new Vue({
+    el: "#main",
+    data: function () {
+      return {
+        codes: [],
+        lines: [`
+        <tr>
+        <td class="breackpoint">
+          <span><i class="checked-bk"></i>14</span>
+        </td>
+        <td class="code-content current-executing">
+          <code> 32343243243243432 </code>
+        </td>
+      </tr>
+    </table>
+        `,"asdsad"],
+      };
+    },
+    mounted: function () {
+      var me = this;
+      Kooboo.Code.getListByType({
+        codeType: "all",
+      }).then(function (rsp) {
+        me.codes = rsp.model;
+        console.log(me.codes);
+      });
+    },
+  });
+</script>
+
+<style>
+  .code-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 46px;
+    bottom: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+  }
+
+  .code-tree {
+    width: 200px;
+    border-right: 1px solid #ddd;
+  }
+
+  .code-content {
+    flex: 1;
+  }
+  .code-search {
+    width: 100%;
+    outline-width: 0;
+    border-width: 0;
+    height: 35px;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .code-item {
+    line-height: 30px;
+  }
+
+  .breackpoint {
+    vertical-align: top;
+    background-color: rgb(209, 209, 209);
+    word-break: keep-all;
+  }
+
+  .breackpoint span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 5px;
+    cursor: pointer;
+  }
+
+  .breackpoint span i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    background-color: red;
+    margin-right: 3px;
+  }
+
+  .breackpoint:hover i {
+    opacity: 0.5;
+  }
+
+  .checked-bk {
+    opacity: 1 !important;
+  }
+
+  .code-line {
+    word-break: break-all;
+    background-color: #fff;
+    padding: 0 5px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+
+  .current-executing {
+    background-color: yellow;
+  }
+
+  code {
+    color: black;
+    background-color: transparent;
+    word-break: break-all;
+  }
+</style>
