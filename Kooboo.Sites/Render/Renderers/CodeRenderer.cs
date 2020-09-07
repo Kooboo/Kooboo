@@ -34,13 +34,15 @@ namespace Kooboo.Sites.Render
 
                 if (code.Cors || enableCORS)
                 {
-                    var origin = context?.RenderContext?.Request?.Headers?.Get("Origin");
-                    var method = context?.RenderContext?.Request?.Headers?.Get("Access-Control-Request-Method");
-                    var headers = context?.RenderContext?.Request?.Headers?.Get("Access-Control-Request-Headers");
-                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Origin", origin ?? "*");
-                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Methods", method ?? "*");
-                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Headers", headers ?? "*");
-                    context?.RenderContext?.Response?.Headers?.Add("Access-Control-Allow-Credentials", "true");
+                    var requestHeaders = context?.RenderContext?.Request?.Headers;
+                    var origin = requestHeaders?.Get("Origin");
+                    var method = requestHeaders?.Get("Access-Control-Request-Method");
+                    var headers = requestHeaders?.Get("Access-Control-Request-Headers");
+                    var responseHeaders = context?.RenderContext?.Response?.Headers;
+                    if (!responseHeaders.ContainsKey("Access-Control-Allow-Origin")) responseHeaders?.Add("Access-Control-Allow-Origin", origin ?? "*");
+                    if (!responseHeaders.ContainsKey("Access-Control-Allow-Methods")) responseHeaders?.Add("Access-Control-Allow-Methods", method ?? "*");
+                    if (!responseHeaders.ContainsKey("Access-Control-Allow-Headers")) responseHeaders?.Add("Access-Control-Allow-Headers", headers ?? "*");
+                    if (!responseHeaders.ContainsKey("Access-Control-Allow-Credentials")) responseHeaders?.Add("Access-Control-Allow-Credentials", "true");
                 }
 
                 if (!string.IsNullOrEmpty(result))
