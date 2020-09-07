@@ -2,35 +2,58 @@
 <div id="main" class="code-container">
   <div class="code-tree">
     <div>
-      <input class="code-search" placeholder="search" />
+      <input class="code-search" placeholder="search" v-model="keyword" />
     </div>
     <div>
-      <div v-for="code in codes" :key="code.id" class="code-item"
-        >{{code.name}}/</div
+      <div
+        v-for="code in filtedCodes"
+        :key="code.id"
+        class="code-item"
+        @click="currentCode=code"
       >
+        {{code.name}}
+      </div>
     </div>
   </div>
-  <div class="code-content">
+  <div class="ctrl-bar navbar navbar-default">
+    <button class="btn btn-default">
+      <i class="glyphicon glyphicon-arrow-right"></i> <span>Continue</span
+      ><span>(F8)</span>
+    </button>
+
+    <button v-else class="btn btn-default">
+      <i class="glyphicon glyphicon-play"></i> <span>Start debugging</span>
+    </button>
+
+    <button class="btn btn-default">
+      <i class="glyphicon glyphicon-log-in"></i> <span>Step into</span
+      ><span>(F11)</span>
+    </button>
+    <button class="btn btn-default">
+      <i class="glyphicon glyphicon-new-window"></i> <span>Step over</span
+      ><span>(F10)</span>
+    </button>
+    <button class="btn btn-default">
+      <i class="glyphicon glyphicon-log-out"></i> <span>Step out</span
+      ><span>(Shift + F11)</span>
+    </button>
+  </div>
+
+  <div class="code-editor">
     <table>
-      <tr>
-        <td class="breackpoint">
-          <span><i></i>1</span>
+      <tr v-for="(line,index) in lines">
+        <td
+          class="breackpoint"
+          :class="{'checked-bk':isBreakpoint(index+1)}"
+          @click="checkBreackpoint(index+1)"
+        >
+          <span><i></i>{{index+1}}</span>
         </td>
-        <td class="code-line">
-          <code> 323432432432434324324324343323432432432434324dsfsffffffffffffffffffffffffff324324 2434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff3242434324324324343323432432432434324dsfsffffffffffffffffffffffffff324</code>
-        </td>
-      </tr>
-      <tr>
-        <td class="breackpoint">
-          <span><i class="checked-bk"></i>13</span>
-        </td>
-        <td class="code-line current-executing">
-          <code> 323432432</code>
+        <td class="code-line" :class="{'current-executing':line.current}">
+          <code>{{line.content}}</code>
         </td>
       </tr>
     </table>
-
-    <style></style>
   </div>
 </div>
 
@@ -39,18 +62,11 @@
     el: "#main",
     data: function () {
       return {
+        keyword: "",
         codes: [],
-        lines: [`
-        <tr>
-        <td class="breackpoint">
-          <span><i class="checked-bk"></i>14</span>
-        </td>
-        <td class="code-content current-executing">
-          <code> 32343243243243432 </code>
-        </td>
-      </tr>
-    </table>
-        `,"asdsad"],
+        currentCode: null,
+        lines: [],
+        breackpoints: [],
       };
     },
     mounted: function () {
@@ -59,32 +75,92 @@
         codeType: "all",
       }).then(function (rsp) {
         me.codes = rsp.model;
-        console.log(me.codes);
+        me.currentCode = me.codes[0];
       });
+    },
+    watch: {
+      currentCode(value) {
+        if (!value) return;
+        var me = this;
+        Kooboo.Code.getEdit({
+          id: value.id,
+          codetype: value.codeType,
+        }).then(function (rsp) {
+          me.lines = [];
+          if (!rsp.model || !rsp.model.body) return;
+          var lines = rsp.model.body.split("\n");
+
+          for (var i = 0; i < lines.length; i++) {
+            me.lines.push({
+              content: lines[i],
+              checkedBk: false,
+              current: false,
+            });
+          }
+        });
+      },
+    },
+    computed: {
+      filtedCodes() {
+        var me = this;
+        return this.codes.filter(function (f) {
+          return f.name.indexOf(me.keyword) > -1;
+        });
+      },
+    },
+    methods: {
+      checkBreackpoint(line) {
+        var me = this;
+        if (!me.currentCode || !me.currentCode.id) return;
+
+        if (this.isBreakpoint(line)) {
+          this.breackpoints = this.breackpoints.filter(function (f) {
+            return f.line != line || f.codeId != me.currentCode.id;
+          });
+        } else {
+          this.breackpoints.push({
+            line: line,
+            codeId: me.currentCode.id,
+          });
+        }
+      },
+      isBreakpoint(line) {
+        var me = this;
+        if (!me.currentCode || !me.currentCode.id) return;
+
+        return (
+          this.breackpoints.filter(function (f) {
+            return f.line == line && f.codeId == me.currentCode.id;
+          }).length > 0
+        );
+      },
     },
   });
 </script>
 
 <style>
   .code-container {
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 46px;
     bottom: 0;
     margin: 0 !important;
     padding: 0 !important;
-    display: flex;
   }
 
   .code-tree {
     width: 200px;
     border-right: 1px solid #ddd;
+    background-color: #f1f1f1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
   }
 
-  .code-content {
-    flex: 1;
-  }
   .code-search {
     width: 100%;
     outline-width: 0;
@@ -100,14 +176,14 @@
 
   .breackpoint {
     vertical-align: top;
-    background-color: rgb(209, 209, 209);
+    background-color: #f1f1f1;
     word-break: keep-all;
   }
 
   .breackpoint span {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     padding: 2px 5px;
     cursor: pointer;
   }
@@ -127,8 +203,8 @@
     opacity: 0.5;
   }
 
-  .checked-bk {
-    opacity: 1 !important;
+  .checked-bk i {
+    opacity: 0.9 !important;
   }
 
   .code-line {
@@ -140,7 +216,6 @@
     align-items: center;
   }
 
-
   .current-executing {
     background-color: yellow;
   }
@@ -149,5 +224,26 @@
     color: black;
     background-color: transparent;
     word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  .ctrl-bar {
+    position: absolute;
+    top: 5px;
+    left: 205px;
+    right: 5px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  .code-editor {
+    position: absolute;
+    bottom: 0px;
+    top: 55px;
+    left: 205px;
+    right: 0;
+    overflow: auto;
+    outline: #f1f1f1 1px solid;
   }
 </style>
