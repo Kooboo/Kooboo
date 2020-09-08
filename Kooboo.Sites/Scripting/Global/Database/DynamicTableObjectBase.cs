@@ -29,7 +29,17 @@ namespace Kooboo.Sites.Scripting.Global.Database
         {
             get
             {
-                return GetValueFromDict(key);
+                var value = GetValueFromDict(key);
+
+                //[Kooboo.Lib\Jint\Native\Date\DateConstructor.cs FromDateTime] method will convent unspecified datetime to utc time,
+                //but the data is saved using utc and then query out is unspecified 
+                if (value is DateTime)
+                {
+                    var date = (DateTime)value;
+                    if (date.Kind == DateTimeKind.Unspecified) value = date.ToLocalTime();
+                }
+
+                return value;
             }
             set
             {
