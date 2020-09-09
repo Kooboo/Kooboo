@@ -16,9 +16,6 @@ namespace Kooboo.Sites.ScriptDebugger
     public static class SessionManager
     {
         static readonly ConcurrentDictionary<string, DebugSession> _sessions = new ConcurrentDictionary<string, DebugSession>();
-        static readonly TimeSpan _lifeTime = new TimeSpan(0, 0, 5);
-
-
 
         static SessionManager()
         {
@@ -28,7 +25,8 @@ namespace Kooboo.Sites.ScriptDebugger
                 {
                     try
                     {
-                        var shouldRemoveSessions = _sessions.Where(w => DateTime.UtcNow - w.Value.LastRefreshTime > _lifeTime);
+                        var shouldRemoveSessions = _sessions.Where(w => w.Value.IsExpired());
+
                         foreach (var item in shouldRemoveSessions)
                         {
                             item.Value.Clear();

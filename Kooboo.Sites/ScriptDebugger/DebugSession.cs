@@ -10,6 +10,8 @@ namespace Kooboo.Sites.ScriptDebugger
 {
     public class DebugSession
     {
+        private bool _end;
+
         public class Breakpoint
         {
             public Guid codeId { get; set; }
@@ -23,15 +25,24 @@ namespace Kooboo.Sites.ScriptDebugger
             CurrentContext
         }
 
+        public static TimeSpan ExpireTimeSpan { get; } = new TimeSpan(0, 0, 5);
+
         public List<Breakpoint> BreakLines { get; set; } = new List<Breakpoint>();
         public Jint.Engine JsEngine { get; set; }
-        public bool End { get; set; }
+        public bool End
+        {
+            get => _end; set
+            {
+                if (DebuggingContext == null) return;
+                _end = value;
+            }
+        }
 
         public Guid? CurrentCodeId { get; set; }
 
         public DateTime LastRefreshTime { get; set; } = DateTime.UtcNow;
 
-        public DebugInformation DebugInfo { get; set; }
+        public DebugInfo DebugInfo { get; set; }
 
         public Exception Exception { get; set; }
 
@@ -64,5 +75,15 @@ namespace Kooboo.Sites.ScriptDebugger
             DebuggingContext = null;
         }
 
+        public void HandleStep(DebugInfo debugInfo)
+        {
+            if (CurrentContext != null && DebuggingContext == null) DebuggingContext = CurrentContext;
+            DebugInfo = debugInfo;
+        }
+
+        public bool IsExpired()
+        {
+            return DateTime.UtcNow - LastRefreshTime > ExpireTimeSpan;
+        }
     }
 }

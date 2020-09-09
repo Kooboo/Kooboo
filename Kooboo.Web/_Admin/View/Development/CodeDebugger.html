@@ -10,6 +10,7 @@
         :key="code.id"
         class="code-item"
         @click="currentCode=code"
+        :class="{'select-code-item':code.id==currentCode.id}"
       >
         {{code.name}}
       </div>
@@ -40,6 +41,20 @@
       <i class="glyphicon glyphicon-log-out"></i> <span>Step out</span
       ><span>(Shift + F11)</span>
     </button>
+    <div style="position: absolute; right: 0">
+      <a
+        target="blank"
+        class="btn blue"
+        v-if="currentCode"
+        :href="Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
+            id: currentCode.id
+        })"
+        >Edit</a
+      >
+      <button class="btn btn-default" @click="getCode(currentCode)">
+        <i class="fa fa-refresh"></i>&nbsp;<span>Reload</span>
+      </button>
+    </div>
   </div>
 
   <div class="code-editor">
@@ -60,6 +75,30 @@
         </td>
       </tr>
     </table>
+  </div>
+  <div class="debugging-info">
+    <div>
+      <h6>Execute code</h6>
+      <input placeholder="Input your code here" class="form-control" />
+      <button class="btn btn-default" type="button">
+        <i class="fa fa-arrow-left fa-fw"></i>
+        <span>Execute</span>
+      </button>
+      <div>
+        <p>1</p>
+        <p>1</p>
+        <p>1</p>
+      </div>
+    </div>
+
+    <div>
+      <h6>Variables</h6>
+      <code
+        v-if="debugInfo"
+        v-html="syntaxHighlight(JSON.stringify(debugInfo.variables, undefined, 4))"
+      >
+      </code>
+    </div>
   </div>
 </div>
 
@@ -111,15 +150,7 @@
     },
     watch: {
       currentCode(value) {
-        if (!value) return;
-        var me = this;
-        Kooboo.Code.getEdit({
-          id: value.id,
-          codetype: value.codeType,
-        }).then(function (rsp) {
-          if (!rsp.model || !rsp.model.body) return;
-          me.lines = rsp.model.body.split("\n");
-        });
+        this.getCode(value);
       },
     },
     computed: {
@@ -158,7 +189,7 @@
       isExecuting(line) {
         var me = this;
         if (!me.currentCode || !me.currentCode.id || !me.debugInfo) return;
-        return line == me.debugInfo.currentStatement.location.start.line;
+        return line == me.debugInfo.currentLine;
       },
       keepSessionLive: function () {
         var me = this;
@@ -167,13 +198,13 @@
             me.breackpoints = rsp.model.breakLines;
             me.debugInfo = rsp.model.debugInfo;
             me.end = rsp.model.end;
-            if (!me.end && rsp.model.currentCodeId) {
+            if (!me.end && me.debugInfo && rsp.model.currentCodeId) {
               me.currentCode = me.codes.filter(function (f) {
                 return f.id == rsp.model.currentCodeId;
               })[0];
             }
           });
-        }, 1000);
+        }, 500);
       },
       startSession: function () {
         var me = this;
@@ -184,6 +215,41 @@
       onStep(step) {
         Kooboo.Debugger.step({
           action: step,
+        });
+      },
+      syntaxHighlight: function (json) {
+        json = json
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            var cls = "number";
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = "key";
+              } else {
+                cls = "string";
+              }
+            } else if (/true|false/.test(match)) {
+              cls = "boolean";
+            } else if (/null/.test(match)) {
+              cls = "null";
+            }
+            return '<span class="' + cls + '">' + match + "</span>";
+          }
+        );
+      },
+      getCode: function (value) {
+        if (!value) return;
+        var me = this;
+        Kooboo.Code.getEdit({
+          id: value.id,
+          codetype: value.codeType,
+        }).then(function (rsp) {
+          if (!rsp.model || !rsp.model.body) return;
+          me.lines = rsp.model.body.split("\n");
         });
       },
     },
@@ -224,6 +290,16 @@
 
   .code-item {
     line-height: 30px;
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .select-code-item {
+    background-color: #ddd;
+  }
+
+  .code-item:hover {
+    background-color: rgba(221, 221, 221, 0.541);
   }
 
   .breackpoint {
@@ -291,11 +367,24 @@
 
   .code-editor {
     position: absolute;
-    bottom: 0px;
+    bottom: 5px;
     top: 55px;
     left: 205px;
-    right: 0;
+    right: 305px;
     overflow: auto;
+    outline: #f1f1f1 1px solid;
+  }
+
+  .debugging-info {
+    position: absolute;
+    bottom: 0;
+    top: 55px;
+    right: 0px;
+    width: 300px;
+  }
+  .debugging-info > div {
+    height: 50%;
+    overflow-y: auto;
     outline: #f1f1f1 1px solid;
   }
 </style>

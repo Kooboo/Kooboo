@@ -19,17 +19,17 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireUser => true;
 
-        public DebugSession GetSession(ApiCall call)
+        public object GetSession(ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context, DebugSession.GetWay.AutoCreate);
 
-            return new DebugSession()
+            return new
             {
-                BreakLines = session.BreakLines,
-                DebugInfo = session.DebugInfo,
-                End = session.End,
-                CurrentCodeId = session.CurrentCodeId,
-                Exception = session.Exception
+                session.BreakLines,
+                session.DebugInfo,
+                session.End,
+                session.CurrentCodeId,
+                session.Exception
             };
         }
 
