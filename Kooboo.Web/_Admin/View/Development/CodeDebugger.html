@@ -16,24 +16,27 @@
     </div>
   </div>
   <div class="ctrl-bar navbar navbar-default">
-    <button class="btn btn-default">
+    <button class="btn btn-default" v-if="end" @click="startSession">
+      <i class="glyphicon glyphicon-play"></i> <span>Start debugging</span>
+    </button>
+
+    <button class="btn btn-default" v-else @click="onStep('None')">
       <i class="glyphicon glyphicon-arrow-right"></i> <span>Continue</span
       ><span>(F8)</span>
     </button>
 
-    <button v-else class="btn btn-default">
-      <i class="glyphicon glyphicon-play"></i> <span>Start debugging</span>
-    </button>
-
-    <button class="btn btn-default">
+    <button class="btn btn-default" @click="onStep('Into')">
       <i class="glyphicon glyphicon-log-in"></i> <span>Step into</span
       ><span>(F11)</span>
     </button>
-    <button class="btn btn-default">
+    <button
+      class="btn btn-default"
+      @click.stop.prevent.keyup.121="onStep('Over')"
+    >
       <i class="glyphicon glyphicon-new-window"></i> <span>Step over</span
       ><span>(F10)</span>
     </button>
-    <button class="btn btn-default">
+    <button class="btn btn-default" @click="onStep('Out')">
       <i class="glyphicon glyphicon-log-out"></i> <span>Step out</span
       ><span>(Shift + F11)</span>
     </button>
@@ -49,8 +52,11 @@
         >
           <span><i></i>{{index+1}}</span>
         </td>
-        <td class="code-line" :class="{'current-executing':line.current}">
-          <code>{{line.content}}</code>
+        <td
+          class="code-line"
+          :class="{'current-executing':isExecuting(index+1)&&!end}"
+        >
+          <code>{{line}}</code>
         </td>
       </tr>
     </table>
@@ -67,6 +73,8 @@
         currentCode: null,
         lines: [],
         breackpoints: [],
+        debugInfo: null,
+        end: false,
       };
     },
     mounted: function () {
@@ -77,6 +85,29 @@
         me.codes = rsp.model;
         me.currentCode = me.codes[0];
       });
+
+      document.onkeydown = function (e) {
+        switch (e.keyCode) {
+          case 119: //F8
+            e.preventDefault();
+            me.onStep("None");
+            break;
+          case 122: //F11
+            e.preventDefault();
+            if (e.shiftKey) {
+              me.onStep("Out");
+            } else {
+              me.onStep("Into");
+            }
+            break;
+          case 121: //F10
+            e.preventDefault();
+            me.onStep("Over");
+            break;
+        }
+      };
+
+      this.keepSessionLive();
     },
     watch: {
       currentCode(value) {
@@ -86,17 +117,8 @@
           id: value.id,
           codetype: value.codeType,
         }).then(function (rsp) {
-          me.lines = [];
           if (!rsp.model || !rsp.model.body) return;
-          var lines = rsp.model.body.split("\n");
-
-          for (var i = 0; i < lines.length; i++) {
-            me.lines.push({
-              content: lines[i],
-              checkedBk: false,
-              current: false,
-            });
-          }
+          me.lines = rsp.model.body.split("\n");
         });
       },
     },
@@ -109,30 +131,60 @@
       },
     },
     methods: {
-      checkBreackpoint(line) {
+      checkBreackpoint: function (line) {
         var me = this;
         if (!me.currentCode || !me.currentCode.id) return;
 
-        if (this.isBreakpoint(line)) {
-          this.breackpoints = this.breackpoints.filter(function (f) {
-            return f.line != line || f.codeId != me.currentCode.id;
-          });
-        } else {
-          this.breackpoints.push({
-            line: line,
+        Kooboo.Debugger.setBreakpoint({
+          point: {
             codeId: me.currentCode.id,
-          });
-        }
+            line: line,
+          },
+          isCurrent: false,
+        }).then(function (rsp) {
+          me.breackpoints = rsp.model;
+        });
       },
-      isBreakpoint(line) {
+      isBreakpoint: function (line) {
         var me = this;
         if (!me.currentCode || !me.currentCode.id) return;
 
         return (
-          this.breackpoints.filter(function (f) {
+          me.breackpoints.filter(function (f) {
             return f.line == line && f.codeId == me.currentCode.id;
           }).length > 0
         );
+      },
+      isExecuting(line) {
+        var me = this;
+        if (!me.currentCode || !me.currentCode.id || !me.debugInfo) return;
+        return line == me.debugInfo.currentStatement.location.start.line;
+      },
+      keepSessionLive: function () {
+        var me = this;
+        setInterval(function () {
+          Kooboo.Debugger.getSession().then(function (rsp) {
+            me.breackpoints = rsp.model.breakLines;
+            me.debugInfo = rsp.model.debugInfo;
+            me.end = rsp.model.end;
+            if (!me.end && rsp.model.currentCodeId) {
+              me.currentCode = me.codes.filter(function (f) {
+                return f.id == rsp.model.currentCodeId;
+              })[0];
+            }
+          });
+        }, 1000);
+      },
+      startSession: function () {
+        var me = this;
+        Kooboo.Debugger.startSession().then(function (rsp) {
+          me.avtive = true;
+        });
+      },
+      onStep(step) {
+        Kooboo.Debugger.step({
+          action: step,
+        });
       },
     },
   });

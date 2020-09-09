@@ -8,6 +8,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.ScriptDebugger;
 using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.Mysql;
@@ -681,11 +682,17 @@ var value = k.session.key; ")]
             var code = sitedb.Code.Get(codename);
             if (code != null)
             {
-                var result = Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id);
+                Guid? parentCodeId = null;
+                var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetSession(RenderContext,Kooboo.Sites.ScriptDebugger.DebugSession.GetWay.CurrentContext);
+                if (debugsession != null) parentCodeId = debugsession.CurrentCodeId;
+                var result = Manager.ExecuteCode(this.RenderContext, code.Body, code.Id, true);
+
                 if (result != null)
                 {
                     Response.write(result);
                 }
+
+                if (debugsession != null) debugsession.CurrentCodeId = parentCodeId;
             }
         }
 

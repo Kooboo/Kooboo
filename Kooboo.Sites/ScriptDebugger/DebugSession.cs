@@ -1,39 +1,68 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
+﻿using Jint;
+using Jint.Runtime.Debugger;
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Kooboo.Sites.ScriptDebugger
 {
     public class DebugSession
-    { 
-        public Guid CodeId { get; set; }
-
-        // for the embedded js code.
-        public int BodyHash { get; set; }
-
-        public string IpAddress { get; set; }
-
-        public DateTime ActiveTime { get; set; } 
-         
-        public Jint.Engine JsEngine { get; set; }
-        
-        public List<int> BreakLines { get; set; } = new List<int>(); 
-        
-        public ClientAction Action { get; set; }
-
-        public DebugInfo DebugInfo { get; set; } 
-
-        public bool EndOfSession { get; set; }
-
-    }
-
-    public class ClientAction
     {
-        public  Jint.Runtime.Debugger.StepMode StepMode { get; set; }
-         
+        public class Breakpoint
+        {
+            public Guid codeId { get; set; }
+            public int Line { get; set; }
+        }
+
+        public enum GetWay
+        {
+            Normal,
+            AutoCreate,
+            CurrentContext
+        }
+
+        public List<Breakpoint> BreakLines { get; set; } = new List<Breakpoint>();
+        public Jint.Engine JsEngine { get; set; }
+        public bool End { get; set; }
+
+        public Guid? CurrentCodeId { get; set; }
+
+        public DateTime LastRefreshTime { get; set; } = DateTime.UtcNow;
+
+        public DebugInformation DebugInfo { get; set; }
+
+        public Exception Exception { get; set; }
+
+        public StepMode StepMode { get; set; } = StepMode.None;
+
+        public RenderContext DebuggingContext { get; set; }
+
+        public RenderContext CurrentContext { get; set; }
+
+        public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
+
+        public void Next(StepMode stepMode)
+        {
+            StepMode = stepMode;
+            CancellationTokenSource.Cancel();
+            CancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public void Clear()
+        {
+            DebugInfo = null;
+            Exception = null;
+            StepMode = StepMode.Out;
+            if (CancellationTokenSource != null) CancellationTokenSource.Cancel();
+            CancellationTokenSource = new CancellationTokenSource();
+            StepMode = StepMode.None;
+            CurrentCodeId = null;
+            End = false;
+            CurrentContext = null;
+            DebuggingContext = null;
+        }
+
     }
 }
