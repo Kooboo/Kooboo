@@ -11,6 +11,7 @@ namespace Kooboo.Sites.ScriptDebugger
     public class DebugSession
     {
         private bool _end;
+        private Exception exception;
 
         public class Breakpoint
         {
@@ -31,7 +32,8 @@ namespace Kooboo.Sites.ScriptDebugger
         public Jint.Engine JsEngine { get; set; }
         public bool End
         {
-            get => _end; set
+            get => _end;
+            set
             {
                 if (DebuggingContext == null) return;
                 _end = value;
@@ -44,7 +46,15 @@ namespace Kooboo.Sites.ScriptDebugger
 
         public DebugInfo DebugInfo { get; set; }
 
-        public Exception Exception { get; set; }
+        public Exception Exception
+        {
+            get => exception;
+            set
+            {
+                if (value != null) End = true;
+                exception = value;
+            }
+        }
 
         public StepMode StepMode { get; set; } = StepMode.None;
 

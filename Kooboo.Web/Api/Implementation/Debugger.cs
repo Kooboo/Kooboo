@@ -43,7 +43,6 @@ namespace Kooboo.Web.Api.Implementation
             SessionManager.RemoveSession(call.Context);
         }
 
-
         public List<DebugSession.Breakpoint> SetBreakPoint(DebugSession.Breakpoint point, ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context, DebugSession.GetWay.AutoCreate);
@@ -67,6 +66,121 @@ namespace Kooboo.Web.Api.Implementation
 
             return session == null ? new List<DebugSession.Breakpoint>() : session.BreakLines;
         }
+
+        public void Step(string action, ApiCall call)
+        {
+            var session = SessionManager.GetSession(call.Context);
+            if (session == null || !Enum.TryParse<StepMode>(action, out var step)) return;
+            session.Next(step);
+        }
+
+        public object Execute(string JsStatement, ApiCall call)
+        {
+            var session = SessionManager.GetSession(call.Context);
+            if (session == null || session.JsEngine == null) return null;
+            var old = session.JsEngine.SetDebugHandlerMode(StepMode.None);
+            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+            session.JsEngine.SetDebugHandlerMode(old);
+            return session.JsEngine.GetCompletionValue().ToObject();
+        }
+
+        //public ExeResult Execute(string JsStatement, ApiCall call)
+        //{
+        //    var session = SessionManager.GetSession(call.Context);
+        //    ExeResult result = new ExeResult();
+
+        //    if (session != null && session.JsEngine != null)
+        //    {
+        //        if (JintHelper.IsMemberExpression(JsStatement))
+        //        {
+        //            object value;
+        //            try
+        //            {
+        //                value = JintHelper.GetGebuggerValue(session.JsEngine, JsStatement);
+        //                result.Success = true;
+        //                if (value == null)
+        //                {
+        //                    ExecuteRepl(JsStatement, session);
+        //                    result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
+        //                }
+        //                else
+        //                {
+        //                    result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                result.Success = false;
+        //                result.Model = ex.Message;
+        //            }
+        //        }
+        //        else if (Lib.Helper.JintHelper.IsAssignmentExpression(JsStatement))
+        //        {
+
+        //            try
+        //            {
+        //                ExecuteRepl(JsStatement, session);
+        //                result.Success = true;
+        //                var value = Lib.Helper.JintHelper.GetAssignmentValue(JsStatement);
+        //                result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                result.Success = false;
+        //                result.Model = ex.Message;
+        //            }
+        //        }
+
+        //        else
+        //        {
+        //            try
+        //            {
+        //                ExecuteRepl(JsStatement, session);
+        //                result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
+        //                result.Success = true;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                result.Success = false;
+        //                result.Model = ex.Message;
+        //            }
+
+        //        }
+
+        //        var variables = Kooboo.Sites.Scripting.Manager.GetVariables(session.JsEngine);
+
+        //        result.Variables = variables;
+        //    }
+        //    else
+        //    {
+        //        result.Success = false;
+        //        result.Model = Data.Language.Hardcoded.GetValue("Debug engine not started or has ended", call.Context);
+        //        return result;
+        //    }
+
+        //    return result;
+
+        //}
+
+        private static void ExecuteRepl(string JsStatement, DebugSession session)
+        {
+            var old = session.JsEngine.SetDebugHandlerMode(StepMode.None);
+            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+            session.JsEngine.SetDebugHandlerMode(old);
+        }
+
+        // call to get the update variables after exe code. 
+        //public DebugVariables GetVariables(ApiCall call)
+        //{
+        //    var session = SessionManager.GetSession(call.Context);
+
+        //    if (session != null || session.JsEngine != null)
+        //    {
+        //        return Kooboo.Sites.Scripting.Manager.GetVariables(session.JsEngine);
+        //    }
+        //    return new DebugVariables();
+        //}
+
 
         // get the break point info..... only return one for one break. 
         //public DebugInfo GetInfo(ApiCall call)
@@ -103,12 +217,6 @@ namespace Kooboo.Web.Api.Implementation
         //    return new DebugInfo() { HasValue = false };
         //}
 
-        public void Step(string action, ApiCall call)
-        {
-            var session = SessionManager.GetSession(call.Context);
-            if (session == null || !Enum.TryParse<StepMode>(action, out var step)) return;
-            session.Next(step);
-        }
 
         //[Obsolete]
         //public object GetValue(string FullName, ApiCall call)
@@ -140,102 +248,6 @@ namespace Kooboo.Web.Api.Implementation
         //    }
         //}
 
-        public ExeResult Execute(string JsStatement, ApiCall call)
-        {
-            var session = SessionManager.GetSession(call.Context);
-            ExeResult result = new ExeResult();
-
-            if (session != null && session.JsEngine != null)
-            {
-                if (JintHelper.IsMemberExpression(JsStatement))
-                {
-                    object value;
-                    try
-                    {
-                        value = JintHelper.GetGebuggerValue(session.JsEngine, JsStatement);
-                        result.Success = true;
-                        if (value == null)
-                        {
-                            ExecuteRepl(JsStatement, session);
-                            result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
-                        }
-                        else
-                        {
-                            result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        result.Success = false;
-                        result.Model = ex.Message;
-                    }
-                }
-                else if (Lib.Helper.JintHelper.IsAssignmentExpression(JsStatement))
-                {
-
-                    try
-                    {
-                        ExecuteRepl(JsStatement, session);
-                        result.Success = true;
-                        var value = Lib.Helper.JintHelper.GetAssignmentValue(JsStatement);
-                        result.Model = Kooboo.Sites.Scripting.Manager.GetString(value);
-                    }
-                    catch (Exception ex)
-                    {
-                        result.Success = false;
-                        result.Model = ex.Message;
-                    }
-                }
-
-                else
-                {
-                    try
-                    {
-                        ExecuteRepl(JsStatement, session);
-                        result.Model = Kooboo.Sites.Scripting.Manager.GetString(session.JsEngine.GetCompletionValue());
-                        result.Success = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        result.Success = false;
-                        result.Model = ex.Message;
-                    }
-
-                }
-
-                var variables = Kooboo.Sites.Scripting.Manager.GetVariables(session.JsEngine);
-
-                result.Variables = variables;
-            }
-            else
-            {
-                result.Success = false;
-                result.Model = Data.Language.Hardcoded.GetValue("Debug engine not started or has ended", call.Context);
-                return result;
-            }
-
-            return result;
-
-        }
-
-        private static void ExecuteRepl(string JsStatement, DebugSession session)
-        {
-            var old = session.JsEngine.SetDebugHandlerMode(Jint.Runtime.Debugger.StepMode.None);
-            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
-            session.JsEngine.SetDebugHandlerMode(old);
-        }
-
-        // call to get the update variables after exe code. 
-        public DebugVariables GetVariables(ApiCall call)
-        {
-            var session = SessionManager.GetSession(call.Context);
-
-            if (session != null || session.JsEngine != null)
-            {
-                return Kooboo.Sites.Scripting.Manager.GetVariables(session.JsEngine);
-            }
-            return new DebugVariables();
-        }
 
     }
 }

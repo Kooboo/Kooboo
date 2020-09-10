@@ -1608,12 +1608,8 @@
       return this.executeGet("Step", para, true);
     };
 
-    this.getInfo = function (para) {
-      return this.executeGet("GetInfo", para, true);
-    };
-
     this.execute = function (para) {
-      return this.executeGet("Execute", para, true);
+      return this.executePost("Execute", para, true);
     };
   }
   extend(Debugger, BaseModel);

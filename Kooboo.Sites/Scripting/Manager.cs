@@ -252,22 +252,13 @@ namespace Kooboo.Sites.Scripting
 
         public static string ExecuteCode(RenderContext context, string JsCode, Guid CodeId = default(Guid), bool isImportedScript = false)
         {
-            if (string.IsNullOrEmpty(JsCode))
-            {
-                return null;
-            }
-
-            Jint.Engine engine = null;
+            if (string.IsNullOrEmpty(JsCode)) return null;
             var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
+            var debugMode = debugsession != null;
+            var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
 
-            if (debugsession == null)
+            if (debugMode)
             {
-                engine = GetJsEngine(context);
-            }
-            else
-            {
-                engine = GetDebugJsEngine(context, debugsession);
-
                 foreach (var item in debugsession.BreakLines.Where(w => w.codeId == CodeId))
                 {
                     engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
@@ -275,20 +266,19 @@ namespace Kooboo.Sites.Scripting
 
                 debugsession.JsEngine = engine;
                 debugsession.CurrentCodeId = CodeId;
+                debugsession.End = false;
             }
 
             try
             {
-                if (debugsession != null) debugsession.End = false;
                 engine.ExecuteWithErrorHandle(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
-                if (debugsession != null && !isImportedScript) debugsession.End = true;
+                if (debugMode && !isImportedScript) debugsession.End = true;
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
-                if (debugsession != null) debugsession.Exception = ex;
+                Data.Log.Instance.Exception.WriteException(ex);
+                if (debugMode) debugsession.Exception = ex;
                 return ex.Message;
-
             }
 
             return ReturnValue(context, engine);
@@ -465,6 +455,8 @@ namespace Kooboo.Sites.Scripting
         {
             try
             {
+                if (session.Exception != null) return Jint.Runtime.Debugger.StepMode.None;
+
                 session.HandleStep(new DebugInfo
                 {
                     CurrentLine = e.CurrentStatement.Location.Start.Line,

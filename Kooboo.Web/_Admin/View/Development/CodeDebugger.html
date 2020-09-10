@@ -79,15 +79,25 @@
   <div class="debugging-info">
     <div>
       <h6>Execute code</h6>
-      <input placeholder="Input your code here" class="form-control" />
-      <button class="btn btn-default" type="button">
+      <input
+        placeholder="Input your code here"
+        class="form-control"
+        v-model.trim="code"
+        @keydown.enter="executeCode"
+      />
+      <button class="btn btn-default" type="button" @click="executeCode">
         <i class="fa fa-arrow-left fa-fw"></i>
         <span>Execute</span>
       </button>
       <div>
-        <p>1</p>
-        <p>1</p>
-        <p>1</p>
+        <template v-for="item in codeResults">
+          <template v-if="typeof(item)=='array'||typeof(item)=='object'">
+            <v-json-tree :json-data="item" />
+          </template>
+          <template v-else>
+            <p>{{item}}</p>
+          </template>
+        </template>
       </div>
     </div>
 
@@ -103,6 +113,9 @@
 </div>
 
 <script>
+  Kooboo.loadJS(["/_Admin/Scripts/lib/vue-json-tree.js"]);
+  Vue.component("v-json-tree", vJsonTree);
+
   new Vue({
     el: "#main",
     data: function () {
@@ -114,6 +127,8 @@
         breackpoints: [],
         debugInfo: null,
         end: false,
+        code: "",
+        codeResults: [],
       };
     },
     mounted: function () {
@@ -251,6 +266,15 @@
           if (!rsp.model || !rsp.model.body) return;
           me.lines = rsp.model.body.split("\n");
         });
+      },
+      executeCode: function () {
+        var me = this;
+        Kooboo.Debugger.execute({
+          jsStatement: me.code,
+        }).then(function (rsp) {
+          me.codeResults.unshift(rsp.model);
+        });
+        me.code = "";
       },
     },
   });
