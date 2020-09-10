@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Scripting.Extension
            return username + " sample";
         }
 
-        public string xxxcccyang(string xyazddd)
+        public string demoxyz(string xyazddd)
         {
             return xyazddd + "endded"; 
         }

@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -323,7 +322,7 @@ namespace Kooboo.Data.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public Data.Definition.WebsiteType SiteType { get; set; } = Definition.WebsiteType.p;
 
-        public bool IsApp { get; set; }
+        public bool IsApp { get; set; } 
 
         public override int GetHashCode()
         {
@@ -333,19 +332,16 @@ namespace Kooboo.Data.Models
 
             unique += this.EnableJsCssBrowerCache.ToString();
             unique += this.EnableImageBrowserCache.ToString();
-            unique += this.ImageCacheDays.ToString();
-
-            unique += this.EnableSystemRoute.ToString();
-
-            unique += this.EnableECommerce.ToString();
-
-            unique += this.EnableFileIOUrl.ToString();
-
+            unique += this.ImageCacheDays.ToString(); 
+            unique += this.EnableSystemRoute.ToString(); 
+            unique += this.EnableECommerce.ToString(); 
+            unique += this.EnableFileIOUrl.ToString(); 
+            unique += this.EnableCORS.ToString(); 
+            unique += this.EnableSqlLog.ToString();  
             //public bool EnableECommerce { get; set; } 
             //Enable direct access to view, htmlblock etc, via system routes. 
             //public bool EnableSystemRoute { get; set; }
-            //public bool EnableFileIOUrl { get; set; } = true;
-
+            //public bool EnableFileIOUrl { get; set; } = true; 
 
             unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._LocalDiskSyncFolder;
 
