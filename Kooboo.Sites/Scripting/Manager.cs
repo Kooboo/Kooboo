@@ -390,11 +390,19 @@ namespace Kooboo.Sites.Scripting
             {
                 engine = Manager.GetDebugJsEngine(context, debugsession);
 
-#warning InnerJsCode的处理方式还有待思考
-                //foreach (var item in debugsession.BreakLines)
-                //{
-                //    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item, 0));
-                //}
+                var hash = Lib.Security.Hash.ComputeIntCaseSensitive(InnerJsCode); 
+                var sitedb = context.WebSite.SiteDb();
+                var code = sitedb.Code.Store.Where(o => o.BodyHash == hash).FirstOrDefault();
+                Guid codeid = default(Guid); 
+                if (code !=null)
+                {
+                    codeid = code.Id; 
+                } 
+
+                foreach (var item in debugsession.BreakLines.Where(o => o.codeId == codeid))
+                {
+                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
+                }
 
                 debugsession.JsEngine = engine;
             }
