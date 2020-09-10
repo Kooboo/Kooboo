@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Jint.Native;
 using Jint.Runtime.Debugger;
 using Kooboo.Api;
 using Kooboo.Data.Extensions;
@@ -74,17 +75,18 @@ namespace Kooboo.Web.Api.Implementation
             session.Next(step);
         }
 
-        public object Execute(string JsStatement, ApiCall call)
+        public string Execute(string JsStatement, ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context);
             if (session == null || session.JsEngine == null) return null;
             var old = session.JsEngine.SetDebugHandlerMode(StepMode.None);
             session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
             session.JsEngine.SetDebugHandlerMode(old);
-            return session.JsEngine.GetCompletionValue().ToObject();
+            var result = session.JsEngine.GetCompletionValue().ToObject();
+            return Sites.Scripting.Manager.GetString(result);
         }
 
-        //public ExeResult Execute(string JsStatement, ApiCall call)
+        //public ExeResult Execute2(string JsStatement, ApiCall call)
         //{
         //    var session = SessionManager.GetSession(call.Context);
         //    ExeResult result = new ExeResult();
@@ -162,12 +164,13 @@ namespace Kooboo.Web.Api.Implementation
 
         //}
 
-        private static void ExecuteRepl(string JsStatement, DebugSession session)
-        {
-            var old = session.JsEngine.SetDebugHandlerMode(StepMode.None);
-            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
-            session.JsEngine.SetDebugHandlerMode(old);
-        }
+        //private static object ExecuteRepl(string JsStatement, DebugSession session)
+        //{
+        //    var old = session.JsEngine.SetDebugHandlerMode(StepMode.None);
+        //    session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
+        //    session.JsEngine.SetDebugHandlerMode(old);
+        //    return session.JsEngine.GetCompletionValue().ToObject();
+        //}
 
         // call to get the update variables after exe code. 
         //public DebugVariables GetVariables(ApiCall call)

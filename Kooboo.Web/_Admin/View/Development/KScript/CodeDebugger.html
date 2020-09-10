@@ -91,7 +91,7 @@
     <div>
       <template v-for="item in codeResults">
         <template v-if="typeof(item)=='array'||typeof(item)=='object'">
-          <v-json-tree :json-data="item" />
+          <v-json-tree :json-data="item" full-markup />
         </template>
         <template v-else>
           <p>{{item}}</p>
@@ -102,7 +102,11 @@
 
   <div class="variables">
     <h6>Variables</h6>
-    <v-json-tree v-if="debugInfo" :json-data="debugInfo.variables" />
+    <v-json-tree
+      v-if="debugInfo"
+      :json-data="debugInfo.variables"
+      full-markup
+    />
   </div>
 </div>
 
@@ -242,18 +246,26 @@
       executeCode: function () {
         var me = this;
         if (!me.code) return;
+        var code = me.code;
+        me.code = "";
         Kooboo.Debugger.execute({
-          jsStatement: me.code,
+          jsStatement: code,
         }).then(function (rsp) {
           if (rsp.success) {
-            me.codeResults.unshift(rsp.model);
+            var result = rsp.model;
+
+            try {
+              result = JSON.parse(rsp.model);
+            } catch {}
+
+            me.codeResults.unshift(result);
           } else {
             me.codeResults.unshift(rsp.messages);
           }
+          me.codeResults.unshift(code);
         });
-        me.executeHistory.push(me.code);
+        me.executeHistory.push(code);
         me.executeHistoryBak = [];
-        me.code = "";
       },
       executeHistoryUp: function () {
         var me = this;
