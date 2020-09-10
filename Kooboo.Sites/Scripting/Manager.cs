@@ -363,49 +363,35 @@ namespace Kooboo.Sites.Scripting
 
         public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
         {
-            if (string.IsNullOrEmpty(InnerJsCode))
+            if (string.IsNullOrEmpty(InnerJsCode)) return null;
+            var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
+            var debugMode = debugsession != null;
+            Jint.Engine engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
+
+            if (debugMode)
             {
-                return null;
-            }
-
-            Jint.Engine engine = null;
-
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
-
-            if (debugsession == null)
-            {
-                engine = GetJsEngine(context);
-            }
-            else
-            {
-                engine = Manager.GetDebugJsEngine(context, debugsession);
-
-                var hash = Lib.Security.Hash.ComputeIntCaseSensitive(InnerJsCode); 
+                var hash = Lib.Security.Hash.ComputeIntCaseSensitive(InnerJsCode);
                 var sitedb = context.WebSite.SiteDb();
-                var code = sitedb.Code.Store.Where(o => o.BodyHash == hash).FirstOrDefault();
-                Guid codeid = default(Guid); 
-                if (code !=null)
-                {
-                    codeid = code.Id; 
-                } 
+                var codeId = sitedb.Code.Store.Where(o => o.BodyHash == hash).FirstOrDefault()?.Id;
 
-                foreach (var item in debugsession.BreakLines.Where(o => o.codeId == codeid))
+                foreach (var item in debugsession.BreakLines.Where(o => o.codeId == codeId))
                 {
                     engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
                 }
 
                 debugsession.JsEngine = engine;
+                debugsession.CurrentCodeId = codeId;
+                debugsession.End = false;
             }
 
             try
             {
-                if (debugsession != null) debugsession.End = false;
                 engine.ExecuteWithErrorHandle(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
-                if (debugsession != null) debugsession.End = true;
+                if (debugMode) debugsession.End = true;
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+                Data.Log.Instance.Exception.WriteException(ex);
                 if (debugsession != null) debugsession.Exception = ex;
                 return ex.Message;
             }

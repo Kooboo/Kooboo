@@ -1609,7 +1609,7 @@
     };
 
     this.execute = function (para) {
-      return this.executePost("Execute", para, true);
+      return this.executePost("Execute", para, true, false, false, true);
     };
   }
   extend(Debugger, BaseModel);
