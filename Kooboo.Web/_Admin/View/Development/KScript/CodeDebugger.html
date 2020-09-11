@@ -5,15 +5,18 @@
       <input class="code-search" placeholder="search" v-model="keyword" />
     </div>
     <div>
-      <div
-        v-for="code in filtedCodes"
-        :key="code.id"
-        class="code-item"
-        @click="currentCode=code"
-        :class="{'select-code-item':code.id==currentCode.id}"
-      >
-        {{code.name}}
-      </div>
+      <template v-for="code in filtedCodes">
+        <div
+          v-if="typeof(code)=='object'"
+          :key="code.id"
+          class="code-item"
+          @click="currentCode=code"
+          :class="{'select-code-item':code.id==currentCode.id}"
+        >
+          {{code.name}}
+        </div>
+        <h4 :key="code" v-else>{{code}}</h4>
+      </template>
     </div>
   </div>
   <div class="ctrl-bar navbar navbar-default">
@@ -132,14 +135,9 @@
       };
     },
     mounted: function () {
-      var me = this;
-      Kooboo.Code.getListByType({
-        codeType: "all",
-      }).then(function (rsp) {
-        me.codes = rsp.model;
-        me.currentCode = me.codes[0];
-      });
+      this.getCodes();
 
+      var me = this;
       document.onkeydown = function (e) {
         switch (e.keyCode) {
           case 119: //F8
@@ -171,9 +169,29 @@
     computed: {
       filtedCodes() {
         var me = this;
-        return this.codes.filter(function (f) {
+        var tree = {};
+
+        var codes = this.codes.filter(function (f) {
           return f.name.indexOf(me.keyword) > -1;
         });
+
+        for (let i = 0; i < codes.length; i++) {
+          var code = codes[i];
+          if (!tree[code.codeType]) tree[code.codeType] = [];
+          tree[code.codeType].push(code);
+        }
+
+        var result = [];
+
+        for (var key in tree) {
+          result.push(key);
+          var list = tree[key];
+          for (var j = 0; j < list.length; j++) {
+            result.push(list[j]);
+          }
+        }
+
+        return result;
       },
     },
     methods: {
@@ -225,6 +243,15 @@
         var me = this;
         Kooboo.Debugger.startSession().then(function (rsp) {
           me.avtive = true;
+        });
+      },
+      getCodes: function () {
+        var me = this;
+        Kooboo.Code.getListByType({
+          codeType: "all",
+        }).then(function (rsp) {
+          me.codes = rsp.model;
+          if (!me.currentCode) me.currentCode = me.codes[0];
         });
       },
       onStep(step) {
@@ -320,7 +347,7 @@
   }
 
   .code-item {
-    line-height: 30px;
+    line-height: 20px;
     padding: 5px;
     cursor: pointer;
   }
