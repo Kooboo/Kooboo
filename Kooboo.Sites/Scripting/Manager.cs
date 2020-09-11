@@ -250,29 +250,18 @@ namespace Kooboo.Sites.Scripting
             return Data.ControlType.TextBox;
         }
 
-        public static string ExecuteCode(RenderContext context, string JsCode, Guid CodeId = default(Guid), bool isImportedScript = false)
+        public static string ExecuteCode(RenderContext context, string JsCode, Guid CodeId = default(Guid))
         {
             if (string.IsNullOrEmpty(JsCode)) return null;
             var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
             var debugMode = debugsession != null;
             var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
-
-            if (debugMode)
-            {
-                foreach (var item in debugsession.BreakLines.Where(w => w.codeId == CodeId))
-                {
-                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
-                }
-
-                debugsession.JsEngine = engine;
-                debugsession.CurrentCodeId = CodeId;
-                debugsession.End = false;
-            }
+            if (debugMode) ExchangeDebugInfo(CodeId, debugsession, engine);
 
             try
             {
                 engine.ExecuteWithErrorHandle(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
-                if (debugMode && !isImportedScript) debugsession.End = true;
+                if (debugMode) debugsession.End = true;
             }
             catch (Exception ex)
             {
@@ -284,42 +273,32 @@ namespace Kooboo.Sites.Scripting
             return ReturnValue(context, engine);
         }
 
+        public static void ExchangeDebugInfo(Guid CodeId, DebugSession debugsession, Jint.Engine engine)
+        {
+            engine.BreakPoints.Clear();
+
+            foreach (var item in debugsession.BreakLines.Where(w => w.codeId == CodeId))
+            {
+                engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
+            }
+
+            debugsession.JsEngine = engine;
+            debugsession.CurrentCodeId = CodeId;
+            debugsession.End = false;
+        }
+
         public static object ExecuteDataSource(RenderContext context, Guid CodeId, Dictionary<string, object> parameters)
         {
-            var sitedb = context.WebSite.SiteDb();
-
-            var code = sitedb.Code.Get(CodeId);
-
-            if (code == null)
-            {
-                return null;
-            }
-
+            var code = context.WebSite.SiteDb().Code.Get(CodeId);
+            if (code == null) return null;
+            var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
+            var debugMode = debugsession != null;
+            var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
             object result = null;
-            Jint.Engine engine = null;
-
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
-
-            if (debugsession == null)
-            {
-                engine = GetJsEngine(context);
-            }
-            else
-            {
-                engine = GetDebugJsEngine(context, debugsession);
-
-                foreach (var item in debugsession.BreakLines.Where(w => w.codeId == CodeId))
-                {
-                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
-                }
-
-                debugsession.JsEngine = engine;
-                debugsession.CurrentCodeId = CodeId;
-            }
+            if (debugMode) ExchangeDebugInfo(CodeId, debugsession, engine);
 
             try
             {
-
                 var kcontext = context.GetItem<k>();
 
                 Dictionary<string, string> config = new Dictionary<string, string>();
@@ -340,11 +319,8 @@ namespace Kooboo.Sites.Scripting
 
                 kcontext.config = new KDictionary(config);
                 kcontext.ReturnValues.Clear();
-
-                if (debugsession != null) debugsession.End = false;
                 engine.ExecuteWithErrorHandle(code.Body, new Jint.Parser.ParserOptions() { Tolerant = true });
-                if (debugsession != null) debugsession.End = true;
-
+                if (debugMode) debugsession.End = true;
                 kcontext.config = null;
 
                 if (kcontext.ReturnValues.Count > 0)
@@ -354,7 +330,7 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
-                if (debugsession != null) debugsession.Exception = ex;
+                if (debugMode) debugsession.Exception = ex;
                 return ex.Message;
             }
 
@@ -366,21 +342,14 @@ namespace Kooboo.Sites.Scripting
             if (string.IsNullOrEmpty(InnerJsCode)) return null;
             var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
             var debugMode = debugsession != null;
-            Jint.Engine engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
+            var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
 
             if (debugMode)
             {
                 var hash = Lib.Security.Hash.ComputeIntCaseSensitive(InnerJsCode);
                 var sitedb = context.WebSite.SiteDb();
                 var codeId = sitedb.Code.Store.Where(o => o.BodyHash == hash).FirstOrDefault()?.Id;
-
-                foreach (var item in debugsession.BreakLines.Where(o => o.codeId == codeId))
-                {
-                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
-                }
-
-                debugsession.JsEngine = engine;
-                debugsession.CurrentCodeId = codeId;
+                ExchangeDebugInfo(codeId.GetValueOrDefault(), debugsession, engine);
                 debugsession.End = false;
             }
 
@@ -392,7 +361,7 @@ namespace Kooboo.Sites.Scripting
             catch (Exception ex)
             {
                 Data.Log.Instance.Exception.WriteException(ex);
-                if (debugsession != null) debugsession.Exception = ex;
+                if (debugMode) debugsession.Exception = ex;
                 return ex.Message;
             }
 

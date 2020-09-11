@@ -46,6 +46,13 @@
     </button>
     <div style="position: absolute; right: 0">
       <a
+        v-if="currentCode&&currentCode.previewUrl"
+        target="blank"
+        class="btn"
+        :href="currentCode.previewUrl"
+        >Preview</a
+      >
+      <a
         target="blank"
         class="btn blue"
         v-if="currentCode"

@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Jint.Native;
+using Jint.Runtime.Debugger;
 using Kooboo;
 using Kooboo.Data;
 using Kooboo.Data.Attributes;
@@ -682,17 +683,24 @@ var value = k.session.key; ")]
             var code = sitedb.Code.Get(codename);
             if (code != null)
             {
-                Guid? parentCodeId = null;
-                var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetSession(RenderContext,Kooboo.Sites.ScriptDebugger.DebugSession.GetWay.CurrentContext);
-                if (debugsession != null) parentCodeId = debugsession.CurrentCodeId;
-                var result = Manager.ExecuteCode(this.RenderContext, code.Body, code.Id, true);
-
-                if (result != null)
+                Guid? currentCodeId = null;
+                StepMode currentStepMode = StepMode.None;
+                var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetSession(RenderContext, DebugSession.GetWay.CurrentContext);
+                var debugMode = debugsession != null;
+                if (debugMode)
                 {
-                    Response.write(result);
+                    currentCodeId = debugsession.CurrentCodeId;
+                    var step = debugsession.StepMode == StepMode.Into ? StepMode.Into : StepMode.None;
+                    currentStepMode = debugsession.JsEngine.SetDebugHandlerMode(step);
                 }
+                var result = Manager.ExecuteCode(this.RenderContext, code.Body, code.Id);
+                if (result != null) Response.write(result);
 
-                if (debugsession != null) debugsession.CurrentCodeId = parentCodeId;
+                if (debugMode)
+                {
+                    debugsession.JsEngine.SetDebugHandlerMode(currentStepMode);
+                    Manager.ExchangeDebugInfo(currentCodeId.GetValueOrDefault(), debugsession, debugsession.JsEngine);
+                }
             }
         }
 
