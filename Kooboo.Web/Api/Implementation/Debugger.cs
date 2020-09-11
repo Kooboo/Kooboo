@@ -83,6 +83,7 @@ namespace Kooboo.Web.Api.Implementation
             session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
             session.JsEngine.SetDebugHandlerMode(old);
             var result = session.JsEngine.GetCompletionValue().ToObject();
+            session.DebugInfo.Variables = Kooboo.Sites.Scripting.Manager.GetVariables(session.JsEngine);
             return Sites.Scripting.Manager.GetString(result);
         }
 

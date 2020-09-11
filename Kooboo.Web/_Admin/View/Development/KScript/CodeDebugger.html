@@ -111,12 +111,18 @@
   </div>
 
   <div class="variables">
-    <h6>Variables</h6>
-    <v-json-tree
-      v-if="debugInfo"
-      :json-data="debugInfo.variables"
-      full-markup
-    />
+    <template v-if="exception">
+      <h6>Exception</h6>
+      <v-json-tree v-if="debugInfo" :json-data="exception" full-markup />
+    </template>
+    <template v-else>
+      <h6>Variables</h6>
+      <v-json-tree
+        v-if="debugInfo"
+        :json-data="debugInfo.variables"
+        full-markup
+      />
+    </template>
   </div>
 </div>
 
@@ -139,6 +145,7 @@
         codeResults: [],
         executeHistory: [],
         executeHistoryBak: [],
+        exception: null,
       };
     },
     mounted: function () {
@@ -237,7 +244,10 @@
           Kooboo.Debugger.getSession().then(function (rsp) {
             me.breackpoints = rsp.model.breakLines;
             me.debugInfo = rsp.model.debugInfo;
+            me.exception = rsp.model.exception;
             me.end = rsp.model.end;
+            if (me.exception) me.end = true;
+
             if (!me.end && me.debugInfo && rsp.model.currentCodeId) {
               me.currentCode = me.codes.filter(function (f) {
                 return f.id == rsp.model.currentCodeId;
@@ -449,6 +459,7 @@
     outline: #f1f1f1 1px solid;
     padding: 3px;
     overflow-y: auto;
+    word-break: break-all;
   }
 
   .variables {
@@ -460,6 +471,7 @@
     outline: #f1f1f1 1px solid;
     padding: 3px;
     overflow-y: auto;
+    word-break: break-all;
   }
 
   .terminal {
