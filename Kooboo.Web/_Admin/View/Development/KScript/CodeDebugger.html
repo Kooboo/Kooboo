@@ -21,7 +21,8 @@
   </div>
   <div class="ctrl-bar navbar navbar-default">
     <button class="btn btn-default" v-if="end" @click="startSession">
-      <i class="glyphicon glyphicon-play"></i> <span>Start debugging</span>
+      <i class="glyphicon glyphicon-play"></i> <span>Start debugging</span
+      ><span>(F5)</span>
     </button>
 
     <button class="btn btn-default" v-else @click="onStep('None')">
@@ -154,6 +155,10 @@
       var me = this;
       document.onkeydown = function (e) {
         switch (e.keyCode) {
+          case 116: //F8
+            e.preventDefault();
+            me.startSession();
+            break;
           case 119: //F8
             e.preventDefault();
             me.onStep("None");
