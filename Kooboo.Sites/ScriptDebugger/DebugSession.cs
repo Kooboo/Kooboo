@@ -10,7 +10,6 @@ namespace Kooboo.Sites.ScriptDebugger
 {
     public class DebugSession
     {
-        private bool _end;
         private Exception exception;
 
         public class Breakpoint
@@ -30,15 +29,7 @@ namespace Kooboo.Sites.ScriptDebugger
 
         public List<Breakpoint> BreakLines { get; set; } = new List<Breakpoint>();
         public Jint.Engine JsEngine { get; set; }
-        public bool End
-        {
-            get => _end;
-            set
-            {
-                if (DebuggingContext == null) return;
-                _end = value;
-            }
-        }
+        public bool End { get; set; }
 
         public Guid? CurrentCodeId { get; set; }
 

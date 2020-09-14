@@ -23,16 +23,4 @@ namespace Kooboo.Sites.ScriptDebugger
         public Dictionary<string, object> Global = new Dictionary<string, object>();
 
     }
-
-    public class ExeResult
-    {
-        public DebugVariables Variables { get; set; }
-
-        public bool Success { get; set; }
-
-        public string Model { get; set; }
-
-    }
-
-
 }
