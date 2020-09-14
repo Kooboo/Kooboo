@@ -50,7 +50,7 @@
         v-if="currentCode&&currentCode.previewUrl"
         target="blank"
         class="btn"
-        :href="currentCode.previewUrl"
+        @click="showPreview(currentCode.previewUrl)"
         >Preview</a
       >
       <a
@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <div class="code-editor">
+  <div class="code-editor" :style="{bottom:showPreviewPanel?'310px':'5px'}">
     <table>
       <tr v-for="(line,index) in lines">
         <td
@@ -125,6 +125,14 @@
       />
     </template>
   </div>
+
+  <div class="preview-panel" v-if="showPreviewPanel">
+    <div class="url-ctrl">
+      <input v-model="previewUrl" @keydown.enter="goToPreview" />
+      <i class="fa fa-close" @click="showPreviewPanel=false"></i>
+    </div>
+    <iframe :src="iframeUrl"> </iframe>
+  </div>
 </div>
 
 <script>
@@ -147,6 +155,9 @@
         executeHistory: [],
         executeHistoryBak: [],
         exception: null,
+        showPreviewPanel: false,
+        previewUrl: "",
+        iframeUrl: "",
       };
     },
     mounted: function () {
@@ -332,6 +343,19 @@
           me.code = code;
         }
       },
+      showPreview: function (url) {
+        var me = this;
+        me.showPreviewPanel = true;
+        me.previewUrl = url;
+        me.goToPreview();
+      },
+      goToPreview: function () {
+        var me = this;
+        me.iframeUrl = "";
+        me.$nextTick(function () {
+          me.iframeUrl = me.previewUrl;
+        });
+      },
     },
   });
 </script>
@@ -454,6 +478,7 @@
     overflow: auto;
     outline: #f1f1f1 1px solid;
   }
+
   .execute-code {
     position: absolute;
     bottom: 0;
@@ -465,6 +490,37 @@
     padding: 3px;
     overflow-y: auto;
     word-break: break-all;
+  }
+
+  .preview-panel {
+    position: absolute;
+    outline: #f1f1f1 1px solid;
+    height: 300px;
+    bottom: 5px;
+    left: 205px;
+    right: 310px;
+  }
+
+  .preview-panel iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .url-ctrl {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+  }
+
+  .url-ctrl input {
+    outline: 0;
+    border: 0;
+    border-bottom: 1px solid #f1f1f1;
+    width: 100%;
+    padding: 3px;
+    margin: 3px;
   }
 
   .variables {
