@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Lib.Helper;
@@ -9,8 +7,6 @@ using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Sync.DiskSyncLog;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Sync.Disk
 {

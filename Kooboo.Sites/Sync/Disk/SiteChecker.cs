@@ -1,10 +1,8 @@
-﻿using Kooboo.Data.Models;
-using System;
+﻿using Kooboo.Data.Models; 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-
+ 
 namespace Kooboo.Sites.Sync.Disk
 {
    public static class SiteChecker
