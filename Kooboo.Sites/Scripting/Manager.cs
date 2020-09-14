@@ -384,36 +384,6 @@ namespace Kooboo.Sites.Scripting
 
         }
 
-        private static string EngineReturnValue(Jint.Engine engine)
-        {
-            var returnitem = engine.GetCompletionValue();
-            if (returnitem != null && !returnitem.IsNull())
-            {
-                var jsvalue = returnitem as JsValue;
-                if (jsvalue != null)
-                {
-                    if (jsvalue.Type == Types.Null || jsvalue.Type == Types.None)
-                    {
-                        return null;
-                    }
-                    else if (jsvalue.Type == Types.Object)
-                    {
-                        var obj = jsvalue.ToObject();
-                        if (obj != null)
-                        {
-                            return Lib.Helper.JsonHelper.Serialize(obj);
-                        }
-                    }
-                    else
-                    {
-                        return jsvalue.ToString();
-                    }
-                }
-            }
-            return null;
-        }
-
-
         private static Jint.Runtime.Debugger.StepMode EngineStepOrBreak(object sender, Jint.Runtime.Debugger.DebugInformation e, DebugSession session)
         {
             try
@@ -522,9 +492,9 @@ namespace Kooboo.Sites.Scripting
             }
             else
             {
-                if (value is Jint.Native.JsValue)
+                if (value is JsValue)
                 {
-                    var jsvalue = value as Jint.Native.JsValue;
+                    var jsvalue = value as JsValue;
                     if (jsvalue != null)
                     {
                         var jsobject = jsvalue.ToObject();

@@ -49,7 +49,7 @@ namespace Kooboo.Sites.ScriptDebugger
             if (key == null) return null;
             DebugSession session;
 
-            if ((getWay | DebugSession.GetWay.AutoCreate) > 0)
+            if (getWay == DebugSession.GetWay.AutoCreate)
             {
                 session = _sessions.GetOrAdd(key, new DebugSession());
             }
