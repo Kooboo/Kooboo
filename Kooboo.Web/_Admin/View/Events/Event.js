@@ -148,9 +148,9 @@ $(function() {
         });
       },
       saveActivity: function(values, parentRule) {
-        parentRule =
-          parentRule && (parentRule.which !== undefined ? null : parentRule);
-        var currentRule = parentRule || self.currentRule;
+
+        var currentRule = parentRule?parentRule:self.currentRule;
+
 
         if (!currentRule.activity) {
           currentRule.activity = [];
@@ -163,10 +163,11 @@ $(function() {
           currentRule.activity.splice(idx, 1, values);
         }
       },
-      editActivity: function(m, index) {
+      editActivity: function(m, index,currentRule) {
         m.mode = "edit";
         m.index = index;
         self.activityDialogShow = true;
+        self.currentRule = currentRule
         self.activityData = m;
       },
       removeActivity: function(activities, index) {
@@ -177,7 +178,7 @@ $(function() {
       },
       save: function() {
         var rules = self.rules;
-        dataDemapping(rules);
+        rules = dataDemapping(rules);
         Kooboo.BusinessRule.post({
           eventName: Kooboo.getQueryString("name"),
           rules: rules
@@ -260,7 +261,6 @@ $(function() {
                 }
               );
             } else {
-              debugger;
             }
           });
         }
@@ -273,7 +273,8 @@ $(function() {
     }
   });
 
-  function dataDemapping(rules) {
+  function dataDemapping(rulesData) {
+    let rules = JSON.parse(JSON.stringify(rulesData))
     rules.forEach(function(rule) {
       if (rule.hasOwnProperty("expanded")) {
         delete rule.expanded;
@@ -289,13 +290,13 @@ $(function() {
           });
         });
 
-        dataDemapping(rule.then);
-        dataDemapping(rule.else);
+        rule.then = dataDemapping(rule.then);
+        rule.else = dataDemapping(rule.else);
       } else {
         rule.do = rule.activity.map(function(act) {
           return {
             codeId: act.id,
-            setting: act.values
+            setting: act.setting
           };
         });
         rule.if = [];

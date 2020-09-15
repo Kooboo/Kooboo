@@ -26,7 +26,7 @@
     },
     methods: {
       submit: function() {
-        if (self.$refs.form && self.$refs.form.validate()) {
+        if (!self.$refs.form || (self.$refs.form && self.$refs.form.validate())) {
           var data = self.cacheData,
                    values = {};
           self.settings.forEach(function(setting) {
@@ -36,7 +36,7 @@
             // });
             // orig && (orig.defaultValue = self.model[setting.prop]);
           });
-          data.values = values;
+          data.setting = values;
           self.$emit("on-save", data);
           self.close();
 
@@ -113,7 +113,7 @@
     computed: {
       visibleActivityData: function() {
         if (self.modalShow) {
-          return self.activityData ? self.activityData : null;
+          return self.activityData ? JSON.parse(JSON.stringify(self.activityData)) : null;
         }
       }
     },
