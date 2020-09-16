@@ -21,7 +21,7 @@ namespace Kooboo.Web.FrontRequest
         }
         public async Task Invoke(RenderContext context)
         {
-            FrontContext kooboocontext = new FrontContext(context); 
+            FrontContext kooboocontext = new FrontContext(context);
 
             if (context.WebSite != null)
             {
@@ -169,8 +169,8 @@ namespace Kooboo.Web.FrontRequest
                     CheckUserBandwidth(frontContext);
                 }
                 catch (Exception ex)
-                { 
-                    Kooboo.Data.Log.Instance.Exception.Write(frontContext.RenderContext.WebSite.Name + " "+ frontContext.RenderContext.Request.Url);   
+                {
+                    Kooboo.Data.Log.Instance.Exception.Write(frontContext.RenderContext.WebSite.Name + " " + frontContext.RenderContext.Request.Url);
                     Kooboo.Data.Log.Instance.Exception.WriteException(ex);
 
                     frontContext.RenderContext.Response.StatusCode = 500;
@@ -180,7 +180,7 @@ namespace Kooboo.Web.FrontRequest
                     {
                         frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
                     }
-                    frontContext.Log.AddEntry("500",ex.Message, DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message); 
+                    frontContext.Log.AddEntry("500", ex.Message, DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message);
                 }
             }
 
@@ -189,11 +189,11 @@ namespace Kooboo.Web.FrontRequest
             {
                 if (string.IsNullOrEmpty(frontContext.RenderContext.Response.RedirectLocation))
                 {
-                    var custom = frontContext.RenderContext.GetItem<CustomStatusCode>();  
+                    var custom = frontContext.RenderContext.GetItem<CustomStatusCode>();
                     if (custom == null)
-                    { 
+                    {
                         frontContext.RenderContext.Response.RedirectLocation = WebSiteService.GetCustomErrorUrl(frontContext.WebSite, frontContext.RenderContext.Response.StatusCode);
-                    } 
+                    }
                 }
             }
 

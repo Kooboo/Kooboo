@@ -1,196 +1,88 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using dotless.Core.Parser.Functions;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.ScriptDebugger
 {
     public static class SessionManager
     {
-        private static object _locker = new object();
+        static readonly ConcurrentDictionary<string, DebugSession> _sessions = new ConcurrentDictionary<string, DebugSession>();
 
-        public static Dictionary<Guid, List<DebugSession>> Sessions = new Dictionary<Guid, List<DebugSession>>();
-
-        public static DebugSession CreateSession(RenderContext context, Guid CodeId)
+        static SessionManager()
         {
-            if (context.WebSite == null)
+            Task.Run(() =>
             {
-                return null;
-            }
-
-            if (Sessions.ContainsKey(context.WebSite.Id))
-            {
-                var list = Sessions[context.WebSite.Id];
-
-                lock (_locker)
+                while (true)
                 {
-                    var find = list.Find(o => o.CodeId == CodeId && o.IpAddress == context.Request.IP);
-
-                    if (find == null)
+                    try
                     {
-                        var sitedb = context.WebSite.SiteDb();
-                        var code = sitedb.Code.Get(CodeId); 
-                           
-                        find = new DebugSession();
-                        find.CodeId = CodeId;
+                        var shouldRemoveSessions = _sessions.Where(w => w.Value.IsExpired());
 
-                        if (code !=null && code.IsEmbedded)
+                        foreach (var item in shouldRemoveSessions)
                         {
-                            find.BodyHash = code.BodyHash; 
+                            item.Value.Clear();
+                            _sessions.TryRemove(item.Key, out _);
                         }
-
-                        find.IpAddress = context.Request.IP;
-                        list.Add(find);
-                        return find;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        return find;
+                        Kooboo.Data.Log.Instance.Exception.WriteException(ex);
                     }
+
+                    Thread.Sleep(3000);
                 }
+            });
+        }
+
+        public static DebugSession GetSession(RenderContext context, DebugSession.GetWay getWay = DebugSession.GetWay.Normal)
+        {
+            var key = GetSessionKey(context);
+            if (key == null) return null;
+            DebugSession session;
+
+            if (getWay == DebugSession.GetWay.AutoCreate)
+            {
+                session = _sessions.GetOrAdd(key, new DebugSession());
             }
             else
             {
-                lock (_locker)
-                {
-                    List<DebugSession> newsessions = new List<DebugSession>();
-                    Sessions[context.WebSite.Id] = newsessions;
-
-                    DebugSession session = new DebugSession();
-                    session.CodeId = CodeId;
-                    session.IpAddress = context.Request.IP;
-                    session.ActiveTime = DateTime.Now;
-
-                    var sitedb = context.WebSite.SiteDb();
-                    var code = sitedb.Code.Get(CodeId);
-  
-                    if (code != null && code.IsEmbedded)
-                    {
-                        session.BodyHash = code.BodyHash;
-                    }
-
-
-                    newsessions.Add(session);
-
-                    return session;
-                }
-
-            }
-             
-        }
-
-        public static DebugSession GetDebugSession(RenderContext context, Guid CodeId)
-        {
-            if (context.WebSite == null || CodeId == default(Guid))
-            {
-                return null;
+                _sessions.TryGetValue(key, out session);
             }
 
-            if (Sessions.ContainsKey(context.WebSite.Id))
+            if (session != null)
             {
-                var list = Sessions[context.WebSite.Id];
-
-                lock (_locker)
+                session.LastRefreshTime = DateTime.UtcNow;
+                if (getWay == DebugSession.GetWay.CurrentContext && session.DebuggingContext != null && session.DebuggingContext != context)
                 {
-                    if (context.Request.IP !=null)
-                    {
-                        var result = list.Find(o => o.CodeId == CodeId && o.IpAddress == context.Request.IP);
-                        if (result != null)
-                        {
-                            result.ActiveTime = DateTime.Now;
-
-                            return result;
-                        } 
-                    }
-                    else
-                    {
-                        var result = list.Find(o => o.CodeId == CodeId);
-                        if (result != null)
-                        {
-                            result.ActiveTime = DateTime.Now; 
-                            return result;
-                        }
-                    } 
+                    session = null;
                 }
             }
 
-            return null;
+            return session;
+
         }
 
-
-        public static DebugSession GetDebugSession(RenderContext context, string ScriptInnerHtml)
+        public static void RemoveSession(RenderContext context)
         {
-            if (context.WebSite == null || ScriptInnerHtml == null)
-            {
-                return null;
-            } 
-
-            if (Sessions.ContainsKey(context.WebSite.Id))
-            {
-                var list = Sessions[context.WebSite.Id];
-
-                int bodyhash = Lib.Security.Hash.ComputeIntCaseSensitive(ScriptInnerHtml);
-
-                lock (_locker)
-                {
-                    if (context.Request.IP != null)
-                    {
-                        var result = list.Find(o => o.BodyHash == bodyhash  && o.IpAddress == context.Request.IP);
-                        if (result != null)
-                        {
-                            result.ActiveTime = DateTime.Now;
-
-                            return result;
-                        }
-                    }
-                    else
-                    {
-                        var result = list.Find(o => o.BodyHash == bodyhash);
-                        if (result != null)
-                        {
-                            result.ActiveTime = DateTime.Now;
-                            return result;
-                        }
-                    }
-                }
-            }
-
-            return null;
+            var key = GetSessionKey(context);
+            _sessions.TryRemove(key, out var session);
+            if (session != null) session.Clear();
         }
 
-
-        public static void RemoveSession(RenderContext context, DebugSession session)
+        public static string GetSessionKey(RenderContext context)
         {
-            RemoveSession(context, session.CodeId, session.IpAddress); 
+            if (context.WebSite == null) return null;
+            return $"{context.WebSite.Id}__{context.Request?.IP}";
         }
-
-        public static void RemoveSession(RenderContext context, Guid CodeId, string Ip)
-        {
-            if (context.WebSite == null)
-            {
-                return;
-            }
-
-            if (Sessions.ContainsKey(context.WebSite.Id))
-            {
-                var list = Sessions[context.WebSite.Id];
-                lock (_locker)
-                {
-                    var find = list.Find(o => o.CodeId ==CodeId && o.IpAddress == Ip);
-                    if (find != null)
-                    {
-                        find.EndOfSession = true; 
-                        list.Remove(find);
-                    }
-                }
-            }
-        }
-
 
     }
 }

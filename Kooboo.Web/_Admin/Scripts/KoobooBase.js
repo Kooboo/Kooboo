@@ -1,4 +1,4 @@
-﻿(function(wind) {
+﻿(function (wind) {
   function handleRequestError(quest) {
     window.info.fail(
       Kooboo.text.info.networkError + ", " + Kooboo.text.info.checkServer
@@ -18,23 +18,23 @@
 
   var loading = {
     requestCount: 0,
-    start: function() {
+    start: function () {
       this.requestCount++;
       $(".page-loading").show();
       // $("body").addClass("modal-open");
     },
-    stop: function() {
+    stop: function () {
       this.requestCount--;
       if (this.requestCount === 0) {
         $(".page-loading").hide();
       }
       // $("body").removeClass("modal-open");
     },
-    initial: function() {
+    initial: function () {
       if (this.requestCount === 0) {
         $(".page-loading").hide();
       }
-    }
+    },
   };
 
   function BaseModel(typeName) {
@@ -42,26 +42,33 @@
   }
 
   BaseModel.prototype = {
-    executeGet: function(method, data, hideLoading, useSync, hideError) {
+    executeGet: function (method, data, hideLoading, useSync, hideError) {
       var self = this;
       var hideLoading = !!hideLoading && true;
       hideLoading && $(".page-loading").hide();
       !hideLoading && loading.start();
 
       return DataCache.getData(this.name, method, data, useSync)
-        .fail(function(fail) {
+        .fail(function (fail) {
           if (!hideError) handleRequestError(fail);
         })
-        .always(function() {
+        .always(function () {
           !hideLoading && loading.stop();
         })
-        .done(function(res) {
+        .done(function (res) {
           if (!res.success) {
             if (!hideError) Kooboo.handleFailMessages(res.messages);
           }
         });
     },
-    executePost: function(method, data, hideLoading, extendParams, useSync, hideError) {
+    executePost: function (
+      method,
+      data,
+      hideLoading,
+      extendParams,
+      useSync,
+      hideError
+    ) {
       var self = this;
       var hideLoading = !!hideLoading && true;
       !hideLoading && loading.start();
@@ -73,41 +80,41 @@
       data = encodeURIComponent(data);
 
       return DataCache.postData(this.name, method, data, extendParams, useSync)
-        .fail(function(fail) {
+        .fail(function (fail) {
           if (!hideError) handleRequestError(fail);
         })
-        .always(function() {
+        .always(function () {
           !hideLoading && loading.stop();
         })
-        .done(function(res) {
+        .done(function (res) {
           // clean cache...
           if (!res.success) {
-            if (!hideError)  Kooboo.handleFailMessages(res.messages);
+            if (!hideError) Kooboo.handleFailMessages(res.messages);
           } else {
             // data cached
           }
         });
     },
-    executeUpload: function(method, data, progressor) {
+    executeUpload: function (method, data, progressor) {
       var self = this;
 
       !progressor && loading.start();
 
       return DataCache.uploadData(this.name, method, data, progressor)
-        .fail(function(fail) {
+        .fail(function (fail) {
           handleRequestError(fail);
         })
-        .always(function() {
+        .always(function () {
           !progressor && loading.stop();
         })
-        .done(function(res) {
+        .done(function (res) {
           if (!res.success) {
             Kooboo.handleFailMessages(res.messages);
           }
         });
     },
 
-    syncAjax: function(route, data) {
+    syncAjax: function (route, data) {
       var self = this;
 
       loading.start();
@@ -115,50 +122,50 @@
         url: this._getUrl(route),
         type: "GET",
         data: data,
-        async: false
+        async: false,
       })
-        .fail(function(fail) {
+        .fail(function (fail) {
           handleRequestError(fail);
         })
-        .always(function() {
+        .always(function () {
           loading.stop();
         })
-        .done(function(res) {
+        .done(function (res) {
           if (!res.success) {
             Kooboo.handleFailMessages(res.message);
           }
         });
     },
 
-    get: function(paras) {
+    get: function (paras) {
       return this.executeGet("get", paras);
     },
-    Get: function(paras) {
+    Get: function (paras) {
       return this.executeGet("Get", paras);
     },
-    getEdit: function(para) {
+    getEdit: function (para) {
       return this.executeGet("GetEdit", para);
     },
-    getList: function(paras) {
+    getList: function (paras) {
       return this.executeGet("list", paras);
     },
-    post: function(paras) {
+    post: function (paras) {
       return this.executePost("post", paras);
     },
-    put: function(paras) {
+    put: function (paras) {
       return this.executePost("put", paras);
     },
-    Delete: function(paras) {
+    Delete: function (paras) {
       return this.executePost("Delete", paras);
     },
-    Deletes: function(paras) {
+    Deletes: function (paras) {
       return this.executePost("Deletes", paras);
     },
-    isUniqueName: function(paras) {
+    isUniqueName: function (paras) {
       return this._getUrl("isUniqueName", paras);
     },
 
-    _getUrl: function(route) {
+    _getUrl: function (route) {
       var url = "/_api/" + this.name + "/" + route;
       if (Kooboo.getQueryString("SiteId")) {
         url += "?SiteId=" + Kooboo.getQueryString("SiteId");
@@ -166,32 +173,32 @@
       return url;
     },
 
-    _getUrl: function(method) {
+    _getUrl: function (method) {
       var url = "/_api/" + this.name + "/" + method;
       if (Kooboo.getQueryString("SiteId")) {
         url += "?SiteId=" + Kooboo.getQueryString("SiteId");
       }
       return url;
-    }
+    },
   };
 
   //view
   function View() {
     this.name = "View";
 
-    this.CompareType = function(para) {
+    this.CompareType = function (para) {
       return this.executeGet("CompareType", para);
     };
 
-    this.dataMethod = function(para) {
+    this.dataMethod = function (para) {
       return this.executeGet("DataMethod", para);
     };
 
-    this.ViewMethods = function(para) {
+    this.ViewMethods = function (para) {
       return this.executeGet("ViewMethods", para);
     };
 
-    this.Copy = function(para) {
+    this.Copy = function (para) {
       return this.executePost("Copy", para);
     };
   }
@@ -201,31 +208,31 @@
   function Page() {
     this.name = "Page";
 
-    this.getAll = function(para) {
+    this.getAll = function (para) {
       return this.executeGet("all", para);
     };
 
-    this.getAccessToken = function(para) {
+    this.getAccessToken = function (para) {
       return this.executeGet("GetAccessToken", para);
     };
 
-    this.getDefaultRoute = function(para) {
+    this.getDefaultRoute = function (para) {
       return this.executeGet("DefaultRoute", para);
     };
 
-    this.defaultRouteUpdate = function(para) {
+    this.defaultRouteUpdate = function (para) {
       return this.executePost("DefaultRouteUpdate", para);
     };
 
-    this.ConvertFile = function(para) {
+    this.ConvertFile = function (para) {
       return this.executeUpload("ConvertFile", para);
     };
 
-    this.Copy = function(para) {
+    this.Copy = function (para) {
       return this.executePost("Copy", para);
     };
 
-    this.PostRichText = function(para) {
+    this.PostRichText = function (para) {
       return this.executePost("PostRichText", para);
     };
   }
@@ -235,58 +242,58 @@
   function User() {
     this.name = "User";
 
-    this.login = function(para) {
+    this.login = function (para) {
       return this.executePost("login", para);
     };
 
-    this.logout = function(para) {
+    this.logout = function (para) {
       return this.executePost("logout", para);
     };
 
-    this.register = function(para) {
+    this.register = function (para) {
       return this.executePost("register", para);
     };
 
-    this.get = function(para) {
+    this.get = function (para) {
       return this.executeGet("getUser", para);
     };
 
-    this.getCulture = function(para) {
+    this.getCulture = function (para) {
       return this.executeGet("Culture", para);
     };
 
-    this.getUser = function(para) {
+    this.getUser = function (para) {
       return this.executeGet("getUser", para);
     };
 
-    this.changePassword = function(para) {
+    this.changePassword = function (para) {
       return this.executePost("changePassword", para);
     };
 
-    this.updateProfile = function(para) {
+    this.updateProfile = function (para) {
       return this.executePost("updateProfile", para);
     };
 
-    this.checkUser = function(para) {
+    this.checkUser = function (para) {
       return this.executeGet("checkUser", para);
     };
 
-    this.ForgotPassword = function(para) {
+    this.ForgotPassword = function (para) {
       return this.executePost("ForgotPassword", para);
     };
 
-    this.ResetPassword = function(para) {
+    this.ResetPassword = function (para) {
       return this.executePost("ResetPassword", para);
     };
-    this.getLanguage = function() {
+    this.getLanguage = function () {
       return this.executePost("getLanguage", {});
     };
 
-    this.isUniqueEmail = function(paras) {
+    this.isUniqueEmail = function (paras) {
       return this._getUrl("isUniqueEmail", paras);
     };
 
-    this.verifyEmail = function(para) {
+    this.verifyEmail = function (para) {
       return this.executePost("VerifyEmail", para);
     };
   }
@@ -294,43 +301,43 @@
 
   function Organization() {
     (this.name = "Organization"),
-      (this.getOrganizations = function(para) {
+      (this.getOrganizations = function (para) {
         return this.executeGet("getOrganizations", para);
       });
 
-    this.changeUserOrg = function(para) {
+    this.changeUserOrg = function (para) {
       return this.executePost("changeUserOrg", para);
     };
 
-    this.useCoupon = function(para) {
+    this.useCoupon = function (para) {
       return this.executePost("useCoupon", para);
     };
 
-    this.payRecharge = function(para) {
+    this.payRecharge = function (para) {
       return this.executePost("payRecharge", para);
     };
 
-    this.getOrg = function(para) {
+    this.getOrg = function (para) {
       return this.executeGet("getOrg", para);
     };
 
-    this.getUsers = function(para) {
+    this.getUsers = function (para) {
       return this.executeGet("getUsers", para);
     };
 
-    this.addUser = function(para) {
+    this.addUser = function (para) {
       return this.executePost("addUser", para);
     };
 
-    this.deleteUser = function(para) {
+    this.deleteUser = function (para) {
       return this.executePost("deleteUser", para);
     };
 
-    this.getDataCenter = function(para) {
+    this.getDataCenter = function (para) {
       return this.executeGet("GetDataCenter", para);
     };
 
-    this.updateDataCenter = function(para) {
+    this.updateDataCenter = function (para) {
       return this.executePost("UpdateDataCenter", para);
     };
   }
@@ -340,21 +347,21 @@
   function DataSource() {
     this.name = "DataMethodSetting";
 
-    this.update = function(para) {
+    this.update = function (para) {
       return this.executePost("Update", para);
     };
   }
   extend(DataSource, BaseModel);
 
-  DataSource.prototype.getData = function(para) {
+  DataSource.prototype.getData = function (para) {
     return this.executeGet("centerList", para);
   };
 
-  DataSource.prototype.getPublicData = function(para) {
+  DataSource.prototype.getPublicData = function (para) {
     return this.executeGet("public", para);
   };
 
-  DataSource.prototype.getPrivateData = function(para) {
+  DataSource.prototype.getPrivateData = function (para) {
     return this.executeGet("private", para);
   };
 
@@ -362,7 +369,7 @@
   function DataMethodSetting() {
     this.name = "DataMethodSetting";
 
-    this.byView = function(para) {
+    this.byView = function (para) {
       return this.executeGet("byView", para);
     };
   }
@@ -371,43 +378,43 @@
   function Database() {
     this.name = "Database";
 
-    this.getTables = function(para) {
+    this.getTables = function (para) {
       return this.executeGet("Tables", para);
     };
 
-    this.getData = function(para) {
+    this.getData = function (para) {
       return this.executeGet("Data", para);
     };
 
-    this.updateData = function(para) {
+    this.updateData = function (para) {
       return this.executePost("UpdateData", para);
     };
 
-    this.deleteData = function(para) {
+    this.deleteData = function (para) {
       return this.executePost("DeleteData", para);
     };
 
-    this.getColumns = function(para) {
+    this.getColumns = function (para) {
       return this.executeGet("Columns", para);
     };
 
-    this.updateColumn = function(para) {
+    this.updateColumn = function (para) {
       return this.executePost("UpdateColumn", para);
     };
 
-    this.createTable = function(para) {
+    this.createTable = function (para) {
       return this.executePost("CreateTable", para);
     };
 
-    this.isUniqueTableName = function(para) {
+    this.isUniqueTableName = function (para) {
       return this._getUrl("IsUniqueTableName", para);
     };
 
-    this.deleteTables = function(para) {
+    this.deleteTables = function (para) {
       return this.executePost("DeleteTables", para);
     };
 
-    this.getAvailableControlTypes = function(para) {
+    this.getAvailableControlTypes = function (para) {
       return this.executeGet("AvailableControlTypes", para);
     };
   }
@@ -417,63 +424,63 @@
   function Site() {
     this.name = "Site";
 
-    this.clusterList = function(para) {
+    this.clusterList = function (para) {
       return this.executeGet("ClusterList", para);
     };
 
-    this.export = function(para) {
+    this.export = function (para) {
       return this.executePost("export", para);
     };
 
-    this.ExportStoreUrl = function(para) {
+    this.ExportStoreUrl = function (para) {
       return this._getUrl("ExportStore", para);
     };
 
-    this.ExportUrl = function(para) {
+    this.ExportUrl = function (para) {
       return this._getUrl("export", para);
     };
 
-    this.getDiskSync = function(para) {
+    this.getDiskSync = function (para) {
       return this.executeGet("DiskSyncGet", para);
     };
 
-    this.updateDiskSync = function(para) {
+    this.updateDiskSync = function (para) {
       return this.executePost("DiskSyncUpdate", para);
     };
 
-    this.Create = function(para) {
+    this.Create = function (para) {
       return this.executePost("Create", para);
     };
 
-    this.Import = function(para, progressor) {
+    this.Import = function (para, progressor) {
       return this.executeUpload("ImportSite", para, progressor);
     };
 
-    this.Langs = function(para) {
+    this.Langs = function (para) {
       return this.executeGet("Langs", para);
     };
 
-    this.SwitchStatus = function(para) {
+    this.SwitchStatus = function (para) {
       return this.executePost("SwitchStatus", para);
     };
 
-    this.getCultures = function(para) {
+    this.getCultures = function (para) {
       return this.executeGet("Cultures", para);
     };
 
-    this.CheckDomainBindingAvailable = function(para) {
+    this.CheckDomainBindingAvailable = function (para) {
       return this._getUrl("CheckDomainBindingAvailable", para);
     };
 
-    this.getName = function(para) {
+    this.getName = function (para) {
       return this.executeGet("GetName", para);
     };
 
-    this.getExportStoreNames = function() {
+    this.getExportStoreNames = function () {
       return this.executeGet("ExportStoreNames");
     };
 
-    this.getTypes = function() {
+    this.getTypes = function () {
       return this.executeGet("Types");
     };
   }
@@ -482,22 +489,22 @@
   //Domain
   function Domain() {
     this.name = "Domain";
-    this.getAvailable = function(para) {
+    this.getAvailable = function (para) {
       return this.executeGet("Available", para);
     };
-    this.creatDomain = function(para) {
+    this.creatDomain = function (para) {
       return this.executePost("Create", para);
     };
-    this.searchDomain = function(para) {
+    this.searchDomain = function (para) {
       return this.executeGet("Search", para);
     };
-    this.getPaymentStatus = function(para) {
+    this.getPaymentStatus = function (para) {
       return this.executeGet("PaymentStatus", para, true);
     };
-    this.payDomain = function(para) {
+    this.payDomain = function (para) {
       return this.executePost("payDomain", para);
     };
-    this.serverInfo = function(para) {
+    this.serverInfo = function (para) {
       return this.executeGet("ServerInfo", para);
     };
   }
@@ -506,7 +513,7 @@
   //Component - Header
   function Bar() {
     this.name = "Bar";
-    this.getHeader = function(para) {
+    this.getHeader = function (para) {
       return this.executeGet("header", para);
     };
   }
@@ -516,16 +523,16 @@
   function Sidebar() {
     var self = this;
     this.name = "Bar";
-    this.getSidebar = function(para) {
+    this.getSidebar = function (para) {
       return self.executeGet("sitemenu", para);
     };
-    this.getDomainSidebar = function(para) {
+    this.getDomainSidebar = function (para) {
       return self.executeGet("domainMenu", para);
     };
-    this.getExtensionSidebar = function(para) {
+    this.getExtensionSidebar = function (para) {
       return self.executeGet("extensionMenu", para);
     };
-    this.getMarketSidebar = function(para) {
+    this.getMarketSidebar = function (para) {
       return self.executeGet("MarketSideBar", para);
     };
   }
@@ -535,43 +542,43 @@
   function Style() {
     this.name = "Style";
 
-    this.Get = function(para) {
+    this.Get = function (para) {
       return this.executeGet("Get", para);
     };
 
-    this.GetEdit = function(para) {
+    this.GetEdit = function (para) {
       return this.executeGet("GetEdit", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
 
-    this.GetRules = function(para) {
+    this.GetRules = function (para) {
       return this.executeGet("GetRules", para);
     };
 
-    this.UpdateRules = function(para) {
+    this.UpdateRules = function (para) {
       return this.executePost("UpdateRules", para);
     };
 
-    this.getExternalList = function(para) {
+    this.getExternalList = function (para) {
       return this.executeGet("External", para);
     };
 
-    this.getEmbeddedList = function(para) {
+    this.getEmbeddedList = function (para) {
       return this.executeGet("Embedded", para);
     };
 
-    this.getInlineList = function(para) {
+    this.getInlineList = function (para) {
       return this.executeGet("Inline", para);
     };
 
-    this.getRuleRelation = function(para) {
+    this.getRuleRelation = function (para) {
       return this.executeGet("RuleRelation", para);
     };
 
-    this.getExtensions = function(para) {
+    this.getExtensions = function (para) {
       return this.executeGet("getExtensions", para);
     };
   }
@@ -581,19 +588,19 @@
   function CSSRule() {
     this.name = "CSSRule";
 
-    this.getInlineList = function(para) {
+    this.getInlineList = function (para) {
       return this.executeGet("InlineList", para);
     };
 
-    this.getInline = function(para) {
+    this.getInline = function (para) {
       return this.executeGet("getInline", para);
     };
 
-    this.getRelation = function(para) {
+    this.getRelation = function (para) {
       return this.executeGet("Relation", para);
     };
 
-    this.updateInline = function(para) {
+    this.updateInline = function (para) {
       return this.executePost("UpdateInline", para);
     };
   }
@@ -603,27 +610,27 @@
   function Transfer() {
     this.name = "Transfer";
 
-    this.singlePage = function(para) {
+    this.singlePage = function (para) {
       return this.executePost("Single", para);
     };
 
-    this.getSubUrl = function(para) {
+    this.getSubUrl = function (para) {
       return this.executeGet("GetSubUrl", para);
     };
 
-    this.byLevel = function(para) {
+    this.byLevel = function (para) {
       return this.executeGet("ByLevel", para);
     };
 
-    this.byPage = function(para) {
+    this.byPage = function (para) {
       return this.executePost("ByPage", para);
     };
 
-    this.getStatus = function(para) {
+    this.getStatus = function (para) {
       return this.executeGet("GetStatus", para, true);
     };
 
-    this.getTaskStatus = function(para) {
+    this.getTaskStatus = function (para) {
       return this.executeGet("GetTaskStatus", para, true);
     };
   }
@@ -631,11 +638,11 @@
 
   function ContentFolder() {
     this.name = "ContentFolder";
-    this.getColumnsById = function(para) {
+    this.getColumnsById = function (para) {
       return this.executeGet("Columns", para);
     };
 
-    this.getFolderInfoById = function(para) {
+    this.getFolderInfoById = function (para) {
       return this.executeGet("Get", para);
     };
   }
@@ -645,39 +652,39 @@
   function Menu() {
     this.name = "Menu";
 
-    this.Create = function(para) {
+    this.Create = function (para) {
       return this.executePost("Create", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
 
-    this.UpdateTemplate = function(para) {
+    this.UpdateTemplate = function (para) {
       return this.executePost("UpdateTemplate", para);
     };
 
-    this.UpdateUrl = function(para) {
+    this.UpdateUrl = function (para) {
       return this.executePost("UpdateUrl", para);
     };
 
-    this.getFlat = function(para) {
+    this.getFlat = function (para) {
       return this.executeGet("getFlat", para, true);
     };
 
-    this.CreateSub = function(para) {
+    this.CreateSub = function (para) {
       return this.executePost("CreateSub", para);
     };
 
-    this.getLang = function(para) {
+    this.getLang = function (para) {
       return this.executeGet("getLang", para);
     };
 
-    this.updateLang = function(para) {
+    this.updateLang = function (para) {
       return this.executePost("UpdateLang", para);
     };
 
-    this.Swap = function(para) {
+    this.Swap = function (para) {
       return this.executePost("Swap", para);
     };
   }
@@ -687,23 +694,23 @@
   function ResourceGroup() {
     this.name = "ResourceGroup";
 
-    this.Style = function(para) {
+    this.Style = function (para) {
       return this.executeGet("Style", para);
     };
 
-    this.Script = function(para) {
+    this.Script = function (para) {
       return this.executeGet("Script", para);
     };
 
-    this.Get = function(para) {
+    this.Get = function (para) {
       return this.executeGet("Get", para);
     };
 
-    this.Create = function(para) {
+    this.Create = function (para) {
       return this.executePost("Update", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
   }
@@ -713,23 +720,23 @@
   function Script() {
     this.name = "Script";
 
-    this.getExternalList = function(para) {
+    this.getExternalList = function (para) {
       return this.executeGet("External", para);
     };
 
-    this.getEmbeddedList = function(para) {
+    this.getEmbeddedList = function (para) {
       return this.executeGet("Embedded", para);
     };
 
-    this.Get = function(para) {
+    this.Get = function (para) {
       return this.executeGet("Get", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
 
-    this.getExtensions = function(para) {
+    this.getExtensions = function (para) {
       return this.executeGet("getExtensions", para);
     };
   }
@@ -739,23 +746,23 @@
   function KScript() {
     this.name = "KScript";
 
-    this.getExternalList = function(para) {
+    this.getExternalList = function (para) {
       return this.executeGet("External", para);
     };
 
-    this.getEmbeddedList = function(para) {
+    this.getEmbeddedList = function (para) {
       return this.executeGet("Embedded", para);
     };
 
-    this.Get = function(para) {
+    this.Get = function (para) {
       return this.executeGet("Get", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
 
-    this.GetDefine = function() {
+    this.GetDefine = function () {
       return this.executeGet("GetDefine", null, true);
     };
   }
@@ -765,39 +772,39 @@
   function Media() {
     this.name = "Media";
 
-    this.createFolder = function(para) {
+    this.createFolder = function (para) {
       return this.executePost("CreateFolder", para);
     };
 
-    this.getListBy = function(para) {
+    this.getListBy = function (para) {
       return this.executeGet("ListBy", para);
     };
 
-    this.deleteFolders = function(para) {
+    this.deleteFolders = function (para) {
       return this.executePost("DeleteFolders", para);
     };
 
-    this.deleteImages = function(para) {
+    this.deleteImages = function (para) {
       return this.executePost("DeleteImages", para);
     };
 
-    this.imageUpdate = function(para) {
+    this.imageUpdate = function (para) {
       return this.executePost("ImageUpdate", para);
     };
 
-    this.ContentImage = function(para) {
+    this.ContentImage = function (para) {
       return this.executeUpload("ContentImage", para);
     };
 
-    this.getDialogList = function(para) {
+    this.getDialogList = function (para) {
       return this.executeGet("List", para, true);
     };
 
-    this.getPagedList = function(para) {
+    this.getPagedList = function (para) {
       return this.executeGet("PagedList", para);
     };
 
-    this.getPagedListBy = function(para) {
+    this.getPagedListBy = function (para) {
       return this.executeGet("PagedListBy", para);
     };
   }
@@ -806,7 +813,7 @@
   function ContentType() {
     this.name = "ContentType";
 
-    this.save = function(para) {
+    this.save = function (para) {
       return this.executePost("Post", para);
     };
   }
@@ -815,15 +822,15 @@
   function Component() {
     this.name = "Component";
 
-    this.TagObjects = function(para) {
+    this.TagObjects = function (para) {
       return this.executeGet("TagObjects", para);
     };
 
-    this.getPreviewHtml = function(para) {
+    this.getPreviewHtml = function (para) {
       return this.executeGet("PreviewHtml", para);
     };
 
-    this.getSource = function(para) {
+    this.getSource = function (para) {
       return this.executeGet("GetSource", para, false, true);
     };
   }
@@ -832,20 +839,20 @@
   function TextContent() {
     this.name = "textContent";
 
-    this.getFields = function(para) {
+    this.getFields = function (para) {
       return this.executeGet("GetFields", para);
     };
 
-    this.langupdate = function(para) {
+    this.langupdate = function (para) {
       return this.executePost("langupdate", para, false, null, true);
     };
 
-    this.update = function(para) {
+    this.update = function (para) {
       // 上面那个因为在使用的时候需要同步验证，但是这个用法是错误的。修改完后把上面的删了
       return this.executePost("langupdate", para);
     };
 
-    this.getByFolder = function(para) {
+    this.getByFolder = function (para) {
       if (!para || (para && !para.folderId)) {
         var folderId = Kooboo.getQueryString("folder");
         para = para || {};
@@ -854,15 +861,15 @@
       return this.executeGet("ByFolder", para);
     };
 
-    this.getFolderId = function(para) {
+    this.getFolderId = function (para) {
       var id = "";
-      this.syncAjax("GetFolderId", para).done(function(res) {
+      this.syncAjax("GetFolderId", para).done(function (res) {
         id = res.model;
       });
       return id;
     };
 
-    this.search = function(para) {
+    this.search = function (para) {
       return this.executeGet("Search", para);
     };
   }
@@ -871,42 +878,42 @@
   function SiteLog() {
     this.name = "SiteLog";
 
-    this.Blame = function(para) {
+    this.Blame = function (para) {
       return this.executePost("Blame", para);
     };
 
-    this.Restore = function(para) {
+    this.Restore = function (para) {
       return this.executePost("Restore", para);
     };
 
-    this.CheckOut = function(para) {
+    this.CheckOut = function (para) {
       return this.executePost("CheckOut", para);
     };
 
-    this.Versions = function(para) {
+    this.Versions = function (para) {
       return this.executeGet("Versions", para);
     };
 
-    this.Revert = function(para) {
+    this.Revert = function (para) {
       return this.executePost("Revert", para);
     };
 
-    this.Compare = function(para) {
+    this.Compare = function (para) {
       return this.executeGet("Compare", para);
     };
 
-    this.ExportBatch = function(para) {
+    this.ExportBatch = function (para) {
       return this.executeGet("ExportBatch", para);
     };
 
-    this.ExportItem = function(para) {
+    this.ExportItem = function (para) {
       return this.executePost("ExportItem", para);
     };
-    this.ExportItems = function(para) {
+    this.ExportItems = function (para) {
       return this.executePost("ExportItems", para);
     };
 
-    this.DownloadPageUrl = function(para) {
+    this.DownloadPageUrl = function (para) {
       return this._getUrl("DownloadBatch", para);
     };
   }
@@ -915,15 +922,15 @@
   function Label() {
     this.name = "Label";
 
-    this.UpdateUrl = function(para) {
+    this.UpdateUrl = function (para) {
       return this._getUrl("Update", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
 
-    this.getKeys = function(para) {
+    this.getKeys = function (para) {
       return this.executeGet("Keys", para);
     };
   }
@@ -932,10 +939,10 @@
   function Link() {
     this.name = "Link";
 
-    this.All = function(para) {
+    this.All = function (para) {
       return this.executeGet("all", para);
     };
-    this.SyncAll = function(para) {
+    this.SyncAll = function (para) {
       return this.executeGet("all", para, true, true);
     };
   }
@@ -943,7 +950,7 @@
 
   function Editor() {
     this.name = "InlineEditor";
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
   }
@@ -952,19 +959,19 @@
   //Binding
   function Binding() {
     this.name = "Binding";
-    this.listBySite = function(para) {
+    this.listBySite = function (para) {
       return this.executeGet("listbysite", para);
     };
-    this.ListByDomain = function(para) {
+    this.ListByDomain = function (para) {
       return this.executeGet("ListByDomain", para);
     };
-    this.SiteBinding = function(para) {
+    this.SiteBinding = function (para) {
       return this.executeGet("SiteBinding", para);
     };
-    this.verifySSL = function(para) {
+    this.verifySSL = function (para) {
       return this.executeGet("verifySSL", para);
     };
-    this.setSSL = function(para) {
+    this.setSSL = function (para) {
       return this.executePost("setSSL", para);
     };
   }
@@ -974,39 +981,39 @@
   function VisitorLog() {
     this.name = "VisitorLog";
 
-    this.All = function(para) {
+    this.All = function (para) {
       return this.executeGet("list", para);
     };
 
-    this.getWeekNames = function(para) {
+    this.getWeekNames = function (para) {
       return this.executeGet("WeekNames", para);
     };
 
-    this.TopPages = function(para) {
+    this.TopPages = function (para) {
       return this.executeGet("TopPages", para);
     };
 
-    this.TopReferer = function(para) {
+    this.TopReferer = function (para) {
       return this.executeGet("TopReferer", para);
     };
 
-    this.TopImages = function(para) {
+    this.TopImages = function (para) {
       return this.executeGet("TopImages", para);
     };
 
-    this.ErrorList = function(para) {
+    this.ErrorList = function (para) {
       return this.executeGet("ErrorList", para);
     };
 
-    this.ErrorDetail = function(para) {
+    this.ErrorDetail = function (para) {
       return this.executeGet("ErrorDetail", para);
     };
 
-    this.GetRegionCount = function(para) {
+    this.GetRegionCount = function (para) {
       return this.executeGet("GetRegionCount", para);
     };
 
-    this.Monthly = function(para) {
+    this.Monthly = function (para) {
       return this.executeGet("Monthly", para);
     };
   }
@@ -1015,11 +1022,11 @@
   function Job() {
     this.name = "Job";
 
-    this.getLogs = function(para) {
+    this.getLogs = function (para) {
       return this.executeGet("Logs", para);
     };
 
-    this.Run = function(para) {
+    this.Run = function (para) {
       return this.executeGet("Run", para);
     };
   }
@@ -1028,23 +1035,23 @@
   function Upload() {
     this.name = "Upload";
 
-    this.Style = function(para, progressor) {
+    this.Style = function (para, progressor) {
       return this.executeUpload("Style", para, progressor);
     };
 
-    this.Script = function(para, progressor) {
+    this.Script = function (para, progressor) {
       return this.executeUpload("Script", para, progressor);
     };
 
-    this.Images = function(para) {
+    this.Images = function (para) {
       return this.executeUpload("Image", para);
     };
 
-    this.File = function(para) {
+    this.File = function (para) {
       return this.executeUpload("File", para);
     };
 
-    this.Package = function(para) {
+    this.Package = function (para) {
       return this.executeUpload("Package", para);
     };
   }
@@ -1053,35 +1060,35 @@
   function Template() {
     this.name = "Template";
 
-    this.Share = function(para) {
+    this.Share = function (para) {
       return this.executeUpload("Share", para);
     };
 
-    this.batchShare = function(para) {
+    this.batchShare = function (para) {
       return this.executeUpload("ShareBatch", para);
     };
 
-    this.list = function(para) {
+    this.list = function (para) {
       return this.executeGet("List", para);
     };
 
-    this.private = function(para) {
+    this.private = function (para) {
       return this.executeGet("Private", para);
     };
 
-    this.personal = function(para) {
+    this.personal = function (para) {
       return this.executeGet("Personal", para);
     };
 
-    this.Use = function(para) {
+    this.Use = function (para) {
       return this.executePost("Use", para);
     };
 
-    this.Search = function(para) {
+    this.Search = function (para) {
       return this.executeGet("Search", para);
     };
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executeUpload("Update", para);
     };
   }
@@ -1090,30 +1097,30 @@
   function Diagnosis() {
     this.name = "Diagnosis";
 
-    this.getItems = function(para) {
+    this.getItems = function (para) {
       return this.executeGet("items", para);
     };
-    this.startScacn = function(para) {
+    this.startScacn = function (para) {
       return this.executePost("scan", para);
     };
 
-    this.getProgress = function(para) {
+    this.getProgress = function (para) {
       return this.executePost("progress", para, true);
     };
 
-    this.stopScan = function(para) {
+    this.stopScan = function (para) {
       return this.executePost("cancel", para);
     };
 
-    this.startSession = function(para) {
+    this.startSession = function (para) {
       return this.executeGet("StartSession", para);
     };
 
-    this.getStatus = function(para) {
+    this.getStatus = function (para) {
       return this.executeGet("Status", para, true);
     };
 
-    this.cancel = function(para) {
+    this.cancel = function (para) {
       return this.executeGet("cancel", para, true);
     };
   }
@@ -1121,25 +1128,25 @@
 
   function Extensions() {
     this.name = "extension";
-    this.typetree = function() {
+    this.typetree = function () {
       return this.executeGet("typetree");
     };
-    this.post = function(para) {
+    this.post = function (para) {
       return this.executeUpload("post", para);
     };
-    this.dataSource = function() {
+    this.dataSource = function () {
       return this.executePost("datasource");
     };
-    this.thirdparty = function() {
+    this.thirdparty = function () {
       return this.executePost("thirdparty");
     };
-    this.thirdPartyUpdate = function(para) {
+    this.thirdPartyUpdate = function (para) {
       return this.executePost("thirdPartyUpdate", para);
     };
-    this.getSetting = function(para) {
+    this.getSetting = function (para) {
       return this.executeGet("getSetting", para);
     };
-    this.UpdateSetting = function(methodId, para) {
+    this.UpdateSetting = function (methodId, para) {
       return this.executePost("UpdateSetting?id=" + methodId, para);
     };
   }
@@ -1148,27 +1155,27 @@
   function EmailAddress() {
     this.name = "EmailAddress";
 
-    this.Address = function(para) {
+    this.Address = function (para) {
       return this.executeGet("Address", para);
     };
 
-    this.Domains = function(para) {
+    this.Domains = function (para) {
       return this.executeGet("Domains", para);
     };
 
-    this.getMemberList = function(para) {
+    this.getMemberList = function (para) {
       return this.executeGet("MemberList", para);
     };
 
-    this.saveMember = function(para) {
+    this.saveMember = function (para) {
       return this.executePost("MemberPost", para);
     };
 
-    this.removeMember = function(para) {
+    this.removeMember = function (para) {
       return this.executePost("MemberDelete", para);
     };
 
-    this.updateForward = function(para) {
+    this.updateForward = function (para) {
       return this.executePost("UpdateForward", para);
     };
   }
@@ -1177,15 +1184,15 @@
   function EmailDraft() {
     this.name = "EmailDraft";
 
-    this.Compose = function(para) {
+    this.Compose = function (para) {
       return this.executeGet("Compose", para);
     };
 
-    this.targetAddresses = function(para) {
+    this.targetAddresses = function (para) {
       return this.executeGet("TargetAddresses", para);
     };
 
-    this.Save = function(para) {
+    this.Save = function (para) {
       return this.executePost("Post", para);
     };
   }
@@ -1194,19 +1201,19 @@
   function EmailAttachment() {
     this.name = "EmailAttachment";
 
-    this.ImagePost = function(para) {
+    this.ImagePost = function (para) {
       return this.executeUpload("ImagePost", para);
     };
 
-    this.AttachmentPost = function(para) {
+    this.AttachmentPost = function (para) {
       return this.executeUpload("AttachmentPost", para);
     };
 
-    this.DeleteAttachment = function(para) {
+    this.DeleteAttachment = function (para) {
       return this.executePost("DeleteAttachment", para);
     };
 
-    this.downloadAttachment = function(para) {
+    this.downloadAttachment = function (para) {
       return this._getUrl("msgfile", para);
     };
   }
@@ -1215,35 +1222,35 @@
   function EmailMessage() {
     this.name = "EmailMessage";
 
-    this.Delete = function(para) {
+    this.Delete = function (para) {
       return this.executePost("Deletes", para);
     };
 
-    this.Send = function(para) {
+    this.Send = function (para) {
       return this.executeUpload("Send", para);
     };
 
-    this.More = function(para) {
+    this.More = function (para) {
       return this.executeGet("More", para);
     };
 
-    this.Moves = function(para) {
+    this.Moves = function (para) {
       return this.executePost("Moves", para);
     };
 
-    this.getContent = function(para) {
+    this.getContent = function (para) {
       return this.executeGet("Content", para);
     };
 
-    this.getForwardContent = function(para) {
+    this.getForwardContent = function (para) {
       return this.executeGet("Forward", para);
     };
 
-    this.getReplyContent = function(para) {
+    this.getReplyContent = function (para) {
       return this.executeGet("Reply", para);
     };
 
-    this.MarkReads = function(para) {
+    this.MarkReads = function (para) {
       return this.executePost("MarkReads", para);
     };
   }
@@ -1252,115 +1259,115 @@
   function Publish() {
     this.name = "publish";
 
-    this.getRemoteSiteList = function(para) {
+    this.getRemoteSiteList = function (para) {
       return this.executePost("RemoteSiteList", para);
     };
 
-    this.pushItems = function(para) {
+    this.pushItems = function (para) {
       return this.executePost("pushItems", para);
     };
 
-    this.push = function(para) {
+    this.push = function (para) {
       return this.executePost("push", para);
     };
 
-    this.pull = function(para) {
+    this.pull = function (para) {
       return this.executePost("pull", para, true);
     };
 
-    this.pushLog = function(para) {
+    this.pushLog = function (para) {
       return this.executeGet("OutItem", para);
     };
 
-    this.pullLog = function(para) {
+    this.pullLog = function (para) {
       return this.executeGet("InItem", para);
     };
   }
   extend(Publish, BaseModel);
 
-  var UserPublish = function() {
+  var UserPublish = function () {
     this.name = "UserPublish";
 
-    this.getRemoteDomains = function(para) {
+    this.getRemoteDomains = function (para) {
       return this.executeGet("RemoteDomains", para);
     };
 
-    this.deleteServer = function(para) {
+    this.deleteServer = function (para) {
       return this.executePost("DeleteServer", para);
     };
 
-    this.updateServer = function(para) {
+    this.updateServer = function (para) {
       return this.executePost("UpdateServer", para);
     };
 
-    this.getRemoteDomains = function(para) {
+    this.getRemoteDomains = function (para) {
       return this.executeGet("RemoteDomains", para);
     };
   };
 
   extend(UserPublish, BaseModel);
 
-  var Dashboard = function() {
+  var Dashboard = function () {
     this.name = "Dashboard";
 
-    this.All = function(para) {
+    this.All = function (para) {
       return this.executeGet("All", para);
     };
 
-    this.getItems = function(para) {
+    this.getItems = function (para) {
       return this.executeGet("Items", para);
     };
   };
   extend(Dashboard, BaseModel);
 
-  var Form = function() {
+  var Form = function () {
     this.name = "Form";
 
-    this.GetEdit = function(para) {
+    this.GetEdit = function (para) {
       return this.executeGet("GetEdit", para);
     };
 
-    this.updateBody = function(para) {
+    this.updateBody = function (para) {
       return this.executePost("UpdateBody", para);
     };
 
-    this.getExternalList = function(para) {
+    this.getExternalList = function (para) {
       return this.executeGet("External", para);
     };
 
-    this.getEmbeddedList = function(para) {
+    this.getEmbeddedList = function (para) {
       return this.executeGet("Embedded", para);
     };
 
-    this.getSetting = function(para) {
+    this.getSetting = function (para) {
       return this.executeGet("GetSetting", para);
     };
 
-    this.updateSetting = function(para) {
+    this.updateSetting = function (para) {
       return this.executePost("UpdateSetting", para);
     };
 
-    this.getSource = function(para) {
+    this.getSource = function (para) {
       return this.executeGet("FormSource", para);
     };
 
-    this.UpdateForm = function(para) {
+    this.UpdateForm = function (para) {
       return this.executePost("UpdateForm", para);
     };
 
-    this.Values = function(para) {
+    this.Values = function (para) {
       return this.executeGet("FormValues", para);
     };
 
-    this.DeleteValues = function(para) {
+    this.DeleteValues = function (para) {
       return this.executePost("DeleteFormValues", para);
     };
 
-    this.getKoobooForm = function(para) {
+    this.getKoobooForm = function (para) {
       return this.executeGet("GetKoobooForm", para);
     };
 
-    this.updateKoobooForm = function(para) {
+    this.updateKoobooForm = function (para) {
       return this.executePost("UpdateKoobooForm", para);
     };
   };
@@ -1369,15 +1376,15 @@
   function File() {
     this.name = "File";
 
-    this.createFolder = function(para) {
+    this.createFolder = function (para) {
       return this.executePost("CreateFolder", para);
     };
 
-    this.deleteFolders = function(para) {
+    this.deleteFolders = function (para) {
       return this.executePost("DeleteFolders", para);
     };
 
-    this.deleteFiles = function(para) {
+    this.deleteFiles = function (para) {
       return this.executePost("DeleteFiles", para);
     };
   }
@@ -1386,7 +1393,7 @@
   function Profile() {
     this.name = "Profile";
 
-    this.getAccount = function(para) {
+    this.getAccount = function (para) {
       return this.executeGet("Account", para);
     };
   }
@@ -1395,15 +1402,15 @@
   function Disk() {
     this.name = "Disk";
 
-    this.CleanRepository = function(para) {
+    this.CleanRepository = function (para) {
       return this.executePost("CleanRepository", para);
     };
 
-    this.CleanLog = function(para) {
+    this.CleanLog = function (para) {
       return this.executePost("CleanLog", para);
     };
 
-    this.getSize = function(para) {
+    this.getSize = function (para) {
       return this.executeGet("GetSize", para);
     };
   }
@@ -1412,7 +1419,7 @@
   function Relation() {
     this.name = "Relation";
 
-    this.showBy = function(para) {
+    this.showBy = function (para) {
       return this.executeGet("ShowBy", para, true);
     };
   }
@@ -1421,15 +1428,15 @@
   function Url() {
     this.name = "Url";
 
-    this.getInternalList = function(para) {
+    this.getInternalList = function (para) {
       return this.executeGet("Internal", para);
     };
 
-    this.getExternalList = function(para) {
+    this.getExternalList = function (para) {
       return this.executeGet("External", para);
     };
 
-    this.updateUrl = function(para) {
+    this.updateUrl = function (para) {
       return this._getUrl("UpdateUrl", para);
     };
   }
@@ -1438,7 +1445,7 @@
   function Layout() {
     this.name = "Layout";
 
-    this.Copy = function(para) {
+    this.Copy = function (para) {
       return this.executePost("Copy", para);
     };
   }
@@ -1447,11 +1454,11 @@
   function System() {
     this.name = "System";
 
-    this.Version = function(para) {
+    this.Version = function (para) {
       return this.executeGet("Version", para, true, true);
     };
 
-    this.loadFile = function(para) {
+    this.loadFile = function (para) {
       var files;
       $.ajax({
         url: this._getUrl("loadFile"),
@@ -1459,9 +1466,9 @@
         dataType: "json",
         data: JSON.stringify(para),
         async: false,
-        success: function(res) {
+        success: function (res) {
           files = res.success ? res.model : {};
-        }
+        },
       });
       return files;
     };
@@ -1471,35 +1478,35 @@
   function Search() {
     this.name = "Search";
 
-    this.Enable = function(para) {
+    this.Enable = function (para) {
       return this.executePost("Enable", para);
     };
 
-    this.Disable = function(para) {
+    this.Disable = function (para) {
       return this.executePost("Disable", para);
     };
 
-    this.Rebuild = function(para) {
+    this.Rebuild = function (para) {
       return this.executePost("Rebuild", para);
     };
 
-    this.Clean = function(para) {
+    this.Clean = function (para) {
       return this.executePost("Clean", para);
     };
 
-    this.getIndexStat = function(para) {
+    this.getIndexStat = function (para) {
       return this.executeGet("IndexStat", para);
     };
 
-    this.getLastest = function(para) {
+    this.getLastest = function (para) {
       return this.executeGet("Lastest", para);
     };
 
-    this.SearchStat = function(para) {
+    this.SearchStat = function (para) {
       return this.executeGet("SearchStat", para);
     };
 
-    this.getWeekNames = function(para) {
+    this.getWeekNames = function (para) {
       return this.executeGet("WeekNames", para);
     };
   }
@@ -1508,7 +1515,7 @@
 
   function HtmlBlock() {
     this.name = "HtmlBlock";
-    this.syncPost = function(para) {
+    this.syncPost = function (para) {
       return this.executePost("Post", para, true, {}, true);
     };
   }
@@ -1517,11 +1524,11 @@
   function Cluster() {
     this.name = "Cluster";
 
-    this.get = function(para) {
+    this.get = function (para) {
       return this.executeGet("Get", para);
     };
 
-    this.isValidateCustomServer = function(para) {
+    this.isValidateCustomServer = function (para) {
       return this.executeGet("ValidateCustomServer", para);
     };
   }
@@ -1530,7 +1537,7 @@
   function KeyValue() {
     this.name = "KeyValue";
 
-    this.Update = function(para) {
+    this.Update = function (para) {
       return this.executePost("Update", para);
     };
   }
@@ -1539,11 +1546,11 @@
   function Code() {
     this.name = "Code";
 
-    this.getCodeType = function(para) {
+    this.getCodeType = function (para) {
       return this.executeGet("CodeType", para);
     };
 
-    this.getListByType = function(para) {
+    this.getListByType = function (para) {
       return this.executeGet("ListByType", para);
     };
   }
@@ -1552,27 +1559,27 @@
   function BusinessRule() {
     this.name = "BusinessRule";
 
-    this.getAvailableCodes = function(para) {
+    this.getAvailableCodes = function (para) {
       return this.executeGet("GetAvailableCodes", para);
     };
 
-    this.getListByEvent = function(para) {
+    this.getListByEvent = function (para) {
       return this.executeGet("ListByEvent", para);
     };
 
-    this.getConditionOption = function(para) {
+    this.getConditionOption = function (para) {
       return this.executeGet("ConditionOption", para);
     };
 
-    this.getSetting = function(para) {
+    this.getSetting = function (para) {
       return this.executeGet("GetSetting", para);
     };
 
-    this.getTemp = function(para) {
+    this.getTemp = function (para) {
       return this.executeGet("Temp", para);
     };
 
-    this.deleteRule = function(para) {
+    this.deleteRule = function (para) {
       return this.executePost("DeleteRule", para);
     };
   }
@@ -1581,28 +1588,28 @@
   function Debugger() {
     this.name = "Debugger";
 
-    this.startSession = function(para) {
-      return this.executeGet("StartSession", para);
+    this.getSession = function (para) {
+      return this.executeGet("GetSession", para, true);
     };
 
-    this.stopSession = function(para) {
+    this.startSession = function (para) {
+      return this.executeGet("StartSession", para, true);
+    };
+
+    this.stopSession = function (para) {
       return this.executeGet("StopSession", para, true, true);
     };
 
-    this.setBreakpoints = function(para) {
-      return this.executePost("SetBreakPoints", para, true);
+    this.setBreakpoint = function (para) {
+      return this.executePost("SetBreakPoint", para, true);
     };
 
-    this.step = function(para) {
+    this.step = function (para) {
       return this.executeGet("Step", para, true);
     };
 
-    this.getInfo = function(para) {
-      return this.executeGet("GetInfo", para, true);
-    };
-
-    this.execute = function(para) {
-      return this.executeGet("Execute", para, true);
+    this.execute = function (para) {
+      return this.executePost("Execute", para, true, false, false, true);
     };
   }
   extend(Debugger, BaseModel);
@@ -1610,18 +1617,18 @@
   function SiteUser() {
     this.name = "SiteUser";
 
-    this.getCurrentUsers = function(para) {
+    this.getCurrentUsers = function (para) {
       return this.executeGet("CurrentUsers", para);
     };
 
-    this.getAvailableUsers = function(para) {
+    this.getAvailableUsers = function (para) {
       return this.executeGet("AvailableUsers", para);
     };
-    this.getRoles = function(para) {
+    this.getRoles = function (para) {
       return this.executeGet("Roles", para);
     };
 
-    this.addUser = function(para) {
+    this.addUser = function (para) {
       return this.executePost("AddUser", para);
     };
   }
@@ -1630,11 +1637,11 @@
   function SqlLog() {
     this.name = "SqlLog";
 
-    this.list = function(para) {
+    this.list = function (para) {
       return this.executeGet("List", para);
     };
 
-    this.weeks = function(para) {
+    this.weeks = function (para) {
       return this.executeGet("Weeks", para);
     };
   }
@@ -1648,11 +1655,11 @@
   function Commerce() {
     this.name = "Commerce";
 
-    this.enableSites = function(para) {
+    this.enableSites = function (para) {
       return this.executePost("EnableSites", para);
     };
 
-    this.disableSites = function(para) {
+    this.disableSites = function (para) {
       return this.executePost("DisableSites", para);
     };
   }
@@ -1661,11 +1668,11 @@
   function Product() {
     this.name = "Product";
 
-    this.getEdit = function(para) {
+    this.getEdit = function (para) {
       return this.executeGet("GetEdit", para);
     };
 
-    this.getList = function(para) {
+    this.getList = function (para) {
       return this.executeGet("ProductList", para);
     };
   }
@@ -1673,7 +1680,7 @@
 
   function ProductType() {
     this.name = "ProductType";
-    this.getColumnsById = function(para) {
+    this.getColumnsById = function (para) {
       return this.executeGet("Columns", para);
     };
   }
@@ -1682,7 +1689,7 @@
   function ProductCategory() {
     this.name = "Category";
 
-    this.checkProuctCount = function(para) {
+    this.checkProuctCount = function (para) {
       return this.executeGet("CheckProuctCount", para);
     };
   }
@@ -1691,7 +1698,7 @@
   function KConfig() {
     this.name = "KConfig";
 
-    this.update = function(para) {
+    this.update = function (para) {
       return this.executePost("Update", para);
     };
   }
@@ -1700,19 +1707,19 @@
   function APIGeneration() {
     this.name = "APIGeneration";
 
-    this.getTypes = function(para) {
+    this.getTypes = function (para) {
       return this.executeGet("Types", para);
     };
 
-    this.getObjects = function(para) {
+    this.getObjects = function (para) {
       return this.executeGet("Objects", para);
     };
 
-    this.getActions = function(para) {
+    this.getActions = function (para) {
       return this.executeGet("Actions", para);
     };
 
-    this.Generate = function(para) {
+    this.Generate = function (para) {
       return this.executePost("Generate", para);
     };
   }
@@ -1721,7 +1728,7 @@
   function Currency() {
     this.name = "Currency";
 
-    this.change = function(para) {
+    this.change = function (para) {
       return this.executePost("Change", para);
     };
   }
@@ -1729,7 +1736,7 @@
 
   function CoreSetting() {
     this.name = "CoreSetting";
-    this.update = function(para) {
+    this.update = function (para) {
       return this.executePost("update", para);
     };
   }
@@ -1737,13 +1744,13 @@
 
   function TableRelation() {
     this.name = "TableRelation";
-    this.getTablesAndFields = function(para) {
+    this.getTablesAndFields = function (para) {
       return this.executeGet("getTablesAndFields", para);
     };
-    this.getRelationTypes = function(para) {
+    this.getRelationTypes = function (para) {
       return this.executeGet("getRelationTypes", para);
     };
-    this.addRelation = function(para) {
+    this.addRelation = function (para) {
       return this.executePost("AddRelation", para);
     };
   }
@@ -1829,11 +1836,11 @@
     UserPublish: new UserPublish(),
     Url: new Url(),
     View: new View(),
-    SqlLog:new SqlLog()
+    SqlLog: new SqlLog(),
   };
   wind.Kooboo.TextContent = new TextContent();
 
-  Kooboo.getQueryString = function(name, source) {
+  Kooboo.getQueryString = function (name, source) {
     if (!name) {
       return null;
     }
@@ -1845,7 +1852,7 @@
     }
     return null;
   };
-  Kooboo.getURLParams = function(search) {
+  Kooboo.getURLParams = function (search) {
     var params = {};
 
     if (search.indexOf("?") > -1) {
@@ -1853,14 +1860,14 @@
     }
 
     var temp = search.split("&");
-    temp.forEach(function(param) {
+    temp.forEach(function (param) {
       var match = param.match(/(\w*)+=(\S*)/);
       match && (params[match[1].toLowerCase()] = match[2]);
     });
 
     return params;
   };
-  Kooboo.isSameURLParams = function(p1, p2) {
+  Kooboo.isSameURLParams = function (p1, p2) {
     var key1 = Object.keys(p1),
       key2 = Object.keys(p2),
       same = true;
@@ -1881,11 +1888,11 @@
 
     return same;
   };
-  Kooboo.objToArr = function(obj, keyName, valueName) {
+  Kooboo.objToArr = function (obj, keyName, valueName) {
     var arr = [];
 
     if (obj) {
-      Object.keys(obj).forEach(function(key) {
+      Object.keys(obj).forEach(function (key) {
         var _temp = {};
         _temp[keyName || "key"] = key;
         _temp[valueName || "value"] = obj[key];
@@ -1895,7 +1902,7 @@
 
     return arr;
   };
-  Kooboo.arrToObj = function(arr, keyName, valueName) {
+  Kooboo.arrToObj = function (arr, keyName, valueName) {
     var obj = {};
     if (arr && arr.length) {
       for (var i = 0, len = arr.length; i < len; i++) {
@@ -1906,7 +1913,7 @@
     return obj;
   };
 
-  Kooboo.bytesToSize = function(filesize) {
+  Kooboo.bytesToSize = function (filesize) {
     var gigabytes = 1024 * 1024 * 1024;
     var returnValue = filesize / gigabytes;
     if (returnValue > 1) {
@@ -1922,7 +1929,7 @@
     return Math.floor(returnValue * 100) / 100 + " KB";
   };
 
-  Kooboo.getLabelClass = function(type) {
+  Kooboo.getLabelClass = function (type) {
     var _class = "";
     switch (type.toLowerCase()) {
       case "htmlblock":
@@ -1965,7 +1972,7 @@
     return _class;
   };
 
-  Kooboo.getLabelColor = function(type) {
+  Kooboo.getLabelColor = function (type) {
     var _color = "";
     switch (type.toLowerCase()) {
       case "htmlblock":
@@ -2008,7 +2015,7 @@
     return _color;
   };
 
-  Kooboo.trim = function(str) {
+  Kooboo.trim = function (str) {
     var whitespace =
       " \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000";
     for (var i = 0; i < str.length; i++) {
@@ -2026,7 +2033,7 @@
     return whitespace.indexOf(str.charAt(0)) === -1 ? str : "";
   };
 
-  Kooboo.handleFailMessages = function(messages) {
+  Kooboo.handleFailMessages = function (messages) {
     if (messages) {
       for (var i = 0, len = messages.length; i < len; i++) {
         window.info.fail(messages[i]);
@@ -2034,11 +2041,11 @@
     }
   };
 
-  Kooboo.getRandomId = function() {
+  Kooboo.getRandomId = function () {
     return "kb_id_" + +new Date() + Math.ceil(Math.random() * Math.pow(2, 20));
   };
 
-  Kooboo.getResourceTagId = function(type) {
+  Kooboo.getResourceTagId = function (type) {
     return (
       type +
       "-" +
@@ -2050,7 +2057,7 @@
 
   Kooboo.event = {
     input: {
-      positiveIntegerOnly: function(m, e) {
+      positiveIntegerOnly: function (m, e) {
         if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/) {
           return true;
         } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/) {
@@ -2063,7 +2070,7 @@
           return false;
         }
       },
-      positiveNumberOnly: function(m, e) {
+      positiveNumberOnly: function (m, e) {
         if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/) {
           return true;
         } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/) {
@@ -2080,7 +2087,7 @@
           return false;
         }
       },
-      inputNumberOnly: function(m, e) {
+      inputNumberOnly: function (m, e) {
         if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/) {
           return true;
         } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/) {
@@ -2096,11 +2103,11 @@
         } else {
           return false;
         }
-      }
-    }
+      },
+    },
   };
 
-  Kooboo.isFileNameExist = function(uploadFiles, localFiles) {
+  Kooboo.isFileNameExist = function (uploadFiles, localFiles) {
     var exist = false;
 
     for (var i = 0, len = uploadFiles.length; i < len; i++) {
@@ -2118,7 +2125,7 @@
 
     return exist;
   };
-  Kooboo.getTemplate = function(url) {
+  Kooboo.getTemplate = function (url) {
     if (localStorage.getItem(url)) {
       return localStorage.getItem(url);
     } else {
@@ -2128,21 +2135,21 @@
         type: "get",
         cache: true,
         async: false,
-        success: function(res) {
+        success: function (res) {
           text = res;
           localStorage.setItem(url, res);
-        }
+        },
       });
       return text;
     }
   };
-  Kooboo.loadJS = function(paths, fromLayout) {
-    $("script[spa-script]", $("head")).each(function(idx, script) {
+  Kooboo.loadJS = function (paths, fromLayout) {
+    $("script[spa-script]", $("head")).each(function (idx, script) {
       $(script).remove();
     });
 
     var unCachedScripts = [];
-    paths.forEach(function(path) {
+    paths.forEach(function (path) {
       var hasCached = localStorage.getItem(path);
       if (hasCached) {
         loadJS(path, hasCached, fromLayout);
@@ -2154,7 +2161,7 @@
     if (unCachedScripts.length) {
       var scripts = Kooboo.System.loadFile(unCachedScripts);
       var _paths = Object.keys(scripts);
-      _paths.forEach(function(path) {
+      _paths.forEach(function (path) {
         if (scripts[path]) {
           loadJS(path, scripts[path], fromLayout);
           localStorage.setItem(path, scripts[path]);
@@ -2187,13 +2194,13 @@
     }
   };
 
-  Kooboo.loadCSS = function(paths) {
-    $("style[data-href]", $("head")).each(function(idx, style) {
+  Kooboo.loadCSS = function (paths) {
+    $("style[data-href]", $("head")).each(function (idx, style) {
       $(style).remove();
     });
 
     var unCachedStyles = [];
-    paths.forEach(function(path) {
+    paths.forEach(function (path) {
       var hasCached = localStorage.getItem(path);
       hasCached ? loadCSS(path, hasCached) : unCachedStyles.push(path);
     });
@@ -2201,7 +2208,7 @@
     if (unCachedStyles.length) {
       var styles = Kooboo.System.loadFile(unCachedStyles);
       var _paths = Object.keys(styles);
-      _paths.forEach(function(path) {
+      _paths.forEach(function (path) {
         localStorage.setItem(path, styles[path]);
         loadCSS(path, styles[path]);
       });
@@ -2214,7 +2221,7 @@
   };
 
   var _rules = {
-    required: function(value) {
+    required: function (value) {
       if (
         value == undefined ||
         value == null ||
@@ -2225,10 +2232,10 @@
         return false;
       } else return true;
     },
-    pattern: function(value, pattern) {
+    pattern: function (value, pattern) {
       return pattern.test(value);
     },
-    min: function(value, min) {
+    min: function (value, min) {
       if (typeof value == "number") {
         return value >= min;
       } else if (value === null) {
@@ -2237,7 +2244,7 @@
         return value.length >= min;
       }
     },
-    max: function(value, max) {
+    max: function (value, max) {
       if (typeof value == "number") {
         return value <= max;
       } else if (value === null) {
@@ -2246,19 +2253,19 @@
         return value.length <= max;
       }
     },
-    validate: function(value, validate) {
+    validate: function (value, validate) {
       return validate(value);
     },
-    remote: function(value, params) {
+    remote: function (value, params) {
       var res = $.ajax(params.url, {
         type: params.type || "get",
         data: params.data(),
-        async: false
+        async: false,
       });
       return res.responseJSON.success;
-    }
+    },
   };
-  Kooboo.validField = function(prop, rules) {
+  Kooboo.validField = function (prop, rules) {
     var result = { valid: true, msg: "" };
     for (var i = 0; i < rules.length; i++) {
       var item = rules[i];
@@ -2274,7 +2281,7 @@
     }
     return result;
   };
-  Kooboo.validate = function(model, ruleModel) {
+  Kooboo.validate = function (model, ruleModel) {
     var result = {};
     var hasError = false;
     for (var key in model) {
@@ -2287,20 +2294,20 @@
     }
     return { result: result, hasError: hasError };
   };
-  Kooboo.trigger = function(el, type) {
+  Kooboo.trigger = function (el, type) {
     var e = document.createEvent("HTMLEvents");
     e.initEvent(type, true, true);
     el.dispatchEvent(e);
   };
 
-  Kooboo.isLocal = function() {
+  Kooboo.isLocal = function () {
     return !!document.getElementById("isLocal");
   };
 
-  Kooboo.GetCookie = function(key) {
+  Kooboo.GetCookie = function (key) {
     var value = null;
 
-    document.cookie.split(";").find(function(m) {
+    document.cookie.split(";").find(function (m) {
       var keyvalue = m.trim().split("=");
       if (keyvalue[0] == key) {
         value = keyvalue[1];

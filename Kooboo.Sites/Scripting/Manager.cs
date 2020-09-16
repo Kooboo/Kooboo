@@ -14,6 +14,9 @@ using Kooboo.Lib.Reflection;
 using Jint.Runtime;
 using KScript;
 using Kooboo.Data.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
+using Kooboo.Sites.ScriptDebugger;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -68,13 +71,17 @@ namespace Kooboo.Sites.Scripting
             return item;
         }
 
-        public static Jint.Engine GetDebugJsEngine(RenderContext context)
+        public static Jint.Engine GetDebugJsEngine(RenderContext context, ScriptDebugger.DebugSession session)
         {
+            session.CurrentContext = context;
             var item = context.GetItem<Jint.Engine>(DebuggerEngineName);
 
             if (item == null)
             {
                 item = new Jint.Engine(JintSetting.SetDebugOption);
+
+                item.Break += (s, e) => EngineStepOrBreak(s, e, session);
+                item.Step += (s, e) => EngineStepOrBreak(s, e, session);
 
                 var kcontext = context.GetItem<k>();
                 if (kcontext == null)
@@ -87,6 +94,7 @@ namespace Kooboo.Sites.Scripting
 
                 context.SetItem<Jint.Engine>(item, DebuggerEngineName);
             }
+
             return item;
         }
 
@@ -244,240 +252,53 @@ namespace Kooboo.Sites.Scripting
 
         public static string ExecuteCode(RenderContext context, string JsCode, Guid CodeId = default(Guid))
         {
-            if (string.IsNullOrEmpty(JsCode))
-            {
-                return null;
-            }
+            if (string.IsNullOrEmpty(JsCode)) return null;
+            var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
+            var debugMode = debugsession != null;
+            var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
+            if (debugMode) ExchangeDebugInfo(CodeId, debugsession, engine);
 
-            Jint.Engine engine = null;
-
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, CodeId);
-
-            if (debugsession == null)
-            {
-                engine = Kooboo.Sites.Scripting.Manager.GetJsEngine(context);
-            }
-            else
-            {
-                engine = Kooboo.Sites.Scripting.Manager.GetDebugJsEngine(context);
-
-                foreach (var item in debugsession.BreakLines)
-                {
-                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item, 0));
-                }
-
-                debugsession.JsEngine = engine;
-
-                engine.Break += (s, e) => Engine_Break(s, e, debugsession);
-
-                engine.Step += (s, e) => Engine_Step(s, e, debugsession);
-
-            }
             try
             {
                 engine.ExecuteWithErrorHandle(JsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
+                if (debugMode) debugsession.End = true;
             }
             catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
-
-                if (debugsession != null)
-                {
-                    var info = new ScriptDebugger.DebugInfo
-                    {
-                        Start = new Jint.Parser.Position() { Line = -1 },
-                        End = new Jint.Parser.Position() { Line = -1 },
-                        EndOfExe = true,
-                        HasValue = true,
-                        IsException = true
-                    };
-
-                    if (ex is JavaScriptException)
-                    {
-                        var jsex = ex as JavaScriptException;
-                        info.Start.Line = jsex.LineNumber;
-                        info.End.Line = jsex.LineNumber;
-
-                        info.Message = "Line " + jsex.LineNumber.ToString() + " " + jsex.Error.ToString() + " " + jsex.Message + " " + jsex.Source;
-                    }
-                    else
-                    {
-                        info.Message = ex.Message + ex.StackTrace;
-                    }
-
-                    debugsession.DebugInfo = info;
-                }
-
+                Data.Log.Instance.Exception.WriteException(ex);
+                if (debugMode) debugsession.Exception = ex;
                 return ex.Message;
-
-            }
-
-            if (debugsession != null)
-            {
-                if (debugsession.DebugInfo != null)
-                {
-                    debugsession.DebugInfo.EndOfExe = true;
-                }
-                else
-                {
-                    var info = new ScriptDebugger.DebugInfo
-                    {
-                        Start = new Jint.Parser.Position() { Line = -1 },
-                        End = new Jint.Parser.Position() { Line = -1 },
-                        EndOfExe = true,
-                        HasValue = true
-                    };
-                    debugsession.DebugInfo = info;
-                }
             }
 
             return ReturnValue(context, engine);
         }
 
-
-        public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
+        public static void ExchangeDebugInfo(Guid CodeId, DebugSession debugsession, Jint.Engine engine)
         {
-            if (string.IsNullOrEmpty(InnerJsCode))
+            engine.BreakPoints.Clear();
+
+            foreach (var item in debugsession.BreakLines.Where(w => w.codeId == CodeId))
             {
-                return null;
+                engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item.Line, 0));
             }
 
-            Jint.Engine engine = null;
-
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, InnerJsCode);
-
-            if (debugsession == null)
-            {
-                engine = Kooboo.Sites.Scripting.Manager.GetJsEngine(context);
-            }
-            else
-            {
-                engine = Kooboo.Sites.Scripting.Manager.GetDebugJsEngine(context);
-
-                foreach (var item in debugsession.BreakLines)
-                {
-                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item, 0));
-                }
-
-                debugsession.JsEngine = engine;
-
-                engine.Break += (s, e) => Engine_Break(s, e, debugsession);
-
-                engine.Step += (s, e) => Engine_Step(s, e, debugsession);
-
-            }
-            try
-            {
-                engine.ExecuteWithErrorHandle(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
-            }
-            catch (Exception ex)
-            {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
-                return ex.Message;
-            }
-
-            if (debugsession != null)
-            {
-                var info = new ScriptDebugger.DebugInfo
-                {
-                    Start = new Jint.Parser.Position() { Line = -1 },
-                    End = new Jint.Parser.Position() { Line = -1 },
-                    EndOfExe = true,
-                    HasValue = true
-                };
-                debugsession.DebugInfo = info;
-            }
-
-            return ReturnValue(context, engine);
+            debugsession.JsEngine = engine;
+            debugsession.CurrentCodeId = CodeId;
+            debugsession.End = false;
         }
-
-        private static string ReturnValue(RenderContext context, Jint.Engine engine)
-        {
-            // string writeout = EngineReturnValue(engine);
-
-            string output = context.GetItem<string>(Constants.OutputName);
-            if (!string.IsNullOrWhiteSpace(output))
-            {
-                context.SetItem<string>(null, Constants.OutputName);
-
-                return output; 
-            } 
-    
-           return null;
-         
-        }
-
-        private static string EngineReturnValue(Jint.Engine engine)
-        {
-            var returnitem = engine.GetCompletionValue();
-            if (returnitem != null && !returnitem.IsNull())
-            {
-                var jsvalue = returnitem as JsValue;
-                if (jsvalue != null)
-                {
-                    if (jsvalue.Type == Types.Null || jsvalue.Type == Types.None)
-                    {
-                        return null;
-                    }
-                    else if (jsvalue.Type == Types.Object)
-                    {
-                        var obj = jsvalue.ToObject();
-                        if (obj != null)
-                        {
-                            return Lib.Helper.JsonHelper.Serialize(obj);
-                        }
-                    }
-                    else
-                    {
-                        return jsvalue.ToString();
-                    }
-                }
-            }
-            return null;
-        }
-
-
 
         public static object ExecuteDataSource(RenderContext context, Guid CodeId, Dictionary<string, object> parameters)
         {
-            var sitedb = context.WebSite.SiteDb();
-
-            var code = sitedb.Code.Get(CodeId);
-
-            if (code == null)
-            {
-                return null;
-            }
-
+            var code = context.WebSite.SiteDb().Code.Get(CodeId);
+            if (code == null) return null;
+            var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
+            var debugMode = debugsession != null;
+            var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
             object result = null;
-            Jint.Engine engine = null;
-
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, code.Id);
-
-            if (debugsession == null)
-            {
-                engine = Kooboo.Sites.Scripting.Manager.GetJsEngine(context);
-            }
-            else
-            {
-                engine = Kooboo.Sites.Scripting.Manager.GetDebugJsEngine(context);
-
-                foreach (var item in debugsession.BreakLines)
-                {
-                    engine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item, 0));
-                }
-
-                debugsession.JsEngine = engine;
-
-                engine.Break += (s, e) => Engine_Break(s, e, debugsession);
-
-                engine.Step += (s, e) => Engine_Step(s, e, debugsession);
-
-            }
+            if (debugMode) ExchangeDebugInfo(CodeId, debugsession, engine);
 
             try
             {
-
                 var kcontext = context.GetItem<k>();
 
                 Dictionary<string, string> config = new Dictionary<string, string>();
@@ -498,9 +319,8 @@ namespace Kooboo.Sites.Scripting
 
                 kcontext.config = new KDictionary(config);
                 kcontext.ReturnValues.Clear();
-
                 engine.ExecuteWithErrorHandle(code.Body, new Jint.Parser.ParserOptions() { Tolerant = true });
-
+                if (debugMode) debugsession.End = true;
                 kcontext.config = null;
 
                 if (kcontext.ReturnValues.Count > 0)
@@ -510,124 +330,84 @@ namespace Kooboo.Sites.Scripting
             }
             catch (Exception ex)
             {
+                if (debugMode) debugsession.Exception = ex;
                 return ex.Message;
-            }
-
-            if (debugsession != null)
-            {
-                var info = new ScriptDebugger.DebugInfo
-                {
-                    Start = new Jint.Parser.Position() { Line = -1 },
-                    End = new Jint.Parser.Position() { Line = -1 },
-                    EndOfExe = true,
-                    HasValue = true
-                };
-                debugsession.DebugInfo = info;
             }
 
             return result;
         }
 
-
-        private static Jint.Runtime.Debugger.StepMode Engine_Step(object sender, Jint.Runtime.Debugger.DebugInformation e, ScriptDebugger.DebugSession session)
+        public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
         {
-            if (session.EndOfSession)
+            if (string.IsNullOrEmpty(InnerJsCode)) return null;
+            var debugsession = ScriptDebugger.SessionManager.GetSession(context, DebugSession.GetWay.CurrentContext);
+            var debugMode = debugsession != null;
+            var engine = debugMode ? GetDebugJsEngine(context, debugsession) : GetJsEngine(context);
+
+            if (debugMode)
             {
-                return Jint.Runtime.Debugger.StepMode.None;
+                var hash = Lib.Security.Hash.ComputeIntCaseSensitive(InnerJsCode);
+                var sitedb = context.WebSite.SiteDb();
+                var codeId = sitedb.Code.Store.Where(o => o.BodyHash == hash).FirstOrDefault()?.Id;
+                ExchangeDebugInfo(codeId.GetValueOrDefault(), debugsession, engine);
+                debugsession.End = false;
             }
 
-            var info = new ScriptDebugger.DebugInfo
+            try
             {
-                Start = e.CurrentStatement.Location.Start,
-                End = e.CurrentStatement.Location.End,
-
-                Variables = Kooboo.Sites.Scripting.Manager.GetVariables(sender as Jint.Engine)
-            };
-
-            session.DebugInfo = info;
-
-            int count = 1;
-            while (session.Action == null)
+                engine.ExecuteWithErrorHandle(InnerJsCode, new Jint.Parser.ParserOptions() { Tolerant = true });
+                if (debugMode) debugsession.End = true;
+            }
+            catch (Exception ex)
             {
-                System.Threading.Thread.Sleep(100);
-                count += 1;
-                if (count > 10000)
-                {
-                    break;
-                }
-
-                if (session.EndOfSession)
-                {
-                    return Jint.Runtime.Debugger.StepMode.None;
-                }
+                Data.Log.Instance.Exception.WriteException(ex);
+                if (debugMode) debugsession.Exception = ex;
+                return ex.Message;
             }
 
-
-            if (session.EndOfSession)
-            {
-                return Jint.Runtime.Debugger.StepMode.None;
-            }
-
-            if (session.Action != null)
-            {
-                var mode = session.Action.StepMode;
-                session.Action = null;
-                return mode;
-            }
-
-            return Jint.Runtime.Debugger.StepMode.None;
+            return ReturnValue(context, engine);
         }
 
-        private static Jint.Runtime.Debugger.StepMode Engine_Break(object sender, Jint.Runtime.Debugger.DebugInformation e, ScriptDebugger.DebugSession session)
+        private static string ReturnValue(RenderContext context, Jint.Engine engine)
         {
-            if (session.EndOfSession)
+            // string writeout = EngineReturnValue(engine);
+
+            string output = context.GetItem<string>(Constants.OutputName);
+            if (!string.IsNullOrWhiteSpace(output))
             {
-                return Jint.Runtime.Debugger.StepMode.None;
-            }
-            var info = new ScriptDebugger.DebugInfo
-            {
-                Start = e.CurrentStatement.Location.Start,
-                End = e.CurrentStatement.Location.End,
+                context.SetItem<string>(null, Constants.OutputName);
 
-                Variables = Kooboo.Sites.Scripting.Manager.GetVariables(sender as Jint.Engine)
-            };
-
-            session.DebugInfo = info;
-
-            int count = 1;
-            while (session.Action == null)
-            {
-                System.Threading.Thread.Sleep(100);
-                count += 1;
-                if (count > 10000)
-                {
-                    break;
-                }
-
-                if (session.EndOfSession)
-                {
-                    return Jint.Runtime.Debugger.StepMode.None;
-                }
+                return output;
             }
 
-            if (session.EndOfSession)
-            {
-                return Jint.Runtime.Debugger.StepMode.None;
-            }
+            return null;
 
-            if (session.Action != null)
-            {
-                var mode = session.Action.StepMode;
-                session.Action = null;
-                return mode;
-            }
-
-            return Jint.Runtime.Debugger.StepMode.None;
         }
 
-        public static Kooboo.Sites.ScriptDebugger.DebugVariables GetVariables(Jint.Engine engines)
+        private static Jint.Runtime.Debugger.StepMode EngineStepOrBreak(object sender, Jint.Runtime.Debugger.DebugInformation e, DebugSession session)
         {
-            ScriptDebugger.DebugVariables variables = new ScriptDebugger.DebugVariables();
+            try
+            {
+                if (session.Exception != null) return Jint.Runtime.Debugger.StepMode.None;
+
+                session.HandleStep(new DebugInfo
+                {
+                    CurrentLine = e.CurrentStatement.Location.Start.Line,
+                    Variables = GetVariables(session.JsEngine)
+                });
+
+                Task.Delay(new TimeSpan(0, 10, 0), session.CancellationTokenSource.Token).Wait();
+                return Jint.Runtime.Debugger.StepMode.None;
+            }
+            catch
+            {
+                return session.StepMode;
+            }
+        }
+
+        public static DebugVariables GetVariables(Jint.Engine engines)
+        {
+            DebugVariables variables = new DebugVariables();
 
             if (engines.ExecutionContext.LexicalEnvironment != null)
             {
@@ -712,9 +492,9 @@ namespace Kooboo.Sites.Scripting
             }
             else
             {
-                if (value is Jint.Native.JsValue)
+                if (value is JsValue)
                 {
-                    var jsvalue = value as Jint.Native.JsValue;
+                    var jsvalue = value as JsValue;
                     if (jsvalue != null)
                     {
                         var jsobject = jsvalue.ToObject();
