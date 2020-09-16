@@ -201,7 +201,7 @@
               <li class="list-group-item" v-for="($data, $index) in rule.activity" :key="$index">
                   <span class="sortable"><i class="glyphicon glyphicon-list"></i></span>
                   <a class="btn btn-xs pull-right gray" href="javascript:;" @click.prevent="$root.removeActivity(rule.activity, $index)"><i class="fa fa-minus"></i></a>
-                  <a class="btn btn-xs pull-right blue margin-right-10" href="javascript:;" @click.prevent="$root.editActivity($data, $index)"><i class="fa fa-pencil"></i></a>
+                  <a class="btn btn-xs pull-right blue margin-right-10" href="javascript:;" @click.prevent="$root.editActivity($data, $index ,rule)"><i class="fa fa-pencil"></i></a>
                   <span class="text">{{ $data.name }}</span>
               </li>
           </ul>
