@@ -129,6 +129,7 @@
   <div class="preview-panel" v-if="showPreviewPanel">
     <div class="url-ctrl">
       <input v-model="previewUrl" @keydown.enter="goToPreview" />
+      <i class="fa fa-refresh" @click="goToPreview" style="margin-right: 10px;" ></i></span>
       <i class="fa fa-close" @click="showPreviewPanel=false"></i>
     </div>
     <iframe :src="iframeUrl"> </iframe>
