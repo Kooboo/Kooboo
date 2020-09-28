@@ -186,20 +186,11 @@ namespace Kooboo.Web.Api.Implementation
         }
 
 
-        public bool VerifySsl(ApiCall call)
+        public bool VerifySsl(string rootDomain, ApiCall call)
         {
-            var rootDomain = call.GetRequestValue("rootDomain");
-            var Subdomain = call.GetRequestValue("Subdomain");
+            string Subdomain = call.GetValue("Subdomain");
 
-            string fullname = null;
-            if (rootDomain.StartsWith("."))
-            {
-                fullname = Subdomain + rootDomain;
-            }
-            else
-            {
-                fullname = Subdomain + "." + rootDomain;
-            }
+            string fullname = CombineDomain(rootDomain, Subdomain);
 
             var ok = Kooboo.Data.SSL.SslService.EnsureCheck(fullname);
             if (ok)
@@ -212,20 +203,11 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public void SetSsl(ApiCall call)
+        public void SetSsl(string rootDomain, ApiCall call)
         {
-            var rootDomain = call.GetRequestValue("rootDomain");
-            var Subdomain = call.GetRequestValue("Subdomain");
-            string fullname = null;
+            string Subdomain = call.GetValue("Subdomain");
 
-            if (rootDomain.StartsWith("."))
-            {
-                fullname = Subdomain + rootDomain;
-            }
-            else
-            {
-                fullname = Subdomain + "." + rootDomain;
-            }
+            string fullname = CombineDomain(rootDomain, Subdomain);
 
             Guid Orgid = default(Guid);
 
@@ -243,6 +225,27 @@ namespace Kooboo.Web.Api.Implementation
             Kooboo.Data.SSL.SslService.SetSsl(fullname, Orgid);
         }
 
+        private string CombineDomain(string rootDoamin, string subDomain)
+        {
+            if (rootDoamin == null)
+            {
+                return null;
+            }
+
+            if (rootDoamin.StartsWith("."))
+            {
+                rootDoamin = rootDoamin.Substring(1);
+            }
+
+            if (string.IsNullOrWhiteSpace(subDomain))
+            {
+                return rootDoamin;
+            }
+            else
+            {
+                return subDomain + "." + rootDoamin;
+            }
+        }
 
         public List<SiteBindingViewModel> SiteBinding(ApiCall call)
         {
