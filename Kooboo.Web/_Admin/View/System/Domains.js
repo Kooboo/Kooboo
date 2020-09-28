@@ -28,7 +28,7 @@ $(function() {
               message: Kooboo.text.validation.objectNameRegex
             },
             {
-              min: 1,
+              min: 0,
               max: 63,
               message:
                 Kooboo.text.validation.minLength +
