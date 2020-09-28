@@ -186,8 +186,11 @@ namespace Kooboo.Web.Api.Implementation
         }
 
 
-        public bool VerifySsl(string rootDomain, string Subdomain, ApiCall call)
+        public bool VerifySsl(ApiCall call)
         {
+            var rootDomain = call.GetRequestValue("rootDomain");
+            var Subdomain = call.GetRequestValue("Subdomain");
+
             string fullname = null;
             if (rootDomain.StartsWith("."))
             {
@@ -209,9 +212,12 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public void SetSsl(string rootDomain, string Subdomain, ApiCall call)
+        public void SetSsl(ApiCall call)
         {
+            var rootDomain = call.GetRequestValue("rootDomain");
+            var Subdomain = call.GetRequestValue("Subdomain");
             string fullname = null;
+
             if (rootDomain.StartsWith("."))
             {
                 fullname = Subdomain + rootDomain;
