@@ -103,6 +103,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="modules\Authorization.Module.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="modules\DaFang.Module.zip">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
