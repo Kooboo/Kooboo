@@ -35,7 +35,7 @@ namespace Kooboo.Data.Repository
         private Dictionary<string, Guid> AccessToken = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
 
 
-        public void AddOrUpdateTemp(User user, bool Overwrite = false)
+        private void AddOrUpdateTemp(User user, bool Overwrite = false)
         {
             user.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
             AddOrUpdateCache(user, Overwrite);
@@ -72,7 +72,7 @@ namespace Kooboo.Data.Repository
             }
         }
 
-        public void AddOrUpdateLocal(User user, bool overwrite = false)
+        private void AddOrUpdateLocal(User user, bool overwrite = false)
         {
             lock (_locker)
             {
