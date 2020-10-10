@@ -4,7 +4,7 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Text;
-using System.Net.Security;    
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -15,7 +15,7 @@ namespace WxPayAPI
     /// </summary>
     public class HttpService
     {
-        private static string USER_AGENT = string.Format("WXPaySDK/{3} ({0}) .net/{1} {2}", Environment.OSVersion, Environment.Version, WxPayConfig.GetConfig().GetMchID(), typeof(HttpService).Assembly.GetName().Version);
+        private static string USER_AGENT(string mchId) => string.Format("WXPaySDK/{3} ({0}) .net/{1} {2}", Environment.OSVersion, Environment.Version, mchId, typeof(HttpService).Assembly.GetName().Version);
 
         public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
@@ -23,7 +23,7 @@ namespace WxPayAPI
             return true;
         }
 
-        public static string Post(string xml, string url, bool isUseCert, int timeout)
+        public static string Post(string xml, string url, bool isUseCert, int timeout, string mchId)
         {
             System.GC.Collect();//垃圾回收，回收没有正常关闭的http连接
 
@@ -48,7 +48,7 @@ namespace WxPayAPI
                 * 下面设置HttpWebRequest的相关属性
                 * ************************************************************/
                 request = (HttpWebRequest)WebRequest.Create(url);
-                request.UserAgent = USER_AGENT;
+                request.UserAgent = USER_AGENT(mchId);
                 request.Method = "POST";
                 request.Timeout = timeout * 1000;
 
@@ -115,7 +115,7 @@ namespace WxPayAPI
                 {
                     response.Close();
                 }
-                if(request != null)
+                if (request != null)
                 {
                     request.Abort();
                 }
@@ -128,7 +128,7 @@ namespace WxPayAPI
         /// </summary>
         /// <param name="url">请求的url地址</param>
         /// <returns>http GET成功后返回的数据，失败抛WebException异常</returns>
-        public static string Get(string url)
+        public static string Get(string url, string mchId)
         {
             System.GC.Collect();
             string result = "";
@@ -152,7 +152,7 @@ namespace WxPayAPI
                 * 下面设置HttpWebRequest的相关属性
                 * ************************************************************/
                 request = (HttpWebRequest)WebRequest.Create(url);
-                request.UserAgent = USER_AGENT;
+                request.UserAgent = USER_AGENT(mchId);
                 request.Method = "GET";
 
                 //获取服务器返回
@@ -165,7 +165,7 @@ namespace WxPayAPI
             }
             catch (System.Threading.ThreadAbortException e)
             {
-                Log.Error("HttpService","Thread - caught ThreadAbortException - resetting.");
+                Log.Error("HttpService", "Thread - caught ThreadAbortException - resetting.");
                 Log.Error("Exception message: {0}", e.Message);
                 System.Threading.Thread.ResetAbort();
             }

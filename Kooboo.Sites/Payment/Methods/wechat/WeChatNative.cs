@@ -59,7 +59,7 @@ var timerid = setInterval(checkStatus, 1000);
 </script>")]
         public IPaymentResponse Charge(PaymentRequest request)
         {
-            WxPayData data = new WxPayData();
+            WxPayData data = new WxPayData(Setting);
 
             if (this.Setting == null)
             {
@@ -129,7 +129,7 @@ var timerid = setInterval(checkStatus, 1000);
             }
 
 
-            WxPayData data = new WxPayData();
+            WxPayData data = new WxPayData(Setting);
             try
             {
                 data.FromXml(postdata);
@@ -137,7 +137,7 @@ var timerid = setInterval(checkStatus, 1000);
             catch (WxPayException ex)
             {
                 //若签名错误，则立即返回结果给微信支付后台
-                WxPayData res = new WxPayData();
+                WxPayData res = new WxPayData(Setting);
                 res.SetValue("return_code", "FAIL");
                 res.SetValue("return_msg", ex.Message);
                 // Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
@@ -159,7 +159,7 @@ var timerid = setInterval(checkStatus, 1000);
             if (!data.IsSet("transaction_id"))
             {
                 //若transaction_id不存在，则立即返回结果给微信支付后台
-                WxPayData res = new WxPayData();
+                WxPayData res = new WxPayData(Setting);
                 res.SetValue("return_code", "FAIL");
                 res.SetValue("return_msg", "支付结果中微信订单号不存在");
                 // Log.Error(this.GetType().ToString(), "The Pay result is error : " + res.ToXml());
@@ -171,7 +171,7 @@ var timerid = setInterval(checkStatus, 1000);
                     Content = res.ToXml(),
                     ContentType = "Application/Xml"
                 };
-                 
+
                 return result;
             }
 
@@ -181,7 +181,7 @@ var timerid = setInterval(checkStatus, 1000);
 
             if (obj == null || !System.Guid.TryParse(obj.ToString(), out RequestId))
             {
-                WxPayData res = new WxPayData();
+                WxPayData res = new WxPayData(Setting);
                 res.SetValue("return_code", "FAIL");
                 res.SetValue("return_msg", "订单查询失败");
                 result.CallbackResponse = new CallbackResponse()
@@ -193,7 +193,7 @@ var timerid = setInterval(checkStatus, 1000);
             }
             else
             {
-                WxPayData res = new WxPayData();
+                WxPayData res = new WxPayData(Setting);
                 res.SetValue("return_code", "SUCCESS");
                 res.SetValue("return_msg", "OK");
                 result.CallbackResponse = new CallbackResponse()
@@ -237,7 +237,7 @@ var timerid = setInterval(checkStatus, 1000);
 
             try
             {
-                var data = new WxPayData();
+                var data = new WxPayData(Setting);
                 data.SetValue("out_trade_no", request.Id.ToString("N"));
                 var response = WxPayApi.OrderQuery(data, this.Setting);
 

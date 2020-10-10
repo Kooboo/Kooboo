@@ -5,12 +5,11 @@ using System.Xml;
 using System.Security.Cryptography;
 using System.Text;
 using WxPayAPI.lib;
-using System.Linq; 
-
-
+using System.Linq;
+using Kooboo.Sites.Payment.Methods;
 
 namespace WxPayAPI
-{ 
+{
 
     /// <summary>
     /// 微信支付协议接口数据类，所有的API接口通信都依赖这个数据结构，
@@ -20,11 +19,13 @@ namespace WxPayAPI
     /// </summary>
     public class WxPayData
     {
-        public  const string SIGN_TYPE_MD5 = "MD5";
-        public  const string SIGN_TYPE_HMAC_SHA256 = "HMAC-SHA256";
-        public WxPayData()
-        {
+        public const string SIGN_TYPE_MD5 = "MD5";
+        public const string SIGN_TYPE_HMAC_SHA256 = "HMAC-SHA256";
+        public WeChatSetting _setting;
 
+        public WxPayData(WeChatSetting setting)
+        {
+            _setting = setting;
         }
 
         //采用排序的Dictionary的好处是方便对数据包进行签名，不用再签名之前再做一次排序
@@ -125,7 +126,7 @@ namespace WxPayAPI
                 throw new WxPayException("将空的xml串转换为WxPayData不合法!");
             }
 
-			
+
             SafeXmlDocument xmlDoc = new SafeXmlDocument();
             xmlDoc.LoadXml(xml);
             XmlNode xmlNode = xmlDoc.FirstChild;//获取到根节点<xml>
@@ -135,17 +136,17 @@ namespace WxPayAPI
                 XmlElement xe = (XmlElement)xn;
                 m_values[xe.Name] = xe.InnerText;//获取xml的键值对到WxPayData内部的数据中
             }
-			
+
             try
             {
-				//2015-06-29 错误是没有签名
-				if(m_values["return_code"] != "SUCCESS")
-				{
-					return m_values;
-				}
+                //2015-06-29 错误是没有签名
+                if (m_values["return_code"] != "SUCCESS")
+                {
+                    return m_values;
+                }
                 CheckSign();//验证签名,不通过会抛异常
             }
-            catch(WxPayException ex)
+            catch (WxPayException ex)
             {
                 throw new WxPayException(ex.Message);
             }
@@ -206,7 +207,7 @@ namespace WxPayAPI
 
                 str += string.Format("{0}={1}\n", pair.Key, pair.Value.ToString());
             }
-            str =  System.Web.HttpUtility.HtmlEncode(str);
+            str = System.Web.HttpUtility.HtmlEncode(str);
             Log.Debug(this.GetType().ToString(), "Print in Web Page : " + str);
             return str;
         }
@@ -216,11 +217,12 @@ namespace WxPayAPI
         * @生成签名，详见签名生成算法
         * @return 签名, sign字段不参加签名
         */
-        public string MakeSign(string signType){
+        public string MakeSign(string signType)
+        {
             //转url格式
             string str = ToUrl();
             //在string后加入API KEY
-            str += "&key=" + WxPayConfig.GetConfig().GetKey();
+            str += "&key=" + _setting.Key;
             if (signType == SIGN_TYPE_MD5)
             {
                 var md5 = MD5.Create();
@@ -233,10 +235,12 @@ namespace WxPayAPI
                 //所有字符转为大写
                 return sb.ToString().ToUpper();
             }
-            else if(signType==SIGN_TYPE_HMAC_SHA256)
+            else if (signType == SIGN_TYPE_HMAC_SHA256)
             {
-                return CalcHMACSHA256Hash(str, WxPayConfig.GetConfig().GetKey());
-            }else{
+                return CalcHMACSHA256Hash(str, _setting.Key);
+            }
+            else
+            {
                 throw new WxPayException("sign_type 不合法");
             }
         }
@@ -249,7 +253,7 @@ namespace WxPayAPI
         {
             return MakeSign(SIGN_TYPE_HMAC_SHA256);
         }
-         
+
         /**
         * 
         * 检测签名是否正确
@@ -306,7 +310,7 @@ namespace WxPayAPI
         }
 
 
-        private  string CalcHMACSHA256Hash(string plaintext, string salt)
+        private string CalcHMACSHA256Hash(string plaintext, string salt)
         {
             string result = "";
             var enc = Encoding.UTF8;
