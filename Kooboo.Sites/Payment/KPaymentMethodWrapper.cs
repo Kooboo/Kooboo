@@ -79,6 +79,8 @@ namespace Kooboo.Sites.Payment
                             {
                                 PaymentManager.CallBack(new PaymentCallback() { RequestId = request.Id, Status = PaymentStatus.Rejected, ResponseMessage = "kscript check status" }, this.Context);
                             }
+
+                            return status;
                         }
                         catch (Exception ex)
                         {
