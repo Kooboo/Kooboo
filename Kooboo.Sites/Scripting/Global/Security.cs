@@ -35,6 +35,20 @@ var input = ""myvalue"";
             return HexStringFromBytes(hash);
         }
 
+        [Description(@"
+  var input = ""myvalue"";  
+     var shavalue = k.security.sha512(input); ")]
+        public string sha512(string input)
+        {
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            SHA512CryptoServiceProvider cryptoTransformSHA512 = new SHA512CryptoServiceProvider();
+
+            var hash = cryptoTransformSHA512.ComputeHash(bytes);
+
+            return HexStringFromBytes(hash);
+        }
+
+
         private string HexStringFromBytes(byte[] bytes)
         {
             var sb = new StringBuilder();
