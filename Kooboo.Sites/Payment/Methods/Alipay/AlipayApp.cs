@@ -1,4 +1,5 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Methods.Alipay.lib;
 using Kooboo.Sites.Payment.Response;
@@ -6,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -36,6 +38,13 @@ namespace Kooboo.Sites.Payment.Methods.Alipay
 
         public RenderContext Context { get; set; }
 
+        [Description(@"
+var charge = {};
+charge.total = 1.50; 
+charge.name = 'green tea order'; 
+var resForm = k.payment.alipayForm.charge(charge); 
+")]
+        [KDefineType(Return = typeof(StringResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             if (Setting == null) return null;
@@ -67,6 +76,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay
             };
         }
 
+        [KDefineType(Params = new[] { typeof(string) })]
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();
