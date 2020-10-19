@@ -40,9 +40,9 @@ namespace Kooboo.Sites.Payment.Methods.Alipay
 
         [Description(@"
 var charge = {};
-charge.total = 1.50; 
+charge.totalAmount = 1.50; 
 charge.name = 'green tea order'; 
-var resForm = k.payment.alipayForm.charge(charge); 
+ k.payment.alipayApp.charge(charge); 
 ")]
         [KDefineType(Return = typeof(StringResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
@@ -64,7 +64,7 @@ var resForm = k.payment.alipayForm.charge(charge);
             sys.Add("timestamp", DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd HH:mm:ss"));
             sys.Add("alipay_sdk", "alipay-easysdk-net-2.0.0");
             sys.Add("biz_content", JsonHelper.Serialize(biz));
-            sys.Add("notify_url", PaymentHelper.GetCallbackUrl(this, "Notify", Context));
+            sys.Add("notify_url", PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context));
             var data = new AlipayData();
             var sign = data.RSASign(sys, Setting.PrivateKey, "UTF-8", Setting.SignType);
             sys.Add("sign", sign);

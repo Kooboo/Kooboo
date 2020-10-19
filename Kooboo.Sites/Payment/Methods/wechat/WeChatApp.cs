@@ -1,10 +1,13 @@
 ﻿using Jint.Native.Function;
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Dom;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Callback;
+using Kooboo.Sites.Payment.Response;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -38,6 +41,13 @@ namespace Kooboo.Sites.Payment.Methods.wechat
 
         public RenderContext Context { get; set; }
 
+        [Description(@"
+var charge = {};
+charge.totalAmount = 1.50; 
+charge.name = 'green tea order'; 
+var result= k.payment.wechatApp.charge(charge); 
+")]
+        [KDefineType(Return = typeof(StringResponse))]
         public IPaymentResponse Charge(PaymentRequest request)
         {
             var root = new XElement("xml");
@@ -53,7 +63,7 @@ namespace Kooboo.Sites.Payment.Methods.wechat
             root.Add(new XElement("time_start", DateTime.Now.ToString("yyyyMMddHHmmss")));
             root.Add(new XElement("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss")));
             var notifurl = PaymentHelper.GetCallbackUrl(this, nameof(Notify), Context);
-            root.Add(new XElement("notify_url", notifurl.ToLower()));
+            root.Add(new XElement("notify_url", notifurl));
             root.Add(new XElement("trade_type", "APP"));
             root.Add(new XElement("sign_type", WxPayData.SIGN_TYPE_HMAC_SHA256));
             var xml = new XDocument(root);
@@ -84,19 +94,11 @@ namespace Kooboo.Sites.Payment.Methods.wechat
             var sign = CalcHMACSHA256Hash(str, Setting.Key).ToUpper();
             result.Add("sign", sign);
 
-            return new Response.StringResponse
+            return new StringResponse
             {
                 requestId = request.Id,
                 Content = JsonHelper.Serialize(result)
             };
-        }
-
-        private void CheckSign(XElement response)
-        {
-            var signElement = response.Element("sign");
-            signElement.Remove();
-            var sign = MakeSign(response.Document, Setting.Key);
-            if (sign != signElement.Value) throw new Exception("sign check fail");
         }
 
         public PaymentCallback Notify(RenderContext context)
@@ -136,7 +138,7 @@ namespace Kooboo.Sites.Payment.Methods.wechat
 
             Guid RequestId;
 
-            if (obj == null || !System.Guid.TryParse(obj.ToString(), out RequestId))
+            if (obj == null || !System.Guid.TryParse(obj.Value.ToString(), out RequestId))
             {
                 FailCallback(result, "订单查询失败");
                 return result;
@@ -165,38 +167,7 @@ namespace Kooboo.Sites.Payment.Methods.wechat
             }
         }
 
-        private void SuccessCallback(PaymentCallback result, Guid RequestId)
-        {
-            var res = new XDocument();
-            res.Add(new XElement("return_code", "SUCCESS"));
-            res.Add(new XElement("return_msg", "OK"));
-            var xml = new XDocument(res);
-            res.Add(new XElement("sign", MakeSign(xml, Setting.Key)));
-
-            result.CallbackResponse = new CallbackResponse()
-            {
-                Content = res.ToString(),
-                ContentType = "Application/Xml"
-            };
-
-            result.RequestId = RequestId;
-        }
-
-        private void FailCallback(PaymentCallback result, string msg)
-        {
-            var res = new XDocument();
-            res.Add(new XElement("return_code", "FAIL"));
-            res.Add(new XElement("return_msg", msg));
-            var xml = new XDocument(res);
-            res.Add(new XElement("sign", MakeSign(xml, Setting.Key)));
-
-            result.CallbackResponse = new CallbackResponse()
-            {
-                Content = res.ToString(),
-                ContentType = "Application/Xml"
-            };
-        }
-
+        [KDefineType(Params = new[] { typeof(string) })]
         public PaymentStatusResponse checkStatus(PaymentRequest request)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();
@@ -257,6 +228,46 @@ namespace Kooboo.Sites.Payment.Methods.wechat
             }
 
             return result;
+        }
+        
+        private void CheckSign(XElement response)
+        {
+            var signElement = response.Element("sign");
+            signElement.Remove();
+            var sign = MakeSign(response.Document, Setting.Key);
+            if (sign != signElement.Value) throw new Exception("sign check fail");
+        }
+
+        private void SuccessCallback(PaymentCallback result, Guid RequestId)
+        {
+            var root = new XElement("xml");
+            root.Add(new XElement("return_code", "SUCCESS"));
+            root.Add(new XElement("return_msg", "OK"));
+            var xml = new XDocument(root);
+            root.Add(new XElement("sign", MakeSign(xml, Setting.Key)));
+
+            result.CallbackResponse = new CallbackResponse()
+            {
+                Content = xml.ToString(),
+                ContentType = "Application/Xml"
+            };
+
+            result.RequestId = RequestId;
+        }
+
+        private void FailCallback(PaymentCallback result, string msg)
+        {
+            var root = new XElement("xml");
+            root.Add(new XElement("return_code", "FAIL"));
+            root.Add(new XElement("return_msg", msg));
+            var xml = new XDocument(root);
+            root.Add(new XElement("sign", MakeSign(xml, Setting.Key)));
+
+            result.CallbackResponse = new CallbackResponse()
+            {
+                Content = xml.ToString(),
+                ContentType = "Application/Xml"
+            };
         }
 
         private string MakeSign(XDocument xml, string key)
