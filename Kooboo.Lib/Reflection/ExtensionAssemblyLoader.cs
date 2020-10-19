@@ -193,16 +193,23 @@ namespace Kooboo.Lib.Reflection
         {
             var rootPath = PathUtility.TryRootPath();
 
-            VirtualResources.Setup(v =>
+            var folder =  Path.Combine(AppContext.BaseDirectory, "modules"); 
+
+            if (System.IO.Directory.Exists(folder))
             {
-                foreach (var item in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "modules"), "*.zip"))
+                VirtualResources.Setup(v =>
                 {
-                    v.LoadZip(item, rootPath, new Lib.VirtualFile.Zip.ZipOption
+                    foreach (var item in Directory.GetFiles(folder, "*.zip"))
                     {
-                        Cache = true
-                    });
-                }
-            });
+                        v.LoadZip(item, rootPath, new Lib.VirtualFile.Zip.ZipOption
+                        {
+                            Cache = true
+                        });
+                    }
+                });
+            }
+
+            
         }
     }
 }

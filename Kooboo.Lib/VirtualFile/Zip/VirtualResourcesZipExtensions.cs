@@ -17,7 +17,11 @@ namespace VirtualFile.Zip
 
         public static void LoadZip(this VirtualResources virtualResources, string zipPath, string rootPath, ZipOption zipOption)
         {
-            if (!File.Exists(zipPath)) throw new FileNotFoundException();
+            if (!File.Exists(zipPath))
+            {
+                // throw new FileNotFoundException();
+                return;
+            }
             var zipArchive = new ICSharpCode.SharpZipLib.Zip.ZipFile(zipPath);
             zipPath = Helper.NormalizePath(zipPath);
             _zipArchives[zipPath] = zipArchive;
