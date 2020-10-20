@@ -68,11 +68,11 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         /// clear null field  and repeat field
         /// </summary>
         /// <param name="value"></param>
-        IDictionary<string, object> StandardizingField(IDictionary<string, object> value)
+        IDictionary<string, object> StandardizingField(IDictionary<string, object> value, bool clearNull = true)
         {
-            return value.Where(w => w.Value != null)
+            return (clearNull ? value.Where(w => w.Value != null) : value)
                         .GroupBy(g => g.Key.ToLower())
-                        .ToDictionary(k => k.Last().Key, v => v.Last().Value);
+                        .ToDictionary(k => k.Last().Key, v => v.FirstOrDefault(f => f.Value != null).Value);
         }
 
         public object add(object value)
@@ -222,7 +222,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
         public void update(object id, object newvalue)
         {
             var dic = kHelper.CleanDynamicObject(newvalue);
-            dic = StandardizingField(dic);
+            dic = StandardizingField(dic, false);
             EnsureTableCreated();
             if (_schema.PrimaryKey != null && dic.ContainsKey(_schema.PrimaryKey)) dic.Remove(_schema.PrimaryKey);
             TryUpgradeSchema(dic);
@@ -242,7 +242,7 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
 
         public long Count(string query)
         {
-          return  this.Query(query).count();  
+            return this.Query(query).count();
         }
     }
 }
