@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using MongoDB.Bson.Serialization.Conventions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -85,6 +86,12 @@ var input = ""myvalue"";
         {
             var bytes = System.Text.Encoding.UTF8.GetBytes(input); 
             return Convert.ToBase64String(bytes);
+        }
+
+        [Description("Convert to base64 format byte[]")]
+        public string ToBase64(int[] input)
+        {
+            return Convert.ToBase64String(input.Select(s=> Convert.ToByte(s)).ToArray());
         }
 
         [Description("Convert from base64 string")]
