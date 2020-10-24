@@ -181,7 +181,7 @@ namespace Kooboo.Sites.FrontEvent
 
             foreach (var item in ConstTypeContainer.ByteTypes)
             {
-                if (Attributes.AttributeHelper.IsRoutable(item.Value))
+                if (Kooboo.Sites.Service.ObjectService.IsRoutable(item.Value, false))
                 {
                     objecttypes.Add(item.Key.ToString(), item.Value.Name);
                 }

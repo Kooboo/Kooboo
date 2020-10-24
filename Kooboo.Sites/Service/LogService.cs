@@ -67,7 +67,7 @@ namespace Kooboo.Sites.Service
 
         public static void EnsureRestoreObjectRoute(SiteDb SiteDb, SiteObject siteobject)
         {
-            if (siteobject != null && Attributes.AttributeHelper.IsRoutable(siteobject))
+            if (siteobject != null && Kooboo.Sites.Service.ObjectService.IsRoutable(siteobject, true))
             {
                 var route = SiteDb.Routes.GetByObjectId(siteobject.Id);
                 if (route == null)
@@ -115,7 +115,7 @@ namespace Kooboo.Sites.Service
 
         public static void EnsureDeleteObjectRoute(SiteDb SiteDb, SiteObject siteobject)
         {
-            if (siteobject != null && Attributes.AttributeHelper.IsRoutable(siteobject))
+            if (siteobject != null && Kooboo.Sites.Service.ObjectService.IsRoutable(siteobject, true))
             {
                 var route = SiteDb.Routes.GetByObjectId(siteobject.Id, siteobject.ConstType);
                 if (route != null)

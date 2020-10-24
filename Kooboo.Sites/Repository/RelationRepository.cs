@@ -173,7 +173,7 @@ namespace Kooboo.Sites.Repository
 
         public List<ObjectRelation> GetReferredBy(SiteObject SiteObject, byte ConstTypeX = 0)
         {
-            if (Attributes.AttributeHelper.IsRoutable(SiteObject))
+            if (Kooboo.Sites.Service.ObjectService.IsRoutable(SiteObject, false))
             {
                 return GetReferredByRelationViaRoutes(SiteObject.Id, ConstTypeX);
             }
@@ -185,7 +185,7 @@ namespace Kooboo.Sites.Repository
 
         public List<ObjectRelation> GetReferredBy(Type siteObjectType, Guid ObjectId, byte ConstTypeX = 0)
         {
-            if (Attributes.AttributeHelper.IsRoutable(siteObjectType))
+            if (Kooboo.Sites.Service.ObjectService.IsRoutable(siteObjectType, false))
             {
                 return GetReferredByRelationViaRoutes(ObjectId, ConstTypeX);
             }

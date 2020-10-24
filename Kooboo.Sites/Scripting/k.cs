@@ -944,7 +944,7 @@ var value = k.session.key; ")]
 
             var repo = Activator.CreateInstance(type) as IRepository;
 
-            bool isRoutable = Kooboo.Attributes.AttributeHelper.IsRoutable(repo.ModelType);
+            bool isRoutable = Kooboo.Sites.Service.ObjectService.IsRoutable(repo.ModelType, false);
 
             var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
 
