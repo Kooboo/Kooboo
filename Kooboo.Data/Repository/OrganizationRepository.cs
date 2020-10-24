@@ -25,10 +25,11 @@ namespace Kooboo.Data.Repository
 
             if (org == null || org.LastModified == default(DateTime) || org.LastModified < DateTime.Now.AddHours(-12))
             {
-                org = GetFromAccount(id);
-                if (org != null)
+              var accorg = GetFromAccount(id);
+                if (accorg != null)
                 {
-                    AddOrUpdateLocal(org);
+                    AddOrUpdateLocal(accorg);
+                    return accorg; 
                 }
             } 
             return org;
