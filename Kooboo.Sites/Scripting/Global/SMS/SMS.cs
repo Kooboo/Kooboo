@@ -31,6 +31,13 @@ namespace Kooboo.Sites.Scripting.Global.SMS
                 return new Tencent(this.Context); 
             }
         }
-
+        [Description("Send SMS using ChinaMobile")]
+        public ChinaMobile ChinaMobile
+        {
+            get
+            {
+                return new ChinaMobile(this.Context);
+            }
+        }
     }
 }
