@@ -1,5 +1,4 @@
-﻿using Kooboo.Sites.SMS.ChinaMobile.Helpers;
-using Kooboo.Sites.SMS.ChinaMobile.Models;
+﻿using Kooboo.Sites.SMS.ChinaMobile.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -74,8 +73,12 @@ namespace Kooboo.Sites.SMS.ChinaMobile
                                 content,
                                 _config.Sign);
 
-            var requestString = Base64Helper.Encode(notificationSubmitRequest);
-            return new StringContent(requestString);
+
+            var requestString = JsonConvert.SerializeObject(notificationSubmitRequest);
+            var requestBytes = Encoding.UTF8.GetBytes(requestString);
+            var base64String = Convert.ToBase64String(requestBytes);
+
+            return new StringContent(base64String);
         }
     }
 }

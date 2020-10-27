@@ -1,4 +1,5 @@
-﻿using Kooboo.Sites.SMS.ChinaMobile.Helpers;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Kooboo.Sites.SMS.ChinaMobile.Models
@@ -31,7 +32,14 @@ namespace Kooboo.Sites.SMS.ChinaMobile.Models
             stringBuilder.Append(Sign);
             stringBuilder.Append(AddSerial);
 
-            Mac = MD5Helper.Encrpty(stringBuilder.ToString());
+
+            using (var md5CryptoServiceProvider = new MD5CryptoServiceProvider())
+            {
+                var inputBytes = Encoding.UTF8.GetBytes(stringBuilder.ToString());
+                byte[] md5Hash = md5CryptoServiceProvider.ComputeHash(inputBytes);
+
+                Mac = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
+            };
         }
 
         /// <summary>
