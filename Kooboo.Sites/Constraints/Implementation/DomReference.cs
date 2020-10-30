@@ -158,7 +158,7 @@ namespace Kooboo.Sites.Constraints
         private string GetObjectUrl(SiteDb SiteDb, DomObject DomObject)
         {
             string url; 
-            if (Attributes.AttributeHelper.IsRoutable(DomObject))
+            if (Kooboo.Sites.Service.ObjectService.IsRoutable(DomObject, false))
             {
                 url=  SiteDb.Routes.GetObjectPrimaryRelativeUrl(DomObject.Id);
             }

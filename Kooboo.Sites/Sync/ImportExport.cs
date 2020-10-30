@@ -602,6 +602,8 @@ namespace Kooboo.Sites.Sync
 
                     var serializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(repo.ModelType);
 
+                    bool IsRoutable = Kooboo.Sites.Service.ObjectService.IsRoutable(repo.ModelType);  
+                     
                     foreach (var dbitem in repo.All())
                     {
                         if (dbitem.Id != default(Guid))
@@ -611,7 +613,7 @@ namespace Kooboo.Sites.Sync
                             File.WriteAllBytes(fullpath, bytes);
 
                             // routable object....  
-                            if (Kooboo.Attributes.AttributeHelper.IsRoutable(dbitem))
+                            if (IsRoutable)
                             {
                                 var route = SiteDb.Routes.GetByObjectId(dbitem.Id);
                                 if (route != null)
@@ -703,139 +705,139 @@ namespace Kooboo.Sites.Sync
             return DiskPath;
         }
          
-        public static string InterCopyTime(SiteDb SiteDb, Int64 timetick)
-        {
-            string DiskPath = Kooboo.Data.AppSettings.TempDataPath;
-            DiskPath = System.IO.Path.Combine(DiskPath, System.Guid.NewGuid().ToString());
-            IOHelper.EnsureDirectoryExists(DiskPath);
+        //public static string InterCopyTime(SiteDb SiteDb, Int64 timetick)
+        //{
+        //    string DiskPath = Kooboo.Data.AppSettings.TempDataPath;
+        //    DiskPath = System.IO.Path.Combine(DiskPath, System.Guid.NewGuid().ToString());
+        //    IOHelper.EnsureDirectoryExists(DiskPath);
 
-            var routeserializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.Routes.SiteObjectType);
+        //    var routeserializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.Routes.SiteObjectType);
 
-            string RoutePath = System.IO.Path.Combine(DiskPath, SiteDb.Routes.StoreName);
+        //    string RoutePath = System.IO.Path.Combine(DiskPath, SiteDb.Routes.StoreName);
 
-            var logs = SiteDb.Log.Store.Where(o => o.TimeTick >= timetick).SelectAll();
+        //    var logs = SiteDb.Log.Store.Where(o => o.TimeTick >= timetick).SelectAll();
 
-            foreach (var item in logs)
-            {
-                var repo = SiteDb.GetRepository(item.StoreName);
-                if (!Attributes.AttributeHelper.IsCoreObject(repo.ModelType))
-                {
-                    continue;
-                }
+        //    foreach (var item in logs)
+        //    {
+        //        var repo = SiteDb.GetRepository(item.StoreName);
+        //        if (!Attributes.AttributeHelper.IsCoreObject(repo.ModelType))
+        //        {
+        //            continue;
+        //        }
 
-                string path = System.IO.Path.Combine(DiskPath, item.StoreName);
-                IOHelper.EnsureDirectoryExists(path);
+        //        string path = System.IO.Path.Combine(DiskPath, item.StoreName);
+        //        IOHelper.EnsureDirectoryExists(path);
 
-                var serializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(repo.ModelType);
+        //        var serializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(repo.ModelType);
 
-                if (item.EditType == IndexedDB.EditType.Delete)
-                {
+        //        if (item.EditType == IndexedDB.EditType.Delete)
+        //        {
 
-                }
+        //        }
 
-                foreach (var dbitem in repo.All())
-                {
-                    if (dbitem.Id != default(Guid))
-                    {
-                        var bytes = serializer.ToBytes(dbitem);
-                        string fullpath = System.IO.Path.Combine(path, dbitem.Id.ToString() + InterExtension);
-                        File.WriteAllBytes(fullpath, bytes);
+        //        foreach (var dbitem in repo.All())
+        //        {
+        //            if (dbitem.Id != default(Guid))
+        //            {
+        //                var bytes = serializer.ToBytes(dbitem);
+        //                string fullpath = System.IO.Path.Combine(path, dbitem.Id.ToString() + InterExtension);
+        //                File.WriteAllBytes(fullpath, bytes);
 
-                        // routable object....  
-                        if (Kooboo.Attributes.AttributeHelper.IsRoutable(dbitem))
-                        {
-                            var route = SiteDb.Routes.GetByObjectId(dbitem.Id);
-                            if (route != null)
-                            {
-                                var routebytes = routeserializer.ToBytes(route);
-                                string RouteFullPath = System.IO.Path.Combine(RoutePath, route.Id.ToString() + InterExtension);
-                                IOHelper.EnsureFileDirectoryExists(RouteFullPath);
-                                File.WriteAllBytes(RouteFullPath, routebytes);
-                            }
-                        }
+        //                // routable object....  
+        //                if (Kooboo.Attributes.AttributeHelper.IsRoutable(dbitem))
+        //                {
+        //                    var route = SiteDb.Routes.GetByObjectId(dbitem.Id);
+        //                    if (route != null)
+        //                    {
+        //                        var routebytes = routeserializer.ToBytes(route);
+        //                        string RouteFullPath = System.IO.Path.Combine(RoutePath, route.Id.ToString() + InterExtension);
+        //                        IOHelper.EnsureFileDirectoryExists(RouteFullPath);
+        //                        File.WriteAllBytes(RouteFullPath, routebytes);
+        //                    }
+        //                }
 
-                        if (dbitem is TextContent)
-                        {
-                            // need to have the content type and content folder. 
-                            var content = dbitem as TextContent;
-                            var folder = SiteDb.ContentFolders.Get(content.FolderId);
-                            var FolderSerilizer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ContentFolders.SiteObjectType);
-                            var FolderBytes = FolderSerilizer.ToBytes(folder);
-                            string FolderPath = System.IO.Path.Combine(DiskPath, SiteDb.ContentFolders.StoreName);
-                            IOHelper.EnsureDirectoryExists(FolderPath);
-                            FolderPath = System.IO.Path.Combine(FolderPath, folder.Id.ToString() + InterExtension);
-                            File.WriteAllBytes(FolderPath, FolderBytes);
-
-
-                            var contenttype = SiteDb.ContentTypes.Get(folder.ContentTypeId);
-                            var TypeSerilizer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ContentTypes.SiteObjectType);
-                            var typeBytes = TypeSerilizer.ToBytes(contenttype);
-                            string TypePath = System.IO.Path.Combine(DiskPath, SiteDb.ContentTypes.StoreName);
-                            IOHelper.EnsureDirectoryExists(TypePath);
-                            TypePath = System.IO.Path.Combine(TypePath, contenttype.Id.ToString() + InterExtension);
-                            File.WriteAllBytes(TypePath, typeBytes);
-                        }
-
-                        if (dbitem is ContentFolder)
-                        {
-                            var folder = dbitem as ContentFolder;
-                            var contenttype = SiteDb.ContentTypes.Get(folder.ContentTypeId);
-                            var TypeSerilizer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ContentTypes.SiteObjectType);
-                            var typeBytes = TypeSerilizer.ToBytes(contenttype);
-                            string TypePath = System.IO.Path.Combine(DiskPath, SiteDb.ContentTypes.StoreName);
-                            IOHelper.EnsureDirectoryExists(TypePath);
-                            TypePath = System.IO.Path.Combine(TypePath, contenttype.Id.ToString() + InterExtension);
-                            File.WriteAllBytes(TypePath, typeBytes);
-                        }
-
-                        if (dbitem is View)
-                        {
-                            var view = dbitem as View;
-                            var allmethods = SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == view.Id).SelectAll();
-
-                            if (allmethods != null && allmethods.Count() > 0)
-                            {
-                                var MethodSerializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ViewDataMethods.SiteObjectType);
-
-                                foreach (var method in allmethods)
-                                {
-                                    var methodbytes = MethodSerializer.ToBytes(method);
-                                    string methodPath = System.IO.Path.Combine(DiskPath, SiteDb.ViewDataMethods.StoreName);
-                                    IOHelper.EnsureDirectoryExists(methodPath);
-                                    methodPath = System.IO.Path.Combine(methodPath, method.Id.ToString() + InterExtension);
-                                    File.WriteAllBytes(methodPath, methodbytes);
-                                    // get the datamethod setting. 
-
-                                    var datamethod = SiteDb.DataMethodSettings.Get(method.MethodId);
-
-                                    if (datamethod != null)
-                                    {
-                                        var dataMethodSerializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.DataMethodSettings.SiteObjectType);
-
-                                        var datamethodBytes = dataMethodSerializer.ToBytes(datamethod);
-
-                                        string DataMethodPath = System.IO.Path.Combine(DiskPath, SiteDb.DataMethodSettings.StoreName);
-                                        IOHelper.EnsureDirectoryExists(DataMethodPath);
-                                        DataMethodPath = System.IO.Path.Combine(DataMethodPath, datamethod.Id.ToString() + InterExtension);
-
-                                        File.WriteAllBytes(DataMethodPath, datamethodBytes);
-
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
-                repo.Store.Close();
+        //                if (dbitem is TextContent)
+        //                {
+        //                    // need to have the content type and content folder. 
+        //                    var content = dbitem as TextContent;
+        //                    var folder = SiteDb.ContentFolders.Get(content.FolderId);
+        //                    var FolderSerilizer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ContentFolders.SiteObjectType);
+        //                    var FolderBytes = FolderSerilizer.ToBytes(folder);
+        //                    string FolderPath = System.IO.Path.Combine(DiskPath, SiteDb.ContentFolders.StoreName);
+        //                    IOHelper.EnsureDirectoryExists(FolderPath);
+        //                    FolderPath = System.IO.Path.Combine(FolderPath, folder.Id.ToString() + InterExtension);
+        //                    File.WriteAllBytes(FolderPath, FolderBytes);
 
 
-            }
+        //                    var contenttype = SiteDb.ContentTypes.Get(folder.ContentTypeId);
+        //                    var TypeSerilizer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ContentTypes.SiteObjectType);
+        //                    var typeBytes = TypeSerilizer.ToBytes(contenttype);
+        //                    string TypePath = System.IO.Path.Combine(DiskPath, SiteDb.ContentTypes.StoreName);
+        //                    IOHelper.EnsureDirectoryExists(TypePath);
+        //                    TypePath = System.IO.Path.Combine(TypePath, contenttype.Id.ToString() + InterExtension);
+        //                    File.WriteAllBytes(TypePath, typeBytes);
+        //                }
+
+        //                if (dbitem is ContentFolder)
+        //                {
+        //                    var folder = dbitem as ContentFolder;
+        //                    var contenttype = SiteDb.ContentTypes.Get(folder.ContentTypeId);
+        //                    var TypeSerilizer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ContentTypes.SiteObjectType);
+        //                    var typeBytes = TypeSerilizer.ToBytes(contenttype);
+        //                    string TypePath = System.IO.Path.Combine(DiskPath, SiteDb.ContentTypes.StoreName);
+        //                    IOHelper.EnsureDirectoryExists(TypePath);
+        //                    TypePath = System.IO.Path.Combine(TypePath, contenttype.Id.ToString() + InterExtension);
+        //                    File.WriteAllBytes(TypePath, typeBytes);
+        //                }
+
+        //                if (dbitem is View)
+        //                {
+        //                    var view = dbitem as View;
+        //                    var allmethods = SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == view.Id).SelectAll();
+
+        //                    if (allmethods != null && allmethods.Count() > 0)
+        //                    {
+        //                        var MethodSerializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.ViewDataMethods.SiteObjectType);
+
+        //                        foreach (var method in allmethods)
+        //                        {
+        //                            var methodbytes = MethodSerializer.ToBytes(method);
+        //                            string methodPath = System.IO.Path.Combine(DiskPath, SiteDb.ViewDataMethods.StoreName);
+        //                            IOHelper.EnsureDirectoryExists(methodPath);
+        //                            methodPath = System.IO.Path.Combine(methodPath, method.Id.ToString() + InterExtension);
+        //                            File.WriteAllBytes(methodPath, methodbytes);
+        //                            // get the datamethod setting. 
+
+        //                            var datamethod = SiteDb.DataMethodSettings.Get(method.MethodId);
+
+        //                            if (datamethod != null)
+        //                            {
+        //                                var dataMethodSerializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(SiteDb.DataMethodSettings.SiteObjectType);
+
+        //                                var datamethodBytes = dataMethodSerializer.ToBytes(datamethod);
+
+        //                                string DataMethodPath = System.IO.Path.Combine(DiskPath, SiteDb.DataMethodSettings.StoreName);
+        //                                IOHelper.EnsureDirectoryExists(DataMethodPath);
+        //                                DataMethodPath = System.IO.Path.Combine(DataMethodPath, datamethod.Id.ToString() + InterExtension);
+
+        //                                File.WriteAllBytes(DataMethodPath, datamethodBytes);
+
+        //                            }
+
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        repo.Store.Close();
+
+
+        //    }
 
 
 
-            return DiskPath;
-        }
+        //    return DiskPath;
+        //}
 
         public static void ImportInter(ZipArchive archive, SiteDb siteDb, Guid UserId = default(Guid))
         {
