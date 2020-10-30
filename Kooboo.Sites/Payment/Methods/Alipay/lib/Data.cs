@@ -128,7 +128,7 @@ namespace Kooboo.Sites.Payment.Methods.Alipay.lib
 
         }
 
-        private static string GetSignSourceData(string body)
+        public static string GetSignSourceData(string body)
         {
             string rootNode = ALIPAY_QUERY.Replace(".", "_") + RESPONSE_SUFFIX;
             int indexOfRootNode = body.IndexOf(rootNode);
