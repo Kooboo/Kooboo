@@ -215,7 +215,7 @@ namespace Kooboo.Sites.Sync
                 return null; 
             }
 
-            if (Attributes.AttributeHelper.IsRoutable(siteobject))
+            if (Kooboo.Sites.Service.ObjectService.IsRoutable(siteobject, false))
             {
                 return sitedb.Routes.GetObjectPrimaryRelativeUrl(siteobject.Id);
             }

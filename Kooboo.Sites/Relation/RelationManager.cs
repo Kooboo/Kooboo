@@ -62,7 +62,7 @@ namespace Kooboo.Sites.Relation
                 Document Dom = null;
 
 
-                if (Attributes.AttributeHelper.IsRoutable(ModelType))
+                if (Kooboo.Sites.Service.ObjectService.IsRoutable(ModelType, false))
                 {
                     basurl = Service.ObjectService.GetObjectRelativeUrl(SiteEvent.SiteDb, SiteEvent.Value.Id, SiteEvent.Value.ConstType);
                 }

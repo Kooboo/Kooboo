@@ -440,7 +440,7 @@ namespace Kooboo.Sites.Repository
                         }
                     }
 
-                    else if (Attributes.AttributeHelper.IsRoutable(siteobject))
+                    else if (Kooboo.Sites.Service.ObjectService.IsRoutable(siteobject, true))
                     {
                         Service.LogService.EnsureDeleteObjectRoute(this.SiteDb, siteobject as SiteObject);
                     }
@@ -467,7 +467,7 @@ namespace Kooboo.Sites.Repository
                     }
                 }
 
-                else if (Attributes.AttributeHelper.IsRoutable(oldvalue))
+                else if (Kooboo.Sites.Service.ObjectService.IsRoutable(oldvalue, true))
                 {
                     Service.LogService.EnsureRestoreObjectRoute(this.SiteDb, oldvalue as SiteObject);
                 }
@@ -655,7 +655,7 @@ namespace Kooboo.Sites.Repository
             if (siteevent.ChangeType == ChangeType.Delete)
             {
                 var objectvalue = siteevent.Value;
-                if (Attributes.AttributeHelper.IsRoutable(objectvalue))
+                if (Kooboo.Sites.Service.ObjectService.IsRoutable(objectvalue, false))
                 {
                     Sites.Helper.ChangeHelper.DeleteRoutableObject(SiteDb, this, objectvalue);
                 }

@@ -64,14 +64,14 @@ namespace Kooboo.Sites.Service
             info.ObjectId = siteobject.Id;
             info.ConstType = siteobject.ConstType;
 
-            if (info.ConstType >0)
+            if (info.ConstType > 0)
             {
                 info.ModelType = ConstTypeService.GetModelType(siteobject.ConstType);
             }
-            
+
             if (info.ModelType == null)
             {
-                info.ModelType =  siteobject.GetType(); 
+                info.ModelType = siteobject.GetType();
             }
 
             if (siteobject is IBinaryFile)
@@ -93,7 +93,7 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-            if (Attributes.AttributeHelper.IsRoutable(siteobject))
+            if (Kooboo.Sites.Service.ObjectService.IsRoutable(siteobject, false))
             {
                 info.Url = GetObjectRelativeUrl(SiteDb, siteobject as SiteObject);
                 info.DisplayName = info.Url;
@@ -133,13 +133,13 @@ namespace Kooboo.Sites.Service
 
                 if (info.ModelType == typeof(DataMethodSetting))
                 {
-                    var datamethod = siteobject as DataMethodSetting; 
-                    if (datamethod !=null)
+                    var datamethod = siteobject as DataMethodSetting;
+                    if (datamethod != null)
                     {
                         info.Name = datamethod.OriginalMethodName;
-                        info.DisplayName = datamethod.OriginalMethodName; 
+                        info.DisplayName = datamethod.OriginalMethodName;
                     }
-                     
+
                 }
 
                 return info;
@@ -172,7 +172,7 @@ namespace Kooboo.Sites.Service
 
             if (repo == null || ObjectId == default(Guid))
             {
-                return null; 
+                return null;
             }
 
             var siteobject = repo.Get(ObjectId);
@@ -239,7 +239,7 @@ namespace Kooboo.Sites.Service
                 return GetObjectRelativeUrl(SiteDb, style);
             }
 
-            if (Attributes.AttributeHelper.IsRoutable(SiteObject))
+            if (Kooboo.Sites.Service.ObjectService.IsRoutable(SiteObject, false))
             {
                 return SiteDb.Routes.GetObjectPrimaryRelativeUrl(SiteObject.Id);
             }
@@ -348,5 +348,24 @@ namespace Kooboo.Sites.Service
             }
         }
 
+
+        public static bool IsRoutable(ISiteObject item, bool IncludeCode = true)
+        {
+            return IsRoutable(item.GetType(), IncludeCode);
+        }
+
+        public static bool IsRoutable(Type ModelType, bool IncludeCode = true)
+        {
+            bool IsRoutable = Attributes.AttributeHelper.IsRoutable(ModelType);
+            if (!IsRoutable && IncludeCode)
+            {
+                if (ModelType == typeof(Code))
+                {
+                    IsRoutable = true;
+                }
+            }
+            return IsRoutable;
+        }
     }
+
 }
