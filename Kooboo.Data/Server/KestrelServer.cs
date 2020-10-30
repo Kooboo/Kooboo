@@ -1,5 +1,5 @@
 ﻿#if NETSTANDARD2_0
- 
+
 using System;
 using System.Net;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace Kooboo.Data.Server
             SocketTransportFactory usesocket = new SocketTransportFactory(new koobooSocketOption(), life, log);
 
             _server = new KestrelServer(new KoobooServerOption(port, forcessl), usesocket, log);
-
+            _server.Options.Limits.MaxRequestBodySize = 1024 * 1024 * 800;
             SetMiddleWares(middlewares);
         }
 
@@ -140,7 +140,7 @@ namespace Kooboo.Data.Server
                 var log = new Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory();
                 services.AddSingleton<ILoggerFactory>(log);
 
-                lisOption.KestrelServerOptions.ApplicationServices = services.BuildServiceProvider(); 
+                lisOption.KestrelServerOptions.ApplicationServices = services.BuildServiceProvider();
 
                 if (port == 443 || forcessl)
                 {
@@ -161,7 +161,7 @@ namespace Kooboo.Data.Server
 
             public X509Certificate2 SelectSsl(Microsoft.AspNetCore.Connections.ConnectionContext context, string host)
             {
-                return Kooboo.Data.Server.SslCertificateProvider.SelectCertificate2(host); 
+                return Kooboo.Data.Server.SslCertificateProvider.SelectCertificate2(host);
             }
         }
 
@@ -201,7 +201,7 @@ namespace Kooboo.Data.Server
             }
 
             private static Context.HttpRequest GetRequest(IFeatureCollection requestFeature)
-            { 
+            {
                 Context.HttpRequest httprequest = new Context.HttpRequest();
                 var req = requestFeature.Get<IHttpRequestFeature>();
 
@@ -212,9 +212,9 @@ namespace Kooboo.Data.Server
                 Microsoft.Extensions.Primitives.StringValues forwardip;
                 if (req.Headers.TryGetValue("X-Forwarded-For", out forwardip))
                 {
-                    httprequest.IP = forwardip.First(); 
+                    httprequest.IP = forwardip.First();
                 }
-                 
+
                 Microsoft.Extensions.Primitives.StringValues host;
                 req.Headers.TryGetValue("Host", out host);
 
@@ -227,7 +227,7 @@ namespace Kooboo.Data.Server
                 }
 
                 httprequest.Host = domainhost;
-  
+
 
                 foreach (var item in req.Headers)
                 {
@@ -242,7 +242,7 @@ namespace Kooboo.Data.Server
                 httprequest.Scheme = req.Scheme;
 
 
-                httprequest.QueryString = GetQueryString(requestFeature);  
+                httprequest.QueryString = GetQueryString(requestFeature);
 
                 httprequest.Cookies = GetCookie(requestFeature);
 
@@ -301,7 +301,7 @@ namespace Kooboo.Data.Server
                 if (contenttype != null && contenttype.ToLower().Contains("urlencoded"))
                 {
                     hasEncoded = true;
-                } 
+                }
                 // The encoding type of a form is determined by the attribute enctype.It can have three values, 
                 //application / x - www - form - urlencoded - Represents an URL encoded form. This is the default value if enctype attribute is not set to anything. 
                 //multipart / form - data - Represents a Multipart form.This type of form is used when the user wants to upload files 
@@ -394,19 +394,19 @@ namespace Kooboo.Data.Server
 
             private static NameValueCollection GetQueryString(IFeatureCollection feature)
             {
-                NameValueCollection query = new NameValueCollection(); 
-                 
+                NameValueCollection query = new NameValueCollection();
+
                 var requestfeature = feature.Get<IQueryFeature>();
                 if (requestfeature == null)
                 {
                     requestfeature = new QueryFeature(feature);
                 }
 
-                if (requestfeature.Query !=null && requestfeature.Query.Any())
+                if (requestfeature.Query != null && requestfeature.Query.Any())
                 {
                     foreach (var item in requestfeature.Query)
                     {
-                        query.Add(item.Key, item.Value); 
+                        query.Add(item.Key, item.Value);
                     }
                 }
                 return query;
@@ -426,10 +426,10 @@ namespace Kooboo.Data.Server
                 res.Headers.Add("Content-Type", response.ContentType);
 
                 foreach (var item in response.Headers)
-                { 
+                {
                     res.Headers[item.Key] = item.Value;
                 }
-                 
+
                 #region cookie
 
                 if (response.DeletedCookieNames.Any() || response.AppendedCookies.Any())
@@ -508,7 +508,7 @@ namespace Kooboo.Data.Server
                         {
                             await response.Stream.CopyToAsync(res.Body);
                         }
-                       
+
                         else
                         {
                             // 404.   
@@ -529,7 +529,7 @@ namespace Kooboo.Data.Server
                     string location = response.RedirectLocation;
 
                     if (!string.IsNullOrEmpty(location))
-                    {  
+                    {
                         var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                             ? renderContext.Request.Host
                             : string.Format("{0}:{1}", renderContext.Request.Host, renderContext.Request.Port);
@@ -623,7 +623,7 @@ namespace Kooboo.Data.Server
                 Log(renderContext);
                 res = null;
             }
-             
+
 
 
             public static void Log(RenderContext context)
@@ -635,7 +635,7 @@ namespace Kooboo.Data.Server
                     Kooboo.Data.Log.Instance.Http.Write(log);
                 }
             }
-            
+
         }
 
     }
