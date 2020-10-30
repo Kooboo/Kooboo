@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Scripting
 {
     public static class JintSetting
     {
-        public static int MaxStatements { get; set; } = 70000;
+        public static int MaxStatements { get; set; } = 1000000;
 
         public static int LimitRecursion { get; set; } = 5000;
 
