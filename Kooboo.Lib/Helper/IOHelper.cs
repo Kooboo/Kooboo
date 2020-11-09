@@ -379,6 +379,8 @@ namespace Kooboo.Lib.Helper
                     return "video/mp4";
                 case ".mp4v":
                     return "video/mp4";
+                case ".mkv":
+                    return "video/x-matroska";
                 case ".mpa":
                     return "video/mpeg";
                 case ".mpe":
