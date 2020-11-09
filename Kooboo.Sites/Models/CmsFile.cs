@@ -42,6 +42,7 @@ namespace Kooboo.Sites.Models
         /// <summary>
         ///  this is for some file like text file, etc... 
         /// </summary>
+        [Obsolete]
         public string ContentString { get; set; }
 
         /// <summary>

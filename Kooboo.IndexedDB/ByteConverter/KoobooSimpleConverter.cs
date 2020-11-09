@@ -12,7 +12,7 @@ namespace Kooboo.IndexedDB.ByteConverter
 {
   public  class KoobooSimpleConverter<T> : IByteConverter<T>
     {
-        SimpleConverter<T> converter; 
+       internal SimpleConverter<T> converter; 
 
         public KoobooSimpleConverter()
         {

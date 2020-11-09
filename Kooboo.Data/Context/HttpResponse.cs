@@ -70,6 +70,8 @@ namespace Kooboo.Data.Context
 
         public System.IO.Stream Stream { get; set; }
 
+        public Kooboo.IndexedDB.FilePart FilePart { get; set; }
+
         public long OrginalLength { get; set; }
 
         private Dictionary<string, string> _headers;

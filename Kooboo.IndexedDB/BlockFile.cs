@@ -12,7 +12,7 @@ namespace Kooboo.IndexedDB
     public class BlockFile
     {
 
-        private string _fullfilename;
+        internal string _fullfilename;
         private FileStream _filestream;
 
         private object _object = new object();
@@ -37,7 +37,7 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        private byte[] GetPartial(long position, int offset, int count)
+        internal byte[] GetPartial(long position, int offset, int count)
         {
             byte[] partial = new byte[count]; 
             if (Stream.Length >= position + offset + count)

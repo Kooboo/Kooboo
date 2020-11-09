@@ -966,7 +966,7 @@ namespace Kooboo.IndexedDB
                 }
             }
         }
-        
+
         public async Task<TValue> getValueAsync(Int64 blockposition)
         {
             byte[] contentbytes = await this.BlockFile.GetAsync(blockposition);
@@ -1082,6 +1082,7 @@ namespace Kooboo.IndexedDB
         }
 
 
+        [Obsolete]
         public byte[] GetColumnBytes(TKey key, string FieldName)
         {
             var column = GetColumn(FieldName);
@@ -1095,6 +1096,72 @@ namespace Kooboo.IndexedDB
                 return getColumnsBytes(key, column.relativePosition, column.Length);
             }
         }
+
+        public FilePart GetFieldPart(TKey key, string FieldName)
+        {
+            var FieldNameHash = Helper.ObjectHelper.GetHashCode(FieldName);
+            var fieldnamehashbytes = BitConverter.GetBytes(FieldNameHash);
+            Int64 blockposition = this.primaryIndex.Get(key);
+
+            if (blockposition <= 0)
+            {
+                return null;
+            }
+
+            FilePart info = new FilePart();
+            info.FullFileName = this.BlockFile._fullfilename;
+            info.BlockPosition = blockposition;
+
+            var koobooconverter = this.ValueConverter as KoobooSimpleConverter<TValue>;
+
+            int startpos = 0;
+
+            // found in the column first. 
+            foreach (var item in koobooconverter.converter.Columns)
+            {
+                if (item.FieldNameHash == FieldNameHash)
+                {
+                    info.RelativePosition =  item.relativePosition + 10 + 8; // TODO: move this to 
+                    info.Length = item.Length;
+                    return info;
+                } 
+                var next = item.relativePosition + item.Length + 8; 
+                if (next > startpos)
+                {
+                    startpos = next; 
+                }
+            }
+
+            // if not found, after the last column, check one field by one field. 
+
+            var totallen = this.BlockFile.GetLength(blockposition);
+
+            var maxstart = totallen - 8;
+
+            while (startpos < maxstart)
+            {
+                var header = this.BlockFile.GetPartial(blockposition, startpos + 10, 8); 
+
+                int itemNameHash  = BitConverter.ToInt32(header, 0);
+
+                int len = BitConverter.ToInt32(header, 4);
+
+
+                if (itemNameHash == FieldNameHash)
+                {
+                    var itemstart = startpos + 10 + 8;
+                    info.RelativePosition = itemstart;
+                    info.Length = len;
+                    return info; 
+                }
+
+                startpos = startpos + 8 + len; 
+                   
+            }
+              
+            return null;
+        }
+         
 
         public void Close()
         {

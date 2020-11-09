@@ -228,7 +228,7 @@ namespace Kooboo.Sites.Systems
 
             if (System.Guid.TryParse(NameOrId, out FileId))
             {
-                file = context.SiteDb.Files.Get(FileId) as CmsFile;
+                file = context.SiteDb.Files.Get(FileId, true) as CmsFile;
             }
 
             long logid = -1;
@@ -336,14 +336,32 @@ namespace Kooboo.Sites.Systems
                 }
 
                 context.RenderContext.Response.ContentType = contentType;
-                var allbytes = Lib.Helper.IOHelper.ReadAllBytes(fullpath);
+                 
 
                 if (contentType.ToLower().Contains("image"))
                 {
+                    var allbytes = Lib.Helper.IOHelper.ReadAllBytes(fullpath);
+
                     allbytes = setImageBytes(context, allbytes);
-                    SetImageCache(context.RenderContext); 
+                    SetImageCache(context.RenderContext);
+
+                    context.RenderContext.Response.Body = allbytes;
+
                 } 
-                context.RenderContext.Response.Body = allbytes; 
+                else
+                {
+                    var fileinfo = new System.IO.FileInfo(fullpath);
+                    if (fileinfo.Length > 1024 * 1024 * 3)
+                    {
+                        var stream = Kooboo.IndexedDB.StreamManager.OpenReadStream(fullpath);
+                        context.RenderContext.Response.Stream = stream;
+                    }
+                    else
+                    {
+                        var allbytes = Lib.Helper.IOHelper.ReadAllBytes(fullpath);
+                        context.RenderContext.Response.Body = allbytes;
+                    } 
+                } 
             }
         }
 
