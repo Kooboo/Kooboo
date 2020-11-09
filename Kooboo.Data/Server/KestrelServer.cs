@@ -489,11 +489,7 @@ namespace Kooboo.Data.Server
 
                 if (response.StatusCode == 200)
                 {
-                    if (response.FilePart != null && renderContext.Request.Method != "HEAD")
-                    {
-                        await WritePartToResponse(response.FilePart, res);
-                    }
-                    else if (response.Body != null && renderContext.Request.Method != "HEAD")
+                    if (response.Body != null && renderContext.Request.Method != "HEAD")
                     {
                         try
                         {
@@ -510,8 +506,12 @@ namespace Kooboo.Data.Server
                         if (response.Stream != null)
                         {
                             await response.Stream.CopyToAsync(res.Body);
+                        } 
+                        else if (response.FilePart != null)
+                        {
+                            await WritePartToResponse(response.FilePart, res);
                         }
-
+                          
                         else
                         {
                             // 404.   
