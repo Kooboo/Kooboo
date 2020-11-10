@@ -21,12 +21,12 @@ namespace Kooboo.Sites.Scripting.Global.SMS
 
         public RenderContext Context { get; set; }
 
-        [Description("k.sms.aliSMS.send(\"your_ali_template_code\", \"+8615312345678\", \"MergeContent\");")]
-        public bool Send(string templateCode, string ToPhoneNumber, string bindingkey, string bindingvalue)
+        [Description("k.sms.aliSMS.send(\"your_ali_template_code\", \"+8615312345678\", \"code\", \"1234\", \"signName\");")]
+        public bool Send(string templateCode, string ToPhoneNumber, string bindingkey, string bindingvalue, string signName)
         {
             var setting = this.Context.WebSite.SiteDb().CoreSetting.GetSetting<AliSMSSetting>();
 
-            if (setting == null || string.IsNullOrWhiteSpace(setting.accessId) || string.IsNullOrWhiteSpace(setting.accessSecret) || string.IsNullOrWhiteSpace(setting.signName))
+            if (setting == null || string.IsNullOrWhiteSpace(setting.accessId) || string.IsNullOrWhiteSpace(setting.accessSecret) || string.IsNullOrWhiteSpace(signName))
             {
                 throw new Exception("Ali SMS service not configured");
             }
@@ -51,7 +51,7 @@ namespace Kooboo.Sites.Scripting.Global.SMS
             try
             {
                 request.PhoneNumbers = ToPhoneNumber;
-                request.SignName = setting.signName;
+                request.SignName = signName;
                 request.TemplateCode = templateCode;
 
                 string bindingpara = "";
@@ -64,7 +64,7 @@ namespace Kooboo.Sites.Scripting.Global.SMS
 
                 }
                 request.TemplateParam = bindingpara;
-                 
+
                 var res = acsClient.GetAcsResponse(request);
 
                 if (res == null || res.Code != "OK")
@@ -102,5 +102,12 @@ namespace Kooboo.Sites.Scripting.Global.SMS
             }
         }
 
+
+        [Description("k.sms.aliSMS.send(\"your_ali_template_code\", \"+8615312345678\", \"code\", \"1234\");")]
+        public bool Send(string templateCode, string ToPhoneNumber, string bindingkey, string bindingvalue)
+        {
+            var setting = this.Context.WebSite.SiteDb().CoreSetting.GetSetting<AliSMSSetting>();
+            return Send(templateCode, ToPhoneNumber, bindingkey, bindingvalue, setting.signName);
+        }
     }
 }
