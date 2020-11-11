@@ -5,6 +5,7 @@ using Kooboo.Data.Template;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Sync;
 using System;
+using System.IO;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -65,5 +66,70 @@ namespace Kooboo.Web.Api.Implementation
             SyncService.Receive(sitedb, sync, null, userid);
 
         }
+
+   
+        public void Zip(Guid SiteId, ApiCall call)
+        {
+           // verify login.  
+           if (call.Context.User == null)
+            {
+                throw new Exception("Access denied"); 
+            }
+           else
+            {
+                var usersites = Kooboo.Sites.Service.WebSiteService.ListByUser(call.Context.User);
+
+                var find = usersites.Find(o => o.Id == SiteId); 
+                if (find == null)
+                {
+                    throw new Exception("Access denied");
+                }
+            }
+
+            // Guid Hash = call.GetValue<Guid>("hash");
+             
+            //if (Hash != default(Guid))
+            //{
+            //    var hashback = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
+
+            //    if (hashback != Hash)
+            //    {
+            //        throw new Exception(Data.Language.Hardcoded.GetValue("Hash validation failed", call.Context));
+            //    }
+            //}
+
+            var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            var sitedb = website.SiteDb();
+
+            //  var zip = call.Context.Request.PostData; 
+
+            var files = Kooboo.Lib.NETMultiplePart.FormReader.ReadFile(call.Context.Request.PostData);
+
+            if (files != null && files.Count > 0)
+            {
+                foreach (var f in files)
+                {
+                    var bytes = f.Bytes;
+                    string filename = f.FileName;
+
+                    string extension = System.IO.Path.GetExtension(filename);
+                    if (!string.IsNullOrEmpty(extension))
+                    {
+                        extension = extension.ToLower();
+                    }
+
+                    if (extension == ".zip" || extension == ".rar")
+                    {
+                        MemoryStream memory = new MemoryStream(bytes); 
+
+                        Kooboo.Sites.Sync.ImportExport.ImportZip(memory, call.WebSite, call.Context.User.Id);
+                    }
+
+                }
+            }
+
+
+        }
+
     }
 }
