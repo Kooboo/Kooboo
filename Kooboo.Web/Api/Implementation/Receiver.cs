@@ -54,7 +54,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("Hash validation failed", call.Context));
                 }
-            } 
+            }
 
             var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
             var sitedb = website.SiteDb();
@@ -67,19 +67,29 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
-   
-        public void Zip(Guid SiteId, ApiCall call)
+
+        public void Zip(ApiCall call)
         {
-           // verify login.  
-           if (call.Context.User == null)
+
+            var isSpa = call.GetBoolValue("iSSpa");
+            // TODO 根据这个为ImportExport.ImportZip确定是spa的导入
+
+            if (call.Context.WebSite == null)
             {
-                throw new Exception("Access denied"); 
+                throw new Exception("site not found");
             }
-           else
+
+            var SiteId = call.Context.WebSite.Id;
+            // verify login.  
+            if (call.Context.User == null)
+            {
+                throw new Exception("Access denied");
+            }
+            else
             {
                 var usersites = Kooboo.Sites.Service.WebSiteService.ListByUser(call.Context.User);
 
-                var find = usersites.Find(o => o.Id == SiteId); 
+                var find = usersites.Find(o => o.Id == SiteId);
                 if (find == null)
                 {
                     throw new Exception("Access denied");
@@ -87,7 +97,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             // Guid Hash = call.GetValue<Guid>("hash");
-             
+
             //if (Hash != default(Guid))
             //{
             //    var hashback = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
@@ -120,7 +130,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (extension == ".zip" || extension == ".rar")
                     {
-                        MemoryStream memory = new MemoryStream(bytes); 
+                        MemoryStream memory = new MemoryStream(bytes);
 
                         Kooboo.Sites.Sync.ImportExport.ImportZip(memory, call.WebSite, call.Context.User.Id);
                     }
