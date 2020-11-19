@@ -35,6 +35,8 @@ $(function () {
           enableJsCssCompress: false,
           enableJsCssBrowerCache: true,
           enableImageBrowserCache: false,
+          enableVideoBrowserCache: false,
+          enableSPA: false,
           imageCacheDays: 1,
           enableDiskSync: false,
           enableMultilingual: false,

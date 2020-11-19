@@ -339,7 +339,10 @@ namespace Kooboo.Web.Api.Implementation
 
                 currentsite.EnableJsCssBrowerCache = newinfo.EnableJsCssBrowerCache;
                 currentsite.EnableImageBrowserCache = newinfo.EnableImageBrowserCache;
-                currentsite.ImageCacheDays = newinfo.ImageCacheDays; 
+                currentsite.ImageCacheDays = newinfo.ImageCacheDays;
+
+                currentsite.EnableSPA = newinfo.EnableSPA;
+                currentsite.EnableVideoBrowserCache = newinfo.EnableVideoBrowserCache; 
 
                 currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress; 
 

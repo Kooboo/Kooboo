@@ -292,6 +292,17 @@ namespace Kooboo.Sites.Service
                 return null;
             }
 
+            if (context.WebSite.EnableSPA)
+            {
+                var home = Kooboo.Sites.Routing.ObjectRoute.GetDefaultRoute(context.WebSite.SiteDb()); 
+                if (home !=null && home.Name.ToLower() != context.RenderContext.Request.Url.ToLower())
+                {
+                    context.RenderContext.Response.Redirect(302, home.Name);
+                    return null; 
+                } 
+            }
+
+
             var url = GetCustomErrorUrl(context.WebSite, statusCode);
             return await RenderCustomErrorPage(context, url);
         }

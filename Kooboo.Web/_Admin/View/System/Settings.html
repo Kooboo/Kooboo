@@ -72,13 +72,13 @@
           </div>
       </li>
       <li class="item clearfix">
-        <div class="col-md-3">
-            <label class="control-label">Enable Sql Log</label>
-            <p class="form-control-static"></p>
-        </div>
-        <div class="col-md-9">
-            <kb-switch v-model="model.enableSqlLog"></kb-switch>
-        </div>
+          <div class="col-md-3">
+              <label class="control-label">Enable Sql Log</label>
+              <p class="form-control-static"></p>
+          </div>
+          <div class="col-md-9">
+              <kb-switch v-model="model.enableSqlLog"></kb-switch>
+          </div>
       </li>
       <li class="item clearfix">
           <div class="col-md-3">
@@ -112,7 +112,7 @@
 
       <li class="item clearfix">
           <div class="col-md-3">
-              <label class="control-label">Enable Js CSS Browser Cache</label> 
+              <label class="control-label">Enable Js CSS Browser Cache</label>
           </div>
           <div class="col-md-9">
               <div class="form-group">
@@ -121,10 +121,21 @@
           </div>
       </li>
 
+      <li class="item clearfix">
+          <div class="col-md-3">
+              <label class="control-label">Enable Video Browser Cache</label>
+          </div>
+          <div class="col-md-9">
+              <div class="form-group">
+                  <kb-switch v-model="model.enableVideoBrowserCache"></kb-switch>
+              </div>
+          </div>
+      </li>
+
 
       <li class="item clearfix">
           <div class="col-md-3">
-              <label class="control-label">Enable image Browser Cache</label> 
+              <label class="control-label">Enable image Browser Cache</label>
           </div>
           <div class="col-md-9">
               <div class="form-group">
@@ -226,16 +237,29 @@
       </li>
 
       <li class="item clearfix">
-        <div class="col-md-3">
-            <label class="control-label">Enable CORS</label>
-            <p class="form-control-static"></p>
-        </div>
-        <div class="col-md-9">
-            <div class="form-group">
-                <kb-switch v-model="model.enableCORS"></kb-switch>
-            </div>
-        </div>
-    </li>
+          <div class="col-md-3">
+              <label class="control-label">Enable CORS</label>
+              <p class="form-control-static"></p>
+          </div>
+          <div class="col-md-9">
+              <div class="form-group">
+                  <kb-switch v-model="model.enableCORS"></kb-switch>
+              </div>
+          </div>
+      </li>
+
+      <li class="item clearfix">
+          <div class="col-md-3">
+              <label class="control-label">Enable SPA</label>
+              <p class="form-control-static">redirect 404 to start page</p>
+          </div>
+          <div class="col-md-9">
+              <div class="form-group">
+                  <kb-switch v-model="model.enableSPA"></kb-switch>
+              </div>
+          </div>
+      </li>
+
 
       <li class="item clearfix">
           <div class="col-md-3">

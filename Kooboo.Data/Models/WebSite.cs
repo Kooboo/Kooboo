@@ -238,7 +238,11 @@ namespace Kooboo.Data.Models
         //by append a version to js css file. 
         public bool EnableJsCssBrowerCache { get; set; } = true;
 
-        public bool EnableImageBrowserCache { get; set; } = false;
+        public bool EnableImageBrowserCache { get; set; }
+
+        public bool EnableVideoBrowserCache { get; set; } = true;
+
+        public bool EnableSPA { get; set; }
 
         public int ImageCacheDays { get; set; } = 1;
 
@@ -250,6 +254,8 @@ namespace Kooboo.Data.Models
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
         public bool ContinueConvert { get; set; } = true;
+
+
 
         public bool HasSitePath()
         {
@@ -322,8 +328,8 @@ namespace Kooboo.Data.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public Data.Definition.WebsiteType SiteType { get; set; } = Definition.WebsiteType.p;
 
-        public bool IsApp { get; set; } 
-
+        public bool IsApp { get; set; }
+  
         public override int GetHashCode()
         {
             string unique = string.Empty;
@@ -332,12 +338,14 @@ namespace Kooboo.Data.Models
 
             unique += this.EnableJsCssBrowerCache.ToString();
             unique += this.EnableImageBrowserCache.ToString();
-            unique += this.ImageCacheDays.ToString(); 
-            unique += this.EnableSystemRoute.ToString(); 
-            unique += this.EnableECommerce.ToString(); 
-            unique += this.EnableFileIOUrl.ToString(); 
-            unique += this.EnableCORS.ToString(); 
-            unique += this.EnableSqlLog.ToString();  
+            unique += this.EnableVideoBrowserCache.ToString();
+            unique += this.EnableSPA.ToString(); 
+            unique += this.ImageCacheDays.ToString();
+            unique += this.EnableSystemRoute.ToString();
+            unique += this.EnableECommerce.ToString();
+            unique += this.EnableFileIOUrl.ToString();
+            unique += this.EnableCORS.ToString();
+            unique += this.EnableSqlLog.ToString();
             //public bool EnableECommerce { get; set; } 
             //Enable direct access to view, htmlblock etc, via system routes. 
             //public bool EnableSystemRoute { get; set; }

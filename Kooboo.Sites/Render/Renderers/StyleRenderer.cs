@@ -23,16 +23,9 @@ namespace Kooboo.Sites.Render
                     {
                         body = CompressCache.Get(css.Id, css.Version, body, CompressType.css);
                     }
-                } 
-
-                TextBodyRender.SetBody(context, body); 
-
-                var version = context.RenderContext.Request.GetValue("version");
-
-                if (!string.IsNullOrWhiteSpace(version))
-                {
-                    context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
                 }
+                TextBodyRender.SetBody(context, body); 
+                VersionRenderer.ScriptStyleVersion(context); 
             }
         }
 
