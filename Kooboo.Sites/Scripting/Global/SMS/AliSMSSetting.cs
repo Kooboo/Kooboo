@@ -13,6 +13,7 @@ namespace Kooboo.Sites.Scripting.Global.SMS
         public string regionId { get; set; }
 
         public string signName { get; set; }
+        public string internationalSignName { get; set; }
 
         public string Name => "AliSMS";
     }
