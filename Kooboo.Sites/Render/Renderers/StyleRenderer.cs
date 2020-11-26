@@ -1,8 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved. 
-using Kooboo.Sites.Render.Renderers;
-using System;
-using System.Text;
+using Kooboo.Sites.Render.Renderers; 
 
 namespace Kooboo.Sites.Render
 {
@@ -27,8 +25,7 @@ namespace Kooboo.Sites.Render
                 TextBodyRender.SetBody(context, body); 
                 VersionRenderer.ScriptStyleVersion(context); 
             }
-        }
-
+        } 
 
         public static string GetBody(Kooboo.Sites.Models.Style style)
         {

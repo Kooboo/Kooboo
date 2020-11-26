@@ -40,15 +40,21 @@ var webcontent = k.url.get(""http://www.kooboo.com"", ""username"", ""password""
         [Description(@"Get data string from remote url using HTTP Basic authentication, and deserialize the string as a JSON object")]
         public object GetJson(string url, string username, string password)
         {
-            string result = _get(url, null, username, password).Result;
-            return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);
+            string result = _get(url, null, username, password).Result; 
+
+            Jint.Native.Json.JsonParser praser = new Jint.Native.Json.JsonParser(new Jint.Engine()); 
+           return  praser.Parse(result);  
+          // return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);  
         }
 
         [Description(@"Get data string from remote url and deserialize the string as a JSON object")]
         public object GetJson(string url)
         {
             string result = _get(url).Result;
-            return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);
+
+            Jint.Native.Json.JsonParser praser = new Jint.Native.Json.JsonParser(new Jint.Engine());
+            return praser.Parse(result); 
+           // return Kooboo.Lib.Helper.JsonHelper.Deserialize(result);
         }
 
 

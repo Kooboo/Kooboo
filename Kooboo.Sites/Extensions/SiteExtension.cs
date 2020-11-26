@@ -39,7 +39,8 @@ namespace Kooboo.Sites.Extensions
 
 
         public static string BaseUrl(this WebSite site, string path = null)
-        {
+        { 
+
             if (site == null)
             {
                 return string.Empty;
@@ -48,6 +49,12 @@ namespace Kooboo.Sites.Extensions
             {
                 path = string.Empty;
             }
+
+            if (!string.IsNullOrEmpty(site.PreviewUrl))
+            { 
+                return Lib.Helper.UrlHelper.Combine(site.PreviewUrl, path);  
+            }
+
             var split = path.Split('?');
             var p = split[0];
             var binding = Data.GlobalDb.Bindings.GetByWebSite(site.Id).FirstOrDefault();

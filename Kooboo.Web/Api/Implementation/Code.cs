@@ -19,6 +19,8 @@ namespace Kooboo.Web.Api.Implementation
             call.Context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
 
             var sitedb = call.WebSite.SiteDb();
+
+            call.WebSite.BaseUrl(); 
             
             if (call.ObjectId != default(Guid))
             {

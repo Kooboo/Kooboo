@@ -256,6 +256,9 @@ namespace Kooboo.Data.Models
         public bool ContinueConvert { get; set; } = true;
 
 
+        public string PreviewUrl { get; set; }
+
+
 
         public bool HasSitePath()
         {
@@ -354,6 +357,8 @@ namespace Kooboo.Data.Models
             unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._LocalDiskSyncFolder;
 
             unique += this.DefaultCulture + this.AutoDetectCulture.ToString();
+
+            unique += this.PreviewUrl; 
 
             foreach (var item in this.Cultures)
             {

@@ -49,6 +49,7 @@ $(function () {
           enableLocationRedirect: false,
           diskSyncFolder: "",
           enableCORS: true,
+          previewUrl: ""
         },
         loading: true,
         domains: [],

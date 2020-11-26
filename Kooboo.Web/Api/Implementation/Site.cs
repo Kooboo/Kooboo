@@ -350,6 +350,8 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.EnableCORS = newinfo.EnableCORS;
                 currentsite.EnableSqlLog = newinfo.EnableSqlLog;
 
+                currentsite.PreviewUrl = newinfo.PreviewUrl; 
+
                 // the cluster... 
 
                 GlobalDb.WebSites.AddOrUpdate(currentsite);
