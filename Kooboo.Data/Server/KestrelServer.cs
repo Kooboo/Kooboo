@@ -22,6 +22,7 @@ using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using Kooboo.Lib.Helper;
+using Kooboo.Extensions;
 
 namespace Kooboo.Data.Server
 {
@@ -494,7 +495,8 @@ namespace Kooboo.Data.Server
                         try
                         {
                             res.Headers["Content-Length"] = response.Body.Length.ToString();
-                            await res.Body.WriteAsync(response.Body, 0, response.Body.Length).ConfigureAwait(false);
+                            
+                            await response.Body.ChunkCopyAsync(res.Body).ConfigureAwait(false);
                         }
                         catch (Exception)
                         {
@@ -505,7 +507,7 @@ namespace Kooboo.Data.Server
                     {
                         if (response.Stream != null)
                         {
-                            await response.Stream.CopyToAsync(res.Body);
+                            await response.Stream.ChunkCopyAsync(res.Body, response.Stream.Length);
                         } 
                         else if (response.FilePart != null)
                         {
@@ -563,7 +565,7 @@ namespace Kooboo.Data.Server
                     if (response.Body != null && response.Body.Length > 0)
                     {
                         res.StatusCode = response.StatusCode;
-                        await res.Body.WriteAsync(response.Body, 0, response.Body.Length).ConfigureAwait(false);
+                        await response.Body.ChunkCopyAsync(res.Body).ConfigureAwait(false);
 
                         res.Body.Dispose();
                         Log(renderContext);
@@ -644,13 +646,9 @@ namespace Kooboo.Data.Server
             {
                 long offset = part.BlockPosition + part.RelativePosition;
                 //byte[] buffer = new byte[209715200];
-                byte[] buffer = new byte[8096];
                 long totalToSend = part.Length;
-                int count = 0;
 
                 Res.Headers["Content-Length"] = totalToSend.ToString();
-
-                long bytesRemaining = totalToSend;
 
                 var stream = Kooboo.IndexedDB.StreamManager.OpenReadStream(part.FullFileName);
 
@@ -658,20 +656,7 @@ namespace Kooboo.Data.Server
 
                 try
                 {
-                    while (bytesRemaining > 0)
-                    {
-                        if (bytesRemaining <= buffer.Length)
-                            count = await stream.ReadAsync(buffer, 0, (int)bytesRemaining);
-                        else
-                            count = await stream.ReadAsync(buffer, 0, buffer.Length);
-
-                        if (count == 0)
-                            return;
-
-                        await Res.Body.WriteAsync(buffer, 0, count);
-
-                        bytesRemaining -= count;
-                    }
+                    await stream.ChunkCopyAsync(Res.Body, totalToSend);
                 }
                 catch (IndexOutOfRangeException)
                 {
