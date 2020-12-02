@@ -18,7 +18,7 @@ namespace Kooboo.Sites.OAuth2
             Context = context;
             if (context.WebSite == null) throw new Exception("Not WebSite");
             Setting = context.WebSite.SiteDb().CoreSetting.GetSetting<T>();
-            if (Setting == null) throw new Exception($"Not SiteSetting");
+            if (Setting == null) throw new Exception($"You need set {typeof(T).Name} first!");
         }
 
         [Kooboo.Data.Attributes.KIgnore]
@@ -27,7 +27,7 @@ namespace Kooboo.Sites.OAuth2
         [Kooboo.Data.Attributes.KIgnore]
         public RenderContext Context { get; set; }
 
-        public abstract string GetRedirectUrl(IDictionary<string, object> @params);
+        public abstract string GetAuthUrl(IDictionary<string, object> @params);
 
         [Kooboo.Data.Attributes.KIgnore]
         public abstract string Callback(IDictionary<string, object> query);

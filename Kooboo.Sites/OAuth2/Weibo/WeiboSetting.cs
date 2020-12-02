@@ -10,6 +10,6 @@ namespace Kooboo.Sites.OAuth2.Weibo
         public string Name => "WeiboLoginSetting";
         public string Appid { get; set; }
         public string Secret { get; set; }
-        public string RedirectUri { get; set; }
+        public string CallbackCodeName { get; set; }
     }
 }

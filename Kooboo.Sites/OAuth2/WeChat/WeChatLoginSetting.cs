@@ -10,7 +10,7 @@ namespace Kooboo.Sites.OAuth2.WeChat
 
         public string Appid { get; set; }
         public string Secret { get; set; }
-        public string AfterAuthCallbackName { get; set; }
+        public string CallbackCodeName { get; set; }
         public string Name => "WeChatLoginSetting";
     }
 }

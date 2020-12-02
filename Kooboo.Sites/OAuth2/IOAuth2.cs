@@ -7,6 +7,6 @@ namespace Kooboo.Sites.OAuth2
     {
         [KIgnore]
         string Callback(IDictionary<string, object> query);
-        string GetRedirectUrl(IDictionary<string, object> @params);
+        string GetAuthUrl(IDictionary<string, object> @params);
     }
 }

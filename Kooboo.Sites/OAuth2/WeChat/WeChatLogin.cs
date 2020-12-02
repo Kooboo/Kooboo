@@ -24,9 +24,9 @@ appid:xxx
 
 secret:xxx
 
-afterAuthCallbackName:wxcallback
+callbackCodeName:wxcallback
 
-2.Create afterAuthCallback script
+2.Create callbackCode script
 
 development=>code=>create event code
 
@@ -40,14 +40,14 @@ k.response.write(k.request.body)
 
 <div>
     <script engine='kscript'>
-        var url = k.oAuth.weChat.getRedirectUrl({
+        var url = k.oAuth2.weChat.getAuthUrl({
             state: 'custom_state'
         })
     </script>
     <a k-href='url'>wechat login</a>
 </div>
 ")]
-        public override string GetRedirectUrl(IDictionary<string, object> @params)
+        public override string GetAuthUrl(IDictionary<string, object> @params)
         {
             var redirectUrl = $"{Context.WebSite.BaseUrl()}_api/oauth2callback/{nameof(WeChatLogin)}";
             var url = $"https://open.weixin.qq.com/connect/qrconnect?appid={Setting.Appid}&redirect_uri={redirectUrl}&response_type=code&scope=snsapi_login&state=";
@@ -65,9 +65,9 @@ appid:xxx
 
 secret:xxx
 
-afterAuthCallbackName:wxcallback
+callbackCodeName:wxcallback
 
-2.Create afterAuthCallback script
+2.Create callbackCode script
 
 development=>code=>create event code
 
@@ -84,7 +84,7 @@ k.response.write(k.request.body)
     <script src='https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'></script>
     <div id='json_data' style='display:none'>
         <script engine='kscript'>
-            k.response.write(k.oAuth.weChat.getRedirectJson({
+            k.response.write(k.oAuth2.weChat.getAuthJson({
                                 id:'qrcode_container',
                                 state:'custom_state'
                             }))
@@ -92,11 +92,11 @@ k.response.write(k.request.body)
     </div>
     <script>
         var json=document.getElementById('json_data').innerText
-        			new WxLogin(JSON.parse(json));
+        new WxLogin(JSON.parse(json));
     </script>
 </div>
 ")]
-        public string GetRedirectJson(IDictionary<string, object> @params)
+        public string GetAuthJson(IDictionary<string, object> @params)
         {
             var redirectUrl = $"{Context.WebSite.BaseUrl()}_api/oauth2callback/{nameof(WeChatLogin)}";
             if (!@params.ContainsKey("appid")) @params.Add("appid", Setting.Appid);
@@ -108,7 +108,7 @@ k.response.write(k.request.body)
         [KIgnore]
         public override string Callback(IDictionary<string, object> query)
         {
-            var codeScript = Context.WebSite.SiteDb().Code.GetByNameOrId(Setting.AfterAuthCallbackName);
+            var codeScript = Context.WebSite.SiteDb().Code.GetByNameOrId(Setting.CallbackCodeName);
             if (codeScript == null) throw new Exception("Not handle callback script code!");
             query.TryGetValue("code", out var code);
             if (string.IsNullOrWhiteSpace(code.ToString())) throw new Exception("code can't be empty");

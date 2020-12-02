@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Authorization.Module.code.Jwt
+namespace Kooboo.Sites.Scripting.Global.Jwt
 {
     public class JwtSetting : ISiteSetting
     {
