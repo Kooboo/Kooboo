@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods
 {
-    public class PaypalFormSetting : IPaymentSetting
+    public class PaypalFormSetting : IPaymentSetting, ISettingDescription
     {
         public string PaypalUrl
         {
@@ -40,7 +42,14 @@ namespace Kooboo.Sites.Payment.Methods
         public string CancelUrl { get; set; }
 
         public string LogoImage { get; set; }
-          
-        public string Name =>"PaypalFormPayment";
+
+        public string Name => "PaypalFormPayment";
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
+        }
     }
 }

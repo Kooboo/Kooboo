@@ -1,45 +1,72 @@
-$(function() {
+$(function () {
   var self;
   new Vue({
     el: "#app",
-    data: function() {
+    data: function () {
       self = this;
       return {
         breads: [
           {
-            name: "SITES"
+            name: "SITES",
           },
           {
-            name: "DASHBOARD"
+            name: "DASHBOARD",
           },
           {
-            name: "Core settings"
-          }
+            name: "Core settings",
+          },
         ],
         settings: [],
         showModal: false,
         fields: [],
-        currentSettingName: ""
+        alert: "",
+        currentSettingName: "",
       };
     },
+    computed: {
+      groups: function () {
+        var arr = [];
+
+        for (var i = 0; i < this.settings.length; i++) {
+          const setting = this.settings[i];
+
+          var group = arr.filter(function (f) {
+            return f.name == setting.group;
+          })[0];
+
+          if (group) {
+            group.items.push(setting);
+          } else {
+            arr.push({
+              name: setting.group,
+              items: [setting],
+            });
+          }
+        }
+
+        return arr;
+      },
+    },
     methods: {
-      getList: function() {
-        Kooboo.CoreSetting.getList().then(function(res) {
+      getList: function () {
+        Kooboo.CoreSetting.getList().then(function (res) {
           if (res.success) {
-            self.settings = res.model.map(function(item) {
+            self.settings = res.model.map(function (item) {
               return {
                 name: item.name,
-                value: item.value
+                group: item.group,
+                alert: item.alert,
+                value: item.value,
               };
             });
           }
         });
       },
-      onSave: function() {
+      onSave: function () {
         Kooboo.CoreSetting.update({
           name: self.currentSettingName,
-          model: Kooboo.arrToObj(self.fields, "name", "value")
-        }).then(function(res) {
+          model: Kooboo.arrToObj(self.fields, "name", "value"),
+        }).then(function (res) {
           if (res.success) {
             info.done(Kooboo.text.info.update.success);
             self.onClose();
@@ -47,16 +74,21 @@ $(function() {
           }
         });
       },
-      onClose: function() {
+      onClose: function () {
         self.currentSettingName = "";
         self.fields = [];
         self.showModal = false;
       },
-      onEdit: function(name) {
+      onEdit: function (name) {
         self.currentSettingName = name;
+
+        self.alert = self.settings.filter(function (f) {
+          return f.name == name;
+        })[0].alert;
+
         Kooboo.CoreSetting.get({
-          name: name
-        }).then(function(res) {
+          name: name,
+        }).then(function (res) {
           self.fields = res.model;
           self.showModal = true;
           self.getList();
@@ -77,7 +109,7 @@ $(function() {
 
         var reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           var b64 = e.target.result;
           field.value =
             file.name + "|" + b64.substr(b64.indexOf("base64,") + 7);
@@ -90,13 +122,13 @@ $(function() {
         var idx = nameAndBase64.indexOf("|");
         idx = idx < 0 ? 0 : idx;
         return nameAndBase64.substr(0, idx);
-      }
+      },
     },
-    mounted: function() {
+    mounted: function () {
       this.getList();
     },
-    beforeDestory: function() {
+    beforeDestory: function () {
       self = null;
-    }
+    },
   });
 });

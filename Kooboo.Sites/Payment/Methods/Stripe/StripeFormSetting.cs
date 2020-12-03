@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Stripe
 {
-    public class StripeFormSetting : IPaymentSetting
+    public class StripeFormSetting : IPaymentSetting, ISettingDescription
     {
         private const string name = "StripePayment";
 
@@ -19,5 +21,12 @@ namespace Kooboo.Sites.Payment.Methods.Stripe
         public string Publishablekey { get; set; }
 
         public string WebhookSigningSecret { get; set; }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
+        }
     }
 }
