@@ -40,7 +40,7 @@ k.response.write(k.request.body)
 
 <div>
     <script engine='kscript'>
-        var url = k.oAuth2.weibo.getAuthUrl({})
+        var url = k.oAuth2.weibo.getAuthUrl()
     </script>
     <a k-href='url'>weibo login</a>
 </div>
