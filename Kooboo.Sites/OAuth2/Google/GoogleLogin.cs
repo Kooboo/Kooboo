@@ -18,27 +18,20 @@ namespace Kooboo.Sites.OAuth2.Google
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>GoogleLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:googlecallback
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:googlecallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.google.getAuthUrl({
@@ -62,27 +55,20 @@ k.response.write(k.request.body)
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>GoogleLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:googlecallback
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:googlecallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.google.getAuthUrl()

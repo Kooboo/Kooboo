@@ -18,29 +18,21 @@ namespace Kooboo.Sites.OAuth2.Google
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>FacebookLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:fbcallback
-
 fields:
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:fbcallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.facebook.getAuthUrl({
@@ -61,29 +53,21 @@ k.response.write(k.request.body)
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>FacebookLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:fbcallback
-
 fields:
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:fbcallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.facebook.getAuthUrl()

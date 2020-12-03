@@ -17,27 +17,20 @@ namespace Kooboo.Sites.OAuth2.WeChat
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>WeChatLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:wxcallback
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:wxcallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.weChat.getAuthUrl({
@@ -58,27 +51,20 @@ k.response.write(k.request.body)
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>WeChatLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:wxcallback
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:wxcallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.weChat.getAuthUrl()
@@ -91,27 +77,20 @@ k.response.write(k.request.body)
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>WeChatLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:wxcallback
 
 2.Create callbackCode script
-
 development=>code=>create event code
-
 name:wxcallback
 
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <div id='qrcode_container'></div>
     <script src='https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'></script>

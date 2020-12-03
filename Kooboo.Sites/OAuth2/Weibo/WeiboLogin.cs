@@ -17,27 +17,20 @@ namespace Kooboo.Sites.OAuth2.Weibo
 
         [Description(@"
 1.Config
-
 site=>system=>settings=>WeibotLoginSetting
 
 appid:xxx
-
 secret:xxx
-
 callbackCodeName:wbcallback
 
 2.Create callbackCode script
-
 development=>code=>create event code
 
 name:wbcallback
-
 code:
-
 k.response.write(k.request.body)
 
 3.Add page
-
 <div>
     <script engine='kscript'>
         var url = k.oAuth2.weibo.getAuthUrl()
