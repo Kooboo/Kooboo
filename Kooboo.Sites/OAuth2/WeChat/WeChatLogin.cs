@@ -80,6 +80,39 @@ k.response.write(k.request.body)
 3.Add page
 
 <div>
+    <script engine='kscript'>
+        var url = k.oAuth2.weChat.getAuthUrl()
+    </script>
+    <a k-href='url'>wechat login</a>
+</div>
+")]
+        public string GetAuthUrl() => GetAuthUrl(new Dictionary<string, object>());
+
+
+        [Description(@"
+1.Config
+
+site=>system=>settings=>WeChatLoginSetting
+
+appid:xxx
+
+secret:xxx
+
+callbackCodeName:wxcallback
+
+2.Create callbackCode script
+
+development=>code=>create event code
+
+name:wxcallback
+
+code:
+
+k.response.write(k.request.body)
+
+3.Add page
+
+<div>
     <div id='qrcode_container'></div>
     <script src='https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'></script>
     <div id='json_data' style='display:none'>

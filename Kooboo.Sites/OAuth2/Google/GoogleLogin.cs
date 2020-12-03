@@ -60,6 +60,38 @@ k.response.write(k.request.body)
             return url;
         }
 
+        [Description(@"
+1.Config
+
+site=>system=>settings=>GoogleLoginSetting
+
+appid:xxx
+
+secret:xxx
+
+callbackCodeName:googlecallback
+
+2.Create callbackCode script
+
+development=>code=>create event code
+
+name:googlecallback
+
+code:
+
+k.response.write(k.request.body)
+
+3.Add page
+
+<div>
+    <script engine='kscript'>
+        var url = k.oAuth2.google.getAuthUrl()
+    </script>
+    <a k-href='url'>google login</a>
+</div>
+")]
+        public string GetAuthUrl() => GetAuthUrl(new Dictionary<string, object>());
+
         [KIgnore]
         public override string Callback(IDictionary<string, object> query)
         {

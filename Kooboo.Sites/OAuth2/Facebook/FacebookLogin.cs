@@ -59,6 +59,40 @@ k.response.write(k.request.body)
             return url;
         }
 
+        [Description(@"
+1.Config
+
+site=>system=>settings=>FacebookLoginSetting
+
+appid:xxx
+
+secret:xxx
+
+callbackCodeName:fbcallback
+
+fields:
+
+2.Create callbackCode script
+
+development=>code=>create event code
+
+name:fbcallback
+
+code:
+
+k.response.write(k.request.body)
+
+3.Add page
+
+<div>
+    <script engine='kscript'>
+        var url = k.oAuth2.facebook.getAuthUrl()
+    </script>
+    <a k-href='url'>facebook login</a>
+</div>
+")]
+        public string GetAuthUrl() => GetAuthUrl(new Dictionary<string, object>());
+
         [KIgnore]
         public override string Callback(IDictionary<string, object> query)
         {
