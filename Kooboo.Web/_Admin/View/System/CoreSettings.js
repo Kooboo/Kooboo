@@ -19,35 +19,37 @@ $(function () {
         settings: [],
         showModal: false,
         fields: [],
+        groups: [],
         alert: "",
         currentSettingName: "",
       };
     },
-    computed: {
-      groups: function () {
-        var arr = [];
-
+    methods: {
+      setGroups: function () {
+        var groupsBak = this.groups;
+        this.groups = [];
         for (var i = 0; i < this.settings.length; i++) {
           const setting = this.settings[i];
 
-          var group = arr.filter(function (f) {
+          var group = this.groups.filter(function (f) {
             return f.name == setting.group;
           })[0];
 
           if (group) {
             group.items.push(setting);
           } else {
-            arr.push({
+            var groupBak = groupsBak.filter(function (f) {
+              return f.name == setting.group;
+            })[0];
+
+            this.groups.push({
               name: setting.group,
               items: [setting],
+              expand: groupBak && groupBak.expand,
             });
           }
         }
-
-        return arr;
       },
-    },
-    methods: {
       getList: function () {
         Kooboo.CoreSetting.getList().then(function (res) {
           if (res.success) {
@@ -59,6 +61,8 @@ $(function () {
                 value: item.value,
               };
             });
+
+            self.setGroups();
           }
         });
       },

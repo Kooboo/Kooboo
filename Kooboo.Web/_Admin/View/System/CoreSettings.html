@@ -18,6 +18,12 @@
   .setting-list li:last-child {
     border-bottom: 0;
   }
+
+  .expand-btn {
+    position: absolute;
+    right: 10px;
+    color: #888;
+  }
 </style>
 <div id="app" v-cloak>
   <div class="page-header">
@@ -29,10 +35,18 @@
       <div
         v-for="group in groups"
         :key="group.name"
-        style="outline: 1px solid #eee"
       >
-        <h6 style="background-color: #eee; padding: 5px">{{group.name}}</h6>
-        <ul class="setting-list clearfix">
+        <h6
+          style="border-bottom: 1px solid #eeeeee; padding: 10px; position: relative"
+          @click="group.expand=!group.expand"
+        >
+          {{group.name}}
+          <span
+            class="expand-btn fa fa-caret-down"
+            :class="group.expand?'fa-caret-down':'fa-caret-up'"
+          ></span>
+        </h6>
+        <ul class="setting-list clearfix" v-show="group.expand">
           <li
             class="item clearfix"
             v-for="(setting, index) in group.items"
