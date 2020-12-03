@@ -26,8 +26,12 @@
   <kb-breadcrumb :breads="breads"></kb-breadcrumb>
   <div class="row">
     <div class="col-md-6 col-sm-12">
-      <div v-for="group in groups" :key="group.name" style="outline: 1px solid #eee;">
-        <h6 style="background-color: #eee; padding: 5px;">{{group.name}}</h6>
+      <div
+        v-for="group in groups"
+        :key="group.name"
+        style="outline: 1px solid #eee"
+      >
+        <h6 style="background-color: #eee; padding: 5px">{{group.name}}</h6>
         <ul class="setting-list clearfix">
           <li
             class="item clearfix"
@@ -67,7 +71,7 @@
         <div class="modal-body">
           <div class="alert alert-info alert-dismissable" v-if="alert">
             <strong>Tooltip</strong>
-            <p>{{alert}}</p>
+            <p style="white-space: pre-line">{{alert}}</p>
           </div>
           <div class="form-horizontal">
             <div

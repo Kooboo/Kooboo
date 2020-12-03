@@ -20,8 +20,8 @@ namespace Kooboo.Sites.OAuth2.Facebook
 
         public string GetAlert(RenderContext renderContext)
         {
-            return $@"
-Please set the callback address to:
+            return $@"1. You must enable the site to force SSL 
+2.Please set the callback address to:
 '{renderContext.WebSite.BaseUrl()}_api/oauth2callback/FacebookLogin'
 ";
         }

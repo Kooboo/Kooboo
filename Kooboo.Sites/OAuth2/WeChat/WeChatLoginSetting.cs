@@ -19,8 +19,7 @@ namespace Kooboo.Sites.OAuth2.WeChat
 
         public string GetAlert(RenderContext renderContext)
         {
-            return $@"
-Please set the callback address to:
+            return $@"Please set the callback address to:
 '{new Uri(renderContext.WebSite.BaseUrl()).Host}'
 ";
         }

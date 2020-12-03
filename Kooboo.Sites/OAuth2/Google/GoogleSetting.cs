@@ -18,8 +18,7 @@ namespace Kooboo.Sites.OAuth2.Google
 
         public string GetAlert(RenderContext renderContext)
         {
-            return $@"
-Please set the callback address to:
+            return $@"Please set the callback address to:
 '{renderContext.WebSite.BaseUrl()}_api/oauth2callback/GoogleLogin'
 ";
         }
