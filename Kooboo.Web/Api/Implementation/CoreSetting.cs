@@ -49,14 +49,22 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in Kooboo.Sites.Service.CoreSettingService.types)
             {
                 var value = sitedb.CoreSetting.Get(item.Key);
+                var instance = Activator.CreateInstance(item.Value);
+                var group = instance is ISettingDescription ? (instance as ISettingDescription).Group : "Others";
+                var alert = instance is ISettingDescription ? (instance as ISettingDescription).GetAlert(call.Context) : "";
 
                 if (value == null)
                 {
-                    var instance = Activator.CreateInstance(item.Value);
                     if (instance != null)
                     {
                         var name = GetName(instance);
-                        result.Add(new CoreSettingViewModel() { Name = name });
+
+                        result.Add(new CoreSettingViewModel()
+                        {
+                            Name = name,
+                            Group = group,
+                            Alert = alert
+                        });
                     }
 
                 }
@@ -67,7 +75,16 @@ namespace Kooboo.Web.Api.Implementation
                             x => x.Type == "file" ? new SettingFile(x.Value?.ToString()).Name : x.Value);
                     var json = Lib.Helper.JsonHelper.Serialize(values);
 
-                    result.Add(new CoreSettingViewModel() { Name = value.Name, Value = json, lastModify = value.LastModified });
+                    var vm = new CoreSettingViewModel()
+                    {
+                        Name = value.Name,
+                        Group = group,
+                        Alert = alert,
+                        Value = json,
+                        lastModify = value.LastModified
+                    };
+
+                    result.Add(vm);
                 }
 
             }
@@ -161,6 +178,10 @@ namespace Kooboo.Web.Api.Implementation
     {
 
         public string Name { get; set; }
+
+        public string Group { get; set; }
+
+        public string Alert { get; set; }
 
         public string Value { get; set; }
 

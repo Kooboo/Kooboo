@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods
 {
-    public class WeChatSetting : IPaymentSetting
+    public class WeChatSetting : IPaymentSetting, ISettingDescription
     {
         public string Name => "WeChatPay";
 
@@ -15,7 +17,7 @@ namespace Kooboo.Sites.Payment.Methods
         public string Key { get; set; }
 
         public string AppSecret { get; set; }
-        
+
         public string GetSSlCertPath()
         {
             return "";
@@ -24,7 +26,7 @@ namespace Kooboo.Sites.Payment.Methods
         {
             return "";
         }
-         
+
         //=======【支付结果通知url】===================================== 
         /* 支付结果通知回调url，用于商户接收支付结果
         */
@@ -68,6 +70,11 @@ namespace Kooboo.Sites.Payment.Methods
             return 1;
         }
 
+        public string Group => "Payment";
 
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
+        }
     }
 }

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.qualpay
 {
-    public class QualpayFormSetting : IPaymentSetting
+    public class QualpayFormSetting : IPaymentSetting, ISettingDescription
     {
         public string Name => "QualpayFormPayment";
 
@@ -33,6 +35,13 @@ namespace Kooboo.Sites.Payment.Methods.qualpay
                 return "https://api.qualpay.com";
 
             }
+        }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
         }
     }
 }

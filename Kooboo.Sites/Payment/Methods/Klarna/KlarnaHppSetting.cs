@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Payment.Methods.Klarna.lib;
 
 namespace Kooboo.Sites.Payment.Methods.Klarna
 {
-    public class KlarnaHppSetting : IPaymentSetting
+    public class KlarnaHppSetting : IPaymentSetting,ISettingDescription
     {
         public string Name => "KlarnaHppPayment";
 
@@ -56,6 +58,13 @@ namespace Kooboo.Sites.Payment.Methods.Klarna
         /// Consumer will get redirected there when an error occurred in the flow. If this parameter is not set and a <c>failure</c> URL is present, the Consumer will get redirected there.
         /// </summary>
         public string Error { get; set; }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
+        }
 
         public Credentials GetCredential(string country)
         {

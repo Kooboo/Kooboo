@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Context;
 using System;
 using System.IO;
 
@@ -8,6 +9,12 @@ namespace Kooboo.Data.Interface
     public interface ISiteSetting
     {
         string Name { get; }
+    }
+
+    public interface ISettingDescription
+    {
+        string Group { get; }
+        string GetAlert(RenderContext renderContext);
     }
 
     public class SettingFile

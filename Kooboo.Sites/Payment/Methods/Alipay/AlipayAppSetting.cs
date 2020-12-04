@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Alipay
 {
-    public class AlipayAppSetting :IPaymentSetting
+    public class AlipayAppSetting : IPaymentSetting, ISettingDescription
     {
-        public  string Name => "AlipayAppPayment";
+        public string Name => "AlipayAppPayment";
         public string APPId { get; set; }
         public string SignType { get; set; }
         public string PrivateKey { get; set; }
@@ -24,6 +26,13 @@ namespace Kooboo.Sites.Payment.Methods.Alipay
                 return "https://openapi.alipay.com/gateway.do";
 
             }
+        }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
         }
     }
 }
