@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Ogone
 {
-    public class OgoneSetting : IPaymentSetting
+    public class OgoneSetting : IPaymentSetting, ISettingDescription
     {
         public string Name => "OgonePay";
 
@@ -27,6 +29,13 @@ namespace Kooboo.Sites.Payment.Methods.Ogone
         public string BaseUrl()
         {
             return "https://payment";
+        }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
         }
     }
 }

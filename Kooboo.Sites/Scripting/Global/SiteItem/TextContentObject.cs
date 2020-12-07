@@ -69,6 +69,10 @@ namespace KScript.Sites
             {
                 return this.TextContent.LastModified.ToString();
             }
+            else if (lower == "version")
+            {
+                return this.TextContent.Version.ToString(); 
+            }
 
             var store = this.TextContent.GetContentStore(this.Culture);
 

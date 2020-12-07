@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Dwolla
 {
-    public class DwollaSetting : IPaymentSetting
+    public class DwollaSetting : IPaymentSetting, ISettingDescription
     {
         public string Name => "DwollaPayment";
 
@@ -17,5 +19,12 @@ namespace Kooboo.Sites.Payment.Methods.Dwolla
         public string FundingSourceId { get; set; }
 
         public string ReturnUrl { get; set; }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
+        }
     }
 }

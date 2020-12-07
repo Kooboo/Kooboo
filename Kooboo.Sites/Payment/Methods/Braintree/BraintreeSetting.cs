@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.Braintree
 {
-    public class BraintreeSetting : IPaymentSetting
+    public class BraintreeSetting : IPaymentSetting,ISettingDescription
     {
         public string Name => "Braintree";
 
@@ -31,6 +33,13 @@ namespace Kooboo.Sites.Payment.Methods.Braintree
                 return "https://api.braintreegateway.com";
 
             }
+        }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
         }
     }
 }

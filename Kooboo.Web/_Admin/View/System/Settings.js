@@ -35,6 +35,8 @@ $(function () {
           enableJsCssCompress: false,
           enableJsCssBrowerCache: true,
           enableImageBrowserCache: false,
+          enableVideoBrowserCache: false,
+          enableSPA: false,
           imageCacheDays: 1,
           enableDiskSync: false,
           enableMultilingual: false,
@@ -47,6 +49,7 @@ $(function () {
           enableLocationRedirect: false,
           diskSyncFolder: "",
           enableCORS: true,
+          previewUrl: ""
         },
         loading: true,
         domains: [],

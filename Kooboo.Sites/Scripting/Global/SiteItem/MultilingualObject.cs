@@ -87,6 +87,10 @@ namespace KScript.Sites
                         return this.Values.First();
                     }
                 }
+                else if (key.ToLower() == "version")
+                {
+                    
+                }
 
                 return null;
 

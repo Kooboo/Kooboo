@@ -24,17 +24,6 @@ namespace Kooboo.Sites.Render
             }
         }
 
-        //public static void Render(FrontContext context)
-        //{
-        //    var file = context.SiteDb.Files.Get(context.Route.objectId);
-        //    if (file == null)
-        //    {
-        //        return;
-        //    }
-
-        //    RenderFile(context, file);
-        //}
-
         public static async Task RenderAsync(FrontContext context)
         {
             var file = context.SiteDb.Files.Get(context.Route.objectId, true);
@@ -90,38 +79,34 @@ namespace Kooboo.Sites.Render
                     context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(FileContent.ContentString);
                 }
             }
-
-
-
+             
             // cache for font.
             if (contentType != null)
             {
-                if (contentType.ToLower().Contains("font"))
+                string lower = contentType.ToLower(); 
+
+                if (lower.Contains("font"))
                 {
-                    context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                    VersionRenderer.FontVersion(context);  
                 }
-                else if (contentType.ToLower().Contains("image"))
+                else if (lower.Contains("image"))
                 {
                     context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                     context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
 
-                    if (context.RenderContext.WebSite.EnableImageBrowserCache)
-                    {
-                        if (context.RenderContext.WebSite.ImageCacheDays > 0)
-                        {
-                            context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(context.RenderContext.WebSite.ImageCacheDays).ToString("r");
-                        }
-                        else
-                        {
-                            // double verify...
-                            var version = context.RenderContext.Request.GetValue("version");
-                            if (!string.IsNullOrWhiteSpace(version))
-                            {
-                                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
-                            }
-                        }
-                    }
-
+                    VersionRenderer.ImageVersion(context);  
+                }
+                else if (lower.Contains("css"))
+                {
+                    VersionRenderer.ScriptStyleVersion(context); 
+                }
+                else if (lower.Contains("javascript"))
+                {
+                    VersionRenderer.ScriptStyleVersion(context);
+                }
+                else if (lower.Contains("video"))
+                {
+                    VersionRenderer.VideoVersion(context); 
                 }
             }
 

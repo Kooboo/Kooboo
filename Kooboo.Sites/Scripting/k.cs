@@ -668,7 +668,7 @@ var value = k.session.key; ")]
                     {
                         if (_security == null)
                         {
-                            _security = new Security();
+                            _security = new Security(RenderContext);
                         }
                     }
                 }
