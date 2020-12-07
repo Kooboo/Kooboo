@@ -149,6 +149,8 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             if (type != null && linebreak > -1)
             {
                 var codebody = text.Substring(linebreak + _endmark.Length);
+                if (codebody.StartsWith("\r\n")) codebody = codebody.Substring("\r\n".Length);
+                else if (codebody.StartsWith("\n")) codebody = codebody.Substring("\n".Length);
                 code.CodeType = Lib.Helper.EnumHelper.GetEnum<Kooboo.Sites.Models.CodeType>(type);
                 code.Body = codebody;
                 return true;
