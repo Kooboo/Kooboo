@@ -211,13 +211,21 @@
         },
         url: function (value) {
           self.urlValidateModel = { valid: true, msg: "" };
-          if (!self.nameIsPolluted && typeof value == "string") {
-            value = value.replace(/\//g, "_");
-            value = value.replace(/\\/g, "_");
-            value = value.replace(/\./g, "");
+          if (
+            self.isNewCode &&
+            !self.nameIsPolluted &&
+            typeof value == "string"
+          ) {
+            value = value.replace(/(?!\w)./g, "_");
+
             while (value.startsWith("_")) {
               value = value.substr(1);
             }
+
+            while (value.endsWith("_")) {
+              value = value.substr(0, value.length - 1);
+            }
+
             self.name = value;
           }
         },
@@ -416,7 +424,7 @@
         needUrl: function () {
           if (!this.codeType) return false;
           var type = this.codeType.toLowerCase();
-          return type === "api" || type === "authentication";
+          return type === "api";
         },
       },
     });
