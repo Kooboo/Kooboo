@@ -238,9 +238,7 @@
     },
     mounted: function () {
       var me = this;
-      Kooboo.Code.getListByType({
-        codeType: "Authentication",
-      }).then(function (res) {
+      Kooboo.Authentication.getList().then(function (res) {
         if (res.success) {
           me.model = res.model;
           me.selectedRows = [];

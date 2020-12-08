@@ -31,7 +31,7 @@ namespace Kooboo.Sites.Models
     public enum SucceedAction
     {
         None,
-        Jwt,
+        JwtLogin,
         CustomCode
     }
 

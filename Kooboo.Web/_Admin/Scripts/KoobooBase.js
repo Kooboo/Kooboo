@@ -204,6 +204,12 @@
   }
   extend(View, BaseModel);
 
+  //Authentication
+  function Authentication() {
+    this.name = "Authentication";
+  }
+  extend(Authentication, BaseModel);
+
   //page
   function Page() {
     this.name = "Page";
