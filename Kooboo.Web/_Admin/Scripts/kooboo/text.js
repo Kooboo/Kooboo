@@ -67,6 +67,7 @@
       balance: "Balance",
       enable: "Enable",
       enabled: "Enabled",
+      authentication:"Authentication",
 
       API: "API",
       Code: "Code",
