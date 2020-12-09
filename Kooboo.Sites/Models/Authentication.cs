@@ -13,17 +13,19 @@ namespace Kooboo.Sites.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public MatcherType Matcher { get; set; }
 
-        public string MatcherDetail { get; set; }
+        public List<Condition> Conditions { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public SucceedAction SucceedAction { get; set; }
-
-        public string SucceedCodeName { get; set; }
+        public AuthenticationAction Action { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public FailedAction FailedAction { get; set; }
 
-        public string FailedCodeName { get; set; }
+        public string CustomCodeName { get; set; }
+
+        public string Url { get; set; }
+
+        public int HttpCode { get; set; }
 
     }
 
@@ -31,15 +33,14 @@ namespace Kooboo.Sites.Models
     {
         None,
         Any,
-        Condition,
-        Regular,
-        CustomCode
+        Condition
     }
 
-    public enum SucceedAction
+    public enum AuthenticationAction
     {
         None,
-        JwtLogin,
+        Jwt,
+        basic,
         CustomCode
     }
 
@@ -47,7 +48,6 @@ namespace Kooboo.Sites.Models
     {
         None,
         ResultCode,
-        Redirect,
-        CustomCode
+        Redirect
     }
 }

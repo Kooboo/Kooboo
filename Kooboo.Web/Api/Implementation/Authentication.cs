@@ -16,7 +16,7 @@ namespace Kooboo.Web.Api.Implementation
             return new
             {
                 Matcher = GetEnumDescription(typeof(MatcherType)),
-                SucceedAction = GetEnumDescription(typeof(SucceedAction)),
+                Action = GetEnumDescription(typeof(AuthenticationAction)),
                 FailedAction = GetEnumDescription(typeof(FailedAction)),
             };
         }

@@ -74,13 +74,10 @@
                     >{{ item.display }}</option
                   >
                 </select>
-                <div v-if="editModel.matcher=='Condition'"> 
-                  
-                </div>
               </div>
             </kb-form-item>
-            <kb-form-item prop="succeedAction">
-              <label class="control-label col-md-3">SucceedAction</label>
+            <kb-form-item prop="action">
+              <label class="control-label col-md-3">Action</label>
               <div class="col-md-9">
                 <select v-model="editModel.succeedAction" class="form-control">
                   <option
@@ -92,19 +89,54 @@
                 </select>
               </div>
             </kb-form-item>
-            <kb-form-item prop="failedAction">
-              <label class="control-label col-md-3">FailedAction</label>
-              <div class="col-md-9">
-                <select v-model="editModel.failedAction" class="form-control">
-                  <option
-                    v-for="item in types.failedAction"
-                    :key="item.name"
-                    :value="item.name"
-                    >{{ item.display }}</option
+
+            <template v-if="editModel.action=='CustomCode'">
+              <kb-form-item>
+                <label class="control-label col-md-3"></label>
+                <div class="col-md-9">
+                  <select
+                    v-model="editModel.failedActionDetail"
+                    class="form-control"
                   >
-                </select>
-              </div>
-            </kb-form-item>
+                    <option
+                      v-for="item in authenticationCodes"
+                      :key="item.name"
+                      :value="item.name"
+                      >{{ item.name }}</option
+                    >
+                  </select>
+                </div>
+              </kb-form-item>
+            </template>
+
+            <template v-else>
+              <kb-form-item prop="failedAction">
+                <label class="control-label col-md-3">FailedAction</label>
+                <div class="col-md-9">
+                  <select v-model="editModel.failedAction" class="form-control">
+                    <option
+                      v-for="item in types.failedAction"
+                      :key="item.name"
+                      :value="item.name"
+                      >{{ item.display }}</option
+                    >
+                  </select>
+                </div>
+              </kb-form-item>
+              <kb-form-item
+                v-if="editModel.failedAction=='ResultCode'||editModel.failedAction=='Redirect'"
+              >
+                <label class="control-label col-md-3"></label>
+                <div class="col-md-9">
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="editModel.failedActionDetail"
+                  />
+                </div>
+              </kb-form-item>
+            </template>
+            
           </kb-form>
         </div>
         <div class="modal-footer">
@@ -145,6 +177,8 @@
         selectedRows: [],
         showEditModal: false,
         editModel: null,
+        conditions: [],
+        authenticationCodes: [],
       };
     },
     mounted: function () {
@@ -213,8 +247,9 @@
             id: Kooboo.Guid.Empty,
             name: "",
             matcher: "None",
-            succeedAction: "None",
+            action: "None",
             failedAction: "None",
+            failedActionDetail: "",
           };
         }
         this.showEditModal = true;
@@ -255,6 +290,13 @@
         });
       },
     },
-    watch: {},
+    watch: {
+      "editModel.failedAction": function (value) {
+        if (value == "ResultCode") this.editModel.failedActionDetail = "401";
+        if (value == "Redirect") this.editModel.failedActionDetail = "/";
+        if (value == "CustomCode") {
+        }
+      },
+    },
   });
 </script>
