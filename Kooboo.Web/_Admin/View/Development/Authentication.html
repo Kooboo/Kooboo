@@ -22,27 +22,31 @@
       </template>
     </kb-table-column>
 
-    <kb-table-column :label="'Matcher'">
+    <kb-table-column :label="Kooboo.text.common.matcher">
       <template v-slot="row">
-        <span @click.stop="">{{ row.matcher }}</span>
+        <span @click.stop=""
+          >{{ row.matcher=='Condition'?getConditionStr(row):row.matcher }}</span
+        >
       </template>
     </kb-table-column>
 
-    <kb-table-column :label="'Action'">
+    <kb-table-column :label="Kooboo.text.site.siteLog.action">
       <template v-slot="row">
         <span @click.stop="">{{ row.action }}</span>
       </template>
     </kb-table-column>
 
-    <kb-table-column :label="'FailedAction'">
+    <kb-table-column
+      :label="Kooboo.text.common.failed+Kooboo.text.site.siteLog.action"
+    >
       <template v-slot="row">
         <span @click.stop=""
-          >{{row.action=='CustomCode'?'': row.failedAction }}</span
+          >{{row.action=='CustomCode'?'CustomCode': row.failedAction }}</span
         >
       </template>
     </kb-table-column>
 
-    <kb-table-column :label="'Parameter'">
+    <kb-table-column :label="Kooboo.text.component.viewEditor.parameter">
       <template v-slot="row">
         <span @click.stop="">{{getParameter(row)}}</span>
       </template>
@@ -180,7 +184,9 @@
 
             <template v-else>
               <kb-form-item prop="failedAction">
-                <label class="control-label col-md-3">FailedAction</label>
+                <label class="control-label col-md-3"
+                  >{{Kooboo.text.common.failed+Kooboo.text.site.siteLog.action}}</label
+                >
                 <div class="col-md-9">
                   <select v-model="editModel.failedAction" class="form-control">
                     <option
@@ -408,8 +414,17 @@
       getParameter: function (row) {
         if (row.action == "CustomCode") return row.customCodeName;
         if (row.failedAction == "None") return "";
-        if (row.failedAction == "HttpCode") return row.httpCode;
+        if (row.failedAction == "ResultCode") return row.httpCode;
         if (row.failedAction == "Redirect") return row.url;
+      },
+      getConditionStr(row) {
+        if (row.matcher == "Condition") {
+          return row.conditions
+            .map(function (m) {
+              return m.left + " " + m.operator + " '" + m.right + "'";
+            })
+            .join(" && ");
+        } else return "";
       },
     },
     watch: {

@@ -36,7 +36,7 @@ namespace Kooboo.Sites.Helper
         {
             var jwt = new kJwt(frontContext.RenderContext);
             var json = jwt.Decode();
-            var result= JsonHelper.DeserializeJObject(json);
+            var result = JsonHelper.DeserializeJObject(json);
             if (result.GetValue("code").ToString() == "1")
             {
                 switch (authentication.FailedAction)
@@ -55,8 +55,9 @@ namespace Kooboo.Sites.Helper
                 }
                 return false;
             }
-            else {
-                frontContext.RenderContext.Items.Add("jwt_payload",result.GetValue("value"));
+            else
+            {
+                frontContext.RenderContext.Items.Add("jwt_payload", result.GetValue("value"));
                 return true;
             }
         }
@@ -94,7 +95,7 @@ namespace Kooboo.Sites.Helper
 
         private static bool MatchCondition(FrontContext frontContext, List<Condition> conditions)
         {
-            if (conditions == null) return false;
+            if (conditions == null || conditions.Count == 0) return false;
 
             foreach (var item in conditions)
             {

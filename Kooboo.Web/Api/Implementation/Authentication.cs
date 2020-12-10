@@ -26,7 +26,7 @@ namespace Kooboo.Web.Api.Implementation
             return Enum.GetNames(type).Select(s => new
             {
                 Name = s,
-                Display = Hardcoded.GetValue(s)
+                Display = s
             });
         }
     }

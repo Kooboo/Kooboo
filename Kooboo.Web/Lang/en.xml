@@ -1344,4 +1344,5 @@
   <key id="Enable Sql Log">Enable Sql Log</key>
   <key id="Enable CORS">Enable CORS</key>
   <key id="Authentication">Authentication</key>
+  <key id="Matcher">Matcher</key>
 </Lang>
