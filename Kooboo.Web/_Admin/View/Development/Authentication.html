@@ -164,7 +164,7 @@
             </kb-form-item>
 
             <template v-if="editModel.action=='CustomCode'">
-              <kb-form-item>
+              <kb-form-item prop="customCodeName">
                 <label class="control-label col-md-3">Code Name</label>
                 <div class="col-md-9">
                   <select
@@ -198,7 +198,10 @@
                   </select>
                 </div>
               </kb-form-item>
-              <kb-form-item v-if="editModel.failedAction=='ResultCode'">
+              <kb-form-item
+                v-if="editModel.failedAction=='ResultCode'"
+                prop="httpCode"
+              >
                 <label class="control-label col-md-3">Http Code</label>
                 <div class="col-md-9">
                   <input
@@ -208,7 +211,10 @@
                   />
                 </div>
               </kb-form-item>
-              <kb-form-item v-if="editModel.failedAction=='Redirect'">
+              <kb-form-item
+                v-if="editModel.failedAction=='Redirect'"
+                prop="url"
+              >
                 <label class="control-label col-md-3">Url</label>
                 <div class="col-md-9">
                   <input
@@ -286,6 +292,34 @@
       rules: function () {
         var me = this;
         var rules = {};
+
+        if (me.editModel.action == "CustomCode") {
+          rules.customCodeName = [
+            {
+              required: true,
+              message: Kooboo.text.validation.required,
+            },
+          ];
+        }
+
+        if (me.editModel.failedAction == "ResultCode") {
+          rules.httpCode = [
+            {
+              required: true,
+              message: Kooboo.text.validation.required,
+            },
+          ];
+        }
+
+        if (me.editModel.failedAction == "Redirect") {
+          rules.url = [
+            {
+              required: true,
+              message: Kooboo.text.validation.required,
+            },
+          ];
+        }
+
         if (me.isNew) {
           rules.name = [
             {
@@ -378,6 +412,18 @@
       onSave: function () {
         var me = this;
         if (!me.$refs.form.validate()) return;
+
+        if (me.editModel.matcher == "Condition") {
+          if (me.editModel.conditions.length == 0)
+            return alert("You need add Conditions!");
+          if (
+            me.editModel.conditions.filter(function (f) {
+              return !f.right;
+            }).length > 0
+          )
+            return alert("Condition value can not be empty!");
+        }
+
         Kooboo.Authentication.post(me.editModel).then(function () {
           me.getList();
           me.showEditModal = false;
