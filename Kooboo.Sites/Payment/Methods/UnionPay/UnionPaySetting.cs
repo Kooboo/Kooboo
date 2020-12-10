@@ -1,11 +1,12 @@
-﻿using Kooboo.Data.Interface;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods.UnionPay
 {
-    public class UnionPaySetting : IPaymentSetting
+    public class UnionPaySetting : IPaymentSetting, ISettingDescription
     {
         public string Name => "UnionPay";
 
@@ -40,5 +41,12 @@ namespace Kooboo.Sites.Payment.Methods.UnionPay
         public SettingFile MiddleCertCER { get; set; }
 
         public string SignCertPasswrod { get; set; }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
+        }
     }
 }

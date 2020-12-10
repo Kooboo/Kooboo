@@ -26,6 +26,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace KScript
 {
@@ -488,8 +489,20 @@ var value = k.session.key; ")]
                     {
                         if (_sqlite == null)
                         {
+                            var setting = RenderContext.WebSite.SiteDb().CoreSetting.GetSetting<SqliteSetting>();
+                            var builder = new StringBuilder();
+
                             var path = Path.Combine(AppSettings.GetFileIORoot(RenderContext.WebSite), "sqlite.db");
-                            _sqlite = new SqliteDatabase($"Data source='{path}';");
+                            builder.Append($"Data source='{path}';");
+
+                            if (setting != null)
+                            {
+                                if (setting.ForeignKeyConstraint)
+                                {
+                                    builder.Append("foreign keys=true");
+                                }
+                            }
+                            _sqlite = new SqliteDatabase(builder.ToString());
 
                             _sqlite.SqlExecuter.Event += (sql, @params) =>
                             {
@@ -668,7 +681,7 @@ var value = k.session.key; ")]
                     {
                         if (_security == null)
                         {
-                            _security = new Security();
+                            _security = new Security(RenderContext);
                         }
                     }
                 }

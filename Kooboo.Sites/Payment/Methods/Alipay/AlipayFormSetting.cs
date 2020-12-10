@@ -1,11 +1,13 @@
-﻿using Kooboo.Sites.Payment.Methods.Alipay;
+﻿using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using Kooboo.Sites.Payment.Methods.Alipay;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Payment.Methods
 {
-    public class AlipayFormSetting : IPaymentSetting
+    public class AlipayFormSetting : IPaymentSetting, ISettingDescription
     {
         public string Name => "AlipayFormPayment";
 
@@ -30,6 +32,13 @@ namespace Kooboo.Sites.Payment.Methods
                 return "https://openapi.alipay.com/gateway.do";
 
             }
+        }
+
+        public string Group => "Payment";
+
+        public string GetAlert(RenderContext renderContext)
+        {
+            return string.Empty;
         }
     }
 }

@@ -339,13 +339,18 @@ namespace Kooboo.Web.Api.Implementation
 
                 currentsite.EnableJsCssBrowerCache = newinfo.EnableJsCssBrowerCache;
                 currentsite.EnableImageBrowserCache = newinfo.EnableImageBrowserCache;
-                currentsite.ImageCacheDays = newinfo.ImageCacheDays; 
+                currentsite.ImageCacheDays = newinfo.ImageCacheDays;
+
+                currentsite.EnableSPA = newinfo.EnableSPA;
+                currentsite.EnableVideoBrowserCache = newinfo.EnableVideoBrowserCache; 
 
                 currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress; 
 
                 currentsite.SiteType = newinfo.SiteType;
                 currentsite.EnableCORS = newinfo.EnableCORS;
                 currentsite.EnableSqlLog = newinfo.EnableSqlLog;
+
+                currentsite.PreviewUrl = newinfo.PreviewUrl; 
 
                 // the cluster... 
 

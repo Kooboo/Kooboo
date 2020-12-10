@@ -1,16 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-using System.Configuration;
-using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
@@ -139,6 +133,7 @@ namespace Kooboo.Mail.Smtp
                     Kooboo.Data.Log.Instance.Exception.Write(DateTime.Now.ToString()+ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
                     needawait = true;
                 }
+
                 if (needawait)
                 {
                     await Task.Delay(200);

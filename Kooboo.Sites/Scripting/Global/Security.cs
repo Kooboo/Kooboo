@@ -1,5 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Sites.Scripting.Global.Jwt;
 using MongoDB.Bson.Serialization.Conventions;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,15 @@ namespace KScript
 {
     public class Security
     {
+        public Security(RenderContext context)
+        {
+            _kJwt = new Lazy<kJwt>(() => new kJwt(context), true);
+        }
+
+        private Lazy<kJwt> _kJwt;
+
+        public kJwt Jwt => _kJwt.Value;
+
         [Description(@"Compute a 32 length text string value
 var input = ""myvalue"";  
     var md5value = k.security.md5(input); ")]
@@ -84,14 +95,14 @@ var input = ""myvalue"";
         [Description("Convert to base64 format string")]
         public string ToBase64(string input)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(input); 
+            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
             return Convert.ToBase64String(bytes);
         }
 
         [Description("Convert to base64 format byte[]")]
         public string ToBase64(int[] input)
         {
-            return Convert.ToBase64String(input.Select(s=> Convert.ToByte(s)).ToArray());
+            return Convert.ToBase64String(input.Select(s => Convert.ToByte(s)).ToArray());
         }
 
         [Description("Convert from base64 string")]
@@ -100,18 +111,18 @@ var input = ""myvalue"";
             var bytes = Convert.FromBase64String(base64string);
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
-         
+
         [Description("Generate a new Guid")]
         public string NewGuid()
         {
-           var id =  System.Guid.NewGuid();
-            return id.ToString().Replace("-", ""); 
+            var id = System.Guid.NewGuid();
+            return id.ToString().Replace("-", "");
         }
 
         [Description("Generate a new Guid, encrypt to short length")]
         public string ShortGuid()
         {
-            return Kooboo.Lib.Security.ShortGuid.GetNewShortId(); 
+            return Kooboo.Lib.Security.ShortGuid.GetNewShortId();
         }
 
     }

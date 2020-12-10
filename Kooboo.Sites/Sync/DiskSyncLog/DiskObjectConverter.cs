@@ -9,7 +9,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
 {
     public static class DiskObjectConverter
     {
-        internal static string _endmark { get; set; } = "_end//\r\n";
+        internal static string _endmark { get; set; } = "_end//";
 
         public static byte[] ToBytes(SiteDb sitedb, ISiteObject siteobject)
         {
@@ -78,7 +78,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                     if (IOHelper.IsEqualBytes(bytes, DiskBytes))
                     {
                         return false;
-                    } 
+                    }
                     var currentbody = currentcode.Body;
 
                     var ok = FromCodeBytes(currentcode, DiskBytes);
@@ -126,7 +126,7 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
                 }
             }
 
-            result += _endmark;
+            result = result + _endmark + "\r\n";
 
             var textobject = code as ITextObject;
             if (!string.IsNullOrEmpty(textobject.Body))
@@ -149,6 +149,8 @@ namespace Kooboo.Sites.Sync.DiskSyncLog
             if (type != null && linebreak > -1)
             {
                 var codebody = text.Substring(linebreak + _endmark.Length);
+                if (codebody.StartsWith("\r\n")) codebody = codebody.Substring("\r\n".Length);
+                else if (codebody.StartsWith("\n")) codebody = codebody.Substring("\n".Length);
                 code.CodeType = Lib.Helper.EnumHelper.GetEnum<Kooboo.Sites.Models.CodeType>(type);
                 code.Body = codebody;
                 return true;

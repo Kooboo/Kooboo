@@ -31,14 +31,9 @@ namespace Kooboo.Sites.Render
 
             TextBodyRender.SetBody(context, result);
 
-            var version = context.RenderContext.Request.GetValue("version");
-
-            if (!string.IsNullOrWhiteSpace(version))
-            {
-                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
-            } 
+            VersionRenderer.ScriptStyleVersion(context);
         }
-
+         
         private static string Getbody(FrontContext context, Models.Script script)
         {
             string result = null;
