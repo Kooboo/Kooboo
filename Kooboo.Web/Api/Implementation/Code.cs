@@ -20,8 +20,6 @@ namespace Kooboo.Web.Api.Implementation
 
             var sitedb = call.WebSite.SiteDb();
 
-            call.WebSite.BaseUrl(); 
-            
             if (call.ObjectId != default(Guid))
             {
                 var code = sitedb.Code.Get(call.ObjectId);

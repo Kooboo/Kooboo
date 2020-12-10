@@ -11,6 +11,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Server;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting;
+using Kooboo.Sites.Helper;
 
 namespace Kooboo.Web.FrontRequest
 {
@@ -51,19 +52,8 @@ namespace Kooboo.Web.FrontRequest
                     ObjectRoute.Parse(kooboocontext);
                     if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
                     {
-                        var authenticationCodes = kooboocontext.SiteDb.Code.ListByCodeType(Sites.Models.CodeType.Authentication);
-
-                        foreach (var code in authenticationCodes)
-                        {
-                            var result = Manager.ExecuteCode(kooboocontext.RenderContext, code.Body, code.Id);
-                            if (!string.IsNullOrWhiteSpace(result)) kooboocontext.RenderContext.Response.AppendString(result);
-                        }
-
-                        if (kooboocontext.RenderContext.Response.StatusCode < 300)
-                        {
-                            await ExecuteKooboo(kooboocontext);
-                        }
-
+                        var success = AuthenticationHelper.Authentication(kooboocontext);
+                        if(success) await ExecuteKooboo(kooboocontext);
                         return;
                     }
                 }

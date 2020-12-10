@@ -3,6 +3,7 @@ using JWT.Algorithms;
 using JWT.Exceptions;
 using JWT.Serializers;
 using Kooboo.Data.Context;
+using Kooboo.Extensions;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using System;
@@ -166,6 +167,8 @@ error
                 });
             }
         }
+
+        public object Payload => context.Items.GetValueOrDefault("jwt_payload");
 
         private JwtSetting GetJwtSetting()
         {
