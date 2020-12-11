@@ -1343,6 +1343,6 @@
   <key id="SQL logs">SQL 日志</key>
   <key id="Enable Sql Log">启用 SQL 日志</key>
   <key id="Enable CORS">启用 CORS</key>
-  <key id="Authentication">身份授权</key>
+  <key id="Authentication">身份认证</key>
   <key id="Matcher">匹配器</key>
 </Lang>
