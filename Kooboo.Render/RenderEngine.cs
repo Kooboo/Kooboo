@@ -184,7 +184,7 @@ namespace Kooboo.Render
 
             // set the culture...
             string culture = Context.Culture; 
-            if (string.IsNullOrEmpty(culture))
+            if (!string.IsNullOrEmpty(culture))
             {
                 Context.DataContext.Push("culture", culture); 
             }

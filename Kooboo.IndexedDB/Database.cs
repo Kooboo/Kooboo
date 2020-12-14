@@ -331,6 +331,25 @@ namespace Kooboo.IndexedDB
 
         public Sequence<TValue> GetSequence<TValue>(string name)
         {
+            name = GetSeqScheduleFolder(name); 
+
+            if (!this.openSequenceList.ContainsKey(name))
+            {
+                lock (_locker)
+                {
+                    if (!this.openSequenceList.ContainsKey(name))
+                    {
+                        Sequence<TValue> log = new Sequence<TValue>(name);
+
+                        this.openSequenceList.Add(name, log);
+                    }
+                }
+            } 
+            return this.openSequenceList[name] as Sequence<TValue>;
+        }
+        [Obsolete]
+        public Sequence<TValue> GetSequenceOld<TValue>(string name)
+        {  
             if (!this.openSequenceList.ContainsKey(name))
             {
                 lock (_locker)
@@ -343,9 +362,28 @@ namespace Kooboo.IndexedDB
                     }
                 }
             }
-
             return this.openSequenceList[name] as Sequence<TValue>;
         }
+
+        private string GetSeqScheduleFolder(string FolderName)
+        {
+            if (System.IO.Path.IsPathRooted(FolderName))
+            {
+                return FolderName;
+            }
+            else
+            {  
+                string dbfolder = System.IO.Path.Combine(this.AbsolutePath, GlobalSettings.SequencePath);
+
+                if (!System.IO.Directory.Exists(dbfolder))
+                {
+                    System.IO.Directory.CreateDirectory(dbfolder);
+                }
+
+                return System.IO.Path.Combine(dbfolder, FolderName + ".seq");
+            }
+        }
+
 
         /// <summary>
         /// get an existing object store. 
@@ -523,7 +561,7 @@ namespace Kooboo.IndexedDB
                     {
                         if (item.Name != null && item.Name.ToLower() == lowername)
                         {
-                           return item.FullName; 
+                            return item.FullName;
                         }
                     }
                 }
@@ -532,7 +570,7 @@ namespace Kooboo.IndexedDB
             // this directory does not existrs. 
 
             if (!System.IO.Directory.Exists(fullpath))
-            { 
+            {
                 System.IO.Directory.CreateDirectory(fullpath);
             }
 

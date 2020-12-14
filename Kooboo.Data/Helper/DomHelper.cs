@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace Kooboo.Data.Helper
 {
 public static    class DomHelper
-    {
-          
+    { 
         private static string _clearBodyStyle (string html)
         {
             var doc = Kooboo.Dom.DomParser.CreateDom(html);
