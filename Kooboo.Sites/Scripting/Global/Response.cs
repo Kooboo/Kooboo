@@ -86,7 +86,7 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
 
 
         public void RenderView(string ViewBody)
-        { 
+        {
             var options = RenderOptionHelper.GetViewOption(context, default(Guid));
 
             var renderplan = RenderEvaluator.Evaluate(ViewBody, options);
@@ -97,10 +97,10 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
             if (!string.IsNullOrWhiteSpace(result))
             {
                 write(result);
-            } 
+            }
         }
 
-
+        public void binary(string contentType, byte[] bytes) => binary(contentType, bytes, null);
 
         public void binary(string contentType, byte[] bytes, string filename = null)
         {
@@ -149,7 +149,7 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
                     newcontext.Culture = context.Culture;
 
                     FrontContext kooboocontext = new FrontContext(newcontext);
-                 
+
                     kooboocontext.Route = route;
 
                     Kooboo.Sites.Render.RouteRenderers.RenderAsync(kooboocontext);
