@@ -8,7 +8,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-using LumiSoft.Net; 
+using LumiSoft.Net;
+using Kooboo.Mail.Smtp;
 
 namespace Kooboo.Mail.Imap
 {
@@ -41,7 +42,7 @@ namespace Kooboo.Mail.Imap
             int hasRead = 0, actual = 0;
             do
             {
-                actual = await _stream.ReadAsync(buffer, offset + hasRead, count - hasRead);
+                actual = await _stream.ReadAsyncWithTimeout(buffer, offset + hasRead, count - hasRead);
 
                 hasRead += actual;
             }
@@ -61,7 +62,7 @@ namespace Kooboo.Mail.Imap
 
         public virtual async Task<string> ReadLineAsync()
         {
-            var line = await _reader.ReadLineAsync();
+            var line = await _reader.ReadToEndAsyncWithTimeout();
 
             LogRead(line);
 
@@ -70,7 +71,7 @@ namespace Kooboo.Mail.Imap
 
         public virtual async Task WriteAsync(byte[] buffer)
         {
-            await _stream.WriteAsync(buffer, 0, buffer.Length);
+            await _stream.WriteAsyncWithTimeout(buffer, 0, buffer.Length);
             await _stream.FlushAsync();
 
             var str = Encoding.UTF8.GetString(buffer);
@@ -85,7 +86,7 @@ namespace Kooboo.Mail.Imap
 
         public virtual async Task WriteLineAsync(string line)
         {
-            await _writer.WriteAsync(line + "\r\n");
+            await _writer.WriteLineAsyncWithTimeout(line);
 
             LogWrite(line);
         }

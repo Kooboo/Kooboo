@@ -41,6 +41,8 @@ namespace Kooboo.Mail.Smtp
             Port = port;
             Certificate = cert;
 
+            Timeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
+
             Heartbeat = Heartbeat.Instance;
             _connectionManager = new ConnectionManager(Options.MaxConnections);
             Heartbeat.Add(_connectionManager);
@@ -149,7 +151,7 @@ namespace Kooboo.Mail.Smtp
         public SmtpServerOptions()
         {
 
-            this.LiveTimeout = TimeSpan.FromSeconds(30);
+            this.LiveTimeout = TimeSpan.FromMinutes(1);
             this.MailsPerConnection = 10;
 
 #if DEBUG

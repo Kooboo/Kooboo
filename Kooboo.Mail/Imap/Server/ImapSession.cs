@@ -116,7 +116,10 @@ namespace Kooboo.Mail.Imap
                 }
                 else
                 {
-                    Stream = new ImapStream(TcpClient, TcpClient.GetStream());
+                    var stream = TcpClient.GetStream();
+                    stream.ReadTimeout =
+                    stream.WriteTimeout = Server.Timeout;
+                    Stream = new ImapStream(TcpClient, stream);
                 }
 
                 await OnStart();
@@ -140,6 +143,9 @@ namespace Kooboo.Mail.Imap
             {
                 // No need to dispose for finally block will do it
             }
+            catch (SocketException)
+            {
+            }
             catch (Exception ex)
             {
                 await Stream.WriteLineAsync("Local server error occured, bye!");
@@ -158,6 +164,8 @@ namespace Kooboo.Mail.Imap
 
             IsSecureConnection = true;
 
+            sslStream.ReadTimeout =
+            sslStream.WriteTimeout = Server.Timeout;
             Stream = new ImapStream(TcpClient, sslStream);
         }
 
