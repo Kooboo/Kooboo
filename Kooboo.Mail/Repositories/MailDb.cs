@@ -91,7 +91,7 @@ namespace Kooboo.Mail
                 {
                     lock(_lock)
                     {
-                        _msgbody = this.Db.GetSequence<string>("MessageSource"); 
+                        _msgbody = this.Db.GetSequenceOld<string>("MessageSource"); 
                     }
                 }
                 return _msgbody;

@@ -35,6 +35,7 @@ namespace Kooboo.Data
             Version = new Version(Version.Major, Version.Minor, build, revision);
 
             RootPath = PathUtility.TryRootPath();
+
             IsOnlineServer = GetBool("IsOnlineServer");
 
             CmsLang = ConfigurationManager.AppSettings.Get("CmsLang");

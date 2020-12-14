@@ -51,6 +51,7 @@ namespace Kooboo.Mail.Smtp
             try
             {
                 _stream = _client.GetStream();
+                _stream.ReadTimeout = 30000; 
                 if (_server.Certificate != null)
                 {
                     var ssl = new SslStream(_stream, false);
@@ -63,7 +64,7 @@ namespace Kooboo.Mail.Smtp
 
                 Kooboo.Mail.Smtp.SmtpSession session = new Smtp.SmtpSession(this.Client.Address.ToString());
 
-                // Service ready
+                //Service ready
                 await WriteLineAsync(session.ServiceReady().Render());
 
                 var commandline = await _reader.ReadLineAsync();

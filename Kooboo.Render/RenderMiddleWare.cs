@@ -2,7 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using System.Threading.Tasks;
-using Kooboo.Data.Server; 
+using Kooboo.Data.Server;
 using System.Collections.Generic;
 using Kooboo.Render.Response;
 
@@ -66,7 +66,7 @@ namespace Kooboo.Render
             var currentwebsite = context.WebSite;
             if (this.options.RequireSpeicalSite)
             {
-                context.WebSite = null; 
+                context.WebSite = null;
 
                 //var website = new Kooboo.Data.Models.WebSite();
                 //website.Name = "_____kooboorendertempspecialsitename";
@@ -118,15 +118,16 @@ namespace Kooboo.Render
                 }
             }
 
-            if ((context.User != null) && !string.IsNullOrWhiteSpace(context.User.Language))
+            var culture = GetCulture(context);
+            if (culture != null)
             {
-                context.Culture = context.User.Language;
-            }
+                context.Culture = culture;
+            } 
 
             var Response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
 
             // Set System version. 
-            context.Response.AppendCookie("_system_version_", Data.AppSettings.Version.ToString());  
+            context.Response.AppendCookie("_system_version_", Data.AppSettings.Version.ToString());
             if (Response != null)
             {
                 if (this.options.Log != null)
@@ -166,7 +167,7 @@ namespace Kooboo.Render
                         SetResponse(context, resposne);
                         return;
                     }
-                } 
+                }
             }
 
             // Render controller here...
@@ -176,6 +177,23 @@ namespace Kooboo.Render
                 context.WebSite = currentwebsite;  // restore...
             }
             await Next.Invoke(context);
+        }
+
+
+        public string GetCulture(RenderContext context)
+        {
+            var culture = context.Request.GetValue("lang", "language");
+            if (!string.IsNullOrWhiteSpace(culture))
+            {
+                return culture;
+            }
+
+            if ((context.User != null) && !string.IsNullOrWhiteSpace(context.User.Language))
+            {
+                return context.Culture = context.User.Language;
+            }
+
+            return null;
         }
 
         public void SetResponse(RenderContext context, ResponseBase response)
@@ -213,7 +231,7 @@ namespace Kooboo.Render
                     return;
                 }
             }
-             
+
             if (response is BinaryResponse)
             {
                 var binary = response as BinaryResponse;
@@ -227,6 +245,6 @@ namespace Kooboo.Render
             }
 
         }
-         
+
     }
 }
