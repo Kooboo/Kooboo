@@ -118,8 +118,11 @@ namespace Kooboo.Sites.Repository
                 newroute.Name = NewRelativeUrl;
 
                 AddOrUpdate(newroute);
-                Delete(oldroute.Id);
 
+                if (newroute.Id != oldroute.Id)
+                {
+                    Delete(oldroute.Id);
+                } 
                 Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, newroute, OldRelativeUrl, newroute.Name);
 
             }
