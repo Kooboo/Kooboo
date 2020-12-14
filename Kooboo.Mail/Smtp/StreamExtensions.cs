@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Mail.Smtp;
+using System.Net.Sockets;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -36,7 +37,7 @@ namespace Kooboo.Mail.Smtp
             var task = timeout == null ? null : Task.Delay(timeout.Value);
             do
             {
-                var readLen = await from.ReadAsync(buffer, length, buffer.Length - length);
+                var readLen = await from.ReadAsyncWithTimeout(buffer, length, buffer.Length - length);
                 // 如果暂时未读到数据，则循环读取
                 if (readLen == 0)
                     continue;
@@ -106,5 +107,87 @@ namespace Kooboo.Mail.Smtp
 
             return true;
         }
+
+        //
+        // Timeout async read/write
+        //
+        public static async Task<string> ReadLineAsyncWithTimeout(this StreamReader reader)
+        {
+            var task = reader.ReadLineAsync();
+            if (reader.BaseStream.ReadTimeout == 0)
+                return await task;
+
+            var timeoutTask = Task.Delay(reader.BaseStream.ReadTimeout);
+
+            await Task.WhenAny(task, timeoutTask);
+            if (!task.IsCompleted)
+                throw new SocketException((int)SocketError.TimedOut);
+
+            return task.Result;
+        }
+
+        public static async Task<string> ReadToEndAsyncWithTimeout(this StreamReader reader)
+        {
+            var task = reader.ReadToEndAsync();
+            if (reader.BaseStream.ReadTimeout == 0)
+                return await task;
+
+            var timeoutTask = Task.Delay(reader.BaseStream.ReadTimeout);
+
+            await Task.WhenAny(task, timeoutTask);
+            if (!task.IsCompleted)
+                throw new SocketException((int)SocketError.TimedOut);
+
+            return task.Result;
+        }
+
+
+        public static async Task WriteLineAsyncWithTimeout(this StreamWriter writer, string line)
+        {
+            var task = writer.WriteLineAsync(line + "\r\n");
+            if (writer.BaseStream.WriteTimeout == 0)
+            {
+                await task;
+                return;
+            }
+
+            var timeoutTask = Task.Delay(writer.BaseStream.WriteTimeout);
+
+            await Task.WhenAny(task, timeoutTask);
+            if (!task.IsCompleted)
+                throw new SocketException((int)SocketError.TimedOut);
+        }
+
+        public static async Task<int> ReadAsyncWithTimeout(this Stream stream, byte[] buffer, int start, int count)
+        {
+            var task = stream.ReadAsync(buffer, start, count);
+            if (stream.ReadTimeout == 0)
+                return await task;
+
+            var timeoutTask = Task.Delay(stream.ReadTimeout);
+
+            await Task.WhenAny(task, timeoutTask);
+            if (!task.IsCompleted)
+                throw new SocketException((int)SocketError.TimedOut);
+
+            return task.Result;
+        }
+
+        public static async Task WriteAsyncWithTimeout(this Stream stream, byte[] buffer, int start, int count)
+        {
+            var task = stream.WriteAsync(buffer, start, count);
+            if (stream.WriteTimeout == 0)
+            {
+                await task;
+                return;
+            }
+
+            var timeoutTask = Task.Delay(stream.ReadTimeout);
+
+            await Task.WhenAny(task, timeoutTask);
+            if (!task.IsCompleted)
+                throw new SocketException((int)SocketError.TimedOut);
+        }
+
     }
 }

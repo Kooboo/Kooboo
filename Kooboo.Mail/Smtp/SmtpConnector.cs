@@ -51,16 +51,19 @@ namespace Kooboo.Mail.Smtp
             try
             {
                 _stream = _client.GetStream();
-                _client.ReceiveTimeout = 30000; 
-                _stream.ReadTimeout = 30000; 
+
                 if (_server.Certificate != null)
                 {
                     var ssl = new SslStream(_stream, false);
                     await ssl.AuthenticateAsServerAsync(_server.Certificate);
                     _stream = ssl;
                 }
-                _reader = new System.IO.StreamReader(_stream);
-                _writer = new System.IO.StreamWriter(_stream);
+
+                _stream.ReadTimeout =
+                _stream.WriteTimeout = _server.Timeout;
+
+                _reader = new StreamReader(_stream);
+                _writer = new StreamWriter(_stream);
                 _writer.AutoFlush = true;
 
                 Kooboo.Mail.Smtp.SmtpSession session = new Smtp.SmtpSession(this.Client.Address.ToString());
@@ -68,7 +71,7 @@ namespace Kooboo.Mail.Smtp
                 //Service ready
                 await WriteLineAsync(session.ServiceReady().Render());
 
-                var commandline = await _reader.ReadLineAsync();
+                var commandline = await _reader.ReadLineAsyncWithTimeout();
 
                 var cancellationToken = _cancellationTokenSource.Token;
                 while (!cancellationToken.IsCancellationRequested && commandline != null)
@@ -157,7 +160,7 @@ namespace Kooboo.Mail.Smtp
 
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        commandline = await _reader.ReadLineAsync();
+                        commandline = await _reader.ReadLineAsyncWithTimeout();
                     }
                 }
 
@@ -165,6 +168,14 @@ namespace Kooboo.Mail.Smtp
             catch (ObjectDisposedException)
             {
                 // Caused by our active connection closing, no need to handle as exception
+            }
+            catch (SocketException ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.Write(ex.ToString());
+            }
+            catch (TimeoutException ex)
+            {
+                Kooboo.Data.Log.Instance.Exception.Write(ex.ToString());
             }
             catch (Exception ex)
             {
@@ -178,7 +189,7 @@ namespace Kooboo.Mail.Smtp
                 catch
                 {
                 }
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message.ToString());
             }
             finally
             {
@@ -189,7 +200,7 @@ namespace Kooboo.Mail.Smtp
 
         private Task WriteLineAsync(string line)
         {
-            return _writer.WriteAsync(line + "\r\n");
+            return _writer.WriteLineAsyncWithTimeout(line);
         }
 
         public void CheckTimeout()

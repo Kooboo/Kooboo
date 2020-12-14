@@ -30,6 +30,8 @@ namespace Kooboo.Mail.Imap
         {
             Port = port;
 
+            Timeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
+
             Heartbeat = Heartbeat.Instance;
             _connectionManager = new ConnectionManager(Options.MaxConnections);
             Heartbeat.Add(_connectionManager);
@@ -60,6 +62,8 @@ namespace Kooboo.Mail.Imap
             }
         }
 
+        public int Timeout { get; set; }
+
         [JsonIgnore]
         public X509Certificate Certificate { get; private set; }
 
@@ -75,6 +79,8 @@ namespace Kooboo.Mail.Imap
                 return;
 
             _listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+            _listener.Server.ReceiveTimeout =
+            _listener.Server.SendTimeout = Timeout;
             _listener.Start();
 
             _cancellationTokenSource = new CancellationTokenSource();
