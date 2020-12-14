@@ -100,9 +100,20 @@ error
                 });
             }
 
-            var token = authorizationValue.Substring(7);
+            try
+            {
+                var token = authorizationValue.Substring(7);
 
-            return Decode(token);
+                return Decode(token);
+            }
+            catch (Exception ex)
+            {
+                return JsonHelper.Serialize(new
+                {
+                    Code = 1,
+                    Value = ex.ToString()
+                });
+            }
         }
 
         [Description(@"

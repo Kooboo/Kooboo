@@ -1,7 +1,9 @@
 ﻿using Kooboo.Lib.Helper;
+using Kooboo.Sites.Engine;
 using Kooboo.Sites.FrontEvent;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
+using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global.Jwt;
 using System;
 using System.Collections.Generic;
@@ -36,13 +38,15 @@ namespace Kooboo.Sites.Helper
         {
             var jwt = new kJwt(frontContext.RenderContext);
             var json = jwt.Decode();
-            var result = JsonHelper.DeserializeJObject(json);
-            if (result.GetValue("code").ToString() == "1")
+            var jsonParser = new Jint.Native.Json.JsonParser(new Jint.Engine());
+            var result = jsonParser.Parse(json);
+            var code = result.AsObject().Get("code").AsNumber();
+            if (code == 1)
             {
                 switch (authentication.FailedAction)
                 {
                     case FailedAction.None:
-                        frontContext.RenderContext.Response.AppendString(result.GetValue("value").ToString());
+                        frontContext.RenderContext.Response.AppendString(result.AsObject().Get("value").ToString());
                         break;
                     case FailedAction.ResultCode:
                         frontContext.RenderContext.Response.StatusCode = authentication.HttpCode;
@@ -57,7 +61,7 @@ namespace Kooboo.Sites.Helper
             }
             else
             {
-                frontContext.RenderContext.Items.Add("jwt_payload", result.GetValue("value"));
+                frontContext.RenderContext.Items.Add("jwt_payload",result.AsObject().Get("value"));
                 return true;
             }
         }
