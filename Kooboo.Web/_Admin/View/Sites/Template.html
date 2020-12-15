@@ -11,7 +11,7 @@
                 type="text"
                 class="form-control"
                 placeholder="Enter your keyword"
-                style="height: 32px;"
+                style="height: 32px"
                 ref="searchInput"
                 @keyup.enter="searchStart"
                 v-model="searchKey"
@@ -91,6 +91,7 @@
                       class="lazy"
                       :data-original="$data.thumbNail"
                       :alt="$data.name"
+                      src="/_Admin/Images/logo.png"
                     />
                     <span class="desc">{{$data.description}}</span>
                   </span>
@@ -124,6 +125,7 @@
                       class="lazy"
                       :data-original="$data.thumbNail"
                       :alt="$data.name"
+                      src="/_Admin/Images/logo.png"
                     />
                     <span class="desc">{{$data.description}}</span>
                   </span>
@@ -198,11 +200,7 @@
                   <div class="form-group">
                     <label class="col-md-2 control-label">Tags</label>
                     <div class="col-md-10">
-                      <select
-                        id="select2_element"
-                        multiple
-                        style="width: 100%;"
-                      >
+                      <select id="select2_element" multiple style="width: 100%">
                       </select>
                     </div>
                   </div>
@@ -262,7 +260,7 @@
                             <div class="fileinput-new thumbnail">
                               <img
                                 :src="$data.data?$data.data:$data"
-                                style="width: 100px; height: 100px;"
+                                style="width: 100px; height: 100px"
                               />
                             </div>
                             <a
@@ -330,30 +328,30 @@
 </div>
 
 <script>
-  (function() {
+  (function () {
     Kooboo.loadJS([
       "/_Admin/Scripts/lib/select2.min.js",
       "/_Admin/Scripts/components/kbTemplateModal.js",
       "/_Admin/Scripts/components/kbPager.js",
       "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-      "/_Admin/Scripts/lib/jquery.lazyload.min.js"
+      "/_Admin/Scripts/lib/jquery.lazyload.min.js",
     ]);
     Kooboo.loadCSS(["/_Admin/Styles/select2/select2.css"]);
   })();
 
   var self = new Vue({
     el: "#main",
-    data: function() {
+    data: function () {
       return {
         types: [
           {
             displayText: Kooboo.text.site.template.public,
-            value: "list"
+            value: "list",
           },
           {
             displayText: Kooboo.text.site.template.personal,
-            value: "personal"
-          }
+            value: "personal",
+          },
         ],
         type: "",
         searchKey: "",
@@ -376,28 +374,28 @@
           link: "",
           images: [],
           file: null,
-          defaultImg: 0
-        }
+          defaultImg: 0,
+        },
       };
     },
-    mounted: function() {
-      this.$nextTick(function() {
+    mounted: function () {
+      this.$nextTick(function () {
         self.changeType(Kooboo.getQueryString("type") || "list");
       });
     },
     methods: {
-      searchStart: function() {
+      searchStart: function () {
         if (self.searchKey) {
           self.searched = true;
           Kooboo.Template.Search({
-            keyword: self.searchKey
-          }).then(function(res) {
+            keyword: self.searchKey,
+          }).then(function (res) {
             if (res.success) {
               self.packages = res.model;
             }
           });
         } else {
-          Kooboo.Template[self.type]().then(function(res) {
+          Kooboo.Template[self.type]().then(function (res) {
             if (res.success) {
               self.searched = false;
               if (self.type == "personal") {
@@ -409,12 +407,12 @@
           });
         }
       },
-      changeType: function(type) {
+      changeType: function (type) {
         if (self.type !== type) {
           self.type = type;
           if (type == "list") {
             if (!self.packages.list.length || self.publicTabNeedRefresh) {
-              Kooboo.Template.list().then(function(res) {
+              Kooboo.Template.list().then(function (res) {
                 if (res.success) {
                   self.publicTabNeedRefresh = false;
                   self.packages = res.model;
@@ -426,7 +424,7 @@
             }
           } else {
             if (!self.personalPackages.list.length) {
-              Kooboo.Template.personal().then(function(res) {
+              Kooboo.Template.personal().then(function (res) {
                 if (res.success) {
                   self.personalPackages = res.model;
                   self.cachePersonal = res.model;
@@ -438,11 +436,11 @@
           }
         }
       },
-      changeKeyword: function() {
+      changeKeyword: function () {
         this.$refs.searchInput && this.$refs.searchInput.focus();
       },
-      clearSearchResult: function() {
-        Kooboo.Template.getList().then(function(res) {
+      clearSearchResult: function () {
+        Kooboo.Template.getList().then(function (res) {
           if (res.success) {
             self.searched = false;
             self.searchKey = "";
@@ -450,27 +448,27 @@
           }
         });
       },
-      chooseTemplate: function(item) {
+      chooseTemplate: function (item) {
         Kooboo.Template.Get({
-          id: item.id
-        }).then(function(res) {
+          id: item.id,
+        }).then(function (res) {
           if (res.success) {
             self.templateData = res.model;
             self.showTemplateModal = true;
           }
         });
       },
-      removePackage: function(item) {
+      removePackage: function (item) {
         if (confirm(Kooboo.text.confirm.deleteItem)) {
           Kooboo.Template.Delete({
-            Id: item.id
-          }).then(function(res) {
+            Id: item.id,
+          }).then(function (res) {
             if (res.success) {
               publicTabNeedRefresh = true;
-              Kooboo.Template.personal().then(function(res) {
+              Kooboo.Template.personal().then(function (res) {
                 if (res.success) {
                   self.personalPackages.list = [];
-                  self.$nextTick(function() {
+                  self.$nextTick(function () {
                     self.personalPackages = res.model;
                     self.cachePersonal = res.model;
                   });
@@ -483,39 +481,41 @@
           });
         }
       },
-      editPackage: function(item) {
+      editPackage: function (item) {
         Kooboo.Template.Get({
           siteId: item.siteId,
-          id: item.id
-        }).then(function(res) {
+          id: item.id,
+        }).then(function (res) {
           if (res.success) {
             self.showEditTemplateModal = true;
             self.editModel.id = res.model.id;
             self.editModel.name = res.model.name;
             self.editModel.isPrivate = res.model.isPrivate;
             self.editModel.category = res.model.category;
-            self.editModel.tags = res.model.tags.split(",").filter(function(m) {
-              return !!m;
-            });
-            self.$nextTick(function() {
-              var tags = self.editModel.tags.map(function(item) {
+            self.editModel.tags = res.model.tags
+              .split(",")
+              .filter(function (m) {
+                return !!m;
+              });
+            self.$nextTick(function () {
+              var tags = self.editModel.tags.map(function (item) {
                 return {
                   id: item,
                   text: item,
-                  selected: true
+                  selected: true,
                 };
               });
               $("#select2_element").select2({
                 tags: true,
                 tokenSeparators: [",", " ", ";"],
-                data: tags
+                data: tags,
               });
             });
             self.editModel.description = res.model.description;
             self.editModel.link = res.model.link;
             self.editModel.images = res.model.images;
             self.editModel.file = null;
-            var defaultImage = res.model.images.find(function(f) {
+            var defaultImage = res.model.images.find(function (f) {
               return f.indexOf(res.model.thumbNail) > -1;
             });
             if (defaultImage) {
@@ -528,27 +528,27 @@
           }
         });
       },
-      changePackagesPage: function(pageNr) {
+      changePackagesPage: function (pageNr) {
         window.scrollTo(0, 0);
         if (self.searched) {
           Kooboo.Template.Search({
             keyword: self.searchKey,
-            pageNr: pageNr
-          }).then(function(res) {
+            pageNr: pageNr,
+          }).then(function (res) {
             if (res.success) {
               self.packages.list = [];
-              self.$nextTick(function() {
+              self.$nextTick(function () {
                 self.packages = res.model;
               });
             }
           });
         } else {
           Kooboo.Template.list({
-            pageNr: pageNr
-          }).then(function(res) {
+            pageNr: pageNr,
+          }).then(function (res) {
             if (res.success) {
               self.packages.list = [];
-              self.$nextTick(function() {
+              self.$nextTick(function () {
                 self.packages = res.model;
                 self.cachedList = res.model;
               });
@@ -556,21 +556,21 @@
           });
         }
       },
-      changePersonalPackagesPage: function(pageNr) {
+      changePersonalPackagesPage: function (pageNr) {
         window.scrollTo(0, 0);
         Kooboo.Template.personal({
-          pageNr: pageNr
-        }).then(function(res) {
+          pageNr: pageNr,
+        }).then(function (res) {
           if (res.success) {
             self.personalPackages.list = [];
-            self.$nextTick(function() {
+            self.$nextTick(function () {
               self.personalPackages = res.model;
               self.cachePersonal = res.model;
             });
           }
         });
       },
-      saveEdit: function() {
+      saveEdit: function () {
         var data = new FormData();
 
         data.append("id", self.editModel.id);
@@ -580,7 +580,7 @@
           "tags",
           $("#select2_element")
             .select2("data")
-            .map(function(f) {
+            .map(function (f) {
               return f.text.trim();
             })
             .join(",")
@@ -590,14 +590,14 @@
         data.append(
           "images",
           JSON.stringify(
-            self.editModel.images.map(function(f) {
+            self.editModel.images.map(function (f) {
               if (typeof f != "string") return f.file.name;
               return f;
             })
           )
         );
 
-        self.editModel.images.forEach(function(f, index) {
+        self.editModel.images.forEach(function (f, index) {
           if (typeof f != "string") {
             data.append("file_" + index, f.file);
           }
@@ -613,7 +613,7 @@
             data.append("defaultImg", self.editModel.defaultImg);
           } else {
             var index = self.editModel.images
-              .filter(function(f) {
+              .filter(function (f) {
                 return typeof f != "string";
               })
               .indexOf(selected);
@@ -621,14 +621,14 @@
           }
         }
 
-        Kooboo.Template.Update(data).then(function(res) {
+        Kooboo.Template.Update(data).then(function (res) {
           if (res.success) {
             publicTabNeedRefresh = true;
-            Kooboo.Template.personal().then(function(r) {
+            Kooboo.Template.personal().then(function (r) {
               if (r.success) {
                 self.searched = false;
                 self.personalPackages.list = [];
-                self.$nextTick(function() {
+                self.$nextTick(function () {
                   self.personalPackages = r.model;
                   self.cachePersonal = r.model;
                   self.showEditTemplateModal = false;
@@ -642,21 +642,21 @@
           }
         });
       },
-      loadImg: function() {
-        setTimeout(function() {
+      loadImg: function () {
+        setTimeout(function () {
           $("img.lazy").lazyload({
             event: "scroll",
-            effect: "fadeIn"
+            effect: "fadeIn",
           });
         }, 100);
       },
-      chooseAsDefault: function(m) {
-        self.editing.imgList.forEach(function(f) {
+      chooseAsDefault: function (m) {
+        self.editing.imgList.forEach(function (f) {
           f.selected(false);
         });
         m.selected(true);
       },
-      removeFile: function(item, index) {
+      removeFile: function (item, index) {
         var selected = self.editModel.images[self.editModel.defaultImg];
         self.editModel.images.splice(index, 1);
         if (index == self.editModel.defaultImg) {
@@ -666,38 +666,36 @@
           self.editModel.defaultImg = self.editModel.images.indexOf(selected);
         }
       },
-      uploadImg: function(data, files) {
-        files.forEach(function(f) {
+      uploadImg: function (data, files) {
+        files.forEach(function (f) {
           var reader = new FileReader();
-          reader.onloadend = function() {
+          reader.onloadend = function () {
             self.editModel.images.push({
               data: reader.result,
-              file: f
+              file: f,
             });
           };
           reader.readAsDataURL(f);
         });
       },
-      uploadFile: function(data, files) {
+      uploadFile: function (data, files) {
         self.editModel.file = files[0];
-      }
+      },
     },
     watch: {
-      packages: function() {
+      packages: function () {
         this.loadImg();
       },
-      personalPackages: function() {
+      personalPackages: function () {
         this.loadImg();
       },
-      showEditTemplateModal: function(value) {
+      showEditTemplateModal: function (value) {
         if (value) {
-          setTimeout(function() {
-            $(".autosize")
-              .textareaAutoSize()
-              .trigger("keyup");
+          setTimeout(function () {
+            $(".autosize").textareaAutoSize().trigger("keyup");
           }, 300);
         }
-      }
-    }
+      },
+    },
   });
 </script>
