@@ -19,6 +19,8 @@ $(function () {
         cacheData: null,
         isSearching: false,
         defaultColumnName: "",
+        listKeys: [],
+        showTable: false,
       };
     },
     mounted: function () {
@@ -26,6 +28,7 @@ $(function () {
         if (res.success) {
           self.cacheData = res.model;
           self.handleData(res.model);
+          self.showTable = true;
         }
       });
       Kooboo.ContentFolder.getFolderInfoById({
@@ -105,6 +108,14 @@ $(function () {
               : "label-sm label-default",
           };
           ob.id = item.id;
+
+          for (var key in item.textValues) {
+            if (key != self.defaultColumnName) {
+              if (self.listKeys.indexOf(key) == -1) self.listKeys.push(key);
+              ob[key] = item.textValues[key];
+            }
+          }
+
           ob.Edit = {
             text: Kooboo.text.common.edit,
             url: Kooboo.Route.Get(Kooboo.Route.TextContent.DetailPage, {

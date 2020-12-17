@@ -10,7 +10,7 @@
           v-model="searchKey"
           @keyup.enter="searchStart"
           class="form-control"
-          style="height: 32px;"
+          style="height: 32px"
           placeholder="输入关键字"
         />
         <div class="input-group-btn">
@@ -30,10 +30,13 @@
         href="javascript:;"
         >Search result</a
       >
-      <a :href="newTextContent" v-else class="btn green navbar-btn">{{
-        Kooboo.text.site.textContent.new + " " + folderName
-      }}</a>
-      <a v-if="selected.length == 1" @click="onCopy" class="btn green navbar-btn"
+      <a :href="newTextContent" v-else class="btn green navbar-btn"
+        >{{ Kooboo.text.site.textContent.new + " " + folderName }}</a
+      >
+      <a
+        v-if="selected.length == 1"
+        @click="onCopy"
+        class="btn green navbar-btn"
         >Copy</a
       >
       <a v-if="selected.length > 0" @click="onDelete" class="btn red navbar-btn"
@@ -56,14 +59,24 @@
       ></a>
     </div>
   </div>
-  <kb-table :data="tableData" show-select :selected.sync="selected">
+
+  <kb-table
+    :data="tableData"
+    show-select
+    :selected.sync="selected"
+    v-if="showTable"
+  >
     <kb-table-column :label="defaultColumnName">
       <template v-slot="row">
-        <a :href="row[defaultColumnName].url" @click.stop>{{
-          row[defaultColumnName].text
-        }}</a>
+        <a :href="row[defaultColumnName].url" @click.stop
+          >{{ row[defaultColumnName].text }}</a
+        >
       </template>
     </kb-table-column>
+
+    <kb-table-column v-for="item in listKeys" :prop="item" :label="item">
+    </kb-table-column>
+
     <kb-table-column :label="Kooboo.text.common.online">
       <template v-slot="row">
         <span :class="['label', row.online.class]">{{ row.online.text }}</span>
@@ -89,11 +102,11 @@
 </div>
 
 <script>
-  (function() {
+  (function () {
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kbTable.js",
       "/_Admin/Scripts/components/kbBreadcrumb.js",
-      "/_Admin/Scripts/components/kbPager.js"
+      "/_Admin/Scripts/components/kbPager.js",
     ]);
   })();
 </script>
