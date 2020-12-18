@@ -31,7 +31,7 @@ namespace Kooboo.Sites.Scripting
                             {
                                 var instance = Activator.CreateInstance(item) as IkScript;
 
-                                if (instance != null)
+                                if (instance != null && _list.ContainsKey(instance.Name) != true)
                                 {
                                     _list.Add(instance.Name, item);
                                 }
