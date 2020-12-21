@@ -20,6 +20,13 @@ namespace Kooboo.Sites.Helper
         {
             var authentication = Match(frontContext);
             if (authentication == null) return true;
+            var enableCORS = frontContext?.WebSite?.EnableCORS ?? false;
+
+            if (CorsHelper.IsOptionsRequest(frontContext) && enableCORS)
+            {
+                CorsHelper.HandleHeaders(frontContext);
+                return false;
+            }
 
             switch (authentication.Action)
             {
@@ -61,7 +68,7 @@ namespace Kooboo.Sites.Helper
             }
             else
             {
-                frontContext.RenderContext.Items.Add("jwt_payload",result.AsObject().Get("value"));
+                frontContext.RenderContext.Items.Add("jwt_payload", result.AsObject().Get("value"));
                 return true;
             }
         }
