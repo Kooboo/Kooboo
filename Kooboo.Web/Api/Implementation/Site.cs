@@ -257,7 +257,7 @@ namespace Kooboo.Web.Api.Implementation
 
             names.Add(new ExportStoreNameViewModel() { Name = typeof(Code).Name, DisplayName = Hardcoded.GetValue("Code", call.Context) }); 
 
-            names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "Authentication", DisplayName = Hardcoded.GetValue("Authentication", call.Context) });
 
             return names;
         }
