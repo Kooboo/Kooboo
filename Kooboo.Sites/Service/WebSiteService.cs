@@ -303,8 +303,8 @@ namespace Kooboo.Sites.Service
                     if (page != null)
                     {
                         context.Page = page;
-                        var html = RenderEngine.RenderPageAsync(context);
-                        context.RenderContext.Response.Body = Encoding.Default.GetBytes(html.Result);
+                        var html = await RenderEngine.RenderPageAsync(context);
+                        context.RenderContext.Response.Body = Encoding.Default.GetBytes(html);
                         return null;
                     }
                 }
