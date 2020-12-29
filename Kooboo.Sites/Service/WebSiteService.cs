@@ -302,7 +302,9 @@ namespace Kooboo.Sites.Service
 
                     if (page != null)
                     {
-                        context.RenderContext.Response.Body = Encoding.Default.GetBytes(page.Body);
+                        context.Page = page;
+                        var html = RenderEngine.RenderPageAsync(context);
+                        context.RenderContext.Response.Body = Encoding.Default.GetBytes(html.Result);
                         return null;
                     }
                 }
