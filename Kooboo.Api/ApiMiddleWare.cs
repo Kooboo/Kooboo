@@ -126,6 +126,10 @@ namespace Kooboo.Api
             {
                 RenderBinary(context, response as BinaryResponse);
             }
+            if (response is StreamResponse)
+            {
+                RenderStream(context, response as StreamResponse);
+            }
             else if (response is NoResponse)
             {
                 // do nothing. 
@@ -151,10 +155,10 @@ namespace Kooboo.Api
             {
                 if (!context.Response.Headers.ContainsKey(item.Key))
                 {
-                    context.Response.Headers.Add(item.Key, item.Value); 
+                    context.Response.Headers.Add(item.Key, item.Value);
                 }
 
-            } 
+            }
         }
 
 
@@ -192,6 +196,24 @@ namespace Kooboo.Api
                 context.Response.Headers.Add(item.Key, value);
             }
             context.Response.Body = resposne.BinaryBytes;
+        }
+
+        public void RenderStream(RenderContext context, StreamResponse resposne)
+        {
+            if (resposne == null)
+            {
+                return;
+            }
+            context.Response.ContentType = resposne.ContentType;
+            context.Response.StatusCode = 200;
+
+            foreach (var item in resposne.Headers)
+            {
+                string value = string.Join("", item.Value);
+                context.Response.Headers.Add(item.Key, value);
+            }
+
+            context.Response.Stream = resposne.Stream;
         }
 
         public void RenderPlainResponse(RenderContext context, PlainResponse resposne)

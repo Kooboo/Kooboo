@@ -11,6 +11,7 @@ namespace Kooboo.Api.ApiResponse
             this.Headers = new HttpStringCollection();
             this.Success = true; 
         }
+
         public byte[] BinaryBytes { get; set; }
 
         public HttpStringCollection Headers { get; set; }

@@ -167,7 +167,7 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-        public virtual BinaryResponse Export(ApiCall call)
+        public virtual StreamResponse Export(ApiCall call)
         {
             var site = call.WebSite;
             if (site == null)
@@ -187,14 +187,13 @@ namespace Kooboo.Web.Api.Implementation
 
             if (File.Exists(exportfile))
             {
-                var allbytes = System.IO.File.ReadAllBytes(path);
-
-                BinaryResponse response = new BinaryResponse();
+                StreamResponse response = new StreamResponse();
                 response.ContentType = "application/zip";
                 response.Headers.Add("Content-Disposition", $"attachment;filename={name}.zip");
-                response.BinaryBytes = allbytes;
+                response.Stream = File.OpenRead(path);
                 return response;
             }
+
             return null;
         }
 
