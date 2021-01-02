@@ -37,7 +37,24 @@ namespace Kooboo.Sites.Models
         /// the content bytes of this file. 
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
-        public byte[] ContentBytes { get; set; }
+        private byte[] _contentbytes; 
+        public byte[] ContentBytes {
+            get {
+                return _contentbytes; 
+            }
+            set
+            {
+                _contentbytes = value; 
+                if (_contentbytes !=null)
+                {
+                    this.Size = _contentbytes.Length; 
+                }
+                else
+                {
+                    this.Size = 0; 
+                } 
+            }
+        }
          
         /// <summary>
         ///  this is for some file like text file, etc... 
@@ -61,8 +78,7 @@ namespace Kooboo.Sites.Models
                     if (ContentBytes != null)
                     {
                         _size = ContentBytes.Length;
-                    }
-
+                    } 
                 }
                 return _size;
             }
