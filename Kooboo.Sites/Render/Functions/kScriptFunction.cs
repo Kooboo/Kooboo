@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Jint.Native;
 using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Render.Functions
@@ -22,16 +24,27 @@ namespace Kooboo.Sites.Render.Functions
             if (prog != null && prog != Jint.Native.JsValue.Undefined)
             {
                 var paras = FunctionHelper.RenderParameter(context, this.Parameters);
-
-                var result = engine.Invoke(prog, paras.ToArray());
+                  
+                var result = engine.Invoke(prog, paras.ToArray()); 
 
                 if (result != null)
-                {
-                    return result.ToString();
+                { 
+                    if (result.IsArray())
+                    {
+                        var items = result.AsArray();
+
+                        var arrayResult = new List<object>(); 
+
+                        foreach (Jint.Native.JsValue item in items.GetOwnProperties().Select(p => p.Value.Value))
+                        {
+                            arrayResult.Add(item);
+                        } 
+                        return arrayResult; 
+                    }
+                    return result.ToString(); 
                 }
             }
-            return null;
-
+            return null; 
         }
     }
 }
