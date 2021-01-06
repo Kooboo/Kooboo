@@ -5,6 +5,7 @@ using System.Text;
 using Kooboo.Dom;
 using Kooboo.Data.Context;
 using Kooboo.Sites.DataSources;
+using Kooboo.Sites.Render.Functions;
 
 namespace Kooboo.Sites.Render
 {
@@ -23,6 +24,9 @@ namespace Kooboo.Sites.Render
 
         private ValueRenderTask CompareValueRenderTask { get; set; }
 
+        private bool IsFunction { get; set; }
+        private IFunction function { get; set; }
+
         public ConditionRenderTask(Element element, string ConditionText, EvaluatorOption options)
         {
             if (ConditionText.ToLower().StartsWith("repeat"))
@@ -30,6 +34,12 @@ namespace Kooboo.Sites.Render
                 this.IsRepeatCondition = true;
                 this.ConditionText = GetConditionText(ConditionText);
             }
+
+            if (FunctionHelper.IsFunction(ConditionText))
+            {
+                this.IsFunction = true;
+                this.function = FunctionHelper.Parse(ConditionText); 
+            } 
             else
             {
                 this.Filter = FilterHelper.GetFilter(ConditionText);
@@ -75,7 +85,22 @@ namespace Kooboo.Sites.Render
             if (this.IsRepeatCondition)
             {
                 return context.DataContext.RepeatCounter.Check(this.ConditionText);
+            } 
+            if (this.IsFunction && function != null)
+            {
+                var funcresult = this.function.Render(context);
+
+                if (funcresult !=null)
+                {
+                    var result = funcresult.ToString().ToLower(); 
+                    if (result == "true" || result == "yes" || result == "1")
+                    {
+                        return true; 
+                    } 
+                } 
+                return false;  
             }
+
             else
             {
                 if (this.Filter != null)
