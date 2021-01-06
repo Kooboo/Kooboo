@@ -105,6 +105,11 @@ k.url.post(""http://www.kooboo.com/fakereceiver"", data,'admin','abc123');
 ")]
         public string post(string url, string data, string userName, string password) => _Post(url, data, BuildBasicHeader(userName, password)).Result;
 
+        [Description(@"Post data to remote url
+var data = ""name=myname&field=value""; 
+k.url.post(""http://www.kooboo.com/fakereceiver"", data,{'Authentication','Bearer xxxx'}););
+")]
+        public string post(string url, string data, IDictionary<string, object> headers) => _Post(url, data, headers).Result;
 
 
         #endregion
@@ -146,6 +151,19 @@ k.url.postData(""http://www.kooboo.com/fakereceiver"", data,'admin','abc123');
         {
             string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
             return post(url, poststring, userName, password);
+        }
+
+        [Description(@"Post data as a Json string to remote url
+var data = {
+    name:'abc',
+    age:23
+}
+k.url.postData(""http://www.kooboo.com/fakereceiver"", data,{'Authentication','Bearer xxxx'}); 
+")]
+        public string postData(string url, object data, IDictionary<string, object> headers)
+        {
+            string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
+            return post(url, poststring, headers);
         }
 
         #endregion
@@ -210,6 +228,26 @@ k.url.postData(""http://www.kooboo.com/fakereceiver"", data,'admin','abc123'); "
         {
             string json = JsonHelper.Serialize(data);
             return _PostForm(url, json, BuildBasicHeader(userName, password)).Result;
+        }
+
+        [Description(@"Post form data to remote url
+var data = '{""name"":""abc"", ""age"":23}'
+k.url.postData(""http://www.kooboo.com/fakereceiver"", data,{'Authentication','Bearer xxxx'}); ")]
+        public string postform(string url, string data, IDictionary<string, object> headers)
+        {
+            return _PostForm(url, data, headers).Result;
+        }
+
+        [Description(@"Post form data to remote url
+var data = {
+    name:'abc',
+    age:123
+}
+k.url.postData(""http://www.kooboo.com/fakereceiver"", data,{'Authentication','Bearer xxxx'}); ")]
+        public string postform(string url, object data, IDictionary<string, object> headers)
+        {
+            string json = JsonHelper.Serialize(data);
+            return _PostForm(url, json, headers).Result;
         }
 
         #endregion
