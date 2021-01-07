@@ -23,8 +23,8 @@ namespace Kooboo.Lib.Compatible
         {
             return MimeMapping.MimeUtility.GetMimeMapping(extension);
         }
-    
-#region
+
+        #region
         public RsaKeys GenerateKeys(int size)
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
@@ -151,7 +151,7 @@ namespace Kooboo.Lib.Compatible
             sb.Append("</RSAKeyValue>");
             return (sb.ToString());
         }
-#endregion
+        #endregion
 
         public double GetDistance(double xLa, double xLong, double yLa, double yLong)
         {
@@ -160,7 +160,7 @@ namespace Kooboo.Lib.Compatible
             return cordx.GetDistanceTo(cordy);
         }
 
-#region image
+        #region image
         public SizeMeansurement GetImageSize(byte[] imagebytes)
         {
             SizeMeansurement measure = new SizeMeansurement();
@@ -169,13 +169,17 @@ namespace Kooboo.Lib.Compatible
             {
                 MemoryStream stream = new MemoryStream(imagebytes);
                 var image = Image.Identify(stream);
-                measure.Height = image.Height;
-                measure.Width = image.Width;
+
+                if (image != null)
+                {
+                    measure.Height = image.Height;
+                    measure.Width = image.Width;
+                }
             }
             catch (Exception ex)
             {
-
             }
+
             return measure;
         }
 
@@ -196,7 +200,7 @@ namespace Kooboo.Lib.Compatible
             systhumbnail = image;
 
             MemoryStream memstream = new MemoryStream();
-            systhumbnail.Save(memstream,PngFormat.Instance);
+            systhumbnail.Save(memstream, PngFormat.Instance);
 
             return memstream.ToArray();
         }
@@ -223,7 +227,7 @@ namespace Kooboo.Lib.Compatible
 
             using (MemoryStream ms = new MemoryStream())
             {
-                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width,image.Height, size);
+                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width, image.Height, size);
                 image.Mutate(x => x.Resize(size.Width, size.Height));
                 image.Save(ms, PngFormat.Instance);
 
@@ -236,7 +240,7 @@ namespace Kooboo.Lib.Compatible
             }
         }
 
-#endregion
+        #endregion
 
         public void OpenDefaultUrl(string url)
         {

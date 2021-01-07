@@ -168,9 +168,17 @@ namespace Kooboo.Lib.Helper
 
             if (baseUrl.ToLower().StartsWith("http"))
             {
-                Uri baseuri = new Uri(baseUrl);
-                Uri cssuri = new Uri(baseuri, subUrl);
-                return cssuri.OriginalString;
+                Uri uri = new Uri(baseUrl);
+
+                try
+                {
+                    uri = new Uri(uri, subUrl);
+                }
+                catch (Exception)
+                {
+                }
+                
+                return uri.OriginalString;
             }
             else
             {
