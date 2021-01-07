@@ -259,7 +259,10 @@ namespace Kooboo.Sites.Render
             Dictionary<string, string> newdict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var item in orginal)
             {
-                newdict.Add(item.Key, item.Value);
+                if (!newdict.ContainsKey(item.Key))
+                {
+                  newdict.Add(item.Key, item.Value);
+                } 
             }
             return newdict;
         }

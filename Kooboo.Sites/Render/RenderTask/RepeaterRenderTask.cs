@@ -174,12 +174,10 @@ namespace Kooboo.Sites.Render
             if (!string.IsNullOrEmpty(this.ContainerEndTag))
             {
                 sb.Append(this.ContainerEndTag);
-            }
-
+            } 
             return sb.ToString();
         }
-
-
+         
         public object GetContainerValue(RenderContext context)
         { 
             if (this.IsFunction && function != null)
@@ -200,6 +198,10 @@ namespace Kooboo.Sites.Render
         public IList GetList(object container)
         {
             IList itemcollection;
+            if (container == null)
+            {
+                return new List<string>(); 
+            }
             if (container is DataMethodResult)
             {
                 var containerresult = container as DataMethodResult;

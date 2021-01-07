@@ -43,6 +43,15 @@ namespace Kooboo.Sites.Scripting.Global.RelationalDatabase
             {
                 return obj[key];
             }
+            else
+            {
+                var lower = key.ToLower(); 
+                var findkey = obj.Keys.FirstOrDefault(o => o.ToLower() == lower); 
+                if (findkey !=null)
+                {
+                    return obj[findkey]; 
+                } 
+            }
 
             if (_table == null) return null;
             var cacheKey = $"{_table.Database.ConnectionString}_{_table.Name}_{key}";

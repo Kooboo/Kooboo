@@ -27,15 +27,17 @@ namespace Kooboo.Sites.Render.Functions
                   
                 var result = engine.Invoke(prog, paras.ToArray()); 
 
-                if (result != null)
+                if (result != null && result.IsNull()==false)
                 { 
                     if (result.IsArray())
                     {
                         var items = result.AsArray();
 
-                        var arrayResult = new List<object>(); 
+                        var arrayResult = new List<object>();
 
-                        foreach (Jint.Native.JsValue item in items.GetOwnProperties().Select(p => p.Value.Value))
+                        var ownproperties = items.GetOwnProperties().Where(o=>o.Key!= "length").ToList(); 
+
+                        foreach (Jint.Native.JsValue item in ownproperties.Select(p => p.Value.Value))
                         {
                             arrayResult.Add(item);
                         } 
