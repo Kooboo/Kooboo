@@ -144,7 +144,7 @@ namespace Kooboo.Mail.Smtp
 
         public static async Task WriteLineAsyncWithTimeout(this StreamWriter writer, string line)
         {
-            var task = writer.WriteLineAsync(line + "\r\n");
+            var task = writer.WriteAsync(line + "\r\n");
             if (writer.BaseStream.WriteTimeout == 0)
             {
                 await task;
