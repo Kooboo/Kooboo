@@ -27,8 +27,22 @@ namespace Kooboo.Sites.Render
         private bool IsFunction { get; set; }
         private IFunction function { get; set; }
 
+        private bool IsOpposite { get; set; }
+
         public ConditionRenderTask(Element element, string ConditionText, EvaluatorOption options)
         {
+            if (string.IsNullOrWhiteSpace(ConditionText))
+            {
+                return;
+            }
+
+            ConditionText = ConditionText.Trim(); 
+            if (ConditionText.StartsWith("!"))
+            {
+                ConditionText = ConditionText.Substring(1);
+                this.IsOpposite = true; 
+            }
+
             if (ConditionText.ToLower().StartsWith("repeat"))
             {
                 this.IsRepeatCondition = true;
@@ -38,30 +52,35 @@ namespace Kooboo.Sites.Render
             if (FunctionHelper.IsFunction(ConditionText))
             {
                 this.IsFunction = true;
-                this.function = FunctionHelper.Parse(ConditionText); 
-            } 
+                this.function = FunctionHelper.Parse(ConditionText);
+            }
             else
             {
                 this.Filter = FilterHelper.GetFilter(ConditionText);
-                 FilterHelper.CheckValueType(this.Filter); 
+                FilterHelper.CheckValueType(this.Filter);
             }
             string NewElementString = Service.DomService.ReSerializeElement(element);
 
             this.SubTasks = RenderEvaluator.Evaluate(NewElementString, options);
         }
-         
+
 
         public string Render(RenderContext context)
         {
-            if (EvaluateCondition(context))
+            var testok = EvaluateCondition(context); 
+            
+            if (this.IsOpposite)
+            {
+                testok = !testok; 
+            } 
+            if (testok)
             {
                 StringBuilder sb = new StringBuilder();
 
                 foreach (var item in this.SubTasks)
                 {
                     sb.Append(item.Render(context));
-                }
-
+                } 
                 return sb.ToString();
             }
             else
@@ -85,30 +104,30 @@ namespace Kooboo.Sites.Render
             if (this.IsRepeatCondition)
             {
                 return context.DataContext.RepeatCounter.Check(this.ConditionText);
-            } 
+            }
             if (this.IsFunction && function != null)
             {
                 var funcresult = this.function.Render(context);
 
-                if (funcresult !=null)
+                if (funcresult != null)
                 {
-                    var result = funcresult.ToString().ToLower(); 
+                    var result = funcresult.ToString().ToLower();
                     if (result == "true" || result == "yes" || result == "1")
                     {
-                        return true; 
-                    } 
-                } 
-                return false;  
+                        return true;
+                    }
+                }
+                return false;
             }
 
             else
             {
                 if (this.Filter != null)
                 {
-                    string value = null; 
+                    string value = null;
                     if (this.Filter.IsNameValueType)
                     {
-                        value = this.Filter.FieldName; 
+                        value = this.Filter.FieldName;
                     }
                     else
                     {
@@ -117,9 +136,9 @@ namespace Kooboo.Sites.Render
                             this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName);
                         }
 
-                       value = this.ValueRenderTask.Render(context);
+                        value = this.ValueRenderTask.Render(context);
                     }
-                   
+
 
                     if (value == null)
                     {
@@ -147,15 +166,15 @@ namespace Kooboo.Sites.Render
                             this.CompareValueRenderTask = new ValueRenderTask(this.Filter.FieldValue);
                         }
 
-                        var contextcomparevalue = this.CompareValueRenderTask.Render(context); 
+                        var contextcomparevalue = this.CompareValueRenderTask.Render(context);
 
                         if (!string.IsNullOrWhiteSpace(contextcomparevalue))
                         {
-                            comparevalue = contextcomparevalue; 
-                        } 
+                            comparevalue = contextcomparevalue;
+                        }
                         else
                         {
-                            comparevalue = this.Filter.FieldValue; 
+                            comparevalue = this.Filter.FieldValue;
                         }
                     }
 

@@ -18,7 +18,7 @@ namespace Kooboo.Web.Security
                 foreach (var item in allpages.GroupBy(o => o.taskid))
                 {
                     var pages = item.ToList();
-                    if (pages.Count > 20)   // only allow additional download of 20 more pages.. 
+                    if (pages.Count > 100)   // only allow additional download of 20 more pages.. 
                     {
                         return false;
                     }

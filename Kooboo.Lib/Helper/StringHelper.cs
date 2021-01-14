@@ -71,8 +71,7 @@ namespace Kooboo.Lib.Helper
             }
             return string.Empty;
         }
-
-
+         
         public static string ToValidUserNames(string input)
         {
             StringBuilder sb = new StringBuilder();
