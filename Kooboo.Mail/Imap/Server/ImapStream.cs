@@ -62,7 +62,7 @@ namespace Kooboo.Mail.Imap
 
         public virtual async Task<string> ReadLineAsync()
         {
-            var line = await _reader.ReadToEndAsyncWithTimeout();
+            var line = await _reader.ReadLineAsyncWithTimeout();
 
             LogRead(line);
 
