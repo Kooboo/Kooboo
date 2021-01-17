@@ -151,6 +151,12 @@ namespace Kooboo.Mail.Smtp
         public static async Task WriteLineAsyncWithTimeout(this StreamWriter writer, string line)
         {
             var task = writer.WriteAsync(line + "\r\n");
+            if (!writer.BaseStream.CanTimeout)
+            {
+                await task;
+                return;
+            }
+
             if (writer.BaseStream.WriteTimeout == 0)
             {
                 await task;
@@ -167,6 +173,9 @@ namespace Kooboo.Mail.Smtp
         public static async Task<int> ReadAsyncWithTimeout(this Stream stream, byte[] buffer, int start, int count)
         {
             var task = stream.ReadAsync(buffer, start, count);
+            if (!stream.CanTimeout)
+                return await task;
+
             if (stream.ReadTimeout == 0)
                 return await task;
 
@@ -182,6 +191,12 @@ namespace Kooboo.Mail.Smtp
         public static async Task WriteAsyncWithTimeout(this Stream stream, byte[] buffer, int start, int count)
         {
             var task = stream.WriteAsync(buffer, start, count);
+            if (!stream.CanTimeout)
+            {
+                await task;
+                return;
+            }
+
             if (stream.WriteTimeout == 0)
             {
                 await task;
