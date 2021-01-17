@@ -114,6 +114,9 @@ namespace Kooboo.Mail.Smtp
         public static async Task<string> ReadLineAsyncWithTimeout(this StreamReader reader)
         {
             var task = reader.ReadLineAsync();
+            if (!reader.BaseStream.CanTimeout)
+                return await task;
+
             if (reader.BaseStream.ReadTimeout == 0)
                 return await task;
 
@@ -129,6 +132,9 @@ namespace Kooboo.Mail.Smtp
         public static async Task<string> ReadToEndAsyncWithTimeout(this StreamReader reader)
         {
             var task = reader.ReadToEndAsync();
+            if (!reader.BaseStream.CanTimeout)
+                return await task;
+
             if (reader.BaseStream.ReadTimeout == 0)
                 return await task;
 
