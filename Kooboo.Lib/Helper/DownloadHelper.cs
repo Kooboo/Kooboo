@@ -170,7 +170,19 @@ namespace Kooboo.Lib.Helper
                         if (existContentType)
                         {
                             ContentType contentTypeInstance = new ContentType(contentType);
-                            request.Content = new StringContent(PutPostBoy, Encoding.GetEncoding(contentTypeInstance.CharSet), contentTypeInstance.MediaType);
+                            var encoding = Encoding.Default;
+
+                            try
+                            {
+                                encoding = Encoding.GetEncoding(contentTypeInstance.CharSet);
+                            }
+                            catch (Exception)
+                            {
+                            }
+
+                            var mediaType = contentTypeInstance.MediaType;
+                            if (string.IsNullOrWhiteSpace(mediaType)) mediaType = "application/json";
+                            request.Content = new StringContent(PutPostBoy, encoding, mediaType);
                         }
                         else
                         {
