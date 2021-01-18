@@ -978,7 +978,20 @@ namespace Kooboo.Sites.Repository
                 }
                 return _textcontent;
             }
-        } 
+        }
+
+        private AuthenticationRepository _authentication;
+        public AuthenticationRepository Authentication
+        {
+            get
+            {
+                if (_authentication == null)
+                {
+                    _authentication = GetSiteRepository<AuthenticationRepository, Authentication>();
+                }
+                return _authentication;
+            }
+        }
 
         // rebuild the index... 
         public void ClearLog(string[] storenames)

@@ -120,6 +120,14 @@ k.response.setHeader(""ServerTwo"", ""powerful kooboo server"");
             this.context.SetItem<CustomStatusCode>(new CustomStatusCode() { IsCustomSet = true, Code = code });
         }
 
+        [Description(@"Set the status code
+  k.response.statusCode(401);")]
+        public void Unauthorized()
+        {
+            this.context.Response.StatusCode = 401;
+            this.context.SetItem<CustomStatusCode>(new CustomStatusCode() { IsCustomSet = true, Code = 401 });
+        }
+
         [Description(@"Excute another Url, and write the response within current context
  k.response.execute(""/anotherpage"");")]
         public void Execute(string url)

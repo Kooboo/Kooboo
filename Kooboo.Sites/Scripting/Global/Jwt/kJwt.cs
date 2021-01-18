@@ -3,6 +3,7 @@ using JWT.Algorithms;
 using JWT.Exceptions;
 using JWT.Serializers;
 using Kooboo.Data.Context;
+using Kooboo.Extensions;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using System;
@@ -99,9 +100,20 @@ error
                 });
             }
 
-            var token = authorizationValue.Substring(7);
+            try
+            {
+                var token = authorizationValue.Substring(7);
 
-            return Decode(token);
+                return Decode(token);
+            }
+            catch (Exception ex)
+            {
+                return JsonHelper.Serialize(new
+                {
+                    Code = 1,
+                    Value = ex.ToString()
+                });
+            }
         }
 
         [Description(@"
@@ -166,6 +178,8 @@ error
                 });
             }
         }
+
+        public object Payload => context.Items.GetValueOrDefault("jwt_payload");
 
         private JwtSetting GetJwtSetting()
         {

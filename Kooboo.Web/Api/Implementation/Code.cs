@@ -20,8 +20,6 @@ namespace Kooboo.Web.Api.Implementation
 
             var sitedb = call.WebSite.SiteDb();
 
-            call.WebSite.BaseUrl(); 
-            
             if (call.ObjectId != default(Guid))
             {
                 var code = sitedb.Code.Get(call.ObjectId);
@@ -143,17 +141,17 @@ namespace Kooboo.Web.Api.Implementation
 //if (k.event.url.indexOf(""pagetwo"")>-1)
 //{
 //     k.event.url = ""/pageone"";
-//}"; 
+//}";
             }
             else if (codetype == Sites.Models.CodeType.PageScript)
             {
                 sample = @"// kscript that can be inserted to page position. 
 //k.cookie.set(""key"", ""value"");
-//k.response.write(""Hello world"");"; 
+//k.response.write(""Hello world"");";
             }
-            else  if (codetype == Sites.Models.CodeType.Job)
+            else if (codetype == Sites.Models.CodeType.Job)
             {
-                sample = @"//Schedule task"; 
+                sample = @"//Schedule task";
             }
 
             else if (codetype == Sites.Models.CodeType.PaymentCallBack)
@@ -165,6 +163,14 @@ namespace Kooboo.Web.Api.Implementation
             else if (codetype == Sites.Models.CodeType.Job)
             {
                 sample = @"//Schedule task";
+            }
+            else if (codetype == Sites.Models.CodeType.Authentication)
+            {
+                sample = @"// sample code.. 
+// if (k.request.url.indexOf('/api') == 0) {
+//     var token = k.request.headers.get('Authorization');
+//     if (token != 'abc123') k.response.unauthorized()
+// }";
             }
 
 
@@ -218,44 +224,44 @@ namespace Kooboo.Web.Api.Implementation
                 if (!string.IsNullOrEmpty(model.Url) && !sitedb.Routes.Validate(model.Url, model.Id))
                 {
                     // one more verify. 
-                    var route = sitedb.Routes.Get(model.Url); 
-                    if (route !=null && route.objectId != default(Guid))
+                    var route = sitedb.Routes.Get(model.Url);
+                    if (route != null && route.objectId != default(Guid))
                     {
-                        var siteobjecttype = Kooboo.ConstTypeContainer.GetModelType(route.DestinationConstType); 
-                        if (siteobjecttype !=null)
+                        var siteobjecttype = Kooboo.ConstTypeContainer.GetModelType(route.DestinationConstType);
+                        if (siteobjecttype != null)
                         {
-                            var repo = sitedb.GetSiteRepositoryByModelType(siteobjecttype); 
-                            if (repo !=null)
+                            var repo = sitedb.GetSiteRepositoryByModelType(siteobjecttype);
+                            if (repo != null)
                             {
-                                var obj = repo.Get(route.objectId); 
-                                if (obj !=null)
+                                var obj = repo.Get(route.objectId);
+                                if (obj != null)
                                 {
                                     throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
                                 }
                             }
                         }
-                    } 
-                
-                } 
+                    }
+
+                }
                 // check if it only return Json...
-                code.IsJson = Lib.Helper.JsonHelper.IsJson(code.Body); 
+                code.IsJson = Lib.Helper.JsonHelper.IsJson(code.Body);
             }
-              
+
             if (model.Id != default(Guid))
-            {  
+            {
                 var oldcode = sitedb.Code.Get(model.Id);
                 if (oldcode != null)
                 {
                     // check if needed to change route. 
                     if (code.CodeType == Sites.Models.CodeType.Api)
                     {
-                        var oldroute = sitedb.Routes.GetByObjectId(oldcode.Id); 
-                        if (oldroute !=null && oldroute.Name != model.Url)
+                        var oldroute = sitedb.Routes.GetByObjectId(oldcode.Id);
+                        if (oldroute != null && oldroute.Name != model.Url)
                         {
-                            sitedb.Routes.ChangeRoute(oldroute.Name, model.Url); 
+                            sitedb.Routes.ChangeRoute(oldroute.Name, model.Url);
                         }
                     }
-                     
+
                     oldcode.Name = model.Name;
                     oldcode.Body = model.Body;
                     oldcode.Config = model.Config;
@@ -269,7 +275,7 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         sitedb.Code.AddOrUpdate(oldcode, call.Context.User.Id);
                     }
-                     
+
 
                     code.EventType = oldcode.EventType;
                     code.CodeType = oldcode.CodeType;
@@ -278,7 +284,7 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 //Api add route.
-               if (code.CodeType == Sites.Models.CodeType.Api)
+                if (code.CodeType == Sites.Models.CodeType.Api)
                 {
                     // add a new route. 
                     var route = new Kooboo.Sites.Routing.Route();
@@ -290,7 +296,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 sitedb.Code.AddOrUpdate(code);
-            } 
+            }
 
             return code.Id;
         }
@@ -307,7 +313,7 @@ namespace Kooboo.Web.Api.Implementation
         public Dictionary<string, string> CodeType(ApiCall call)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
-             
+
             var list = Enum.GetNames(typeof(Kooboo.Sites.Models.CodeType));
 
             foreach (var item in list)
@@ -328,14 +334,14 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else if (value == Sites.Models.CodeType.PageScript)
                 {
-                    name = Data.Language.Hardcoded.GetValue("PageScript", call.Context); 
+                    name = Data.Language.Hardcoded.GetValue("PageScript", call.Context);
                 }
                 else if (value == Sites.Models.CodeType.Datasource)
                 {
-                    name = Data.Language.Hardcoded.GetValue("DataSource", call.Context); 
+                    name = Data.Language.Hardcoded.GetValue("DataSource", call.Context);
                 }
 
-                
+
                 result.Add(item, name);
             }
             return result;
@@ -370,7 +376,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 CodeListItem model = new CodeListItem();
                 model.Id = item.Id;
-                model.Name = item.Name;       
+                model.Name = item.Name;
 
                 if (item.IsEmbedded)
                 {
@@ -386,7 +392,7 @@ namespace Kooboo.Web.Api.Implementation
                 model.LastModified = item.LastModified;
 
                 if (item.CodeType == Sites.Models.CodeType.Api)
-                {                  
+                {
                     var route = sitedb.Routes.GetByObjectId(item.Id);
                     if (route != null)
                     {
@@ -412,7 +418,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return result;
         }
-                                                           
+
         public bool HasScriptTag(string body)
         {
             if (body.IndexOf("<script", StringComparison.OrdinalIgnoreCase) > -1)
@@ -428,12 +434,12 @@ namespace Kooboo.Web.Api.Implementation
             }
             return false;
         }
-              
+
         public virtual List<IEmbeddableItemListViewModel> EmbeddedScripts(ApiCall apiCall)
         {
             return apiCall.WebSite.SiteDb().Code.GetEmbeddeds()
             .Select(o => new IEmbeddableItemListViewModel(apiCall.WebSite.SiteDb(), o)).ToList();
-        }            
+        }
 
     }
 }

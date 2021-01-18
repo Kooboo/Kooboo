@@ -10,6 +10,8 @@ using Kooboo.Sites.Service;
 using Kooboo.Data.Context;
 using Kooboo.Data.Server;
 using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting;
+using Kooboo.Sites.Helper;
 
 namespace Kooboo.Web.FrontRequest
 {
@@ -50,7 +52,8 @@ namespace Kooboo.Web.FrontRequest
                     ObjectRoute.Parse(kooboocontext);
                     if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
                     {
-                        await ExecuteKooboo(kooboocontext);
+                        var success = AuthenticationHelper.Authentication(kooboocontext);
+                        if(success) await ExecuteKooboo(kooboocontext);
                         return;
                     }
                 }

@@ -204,6 +204,16 @@
   }
   extend(View, BaseModel);
 
+  //Authentication
+  function Authentication() {
+    this.name = "Authentication";
+
+    this.getTypes = function () {
+      return this.executeGet("GetTypes");
+    };
+  }
+  extend(Authentication, BaseModel);
+
   //page
   function Page() {
     this.name = "Page";
@@ -1837,6 +1847,7 @@
     Url: new Url(),
     View: new View(),
     SqlLog: new SqlLog(),
+    Authentication: new Authentication(),
   };
   wind.Kooboo.TextContent = new TextContent();
 

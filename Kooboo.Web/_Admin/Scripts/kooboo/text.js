@@ -67,6 +67,7 @@
       balance: "Balance",
       enable: "Enable",
       enabled: "Enabled",
+      authentication:"Authentication",
 
       API: "API",
       Code: "Code",
@@ -174,6 +175,7 @@
       renew: "Renew",
       chooseObject: "Choose object",
       chooseAction: "Choose action",
+      matcher:"Matcher"
     },
 
     system: {
