@@ -170,13 +170,13 @@ namespace Kooboo.Sites.SiteTransfer
                 if (!string.IsNullOrEmpty(findurl))
                 {
                     string newrelative = RelativeUrl.Replace(hostname + "/", "");
-                    fullurl = UrlHelper.Combine(findurl, newrelative);  
+                    fullurl = UrlHelper.Combine(findurl, newrelative);
                 }
                 else
                 {
                     string newrelative = RelativeUrl.Replace(hostname + "/", "");
                     var protocol = OrgProtocol(orgimport);
-                    fullurl = protocol + hostname + newrelative;  
+                    fullurl = protocol + hostname + newrelative;
                 }
                 download = await DownloadUrl(siteDb, fullurl, Context);
             }
@@ -188,7 +188,7 @@ namespace Kooboo.Sites.SiteTransfer
                     fullurl = UrlHelper.Combine(item, RelativeUrl);
 
                     download = await DownloadUrl(siteDb, fullurl, Context);
-                     
+
                     if (download != null)
                     {
                         break;
@@ -248,7 +248,7 @@ namespace Kooboo.Sites.SiteTransfer
                 {
                     return false;
                 }
-                 
+
                 string sub = domainresult.SubDomain.ToLower();
                 if (sub != "www" && sub.Length > 3)
                 {
@@ -273,28 +273,25 @@ namespace Kooboo.Sites.SiteTransfer
 
             Dictionary<string, string> header = null;
             string body = null;
-            string method = "GET";  
+            string method = "GET";
 
-            if (context !=null)
+            if (context != null)
             {
-                var contenttype = context.Request.Headers.Get("Content-Type"); 
-                if (!string.IsNullOrWhiteSpace(contenttype))
+                var forwardHeaders = new[] { "Content-Type", "Authorization", "User-Agent" };
+
+
+                foreach (var item in forwardHeaders)
                 {
-                    header = new Dictionary<string, string>();
-                    header.Add("Content-Type", contenttype);
-                } 
-                //header = new Dictionary<string, string>();  
-                //foreach (var item in context.Request.Headers.AllKeys)
-                //{
-                //    var value = context.Request.Headers.Get(item);
-                //   if (!header.ContainsKey(item))
-                //    {header.Add(item, value);}
-                //}
+                    if (header == null) header = new Dictionary<string, string>();
+                    var contenttype = context.Request.Headers.Get(item);
+                    if (!string.IsNullOrWhiteSpace(contenttype)) header.Add(item, contenttype);
+                }
+
                 body = context.Request.Body;
-                method = context.Request.Method; 
+                method = context.Request.Method;
             }
 
-            return await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer, method, header, body);  
+            return await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer, method, header, body);
         }
 
     }

@@ -11,6 +11,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Net.Http.Headers;
 using System.IO.Compression;
 using System.Collections.Generic;
+using System.Net.Mime;
+using System.Text;
 
 namespace Kooboo.Lib.Helper
 {
@@ -20,10 +22,10 @@ namespace Kooboo.Lib.Helper
         {
             // ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
             //turn on tls12 and tls11,default is ssl3 and tls
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11; 
-            HttpHelper.SetCustomSslChecker(); 
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+            HttpHelper.SetCustomSslChecker();
         }
- 
+
 
         public static byte[] DownloadFile(string absoluteUrl, string containsContentType = null)
         {
@@ -129,51 +131,61 @@ namespace Kooboo.Lib.Helper
 
         }
 
-        public static async Task<DownloadContent> DownloadUrlAsync(string fullUrl,  CookieContainer cookieContainer, string method, Dictionary<string, string> headers, string PutPostBoy)
+        public static async Task<DownloadContent> DownloadUrlAsync(string fullUrl, CookieContainer cookieContainer, string method, Dictionary<string, string> headers, string PutPostBoy)
         {
             if (string.IsNullOrWhiteSpace(method))
             {
-                method = "GET"; 
+                method = "GET";
             }
-            method = method.ToUpper(); 
+            method = method.ToUpper();
 
             try
             {
-                HttpClient client = HttpClientHelper.Client; 
+                HttpClient client = HttpClientHelper.Client;
                 //Check null inside the method. 
                 HttpClientHelper.SetCookieContainer(cookieContainer, fullUrl);
 
-                HttpResponseMessage response = null; 
+                HttpResponseMessage response = null;
 
-                if (headers !=null || PutPostBoy !=null)
+                if (headers != null || PutPostBoy != null)
                 {
-                    HttpRequestMessage request = new HttpRequestMessage();
-                    request.Method = new HttpMethod(method);
+                    HttpRequestMessage request = new HttpRequestMessage(new HttpMethod(method), fullUrl);
+                    string contentType = null;
+                    var existContentType = headers?.TryGetValue("Content-Type", out contentType) ?? false;
 
-                    request.RequestUri = new Uri(fullUrl); 
-
-                    if (headers !=null)
+                    if (headers != null)
                     {
+                        if (existContentType) headers.Remove("Content-Type");
+
                         foreach (var item in headers)
                         {
-                            if (!request.Headers.Contains(item.Key))
+                            if (!request.Headers.TryGetValues(item.Key, out var _))
                             {
                                 request.Headers.Add(item.Key, item.Value);
-                            } 
+                            }
                         }
-                    } 
-                    if (PutPostBoy !=null)
+                    }
+                    if (PutPostBoy != null)
                     {
-                        request.Content = new StringContent(PutPostBoy); 
-                    }  
+                        if (existContentType)
+                        {
+                            ContentType contentTypeInstance = new ContentType(contentType);
+                            request.Content = new StringContent(PutPostBoy, Encoding.GetEncoding(contentTypeInstance.CharSet), contentTypeInstance.MediaType);
+                        }
+                        else
+                        {
+                            request.Content = new StringContent(PutPostBoy);
 
-                    response = await client.SendAsync(request); 
+                        }
+                    }
+
+                    response = await client.SendAsync(request);
                 }
                 else
                 {
                     if (method == "GET")
                     {
-                        response = await client.GetAsync(fullUrl); 
+                        response = await client.GetAsync(fullUrl);
                     }
                     else if (method == "POST")
                     {
@@ -186,9 +198,9 @@ namespace Kooboo.Lib.Helper
                     else if (method == "DELETE")
                     {
                         response = await client.DeleteAsync(fullUrl);
-                    } 
+                    }
                 }
-                   
+
 
                 if (response == null)
                 {
@@ -213,7 +225,7 @@ namespace Kooboo.Lib.Helper
             }
             return null;
         }
-         
+
 
 
         internal static async Task<DownloadContent> ProcessResponse1(HttpResponseMessage response)
@@ -239,7 +251,7 @@ namespace Kooboo.Lib.Helper
                 downcontent.ContentType = contentType.ToLower();
             }
 
-            var databytes = await GetDataBytes(response); 
+            var databytes = await GetDataBytes(response);
             downcontent.DataBytes = databytes;
 
             if (string.IsNullOrEmpty(downcontent.ContentType) || IOHelper.IsStringType(downcontent.ContentType))
@@ -247,13 +259,13 @@ namespace Kooboo.Lib.Helper
                 downcontent.isString = true;
 
                 if (databytes != null)
-                { 
+                {
                     var encoding = EncodingDetector.GetEncoding(ref databytes, contentType);
                     if (encoding == null) return downcontent;
                     downcontent.ContentString = encoding.GetString(databytes);
-                    downcontent.Encoding = encoding.WebName; 
-                } 
-            } 
+                    downcontent.Encoding = encoding.WebName;
+                }
+            }
 
             return downcontent;
         }
