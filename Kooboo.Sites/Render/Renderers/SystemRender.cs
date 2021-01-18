@@ -329,14 +329,14 @@ namespace Kooboo.Sites.Systems
             if (!string.IsNullOrWhiteSpace(fullpath))
             {
                 string contentType = IOHelper.MimeType(relative);
-
-                if (string.IsNullOrEmpty(contentType))
+                string type = context.RenderContext.Request.QueryString.Get("type")?.ToLower();
+                if (string.IsNullOrEmpty(contentType) || type == "download")
                 {
                     contentType = "application/octet-stream";
                 }
 
                 context.RenderContext.Response.ContentType = contentType;
-                 
+
 
                 if (contentType.ToLower().Contains("image"))
                 {
@@ -347,7 +347,7 @@ namespace Kooboo.Sites.Systems
 
                     context.RenderContext.Response.Body = allbytes;
 
-                } 
+                }
                 else
                 {
                     var fileinfo = new System.IO.FileInfo(fullpath);
@@ -360,8 +360,8 @@ namespace Kooboo.Sites.Systems
                     {
                         var allbytes = Lib.Helper.IOHelper.ReadAllBytes(fullpath);
                         context.RenderContext.Response.Body = allbytes;
-                    } 
-                } 
+                    }
+                }
             }
         }
 
@@ -385,14 +385,14 @@ namespace Kooboo.Sites.Systems
 
             if (System.IO.File.Exists(fullpath))
             {
-                return fullpath; 
+                return fullpath;
             }
 
-            return null;  
+            return null;
         }
 
         public static byte[] setImageBytes(FrontContext context, byte[] currentbyes)
-        { 
+        {
             var width = context.RenderContext.Request.Get("width");
             if (!string.IsNullOrEmpty(width))
             {
@@ -404,23 +404,23 @@ namespace Kooboo.Sites.Systems
                     int intheight = 0;
                     if (int.TryParse(width, out intwidth) && int.TryParse(height, out intheight))
                     {
-                        return Kooboo.Sites.Render.ImageRenderer.GetImageThumbnail(context.RenderContext, currentbyes, intwidth, intheight, 0);   
+                        return Kooboo.Sites.Render.ImageRenderer.GetImageThumbnail(context.RenderContext, currentbyes, intwidth, intheight, 0);
                         //Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intheight);
                     }
-                } 
+                }
                 else
                 {
                     int intwidth = 0;
 
                     if (int.TryParse(width, out intwidth))
-                    { 
-                        return Kooboo.Sites.Render.ImageRenderer.GetImageThumbnail(context.RenderContext, currentbyes, intwidth, intwidth, 0); 
-                         //return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intwidth);
+                    {
+                        return Kooboo.Sites.Render.ImageRenderer.GetImageThumbnail(context.RenderContext, currentbyes, intwidth, intwidth, 0);
+                        //return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(currentbyes, intwidth, intwidth);
                     }
                 }
             }
 
-            return currentbyes; 
+            return currentbyes;
         }
 
         public static void SetImageCache(RenderContext context)
