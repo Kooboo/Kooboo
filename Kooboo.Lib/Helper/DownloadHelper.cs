@@ -148,7 +148,9 @@ namespace Kooboo.Lib.Helper
                 if (headers !=null || PutPostBoy !=null)
                 {
                     HttpRequestMessage request = new HttpRequestMessage();
-                    request.Method = new HttpMethod(method); 
+                    request.Method = new HttpMethod(method);
+
+                    request.RequestUri = new Uri(fullUrl); 
 
                     if (headers !=null)
                     {

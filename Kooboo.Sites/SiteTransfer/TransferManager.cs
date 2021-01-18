@@ -248,7 +248,7 @@ namespace Kooboo.Sites.SiteTransfer
                 {
                     return false;
                 }
-
+                 
                 string sub = domainresult.SubDomain.ToLower();
                 if (sub != "www" && sub.Length > 3)
                 {
@@ -273,20 +273,23 @@ namespace Kooboo.Sites.SiteTransfer
 
             Dictionary<string, string> header = null;
             string body = null;
-            string method = "GET"; 
-
+            string method = "GET";  
 
             if (context !=null)
             {
-                foreach (var item in context.Request.Headers.AllKeys)
+                var contenttype = context.Request.Headers.Get("Content-Type"); 
+                if (!string.IsNullOrWhiteSpace(contenttype))
                 {
-                    var value = context.Request.Headers.Get(item);
-                   if (!header.ContainsKey(item))
-                    { 
-                        header.Add(item, value);
-                    }
-                }
-
+                    header = new Dictionary<string, string>();
+                    header.Add("Content-Type", contenttype);
+                } 
+                //header = new Dictionary<string, string>();  
+                //foreach (var item in context.Request.Headers.AllKeys)
+                //{
+                //    var value = context.Request.Headers.Get(item);
+                //   if (!header.ContainsKey(item))
+                //    {header.Add(item, value);}
+                //}
                 body = context.Request.Body;
                 method = context.Request.Method; 
             }
