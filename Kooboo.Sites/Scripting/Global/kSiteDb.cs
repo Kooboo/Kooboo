@@ -4,10 +4,13 @@ using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Scripting.Global.Site;
 using Kooboo.Sites.Sync;
 using KScript.Sites;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -23,6 +26,7 @@ namespace KScript
         {
             this.context = context;
             this.sitedb = this.context.WebSite.SiteDb();
+            _kCoreSettings = new Lazy<kCoreSettings>(() => new kCoreSettings(sitedb), true);
             _locker = new object();
         }
 
@@ -90,7 +94,7 @@ namespace KScript
         }
 
         public void DeleteSite(object SiteId)
-        { 
+        {
             Guid id = Kooboo.Lib.Helper.IDHelper.ParseKey(SiteId);
             WebSite find = _findsite(id);
 
@@ -387,6 +391,10 @@ namespace KScript
                 return _formValues;
             }
         }
+
+        Lazy<kCoreSettings> _kCoreSettings;
+
+        public kCoreSettings Settings => _kCoreSettings.Value;
     }
 
 }
