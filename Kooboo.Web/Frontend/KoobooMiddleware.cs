@@ -80,7 +80,8 @@ namespace Kooboo.Web.FrontRequest
                             }
                             else
                             {
-                                var continuedownload = await TransferManager.continueDownload(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RawRelativeUrl);
+                                 
+                                var continuedownload = await TransferManager.continueDownload(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RawRelativeUrl, kooboocontext.RenderContext);
                                 if (continuedownload != null)
                                 {
                                     ObjectRoute.Parse(kooboocontext);

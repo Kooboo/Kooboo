@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Context;
 using Kooboo.Extensions;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
@@ -104,7 +105,7 @@ namespace Kooboo.Sites.SiteTransfer
             await executor.Execute();
         }
 
-        public static async Task<SiteObject> continueDownload(SiteDb siteDb, string RelativeUrl)
+        public static async Task<SiteObject> continueDownload(SiteDb siteDb, string RelativeUrl, RenderContext Context = null)
         {
             if (!siteDb.WebSite.ContinueDownload)
             { return null; }
@@ -169,20 +170,15 @@ namespace Kooboo.Sites.SiteTransfer
                 if (!string.IsNullOrEmpty(findurl))
                 {
                     string newrelative = RelativeUrl.Replace(hostname + "/", "");
-                    fullurl = UrlHelper.Combine(findurl, newrelative);
-                    var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
-                    download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
+                    fullurl = UrlHelper.Combine(findurl, newrelative);  
                 }
                 else
-                { 
+                {
                     string newrelative = RelativeUrl.Replace(hostname + "/", "");
-                    // check whether it is https or not.  
-                    // fullurl = UrlHelper.Combine(hostname, newrelative);
-                    var protocol = OrgProtocol(orgimport); 
-                    fullurl = protocol + hostname + newrelative;
-                    var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
-                    download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
+                    var protocol = OrgProtocol(orgimport);
+                    fullurl = protocol + hostname + newrelative;  
                 }
+                download = await DownloadUrl(siteDb, fullurl, Context);
             }
 
             if (download == null)
@@ -190,8 +186,9 @@ namespace Kooboo.Sites.SiteTransfer
                 foreach (var item in history)
                 {
                     fullurl = UrlHelper.Combine(item, RelativeUrl);
-                    var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
-                    download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
+
+                    download = await DownloadUrl(siteDb, fullurl, Context);
+                     
                     if (download != null)
                     {
                         break;
@@ -268,6 +265,28 @@ namespace Kooboo.Sites.SiteTransfer
             url = url += "?base64url=" + base64string;
 
             return Lib.Helper.HttpHelper.Get<bool>(url);
+        }
+
+        public static async Task<DownloadContent> DownloadUrl(SiteDb sitedb, string fullurl, RenderContext context)
+        {
+            var cookiecontianer = sitedb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
+
+            if (context !=null && context.Request.Method !=null)
+            {
+                var lowerMethod = context.Request.Method.ToLower().Trim(); 
+
+                if (lowerMethod == "post")
+                {
+                    return await DownloadHelper.PostPutUrlAsync(fullurl, true, cookiecontianer, context.Request.Body);
+                }
+                else if (lowerMethod == "put")
+                {
+                    return await DownloadHelper.PostPutUrlAsync(fullurl, false, cookiecontianer, context.Request.Body);
+                } 
+            } 
+
+            return await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
+             
         }
 
     }

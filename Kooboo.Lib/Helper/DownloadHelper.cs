@@ -163,6 +163,52 @@ namespace Kooboo.Lib.Helper
             return null;
         }
 
+
+        public static async Task<DownloadContent> PostPutUrlAsync(string fullUrl, bool IsPost,  CookieContainer cookieContainer, string postbody)
+        {
+            try
+            {
+                HttpClient client = HttpClientHelper.Client;
+
+                HttpClientHelper.SetCookieContainer(cookieContainer, fullUrl);
+
+                HttpResponseMessage response = null; 
+
+                if (IsPost)
+                {
+                    response = await client.PostAsync(fullUrl, new StringContent(postbody));
+                }
+                else
+                {
+                    response = await client.PutAsync(fullUrl, new StringContent(postbody));
+                } 
+
+                if (response == null)
+                {
+                    return null;
+                }
+
+                var statuscode = (int)response.StatusCode;
+                if (statuscode >= 300 && statuscode <= 399)
+                {
+                    var url = response.Headers.GetValues("Location").FirstOrDefault();
+                    if (!string.IsNullOrEmpty(url) && !url.ToLower().StartsWith("http"))
+                    {
+                        url = Lib.Helper.UrlHelper.Combine(fullUrl, url);
+                    }
+                    return await DownloadUrlAsync(url, cookieContainer);
+                }
+                return await ProcessResponse1(response);
+            }
+            catch (Exception ex)
+            {
+                // throw ex;
+            }
+            return null;
+        }
+
+
+
         internal static async Task<DownloadContent> ProcessResponse1(HttpResponseMessage response)
         {
             DownloadContent downcontent = new DownloadContent();
