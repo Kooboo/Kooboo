@@ -9,6 +9,7 @@ using Kooboo.Sites.Sync.Disk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,7 +50,7 @@ namespace Kooboo.Sites.Service
                 website.EnableSitePath = false;
                 website.EnableVisitorLog = false;
                 website.ContinueDownload = false;
-                website.Published = false; 
+                website.Published = false;
 
                 sitedb.SearchIndex.DelSelf();
                 sitedb.ImagePool.ClearAll();
@@ -59,7 +60,7 @@ namespace Kooboo.Sites.Service
                 sitedb.DatabaseDb.Close();
 
                 sitedb.DatabaseDb.deleteDatabase();
-                  
+
                 Thread.Sleep(20);
 
                 Cache.WebSiteCache.RemoveWebSitePlan(website.Id);
@@ -294,12 +295,19 @@ namespace Kooboo.Sites.Service
 
             if (context.WebSite.EnableSPA)
             {
-                var home = Kooboo.Sites.Routing.ObjectRoute.GetDefaultRoute(context.WebSite.SiteDb()); 
-                if (home !=null && home.Name.ToLower() != context.RenderContext.Request.Url.ToLower())
+                var home = Kooboo.Sites.Routing.ObjectRoute.GetDefaultRoute(context.WebSite.SiteDb());
+                if (home != null && home.Name.ToLower() != context.RenderContext.Request.Url.ToLower())
                 {
-                    context.RenderContext.Response.Redirect(302, home.Name);
-                    return null; 
-                } 
+                    var page = context.SiteDb.Pages.GetByUrl(home.Name);
+
+                    if (page != null)
+                    {
+                        context.Page = page;
+                        var html = await RenderEngine.RenderPageAsync(context);
+                        context.RenderContext.Response.Body = Encoding.Default.GetBytes(html);
+                        return null;
+                    }
+                }
             }
 
 
@@ -347,13 +355,13 @@ namespace Kooboo.Sites.Service
 
             return "Internal Server Error";
         }
- 
+
         public static void VerifyFrontendEvent(WebSite website)
-        { 
+        {
             // check if there is any event.... 
             if (website.EnableFrontEvents)
             {
-                var sitedb = website.SiteDb(); 
+                var sitedb = website.SiteDb();
 
                 var events = sitedb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
                 if (events == 0)
@@ -363,6 +371,6 @@ namespace Kooboo.Sites.Service
                 }
             }
         }
-         
+
     }
 }
