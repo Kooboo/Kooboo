@@ -111,7 +111,7 @@ namespace Kooboo.Sites.Routing
             {
                 Path path = FindPath(RelativeUrl, EnsureObjectId);
 
-                if (path !=null && !this.HasObject(path))
+                if (path != null && !this.HasObject(path))
                 {
                     var sub = FindShortestWildCardPath(path);
                     if (sub != null && this.HasObject(sub))
@@ -281,12 +281,14 @@ namespace Kooboo.Sites.Routing
                         }
                     }
 
+                    return tryGetPath(currentpath, item.RemoveRoutingCurlyBracket()); 
+                     
                     //if (currentpath.Children == null || !currentpath.Children.Any())
                     //{
                     //    if (currentpath.ObjectId != default(Guid))
                     //    { return currentpath;  }
                     //} 
-                    return null;
+                    //return null;
                 }
                 else
                 {
@@ -297,6 +299,63 @@ namespace Kooboo.Sites.Routing
             return currentpath;
 
         }
+
+        private Path tryGetPath(Path currentPath, string urlPart)
+        {
+            if (urlPart.Contains("?"))
+            {
+                var subpart = urlPart.Substring(0, urlPart.IndexOf("?"));
+                List<string> matches = new List<string>();
+                foreach (var item in currentPath.Children)
+                {
+                    if (item.Key.StartsWith(subpart, StringComparison.OrdinalIgnoreCase))
+                    {
+                        matches.Add(item.Key);
+                    }
+                }
+                // find the longest match...
+                var sep = "?&".ToCharArray();
+                var parts = urlPart.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                int count = -1;
+                string current = null;
+
+                foreach (var item in matches)
+                {
+                    string[] checkitems = item.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                    var newcounter = countmatch(checkitems, parts);
+                    if (newcounter > count)
+                    {
+                        count = newcounter;
+                        current = item;
+                    }
+                }  
+
+                if (current !=null)
+                {
+                    if (currentPath.Children.ContainsKey(current))
+                    {
+                        return currentPath.Children[current]; 
+                    }
+                }
+
+            } 
+            return null;
+
+            int countmatch(string[] checkitem, string[] parts)
+            {
+                int counter = 0;
+                foreach (var item in parts)
+                {
+                    if (checkitem.Contains(item, StringComparer.OrdinalIgnoreCase))
+                    {
+                        counter += 1;
+                    }
+                }
+                return counter;
+            }
+        }
+
+
 
         private Path _findPath(Path parent, string currentsegment, bool EnsureObjectId = false)
         {

@@ -5,8 +5,10 @@ using System.Linq;
 
 namespace Kooboo.Web.Security
 {
-    public static class ActionControl
+    public static class ActionControl 
     {
+        public static int OnlineMaxPage { get; set; } = 200; 
+
         //online server must has max download pages control. otherwise, too many pages may be downloaded. 
         public static bool CanServerDownloadMorePages(SiteDb sitedb, string relativeurl)
         {
@@ -18,7 +20,7 @@ namespace Kooboo.Web.Security
                 foreach (var item in allpages.GroupBy(o => o.taskid))
                 {
                     var pages = item.ToList();
-                    if (pages.Count > 200)   // only allow additional download of 20 more pages.. 
+                    if (pages.Count > OnlineMaxPage)   // only allow additional download of 20 more pages.. 
                     {
                         return false;
                     }
