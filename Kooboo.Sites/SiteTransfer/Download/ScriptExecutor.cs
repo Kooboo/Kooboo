@@ -16,7 +16,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
 
         public async Task Execute()
         {
-            var download = await DownloadHelper.DownloadUrlAsync(this.DownloadTask.AbsoluteUrl, Manager.CookieContainer);
+            var download = await DownloadHelper.DownloadUrlAsync(this.DownloadTask.AbsoluteUrl, Manager.CookieContainer, "GET", null,  null);
             if (download != null)
             {
                 AddDownload(download);

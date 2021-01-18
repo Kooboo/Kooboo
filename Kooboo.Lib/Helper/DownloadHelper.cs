@@ -68,7 +68,7 @@ namespace Kooboo.Lib.Helper
                 contenttype = contenttype.ToLower();
             }
 
-            var download = await DownloadUrlAsync(absoluteUrl, cookiecontainer);
+            var download = await DownloadUrlAsync(absoluteUrl, cookiecontainer, "GET", null, null);
 
             if (download == null)
             {
@@ -129,59 +129,64 @@ namespace Kooboo.Lib.Helper
 
         }
 
-        public static async Task<DownloadContent> DownloadUrlAsync(string fullUrl, CookieContainer cookieContainer = null)
+        public static async Task<DownloadContent> DownloadUrlAsync(string fullUrl,  CookieContainer cookieContainer, string method, Dictionary<string, string> headers, string PutPostBoy)
         {
+            if (string.IsNullOrWhiteSpace(method))
+            {
+                method = "GET"; 
+            }
+            method = method.ToUpper(); 
+
             try
             {
-                HttpClient client = HttpClientHelper.Client;
-
-                HttpClientHelper.SetCookieContainer(cookieContainer, fullUrl);
-
-                var response = await client.GetAsync(fullUrl);
-
-                if (response == null)
-                {
-                    return null;
-                }
-
-                var statuscode = (int)response.StatusCode;
-                if (statuscode >= 300 && statuscode <= 399)
-                {
-                    var url = response.Headers.GetValues("Location").FirstOrDefault();
-                    if (!string.IsNullOrEmpty(url) && !url.ToLower().StartsWith("http"))
-                    {
-                        url = Lib.Helper.UrlHelper.Combine(fullUrl, url);
-                    }
-                    return await DownloadUrlAsync(url, cookieContainer);
-                }
-                return await ProcessResponse1(response);
-            }
-            catch (Exception ex)
-            {
-                // throw ex;
-            }
-            return null;
-        }
-
-
-        public static async Task<DownloadContent> PostPutUrlAsync(string fullUrl, bool IsPost,  CookieContainer cookieContainer, string postbody)
-        {
-            try
-            {
-                HttpClient client = HttpClientHelper.Client;
-
+                HttpClient client = HttpClientHelper.Client; 
+                //Check null inside the method. 
                 HttpClientHelper.SetCookieContainer(cookieContainer, fullUrl);
 
                 HttpResponseMessage response = null; 
 
-                if (IsPost)
+                if (headers !=null || PutPostBoy !=null)
                 {
-                    response = await client.PostAsync(fullUrl, new StringContent(postbody));
+                    HttpRequestMessage request = new HttpRequestMessage();
+                    request.Method = new HttpMethod(method); 
+
+                    if (headers !=null)
+                    {
+                        foreach (var item in headers)
+                        {
+                            if (!request.Headers.Contains(item.Key))
+                            {
+                                request.Headers.Add(item.Key, item.Value);
+                            } 
+                        }
+                    } 
+                    if (PutPostBoy !=null)
+                    {
+                        request.Content = new StringContent(PutPostBoy); 
+                    }  
+
+                    response = await client.SendAsync(request); 
                 }
                 else
                 {
-                    response = await client.PutAsync(fullUrl, new StringContent(postbody));
-                } 
+                    if (method == "GET")
+                    {
+                        response = await client.GetAsync(fullUrl); 
+                    }
+                    else if (method == "POST")
+                    {
+                        response = await client.PostAsync(fullUrl, new StringContent(PutPostBoy));
+                    }
+                    else if (method == "PUT")
+                    {
+                        response = await client.PutAsync(fullUrl, new StringContent(PutPostBoy));
+                    }
+                    else if (method == "DELETE")
+                    {
+                        response = await client.DeleteAsync(fullUrl);
+                    } 
+                }
+                   
 
                 if (response == null)
                 {
@@ -196,7 +201,7 @@ namespace Kooboo.Lib.Helper
                     {
                         url = Lib.Helper.UrlHelper.Combine(fullUrl, url);
                     }
-                    return await DownloadUrlAsync(url, cookieContainer);
+                    return await DownloadUrlAsync(url, cookieContainer, method, headers, PutPostBoy);
                 }
                 return await ProcessResponse1(response);
             }
@@ -206,7 +211,7 @@ namespace Kooboo.Lib.Helper
             }
             return null;
         }
-
+         
 
 
         internal static async Task<DownloadContent> ProcessResponse1(HttpResponseMessage response)

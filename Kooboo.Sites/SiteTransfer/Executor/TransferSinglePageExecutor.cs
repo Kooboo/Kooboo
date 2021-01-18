@@ -35,7 +35,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
             if (oldpage == null || oldpage.PageId == default(Guid))
             {
-                var down = await DownloadHelper.DownloadUrlAsync(transpage.absoluteUrl, cookieContainer);
+                var down = await DownloadHelper.DownloadUrlAsync(transpage.absoluteUrl, cookieContainer, "GET", null, null);
                 if (down == null)
                 {
                     return;

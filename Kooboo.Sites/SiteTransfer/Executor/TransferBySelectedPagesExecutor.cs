@@ -39,7 +39,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                 {
                     baseurl = item.absoluteUrl; 
                 } 
-                var down = await DownloadHelper.DownloadUrlAsync(item.absoluteUrl, manager.CookieContainer);
+                var down = await DownloadHelper.DownloadUrlAsync(item.absoluteUrl, manager.CookieContainer, "GET", null, null);
                 if (down == null || string.IsNullOrEmpty(down.GetString()))
                 {
                     item.done = true;

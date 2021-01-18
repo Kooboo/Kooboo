@@ -105,7 +105,7 @@ namespace Kooboo.Sites.SiteTransfer
             await executor.Execute();
         }
 
-        public static async Task<SiteObject> continueDownload(SiteDb siteDb, string RelativeUrl, RenderContext Context = null)
+        public static async Task<SiteObject> continueDownload(SiteDb siteDb, string RelativeUrl, RenderContext Context)
         {
             if (!siteDb.WebSite.ContinueDownload)
             { return null; }
@@ -271,22 +271,27 @@ namespace Kooboo.Sites.SiteTransfer
         {
             var cookiecontianer = sitedb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
 
-            if (context !=null && context.Request.Method !=null)
+            Dictionary<string, string> header = null;
+            string body = null;
+            string method = "GET"; 
+
+
+            if (context !=null)
             {
-                var lowerMethod = context.Request.Method.ToLower().Trim(); 
-
-                if (lowerMethod == "post")
+                foreach (var item in context.Request.Headers.AllKeys)
                 {
-                    return await DownloadHelper.PostPutUrlAsync(fullurl, true, cookiecontianer, context.Request.Body);
+                    var value = context.Request.Headers.Get(item);
+                   if (!header.ContainsKey(item))
+                    { 
+                        header.Add(item, value);
+                    }
                 }
-                else if (lowerMethod == "put")
-                {
-                    return await DownloadHelper.PostPutUrlAsync(fullurl, false, cookiecontianer, context.Request.Body);
-                } 
-            } 
 
-            return await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
-             
+                body = context.Request.Body;
+                method = context.Request.Method; 
+            }
+
+            return await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer, method, header, body);  
         }
 
     }

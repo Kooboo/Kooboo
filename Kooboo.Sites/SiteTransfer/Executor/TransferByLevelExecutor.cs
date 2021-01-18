@@ -98,7 +98,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                 {
                     DoneUrlHash.Add(item.Id); 
 
-                    var down =  await DownloadHelper.DownloadUrlAsync(item.absoluteUrl, manager.CookieContainer);
+                    var down =  await DownloadHelper.DownloadUrlAsync(item.absoluteUrl, manager.CookieContainer, "GET", null, null);
 
                     siteDb.TransferTasks.UpdateCookie(progress.TaskId, manager.CookieContainer); 
 
