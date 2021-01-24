@@ -450,7 +450,7 @@ var item = k.site.textContents.get(""titletwo"");")]
 
         [Description(@"Return an array of all TextContentObjects
  var list= k.site.textContents.all();")]
-        public List<TextContentObject> All()
+        public TextContentObject[] All()
         {
             List<TextContentObject> result = new List<TextContentObject>();
 
@@ -461,7 +461,7 @@ var item = k.site.textContents.get(""titletwo"");")]
                 TextContentObject model = new TextContentObject(item, this.context);
                 result.Add(model);
             }
-            return result;
+            return result.ToArray();
         }
 
         [Description(@"find the first matched items based on search condition
@@ -493,7 +493,7 @@ var item = k.site.textContents.get(""titletwo"");")]
         var items = k.site.textContents.findAll(""name startwith 'matchedvalue'""); 
         // you may use the condition of ""folder"", ""contenttype"" and ""category"".
         var bloglist = k.site.textContents.findAll(""folder ==blog"");")]
-        public List<TextContentObject> FindAll(string query)
+        public TextContentObject[] FindAll(string query)
         {
             var all = _findAll(query);
             List<TextContentObject> result = new List<TextContentObject>();
@@ -502,7 +502,7 @@ var item = k.site.textContents.get(""titletwo"");")]
                 var txtObj = new TextContentObject(item, this.context);
                 result.Add(txtObj);
             }
-            return result.OrderByDescending(o => o.TextContent.LastModified).ToList();
+            return result.OrderByDescending(o => o.TextContent.LastModified).ToArray();
         }
 
         private List<TextContent> _findAll(string queryCondition)

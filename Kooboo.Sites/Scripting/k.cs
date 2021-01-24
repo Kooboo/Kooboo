@@ -649,6 +649,34 @@ var value = k.session.key; ")]
             }
         }
 
+        public KText String
+        {
+            get
+            {
+                return this.Text; 
+            }
+        }
+
+        private KText _ktext; 
+
+        public  KText Text
+        {
+            get
+            {
+                if (_ktext == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_ktext == null)
+                        {
+                            _ktext = new KText(); 
+                        }
+                    }
+                }
+                return _ktext;
+            }
+        }
+
         private KScript.Mail _mail;
         public KScript.Mail mail
         {

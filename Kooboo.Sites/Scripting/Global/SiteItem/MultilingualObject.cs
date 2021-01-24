@@ -109,7 +109,7 @@ namespace KScript.Sites
             }
         }
 
-        public ICollection<string> Keys => this.Values.Keys;
+        public ICollection<string> Keys => this.Values.Keys.ToArray();
 
         [KIgnore]
         public int Count => this.Values.Count;
@@ -119,7 +119,7 @@ namespace KScript.Sites
         [KIgnore]
         public bool IsReadOnly => false;
 
-        ICollection<object> IDictionary<string, object>.Values => this.Values.Values;
+        ICollection<object> IDictionary<string, object>.Values => this.Values.Values.ToArray();
 
         [KIgnore]
         public void Add(string key, object value)
@@ -234,7 +234,5 @@ namespace KScript.Sites
         {
             return GetEnumerator();
         }
-
-
     }
 }

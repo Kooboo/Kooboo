@@ -65,7 +65,7 @@ namespace KScript.Sites
             return this.OrderByDescending(fieldname); 
         }
          
-        public List<TextContentObject> take(int count)
+        public TextContentObject[] take(int count)
         {
 
             var sitedb = this.txtObjRepo.context.WebSite.SiteDb();
@@ -116,7 +116,7 @@ namespace KScript.Sites
 
             if (filteritems == null || !filteritems.Any())
             {
-                return new List<TextContentObject>();
+                return new List<TextContentObject>().ToArray();
             }
 
 
@@ -172,7 +172,7 @@ namespace KScript.Sites
                 var obj = new TextContentObject(item, this.txtObjRepo.context);
                 result.Add(obj); 
             }
-            return result; 
+            return result.ToArray(); 
         }
 
 

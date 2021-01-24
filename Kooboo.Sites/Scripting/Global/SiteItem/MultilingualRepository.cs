@@ -26,7 +26,7 @@ namespace KScript.Sites
 
         protected RenderContext context { get; set; }
 
-        public virtual List<MultilingualObject> All()
+        public virtual  MultilingualObject[] All()
         {
             List<MultilingualObject> result = new List<MultilingualObject>();
             foreach (var item in this.repo.All())
@@ -38,7 +38,7 @@ namespace KScript.Sites
                     result.Add(model);
                 }
             }
-            return result;
+            return result.ToArray();
         }
 
         public virtual MultilingualObject Get(object nameOrId)

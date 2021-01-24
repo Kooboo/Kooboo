@@ -390,31 +390,21 @@ namespace KScript.Sites
         ICollection IDictionary.Keys
         {
             get
-            {
-                //var store = this.TextContent.GetContentStore(this.Culture);
-                //if (store != null)
-                //{
-                //    return store.FieldValues.Keys;
-                //}
-                //return new List<string>();
-
-                List<string> mykey = new List<string>();
-                mykey.Add("id");
-                mykey.Add("userKey");
-                mykey.Add("lastModifled");
+            { 
+                List<string> mykeys = new List<string>();
+                mykeys.Add("id");
+                mykeys.Add("userKey");
+                mykeys.Add("lastModifled");
 
                 var store = this.TextContent.GetContentStore(this.Culture);
                 if (store != null)
                 {
                     foreach (var item in store.FieldValues.Keys)
                     {
-                        mykey.Add(item);
+                        mykeys.Add(item);
                     }
-                }
-
-                return mykey;
-
-
+                } 
+                return mykeys.ToArray();  
             }
         }
 

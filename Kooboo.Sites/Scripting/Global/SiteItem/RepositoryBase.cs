@@ -33,7 +33,7 @@ namespace KScript.Sites
 
         [Description(@"Return an array of all SiteObjects. SiteObject can be view, layout, style or others.
 var allStyles = k.site.styles.all(); ")]
-        public virtual List<SiteObject> All()
+        public virtual SiteObject[] All()
         {
             List<SiteObject> result = new List<SiteObject>();
             foreach (var item in this.repo.All())
@@ -44,7 +44,7 @@ var allStyles = k.site.styles.all(); ")]
                     result.Add(siteobjct);
                 }
             }
-            return result;
+            return result.ToArray();
         }
 
         [Description(@"Update the SiteOject property values. SiteObject can be view, layout, style or others. 
@@ -86,7 +86,7 @@ k.site.pages.delete(page.id);")]
             this.repo.AddOrUpdate(rightobject);
         }
 
-        public List<ChangeLog> GetLogs(object NameOrId)
+        public ChangeLog[] GetLogs(object NameOrId)
         {
             var obj = this.Get(NameOrId);
             if (obj != null)
@@ -96,7 +96,7 @@ k.site.pages.delete(page.id);")]
 
                 if (logs != null && logs.Any())
                 {
-                    return logs.Select(o => new ChangeLog(o)).ToList();
+                    return logs.Select(o => new ChangeLog(o)).ToArray();
                 }
             }
             return null;

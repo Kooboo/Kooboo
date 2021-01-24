@@ -6,6 +6,7 @@ using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Scripting.Global.Site;
+using Kooboo.Sites.Scripting.Global.SiteItem;
 using Kooboo.Sites.Sync;
 using KScript.Sites;
 using System;
@@ -162,6 +163,27 @@ namespace KScript
                     }
                 }
                 return _page;
+            }
+        }
+
+
+        private Visitor _visitor;
+
+        public Visitor Visitor
+        {
+            get
+            {
+                if (_visitor == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_visitor == null)
+                        {
+                            _visitor = new Visitor(this.context);
+                        }
+                    }
+                }
+                return _visitor;
             }
         }
 
