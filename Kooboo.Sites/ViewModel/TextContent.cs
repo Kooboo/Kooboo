@@ -125,7 +125,7 @@ namespace Kooboo.Sites.ViewModel
 
                         if (mulresult.Count() > 0)
                         {
-                            return mulresult;
+                            return mulresult.ToArray();
                         }
                         else
                         { return null; }
@@ -167,7 +167,7 @@ namespace Kooboo.Sites.ViewModel
                                 }
                             }
                         }
-                        return emresult.OrderByDescending(o => o.LastModified).ToList();
+                        return emresult.OrderByDescending(o => o.LastModified).ToArray();
                     }
                 }
             }
