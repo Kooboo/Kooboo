@@ -114,8 +114,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Lighthouse\" />
-  </ItemGroup>
-
 </Project>
