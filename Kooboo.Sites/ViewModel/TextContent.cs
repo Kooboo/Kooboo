@@ -29,6 +29,20 @@ namespace Kooboo.Sites.ViewModel
 
         public Dictionary<string, string> TextValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+        public object this[string key]
+        {
+
+            get
+            {
+                return GetValue(key);
+
+            }
+            set
+            {
+                this.SetValue(key, value);
+            }
+        }
+
         public Object GetValue(string FieldName)
         {
             string lower = FieldName.ToLower();
