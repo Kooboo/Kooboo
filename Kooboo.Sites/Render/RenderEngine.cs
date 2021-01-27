@@ -45,7 +45,7 @@ namespace Kooboo.Sites.Render
                 {
                     long version = context.Page.Version;
 
-                    var minutes = context.Page.CacheHours * 60; 
+                    var minutes = context.Page.CacheMinutes; 
 
                     if (!context.Page.CacheByVersion)
                     {
