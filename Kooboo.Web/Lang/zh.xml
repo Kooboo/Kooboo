@@ -1345,4 +1345,8 @@
   <key id="Enable CORS">启用 CORS</key>
   <key id="Authentication">身份认证</key>
   <key id="Matcher">匹配器</key>
+  <key id="Cache">缓存</key>
+  <key id="Hours">小时</key>
+  <key id="Enable cache">启用缓存</key>
+  <key id="Cache by version">版本缓存</key>
 </Lang>

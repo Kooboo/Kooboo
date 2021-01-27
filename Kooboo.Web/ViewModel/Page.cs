@@ -97,6 +97,12 @@ namespace Kooboo.Web.ViewModel
         [JsonConverter(typeof(StringEnumConverter))]
         public PageType Type { get; set; }
 
+        public bool EnableCache { get; set; }
+
+        public bool CacheByVersion { get; set; }
+
+        public int CacheHours { get; set; }
+
     }
 
     public class PageUpdateViewModel
@@ -121,8 +127,13 @@ namespace Kooboo.Web.ViewModel
 
         public HashSet<string> Styles { get; set; } = new HashSet<string>();
          
-        public string CustomHeader { get; set; } 
-      
+        public string CustomHeader { get; set; }
+        public bool EnableCache { get; set; }
+
+        public bool CacheByVersion { get; set; }
+
+        public int CacheHours { get; set; }
+
     }
 
     public class PageDefaultRouteViewModel

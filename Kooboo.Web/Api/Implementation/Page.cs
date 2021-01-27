@@ -146,6 +146,9 @@ namespace Kooboo.Web.Api.Implementation
             model.Published = page.Online;
             model.UrlPath = route == null ? null : route.Name; 
             model.Type = page.Type; 
+            model.EnableCache = page.EnableCache; 
+            model.CacheHours = page.CacheHours; 
+            model.CacheByVersion = page.CacheByVersion;
 
             if (page.Type == PageType.RichText)
             {
@@ -227,6 +230,9 @@ namespace Kooboo.Web.Api.Implementation
             var page = new Page();
             page.Id = model.Id;
             page.Name = model.Name;
+            page.EnableCache = model.EnableCache;
+            page.CacheByVersion = model.CacheByVersion;
+            page.CacheHours = model.CacheHours;
             page.Parameters = new Dictionary<string, string>(model.Parameters, StringComparer.OrdinalIgnoreCase);
             page.Headers.Metas = model.Metas;
             page.Headers.Styles = model.Styles;

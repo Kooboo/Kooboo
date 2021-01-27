@@ -1345,4 +1345,8 @@
   <key id="Enable CORS">Enable CORS</key>
   <key id="Authentication">Authentication</key>
   <key id="Matcher">Matcher</key>
+  <key id="Cache">Cache</key>
+  <key id="Hours">Hours</key>
+  <key id="Enable cache">Enable cache</key>
+  <key id="Cache by version">Cache by version</key>
 </Lang>
