@@ -1,27 +1,13 @@
 <!-- #layout name=default -->
 <div id="main" class="fixed" v-if="init">
   <div class="container">
-    <kb-form
-      simple
-      class="form-horizontal"
-      :model="model"
-      :rules="rules"
-      ref="form"
-      class="margin-bottom-25"
-    >
+    <kb-form simple class="form-horizontal" :model="model" :rules="rules" ref="form" class="margin-bottom-25">
       <kb-form-item class="form-group" prop="name" v-slot="error">
         <div :class="{'has-error' : !!error.error}">
-          <label class="control-label col-md-1"
-            >{{Kooboo.text.common.Page + ': '}}</label
-          >
+          <label class="control-label col-md-1">{{Kooboo.text.common.Page + ': '}}</label>
           <div class="col-md-11">
-            <input
-              v-if="isNewPage"
-              type="text"
-              class="form-control input-large"
-              v-model="model.name"
-              v-kb-tooltip:right.manual.error="error.error"
-            />
+            <input v-if="isNewPage" type="text" class="form-control input-large" v-model="model.name"
+              v-kb-tooltip:right.manual.error="error.error" />
             <p v-else class="form-control-static">{{model.name}}</p>
           </div>
         </div>
@@ -30,12 +16,8 @@
         <div :class="{'has-error' : !!error.error}">
           <label class="control-label col-md-1">URL</label>
           <div class="col-md-11">
-            <input
-              type="text"
-              class="form-control input-large"
-              v-model="model.url"
-              v-kb-tooltip:right.manual.error="error.error"
-            />
+            <input type="text" class="form-control input-large" v-model="model.url"
+              v-kb-tooltip:right.manual.error="error.error" />
           </div>
         </div>
       </kb-form-item>
@@ -43,37 +25,50 @@
         <div :class="{'has-error' : !!error.error}">
           <label class="control-label col-md-1">Title</label>
           <div class="col-md-11">
-            <input
-              type="text"
-              class="form-control input-large"
-              v-model="model.title"
-              v-kb-tooltip:right.manual.error="error.error"
-            />
+            <input type="text" class="form-control input-large" v-model="model.title"
+              v-kb-tooltip:right.manual.error="error.error" />
           </div>
         </div>
       </kb-form-item>
       <kb-form-item class="form-group">
         <label class="control-label col-md-1">Content</label>
         <div class="col-md-11">
-          <textarea
-            v-model="model.body"
-            v-kb-richeditor="richEditor"
-            style="opacity: 0"
-          ></textarea>
+          <textarea v-model="model.body" v-kb-richeditor="richEditor" style="opacity: 0"></textarea>
+        </div>
+      </kb-form-item>
+      <kb-form-item class="form-group" prop="title">
+        <div>
+          <label class="control-label col-md-1">Enable cache</label>
+          <div class="col-md-11">
+            <kb-switch v-model="model.enableCache"></kb-switch>
+          </div>
+        </div>
+      </kb-form-item>
+      <kb-form-item class="form-group" prop="title" v-if="model.enableCache">
+        <div>
+          <label class="control-label col-md-1">Cache by version</label>
+          <div class="col-md-11">
+            <kb-switch v-model="model.cacheByVersion"></kb-switch>
+          </div>
+        </div>
+      </kb-form-item>
+      <kb-form-item class="form-group" prop="title">
+        <div>
+          <label class="control-label col-md-1"></label>
+          <div class="col-md-11">
+            <div class="input-group input-large" v-if="model.enableCache&&!model.cacheByVersion">
+              <input class="form-control input-large" type="number" v-model="model.cacheMinutes" />
+              <div class="input-group-addon">Minutes</div>
+            </div>
+          </div>
         </div>
       </kb-form-item>
     </kb-form>
   </div>
   <div class="page-buttons">
     <div class="btn-group dropup">
-      <button @click="onSaveAndReturn" class="btn green" style="margin: 0;"
-        >Save & Return</button
-      >
-      <a
-        class="btn green dropdown-toggle"
-        data-toggle="dropdown"
-        style="margin:0;min-width:auto;"
-      >
+      <button @click="onSaveAndReturn" class="btn green" style="margin: 0;">Save & Return</button>
+      <a class="btn green dropdown-toggle" data-toggle="dropdown" style="margin:0;min-width:auto;">
         <i class="fa fa-angle-up"></i>
       </a>
       <ul class="dropdown-menu" role="menu">
@@ -85,17 +80,23 @@
   <kb-media-dialog :data.sync="richEditor.mediaDialogData"></kb-media-dialog>
 </div>
 <script>
-  (function() {
+  (function () {
     Kooboo.loadJS([
       "/_Admin/Scripts/kooboo-web-editor/richEditor.min.js",
       "/_Admin/Scripts/components/tinymceMonaco/plugin.min.js",
       "/_Admin/Scripts/kooboo/Guid.js",
       "/_Admin/Scripts/components/kbForm.js",
-      "/_Admin/Scripts/components/kb-media-dialog.js"
+      "/_Admin/Scripts/components/kb-media-dialog.js",
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+      "/_Admin/Scripts/components/kbSwitch.js"
+    ]);
+
+    Kooboo.loadCSS([
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
     ]);
     var self = new Vue({
       el: "#main",
-      data: function() {
+      data: function () {
         return {
           isNewPage: false,
           model: {
@@ -103,7 +104,10 @@
             name: "",
             title: "",
             url: "",
-            body: ""
+            body: "",
+            enableCache: false,
+            cacheByVersion: false,
+            cacheMinutes: 3
           },
           richEditor: {
             value: "",
@@ -117,7 +121,7 @@
           init: false
         };
       },
-      mounted: function() {
+      mounted: function () {
         var self = this;
         if (!this.model.id) {
           this.isNewPage = true;
@@ -126,26 +130,29 @@
           $(".page-loading").hide();
           self.init = true;
         } else {
-          Kooboo.Page.getEdit({ id: this.model.id }).then(function(res) {
+          Kooboo.Page.getEdit({ id: this.model.id }).then(function (res) {
             if (res.success) {
               self.model.name = res.model.name;
               self.model.title = res.model.title;
               self.model.url = res.model.urlPath;
               self.richEditor.value = res.model.body;
+              self.model.enableCache = res.model.enableCache;
+              self.model.cacheByVersion = res.model.cacheByVersion;
+              if (res.model.cacheMinutes) self.model.cacheMinutes = res.model.cacheMinutes;
               self.backUp = JSON.parse(JSON.stringify(self.model));
               self.init = true;
             }
           });
         }
 
-        Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function(
+        Kooboo.EventBus.subscribe("ko/style/list/pickimage/show", function (
           ctx
         ) {
-          Kooboo.Media.getList().then(function(res) {
+          Kooboo.Media.getList().then(function (res) {
             if (res.success) {
               res.model["show"] = true;
               res.model["context"] = ctx;
-              res.model["onAdd"] = function(selected) {
+              res.model["onAdd"] = function (selected) {
                 ctx.settings.file_browser_callback(
                   ctx.field_name,
                   selected.url + "?SiteId=" + Kooboo.getQueryString("SiteId"),
@@ -160,7 +167,7 @@
         });
       },
       computed: {
-        rules: function() {
+        rules: function () {
           var rules = {
             title: [{ required: Kooboo.text.validation.required }],
             url: [
@@ -187,7 +194,7 @@
               {
                 remote: {
                   url: Kooboo.Page.isUniqueName(),
-                  data: function(value) {
+                  data: function (value) {
                     return {
                       name: value
                     };
@@ -199,7 +206,7 @@
           }
           return rules;
         },
-        isContentChange: function() {
+        isContentChange: function () {
           if (this.backUp.name.trim() != this.model.name.trim()) return true;
           if (this.backUp.title.trim() != this.model.title.trim()) return true;
           if (this.backUp.body.trim() != this.model.body.trim()) return true;
@@ -207,14 +214,14 @@
         }
       },
       methods: {
-        onSaveAndReturn: function() {
-          self.onSave(function() {
+        onSaveAndReturn: function () {
+          self.onSave(function () {
             location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
           });
         },
-        onSave: function(cb) {
+        onSave: function (cb) {
           if (!this.$refs.form.validate()) return;
-          Kooboo.Page.PostRichText(this.model).then(function(res) {
+          Kooboo.Page.PostRichText(this.model).then(function (res) {
             if (res.success) {
               if (cb && typeof cb == "function") {
                 cb(res.model);
@@ -224,7 +231,7 @@
           });
         },
 
-        goBack: function() {
+        goBack: function () {
           if (!self.isContentChange) {
             location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
           } else {
@@ -235,7 +242,7 @@
         }
       },
       watch: {
-        "model.name": function() {
+        "model.name": function () {
           if (this.isNewPage) {
             if (this.model.name.trim()[0] == "/") {
               this.model.url = this.model.name;

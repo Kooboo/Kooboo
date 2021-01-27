@@ -220,16 +220,14 @@
                               <div style="flex: 1;"></div>
                               <kb-switch v-model="enableCache"></kb-switch>
                             </div>
-
-                            <div class="input-group" v-if="enableCache&&!cacheByVersion">
-                              <input class="form-control" type="number" v-model="cacheMinutes" />
-                              <div class="input-group-addon">Minutes</div>
-                            </div>
-                            
                             <div style="display: flex;align-items: center;margin: 8px 0;" v-if="enableCache">
                               <label class="control-label"><span>Cache by version</span></label>
                               <div style="flex: 1;"></div>
                               <kb-switch v-model="cacheByVersion" ></kb-switch>
+                            </div>
+                            <div class="input-group" v-if="enableCache&&!cacheByVersion">
+                              <input class="form-control" type="number" v-model="cacheMinutes" />
+                              <div class="input-group-addon">Minutes</div>
                             </div>
                           </div>
                         </div>

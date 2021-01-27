@@ -16,9 +16,9 @@ namespace Kooboo.Web.Api.Implementation
     public class PageApi : SiteObjectApi<Page>
     {
         public PageListViewModel All(ApiCall apiCall)
-        {          
-            var sitedb = apiCall.WebSite.SiteDb();       
-       
+        {
+            var sitedb = apiCall.WebSite.SiteDb();
+
             PageListViewModel model = new PageListViewModel();
             model.Layouts = sitedb.Layouts.All();
             model.BaseUrl = sitedb.WebSite.BaseUrl();
@@ -44,7 +44,7 @@ namespace Kooboo.Web.Api.Implementation
                 PreviewUrl = PageService.GetPreviewUrl(sitedb, item),
                 Linked = sitedb.Relations.GetReferredBy(item).Count(),
                 LayoutId = GetLayoutId(item),
-               // PageView = sitedb.VisitorLog.QueryDescending(o => o.ObjectId == item.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
+                // PageView = sitedb.VisitorLog.QueryDescending(o => o.ObjectId == item.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
                 LastModified = item.LastModified,
                 StartPage = item.DefaultStart,
                 InlineUrl = "/_api/redirect/inline?siteid=" + sitedb.WebSite.Id + "&pageid=" + item.Id
@@ -105,7 +105,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             // optional type.  
             string baseurl = call.Context.WebSite.BaseUrl();
-            baseurl = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(baseurl, call.Context.WebSite);  
+            baseurl = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(baseurl, call.Context.WebSite);
             Guid PageId = call.ObjectId;
             var sitedb = call.WebSite.SiteDb();
 
@@ -144,10 +144,10 @@ namespace Kooboo.Web.Api.Implementation
             model.Id = page.Id;
             model.Name = page.Name;
             model.Published = page.Online;
-            model.UrlPath = route == null ? null : route.Name; 
-            model.Type = page.Type; 
-            model.EnableCache = page.EnableCache; 
-            model.CacheMinutes = page.CacheMinutes; 
+            model.UrlPath = route == null ? null : route.Name;
+            model.Type = page.Type;
+            model.EnableCache = page.EnableCache;
+            model.CacheMinutes = page.CacheMinutes;
             model.CacheByVersion = page.CacheByVersion;
 
             if (page.Type == PageType.RichText)
@@ -159,7 +159,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     model.Title = titletag.item[0].InnerHtml;
                 }
-                model.Body = doc.body.InnerHtml; 
+                model.Body = doc.body.InnerHtml;
             }
 
             else
@@ -172,7 +172,7 @@ namespace Kooboo.Web.Api.Implementation
                 string body = string.IsNullOrEmpty(page.Body) ? string.Empty : HtmlHeadService.SetBaseHref(page.Body, baseurl);
 
                 model.LayoutName = page.LayoutName;
-                model.LayoutId = Kooboo.Data.IDGenerator.GetOrGenerate(page.LayoutName, ConstObjectType.Layout); 
+                model.LayoutId = Kooboo.Data.IDGenerator.GetOrGenerate(page.LayoutName, ConstObjectType.Layout);
                 model.Metas = page.Headers.Metas;
                 model.CustomHeader = page.Headers.CustomHeader;
                 model.MetaBindings = PageService.GetMetaBindings(sitedb, PageId);
@@ -248,7 +248,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrEmpty(page.LayoutName))
             {
-                page.Type = PageType.Layout; 
+                page.Type = PageType.Layout;
             }
 
             string routename = string.IsNullOrWhiteSpace(model.UrlPath) ? page.Name : model.UrlPath;
@@ -259,8 +259,8 @@ namespace Kooboo.Web.Api.Implementation
 
             routename = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(routename);
 
-            var sitedb = call.Context.WebSite.SiteDb(); 
-             
+            var sitedb = call.Context.WebSite.SiteDb();
+
             if (!sitedb.Routes.Validate(routename, page.Id))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
@@ -268,7 +268,7 @@ namespace Kooboo.Web.Api.Implementation
 
             //----
             if (model.Id == default(Guid))
-            {    
+            {
                 sitedb.Routes.AddOrUpdate(routename, page, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
             }
@@ -281,8 +281,8 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 page.DefaultStart = oldpage.DefaultStart;
-                page.IsSecure = oldpage.IsSecure; 
-     
+                page.IsSecure = oldpage.IsSecure;
+
                 sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
 
                 var route = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, oldpage);
@@ -297,21 +297,21 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     sitedb.Routes.ChangeRoute(route, routename);
                 }
-            }               
+            }
 
             return page.Id;
         }
-               
-        public Guid PostRichText(string name, string title, string body, string url, ApiCall call)
+
+        public Guid PostRichText(string name, string title, string body, string url, bool enableCache, bool cacheByVersion, int cacheMinutes, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
-                                                   
+
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(body))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Page body and Url are required", call.Context));
             }
 
-            url = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(url); 
+            url = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(url);
             string PageBody = "<html>";
             if (!string.IsNullOrEmpty(title))
             {
@@ -324,13 +324,13 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!sitedb.Routes.Validate(url, PageId))
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context)); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
             }
 
             if (PageId == default(Guid))
             {
                 // new add. 
-                Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText };
+                Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText, EnableCache = enableCache, CacheByVersion = cacheByVersion, CacheMinutes = cacheMinutes };
                 sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(newpage, call.Context.User.Id);
                 PageId = newpage.Id;
@@ -344,8 +344,11 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 oldpage.Name = name;
-                oldpage.Body = PageBody;         
-  
+                oldpage.Body = PageBody;
+                oldpage.EnableCache = enableCache;
+                oldpage.CacheByVersion = cacheByVersion;
+                oldpage.CacheMinutes = cacheMinutes;
+
                 sitedb.Pages.AddOrUpdate(oldpage, call.Context.User.Id);
 
                 var route = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, oldpage);
@@ -354,11 +357,11 @@ namespace Kooboo.Web.Api.Implementation
                     sitedb.Routes.ChangeRoute(route, url);
                 }
 
-                PageId = oldpage.Id; 
+                PageId = oldpage.Id;
             }
             return PageId;
         }
-                 
+
 
         public void ConvertFile(ApiCall call)
         {
@@ -377,21 +380,21 @@ namespace Kooboo.Web.Api.Implementation
                         extension = extension.ToLower();
                     }
                     if (extension == ".aspx" || extension == ".axd" || extension == ".asx" || extension == ".ashx" || extension == ".asmx" || extension == ".asp" || extension == ".cfm" || extension == ".yaws" || extension == ".html" || extension == ".htm" || extension == ".shtml" || extension == ".xhtml" || extension == ".jhtml" || extension == ".cshtml" || extension == ".jsp" || extension == ".jspx" || extension == ".wss" || extension == ".do" || extension == ".action" || extension == ".pl" || extension == ".php" || extension == ".php3" || extension == ".php4" || extension == ".phtml" || extension == ".py" || extension == ".cgi" || extension == ".dll" || extension == ".rb" || extension == ".rhtml")
-                    {  
+                    {
                         // import single page. 
                         var sitedb = call.WebSite.SiteDb();
                         var routeurl = GetAvailableRoute(sitedb, filename);
                         string textbody = System.Text.Encoding.UTF8.GetString(bytes);
                         var page = new Page() { Name = filename, Body = textbody };
 
-                        sitedb.Routes.AddOrUpdate(routeurl, page,call.Context.User.Id);
+                        sitedb.Routes.AddOrUpdate(routeurl, page, call.Context.User.Id);
                         sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
                         return;
                     }
                     else if (extension == ".zip" || extension == ".rar")
                     {
                         MemoryStream memory = new MemoryStream(bytes);
-                    
+
                         Sites.Sync.ImportExport.ImportZip(memory, call.WebSite, call.Context.User.Id);
                         return;
                     }
@@ -550,7 +553,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var newpage = Lib.Serializer.Copy.DeepCopy<Page>(page);
                 newpage.CreationDate = DateTime.UtcNow;
-                newpage.LastModified = DateTime.UtcNow; 
+                newpage.LastModified = DateTime.UtcNow;
 
                 newpage.Name = call.GetValue("name");
                 newpage.Id = default(Guid);
@@ -560,7 +563,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
                 }
-                 
+
                 sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
 
                 sitedb.Pages.AddOrUpdate(newpage, call.Context.User.Id);
