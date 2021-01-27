@@ -222,7 +222,7 @@
                             </div>
 
                             <div class="input-group" v-if="enableCache&&!cacheByVersion">
-                              <input class="form-control" type="number" v-model="cacheHours" />
+                              <input class="form-control" type="number" v-model="cacheMinutes" />
                               <div class="input-group-addon">Minutes</div>
                             </div>
                             
@@ -375,7 +375,7 @@
           submitData: null,
           enableCache:false,
           cacheByVersion:false,
-          cacheHours:3
+          cacheMinutes:3
         };
       },
       computed: {
@@ -452,7 +452,7 @@
             res["id"] = self.pageId;
             res["enableCache"] = self.enableCache;
             res["cacheByVersion"] = self.cacheByVersion;
-            res["cacheHours"] = self.cacheHours;
+            res["cacheMinutes"] = self.cacheMinutes;
 
             self.submitData = res;
 
@@ -589,7 +589,7 @@
           self.setHTML(layout.model.body, function() {});
           self.enableCache=page.model.enableCache;
           self.cacheByVersion=page.model.cacheByVersion;
-          self.cacheHours=page.model.cacheHours||3;
+          self.cacheMinutes=page.model.cacheMinutes||3;
         });
 
         $(window).on("resize", function() {
