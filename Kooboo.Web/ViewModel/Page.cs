@@ -101,7 +101,7 @@ namespace Kooboo.Web.ViewModel
 
         public bool CacheByVersion { get; set; }
 
-        public int CacheHours { get; set; }
+        public int CacheMinutes { get; set; }
 
     }
 
@@ -132,7 +132,7 @@ namespace Kooboo.Web.ViewModel
 
         public bool CacheByVersion { get; set; }
 
-        public int CacheHours { get; set; }
+        public int CacheMinutes { get; set; }
 
     }
 

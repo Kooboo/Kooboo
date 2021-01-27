@@ -201,6 +201,40 @@
                         </div>
                       </div>
                     </div>
+                    <div>
+                      <div class="panel panel-default">
+                        <div
+                          class="panel-heading clickable"
+                          data-toggle="collapse"
+                          data-target="#J_Setting_Cache"
+                        >
+                          <h4 class="panel-title">Cache</h4>
+                        </div>
+                        <div
+                          id="J_Setting_Cache"
+                          class="panel-collapse collapse"
+                        >
+                          <div class="panel-body">
+                            <div style="display: flex;align-items: center;margin: 8px 0;">
+                              <label class="control-label"><span>Enable cache</span></label>
+                              <div style="flex: 1;"></div>
+                              <kb-switch v-model="enableCache"></kb-switch>
+                            </div>
+
+                            <div class="input-group" v-if="enableCache&&!cacheByVersion">
+                              <input class="form-control" type="number" v-model="cacheHours" />
+                              <div class="input-group-addon">Minutes</div>
+                            </div>
+                            
+                            <div style="display: flex;align-items: center;margin: 8px 0;" v-if="enableCache">
+                              <label class="control-label"><span>Cache by version</span></label>
+                              <div style="flex: 1;"></div>
+                              <kb-switch v-model="cacheByVersion" ></kb-switch>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </section>
               </div>
@@ -292,12 +326,15 @@
       "/_Admin/Scripts/lib/jstree.min.js",
       "/_Admin/Scripts/pageEditor/widgets/component-selector.js",
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
-      "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js"
+      "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js",
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+      "/_Admin/Scripts/components/kbSwitch.js"
     ]);
     Kooboo.loadCSS([
       "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
       "/_Admin/Styles/jstree/style.min.css",
-      "/_Admin/Styles/bootstrap-editable/css/bootstrap-editable.css"
+      "/_Admin/Styles/bootstrap-editable/css/bootstrap-editable.css",
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
     ]);
     window.__pageEditor = {};
     var Guid = Kooboo.Guid,
@@ -335,7 +372,10 @@
           isUrlChanged: false,
           isBodyChanged: false,
           isSaveAndReturn: false,
-          submitData: null
+          submitData: null,
+          enableCache:false,
+          cacheByVersion:false,
+          cacheHours:3
         };
       },
       computed: {
@@ -410,6 +450,9 @@
                 : self.pageContent;
             res["name"] = self.name;
             res["id"] = self.pageId;
+            res["enableCache"] = self.enableCache;
+            res["cacheByVersion"] = self.cacheByVersion;
+            res["cacheHours"] = self.cacheHours;
 
             self.submitData = res;
 
@@ -544,6 +587,9 @@
           savedStyles = page.model.styles;
           savedScripts = page.model.scripts;
           self.setHTML(layout.model.body, function() {});
+          self.enableCache=page.model.enableCache;
+          self.cacheByVersion=page.model.cacheByVersion;
+          self.cacheHours=page.model.cacheHours||3;
         });
 
         $(window).on("resize", function() {

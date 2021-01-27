@@ -103,7 +103,7 @@ namespace Kooboo.Sites.Models
 
         public bool CacheByVersion { get; set; }
 
-        public int CacheHours { get; set; }
+        public int CacheMinutes { get; set; }
          
         public override int GetHashCode()
         {
@@ -113,7 +113,7 @@ namespace Kooboo.Sites.Models
             un += this.Headers.GetHashCode().ToString();
             un += this.LayoutName;
             un += this.IsStatic.ToString();
-            un += this.EnableCache.ToString() + this.CacheByVersion.ToString() + this.CacheHours.ToString(); 
+            un += this.EnableCache.ToString() + this.CacheByVersion.ToString() + this.CacheMinutes.ToString(); 
              
             if (this._parameters != null)
             {
