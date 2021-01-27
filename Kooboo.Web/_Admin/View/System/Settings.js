@@ -37,6 +37,7 @@ $(function () {
           enableImageBrowserCache: false,
           enableVideoBrowserCache: false,
           enableLighthouseOptimization: false,
+          lighthouseSettingsJson: "[]",
           enableSPA: false,
           imageCacheDays: 1,
           enableDiskSync: false,
@@ -84,7 +85,7 @@ $(function () {
           var model = response.model;
 
           if (model.lighthouseSettingsJson) {
-            self.lighthouseSettings = model.lighthouseSettingsJson;
+            self.lighthouseSettings = JSON.parse(model.lighthouseSettingsJson);
           }
 
           // console.log(model);
@@ -302,17 +303,14 @@ $(function () {
       //#endregion
       onShowLighthouseModal: function () {
         var self = this;
-
-        self.lighthouseItemsBinding = JSON.parse(
+        var lighthouseItemsCopy = JSON.parse(
           JSON.stringify(self.lighthouseItems)
         );
 
-        var lighthouseSettings = JSON.parse(self.lighthouseSettingsJson||"[]");
+        for (var i = 0; i < lighthouseItemsCopy.length; i++) {
+          var lighthouseItem = lighthouseItemsCopy[i];
 
-        for (var i = 0; i < self.lighthouseItemsBinding.length; i++) {
-          var lighthouseItem = self.lighthouseItemsBinding[i];
-
-          var lighthouseSetting = lighthouseSettings.filter(function (f) {
+          var lighthouseSetting = self.lighthouseSettings.filter(function (f) {
             return f.name == lighthouseItem.name;
           })[0];
 
@@ -324,7 +322,7 @@ $(function () {
             var settingValues = [];
 
             if (lighthouseSetting) {
-              settingValues.setting = lighthouseSetting.setting;
+              settingValues = lighthouseSetting.setting;
             }
 
             for (var j = 0; j < lighthouseItem.setting.length; j++) {
@@ -334,12 +332,39 @@ $(function () {
                 return f.name == setting.name;
               })[0];
 
-              if(settingValue) setting.value==settingValue.value;
-              else setting.value=null
+              if (settingValue) setting.value = settingValue.value;
+              else setting.value = null;
             }
           }
         }
-        self.showLighthouseModal=true
+
+        self.lighthouseItemsBinding = lighthouseItemsCopy;
+        self.showLighthouseModal = true;
+      },
+      onLighthouseSave: function () {
+        var self = this;
+        self.lighthouseSettings = [];
+        for (var i = 0; i < self.lighthouseItemsBinding.length; i++) {
+          var bindingItem = self.lighthouseItemsBinding[i];
+          self.lighthouseSettings.push({
+            name: bindingItem.name,
+            enable: bindingItem.enable,
+            setting: !bindingItem.setting
+              ? null
+              : bindingItem.setting.map(function (m) {
+                  return {
+                    name: m.name,
+                    value: m.value,
+                  };
+                }),
+          });
+        }
+
+        self.model.lighthouseSettingsJson = JSON.stringify(
+          self.lighthouseSettings
+        );
+
+        self.showLighthouseModal = false;
       },
     },
   });

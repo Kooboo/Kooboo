@@ -353,6 +353,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 currentsite.PreviewUrl = newinfo.PreviewUrl;
                 currentsite.EnableLighthouseOptimization = newinfo.EnableLighthouseOptimization;
+                currentsite.LighthouseSettingsJson = newinfo.LighthouseSettingsJson;
 
                 // the cluster... 
 

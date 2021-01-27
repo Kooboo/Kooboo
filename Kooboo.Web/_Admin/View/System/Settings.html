@@ -569,7 +569,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button @click="onAddLangModalHide" class="close">
+          <button @click="showLighthouseModal=false" class="close">
             <i class="fa fa-close"></i>
           </button>
           <h4 class="modal-title">Configuration</h4>
@@ -602,8 +602,8 @@
           </ul>
         </div>
         <div class="modal-footer">
-          <button @click="onAddLangModalSave" class="btn green">Save</button>
-          <button @click="onAddLangModalHide" class="btn gray">Cancel</button>
+          <button @click="onLighthouseSave" class="btn green">Save</button>
+          <button @click="showLighthouseModal=false" class="btn gray">Cancel</button>
         </div>
       </div>
     </div>
