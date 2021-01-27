@@ -33,7 +33,7 @@ namespace Kooboo.Sites.Render.PageCache
             if (siteitems.ContainsKey(PageId))
             {
                 var item = siteitems[PageId];
-                if (item != null && CacheMinutes > 0)
+                if (item != null)
                 { 
                     if (Version <= 0)
                     {
@@ -49,8 +49,7 @@ namespace Kooboo.Sites.Render.PageCache
                         {
                             return item.Result;
                         } 
-                    }
-
+                    } 
                 }
             }
 
