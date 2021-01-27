@@ -40,7 +40,31 @@ namespace Kooboo.Sites.Render
             {
                 RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, option));
 
-                result = RenderHelper.Render(RenderPlan, context.RenderContext);
+                // check the cache. 
+                if (context.Page.EnableCache)
+                {
+                    long version = context.Page.Version;
+
+                    var minutes = context.Page.CacheHours * 60; 
+
+                    if (!context.Page.CacheByVersion)
+                    {
+                        version = -1; 
+                    }
+
+                    result = Kooboo.Sites.Render.PageCache.PageCache.Get(context.SiteDb.Id, context.Page.Id, version, minutes); 
+
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        result = RenderHelper.Render(RenderPlan, context.RenderContext);
+                        Kooboo.Sites.Render.PageCache.PageCache.Set(context.SiteDb.Id, context.Page.Id, result, context.Page.Version); 
+                    }
+                }
+                else
+                {
+                    result = RenderHelper.Render(RenderPlan, context.RenderContext);
+                }
+               
             }
 
 
