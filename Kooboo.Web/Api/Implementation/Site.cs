@@ -16,6 +16,7 @@ using Kooboo.Lib.Helper;
 using Kooboo.Data.Language;
 using Kooboo.Sites.Models;
 using Kooboo.Web.Lighthouse;
+using System.ComponentModel;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -580,10 +581,55 @@ namespace Kooboo.Web.Api.Implementation
             return temp;
         }
 
+        readonly Type[] _numberType = new Type[] { typeof(int), typeof(float), typeof(double), typeof(decimal) };
 
-        public List<ILightHouseItem> GetLighthouseItems()
+        public List<Dictionary<string, object>> GetLighthouseItems()
         {
-            return Manger.List();
+            var result = new List<Dictionary<string, object>>();
+            var lighthouseItems = Manger.List();
+
+            foreach (var lighthouseItem in lighthouseItems)
+            {
+                var lighthouseItemDic = new Dictionary<string, object>() {
+                    { nameof(lighthouseItem.Name),lighthouseItem.Name },
+                    { nameof(lighthouseItem.Description),lighthouseItem.Description },
+                };
+
+                var type = lighthouseItem.GetType();
+                var settingType = Lib.Reflection.TypeHelper.GetGenericType(type);
+
+                if (settingType != null)
+                {
+                    var settingDic = new List<Dictionary<string, object>>();
+                    var instance = Activator.CreateInstance(settingType);
+                    var properties = settingType.GetProperties();
+
+                    foreach (var item in properties)
+                    {
+                        var description = item.CustomAttributes.FirstOrDefault(f => f.AttributeType == typeof(DescriptionAttribute))?.ConstructorArguments.FirstOrDefault();
+
+                        var controlType = item.PropertyType == typeof(bool) ? "Switch" : _numberType.Contains(item.PropertyType) ? "Number" : "Text";
+
+                        settingDic.Add(new Dictionary<string, object>
+                        {
+                            {  "Name", item.Name},
+                            {  "DisplayName", description?.Value ?? item.Name},
+                            {  "Value", item.GetValue(instance)},
+                            {  "ControlType", controlType},
+                        });
+                    }
+
+                    lighthouseItemDic.Add("Setting", settingDic);
+                }
+                else
+                {
+                    lighthouseItemDic.Add("Setting", null);
+                }
+
+                result.Add(lighthouseItemDic);
+            }
+
+            return result;
         }
     }
 

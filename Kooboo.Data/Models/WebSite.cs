@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace Kooboo.Data.Models
 {
@@ -335,8 +336,11 @@ namespace Kooboo.Data.Models
 
         public bool EnableLighthouseOptimization { get; set; }
 
-        //modeltype Kooboo.Web.ViewModel.LighthouseItemSetting[]
         public string LighthouseSettingsJson { get; set; }
+
+        //private JArray _lighthouseSettings;
+
+
 
         public override int GetHashCode()
         {

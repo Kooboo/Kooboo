@@ -12,9 +12,7 @@ namespace Kooboo.Web.Lighthouse
 
         public static List<ILightHouseItem> List()
         {
-            var list = Kooboo.Lib.IOC.Service.GetInstances<ILightHouseItem>();
-
-            return list;
+            return Kooboo.Lib.IOC.Service.GetInstances<ILightHouseItem>();
         }
 
         public static LighthouseItemSetting[] GetLighthouseSettings(WebSite webSite)

@@ -11,8 +11,6 @@ namespace Kooboo.Web.Lighthouse
 
         string Description { get; }
 
-        List<Setting> Setting { get; }
-
-        void Execute(Dictionary<string, string> Setting, RenderContext Context);
+        void Execute(RenderContext Context);
     }
 }
