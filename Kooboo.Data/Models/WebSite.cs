@@ -334,6 +334,8 @@ namespace Kooboo.Data.Models
         public bool IsApp { get; set; }
 
         public bool EnableLighthouseOptimization { get; set; }
+
+        //modeltype Kooboo.Web.ViewModel.LighthouseItemSetting[]
         public string LighthouseSettingsJson { get; set; }
 
         public override int GetHashCode()
