@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kooboo.Web.Lighthouse
 {
-    static class Manger
+    public static class Manger
     {
 
         public static List<ILightHouseItem> List()

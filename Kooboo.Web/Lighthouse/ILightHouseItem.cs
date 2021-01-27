@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Kooboo.Web.Lighthouse
 {
-  public  interface ILightHouseItem
+    public interface ILightHouseItem
     {
-        string Name { get;  }
+        string Name { get; }
 
-        string Description { get; } 
+        string Description { get; }
 
         List<Setting> Setting { get; }
-         
-        void Execute(Dictionary<string,string> Setting, RenderContext Context); 
+
+        void Execute(Dictionary<string, string> Setting, RenderContext Context);
     }
 }

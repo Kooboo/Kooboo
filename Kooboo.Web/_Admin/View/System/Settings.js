@@ -36,6 +36,7 @@ $(function () {
           enableJsCssBrowerCache: true,
           enableImageBrowserCache: false,
           enableVideoBrowserCache: false,
+          enableLighthouseOptimization: false,
           enableSPA: false,
           imageCacheDays: 1,
           enableDiskSync: false,
@@ -49,7 +50,7 @@ $(function () {
           enableLocationRedirect: false,
           diskSyncFolder: "",
           enableCORS: true,
-          previewUrl: ""
+          previewUrl: "",
         },
         loading: true,
         domains: [],
@@ -60,6 +61,10 @@ $(function () {
         _clusters: [],
         showError: false,
         showCustomServerModal: false,
+        showLighthouseModal: false,
+        lighthouseItems: [],
+        lighthouseItemsBinding: [],
+        lighthouseSettings: [],
       };
     },
     mounted: function () {
@@ -67,10 +72,21 @@ $(function () {
         $.when(
           Kooboo.Site.getCultures(),
           Kooboo.Site.Langs(),
-          Kooboo.Site.getTypes()
-        ).then(function (cultureLists, defaultCulture, siteTypes) {
+          Kooboo.Site.getTypes(),
+          Kooboo.Site.GetLighthouseItems()
+        ).then(function (
+          cultureLists,
+          defaultCulture,
+          siteTypes,
+          lighthouseItems
+        ) {
           self.loading = false;
           var model = response.model;
+
+          if (model.lighthouseSettingsJson) {
+            self.lighthouseSettings = model.lighthouseSettingsJson;
+          }
+
           // console.log(model);
           // automapping
           _.keys(self.model).forEach(function (key) {
@@ -81,6 +97,8 @@ $(function () {
           self.customSettingArray = Kooboo.objToArr(model.customSettings);
           self.siteTypes = Kooboo.objToArr(siteTypes[0].model);
           self.cultures = cultureLists[0].model;
+          self.lighthouseItems = lighthouseItems[0].model;
+
           for (var cul in defaultCulture[0].model.cultures) {
             self.langs.push({
               key: cul,
@@ -282,6 +300,47 @@ $(function () {
         });
       },
       //#endregion
+      onShowLighthouseModal: function () {
+        var self = this;
+
+        self.lighthouseItemsBinding = JSON.parse(
+          JSON.stringify(self.lighthouseItems)
+        );
+
+        var lighthouseSettings = JSON.parse(self.lighthouseSettingsJson||"[]");
+
+        for (var i = 0; i < self.lighthouseItemsBinding.length; i++) {
+          var lighthouseItem = self.lighthouseItemsBinding[i];
+
+          var lighthouseSetting = lighthouseSettings.filter(function (f) {
+            return f.name == lighthouseItem.name;
+          })[0];
+
+          if (lighthouseSetting) {
+            lighthouseItem.enable = lighthouseSetting.enable;
+          } else lighthouseItem.enable = true;
+
+          if (lighthouseItem.setting) {
+            var settingValues = [];
+
+            if (lighthouseSetting) {
+              settingValues.setting = lighthouseSetting.setting;
+            }
+
+            for (var j = 0; j < lighthouseItem.setting.length; j++) {
+              var setting = lighthouseItem.setting[j];
+
+              var settingValue = settingValues.filter(function (f) {
+                return f.name == setting.name;
+              })[0];
+
+              if(settingValue) setting.value==settingValue.value;
+              else setting.value=null
+            }
+          }
+        }
+        self.showLighthouseModal=true
+      },
     },
   });
 });

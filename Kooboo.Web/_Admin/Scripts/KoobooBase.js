@@ -438,6 +438,10 @@
       return this.executeGet("ClusterList", para);
     };
 
+    this.GetLighthouseItems = function () {
+      return this.executeGet("GetLighthouseItems");
+    };
+
     this.export = function (para) {
       return this.executePost("export", para);
     };

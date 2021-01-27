@@ -15,6 +15,7 @@ using Kooboo.Api;
 using Kooboo.Lib.Helper;
 using Kooboo.Data.Language;
 using Kooboo.Sites.Models;
+using Kooboo.Web.Lighthouse;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -177,13 +178,13 @@ namespace Kooboo.Web.Api.Implementation
             var exportfile = ImportExport.ExportInter(site.SiteDb());
             var path = System.IO.Path.GetFullPath(exportfile);
 
-            string name = site.DisplayName; 
+            string name = site.DisplayName;
             if (string.IsNullOrEmpty(name))
             {
-                name = site.Name; 
+                name = site.Name;
             }
 
-            name = Lib.Helper.StringHelper.ToValidFileName(name); 
+            name = Lib.Helper.StringHelper.ToValidFileName(name);
 
             if (File.Exists(exportfile))
             {
@@ -228,7 +229,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public List<ExportStoreNameViewModel> ExportStoreNames(ApiCall call)
-        { 
+        {
 
             List<ExportStoreNameViewModel> names = new List<ExportStoreNameViewModel>();
             names.Add(new ExportStoreNameViewModel() { Name = "Page", DisplayName = Hardcoded.GetValue("Page", call.Context) });
@@ -255,7 +256,7 @@ namespace Kooboo.Web.Api.Implementation
 
             names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context) });
 
-            names.Add(new ExportStoreNameViewModel() { Name = typeof(Code).Name, DisplayName = Hardcoded.GetValue("Code", call.Context) }); 
+            names.Add(new ExportStoreNameViewModel() { Name = typeof(Code).Name, DisplayName = Hardcoded.GetValue("Code", call.Context) });
 
             names.Add(new ExportStoreNameViewModel() { Name = "Authentication", DisplayName = Hardcoded.GetValue("Authentication", call.Context) });
 
@@ -342,15 +343,16 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.ImageCacheDays = newinfo.ImageCacheDays;
 
                 currentsite.EnableSPA = newinfo.EnableSPA;
-                currentsite.EnableVideoBrowserCache = newinfo.EnableVideoBrowserCache; 
+                currentsite.EnableVideoBrowserCache = newinfo.EnableVideoBrowserCache;
 
-                currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress; 
+                currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress;
 
                 currentsite.SiteType = newinfo.SiteType;
                 currentsite.EnableCORS = newinfo.EnableCORS;
                 currentsite.EnableSqlLog = newinfo.EnableSqlLog;
 
-                currentsite.PreviewUrl = newinfo.PreviewUrl; 
+                currentsite.PreviewUrl = newinfo.PreviewUrl;
+                currentsite.EnableLighthouseOptimization = newinfo.EnableLighthouseOptimization;
 
                 // the cluster... 
 
@@ -445,7 +447,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 // init disk.. 
                 if (!hasSamePath)
-                { 
+                {
                 }
                 WebSiteService.InitDiskSync(website, true);
             }
@@ -508,7 +510,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return default(Guid);
             }
-            
+
             string RootDomain = null;
             string SubDomain = null;
             string SiteName = null;
@@ -577,6 +579,11 @@ namespace Kooboo.Web.Api.Implementation
             return temp;
         }
 
+
+        public List<ILightHouseItem> GetLighthouseItems()
+        {
+            return Manger.List();
+        }
     }
 
 }
