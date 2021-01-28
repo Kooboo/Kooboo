@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Kooboo.Web.Lighthouse
 {
-    public abstract class LightHouseItemWithSetting<TSetting> : ILightHouseItem where TSetting : ILightHouseItemSetting
+    public abstract class LightHouseItemWithSetting<TSetting> : ILightHouseItem where TSetting : class, ILightHouseItemSetting
     {
         public abstract string Name { get; }
 
@@ -16,8 +16,7 @@ namespace Kooboo.Web.Lighthouse
 
         public void Execute(RenderContext Context)
         {
-            var setting = (TSetting)Activator.CreateInstance(typeof(TSetting));
-            //TODO get setting from website LighthouseSettingsJson
+            var setting = Context.WebSite.GetLighthouseItemSetting<TSetting>(Name);
             Execute(setting, Context);
         }
     }

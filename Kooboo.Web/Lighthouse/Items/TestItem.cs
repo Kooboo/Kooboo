@@ -14,18 +14,17 @@ namespace Kooboo.Web.Lighthouse.Items
 
         public override void Execute(CustomSetting setting, RenderContext Context)
         {
-            throw new NotImplementedException();
         }
     }
 
     public class CustomSetting : ILightHouseItemSetting
     {
         [Description("Text Description")]
-        public string Text { get; set; }
+        public string Text { get; set; } = "default value";
 
         [Description("Number Description")]
-        public int Number { get; set; }
+        public int Number { get; set; } = 34;
 
-        public bool Switch { get; set; }
+        public bool Switch { get; set; } = true;
     }
 }

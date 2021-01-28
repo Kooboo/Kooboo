@@ -319,21 +319,16 @@ $(function () {
           } else lighthouseItem.enable = true;
 
           if (lighthouseItem.setting) {
-            var settingValues = [];
+            var settingValue = {};
 
             if (lighthouseSetting) {
-              settingValues = lighthouseSetting.setting;
+              settingValue = lighthouseSetting.setting;
             }
 
             for (var j = 0; j < lighthouseItem.setting.length; j++) {
               var setting = lighthouseItem.setting[j];
-
-              var settingValue = settingValues.filter(function (f) {
-                return f.name == setting.name;
-              })[0];
-
-              if (settingValue) setting.value = settingValue.value;
-              else setting.value = null;
+              if (settingValue[setting.name])
+                setting.value = settingValue[setting.name];
             }
           }
         }
@@ -346,18 +341,23 @@ $(function () {
         self.lighthouseSettings = [];
         for (var i = 0; i < self.lighthouseItemsBinding.length; i++) {
           var bindingItem = self.lighthouseItemsBinding[i];
-          self.lighthouseSettings.push({
+          var lighthouseSetting = {
             name: bindingItem.name,
             enable: bindingItem.enable,
-            setting: !bindingItem.setting
-              ? null
-              : bindingItem.setting.map(function (m) {
-                  return {
-                    name: m.name,
-                    value: m.value,
-                  };
-                }),
-          });
+            setting: null,
+          };
+
+          if (bindingItem.setting) {
+            lighthouseSetting.setting = {};
+
+            for (var j = 0; j < bindingItem.setting.length; j++) {
+              var bindingItemSetting = bindingItem.setting[j];
+              lighthouseSetting.setting[bindingItemSetting.name] =
+                bindingItemSetting.value;
+            }
+          }
+
+          self.lighthouseSettings.push(lighthouseSetting);
         }
 
         self.model.lighthouseSettingsJson = JSON.stringify(

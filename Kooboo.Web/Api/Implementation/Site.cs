@@ -583,7 +583,7 @@ namespace Kooboo.Web.Api.Implementation
 
         readonly Type[] _numberType = new Type[] { typeof(int), typeof(float), typeof(double), typeof(decimal) };
 
-        public List<Dictionary<string, object>> GetLighthouseItems()
+        public List<Dictionary<string, object>> GetLighthouseItems(ApiCall apiCall)
         {
             var result = new List<Dictionary<string, object>>();
             var lighthouseItems = Manger.List();

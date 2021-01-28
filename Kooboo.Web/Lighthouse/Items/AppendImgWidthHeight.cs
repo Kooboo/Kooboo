@@ -13,7 +13,6 @@ namespace Kooboo.Web.Lighthouse.Items
 
         public  void Execute( RenderContext Context)
         {
-            throw new NotImplementedException();
         }
     }
 }

@@ -14,20 +14,5 @@ namespace Kooboo.Web.Lighthouse
         {
             return Kooboo.Lib.IOC.Service.GetInstances<ILightHouseItem>();
         }
-
-        public static LighthouseItemSetting[] GetLighthouseSettings(WebSite webSite)
-        {
-            List<LighthouseItemSetting> result;
-
-            if (string.IsNullOrWhiteSpace(webSite.LighthouseSettingsJson))
-            {
-                result = new List<LighthouseItemSetting>();
-            }
-            else {
-                result = JsonHelper.Deserialize<List<LighthouseItemSetting>>(webSite.LighthouseSettingsJson);
-            }
-
-            return result.ToArray();
-        }
     }
 }

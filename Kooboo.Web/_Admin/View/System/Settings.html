@@ -595,7 +595,9 @@
                   <div v-if="setting.controlType=='Switch'">
                     <kb-switch v-model="setting.value"></kb-switch>
                   </div>
-                  <input v-else :type="setting.controlType=='Text'?'text':'number'" class="form-control input-large" v-model="setting.value" />
+                  <input v-else-if="setting.controlType=='Number'" type="number" class="form-control input-large"
+                    v-model.number="setting.value" />
+                  <input v-else class="form-control input-large" v-model="setting.value" />
                 </div>
               </div>
             </li>

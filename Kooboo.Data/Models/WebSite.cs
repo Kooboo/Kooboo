@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -336,9 +337,71 @@ namespace Kooboo.Data.Models
 
         public bool EnableLighthouseOptimization { get; set; }
 
-        public string LighthouseSettingsJson { get; set; }
+        private string _lighthouseSettingsJson;
 
-        //private JArray _lighthouseSettings;
+        public string LighthouseSettingsJson
+        {
+            get => _lighthouseSettingsJson; set
+            {
+                _lighthouseSettingsJson = value;
+                _lighthouseSettings = null;
+                _lighthouseSettingsDic.Clear();
+            }
+        }
+
+        private JArray _lighthouseSettings;
+
+        [JsonIgnore]
+        private JArray LighthouseSettings
+        {
+            get
+            {
+                if (_lighthouseSettings == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_lighthouseSettings == null)
+                        {
+                            if (string.IsNullOrWhiteSpace(LighthouseSettingsJson))
+                            {
+                                _lighthouseSettings = new JArray();
+                            }
+                            else
+                            {
+                                _lighthouseSettings = JsonConvert.DeserializeObject<JArray>(LighthouseSettingsJson);
+                            }
+                        }
+                    }
+                }
+
+                return _lighthouseSettings;
+            }
+        }
+
+        [JsonIgnore]
+        private ConcurrentDictionary<string, object> _lighthouseSettingsDic = new ConcurrentDictionary<string, object>();
+
+        object _locker = new object();
+
+        public T GetLighthouseItemSetting<T>(string lighthouseItemName) where T : class
+        {
+            var result = _lighthouseSettingsDic.GetOrAdd(lighthouseItemName, s =>
+                         {
+                             var setting = LighthouseSettings
+                                        .FirstOrDefault(f => f.Value<string>("name") == s)?
+                                       .Value<JObject>("setting")?
+                                       .ToObject<T>();
+
+                             if (setting == null)
+                             {
+                                 setting = Activator.CreateInstance<T>();
+                             }
+
+                             return setting;
+                         });
+
+            return result as T;
+        }
 
 
 
