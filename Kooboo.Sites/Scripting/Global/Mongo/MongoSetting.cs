@@ -15,7 +15,11 @@ namespace KScript
 
         public string GetAlert(RenderContext renderContext)
         {
-            return string.Empty;
+            return $@"mongodb://[username:password@]host1[:port1][,host2[:port2],…[,hostN[:portN]]][/[database][?options]]
+
+Example:
+mongodb://admin:123@localhost/mydb
+";
         }
     }
 }

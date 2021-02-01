@@ -20,7 +20,9 @@ namespace Kooboo.Sites.Scripting.Global.Mysql
 
         public string GetAlert(RenderContext renderContext)
         {
-            return string.Empty;
+            return $@"Example:
+Data Source=127.0.0.1;Initial Catalog=mydb;User ID=sa;Pwd=123
+";
         }
     }
 }
