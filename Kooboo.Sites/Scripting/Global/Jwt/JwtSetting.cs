@@ -22,7 +22,7 @@ namespace Kooboo.Sites.Scripting.Global.Jwt
         {
             return $@"Example:
 Secret: 3800EEB70D3B4110A6B4FBC40D026C9D
-Exp: 3600
+Exp (seconds) : 3600
 EnableExp: true
 ";
         }
