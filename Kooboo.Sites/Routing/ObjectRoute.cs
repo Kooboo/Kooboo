@@ -516,12 +516,21 @@ namespace Kooboo.Sites.Routing
                     {
                         foundresult.Add(item);
                     }
+                    else if (lower == "/" || lower == "\\")
+                    {
+                        foundresult.Add(item);
+                    }
                 }
             }
 
             if (foundresult.Count > 0)
             {
-                return foundresult.OrderBy(o => o.Name.Length).First();
+                var hasidroutes = foundresult.Where(o => o.objectId != default(Guid)).ToList(); 
+
+                if (hasidroutes.Any())
+                {
+                    return hasidroutes.OrderBy(o => o.Name.Length).FirstOrDefault();
+                } 
             }
             return null;
         }
