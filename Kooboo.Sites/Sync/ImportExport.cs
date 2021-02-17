@@ -382,9 +382,28 @@ namespace Kooboo.Sites.Sync
             return SiteDb.WebSite;
         }
 
+        public static WebSite Clone(WebSite OriginalSite, WebSite Target = null)
+        {
+            if (Target == null)
+            {
+                var temporgid = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase("zguoqi");
+                Target = new WebSite() { OrganizationId = temporgid };
+            }
+
+            var orgPath = OriginalSite.SiteDb().DatabaseDb.AbsolutePath;
+
+            var targetpath = Target.SiteDb().DatabaseDb.AbsolutePath;
+
+            Target.SiteDb().DatabaseDb.Close();
+
+            Lib.Helper.IOHelper.DirectoryCopy(orgPath, targetpath, true);
+
+            return Target;
+        }
+
         public static WebSite ImportHtmlZip(ZipArchive archive, SiteDb siteDb)
         {
-            var manager = new  SyncManager(siteDb.WebSite.Id);
+            var manager = new SyncManager(siteDb.WebSite.Id);
             foreach (var entry in archive.Entries)
             {
                 var target = entry.FullName;
@@ -562,9 +581,9 @@ namespace Kooboo.Sites.Sync
             string fileiopath = Lib.Helper.IOHelper.CombinePath(diskpath, "__fileio__");
 
             string currentPath = Kooboo.Data.AppSettings.GetFileIORoot(website);
-             
-            Kooboo.Lib.Helper.IOHelper.DirectoryCopy(currentPath, fileiopath, true);  
-        } 
+
+            Kooboo.Lib.Helper.IOHelper.DirectoryCopy(currentPath, fileiopath, true);
+        }
 
         public static string InterCopySelected(SiteDb SiteDb, List<string> StoretNames)
         {
@@ -586,10 +605,10 @@ namespace Kooboo.Sites.Sync
                 else
                 {
                     var repo = SiteDb.GetRepository(item);
-                    
-                    if (repo== null)
+
+                    if (repo == null)
                     {
-                        continue; 
+                        continue;
                     }
 
                     if (!Attributes.AttributeHelper.IsCoreObject(repo.ModelType))
@@ -602,8 +621,8 @@ namespace Kooboo.Sites.Sync
 
                     var serializer = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter(repo.ModelType);
 
-                    bool IsRoutable = Kooboo.Sites.Service.ObjectService.IsRoutable(repo.ModelType);  
-                     
+                    bool IsRoutable = Kooboo.Sites.Service.ObjectService.IsRoutable(repo.ModelType);
+
                     foreach (var dbitem in repo.All())
                     {
                         if (dbitem.Id != default(Guid))
@@ -704,7 +723,7 @@ namespace Kooboo.Sites.Sync
 
             return DiskPath;
         }
-         
+
         //public static string InterCopyTime(SiteDb SiteDb, Int64 timetick)
         //{
         //    string DiskPath = Kooboo.Data.AppSettings.TempDataPath;
