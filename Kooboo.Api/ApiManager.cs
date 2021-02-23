@@ -91,7 +91,7 @@ namespace Kooboo.Api
 
         private static IResponse ExecuteMethod(ApiCall call, ApiMethod apimethod)
         {
-            object response =null; 
+            object response = null;
 
             if (apimethod.ClassInstance is Api)
             {
@@ -99,26 +99,26 @@ namespace Kooboo.Api
 
                 try
                 {
-                    var ok = instance.OnActionExecuting(call);
-                    if (ok)
+                    response = instance.OnActionExecuting(call);
+                    if (response == null)
                     {
                         response = Methods.ApiMethodManager.Execute(apimethod, call);
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw ex; 
+                    throw ex;
                 }
                 finally
                 {
-                     instance.OnActionExecuted(call);
-                }  
+                    instance.OnActionExecuted(call);
+                }
             }
             else
             {
                 response = Methods.ApiMethodManager.Execute(apimethod, call);
             }
-         
+
 
             if (apimethod.IsVoid)
             {
