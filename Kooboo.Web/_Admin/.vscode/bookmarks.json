@@ -1,12 +1,14 @@
-[
-	{
-		"path": "$ROOTPATH$\\Scripts\\KoobooBase.js",
-		"bookmarks": [
-			{
-				"line": 1625,
-				"column": 6,
-				"label": ""
-			}
-		]
-	}
-]
+{
+	"files": [
+		{
+			"path": "Scripts/KoobooBase.js",
+			"bookmarks": [
+				{
+					"line": 1632,
+					"column": 6,
+					"label": ""
+				}
+			]
+		}
+	]
+}

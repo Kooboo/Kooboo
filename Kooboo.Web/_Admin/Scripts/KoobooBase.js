@@ -181,7 +181,6 @@
       return url;
     },
   };
-
   //view
   function View() {
     this.name = "View";
@@ -213,6 +212,13 @@
     };
   }
   extend(Authentication, BaseModel);
+
+  //CssOptimization
+  function CssOptimization() {
+    this.name = "CssOptimization";
+  }
+
+  extend(CssOptimization, BaseModel);
 
   //page
   function Page() {
@@ -1852,6 +1858,7 @@
     View: new View(),
     SqlLog: new SqlLog(),
     Authentication: new Authentication(),
+    CssOptimization: new CssOptimization(),
   };
   wind.Kooboo.TextContent = new TextContent();
 

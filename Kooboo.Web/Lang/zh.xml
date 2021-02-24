@@ -1350,4 +1350,5 @@
   <key id="Enable cache">启用缓存</key>
   <key id="Cache by version">版本缓存</key>
   <key id="Enable Lighthouse optimization">启用 Lighthouse 优化</key>
+  <key id="CSS optimization">CSS 优化</key>
 </Lang>
