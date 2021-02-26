@@ -61,7 +61,8 @@ namespace Kooboo.Sites.Render
         kConfig = 17,
         kCache = 18,
         OmitOuterTag = 19,
-        Version = 20
+        Version = 20, 
+        LocalCache = 21
     }
 
 }
