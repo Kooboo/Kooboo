@@ -68,6 +68,7 @@
       enable: "Enable",
       enabled: "Enabled",
       authentication:"Authentication",
+      cssOptimization:"CSS optimization",
 
       API: "API",
       Code: "Code",

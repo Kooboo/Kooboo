@@ -1350,4 +1350,5 @@
   <key id="Enable cache">Enable cache</key>
   <key id="Cache by version">Cache by version</key>
   <key id="Enable Lighthouse optimization">Enable Lighthouse optimization</key>
+  <key id="CSS optimization">CSS optimization</key>
 </Lang>
