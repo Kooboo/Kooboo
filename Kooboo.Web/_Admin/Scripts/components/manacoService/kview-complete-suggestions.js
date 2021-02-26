@@ -86,6 +86,11 @@ var getKViewSuggestions = function () {
           documentation: "Replace the element with the value.",
           insertText: 'k-config="${1:}"'
       },
+     {
+         label: "k-localcache",
+         documentation: "load external resource into local machine cache.",
+         insertText: 'k-localcache="${1:}"'
+     },
     {
         label: "k-data",
         documentation: "query one item from database",

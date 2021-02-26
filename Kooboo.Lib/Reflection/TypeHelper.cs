@@ -7,11 +7,26 @@ using System.Linq;
 using System.Reflection;
 using Kooboo.Extensions;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 
 namespace Kooboo.Lib.Reflection
 {
     public static class TypeHelper
     {
+
+        public static string GetProperty(Type objType, string PropertyName)
+        {
+            var method = objType.GetProperty(PropertyName).GetGetMethod();
+            var dynamicMethod = new DynamicMethod("meide", typeof(long),
+                                                  Type.EmptyTypes);
+            var generator = dynamicMethod.GetILGenerator();
+            generator.Emit(OpCodes.Ldnull);
+            generator.Emit(OpCodes.Call, method);
+            generator.Emit(OpCodes.Ret);
+            var silly = (Func<string>)dynamicMethod.CreateDelegate(
+                           typeof(Func<string>));
+            return silly();
+        }
 
         public static List<MethodInfo> GetPublicMethods(Type type)
         {

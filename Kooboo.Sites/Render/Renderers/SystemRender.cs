@@ -22,11 +22,26 @@ namespace Kooboo.Sites.Systems
             //systemroute.Name = "__kb/{objecttype}/{nameorid}"; defined in Routes. 
             var paras = context.Route.Parameters;
             var strObjectType = paras.GetValue("objecttype");
+            if (strObjectType == null)
+            {
+                return;
+            }
             byte constType = ConstObjectType.Unknown;
             if (!byte.TryParse(strObjectType, out constType))
             {
                 constType = ConstTypeContainer.GetConstType(strObjectType);
+
+                if (constType == 0 && strObjectType == "custom")
+                {
+                    //   sysRoute.Name = "/__kb/{objecttype}/{nameorid}/{action}";
+                    var type = paras.GetValue("nameorid");
+                    var para = paras.GetValue("action");
+                    await Kooboo.Sites.Render.Renderers.Custom.CustomRenderManager.RenderAsync(type, para, context);
+                    return;
+                }
             }
+
+
             var id = paras.GetValue("nameorid");
 
             switch (constType)

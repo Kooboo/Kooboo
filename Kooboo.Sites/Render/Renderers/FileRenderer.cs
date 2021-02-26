@@ -6,6 +6,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Lib;
 using Kooboo.Lib.Helper;
 using System;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.Render
 {
@@ -68,7 +69,16 @@ namespace Kooboo.Sites.Render
             else
             {
                 // read whole content. 
-                var FileContent = await sitedb.FilePool.GetAsync(file.Id);
+                CmsFile FileContent = null;
+                if (file.ContentBytes == null)
+                {
+                    FileContent = await sitedb.FilePool.GetAsync(file.Id);
+                }
+                else
+                {
+                    FileContent = file;
+                }
+                 
 
                 if (FileContent.ContentBytes != null)
                 {
@@ -79,26 +89,26 @@ namespace Kooboo.Sites.Render
                     context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(FileContent.ContentString);
                 }
             }
-             
+
             // cache for font.
             if (contentType != null)
             {
-                string lower = contentType.ToLower(); 
+                string lower = contentType.ToLower();
 
                 if (lower.Contains("font"))
                 {
-                    VersionRenderer.FontVersion(context);  
+                    VersionRenderer.FontVersion(context);
                 }
                 else if (lower.Contains("image"))
                 {
                     context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                     context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
 
-                    VersionRenderer.ImageVersion(context);  
+                    VersionRenderer.ImageVersion(context);
                 }
                 else if (lower.Contains("css"))
                 {
-                    VersionRenderer.ScriptStyleVersion(context); 
+                    VersionRenderer.ScriptStyleVersion(context);
                 }
                 else if (lower.Contains("javascript"))
                 {
@@ -106,7 +116,7 @@ namespace Kooboo.Sites.Render
                 }
                 else if (lower.Contains("video"))
                 {
-                    VersionRenderer.VideoVersion(context); 
+                    VersionRenderer.VideoVersion(context);
                 }
             }
 
