@@ -37,6 +37,7 @@ namespace Kooboo.Sites.Render.PageCache
                 { 
                     if (Version <= 0)
                     {
+                        // by minutes
                         var MinutesPast = DateTime.Now - item.LastModify;
                         if (MinutesPast.Minutes < CacheMinutes)
                         {
@@ -45,6 +46,7 @@ namespace Kooboo.Sites.Render.PageCache
                     }
                     else
                     {
+                        // by version. 
                         if (Version == item.Version)
                         {
                             return item.Result;

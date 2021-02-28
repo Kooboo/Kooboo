@@ -42,8 +42,7 @@ namespace Kooboo.Sites.Render
                 return _list;
             }
         }
-
-
+         
         public static List<IEvaluator> MockPage
         {
             get

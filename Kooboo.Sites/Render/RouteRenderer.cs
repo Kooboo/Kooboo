@@ -8,8 +8,8 @@ namespace Kooboo.Sites.Render
     {
         public static async Task RenderAsync(FrontContext context)
         {
-            try
-            {
+           // try
+           // {
                 if (context.RenderContext.Response.End)
                 {
                     return;
@@ -66,14 +66,14 @@ namespace Kooboo.Sites.Render
                     default:
                         break;
                 }
-            }
-            catch (System.Exception ex)
-            {
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + " " + ex.Source + ex.StackTrace);
+            //}
+            //catch (System.Exception ex)
+            //{
+            //    Kooboo.Data.Log.Instance.Exception.Write(ex.Message + " " + ex.Source + ex.StackTrace);
 
-                context.RenderContext.Response.AppendString(ex.Message+ " " + ex.Source);
+            //    context.RenderContext.Response.AppendString(ex.Message+ " " + ex.Source);
       
-            }
+            //}
 
         }
     }

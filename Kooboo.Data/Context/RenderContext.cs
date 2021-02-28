@@ -299,5 +299,7 @@ namespace Kooboo.Data.Context
         public bool IsApp { get; set; }
 
         public string AppParentUrl { get; set; }
+
+        public bool MockRender { get; set; }
     }
 }

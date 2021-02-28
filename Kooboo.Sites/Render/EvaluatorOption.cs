@@ -36,8 +36,7 @@ namespace Kooboo.Sites.Render
             return newoption;
         }
 
-        public List<IEvaluator> Evaluators { get; set; }
-
+        public List<IEvaluator> Evaluators { get; set; } 
     }
 
 

@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Jint.Native;
+//All rights reserved. 
 using Jint.Runtime.Debugger;
 using Kooboo;
 using Kooboo.Data;
@@ -16,13 +15,11 @@ using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.SMS;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using Kooboo.Sites.Service;
-using KScript.KscriptConfig;
-using KScript.Sites;
+using KScript.KscriptConfig; 
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Dynamic;
+using System.ComponentModel; 
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -314,6 +311,19 @@ var value = k.session.key; ")]
                     _template = new KTemplate(this.RenderContext);
                 }
                 return _template;
+            }
+        }
+
+        private KCache _cache; 
+        public KCache Cache
+        {
+            get
+            {
+                if (_cache == null)
+                {
+                    _cache = new KCache(this.RenderContext); 
+                }
+                return _cache; 
             }
         }
 
@@ -750,6 +760,8 @@ var value = k.session.key; ")]
         {
             Import(codename);
         }
+
+        
 
         #region APIHelper
 

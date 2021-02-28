@@ -96,6 +96,14 @@ namespace Kooboo.Sites.Render.LocalCache
                     }
                 }
             }
+            else
+            {
+                var diskpth = GetDiskPath(site, Path); 
+                if (System.IO.File.Exists(diskpth))
+                {
+                    return System.IO.File.ReadAllBytes(diskpth); 
+                }
+            }
             return null;
         }
 
@@ -144,7 +152,8 @@ namespace Kooboo.Sites.Render.LocalCache
         internal static string GetDiskPath(WebSite site, string path)
         {
             //var localname = GetSiteLocalName(site, path); 
-            return System.IO.Path.Combine(BaseDir, site.Name, path);
+            var diskpath =  System.IO.Path.Combine(BaseDir, site.Name, path);
+            return diskpath; 
         }
 
         internal static async Task FetchItem(WebSite site, LocalItem item)

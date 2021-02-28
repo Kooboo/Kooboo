@@ -50,11 +50,8 @@ namespace Kooboo.Sites.Render
                 return;
             }
 
-            RenderImage(context, image);
-
-            context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
-            VersionRenderer.ImageVersion(context);
+            RenderImage(context, image); 
+  
         }
          
 
@@ -144,7 +141,11 @@ namespace Kooboo.Sites.Render
             }
 
 
-            context.RenderContext.Response.Body = bytes;
+            context.RenderContext.Response.Body = bytes; 
+
+            context.RenderContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.RenderContext.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+            VersionRenderer.ImageVersion(context);
         }
 
         public static byte[] GetImageThumbnail(RenderContext context, byte[] OrgBytes, int width, int height, long version)

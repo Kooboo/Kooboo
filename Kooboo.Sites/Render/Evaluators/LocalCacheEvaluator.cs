@@ -42,7 +42,11 @@ namespace Kooboo.Sites.Render.Evaluators
                 return null;
             }
 
-            element.removeAttribute(source.AttributeName);
+            if (source !=null)
+            {
+                element.removeAttribute(source.AttributeName);
+            }
+
 
             EvaluatorResponse response = new EvaluatorResponse();
 
@@ -106,34 +110,26 @@ namespace Kooboo.Sites.Render.Evaluators
                         result.AttributeName = "src";
                         result.AttributeValue = href;
                     }
-                }
-
-            }
-
-            if (string.IsNullOrEmpty(result.AttributeValue))
-            {
-                return null;
-            }
+                } 
+            } 
 
             var lowerhref = result.AttributeValue.ToLower();
             if (lowerhref == "#" || lowerhref.StartsWith("#") || lowerhref.StartsWith("javascript:"))
             {
-                return null;
+                result.ShouldHandle = false;  
             }
 
             result.AttributeValue = result.AttributeValue.Replace("\r", "");
             result.AttributeValue = result.AttributeValue.Replace("\n", "");
 
-            string tempwithoutBracket = result.AttributeValue.Replace("{", "");
-            tempwithoutBracket = tempwithoutBracket.Replace("}", "");
-            if (Lib.Helper.UrlHelper.IsValidUrl(tempwithoutBracket))
-            {
-                return result;
-            }
-            else
-            {
-                return null;
-            }
+            //string tempwithoutBracket = result.AttributeValue.Replace("{", "");
+            //tempwithoutBracket = tempwithoutBracket.Replace("}", "");
+            //if (Lib.Helper.UrlHelper.IsValidUrl(tempwithoutBracket))
+            //{
+            //    return result;
+            //} 
+
+            return result; 
         }
     }
 
@@ -143,5 +139,7 @@ namespace Kooboo.Sites.Render.Evaluators
         public string AttributeName { get; set; }
 
         public string AttributeValue { get; set; }
+
+        public bool ShouldHandle { get; set; } = true; 
     }
 }

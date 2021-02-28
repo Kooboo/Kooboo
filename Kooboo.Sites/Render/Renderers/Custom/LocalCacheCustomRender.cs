@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kooboo.Lib.Helper;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,21 @@ namespace Kooboo.Sites.Render.Renderers.Custom
             var bytes = await LocalCache.LocalCacheManager.GetItem(context.WebSite, parameter);
             if (bytes != null)
             {
-                var CmsFile = new Kooboo.Sites.Models.CmsFile();
-                CmsFile.ContentBytes = bytes;
-                CmsFile.Name = parameter; 
-                await Kooboo.Sites.Render.FileRenderer.RenderFile(context, CmsFile); 
+              var  contentType = IOHelper.MimeType(parameter);
+                if (contentType !=null && contentType.ToLower().Contains("image"))
+                {
+                    var image = new Kooboo.Sites.Models.Image();
+                    image.Bytes = bytes;
+                    image.Name = parameter;
+                    Kooboo.Sites.Render.ImageRenderer.RenderImage(context, image); 
+                }
+                else
+                {
+                    var CmsFile = new Kooboo.Sites.Models.CmsFile();
+                    CmsFile.ContentBytes = bytes;
+                    CmsFile.Name = parameter;
+                    await Kooboo.Sites.Render.FileRenderer.RenderFile(context, CmsFile);
+                } 
             }  
         }
 

@@ -59,7 +59,7 @@ namespace Kooboo.Sites.Render
                 return;
             }
 
-            this.KeyOrExpression = KeyOrExpression; 
+            this.KeyOrExpression = KeyOrExpression;
 
             KeyOrExpression = KeyOrExpression.Trim();
 
@@ -113,39 +113,50 @@ namespace Kooboo.Sites.Render
                     {
                         this.StringValue = KeyOrExpression;
                     }
-                } 
+                }
                 else
                 {
                     var lower = KeyOrExpression.ToLower();
                     if (lower.StartsWith("https://") || lower.StartsWith("http://") || lower.StartsWith("//") || lower.StartsWith("/"))
                     {
                         this.IsString = true;
-                        this.StringValue = KeyOrExpression; 
-                    }  
-                } 
+                        this.StringValue = KeyOrExpression;
+                    }
+                }
             }
         }
 
         public string Render(RenderContext context)
         {
-            var url =  PraseUrl(context);
+            var url = PraseUrl(context);
 
             if (url.StartsWith("//"))
             {
                 if (context.Request.Port == 443)
                 {
-                    url = "https:" + url; 
+                    url = "https:" + url;
                 }
                 else
                 {
-                    url = "http://" + url; 
+                    url = "http://" + url;
                 }
-            } 
+            }
 
+            var lower = url.ToLower(); 
 
-            var shorturl = Kooboo.Sites.Render.LocalCache.LocalCacheManager.SetItem(context.WebSite, url);
+            if (url.ToLower().StartsWith("/__kb/custom/localcache"))
+            {
+                return url;
+            }
 
-            return Kooboo.Sites.Render.LocalCache.LocalCacheManager.GetUrl(shorturl); 
+            ///__kb/custom/LocalCache
+            if (lower.StartsWith("https://") || lower.StartsWith("http://"))
+            {
+
+                var shorturl = Kooboo.Sites.Render.LocalCache.LocalCacheManager.SetItem(context.WebSite, url);
+                return Kooboo.Sites.Render.LocalCache.LocalCacheManager.GetUrl(shorturl);
+            }
+            return url;
         }
 
         private string PraseUrl(RenderContext context)
@@ -166,7 +177,7 @@ namespace Kooboo.Sites.Render
                 }
                 catch (Exception ex)
                 {
-                   
+
                 }
 
                 return result;
