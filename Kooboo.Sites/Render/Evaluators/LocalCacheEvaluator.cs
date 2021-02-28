@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Kooboo.Dom;
 
@@ -8,13 +9,11 @@ namespace Kooboo.Sites.Render.Evaluators
     public class LocalCacheEvaluator : IEvaluator
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
-        { 
+        {
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.LocalCache))
             {
                 return null;
-            }
-
-            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            } 
 
             if (node.nodeType != enumNodeType.ELEMENT)
             {
@@ -22,98 +21,48 @@ namespace Kooboo.Sites.Render.Evaluators
             }
             var element = node as Element;
 
-            string attName = null;
-            foreach (var item in element.attributes)
-            {
-                if (item.name == "k-localcache")
-                {
-                    attName = item.name;
-                    break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(attName))
-            {
-
-               return null;
-            }
-
-            Kooboo.Sites.Service.DomUrlService.GetLinkOrSrc
-
-            string attributeValues = element.getAttribute(attName);
-            element.removeAttribute(attName);
-
-            if (string.IsNullOrEmpty(attributeValues) || attributeValues.IndexOf(' ') < 0)
+            if (!element.hasAttribute("k-localcache"))
             {
                 return null;
             }
 
+            string attName = "k-localcache";
+            string attvalue = element.getAttribute(attName);
+            var source = GetSourceLink(element);
+
+            if (string.IsNullOrEmpty(attvalue))
+            {
+                attvalue = source.AttributeValue;
+            }
+
+            element.removeAttribute(attName);
+
+            if (attvalue == null)
+            {
+                return null;
+            }
+
+            element.removeAttribute(source.AttributeName);
+
             EvaluatorResponse response = new EvaluatorResponse();
 
-            string[] attributes = attributeValues.Split(';');
 
-            foreach (var item in attributes)
+            List<IRenderTask> tasks = new List<IRenderTask>();
+            tasks.Add(new ContentRenderTask(" " + source.AttributeName + "=\""));
+
+            var local = new LocalCacheRenderTask(attvalue);  
+            tasks.Add(local);
+
+            tasks.Add(new ContentRenderTask("\""));
+
+            if (response.AttributeTask == null)
             {
-                var attkeyvalue = ParseAtt(item);
-                if (attkeyvalue == null)
-                {
-                    continue;
-                }
-
-                string attributeName = attkeyvalue.Key;
-                string attributeValue = attkeyvalue.Value;
-
-                if (AppendAttributes.ContainsKey(attributeName))
-                {
-                    string sep = AppendAttributes[attributeName];
-                    string value = element.getAttribute(attributeName);
-
-                    if (!string.IsNullOrEmpty(value))
-                    {
-                        if (!value.Trim().EndsWith(sep))
-                        {
-                            value = value + sep;
-                        }
-                        if (appendValues.ContainsKey(attributeName))
-                        {
-                            var orgvalue = appendValues[attributeName];
-                            value = orgvalue + value;
-                        }
-                        appendValues[attributeName] = value;
-                    }
-                }
-
-                List<IRenderTask> tasks = new List<IRenderTask>();
-                tasks.Add(new ContentRenderTask(" " + attributeName + "=\""));
-
-                if (appendValues.ContainsKey(attributeName))
-                {
-                    tasks.Add(new ContentRenderTask(appendValues[attributeName]));
-                }
-
-                tasks.Add(new ValueRenderTask(attributeValue));
-                tasks.Add(new ContentRenderTask("\""));
-
-                if (response.AttributeTask == null)
-                {
-                    response.AttributeTask = tasks;
-                }
-                else
-                {
-                    response.AttributeTask.AddRange(tasks);
-                }
-
-                element.removeAttribute(attributeName);
-
-                if (options.RequireBindingInfo)
-                {
-                    if (response.BindingTask == null) response.BindingTask = new List<IRenderTask>();
-                    var bindingTask = new BindingRenderTask(attributeValue, new Dictionary<string, string> { { "attribute", attributeName } });
-                    response.BindingTask.Add(bindingTask);
-                    if (response.EndBindingTask == null) response.EndBindingTask = new List<IRenderTask>();
-                    response.EndBindingTask.Add(bindingTask.BindingEndRenderTask);
-                }
+                response.AttributeTask = tasks;
             }
+            else
+            {
+                response.AttributeTask.AddRange(tasks);
+            } 
 
             if (response.AttributeTask == null || response.AttributeTask.Count() == 0)
             {
@@ -125,63 +74,74 @@ namespace Kooboo.Sites.Render.Evaluators
             }
 
         }
-    }
-}
 
-public class AttributeEvaluator : IEvaluator
-{
-    private Dictionary<string, string> _appendattributes;
-    private Dictionary<string, string> AppendAttributes
-    {
-        get
+        public static SourceValue GetSourceLink(Element item)
         {
-            if (_appendattributes == null)
+            SourceValue result = new SourceValue();
+            string tagname = item.tagName.ToLower();
+
+            if (tagname == "script" || tagname == "img" || tagname == "embed")
             {
-                _appendattributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                _appendattributes.Add("style", ";");
-                _appendattributes.Add("class", " ");
+                result.AttributeName = "src";
+                result.AttributeValue = item.getAttribute("src");
             }
-            return _appendattributes;
+            else if (tagname == "a" || tagname == "link")
+            {
+                result.AttributeName = "href";
+                result.AttributeValue = item.getAttribute("href");
+            }
+            else
+            {
+                var href = item.getAttribute("href");
+                if (!string.IsNullOrWhiteSpace(href))
+                {
+                    result.AttributeName = "href";
+                    result.AttributeValue = href;
+                }
+                else
+                {
+                    href = item.getAttribute("src");
+                    if (!string.IsNullOrWhiteSpace(href))
+                    {
+                        result.AttributeName = "src";
+                        result.AttributeValue = href;
+                    }
+                }
+
+            }
+
+            if (string.IsNullOrEmpty(result.AttributeValue))
+            {
+                return null;
+            }
+
+            var lowerhref = result.AttributeValue.ToLower();
+            if (lowerhref == "#" || lowerhref.StartsWith("#") || lowerhref.StartsWith("javascript:"))
+            {
+                return null;
+            }
+
+            result.AttributeValue = result.AttributeValue.Replace("\r", "");
+            result.AttributeValue = result.AttributeValue.Replace("\n", "");
+
+            string tempwithoutBracket = result.AttributeValue.Replace("{", "");
+            tempwithoutBracket = tempwithoutBracket.Replace("}", "");
+            if (Lib.Helper.UrlHelper.IsValidUrl(tempwithoutBracket))
+            {
+                return result;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 
 
-    public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
+    public class SourceValue
     {
-       
-    }
+        public string AttributeName { get; set; }
 
-    private AttKeyValue ParseAtt(string input)
-    {
-        if (string.IsNullOrEmpty(input))
-        {
-            return null;
-        }
-
-        input = input.Trim();
-
-        int spaceindex = input.IndexOf(" ");
-        if (spaceindex == -1)
-        {
-            return null;
-        }
-
-        AttKeyValue result = new AttKeyValue();
-
-        result.Key = input.Substring(0, spaceindex);
-        result.Value = input.Substring(spaceindex).Trim();
-        return result;
-    }
-
-    public class AttKeyValue
-    {
-        public string Key { get; set; }
-        public string Value { get; set; }
-    }
-
-    public class AppendValues
-    {
-        public string AttName { get; set; }
-        public string Value { get; set; }
+        public string AttributeValue { get; set; }
     }
 }
