@@ -42,5 +42,37 @@ namespace Kooboo.Sites.Render
                 return _list;
             }
         }
+
+
+        public static List<IEvaluator> MockPage
+        {
+            get
+            {
+                if (_list == null)
+                {
+                    _list = new List<IEvaluator>();
+                    _list.Add(new PlaceHolderEvaluator());
+                    _list.Add(new SiteLayoutEvaluator());
+                   // _list.Add(new RepeaterEvaluator());
+                   // _list.Add(new ConditionEvaluator());
+                   // _list.Add(new ForEvaluator());
+                    _list.Add(new AttributeEvaluator());
+                   // _list.Add(new kExternalCacheEvaluator());
+                    _list.Add(new UrlEvaluator());
+                    _list.Add(new LocalCacheEvaluator());
+                    _list.Add(new LabelEvaluator());
+                    _list.Add(new OmitTagEvaluator());
+                    _list.Add(new OmitOuterTagEvaluator());
+                    _list.Add(new ContentEvaluator());
+                    _list.Add(new ComponentEvaluator());
+                    _list.Add(new HeaderEvaluator());
+                    _list.Add(new FormEvaluator());
+                    _list.Add(new CommandEvaluator());
+                    _list.Add(new KConfigContentEvaluator());
+                    _list.Add(new VersionEvaluator());
+                }
+                return _list;
+            }
+        }
     }
 }
