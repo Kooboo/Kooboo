@@ -107,6 +107,8 @@ namespace Kooboo.Sites.Models
         public bool CacheByVersion { get; set; }
 
         public int CacheMinutes { get; set; }
+
+        //Value like "page,site"
         public string CacheQueryKeys { get; set; }
 
         public override int GetHashCode()

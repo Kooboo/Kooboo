@@ -136,7 +136,6 @@ namespace Kooboo.Web.ViewModel
 
         public int CacheMinutes { get; set; }
 
-        //Value like "page,site"
         public string CacheQueryKeys { get; set; }
 
     }
