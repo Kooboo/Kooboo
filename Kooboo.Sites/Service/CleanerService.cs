@@ -1,5 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Models;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System;
@@ -53,8 +55,12 @@ namespace Kooboo.Sites.Service
             }
         }
 
+        public static List<CmsCssRule> GetUnusedRules(WebSite site)
+        {
+            var sitedb = site.SiteDb(); 
+            return null;
 
-
+        } 
 
     }
 }
