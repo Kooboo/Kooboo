@@ -78,6 +78,11 @@ namespace Kooboo.Sites.Render.Components
 
         public Task<string> RenderAsync(RenderContext context, ComponentSetting settings)
         {
+            if (context.MockData)
+            {
+                return null; 
+            }
+
             string code = settings.InnerHtml;
             string result = null; 
 
