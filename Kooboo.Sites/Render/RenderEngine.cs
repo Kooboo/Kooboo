@@ -42,21 +42,20 @@ namespace Kooboo.Sites.Render
 
                 // check the cache. 
                 if (context.Page.EnableCache)
-                {
-                    long version = context.Page.Version;
-
-                    var minutes = context.Page.CacheMinutes;
-
-                    if (!context.Page.CacheByVersion)
+                { 
+                    if (context.Page.CacheByVersion)
                     {
-                        version = -1;
+                        result =  PageCache.PageCache.GetByVersion(context.SiteDb.Id, context.Page.Id, context.Page.Version);
                     }
-
-                    result = Kooboo.Sites.Render.PageCache.PageCache.Get(context.SiteDb.Id, context.Page.Id, version, minutes);
+                    else
+                    {
+                        result = PageCache.PageCache.GetByMinutes(context.SiteDb.Id, context.Page.Id, context.Page.CacheMinutes);
+                    } 
 
                     if (string.IsNullOrEmpty(result))
                     {
                         result = RenderHelper.Render(RenderPlan, context.RenderContext);
+
                         Kooboo.Sites.Render.PageCache.PageCache.Set(context.SiteDb.Id, context.Page.Id, result, context.Page.Version);
                     }
                 }

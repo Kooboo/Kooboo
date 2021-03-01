@@ -26,37 +26,47 @@ namespace Kooboo.Sites.Render.PageCache
             return SitePageCache[SiteId];
 
         }
-
-        public static string Get(Guid SiteId, Guid PageId, long Version, int CacheMinutes = 0)
+         
+        public static string GetByVersion(Guid SiteId, Guid PageId, long Version)
         {
             var siteitems = GetSiteCaches(SiteId);
             if (siteitems.ContainsKey(PageId))
             {
                 var item = siteitems[PageId];
                 if (item != null)
-                { 
-                    if (Version <= 0)
+                {
+                    // by version. 
+                    if (Version == item.Version)
                     {
-                        // by minutes
-                        var MinutesPast = DateTime.Now - item.LastModify;
-                        if (MinutesPast.Minutes < CacheMinutes)
-                        {
-                            return item.Result;
-                        } 
-                    }
-                    else
-                    {
-                        // by version. 
-                        if (Version == item.Version)
-                        {
-                            return item.Result;
-                        } 
+                        return item.Result;
                     } 
                 }
             }
 
             return null;
         }
+
+
+        public static string GetByMinutes(Guid SiteId, Guid PageId, int CacheMinutes)
+        {
+            var siteitems = GetSiteCaches(SiteId);
+            if (siteitems.ContainsKey(PageId))
+            {
+                var item = siteitems[PageId];
+                if (item != null)
+                {
+                    // by minutes
+                    var MinutesPast = DateTime.Now - item.LastModify;
+                    if (MinutesPast.Minutes < CacheMinutes)
+                    {
+                        return item.Result;
+                    }
+                }
+            }
+
+            return null;
+        }
+
 
         public static void Set(Guid SiteId, Guid PageId, string Content, long Version)
         {
