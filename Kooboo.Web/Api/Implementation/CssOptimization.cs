@@ -43,12 +43,19 @@ namespace Kooboo.Web.Api.Implementation
                 var style = sitedb.Styles.Get(styleid); 
                 if (style !=null)
                 {
-                    var url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(site.SiteDb(), style);
-
-                    foreach (var rule in list)
+                    try
                     {
-                        rule.StyleSheet = url;  
+                        var url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(site.SiteDb(), style);
+
+                        foreach (var rule in list)
+                        {
+                            rule.StyleSheet = url;
+                        } 
                     }
+                    catch (Exception)
+                    { 
+                    }
+         
                 }  
             } 
 

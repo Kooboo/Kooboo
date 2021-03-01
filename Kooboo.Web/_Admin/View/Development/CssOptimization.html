@@ -19,7 +19,7 @@
 
   <kb-table :data="list" show-select :selected.sync="selectedRows">
 
-      <kb-table-column :label="Kooboo.text.common.name">
+      <kb-table-column width="150px" :label="Kooboo.text.common.name">
           <template v-slot="row">
               <span @click.stop="">{{ row.styleSheet }}</span>
           </template>
@@ -29,9 +29,7 @@
           <template v-slot="row">
               <span @click.stop="">{{ row.content }}</span>
           </template>
-      </kb-table-column> 
-
-
+      </kb-table-column>  
 
   </kb-table>
 </div>
