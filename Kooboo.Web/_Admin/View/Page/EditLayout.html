@@ -225,9 +225,17 @@
                               <div style="flex: 1;"></div>
                               <kb-switch v-model="cacheByVersion" ></kb-switch>
                             </div>
-                            <div class="input-group" v-if="enableCache&&!cacheByVersion">
-                              <input class="form-control" type="number" v-model="cacheMinutes" />
-                              <div class="input-group-addon">Minutes</div>
+
+                            <div v-if="enableCache&&!cacheByVersion">
+                              <span style="display: block;padding: 5px;">Time</span>
+                              <div class="input-group" >
+                                <input class="form-control" type="number" v-model="cacheMinutes" />
+                                <div  class="input-group-addon">Minutes</div>
+                              </div>
+                            </div>
+                            <div v-if="enableCache&&!cacheByVersion">
+                              <span style="display: block;padding: 5px;">Cache query keys</span>
+                              <input class="form-control"  v-model="cacheQueryKeys" placeholder='Example: category,page,index' />
                             </div>
                           </div>
                         </div>
@@ -373,7 +381,8 @@
           submitData: null,
           enableCache:false,
           cacheByVersion:false,
-          cacheMinutes:3
+          cacheMinutes:3,
+          cacheQueryKeys:""
         };
       },
       computed: {
@@ -451,6 +460,7 @@
             res["enableCache"] = self.enableCache;
             res["cacheByVersion"] = self.cacheByVersion;
             res["cacheMinutes"] = self.cacheMinutes;
+            res["cacheQueryKeys"] = self.cacheQueryKeys;
 
             self.submitData = res;
 
@@ -588,6 +598,8 @@
           self.enableCache=page.model.enableCache;
           self.cacheByVersion=page.model.cacheByVersion;
           self.cacheMinutes=page.model.cacheMinutes||3;
+          self.cacheQueryKeys=(page.model.cacheQueryKeys||"");
+          
         });
 
         $(window).on("resize", function() {

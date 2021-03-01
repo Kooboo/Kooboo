@@ -148,6 +148,8 @@ namespace Kooboo.Web.Api.Implementation
             model.Type = page.Type;
             model.EnableCache = page.EnableCache;
             model.CacheMinutes = page.CacheMinutes;
+            model.CacheQueryKeys = page.CacheQueryKeys;
+
             model.CacheByVersion = page.CacheByVersion;
 
             if (page.Type == PageType.RichText)
@@ -233,6 +235,7 @@ namespace Kooboo.Web.Api.Implementation
             page.EnableCache = model.EnableCache;
             page.CacheByVersion = model.CacheByVersion;
             page.CacheMinutes = model.CacheMinutes;
+            page.CacheQueryKeys = model.CacheQueryKeys;
             page.Parameters = new Dictionary<string, string>(model.Parameters, StringComparer.OrdinalIgnoreCase);
             page.Headers.Metas = model.Metas;
             page.Headers.Styles = model.Styles;
@@ -302,7 +305,7 @@ namespace Kooboo.Web.Api.Implementation
             return page.Id;
         }
 
-        public Guid PostRichText(string name, string title, string body, string url, bool enableCache, bool cacheByVersion, int cacheMinutes, ApiCall call)
+        public Guid PostRichText(string name, string title, string body, string url, bool enableCache, bool cacheByVersion, int cacheMinutes, string cacheQueryKeys, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
@@ -330,7 +333,7 @@ namespace Kooboo.Web.Api.Implementation
             if (PageId == default(Guid))
             {
                 // new add. 
-                Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText, EnableCache = enableCache, CacheByVersion = cacheByVersion, CacheMinutes = cacheMinutes };
+                Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText, EnableCache = enableCache, CacheByVersion = cacheByVersion, CacheMinutes = cacheMinutes, CacheQueryKeys = cacheQueryKeys };
                 sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(newpage, call.Context.User.Id);
                 PageId = newpage.Id;
@@ -348,6 +351,7 @@ namespace Kooboo.Web.Api.Implementation
                 oldpage.EnableCache = enableCache;
                 oldpage.CacheByVersion = cacheByVersion;
                 oldpage.CacheMinutes = cacheMinutes;
+                oldpage.CacheQueryKeys = cacheQueryKeys;
 
                 sitedb.Pages.AddOrUpdate(oldpage, call.Context.User.Id);
 

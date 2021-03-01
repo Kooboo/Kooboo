@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Kooboo.Sites.Cache;
 
 namespace Kooboo.Sites.Models
-{ 
+{
     [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Text)]
     [Kooboo.Attributes.Routable]
     public class Page : DomObject, Kooboo.Data.Interface.IScriptable
@@ -16,46 +16,48 @@ namespace Kooboo.Sites.Models
         public Page()
         {
             ConstType = ConstObjectType.Page;
-            this.Online = true;   
+            this.Online = true;
         }
-         
-        private HtmlHeader _Headers; 
-        public HtmlHeader Headers {
 
-            get {
+        private HtmlHeader _Headers;
+        public HtmlHeader Headers
+        {
+
+            get
+            {
                 if (_Headers == null)
                 {
                     _Headers = new HtmlHeader();
                 }
-                return _Headers; 
+                return _Headers;
             }
-            set { _Headers = value;  }
-        } 
-                 
-        private Guid _id; 
+            set { _Headers = value; }
+        }
+
+        private Guid _id;
         public override Guid Id
         {
             get
             {
-              if (_id == default(Guid))
-              {
-                  _id = System.Guid.NewGuid();
-              }
-              return _id; 
+                if (_id == default(Guid))
+                {
+                    _id = System.Guid.NewGuid();
+                }
+                return _id;
             }
             set
             {
-                _id = value; 
+                _id = value;
             }
         }
-          
+
         /// <summary>
         /// if page does not contain html header tag, the start layout of the page. 
         /// To be checked when adding layout to a page. 
         /// This store the name of the layout, but it can be converted to Guid key using hash function.
         /// </summary>
         public string LayoutName { get; set; }
-         
+
         public bool HasLayout
         {
             get
@@ -71,7 +73,7 @@ namespace Kooboo.Sites.Models
 
 
         public bool IsSecure { get; set; }
-           
+
 
         [JsonConverter(typeof(StringEnumConverter))]
         public PageType Type { get; set; }
@@ -81,30 +83,32 @@ namespace Kooboo.Sites.Models
         /// </summary>
         public bool DefaultStart { get; set; }
 
-        private Dictionary<string, string> _parameters; 
-        public Dictionary<string, string> Parameters {
+        private Dictionary<string, string> _parameters;
+        public Dictionary<string, string> Parameters
+        {
             get
             {
                 if (_parameters == null)
                 {
-                    _parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+                    _parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 }
-                return _parameters; 
+                return _parameters;
             }
-            set 
+            set
             {
-                _parameters = value; 
+                _parameters = value;
             }
         }
 
         public List<string> RequestParas { get; set; }
 
-        public bool EnableCache { get; set;}
+        public bool EnableCache { get; set; }
 
         public bool CacheByVersion { get; set; }
 
         public int CacheMinutes { get; set; }
-         
+        public string CacheQueryKeys { get; set; }
+
         public override int GetHashCode()
         {
             string un = this.Name;
@@ -113,26 +117,26 @@ namespace Kooboo.Sites.Models
             un += this.Headers.GetHashCode().ToString();
             un += this.LayoutName;
             un += this.IsStatic.ToString();
-            un += this.EnableCache.ToString() + this.CacheByVersion.ToString() + this.CacheMinutes.ToString(); 
-             
+            un += this.EnableCache.ToString() + this.CacheByVersion.ToString() + this.CacheMinutes.ToString() + this.CacheQueryKeys;
+
             if (this._parameters != null)
             {
                 foreach (var item in this._parameters)
                 {
                     un += item.Key + item.Value;
                 }
-            } 
-            un += this.DefaultStart.ToString();  
+            }
+            un += this.DefaultStart.ToString();
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(un); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(un);
         }
 
     }
 
     public enum PageType
     {
-        Normal =0,
+        Normal = 0,
         Layout = 1,
-        RichText  =2
+        RichText = 2
     }
 }

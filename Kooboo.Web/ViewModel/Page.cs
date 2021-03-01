@@ -103,6 +103,8 @@ namespace Kooboo.Web.ViewModel
 
         public int CacheMinutes { get; set; }
 
+        public string CacheQueryKeys { get; set; }
+
     }
 
     public class PageUpdateViewModel
@@ -133,6 +135,9 @@ namespace Kooboo.Web.ViewModel
         public bool CacheByVersion { get; set; }
 
         public int CacheMinutes { get; set; }
+
+        //Value like "page,site"
+        public string CacheQueryKeys { get; set; }
 
     }
 
