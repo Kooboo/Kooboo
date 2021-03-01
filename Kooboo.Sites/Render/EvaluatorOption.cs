@@ -24,6 +24,8 @@ namespace Kooboo.Sites.Render
 
         public bool EnableImageBrowserCache { get; set; }
 
+        public bool MockData { get; set; }
+
         public EvaluatorOption Clone()
         {
             EvaluatorOption newoption = new EvaluatorOption();
@@ -33,6 +35,7 @@ namespace Kooboo.Sites.Render
             newoption.OwnerObjectId = this.OwnerObjectId;
             newoption.EnableImageBrowserCache = this.EnableImageBrowserCache;
             newoption.EnableJsCssBrowserCache = this.EnableJsCssBrowserCache;
+            newoption.MockData = this.MockData; 
             return newoption;
         }
 

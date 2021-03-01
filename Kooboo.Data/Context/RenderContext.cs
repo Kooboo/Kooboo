@@ -300,6 +300,6 @@ namespace Kooboo.Data.Context
 
         public string AppParentUrl { get; set; }
 
-        public bool MockRender { get; set; }
+        public bool MockData { get; set; }
     }
 }

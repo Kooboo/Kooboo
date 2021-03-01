@@ -55,21 +55,12 @@ namespace Kooboo.Sites.Render
         }
 
 
-        public static async Task RenderMockAsync(RenderContext context, Page page)
+        public static async Task<string> RenderMockAsync(RenderContext context, Page page)
         {
             FrontContext frontcontext = new FrontContext(context);
             frontcontext.Page = page;
-
-            var html = await RenderEngine.RenderPageAsync(frontcontext);
-
-            if (!string.IsNullOrEmpty(html))
-            {
-                TextBodyRender.SetBody(frontcontext, html);
-            }
-            else
-            {
-                frontcontext.RenderContext.Response.Body = new byte[0];
-            }
+            context.MockData = true;
+            return await RenderEngine.RenderMockPageAsync(frontcontext);
         }
     }
 }

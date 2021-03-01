@@ -94,48 +94,13 @@ namespace Kooboo.Sites.Render
             List<IRenderTask> RenderPlan = null;
 
             var option = RenderOptionHelper.GetPageOption(context);
+            option.Evaluators = EvaluatorContainer.MockData;
 
+            context.RenderContext.MockData = true; 
 
-            RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, option));
+            RenderPlan = RenderEvaluator.Evaluate(context.Page.Body, option);
 
-            // check the cache. 
-            if (context.Page.EnableCache)
-            {
-                long version = context.Page.Version;
-
-                var minutes = context.Page.CacheMinutes;
-
-                if (!context.Page.CacheByVersion)
-                {
-                    version = -1;
-                }
-
-                result = Kooboo.Sites.Render.PageCache.PageCache.Get(context.SiteDb.Id, context.Page.Id, version, minutes);
-
-                if (string.IsNullOrEmpty(result))
-                {
-                    result = RenderHelper.Render(RenderPlan, context.RenderContext);
-                    Kooboo.Sites.Render.PageCache.PageCache.Set(context.SiteDb.Id, context.Page.Id, result, context.Page.Version);
-                }
-            }
-            else
-            {
-                result = RenderHelper.Render(RenderPlan, context.RenderContext);
-            }
-
-
-
-
-            if (context.Page.Type == Models.PageType.RichText)
-            {
-                //special for richtext editor. meta name = "viewport" content = "width=device-width, initial-scale=1"
-                var header = new Models.HtmlHeader();
-                Dictionary<string, string> content = new Dictionary<string, string>();
-                content.Add("", "width=device-width, initial-scale=1");
-                header.Metas.Add(new Models.HtmlMeta() { name = "viewport", content = content });
-
-                result = HtmlHeadService.SetHeaderToHtml(result, header);
-            }
+            result = RenderHelper.Render(RenderPlan, context.RenderContext);
 
             return result;
         }

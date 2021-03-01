@@ -30,13 +30,13 @@ namespace Kooboo.Sites.Render.Components
 
         public bool IsRegularHtmlTag { get { return false; } }
 
-        public string StoreEngineName { get { return null;  } }
+        public string StoreEngineName { get { return null; } }
 
-        public byte StoreConstType { get { return ConstObjectType.View;  } }
+        public byte StoreConstType { get { return ConstObjectType.View; } }
 
         public string DisplayName(RenderContext Context)
         {
-            return Data.Language.Hardcoded.GetValue("View", Context); 
+            return Data.Language.Hardcoded.GetValue("View", Context);
         }
 
         public List<ComponentInfo> AvaiableObjects(SiteDb sitedb)
@@ -66,31 +66,35 @@ namespace Kooboo.Sites.Render.Components
 
         public Task<string> RenderAsync(RenderContext context, ComponentSetting setting)
         {
+            if (context.MockData)
+            {
+                return RenderMockAsync(context, setting);
+            } 
             var frontcontext = context.GetItem<FrontContext>();
             DateTime logstart = DateTime.UtcNow;
-             
+
             View view = null;
 
             if (context.WebSite.EnableFrontEvents && context.IsSiteBinding)
             {
 
-                view = Kooboo.Sites.FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFinding, context, setting); 
-                
+                view = Kooboo.Sites.FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFinding, context, setting);
+
                 if (view == null)
-                { 
+                {
                     view = context.WebSite.SiteDb().Views.GetByNameOrId(setting.NameOrId);
                     if (view != null)
                     {
-                        var result = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFound, context, setting, view); 
+                        var result = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFound, context, setting, view);
 
-                        if (result !=null)
+                        if (result != null)
                         {
-                            view = result; 
-                        }  
+                            view = result;
+                        }
                     }
                     else
                     {
-                        view = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewNotFound, context, setting);  
+                        view = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewNotFound, context, setting);
                     }
                 }
             }
@@ -129,21 +133,21 @@ namespace Kooboo.Sites.Render.Components
                 var result = DataSources.DataMethodExecutor.ExecuteViewDataMethod(frontcontext, datemethod);
 
                 if (result != null)
-                { 
+                {
                     if (result is PagedResult)
-                    { 
-                        var pagedresult = result as  PagedResult; 
-                 
-                        dataResults[datemethod.AliasName] = pagedresult.DataList; 
+                    {
+                        var pagedresult = result as PagedResult;
+
+                        dataResults[datemethod.AliasName] = pagedresult.DataList;
                         dataResults[datemethod.AliasName + ".TotalPages"] = pagedresult.TotalPages;
                         List<int> PageNrs = new List<int>();
                         for (int i = 1; i <= pagedresult.TotalPages; i++)
                         {
-                            PageNrs.Add(i); 
+                            PageNrs.Add(i);
                         }
                         dataResults[datemethod.AliasName + ".CurrentPage"] = pagedresult.PageNumber;
                         dataResults[datemethod.AliasName + ".Pages"] = PageNrs;
-                    } 
+                    }
                     else
                     {
                         //if (result is DataMethodResult)
@@ -181,18 +185,18 @@ namespace Kooboo.Sites.Render.Components
             List<IRenderTask> renderplan;
             string returnstring = string.Empty;
 
-            var options = RenderOptionHelper.GetViewOption(context, viewid); 
-             
+            var options = RenderOptionHelper.GetViewOption(context, viewid);
+
             if (options.RequireBindingInfo)
             {
-                viewBody = DomService.ApplyKoobooId(viewBody); 
-                renderplan = RenderEvaluator.Evaluate(viewBody, options); 
+                viewBody = DomService.ApplyKoobooId(viewBody);
+                renderplan = RenderEvaluator.Evaluate(viewBody, options);
             }
             else
-            { 
+            {
                 renderplan = Cache.RenderPlan.GetOrAddRenderPlan(frontcontext.SiteDb, viewid, () => RenderEvaluator.Evaluate(viewBody, options));
             }
-             
+
 
             returnstring += RenderHelper.Render(renderplan, frontcontext.RenderContext);
 
@@ -206,7 +210,7 @@ namespace Kooboo.Sites.Render.Components
             {
                 context.DataContext.Pop();
             }
-            
+
 
             frontcontext.AddLogEntry("view", view.Name, logstart, 200);
 
@@ -251,5 +255,53 @@ namespace Kooboo.Sites.Render.Components
 
             return CurrentView;
         }
+
+
+        public Task<string> RenderMockAsync(RenderContext context, ComponentSetting setting)
+        {
+            var frontcontext = context.GetItem<FrontContext>();
+            DateTime logstart = DateTime.UtcNow;
+
+            View view = context.WebSite.SiteDb().Views.GetByNameOrId(setting.NameOrId);
+
+            view = CheckAlternativeView(view, frontcontext);
+
+            frontcontext.ExecutingView = view;
+
+            string viewBody = null;
+            frontcontext.Views.Add(view);
+
+            if (setting.Settings != null && setting.Settings.Count() > 0)
+            {
+                context.DataContext.Push(setting.Settings);
+            }
+
+
+            viewBody = view.Body;
+
+            Guid viewid = view.Id;
+
+            List<IRenderTask> renderplan;
+            string returnstring = string.Empty;
+
+            var options = RenderOptionHelper.GetViewOption(context, viewid);
+            options.MockData = true;
+
+            renderplan = RenderEvaluator.Evaluate(viewBody, options);
+
+            returnstring += RenderHelper.Render(renderplan, frontcontext.RenderContext);
+
+            if (setting.Settings != null && setting.Settings.Count() > 0)
+            {
+                context.DataContext.Pop();
+            }
+
+            frontcontext.AddLogEntry("view", view.Name, logstart, 200);
+
+            frontcontext.ExecutingView = null;
+            return Task.FromResult(returnstring);
+
+        }
+
     }
 }
