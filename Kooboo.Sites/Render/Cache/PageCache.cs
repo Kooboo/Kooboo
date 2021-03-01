@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Render.PageCache
         }
 
 
-        public static string GetByMinutes(Guid SiteId, Guid PageId, int CacheMinutes)
+        public static string GetByMinutes(Guid SiteId, Guid PageId, int CacheMinutes, long version=-1)
         {
             var siteitems = GetSiteCaches(SiteId);
             if (siteitems.ContainsKey(PageId))
@@ -55,6 +55,11 @@ namespace Kooboo.Sites.Render.PageCache
                 var item = siteitems[PageId];
                 if (item != null)
                 {
+                    // force update when page version change. 
+                    if (version >0 && item.Version != version)
+                    {
+                        return null; 
+                    } 
                     // by minutes
                     var MinutesPast = DateTime.Now - item.LastModify;
                     if (MinutesPast.Minutes < CacheMinutes)

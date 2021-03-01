@@ -49,7 +49,7 @@ namespace Kooboo.Sites.Render
                     }
                     else
                     {
-                        result = PageCache.PageCache.GetByMinutes(context.SiteDb.Id, context.Page.Id, context.Page.CacheMinutes);
+                        result = PageCache.PageCache.GetByMinutes(context.SiteDb.Id, context.Page.Id, context.Page.CacheMinutes, context.Page.Version);
                     } 
 
                     if (string.IsNullOrEmpty(result))
