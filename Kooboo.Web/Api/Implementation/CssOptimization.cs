@@ -19,6 +19,7 @@ namespace Kooboo.Web.Api.Implementation
         public List<OptimizationViewModel> List(ApiCall call)
         {
             var site = call.WebSite;
+            var sitedb = call.WebSite.SiteDb(); 
 
             List<OptimizationViewModel> result = new List<OptimizationViewModel>();
 
@@ -29,9 +30,29 @@ namespace Kooboo.Web.Api.Implementation
                 var model = new OptimizationViewModel();
                 model.Id = item.Id;
                 model.Content = item.CssText;
+                model.ParentId = item.ParentStyleId;  
                 result.Add(model);
+            }
+
+            foreach (var item in result.GroupBy(o=>o.ParentId))
+            {
+                var list = item.ToList();
+
+                var styleid = item.Key;
+
+                var style = sitedb.Styles.Get(styleid); 
+                if (style !=null)
+                {
+                    var url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(site.SiteDb(), style);
+
+                    foreach (var rule in list)
+                    {
+                        rule.StyleSheet = url;  
+                    }
+                }  
             } 
-            return result; 
+
+            return result.OrderBy(o=>o.StyleSheet).ToList(); 
         }
 
         public void Delete(ApiCall call, Guid[] ids)
@@ -73,6 +94,10 @@ namespace Kooboo.Web.Api.Implementation
         public Guid Id { get; set; }
 
         public string Content { get; set; }
+
+        public string StyleSheet { get; set; }
+
+        public Guid ParentId { get; set; }
 
     }
 }

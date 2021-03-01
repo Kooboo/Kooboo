@@ -18,11 +18,21 @@
   </div>
 
   <kb-table :data="list" show-select :selected.sync="selectedRows">
-    <kb-table-column :label="Kooboo.text.common.Content">
-      <template v-slot="row">
-        <span @click.stop="">{{ row.content }}</span>
-      </template>
-    </kb-table-column>
+
+      <kb-table-column :label="Kooboo.text.common.name">
+          <template v-slot="row">
+              <span @click.stop="">{{ row.styleSheet }}</span>
+          </template>
+      </kb-table-column>
+
+      <kb-table-column :label="Kooboo.text.common.Content">
+          <template v-slot="row">
+              <span @click.stop="">{{ row.content }}</span>
+          </template>
+      </kb-table-column> 
+
+
+
   </kb-table>
 </div>
 <script>

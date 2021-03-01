@@ -49,7 +49,7 @@ namespace Kooboo.Sites.Render.Components
         public List<ComponentInfo> AvaiableObjects(SiteDb SiteDb)
         {
             List<ComponentInfo> Models = new List<ComponentInfo>();
-            var allScript = SiteDb.Code.ListByCodeType(Sites.Models.CodeType.PageScript).Where(o=>o.IsEmbedded== false);
+            var allScript = SiteDb.Code.ListByCodeType(Sites.Models.CodeType.PageScript).Where(o => o.IsEmbedded == false);
 
             foreach (var item in allScript)
             {
@@ -68,10 +68,10 @@ namespace Kooboo.Sites.Render.Components
 
         public string Preview(SiteDb SiteDb, string NameOrId)
         {
-            var k = SiteDb.Code.Get(NameOrId); 
-            if (k !=null)
+            var k = SiteDb.Code.Get(NameOrId);
+            if (k != null)
             {
-                return k.Body; 
+                return k.Body;
             }
             return null;
         }
@@ -80,11 +80,11 @@ namespace Kooboo.Sites.Render.Components
         {
             if (context.MockData)
             {
-                return null; 
+                return null;
             }
 
             string code = settings.InnerHtml;
-            string result = null; 
+            string result = null;
 
             if (settings.Engine == "kscript")
             {
@@ -99,11 +99,11 @@ namespace Kooboo.Sites.Render.Components
                 else
                 {
                     if (!string.IsNullOrWhiteSpace(code))
-                    { 
+                    {
                         result = Scripting.Manager.ExecuteInnerScript(context, code);
                     }
                 }
-               
+
             }
             else
             {
@@ -114,10 +114,10 @@ namespace Kooboo.Sites.Render.Components
                 }
                 else
                 {
-                    result = code; 
-                }    
+                    result = code;
+                }
             }
-              
+
             return Task.FromResult<string>(result);
 
         }
