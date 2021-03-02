@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Render.PageCache
           set; 
         }
 
-        private Guid ComputeHash(Dictionary<string, string> value)
+        public static Guid ComputeHash(Dictionary<string, string> value)
         {
             if (value == null)
             { return default(Guid); } 
@@ -34,7 +34,14 @@ namespace Kooboo.Sites.Render.PageCache
             {
                 uniquestring += item.Key + item.Value; 
             } 
-            return Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(uniquestring);  
+            if (string.IsNullOrWhiteSpace(uniquestring))
+            {
+                return default(Guid); 
+            }
+            else
+            {
+                return Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(uniquestring);
+            } 
         }
 
         private Dictionary<string, string> _querystring; 

@@ -51,12 +51,26 @@ namespace Kooboo.Sites.Render.Evaluators
             } 
 
             if (element.tagName == "link")
-            {
-                var rel = element.getAttribute("rel");
-                if (rel == null || rel.ToLower() != "stylesheet")
+            { 
+                if (!options.EnableJsCssBrowserCache)
                 {
-                    return null;
+                    return null; 
                 }
+
+                var rel = element.getAttribute("rel");
+
+                var url = element.getAttribute("src");
+                var mine = Kooboo.Lib.Helper.IOHelper.MimeType(url); 
+                 
+                if (mine == null)
+                {
+                    return null; 
+                }
+
+                if (!mine.ToLower().Contains("css")  && !mine.ToLower().Contains("font") && !mine.ToLower().Contains("style"))
+                {
+                    return null; 
+                }  
             }
 
             Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

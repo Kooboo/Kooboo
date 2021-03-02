@@ -6,6 +6,7 @@ using Kooboo.Extensions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Kooboo.Sites.Cache;
+using Kooboo.Data.Attributes;
 
 namespace Kooboo.Sites.Models
 {
@@ -108,6 +109,22 @@ namespace Kooboo.Sites.Models
 
         public int CacheMinutes { get; set; }
 
+        private string[] _cachekeys;
+        [KIgnore]
+        public string[] CacheKeys
+        {
+            get
+            {
+                if (_cachekeys == null)
+                {
+                    if (!string.IsNullOrWhiteSpace(CacheQueryKeys))
+                    {
+                        _cachekeys = this.CacheQueryKeys.Split(",;".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    }
+                }
+                return _cachekeys;
+            }
+        }
         //Value like "page,site"
         public string CacheQueryKeys { get; set; }
 

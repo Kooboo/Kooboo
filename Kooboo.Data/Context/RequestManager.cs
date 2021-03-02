@@ -28,12 +28,12 @@ namespace Kooboo.Data.Context
             return request.Headers.Get(name);
         }
 
-        private static string TryGetValue(HttpRequest request, string name,bool needDecode=true)
+        private static string TryGetValue(HttpRequest request, string name, bool needDecode = true)
         {
             string Value = request.QueryString.Get(name);
             if (!string.IsNullOrEmpty(Value))
             {
-                if(needDecode)
+                if (needDecode)
                     Value = System.Net.WebUtility.UrlDecode(Value);
                 return Value;
             }
@@ -126,9 +126,9 @@ namespace Kooboo.Data.Context
             return Value;
         }
 
-        public static string GetValue(HttpRequest request, string key,bool needDecode=true)
+        public static string GetValue(HttpRequest request, string key, bool needDecode = true)
         {
-            return TryGetValue(request, key,needDecode);
+            return TryGetValue(request, key, needDecode);
         }
 
         public static string GetValue(HttpRequest request, params string[] names)
@@ -154,7 +154,7 @@ namespace Kooboo.Data.Context
 
             if (!WebSite.EnableMultilingual)
             {
-                return WebSite.DefaultCulture; 
+                return WebSite.DefaultCulture;
             }
 
             var request = context.Request;
@@ -208,26 +208,26 @@ namespace Kooboo.Data.Context
                 }
             }
 
-            if (context.User !=null)
+            if (context.User != null)
             {
-                if (context.User.Language !=null)
+                if (context.User.Language != null)
                 {
-                    var userlang = context.User.Language; 
+                    var userlang = context.User.Language;
                     if (WebSite.Culture.ContainsKey(userlang))
                     {
                         SetCultureCookie(context, userlang);
-                        return userlang; 
-                    } 
-                } 
+                        return userlang;
+                    }
+                }
             }
 
             if (context.Request.Cookies.ContainsKey("_kooboo_culture"))
             {
-                var cookieculture = context.Request.Cookies.GetValue("_kooboo_culture"); 
+                var cookieculture = context.Request.Cookies.GetValue("_kooboo_culture");
 
                 if (WebSite.Culture.ContainsKey(cookieculture))
                 {
-                    return cookieculture; 
+                    return cookieculture;
                 }
 
             }
@@ -237,7 +237,7 @@ namespace Kooboo.Data.Context
             {
                 string detected = DetectCulture(WebSite, context.Request);
                 SetCultureCookie(context, detected);
-                return detected; 
+                return detected;
             }
             else
             {
@@ -287,11 +287,11 @@ namespace Kooboo.Data.Context
 
             if (request.QueryString.AllKeys.Contains("kooboodebug"))
             {
-                request.Channel = RequestChannel.InlineDesign;    
+                request.Channel = RequestChannel.InlineDesign;
                 request.QueryString.Remove("kooboodebug");
                 hasquery = true;
             }
-                
+
             // alternative view. 
             string stralterview = request.QueryString.Get(Constants.Site.AlternativeViewQueryName);
 
@@ -351,7 +351,7 @@ namespace Kooboo.Data.Context
                     int NextSlash = relativeUrl.IndexOf("/", 1);
                     if (NextSlash == -1)
                     {
-                        NextSlash = relativeUrl.IndexOf("?", 1); 
+                        NextSlash = relativeUrl.IndexOf("?", 1);
                     }
                     string path = string.Empty;
                     if (NextSlash > 0)
@@ -379,7 +379,7 @@ namespace Kooboo.Data.Context
                                         request.RelativeUrl = relativeUrl.Substring(NextSlash);
                                         if (request.RelativeUrl.StartsWith("?"))
                                         {
-                                            request.RelativeUrl = "/" + request.RelativeUrl; 
+                                            request.RelativeUrl = "/" + request.RelativeUrl;
                                         }
                                     }
                                     else
@@ -397,7 +397,7 @@ namespace Kooboo.Data.Context
                 }
             }
         }
-         
+
         public static string DetectCulture(WebSite website, HttpRequest request)
         {
             if (website.EnableMultilingual)
@@ -427,7 +427,7 @@ namespace Kooboo.Data.Context
 
             return website.DefaultCulture;
         }
-          
+
         public static string DetectCultureByCountryCode(WebSite website, string countrycode)
         {
 
@@ -450,7 +450,7 @@ namespace Kooboo.Data.Context
         {
             if (acceptLanguageHeader == null)
             {
-                return null; 
+                return null;
             }
 
             string lowerdefault = website.DefaultCulture.ToLower();
@@ -481,6 +481,30 @@ namespace Kooboo.Data.Context
             //}
             return null;
         }
-         
+
+        public static Dictionary<string, string> GetQueryString(HttpRequest request)
+        {
+            var keys = request.QueryString.AllKeys;
+
+            Dictionary<string, string> querystring = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            bool hasvalue = false; 
+            
+            foreach (var item in keys)
+            {
+                var value = request.QueryString.Get(item);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    querystring.Add(item, value);
+                    hasvalue = true; 
+                }
+            } 
+            if (hasvalue)
+            {
+                return querystring; 
+            }
+            return null; 
+            
+        }
+
     }
 }

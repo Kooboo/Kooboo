@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Kooboo.Sites.Service;
 using System;
 using Kooboo.Sites.DataTraceAndModify.CustomTraces;
+using Kooboo.Data.Context;
+using System.Linq;
 
 namespace Kooboo.Sites.Render
 {
@@ -42,22 +44,29 @@ namespace Kooboo.Sites.Render
 
                 // check the cache. 
                 if (context.Page.EnableCache)
-                { 
-                    context.RenderContext.Request.Get()
+                {
+                    Dictionary<string, string> querystring = null;
+
+                    if (!string.IsNullOrWhiteSpace(context.Page.CacheQueryKeys))
+                    {
+                        querystring = RequestManager.GetQueryString(context.RenderContext.Request);
+                        querystring = FilterOut(querystring, context.Page.CacheKeys);
+                    } 
+
                     if (context.Page.CacheByVersion)
                     {
-                        result =  PageCache.PageCache.GetByVersion(context.SiteDb.Id, context.Page.Id, context.Page.Version);
+                        result = PageCache.PageCache.GetByVersion(context.SiteDb.Id, context.Page.Id, context.Page.Version, querystring);
                     }
                     else
                     {
-                        result = PageCache.PageCache.GetByMinutes(context.SiteDb.Id, context.Page.Id, context.Page.CacheMinutes, context.Page.Version);
-                    } 
+                        result = PageCache.PageCache.GetByMinutes(context.SiteDb.Id, context.Page.Id, context.Page.CacheMinutes, querystring, context.Page.Version);
+                    }
 
                     if (string.IsNullOrEmpty(result))
                     {
                         result = RenderHelper.Render(RenderPlan, context.RenderContext);
 
-                        Kooboo.Sites.Render.PageCache.PageCache.Set(context.SiteDb.Id, context.Page.Id, result, context.Page.Version);
+                        Kooboo.Sites.Render.PageCache.PageCache.Set(context.SiteDb.Id, context.Page.Id, result, context.Page.Version, querystring);
                     }
                 }
                 else
@@ -96,11 +105,31 @@ namespace Kooboo.Sites.Render
             var option = RenderOptionHelper.GetPageOption(context);
             option.Evaluators = EvaluatorContainer.MockData;
 
-            context.RenderContext.MockData = true; 
+            context.RenderContext.MockData = true;
 
             RenderPlan = RenderEvaluator.Evaluate(context.Page.Body, option);
 
             result = RenderHelper.Render(RenderPlan, context.RenderContext);
+
+            return result;
+        }
+
+        public static Dictionary<string, string> FilterOut(Dictionary<string, string> values, string[] keys)
+        {
+            if (values == null || keys == null)
+            {
+                return null;
+            }
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            foreach (var item in keys)
+            {
+                if (values.ContainsKey(item))
+                {
+                    var value = values[item];
+                    result.Add(item, value);
+                }
+            }
 
             return result;
         }

@@ -15,14 +15,13 @@ namespace Kooboo.Sites.Render
                 else
                 {
                     // double verify...
-                    var version = context.RenderContext.Request.GetValue("version");
-                    if (!string.IsNullOrWhiteSpace(version))
-                    {
-                        context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
-                    }
+                    //var version = context.RenderContext.Request.GetValue("version");
+                    //if (!string.IsNullOrWhiteSpace(version))
+                    //{
+                        context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(30).ToString("r");
+                    //}
                 }
-            } 
-
+            }
         }
 
         public static void FontVersion(FrontContext context)
@@ -37,6 +36,9 @@ namespace Kooboo.Sites.Render
             if (!string.IsNullOrWhiteSpace(version))
             {
                 context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+            }else if (context.WebSite.EnableJsCssBrowerCache)
+            {
+                context.RenderContext.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(30).ToString("r");
             }
         }
 
