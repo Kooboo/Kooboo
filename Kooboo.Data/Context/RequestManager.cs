@@ -397,8 +397,7 @@ namespace Kooboo.Data.Context
                 }
             }
         }
-
-
+         
         public static string DetectCulture(WebSite website, HttpRequest request)
         {
             if (website.EnableMultilingual)
@@ -428,9 +427,7 @@ namespace Kooboo.Data.Context
 
             return website.DefaultCulture;
         }
-
-
-
+          
         public static string DetectCultureByCountryCode(WebSite website, string countrycode)
         {
 
@@ -484,8 +481,6 @@ namespace Kooboo.Data.Context
             //}
             return null;
         }
-
-
-
+         
     }
 }

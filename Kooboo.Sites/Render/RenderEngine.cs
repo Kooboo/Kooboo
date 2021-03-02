@@ -43,6 +43,7 @@ namespace Kooboo.Sites.Render
                 // check the cache. 
                 if (context.Page.EnableCache)
                 { 
+                    context.RenderContext.Request.Get()
                     if (context.Page.CacheByVersion)
                     {
                         result =  PageCache.PageCache.GetByVersion(context.SiteDb.Id, context.Page.Id, context.Page.Version);

@@ -7,19 +7,19 @@ namespace Kooboo.Sites.Render.PageCache
     {
         private static object _locker = new object();
 
-        internal static Dictionary<Guid, Dictionary<Guid, CacheItem>> SitePageCache { get; set; }
+        internal static Dictionary<Guid, Dictionary<Guid, PageCacheItem>> SitePageCache { get; set; }
         static PageCache()
         {
-            SitePageCache = new Dictionary<Guid, Dictionary<Guid, CacheItem>>();
+            SitePageCache = new Dictionary<Guid, Dictionary<Guid, PageCacheItem>>();
         }
 
-        internal static Dictionary<Guid, CacheItem> GetSiteCaches(Guid SiteId)
+        internal static Dictionary<Guid, PageCacheItem> GetSiteCaches(Guid SiteId)
         {
             if (!SitePageCache.ContainsKey(SiteId))
             {
                 lock (_locker)
                 {
-                    Dictionary<Guid, CacheItem> sitecache = new Dictionary<Guid, CacheItem>();
+                    Dictionary<Guid, PageCacheItem> sitecache = new Dictionary<Guid, PageCacheItem>();
                     SitePageCache.Add(SiteId, sitecache);
                 }
             }
@@ -45,8 +45,7 @@ namespace Kooboo.Sites.Render.PageCache
 
             return null;
         }
-
-
+         
         public static string GetByMinutes(Guid SiteId, Guid PageId, int CacheMinutes, long version=-1)
         {
             var siteitems = GetSiteCaches(SiteId);
@@ -71,13 +70,12 @@ namespace Kooboo.Sites.Render.PageCache
 
             return null;
         }
-
-
+         
         public static void Set(Guid SiteId, Guid PageId, string Content, long Version)
         {
             var siteitems = GetSiteCaches(SiteId);
 
-            var cacheitem = new CacheItem();
+            var cacheitem = new PageCacheItem();
             cacheitem.Result = Content;
             cacheitem.LastModify = DateTime.Now;
             cacheitem.ObjectId = PageId;
