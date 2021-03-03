@@ -23,6 +23,7 @@ namespace Kooboo.Sites.Render
                     _list.Add(new SiteLayoutEvaluator());
                     _list.Add(new RepeaterEvaluator());
                     _list.Add(new ConditionEvaluator());
+                    _list.Add(new SystemEvaluator());
                     _list.Add(new ForEvaluator());
                     _list.Add(new AttributeEvaluator());
                     _list.Add(new kExternalCacheEvaluator());

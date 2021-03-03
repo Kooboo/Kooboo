@@ -24,8 +24,7 @@ namespace Kooboo.Sites.Render.PageCache
                     SitePageCache.Add(SiteId, sitecache);
                 }
             }
-            return SitePageCache[SiteId];
-
+            return SitePageCache[SiteId]; 
         }
          
         public static string GetByVersion(Guid SiteId, Guid PageId, long Version, Dictionary<string, string> querystring = null)

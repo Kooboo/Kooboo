@@ -49,9 +49,9 @@ namespace Kooboo.Sites.Render
 
                     if (!string.IsNullOrWhiteSpace(context.Page.CacheQueryKeys))
                     {
-                        querystring = RequestManager.GetQueryString(context.RenderContext.Request);
-                        querystring = FilterOut(querystring, context.Page.CacheKeys);
-                    } 
+                        //querystring = RequestManager.GetQueryString(context.RenderContext.Request);
+                        querystring = GetParaValues(context.RenderContext, context.Page.CacheKeys);
+                    }
 
                     if (context.Page.CacheByVersion)
                     {
@@ -114,9 +114,9 @@ namespace Kooboo.Sites.Render
             return result;
         }
 
-        public static Dictionary<string, string> FilterOut(Dictionary<string, string> values, string[] keys)
+        public static Dictionary<string, string> GetParaValues(RenderContext context, string[] keys)
         {
-            if (values == null || keys == null)
+            if (keys == null)
             {
                 return null;
             }
@@ -124,13 +124,9 @@ namespace Kooboo.Sites.Render
 
             foreach (var item in keys)
             {
-                if (values.ContainsKey(item))
-                {
-                    var value = values[item];
-                    result.Add(item, value);
-                }
-            }
-
+                var value = RequestManager.GetValue(context.Request, item);
+                result[item] = value;
+            } 
             return result;
         }
     }

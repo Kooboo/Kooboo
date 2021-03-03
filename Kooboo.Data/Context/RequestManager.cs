@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Kooboo.Extensions;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Kooboo.Data.Context
 {
@@ -53,6 +54,13 @@ namespace Kooboo.Data.Context
             if (request.Cookies.ContainsKey(name))
             {
                 return request.Cookies[name];
+            }
+
+            var systemvalue = GetSystemValue(request, name);
+
+            if (systemvalue != null)
+            {
+                return systemvalue;
             }
 
             if (!string.IsNullOrEmpty(request.Body))
@@ -487,23 +495,58 @@ namespace Kooboo.Data.Context
             var keys = request.QueryString.AllKeys;
 
             Dictionary<string, string> querystring = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            bool hasvalue = false; 
-            
+            bool hasvalue = false;
+
             foreach (var item in keys)
             {
                 var value = request.QueryString.Get(item);
                 if (!string.IsNullOrEmpty(value))
                 {
                     querystring.Add(item, value);
-                    hasvalue = true; 
+                    hasvalue = true;
                 }
-            } 
+            }
             if (hasvalue)
             {
-                return querystring; 
+                return querystring;
             }
-            return null; 
-            
+            return null;
+
+        }
+
+        public static string GetSystemValue(HttpRequest request, string Name)
+        {
+            if (Name == null)
+            {
+                return null;
+            }
+            Name = Name.ToLower();
+
+            string result = null;
+
+            if (Name == "device")
+            {
+                var useragent = request.Headers.Get("User-Agent");
+                if (IsMobile(useragent))
+                {
+                    return "Mobile";
+                }
+                else
+                {
+                    return "Desktop";
+                }
+            }
+
+            return result;
+        }
+
+
+        static Regex MobileCheck = new Regex(@"(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+
+
+        public static bool IsMobile(string UserAgent)
+        {
+            return MobileCheck.IsMatch(UserAgent);
         }
 
     }

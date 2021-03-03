@@ -41,13 +41,19 @@ namespace Kooboo.Render.ServerSide
          
 
         public static RenderRespnose RenderJs(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context, string RelativeUrl)
-        {
+        { 
             var fullname = sourceProvider.GetFullFileName(context, RelativeUrl);
 
             if (string.IsNullOrEmpty(fullname))
             {
                 return new RenderRespnose() { Body = null };
             }
+
+           // cache
+           if (RelativeUrl.ToLower().Contains("monaco"))
+            {
+                context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
+            } 
 
             if (option.EnableMultilingual && RelativeUrl.ToLower().EndsWith(option.MultilingualJsFile))
             { 
