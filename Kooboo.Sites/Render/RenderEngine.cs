@@ -68,6 +68,9 @@ namespace Kooboo.Sites.Render
 
                         Kooboo.Sites.Render.PageCache.PageCache.Set(context.SiteDb.Id, context.Page.Id, result, context.Page.Version, querystring);
                     }
+
+
+                    // cache result may have replacement. 
                 }
                 else
                 {

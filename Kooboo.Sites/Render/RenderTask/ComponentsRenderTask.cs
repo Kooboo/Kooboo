@@ -18,7 +18,20 @@ namespace Kooboo.Sites.Render
         public ComponentRenderTask(Element element)
         {
             this.setting = ComponentSetting.LoadFromElement(element);
+
+            if (this.setting.Settings.ContainsKey("nocache"))
+            {
+                this.setting.Settings.Remove("nocache");
+                this.NonCache = true; 
+            }
         }
+
+        public ComponentRenderTask()
+        {
+
+        }
+
+        public bool NonCache { get; set; }
 
         public bool ClearBefore
         {
@@ -30,6 +43,13 @@ namespace Kooboo.Sites.Render
 
         public string Render(RenderContext context)
         {
+            if (NonCache)
+            {
+                var newtask = new ComponentRenderTask();
+                newtask.setting = this.setting; 
+                return NonCacheItems.Set(context.WebSite.Id, newtask); 
+            }
+
             var component = Container.Get(setting.TagName);
             Task<string> task = component.RenderAsync(context, setting);
             if (task == null)

@@ -23,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
 
             List<OptimizationViewModel> result = new List<OptimizationViewModel>();
 
-            var unusedList = Kooboo.Sites.Service.CleanerService.GetUnusedRules(call.Context).Result;
+            var unusedList = Kooboo.Sites.Service.CssCleanerService.GetUnusedRules(call.Context).Result;
 
             foreach (var item in unusedList)
             {
