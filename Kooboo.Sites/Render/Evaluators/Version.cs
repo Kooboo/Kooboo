@@ -59,7 +59,7 @@ namespace Kooboo.Sites.Render.Evaluators
 
                 var rel = element.getAttribute("rel");
 
-                var url = element.getAttribute("src");
+                var url = element.getAttribute("href");
                 var mine = Kooboo.Lib.Helper.IOHelper.MimeType(url); 
                  
                 if (mine == null)

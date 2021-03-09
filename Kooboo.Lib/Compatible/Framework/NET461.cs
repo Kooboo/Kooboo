@@ -135,7 +135,7 @@ namespace Kooboo.Lib.Compatible
             systhumbnail = image.GetThumbnailImage(width, height, null, new IntPtr());
 
             MemoryStream memstream = new MemoryStream();
-            systhumbnail.Save(memstream, System.Drawing.Imaging.ImageFormat.Png);
+            systhumbnail.Save(memstream, image.RawFormat);
             return memstream.ToArray();
         }
 
