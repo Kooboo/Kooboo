@@ -12,5 +12,9 @@ namespace Kooboo.Web.Lighthouse
         string Description { get; }
 
         void Execute(RenderContext Context);
+
+        bool ImgTag { get;   }
+
+        bool ATag { get; }
     }
 }

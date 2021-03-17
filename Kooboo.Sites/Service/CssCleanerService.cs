@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Service
 {
-  public static  class CssCleanerService
+    public static class CssCleanerService
     {
         public static async Task<List<CmsCssRule>> GetUnusedRules(RenderContext context)
         {
@@ -19,49 +19,118 @@ namespace Kooboo.Sites.Service
 
             context.MockData = true;
             var doms = await GetDoms(sitedb, context);
+            var JsCssNames = JsClassList(sitedb);
 
             var rules = sitedb.CssRules.All().Where(o => !o.IsInline).ToList();
+            var styles = sitedb.Styles.All();
 
-            Dictionary<CmsCssRule, List<simpleSelector>> preselector = new Dictionary<CmsCssRule, List<simpleSelector>>();
+            List<StyleRules> prerules = new List<StyleRules>();
 
-            foreach (var item in rules)
+            var groupby = rules.GroupBy(o => o.ParentStyleId).ToList();
+            foreach (var item in groupby)
             {
-                if (!string.IsNullOrWhiteSpace(item.SelectorText))
+                var styleid = item.Key;
+                var style = sitedb.Styles.Get(styleid);
+                StyleRules stylerule = new StyleRules();
+                stylerule.Style = style;
+                stylerule.StyleId = styleid;
+                var list = item.ToList();
+
+                foreach (var rule in list)
                 {
-                    var selectorlist = SelectorParser.parseSelectorGroup(item.SelectorText);
+                    var selectorlist = SelectorParser.parseSelectorGroup(rule.SelectorText);
                     if (selectorlist != null)
-                    { preselector.Add(item, selectorlist); }
-                } 
+                    {
+                        stylerule.PreSelector.Add(rule, selectorlist);
+                    }
+                }
+                prerules.Add(stylerule);
             }
 
             List<CmsCssRule> unused = new List<CmsCssRule>();
 
-            foreach (var item in preselector)
+            foreach (var item in prerules)
             {
-                bool checkused = IsUsed(item.Value, doms);
-                if (!checkused)
+                var checkdoms = new Dictionary<Guid, Kooboo.Dom.Document>();
+                if (item.Style != null)
                 {
-                    unused.Add(item.Key);
+                    var pageids = sitedb.Styles.GetUsedByPageId(item.Style);
+                    foreach (var onepagedom in doms)
+                    {
+                        if (pageids.Contains(onepagedom.Key))
+                        {
+                            checkdoms.Add(onepagedom.Key, onepagedom.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    checkdoms = doms;
+                }
+
+                foreach (var rule in item.PreSelector)
+                {
+                    try
+                    {
+                        bool checkDomused = IsUsed(rule.Value, checkdoms.Values.ToList());
+
+                        if (!checkDomused)
+                        {
+                            bool checkJsUsed = IsUsed(rule.Value, JsCssNames);
+                            if (!checkJsUsed)
+                            {
+                                unused.Add(rule.Key);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+                    }
                 }
             }
+             
             return unused;
         }
 
-        private static async Task<List<Kooboo.Dom.Document>> GetDoms(SiteDb sitedb, RenderContext context)
-        {
-            List<Kooboo.Dom.Document> doms = new List<Document>();
 
+        private static async Task<Dictionary<Guid, Kooboo.Dom.Document>> GetDoms(SiteDb sitedb, RenderContext context)
+        {
+            Dictionary<Guid, Kooboo.Dom.Document> pagedoms = new Dictionary<Guid, Document>();
+            List<Kooboo.Dom.Document> doms = new List<Document>();
             foreach (var item in sitedb.Pages.All())
             {
                 RenderContext newcontext = new RenderContext();
                 newcontext.WebSite = sitedb.WebSite;
                 var html = await Kooboo.Sites.Render.PageRenderer.RenderMockAsync(newcontext, item);
-
                 var dom = Kooboo.Dom.DomParser.CreateDom(html);
-
+                pagedoms.Add(item.Id, dom);
                 doms.Add(dom);
             }
-            return doms;
+            return pagedoms;
+        }
+
+        public static bool IsUsed(List<simpleSelector> selector, HashSet<string> JsClassNames)
+        {
+            foreach (var item in selector)
+            {
+                if (item.Type == enumSimpleSelectorType.classSelector)
+                {
+                    var clsSelector = item as classSelector;
+                    if (clsSelector != null)
+                    {
+                        foreach (var cls in clsSelector.classList)
+                        {
+                            if (JsClassNames.Contains(cls))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static bool IsUsed(List<simpleSelector> selector, List<Kooboo.Dom.Document> docs)
@@ -106,6 +175,22 @@ namespace Kooboo.Sites.Service
             }
             return false;
         }
+
+        public static HashSet<string> JsClassList(SiteDb Sitedb)
+        {
+            HashSet<string> result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var alljs = Sitedb.Scripts.All();
+
+            foreach (var item in alljs)
+            {
+                var list = Lib.Utilities.JsStringScanner.ScanStringList(item.Body);
+                foreach (var name in list)
+                {
+                    result.Add(name);
+                }
+            }
+            return result;
+        }
     }
 
 
@@ -116,7 +201,16 @@ namespace Kooboo.Sites.Service
         public List<Guid> StyleId { get; set; }
 
         public Guid PageId { get; set; }
-
-        public List<string> JsClassList { get; set; }
     }
+
+    public class StyleRules
+    {
+        public Guid StyleId { get; set; }
+
+        public Style Style { get; set; }
+
+        public Dictionary<CmsCssRule, List<simpleSelector>> PreSelector = new Dictionary<CmsCssRule, List<simpleSelector>>();
+
+    }
+
 }

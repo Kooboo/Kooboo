@@ -114,4 +114,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Lighthouse\Css\" />
+  </ItemGroup>
+
 </Project>

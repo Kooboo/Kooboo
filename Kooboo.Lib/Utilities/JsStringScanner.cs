@@ -6,6 +6,13 @@ namespace Kooboo.Lib.Utilities
 {
     public class JsStringScanner
     {
+
+      public static List<string> ScanStringList(string jstext)
+        {
+            JsStringScanner scanner = new JsStringScanner(jstext); 
+            return scanner.GetStringList(); 
+        }
+
         private char[] chars;
         private int _readIndex;
         private int _length;

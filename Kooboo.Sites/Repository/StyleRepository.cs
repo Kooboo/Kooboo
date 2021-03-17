@@ -8,8 +8,9 @@ using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq; 
+using System.Linq;
 using Kooboo.Data.Models;
+using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.Repository
 {
@@ -53,8 +54,8 @@ namespace Kooboo.Sites.Repository
                 {
                     UsedByRelation relation = new UsedByRelation();
                     relation.ObjectId = item.OwnerObjectId;
-                    relation.ConstType = item.OwnerConstType; 
-                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation); 
+                    relation.ConstType = item.OwnerConstType;
+                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
                     relation.Remark = item.KoobooOpenTag;
                     result.Add(relation);
                 }
@@ -85,7 +86,7 @@ namespace Kooboo.Sites.Repository
 
                             UsedByRelation relation = new UsedByRelation();
                             relation.ObjectId = ParentStyle.Id;
-                            relation.ConstType = ParentStyle.ConstType; 
+                            relation.ConstType = ParentStyle.ConstType;
                             Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
                             relation.Remark = cssrule.CssText;
                             result.Add(relation);
@@ -97,13 +98,12 @@ namespace Kooboo.Sites.Repository
                 {
                     UsedByRelation relation = new UsedByRelation();
                     relation.ObjectId = item.objectXId;
-                    relation.ConstType = item.ConstTypeX; 
-                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation); 
+                    relation.ConstType = item.ConstTypeX;
+                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
                     result.Add(relation);
                 }
             }
             return result;
-
         }
 
         /// <summary>
@@ -141,5 +141,64 @@ namespace Kooboo.Sites.Repository
             return result;
         }
 
+
+        public List<Guid> GetUsedByPageId(Style style)
+        {
+            var relations = GetUsedBy(style);
+            List<Guid> Pageids = new List<Guid>();
+
+            foreach (var item in relations)
+            {
+                if (item.ConstType == ConstObjectType.Page)
+                {
+                    Pageids.Add(item.ObjectId);
+                }
+                else
+                {
+                    var repo = this.SiteDb.GetRepository(item.ConstType);
+                    if (repo != null)
+                    {
+                        var siteobj = repo.Get(item.ObjectId);
+                        if (siteobj != null)
+                        {
+                            var extraids = _GetUsedByPage(repo, siteobj);
+                            Pageids.AddRange(extraids);
+                        }
+
+                    }
+                }
+            }
+            return Pageids;
+        }
+
+        private List<Guid> _GetUsedByPage(IRepository repo, ISiteObject siteobject)
+        {
+            List<Guid> pageids = new List<Guid>();
+
+            var usedby = repo.GetUsedBy(siteobject.Id);
+
+            foreach (var item in usedby)
+            {
+                if (item.ConstType == ConstObjectType.Page)
+                {
+                    pageids.Add(item.ObjectId);
+                }
+                else
+                {
+                    var newrepo = this.SiteDb.GetRepository(item.ConstType);
+                    if (newrepo != null)
+                    {
+                        var siteobj = newrepo.Get(item.ObjectId);
+                        if (siteobj != null)
+                        {
+                            var usedbyids = _GetUsedByPage(newrepo, siteobj);
+                            pageids.AddRange(usedbyids);
+                        }
+                    }
+                }
+            }
+
+            return pageids;
+        }
     }
 }
