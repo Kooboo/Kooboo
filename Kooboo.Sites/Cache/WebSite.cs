@@ -158,18 +158,18 @@ namespace Kooboo.Sites.Cache
                 return true;
             }
 
-            if (!Kooboo.Data.AppSettings.IsOnlineServer)
-            {
-                if (TValueType == typeof(Page)
-              || TValueType == typeof(HtmlBlock)
-              || TValueType == typeof(Style)
-              || TValueType == typeof(Script)
-              || TValueType == typeof(Image)
-               )
-                {
-                    return true;
-                }
-            }
+            //if (!Kooboo.Data.AppSettings.IsOnlineServer)
+            //{
+            //    if (TValueType == typeof(Page)
+            //  || TValueType == typeof(HtmlBlock)
+            //  || TValueType == typeof(Style)
+            //  || TValueType == typeof(Script)
+            //  || TValueType == typeof(Image)
+            //   )
+            //    {
+            //        return true;
+            //    }
+            //}
 
             return false;
         }

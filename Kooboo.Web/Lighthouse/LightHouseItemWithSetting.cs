@@ -12,12 +12,18 @@ namespace Kooboo.Web.Lighthouse
 
         public abstract string Description { get; }
 
+        public abstract bool ImgTag { get; }
+
+        public abstract bool ATag { get; }
+
+        public TSetting Setting { get; set; }
+
         public abstract void Execute(TSetting setting, RenderContext Context);
 
         public void Execute(RenderContext Context)
         {
-            var setting = Context.WebSite.GetLighthouseItemSetting<TSetting>(Name);
-            Execute(setting, Context);
+            this.Setting = Context.WebSite.GetLighthouseItemSetting<TSetting>(Name);
+            Execute(this.Setting, Context);
         }
     }
 }

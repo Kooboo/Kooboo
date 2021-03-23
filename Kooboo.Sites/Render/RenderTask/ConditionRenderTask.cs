@@ -136,9 +136,13 @@ namespace Kooboo.Sites.Render
                             this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName);
                         }
 
-                        value = this.ValueRenderTask.Render(context);
+                        value = this.ValueRenderTask.Render(context);  
                     }
 
+                    if (value == null)
+                    {
+                        value = RequestManager.GetSystemValue(context.Request, this.Filter.FieldName); 
+                    } 
 
                     if (value == null)
                     {
@@ -148,12 +152,11 @@ namespace Kooboo.Sites.Render
                             value = context.DataContext.RepeatCounter.CurrentCounter.Current.ToString();
                         }
                         else
-                        {
+                        { 
                             return false;
                         }
                     }
-
-
+                     
                     string comparevalue = null;
                     if (this.Filter.IsValueValueType)
                     {
@@ -185,6 +188,8 @@ namespace Kooboo.Sites.Render
 
             return false;
         }
+         
+    
 
         private string GetConditionText(string input)
         {

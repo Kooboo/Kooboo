@@ -5,6 +5,8 @@ using Kooboo.Sites.Render.RenderTask;
 
 namespace Kooboo.Sites.Render.Evaluators
 {
+
+    [Obsolete]
     public class kExternalCacheEvaluator : IEvaluator
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)

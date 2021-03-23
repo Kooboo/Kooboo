@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System.Threading.Tasks;
-using Kooboo.Extensions;
+using System.Threading.Tasks; 
 using Kooboo.Sites.Extensions;
 using System;
-using Kooboo.Data.Context;
-using System.Collections;
+using Kooboo.Data.Context; 
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
@@ -180,9 +178,7 @@ namespace Kooboo.Sites.Render
                         }
                     } 
 
-                }
-
-
+                } 
 
             }
 

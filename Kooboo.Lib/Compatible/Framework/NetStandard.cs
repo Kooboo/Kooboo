@@ -189,18 +189,21 @@ namespace Kooboo.Lib.Compatible
 
             MemoryStream stream = new MemoryStream(contentBytes);
 
-            Image systhumbnail = null;
-            var image = Image.Load(stream);
+            Image systhumbnail = null; 
+
+            var image = Image.Load(stream, out var  imgformate);
             if (image.Width < width && image.Height < height)
             {
                 return contentBytes;
-            }
-
+            } 
             image.Mutate(x => x.Resize(width, height));
             systhumbnail = image;
 
+            var form = image.Metadata.GetJpegMetadata();
+            var png = image.Metadata.GetPngMetadata(); 
+
             MemoryStream memstream = new MemoryStream();
-            systhumbnail.Save(memstream, PngFormat.Instance);
+            systhumbnail.Save(memstream, imgformate);
 
             return memstream.ToArray();
         }

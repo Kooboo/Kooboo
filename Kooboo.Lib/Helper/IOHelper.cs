@@ -648,7 +648,7 @@ namespace Kooboo.Lib.Helper
                 case ".tsv":
                     return "text/tab-separated-values";
                 case ".ttf":
-                    return "application/octet-stream";
+                    return "font/x-ttf";
                 case ".tts":
                     return "video/vnd.dlna.mpeg-tts";
                 case ".txt":

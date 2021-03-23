@@ -12,6 +12,10 @@ namespace Kooboo.Web.Lighthouse.Items
 
         public override string Description => "Description Description Description";
 
+        public override bool ATag => true;
+
+        public override bool ImgTag =>false;
+
         public override void Execute(CustomSetting setting, RenderContext Context)
         {
         }
