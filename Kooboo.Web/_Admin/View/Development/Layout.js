@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
   function newId() {
     return Math.ceil(Math.random() * Math.pow(2, 53));
   }
@@ -20,22 +20,22 @@ $(function() {
 
   new Vue({
     el: "#main",
-    data: function() {
+    data: function () {
       self = this;
       return {
         layoutId: Kooboo.getQueryString("Id") || Guid.Empty,
         model: {
-          name: ""
+          name: "",
         },
         rules: {
           name: [
             {
               required: true,
-              message: Kooboo.text.validation.required
+              message: Kooboo.text.validation.required,
             },
             {
               pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
-              message: Kooboo.text.validation.objectNameRegex
+              message: Kooboo.text.validation.objectNameRegex,
             },
             {
               min: 1,
@@ -45,41 +45,42 @@ $(function() {
                 1 +
                 ", " +
                 Kooboo.text.validation.maxLength +
-                64
+                64,
             },
             {
               remote: {
                 url: Kooboo.Layout.isUniqueName(),
-                data: function() {
+                data: function () {
                   return {
-                    name: self.model.name
+                    name: self.model.name,
                   };
-                }
+                },
               },
-              message: Kooboo.text.validation.taken
-            }
-          ]
+              message: Kooboo.text.validation.taken,
+            },
+          ],
         },
+        noScaffoldMode: false,
         layoutCode: "",
         _layoutCode: "",
         htmlContent: "",
         _htmlContent: "",
         curType: "preview",
-        bindingPanel: new BindingPanel()
+        bindingPanel: new BindingPanel(),
       };
     },
-    mounted: function() {
+    mounted: function () {
       helper = new Helper($(".kb-editor")[0]);
 
-      Kooboo.EventBus.subscribe("kb/lighter/holder", function(elem) {
+      Kooboo.EventBus.subscribe("kb/lighter/holder", function (elem) {
         self.bindingPanel.elem = elem;
         if (elem !== elem.ownerDocument.body) {
           $(elem.ownerDocument.body).animate(
             {
-              scrollTop: $(elem).offset().top
+              scrollTop: $(elem).offset().top,
             },
             200,
-            function() {
+            function () {
               // Lighter
               helper.hold(elem);
               // HTML Preivew
@@ -92,21 +93,21 @@ $(function() {
         }
       });
 
-      Kooboo.EventBus.subscribe("kb/preview/elem/hover", function(elem) {
+      Kooboo.EventBus.subscribe("kb/preview/elem/hover", function (elem) {
         // Lighter
         helper.hover(elem);
         // HTML Preivew
         Kooboo.EventBus.publish("kb/html/previewer/hover", elem);
       });
 
-      Kooboo.EventBus.subscribe("kb/html/elem/hover", function(elem) {
+      Kooboo.EventBus.subscribe("kb/html/elem/hover", function (elem) {
         // Lighter
         helper.hover(elem);
         // HTML Preivew
         Kooboo.EventBus.publish("kb/html/previewer/hover", elem);
       });
 
-      Kooboo.EventBus.subscribe("binding/save", function(data) {
+      Kooboo.EventBus.subscribe("binding/save", function (data) {
         talBinder.bind(data.elem, data);
 
         if (data.id) {
@@ -116,7 +117,7 @@ $(function() {
             id: newId(),
             elem: data.elem,
             type: data.type,
-            text: data.text
+            text: data.text,
           });
         }
         Kooboo.EventBus.publish("kb/frame/dom/update");
@@ -125,7 +126,7 @@ $(function() {
         helper.label(data.elem, data.type);
       });
 
-      Kooboo.EventBus.subscribe("binding/remove", function(data) {
+      Kooboo.EventBus.subscribe("binding/remove", function (data) {
         var item = BindingStore.byId(data.id);
 
         if (item) {
@@ -136,17 +137,17 @@ $(function() {
         }
       });
 
-      Kooboo.EventBus.subscribe("position/add", function(data) {
+      Kooboo.EventBus.subscribe("position/add", function (data) {
         self.attrPosition(data.elem, data.name, data.type, data.applyOmit);
         Kooboo.EventBus.publish("kb/html/previewer/select", $(data.elem)[0]);
       });
 
-      Kooboo.EventBus.subscribe("position/update", function(data) {
+      Kooboo.EventBus.subscribe("position/update", function (data) {
         self.updatePosition(data.id, data.name, data.applyOmit);
         Kooboo.EventBus.publish("kb/html/previewer/select", $(data.elem)[0]);
       });
 
-      Kooboo.EventBus.subscribe("position:remove", function(pos) {
+      Kooboo.EventBus.subscribe("position:remove", function (pos) {
         var position = PositionStore.byId(pos.id);
         if (position) {
           switch (position.type) {
@@ -170,14 +171,14 @@ $(function() {
       });
 
       kbFrame = new KBFrame(document.getElementById("layout_iframe"), {
-        type: "layout"
+        type: "layout",
       });
 
-      $(kbFrame).on("loaded", function() {
+      $(kbFrame).on("loaded", function () {
         $(window).trigger("resize");
       });
 
-      Kooboo.EventBus.subscribe("kb/frame/loaded", function() {
+      Kooboo.EventBus.subscribe("kb/frame/loaded", function () {
         $(window).trigger("resize");
       });
 
@@ -185,7 +186,7 @@ $(function() {
         Kooboo.BrowserInfo.getBrowser() == "chrome"
           ? "mousewheel"
           : "DOMMouseScroll",
-        function(e) {
+        function (e) {
           var scrollTop =
             kbFrame.getScrollTop() +
             (e.originalEvent.deltaY
@@ -195,67 +196,67 @@ $(function() {
         }
       );
 
-      $(window).on("resize", function() {
+      $(window).on("resize", function () {
         helper.refresh();
       });
 
       $.when(
         Kooboo.Layout.Get({
-          Id: self.layoutId
+          Id: self.layoutId,
         }),
         Kooboo.Style.getExternalList(),
         Kooboo.Script.getExternalList(),
         Kooboo.ResourceGroup.Style(),
         Kooboo.ResourceGroup.Script()
-      ).then(function(layout, styles, scripts, styleGroup, scriptGroup) {
+      ).then(function (layout, styles, scripts, styleGroup, scriptGroup) {
         layout = $.isArray(layout) ? layout[0] : layout;
         styles = $.isArray(styles) ? styles[0] : styles;
         scripts = $.isArray(scripts) ? scripts[0] : scripts;
         styleGroup = $.isArray(styleGroup) ? styleGroup[0] : styleGroup;
         scriptGroup = $.isArray(scriptGroup) ? scriptGroup[0] : scriptGroup;
 
-        var styleList = styles.model.map(function(style) {
+        var styleList = styles.model.map(function (style) {
             return {
               id: style.id,
               text: style.name,
-              url: style.routeName
+              url: style.routeName,
             };
           }),
-          scriptList = scripts.model.map(function(script) {
+          scriptList = scripts.model.map(function (script) {
             return {
               id: script.id,
               text: script.name,
-              url: script.routeName
+              url: script.routeName,
             };
           }),
-          styleGroupList = styleGroup.model.map(function(style) {
+          styleGroupList = styleGroup.model.map(function (style) {
             return {
               id: style.id,
               text: style.name,
-              url: style.relativeUrl
+              url: style.relativeUrl,
             };
           }),
-          scriptGroupList = scriptGroup.model.map(function(script) {
+          scriptGroupList = scriptGroup.model.map(function (script) {
             return {
               id: script.id,
               text: script.name,
-              url: script.relativeUrl
+              url: script.relativeUrl,
             };
           });
 
         self.bindingPanel.styleResource = {
           styles: styleList,
-          styleGroup: styleGroupList
+          styleGroup: styleGroupList,
         };
 
         self.bindingPanel.scriptResource = {
           scripts: scriptList,
-          scriptGroup: scriptGroupList
+          scriptGroup: scriptGroupList,
         };
 
         self.model.name = layout.model.name;
         self.layoutCode = layout.model.body;
-        self.setHTML(self.layoutCode, function() {
+        self.setHTML(self.layoutCode, function () {
           self._layoutCode = self.getHTML();
         });
       });
@@ -269,21 +270,31 @@ $(function() {
       // })
     },
     methods: {
-      formatCode: function() {
+      formatCode: function () {
         this.$refs.editor.formatCode();
       },
-      changeType: function(type) {
+      changeType: function (type) {
         if (self.curType !== type) {
           self.curType = type;
 
           if (type == "code") {
-            self.layoutCode = self.getHTML();
-            self.$nextTick(function() {
+            self.layoutCode = self.noScaffoldMode
+              ? kbFrame.getDocumentElement().ownerDocument.body.innerHTML
+              : self.getHTML();
+
+            self.$nextTick(function () {
               self.formatCode();
             });
           } else {
             var oldHtml = self.htmlContent,
               newHtml = self.layoutCode;
+            var temp = newHtml.replace(/\s*/g, "").toUpperCase();
+
+            self.noScaffoldMode = !(
+              temp.indexOf("<HTML>") > -1 ||
+              temp.indexOf("<HEAD>") > -1 ||
+              temp.indexOf("<BODY>") > -1
+            );
 
             if (oldHtml !== newHtml) {
               self.setHTML(newHtml);
@@ -291,16 +302,16 @@ $(function() {
           }
         }
       },
-      getHTML: function() {
+      getHTML: function () {
         return kbFrame.getHTML();
       },
-      setHTML: function(html, callback) {
+      setHTML: function (html, callback) {
         BindingStore.clear();
 
         !kbFrame.hasResource() &&
           kbFrame.setResource(self.bindingPanel.resources);
-        kbFrame.setContent(html, function() {
-          setTimeout(function() {
+        kbFrame.setContent(html, function () {
+          setTimeout(function () {
             $(window).trigger("resize");
           }, 1500);
 
@@ -312,16 +323,16 @@ $(function() {
           helper.refresh();
 
           self.scanPositions();
-          _.forEach(PositionStore.getAll(), function(it) {
+          _.forEach(PositionStore.getAll(), function (it) {
             helper.mask(it.elem);
           });
 
           self.scanBindings();
           _.forEach(
-            _.filter(BindingStore.getAll(), function(it) {
+            _.filter(BindingStore.getAll(), function (it) {
               return ["style", "script"].indexOf(it.type) == -1;
             }),
-            function(it) {
+            function (it) {
               helper.label(it.elem, it.type);
               helper.ring(it.elem);
             }
@@ -334,23 +345,23 @@ $(function() {
           if (callback) callback();
         });
       },
-      onSaveAndReturn: function() {
-        self.onSubmitLayout(function() {
+      onSaveAndReturn: function () {
+        self.onSubmitLayout(function () {
           self.goBack();
         });
       },
-      onSave: function() {
-        self.onSubmitLayout(function(id) {
+      onSave: function () {
+        self.onSubmitLayout(function (id) {
           if (self.isNewLayout) {
             location.href = Kooboo.Route.Get(Kooboo.Route.Layout.DetailPage, {
-              Id: id
+              Id: id,
             });
           } else {
             window.info.show(Kooboo.text.info.save.success, true);
           }
         });
       },
-      userCancel: function() {
+      userCancel: function () {
         if (self.isContentChanged) {
           if (confirm(Kooboo.text.confirm.beforeReturn)) {
             self.goBack();
@@ -359,7 +370,7 @@ $(function() {
           self.goBack();
         }
       },
-      getBodyHtml: function() {
+      getBodyHtml: function () {
         if (self.isNewLayout) {
           return self.getHTML();
         } else {
@@ -370,12 +381,12 @@ $(function() {
           }
         }
       },
-      doSubmit: function(body, callback) {
+      doSubmit: function (body, callback) {
         Kooboo.Layout.post({
           id: self.layoutId,
           name: self.model.name,
-          body: body
-        }).then(function(res) {
+          body: body,
+        }).then(function (res) {
           if (res.success) {
             self._htmlContent = self.htmlContent;
             self._layoutCode = self.layoutCode;
@@ -387,10 +398,10 @@ $(function() {
           }
         });
       },
-      submit: function(callback) {
+      submit: function (callback) {
         if (self.curType == "code") {
-          self.setHTML(self.layoutCode, function() {
-            setTimeout(function() {
+          self.setHTML(self.layoutCode, function () {
+            setTimeout(function () {
               var body = self.getBodyHtml();
               self.doSubmit(body, callback);
             }, 600);
@@ -400,22 +411,22 @@ $(function() {
           self.doSubmit(body, callback);
         }
       },
-      onSubmitLayout: function(callback) {
+      onSubmitLayout: function (callback) {
         if (self.isNewLayout) {
           self.$refs.form.validate() && self.submit(callback);
         } else {
           self.submit(callback);
         }
       },
-      goBack: function() {
+      goBack: function () {
         location.href = Kooboo.Route.Get(Kooboo.Route.Layout.ListPage);
       },
-      scanPositions: function() {
+      scanPositions: function () {
         PositionStore.clear();
         self.scanAttrPositions(kbFrame.getDocumentElement());
       },
-      scanAttrPositions: function(node) {
-        $("[" + positionKey + "]", node).each(function(ix, it) {
+      scanAttrPositions: function (node) {
+        $("[" + positionKey + "]", node).each(function (ix, it) {
           var name = $(it).attr(positionKey),
             position;
 
@@ -424,7 +435,7 @@ $(function() {
               id: newId(),
               name: name,
               elem: it,
-              type: "attr"
+              type: "attr",
             };
           } else {
             var newName = name,
@@ -438,7 +449,7 @@ $(function() {
               id: newId(),
               name: newName,
               elem: it,
-              type: "attr"
+              type: "attr",
             };
           }
 
@@ -447,7 +458,7 @@ $(function() {
           PositionStore.add(position);
         });
       },
-      attrPosition: function(elem, name, loc, applyOmit) {
+      attrPosition: function (elem, name, loc, applyOmit) {
         switch (loc) {
           case "append":
             var appendBlock = $("<div>");
@@ -475,13 +486,13 @@ $(function() {
           id: newId(),
           type: loc,
           elem: elem,
-          name: name
+          name: name,
         };
 
         PositionStore.add(data);
         return data;
       },
-      updatePosition: function(id, nextName, applyOmit) {
+      updatePosition: function (id, nextName, applyOmit) {
         var pos = PositionStore.byId(id);
 
         if (pos) {
@@ -499,17 +510,17 @@ $(function() {
 
         return this;
       },
-      scanBindings: function() {
+      scanBindings: function () {
         self._scanBindings(kbFrame.getDocumentElement());
       },
-      _scanBindings: function(elem) {
+      _scanBindings: function (elem) {
         var children = elem.children,
           len = children.length,
           parsed = talParser.parse(elem),
           list = this.bindings,
           item;
 
-        _.forEach(parsed, function(val, key) {
+        _.forEach(parsed, function (val, key) {
           if (val) {
             switch (key) {
               case "label":
@@ -517,7 +528,7 @@ $(function() {
                   id: newId(),
                   elem: elem,
                   type: key,
-                  text: val
+                  text: val,
                 });
                 break;
               default:
@@ -529,19 +540,19 @@ $(function() {
         for (var i = 0; i < len; i++) {
           self._scanBindings(children[i]);
         }
-      }
+      },
     },
     computed: {
-      isNewLayout: function() {
+      isNewLayout: function () {
         return self.layoutId == Guid.Empty;
       },
-      isContentChanged: function() {
+      isContentChanged: function () {
         if (self.curType == "code") {
           return !_.isEqual(self._layoutCode, self.layoutCode);
         } else {
           return !_.isEqual(self._htmlContent, self.getHTML());
         }
-      }
-    }
+      },
+    },
   });
 });
