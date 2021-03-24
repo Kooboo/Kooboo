@@ -18,7 +18,15 @@ namespace Kooboo.Sites.Render
 
         public async static Task RenderAsync(FrontContext context)
         {
-            var image = await context.SiteDb.ImagePool.GetAsync(context.Route.objectId);
+            Models.Image image = null; 
+            if (context.SiteDb.Images.UseCache)
+            {
+                image = context.SiteDb.Images.Get(context.Route.objectId); 
+            }
+            else
+            {
+                image = await context.SiteDb.ImagePool.GetAsync(context.Route.objectId);
+            } 
 
             if (image == null || image.ContentBytes == null)
             {

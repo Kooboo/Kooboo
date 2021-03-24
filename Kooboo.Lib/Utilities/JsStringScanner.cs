@@ -122,7 +122,7 @@ namespace Kooboo.Lib.Utilities
             }
             else
             {
-                return chars[_readIndex];
+               return chars[_readIndex]; 
             }
         }
 
@@ -341,7 +341,7 @@ namespace Kooboo.Lib.Utilities
         }
 
         private static bool NewLine(char input)
-        {
+        { 
             if (input == '\u000A')
             {
                 return true;
@@ -383,7 +383,7 @@ namespace Kooboo.Lib.Utilities
                     while (true)
                     {
                         var nextchar = consumeNext();
-                        if (NewLine(nextchar))
+                        if (NewLine(nextchar) || nextchar == this.EOFChar)
                         {
                             break;
                         }

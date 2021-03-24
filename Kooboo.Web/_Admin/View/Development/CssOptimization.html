@@ -57,10 +57,7 @@
         list: [],
         selectedRows: [],
       };
-    },
-    mounted() {
-      this.onScan();
-    },
+    }, 
     methods: {
       onDelete() {
         Kooboo.CssOptimization.Delete(this.selectedRows.map((m) => m.id)).then(
