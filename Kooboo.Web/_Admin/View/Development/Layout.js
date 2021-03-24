@@ -256,6 +256,7 @@ $(function () {
 
         self.model.name = layout.model.name;
         self.layoutCode = layout.model.body;
+        self.noScaffoldMode = self.isNoScaffold(self.layoutCode);
         self.setHTML(self.layoutCode, function () {
           self._layoutCode = self.getHTML();
         });
@@ -273,6 +274,14 @@ $(function () {
       formatCode: function () {
         this.$refs.editor.formatCode();
       },
+      isNoScaffold: function (str) {
+        var temp = str.replace(/\s*/g, "").toUpperCase();
+
+        return !(
+          temp.indexOf("<HTML>") > -1 ||
+          temp.indexOf("<BODY>") > -1
+        );
+      },
       changeType: function (type) {
         if (self.curType !== type) {
           self.curType = type;
@@ -288,14 +297,7 @@ $(function () {
           } else {
             var oldHtml = self.htmlContent,
               newHtml = self.layoutCode;
-            var temp = newHtml.replace(/\s*/g, "").toUpperCase();
-
-            self.noScaffoldMode = !(
-              temp.indexOf("<HTML>") > -1 ||
-              temp.indexOf("<HEAD>") > -1 ||
-              temp.indexOf("<BODY>") > -1
-            );
-
+            self.noScaffoldMode = self.isNoScaffold(newHtml);
             if (oldHtml !== newHtml) {
               self.setHTML(newHtml);
             }
@@ -371,7 +373,9 @@ $(function () {
         }
       },
       getBodyHtml: function () {
-        if (self.isNewLayout) {
+        if (this.isNoScaffold(this.layoutCode)) {
+          return this.layoutCode;
+        } else if (self.isNewLayout) {
           return self.getHTML();
         } else {
           if (self.isContentChanged) {
