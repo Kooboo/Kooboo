@@ -13,13 +13,8 @@ using Kooboo.Web.Frontend;
 using Kooboo.Web.JsTest;
 using Kooboo.Web.Spa;
 using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Collections.Generic; 
 using System.Threading;
-using System.Threading.Tasks;
-using VirtualFile;
-using VirtualFile.Zip;
-
 
 namespace Kooboo.Web
 {
@@ -134,10 +129,10 @@ namespace Kooboo.Web
             }
 
             // close all database. 
-            foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
-            {
-                item.Value.Published = false; //set to false in the memory only..
-            }
+            //foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
+            //{
+            //    item.Value.Published = false; //set to false in the memory only..
+            //}
 
             foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
             {

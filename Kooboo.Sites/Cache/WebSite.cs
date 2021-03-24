@@ -1,15 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
-using Kooboo.Events.Cms;
-using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Routing;
@@ -137,7 +131,8 @@ namespace Kooboo.Sites.Cache
 
         public static bool EnableCache(WebSite website, Type TValueType)
         {
-            if (TValueType == typeof(Label)
+            if (TValueType == typeof(Page)
+               || TValueType == typeof(Label)
                 || TValueType == typeof(View)
                 || TValueType == typeof(Layout)
                 || TValueType == typeof(ViewDataMethod)
@@ -158,18 +153,17 @@ namespace Kooboo.Sites.Cache
                 return true;
             }
 
-            //if (!Kooboo.Data.AppSettings.IsOnlineServer)
-            //{
-            //    if (TValueType == typeof(Page)
-            //  || TValueType == typeof(HtmlBlock)
-            //  || TValueType == typeof(Style)
-            //  || TValueType == typeof(Script)
-            //  || TValueType == typeof(Image)
-            //   )
-            //    {
-            //        return true;
-            //    }
-            //}
+            if (!Kooboo.Data.AppSettings.IsOnlineServer)
+            {
+             if ( TValueType == typeof(HtmlBlock)
+              || TValueType == typeof(Style)
+              || TValueType == typeof(Script)
+              || TValueType == typeof(Image)
+               )
+                {
+                    return true;
+                }
+            }
 
             return false;
         }

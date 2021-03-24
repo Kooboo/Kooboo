@@ -44,7 +44,7 @@ namespace Kooboo.Sites.Render
                 {
                     Element child = item as Element;
 
-                    if (child.tagName == "position" || child.tagName == "placeholder")
+                    if (child.tagName == "placeholder" || child.tagName == "position")
                     {
                         string positionname = child.id;
                         if (string.IsNullOrEmpty(positionname))
@@ -86,13 +86,16 @@ namespace Kooboo.Sites.Render
         public string Render(RenderContext context)
         {
             var plans = RenderPlanManager.GetLayoutPlan(this.LayoutName, context);
+            
             plans = PreRenderLayout(context, plans);
+
             RenderComponent(context);
+
             var result = RenderHelper.Render(plans, context);
             return result;
         }
 
-        private List<IRenderTask> PreRenderLayout(RenderContext context, List<IRenderTask> layoutplan)
+        public List<IRenderTask> PreRenderLayout(RenderContext context, List<IRenderTask> layoutplan)
         {
             List<IRenderTask> newPlan = new List<IRenderTask>(); 
 
@@ -104,6 +107,10 @@ namespace Kooboo.Sites.Render
                     //do nothing.
                     newPlan.Add(item);
                 }
+                else if (item is SiteLayoutRenderTask)
+                { 
+                    newPlan.Add(item); 
+                }
                 else
                 {
                     var result = item.Render(context);
@@ -113,7 +120,7 @@ namespace Kooboo.Sites.Render
             return newPlan;
         }
 
-        private void RenderComponent(RenderContext context)
+        public void RenderComponent(RenderContext context)
         {
             foreach (var item in Components)
             {
