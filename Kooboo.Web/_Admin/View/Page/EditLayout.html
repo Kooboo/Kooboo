@@ -46,7 +46,7 @@
       <div class="tabs-bottom">
         <div class="tab-content">
           <section class="tab-pane" :class="{active: curType == 'preview'}">
-            <div class="kb-editor" style="overflow: hidden;">
+            <div class="kb-editor" style="overflow: hidden">
               <iframe
                 src="about:blank"
                 id="page_iframe"
@@ -161,7 +161,7 @@
                             class="list-group"
                             v-kb-sortable="bindingPanel.bodyScriptList"
                             @after-sort="bindingPanel.bodyScriptSorted"
-                            style="min-height: 40px;"
+                            style="min-height: 40px"
                           >
                             <li
                               class="list-group-item"
@@ -215,27 +215,56 @@
                           class="panel-collapse collapse"
                         >
                           <div class="panel-body">
-                            <div style="display: flex;align-items: center;margin: 8px 0;">
-                              <label class="control-label"><span>Enable cache</span></label>
-                              <div style="flex: 1;"></div>
+                            <div
+                              style="
+                                display: flex;
+                                align-items: center;
+                                margin: 8px 0;
+                              "
+                            >
+                              <label class="control-label"
+                                ><span>Enable cache</span></label
+                              >
+                              <div style="flex: 1"></div>
                               <kb-switch v-model="enableCache"></kb-switch>
                             </div>
-                            <div style="display: flex;align-items: center;margin: 8px 0;" v-if="enableCache">
-                              <label class="control-label"><span>Cache by version</span></label>
-                              <div style="flex: 1;"></div>
-                              <kb-switch v-model="cacheByVersion" ></kb-switch>
+                            <div
+                              style="
+                                display: flex;
+                                align-items: center;
+                                margin: 8px 0;
+                              "
+                              v-if="enableCache"
+                            >
+                              <label class="control-label"
+                                ><span>Cache by version</span></label
+                              >
+                              <div style="flex: 1"></div>
+                              <kb-switch v-model="cacheByVersion"></kb-switch>
                             </div>
 
                             <div v-if="enableCache&&!cacheByVersion">
-                              <span style="display: block;padding: 5px;">Time</span>
-                              <div class="input-group" >
-                                <input class="form-control" type="number" v-model="cacheMinutes" />
-                                <div  class="input-group-addon">Minutes</div>
+                              <span style="display: block; padding: 5px"
+                                >Time</span
+                              >
+                              <div class="input-group">
+                                <input
+                                  class="form-control"
+                                  type="number"
+                                  v-model="cacheMinutes"
+                                />
+                                <div class="input-group-addon">Minutes</div>
                               </div>
                             </div>
                             <div v-if="enableCache">
-                              <span style="display: block;padding: 5px;">Cache query keys</span>
-                              <input class="form-control"  v-model="cacheQueryKeys" placeholder='Example: category,page,index' />
+                              <span style="display: block; padding: 5px"
+                                >Cache query keys</span
+                              >
+                              <input
+                                class="form-control"
+                                v-model="cacheQueryKeys"
+                                placeholder="Example: category,page,index"
+                              />
                             </div>
                           </div>
                         </div>
@@ -271,13 +300,13 @@
   </div>
   <div class="page-buttons">
     <div class="btn-group dropup">
-      <button class="btn green" style="margin: 0;" @click="onSaveAndReturn"
+      <button class="btn green" style="margin: 0" @click="onSaveAndReturn"
         >Save &amp; Return</button
       >
       <a
         class="btn green dropdown-toggle"
         data-toggle="dropdown"
-        style="margin:0;min-width:auto;"
+        style="margin: 0; min-width: auto"
       >
         <i class="fa fa-angle-up"></i>
       </a>
@@ -297,11 +326,11 @@
     store: {},
     util: {},
     viewModel: {},
-    widget: {}
+    widget: {},
   };
 </script>
 <script>
-  (function() {
+  (function () {
     Kooboo.loadJS([
       "/_Admin/Scripts/components/kb-code-editor.js",
       "/_Admin/Scripts/kooboo/Guid.js",
@@ -334,13 +363,13 @@
       "/_Admin/Scripts/lib/jquery-ui-customized.js",
       "/_Admin/Scripts/lib/js-beautify/lib/beautify-html.js",
       "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
-      "/_Admin/Scripts/components/kbSwitch.js"
+      "/_Admin/Scripts/components/kbSwitch.js",
     ]);
     Kooboo.loadCSS([
       "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
       "/_Admin/Styles/jstree/style.min.css",
       "/_Admin/Styles/bootstrap-editable/css/bootstrap-editable.css",
-      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
+      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css",
     ]);
     window.__pageEditor = {};
     var Guid = Kooboo.Guid,
@@ -353,7 +382,7 @@
 
     var self = new Vue({
       el: "#main",
-      data: function() {
+      data: function () {
         return {
           isNewPage: false,
           pageId: Kooboo.getQueryString("Id") || Kooboo.Guid.Empty,
@@ -379,27 +408,27 @@
           isBodyChanged: false,
           isSaveAndReturn: false,
           submitData: null,
-          enableCache:false,
-          cacheByVersion:false,
-          cacheMinutes:3,
-          cacheQueryKeys:""
+          enableCache: false,
+          cacheByVersion: false,
+          cacheMinutes: 3,
+          cacheQueryKeys: "",
         };
       },
       computed: {
-        isPageContentEqual: function() {
+        isPageContentEqual: function () {
           return plainify(this.pageContent) == plainify(this.backupPageContent);
 
           function plainify(p) {
             var lineBreaker = p.indexOf("\r\n") > -1 ? "\r\n" : "\n";
             return p
               .split(lineBreaker)
-              .map(function(line) {
+              .map(function (line) {
                 return line.trim();
               })
               .join("");
           }
         },
-        isContentChanged: function() {
+        isContentChanged: function () {
           var self = this;
           return (
             self.isTitleChanged ||
@@ -408,17 +437,17 @@
             self.isBodyChanged ||
             (self.curType == "code" ? !self.isPageContentEqual : false)
           );
-        }
+        },
       },
-      mounted: function() {
+      mounted: function () {
         var self = this;
         self.isNewPage = self.pageId == Kooboo.Guid.Empty;
         self.kbFrame = new KBFrame(document.getElementById("page_iframe"), {
-          type: "layout_page"
+          type: "layout_page",
         });
         window.__pageEditor.kbFrame = self.kbFrame;
 
-        Kooboo.EventBus.subscribe("binding/remove", function(data) {
+        Kooboo.EventBus.subscribe("binding/remove", function (data) {
           if (BindingStore.byId(data.id)) {
             BindingStore.remove(data.id);
           }
@@ -426,26 +455,26 @@
 
         $(window).on(
           "resize",
-          _.debounce(function() {
+          _.debounce(function () {
             Kooboo.EventBus.publish("kb/page/layout/component/remask");
           }, 50)
         );
 
         Kooboo.EventBus.subscribe(
           "kb/pageeditor/component/position/ready",
-          function() {
+          function () {
             Kooboo.EventBus.publish("fdoc/load", self.cachedPositionsInfo);
           }
         );
 
-        Kooboo.EventBus.subscribe("kb/page/final/save", function(res) {
+        Kooboo.EventBus.subscribe("kb/page/final/save", function (res) {
           if (!res.errorCount || res.errorCount == 0) {
             var styleList = [],
               scriptList = [];
-            self.bindingPanel.styleList.forEach(function(style) {
+            self.bindingPanel.styleList.forEach(function (style) {
               style.url && styleList.push(style.url);
             });
-            self.bindingPanel.bodyScriptList.forEach(function(script) {
+            self.bindingPanel.bodyScriptList.forEach(function (script) {
               script.url && scriptList.push(script.url);
             });
             res["styles"] = styleList;
@@ -465,17 +494,17 @@
             self.submitData = res;
 
             if (self.isSaveAndReturn) {
-              self.onSubmit(function() {
+              self.onSubmit(function () {
                 self.goBack();
               });
             } else {
-              self.onSubmit(function(id) {
+              self.onSubmit(function (id) {
                 if (self.isNewPage) {
                   location.href = Kooboo.Route.Get(
                     Kooboo.Route.Page.EditLayout,
                     {
                       id: id,
-                      layoutId: self.layoutId
+                      layoutId: self.layoutId,
                     }
                   );
                 } else {
@@ -491,7 +520,7 @@
           }
         });
 
-        Kooboo.EventBus.subscribe("kb/page/field/change", function(data) {
+        Kooboo.EventBus.subscribe("kb/page/field/change", function (data) {
           switch (data.type) {
             case "title":
               self.isTitleChanged = true;
@@ -511,10 +540,10 @@
         $.when(
           Kooboo.Page.getEdit({
             Id: self.pageId,
-            layoutId: self.layoutId
+            layoutId: self.layoutId,
           }),
           Kooboo.Layout.get({
-            Id: self.layoutId
+            Id: self.layoutId,
           }),
           Kooboo.Site.Langs(),
           Kooboo.Component.getList(),
@@ -522,7 +551,7 @@
           Kooboo.Script.getExternalList(),
           Kooboo.ResourceGroup.Style(),
           Kooboo.ResourceGroup.Script()
-        ).then(function(
+        ).then(function (
           page,
           layout,
           langs,
@@ -544,46 +573,46 @@
           styleGroup = $.isArray(styleGroup) ? styleGroup[0] : styleGroup;
           scriptGroup = $.isArray(scriptGroup) ? scriptGroup[0] : scriptGroup;
 
-          styles.model.forEach(function(style) {
+          styles.model.forEach(function (style) {
             styleList.push({
               id: style.id,
               text: style.name,
-              url: style.routeName
+              url: style.routeName,
             });
           });
 
-          scripts.model.forEach(function(script) {
+          scripts.model.forEach(function (script) {
             scriptList.push({
               id: script.id,
               text: script.name,
-              url: script.routeName
+              url: script.routeName,
             });
           });
 
-          styleGroup.model.forEach(function(style) {
+          styleGroup.model.forEach(function (style) {
             styleGroupList.push({
               id: style.id,
               text: style.name,
-              url: style.relativeUrl
+              url: style.relativeUrl,
             });
           });
 
-          scriptGroup.model.forEach(function(script) {
+          scriptGroup.model.forEach(function (script) {
             scriptGroupList.push({
               id: script.id,
               text: script.name,
-              url: script.relativeUrl
+              url: script.relativeUrl,
             });
           });
 
           self.bindingPanel.styleResource = {
             styles: styleList,
-            styleGroup: styleGroupList
+            styleGroup: styleGroupList,
           };
 
           self.bindingPanel.scriptResource = {
             scripts: scriptList,
-            scriptGroup: scriptGroupList
+            scriptGroup: scriptGroupList,
           };
 
           Kooboo.pageEditor.store.ComponentStore.setTypes(component[0].model);
@@ -594,20 +623,19 @@
           self.layoutName = layout.model.name;
           savedStyles = page.model.styles;
           savedScripts = page.model.scripts;
-          self.setHTML(layout.model.body, function() {});
-          self.enableCache=page.model.enableCache;
-          self.cacheByVersion=page.model.cacheByVersion;
-          self.cacheMinutes=page.model.cacheMinutes||3;
-          self.cacheQueryKeys=(page.model.cacheQueryKeys||"");
-          
+          self.setHTML(layout.model.body, function () {});
+          self.enableCache = page.model.enableCache;
+          self.cacheByVersion = page.model.cacheByVersion;
+          self.cacheMinutes = page.model.cacheMinutes || 3;
+          self.cacheQueryKeys = page.model.cacheQueryKeys || "";
         });
 
-        $(window).on("resize", function() {
+        $(window).on("resize", function () {
           Kooboo.EventBus.publish("kb/page/layout/component/remask");
         });
       },
       methods: {
-        valid: function(isPosted) {
+        valid: function (isPosted) {
           if (!self.posted || !self.isNewPage) return true;
           var rules = [
             { required: Kooboo.text.validation.required },
@@ -619,20 +647,20 @@
                 1 +
                 ", " +
                 Kooboo.text.validation.maxLength +
-                64
-            }
+                64,
+            },
           ];
           if (isPosted) {
             rules.push({
               remote: {
                 url: Kooboo.Page.isUniqueName(),
-                data: function() {
+                data: function () {
                   return {
-                    name: self.name
+                    name: self.name,
                   };
-                }
+                },
               },
-              message: Kooboo.text.validation.taken
+              message: Kooboo.text.validation.taken,
             });
           }
 
@@ -640,32 +668,32 @@
           self.nameError = result.msg;
           return result.valid;
         },
-        nameInputBlur: function() {
+        nameInputBlur: function () {
           if (!self.name) return;
           Kooboo.EventBus.publish("kb/page/url/route/set", self.name);
         },
-        formatCode: function(cb) {
+        formatCode: function (cb) {
           self.$refs.codeEditor.formatCode(cb);
         },
-        removeStyle: function(item) {
+        removeStyle: function (item) {
           self.bindingPanel.removeStyle(item);
         },
-        editJsCss: function(item) {
+        editJsCss: function (item) {
           self.bindingPanel.editJsCss(item);
         },
-        removeScript: function(item) {
+        removeScript: function (item) {
           self.bindingPanel.removeScript(item);
         },
-        createStyle: function() {
+        createStyle: function () {
           self.bindingPanel.createStyle();
         },
-        createScript: function(b) {
+        createScript: function (b) {
           self.bindingPanel.createScript(b);
         },
-        getPositions: function(dom, positions, fromNestedLayout, layoutName) {
+        getPositions: function (dom, positions, fromNestedLayout, layoutName) {
           $(dom)
             .children("placeholder")
-            .each(function(idx, position) {
+            .each(function (idx, position) {
               var name = $(position).attr("id"),
                 contents = [];
 
@@ -674,7 +702,7 @@
                   ","
                 ),
                 position
-              ).each(function(idx, content) {
+              ).each(function (idx, content) {
                 if (
                   $(content).parents("placeholder").length == 1 ||
                   fromNestedLayout
@@ -685,7 +713,7 @@
                     engine: content.hasAttribute("engine")
                       ? $(content).attr("engine")
                       : false,
-                    id: Math.ceil(Math.random() * Math.pow(2, 53))
+                    id: Math.ceil(Math.random() * Math.pow(2, 53)),
                   });
                 }
 
@@ -702,7 +730,7 @@
               var pos = {
                 name: name,
                 contents: contents,
-                fromLayout: fromNestedLayout
+                fromLayout: fromNestedLayout,
               };
 
               layoutName && (pos.layoutName = layoutName);
@@ -712,14 +740,14 @@
 
           return positions;
         },
-        setHTML: function(html, callback) {
+        setHTML: function (html, callback) {
           !self.kbFrame.hasResource() &&
             self.kbFrame.setResource(self.bindingPanel.resources);
           self.kbFrame.setExistResource({
             scripts: savedScripts,
-            styles: savedStyles
+            styles: savedStyles,
           });
-          self.kbFrame.setContent(html, function() {
+          self.kbFrame.setContent(html, function () {
             self.bindingPanel.elem = self.kbFrame.getDocumentElement();
             if (!self.cachedPositionsInfo) {
               self.cachedPositionsInfo = {
@@ -727,24 +755,24 @@
                 container: $(".kb-editor")[0],
                 positions: self.positions,
                 styles: savedStyles,
-                scripts: savedScripts
+                scripts: savedScripts,
               };
             }
 
-            setTimeout(function() {
+            setTimeout(function () {
               Kooboo.EventBus.publish("fdoc/load", self.cachedPositionsInfo);
               $(window).trigger("resize");
             }, 500);
             if (callback) callback();
           });
         },
-        getLayoutHTML: function() {
+        getLayoutHTML: function () {
           var vDom = $("<layout>");
           $(vDom).attr("id", self.layoutName);
           vDom = self.getLayout(self.kbFrame.getDocumentElement(), vDom);
           return vDom[0].outerHTML;
         },
-        getLayout: function(node, dom) {
+        getLayout: function (node, dom) {
           dom = self.getSaveLayout(node, dom);
           handleSavedLayout(dom[0]);
 
@@ -752,15 +780,12 @@
             if ($(dom)[0].tagName.toLowerCase() == "placeholder") {
               if (dom.hasAttribute("k-omit")) {
                 if ($(dom).children().length) {
-                  var children = $(dom)
-                    .children()
-                    .get()
-                    .reverse();
-                  children.forEach(function(child) {
+                  var children = $(dom).children().get().reverse();
+                  children.forEach(function (child) {
                     $(child).insertAfter(dom);
                   });
                   $(dom).remove();
-                  children.forEach(function(child) {
+                  children.forEach(function (child) {
                     handleSavedLayout(child);
                   });
                 } else {
@@ -769,14 +794,14 @@
               } else {
                 $(dom)
                   .children()
-                  .each(function(idx, component) {
+                  .each(function (idx, component) {
                     handleSavedLayout(component);
                   });
               }
             } else {
               $(dom)
                 .children()
-                .each(function(idx, component) {
+                .each(function (idx, component) {
                   handleSavedLayout(component);
                 });
             }
@@ -784,10 +809,10 @@
 
           return dom;
         },
-        getSaveLayout: function(node, dom) {
+        getSaveLayout: function (node, dom) {
           $(node)
             .children()
-            .each(function(idx, component) {
+            .each(function (idx, component) {
               if (component.getAttribute("k-placeholder")) {
                 var el = $("<placeholder>");
                 $(el).attr("id", component.getAttribute("k-placeholder"));
@@ -813,9 +838,7 @@
                 } else if (ComponentTool.isEnginedComponent(component)) {
                   var data = $(component).data("kb-comp"),
                     el = $("<" + data.type.toLowerCase() + ">");
-                  $(el)
-                    .attr("engine", data.engine)
-                    .attr("id", data.name);
+                  $(el).attr("engine", data.engine).attr("id", data.name);
                   if (data.type.toLowerCase() == "layout") {
                     self.getSaveLayout(component, el);
                   }
@@ -828,13 +851,13 @@
 
           return dom;
         },
-        getSaveLayoutHTML: function() {
+        getSaveLayoutHTML: function () {
           var vDom = $("<layout>");
           $(vDom).attr("id", self.layoutName);
           vDom = self.getSaveLayout(self.kbFrame.getDocumentElement(), vDom);
           return vDom[0].outerHTML;
         },
-        changeType: function(type) {
+        changeType: function (type) {
           if (self.curType !== type) {
             if (type == "code") {
               self.pageContent = html_beautify(self.getLayoutHTML());
@@ -844,22 +867,22 @@
                 Kooboo.EventBus.publish("fdoc/load", {
                   fdoc: self.kbFrame.getDocumentElement(),
                   container: $(".kb-editor")[0],
-                  positions: self.positions
+                  positions: self.positions,
                 });
               }
             }
             self.curType = type;
           }
         },
-        onSaveAndReturn: function() {
+        onSaveAndReturn: function () {
           self.isSaveAndReturn = true;
           Kooboo.EventBus.publish("kb/page/save", {});
         },
-        onSave: function() {
+        onSave: function () {
           self.isSaveAndReturn = false;
           Kooboo.EventBus.publish("kb/page/save", {});
         },
-        userCancel: function() {
+        userCancel: function () {
           if (self.isContentChanged) {
             if (confirm(Kooboo.text.confirm.beforeReturn)) {
               self.goBack();
@@ -868,12 +891,12 @@
             self.goBack();
           }
         },
-        goBack: function() {
+        goBack: function () {
           location.href = Kooboo.Route.Get(Kooboo.Route.Page.ListPage);
         },
-        onSubmit: function(cb) {
+        onSubmit: function (cb) {
           function submit() {
-            Kooboo.Page.post(JSON.stringify(self.submitData)).then(function(
+            Kooboo.Page.post(JSON.stringify(self.submitData)).then(function (
               res
             ) {
               if (res.success) {
@@ -886,18 +909,18 @@
           self.posted = true;
           if (!self.valid()) return;
           submit();
-        }
+        },
       },
       watch: {
-        pageContent: function(html) {
+        pageContent: function (html) {
           if (html) {
-            var layout = $.parseHTML(html);
+            var layout = $.parseHTML(html, document, true);
             var positions = [];
             positions = self.getPositions(layout, positions, false);
             self.positions = positions;
           }
-        }
-      }
+        },
+      },
     });
   })();
 </script>
