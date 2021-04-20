@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved. 
-using Kooboo.Sites.Render.Renderers; 
+using Kooboo.Data.Context;
+using Kooboo.Sites.Render.Renderers;
 
 namespace Kooboo.Sites.Render
 {
@@ -13,7 +14,7 @@ namespace Kooboo.Sites.Render
 
             if (css != null && css.Body != null)
             {
-                var body = GetBody(css);
+                var body = GetBody(context.RenderContext, css);
 
                 if (context.RenderContext.WebSite != null && context.RenderContext.WebSite.EnableJsCssCompress)
                 {
@@ -22,12 +23,12 @@ namespace Kooboo.Sites.Render
                         body = CompressCache.Get(css.Id, css.Version, body, CompressType.css);
                     }
                 }
-                TextBodyRender.SetBody(context, body); 
-                VersionRenderer.ScriptStyleVersion(context); 
+                TextBodyRender.SetBody(context, body);
+                VersionRenderer.ScriptStyleVersion(context);
             }
-        } 
+        }
 
-        public static string GetBody(Kooboo.Sites.Models.Style style)
+        public static string GetBody(RenderContext context, Models.Style style)
         {
             if (style == null || string.IsNullOrEmpty(style.Body))
             {
@@ -45,7 +46,7 @@ namespace Kooboo.Sites.Render
                 var find = styleEngines.Find(o => o.Extension == style.Extension);
                 if (find != null)
                 {
-                    return find.Execute(null, style.Body);
+                    return find.Execute(context, style.Source);
                 }
                 else
                 {
