@@ -12,6 +12,7 @@ using System.Collections.Concurrent;
 using Kooboo.Data.Models;
 using Kooboo.Data.Events;
 using Kooboo.Events;
+using System.IO;
 
 namespace Kooboo.Sites.Engine
 {
@@ -72,6 +73,87 @@ namespace Kooboo.Sites.Engine
 
         public ImportAction Import(Import import)
         {
+            if (string.IsNullOrWhiteSpace(import.Path)) return ImportAction.ImportNothing;
+            var extension = Path.GetExtension(import.Path)?.ToLower() ?? "css";
+            Imports.Add(import.Path);
+
+            switch (extension)
+            {
+                case ".less":
+                    return ImportLess(import);
+                case ".css":
+                    return ImportCss(import);
+                case ".js":
+                    return ImportJs(import);
+                default:
+                    return ImportAction.ImportNothing;
+            }
+        }
+
+        private ImportAction ImportJs(Import import)
+        {
+            var code = _webSite.SiteDb().Code.GetByNameOrId(Path.GetFileNameWithoutExtension(import.Path));
+
+            if (code == null)
+            {
+                try
+                {
+                    code = _webSite.SiteDb().Code.GetByUrl(Path.GetFileNameWithoutExtension(import.Path));
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            if (code == null) return ImportAction.LeaveImport;
+
+            RenderContext context = new RenderContext
+            {
+                WebSite = _webSite
+            };
+
+            var source = Scripting.Manager.ExecuteCode(context, code.Body);
+            return ImportLess(import, source);
+        }
+
+        private ImportAction ImportCss(Import import)
+        {
+            var style = GetStyle(import);
+            if (style == null) return ImportAction.LeaveImport;
+            import.InnerContent = style.Body;
+            return ImportAction.ImportCss;
+        }
+
+        private ImportAction ImportLess(Import import)
+        {
+            var style = GetStyle(import);
+            if (style == null) return ImportAction.LeaveImport;
+            return ImportLess(import, style.Source);
+        }
+
+        private ImportAction ImportLess(Import import, string source)
+        {
+            _paths.Add(import.Path);
+
+            try
+            {
+                import.InnerRoot = Parser().Parse(source, import.Path);
+            }
+            catch (Exception)
+            {
+                Imports.Remove(import.Path);
+                return ImportAction.ImportNothing;
+            }
+            finally
+            {
+                _paths.RemoveAt(_paths.Count - 1);
+            }
+
+            return ImportAction.ImportLess;
+        }
+
+        private Models.Style GetStyle(Import import)
+        {
             var style = _webSite.SiteDb().Styles.GetByNameOrId(import.Path);
 
             if (style == null)
@@ -85,37 +167,7 @@ namespace Kooboo.Sites.Engine
                 }
             }
 
-            if (style == null) return ImportAction.LeaveImport;
-
-            var extension = style.Extension?.ToLower() ?? "css";
-            Imports.Add(import.Path);
-
-            switch (extension)
-            {
-                case "less":
-                    _paths.Add(import.Path);
-
-                    try
-                    {
-                        import.InnerRoot = Parser().Parse(style.Source, import.Path);
-                    }
-                    catch (Exception)
-                    {
-                        Imports.Remove(import.Path);
-                        return ImportAction.ImportNothing;
-                    }
-                    finally
-                    {
-                        _paths.RemoveAt(_paths.Count - 1);
-                    }
-
-                    return ImportAction.ImportLess;
-                case "css":
-                    import.InnerContent = style.Body;
-                    return ImportAction.ImportCss;
-                default:
-                    return ImportAction.ImportNothing;
-            }
+            return style;
         }
     }
 
