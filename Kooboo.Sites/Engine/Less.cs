@@ -28,22 +28,47 @@ namespace Kooboo.Sites.Engine
 
         public bool IsStyle => true;
 
-        readonly ConcurrentDictionary<WebSite, LessEngine> _lessEngines = new ConcurrentDictionary<WebSite, LessEngine>();
+        //readonly ConcurrentDictionary<WebSite, LessEngine> _lessEngines = new ConcurrentDictionary<WebSite, LessEngine>();
+
+        private Dictionary<Guid, LessEngine> _lessEngines = new Dictionary<Guid, LessEngine>();
+
+        private object _lock = new object();
 
         // Less Css..   
         public string Execute(RenderContext context, string input)
         {
-            return _lessEngines.GetOrAdd(context.WebSite, _ =>
+            //用ConcurrentDictionary每10次出现一次 “集合已经修改” 的错误。不懂为什么... 
+            //用SiteId 比用website对象好， 因为对象也是取对象的Hash值来做key。这个值会改变。
+
+            var id = context.WebSite.Id;
+            if (!_lessEngines.ContainsKey(id))
             {
-                var engine = new LessEngine();
-                engine.Parser.Importer = new KLessImporter(context.WebSite);
-                return engine;
-            }).Parse(input ?? string.Empty);
+                lock (_lock)
+                {
+                    if (!_lessEngines.ContainsKey(id))
+                    {
+                        var newengine = new LessEngine();
+                        newengine.Parser.Importer = new KLessImporter(context.WebSite);
+                        _lessEngines.Add(id, newengine);
+                    }
+                }
+            }
+
+            LessEngine engine = _lessEngines[id];
+
+            return engine.Parse(input ?? string.Empty);
+
+            //return _lessEngines.GetOrAdd(context.WebSite, _ =>
+            //{
+            //    var engine = new LessEngine();
+            //    engine.Parser.Importer = new KLessImporter(context.WebSite);
+            //    return engine;
+            //}).Parse(input ?? string.Empty);
         }
 
         public void RemoveCache(WebSite webSite)
         {
-            _lessEngines.TryRemove(webSite, out _);
+            _lessEngines.Remove(webSite.Id);
         }
     }
 
