@@ -38,13 +38,13 @@ namespace Kooboo.Data.Models
         public string Function { get; set; }
 
         // The manager of this department. The head of this department. 
-        public bool IsHead { get; set; }
+        public bool IsManager { get; set; }
 
         public override int GetHashCode()
         {
             string unique = this.UserId.ToString() + this.OrganizationId.ToString() + this.DepartmentId.ToString();
 
-            unique += this.Function + this.IsHead.ToString(); 
+            unique += this.Function + this.IsManager.ToString(); 
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }

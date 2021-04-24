@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -218,6 +217,11 @@ namespace Kooboo.Data
 
         public static string GetOrganizationFolder(Guid OrganizationId, bool IsOnlineServer)
         {
+             if (OrganizationId==default(Guid))
+            {
+                return Path.Combine(DatabasePath, "_kooboo_temp_"); 
+            }
+
             var organizationName = GlobalDb.Organization.GetName(OrganizationId);
 
             string foldername = null;

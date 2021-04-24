@@ -1,16 +1,16 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Data.Service;
+using Kooboo.Lib.Security;
 using Kooboo.Sites.Scripting.Global.Jwt;
-using MongoDB.Bson.Serialization.Conventions;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace KScript
 {
@@ -124,6 +124,34 @@ var input = ""myvalue"";
         {
             return Kooboo.Lib.Security.ShortGuid.GetNewShortId();
         }
+
+        [Description("Hash a password using built-in best practice")]
+        public string HashPassword(string password)
+        {
+            DefaultPasswordHash hashprovider = new DefaultPasswordHash(); 
+           return hashprovider.Hash(password);  
+        }
+        [Description("Verify a password again hashed value")]
+        public bool VerifyPassword(string password, string saltdpassword) 
+        {
+            DefaultPasswordHash hashprovider = new DefaultPasswordHash();
+            return hashprovider.Verify(password, saltdpassword);
+        }
+
+        private RSAEncryption _rsa; 
+
+        public RSAEncryption rsa
+        {
+            get
+            {
+                if (_rsa == null)
+                {
+                    _rsa = new RSAEncryption();  
+                }
+                return _rsa; 
+            }
+        }
+
 
     }
 

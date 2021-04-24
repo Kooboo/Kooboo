@@ -36,7 +36,6 @@ namespace Kooboo.Sites.Render
                     sb.Clear();
                     context.AddPlaceHolderContent("", currentvalue);
 
-
                 } 
 
                 if (item is HeaderRenderTask)

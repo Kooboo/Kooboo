@@ -29,7 +29,15 @@ namespace Kooboo.Data.Models
             }
         }
 
+        //name or code.
         public string Name { get; set; }
+
+        public string DisplayName { get; set; }
+
+        public Guid ParentDepartmentId
+        {
+            get;set;
+        }
            
         public Guid OrganizationId { get; set; }
 

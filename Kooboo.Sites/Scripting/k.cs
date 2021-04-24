@@ -150,9 +150,9 @@ namespace KScript
                 return _response;
             }
         }
+         
 
-        private Request _request;
-
+        private Request _request; 
 
         [Description(@"Access to the http request data, query string, form or headers. Cookie is available from k.cookie.
 var value = k.request.queryname;
@@ -175,6 +175,29 @@ var value = k.request.form.queryname;")]
                 return _request;
             }
         }
+
+
+        private ClientJs _clientjs;
+
+        [Description(@"Sent object to browser JavaScript")]
+        public ClientJs ClientJS
+        {
+            get
+            {
+                if (_clientjs == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_clientjs == null)
+                        {
+                            _clientjs = new ClientJs(this.RenderContext); 
+                        }
+                    }
+                }
+                return _clientjs;
+            }
+        }
+         
 
         private Session _session;
 
@@ -684,6 +707,26 @@ var value = k.session.key; ")]
                     }
                 }
                 return _ktext;
+            }
+        }
+
+        private KDate _kdate; 
+
+        public KDate Date
+        {
+            get
+            {
+                if (_kdate == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_kdate == null)
+                        {
+                            _kdate = new KDate(); 
+                        }
+                    }
+                }
+                return _kdate;
             }
         }
 

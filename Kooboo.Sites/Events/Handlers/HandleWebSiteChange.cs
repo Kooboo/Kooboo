@@ -14,7 +14,6 @@ namespace Kooboo.Sites.Events.Handlers
     {  
         public void Handle(WebSiteChange theEvent, RenderContext context)
         { 
-             
             Kooboo.Sites.Cache.RenderPlan.RemoveSiteDb(theEvent.WebSite.Id);  
         }
     }

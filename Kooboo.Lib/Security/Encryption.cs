@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.IO;
 using System.Xml;
+using System.ComponentModel;
 
 namespace Kooboo.Lib.Security
 { 
@@ -65,7 +66,7 @@ namespace Kooboo.Lib.Security
         /// <param name="publickey"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string RSAEncrypt(string publickey,string content)
+        public static string Encrypt(string publickey,string content)
         {
             return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSAEncrypt(publickey, content);
         }
@@ -76,7 +77,7 @@ namespace Kooboo.Lib.Security
         /// <param name="privatekey"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string RSADecrypt(string privatekey,string content)
+        public static string Decrypt(string privatekey,string content)
         {
             return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSADecrypt(privatekey, content);
             
@@ -88,13 +89,18 @@ namespace Kooboo.Lib.Security
         /// <param name="privateKeyPath">RSA private key file path</param> 
         /// <param name="publicKeyPath">RSA private key file path</param> /
         // <param name="size">secure size must be above 512</param> 
-        public static void GenerateRsa(string privateKeyPath, string publicKeyPath, int size)
+        private static void GenerateRsa(string privateKeyPath, string publicKeyPath, int size)
         {
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateRsa(privateKeyPath, publicKeyPath, size);
         }
 
-        public static RsaKeys GenerateKeys(int size=512)
+        [Description("Generate RSA public private key pair. Default size = 512")]
+        public static RsaKeys GenerateKeys(int size)
         {
+            if (size <=0)
+            {
+                size = 512; 
+            }
            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateKeys(size);
         }
     }

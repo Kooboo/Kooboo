@@ -44,6 +44,7 @@ namespace Kooboo.Data.Service
             // Format hash with extra information
             return string.Format("$KHASH$V1${0}${1}", iterations, base64Hash);
         }
+          
 
         /// <summary>
         /// Creates a hash from a password with 10000 iterations

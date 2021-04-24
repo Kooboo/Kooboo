@@ -43,7 +43,7 @@ namespace Kooboo.Data.Helper
             {
                 return null;
             }
-            return Lib.Security.RSAEncryption.RSAEncrypt(LatestPublickey, input); 
+            return Lib.Security.RSAEncryption.Encrypt(LatestPublickey, input); 
         }
 
         public static string Decrypt(string input)
@@ -58,7 +58,7 @@ namespace Kooboo.Data.Helper
                 string result = null;
                 try
                 {
-                    result = Lib.Security.RSAEncryption.RSADecrypt(item, input); 
+                    result = Lib.Security.RSAEncryption.Decrypt(item, input); 
                 }
                 catch (Exception)
                 { 
