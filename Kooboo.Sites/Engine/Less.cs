@@ -200,6 +200,7 @@ namespace Kooboo.Sites.Engine
     {
         public void Handle(WebSiteChange theEvent, RenderContext context)
         {
+            if (theEvent.ChangeType != ChangeType.Delete) return;
             var lessEngine = Manager.Get("less");
             if (lessEngine == null) return;
             (lessEngine as Less).RemoveCache(theEvent.WebSite);
