@@ -11,6 +11,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.ScriptDebugger;
 using Kooboo.Sites.Scripting;
 using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.Api;
 using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.SMS;
 using Kooboo.Sites.Scripting.Global.Sqlite;
@@ -644,6 +645,27 @@ var value = k.session.key; ")]
                     }
                 }
                 return _mongo;
+            }
+        }
+
+        private KApi _api;
+        static object _apiLocker = new object();
+
+        public KApi Api
+        {
+            get
+            {
+                if (_api == null)
+                {
+                    lock (_apiLocker)
+                    {
+                        if (_api == null)
+                        {
+                            _api = new KApi(RenderContext);
+                        }
+                    }
+                }
+                return _api;
             }
         }
 
