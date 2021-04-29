@@ -32,7 +32,7 @@ k.api.get(function (id) {
 //result 23.0
 ")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Get(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "GET", metas);
+        public void Get(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "GET", metas);
 
         [Description(@"
 //GET /test?id=23
@@ -70,7 +70,7 @@ k.api.post(function (id, body) {
 // }
 ")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Post(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "POST", metas);
+        public void Post(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "POST", metas);
 
         [Description(@"
 //POST /test?id=23
@@ -120,7 +120,7 @@ k.api.put(function (id, body) {
 // }
 ")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Put(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "PUT", metas);
+        public void Put(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "PUT", metas);
 
         [Description(@"
 //PUT /test?id=23
@@ -156,7 +156,7 @@ k.api.delete(function (id) {
 //result 23.0
 ")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Delete(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "DELETE", metas);
+        public void Delete(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "DELETE", metas);
 
         [Description(@"
 //DELETE /test?id=23
@@ -168,19 +168,32 @@ k.api.delete(function (id) {
 ")]
         public void Delete(MulticastDelegate action) => Delete(action, null);
 
-        private void On(MulticastDelegate action, string method, IDictionary<string, object>[] metas)
+        private void CallAction(MulticastDelegate action, string method, IDictionary<string, object>[] metas)
         {
             if (_renderContext.Request.Method != method) return;
-            metas = Helpers.NamedMetas(metas);
-            var func = action.Target as ScriptFunctionInstance;
-            var parameters = GetParameters(func, metas);
-            var result = func.Call(func, parameters).ToObject();
 
-            if (result != null)
+            var response = new KApiRespone();
+
+            try
             {
-                var json = JsonHelper.SerializeCaseSensitive(result);
-                _renderContext.Response.AppendString(json);
+                metas = Helpers.NamedMetas(metas);
+                var func = action.Target as ScriptFunctionInstance;
+                var parameters = GetParameters(func, metas);
+                var result = func.Call(func, parameters).ToObject();
+                if (result != null) response.Data = JsonHelper.Serialize(result);
             }
+            catch (KApiException e)
+            {
+                response.Code = 400;
+                response.Data = e.Message;
+            }
+            catch (Exception e)
+            {
+                response.Code = 500;
+                response.Data = e.ToString();
+            }
+
+            DefaultResultHandler(response);
         }
 
         private JsValue[] GetParameters(ScriptFunctionInstance func, IDictionary<string, object>[] metas)
@@ -230,6 +243,13 @@ k.api.delete(function (id) {
             }
 
             return value;
+        }
+
+        void DefaultResultHandler(KApiRespone response)
+        {
+            _renderContext.Response.StatusCode = response.Code;
+            _renderContext.SetItem(new CustomStatusCode() { IsCustomSet = true, Code = response.Code });
+            _renderContext.Response.AppendString(response.Data);
         }
     }
 }

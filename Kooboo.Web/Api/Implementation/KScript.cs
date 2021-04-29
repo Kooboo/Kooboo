@@ -6,6 +6,7 @@ using KScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -16,7 +17,14 @@ namespace Kooboo.Web.Api.Implementation
 
         public KScriptApi()
         {
-            _defineContent = new Lazy<string>(() => new KScriptToTsDefineConventer().Convent(typeof(KScript.k)), true);
+            _defineContent = new Lazy<string>(() =>
+            {
+                var sb = new StringBuilder();
+                var defines = new KScriptToTsDefineConventer().Convent(typeof(KScript.k));
+                sb.Append(defines);
+                sb.Append(Extends());
+                return sb.ToString();
+            }, true);
         }
 
         public string ModelName
@@ -37,6 +45,13 @@ namespace Kooboo.Web.Api.Implementation
         public string GetDefine()
         {
             return _defineContent.Value;
+        }
+
+        public string Extends()
+        {
+            return @"
+declare function ok(data: object = null) {};
+";
         }
 
         public IEnumerable<string> GetTables(ApiCall apiCall, string database)
@@ -75,9 +90,9 @@ namespace Kooboo.Web.Api.Implementation
                 case "sqlserver":
                     return kInstance.SqlServer.Query($"SELECT COLUMN_NAME from INFORMATION_SCHEMA.columns where TABLE_NAME= '{table}'").Select(s => s.GetValue("COLUMN_NAME").ToString());
                 case "mongo":
-                    table= kInstance.Mongo.Tables.FirstOrDefault(f => f == table);
+                    table = kInstance.Mongo.Tables.FirstOrDefault(f => f == table);
                     if (table == null) return new string[0];
-                    return (kInstance.Mongo.GetTable(table) as MongoTable).GetAllField().Select(s=>s.ToString());
+                    return (kInstance.Mongo.GetTable(table) as MongoTable).GetAllField().Select(s => s.ToString());
                 default:
                     return new string[0];
             }
