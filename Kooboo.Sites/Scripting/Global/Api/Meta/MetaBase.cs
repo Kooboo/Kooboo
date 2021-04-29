@@ -3,13 +3,11 @@ using Jint.Native.Function;
 using Jint.Native.Json;
 using Kooboo.Data.Attributes;
 using Kooboo.Lib.Helper;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Api.Meta
 {
@@ -36,6 +34,18 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
                 return value;
             }
         }
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return id;
+}, [
+    {
+        name: 'id',
+        required: true
+    }
+])
+")]
         public bool? Required
         {
             get
@@ -47,6 +57,18 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
                 else return null;
             }
         }
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return id;
+}, [
+    {
+        name: 'id',
+        type: 'Number'
+    }
+])
+")]
         public Types? Type
         {
             get
@@ -58,6 +80,19 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
                 else return null;
             }
         }
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return id;
+}, [
+    {
+        name: 'id',
+        type: 'Number', // if type == 'String' match string length
+        min: 30
+    }
+])
+")]
         public double? Min
         {
             get
@@ -66,6 +101,19 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
                 return min as double?;
             }
         }
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return id;
+}, [
+    {
+        name: 'id',
+        type: 'Number', // if type == 'String' match string length
+        max: 30
+    }
+])
+")]
         public double? Max
         {
             get
@@ -74,6 +122,18 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
                 return max as double?;
             }
         }
+
+        [Description(@"
+//GET /test?id=bee
+k.api.get(function (id) {
+    return id;
+}, [
+    {
+        name: 'id',
+        pattern: 'be+'
+    }
+])
+")]
         public string Pattern
         {
             get
@@ -83,6 +143,19 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
             }
         }
 
+        [Description(@"
+//GET /test?id=bee
+k.api.get(function (id) {
+    return id;
+}, [
+    {
+        name: 'id',
+        validator: function (value) {
+            return value == 'bee'
+        }
+    }
+])
+")]
         public MulticastDelegate Validator
         {
             get
@@ -92,6 +165,27 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
             }
         }
 
+        [Description(@"
+//POST /test
+// {
+//     'age':23
+// }
+
+k.api.post(function (body) {
+    return body;
+}, [
+    {
+        name: 'body',
+        from: 'Body',
+        children: [
+            {
+                name: 'age',
+                min: 10
+            }
+        ]
+    }
+])
+")]
         public ChildMeta[] Children { get; }
 
         [KIgnore]
@@ -134,7 +228,7 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
             if (type == Types.Boolean) value = GetBoolean(value);
             else if (type == Types.Number || value is double) value = GetNumber(value);
             else if (type == Types.Object || value is IDictionary<string, object>) value = GetObject(value);
-            else if (type == Types.Array || value is IEnumerable) value = GetArray(value);
+            else if (type == Types.Array || (value is IEnumerable && !(value is string))) value = GetArray(value);
             else if (type == Types.String || value is string) value = GetString(value);
 
             return value;
@@ -168,7 +262,7 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
             if (!(obj is IDictionary<string, object>)) throw new TypeException(_parents, Types.Object);
             var dic = obj as IDictionary<string, object>;
             var metas = Helpers.NamedMetas(_Children);
-            Helpers.CheckRequired(dic.Keys.ToArray(), metas);
+            if (metas != null) Helpers.CheckRequired(dic.Keys.ToArray(), metas);
             var result = new Dictionary<string, object>();
 
             foreach (var item in dic)
@@ -178,31 +272,6 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
             }
 
             value = result;
-            return value;
-        }
-
-        private object ToObject(object value)
-        {
-            if ((value is string) && JsonHelper.IsJson(value as string))
-            {
-                value = new JsonParser(_engine).Parse(value as string).ToObject();
-            }
-            else if (this is RootMeta)
-            {
-                var rootMeta = this as RootMeta;
-                if (rootMeta.From == ValueFrom.Body)
-                {
-                    var result = new Dictionary<string, object>();
-
-                    foreach (var item in rootMeta.Context.Request.Forms.AllKeys)
-                    {
-                        result[item] = rootMeta.Context.Request.Forms.Get(item);
-                    }
-
-                    value = result;
-                }
-            }
-
             return value;
         }
 
@@ -216,7 +285,9 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
 
                 try
                 {
-                    var result = func.Call(func, new[] { JsValue.FromObject(func.Engine, value) });
+                    var validValue = value is JsValue ? value : JsValue.FromObject(func.Engine, value);
+                    var @params = new[] { JsValue.FromObject(func.Engine, validValue) };
+                    var result = func.Call(func, @params);
                     if (!true.Equals(result.ToObject())) throw new InvalidException(_parents);
                 }
                 catch (Exception)
@@ -282,5 +353,30 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
         }
 
         protected abstract object GetFrom();
+
+        private object ToObject(object value)
+        {
+            if ((value is string) && JsonHelper.IsJson(value as string))
+            {
+                value = new JsonParser(_engine).Parse(value as string).ToObject();
+            }
+            else if (this is RootMeta)
+            {
+                var rootMeta = this as RootMeta;
+                if (rootMeta.From == ValueFrom.Body)
+                {
+                    var result = new Dictionary<string, object>();
+
+                    foreach (var item in rootMeta.Context.Request.Forms.AllKeys)
+                    {
+                        result[item] = rootMeta.Context.Request.Forms.Get(item);
+                    }
+
+                    value = result;
+                }
+            }
+
+            return value;
+        }
     }
 }

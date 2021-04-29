@@ -1,8 +1,4 @@
-﻿using Kooboo.Data.Attributes;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Sites.Scripting.Global.Api.Meta
 {

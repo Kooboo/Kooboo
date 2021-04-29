@@ -1,4 +1,5 @@
-﻿using Kooboo.Data.Context;
+﻿using Kooboo.Data.Attributes;
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
 
@@ -6,6 +7,7 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
 {
     public class RootMeta : MetaBase
     {
+        [KIgnore]
         public RenderContext Context { get; }
 
         public RootMeta(Jint.Engine engine, IDictionary<string, object> metas, RenderContext context) : base(engine, metas, new string[0])
