@@ -354,26 +354,11 @@ k.api.post(function (body) {
 
         protected abstract object GetFrom();
 
-        private object ToObject(object value)
+        protected virtual object ToObject(object value)
         {
             if ((value is string) && JsonHelper.IsJson(value as string))
             {
                 value = new JsonParser(_engine).Parse(value as string).ToObject();
-            }
-            else if (this is RootMeta)
-            {
-                var rootMeta = this as RootMeta;
-                if (rootMeta.From == ValueFrom.Body)
-                {
-                    var result = new Dictionary<string, object>();
-
-                    foreach (var item in rootMeta.Context.Request.Forms.AllKeys)
-                    {
-                        result[item] = rootMeta.Context.Request.Forms.Get(item);
-                    }
-
-                    value = result;
-                }
             }
 
             return value;

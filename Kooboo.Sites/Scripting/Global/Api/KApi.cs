@@ -1,5 +1,6 @@
 ﻿using Jint.Native;
 using Jint.Native.Function;
+using Jint.Native.Json;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
@@ -25,10 +26,7 @@ namespace Kooboo.Sites.Scripting.Global.Api
 k.api.get(function (id) {
     return id;
 }, [
-    {
-        name: 'id',
-        type: 'Number'
-    }
+    {name: 'id',type: 'Number'}
 ])
 
 //result 23.0
@@ -47,16 +45,127 @@ k.api.get(function(id){
 ")]
         public void Get(MulticastDelegate action) => Get(action, null);
 
+        [Description(@"
+//POST /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.post(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+}, [
+    { name: 'id', type: 'Number' },
+    { name: 'body', from: 'Body', type: 'Object' },
+])
+
+//result
+// {
+//   'id': 23.0,
+//   'body': {
+//     'age': 40.0
+//   }
+// }
+")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
         public void Post(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "POST", metas);
+
+        [Description(@"
+//POST /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.post(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+})
+
+//result
+// {
+//   'id': '23',
+//   'body': {
+//     'age': 40.0
+//   }
+// }
+")]
         public void Post(MulticastDelegate action) => Post(action, null);
 
+        [Description(@"
+//PUT /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.put(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+}, [
+    { name: 'id', type: 'Number' },
+    { name: 'body', from: 'Body', type: 'Object' },
+])
+
+//result
+// {
+//   'id': 23.0,
+//   'body': {
+//     'age': 40.0
+//   }
+// }
+")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
         public void Put(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "PUT", metas);
+
+        [Description(@"
+//PUT /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.put(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+})
+
+//result
+// {
+//   'id': '23',
+//   'body': {
+//     'age': 40.0
+//   }
+// }
+")]
         public void Put(MulticastDelegate action) => Put(action, null);
 
+        [Description(@"
+//DELETE /test?id=23
+k.api.delete(function (id) {
+    return id;
+},[
+    {name:'id',type:'Number'}
+])
+
+//result 23.0
+")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
         public void Delete(MulticastDelegate action, IDictionary<string, object>[] metas) => On(action, "DELETE", metas);
+
+        [Description(@"
+//DELETE /test?id=23
+k.api.delete(function (id) {
+    return id;
+})
+
+//result '23'
+")]
         public void Delete(MulticastDelegate action) => Delete(action, null);
 
         private void On(MulticastDelegate action, string method, IDictionary<string, object>[] metas)
@@ -86,7 +195,7 @@ k.api.get(function(id){
 
                 if (meta == null)
                 {
-                    value = _renderContext.Request.QueryString.Get(item);
+                    value = GetDefaultValue(func, item);
                 }
                 else
                 {
@@ -98,6 +207,29 @@ k.api.get(function(id){
             }
 
             return result.ToArray();
+        }
+
+        private object GetDefaultValue(ScriptFunctionInstance func, string item)
+        {
+            object value;
+
+            if (item.ToLower() == "body")
+            {
+                if (JsonHelper.IsJson(_renderContext.Request.Body))
+                {
+                    value = new JsonParser(func.Engine).Parse(_renderContext.Request.Body).ToObject();
+                }
+                else
+                {
+                    value = Helpers.FormToObject(_renderContext);
+                }
+            }
+            else
+            {
+                value = _renderContext.Request.QueryString.Get(item);
+            }
+
+            return value;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Jint.Native.Json;
+using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Scripting.Global.Api.Meta;
 using System;
@@ -25,6 +26,18 @@ namespace Kooboo.Sites.Scripting.Global.Api
         public static IDictionary<string, object>[] NamedMetas(IDictionary<string, object>[] metas)
         {
             return metas?.Where(w => w.ContainsKey("name"))?.ToArray();
+        }
+
+        public static object FormToObject(RenderContext context)
+        {
+            var result = new Dictionary<string, object>();
+
+            foreach (var item in context.Request.Forms.AllKeys)
+            {
+                result[item] = context.Request.Forms.Get(item);
+            }
+
+            return result;
         }
     }
 }

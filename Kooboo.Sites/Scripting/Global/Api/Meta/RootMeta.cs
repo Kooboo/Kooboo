@@ -45,5 +45,17 @@ namespace Kooboo.Sites.Scripting.Global.Api.Meta
                     return Context.Request.QueryString.Get(Name);
             }
         }
+
+        protected override object ToObject(object value)
+        {
+            value = base.ToObject(value);
+
+            if (value is string && From == ValueFrom.Body)
+            {
+                value = Helpers.FormToObject(Context);
+            }
+
+            return value;
+        }
     }
 }
