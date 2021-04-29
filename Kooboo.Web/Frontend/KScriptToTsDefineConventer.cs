@@ -211,12 +211,8 @@ namespace Kooboo.Web.Frontend.KScriptDefine
                     }
                     else
                     {
-                        builder.AppendLine($"{_indentation}{declare}enum {define.Name} {{");
-
-                        foreach (var item in define.Enums)
-                        {
-                            builder.AppendLine($"{_indentation}{_indentation}{item.Key}={item.Value},");
-                        }
+                        var enums = define.Enums.Keys.Select(s => $"'{s}'");
+                        builder.AppendLine($"{_indentation}{declare}type {define.Name} = {string.Join(" | ", enums)};");
                     }
 
                     builder.AppendLine($"{_indentation}}}");
@@ -236,13 +232,13 @@ namespace Kooboo.Web.Frontend.KScriptDefine
         {
             Define define;
 
-            if (type.IsClass || type.IsInterface || type.IsValueType)
-            {
-                define = ConvertClassOrInterface(type);
-            }
-            else if (type.IsEnum)
+            if (type.IsEnum)
             {
                 define = ConvertEnum(type);
+            }
+            else if (type.IsClass || type.IsInterface || type.IsValueType)
+            {
+                define = ConvertClassOrInterface(type);
             }
             else
             {
