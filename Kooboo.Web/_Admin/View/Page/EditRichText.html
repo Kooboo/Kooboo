@@ -36,43 +36,6 @@
           <textarea v-model="model.body" v-kb-richeditor="richEditor" style="opacity: 0"></textarea>
         </div>
       </kb-form-item>
-      <kb-form-item class="form-group" prop="title">
-        <div>
-          <label class="control-label col-md-1">Enable cache</label>
-          <div class="col-md-11">
-            <kb-switch v-model="model.enableCache"></kb-switch>
-          </div>
-        </div>
-      </kb-form-item>
-      <kb-form-item class="form-group" prop="title" v-if="model.enableCache">
-        <div>
-          <label class="control-label col-md-1">Cache by version</label>
-          <div class="col-md-11">
-            <kb-switch v-model="model.cacheByVersion"></kb-switch>
-          </div>
-        </div>
-      </kb-form-item>
-      <kb-form-item class="form-group" prop="title">
-        <div v-if="model.enableCache&&!model.cacheByVersion">
-          <label class="control-label col-md-1"></label>
-          <div class="col-md-11">
-            <span style="display: block;padding: 5px;">Time</span>
-            <div class="input-group input-large" >
-              <input class="form-control" type="number" v-model="model.cacheMinutes" />
-              <div class="input-group-addon">Minutes</div>
-            </div>
-          </div>
-        </div>
-      </kb-form-item>
-      <kb-form-item class="form-group" prop="title">
-        <div v-if="model.enableCache">
-          <label class="control-label col-md-1"></label>
-          <div class="col-md-11">
-            <span style="display: block;padding: 5px;">Cache query keys</span>
-            <input class="form-control input-large" v-model="model.cacheQueryKeys" placeholder='Example: category,page,index' />
-          </div>
-        </div>
-      </kb-form-item>
     </kb-form>
   </div>
   <div class="page-buttons">
@@ -118,7 +81,7 @@
             enableCache: false,
             cacheByVersion: false,
             cacheMinutes: 3,
-            cacheQueryKeys:""
+            cacheQueryKeys:" "
           },
           richEditor: {
             value: "",
@@ -147,10 +110,6 @@
               self.model.title = res.model.title;
               self.model.url = res.model.urlPath;
               self.richEditor.value = res.model.body;
-              self.model.enableCache = res.model.enableCache;
-              self.model.cacheByVersion = res.model.cacheByVersion;
-              if (res.model.cacheMinutes) self.model.cacheMinutes = res.model.cacheMinutes;
-              if (res.model.cacheQueryKeys) self.model.cacheQueryKeys = res.model.cacheQueryKeys;
               self.backUp = JSON.parse(JSON.stringify(self.model));
               self.init = true;
             }
