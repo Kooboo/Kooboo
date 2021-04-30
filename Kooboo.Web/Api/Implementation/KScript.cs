@@ -49,9 +49,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public string Extends()
         {
-            return @"
-declare function ok(data: object = null) {};
-";
+            return @"";
         }
 
         public IEnumerable<string> GetTables(ApiCall apiCall, string database)

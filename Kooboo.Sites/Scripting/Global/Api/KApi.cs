@@ -168,11 +168,98 @@ k.api.delete(function (id) {
 ")]
         public void Delete(MulticastDelegate action) => Delete(action, null);
 
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.ok();
+})
+
+//result  httcode 200
+")]
+        public KApiResponse Ok() => new KApiResponse(200, null);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.ok(id);
+})
+
+//result '23'
+")]
+        public KApiResponse Ok(object data) => new KApiResponse(200, JsonHelper.Serialize(data));
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.httpCode(400);
+})
+
+//result httpcode 400
+")]
+        public KApiResponse HttpCode(int code) => new KApiResponse(code);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.httpCode(400,{error:'id is Required'});
+})
+
+//result httpcode:400 body {'error':'id is Required'}
+")]
+        public KApiResponse HttpCode(int code, object data) => new KApiResponse(code, JsonHelper.Serialize(data));
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.redirect('http://www.kooboo.cn');
+})
+")]
+        public KApiResponse Redirect(string url) => new KApiResponse(302, url);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.badRequest();
+})
+ d
+//result  httcode 400
+")]
+        public KApiResponse BadRequest() => new KApiResponse(400, null);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.unauthorized();
+})
+ d
+//result  httcode 401
+")]
+        public KApiResponse Unauthorized() => new KApiResponse(401, null);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.forbidden();
+})
+ d
+//result  httcode 403
+")]
+        public KApiResponse Forbidden() => new KApiResponse(403, null);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return k.api.notFound();
+})
+ d
+//result  httcode 404
+")]
+        public KApiResponse NotFound() => new KApiResponse(404, null);
+
         private void CallAction(MulticastDelegate action, string method, IDictionary<string, object>[] metas)
         {
             if (_renderContext.Request.Method != method) return;
-
-            var response = new KApiRespone();
+            KApiResponse response;
 
             try
             {
@@ -180,17 +267,24 @@ k.api.delete(function (id) {
                 var func = action.Target as ScriptFunctionInstance;
                 var parameters = GetParameters(func, metas);
                 var result = func.Call(func, parameters).ToObject();
-                if (result != null) response.Data = JsonHelper.Serialize(result);
+
+                if (result is KApiResponse)
+                {
+                    response = result as KApiResponse;
+                }
+                else
+                {
+                    var data = result == null ? null : JsonHelper.Serialize(result);
+                    response = new KApiResponse(200, data);
+                }
             }
             catch (KApiException e)
             {
-                response.Code = 400;
-                response.Data = e.Message;
+                response = new KApiResponse(400, e.Message);
             }
             catch (Exception e)
             {
-                response.Code = 500;
-                response.Data = e.ToString();
+                response = new KApiResponse(500, e.ToString());
             }
 
             DefaultResultHandler(response);
@@ -245,11 +339,12 @@ k.api.delete(function (id) {
             return value;
         }
 
-        void DefaultResultHandler(KApiRespone response)
+        void DefaultResultHandler(KApiResponse response)
         {
             _renderContext.Response.StatusCode = response.Code;
             _renderContext.SetItem(new CustomStatusCode() { IsCustomSet = true, Code = response.Code });
-            _renderContext.Response.AppendString(response.Data);
+            if (response.Code > 300 && response.Code <= 302) _renderContext.Response.Redirect(302, response.Data);
+            else if (response.Data != null) _renderContext.Response.AppendString(response.Data);
         }
     }
 }
