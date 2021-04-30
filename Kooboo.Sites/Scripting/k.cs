@@ -15,11 +15,12 @@ using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.SMS;
 using Kooboo.Sites.Scripting.Global.Sqlite;
 using Kooboo.Sites.Service;
-using KScript.KscriptConfig; 
+using KScript.Api;
+using KScript.KscriptConfig;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel; 
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -644,6 +645,27 @@ var value = k.session.key; ")]
                     }
                 }
                 return _mongo;
+            }
+        }
+
+        private KApi _api;
+        static object _apiLocker = new object();
+
+        public KApi Api
+        {
+            get
+            {
+                if (_api == null)
+                {
+                    lock (_apiLocker)
+                    {
+                        if (_api == null)
+                        {
+                            _api = new KApi(RenderContext);
+                        }
+                    }
+                }
+                return _api;
             }
         }
 
