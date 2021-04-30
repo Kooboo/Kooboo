@@ -1,9 +1,10 @@
 ﻿using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Scripting.Global.Api.Meta;
 using System;
 using System.Collections.Generic;
 
-namespace Kooboo.Sites.Scripting.Global.Api.Meta
+namespace KScript.Api
 {
     public class RootMeta : MetaBase
     {

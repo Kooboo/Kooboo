@@ -1,9 +1,6 @@
-﻿using Kooboo.Sites.Scripting.Global.Api.Meta;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
-namespace Kooboo.Sites.Scripting.Global.Api
+namespace KScript.Api
 {
     public class KApiException : Exception
     {

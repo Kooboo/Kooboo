@@ -3,7 +3,7 @@ using Kooboo.Lib.Helper;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kooboo.Sites.Scripting.Global.Api
+namespace KScript.Api
 {
     public static class Helpers
     {

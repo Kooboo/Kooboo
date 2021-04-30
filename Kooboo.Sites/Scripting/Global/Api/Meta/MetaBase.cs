@@ -3,6 +3,7 @@ using Jint.Native.Function;
 using Jint.Native.Json;
 using Kooboo.Data.Attributes;
 using Kooboo.Lib.Helper;
+using KScript.Api;
 using System;
 using System.Collections;
 using System.Collections.Generic;

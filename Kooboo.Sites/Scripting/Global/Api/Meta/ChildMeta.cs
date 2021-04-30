@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Kooboo.Sites.Scripting.Global.Api.Meta;
+using System.Collections.Generic;
 
-namespace Kooboo.Sites.Scripting.Global.Api.Meta
+namespace KScript.Api
 {
     public class ChildMeta : MetaBase
     {

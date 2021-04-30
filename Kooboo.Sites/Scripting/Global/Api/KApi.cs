@@ -4,13 +4,14 @@ using Jint.Native.Json;
 using Kooboo.Data.Attributes;
 using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.Api.Meta;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Kooboo.Sites.Scripting.Global.Api
+namespace KScript.Api
 {
     public class KApi
     {
