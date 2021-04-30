@@ -63,7 +63,7 @@ k.api.get(function (id) {
 
 //result { 'success': true, 'data': 23, 'error': null, 'code': 200 }
 ")]
-        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        [KDefineType(Params = new[] { typeof(object), typeof(object) })]
         public void Get(MulticastDelegate action, MulticastDelegate resultHander) => Get(action, null, resultHander);
 
         [Description(@"
@@ -152,7 +152,7 @@ k.api.post(function (id, body) {
 
 //result { 'success': true, 'data': {'id': 23,'body': {'age': 40}}, 'error': null, 'code': 200 }
 ")]
-        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        [KDefineType(Params = new[] { typeof(object), typeof(object) })]
         public void Post(MulticastDelegate action, MulticastDelegate resultHander) => Post(action, null, resultHander);
 
         [Description(@"
@@ -249,7 +249,7 @@ k.api.put(function (id, body) {
 
 //result { 'success': true, 'data': {'id': 23,'body': {'age': 40}}, 'error': null, 'code': 200 }
 ")]
-        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        [KDefineType(Params = new[] { typeof(object), typeof(object) })]
         public void Put(MulticastDelegate action, MulticastDelegate resultHander) => Put(action, null, resultHander);
 
         [Description(@"
@@ -326,7 +326,7 @@ k.api.delete(function (id) {
 
 //result { 'success': true, 'data': 23, 'error': null, 'code': 200 }
 ")]
-        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        [KDefineType(Params = new[] { typeof(object), typeof(object) })]
         public void Delete(MulticastDelegate action, MulticastDelegate resultHander) => Delete(action, null, resultHander);
 
         [Description(@"
