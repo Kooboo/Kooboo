@@ -21,6 +21,18 @@ namespace Kooboo.Sites.Scripting.Global.Api
             _renderContext = renderContext;
         }
 
+        #region Get
+        [Description(@"
+//GET /test?id=23
+
+k.api.get(function(id){
+    return id;
+})
+
+//result '23'
+")]
+        public void Get(MulticastDelegate action) => Get(action, null, null);
+
         [Description(@"
 //GET /test?id=23
 k.api.get(function (id) {
@@ -32,118 +44,255 @@ k.api.get(function (id) {
 //result 23.0
 ")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Get(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "GET", metas);
+        public void Get(MulticastDelegate action, IDictionary<string, object>[] metas) => Get(action, metas, null);
 
         [Description(@"
 //GET /test?id=23
+k.api.get(function (id) {
+    return id;
+},function (code, data) {
+    var success = code < 400
 
-k.api.get(function(id){
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': 23, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Get(MulticastDelegate action, MulticastDelegate resultHander) => Get(action, null, resultHander);
+
+        [Description(@"
+//GET /test?id=23
+k.api.get(function (id) {
+    return id;
+}, [
+    {name: 'id',type: 'Number'}
+],function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': 23, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Get(MulticastDelegate action, IDictionary<string, object>[] metas, MulticastDelegate resultHander) => CallAction(action, "GET", metas, resultHander);
+        #endregion
+
+        #region Post
+        [Description(@"
+//POST /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.post(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+})
+
+//result {'id': '23','body': {'age': 40}}
+")]
+        public void Post(MulticastDelegate action) => Post(action, null, null);
+
+        [Description(@"
+//POST /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.post(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+}, [
+    { name: 'id', type: 'Number' },
+    { name: 'body', from: 'Body', type: 'Object' },
+])
+
+//result {'id': '23','body': {'age': 40}}
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Post(MulticastDelegate action, IDictionary<string, object>[] metas) => Post(action, metas, null);
+
+        [Description(@"
+//POST /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.post(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+},function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': {'id': 23,'body': {'age': 40}}, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Post(MulticastDelegate action, MulticastDelegate resultHander) => Post(action, null, resultHander);
+
+        [Description(@"
+//POST /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.post(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+}, [
+    { name: 'id', type: 'Number' },
+    { name: 'body', from: 'Body', type: 'Object' },
+],function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': {'id': 23,'body': {'age': 40}}, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Post(MulticastDelegate action, IDictionary<string, object>[] metas, MulticastDelegate resultHander) => CallAction(action, "POST", metas, resultHander);
+        #endregion
+
+        #region Put
+        [Description(@"
+//PUT /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.put(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+})
+
+//result {'id': '23','body': {'age': 40}}
+")]
+        public void Put(MulticastDelegate action) => Put(action, null, null);
+
+        [Description(@"
+//PUT /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.put(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+}, [
+    { name: 'id', type: 'Number' },
+    { name: 'body', from: 'Body', type: 'Object' },
+])
+
+//result {'id': '23','body': {'age': 40}}
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Put(MulticastDelegate action, IDictionary<string, object>[] metas) => Put(action, metas, null);
+
+        [Description(@"
+//PUT /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.put(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+},function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': {'id': 23,'body': {'age': 40}}, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Put(MulticastDelegate action, MulticastDelegate resultHander) => Put(action, null, resultHander);
+
+        [Description(@"
+//PUT /test?id=23
+// {
+//     'age':40
+// }
+
+k.api.put(function (id, body) {
+    return {
+        id: id,
+        body: body
+    }
+}, [
+    { name: 'id', type: 'Number' },
+    { name: 'body', from: 'Body', type: 'Object' },
+],function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': {'id': 23,'body': {'age': 40}}, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Put(MulticastDelegate action, IDictionary<string, object>[] metas, MulticastDelegate resultHander) => CallAction(action, "PUT", metas, resultHander);
+        #endregion
+
+        #region Delete
+        [Description(@"
+//DELETE /test?id=23
+k.api.delete(function (id) {
     return id;
 })
 
 //result '23'
 ")]
-        public void Get(MulticastDelegate action) => Get(action, null);
-
-        [Description(@"
-//POST /test?id=23
-// {
-//     'age':40
-// }
-
-k.api.post(function (id, body) {
-    return {
-        id: id,
-        body: body
-    }
-}, [
-    { name: 'id', type: 'Number' },
-    { name: 'body', from: 'Body', type: 'Object' },
-])
-
-//result
-// {
-//   'id': 23.0,
-//   'body': {
-//     'age': 40.0
-//   }
-// }
-")]
-        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Post(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "POST", metas);
-
-        [Description(@"
-//POST /test?id=23
-// {
-//     'age':40
-// }
-
-k.api.post(function (id, body) {
-    return {
-        id: id,
-        body: body
-    }
-})
-
-//result
-// {
-//   'id': '23',
-//   'body': {
-//     'age': 40.0
-//   }
-// }
-")]
-        public void Post(MulticastDelegate action) => Post(action, null);
-
-        [Description(@"
-//PUT /test?id=23
-// {
-//     'age':40
-// }
-
-k.api.put(function (id, body) {
-    return {
-        id: id,
-        body: body
-    }
-}, [
-    { name: 'id', type: 'Number' },
-    { name: 'body', from: 'Body', type: 'Object' },
-])
-
-//result
-// {
-//   'id': 23.0,
-//   'body': {
-//     'age': 40.0
-//   }
-// }
-")]
-        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Put(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "PUT", metas);
-
-        [Description(@"
-//PUT /test?id=23
-// {
-//     'age':40
-// }
-
-k.api.put(function (id, body) {
-    return {
-        id: id,
-        body: body
-    }
-})
-
-//result
-// {
-//   'id': '23',
-//   'body': {
-//     'age': 40.0
-//   }
-// }
-")]
-        public void Put(MulticastDelegate action) => Put(action, null);
+        public void Delete(MulticastDelegate action) => Delete(action, null, null);
 
         [Description(@"
 //DELETE /test?id=23
@@ -156,18 +305,54 @@ k.api.delete(function (id) {
 //result 23.0
 ")]
         [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
-        public void Delete(MulticastDelegate action, IDictionary<string, object>[] metas) => CallAction(action, "DELETE", metas);
+        public void Delete(MulticastDelegate action, IDictionary<string, object>[] metas) => Delete(action, metas, null);
 
         [Description(@"
 //DELETE /test?id=23
 k.api.delete(function (id) {
     return id;
+},[
+    {name:'id',type:'Number'}
+],function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
 })
 
-//result '23'
+//result { 'success': true, 'data': 23, 'error': null, 'code': 200 }
 ")]
-        public void Delete(MulticastDelegate action) => Delete(action, null);
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Delete(MulticastDelegate action, MulticastDelegate resultHander) => Delete(action, null, resultHander);
 
+        [Description(@"
+//DELETE /test?id=23
+k.api.delete(function (id) {
+    return id;
+},[
+    {name:'id',type:'Number'}
+],function (code, data) {
+    var success = code < 400
+
+    return {
+        success: success,
+        data: success ? data : null,
+        error: success ? null : data,
+        code: code
+    }
+})
+
+//result { 'success': true, 'data': 23, 'error': null, 'code': 200 }
+")]
+        [KDefineType(Params = new[] { typeof(object), typeof(RootMeta[]) })]
+        public void Delete(MulticastDelegate action, IDictionary<string, object>[] metas, MulticastDelegate resultHander) => CallAction(action, "DELETE", metas, resultHander);
+        #endregion
+
+        #region Http result
         [Description(@"
 //GET /test?id=23
 k.api.get(function (id) {
@@ -186,7 +371,7 @@ k.api.get(function (id) {
 
 //result '23'
 ")]
-        public KApiResponse Ok(object data) => new KApiResponse(200, JsonHelper.Serialize(data));
+        public KApiResponse Ok(object data) => new KApiResponse(200, Helpers.ToJson(data));
 
         [Description(@"
 //GET /test?id=23
@@ -206,7 +391,7 @@ k.api.get(function (id) {
 
 //result httpcode:400 body {'error':'id is Required'}
 ")]
-        public KApiResponse HttpCode(int code, object data) => new KApiResponse(code, JsonHelper.Serialize(data));
+        public KApiResponse HttpCode(int code, object data) => new KApiResponse(code, Helpers.ToJson(data));
 
         [Description(@"
 //GET /test?id=23
@@ -255,8 +440,9 @@ k.api.get(function (id) {
 //result  httcode 404
 ")]
         public KApiResponse NotFound() => new KApiResponse(404, null);
+        #endregion
 
-        private void CallAction(MulticastDelegate action, string method, IDictionary<string, object>[] metas)
+        private void CallAction(MulticastDelegate action, string method, IDictionary<string, object>[] metas, MulticastDelegate resultHander)
         {
             if (_renderContext.Request.Method != method) return;
             KApiResponse response;
@@ -274,7 +460,7 @@ k.api.get(function (id) {
                 }
                 else
                 {
-                    var data = result == null ? null : JsonHelper.Serialize(result);
+                    var data = result == null ? null : Helpers.ToJson(result);
                     response = new KApiResponse(200, data);
                 }
             }
@@ -287,7 +473,14 @@ k.api.get(function (id) {
                 response = new KApiResponse(500, e.ToString());
             }
 
-            DefaultResultHandler(response);
+            if (resultHander == null)
+            {
+                DefaultResultHandler(response);
+            }
+            else
+            {
+                CustomResultHandler(resultHander, response);
+            }
         }
 
         private JsValue[] GetParameters(ScriptFunctionInstance func, IDictionary<string, object>[] metas)
@@ -345,6 +538,13 @@ k.api.get(function (id) {
             _renderContext.SetItem(new CustomStatusCode() { IsCustomSet = true, Code = response.Code });
             if (response.Code > 300 && response.Code <= 302) _renderContext.Response.Redirect(302, response.Data);
             else if (response.Data != null) _renderContext.Response.AppendString(response.Data);
+        }
+
+        private void CustomResultHandler(MulticastDelegate resultHander, KApiResponse response)
+        {
+            var func = resultHander.Target as ScriptFunctionInstance;
+            var result = func.Call(func, new[] { JsValue.FromObject(func.Engine, response.Code), JsValue.FromObject(func.Engine, response.Data) }).ToObject();
+            if (result != null) _renderContext.Response.AppendString(Helpers.ToJson(result));
         }
     }
 }

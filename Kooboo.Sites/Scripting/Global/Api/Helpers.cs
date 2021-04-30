@@ -1,12 +1,7 @@
-﻿using Jint.Native;
-using Jint.Native.Json;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
-using Kooboo.Sites.Scripting.Global.Api.Meta;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Sites.Scripting.Global.Api
 {
@@ -39,6 +34,12 @@ namespace Kooboo.Sites.Scripting.Global.Api
             }
 
             return result;
+        }
+
+        public static string ToJson(object obj)
+        {
+            if (obj == null) return null;
+            return JsonHelper.SerializeCaseSensitive(obj, new IntJsonConvert());
         }
     }
 }
