@@ -4,7 +4,6 @@ using System;
 
 namespace Kooboo.Data.Models
 {
-
     /// <summary>
     /// The group or organization that this user belongs to.
     /// This can be the company name, or school, or other organizations. 

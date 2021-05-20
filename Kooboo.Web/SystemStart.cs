@@ -107,7 +107,7 @@ namespace Kooboo.Web
                             _middlewares.Add(new JsTestMiddleWare(KoobooJsTestOption()));
                             _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
 
-                            _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
+                           _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
 
                             _middlewares.Add(new SslCertMiddleWare());
 

@@ -65,11 +65,6 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     SameSiteRedirect = true;
                 }
-#if DEBUG
-                {
-                    SameSiteRedirect = true;
-                }
-#endif 
 
                 string returnUrl = apiCall.GetValue("returnurl");
                 if (returnUrl != null)

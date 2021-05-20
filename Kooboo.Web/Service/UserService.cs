@@ -7,7 +7,7 @@ using System;
 namespace Kooboo.Web.Service
 {
     public static class UserService
-    { 
+    {
         public static string GetToken(User user)
         {
             if (Kooboo.Data.AppSettings.IsOnlineServer && !IsSameServer(user.TempRedirectUrl))
@@ -38,12 +38,12 @@ namespace Kooboo.Web.Service
             {
                 gettokenurl += "&password=" + user.Password;
             }
-        
+
             return Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
-          
+
         }
 
-        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool SameSiteRedirect)
+        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool samesiteredirect)
         {
             if (!string.IsNullOrWhiteSpace(returnUrl))
             {
@@ -57,21 +57,18 @@ namespace Kooboo.Web.Service
                 }
             }
 
-            string baseurl = currentRequestUrl; 
+            string baseurl = currentRequestUrl;
 
-            if (!string.IsNullOrWhiteSpace(User.TempRedirectUrl))
+            if (!samesiteredirect && !string.IsNullOrWhiteSpace(User.TempRedirectUrl) && Data.AppSettings.IsOnlineServer)
             {
-                if (Data.AppSettings.IsOnlineServer && !SameSiteRedirect)
-                {
-                    baseurl = User.TempRedirectUrl;
-                }
+                baseurl = User.TempRedirectUrl;
             }
-              
+
             string url;
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                context.User = User; 
+                context.User = User;
                 url = Kooboo.Data.Service.StartService.AfterLoginPage(context);
             }
             else
@@ -79,18 +76,18 @@ namespace Kooboo.Web.Service
                 url = returnUrl;
             }
 
-            string fullurl = url; 
-           
-            if (baseurl !=null && baseurl.ToLower().StartsWith("http://") || baseurl.ToLower().StartsWith("https://"))
+            string fullurl = url;
+
+            if (baseurl != null && (baseurl.ToLower().StartsWith("http://") || baseurl.ToLower().StartsWith("https://")))
             {
                 fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
-            }      
+            }
             return fullurl;
         }
 
-        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool SameSiteRedirect)
+        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool samesiteredirect)
         {
-            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, SameSiteRedirect);
+            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, samesiteredirect);
 
             string token = GetToken(user);
 

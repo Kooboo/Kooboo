@@ -30,12 +30,12 @@ namespace Kooboo.App
             {
                 if (KoobooUpgrade.IsAutoUpgrade)
                 {
-                    var hours = DateTime.Now.Hour; 
-                     // only do it in the midnight of current computer zone. 
-                    if (hours == 2 || hours == 3 || hours == 4)
-                    {
-                       await KoobooUpgrade.Upgrade();
-                    }  
+                    //var hours = DateTime.Now.Hour; 
+                    // // only do it in the midnight of current computer zone. 
+                    //if (hours == 2 || hours == 3 || hours == 4)
+                    //{
+                    //await KoobooUpgrade.Upgrade();
+                    //}
                 }
             }
         }

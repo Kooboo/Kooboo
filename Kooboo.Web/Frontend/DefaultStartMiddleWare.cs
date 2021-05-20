@@ -44,19 +44,27 @@ namespace Kooboo.Web.Frontend
         {
             if (context.Request.RelativeUrl == "/" || string.IsNullOrEmpty(context.Request.RelativeUrl))
             {
-                string relative = this.options.LoginPage; 
-
-                if (context.User !=null && !string.IsNullOrWhiteSpace(this.options.PageAfterLogin))
+                //Temp fix. 
+                string host = context.Request.Host.ToLower();
+                if (host == "kooboo.cn" || host == "www.kooboo.cn" || host == "www.kooboo.com" || host == "kooboo.com" || host == "kooboo.eu" || host == "www.kooboo.eu")
                 {
-                    relative = this.options.PageAfterLogin; 
+                    await Next.Invoke(context);
+                    return;
+                } 
+
+                string relative = this.options.LoginPage;
+
+                if (context.User != null && !string.IsNullOrWhiteSpace(this.options.PageAfterLogin))
+                {
+                    relative = this.options.PageAfterLogin;
                 }
 
                 if (relative.ToLower().StartsWith(this.options.StartPath))
                 {
-                    relative = relative.Substring(this.options.StartPath.Length); 
+                    relative = relative.Substring(this.options.StartPath.Length);
                 }
 
-                var Response = RenderEngine.Render(context, this.options,  relative);
+                var Response = RenderEngine.Render(context, this.options, relative);
 
                 if (Response != null)
                 {
@@ -82,14 +90,14 @@ namespace Kooboo.Web.Frontend
                     }
                 }
 
-                await Next.Invoke(context); 
+                await Next.Invoke(context);
             }
             else
             {
                 await Next.Invoke(context); return;
             }
-              
-        
+
+
 
         }
     }
