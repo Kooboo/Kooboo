@@ -220,6 +220,13 @@
 
   extend(CssOptimization, BaseModel);
 
+  //CodeSearch
+  function CodeSearch() {
+    this.name = "CodeSearch";
+  }
+
+  extend(CodeSearch, BaseModel);
+
   //page
   function Page() {
     this.name = "Page";
@@ -1859,6 +1866,7 @@
     SqlLog: new SqlLog(),
     Authentication: new Authentication(),
     CssOptimization: new CssOptimization(),
+    CodeSearch: new CodeSearch(),
   };
   wind.Kooboo.TextContent = new TextContent();
 
