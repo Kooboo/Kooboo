@@ -31,11 +31,17 @@
     </kb-table-column>
 
     <kb-table-column label="Line">
-      <template v-slot="row"> {{row.line}} </template>
+      <template v-slot="row">
+          <div v-for="line in row.lines">
+              <span>line</span>
+              {{line.lineNumber}} : {{line.summary}}
+          </div>
+        {{row.line}} 
+      </template>
     </kb-table-column>
 
-    <kb-table-column label="URL">
-      <template v-slot="row"> <a :href="row.url">{{row.url}}</a> </template>
+    <kb-table-column label="URL" width="100px">
+      <template v-slot="row"> <a class="btn green" :href="row.url">Edit</a> </template>
     </kb-table-column>
   </kb-table>
 </div>

@@ -366,6 +366,84 @@ namespace Kooboo.Sites.Service
             }
             return IsRoutable;
         }
+
+
+        public static string GetEditRoute(ISiteObject obj, SiteDb sitedb)
+        {
+            var modeltype = ConstTypeService.GetModelType(obj.ConstType);
+
+            if (modeltype == typeof(Page))
+            {
+                // / _Admin / Page / EditPage ? SiteId = 9f4c626c - f49f - 3538 - 05c5 - 97bb3a206f01 & Id = 9207f022 - d11e - 480a - 8ddf - aacb5cb4b1b3
+                /// _Admin / Page / EditRichText ? SiteId = 9f4c626c - f49f - 3538 - 05c5 - 97bb3a206f01 & Id = 5fbb992d - 423f - 4a26 - b27e - 067a743eabc6
+                ///_Admin/Page/EditLayout?SiteId=9f4c626c-f49f-3538-05c5-97bb3a206f01&Id=685e3801-762d-44be-be1e-7f4d4237d47a&layoutId=7186a2e9-a55b-c58b-4964-fd9b73b82985
+                var page = obj as Page;
+                if (page.Type == PageType.Normal)
+                {
+                    return "/_Admin/Page/EditPage?SiteId=" + sitedb.Id.ToString() + "&Id=" + page.Id.ToString();
+                }
+                else if (page.Type == PageType.Layout)
+                {
+                    /// _Admin / Page / EditLayout ? SiteId = 9f4c626c - f49f - 3538 - 05c5 - 97bb3a206f01 & Id = 685e3801 - 762d - 44be - be1e - 7f4d4237d47a & layoutId = 7186a2e9 - a55b - c58b - 4964 - fd9b73b82985
+                    var layout = new Layout();
+                    layout.Name = page.LayoutName;
+
+                    var url = "/_Admin/Page/EditLayout?SiteId=" + sitedb.Id.ToString();
+                    url += "&Id=" + page.Id.ToString();
+                    url += "&layoutId=" + layout.Id.ToString();
+                    return url;
+                }
+                else if (page.Type == PageType.RichText)
+                {
+                    /// _Admin / Page / EditRichText ? SiteId = 9f4c626c - f49f - 3538 - 05c5 - 97bb3a206f01 & Id = 5fbb992d - 423f - 4a26 - b27e - 067a743eabc6
+                    /// 
+                    return "/_Admin/Page/EditRichText?SiteId=" + sitedb.Id.ToString() + "&Id=" + page.Id.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            else if (modeltype == typeof(View))
+            {
+                //_Admin/Development/View?SiteId=9f4c626c-f49f-3538-05c5-97bb3a206f01&Id=a16aa2f1-e4ff-f5a3-a49b-c719e1a58d11 
+
+                return "/_Admin/Development/View?SiteId=" + sitedb.Id.ToString() + "&Id=" + obj.Id.ToString();
+
+            }
+            else if (modeltype == typeof(Style))
+            {
+                //_Admin/Development/Style?SiteId=02182faa-207a-0a69-bfd3-677269d75360&Id=41be6f57-6d78-a959-38ba-17f628f5c726 
+                return "/_Admin/Development/Style?SiteId=" + sitedb.Id.ToString() + "&Id=" + obj.Id.ToString();
+            }
+            else if ((modeltype == typeof(Script)))
+            {
+                //_Admin/Development/Script?SiteId=02182faa-207a-0a69-bfd3-677269d75360&Id=c9dc9ec1-c29e-4ce5-b024-f18183c00502 
+                return "/_Admin/Development/Script?SiteId=" + sitedb.Id.ToString() + "&Id=" + obj.Id.ToString();
+            }
+            else if (modeltype == typeof(Code))
+            {
+                ///_Admin/Development/EditCode?SiteId=02182faa-207a-0a69-bfd3-677269d75360&id=d2e30679-aa6f-4901-bc0d-5b006057d9a3
+
+                return "/_Admin/Development/EditCode?SiteId=" + sitedb.Id.ToString() + "&Id=" + obj.Id.ToString();
+            }
+            else if (modeltype == typeof(Layout))
+            {
+                ///_Admin/Development/Layout?SiteId=02182faa-207a-0a69-bfd3-677269d75360&Id=0da593e9-562e-9ad4-9ae4-7e88961ccd36 
+                return "/_Admin/Development/Layout?SiteId=" + sitedb.Id.ToString() + "&Id=" + obj.Id.ToString();
+            }
+
+            else
+            {
+        /// system route. 
+            //string SystemRouteTemplate = "/__kb/{objecttype}/{nameorid}"; 
+            return "/__kb/" + modeltype.Name + "/" + obj.Id.ToString();
+
+            } 
+
+        }
     }
 
 }

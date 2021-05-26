@@ -2,6 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -44,7 +45,7 @@ namespace Kooboo.Lib.Helper
         public static string GetUniqueBoundary()
         {
             return IDHelper.NewLongId().ToString();
-        }             
+        }
 
         public static string ToValidFileName(string input)
         {
@@ -71,7 +72,7 @@ namespace Kooboo.Lib.Helper
             }
             return string.Empty;
         }
-         
+
         public static string ToValidUserNames(string input)
         {
             StringBuilder sb = new StringBuilder();
@@ -79,17 +80,17 @@ namespace Kooboo.Lib.Helper
             for (int i = 0; i < input.Length; i++)
             {
                 var current = input[i];
-                 
+
                 if (Helper.CharHelper.isAlphanumeric(current) || current == '_')
                 {
-                    sb.Append(current); 
+                    sb.Append(current);
                 }
                 else
                 {
-                  //sb.Append('~'); 
-                } 
-            }  
-            return sb.ToString(); 
+                    //sb.Append('~'); 
+                }
+            }
+            return sb.ToString();
         }
 
 
@@ -157,7 +158,7 @@ namespace Kooboo.Lib.Helper
                 return _space;
             }
         }
-         
+
         /// <summary>
         /// The space characters, for the purposes of this specification, are
         /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
@@ -182,13 +183,13 @@ namespace Kooboo.Lib.Helper
             var currentchar = input[start];
             while (isSpaceCharacters(currentchar))
             {
-                start = start + 1; 
-               
-                if (start > len -1)
+                start = start + 1;
+
+                if (start > len - 1)
                 {
-                    return null; 
+                    return null;
                 }
-                currentchar = input[start]; 
+                currentchar = input[start];
             }
 
             if (start + count >= len - 1)
@@ -197,23 +198,23 @@ namespace Kooboo.Lib.Helper
             }
 
             int i = start + count;
-             
-             while(i< len && IsNonBreakChar(input[i]))
+
+            while (i < len && IsNonBreakChar(input[i]))
             {
-                i += 1; 
+                i += 1;
             }
 
-            return input.Substring(start, i - start);  
+            return input.Substring(start, i - start);
         }
 
         private static bool IsNonBreakChar(char input)
-        { 
+        {
             if (input < 128)
             {
-                return  CharHelper.isAlphanumeric(input); 
+                return CharHelper.isAlphanumeric(input);
             }
 
-            return true;  
+            return true;
         }
 
 
@@ -223,6 +224,85 @@ namespace Kooboo.Lib.Helper
         }
 
 
+        public static List<FindResult> FindText(string body, string keyword)
+        {
+            List<FindResult> result = new List<FindResult>();
+            var seperators = " ,.;\r\n".ToCharArray();
 
+            using (StringReader reader = new StringReader(body))
+            {
+                string line;
+                int counter = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var index = line.IndexOf(keyword, StringComparison.OrdinalIgnoreCase);
+                    if (index > -1)
+                    {
+                        FindResult lineresult = new FindResult();
+                        lineresult.LineNumber = counter;
+
+                        int start = index - 20;
+                        if (start < 0)
+                        {
+                            start = 0;
+                        }
+                        int startindex = start;
+
+                        if (index < 10)
+                        {
+                            startindex = 0;
+                        }
+                        else
+                        {
+                            int findstartindex = line.IndexOfAny(seperators, start); 
+                            if (findstartindex > start && findstartindex < index)
+                            {
+                                startindex = findstartindex;
+                            }
+                        }
+                         
+
+                        int endindex = index + keyword.Length;
+                        int next = endindex + 5;
+                        if (next < line.Length)
+                        {
+                            int findendindex = line.IndexOfAny(seperators, next);
+                            if (findendindex > next)
+                            {
+                                next = findendindex;
+                            }
+                        }
+                        else
+                        {
+                            next = line.Length;
+                        }
+
+                        var subsummary = line.Substring(startindex, next - startindex);
+                        lineresult.Summary = subsummary;
+                        result.Add(lineresult);
+                    }
+                
+                    counter += 1;
+                }
+            }
+
+            if (result.Any())
+            {
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+    }
+
+    public class FindResult
+    {
+        public int LineNumber { get; set; }
+
+        public string Summary { get; set; }
     }
 }
