@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Reflection
 {
-  public static class Dynamic
+    public static class Dynamic
     {
         private static object _lock = new object();
 
@@ -67,6 +67,28 @@ namespace Kooboo.Lib.Reflection
         }
 
         private static Dictionary<string, Func<object, object>> GetValueFuncs = new Dictionary<string, Func<object, object>>();
-          
+
+        public static Dictionary<string, object> GetMemberValues(object obj)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            if (obj == null)
+            {
+                return result;
+            }
+            var type = obj.GetType();
+
+            var members = Lib.Reflection.TypeHelper.GetPublicFieldOrProperties(type);
+
+            foreach (var item in members)
+            {
+                var value = GetObjectMember(obj, item.Key);
+                if (value != null)
+                {
+                    result.Add(item.Key, value);
+                }
+            }
+            return result;
+        }
+
     }
 }
