@@ -19,10 +19,10 @@ namespace Kooboo.Data.Models
                     {
                         _id = Lib.Helper.IDHelper.NewIntGuid(ServerId); 
                     }
-                    else if (!string.IsNullOrWhiteSpace(this.Name))
-                    {
-                        _id = Lib.Security.Hash.ComputeGuidIgnoreCase(this.Name); 
-                    }
+                    //else if (!string.IsNullOrWhiteSpace(this.Name))
+                    //{
+                    //    _id = Lib.Security.Hash.ComputeGuidIgnoreCase(this.Name); 
+                    //}
                 }
                 return _id; 
             }

@@ -625,7 +625,7 @@ namespace Kooboo.IndexedDB.Query
         public List<TValue> SelectAll()
         {
             ///default limits to 5000 records. 
-            return Take(5000);
+            return Take(99999);
         }
 
 

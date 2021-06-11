@@ -10,7 +10,7 @@ namespace Kooboo.Data.Helper
 {
  public static   class AccountUrlHelper
     {
-        public static string AccountBase = AppSettings.AccountApiUrl; 
+        public static string AccountBase { get; set; } = AppSettings.AccountApiUrl; 
          
         public static string User(string relativeUrl)
         { 
@@ -45,23 +45,12 @@ namespace Kooboo.Data.Helper
         public static string Template(string relativeUrl)
         {
             return AccountBase + "/account/template" + ensureRelative(relativeUrl);
-        }
-
-        public static string Certificate(string relativeUrl)
-        {
-            return AccountBase + "/account/certificate" + ensureRelative(relativeUrl); 
-        }
-
-        public static string Ssl(string relativeUrl)
-        {
-            return AccountBase + "/account/ssl" + ensureRelative(relativeUrl); 
         } 
 
         public static string OnlineDataCenter(string relativeUrl)
         {
             return AccountBase + "/account/OnlineDataCenter" + ensureRelative(relativeUrl); 
-        }
-
+        } 
 
         private static string ensureRelative(string relativeurl)
         {

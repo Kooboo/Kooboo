@@ -19,7 +19,7 @@ namespace Kooboo.Data.Models
                 if (_id == default(Guid))
                 {
                     _id = IDGenerator.GetId(this.Name);
-                } 
+                }
                 return _id;
             }
         }
@@ -31,13 +31,13 @@ namespace Kooboo.Data.Models
             get
             { return _name; }
             set
-            { _name = value; _id = default(Guid);  }
+            { _name = value; _id = default(Guid); }
         }
 
         public string DisplayName { get; set; }
 
         public Guid AdminUser { get; set; }
-         
+
 
         public int ServerId { get; set; }
 
@@ -53,8 +53,7 @@ namespace Kooboo.Data.Models
         public bool IsBanned { get; set; }
 
         public DateTime LastModified { get; set; }
-
-
+         
         public override int GetHashCode()
         {
             string unique = this.DisplayName;
@@ -62,8 +61,8 @@ namespace Kooboo.Data.Models
             unique += this.AdminUser.ToString() + this.IsBanned.ToString();
             unique += this.Introduction;
             unique += this.AgencyOrgId.ToString();
-            unique += this.LastModified.ToShortTimeString(); 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            unique += this.LastModified.ToShortTimeString();
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 }

@@ -155,54 +155,53 @@ namespace Kooboo.Web.Api.Implementation
             {
                 throw new Exception("User registration failed");
             }
-        }
+        } 
 
+        //public virtual MetaResponse OnlineServer(ApiCall call)
+        //{
+        //    if (call.Context.User == null)
+        //    {
+        //        throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("User not login", call.Context));
+        //    }
 
-        public virtual MetaResponse OnlineServer(ApiCall call)
-        {
-            if (call.Context.User == null)
-            {
-                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("User not login", call.Context));
-            }
+        //    var user = call.Context.User;
+        //    if (string.IsNullOrWhiteSpace(Data.Service.UserLoginService.GetUserPassword(user)))
+        //    {
+        //        var dbuser = GlobalDb.Users.Get(user.Id);
+        //        if (dbuser != null)
+        //        {
+        //            user = dbuser;
+        //        }
+        //    }
 
-            var user = call.Context.User;
-            if (string.IsNullOrWhiteSpace(Data.Service.UserLoginService.GetUserPassword(user)))
-            {
-                var dbuser = GlobalDb.Users.Get(user.Id);
-                if (dbuser != null)
-                {
-                    user = dbuser;
-                }
-            }
+        //    var url = Kooboo.Data.Helper.AccountUrlHelper.User("GetMarketServerHost");
+        //    url += "?UserId=" + user.Id.ToString();
 
-            var url = Kooboo.Data.Helper.AccountUrlHelper.User("GetMarketServerHost");
-            url += "?UserId=" + user.Id.ToString();
+        //    var serverurl = Lib.Helper.HttpHelper.Get<string>(url);
 
-            var serverurl = Lib.Helper.HttpHelper.Get<string>(url);
+        //    if (serverurl != null && !serverurl.ToLower().StartsWith("http"))
+        //    {
+        //        serverurl = "https://" + serverurl;
+        //    }
 
-            if (serverurl != null && !serverurl.ToLower().StartsWith("http"))
-            {
-                serverurl = "https://" + serverurl;
-            }
+        //    if (serverurl != null)
+        //    {
+        //        serverurl += "/_admin/market/index";
 
-            if (serverurl != null)
-            {
-                serverurl += "/_admin/market/index";
+        //        var token = Service.UserService.GetTokenFromOnline(user);
+        //        if (!string.IsNullOrWhiteSpace(token))
+        //        {
+        //            serverurl += "?accesstoken=" + token;
+        //        }
 
-                var token = Service.UserService.GetTokenFromOnline(user);
-                if (!string.IsNullOrWhiteSpace(token))
-                {
-                    serverurl += "?accesstoken=" + token;
-                }
+        //        return new MetaResponse() { RedirectUrl = serverurl, StatusCode = 302 };
+        //    }
+        //    else
+        //    {
+        //        throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));
+        //    }
 
-                return new MetaResponse() { RedirectUrl = serverurl, StatusCode = 302 };
-            }
-            else
-            {
-                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));
-            }
-
-        }
+        //}
 
         public bool UpdateProfile(User newuser, ApiCall call)
         {
