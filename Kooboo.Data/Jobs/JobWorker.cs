@@ -16,6 +16,8 @@ namespace Kooboo.Jobs
         {
             this._timer = new Timer(10000);
             this._timer.Elapsed += RunJobs;
+
+            
         }
 
         public void Start()
