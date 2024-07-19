@@ -8,6 +8,8 @@ Kooboo creates many original innovations. It is the FIRST and ONLY CMS capable o
 
 **Instant Start**: Ready in 2 seconds – download, click, and go.
 
+**Clone Website**: Instantly migrate any URL into Kooboo and start editing
+
 **All-in-One**: Includes web, mail, database server, and tools for development, debugging, and deployment.
 
 **Faster Development**: Requires only HTML, CSS, and JavaScript, with no limitations.
