@@ -2,24 +2,21 @@
 //All rights reserved.
 using Kooboo.Data;
 using Kooboo.Data.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.JsTest
 {
     public class JsTestOption
     {
-       
+
         public string GetDiskRoot(RenderContext request)
         {
             if (request != null && request.WebSite != null && !string.IsNullOrEmpty(request.WebSite.LocalRootPath))
             {
                 return request.WebSite.LocalRootPath;
-            } 
+            }
             return AppSettings.RootPath;
         }
-       
+
 
         public bool ShouldTryHandle(Kooboo.Data.Context.RenderContext context, JsTestOption Options)
         {

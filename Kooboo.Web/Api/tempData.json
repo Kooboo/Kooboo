@@ -1,0 +1,378 @@
+[
+  [
+    {
+      "type": "text",
+      "content": "Limited time promotion"
+    },
+    {
+      "type": "html",
+      "content": "<span class='iconfont icon-pull-down float-right h-30px leading-30px float-right' style='margin-top:-30px'/>"
+    },
+    {
+      "type": "echarts",
+      "option": {
+        "tooltip": {
+          "trigger": "item"
+        },
+        "legend": {
+          "top": "12%",
+          "left": "center"
+        },
+        "grid": {
+          "top": "2%"
+        },
+        "series": [
+          {
+            "name": "Access From",
+            "type": "pie",
+            "radius": [
+              "30%",
+              "60%"
+            ],
+            "center": [
+              "50%",
+              "70%"
+            ],
+            "avoidLabelOverlap": false,
+            "label": {
+              "show": false,
+              "position": "center"
+            },
+            "emphasis": {
+              "label": {
+                "show": true,
+                "fontSize": "30",
+                "fontWeight": "bold"
+              }
+            },
+            "labelLine": {
+              "show": false
+            },
+            "data": [
+              {
+                "value": 1048,
+                "name": "Search Engine"
+              },
+              {
+                "value": 735,
+                "name": "Direct"
+              },
+              {
+                "value": 580,
+                "name": "Email"
+              },
+              {
+                "value": 484,
+                "name": "Union Ads"
+              },
+              {
+                "value": 300,
+                "name": "Video Ads"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "content": "Today's selection"
+    },
+    {
+      "type": "html",
+      "content": "<span class='text-14px text-blue h-30px leading-30px'>Kooboo</span>"
+    },
+    {
+      "type": "html",
+      "content": "<div class='h-30px leading-30px w-2px bg-666 opacity-6 ' style='margin-left:60px;margin-top:-30px' />"
+    },
+    {
+      "type": "text",
+      "content": "Concise code Seminar"
+    }
+  ],
+
+
+  [
+    {
+      "type": "text",
+      "content": "Limited time promotion2"
+    },
+    {
+      "type": "html",
+      "content": "<div class='iconfont icon-pull-down float-right h-30px leading-30px float-right' style='margin-top:-30px'/>"
+    },
+    {
+      "type": "echarts",
+      "option": {
+        "tooltip": {
+          "trigger": "axis"
+        },
+        "legend": {
+          "data": [ "Email", "Union Ads", "Video Ads", "Direct", "Search Engine" ],
+          "top": "3%"
+        },
+        "grid": {
+          "top": "40%",
+          "left": "3%",
+          "right": "4%",
+          "bottom": "3%",
+          "containLabel": true
+        },
+        "toolbox": {
+          "feature": {
+            "saveAsImage": {}
+          },
+          "top": "20%"
+        },
+        "xAxis": {
+          "type": "category",
+          "boundaryGap": false,
+          "data": [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
+        },
+        "yAxis": {
+          "type": "value"
+        },
+        "series": [
+          {
+            "name": "Email",
+            "type": "line",
+            "stack": "Total",
+            "data": [ 120, 132, 101, 134, 90, 230, 210 ]
+          },
+          {
+            "name": "Union Ads",
+            "type": "line",
+            "stack": "Total",
+            "data": [ 220, 182, 191, 234, 290, 330, 310 ]
+          },
+          {
+            "name": "Video Ads",
+            "type": "line",
+            "stack": "Total",
+            "data": [ 150, 232, 201, 154, 190, 330, 410 ]
+          },
+          {
+            "name": "Direct",
+            "type": "line",
+            "stack": "Total",
+            "data": [ 320, 332, 301, 334, 390, 330, 320 ]
+          },
+          {
+            "name": "Search Engine",
+            "type": "line",
+            "stack": "Total",
+            "data": [ 820, 932, 901, 934, 1290, 1330, 1320 ]
+          }
+        ]
+      }
+    }
+  ],
+
+
+  [
+    {
+      "type": "text",
+      "content": "Limited time promotion3"
+    },
+    {
+      "type": "html",
+      "content": "<div class='iconfont icon-pull-down float-right h-30px leading-30px float-right ' style='margin-top:-30px'/>"
+    },
+    {
+      "type": "echarts",
+      "option": {
+        "xAxis": {
+          "type": "category",
+          "data": [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
+        },
+        "yAxis": {
+          "type": "value"
+        },
+        "grid": {
+          "top": "5%"
+        },
+        "series": [
+          {
+            "data": [ 120, 200, 150, 80, 70, 110, 130 ],
+            "type": "bar",
+            "showBackground": true,
+            "backgroundStyle": {
+              "color": "rgba(180, 180, 180, 0.2)"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  [
+    {
+      "type": "text",
+      "content": "Limited time promotion4"
+    },
+    {
+      "type": "html",
+      "content": "<span class='iconfont icon-pull-down h-30px leading-30px float-right' style='margin-top:-30px' />"
+    },
+    {
+      "type": "echarts",
+      "option": {
+        "xAxis": {},
+        "yAxis": {},
+        "series": [
+          {
+            "symbolSize": 5,
+            "grid": {
+              "top": "5%"
+            },
+            "data": [
+              [ 10.0, 8.04 ],
+              [ 8.07, 6.95 ],
+              [ 13.0, 7.58 ],
+              [ 9.05, 8.81 ],
+              [ 11.0, 8.33 ],
+              [ 14.0, 7.66 ],
+              [ 13.4, 6.81 ],
+              [ 10.0, 6.33 ],
+              [ 14.0, 8.96 ],
+              [ 12.5, 6.82 ],
+              [ 9.15, 7.2 ],
+              [ 11.5, 7.2 ],
+              [ 3.03, 4.23 ],
+              [ 12.2, 7.83 ],
+              [ 2.02, 4.47 ],
+              [ 1.05, 3.33 ],
+              [ 4.05, 4.96 ],
+              [ 6.03, 7.24 ],
+              [ 12.0, 6.26 ],
+              [ 12.0, 8.84 ],
+              [ 7.08, 5.82 ],
+              [ 5.02, 5.68 ]
+            ],
+            "type": "scatter"
+          }
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "content": "Today's selection2"
+    },
+    {
+      "type": "html",
+      "content": " <span class='text-14px text-blue h-30px leading-30px'>Kooboo</span>"
+    },
+    {
+      "type": "html",
+      "content": "<div class='h-30px leading-30px w-2px bg-666 mx-12  ml-60px opacity-6 ' style='margin-left:60px;margin-top:-30px' />"
+    },
+    {
+      "type": "text",
+      "content": "Concise code Seminar3"
+    }
+  ],
+  [
+    {
+      "type": "text",
+      "content": "Limited time promotion"
+    },
+    {
+      "type": "html",
+      "content": "<span class='iconfont icon-pull-down float-right h-30px leading-30px float-right ' style='margin-top:-30px'/>"
+    },
+    {
+      "type": "echarts",
+      "option": {
+        "radar": {
+          "indicator": [
+            {
+              "name": "Sales",
+              "max": 6500
+            },
+            {
+              "name": "Administration",
+              "max": 16000
+            },
+            {
+              "name": "Information Technology",
+              "max": 30000
+            },
+            {
+              "name": "Customer Support",
+              "max": 38000
+            },
+            {
+              "name": "Development",
+              "max": 52000
+            },
+            {
+              "name": "Marketing",
+              "max": 25000
+            }
+          ]
+        },
+        "grid": {
+          "top": "15%"
+        },
+        "series": [
+          {
+            "name": "Budget vs spending",
+            "type": "radar",
+            "data": [
+              {
+                "value": [ 4200, 3000, 20000, 35000, 50000, 18000 ],
+                "name": "Allocated Budget"
+              },
+              {
+                "value": [ 5000, 14000, 28000, 26000, 42000, 21000 ],
+                "name": "Actual Spending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "content": "Today's selection"
+    },
+    {
+      "type": "html",
+      "content": " <span class='text-14px text-blue h-30px leading-30px'>Kooboo</span>"
+    },
+    {
+      "type": "html",
+      "content": "<div class='h-30px leading-30px w-2px bg-666 mx-12 ml-60px opacity-6 ' style='margin-left:60px;margin-top:-30px' />"
+    },
+    {
+      "type": "text",
+      "content": "Concise code Seminar"
+    }
+  ],
+  [
+    {
+      "type": "text",
+      "content": "Online store conversion rate"
+    },
+    {
+      "type": "html",
+      "content": "<div class='text-20px ml-12px my-12'>0%</div>"
+    },
+    {
+      "type": "text",
+      "content": "conversion funnel"
+    },
+    {
+      "type": "text",
+      "content": "Added to card 0.00%"
+    },
+    {
+      "type": "text",
+      "content": "0 serrsions"
+    },
+    {
+      "type": "html",
+      "content": " <span class='text-14px text-blue h-30px leading-30px'>View report</span>"
+    }
+  ]
+]

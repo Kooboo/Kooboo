@@ -1,16 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Lib.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Spa
 {
-  public  class RenderHelper
-    { 
+    public class RenderHelper
+    {
         public static UrlFileType GetFileType(string url, string ContentType = "")
         {
             if (string.IsNullOrWhiteSpace(url))
@@ -131,7 +126,7 @@ namespace Kooboo.Web.Spa
             return UrlFileType.File;
 
         }
-         
+
         public static string CombinePath(string Root, string RelativeUrl)
         {
             if (string.IsNullOrEmpty(RelativeUrl))
@@ -140,10 +135,10 @@ namespace Kooboo.Web.Spa
             }
             return Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl);
         }
-         
+
         public static string GetRelativeUrl(string RawRelativeUrl, SpaRenderOption option)
         {
-           string  RelativeUrl = RemoveQuestionMark(RawRelativeUrl); 
+            string RelativeUrl = RemoveQuestionMark(RawRelativeUrl);
             if (!string.IsNullOrEmpty(option.Prefix))
             {
                 if (RelativeUrl.ToLower().StartsWith(option.Prefix))
@@ -158,14 +153,14 @@ namespace Kooboo.Web.Spa
         {
             if (string.IsNullOrEmpty(input))
             {
-                return input; 
+                return input;
             }
             int mark = input.IndexOf("?");
             if (mark > 0)
             {
-                return input.Substring(0, mark); 
+                return input.Substring(0, mark);
             }
-            return input;  
+            return input;
         }
     }
     public enum UrlFileType

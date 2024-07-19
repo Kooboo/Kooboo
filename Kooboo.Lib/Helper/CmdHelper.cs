@@ -1,6 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System.Collections.Generic;    
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Kooboo.Lib.Helper
@@ -27,7 +27,7 @@ namespace Kooboo.Lib.Helper
             return strOutput;
         }
 
-        public static string ExeCmds(List<string> cmds,bool close)
+        public static string ExeCmds(List<string> cmds, bool close)
         {
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
@@ -37,7 +37,7 @@ namespace Kooboo.Lib.Helper
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
             p.StartInfo.CreateNoWindow = false;
-          
+
             p.Start();
 
             foreach (var cmd in cmds)
@@ -45,7 +45,7 @@ namespace Kooboo.Lib.Helper
                 p.StandardInput.WriteLine(cmd);
             }
 
-            p.StandardInput.Close(); 
+            p.StandardInput.Close();
 
             var error = p.StandardError.ReadLine();
             if (!string.IsNullOrEmpty(error) || close)
@@ -58,7 +58,7 @@ namespace Kooboo.Lib.Helper
             return strOutput;
         }
 
-        public static string ExeCmds(List<string> cmds,out Process p)
+        public static string ExeCmds(List<string> cmds, out Process p)
         {
             p = new Process();
             p.StartInfo.FileName = "cmd.exe";
@@ -76,7 +76,7 @@ namespace Kooboo.Lib.Helper
             }
 
             var error = p.StandardError.ReadLine();
-            if (!string.IsNullOrEmpty(error) )
+            if (!string.IsNullOrEmpty(error))
             {
                 p.StandardInput.WriteLine("exit");
             }
@@ -99,7 +99,7 @@ namespace Kooboo.Lib.Helper
             p.Start();
 
             p.StandardInput.WriteLine(cmd);
-           
+
         }
 
     }

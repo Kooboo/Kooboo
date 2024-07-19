@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Kooboo.Dom.CSS
@@ -18,9 +14,9 @@ namespace Kooboo.Dom.CSS
         private static List<char> _whitespace;
         public static List<char> WhiteSpace()
         {
-           /// Only the characters "space" (U+0020), "tab" (U+0009), "line feed" (U+000A), "carriage return" (U+000D), and "form feed" (U+000C) can occur in whitespace.
+            /// Only the characters "space" (U+0020), "tab" (U+0009), "line feed" (U+000A), "carriage return" (U+000D), and "form feed" (U+000C) can occur in whitespace.
 
-            if (_whitespace==null)
+            if (_whitespace == null)
             {
                 _whitespace = new List<char>();
                 _whitespace.Add('\u0020');
@@ -31,7 +27,7 @@ namespace Kooboo.Dom.CSS
 
             }
             return _whitespace;
-           
+
 
         }
 
@@ -48,7 +44,7 @@ namespace Kooboo.Dom.CSS
                 _combinator = new List<char>();
 
                 List<char> whitespacelist = WhiteSpace();
-                _combinator.AddRange(whitespacelist); 
+                _combinator.AddRange(whitespacelist);
 
                 _combinator.Add('\u003E');
                 _combinator.Add('\u002B');
@@ -59,22 +55,22 @@ namespace Kooboo.Dom.CSS
 
         }
 
-        
+
     }
 
 
-   public enum enumSimpleSelectorType
+    public enum enumSimpleSelectorType
     {
         universal = 8,
-        type=1,
+        type = 1,
         attribute = 2,
         classSelector = 3,
         id = 4,
-        pseudoclass =5,
-        combinator =6,
+        pseudoclass = 5,
+        combinator = 6,
         pseudoElement = 7,
-        negativePseudoClass =8, 
-        unknown=0
+        negativePseudoClass = 8,
+        unknown = 0
     }
 
 }

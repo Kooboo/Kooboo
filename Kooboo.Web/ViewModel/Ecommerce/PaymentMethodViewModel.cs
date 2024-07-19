@@ -9,7 +9,7 @@ namespace Kooboo.ServerData.ViewModel
         {
             this.Icon = method.Icon;
             this.IconType = method.IconType;
-            this.DisplayName = method.Name; 
+            this.DisplayName = method.Name;
         }
 
         //???? what is this???

@@ -1,0 +1,5216 @@
+{
+  "name": "element-plus-v2.2",
+  "tags": [
+    {
+      "name": "el-button",
+      "description": "Commonly used button.\n [doc](https://element-plus.org/en-US/component/button.html)",
+      "attributes": [
+        {
+          "name": "size",
+          "description": "button size",
+          "values": [
+            {
+              "name": "large",
+              "description": "the large button size"
+            },
+            {
+              "name": "default",
+              "description": "the default button size"
+            },
+            {
+              "name": "small",
+              "description": "the small button size"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "description": "button type",
+          "values": [
+            {
+              "name": "primary",
+              "description": "primary button type"
+            },
+            {
+              "name": "success",
+              "description": "success button type"
+            },
+            {
+              "name": "warning",
+              "description": "warning button type"
+            },
+            {
+              "name": "danger",
+              "description": "danger button type"
+            },
+            {
+              "name": "info",
+              "description": "info button type"
+            }
+          ]
+        },
+        {
+          "name": ":plain",
+          "description": "determine whether it's a plain button",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a plain button"
+            },
+            {
+              "name": "false",
+              "description": "it's not a plain button"
+            }
+          ]
+        },
+        {
+          "name": ":text",
+          "description": "determine whether it's a text button",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a text button"
+            },
+            {
+              "name": "false",
+              "description": "it's not a text button"
+            }
+          ]
+        },
+        {
+          "name": ":bg",
+          "description": "determine whether the text button background color is always on",
+          "values": [
+            {
+              "name": "true",
+              "description": "the text button background color is always on"
+            },
+            {
+              "name": "false",
+              "description": "the text button background color is always not on"
+            }
+          ]
+        },
+        {
+          "name": ":link",
+          "description": "determine whether it's a link button",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a link button"
+            },
+            {
+              "name": "false",
+              "description": "it's not a link button"
+            }
+          ]
+        },
+        {
+          "name": ":round",
+          "description": "determine whether it's a round button",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a round button"
+            },
+            {
+              "name": "false",
+              "description": "it's not a round button"
+            }
+          ]
+        },
+        {
+          "name": ":circle",
+          "description": "determine whether it's a circle button",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a circle button"
+            },
+            {
+              "name": "false",
+              "description": "it's not a circle button"
+            }
+          ]
+        },
+        {
+          "name": ":loading",
+          "description": "determine whether it's a loading",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a loading"
+            },
+            {
+              "name": "false",
+              "description": "it's not a loading"
+            }
+          ]
+        },
+        {
+          "name": "loading-icon",
+          "description": "customize loading icon component",
+          "values": [
+            {
+              "name": "Loading",
+              "description": "it's a loading icon  component"
+            }
+          ]
+        },
+        {
+          "name": ":disabled",
+          "description": "disable the button",
+          "values": [
+            {
+              "name": "true",
+              "description": "it's a disabled button"
+            },
+            {
+              "name": "false",
+              "description": "it's not a disabled button"
+            }
+          ]
+        },
+        {
+          "name": "icon",
+          "description": "icon component",
+          "values": []
+        },
+        {
+          "name": ":autofocus",
+          "description": "same as native button's autofocus",
+          "values": [
+            {
+              "name": "true",
+              "description": "autofocus"
+            },
+            {
+              "name": "false",
+              "description": "no autofocus"
+            }
+          ]
+        },
+        {
+          "name": "native-type",
+          "description": "same as native button's type",
+          "values": [
+            {
+              "name": "button",
+              "description": "normal button type"
+            },
+            {
+              "name": "submit",
+              "description": "submit button type"
+            },
+            {
+              "name": "reset",
+              "description": "reset button type"
+            }
+          ]
+        },
+        {
+          "name": ":auto-insert-space",
+          "description": "automatically insert a space between two chinese characters",
+          "values": []
+        }
+      ]
+    },
+    {
+      "name": "el-button-group",
+      "description": "Displayed as a button group, can be used to group a series of similar operations. \n[doc](https://element-plus.org/en-US/component/button.html#button-group)",
+      "attributes": [
+        {
+          "name": "size",
+          "description": "control the size of buttons in this button-group",
+          "values": [
+            {
+              "name": "large",
+              "description": "the large button size"
+            },
+            {
+              "name": "default",
+              "description": "the default button size"
+            },
+            {
+              "name": "small",
+              "description": "the small button size"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "description": "control the type of buttons in this button-group",
+          "values": [
+            {
+              "name": "primary",
+              "description": "primary button type"
+            },
+            {
+              "name": "success",
+              "description": "success button type"
+            },
+            {
+              "name": "warning",
+              "description": "warning button type"
+            },
+            {
+              "name": "danger",
+              "description": "danger button type"
+            },
+            {
+              "name": "info",
+              "description": "info button type"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-container",
+      "description": " wrapper container. When nested with a ```<el-header>``` or ```<el-footer>```, all its child elements will be vertically arranged. Otherwise horizontally. \n[doc](https://element-plus.org/en-US/component/container.html#container-attributes)",
+      "attributes": [
+        {
+          "name": "direction",
+          "description": "layout direction for child elements",
+          "values": [
+            {
+              "name": "horizontal",
+              "description": "horizontal arrangement"
+            },
+            {
+              "name": "vertical",
+              "description": "vertical arrangement"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-header",
+      "description": "container for headers. \n[doc](https://element-plus.org/en-US/component/container.html#header-attributes)",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "height of the header",
+          "values": [
+            {
+              "name": "60px",
+              "description": "height of the header is 60px"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-aside",
+      "description": "container for side sections (usually a side nav). \n[doc](https://element-plus.org/en-US/component/container.html#aside-attributes)",
+      "attributes": [
+        {
+          "name": "width",
+          "description": "width of the side section",
+          "values": [
+            {
+              "name": "300px",
+              "description": "width of the side section is 300px"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-main",
+      "description": "container for main sectins.",
+      "attributes": []
+    },
+    {
+      "name": "el-footer",
+      "description": "container for footers. \n[doc](https://element-plus.org/en-US/component/container.html#footer-attributes",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "height of the footer",
+          "values": [
+            {
+              "name": "60px",
+              "description": "height of the footer is 60px"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-icon",
+      "description": "Element Plus provides a set of common icons. \n[doc](https://element-plus.org/en-US/component/icon.html)",
+      "attributes": [
+        {
+          "name": "color",
+          "description": "SVG tag's fill attribute",
+          "values": [
+            {
+              "name": "color",
+              "description": "inherit from color"
+            }
+          ]
+        },
+        {
+          "name": ":size",
+          "description": "inherit from color",
+          "values": [
+            {
+              "name": "fontSize",
+              "description": "inherit from font size"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-row",
+      "description": "row component in layout \n[doc](https://element-plus.org/en-US/component/layout.html#row-attributes)",
+      "attributes": [
+        {
+          "name": ":gutter",
+          "description": "grid spacing",
+          "values": [
+            {
+              "name": "0",
+              "description": "grid spacing default value is 0"
+            }
+          ]
+        },
+        {
+          "name": "justify",
+          "description": "horizontal alignment of flex layout",
+          "values": [
+            {
+              "name": "start",
+              "description": "aligns the flex items at the start of the row"
+            },
+            {
+              "name": "end",
+              "description": "aligns the flex items at the end of the row"
+            },
+            {
+              "name": "center",
+              "description": "items are positioned in the center of the row"
+            },
+            {
+              "name": "space-around",
+              "description": "items will have space before, between, and after them"
+            },
+            {
+              "name": "space-between",
+              "description": "items will have space between them"
+            },
+            {
+              "name": "space-evenly",
+              "description": "items will have equal space around them"
+            }
+          ]
+        },
+        {
+          "name": "align",
+          "description": "vertical alignment of flex layout",
+          "values": [
+            {
+              "name": "top",
+              "description": "The vertical alignment of the flexible layout is the top alignment"
+            },
+            {
+              "name": "middle",
+              "description": "The vertical alignment of the flexible layout is the middle alignment"
+            },
+            {
+              "name": "bottom",
+              "description": "The vertical alignment of the flexible layout is the bottom alignment"
+            }
+          ]
+        },
+        {
+          "name": "tag",
+          "description": "custom element tag",
+          "values": [
+            {
+              "name": "div",
+              "description": "Custom element tags"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-col",
+      "description": "col component in layout \n[doc](https://element-plus.org/en-US/component/layout.html#col-attributes)",
+      "attributes": [
+        {
+          "name": ":span",
+          "description": "number of column the grid spans,all number of column the grid spans is 24",
+          "values": [
+            {
+              "name": "6",
+              "description": "number of column the grid spans is 6"
+            },
+            {
+              "name": "12",
+              "description": "number of column the grid spans is 12"
+            },
+            {
+              "name": "18",
+              "description": "number of column the grid spans is 18"
+            },
+            {
+              "name": "24",
+              "description": "number of column the grid spans is 24"
+            }
+          ]
+        },
+        {
+          "name": ":offset",
+          "description": "number of spacing on the left side of the grid",
+          "values": [
+            {
+              "name": "6",
+              "description": "number of spacing on the left side of the grid is 6"
+            },
+            {
+              "name": "12",
+              "description": "number of spacing on the left side of the grid is 12"
+            },
+            {
+              "name": "18",
+              "description": "number of spacing on the left side of the grid is 18"
+            }
+          ]
+        },
+        {
+          "name": ":push",
+          "description": "number of columns that grid moves to the right",
+          "values": [
+            {
+              "name": "6",
+              "description": "number of columns that grid moves to the right is 6"
+            },
+            {
+              "name": "12",
+              "description": "number of columns that grid moves to the right is 12"
+            }
+          ]
+        },
+        {
+          "name": ":pull",
+          "description": "number of columns that grid moves to the left",
+          "values": [
+            {
+              "name": "6",
+              "description": "number of columns that grid moves to the left is 6"
+            },
+            {
+              "name": "12",
+              "description": "number of columns that grid moves to the left is 12"
+            }
+          ]
+        },
+        {
+          "name": ":xs",
+          "description": "<768px Responsive columns or column props object",
+          "values": []
+        },
+        {
+          "name": ":sm",
+          "description": "≥768px Responsive columns or column props object",
+          "values": []
+        },
+        {
+          "name": ":md",
+          "description": "≥992px Responsive columns or column props object",
+          "values": []
+        },
+        {
+          "name": ":lg",
+          "description": "≥1200px Responsive columns or column props object",
+          "values": []
+        },
+        {
+          "name": ":xl",
+          "description": "≥1920px Responsive columns or column props object",
+          "values": []
+        },
+        {
+          "name": "tag",
+          "description": "custom element tag",
+          "values": [
+            {
+              "name": "div",
+              "description": "Custom element tags"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-link",
+      "description": "Text hyperlink \n[doc](https://element-plus.org/en-US/component/link.html)",
+      "attributes": [
+        {
+          "name": "type",
+          "description": "type",
+          "values": [
+            {
+              "name": "primary",
+              "description": "primary link type"
+            },
+            {
+              "name": "success",
+              "description": "success link type"
+            },
+            {
+              "name": "warning",
+              "description": "warning link type"
+            },
+            {
+              "name": "danger",
+              "description": "danger link type"
+            },
+            {
+              "name": "info",
+              "description": "info link type"
+            },
+            {
+              "name": "default",
+              "description": "default link type"
+            }
+          ]
+        },
+        {
+          "name": ":underline",
+          "description": "whether the component has underline",
+          "values": [
+            {
+              "name": "true",
+              "description": "the component has underline"
+            },
+            {
+              "name": "false",
+              "description": "the component no underline"
+            }
+          ]
+        },
+        {
+          "name": ":disabled",
+          "description": "whether the component is disabled",
+          "values": [
+            {
+              "name": "true",
+              "description": " the component is disabled"
+            },
+            {
+              "name": "false",
+              "description": " the component is not disabled"
+            }
+          ]
+        },
+        {
+          "name": "href",
+          "description": "same as native hyperlink's href",
+          "values": []
+        },
+        {
+          "name": "icon",
+          "description": "icon component",
+          "values": []
+        }
+      ]
+    },
+    {
+      "name": "el-scrollbar",
+      "description": "Used to replace the browser's native scrollbar.\n [doc](https://element-plus.org/en-US/component/scrollbar.html)",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "height of scrollbar",
+          "values": []
+        },
+        {
+          "name": "max-height",
+          "description": "max height of scrollbar",
+          "values": []
+        },
+        {
+          "name": ":native",
+          "description": "whether to use the native scrollbar style",
+          "values": [
+            {
+              "name": "true",
+              "description": "use the native scrollbar style"
+            },
+            {
+              "name": "false",
+              "description": "not use the native scrollbar style"
+            }
+          ]
+        },
+        {
+          "name": "wrap-style",
+          "description": "style of warp container",
+          "values": []
+        },
+        {
+          "name": "wrap-class",
+          "description": "class of warp container",
+          "values": []
+        },
+        {
+          "name": "view-style",
+          "description": "style of view",
+          "values": []
+        },
+        {
+          "name": "view-class",
+          "description": "class of view",
+          "values": []
+        },
+        {
+          "name": ":noresize",
+          "description": "do not respond to container size changes, if the container size does not change, it is better to set it to optimize performance",
+          "values": [
+            {
+              "name": "true",
+              "description": "do not respond to container size changes"
+            },
+            {
+              "name": "false",
+              "description": "respond to container size changes"
+            }
+          ]
+        },
+        {
+          "name": "tag",
+          "description": "element tag of the view",
+          "values": [
+            {
+              "name": "div",
+              "description": "element tag of the view"
+            }
+          ]
+        },
+        {
+          "name": ":always",
+          "description": "always show scrollbar",
+          "values": [
+            {
+              "name": "true",
+              "description": "not always show scrollbar"
+            },
+            {
+              "name": "false",
+              "description": "always show scrollbar"
+            }
+          ]
+        },
+        {
+          "name": ":min-size",
+          "description": "minimum size of scrollbar",
+          "values": [
+            {
+              "name": "20",
+              "description": "minimum size of scrollbar is 20 pixels"
+            }
+          ]
+        },
+        {
+          "name": "@scroll",
+          "description": "triggers when scrolling",
+          "values": [
+            {
+              "name": "scrollTo(XCoord,YCoord)",
+              "description": "scrolls to a particular set of coordinates"
+            },
+            {
+              "name": "setScrollTop(scrollTop)",
+              "description": "Set distance to scroll top"
+            },
+            {
+              "name": "setScrollLeft(scrollLeft)",
+              "description": "Set distance to scroll left"
+            },
+            {
+              "name": "update()",
+              "description": "update scrollbar state manually"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-space",
+      "description": "using this component to provide unified space between each components \n[doc](https://element-plus.org/en-US/component/space.html)",
+      "attributes": [
+        {
+          "name": "alignment",
+          "description": "Controls the alignment of items.",
+          "values": [
+            {
+              "name": "center",
+              "description": "Center alignment. \n[doc](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items)"
+            }
+          ]
+        },
+        {
+          "name": "class",
+          "description": "Classname",
+          "values": []
+        },
+        {
+          "name": "direction",
+          "description": "Placement direction",
+          "values": [
+            {
+              "name": "vertical",
+              "description": "Placement direction is vertical"
+            },
+            {
+              "name": "horizontal",
+              "description": "Placement direction is horizontal"
+            }
+          ]
+        },
+        {
+          "name": "prefixCls",
+          "description": "Prefix for space-items",
+          "values": [
+            {
+              "name": "el-space",
+              "description": "Prefix the class name of space items with el-space"
+            }
+          ]
+        },
+        {
+          "name": "style",
+          "description": "Extra style rules",
+          "values": []
+        },
+        {
+          "name": "spacer",
+          "description": "Spacer",
+          "values": []
+        },
+        {
+          "name": "size",
+          "description": "Spacing size",
+          "values": [
+            {
+              "name": "small",
+              "description": "Spacing size is small and the size can be string or number"
+            }
+          ]
+        },
+        {
+          "name": ":wrap",
+          "description": "Auto wrapping",
+          "values": [
+            {
+              "name": "true",
+              "description": "wrap line"
+            },
+            {
+              "name": "false",
+              "description": "not wrap line"
+            }
+          ]
+        },
+        {
+          "name": ":fill",
+          "description": "Whether to fill the container",
+          "values": [
+            {
+              "name": "true",
+              "description": "fill the container"
+            },
+            {
+              "name": "false",
+              "description": "not fill the container"
+            }
+          ]
+        },
+        {
+          "name": ":fill-ratio",
+          "description": "Ratio of fill",
+          "values": [
+            {
+              "name": "100",
+              "description": "Ratio of fill is 100"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-config-provider",
+      "description": "Config Provider is used for providing global configurations, which enables your entire application to access these configurations everywhere. \n[doc](https://element-plus.org/en-US/component/config-provider.html)",
+      "attributes": [
+        {
+          "name": ":locale",
+          "description": "Locale Object",
+          "values": [
+            {
+              "name": "English",
+              "description": "locale object is English. \n[doc](https://github.com/element-plus/element-plus/tree/dev/packages/locale/lang)"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "global component size",
+          "values": [
+            {
+              "name": "large",
+              "description": "global component size is large"
+            },
+            {
+              "name": "default",
+              "description": "global component size is default"
+            },
+            {
+              "name": "small",
+              "description": "global component size is small"
+            }
+          ]
+        },
+        {
+          "name": ":zIndex",
+          "description": "global Initial zIndex the value is number",
+          "values": []
+        },
+        {
+          "name": "namespace",
+          "description": "global component className prefix (cooperated with $namespace \n[doc](https://github.com/element-plus/element-plus/blob/dev/packages/theme-chalk/src/mixins/config.scss#L1))",
+          "values": [
+            {
+              "name": "el",
+              "description": "global component className prefix is el"
+            }
+          ]
+        },
+        {
+          "name": ":button",
+          "description": "button related configuration",
+          "values": [
+            {
+              "name": "{autoInsertSpace: true}",
+              "description": "automatically insert a space between two chinese characters"
+            },
+            {
+              "name": "{autoInsertSpace: false}",
+              "description": "not automatically insert a space between two chinese characters"
+            }
+          ]
+        },
+        {
+          "name": ":message",
+          "description": "message related configuration",
+          "values": [
+            {
+              "name": "{max:5}",
+              "description": "the maximum number of messages that can be displayed at the same time is 5"
+            }
+          ]
+        },
+        {
+          "name": ":experimental-features",
+          "description": "features at experimental stage to be added, all features are default to be set to false",
+          "values": []
+        }
+      ]
+    },
+    {
+      "name": "el-autocomplete",
+      "description": "You can get some recommended tips based on the current input. \n[doc](https://element-plus.org/en-US/component/autocomplete.html)",
+      "attributes": [
+        {
+          "name": "placeholder",
+          "description": "the placeholder of Autocomplete",
+          "values": []
+        },
+        {
+          "name": ":clearable",
+          "description": "whether to show clear button",
+          "values": [
+            {
+              "name": "true",
+              "description": "show clear button"
+            },
+            {
+              "name": "false",
+              "description": "hide clear button"
+            }
+          ]
+        },
+        {
+          "name": ":disabled",
+          "description": "whether Autocomplete is disabled",
+          "values": [
+            {
+              "name": "true",
+              "description": "Autocomplete is disabled"
+            },
+            {
+              "name": "false",
+              "description": "Autocomplete is not disabled"
+            }
+          ]
+        },
+        {
+          "name": "value-key",
+          "description": "key name of the input suggestion object for display",
+          "values": [
+            {
+              "name": "value",
+              "description": "key name is value"
+            }
+          ]
+        },
+        {
+          "name": "icon",
+          "description": "icon component",
+          "values": []
+        },
+        {
+          "name": " v-model",
+          "description": "binding value",
+          "values": []
+        },
+        {
+          "name": ":debounce",
+          "description": "debounce delay when typing, in milliseconds",
+          "values": [
+            {
+              "name": "300",
+              "description": "debounce delay when typing is 300 milliseconds"
+            }
+          ]
+        },
+        {
+          "name": "placement",
+          "description": "placement of the popup menu",
+          "values": [
+            {
+              "name": "top",
+              "description": "placement of the popup menu is top"
+            },
+            {
+              "name": "top-start",
+              "description": "placement of the popup menu is top-start"
+            },
+            {
+              "name": "top-end",
+              "description": "placement of the popup menu is top-end"
+            },
+            {
+              "name": "bottom",
+              "description": "placement of the popup menu is bottom"
+            },
+            {
+              "name": "bottom-start",
+              "description": "placement of the popup menu is bottom-start"
+            },
+            {
+              "name": "bottom-end",
+              "description": "placement of the popup menu is bottom-end"
+            }
+          ]
+        },
+        {
+          "name": ":fetch-suggestions",
+          "description": "a method to fetch input suggestions. When suggestions are ready, invoke callback(data:[]) to return them to Autocomplete",
+          "values": [
+            {
+              "name": "Function(queryString, callback)",
+              "description": "a method to fetch input suggestions."
+            }
+          ]
+        },
+        {
+          "name": "popper-class",
+          "description": "custom class name for autocomplete's dropdown",
+          "values": []
+        },
+        {
+          "name": ":trigger-on-focus",
+          "description": "whether show suggestions when input focus",
+          "values": [
+            {
+              "name": "true",
+              "description": "show suggestions when input focus"
+            },
+            {
+              "name": "false",
+              "description": "not show suggestions when input focus"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "description": "same as name in native input",
+          "values": []
+        },
+        {
+          "name": ":select-when-unmatched",
+          "description": "whether to emit a select event on enter when there is no autocomplete match",
+          "values": [
+            {
+              "name": "true",
+              "description": "emit a select event on enter when there is no autocomplete match"
+            },
+            {
+              "name": "false",
+              "description": "not emit a select event on enter when there is no autocomplete match"
+            }
+          ]
+        },
+        {
+          "name": "label",
+          "description": "label text",
+          "values": []
+        },
+        {
+          "name": "prefix-icon",
+          "description": "prefix icon class",
+          "values": []
+        },
+        {
+          "name": "suffix-icon",
+          "description": "suffix icon class",
+          "values": []
+        },
+        {
+          "name": ":hide-loading",
+          "description": "whether to hide the loading icon in remote search",
+          "values": [
+            {
+              "name": "true",
+              "description": "hide the loading icon in remote search"
+            },
+            {
+              "name": "false",
+              "description": "not hide the loading icon in remote search"
+            }
+          ]
+        },
+        {
+          "name": ":teleported",
+          "description": "whether select dropdown is teleported to the body",
+          "values": [
+            {
+              "name": "true",
+              "description": "select dropdown is teleported to the body"
+            },
+            {
+              "name": "false",
+              "description": "select dropdown not is teleported to the body"
+            }
+          ]
+        },
+        {
+          "name": ":highlight-first-item",
+          "description": "whether to highlight first item in remote search suggestions by default",
+          "values": [
+            {
+              "name": "true",
+              "description": "highlight first item in remote search suggestions by default"
+            },
+            {
+              "name": "false",
+              "description": "not highlight first item in remote search suggestions by default"
+            }
+          ]
+        },
+        {
+          "name": ":fit-input-width",
+          "description": "whether the width of the dropdown is the same as the input",
+          "values": [
+            {
+              "name": "true",
+              "description": "the width of the dropdown is the same as the input"
+            },
+            {
+              "name": "false",
+              "description": "the width of the dropdown is not the same as the input"
+            }
+          ]
+        },
+        {
+          "name": "@select",
+          "description": "triggers when a suggestion is clicked",
+          "values": [
+            {
+              "name": "selected(item)",
+              "description": "the triggered method when a suggestion is clicked"
+            }
+          ]
+        },
+        {
+          "name": "change",
+          "description": "triggers when the icon inside input value change",
+          "values": [
+            {
+              "name": "changed(value)",
+              "description": "the triggered method when the icon inside input value change"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "el-cascader",
+      "description": "If the options have a clear hierarchical structure, Cascader can be used to view and select them. \n[doc](https://element-plus.org/en-US/component/cascader.html)",
+      "attributes": [
+        {
+          "name": "v-model",
+          "description": "binding value",
+          "values": []
+        },
+        {
+          "name": ":options",
+          "description": "data of the options,the key of value and label can be customize by Props.",
+          "values": []
+        },
+        {
+          "name": ":props",
+          "description": "configuration options, see the following table.",
+          "values": []
+        },
+        {
+          "name": "size",
+          "description": "size of input",
+          "values": [
+            {
+              "name": "large",
+              "description": "the large size of input"
+            },
+            {
+              "name": "default",
+              "description": "the default size of input"
+            },
+            {
+              "name": "small",
+              "description": "the small size of input"
+            }
+          ]
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder of input",
+          "values": [
+            {
+              "name": "Select",
+              "description": "placeholder of input"
+            }
+          ]
+        },
+        {
+          "name": ":disabled",
+          "description": "whether Cascader is disabled",
+          "values": [
+            {
+              "name": "true",
+              "description": "Cascader is disabled"
+            },
+            {
+              "name": "false",
+              "description": "Cascader is not disabled"
+            }
+          ]
+        },
+        {
+          "name": ":clearable",
+          "description": "whether selected value can be cleared",
+          "values": [
+            {
+              "name": "true",
+              "description": "selected value can be cleared"
+            },
+            {
+              "name": "false",
+              "description": "selected value can not be cleared"
+            }
+          ]
+        },
+        {
+          "name": ":show-all-levels",
+          "description": "whether to display all levels of the selected value in the input",
+          "values": [
+            {
+              "name": "true",
+              "description": "display all levels of the selected value in the input"
+            },
+            {
+              "name": "false",
+              "description": "not display all levels of the selected value in the input"
+            }
+          ]
+        },
+        {
+          "name": ":collapse-tags",
+          "description": "whether to collapse tags in multiple selection mode",
+          "values": [
+            {
+              "name": "true",
+              "description": "collapse tags in multiple selection mode"
+            },
+            {
+              "name": "false",
+              "description": "not collapse tags in multiple selection mode"
+            }
+          ]
+        },
+        {
+          "name": ":collapse-tags-tooltip",
+          "description": "whether show all selected tags when mouse hover text of collapse-tags. To use this, collapse-tags must be true",
+          "values": [
+            {
+              "name": "true",
+              "description": "show all selected tags when mouse hover text of collapse-tags."
+            },
+            {
+              "name": "false",
+              "description": "not show all selected tags when mouse hover text of collapse-tags."
+            }
+          ]
+        },
+        {
+          "name": "separator",
+          "description": "option label separator",
+          "values": [
+            {
+              "name": "/",
+              "description": "label separator is '/'"
+            }
+          ]
+        },
+        {
+          "name": ":filterable",
+          "description": "whether the options can be searched",
+          "values": []
+        },
+        {
+          "name": ":filter-method",
+          "description": "customize search logic, the first parameter is node, the second is keyword, and need return a boolean value indicating whether it hits.",
+          "values": []
+        },
+        {
+          "name": ":debounce",
+          "description": "debounce delay when typing filter keyword, in milliseconds",
+          "values": [
+            {
+              "name": "300",
+              "description": "wehn typing filter keyword the debounce delay is 300 milliseconds"
+            }
+          ]
+        },
+        {
+          "name": ":before-filter",
+          "description": "hook function before filtering with the value to be filtered as its parameter. If false is returned or a Promise is returned and then is rejected, filtering will be aborted",
+          "values": []
+        },
+        {
+          "name": "popper-class",
+          "description": "custom class name for Cascader's dropdown",
+          "values": []
+        },
+        {
+          "name": ":teleported",
+          "description": "whether cascader popup is teleported",
+          "values": [
+            {
+              "name": "true",
+              "description": "cascader popup is teleported"
+            },
+            {
+              "name": "false",
+              "description": "cascader popup is not teleported"
+            }
+          ]
+        },
+        {
+          "name": "tag-type",
+          "description": "tag type",
+          "values": [
+            {
+              "name": "success",
+              "description": "successful tag type"
+            },
+            {
+              "name": "info",
+              "description": "info tag type"
+            },
+            {
+              "name": "warning",
+              "description": "warning tag type"
+            },
+            {
+              "name": "danger",
+              "description": "danger tag type"
+            }
+          ]
+        },
+        {
+          "name": ":validate-event",
+          "description": "whether to trigger form validation",
+          "values": [
+            {
+              "name": "true",
+              "description": "trigger form validation"
+            },
+            {
+              "name": "false",
+              "description": "not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name": "@change",
+          "description": "triggers when the binding value changes",
+          "values": [
+            {
+              "name": "changed(value)",
+              "description": "the triggered method when the binding value changes"
+            }
+          ]
+        },
+        {
+          "name": "@expand-change",
+          "description": "triggers when expand option changes",
+          "values": [
+            {
+              "name": "exchanged(arr)",
+              "description": "the triggered method when expand option changed,the parameters is an array of the expanding node's parent nodes"
+            }
+          ]
+        },
+        {
+          "name": "@visible-change",
+          "description": "triggers when the dropdown appears/disappears",
+          "values":[
+            {
+              "name": "vchanged(value)",
+              "description": "the triggered method when the dropdown appears/disappears,the parameter is true when it appears, and false otherwise"
+            }
+          ]
+        },
+        {
+          "name":"@remove-tag",
+          "description":"triggers when remove tag in multiple selection mode",
+          "values":[
+            {
+              "name":"removed(value)",
+              "description": "the triggered method when remove tag in multiple selection mode"
+            }
+          ]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Cascader blurs",
+          "values":[
+            {
+              "name":"blured(event)",
+              "description": "the triggered method when Cascader blurs"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Cascader focuses",
+          "values":[
+            {
+              "name":"focused(event)",
+              "description": "the triggered method when Cascader focuses"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-cascader-panel",
+      "description":"CascaderPanel is the core component of Cascader which has various of features such as single selection, multiple selection, dynamic loading and so on.",
+      "attributes":[
+        {
+          "name":" v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":options",
+          "description":"data of the options，the key of value and label can be customize by Props.",
+          "values":[]
+        },
+        {
+          "name":":props",
+          "description":"configuration options, see the following table.",
+          "values":[]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the binding value changes",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description": "the triggered method when the binding value changes"
+            }
+          ]
+        },
+        {
+          "name":"@expand-change",
+          "description":"triggers when expand option changes",
+          "values":[
+            {
+              "name":"exchanged(arr)",
+              "description":"triggers when expand option changes and the parameters is an array"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-checkbox",
+      "description":"A group of options for multiple choices.\n[doc](https://element-plus.org/en-US/component/checkbox.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description":"binding value",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"value of the Checkbox when used inside a checkbox-group",
+          "values":[]
+        },
+        {
+          "name":"true-label",
+          "description":"value of the Checkbox if it's checked",
+          "values":[]
+        },
+        {
+          "name":"false-label",
+          "description":"value of the Checkbox if it's not checked",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether the Checkbox is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "the checkbox is disabled"
+            },
+            {
+              "name":"false",
+              "description":"the checkbox is not disabled"
+            }
+          ]
+        },
+        {
+          "name":":border",
+          "description":"whether to add a border around Checkbox",
+          "values":[
+            {
+              "name":"true",
+              "description": "add a border around Checkbox"
+            },
+            {
+              "name":"false",
+              "description":"not add border around Checkbox"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of the Checkbox",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of Checkbox"
+            },
+            {
+              "name":"default",
+              "description":"the default size of Checkbox"
+            },
+            {
+              "name":"small",
+              "description":"the small size of Checkbox"
+            }
+          ]
+        },
+        {
+          "name":"name",
+          "description":"native 'name' attribute",
+          "values":[]
+        },
+        {
+          "name":":checked",
+          "description":"if the Checkbox is checked",
+          "values":[
+            {
+              "name":"true",
+              "description": "the Checkbox is checked"
+            },
+            {
+              "name":"false",
+              "description":"the Checkbox is not checked"
+            }
+          ]
+        },
+        {
+          "name":":indeterminate",
+          "description":"same as indeterminate in native checkbox",
+          "values":[
+            {
+              "name":"true",
+              "description": "Set indeterminate status, only responsible for style control"
+            },
+            {
+              "name":"false",
+              "description":"Not set indeterminate status, only responsible for style control"
+            }
+          ]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the binding value changes ,the parameter is the updated value",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the method when the binding value changes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-checkbox-group",
+      "description":"It is used for multiple checkboxes which are bound in one group, and indicates whether one option is selected by checking if it is checked. \n[doc](https://element-plus.org/en-US/component/checkbox.html#checkbox-group-attributes)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":"size",
+          "description":"size of checkbox",
+          "values":[
+            {
+              "name":"large",
+              "description":"large size of checkbox"
+            },
+            {
+              "name":"default",
+              "description":"default size of checkbox"
+            },
+            {
+              "name":"small",
+              "description":"small size of checkbox"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether the nesting checkboxes are disabled",
+          "values": [
+            {
+              "name":"true",
+              "description": "the nesting checkbox are disabled"
+            },
+            {
+              "name":"false",
+              "description":"the nesting checkbox are not disabled"
+            }
+          ]
+        },
+        {
+          "name":":min",
+          "description":"minimum number of checkbox checked",
+          "values":[]
+        },
+        {
+          "name":":max",
+          "description":"maximum number of checkbox checked",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"label for screen reader",
+          "values":[]
+        },
+        {
+          "name":"text-color",
+          "description":"font color when button is active",
+          "values":[
+            {
+              "name":"#fff",
+              "description":"font color when button is active is #fff"
+            }
+          ]
+        },
+        {
+          "name":"fill",
+          "description":"border and background color when button is active",
+          "values":[
+            {
+              "name":"#409EFF",
+              "description":"border and background color when button is active is #409EFF"
+            }
+          ]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description": "not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the binding value changes ,the parameter is the updated value",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description": "the triggered method when the binding value changed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-checkbox-button",
+      "description":"Checkbox with button styles.",
+      "attributes":[
+        {
+          "name":"label",
+          "description":"value of the checkbox when used inside a checkbox-group",
+          "values":[]
+        },
+        {
+          "name":"true-label",
+          "description":"value of the checkbox if it's checked",
+          "values":[]
+        },
+        {
+          "name":"false-label",
+          "description":"value of the checkbox if it's not checked",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether the checkbox is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "the checkbox is disabled"
+            },
+            {
+              "name":"false",
+              "description":"the checkbox is not disabled"
+            }
+          ]
+        },
+        {
+          "name":"name",
+          "description":"native 'name' attribute",
+          "values":[]
+        },
+        {
+          "name":":checked",
+          "description":"if the checkbox is checked",
+          "values":[
+            {
+              "name":"true",
+              "description":"the checkbox is checked"
+            },
+            {
+              "name":"false",
+              "description": "the checkbox is not checked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-color-picker",
+      "description":"ColorPicker is a color selector supporting multiple color formats.\n[doc](https://element-plus.org/en-US/component/color-picker.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether to disable the ColorPicker",
+          "values":[
+            {
+              "name":"true",
+              "description": "the colorPicker is disabled"
+            },
+            {
+              "name": "false",
+              "description":"the colorPicker is not disabled"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of ColorPicker",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of colorPicker"
+            },
+            {
+              "name":"default",
+              "description":"the default size of colorPicker"
+            },
+            {
+
+              "name":"small",
+              "description":"the small size of colorPicker"
+            }
+          ]
+        },
+        {
+          "name":":show-alpha",
+          "description":"whether to display the alpha slider",
+          "values":[
+            {
+              "name":"true",
+              "description": "display the alpha slider"
+            },
+            {
+              "name":"false",
+              "description":"not display the alpha slider"
+            }
+          ]
+        },
+        {
+          "name":"color-format",
+          "description":"color format of v-model",
+          "values":[
+            {
+              "name":"hsl",
+              "description": "color format of v-model is hsl"
+            },
+            {
+              "name":"hsv",
+              "description": "color format of v-model is hsv"
+            },
+            {
+              "name":"hex",
+              "description": "color format of v-model is hex(when show-alpha is false)"
+            },
+            {
+              "name":"rgb",
+              "description": "color format of v-model is reg (when show-alpha is true)"
+            }
+          ]
+        },
+        {
+          "name":"popper-class",
+          "description":"custom class name for ColorPicker's dropdown",
+          "values":[]
+        },
+        {
+          "name":":predefine",
+          "description":"predefined color options",
+          "values":[]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description":"trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when input value changes,the parameter is color value",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"the triggered method when input value changed"
+            }
+          ]
+        },
+        {
+          "name":"@active-change",
+          "description":"triggers when the current active color changes",
+          "values":[
+            {
+              "name":"activeChanged(value)",
+              "description":"the triggered method when the current active color changed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-date-picker",
+      "description":"Use Date Picker for date input.\n[doc](https://element-plus.org/en-US/component/date-picker.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description":"binding value",
+          "values":[]
+        },
+        {
+          "name":":readonly",
+          "description":"whether DatePicker is read only",
+          "values":[
+            {
+              "name":"true",
+              "description":"DatePicker is read only"
+            },
+            {
+              "name":"false",
+              "description":"DatePicker is not read only"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether DatePicker is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description":"DatePicker is disabled"
+            },
+            {
+              "name":"false",
+              "description":"DatePicker is not disabled"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of input",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of input"
+            },
+            {
+              "name":"default",
+              "description":"the default size of input"
+            },
+            {
+              "name":"small",
+              "description":"the small size of input"
+            }
+          ]
+        },
+        {
+          "name":":editable",
+          "description":"whether the input is editable",
+          "values":[
+            {
+              "name":"true",
+              "description":"the input is editable"
+            },
+            {
+              "name":"false",
+              "description":"the input is not editable"
+            }
+          ]
+        },
+        {
+          "name":":clearable",
+          "description":"whether to show clear button",
+          "values":[
+            {
+              "name":"true",
+              "description":"show clear button"
+            },
+            {
+              "name":"false",
+              "description":"not show clear button"
+            }
+          ]
+        },
+        {
+          "name":"placeholder",
+          "description":"placeholder in non-range mode",
+          "values":[]
+        },
+        {
+          "name":"start-placeholder",
+          "description":"placeholder for the start date in range mode",
+          "values":[]
+        },
+        {
+          "name":"end-placeholder",
+          "description":"placeholder for the end date in range mode",
+          "values":[]
+        },
+        {
+          "name":"type",
+          "description":"type of the picker",
+          "values":[
+            {
+              "name":"year",
+              "description":"the type of the picker is year" 
+            },
+            {
+              "name":"month",
+              "description":"the type of the picker is month" 
+            },
+            {
+              "name":"date",
+              "description":"the type of the picker is date" 
+            },
+            {
+              "name":"dates",
+              "description":"the type of the picker is dates" 
+            },
+            {
+              "name":"datetime",
+              "description":"the type of the picker is datetime" 
+            },
+            {
+              "name":"week",
+              "description":"the type of the picker is week" 
+            },
+            {
+              "name":"datetimerange",
+              "description":"the type of the picker is datetimerange" 
+            },
+            {
+              "name":"daterange",
+              "description":"the type of the picker is daterange"
+            },
+            {
+              "name":"monthrange",
+              "description":"the type of the picker is monthrange"
+            }
+          ]
+        },
+        {
+          "name":"format",
+          "description":"format of the displayed value in the input box",
+          "values":[]
+        },
+        {
+          "name":"popper-class",
+          "description":"custom class name for DatePicker's dropdown",
+          "values":[]
+        },
+        {
+        "name":"range-separator",
+        "description":"range separator",
+        "values":[]
+        },
+        {
+          "name":":default-value",
+          "description":"optional, default date of the calendar",
+          "values": []
+        },
+        {
+          "name":":default-time",
+          "description":"optional, the time value to use when selecting date range",
+          "values":[]
+        },
+        {
+          "name":"value-format",
+          "description":"optional, format of binding value. If not specified, the binding value will be a Date object",
+          "values":[]
+        },
+        {
+          "name":"id",
+          "description":"same as id in native input",
+          "values":[]
+        },
+        {
+          "name":"name",
+          "description":"same as name in native input",
+          "values":[]
+        },
+        {
+          "name":":unlink-panels",
+          "description": "unlink two date-panels in range-picker",
+          "values": [
+            {
+              "name":"true",
+              "description": "unlink two date-panels in range-picker"
+            },
+            {
+              "name":"false",
+              "description": "link two date-panels in range-picker"
+            }
+          ]
+        },
+        {
+          "name":"prefix-icon",
+          "description":"custom prefix icon component",
+          "values":[
+            {
+              "name":"Date",
+              "description":"custom prefix icon component is date"
+            }
+          ]
+        },
+        {
+          "name":"clear-icon",
+          "description":"custom clear icon component",
+          "values":[
+            {
+              "name":"CircleClose",
+              "description": "CircleClose is custom clear icon"
+            }
+          ]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":":disabled-date",
+          "description":"a function determining if a date is disabled with that date as its parameter. Should return a Boolean",
+          "values":[]
+        },
+        {
+          "name":":shortcuts",
+          "description":"an object array to set shortcut options",
+          "values":[]
+        },
+        {
+          "name":":cell-class-name",
+          "description":"set custom className",
+          "values":[]
+        },
+        {
+          "name":":teleported",
+          "description":"whether date-picker dropdown is teleported to the body",
+          "values":[
+            {
+              "name":"true",
+              "description":"date-picker dropdown is teleported to the body"
+            },
+            {
+              "name":"false",
+              "description":"date-picker dropdown is not teleported to the body"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when user confirms the value",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description": "the triggered method when user confirms the value"
+            }
+          ]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Input blurs",
+          "values":[
+            {
+              "name":"blured(event)",
+              "description":"the triggered method when input blurs"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Input focuses",
+          "values":[
+            {
+              "name":"focused(event)",
+              "description":"the triggered method when input focused"
+            }
+          ]
+        },
+        {
+          "name":"@calendar-change",
+          "description":"triggers when the calendar selected date is changed. Only for daterange",
+          "values":[
+            {
+              "name":"calendarChanged(Date)",
+              "description":"the triggered method when the calendar selected date is changed.Only for daterange"
+            }
+          ]
+        },
+        {
+          "name":"@panel-change",
+          "description":"triggers when the navigation button click.",
+          "values":[
+            {
+              "name":"panelChange(date,mode,view)",
+              "description":"the triggered method when the navigation button is clicked."
+            }
+          ]
+        },
+        {
+          "name":"@visible-change",
+          "description":"triggers when the DatePicker's dropdown appears/disappears",
+          "values":[
+            {
+              "name":"visibleChange(visibility)",
+              "description":"the triggered method when the DatePicker's dropdown appears/disappears"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-form",
+      "description":"Form consists of ```input```, ```radio```, ```select```, ```checkbox``` and so on. With form, you can collect, verify and submit data. \n[doc](https://element-plus.org/en-US/component/form.html)",
+      "attributes":[
+        {
+          "name":":model",
+          "description":"Data of form component.",
+          "values":[]
+        },
+        {
+          "name":":rules",
+          "description":"Validation rules of form.",
+          "values":[]
+        },
+        {
+          "name":":inline",
+          "description":"Whether the form is inline.",
+          "values":[
+            {
+              "name":"true",
+              "description": "the form is inline"
+            },
+            {
+              "name":"false",
+              "description":"the form is not inline"
+            }
+          ]
+        },
+        {
+          "name":"label-position",
+          "description":"Position of label. If set to 'left' or 'right', label-width prop is also required.",
+          "values":[
+            {
+              "name":"left",
+              "description": "label position is left"
+            },
+            {
+              "name":"right",
+              "description":"label position is right"
+            },
+            {
+              "name":"top",
+              "description":"label position is top"
+            }
+          ]
+        },
+        {
+          "name":"label-width",
+          "description":"Width of label. All its direct child form items will inherit this value. auto is supported.",
+          "values":[]
+        },
+        {
+          "name":"label-suffix",
+          "description":"Suffix of the label.",
+          "values":[]
+        },
+        {
+          "name":":hide-required-asterisk",
+          "description":"Whether required fields should have a red asterisk (star) beside their labels.",
+          "values":[
+            {
+              "name":"true",
+              "description":"required fields should have a red asterisk (star) beside their labels."
+            },
+            {
+              "name":"false",
+              "description":"required fields should not have a red asterisk (star) beside their labels."
+            }
+          ]
+        },
+        {
+          "name":":show-message",
+          "description":"Whether to show the error message.",
+          "values":[
+            {
+              "name":"true",
+              "description":"show the error message"
+            },
+            {
+              "name":"false",
+              "description":"not show the error message"
+            }
+          ]
+        },
+        {
+          "name":":inline-message",
+          "description":"Whether to display the error message inline with the form item.",
+          "values":[
+            {
+              "name":"true",
+              "description":"display the error message inline with the form item."
+            },
+            {
+              "name":"false",
+              "description":"not display the error message inline with the form item."
+            }
+          ]
+        },
+        {
+          "name":":status-icon",
+          "description":"Whether to display an icon indicating the validation result.",
+          "values":[
+            {
+              "name":"true",
+              "description":"display an icon indicating the validation result."
+            },
+            {
+              "name":"false",
+              "description":"not display an icon indicating the validation result."
+            }
+          ]
+        },
+        {
+          "name":":validate-on-rule-change",
+          "description":"Whether to trigger validation when the rules prop is changed.",
+          "values":[
+            {
+              "name:":"true",
+              "description": "trigger validation when the rules prop is changed."
+            },
+            {
+              "name:":"false",
+              "description":"not trigger validation when the rules prop is changed."
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"Control the size of components in this form.",
+          "values":[
+            {
+              "name":"large",
+              "description":"large size of components in this form."
+            },
+            {
+              "name":"default",
+              "description":"default size of components in this form."
+            },
+            {
+              "name":"small",
+              "description":"small size of components in this form."
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"Whether to disable all components in this form. If set to true, it will override the disabled prop of the inner component.",
+          "values":[
+            {
+              "name":"true",
+              "description":"disable all components in this form."
+            },
+            {
+              "name":"false",
+              "description":"not disable all components in this form."
+            }
+          ]
+        },
+        {
+          "name":":scroll-to-error",
+          "description":"When validation fails, scroll to the first error form entry.",
+          "values":[
+            {
+              "name":"true",
+              "description":"When validation fails, scroll to the first error form entry."
+            },
+            {
+              "name":"false",
+              "description":"When validation fails,not scroll to the first error form entry."
+            }
+          ]
+        },
+        {
+          "name":"@validate",
+          "description":"triggers after a form item is validated",
+          "values":[
+            {
+              "name":"validated(prop,isValid,message)",
+              "description":"the triggered method after item is validated"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-form-item",
+      "description":"In each form component, you need a form-item field to be the container of your input item. \n[doc](https://element-plus.org/en-US/component/form.html#form-item-attributes)",
+      "attributes":[
+        {
+          "name":"prop",
+          "description": "A key of model. It could be an array of property paths (e.g ['a', 'b', 0]). In the use of validate and resetFields method, the attribute is required.",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"Label text.",
+          "values":[]
+        },
+        {
+          "name":"label-width",
+          "description":"Width of labe.'auto' is supported.",
+          "values":[]
+        },
+        {
+          "name":":required",
+          "description":"Whether the field is required or not, will be determined by validation rules if omitted.",
+          "values":[
+            {
+              "name":"true",
+              "description": "the field is required"
+            },
+            {
+              "name":"false",
+              "description":"the field is not required"
+            }
+          ]
+        },
+        {
+          "name":":rules",
+          "description":"Validation rules of form, see the following table, more advanced usage at async-validator.",
+          "values":[]
+        },
+        {
+          "name":"error",
+          "description":"Field error message, set its value and the field will validate error and show this message immediately.",
+          "values":[]
+        },
+        {
+          "name":":show-message",
+          "description":"Whether to show the error message.",
+          "values":[
+            {
+              "name":"false",
+              "description":"not show the error message"
+            },
+            {
+              "name":"true",
+              "description":"show the error message"
+            }
+          ]
+        },
+        {
+          "name":":inline-message",
+          "description":"Inline style validate message.",
+          "values":[
+            {
+              "name":"true",
+              "description": "show inline validate message"
+            },
+            {
+              "name":"false",
+              "description":"show inline validate message"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"Control the size of components in this form-item.",
+          "values":[
+            {
+              "name":"large",
+              "description":"large size of components in this form-item"
+            },
+            {
+              "name":"default",
+              "description":"default size of components in this form-item"
+            },
+            {
+              "name":"small",
+              "description":"small size of components in this form-item"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-input",
+      "description":"Input data using mouse or keyboard.\n[doc](https://element-plus.org/zh-CN/component/input.html)",
+      "attributes":[
+        {
+          "name":"type",
+          "description":"type of input",
+          "values":[
+            {
+              "name":"text",
+              "description": "text of input is text"
+            },
+            {
+              "name":"textarea",
+              "description": "text of input is textarea"
+            }
+          ]
+        },
+        {
+          "name":" v-model",
+          "description":"binding value",
+          "values":[]
+        },
+        {
+          "name":"maxlength",
+          "description":"the max length",
+          "values": []
+        },
+        {
+          "name":":minlength",
+          "description":"same as minlength in native input",
+          "values":[]
+        },
+        {
+          "name":":show-word-limit",
+          "description":"whether show word count,only works when type is 'text' or 'textarea'",
+          "values":[
+            {
+              "name":"true",
+              "description":"show word count"
+            },
+            {
+              "name":"false",
+              "description":"not show word count"
+            }
+          ]
+        },
+        {
+          "name":"placeholder",
+          "description":"placeholder of Input",
+          "values":[]
+        },
+        {
+          "name":":clearable",
+          "description":"whether to show clear button",
+          "values":[
+            {
+              "name":"true",
+              "description":"show clear button"
+            },
+            {
+              "name":"false",
+              "description":"not show clear button"
+            }
+          ]
+        },
+        {
+          "name":":formatter",
+          "description":"specifies the format of the value presented input.(only works when type is 'text')",
+          "values":[]
+        },
+        {
+          "name":":parser",
+          "description":"specifies the value extracted from formatter input.(only works when type is 'text')",
+          "values":[]
+        },
+        {
+          "name": ":show-password",
+          "description":"whether to show toggleable password input",
+          "values":[
+            {
+              "name": "true",
+              "description":"show password input Whenever"
+            },
+            {
+              "name": "false",
+              "description":"hide password input Whenever"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether Input is disabled",
+          "values":[
+            {
+              "name": "true",
+              "description":"input is disabled"
+            },
+            {
+              "name":"false",
+              "description":"input is not disabled"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of Input, works when type is not 'textarea'",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of input"
+            },
+            {
+              "name":"default",
+              "description":"the default size of input"
+            },
+            {
+              "name":"small",
+              "description":"the small size of input"
+            }
+          ]
+        },
+        {
+          "name":"prefix-icon",
+          "description":"prefix icon component",
+          "values":[]
+        },
+        {
+          "name":"suffix-icon",
+          "description":"suffix icon component",
+          "values":[]
+        },
+        {
+          "name":":rows",
+          "description":"number of rows of textarea, only works when type is 'textarea'",
+          "values":[]
+        },
+        {
+          "name":":autosize",
+          "description":"whether textarea has an adaptive height, only works when type is 'textarea'. Can accept an object, e.g. { minRows: 2, maxRows: 6 }",
+          "values":[
+            {
+              "name":"true",
+              "description":"textarea has an adaptive height"
+            },
+            {
+              "name":"false",
+              "description":"textarea not has an adaptive height"
+            }
+          ]
+        },
+        {
+          "name":"autocomplete",
+          "description":"same as autocomplete in native input",
+          "values":[]
+        },
+        {
+          "name":"name",
+          "description":"same as name in native input",
+          "values":[]
+        },
+        {
+          "name":":readonly",
+          "description":"same as readonly in native input",
+          "values":[
+            {
+              "name":"true",
+              "description": "input is read only"
+            },
+            {
+              "name":"false",
+              "description":"input is not read only"
+            }
+          ]
+        },
+        {
+          "name":":max",
+          "description":"same as max in native input",
+          "values":[]
+        },
+        {
+          "name":":min",
+          "description":"same as min in native input",
+          "values":[]
+        },
+        {
+          "name":":step",
+          "description":"same as step in native input",
+          "values":[]
+        },
+        {
+          "name":"resize",
+          "description":"control the resizability",
+          "values":[
+            {
+              "name":"none",
+              "description":"can not be resize"
+            },
+            {
+              "name":"both",
+              "description":"horizontal and vertical both can be resized"
+            },
+            {
+              "name":"horizontal",
+              "description":"horizontal can be resized"
+            },
+            {
+              "name":"vertical",
+              "description":"vertical can be resized"
+            }
+          ]
+        },
+        {
+          "name":":autofocus",
+          "description":"same as autofocus in native input",
+          "values":[
+            {
+              "name":"true",
+              "description": "input will be autofocus"
+            },
+            {
+              "name":"false",
+              "description": "input will not be autofocus"
+            }
+          ]
+        },
+        {
+          "name":"form",
+          "description":"same as form in native input",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"label text",
+          "values":[]
+        },
+        {
+          "name":"tabindex",
+          "description":"input tabindex",
+          "values":[]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name": "false",
+              "description": "not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":":input-style",
+          "description":"the style of the input element or textarea element",
+          "values":[]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Input blurs",
+          "values":[
+            {
+              "name":"blured(event)",
+              "description":"trigger input blur event when input is blurred"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Input focuses",
+          "values":[
+            {
+              "name":"focused(event)",
+              "description":"trigger input focus event when input is focused"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the input box loses focus or the user presses Enter, only if the modelValue has changed",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger input change event when input the input box loses focus or the user presses Enter, only if the modelValue has changed"
+            }
+          ]
+        },
+        {
+          "name":"@input",
+          "description":"triggers when the Input value change",
+          "values":[
+            {
+              "name":"input(value)",
+              "description":"trigger input change event when input the input value changes"
+            }
+          ]
+        },
+        {
+          "name":"@clear",
+          "description":"triggers when the Input is cleared by clicking the clear button",
+          "values":[
+            {
+              "name":"clear()",
+              "description":"trigger clear event when input is cleared by clicking the clear button"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-input-number",
+      "description":"Input numerical values with a customizable range. \n[doc](https://element-plus.org/en-US/component/input-number.html)",
+      "attributes":[
+        {
+          "name":" v-model",
+          "description":"binding value",
+          "values":[]
+        },
+        {
+          "name":":min",
+          "description":"the minimum allowed value",
+          "values":[]
+        },
+        {
+          "name":":max",
+          "description":"the maximum allowed value",
+          "values":[]
+        },
+        {
+          "name":":step",
+          "description":"incremental step",
+          "values":[]
+        },
+        {
+          "name":":step-strictly",
+          "description":"whether input value can only be multiple of step",
+          "values":[
+            {
+              "name":"true",
+              "description": "input value can only be multiple of step"
+            },
+            {
+              "name":"false",
+              "description":"input value can not only be multiple of step"
+            }
+          ]
+        },
+        {
+          "name":":precision",
+          "description":"precision of input value",
+          "values":[]
+        },
+        {
+          "name":"size",
+          "description":"size of the component",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of component"
+            },
+            {
+              "name":"default",
+              "description":"the default size of component"
+            },
+            {
+              "name":"small",
+              "description":"the small size of component"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether the component is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description":"the component is disabled"
+            },
+          {
+            "name":"false",
+            "description":"the component is not disabled"
+          }
+          ]
+        },
+        {
+          "name":"controls-position",
+          "description":"position of the control buttons",
+          "values":[
+            {
+              "name":"right",
+              "description":"the position of the control buttons is right"
+            }
+          ]
+        },
+        {
+          "name":"name",
+          "description":"same as name in native input",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"label text",
+          "values":[]
+        },
+        {
+          "name":"placeholder",
+          "description":"placeholder in input",
+          "values":[]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description":"trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the value changes",
+          "values":[
+            {
+              "name":"changed(newVal,oldVal)",
+              "description":"trigger the change event when input the input value changes"
+            }
+          ]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Input blurs",
+          "values":[
+            {
+              "name":"blurred(event)",
+              "description":"trigger the blur event when input is blurred"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Input focuses",
+          "values":[
+            {
+              "name":"focused(event)",
+              "description":"trigger the focus event when input is focused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-radio",
+      "description": "Single selection among multiple options. \n[doc](https://element-plus.org/en-US/component/radio.html#radio-attributes)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name": "label",
+          "description":"the value of Radio",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether Radio is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "radio is disabled"
+            },
+            {
+              "name":"false",
+              "description":"radio is not disabled"
+            }
+          ]
+        },
+        {
+          "name":":border",
+          "description":"whether to add a border around Radio",
+          "values":[
+            {
+              "name":"true",
+              "description":"to add a border around Radio"
+            },
+            {
+              "name":"false",
+              "description":"not to add a border around Radio"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description":"size of the Radio",
+          "values":[
+            {
+              "name":"large",
+              "description":"large size of the Radio"
+            },
+            {
+              "name":"default",
+              "description":"default size of the Radio"
+            },
+            {
+              "name":"small",
+              "description":"small size of the Radio"
+            }
+          ]
+        },
+        {
+          "name":"name",
+          "description":"native 'name' attribute",
+          "values":[]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the bound value changes",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the change event when the bound value changes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-radio-group",
+      "description":"Suitable for choosing from some mutually exclusive options. \n[doc](https://element-plus.org/en-US/component/radio.html#radio-group-attributes)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description":"binding value",
+          "values":[]
+        },
+        {
+          "name":"size",
+          "description":"the size of radio",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of radio"
+            },
+            {
+              "name":"default",
+              "description":"the default size of radio"
+            },
+            {
+              "name":"small",
+              "description":"the small size of radio"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether the nesting radios are disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "the nesting radios are disabled"
+            },
+            {
+              "name":"false",
+              "description":"the nesting radios are not disabled"
+            }
+          ]
+        },
+        {
+          "name":"text-color",
+          "description":"font color when button is active",
+          "values":[
+            {
+              "name":"#ffffff",
+              "description":"the color of the button is #ffffff when the button is active"
+            }
+          ]
+        },
+        {
+          "name":"fill",
+          "description":"border and background color when button is active",
+          "values":[
+            {
+              "name":"#409EFF",
+              "description":"border and background color when button is active is #409EFF"
+            }
+          ]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the bound value changes",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the change event when the bound value changes,the label value of the chosen radio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-radio-button",
+      "description":"Radio with button styles. \n[doc](https://element-plus.org/en-US/component/radio.html#radio-button-attributes)",
+      "attributes":[
+        {
+          "name":"label",
+          "description": "the value of radio",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether radio is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "radio is disabled"
+            },
+            {
+              "name":"false",
+              "description":"radio is not disabled"
+            }
+          ]
+        },
+        {
+          "name":"name",
+          "description":"native 'name' attribute",
+          "values":[]
+        }
+      ]
+    },
+    {
+      "name":"el-rate",
+      "description":"Used for rating \n[doc](https://element-plus.org/en-US/component/rate.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":max",
+          "description":"max rating score",
+          "values":[]
+        },
+        {
+          "name":"size",
+          "description":"size of Rate",
+          "values":[
+            {
+              "name":"large",
+              "description":"large size of Rate"
+            },
+            {
+              "name":"default",
+              "description":"default size of Rate"
+            },
+            {
+              "name":"small",
+              "description":"small size of Rate"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether Rate is read-only",
+          "values":[
+            {
+              "name":"true",
+             "description":"Rate is read-only"
+            },
+            {
+              "name":"false",
+              "description":"Rate is not read-only"
+            }
+          ]
+        },
+        {
+          "name":":allow-half",
+          "description":"whether picking half start is allowed",
+          "values":[
+            {
+              "name":"true",
+              "description": "picking half start is allowed"
+            },
+            {
+              "name":"false",
+              "description":"picking half start is not allowed"
+            }
+          ]
+        },
+        {
+          "name":":low-threshold",
+          "description":"threshold value between low and medium level. The value itself will be included in low level",
+          "values":[]
+        },
+        {
+          "name":":high-threshold",
+          "description":"threshold value between medium and high level. The value itself will be included in high level",
+          "values":[]
+        },
+        {
+          "name":":colors",
+          "description":"colors for icons. If array, it should have 3 elements, each of which corresponds with a score level, else if object, the key should be threshold value between two levels, and the value should be corresponding color",
+          "values":[]
+        },
+        {
+          "name":"void-color",
+          "description":"color of unselected icons",
+          "values":[
+            {
+              "name":"#C6D1DE",
+              "description":"the color of unselected icons is #C6D1DE"
+            }
+          ]
+        },
+        {
+          "name":"disabled-void-color",
+          "description":"color of unselected read-only icons",
+          "values":[
+            {
+              "name":"#EFF2F7",
+              "description":"the color of unselected read-only icons is #EFF2F7"
+            }
+          ]
+        },
+        {
+          "name":":icons",
+          "description":"icon components. If array, ot should have 3 elements, each of which corresponds with a score level, else if object, the key should be threshold value between two levels, and the value should be corresponding icon component",
+          "values":[]
+        },
+        {
+          "name":"void-icon",
+          "description":"component of unselected icons",
+          "values":[
+            {
+              "name":"Star",
+              "description":"the icon component of unselected is Star"
+            }
+          ]
+        },
+        {
+          "name":"disabled-void-icon",
+          "description":"component of unselected read-only icons",
+          "values":[
+            {
+              "name":"StarFilled",
+              "description":"the icon component of unselected read-only is StarFilled"
+            }
+          ]
+        },
+        {
+          "name":":show-text",
+          "description":"whether to display texts",
+          "values":[
+            {
+              "name":"true",
+              "description":"display texts"
+            },
+            {
+              "name":"false",
+              "description":"not display texts"
+            }
+          ]
+        },
+        {
+          "name":":show-score",
+          "description":"whether to display current score. show-score and show-text cannot be true at the same time",
+          "values":[
+            {
+              "name":"true",
+              "description":"display current score"
+            },
+            {
+              "name":"false",
+              "description":"not display current score"
+            }
+          ]
+        },
+        {
+          "name":"text-color",
+          "description":"color of texts",
+          "values":[
+            {
+              "name":"#1F2D3D",
+              "description":"color of texts is #1F2D3D"
+            }
+          ]
+        },
+        {
+          "name":":texts",
+          "description":"text array",
+          "values":[]
+        },
+        {
+          "name":"score-template",
+          "description":"score template",
+          "values":[]
+        },
+        {
+          "name":"@change",
+          "description":"Triggers when rate value is changed",
+          "values":[
+            {
+              "name":"@changed(value)",
+              "description":"trigger the change event when rate value is changed,the parameter is the value after changing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-select",
+      "description":"When there are plenty of options, use a drop-down menu to display and select desired ones.\n[doc](https://element-plus.org/en-US/component/select.html#select-attributes)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description":"binding value",
+          "values":[]
+        },
+        {
+          "name":":multiple",
+          "description":"whether multiple-select is activated",
+          "values":[
+            {
+              "name":"true",
+              "description": "multiple-select is activated"
+            },
+            {
+              "name":"false",
+              "description":"multiple-select is not activated"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether Select is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "select is disabled"
+            },
+            {
+              "name":"false",
+              "description":"select is not disabled"
+            }
+          ]
+        },
+        {
+          "name":"value-key",
+          "description":"unique identity key name for value, required when value is an object",
+          "values":[]
+        },
+        {
+          "name":"size",
+          "description":"size of Input",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of input"
+            },
+            {
+              "name":"default",
+              "description":"the default button size"
+            },
+            {
+              "name":"small",
+              "description":"the small button size"
+            }
+          ]
+        },
+        {
+          "name":":clearable",
+          "description":"whether select can be cleared",
+          "values":[
+            {
+              "name":"true",
+              "description": "select can be cleared"
+            },
+            {
+              "name":"false",
+              "description":"select can not be cleared"
+            }
+          ]
+        },
+        {
+          "name":":collapse-tags",
+          "description":"whether to collapse tags to a text when multiple selecting",
+          "values":[
+            {
+              "name":"true",
+              "description": "collapse tags to a text when multiple selecting"
+            },
+            {
+              "name":"false",
+              "description":"not collapse tags to a text when multiple selecting"
+            }
+          ]
+        },
+        {
+          "name":":collapse-tags-tooltip",
+          "description":"whether show all selected tags when mouse hover text of collapse-tags. To use this, collapse-tags must be true",
+          "values":[
+            {
+              "name":"true",
+              "description": "show all selected tags when mouse hover text of collapse-tags"
+            },
+            {
+              "name":"false",
+              "description":"not show all selected tags when mouse hover text of collapse-tags"
+            }
+          ]
+        },
+        {
+          "name":":multiple-limit",
+          "description":"maximum number of options user can select when multiple is true. No limit when set to 0",
+          "values":[]
+        },
+        {
+          "name":"name",
+          "description":"the name attribute of select input",
+          "values":[]
+        },
+        {
+          "name":"effect",
+          "description":"Tooltip theme, built-in theme: dark / light",
+          "values":[
+            {
+              "name":"dark",
+              "description": "set tooltip theme to dark"
+            },
+            {
+              "name":"light",
+              "description":"set tooltip theme to light"
+            }
+          ]
+        },
+        {
+          "name":"autocomplete",
+          "description":"the autocomplete attribute of select input",
+          "values":[]
+        },
+        {
+          "name":"placeholder",
+          "description":"placeholder",
+          "values":[
+            {
+              "name":"Select",
+              "description": "placeholder is Select"
+            }
+          ]
+        },
+        {
+          "name":":filterable",
+          "description":"whether Select is filterable",
+          "values":[
+            {
+              "name":"true",
+              "description": "Select is filterable"
+            },
+            {
+              "name":"false",
+              "description":"Select is unfilterable"
+            }
+          ]
+        },
+        {
+          "name":":allow-create",
+          "description":"whether creating new items is allowed. To use this, filterable must be true",
+          "values":[
+            {
+              "name":"true",
+              "description": "creating new items is allowed. "
+            },
+            {
+              "name":"false",
+              "description":"creating new items is not allowed"
+            }
+          ]
+        },
+        {
+          "name":":filter-method",
+          "description":"custom filter method",
+          "values":[]
+        },
+        {
+          "name":":remote",
+          "description":"whether options are loaded from server",
+          "values":[
+            {
+              "name":"true",
+              "description": "options are loaded from server"
+            },
+            {
+              "name":"false",
+              "description":"options are not loaded from server"
+            }
+          ]
+        },
+        {
+          "name":":remote-method",
+          "description":"custom remote search method",
+          "values":[]
+        },
+        {
+          "name":":loading",
+          "description":"whether Select is loading data from server",
+          "values":[
+            {
+              "name":"true",
+              "description": "Select is loading data from server"
+            },
+            {
+              "name":"false",
+              "description":"Select is not loading data from server"
+            }
+          ]
+        },
+        {
+          "name":"loading-text",
+          "description":"displayed text while loading data from server",
+          "values":[
+            {
+              "name": "Loading",
+              "description": "dispalyed text is 'Loading' while loading data from server"
+            }
+          ]
+        },
+        {
+          "name":"no-match-text",
+          "description":"displayed text when no data matches the filtering query, you can also use slot empty",
+          "values":[
+            {
+              "name":"No matching data",
+              "description":"displayed text is 'No matching data' when no data matches the filtering query"
+            }
+          ]
+        },
+        {
+          "name":"no-data-text",
+          "description":"displayed text when there is no options, you can also use slot empty",
+          "values":[
+            {
+              "name":"No data",
+              "description": "displayed text is 'No data'when there is no options"
+            }
+          ]
+        },
+        {
+          "name":"popper-class",
+          "description":"custom class name for Select's dropdown",
+          "values":[]
+        },
+        {
+          "name":":reserve-keyword",
+          "description":"when multiple and filter is true, whether to reserve current keyword after selecting an option",
+          "values":[
+            {
+              "name":"true",
+              "description": "when multiple and filter is true, reserve current keyword after selecting an option"
+            },
+            {
+              "name":"false",
+              "description":"when multiple and filter is true,not reserve current keyword after selecting an option"
+            }
+          ]
+        },
+        {
+          "name":":default-first-option",
+          "description":"select first matching option on enter key. Use with filterable or remote",
+          "values":[
+            {
+              "name":"true",
+              "description": "select first matching option on enter key. Use with filterable or remote"
+            },
+            {
+              "name":"false",
+              "description":"not select first matching option on enter key"
+            }
+          ]
+        },
+        {
+          "name":":teleported",
+          "description":"whether select dropdown is teleported to the body",
+          "values":[
+            {
+              "name":"true",
+              "description": "select dropdown is teleported to the body"
+            },
+            {
+              "name":"false",
+              "description":"select dropdown not is teleported to the body"
+            }
+          ]
+        },
+        {
+          "name":":persistent",
+          "description":"when select dropdown is inactive and persistent is false, select dropdown will be destroyed",
+          "values":[
+            {
+              "name":"true",
+              "description": "when select dropdown is inactive and persistent is false, select dropdown will be destroyed"
+            },
+            {
+              "name":"false",
+              "description":"when select dropdown is inactive and persistent is false, select dropdown will not be destroyed"
+            }
+          ]
+        },
+        {
+          "name":":automatic-dropdown",
+          "description":"for non-filterable Select, this prop decides if the option menu pops up when the input is focused",
+          "values":[
+            {
+              "name":"true",
+              "description": "for non-filterable Select, the option menu pops up when the input is focused"
+            },
+            {
+              "name":"false",
+              "description":"for non-filterable Select, the option menu do not pops up when the input is focused"
+            }
+          ]
+        },
+        {
+          "name":"clear-icon",
+          "description":"Custom clear icon component",
+          "values":[]
+        },
+        {
+          "name":":fit-input-width",
+          "description":"whether the width of the dropdown is the same as the input",
+          "values":[
+            {
+              "name":"true",
+              "description": "the width of the dropdown is the same as the input"
+            },
+            {
+              "name":"false",
+              "description":"the width of the dropdown is not the same as the input"
+            }
+          ]
+        },
+        {
+          "name":"suffix-icon",
+          "description":"Custom suffix icon component",
+          "values":[]
+        },
+        {
+          "name":"tag-type",
+          "description":"tag type",
+          "values":[
+            {
+              "name":"success",
+              "description": "success tag type"
+            },
+            {
+              "name":"info",
+              "description":"info tag type"
+            },
+            {
+              "description":"warning",
+              "name":"warning tag type"
+            },
+            {
+              "name":"danger",
+              "description":"danger tag type"
+            }
+          ]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the selected value changes",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the change event when the selected value changes and the parameter is current selected value"
+            }
+          ]
+        },
+        {
+          "name":"@visible-change",
+          "description":"triggers when the dropdown appears/disappears",
+          "values":[
+            {
+              "name":"visibleChange(val)",
+              "description":"trigger visible-change event when the dropdown changes"
+            }
+          ]
+        },
+        {
+          "name":"@remove-tag",
+          "description":"triggers when a tag is removed in multiple mode",
+          "values":[
+            {
+              "name":"removeTag(val)",
+              "description":"trigger remove-tag event when a tag is removed in multiple mode, the val is removed tag value"
+            }
+          ]
+        },
+        {
+          "name":"@clear",
+          "description":"triggers when the clear icon is clicked in a clearable Select",
+          "values":[
+            {
+              "name":"clear()",
+              "description":"the triggered method when the clear icon is clicked in a clearable Select"
+            }
+          ]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Input blurs",
+          "values":[
+            {
+              "name":"blur(event)",
+              "description":"the triggered method when input blurs"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Input focuses",
+          "values":[
+            {
+              "name":"focus(event)",
+              "description":"the triggered method when input focused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-option-group",
+      "description":"Display options in groups. \n[doc](https://element-plus.org/en-US/component/select.html#option-group-attributes)",
+      "attributes":[
+        {
+          "name":":label",
+          "description": "name of the group",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether to disable all options in this group",
+          "values":[
+            {
+              "name":"true",
+              "description": "to disable all options in this group"
+            },
+            {
+              "name":"false",
+              "description":"not to disable all options in this group"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-option",
+      "description":"Options for selectors \n[doc](https://element-plus.org/en-US/component/select.html#option-attributes)",
+      "attributes":[
+        {
+          "name":":value",
+          "description": "value of option",
+          "values":[]
+        },
+        {
+          "name":":label",
+          "description":"label of option, same as value if omitted",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether option is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "option is disabled"
+            },
+            {
+              "name":"false",
+              "description":"option is enabled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-slider",
+      "description":"Drag the slider within a fixed range.\n[doc](https://element-plus.org/en-US/component/slider.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":min",
+          "description":"minimum value",
+          "values":[]
+        },
+        {
+          "name":":max",
+          "description":"maximum value",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether Slider is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "Slider is disabled"
+            },
+            {
+              "name":"false",
+              "description":"Slider is enabled"
+            }
+          ]
+        },
+        {
+          "name":":step",
+          "description":"step size",
+          "values":[]
+        },
+        {
+          "name":":show-input",
+          "description":"whether to display an input box, works when range is false",
+          "values":[
+            {
+              "name":"true",
+              "description":"to display an input box, works when range is false"
+            },
+            {
+              "name":"false",
+              "description":"not to display an input box"
+            }
+          ]
+        },
+        {
+          "name":":show-input-controls",
+          "description":"whether to display control buttons when show-input is true",
+          "values":[
+            {
+              "name":"true",
+              "description": " to display control buttons when show-input is true"
+            },
+            {
+              "name":"false",
+              "description":" not to display control buttons"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of the slider",
+          "values":[
+            {
+              "name":"large",
+              "description": "large size of  the slider"
+            },
+            {
+              "name":"default",
+              "description":"default size of slider"
+            },
+            {
+              "name":"small",
+              "description":"small size of slider"
+            }
+          ]
+        },
+        {
+          "name":"input-size",
+          "description":"size of the input box, when set size, the default is the value of size",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of the input box"
+            },
+            {
+              "name":"default",
+              "description":"the default size of the input box"
+            },
+            {
+              "name":"small",
+              "description":"the small size of the input box"
+            }
+          ]
+        },
+        {
+          "name":":show-stops",
+          "description":"whether to display breakpoints",
+          "values":[
+            {
+              "name":"true",
+              "description": "to display breakpoints"
+            },
+            {
+              "name":"false",
+              "description":"not to display breakpoints"
+            }
+          ]
+        },
+        {
+          "name":":show-tooltip",
+          "description":"whether to display tooltip value",
+          "values":[
+            {
+              "name":"true",
+              "description": "to display tooltip value"
+            },
+            {
+              "name":"false",
+              "description":"to display tooltip value"
+            }
+          ]
+        },
+        {
+          "name":":format-tooltip",
+          "description":"format to display tooltip value",
+          "values":[]
+        },
+        {
+          "name":":range",
+          "description":"whether to select a range",
+          "values":[
+            {
+              "name":"true",
+              "description": "to select a range"
+            },
+            {
+              "name":"false",
+              "description":"not to select a range"
+            }
+          ]
+        },
+        {
+          "name":":vertical",
+          "description":"vertical mode",
+          "values":[
+            {
+              "name":"true",
+              "description": "vertical mode"
+            },
+            {
+              "name":"false",
+              "description":"horizontal mode"
+            }
+          ]
+        },
+        {
+          "name":"height",
+          "description":"Slider height, required in vertical mode",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"label for screen reader",
+          "values":[]
+        },
+        {
+          "name":"range-start-label",
+          "description":"when range is true, screen reader label for the start of the range",
+          "values":[]
+        },
+        {
+          "name":"range-end-label",
+          "description":"when range is true, screen reader label for the end of the range",
+          "values":[]
+        },
+        {
+          "name":":format-value-text",
+          "description":"format to display the aria-valuenow attribute for screen readers",
+          "values":[]
+        },
+        {
+          "name":":debounce",
+          "description":"debounce delay when typing, in milliseconds, works when show-input is true",
+          "values":[
+            {
+              "name":"300",
+              "description": "debounce delay when typing, in 300 milliseconds"
+            }
+          ]
+        },
+        {
+          "name":"tooltip-class",
+          "description":"custom class name for the tooltip",
+          "values":[]
+        },
+        {
+          "name":"placement",
+          "description":"position of Tooltip",
+          "values":[
+            {
+              "name":"top",
+              "description": "position of Tooltip is top"
+            },
+            {
+              "name":"top-start",
+              "description":"position of Tooltip is top-start"
+            },
+            {
+              "name":"top-end",
+              "description":"position of Tooltip is top-end"
+            },
+            {
+              "name":"bottom",
+              "description":"position of Tooltip is bottom"
+            },
+            {
+              "name":"bottom-start",
+              "description":"position of tooltip is bottom-start"
+            },
+            {
+              "name":"bottom-end",
+              "description":"position of Tooltip is bottom-end"
+            },
+            {
+              "name":"left",
+              "description":"position of Tooltip is left"
+            },
+            {
+              "name":"left-start",
+              "description":"position of Tooltip is left-start"
+            },
+            {
+              "name":"left-end",
+              "description":"position of Tooltip is left-end"
+            },
+            {
+              "name":"right",
+              "description":"position of Tooltip is right"
+            },
+            {
+              "name":"right-start",
+              "description": "position of Tooltip is right-start"
+            },
+            {
+              "name":"right-end",
+              "description":"position of Tooltip is right-end"
+            }
+          ]
+        },
+        {
+          "name":":marks",
+          "description":"marks, type of key must be number and must in closed interval [min, max], each mark can custom style",
+          "values":[]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the value changes (if the mouse is being dragged, this event only fires when the mouse is released)",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the change event when the value changes"
+            }
+          ]
+        },
+        {
+          "name":"@input",
+          "description":"triggers when the data changes (It'll be emitted in real time during sliding)",
+          "values":[
+            {
+              "name":"input(value)",
+              "description":"the triggered method after the data changes and the parameter is the value after changing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-switch",
+      "description":"Switch is used for switching between two opposing states.\n[doc](https://element-plus.org/en-US/component/switch.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value, it should be equivalent to either active-value or inactive-value, by default it's boolean type",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether Switch is disabled",
+          "values":[
+            {
+            "name":"true",
+            "description": "switch is disabled"
+          },
+          {
+            "name":"false",
+            "description":"switch is enabled"
+          }
+        ]
+        },
+        {
+          "name":":loading",
+          "description":"whether Switch is in loading state",
+          "values":[
+            {
+              "name":"true",
+              "description": "switch is in loading state"
+            },
+            {
+              "name":"false",
+              "description":"switch is not in loading state"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of Switch",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of switch"
+            },
+            {
+              "name":"default",
+              "description":"the default size of switch"
+            },
+            {
+              "name":"small",
+              "description":"the small size of switch"
+            }
+          ]
+        },
+        {
+          "name":"width",
+          "description":"width of Switch",
+          "values":[]
+        },
+        {
+          "name":":inline-prompt",
+          "description":"whether icon or text is displayed inside dot, only the first character will be rendered for text",
+          "values":[
+            {
+              "name":"true",
+              "description": "icon or text is displayed inside dot, only the first character will be rendered for text"
+            },
+            {
+              "name":"false",
+              "description":"icon or text is displayed inside dot,not only the first character will be rendered for text"
+            }
+          ]
+        },
+        {
+          "name":"active-icon",
+          "description":"component of the icon displayed when in on state, overrides active-text",
+          "values":[]
+        },
+        {
+          "name":"inactive-icon",
+          "description":"component of the icon displayed when in off state, overrides inactive-text",
+          "values":[]
+        },
+        {
+          "name":"active-text",
+          "description":"text displayed when in on state",
+          "values":[]
+        },
+        {
+          "name":"inactive-text",
+          "description":"text displayed when in off state",
+          "values":[]
+        },
+        {
+          "name":"active-value",
+          "description":"switch value when in on state",
+          "values":[]
+        },
+        {
+          "name":"inactive-value",
+          "description":"switch value when in off state",
+          "values":[]
+        },
+        {
+          "name":"name",
+          "description":"input name of Switch",
+          "values":[]
+        },
+        {
+          "name":":validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"not trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":":before-change",
+          "description":"before-change hook before the switch state changes. If false is returned or a Promise is returned and then is rejected, will stop switching",
+          "values":[]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when value changes",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"the triggered method when value changes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-time-picker",
+      "description":"Use Time Picker for time input.\n[doc](https://element-plus.org/en-US/component/time-picker.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":readonly",
+          "description":"whether TimePicker is read only",
+          "values":[
+            {
+              "name":"true",
+              "description": "TimePicker is read only"
+            },
+            {
+              "name":"false",
+              "description":"TimePicker is not read only"
+            }
+          ]
+        },
+        {
+          "name":":disabled",
+          "description":"whether TimePicker is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "TimePicker is disabled"
+            },
+            {
+              "name":"false",
+              "description":"TimePicker is enabled"
+            }
+          ]
+        },
+        {
+          "name":":editable",
+          "description":"whether the input is editable",
+          "values":[
+            {
+              "name":"true",
+              "description": "the input is editable"
+            },
+            {
+              "name":"false",
+              "description":"the input is not editable"
+            }
+          ]
+        },
+        {
+          "name":":clearable",
+          "description":"whether to show clear button",
+          "values":[
+            {
+              "name":"true",
+              "description": "to show clear button"
+            },
+            {
+              "name":"false",
+              "description":"not to show clear button"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of Input",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of input"
+            },
+            {
+              "name":"default",
+              "description":"the default size of input"
+            },
+            {
+              "name":"small",
+              "description":"the small size of input"
+            }
+          ]
+        },
+        {
+          "name":"placeholder",
+          "description":"placeholder in non-range mode",
+          "values":[]
+        },
+        {
+          "name":"start-placeholder",
+          "description":"placeholder for the start time in range mode",
+          "values":[]
+        },
+        {
+          "name":"end-placeholder",
+          "description":"placeholder for the end time in range mode",
+          "values":[]
+        },
+        {
+          "name":":is-range",
+          "description":"whether to pick a time range",
+          "values":[
+            {
+              "name":"true",
+              "description": "to pick a time range"
+            },
+            {
+              "name":"false",
+              "description":"not to pick a time range"
+            }
+          ]
+        },
+        {
+          "name":":arrow-control",
+          "description":"whether to pick time using arrow buttons",
+          "values":[
+            {
+              "name":"true",
+              "description": "to pick time using arrow buttons"
+            },
+            {
+              "name":"false",
+              "description":"not to pick time using arrow buttons"
+            }
+          ]
+        },
+        {
+          "name":"popper-class",
+          "description":"custom class name for TimePicker's dropdown",
+          "values":[]
+        },
+        {
+          "name":"range-separator",
+          "description":"range separator",
+          "values":[]
+        },
+        {
+          "name":"format",
+          "description":"format of the displayed value in the input box",
+          "values":[
+            {
+              "name":"HH:mm:ss",
+              "description":"format of the displayed value in the input box is ```HH:mm:ss```"
+            }
+          ]
+        },
+        {
+          "name":":default-value",
+          "description":"optional, default date of the calendar",
+          "values":[]
+        },
+        {
+          "name":"id",
+          "description":"same as id in native input",
+          "values":[]
+        },
+        {
+          "name":"name",
+          "description":"same as name in native input",
+          "values":[]
+        },
+        {
+          "name":"prefix-icon",
+          "description":"Custom prefix icon component",
+          "values":[
+            {
+              "name":"Clock",
+              "description": "the cion component is Clock"
+            }
+          ]
+        },
+        {
+          "name":"clear-icon",
+          "description":"Custom clear icon component",
+          "values":[
+            {
+              "name":"CircleClose",
+              "description": "clear icon component is CircleClose"
+            }
+          ]
+        },
+        {
+          "name":":disabled-hours",
+          "description":"To specify the array of hours that cannot be selected",
+          "values":[]
+        },
+        {
+          "name":":disabled-minutes",
+          "description":"To specify the array of minutes that cannot be selected",
+          "values":[]
+        },
+        {
+          "name":":disabled-seconds",
+          "description":"To specify the array of seconds that cannot be selected",
+          "values":[]
+        },
+        {
+          "name":":teleported",
+          "description":"whether time-picker dropdown is teleported to the body",
+          "values":[
+            {
+              "name":"true",
+              "description": "time-picker dropdown is teleported to the body"
+            },
+            {
+              "name":"false",
+              "description":"time-picker dropdown is not teleported to the body"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when user confirms the value",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the change event when user confirms the value"
+            }
+          ]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Input blurs",
+          "values":[
+            {
+              "name":"blur(event)",
+              "description":"trigger the method when input blurs"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Input focuses",
+          "values":[
+            {
+              "name":"focus(event)",
+              "description":"trigger the focus event when input is focused"
+            }
+          ]
+        },
+        {
+          "name":"@visible-change",
+          "description":"triggers when the TimePicker's dropdown appears/disappears",
+          "values":[
+            {
+              "name":"visibleChange(val)",
+              "description":"trigger the method when the TimePicker's dropdown appears/disappears"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-time-select",
+      "description":"Use Time Select for time input. \n[doc](https://element-plus.org/en-US/component/time-select.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":disabled",
+          "description":"whether TimeSelect is disabled",
+          "values":[
+            {
+              "name":"true",
+              "description": "TimeSelect is disabled"
+            },
+            {
+              "name":"false",
+              "description":"TimeSelect is enabled"
+            }
+          ]
+        },
+        {
+          "name":":editable",
+          "description":"whether the input is editable",
+          "values":[
+          {
+            "name":"true",
+            "description": "the input is editable"
+          },
+          {
+            "name":"false",
+            "description":"the input is not editable"
+          }
+          ]
+        },
+        {
+          "name":":clearable",
+          "description":"whether to show clear button",
+          "values":[
+            {
+              "name":"true",
+              "description": "show clear button"
+            },
+            {
+              "name":"false",
+              "description":"not show clear button"
+            }
+          ]
+        },
+        {
+          "name":"size",
+          "description":"size of Input",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of input"
+            },
+            {
+              "name":"default",
+              "description":"the default size of input"
+            },
+            {
+              "name":"small",
+              "description":"the small size of input"
+            }
+          ]
+        },
+        {
+          "name":"placeholder",
+          "description":"placeholder in non-range mode",
+          "values":[]
+        },
+        {
+          "name":"name",
+          "description":"same as name in native input",
+          "values":[]
+        },
+        {
+          "name":"effect",
+          "description":"Tooltip theme, built-in theme: dark / light",
+          "values":[
+            {
+              "name":"dark",
+              "description": "the Tooltip theme is dark"
+            },
+            {
+              "name":"light",
+              "description": "the Tooltip theme is light"
+            }
+          ]
+        },
+        {
+          "name":"prefix-icon",
+          "description":"Custom prefix icon component",
+          "values":[
+            {
+              "name":"Clock",
+              "description": "prefix icon component is Clock"
+            }
+          ]
+        },
+        {
+          "name":"clear-icon",
+          "description":"Custom clear icon component",
+          "values":[
+            {
+              "name":"CircleClose",
+              "description": "clear icon component is CircleClose"
+            }
+          ]
+        },
+        {
+          "name":"start",
+          "description":"start time",
+          "values":[]
+        },
+        {
+          "name":"end",
+          "description":"end time",
+          "values":[]
+        },
+        {
+          "name":"step",
+          "description":"time step",
+          "values":[]
+        },
+        {
+          "name":"min-time",
+          "description":"minimum time, any time before this time will be disabled",
+          "values":[
+            {
+              "name":"00:00",
+              "description":"before this time will be disabled"
+            }
+          ]
+        },
+        {
+          "name":"max-time",
+          "description":"maximum time, any time after this time will be disabled",
+          "values":[]
+        },
+        {
+          "name":"format",
+          "description":"set format of time \n[doc](https://day.js.org/docs/en/display/format#list-of-all-available-formats)",
+          "values":[]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when user confirms the value",
+          "values":[
+            {
+              "name":"changed(value)",
+              "description":"trigger the method when user confirms the value"
+            }
+          ]
+        },
+        {
+          "name":"@blur",
+          "description":"triggers when Input blurs",
+          "values":[
+            {
+              "name":"blurred(value)",
+              "description":"trigger the blur event when input is blurred"
+            }
+          ]
+        },
+        {
+          "name":"@focus",
+          "description":"triggers when Input focuses",
+          "values":[
+            {
+              "name":"focus(value)",
+              "description":"trigger the focus event when input is focused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-transfer",
+      "description":"You can transfer data from one selection box to another. \n[doc](https://element-plus.org/zh-CN/component/transfer.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":data",
+          "description":"data source",
+          "values":[]
+        },
+        {
+          "name":":filterable",
+          "description":"whether Transfer is filterable",
+          "values":[
+            {
+              "name":"true",
+              "description": "Transfer is filterable"
+            },
+            {
+              "name":"false",
+              "description":"Transfer is not filterable"
+            }
+          ]
+        },
+        {
+          "name":"filter-placeholder",
+          "description":"placeholder for the filter input",
+          "values":[]
+        },
+        {
+          "name":":filter-method",
+          "description":"custom filter method",
+          "values":[]
+        },
+        {
+          "name":"target-order",
+          "description":"order strategy for elements in the target list. If set to original, the elements will keep the same order as the data source. If set to push, the newly added elements will be pushed to the bottom. If set to unshift, the newly added elements will be inserted on the top",
+          "values":[
+            {
+              "name":"original",
+              "description": "the elements will keep the same order as the data source."
+            },
+            {
+              "name":"push",
+              "description":"the newly added elements will be pushed to the bottom."
+            },
+            {
+              "name":"unshift",
+              "description":"the newly added elements will be inserted on the top"
+            }
+          ]
+        },
+        {
+          "name":":titles",
+          "description":"custom list titles",
+          "values":[]
+        },
+        {
+          "name":":button-texts",
+          "description":"custom button texts",
+          "values":[]
+        },
+        {
+          "name":":render-content",
+          "description":"custom render function for data items",
+          "values":[]
+        },
+        {
+          "name":":format",
+          "description":"texts for checking status in list header",
+          "values":[]
+        },
+        {
+          "name":":props",
+          "description":"prop aliases for data source",
+          "values":[]
+        },
+        {
+          "name":":left-default-checked",
+          "description":"key array of initially checked data items of the left list",
+          "values":[]
+        },
+        {
+          "name":":right-default-checked",
+          "description":"key array of initially checked data items of the right list",
+          "values":[]
+        },
+        {
+          "name":"validate-event",
+          "description":"whether to trigger form validation",
+          "values":[
+            {
+              "name":"true",
+              "description": "trigger form validation"
+            },
+            {
+              "name":"false",
+              "description":"trigger form validation"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when data items change in the right list",
+          "values":[
+            {
+              "name":"changed(val,direction,movArr)",
+              "description":"the triggered method when data items change in the right list,the parameters are key array of current data items in the right list, transfer direction (left or right), moved item keys"
+            }
+          ]
+        },
+        {
+          "name":"@left-check-change",
+          "description":"triggers when end user changes the checked state of any data item in the left list",
+          "values":[
+            {
+              "name":"leftCheckChange(oldarr,newarr)",
+              "description":"the triggered method when end user changes the checked state of any data item in the left list,the parameter are key array of currently checked items, key array of items whose checked state have changed"
+            }
+          ]
+        },
+        {
+          "name":"@right-check-change",
+          "description":"triggers when end user changes the checked state of any data item in the right list",
+          "values":[
+            {
+              "name":"@rightCheckChange(oldarr,newarr)",
+              "description":"the triggered method when end user changes the checked state of any data item in the left list,the parameter are key array of currently checked items, key array of items whose checked state have changed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-upload",
+      "description":"Upload files by clicking or drag-and-drop. \n[doc](https://element-plus.org/en-US/component/upload.html)",
+      "attributes":[
+        {
+          "name":":limit",
+          "description":"Limit the number of uploaded files",
+          "values":[]
+        },
+        {
+          "name":":before-upload",
+          "description":"Use before-upload hook to limit the upload file format and size.",
+          "values":[
+            {
+              "name":"beforeAvatarUpload",
+              "description": "a method to limit the upload file format and size."
+            }
+          ]
+        },
+        {
+          "name":"list-type",
+          "description":"Use list-type to change the fileList style.",
+          "values":[]
+        },
+        {
+          "name":":on-change",
+          "description":"Use on-change hook function to control upload file list.",
+          "values":[
+            {
+              "name":"handleChange",
+              "description": "a hook function to control upload file list."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-avatar",
+      "description": "Avatars can be used to represent people or objects. It supports images, Icons, or characters. \n[doc](https://element-plus.org/en-US/component/avatar.html)",
+      "attributes":[
+        {
+          "name":"icon",
+          "description": "representation type to icon, more info on icon component.",
+          "values":[]
+        },
+        {
+          "name":"size",
+          "description":"avatar size.",
+          "values":[
+            {
+              "name":"large",
+              "description": "the large size of avatar"
+            },
+            {
+              "name":"default",
+              "description":"the default size of avatar"
+            },
+            {
+              "name":"small",
+              "description":"the small size of avatar"
+            }
+          ]
+        },
+        {
+          "name":"shape",
+          "description":"avatar shape.",
+          "values":[
+            {
+              "name":"circle",
+              "description": "avatar shape is circle"
+            },
+            {
+              "name":"square",
+              "description":"avatar shape is square"
+            }
+          ]
+        },
+        {
+          "name":"src",
+          "description":"the source of the image for an image avatar.",
+          "values":[]
+        },
+        {
+          "name":"src-set",
+          "description":"native attribute srcset of image avatar.",
+          "values":[]
+        },
+        {
+          "name":"alt",
+          "description":"native attribute alt of image avatar.",
+          "values":[]
+        },
+        {
+          "name":"fit",
+          "description":"set how the image fit its container for an image avatar.",
+          "values":[
+            {
+              "name":"fill",
+              "description": "set fill for the image fit its container for an image avatar."
+            },
+            {
+              "name":"contain",
+              "description":"set contain for the image fit its container for an image avatar."
+            },
+            {
+              "name":"cover",
+              "description":"set cover for the image fit its container for an image avatar."
+            },
+            {
+              "name":"none",
+              "description":"set none for the image fit its container for an image avatar."
+            },
+            {
+              "name":"scale-down",
+              "description":"set scale-down for the image fit its container for an image avatar."
+            }
+          ]
+        },
+        {
+          "name":"@error",
+          "description":"trigger when image load error.",
+          "values":[
+            {
+              "name":"Error(event)",
+              "description":"the triggered method when image load error"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-badge",
+      "description":"A number or status mark on buttons and icons. \n[doc](https://element-plus.org/en-US/component/badge.html)",
+      "attributes":[
+        {
+          "name":":value",
+          "description":"display value.",
+          "values":[]
+        },
+        {
+          "name":":max",
+          "description":"maximum value, shows {max}+ when exceeded. Only works if value is a number.",
+          "values":[]
+        },
+        {
+          "name":":is-dot",
+          "description":"if a little dot is displayed.",
+          "values":[
+            {
+              "name":"true",
+              "description": "dot is displayed."
+            },
+            {
+              "name":"false",
+              "description":"dot is hidden"
+            }
+          ]
+        },
+        {
+          "name":":hidden",
+          "description":"hidden badge.",
+          "values":[
+            {
+              "name":"true",
+              "description": "hidden badge"
+            },
+            {
+              "name":"false",
+              "description":"not hidden badge"
+            }
+          ]
+        },
+        {
+          "name":"type",
+          "description":"badge type.",
+          "values":[
+            {
+              "name":"primary",
+              "description": "primary badge type"
+            },
+            {
+              "name":"success",
+              "description":"success badge type"
+            },
+            {
+              "name":"warning",
+              "description":"warning badge type"
+            },
+            {
+              "name":"danger",
+              "description":"danger badge type"
+            },
+            {
+              "name":"info",
+              "description":"info badge type"
+            }
+          ]
+        }
+      ]
+
+    },
+    {
+      "name":"el-calendar",
+      "description":"Display date.\n[doc](https://element-plus.org/en-US/component/calendar.html)",
+      "attributes":[
+        {
+          "name":"v-model",
+          "description": "binding value",
+          "values":[]
+        },
+        {
+          "name":":range",
+          "description":"time range, including start time and end time. Start time must be start day of week, end time must be end day of week, the time span cannot exceed two months.",
+          "values":[]
+        }
+      ]
+    },
+    {
+      "name":"el-card",
+      "description":"Integrate information in a card container.\n[doc](https://element-plus.org/en-US/component/card.html)",
+      "attributes":[
+        {
+          "name":"header",
+          "description":"title of the card. Also accepts a DOM passed by slot#header",
+          "values":[]
+        },
+        {
+          "name":":body-style",
+          "description":"CSS style of body",
+          "values":[]
+        },
+        {
+          "name":"shadow",
+          "description":"when to show card shadows",
+          "values":[
+            {
+              "name":"always",
+              "description":"always to show card shadows"
+            },
+            {
+              "name":"hover",
+              "description":"when hover to show card shadows"
+            },
+            {
+              "name":"never",
+              "description":"never to show card shadows"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-carousel",
+      "description":"Loop a series of images or texts in a limited space \n[doc](https://element-plus.org/zh-CN/component/carousel.html)",
+      "attributes":[
+        {
+          "name":"height",
+          "description":"height of the carousel",
+          "values":[]
+        },
+        {
+          "name":":initial-index",
+          "description":"index of the initially active slide (starting from 0)",
+          "values":[]
+        },
+        {
+          "name":"trigger",
+          "description":"how indicators are triggered",
+          "values":[
+            {
+              "name":"hover",
+              "description":"when hover indicators are triggered"
+            },
+            {
+              "name":"click",
+              "description":"when click indicators are triggered"
+            }
+          ]
+        },
+        {
+          "name":":autoplay",
+          "description":"whether automatically loop the slides",
+          "values":[
+            {
+              "name":"true",
+              "description": "automatically loop the slides"
+            },
+            {
+              "name":"false",
+              "description":"not automatically loop the slides"
+            }
+          ]
+        },
+        {
+          "name":":interval",
+          "description":"interval of the auto loop, in milliseconds",
+          "values":[]
+        },
+        {
+          "name":"indicator-position",
+          "description":"position of the indicators",
+          "values":[{
+            "name":"outside",
+            "description":"position of the indicators is outside"
+          },
+          {
+            "name":"none",
+            "description":"no indicators"
+          }
+        ]
+        },
+        {
+          "name":"arrow",
+          "description":"when arrows are shown",
+          "values":[
+          {
+            "name":"always",
+            "description":"always show arrows"
+          },
+          {
+            "name":"hover",
+            "description":"when hover arrows are shown"
+          },
+          {
+            "name":"never",
+            "description":"arrows are never shown"
+          }
+          ]
+        },
+        {
+          "name":"type",
+          "description":"type of the Carousel",
+          "values":[
+            {
+              "name":"card",
+              "description":"type of the Carousel is card"
+            }
+          ]
+        },
+        {
+          "name":":loop",
+          "description":"display the items in loop",
+          "values":[
+            {
+              "name":"true",
+              "description": "display the items in loop"
+            },
+            {
+              "name":"false",
+              "description":"not display the items in loop"
+            }
+          ]
+        },
+        {
+          "name":"direction",
+          "description":"display direction",
+          "values":[
+            {
+              "name":"horizontal",
+              "description":"display direction is horizontal"
+            },
+            {
+              "name":"vertical",
+              "description":"display direction is vertical"
+            }
+          ]
+        },
+        {
+          "name":":pause-on-hover",
+          "description":"pause autoplay when hover",
+          "values":[
+            {
+              "name":"true",
+              "description": "pause autoplay when hover"
+            },
+            {
+              "name":"false",
+              "description":"not pause autoplay when hover"
+            }
+          ]
+        },
+        {
+          "name":"@change",
+          "description":"triggers when the active slide switches",
+          "values":[
+            {
+              "name":"changed(curindex,preindex)",
+              "description":"the triggered method when the active slide switches, index of the new active slide, index of the old active slide"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"el-carousel-item",
+      "description":"Content of each slide is completely customizable, and you just need to place it inside el-carousel-item tag. \n[doc](https://element-plus.org/en-US/component/carousel.html#carousel-item-attributes)",
+      "attributes":[
+        {
+          "name":"name",
+          "description":"name of the item, can be used in setActiveItem",
+          "values":[]
+        },
+        {
+          "name":"label",
+          "description":"text content for the corresponding indicator",
+          "values":[]
+        }
+      ]
+    }
+  ],
+  "globalAttributes": [
+  ]
+}

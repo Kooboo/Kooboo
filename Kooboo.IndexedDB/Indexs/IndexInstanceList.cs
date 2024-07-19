@@ -2,7 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.IndexedDB.Indexs
 {
@@ -17,8 +17,8 @@ namespace Kooboo.IndexedDB.Indexs
         }
 
         public void ParseSetting(Dictionary<string, int> indexs, string objectFolder, int MaxCacheLevel)
-        { 
-            if (indexs != null && indexs.Count()>0)
+        {
+            if (indexs != null && indexs.Count() > 0)
             {
                 foreach (var item in indexs)
                 {
@@ -29,20 +29,20 @@ namespace Kooboo.IndexedDB.Indexs
                     }
                 }
             }
-    
+
         }
 
-        internal static IIndex<TValue> GetIndexInstance(string objectFolder, string FieldName, int keyLength,  int MaxCacheLevel)
+        internal static IIndex<TValue> GetIndexInstance(string objectFolder, string FieldName, int keyLength, int MaxCacheLevel)
         {
-            var KeyType = Helper.TypeHelper.GetFieldType<TValue>(FieldName); 
+            var KeyType = Helper.TypeHelper.GetFieldType<TValue>(FieldName);
             if (KeyType == null)
             {
-                return null; 
+                return null;
             }
 
             if (KeyType == typeof(Int32))
             {
-               return new IndexBase<TValue, Int32>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, Int32>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
             }
             else if (KeyType == typeof(Int64))
             {
@@ -95,7 +95,7 @@ namespace Kooboo.IndexedDB.Indexs
                 }
             }
         }
-         
+
         public bool Add(TValue record, Int64 blockPosition)
         {
             for (int i = 0; i < items.Count; i++)

@@ -1,8 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
+using Kooboo.IndexedDB.Helper;
 
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
@@ -30,7 +30,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private bool IsIgnoreCase { get; set; }
 
         public DictionaryFieldConverter(Type DictionaryType, string FieldName)
-        { 
+        {
             this.IsIgnoreCase = Helper.TypeHelper.IsDictIgnoreCase(typeof(T), FieldName);
 
             this.DictionaryType = DictionaryType;
@@ -156,7 +156,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 if (valuestartposition >= ValueByteLen)
                 { break; }
             }
-             
+
 
             System.Collections.IDictionary dict = null;
             if (this.IsIgnoreCase)
@@ -165,11 +165,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 para.Add(StringComparer.OrdinalIgnoreCase);
                 dict = Activator.CreateInstance(this.DictionaryType, para.ToArray()) as System.Collections.IDictionary;
             }
-            else 
+            else
             {
                 dict = Activator.CreateInstance(this.DictionaryType) as System.Collections.IDictionary;
             }
-              
+
             int count = keybytes.Count;
 
             for (int i = 0; i < count; i++)
@@ -310,14 +310,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         Func<object, object> getValue;
         Action<object, object> setValue;
         DictionaryConverter converter;
-         
+
 
         public DictionaryFieldConverter(string FieldName, Type ObjectType, Type DictionaryType)
         {
             this.getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
             this.setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, DictionaryType);
             this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
-            converter = new DictionaryConverter(DictionaryType, Helper.TypeHelper.IsDictIgnoreCase(ObjectType, FieldName)); 
+            converter = new DictionaryConverter(DictionaryType, Helper.TypeHelper.IsDictIgnoreCase(ObjectType, FieldName));
         }
 
         public int ByteLength

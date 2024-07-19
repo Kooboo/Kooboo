@@ -2,9 +2,6 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Queue
 {
@@ -100,7 +97,7 @@ namespace Kooboo.IndexedDB.Queue
 
             private bool MoveOneDay()
             {
-                int nextid =  this.CurrentDayInt;
+                int nextid = this.CurrentDayInt;
                 foreach (int item in this.queue.queueFileIdList)
                 {
                     if (item > nextid)

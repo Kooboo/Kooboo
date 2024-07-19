@@ -2,55 +2,60 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Mail.Imap;
 
 namespace Kooboo.Mail.Multipart
 {
-  public static class HeaderComposer
-    {  
+    public static class HeaderComposer
+    {
         public static string Compose(Dictionary<string, string> Values)
         {
             string header = null;
-
-            HashSet<string> donevalues = new HashSet<string>(StringComparer.OrdinalIgnoreCase); 
+            HashSet<string> valuesDone = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string FromAddress = null;
 
             foreach (var item in Values)
             {
-                string lower = item.Key.ToLower();
+                string lowerCase = item.Key.ToLower();
 
-                var value = item.Value; 
+                var value = item.Value;
 
-                if(lower == "date")
+                if (lowerCase == "date")
                 {
                     // parse date. 
                 }
+                else if (lowerCase == "from")
+                {
+                    //value = Utility.HeaderUtility.EncodeField(value, true);
+                    value = Utility.HeaderUtility.MailKitEncodeAddressField(value);
+                    FromAddress = value;
+                }
 
-                else if (lower == "to" || lower == "from" )
+                else if (lowerCase == "to" || lowerCase == "cc" || lowerCase == "bcc")
                 {
-                    value = Utility.HeaderUtility.EncodeField(value, true); 
+
+                    value = Utility.HeaderUtility.MailKitEncodeAddressField(value);
                 }
-                else if (lower == "subject")
+                else if (lowerCase == "subject")
                 {
-                    value = Utility.HeaderUtility.EncodeField(value); 
+                    value = Utility.HeaderUtility.EncodeField(value);
                 }
-                
+
                 header += item.Key + ": " + value + "\r\n";
-                donevalues.Add(item.Key); 
+                valuesDone.Add(item.Key);
             }
 
-           if (!donevalues.Contains("Date"))
+            if (!valuesDone.Contains("Date"))
             {
-                header += "Date: " + LumiSoft.Net.MIME.MIME_Utils.DateTimeToRfc2822(DateTime.Now)+ "\r\n"; 
-            } 
-
-           if (!donevalues.Contains("Message-ID"))
-            {
-                header += "Message-ID: <" + Guid.NewGuid().ToString().Replace("-", "") + "@mail.kooboo.com>\r\n"; 
+                header += "Date: " + ImapHelper.DateTimeToRfc2822(DateTime.Now) + "\r\n";
             }
-            return header; 
+
+            if (!valuesDone.Contains("Message-ID"))
+            {
+                var msgID = Kooboo.Mail.Utility.SmtpUtility.GenerateMessageId(FromAddress);
+                header += "Message-ID: " + msgID + "\r\n";
+            }
+            return header;
         }
-        
     }
 }

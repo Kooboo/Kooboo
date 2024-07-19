@@ -8,12 +8,12 @@ namespace Kooboo.Render.ObjectSource
     public class DirectoryRender
     {
         public static string Resolve(string localPath, string localRootPath)
-        {  
+        {
             if (localRootPath.StartsWith(Kooboo.Data.AppSettings.RootPath))
             {
-                return null; 
+                return null;
             }
-            
+
             var fileList = string.Empty;
             DirectoryInfo directory = new DirectoryInfo(localPath);
             if (!directory.Exists)

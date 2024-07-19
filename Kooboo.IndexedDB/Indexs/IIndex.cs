@@ -1,11 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.IndexedDB.Btree;
+using Kooboo.IndexedDB.BTree;
 
 namespace Kooboo.IndexedDB.Indexs
 {
@@ -19,7 +15,7 @@ namespace Kooboo.IndexedDB.Indexs
         int Length { get; set; }
 
         Type keyType { get; set; }
-          
+
         bool Add(TValue input, Int64 blockPosition);
 
 
@@ -43,7 +39,7 @@ namespace Kooboo.IndexedDB.Indexs
 
         void Flush();
 
-        void DelSelf(); 
+        void DelSelf();
 
     }
 }

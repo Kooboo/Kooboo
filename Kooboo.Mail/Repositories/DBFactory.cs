@@ -1,21 +1,37 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Interface;
-using Kooboo.Data.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Data.Models;
+using Kooboo.Mail.Transport;
 
 namespace Kooboo.Mail.Factory
 {
     public static class DBFactory
     {
-        private static Dictionary<Guid, MailDb> _maildbs = new Dictionary<Guid, MailDb>();
-        private static Dictionary<Guid, OrgDb> _orgdbs = new Dictionary<Guid, OrgDb>();
 
-        private static object _dbCreateLock = new object();
+        private static ConcurrentDictionary<Guid, MailDb> _maildbprivate;
+
+        private static ConcurrentDictionary<Guid, MailDb> _maildbs
+        {
+            get
+            {
+                if (_maildbprivate == null)
+                {
+                    _maildbprivate = new ConcurrentDictionary<Guid, MailDb>();
+                }
+                return _maildbprivate;
+            }
+        }
+        private static Dictionary<Guid, OrgDb> _orgdbs { get; set; } = new Dictionary<Guid, OrgDb>();
+
+        private static object CreateLock = new object();
+
+        public static IEnumerable<MailDb> OpenMailDbs()
+        {
+            return _maildbs.Values;
+        }
 
         public static MailDb UserMailDb(Guid userId, Guid OrganizationId)
         {
@@ -24,18 +40,25 @@ namespace Kooboo.Mail.Factory
 
             MailDb result;
             if (_maildbs.TryGetValue(guidkey, out result))
-
+            {
                 return result;
+            }
 
-            lock (_dbCreateLock)
+            var locker = GetMailDbLocker(guidkey);
+
+            lock (locker)
             {
                 if (_maildbs.TryGetValue(guidkey, out result))
+                {
                     return result;
+                }
 
                 result = new MailDb(userId, OrganizationId);
-                _maildbs[guidkey] = result;
+
+                _maildbs.TryAdd(guidkey, result);
+                // _maildbs[guidkey] = result;
+                return result;
             }
-            return result;
         }
 
         public static MailDb UserMailDb(User user)
@@ -53,16 +76,25 @@ namespace Kooboo.Mail.Factory
         {
             OrgDb result;
             if (_orgdbs.TryGetValue(organizationId, out result))
+            {
                 return result;
+            }
 
-            lock (_dbCreateLock)
+            var orgdbLocker = GetOrgDbLocker(organizationId);
+
+            lock (orgdbLocker)
             {
                 if (_orgdbs.TryGetValue(organizationId, out result))
+                {
                     return result;
+                }
+
                 result = new OrgDb(organizationId);
+
                 _orgdbs[organizationId] = result;
+                return result;
             }
-            return result;
+
         }
 
         // only when prepare for moving. 
@@ -79,39 +111,10 @@ namespace Kooboo.Mail.Factory
         // this is for email. 
         public static OrgDb OrgDb(string emailAddress)
         {
-            string domainName = GetDomain(emailAddress);
-
-            var domain = Kooboo.Data.GlobalDb.Domains.Get(domainName);
+            var domain = MailDomainCheck.Instance.GetByEmailAddress(emailAddress);
 
             if (domain != null && domain.OrganizationId != default(Guid))
             {
-                if (domain.IsKooboo && Data.AppSettings.IsOnlineServer)
-                {
-                    // for Kooboo subdomain, check if it is in 
-                    var org = Kooboo.Data.GlobalDb.Organization.Get(domain.OrganizationId);
-
-                    if (org != null)
-                    {
-                        var checker = Lib.IOC.Service.GetSingleTon<IMailServerProvider>(false);
-                        if (checker != null)
-                        {
-                            var islocal = checker.IsLocal(org);
-                            if (islocal)
-                            {
-                                return OrgDb(domain.OrganizationId);
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
 
                 return OrgDb(domain.OrganizationId);
             }
@@ -121,14 +124,56 @@ namespace Kooboo.Mail.Factory
             }
         }
 
-        private static string GetDomain(string emailAddress)
+
+        private static object _lockMailLocker = new object();
+        private static object _lockOrgLocker = new object();
+
+
+        private static Dictionary<Guid, object> mailDbLocker = new Dictionary<Guid, object>();
+        private static Dictionary<Guid, object> orgLocker = new Dictionary<Guid, object>();
+
+        public static object GetMailDbLocker(Guid Id)
         {
-            if (string.IsNullOrEmpty(emailAddress))
-                return null;
+            if (mailDbLocker.ContainsKey(Id))
+            {
+                return mailDbLocker[Id];
+            }
 
-            int index = emailAddress.LastIndexOf("@");
+            lock (_lockMailLocker)
+            {
+                if (mailDbLocker.ContainsKey(Id))
+                {
+                    return mailDbLocker[Id];
+                }
+                else
+                {
+                    object newLock = new object();
+                    mailDbLocker[Id] = newLock;
+                    return newLock;
+                }
+            }
+        }
 
-            return index > 0 ? emailAddress.Substring(index + 1) : null;
+        public static object GetOrgDbLocker(Guid Id)
+        {
+            if (orgLocker.ContainsKey(Id))
+            {
+                return orgLocker[Id];
+            }
+
+            lock (_lockOrgLocker)
+            {
+                if (orgLocker.ContainsKey(Id))
+                {
+                    return orgLocker[Id];
+                }
+                else
+                {
+                    object newLock = new object();
+                    orgLocker[Id] = newLock;
+                    return newLock;
+                }
+            }
         }
 
     }

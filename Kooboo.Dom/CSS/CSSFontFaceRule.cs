@@ -1,20 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Dom.CSS
 {
-  public  class CSSFontFaceRule : CSSRule
+    public class CSSFontFaceRule : CSSRule
     {
-      public CSSFontFaceRule()
-      {
-          this.type = enumCSSRuleType.FONT_FACE_RULE;
-          this.style = new CSSStyleDeclaration();
-      }
+        public CSSFontFaceRule()
+        {
+            this.type = enumCSSRuleType.FONT_FACE_RULE;
+            this.style = new CSSStyleDeclaration();
+        }
 
         //family-name
         //Specifies a name that will be used as the font face value for font properties. ( i.e. font-family: <family-name>; )
@@ -31,7 +25,7 @@ namespace Kooboo.Dom.CSS
         //unicode-range
         //The range of unicode code points defined in the font-face rule.
 
-      public CSSStyleDeclaration style;
+        public CSSStyleDeclaration style;
 
 
     }

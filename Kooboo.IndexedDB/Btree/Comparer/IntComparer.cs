@@ -1,12 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree.Comparer
+namespace Kooboo.IndexedDB.BTree.Comparer
 {
     public class IntComparer : IComparer<byte[]>
     {
@@ -56,7 +52,7 @@ namespace Kooboo.IndexedDB.Btree.Comparer
 
                 return comparebyte(x, y);
             }
-           
+
         }
 
         public int comparebyte(byte[] byteone, byte[] bytetwo)
@@ -85,8 +81,8 @@ namespace Kooboo.IndexedDB.Btree.Comparer
 
     public enum IntType
     {
-        Int32=0,
-        Int16=1,
+        Int32 = 0,
+        Int16 = 1,
         Int64 = 2
     }
 }

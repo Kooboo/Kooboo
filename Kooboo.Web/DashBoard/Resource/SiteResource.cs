@@ -7,19 +7,19 @@ using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Web.DashBoard.Resource
 {
-    public class SiteResource :  IDashBoard
+    public class SiteResource : IDashBoard
     {
         public string Name
         {
             get
             {
-                return "Resource"; 
+                return "Resource";
             }
         }
 
         public string DisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("Resource", context); 
+            return Data.Language.Hardcoded.GetValue("Resource", context);
         }
 
         public IDashBoardResponse Render(RenderContext Context)
@@ -32,8 +32,8 @@ namespace Kooboo.Web.DashBoard.Resource
             model.Views = sitedb.Views.Count();
 
             var result = new DashBoardResponseModel();
-            result.Model = model; 
-            return result; 
+            result.Model = model;
+            return result;
         }
     }
 
@@ -41,7 +41,7 @@ namespace Kooboo.Web.DashBoard.Resource
     {
         public int Images { get; set; }
         public int Views { get; set; }
-        public int Pages { get; set; } 
-        public int Contents { get; set; } 
+        public int Pages { get; set; }
+        public int Contents { get; set; }
     }
 }

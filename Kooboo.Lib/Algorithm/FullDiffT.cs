@@ -1,10 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Algorithm
 {
@@ -105,7 +102,7 @@ namespace Kooboo.Lib.Algorithm
                                 // j= jstartindex+1. 
                                 AddAction(actionlist, FullEditAction<T>.ActionType.Add, B[Bstartindex], -1, Bstartindex);
 
-                               // AddAction(actionlist, EditAction<T>.ActionType.Keep, B[Bstartindex + 1]);
+                                // AddAction(actionlist, EditAction<T>.ActionType.Keep, B[Bstartindex + 1]);
                                 //TODO: please check this part. does oneA == B[Bstartindex +1. 
                                 AddAction(actionlist, FullEditAction<T>.ActionType.Keep, oneA, i, j);
 
@@ -302,16 +299,16 @@ namespace Kooboo.Lib.Algorithm
                     if (!inChange)
                     {
                         inChange = true;
-                        changecount += 1; 
+                        changecount += 1;
                     }
                 }
                 else
                 {
-                    inChange = false; 
+                    inChange = false;
                 }
             }
 
-            return changecount; 
+            return changecount;
         }
 
         private void AddAction(List<FullEditAction<T>> currentSet, FullEditAction<T>.ActionType type, T value, int AIndex, int BIndex)
@@ -324,7 +321,7 @@ namespace Kooboo.Lib.Algorithm
             newAction.BIndex = BIndex;
 
             currentSet.Add(newAction);
-            
+
         }
 
         private bool CheckEnd(List<FullEditAction<T>> actionlist, int ALen, int BLen, int currentAIndex, int currentBIndex, List<T> A, List<T> B)
@@ -346,7 +343,7 @@ namespace Kooboo.Lib.Algorithm
 
                 for (int i = currentAIndex; i < ALen; i++)
                 {
-                    AddAction(actionlist, FullEditAction<T>.ActionType.Del, A[i], i , -1);
+                    AddAction(actionlist, FullEditAction<T>.ActionType.Del, A[i], i, -1);
                 }
 
                 return true;

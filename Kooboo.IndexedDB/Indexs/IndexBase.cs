@@ -1,17 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Btree;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.BTree;
 
 namespace Kooboo.IndexedDB.Indexs
 {
     public class IndexBase<TValue, TKey> : IIndex<TValue>
-    { 
+    {
         public string FieldName
         {
             get;
@@ -30,25 +25,25 @@ namespace Kooboo.IndexedDB.Indexs
             set;
         }
 
-        public Btree.BtreeIndex<TKey> index;
+        public BTree.BTreeIndex<TKey> index;
 
         Func<TValue, TKey> GetValue;
-         
+
         public IndexBase(string FieldOrPropertyName, string FullIndexFileName, bool unique, int keylength, int MaxCacheLevel)
         {
-            this.keyType = typeof(TKey); 
+            this.keyType = typeof(TKey);
             this.FieldName = FieldOrPropertyName;
-              
-            this.GetValue = Helper.ObjectHelper.GetGetValue<TValue, TKey>(FieldName); 
-            index = new Btree.BtreeIndex<TKey>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
 
-            this.Length = index.keylength; 
+            this.GetValue = Helper.ObjectHelper.GetGetValue<TValue, TKey>(FieldName);
+            index = new BTree.BTreeIndex<TKey>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
+
+            this.Length = index.keyLength;
         }
-         
+
         public bool Add(TValue input, long blockPosition)
         {
             TKey fieldvalue = GetValue(input);
-            return index.Add(fieldvalue, blockPosition); 
+            return index.Add(fieldvalue, blockPosition);
         }
 
         public void Update(TValue oldRecord, TValue NewRecord, long oldBlockPosition, long newBlockPosition)
@@ -77,13 +72,13 @@ namespace Kooboo.IndexedDB.Indexs
         public ItemCollection GetCollection(byte[] startBytes, byte[] endBytes, bool lowerOpen, bool upperOpen, bool ascending)
         {
             return this.index.getCollection(startBytes, endBytes, lowerOpen, upperOpen, ascending);
-             
+
         }
 
         public KeyBytesCollection AllKeys(bool ascending)
         {
-            return this.index.AllKeyBytesCollection(ascending); 
-        } 
+            return this.index.AllKeyBytesCollection(ascending);
+        }
 
         public void Close()
         {

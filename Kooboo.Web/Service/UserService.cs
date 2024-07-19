@@ -1,8 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
-using System;
 
 namespace Kooboo.Web.Service
 {
@@ -10,7 +12,7 @@ namespace Kooboo.Web.Service
     {
         public static string GetToken(User user)
         {
-            if (Kooboo.Data.AppSettings.IsOnlineServer && !IsSameServer(user.TempRedirectUrl))
+            if (Kooboo.Data.AppSettings.IsOnlineServer)
             {
                 string token = GetTokenFromOnline(user);
 
@@ -30,20 +32,13 @@ namespace Kooboo.Web.Service
         {
             var gettokenurl = Kooboo.Data.Helper.AccountUrlHelper.User("GetToken");
             gettokenurl += "?username=" + user.UserName;
-            if (user.PasswordHash != default(Guid))
-            {
-                gettokenurl += "&password=" + user.PasswordHash.ToString();
-            }
-            else if (!string.IsNullOrEmpty(user.Password))
-            {
-                gettokenurl += "&password=" + user.Password;
-            }
+            gettokenurl += "&password=" + user.GetPasswordString();
 
             return Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
 
         }
 
-        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool samesiteredirect)
+        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl)
         {
             if (!string.IsNullOrWhiteSpace(returnUrl))
             {
@@ -59,7 +54,7 @@ namespace Kooboo.Web.Service
 
             string baseurl = currentRequestUrl;
 
-            if (!samesiteredirect && !string.IsNullOrWhiteSpace(User.TempRedirectUrl) && Data.AppSettings.IsOnlineServer)
+            if (!string.IsNullOrWhiteSpace(User.TempRedirectUrl))
             {
                 baseurl = User.TempRedirectUrl;
             }
@@ -85,9 +80,9 @@ namespace Kooboo.Web.Service
             return fullurl;
         }
 
-        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool samesiteredirect)
+        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl)
         {
-            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, samesiteredirect);
+            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl);
 
             string token = GetToken(user);
 
@@ -112,6 +107,19 @@ namespace Kooboo.Web.Service
 
             return false;
 
+        }
+
+        public static string GenerateTokenFromLocal(User user)
+        {
+            IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+            IJsonSerializer serializer = new JsonNetSerializer();
+            IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+            IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+            return encoder.Encode(new Dictionary<string, object> {
+                {"id", user.Id},
+                { "kind", "default_user" },
+                { "exp", DateTimeOffset.UtcNow.AddDays(30).ToUnixTimeSeconds()},
+            }, user.Password.PadRight(20));
         }
 
         public static int getServerid(string redirecturl)

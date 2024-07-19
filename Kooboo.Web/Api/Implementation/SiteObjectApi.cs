@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Interface;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Attributes;
 using Kooboo.Api;
+using Kooboo.Attributes;
+using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Web.Api
@@ -50,7 +48,7 @@ namespace Kooboo.Web.Api
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -58,7 +56,7 @@ namespace Kooboo.Web.Api
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -77,8 +75,8 @@ namespace Kooboo.Web.Api
 
             IRepository repo = call.WebSite.SiteDb().GetRepository(this.ModelType);
 
-              repo.AddOrUpdate(value, call.Context.User.Id);
-            return value.Id; 
+            repo.AddOrUpdate(value, call.Context.User.Id);
+            return value.Id;
         }
 
         public virtual Guid Post(ApiCall call)
@@ -134,8 +132,8 @@ namespace Kooboo.Web.Api
             if (string.IsNullOrEmpty(json))
             {
                 json = call.Context.Request.Body;
-            } 
-            List<Guid> ids  = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json); 
+            }
+            List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
             if (ids != null && ids.Count() > 0)
             {
@@ -158,14 +156,14 @@ namespace Kooboo.Web.Api
             else if (!string.IsNullOrEmpty(call.NameOrId))
             {
                 return repo.GetByNameOrId(call.NameOrId);
-            } 
-            return Activator.CreateInstance(this.ModelType);  
+            }
+            return Activator.CreateInstance(this.ModelType);
         }
 
         public virtual List<object> List(ApiCall call)
         {
             IRepository repo = call.WebSite.SiteDb().GetRepository(this.ModelType);
-            return repo.All().OrderBy(o=>o.Name).ToList<object>();  
+            return repo.All().SortByNameOrLastModified(call).ToList<object>();
         }
 
         public virtual bool IsUniqueName(ApiCall call)
@@ -200,15 +198,87 @@ namespace Kooboo.Web.Api
                 if (value != null)
                 {
                     return false;
-                } 
+                }
             }
 
-            return true; 
-        } 
+            return true;
+        }
     }
-     
+
     public interface ISiteObjectApi : IApi
     {
-        Type ModelType { get; set;  }
+        Type ModelType { get; set; }
+    }
+
+    public static class SiteObjectApiExtensions
+    {
+        /// <summary>
+        /// Sort by Name if is dev-mode, otherwise sort by LastModified
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="call"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> SortByNameOrLastModified<T>(this IEnumerable<T> list, ApiCall call) where T : ISiteObject
+        {
+            var devMode = ApiHelper.GetIsDevMode(call);
+
+            if (devMode)
+            {
+                return list.OrderBy(it => it.Name?.Trim());
+            }
+
+            return list.OrderByDescending(it => it.LastModified);
+        }
+
+        /// <summary>
+        /// Sort by Body if is dev-mode, otherwise sort by LastModified
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="call"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> SortByBodyOrLastModified<T>(this IEnumerable<T> list, ApiCall call) where T : ITextObject
+        {
+            var devMode = ApiHelper.GetIsDevMode(call);
+
+            if (devMode)
+            {
+                return list.OrderBy(it => it.Body?.Trim());
+            }
+
+            return list.OrderByDescending(it => it.LastModified);
+        }
+
+        /// <summary>
+        /// Sort by Name if is dev-mode, otherwise sort by CreationDate
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="call"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> SortByNameOrCreationDate<T>(this IEnumerable<T> list, ApiCall call) where T : ISiteObject
+        {
+            var devMode = ApiHelper.GetIsDevMode(call);
+
+            if (devMode)
+            {
+                return list.OrderBy(it => it.Name?.Trim());
+            }
+
+            return list.OrderByDescending(it => it.CreationDate);
+        }
+
+        public static IEnumerable<T> SortByDevMode<T>(this IEnumerable<T> list, ApiCall call, Func<IEnumerable<T>, IEnumerable<T>> devModeSorter, Func<IEnumerable<T>, IEnumerable<T>> normalModeSorter)
+        {
+            var devMode = ApiHelper.GetIsDevMode(call);
+
+            if (devMode)
+            {
+                return devModeSorter(list);
+            }
+
+            return normalModeSorter(list);
+        }
     }
 }

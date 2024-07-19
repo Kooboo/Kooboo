@@ -1,9 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
-using Kooboo.Sites.Render;
-using Kooboo.Lib;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.Render;
 
 namespace Kooboo.Web.Spa
 {
@@ -36,17 +35,17 @@ namespace Kooboo.Web.Spa
                 case UrlFileType.Image:
 
                     return RenderImage(Context, option, relativeurl);
-                     
+
                 case UrlFileType.JavaScript:
 
                     response.ContentType = "application/javascript";
-                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);   
+                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
                     break;
 
                 case UrlFileType.Style:
 
                     response.ContentType = "text/css";
-                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);  
+                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
 
                     break;
                 case UrlFileType.File:
@@ -58,7 +57,7 @@ namespace Kooboo.Web.Spa
                     }
                     response.ContentType = contenttype;
 
-                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);  
+                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
 
                     break;
                 case UrlFileType.Html:
@@ -96,7 +95,7 @@ namespace Kooboo.Web.Spa
 
             if (provider != null)
             {
-                response.BinaryBytes = provider.GetBinary(Context, relativeurl);  
+                response.BinaryBytes = provider.GetBinary(Context, relativeurl);
             }
             return response;
         }
@@ -118,7 +117,7 @@ namespace Kooboo.Web.Spa
                 return response;
             }
             string htmlbody = sourceprovider.GetString(Context, relativeurl);
-             
+
             if (string.IsNullOrEmpty(htmlbody))
             {
                 return response;
@@ -128,8 +127,8 @@ namespace Kooboo.Web.Spa
 
             var EvaluatorOption = new EvaluatorOption();
             EvaluatorOption.IgnoreEvaluators = EnumEvaluator.Form | EnumEvaluator.LayoutCommand;
-            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
-              
+            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent;
+
             var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));
 
             string result = Sites.Render.RenderHelper.Render(RenderPlan, Context);
@@ -143,7 +142,7 @@ namespace Kooboo.Web.Spa
             else
             {
                 response.Body = result;
-            } 
+            }
             return response;
         }
     }

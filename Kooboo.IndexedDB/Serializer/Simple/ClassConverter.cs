@@ -1,19 +1,19 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
- public   class ClassConverter
-    { 
-        Type ClassType; 
-      
+    public class ClassConverter
+    {
+        Type ClassType;
+
         public ClassConverter(Type ClassType)
         {
             this.ClassType = ClassType;
-            Items = new List<IFieldConverter>(); 
+            Items = new List<IFieldConverter>();
         }
 
         public void InitFields()
@@ -24,7 +24,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             foreach (var item in allfields)
             {
                 AddFields(ClassType, item.Value, item.Key);
-            } 
+            }
         }
 
         private void AddFields(Type ClassType, Type FieldType, string FieldName)
@@ -36,7 +36,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 Items.Add(converter);
             }
         }
-          
+
         public object FromBytes(byte[] bytes)
         {
             var FieldObject = Activator.CreateInstance(this.ClassType);
@@ -68,12 +68,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 { break; }
             }
 
-            return FieldObject; 
+            return FieldObject;
         }
 
         public byte[] ToBytes(object Value)
         {
-   
+
             List<byte[]> Results = new List<byte[]>();
             int TotalLength = 0;
 

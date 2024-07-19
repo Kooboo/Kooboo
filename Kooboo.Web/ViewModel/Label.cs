@@ -1,14 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Web.ViewModel
 {
- 
+
     public class LabelItemViewModel
     {
         public Guid Id { get; set; }
@@ -32,15 +26,16 @@ namespace Kooboo.Web.ViewModel
                 _values = value;
             }
         }
-         
+
         public DateTime LastModified
-        {get;set;
+        {
+            get; set;
         }
         public Guid KeyHash { get; set; }
 
         public int StoreNameHash { get; set; }
 
         public Dictionary<string, int> Relations { get; set; }
-
+        public object RelationDetails { get; set; }
     }
 }

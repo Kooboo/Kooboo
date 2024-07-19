@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
@@ -143,8 +141,8 @@ namespace Kooboo.Dom.CSS
         {
             propertyname = propertyname.ToLower();
 
-            bool found = false; 
-             
+            bool found = false;
+
             foreach (var onedeclaration in item)
             {
                 if (onedeclaration != null && onedeclaration.propertyname.ToLower() == propertyname)
@@ -190,13 +188,13 @@ namespace Kooboo.Dom.CSS
             foreach (var one in itemstoremove)
             {
                 item.Remove(one);
-            } 
+            }
         }
 
         public void setPropertyValue(string propertyname, string value)
         {
             propertyname = propertyname.ToLower();
-            bool found = false; 
+            bool found = false;
 
             foreach (var onedeclaration in item)
             {
@@ -215,13 +213,13 @@ namespace Kooboo.Dom.CSS
 
         public void setPropertyPriority(string propertyname, bool important)
         {
-            propertyname = propertyname.ToLower(); 
+            propertyname = propertyname.ToLower();
 
             foreach (var onedeclaration in item)
             {
                 if (onedeclaration.propertyname.ToLower() == propertyname)
                 {
-                    onedeclaration.important = important; 
+                    onedeclaration.important = important;
                 }
             }
             // not found

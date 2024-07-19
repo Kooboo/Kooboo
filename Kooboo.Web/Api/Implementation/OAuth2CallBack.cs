@@ -1,14 +1,9 @@
-﻿using Jint.Native.Function;
+﻿using System.Linq;
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Api.Methods;
-using Kooboo.Data.Interface;
 using Kooboo.Sites.OAuth2;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
+using Kooboo.Sites.OAuth2.Apple;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -35,14 +30,29 @@ namespace Kooboo.Web.Api.Implementation
         {
             var name = call.Command.Method;
             var handleType = OAuth2Handles.Value.FirstOrDefault(f => f.Name == name);
-            if (handleType == null) throw new Exception("Can't find handle type");
+            if (handleType == null) throw new Exception("Handle type not found");
             var response = new PlainResponse();
             var instance = Activator.CreateInstance(handleType, new[] { call.Context }) as IOAuth2;
             var query = new Dictionary<string, object>();
 
-            foreach (var item in call.Context.Request.QueryString.AllKeys)
+            if (call.Context.Request.QueryString?.AllKeys != default)
             {
-                query.Add(item, call.Context.Request.QueryString.Get(item));
+                foreach (var item in call.Context.Request.QueryString.AllKeys)
+                {
+                    query.Add(item, call.Context.Request.QueryString.Get(item));
+                }
+            }
+
+            //apple oauth login special handle
+            if (instance is AppleLogin)
+            {
+                if (call.Context.Request.Forms != null)
+                {
+                    foreach (var form in call.Context.Request.Forms)
+                    {
+                        query.Add(form.ToString(), call.Context.Request.Forms.Get(form.ToString()));
+                    }
+                }
             }
 
             response.Content = instance.Callback(query);

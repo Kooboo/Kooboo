@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LumiSoft.Net
+﻿namespace LumiSoft.Net
 {
     /// <summary>
     /// Specifies asynchronous operation state.

@@ -1,12 +1,15 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Models;
-using LumiSoft.Net.MIME;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using System.Text;
+using Kooboo.Data.Models;
+using Kooboo.Mail.ViewModel;
+using MimeKit;
+using NUglify.Helpers;
+using static Kooboo.Mail.Utility.ICalendarUtility;
 
 namespace Kooboo.Mail.Utility
 {
@@ -14,32 +17,20 @@ namespace Kooboo.Mail.Utility
     {
         public static string CheckNFixMessage(string content)
         {
-            var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
-            var message = LumiSoft.Net.MIME.MIME_Message.ParseFromStream(stream);
+            var message = ParseMessage(content);
 
-            bool needToFix = false;
+            bool fixMsg = false;
 
-            var messageIdField = message.Header.GetFirst("Message-ID");
-            var messageId = messageIdField?.ValueToString();
-            if (String.IsNullOrEmpty(messageId) || messageId.Length > 80)
+            if (String.IsNullOrEmpty(message.MessageId))
             {
-                needToFix = true;
-                var correctField = new MIME_h_Unstructured("Message-ID", $"<{Guid.NewGuid().ToString().ToLower()}@kooboo.com>");
-                if (messageIdField == null)
-                {
-                    message.Header.Add(correctField);
-                }
-                else
-                {
-                    message.Header.ReplaceFirst(correctField);
-                }
+                fixMsg = true;
+                message.MessageId = GenerateMessageId(message);
             }
 
-            needToFix = needToFix | CheckNFixEntity(message);
-
-            if (needToFix)
+            // fixMsg = fixMsg | CheckNFixEntity(message); 
+            if (fixMsg)
             {
-                return System.Text.Encoding.UTF8.GetString(message.ToByte());
+                return message.ToMessageText();
             }
             else
             {
@@ -47,159 +38,129 @@ namespace Kooboo.Mail.Utility
             }
         }
 
-        public static MIME_Message ParseMineMessage(string body)
+
+        public static string GenerateMessageId(MimeMessage message)
         {
-            var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(body));
-            return LumiSoft.Net.MIME.MIME_Message.ParseFromStream(stream);
+            var emailaddress = AddressUtility.GetAddress(message.From.First().ToString());
+            var referenceData = $"{message.From}{message.To}{message.Date}{message.Subject}";
+            if (emailaddress != null)
+            {
+                var seg = AddressUtility.ParseSegment(emailaddress);
+                if (!string.IsNullOrEmpty(seg.Host))
+                {
+                    return "<" + Folder.ToId(referenceData) + "@" + seg.Host + ">";
+                }
+            }
+
+            return "<" + Folder.ToId(referenceData) + "@mailprotected.com>";
+        }
+
+        //private static bool CheckNFixEntity(MIME_Entity entity)
+        //{
+        //    var result = false;
+
+        //    if (entity.ContentType != null && !String.IsNullOrEmpty(entity.ContentType.Param_Boundary)
+        //        && entity.ContentType.Param_Boundary.Length > 80)
+        //    {
+        //        result = true;
+        //        entity.ContentType.Param_Boundary = Guid.NewGuid().ToString().ToLower();
+        //    }
+
+        //    var multipart = entity.Body as MIME_b_Multipart;
+        //    if (multipart != null)
+        //    {
+        //        foreach (MIME_Entity each in multipart.BodyParts)
+        //        {
+        //            result |= CheckNFixEntity(each);
+        //        }
+        //    }
+
+        //    return result;
+        //}
+
+        public static MimeMessage ParseMessage(string body)
+        {
+            return MailKitUtility.LoadMessage(body);
+            //var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(body));
+            //return MimeMessage.Load(stream);
         }
 
         public static Kooboo.Mail.Message ParseMeta(string body)
         {
-            var MimeMsg = ParseMineMessage(body);
-            if (MimeMsg == null)
+            var msg = MailKitUtility.LoadMessage(body);
+            if (msg != null)
             {
-                return null;
+                return ParseMeta(msg);
             }
-            return ParseMeta(MimeMsg);
-        }
 
-        public static string GetHtmlBody(MIME_Message MimeMsg)
-        {
-            foreach (var item in MimeMsg.AllEntities)
-            {
-                if (item.ContentType != null)
-                {
-                    if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text") && Lib.Helper.StringHelper.IsSameValue(item.ContentType.SubType, "html"))
-                    {
-                        var btext = item.Body as MIME_b_Text;
-                        if (btext != null)
-                        {
-                            return btext.Text;
-                        }
-                    }
-                }
-            }
             return null;
+
         }
 
-        internal static string GetTextBody(MIME_Message MimeMsg)
-        {
-            foreach (var item in MimeMsg.AllEntities)
-            {
-                if (item.ContentType != null)
-                {
-                    if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text") && Lib.Helper.StringHelper.IsSameValue(item.ContentType.SubType, "plain"))
-                    {
-                        var btext = item.Body as MIME_b_Text;
-                        if (btext != null)
-                        {
-                            return btext.Text;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        internal static string GetAnyTextBody(MIME_Message MimeMsg)
-        {
-            foreach (var item in MimeMsg.AllEntities)
-            {
-                if (item.ContentType != null)
-                {
-                    if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text"))
-                    {
-                        var btext = item.Body as MIME_b_Text;
-                        if (btext != null)
-                        {
-                            return btext.Text;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        public static Kooboo.Mail.Message ParseMeta(MIME_Message MimeMsg)
+        public static Kooboo.Mail.Message ParseMeta(MimeMessage msg)
         {
             Kooboo.Mail.Message message = new Message();
-            message.From = GetHeaderValue(MimeMsg, "from");
-            message.To = GetHeaderValue(MimeMsg, "to");
-            message.SmtpMessageId = GetHeaderValue(MimeMsg, "Message-Id");
-            message.Subject = GetHeaderValue(MimeMsg, "subject");
-            message.Date = GetSentDate(MimeMsg);
-            message.Attachments = ParseAttachment(MimeMsg);
-            message.Summary = ParseSummary(MimeMsg);
+            message.From = msg.From.ToString();
+            message.To = msg.To.ToString();
+
+            message.Cc = msg.Cc.ToString();
+            message.Bcc = msg.Bcc.ToString();
+
+            if (msg.Headers.Contains("Message-Id"))
+            {
+                message.SmtpMessageId = msg.Headers["Message-Id"];
+            }
+            else if (msg.MessageId != null)
+            {
+                message.SmtpMessageId = msg.MessageId;
+            }
+
+            message.Subject = msg.Subject;
+            message.Date = msg.Date.UtcDateTime;
+
+            message.Attachments = Kooboo.Mail.Models.Attachment.LoadFromMimeMessage(msg);
+
+            /// message.Attachments = ParseAttachment(MimeMsg);
+            message.Summary = ParseSummary(msg);
             return message;
         }
 
-        private static DateTime GetSentDate(MIME_Message msg)
+        public static string GetHtmlBody(MimeMessage MimeMsg)
         {
-            var value = GetHeaderValue(msg, "date");
-            if (value != null)
-            {
-                return LumiSoft.Net.MIME.MIME_Utils.ParseRfc2822DateTime(value).ToUniversalTime();
-            }
-            return DateTime.UtcNow; 
+            return MailKitUtility.GetHtmlBody(MimeMsg); // MimeMsg.HtmlBody;
         }
 
-        public static string GetHeaderValue(MIME_Message msg, string headername)
+        public static string GetTextBody(MimeMessage MimeMsg)
         {
-            foreach (var item in msg.Header)
-            {
-                var header = item as MIME_h_Unstructured;
+            return MailKitUtility.GetTextBody(MimeMsg); // MimeMsg.TextBody;
+        }
 
-                if (header != null && Lib.Helper.StringHelper.IsSameValue(header.Name, headername))
+
+        public static string GetHeaderValue(MimeMessage msg, string headername)
+        {
+            foreach (var item in msg.Headers)
+            {
+                if (item != null && Lib.Helper.StringHelper.IsSameValue(item.Field, headername))
                 {
-                    return header.Value;
+                    return item.Value;
+                    // var rawValue = item.RawValue; 
+
+                    //if (rawValue !=null) 
+                    // {
+                    //     return System.Text.Encoding.UTF8.GetString(rawValue); 
+                    // } 
                 }
 
             }
             return null;
         }
 
-        public static List<Models.Attachment> ParseAttachment(MIME_Message MineMessage)
+
+        public static string ParseSummary(MimeMessage msg, int length = 150)
         {
-            List<Mail.Models.Attachment> result = new List<Models.Attachment>();
-            foreach (var item in MineMessage.AllEntities)
-            {
-                if (item.ContentDisposition != null && item.ContentDisposition.DispositionType != null && item.ContentDisposition.DispositionType.ToLower() == "attachment")
-                {
-                    var attachmentbody = item.Body as LumiSoft.Net.MIME.MIME_b_SinglepartBase;
+            var htmlbody = msg.HtmlBody;
 
-                    if (attachmentbody != null)
-                    {
-                        Models.Attachment attach = new Models.Attachment();
-                        attach.FileName = item.ContentDisposition.Param_FileName;
-                        attach.Type = item.ContentType.Type;
-                        attach.SubType = item.ContentType.SubType;
-
-                        long size = item.ContentDisposition.Param_Size;
-
-                        if (size <= 0)
-                        {
-                            var x = item.Body as LumiSoft.Net.MIME.MIME_b_SinglepartBase;
-                            size = x.Data.Length;
-                        }
-                        attach.Size = size;
-
-                        if (!string.IsNullOrEmpty(attach.FileName) && attach.Size > 0)
-                        {
-                            result.Add(attach);
-                        }
-                    }
-
-
-                }
-            }
-            return result;
-        }
-
-        internal static string ParseSummary(MIME_Message msg, int length = 150)
-        {
-            var htmlbody = GetHtmlBody(msg);
-
-            if (htmlbody != null)
+            if (!string.IsNullOrWhiteSpace(htmlbody))
             {
                 htmlbody = Kooboo.Search.Utility.RemoveHtml(htmlbody);
                 htmlbody = htmlbody.Replace("\r\n\r\n", "\r\n");
@@ -207,162 +168,275 @@ namespace Kooboo.Mail.Utility
                 htmlbody = htmlbody.Replace("  ", " ");
             }
 
-            if (!string.IsNullOrEmpty(htmlbody) && htmlbody.Length > length - 50)
+            if (!string.IsNullOrEmpty(htmlbody))
             {
-                return Lib.Helper.StringHelper.SementicSubString(htmlbody, 0, length);
+                if (htmlbody.Length > length - 50)
+                {
+                    return Lib.Helper.StringHelper.SementicSubString(htmlbody, 0, length);
+                }
+                else
+                {
+                    return htmlbody;
+                }
             }
 
-            string text = GetTextBody(msg);
+            string text = msg.TextBody;
 
-            int htmllen = 0;
-            if (htmlbody != null)
+            if (!string.IsNullOrEmpty(text))
             {
-                htmllen = htmlbody.Length;
-            }
-
-            if (!string.IsNullOrEmpty(text) && text.Length > htmllen)
-            {
-                return Lib.Helper.StringHelper.SementicSubString(text, 0, length);
+                if (text.Length > length - 50)
+                {
+                    return Lib.Helper.StringHelper.SementicSubString(text, 0, length);
+                }
+                else
+                {
+                    return text;
+                }
             }
             return null;
         }
+
 
         public static byte[] GetFileBinary(string MessageBody, string FileName)
         {
-            return GetFileBinary(ParseMineMessage(MessageBody), FileName);
+            return GetFileBinary(ParseMessage(MessageBody), FileName);
         }
 
-        public static byte[] GetFileBinary(MIME_Message MimeMsg, string FileName)
+        public static byte[] GetFileBinary(MimeMessage MimeMsg, string FileName, bool IncludeInlineFile = true)
         {
             if (MimeMsg == null)
             {
                 return null;
             }
-            List<Mail.Models.Attachment> result = new List<Models.Attachment>();
-            foreach (var item in MimeMsg.AllEntities)
+
+            foreach (var item in MimeMsg.Attachments)
             {
-                if ((item.ContentDisposition != null && item.ContentDisposition.DispositionType != null && item.ContentDisposition.Param_FileName == FileName)
-                    || (item.ContentType != null && item.ContentType.Param_Name == FileName))
+                if (MailKitUtility.GetFileName(item) == FileName)
                 {
-                    var attachmentbody = item.Body as LumiSoft.Net.MIME.MIME_b_SinglepartBase;
+                    var stream = Utility.MailKitUtility.GetAttachmentBody(item);
+                    return stream != null ? stream.ToArray() : null;
+                }
+            }
 
-                    if (attachmentbody != null)
+            if (IncludeInlineFile)
+            {
+                foreach (var item in MimeMsg.BodyParts)
+                {
+                    if (item is MimeEntity)
                     {
+                        var entity = item as MimeEntity;
+                        if (entity != null)
+                        {
+                            var entityFileName = MailKitUtility.GetFileName(entity);
 
-                        if (attachmentbody.Data != null)
-                        {
-                            return attachmentbody.Data;
+                            if (entityFileName != null && entityFileName == FileName || System.Net.WebUtility.UrlDecode(entityFileName) == FileName || System.Net.WebUtility.UrlDecode(entityFileName) == System.Net.WebUtility.UrlDecode(FileName))
+                            {
+                                var stream = Utility.MailKitUtility.GetAttachmentBody(entity);
+                                return stream != null ? stream.ToArray() : null;
+                            }
                         }
-                        else if (attachmentbody.EncodedData != null)
-                        {
-                            return attachmentbody.EncodedData;
-                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static string GetFileNameByContentId(MimeMessage MimeMsg, string ContentId)
+        {
+            if (MimeMsg == null || ContentId == null)
+            {
+                return null;
+            }
+
+            var id = HeaderUtility.ExtraID(ContentId);
+            foreach (var item in MimeMsg.BodyParts)
+            {
+                if (item != null && item.ContentId != null)
+                {
+                    if (item.ContentId == id || HeaderUtility.ExtraID(item.ContentId) == id)
+                    {
+                        return MailKitUtility.GetFileName(item);
                     }
                 }
             }
             return null;
         }
 
-        public static string GetFileNameByContentId(MIME_Message MimeMsg, string ContentId)
+        public static (string, byte[]) GetFileNameAndBinaryByContentId(MimeMessage MimeMsg, string ContentId)
         {
-            if (MimeMsg == null)
+            if (MimeMsg == null || ContentId == null)
             {
-                return null;
+                return (null, null);
             }
-            List<Mail.Models.Attachment> result = new List<Models.Attachment>();
-            foreach (var item in MimeMsg.AllEntities)
+
+            var id = HeaderUtility.ExtraID(ContentId);
+            foreach (var item in MimeMsg.BodyParts)
             {
-                if (item.ContentID != null)
+                if (item != null && item.ContentId != null)
                 {
-                    if (item.ContentID == ContentId || item.ContentID == "<" + ContentId + ">")
+                    if (item.ContentId == id || HeaderUtility.ExtraID(item.ContentId) == id)
                     {
-                        if (item.ContentDisposition != null)
-                        {
-                            return item.ContentDisposition.Param_FileName;
-                        }
-                        else
-                        {
-                            return item.ContentType.Param_Name;
-                        }
+                        var name = MailKitUtility.GetFileName(item);
+                        var stream = Utility.MailKitUtility.GetAttachmentBody(item);
+                        var bytes = stream != null ? stream.ToArray() : null;
+
+                        return (name, bytes);
                     }
                 }
             }
-            return null;
+            return (null, null);
+
         }
 
-        public static byte[] GenerateAllAttachmentZip(string MessageBody)
+        public static byte[] GetAllAttachmentZip(string MessageBody)
         {
-            var mime = ParseMineMessage(MessageBody);
-            if (mime == null)
+            var msg = ParseMessage(MessageBody);
+            if (msg == null)
             {
                 return null;
             }
 
-            var memorystream = new MemoryStream();
-            var allattachments = ParseAttachment(mime);
-
-            if (allattachments == null || allattachments.Count() == 0)
+            if (msg.Attachments == null || !msg.Attachments.Any())
             {
                 return null;
             }
 
-            var archive = new ZipArchive(memorystream, ZipArchiveMode.Create, true);
+            var memoryStream = new MemoryStream();
 
-            foreach (var item in allattachments)
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Create())
             {
-                if (item.FileName != null)
+
+                foreach (var item in msg.Attachments)
                 {
-                    var filebinary = GetFileBinary(mime, item.FileName);
-
-                    if (filebinary != null && filebinary.Length > 0)
+                    if (item.IsAttachment)
                     {
-                        var zipfile = archive.CreateEntry(item.FileName);
-                        var filestream = zipfile.Open();
-                        filestream.Write(filebinary, 0, filebinary.Length);
-                        filestream.Close();
-                    }
+                        var bytes = MailKitUtility.GetAttachmentBody(item);
+                        bytes.Position = 0;
 
+                        var filename = MailKitUtility.GetFileName(item);
+
+                        archive.AddEntry(filename, bytes, true);
+                    }
                 }
 
+                var opt = new SharpCompress.Writers.WriterOptions(SharpCompress.Common.CompressionType.Deflate);
+
+                opt.ArchiveEncoding.Default = System.Text.Encoding.UTF8;
+
+                archive.SaveTo(memoryStream, opt);
             }
 
-            return memorystream.ToArray();
+            memoryStream.Position = 0;
+
+            return memoryStream.ToArray();
         }
 
         public static Kooboo.Mail.ViewModel.ContentViewModel GetContentViewModel(User user, int MsgId)
         {
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
+            var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(maildb.OrganizationId);
 
-            var msg = maildb.Messages.Get(MsgId);
+            //var msg = maildb.Msgstore.Get(MsgId);
+            var msg = maildb.Message2.Get(MsgId);
             if (msg == null)
             {
                 return null;
             }
-            var model = new Kooboo.Mail.ViewModel.ContentViewModel();
-
-            model.Id = msg.Id;
-            model.From = GetAddressModel(msg.From);
-            model.To = GetAddressModels(msg.To);
-            model.Cc = GetAddressModels(msg.Cc);
-            model.Bcc = GetAddressModels(msg.Bcc);
-            model.Subject = msg.Subject;
-            if (msg.Date == default(DateTime))
+            var model = new Kooboo.Mail.ViewModel.ContentViewModel
             {
-                model.Date = msg.CreationTime; 
+                Id = (int)msg.MsgId
+            };
+            //model.From = GetFrom(msg.From, msg.AddressId, Factory.DBFactory.OrgDb(maildb.OrganizationId));  
+            var mime = ParseMessage(msg.Body);
+
+            var fromMailboxAddress = mime.From.First() as MailboxAddress;
+            var mailFromInfo = orgdb.Email.Get(fromMailboxAddress.Address);
+            if (mailFromInfo != null && mailFromInfo.AddressType == EmailAddressType.Group)
+            {
+                var from = GetHeaderValue(mime, "Sender");
+                model.From = GetAddressModel(from);
             }
             else
             {
-                model.Date = msg.Date; 
+                var from = GetHeaderValue(mime, "From");
+                model.From = GetAddressModel(from);
             }
- 
-            model.Attachments = msg.Attachments;
+
+            if (!string.IsNullOrEmpty(msg.To))
+            {
+                model.To = GetAddressModels(msg.To);
+            }
+            else
+            {
+                model.To = new List<AddressModel>();
+            }
+            model.Cc = GetAddressModels(msg.Cc);
+            model.Bcc = GetAddressModels(msg.Bcc);
+            model.Subject = msg.Subject;
+            model.InviteConfirm = msg.InviteConfirm;
+            if (msg.Date == default)
+            {
+                model.Date = msg.CreationTime;
+            }
+            else
+            {
+                model.Date = msg.Date;
+            }
+
+            if (Folder.ReservedFolder.TryGetValue(msg.FolderId, out var result))
+                model.FolderName = result.ToLower();
+            else
+            {
+                var folder = maildb.Folder.Get(msg.FolderId);
+                if (folder is not null)
+                    model.FolderName = folder.Name;
+            }
+
+            model.Attachments = ViewModel.AttachmentViewModel.FromAttachments(msg.MsgId, msg.Attachments);
 
             model.Html = Kooboo.Mail.Utility.ComposeUtility.RestoreHtmlOrText(user, MsgId);
+
+            model.DownloadAttachment = "/_api/EmailAttachment/msgfile/" + MsgId.ToString();
+
+            if (msg.FolderId == Folder.ToId(Folder.Inbox))
+            {
+                byte[] bodyData = Encoding.UTF8.GetBytes(msg.Body);
+                MemoryStream ms = new MemoryStream(bodyData);
+                MimeMessage mimeMessage = MimeMessage.Load(ms);
+                if (mimeMessage.BodyParts.Count() > 0)
+                {
+                    mimeMessage.BodyParts.ForEach(part =>
+                    {
+                        if ("text/calendar".Equals(part.ContentType.MimeType, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (part.ContentType.Parameters.TryGetValue("method", out string method))
+                            {
+                                string calendarContent = ((TextPart)(part)).Text;
+                                List<ICalendarViewModel> calendarViewModels = ICalendarUtility.AnalysisICalendarContent(calendarContent);
+                                model.Calendar = calendarViewModels;
+
+                                // check calendar is unvalid
+                                var uid = model.Calendar?[0]?.Uid;
+                                if (uid != null)
+                                {
+                                    var calendar = maildb.Calendar.GetScheduleById(uid);
+                                    if (calendar == null)
+                                    {
+                                        model.InviteConfirm = -1;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
 
             return model;
         }
 
-        public static Kooboo.Mail.ViewModel.AddressModel GetAddressModel(string address)
+        public static ViewModel.AddressModel GetAddressModel(string address)
         {
             var model = new Kooboo.Mail.ViewModel.AddressModel();
             if (address == null)
@@ -370,69 +444,96 @@ namespace Kooboo.Mail.Utility
                 return model;
             }
 
-            model.Address = Kooboo.Mail.Utility.AddressUtility.GetAddress(address);
-
-            int start = address.IndexOf(" < ");
-
-            if (start > 0)
+            if (InternetAddress.TryParse(address, out var internetAddress))
             {
-                var part = address.Substring(0, start);
+                if (internetAddress is MailboxAddress)
+                {
+                    var mailboxAddress = internetAddress as MailboxAddress;
+                    if (!string.IsNullOrEmpty(mailboxAddress.Address))
+                    {
+                        var name = AddressUtility.GetDisplayName(mailboxAddress);
+                        model.Name = name;
+                        model.Address = mailboxAddress.Address;
+                    }
 
-                part = part.Replace("\"", "");
-                part = part.Replace("'", "");
+                }
+                else if (internetAddress is GroupAddress)
+                {
+                    var groupadd = internetAddress as GroupAddress;
+                    var memberone = groupadd.Members.FirstOrDefault();
 
-                model.Name = part;
+                    if (memberone is MailboxAddress)
+                    {
+                        var mailboxAddress = memberone as MailboxAddress;
+                        if (!string.IsNullOrEmpty(mailboxAddress.Address))
+                        {
+                            var name = AddressUtility.GetDisplayName(mailboxAddress);
+                            model.Name = name;
+                            model.Address = mailboxAddress.Address;
+                        }
+                    }
+
+                }
+
+
+            }
+            else
+            {
+                if (MailboxAddress.TryParse(address, out var mailboxAddress))
+                {
+                    model.Name = mailboxAddress.Name;
+                    model.Address = mailboxAddress.Address;
+                }
+                else
+                {
+                    var index = address.LastIndexOf('<');
+                    if (index > -1)
+                    {
+                        model.Name = address.Substring(0, index);
+                        model.Address = AddressUtility.GetAddress(address);
+                    }
+                }
             }
 
             return model;
 
         }
 
-        private static List<ViewModel.AddressModel> GetAddressModels(List<string> Addresses)
-        {
-            List<ViewModel.AddressModel> result = new List<ViewModel.AddressModel>();
-            foreach (var item in Addresses)
-            {
-                var model = GetAddressModel(item);
-                result.Add(model);
-            }
-            return result;
-        }
 
-        private static List<ViewModel.AddressModel> GetAddressModels(string addressstring)
+        public static List<ViewModel.AddressModel> GetAddressModels(string addressstring)
         {
-            if (addressstring == null)
+
+            if (string.IsNullOrWhiteSpace(addressstring))
             {
                 return new List<ViewModel.AddressModel>();
             }
 
-            List<char> seprator = new List<char>();
-            seprator.Add(';');
-            var list = addressstring.Split(seprator.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return GetAddressModels(list.ToList());
-        }
+            //if (addressstring.Contains(";"))
+            //{
+            //    addressstring = addressstring.Replace(";", ",");
+            //}
 
-        private static bool CheckNFixEntity(MIME_Entity entity)
-        {
-            var result = false;
+            List<ViewModel.AddressModel> models = new List<ViewModel.AddressModel>();
 
-            if (entity.ContentType != null && !String.IsNullOrEmpty(entity.ContentType.Param_Boundary)
-                && entity.ContentType.Param_Boundary.Length > 80)
+            var address = MailKitUtility.GetMailKitAddressList(addressstring);
+
+            if (address == null)
             {
-                result = true;
-                entity.ContentType.Param_Boundary = Guid.NewGuid().ToString().ToLower();
+                return new List<ViewModel.AddressModel>();
             }
 
-            var multipart = entity.Body as MIME_b_Multipart;
-            if (multipart != null)
+            foreach (var item in address)
             {
-                foreach (MIME_Entity each in multipart.BodyParts)
+                if (!string.IsNullOrEmpty(item.Address))
                 {
-                    result |= CheckNFixEntity(each);
+                    var name = AddressUtility.GetDisplayName(item);
+
+                    models.Add(new ViewModel.AddressModel() { Name = name, Address = item.Address });
                 }
             }
+            return models;
 
-            return result;
         }
+
     }
 }

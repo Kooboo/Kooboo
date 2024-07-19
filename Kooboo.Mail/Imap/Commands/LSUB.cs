@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System;
 using System.Collections.Generic;
 
 namespace Kooboo.Mail.Imap.Commands
@@ -10,13 +11,14 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return "LSUB"; 
+                return "LSUB";
             }
         }
 
-        protected override List<ImapFolder> GetAllFolders(Data.Models.User user)
+        protected override List<ImapFolder> GetAllFolders(Data.Models.User user, Guid LoginOrganizationId)
         {
-            return ImapHelper.GetSubscribedFolder(user);
+
+            return ImapHelper.GetSubscribedFolder(user, LoginOrganizationId);
         }
 
         protected override string Response(string folderName, char delimiter, List<string> attributes)

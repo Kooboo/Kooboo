@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
     /// <summary>
     /// The config value for the tree node leaf.
@@ -17,16 +17,40 @@ namespace Kooboo.IndexedDB.Btree
         /// <param name="keylen"></param>
         /// <param name="unique"></param>
         /// <param name="keyType"></param>
-        public TreeConfig(int keylen, bool unique, Type keyType)
+        public TreeConfig(int keylen, bool unique, Type keyType, int MaxCachelevel, IComparer<byte[]> Comparer, IEqualityComparer<byte[]> Equalitycomparer)
         {
             this.ConfigDiskBytes = 100; // default 100, will changed on calculation when needed. 
             this.unique = unique;
             this.keyType = keyType;
             this.KeyLength = (Int16)keylen;
 
-            this.PointerLen = NodePointer.Length; 
+            this.PointerLen = (Int16)NodePointer.GetPointerLength();
 
-            this.RecordLen = (Int16)(1 + this.KeyLength + PointerLen);   // 1 byte for deletation indication.
+            this.RecordLen = (Int16)(1 + this.KeyLength + PointerLen);   // 1 byte for deletation indication. 
+            this.comparer = Comparer;
+            this.equalitycomparer = Equalitycomparer;
+
+            this.MaxCacheLevel = MaxCachelevel;
+
+            initBuffersize_KeysPerNode();
+        }
+
+        public TreeConfig(int keylen, bool unique, Type keyType, int MaxCacheLevel, IComparer<byte[]> Comparer, IEqualityComparer<byte[]> Equalitycomparer, int BPlusLen)
+        {
+            this.ConfigDiskBytes = 100; // default 100, will changed on calculation when needed. 
+            this.unique = unique;
+            this.keyType = keyType;
+            this.KeyLength = (Int16)keylen;
+
+            this.MaxCacheLevel = MaxCacheLevel;
+
+            this.BPlusLen = (Int16)BPlusLen;
+
+            this.PointerLen = (Int16)NodePointer.GetPointerLength(BPlusLen);
+
+            this.RecordLen = (Int16)(1 + this.KeyLength + PointerLen);   // 1 byte for deletation indication. 
+            this.comparer = Comparer;
+            this.equalitycomparer = Equalitycomparer;
 
             initBuffersize_KeysPerNode();
         }
@@ -36,15 +60,23 @@ namespace Kooboo.IndexedDB.Btree
         /// </summary>
         public TreeConfig()
         {
-            
+
         }
 
         private byte StartByte = 91;
         private byte EndByte = 93;
 
+
+        public IComparer<byte[]> comparer;
+
+        public IEqualityComparer<byte[]> equalitycomparer;
+
+        public int MaxCacheLevel { get; set; }
+
+
         //The total number of bytes this header information required on disk. 
         public Int16 ConfigDiskBytes
-        { get; private set; }   
+        { get; private set; }
 
         public Type keyType
         { get; private set; }
@@ -65,41 +97,42 @@ namespace Kooboo.IndexedDB.Btree
         /// The max count before a split
         /// </summary>
         public Int16 SplitCount
-        { get;  set; }
+        { get; set; }
 
         /// <summary>
         /// The min count before a merge.
         /// </summary>
         public Int16 MergeCount
-        { get;  set; }
+        { get; set; }
 
 
         /// <summary>
         /// The number of keys in every node. 
         /// </summary>
         public Int16 KeysPerNode
-        { get;  set; }
+        { get; set; }
 
         /// <summary>
         ///  the bytes per record (1 + key + pointer) 
         /// 1 + [keylen] + [PinterLen]
         /// </summary>
         public Int16 RecordLen
-        { get;  set; }
+        { get; set; }
 
         /// <summary>
         /// Indicator + counter + blockposition
         /// </summary>
         public Int16 PointerLen
-        { get;  set; }
+        { get; set; }
 
-       /// <summary>
+        /// <summary>
         ///The record tree leaf page size to read from disk per time. this should be multiple of sector file size.
-       /// </summary>
+        /// </summary>
         public int NodeDiskSize
-        { get;  set; }
+        { get; set; }
 
-   
+        public Int16 BPlusLen { get; set; }
+
         /// <summary>
         /// calculate the bufferedsize and keyspernode. 
         /// The judgement is the waste space, formula for comparison = TotalWastedSpace - (multiplier of szie (i) )*2 
@@ -159,8 +192,6 @@ namespace Kooboo.IndexedDB.Btree
             this.SplitCount = (Int16)(this.KeysPerNode * GlobalSettings.SplitRatio);
             this.MergeCount = (Int16)(this.KeysPerNode * GlobalSettings.MergeRatio);
 
-            TreeNode.MinKeysMustBeFree = (int)(this.KeysPerNode /8);
-
         }
 
         /// <summary>
@@ -181,7 +212,6 @@ namespace Kooboo.IndexedDB.Btree
                 uniquebyte = 1;
             }
 
-            // len of this config.
             bytearray[1] = uniquebyte;
 
             System.Buffer.BlockCopy(BitConverter.GetBytes(this.ConfigDiskBytes), 0, bytearray, 2, 2);
@@ -202,25 +232,20 @@ namespace Kooboo.IndexedDB.Btree
 
             System.Buffer.BlockCopy(BitConverter.GetBytes(this.MergeCount), 0, bytearray, 16, 2);
 
-
             // The rest is the type information.
             string typeinfo = keyType.ToString();
 
             byte[] keytypebytes = System.Text.Encoding.ASCII.GetBytes(typeinfo);
             Int16 keytypelen = (Int16)keytypebytes.Length;
 
+            Buffer.BlockCopy(BitConverter.GetBytes(keytypelen), 0, bytearray, 18, 2);
 
-            System.Buffer.BlockCopy(BitConverter.GetBytes(keytypelen), 0, bytearray, 18, 2);
+            Buffer.BlockCopy(keytypebytes, 0, bytearray, 20, keytypelen);
 
-            System.Buffer.BlockCopy(keytypebytes, 0, bytearray, 20, keytypelen);
+            //more added here.
+            Buffer.BlockCopy(BitConverter.GetBytes(this.BPlusLen), 0, bytearray, 90, 2);
 
             return bytearray;
-
-        }
-
-        public static int getConfigSize(byte[] diskbytes)
-        {
-           return BitConverter.ToInt16(diskbytes, 2);
 
         }
 
@@ -228,11 +253,17 @@ namespace Kooboo.IndexedDB.Btree
         /// convert from bytes to class values. 
         /// </summary>
         /// <param name="diskbytes"></param>
-        public static TreeConfig  FromBytes(byte[] diskbytes)
+        public static TreeConfig FromBytes(byte[] diskbytes, int MaxCacheLevel, IComparer<byte[]> Comparer, IEqualityComparer<byte[]> Equalitycomparer)
         {
-            TreeConfig newconfig = new TreeConfig();
+            var newconfig = new TreeConfig();
 
-            if (diskbytes[0] != newconfig.StartByte)
+            newconfig.comparer = Comparer;
+            newconfig.equalitycomparer = Equalitycomparer;
+            newconfig.MaxCacheLevel = MaxCacheLevel;
+
+            // bytearray[0] = this.StartByte;
+            //bytearray[99] = this.EndByte;
+            if (diskbytes[0] != newconfig.StartByte || diskbytes[99] != newconfig.EndByte)
             {
                 throw new Exception("wrong start or end byte check");
             }
@@ -255,12 +286,14 @@ namespace Kooboo.IndexedDB.Btree
             newconfig.NodeDiskSize = BitConverter.ToInt32(diskbytes, 10);
             newconfig.SplitCount = BitConverter.ToInt16(diskbytes, 14);
             newconfig.MergeCount = BitConverter.ToInt16(diskbytes, 16);
-            newconfig.PointerLen = (Int16)(newconfig.RecordLen - newconfig.KeyLength-1);
+            newconfig.PointerLen = (Int16)(newconfig.RecordLen - newconfig.KeyLength - 1);
+
+            newconfig.BPlusLen = BitConverter.ToInt16(diskbytes, 90);
 
             Int16 keytypelen = BitConverter.ToInt16(diskbytes, 18);
 
             byte[] strinbyte = new byte[keytypelen];
-            
+
             System.Buffer.BlockCopy(diskbytes, 20, strinbyte, 0, keytypelen);
 
             string typestring = System.Text.Encoding.ASCII.GetString(strinbyte);
@@ -268,9 +301,7 @@ namespace Kooboo.IndexedDB.Btree
             Type type = Type.GetType(typestring);
 
             newconfig.keyType = type;
-
             return newconfig;
-
         }
 
     }

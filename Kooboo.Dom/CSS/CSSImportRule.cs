@@ -1,11 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Dom.CSS
 {
     //http://dev.w3.org/csswg/cssom/#cssimportrule
@@ -30,7 +24,7 @@ namespace Kooboo.Dom.CSS
                 {
                     return string.Empty;
                 }
-                return cssText.Substring(8).TrimEnd(new []{';',' '});
+                return cssText.Substring(8).TrimEnd(new[] { ';', ' ' });
             }
         }
 

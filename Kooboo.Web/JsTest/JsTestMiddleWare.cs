@@ -1,10 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
-using System.Threading.Tasks;
-using Kooboo.Data.Server;
 using System.IO;
-using System.Collections.Generic; 
+using System.Threading.Tasks;
+using Kooboo.Data;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Web.JsTest
 {
@@ -14,25 +13,25 @@ namespace Kooboo.Web.JsTest
 
         public JsTestMiddleWare(JsTestOption options)
         {
-            this.options = options; 
+            this.options = options;
         }
 
         public IKoobooMiddleWare Next
         {
             get; set;
-        } 
-    
+        }
+
         public async Task Invoke(RenderContext context)
         {
             if (!options.ShouldTryHandle(context, this.options))
             {
                 await Next.Invoke(context); return;
             }
-              
+
             var Response = RenderEngine.Render(context, this.options);
 
             if (Response != null)
-            { 
+            {
                 context.Response.ContentType = Response.ContentType;
 
                 context.Response.StatusCode = 200;
@@ -54,7 +53,7 @@ namespace Kooboo.Web.JsTest
                     return;
                 }
             }
-            
+
             await Next.Invoke(context);
         }
     }

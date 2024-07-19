@@ -1,11 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Web.ViewModel
 {
     public class ApiViewModel
@@ -23,7 +17,7 @@ namespace Kooboo.Web.ViewModel
             this.Parameters = new List<string>();
             this.Name = string.Empty;
             this.UpdateModel = string.Empty;
-            this.ResponseModel = string.Empty; 
+            this.ResponseModel = string.Empty;
         }
         public string Name { get; set; }
 

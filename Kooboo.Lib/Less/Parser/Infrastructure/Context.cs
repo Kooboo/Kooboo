@@ -3,9 +3,9 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using dotless.Core.Parser.Infrastructure.Nodes;
     using Tree;
     using Utils;
-    using dotless.Core.Parser.Infrastructure.Nodes;
 
     public class Context : IEnumerable<IEnumerable<Selector>>
     {
@@ -19,7 +19,7 @@
         public Context Clone()
         {
             var newPathList = new List<List<Selector>>();
-            return new Context {Paths = newPathList};
+            return new Context { Paths = newPathList };
         }
 
         public void AppendSelectors(Context context, IEnumerable<Selector> selectors)
@@ -69,7 +69,8 @@
                 if (el.Value != "&")
                 {
                     currentElements.Add(el);
-                } else
+                }
+                else
                 {
                     // the new list of selectors to add
                     var selectorsMultiplied = new List<List<Selector>>();
@@ -82,7 +83,7 @@
                     }
 
                     // loop through our current selectors
-                    foreach(List<Selector> sel in newSelectors)
+                    foreach (List<Selector> sel in newSelectors)
                     {
                         // if we don't have any parent paths, the & might be in a mixin so that it can be used
                         // whether there are parents or not
@@ -93,7 +94,7 @@
                             if (sel.Count > 0)
                             {
                                 sel[0].Elements = new NodeList<Element>(sel[0].Elements);
-                                sel[0].Elements.Add(new Element(el.Combinator,  ""));
+                                sel[0].Elements.Add(new Element(el.Combinator, ""));
                             }
                             selectorsMultiplied.Add(sel);
                         }
@@ -210,7 +211,7 @@
 
         public string ToCss(Env env)
         {
-            return string.Join(env.Compress ? "," : ",\n",Paths.Select(path => path.Select(p => p.ToCSS(env)).JoinStrings("").Trim()).ToArray());
+            return string.Join(env.Compress ? "," : ",\n", Paths.Select(path => path.Select(p => p.ToCSS(env)).JoinStrings("").Trim()).ToArray());
         }
 
         public int Count

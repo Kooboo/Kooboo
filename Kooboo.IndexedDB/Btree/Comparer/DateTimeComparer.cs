@@ -1,19 +1,15 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree.Comparer
+namespace Kooboo.IndexedDB.BTree.Comparer
 {
     /// <summary>
     /// consider date time as positive int64 number and compare the number only. 
     /// </summary>
-  public  class DateTimeComparer : IComparer<byte[]>
+    public class DateTimeComparer : IComparer<byte[]>
     {
-      private int len = 8;
+        private int len = 8;
 
         public int Compare(byte[] x, byte[] y)
         {
@@ -34,7 +30,7 @@ namespace Kooboo.IndexedDB.Btree.Comparer
             }
 
             return 0;
-           
+
         }
     }
 }

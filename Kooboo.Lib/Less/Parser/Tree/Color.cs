@@ -217,21 +217,21 @@ namespace dotless.Core.Parser.Tree
                 isArgb = true;
                 RGB = Enumerable.Range(1, 3)
                     .Select(i => hex.Substring(i * 2, 2))
-                    .Select(s => (double) int.Parse(s, NumberStyles.HexNumber))
+                    .Select(s => (double)int.Parse(s, NumberStyles.HexNumber))
                     .ToArray();
-                Alpha = (double) int.Parse(hex.Substring(0, 2), NumberStyles.HexNumber) / 255d;
+                Alpha = (double)int.Parse(hex.Substring(0, 2), NumberStyles.HexNumber) / 255d;
             }
             else if (hex.Length == 6)
             {
                 RGB = Enumerable.Range(0, 3)
-                    .Select(i => hex.Substring(i*2, 2))
-                    .Select(s => (double) int.Parse(s, NumberStyles.HexNumber))
+                    .Select(i => hex.Substring(i * 2, 2))
+                    .Select(s => (double)int.Parse(s, NumberStyles.HexNumber))
                     .ToArray();
             }
             else
             {
                 RGB = hex.ToCharArray()
-                    .Select(c => (double) int.Parse("" + c + c, NumberStyles.HexNumber))
+                    .Select(c => (double)int.Parse("" + c + c, NumberStyles.HexNumber))
                     .ToArray();
             }
         }
@@ -294,7 +294,7 @@ namespace dotless.Core.Parser.Tree
         public override void AppendCSS(Env env)
         {
             var rgb = RGB
-                .Select(d => (int) Math.Round(d, MidpointRounding.AwayFromZero))
+                .Select(d => (int)Math.Round(d, MidpointRounding.AwayFromZero))
                 .Select(i => i > 255 ? 255 : (i < 0 ? 0 : i))
                 .ToArray();
 
@@ -340,7 +340,7 @@ namespace dotless.Core.Parser.Tree
             if (otherColor == null)
             {
                 var operable = other as IOperable;
-                if(operable == null)
+                if (operable == null)
                     throw new ParsingException(string.Format("Unable to convert right hand side of {0} to a color", op.Operator), op.Location);
 
                 otherColor = operable.ToColor();
@@ -392,7 +392,7 @@ namespace dotless.Core.Parser.Tree
         /// <returns></returns>
         public string ToArgb()
         {
-            var argb = 
+            var argb =
                 new double[] { Alpha * 255 }
                 .Concat(RGB)
                 .Select(d => (int)Math.Round(d, MidpointRounding.AwayFromZero))
@@ -427,7 +427,7 @@ namespace dotless.Core.Parser.Tree
             if (color == null)
                 throw new ArgumentNullException("color");
 
-            return System.Drawing.Color.FromArgb((int) Math.Round(color.Alpha * 255d), (int) color.R, (int) color.G, (int) color.B);
+            return System.Drawing.Color.FromArgb((int)Math.Round(color.Alpha * 255d), (int)color.R, (int)color.G, (int)color.B);
         }
     }
 }

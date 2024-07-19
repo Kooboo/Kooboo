@@ -1,18 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Sites.Models;
-using System;
 using System.Linq;
-using Kooboo.Web.ViewModel;
 using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using System.Collections.Generic;
+using Kooboo.Data;
+using Kooboo.Data.Permission;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Web.ViewModel;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class CodeApi : SiteObjectApi<Code>
     {
+        [Permission(Feature.CODE, Action = Data.Permission.Action.VIEW)]
         public virtual CodeEditViewModel GetEdit(string codetype, ApiCall call)
         {
             call.Context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
@@ -23,46 +25,65 @@ namespace Kooboo.Web.Api.Implementation
             if (call.ObjectId != default(Guid))
             {
                 var code = sitedb.Code.Get(call.ObjectId);
-                CodeEditViewModel model = new CodeEditViewModel();
-
-                if (code != null)
-                {
-                    model.Name = code.Name;
-                    model.Body = code.Body;
-                    model.Config = code.Config;
-                    model.EventType = Enum.GetName(typeof(Kooboo.Sites.FrontEvent.enumEventType), code.EventType);
-                    model.CodeType = Enum.GetName(typeof(Kooboo.Sites.Models.CodeType), code.CodeType);
-
-                    model.Id = code.Id;
-                    if (code.CodeType == Sites.Models.CodeType.Api)
-                    {
-                        var route = sitedb.Routes.GetByObjectId(model.Id);
-                        if (route != null)
-                        {
-                            model.Url = route.Name;
-                        }
-                    }
-                }
-
-
-                return model;
+                return ToViewModel(sitedb, code);
             }
             else
             {
                 CodeEditViewModel model = new CodeEditViewModel();
-
+                model.ScriptType = ScriptType.Module.ToString();
                 model.Config = configSample();
 
                 if (codetype != null && codetype.ToLower() != "all")
                 {
                     var enumcodetype = Lib.Helper.EnumHelper.GetEnum<CodeType>(codetype);
                     model.Body = getSample(enumcodetype);
+                    model.CodeType = enumcodetype.ToString();
                 }
 
                 model.AvailableEventType = Enum.GetNames(typeof(Kooboo.Sites.FrontEvent.enumEventType)).ToList();
                 model.AvailableCodeType = Enum.GetNames(typeof(Kooboo.Sites.Models.CodeType)).ToList();
                 return model;
             }
+        }
+
+        public CodeEditViewModel GetByName(ApiCall call, string name)
+        {
+            call.Context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            call.Context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+            var siteDb = call.WebSite.SiteDb();
+            var code = siteDb.Code.GetByNameOrId(name);
+
+            if (code == default)
+            {
+                throw new Exception($"Code {name} not found");
+            }
+
+            return ToViewModel(siteDb, code);
+        }
+
+        private static CodeEditViewModel ToViewModel(SiteDb siteDb, Code code)
+        {
+            var model = new CodeEditViewModel();
+            model.Name = code.Name;
+            model.Body = code.Body;
+            model.Config = code.Config;
+            model.EventType = Enum.GetName(typeof(Kooboo.Sites.FrontEvent.enumEventType), code.EventType);
+            model.CodeType = Enum.GetName(typeof(Kooboo.Sites.Models.CodeType), code.CodeType);
+            model.Version = code.Version;
+            model.Id = code.Id;
+            model.ScriptType = code.ScriptType.ToString();
+            model.isEmbedded = code.IsEmbedded;
+
+            if (code.CodeType == Sites.Models.CodeType.Api)
+            {
+                var route = siteDb.Routes.GetByObjectId(model.Id);
+                if (route != null)
+                {
+                    model.Url = route.Name;
+                }
+            }
+
+            return model;
         }
 
         private string configSample()
@@ -109,40 +130,6 @@ namespace Kooboo.Web.Api.Implementation
 //k.response.json(obj); ";
 
             }
-            else if (codetype == Sites.Models.CodeType.Datasource)
-            {
-                sample = @"//sample code, use the k.export to return datasource.
-//var list = []; 
-//var obj = {name: ""myname"", fieldtwo: ""field two value""};
-//list.push(obj);  
-//var obj2 = {name: ""myname2"", fieldtwo: ""field two value2""};
-//list.push(obj2); 
-//k.export(list); ";
-
-            }
-            else if (codetype == Sites.Models.CodeType.Diagnosis)
-            {
-                sample = @"// sample code.
-//var allpages = k.siteDb.pages.all();   
-//var page = allpages[0]; 
-//if (page.body.length> 200)
-//{
-//    var error = ""Page too long: "" + page.name;  
-//    k.diagnosis.error(error);
-//}";
-
-            }
-            else if (codetype == Sites.Models.CodeType.Event)
-            {
-                sample = @"//common event varilables: k.event.url, k.event.userAgent, k.event.culture; 
-//variables per event. k.event.page, k.event.view, k.event.route; 
-// Finding=before object found. Found = object founded. 
-//example, url redirect. only valid on RouteFinding event. 
-//if (k.event.url.indexOf(""pagetwo"")>-1)
-//{
-//     k.event.url = ""/pageone"";
-//}";
-            }
             else if (codetype == Sites.Models.CodeType.PageScript)
             {
                 sample = @"// kscript that can be inserted to page position. 
@@ -164,19 +151,19 @@ namespace Kooboo.Web.Api.Implementation
             {
                 sample = @"//Schedule task";
             }
-            else if (codetype == Sites.Models.CodeType.Authentication)
-            {
-                sample = @"// sample code.. 
-// if (k.request.url.indexOf('/api') == 0) {
-//     var token = k.request.headers.get('Authorization');
-//     if (token != 'abc123') k.response.unauthorized()
-// }";
-            }
 
+            else if (codetype == Sites.Models.CodeType.CodeBlock)
+            {
+                sample = @"//Script block
+//export function foo(){
+//    return 'bar'
+//}";
+            }
 
             return sample;
         }
 
+        [Permission(Feature.CODE, Action = Data.Permission.Action.EDIT)]
         public virtual Guid Post(CodeEditViewModel model, ApiCall call)
         {
             if (model.Url != null)
@@ -201,10 +188,11 @@ namespace Kooboo.Web.Api.Implementation
             code.Name = model.Name;
             code.Config = model.Config;
             code.Body = model.Body;
+            code.ScriptType = Enum.Parse<ScriptType>(model.ScriptType);
 
             if (HasScriptTag(code.Body))
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("You do not need script tag in code. Only in the page, view or layout, you need the script tag"));
+                throw new Exception("You do not need script tag in code. You need the tag in the page, view or layout");
             }
 
             if (!string.IsNullOrEmpty(model.EventType))
@@ -252,6 +240,8 @@ namespace Kooboo.Web.Api.Implementation
                 var oldcode = sitedb.Code.Get(model.Id);
                 if (oldcode != null)
                 {
+                    (model as IDiffChecker).CheckDiff(oldcode);
+
                     // check if needed to change route. 
                     if (code.CodeType == Sites.Models.CodeType.Api)
                     {
@@ -265,6 +255,7 @@ namespace Kooboo.Web.Api.Implementation
                     oldcode.Name = model.Name;
                     oldcode.Body = model.Body;
                     oldcode.Config = model.Config;
+                    oldcode.ScriptType = Enum.Parse<ScriptType>(model.ScriptType);
                     oldcode.IsJson = Lib.Helper.JsonHelper.IsJson(oldcode.Body);
 
                     if (oldcode.IsEmbedded && oldcode.CodeType == Sites.Models.CodeType.PageScript)
@@ -291,25 +282,28 @@ namespace Kooboo.Web.Api.Implementation
                     route.Name = model.Url;
                     route.objectId = code.Id;
                     route.DestinationConstType = ConstObjectType.Code;
-                    sitedb.Routes.AddOrUpdate(route);
+                    sitedb.Routes.AddOrUpdate(route, call.Context.User.Id);
 
                 }
 
-                sitedb.Code.AddOrUpdate(code);
+                sitedb.Code.AddOrUpdate(code, call.Context.User.Id);
             }
 
             return code.Id;
         }
 
+        [Permission(Feature.CODE, Action = Data.Permission.Action.EDIT)]
         public bool IsUniqueName(string name, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
-            var code = sitedb.Code.Get(name);
+            var id = Kooboo.Data.IDGenerator.Generate(name, ConstObjectType.Code);
+            var code = sitedb.Code.Get(id);
 
             return code == null;
         }
 
+        [Permission(Feature.CODE, Action = Data.Permission.Action.VIEW)]
         public Dictionary<string, string> CodeType(ApiCall call)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -319,27 +313,15 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in list)
             {
                 var value = Lib.Helper.EnumHelper.GetEnum<CodeType>(item);
+                var isObsolete = Attribute.IsDefined(value.GetType().GetField(item), typeof(ObsoleteAttribute));
+                if (isObsolete) continue;
+
                 string name = item;
-                if (value == Sites.Models.CodeType.Diagnosis)
-                {
-                    name = Data.Language.Hardcoded.GetValue("Diagnosis", call.Context);
-                }
-                else if (value == Sites.Models.CodeType.Event)
-                {
-                    name = Data.Language.Hardcoded.GetValue("Event", call.Context);
-                }
-                else if (value == Sites.Models.CodeType.Job)
-                {
-                    name = Data.Language.Hardcoded.GetValue("Job", call.Context);
-                }
-                else if (value == Sites.Models.CodeType.PageScript)
-                {
-                    name = Data.Language.Hardcoded.GetValue("PageScript", call.Context);
-                }
-                else if (value == Sites.Models.CodeType.Datasource)
-                {
-                    name = Data.Language.Hardcoded.GetValue("DataSource", call.Context);
-                }
+                name = Data.Language.Hardcoded.GetValue(name, call.Context);
+                // if (value == Sites.Models.CodeType.PageScript)
+                // {
+                //     name = Data.Language.Hardcoded.GetValue("PageScript", call.Context);
+                // }
 
 
                 result.Add(item, name);
@@ -347,7 +329,8 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-        public virtual List<CodeListItem> ListByType(string codetype, ApiCall call)
+        [Permission(Feature.CODE, Action = Data.Permission.Action.VIEW)]
+        public virtual IEnumerable<CodeListItem> ListByType(string codetype, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             string baseurl = call.WebSite.BaseUrl();
@@ -358,7 +341,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (string.IsNullOrEmpty(codetype) || codetype.ToLower() == "all")
             {
-                codes = sitedb.Code.All().OrderBy(o => o.Name).ToList();
+                codes = sitedb.Code.All().ToList();
             }
             else
             {
@@ -372,11 +355,18 @@ namespace Kooboo.Web.Api.Implementation
                 return new List<CodeListItem>();
             }
 
-            foreach (var item in codes)
+            var sortedCodes = SortCodes(codes, ApiHelper.GetIsDevMode(call));
+            foreach (var item in sortedCodes)
             {
-                CodeListItem model = new CodeListItem();
-                model.Id = item.Id;
-                model.Name = item.Name;
+                CodeListItem model = new CodeListItem
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = Lib.Security.Hash.ComputeInt(sitedb.Code.StoreName),
+                    ScriptType = item.ScriptType.ToString(),
+                    Version = item.Version
+                };
 
                 if (item.IsEmbedded)
                 {
@@ -384,11 +374,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 model.CodeType = Enum.GetName(typeof(CodeType), item.CodeType);
-
-                if (item.CodeType == Sites.Models.CodeType.Event)
-                {
-                    model.EventType = Enum.GetName(typeof(Kooboo.Sites.FrontEvent.enumEventType), item.EventType);
-                }
                 model.LastModified = item.LastModified;
 
                 if (item.CodeType == Sites.Models.CodeType.Api)
@@ -419,15 +404,40 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        private static IEnumerable<Code> SortCodes(IEnumerable<Code> codes, bool isDevMode)
+        {
+            if (!isDevMode)
+            {
+                return codes.OrderByDescending(it => it.LastModified);
+            }
+
+            return codes
+                .OrderBy(it => it.IsEmbedded)
+                .ThenBy(it => it.Name?.Trim())
+                .ThenByDescending(it => it.ScriptType.ToString())
+                .ThenBy(it => it.Body?.Trim());
+        }
+
         public bool HasScriptTag(string body)
         {
             if (body.IndexOf("<script", StringComparison.OrdinalIgnoreCase) > -1)
             {
+
+                var stringValues = Lib.Utilities.JsStringScanner.ScanStringList(body);
+
+                foreach (var item in stringValues)
+                {
+                    if (item != null && item.Length > 8)
+                    {
+                        body = body.Replace(item, "");
+                    }
+                }
+
                 var dom = Kooboo.Dom.DomParser.CreateDom(body);
 
                 var el = dom.getElementsByTagName("script");
 
-                if (el != null)
+                if (el != null && el.length > 0)
                 {
                     return true;
                 }
@@ -437,9 +447,56 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual List<IEmbeddableItemListViewModel> EmbeddedScripts(ApiCall apiCall)
         {
-            return apiCall.WebSite.SiteDb().Code.GetEmbeddeds()
+            return apiCall.WebSite.SiteDb().Code.GetEmbeddeds().SortByNameOrLastModified(apiCall)
             .Select(o => new IEmbeddableItemListViewModel(apiCall.WebSite.SiteDb(), o)).ToList();
         }
 
+        [Permission(Feature.CODE, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.VIEW)]
+        public override List<object> List(ApiCall call)
+        {
+            return base.List(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            return base.Post(call);
+        }
+
+        [Permission(Feature.CODE, Action = Data.Permission.Action.EDIT)]
+        public override bool IsUniqueName(ApiCall call)
+        {
+            return base.IsUniqueName(call);
+        }
     }
 }

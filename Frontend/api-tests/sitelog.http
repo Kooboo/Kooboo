@@ -1,0 +1,13 @@
+### 站点日志过滤查询 synclogs同理
+# startDate 开始时间
+# endDate 结束时间
+# actionType Update Add Delete
+# storeName 类型
+# name string 模糊查询
+#user userId 下拉列表通过站点用户拿取
+
+GET http://localhost:3000/_api/v2/SiteLog/list?SiteId=873f4eef-61c5-2c14-a287-c0f215d197f1&startDate=2023-07-26&name=home&action=Update&user=xxxx HTTP/1.1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIwMDJlYWY4LTY4NDUtOGEwOC1jMzc0LTcyMjZiZmZjNzg4YSIsImtpbmQiOiJwYXNzd29yZCIsIm9yZyI6IjIwMDJlYWY4LTY4NDUtOGEwOC1jMzc0LTcyMjZiZmZjNzg4YSIsImV4cCI6MTY5Mjg0Njk2N30.EkkwW_7fw8pqRujpRqGNJT5s38VOwiPRHm_xrmmq1LQ
+
+### 获取日志用户列表
+GET http://localhost:3000/_api/v2/SiteLog/Users HTTP/1.1

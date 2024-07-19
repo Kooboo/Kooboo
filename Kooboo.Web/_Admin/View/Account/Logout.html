@@ -1,9 +1,0 @@
-<!-- #layout name=empty -->
-<div class="page-loading" style="display: none;"></div>
-<script>
-    $(function() {
-        Kooboo.User.logout().then(function(res) {
-            res.success && (location.href = Kooboo.Route.Get(Kooboo.Route.User.LoginPage));
-        });
-    });
-</script>

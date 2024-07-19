@@ -1,14 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.ByteConverter
 {
-  public  class Int64Converter : IByteConverter<Int64>
+    public class Int64Converter : IByteConverter<Int64>
     {
 
         public byte[] ToByte(long input)
@@ -18,7 +14,7 @@ namespace Kooboo.IndexedDB.ByteConverter
 
         public long FromByte(byte[] inputbytes)
         {
-            return BitConverter.ToInt64(inputbytes,0);
+            return BitConverter.ToInt64(inputbytes, 0);
         }
     }
 }

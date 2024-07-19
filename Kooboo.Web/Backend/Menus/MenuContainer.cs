@@ -1,11 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Web.Backend.Menus;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
 {
@@ -23,7 +18,7 @@ namespace Kooboo.Web.Menus
                     {
                         if (_items == null)
                         {
-                            _items = Kooboo.Lib.IOC.Service.GetInstances<ICmsMenu>(); 
+                            _items = Kooboo.Lib.IOC.Service.GetInstances<ICmsMenu>();
                         }
                     }
                 }
@@ -98,7 +93,7 @@ namespace Kooboo.Web.Menus
             }
             return result.OrderBy(o => o.Order).ToList();
         }
-         
+
 
         private static List<ICmsMenu> _featuremenu;
         public static List<ICmsMenu> FeatureMenus
@@ -129,19 +124,20 @@ namespace Kooboo.Web.Menus
                 if (_sidebarmenus == null)
                 {
                     lock (_locker)
-                    { 
+                    {
                         if (_sidebarmenus == null)
                         {
-                            _sidebarmenus = new List<ISideBarMenu>();
+                            var sidebarmenus = new List<ISideBarMenu>();
                             var sidebaritems = SubMenus(typeof(ISideBarMenu));
                             foreach (var item in sidebaritems)
                             {
                                 var sidebaritem = item as ISideBarMenu;
                                 if (sidebaritem != null)
                                 {
-                                    _sidebarmenus.Add(sidebaritem); 
+                                    sidebarmenus.Add(sidebaritem);
                                 }
                             }
+                            _sidebarmenus = sidebarmenus;
                         }
                     }
                 }

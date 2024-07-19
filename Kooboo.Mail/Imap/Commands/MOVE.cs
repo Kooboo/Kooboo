@@ -3,13 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-using LumiSoft.Net;
-using LumiSoft.Net.IMAP;
-
 using Kooboo.Mail.Imap.Commands.FetchCommand;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -32,7 +29,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -76,34 +73,32 @@ namespace Kooboo.Mail.Imap.Commands
         }
 
         public static List<ImapResponse> Execute(MailDb mailDb, IEnumerable<FetchMessage> messages, string folderName)
-        { 
-            var prasedFolder = Utility.FolderUtility.ParseFolder(folderName); 
-              
-            var folder = mailDb.Folders.Get(prasedFolder.FolderId);
+        {
+            var prasedFolder = Utility.FolderUtility.ParseFolder(folderName);
+
+            var folder = mailDb.Folder.Get(prasedFolder.FolderId);
             if (folder == null)
-                throw new CommandException("NO", "Can't move those messages or to that name");
+                throw new CommandException("NO", "Can't move those messages to that folder");
 
             var result = new List<ImapResponse>();
 
             foreach (var each in messages)
             {
                 var message = each.Message;
-                var flags = mailDb.Messages.GetFlags(message.Id);
+                var flags = mailDb.Message2.GetFlags(message.MsgId);
 
-                mailDb.Messages.Delete(message.Id);
 
-                message.Id = 0;
                 message.FolderId = folder.Id;
-               
+
                 if (message.AddressId == 0)
                 {
-                    message.AddressId = prasedFolder.AddressId; 
+                    message.AddressId = prasedFolder.AddressId;
                 }
 
-                mailDb.Messages.AddOrUpdate(message);
+                mailDb.Message2.UpdateMeta(message);
                 flags = flags.Except(new string[] { "Deleted" }).ToArray();
-                mailDb.Messages.UpdateRecent(message.Id);
-                mailDb.Messages.ReplaceFlags(message.Id, flags);
+                mailDb.Message2.UpdateRecent(message.MsgId);
+                mailDb.Message2.ReplaceFlags(message.MsgId, flags);
 
                 result.Add(new ImapResponse(ResultLine.EXPUNGE(each.SeqNo)));
             }
@@ -136,38 +131,38 @@ namespace Kooboo.Mail.Imap.Commands
 
 
 
-       /* RFC 3501 6.1.2. NOOP Command.
-                Arguments:  none
+/* RFC 3501 6.1.2. NOOP Command.
+         Arguments:  none
 
-                Responses:  no specific responses for this command (but see below)
+         Responses:  no specific responses for this command (but see below)
 
-                Result:     OK - noop completed
-                            BAD - command unknown or arguments invalid
+         Result:     OK - noop completed
+                     BAD - command unknown or arguments invalid
 
-                The NOOP command always succeeds.  It does nothing.
+         The NOOP command always succeeds.  It does nothing.
 
-                Since any command can return a status update as untagged data, the
-                NOOP command can be used as a periodic poll for new messages or
-                message status updates during a period of inactivity (this is the
-                preferred method to do this).  The NOOP command can also be used
-                to reset any inactivity autologout timer on the server.
+         Since any command can return a status update as untagged data, the
+         NOOP command can be used as a periodic poll for new messages or
+         message status updates during a period of inactivity (this is the
+         preferred method to do this).  The NOOP command can also be used
+         to reset any inactivity autologout timer on the server.
 
-                Example:    C: a002 NOOP
-                            S: a002 OK NOOP completed
-                            . . .
-                            C: a047 NOOP
-                            S: * 22 EXPUNGE
-                            S: * 23 EXISTS
-                            S: * 3 RECENT
-                            S: * 14 FETCH (FLAGS (\Seen \Deleted))
-                            S: a047 OK NOOP completed
-            */
+         Example:    C: a002 NOOP
+                     S: a002 OK NOOP completed
+                     . . .
+                     C: a047 NOOP
+                     S: * 22 EXPUNGE
+                     S: * 23 EXISTS
+                     S: * 3 RECENT
+                     S: * 14 FETCH (FLAGS (\Seen \Deleted))
+                     S: a047 OK NOOP completed
+     */
 
-            //if (m_pSelectedFolder != null)
-            //{
-            //    UpdateSelectedFolderAndSendChanges();
-            //}
+//if (m_pSelectedFolder != null)
+//{
+//    UpdateSelectedFolderAndSendChanges();
+//}
 
-            //// m_pResponseSender.SendResponseAsync(new IMAP_r_(cmdTag, "OK", "NOOP Completed"));
+//// m_pResponseSender.SendResponseAsync(new IMAP_r_(cmdTag, "OK", "NOOP Completed"));
 
-            //m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag, "OK", "NOOP Completed"));
+//m_pResponseSender.SendResponseAsync(new IMAP_r_ServerStatus(cmdTag, "OK", "NOOP Completed"));

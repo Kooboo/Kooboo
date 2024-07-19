@@ -1,12 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Query;
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using Kooboo.IndexedDB.Condition.ColumnScan;
+using Kooboo.IndexedDB.IndexRange;
+using Kooboo.IndexedDB.Query;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
@@ -18,75 +19,62 @@ namespace Kooboo.IndexedDB.Dynamic
         /// <returns></returns>
         public static ExecutionPlan GetExecutionPlan(Query query)
         {
-            ExecutionPlan executionplan = new ExecutionPlan();
+            var executionPlan = new ExecutionPlan();
 
-            ITableIndex startindex = null;
+            ITableIndex startIndex = null;
+
             if (!string.IsNullOrEmpty(query.OrderByFieldName))
             {
-                startindex = query.table.Indexs.Find(o => o.FieldName == query.OrderByFieldName); 
-                if (startindex == null)
+                startIndex = query.table.Indexs.Find(o => o.FieldName == query.OrderByFieldName);
+                executionPlan.RequireOrderBy = startIndex == null;
+                if (!executionPlan.RequireOrderBy)
                 {
-                    executionplan.RequireOrderBy = true; 
-                }
-            }
+                    var comparer = ObjectContainer.getComparer(startIndex.keyType, startIndex.Length);
+                    var ranges = query.Node?.GetRanges(query.OrderByFieldName, comparer);
 
-            // find other where fields......  
-            if (startindex == null)
-            {
-                startindex = query.table.Indexs.Find(o => o.IsSystem);
-            }
-
-            if (!string.IsNullOrEmpty(query.OrderByFieldName) && !executionplan.RequireOrderBy)
-            {
-                Range<byte[]> range = getRange(query.OrderByFieldName, query.items);
-                if (range != null)
-                {
-                    executionplan.startCollection = startindex.GetCollection(range.lower, range.upper, range.lowerOpen, range.upperOpen, query.Ascending);
-                }
-                else
-                {
-                    executionplan.startCollection = startindex.AllItems(query.Ascending);
-                }
-            }
-            else
-            {
-                executionplan.startCollection = startindex.AllItems(query.Ascending);
-            }
-
-            // check all index fields that has been used in the filter. 
-            foreach (var item in query.table.Indexs)
-            {
-                if (item.FieldName != startindex.FieldName)
-                {
-                    Range<byte[]> indexrange = getRange(item.FieldName, query.items);
-                    if (indexrange != null)
+                    if (ranges != null)
                     {
-                        executionplan.indexRanges.Add(item.FieldName, indexrange);
+                        if (!query.Ascending) ranges.Reverse();
+
+                        executionPlan.StartCollection = ranges.SelectMany(r => startIndex.GetCollection(
+                            r.lower,
+                            r.upper,
+                            r.lowerOpen,
+                            r.upperOpen,
+                            query.Ascending)
+                        );
                     }
                 }
             }
 
-            // now the left columns.. 
-            foreach (var item in query.items)
+            // find other where fields......  
+            startIndex ??= query.table.Indexs.Find(o => o.IsSystem);
+            executionPlan.StartCollection ??= startIndex.AllItems(query.Ascending);
+
+            // check all index fields that has been used in the filter. 
+            foreach (var item in query.table.Indexs)
             {
-                var column = query.table.ObjectConverter.Fields.Find(o => o.FieldName == item.FieldOrProperty);
-
-                if (column != null)
+                if (item.FieldName != startIndex.FieldName)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    var comparer = ObjectContainer.getComparer(item.keyType, item.Length);
+                    var ranges = query.Node?.GetRanges(item.FieldName, comparer);
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.RelativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnEvaluator.GetEvaluator(column.ClrType, item.Compare, item.Value, column.Length);
-
-                    executionplan.scanColumns.Add(colplan);
-                }
-                else
-                {
-                    throw new Exception("filter field must be  column with fixed len");
+                    if (ranges != null)
+                    {
+                        executionPlan.IndexRanges.Add(item.FieldName, ranges);
+                    }
                 }
             }
+
+            var indexNames = query.table.Indexs.Select(s => s.FieldName).ToArray();
+            var columnNames = query.table.ObjectConverter.Fields.Select(s => s.FieldName).ToArray();
+            var notInColumnIndexes = indexNames.Except(columnNames).ToArray();
+
+            // now the left columns.. 
+            executionPlan.ColumnScanner = Node.FromExpression(
+                name => query.table.ObjectConverter.Fields.Find(o => o.FieldName == name),
+                query.Node,
+                notInColumnIndexes);
 
             // the left column query.
             foreach (var item in query.InItems)
@@ -95,14 +83,15 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    var filterNode = new FilterNode
+                    {
+                        ColumnName = column.FieldName,
+                        RelativeStartPosition = column.RelativePosition,
+                        Length = column.Length,
+                        Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.RelativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnInEvaluator.GetInEvaluator(column.ClrType, item.Value, column.Length);
-
-                    executionplan.scanColumns.Add(colplan);
+                    executionPlan.ColumnScanner = Node.And(executionPlan.ColumnScanner, filterNode);
                 }
                 else
                 {
@@ -121,6 +110,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         memberaccess = xitem as MemberExpression;
                     }
                 }
+
                 if (memberaccess == null)
                 {
                     throw new Exception("Method call require use one of the Fields or Property as parameters");
@@ -133,119 +123,33 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    var filterNode = new FilterNode
+                    {
+                        ColumnName = column.FieldName,
+                        RelativeStartPosition = column.RelativePosition,
+                        Length = column.Length,
+                        Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.DataType, column.Length, item)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.RelativePosition;
-                    colplan.length = column.Length;
-
-                    colplan.Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.ClrType, column.Length, item);
-
-                    executionplan.scanColumns.Add(colplan);
+                    executionPlan.ColumnScanner = Node.And(executionPlan.ColumnScanner, filterNode);
                 }
                 else
                 {
-                    throw new Exception("methed call parameter must be a column, add the field to colomn creating creating the store, otherwise use the fullscan option");
+                    throw new Exception(
+                        "methed call parameter must be a column, add the field to colomn creating creating the store, otherwise use the fullscan option");
                 }
             }
 
-            return executionplan;
-        }
-
-        /// <summary>
-        /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields. 
-        /// after get, the related field or property item will be removed from the item collection.
-        /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
-        /// <returns></returns>
-        private static Range<byte[]> getRange(string FieldOrPropertyName, List<FilterItem> items)
-        {
-            if (string.IsNullOrWhiteSpace(FieldOrPropertyName))
-            {
-                return null;
-            }
-
-            FieldOrPropertyName = FieldOrPropertyName.ToLower();
-
-            Range<byte[]> range = new Range<byte[]>();
-
-            List<int> removeditem = new List<int>();
-
-            for (int i = 0; i < items.Count; i++)
-            {
-
-                if (items[i].FieldOrProperty.ToLower() == FieldOrPropertyName)
-                {
-                    switch (items[i].Compare)
-                    {
-                        case Comparer.EqualTo:
-                            // for equal to. 
-                            range.upper = items[i].Value;
-                            range.upperOpen = false;
-                            range.lower = items[i].Value;
-                            range.lowerOpen = false;
-                            removeditem.Add(i);
-                            break;
-                        case Comparer.GreaterThan:
-                            range.lower = items[i].Value;
-                            range.lowerOpen = true;
-                            removeditem.Add(i);
-                            break;
-                        case Comparer.GreaterThanOrEqual:
-                            range.lower = items[i].Value;
-                            range.lowerOpen = false;
-                            removeditem.Add(i);
-                            break;
-                        case Comparer.LessThan:
-                            range.upper = items[i].Value;
-                            range.upperOpen = true;
-                            removeditem.Add(i);
-                            break;
-                        case Comparer.LessThanOrEqual:
-                            range.upper = items[i].Value;
-                            range.upperOpen = false;
-                            removeditem.Add(i);
-                            break;
-                        case Comparer.NotEqualTo:
-                            //does not do anything. 
-                            break;
-                        case Comparer.StartWith:
-                            // does not do anything for startwith or contains. 
-
-                            break;
-                        case Comparer.Contains:
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-
-            }
-
-            bool hasmatch = false;
-            foreach (int item in removeditem.OrderByDescending(o => o))
-            {
-                hasmatch = true;
-                items.RemoveAt(item);
-            }
-
-            if (hasmatch)
-            {
-                return range;
-            }
-            else
-            {
-                return null;
-            }
+            return executionPlan;
         }
 
         public static List<ConditionItem> ParseConditoin(string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))
             {
-                return new List<ConditionItem>(); 
+                return new List<ConditionItem>();
             }
+
             var scanner = new SyntaxScanner(expression);
 
             var tokenRet = scanner.ConsumeNext();
@@ -291,7 +195,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     field = null;
                     compare = null;
                     value = null;
-
                 }
                 else
                 {
@@ -377,9 +280,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             return Comparer.EqualTo;
         }
-
     }
-
 
     public class ConditionItem
     {
@@ -391,5 +292,4 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public string Value { get; set; }
     }
-
 }

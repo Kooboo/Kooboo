@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Text;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using Kooboo.Lib.Helper;
+using Newtonsoft.Json.Linq;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
@@ -21,7 +17,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 url = UrlHelper.AppendQueryString(url, query);
             }
 
-            Kooboo.Data.Log.Instance.Email.Write("--get--" + url);
+            Data.Log.Instance.Email.Write("--get--" + url);
 
             using (var client = new WebClient())
             {
@@ -33,7 +29,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
                 var backstring = client.DownloadString(url);
 
-                Kooboo.Data.Log.Instance.Email.Write(backstring);
+                Data.Log.Instance.Email.Write(backstring);
 
                 return ProcessApiResponse<T>(backstring);
             }
@@ -41,81 +37,59 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public static T Post<T>(string url, Dictionary<string, string> parameters, Dictionary<string, string> headers)
         {
-            try
+            var postString = String.Join("&", parameters.Select(it => String.Concat(it.Key, "=", Uri.EscapeDataString(it.Value))));
+            var postData = Encoding.UTF8.GetBytes(postString);
+
+            using (var client = new WebClient())
             {
-                var postString = String.Join("&", parameters.Select(it => String.Concat(it.Key, "=", Uri.EscapeDataString(it.Value))));
-                var postData = Encoding.UTF8.GetBytes(postString);
+                client.Headers.Add("user-agent", DefaultUserAgent);
+                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                AddHeader(client.Headers, headers);
 
-                using (var client = new WebClient())
-                {
-                    client.Headers.Add("user-agent", DefaultUserAgent);
-                    client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-                    AddHeader(client.Headers, headers);
+                var responseData = client.UploadData(url, "POST", postData);
 
-                    var responseData = client.UploadData(url, "POST", postData);
+                Kooboo.Data.Log.Instance.Email.Write("--post-- " + url + " -- " + postString);
 
-                    Kooboo.Data.Log.Instance.Email.Write("--post-- " + url + " -- " + postString);
+                var strResult = Encoding.UTF8.GetString(responseData);
 
-                    var strResult = Encoding.UTF8.GetString(responseData);
+                Kooboo.Data.Log.Instance.Email.Write(strResult);
 
-                    Kooboo.Data.Log.Instance.Email.Write(strResult);
-
-                    return ProcessApiResponse<T>(strResult);
-                }
+                return ProcessApiResponse<T>(strResult);
             }
-            catch (Exception ex)
-            {
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
-            }
-            return default(T);
+
         }
 
-        public static T Post<T>(string url, Dictionary<string, string> Headers, byte[] postBytes)
+        public static T Post<T>(string url, Dictionary<string, string> Headers, byte[] postBytes, string contentType)
         {
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);
-                client.Headers.Add("Content-Type", "multipart/form-data");
+                client.Headers.Add("Content-Type", contentType ?? "application/octet-stream");
 
                 AddHeader(client.Headers, Headers);
 
-                try
-                {
-                    var responseData = client.UploadData(url, "POST", postBytes);
+                var responseData = client.UploadData(url, "POST", postBytes);
 
-                    string result = Encoding.UTF8.GetString(responseData);
+                string result = Encoding.UTF8.GetString(responseData);
 
-                    Kooboo.Data.Log.Instance.Email.Write("--post--" + url);
-                    Kooboo.Data.Log.Instance.Email.Write(result);
+                Kooboo.Data.Log.Instance.Email.Write("--post--" + url);
+                Kooboo.Data.Log.Instance.Email.Write(result);
 
-                    return ProcessApiResponse<T>(result);
-                }
-                catch (Exception ex)
-                {
-                    Kooboo.Data.Log.Instance.Exception.WriteException(ex);
-                }
-                return default(T);
+                return ProcessApiResponse<T>(result);
+
             }
         }
 
 
         public static byte[] PostBytes(string url, byte[] data, Dictionary<string, string> headers)
         {
-            try
+            using (var client = new WebClient())
             {
-                using (var client = new WebClient())
-                {
-                    client.Headers.Add("user-agent", DefaultUserAgent);
-                    client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-                    AddHeader(client.Headers, headers);
-                    return client.UploadData(url, "POST", data);
-                }
+                client.Headers.Add("user-agent", DefaultUserAgent);
+                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                AddHeader(client.Headers, headers);
+                return client.UploadData(url, "POST", data);
             }
-            catch (Exception ex)
-            {
-                Data.Log.Instance.Email.WriteException(ex);
-            }
-            return null;
         }
 
         private static void AddHeader(WebHeaderCollection webHeaderCollection, Dictionary<string, string> headers)
@@ -144,15 +118,17 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
                 var modelstring = Lib.Helper.JsonHelper.GetString(jobject, "Model");
 
+
                 if (string.IsNullOrWhiteSpace(modelstring) && typeof(T) == typeof(bool))
                 {
                     modelstring = successStr;
                 }
+
                 if (!string.IsNullOrEmpty(modelstring))
                 {
                     var type = typeof(T);
 
-                    if (type.IsClass && type != typeof(string))
+                    if (!type.IsValueType && type != typeof(string))
                     {
                         return Lib.Helper.JsonHelper.Deserialize<T>(modelstring);
                     }
@@ -161,9 +137,54 @@ namespace Kooboo.Web.Api.Implementation.Mails
                         return (T)Lib.Reflection.TypeHelper.ChangeType(modelstring, typeof(T));
                     }
                 }
+
+                var messages = GetErrorResponse(jobject);
+                if (!string.IsNullOrEmpty(messages))
+                {
+                    throw new Exception(messages.ToString());
+                }
+
             }
 
             return default(T);
+        }
+
+
+
+        private static string GetErrorResponse(JObject jobject)
+        {
+            if (jobject == null)
+            {
+                return null;
+            }
+            var token = jobject["messages"];
+            if (token == null)
+            {
+
+                foreach (var item in jobject.Properties().ToList())
+                {
+                    if (item.Name.ToLower() == "messages")
+                    {
+                        token = item.Value;
+                    }
+                }
+            }
+
+            var error = string.Empty;
+
+            if (token != null)
+            {
+                var array = (JArray)token;
+                if (array != null)
+                {
+                    foreach (var item in array)
+                    {
+                        error += item?.ToString() + System.Environment.NewLine;
+                    }
+                }
+            }
+            return error.Trim();
+
         }
     }
 }

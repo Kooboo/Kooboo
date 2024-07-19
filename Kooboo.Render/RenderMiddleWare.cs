@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
-using System.Threading.Tasks;
-using Kooboo.Data.Server;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Kooboo.Data;
+using Kooboo.Data.Context;
 using Kooboo.Render.Response;
 
 namespace Kooboo.Render
@@ -27,7 +27,7 @@ namespace Kooboo.Render
             string relative = relativeurl.ToLower();
             foreach (var item in this.options.RequireUserIgnorePath)
             {
-                if (relative.StartsWith(item))
+                if (relative.StartsWith(item, System.StringComparison.CurrentCultureIgnoreCase))
                 {
                     return true;
                 }
@@ -37,10 +37,12 @@ namespace Kooboo.Render
 
         public async Task Invoke(RenderContext context)
         {
-            if (!options.ShouldTryHandle(context, this.options))
+            if (IsIgnorePath(context.Request.RelativeUrl))
             {
                 await Next.Invoke(context); return;
             }
+
+            context.EnableCORS();
 
             if (this.options.InitData != null)
             {
@@ -122,7 +124,7 @@ namespace Kooboo.Render
             if (culture != null)
             {
                 context.Culture = culture;
-            } 
+            }
 
             var Response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
 

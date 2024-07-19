@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page title="Todo list" back="/_Admin/component.html">
+        <k-data
+          post="http://kcomponent.localkooboo.com/todo/create"
+          id="post_item"
+        >
+          <k-data-query name="content" id="content"></k-data-query>
+        </k-data>
+
+        <k-data
+          init-get="http://kcomponent.localkooboo.com/todo/list"
+          id="item_list"
+        >
+          <k-data-item name="_id" hidden></k-data-item>
+          <k-data-item name="content" label="内容"></k-data-item>
+        </k-data>
+
+        <k-data
+          post="http://kcomponent.localkooboo.com/todo/remove"
+          id="remove_item"
+        >
+          <k-data-query name="_id"></k-data-query>
+        </k-data>
+
+        <k-inline>
+          <k-input placeholder="content" data="content"></k-input>
+          <k-button
+            confirm="确定添加内容吗?"
+            post="post_item"
+            to="/_Admin/demo/todo-list.html"
+            >Add to list</k-button
+          >
+        </k-inline>
+
+        <k-table data="item_list" remove="remove_item"></k-table>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using System.Collections.Generic;
 using System.Linq;
+using Kooboo.Api;
 using Kooboo.Data.Models;
-using System;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 
@@ -25,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -39,7 +37,7 @@ namespace Kooboo.Web.Api.Implementation
 
         [Kooboo.Attributes.RequireParameters("id", "by", "type")]
         public List<UsedByRelation> ShowBy(ApiCall call)
-        { 
+        {
             var sitedb = call.WebSite.SiteDb();
 
             string type = call.GetValue("type");
@@ -52,58 +50,79 @@ namespace Kooboo.Web.Api.Implementation
 
             if (type.ToLower() == "page")
             {
-                return PageRelation(sitedb, by, call.ObjectId); 
+                return PageRelation(sitedb, by, call.ObjectId);
             }
 
             var repo = sitedb.GetRepository(type);
-            var siteobject = repo?.Get(call.ObjectId);
+            var siteObject = repo?.Get(call.ObjectId);
 
-            if (repo == null || siteobject == null)
+            if (repo == null || siteObject == null)
             {
                 return null;
             }
 
-            string baseurl = call.WebSite.BaseUrl();
-     
-            byte consttype = ConstTypeContainer.GetConstType(by);
-    
-            List<UsedByRelation> result = new List<UsedByRelation>();
+            string baseUrl = call.WebSite.BaseUrl();
 
-            var usedby = repo.GetUsedBy(call.ObjectId).Where(o=>o.ConstType == consttype).ToList(); 
- 
-            foreach (var item in usedby)
+            byte constType = ConstTypeContainer.GetConstType(by);
+
+            List<UsedByRelation> result = new List<UsedByRelation>();
+            //var usedby = repo.GetUsedBy(call.ObjectId).Where(o=>o.ConstType == consttype).ToList(); 
+
+            if (constType == ConstObjectType.CssRule)
             {
-                item.Url = sitedb.WebSite.BaseUrl(item.Url);
-            } 
-            return usedby; 
+                constType = ConstObjectType.Style;
+            }
+
+            var usedBy = repo.GetUsedBy(call.ObjectId).ToList();
+
+            var filter = usedBy.Where(o => o.ConstType == constType).ToList();
+            if (!filter.Any())
+            {
+                filter = usedBy;
+            }
+
+            foreach (var item in filter)
+            {
+                if (item.ModelType == typeof(Kooboo.Sites.Routing.Route))
+                {
+                    item.Url = sitedb.WebSite.BaseUrl(item.Name);
+                }
+                else
+                {
+                    item.Url = sitedb.WebSite.BaseUrl(item.Url);
+                }
+
+            }
+            return filter;
         }
 
         private List<UsedByRelation> PageRelation(SiteDb sitedb, string by, Guid PageId)
-        {  
-            string baseurl = sitedb.WebSite.BaseUrl();
-              
-            byte consttype = ConstTypeContainer.GetConstType(by);
+        {
+            string baseUrl = sitedb.WebSite.BaseUrl();
+
+            byte constType = ConstTypeContainer.GetConstType(by);
 
             List<UsedByRelation> result = new List<UsedByRelation>();
 
-            var relations = sitedb.Relations.GetRelations(PageId, consttype);
+            var relations = sitedb.Relations.GetRelations(PageId, constType);
 
             foreach (var item in relations)
             {
-                var objectinfo = ObjectService.GetObjectInfo(sitedb, item.objectYId, item.ConstTypeY);
+                var objectInfo = ObjectService.GetObjectInfo(sitedb, item.objectYId, item.ConstTypeY);
 
-                if (objectinfo != null)
+                if (objectInfo != null)
                 {
-                    UsedByRelation relation = new UsedByRelation();
-                    relation.Name = objectinfo.DisplayName;
-                    relation.Url = objectinfo.Url;
-                    if (!string.IsNullOrEmpty(relation.Url))
+                    UsedByRelation relation = new()
                     {
-                        relation.Url = Lib.Helper.UrlHelper.Combine(baseurl, relation.Url);
+                        Name = objectInfo.DisplayName,
+                        ModelType = objectInfo.ModelType,
+                        ObjectId = objectInfo.ObjectId,
+                        ConstType = objectInfo.ConstType,
+                    };
+                    if (!string.IsNullOrEmpty(objectInfo.Url))
+                    {
+                        relation.Url = Lib.Helper.UrlHelper.Combine(baseUrl, objectInfo.Url);
                     }
-                    relation.ModelType = objectinfo.ModelType;
-                    relation.ObjectId = objectinfo.ObjectId;
-                    relation.ConstType = objectinfo.ConstType;
                     result.Add(relation);
                 }
             }

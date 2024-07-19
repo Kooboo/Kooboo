@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page back="/_Admin/demo/blog/index.html" title="Create post">
+        <k-data
+          id="category_list"
+          init-get="http://kcomponent.localkooboo.com/blog/category_list"
+        >
+          <k-data-item name="value" from="_id"></k-data-item>
+          <k-data-item name="label" from="name"></k-data-item>
+        </k-data>
+
+        <k-data
+          init-get="http://kcomponent.localkooboo.com/blog/get_post"
+          id="edit_post"
+          post="http://kcomponent.localkooboo.com/blog/edit_post"
+        >
+          <k-data-query name="id" from="_id" source="query"></k-data-query>
+          <k-data-item name="_id" hidden></k-data-item>
+          <k-data-item name="title" label="标题"></k-data-item>
+          <k-data-item
+            name="category"
+            options="category_list"
+            label="分类"
+          ></k-data-item>
+          <k-data-item
+            name="content"
+            type="textarea"
+            label="内容"
+          ></k-data-item>
+        </k-data>
+        <k-form data="edit_post" to="/_Admin/demo/blog/index.html"></k-form>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
-namespace dotless.Core.Parameters {
+namespace dotless.Core.Parameters
+{
     public class NullParameterSource : IParameterSource
     {
         public IDictionary<string, string> GetParameters()

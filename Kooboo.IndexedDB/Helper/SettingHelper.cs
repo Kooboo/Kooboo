@@ -1,14 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Columns;
-using Kooboo.IndexedDB.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Columns;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -272,6 +269,6 @@ namespace Kooboo.IndexedDB.Helper
         }
 
         #endregion
-          
+
     }
 }

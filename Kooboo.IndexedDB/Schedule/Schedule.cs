@@ -1,12 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Schedule;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.ByteConverter;
+using Kooboo.IndexedDB.Schedule;
 
 namespace Kooboo.IndexedDB
 {
@@ -68,7 +65,7 @@ namespace Kooboo.IndexedDB
                 this.Folder = scheduleNameOrFolder;
             }
             else
-            { 
+            {
                 string globalschedulefolder = System.IO.Path.Combine(GlobalSettings.RootPath, GlobalSettings.schedulePath);
 
                 if (!System.IO.Directory.Exists(globalschedulefolder))

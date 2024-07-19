@@ -1,16 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
-   public static  class Accessor
+    public static class Accessor
     {
         internal static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -24,21 +21,21 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
                 else if (ConversionType == typeof(string))
                 {
-                    return ""; 
+                    return "";
                 }
                 else
                 {
-                    return null; 
+                    return null;
                 }
             }
 
             object result;
 
 
-            Type valuetype = value.GetType(); 
+            Type valuetype = value.GetType();
             if (valuetype == ConversionType)
             {
-                return value; 
+                return value;
             }
 
             if (ConversionType == typeof(String))
@@ -68,8 +65,8 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
                 else
                 {
-                    return Helper.KeyHelper.ComputeGuid(value.ToString()); 
-                } 
+                    return Helper.KeyHelper.ComputeGuid(value.ToString());
+                }
             }
             else if (ConversionType == typeof(bool))
             {
@@ -84,7 +81,7 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 if (valuetype == typeof(double))
                 {
-                    result = Epoch.AddMilliseconds((Double)value);  
+                    result = Epoch.AddMilliseconds((Double)value);
                 }
 
                 else if (valuetype == typeof(decimal) || valuetype == typeof(long))
@@ -93,7 +90,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     result = Epoch.AddMilliseconds((Double)douvalue);
                 }
 
-                return DateTime.Now; 
+                return DateTime.Now;
             }
             else
             {
@@ -104,31 +101,31 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
 
-        public static  T ChangeType<T>(object value)
+        public static T ChangeType<T>(object value)
         {
             var type = typeof(T);
-            var newvalue = ChangeType(value, type); 
+            var newvalue = ChangeType(value, type);
             if (newvalue != null)
             {
-                return (T)newvalue; 
+                return (T)newvalue;
             }
-            return default(T); 
+            return default(T);
         }
 
         public static object GetValue(IDictionary<string, object> Dynamic, string FieldName, Type ClrType)
         {
             if (Dynamic.ContainsKey(FieldName))
             {
-                var itemvalue = Dynamic[FieldName]; 
-                if (itemvalue !=null)
+                var itemvalue = Dynamic[FieldName];
+                if (itemvalue != null)
                 {
-                    return ChangeType(itemvalue, ClrType); 
-                } 
+                    return ChangeType(itemvalue, ClrType);
+                }
             }
             return null;
         }
 
-        public static object GetValueIDict(IDictionary  Dynamic, string FieldName, Type ClrType)
+        public static object GetValueIDict(IDictionary Dynamic, string FieldName, Type ClrType)
         {
             if (Dynamic.Contains(FieldName))
             {
@@ -148,14 +145,14 @@ namespace Kooboo.IndexedDB.Dynamic
             if (getter != null)
             {
                 var value = getter(obj);
-                if (value !=null)
+                if (value != null)
                 {
                     return ChangeType(value, clrType);
-                } 
+                }
             }
             return null;
         }
-         
+
         public static Guid _ParseKey(object key)
         {
             if (key is System.Guid)
@@ -173,10 +170,10 @@ namespace Kooboo.IndexedDB.Dynamic
                 return Helper.KeyHelper.ComputeGuid(strkey);
             }
         }
-           
+
         private static object _locker = new object();
-         
-        private static Dictionary<string, Func<object, object>> GetValueFuncs { get; set; } = new Dictionary<string, Func<object, object>>();  
+
+        private static Dictionary<string, Func<object, object>> GetValueFuncs { get; set; } = new Dictionary<string, Func<object, object>>();
 
         private static Func<object, object> GetGettter(Type objectType, string FieldName)
         {
@@ -196,10 +193,10 @@ namespace Kooboo.IndexedDB.Dynamic
 
             return GetValueFuncs[key];
         }
-         
+
         private static object _SetterLock = new object();
 
-        private static Dictionary<string, Action<object, object>> SetValueActions { get; set; } = new Dictionary<string, Action<object, object>>(); 
+        private static Dictionary<string, Action<object, object>> SetValueActions { get; set; } = new Dictionary<string, Action<object, object>>();
 
         public static Action<object, object> GetSetter(Type objectType, string FieldName)
         {
@@ -211,17 +208,17 @@ namespace Kooboo.IndexedDB.Dynamic
                 {
                     if (!SetValueActions.ContainsKey(key))
                     {
-                        var fieldtype = ObjectHelper.GetFieldType(objectType, FieldName); 
+                        var fieldtype = ObjectHelper.GetFieldType(objectType, FieldName);
 
-                       if (fieldtype == null)
+                        if (fieldtype == null)
                         {
-                            SetValueActions[key] = null; 
+                            SetValueActions[key] = null;
                         }
-                       else
+                        else
                         {
                             var action = ObjectHelper.GetSetObjectValue(FieldName, objectType, fieldtype);
                             SetValueActions[key] = action;
-                        }  
+                        }
                     }
                 }
             }
@@ -229,6 +226,6 @@ namespace Kooboo.IndexedDB.Dynamic
             return SetValueActions[key];
 
         }
-         
+
     }
 }

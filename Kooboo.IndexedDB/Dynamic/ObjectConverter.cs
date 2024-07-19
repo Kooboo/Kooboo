@@ -1,29 +1,30 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Dynamic.Converter
 {
     public class ObjectConverter
     {
 
-        private string _primarykey;
+        private string _primaryKey;
         private string PrimaryKey
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_primarykey))
+                if (string.IsNullOrWhiteSpace(_primaryKey))
                 {
-                    _primarykey = Constants.DefaultIdFieldName;
+                    _primaryKey = Constants.DefaultIdFieldName;
                 }
-                return _primarykey;
+                return _primaryKey;
             }
             set
             {
-                _primarykey = value;
+                _primaryKey = value;
             }
         }
 
@@ -40,7 +41,7 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
 
                     converter.IsIncremental = item.IsIncremental;
 
-                    converter.ClrType = type;
+                    converter.DataType = type;
 
                     converter.FieldName = item.Name;
                     converter.FieldNameHash = ObjectHelper.GetHashCode(item.Name);
@@ -67,31 +68,45 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
                     this.Fields.Add(converter);
                 }
             }
+
+            foreach (var item in SystemFields.Fields)
+            {
+                if (!this.Fields.Exists(o => o.FieldName == item.FieldName))
+                {
+                    this.Fields.Add(item);
+                }
+            }
+
         }
 
-        public byte[] ToBytes(Dictionary<string, object> predata)
+        public byte[] ToBytes(Dictionary<string, object> preData)
         {
             List<byte[]> Results = new List<byte[]>();
             int TotalLength = 0;
-             
+
             foreach (var item in this.Fields)
             {
                 byte[] result = null;
 
-                object rightvalue = null;
-                if (predata.ContainsKey(item.FieldName))            
+                object rightValue = null;
+                if (preData.ContainsKey(item.FieldName))
                 {
-                    var prevalue = predata[item.FieldName];    
-                    rightvalue = Dynamic.Accessor.ChangeType(prevalue, item.ClrType);   
+                    var preValue = preData[item.FieldName];
+                    rightValue = Dynamic.Accessor.ChangeType(preValue, item.DataType);
                 }
                 else
                 {
-                    rightvalue = IndexHelper.DefaultValue(item.ClrType); 
+                    if (item.SkipDefaultValue)
+                    {
+                        continue;
+                    }
+
+                    rightValue = IndexHelper.DefaultValue(item.DataType);
                 }
-                
-                if (rightvalue != null)
+
+                if (rightValue != null)
                 {
-                    result = item.ToBytes(rightvalue);
+                    result = item.ToBytes(rightValue);
                 }
 
                 if (result == null || result.Length == 0)
@@ -114,13 +129,13 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
                 Results.Add(BitConverter.GetBytes(item.FieldNameHash));
                 TotalLength += 4;
 
-                int bytelen = item.Length;
-                if (bytelen == int.MaxValue)
+                int byteLen = item.Length;
+                if (byteLen == int.MaxValue)
                 {
-                    bytelen = result.Length;
+                    byteLen = result.Length;
                 }
 
-                Results.Add(BitConverter.GetBytes(bytelen));
+                Results.Add(BitConverter.GetBytes(byteLen));
                 TotalLength += 4;
 
                 Results.Add(result);
@@ -128,41 +143,42 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
             }
 
             byte[] BackValue = new byte[TotalLength];
-            int currentposition = 0;
+            int currentPosition = 0;
+
 
             foreach (var item in Results)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, BackValue, currentposition, len);
-                currentposition += len;
+                System.Buffer.BlockCopy(item, 0, BackValue, currentPosition, len);
+                currentPosition += len;
             }
 
             return BackValue;
         }
-          
+
         public IDictionary<string, object> FromBytes(byte[] bytes)
         {
             Dictionary<string, object> values = new Dictionary<string, object>();
 
-            int startposition = 0;
-            int totallength = bytes.Length;
+            int startPosition = 0;
+            int totalLength = bytes.Length;
             while (true)
             {
-                int FieldNameHash = BitConverter.ToInt32(bytes, startposition);
+                int FieldNameHash = BitConverter.ToInt32(bytes, startPosition);
 
-                startposition += 4;
+                startPosition += 4;
 
-                int len = BitConverter.ToInt32(bytes, startposition);
-                startposition += 4;
+                int len = BitConverter.ToInt32(bytes, startPosition);
+                startPosition += 4;
 
                 var item = Fields.Find(o => o.FieldNameHash == FieldNameHash);
 
                 if (item != null)
                 {
-                     if (item.Length == len || item.ClrType == typeof(string) || item.Length == int.MaxValue)
-                     {
+                    if (item.Length == len || item.DataType == typeof(string) || item.Length == int.MaxValue)
+                    {
                         byte[] FieldValueBytes = new byte[len];
-                        System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                        System.Buffer.BlockCopy(bytes, startPosition, FieldValueBytes, 0, len);
 
                         object obj = item.FromBytes(FieldValueBytes);
 
@@ -170,12 +186,12 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
                         {
                             values[item.FieldName] = obj;
                         }
-                     }   
+                    }
                 }
 
-                startposition += len;
+                startPosition += len;
 
-                if (startposition + 8 >= totallength)
+                if (startPosition + 8 >= totalLength)
                 { break; }
             }
 
@@ -186,8 +202,6 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
 
         public T FromBytes<T>(byte[] bytes)
         {
-            var returnobj = Activator.CreateInstance<T>();
-
             var type = typeof(T);
             var cls = Activator.CreateInstance<T>();
 
@@ -203,20 +217,20 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
             return cls;
         }
 
-        private Dictionary<string, Type> fieldtypes = new Dictionary<string, Type>();
+        private Dictionary<string, Type> fieldTypes = new Dictionary<string, Type>();
 
         private Type GetType(Type type, string fieldname)
         {
             string key = type.FullName + fieldname;
-            if (fieldtypes.ContainsKey(key))
+            if (fieldTypes.ContainsKey(key))
             {
-                return fieldtypes[key];
+                return fieldTypes[key];
             }
             else
             {
-                var fieldtype = Helper.TypeHelper.GetFieldType(type, fieldname);
-                fieldtypes[key] = fieldtype;
-                return fieldtype; 
+                var fieldType = Helper.TypeHelper.GetFieldType(type, fieldname);
+                fieldTypes[key] = fieldType;
+                return fieldType;
             }
         }
 
@@ -224,23 +238,23 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
         {
             Dictionary<string, object> values = new Dictionary<string, object>();
 
-            int startposition = 0;
-            int totallength = bytes.Length;
+            int startPosition = 0;
+            int totalLength = bytes.Length;
             while (true)
             {
-                int FieldNameHash = BitConverter.ToInt32(bytes, startposition);
+                int FieldNameHash = BitConverter.ToInt32(bytes, startPosition);
 
-                startposition += 4;
+                startPosition += 4;
 
-                int len = BitConverter.ToInt32(bytes, startposition);
-                startposition += 4;
+                int len = BitConverter.ToInt32(bytes, startPosition);
+                startPosition += 4;
 
                 var item = Fields.Find(o => o.FieldNameHash == FieldNameHash);
 
                 if (item != null)
                 {
                     byte[] FieldValueBytes = new byte[len];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                    System.Buffer.BlockCopy(bytes, startPosition, FieldValueBytes, 0, len);
 
                     object obj = item.FromBytes(FieldValueBytes);
 
@@ -249,11 +263,11 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
                         if (item.IsIncremental)
                         {
                             // verify and change type.... when properly. 
-                            var itemtype = GetType(type, item.FieldName);
-                            if (itemtype != null)
+                            var itemType = GetType(type, item.FieldName);
+                            if (itemType != null)
                             {
-                                var rightvalue = Convert.ChangeType(obj, itemtype);
-                                values[item.FieldName] = rightvalue;
+                                var rightValue = Convert.ChangeType(obj, itemType);
+                                values[item.FieldName] = rightValue;
                             }
                             else
                             {
@@ -266,8 +280,8 @@ namespace Kooboo.IndexedDB.Dynamic.Converter
                         }
                     }
                 }
-                startposition += len;
-                if (startposition + 8 >= totallength)
+                startPosition += len;
+                if (startPosition + 8 >= totalLength)
                 { break; }
             }
 

@@ -1,0 +1,46 @@
+.monaco-editor .markdown-hover,
+.monaco-editor .docs {
+  h4 {
+    margin: 5px 0;
+  }
+  .monaco-tokenized-source {
+    line-height: 14px;
+  }
+  blockquote {
+    border-left: 4px solid #ffa500;
+    padding: 6px 12px;
+    background-color: #f8f8f8;
+    margin: 8px 0;
+  }
+  table {
+    border-collapse: collapse;
+    min-width: 300px;
+    width: 100%;
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      border: 1px solid #ccc;
+      padding: 8px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #dde1e6;
+      color: #565656;
+    }
+    tr {
+      &:nth-child(even) {
+        background-color: #eef1f6;
+      }
+      &:hover {
+        background-color: #d1dbe5;
+      }
+    }
+  }
+  ul {
+    li {
+      list-style-type: none;
+    }
+  }
+}

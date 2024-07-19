@@ -11,7 +11,7 @@ namespace Kooboo.Cache
         public static List<INotifyCacheExpired> Notifiactions = new List<INotifyCacheExpired>();
 
         public static void Notify(string objectCacheName, string cacheKey)
-        { 
+        {
             if (Notifiactions != null)
             {
                 try
@@ -25,7 +25,7 @@ namespace Kooboo.Cache
                 {
                     //log exception
                     Debug.WriteLine(e);
-                } 
+                }
             }
         }
     }

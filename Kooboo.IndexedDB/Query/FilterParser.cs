@@ -1,12 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Indexs;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Condition.ColumnScan;
+using Kooboo.IndexedDB.IndexRange;
 
 namespace Kooboo.IndexedDB.Query
 {
@@ -18,172 +18,199 @@ namespace Kooboo.IndexedDB.Query
         /// <returns></returns>
         public static ExecutionPlan GetExecutionPlan(Filter<TKey, TValue> filter)
         {
-            ExecutionPlan executionplan = new ExecutionPlan();
+            var executionPlan = new ExecutionPlan();
 
             //first check order by field. 
             if (filter.OrderByPrimaryKey)
             {
                 // does not support range with primary key yet, will be supported later.
-                Range<byte[]> primaryrange = getRange(filter.store.StoreSetting.PrimaryKey, filter.items);
+                var ranges = filter.Node?.GetRanges(filter.store.StoreSetting.PrimaryKey,
+                    filter.store.primaryIndex.Tree.comparer);
 
-                if (primaryrange != null)
+                if (ranges != null)
                 {
-                    executionplan.startCollection = filter.store.primaryIndex.getCollection(primaryrange.lower, primaryrange.upper, primaryrange.lowerOpen, primaryrange.upperOpen, filter.Ascending);
-                }
-                else
-                {
-                    executionplan.startCollection = filter.store.primaryIndex.allItemCollection(filter.Ascending);
+                    if (!filter.Ascending) ranges.Reverse();
+
+                    executionPlan.StartCollection = ranges.SelectMany(s => filter.store.primaryIndex.getCollection(
+                        s.lower,
+                        s.upper,
+                        s.lowerOpen,
+                        s.upperOpen,
+                        filter.Ascending)
+                    );
                 }
 
-               // executionplan.OrderBySettled = true;
-                executionplan.hasStartCollection = true;
+
+                executionPlan.StartCollection ??= filter.store.primaryIndex.allItemCollection(filter.Ascending);
+
+                // executionplan.OrderBySettled = true;
+                executionPlan.HasStartCollection = true;
             }
             else
             {
                 if (!string.IsNullOrEmpty(filter.OrderByFieldName))
                 {
-                    if (filter.store.Indexes.HasIndex(filter.OrderByFieldName))
+                    var index = filter.store.Indexes.getIndex(filter.OrderByFieldName);
+                    if (index != null)
                     {
-                        Range<byte[]> range = getRange(filter.OrderByFieldName, filter.items);
+                        var comparer = ObjectContainer.getComparer(index.keyType, index.Length);
+                        var ranges = filter.Node?.GetRanges(filter.OrderByFieldName, comparer);
 
-                        if (range != null)
+                        if (ranges != null)
                         {
-                            executionplan.startCollection = filter.store.Indexes.getIndex(filter.OrderByFieldName).GetCollection(range.lower, range.upper, range.lowerOpen, range.upperOpen, filter.Ascending);
+                            if (!filter.Ascending) ranges.Reverse();
+
+                            executionPlan.StartCollection = ranges.SelectMany(s => filter.store.Indexes
+                                .getIndex(filter.OrderByFieldName)
+                                .GetCollection(
+                                    s.lower,
+                                    s.upper,
+                                    s.lowerOpen,
+                                    s.upperOpen,
+                                    filter.Ascending)
+                            );
                         }
                         else
                         {
-                            executionplan.startCollection = filter.store.Indexes.getIndex(filter.OrderByFieldName).AllItems(filter.Ascending);
+                            executionPlan.StartCollection = filter.store.Indexes.getIndex(filter.OrderByFieldName)
+                                .AllItems(filter.Ascending);
                         }
 
-                       // executionplan.OrderBySettled = true;
-                        executionplan.hasStartCollection = true;
+                        executionPlan.HasStartCollection = true;
                     }
                 }
             }
 
             // check the primary key index. 
-            Range<byte[]> primarykeyrange = getRange(filter.store.StoreSetting.PrimaryKey, filter.items);
+            var list = filter.Node?.GetRanges(filter.store.StoreSetting.PrimaryKey,
+                filter.store.primaryIndex.Tree.comparer);
 
-            if (primarykeyrange != null)
+            if (list != null)
             {
-                executionplan.startCollection = filter.store.primaryIndex.getCollection(primarykeyrange.lower, primarykeyrange.upper, primarykeyrange.lowerOpen, primarykeyrange.upperOpen, filter.Ascending);
-                executionplan.hasStartCollection = true;
+                executionPlan.StartCollection = list.SelectMany(s => filter.store.primaryIndex.getCollection(
+                    s.lower,
+                    s.upper,
+                    s.lowerOpen,
+                    s.upperOpen,
+                    filter.Ascending)
+                );
+                executionPlan.HasStartCollection = true;
             }
 
             // check all index fields that has been used in the filter. 
             foreach (var item in filter.store.Indexes.items)
             {
-                Range<byte[]> indexrange = getRange(item.FieldName, filter.items);
-                if (indexrange != null)
+                var comparer = ObjectContainer.getComparer(item.keyType, item.Length);
+                var ranges = filter.Node?.GetRanges(item.FieldName, comparer);
+                if (ranges != null)
                 {
-                    executionplan.indexRanges.Add(item.FieldName, indexrange);
+                    executionPlan.IndexRanges.Add(item.FieldName, ranges);
                 }
             }
+
+            var indexNames = new List<string>();
+            indexNames.AddRange(filter.store.Indexes.items.Select(s => s.FieldName));
+            if (filter.store.primaryIndex != null) indexNames.Add(filter.store.primaryIndex.fieldname);
+            var columnNames = filter.store.SettingColumns.Select(s => s.Key).ToArray();
+            var notInColumnIndexes = indexNames.Except(columnNames).ToArray();
 
             // now parse columns. All query where condition item must be in columns, otherwise this will be a problem. 
-            foreach (var item in filter.items)
-            {
-                Columns.IColumn<TValue> column;
-                column = filter.store.GetColumn(item.FieldOrProperty);
-                if (column != null)
-                {
-                    ColumnScan colplan = new ColumnScan();
-
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.relativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnEvaluator.GetEvaluator(column.DataType, item.Compare, item.Value, column.Length);
-
-                    executionplan.scanColumns.Add(colplan); 
-                }
-                else
-                {
-                    throw new Exception("filter field must be index or column, add them to colomn or index when creating the store, otherwise use the fullscan option");
-                }
-            }
+            executionPlan.ColumnScanner =
+                Node.FromExpression(name => filter.store.GetColumn(name), filter.Node, notInColumnIndexes);
 
             foreach (var item in filter.InItems)
             {
-                Columns.IColumn<TValue> column;
-                column = filter.store.GetColumn(item.Key);
+                var column = filter.store.GetColumn(item.Key);
+
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    var filterNode = new FilterNode
+                    {
+                        ColumnName = column.FieldName,
+                        RelativeStartPosition = column.RelativePosition,
+                        Length = column.Length,
+                        Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.relativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length); 
-
-                    executionplan.scanColumns.Add(colplan); 
+                    executionPlan.ColumnScanner = Node.And(executionPlan.ColumnScanner, filterNode);
                 }
                 else
                 {
-                    throw new Exception("filter field must be index or column, add them to colomn or index when creating the store, otherwise use the fullscan option");
+                    throw new Exception(
+                        "filter field must be index or column, add them to colomn or index when creating the store, otherwise use the fullscan option");
                 }
             }
 
             /// for the methods calls. 
             foreach (var item in filter.calls)
             {
-                MemberExpression memberaccess = null; 
-                foreach (var xitem in item.Arguments)
+                MemberExpression memberAccess = null;
+                foreach (var xItem in item.Arguments)
                 {
-                    if (xitem.NodeType == ExpressionType.MemberAccess)
+                    if (xItem.NodeType == ExpressionType.MemberAccess)
                     {
-                        memberaccess = xitem as MemberExpression; 
+                        memberAccess = xItem as MemberExpression;
                     }
                 }
-                if (memberaccess == null)
+
+                if (memberAccess == null)
                 {
-                    throw new Exception("Method call require use one of the Fields or Property as parameters"); 
+                    throw new Exception("Method call require use one of the Fields or Property as parameters");
                 }
 
-                string fieldname = memberaccess.Member.Name; 
+                string fieldname = memberAccess.Member.Name;
 
-                Columns.IColumn<TValue> column;
-                column = filter.store.GetColumn(fieldname);
+                var column = filter.store.GetColumn(fieldname);
+
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    var filterNode = new FilterNode
+                    {
+                        ColumnName = column.FieldName,
+                        RelativeStartPosition = column.RelativePosition,
+                        Length = column.Length,
+                        Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.DataType, column.Length, item)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.relativePosition;
-                    colplan.length = column.Length;
-
-                    colplan.Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.DataType, column.Length, item);
-
-                    executionplan.scanColumns.Add(colplan);
+                    executionPlan.ColumnScanner = Node.And(executionPlan.ColumnScanner, filterNode);
                 }
                 else
                 {
-                    throw new Exception("methed call parameter must be a column, add the field to colomn creating creating the store, otherwise use the fullscan option");
+                    throw new Exception(
+                        "methed call parameter must be a column, add the field to colomn creating creating the store, otherwise use the fullscan option");
                 }
-            } 
-            /// verify the plan. or optimize it.
-            if (!executionplan.hasStartCollection)
-            {
-                //make one of the range. pick any one now. should be pick by the optimizer.  
-                foreach (var item in executionplan.indexRanges)
-                {
-                    IIndex<TValue> index = filter.store.Indexes.getIndex(item.Key);
-                    if (index != null)
-                    {
-                        executionplan.startCollection = index.GetCollection(item.Value.lower, item.Value.upper, item.Value.lowerOpen, item.Value.upperOpen, filter.Ascending);
-                        executionplan.hasStartCollection = true; 
-                        executionplan.indexRanges.Remove(item.Key);
-                        break;
-                    }
-                }
-                if (!executionplan.hasStartCollection)
-                {
-                    executionplan.startCollection = filter.store.primaryIndex.allItemCollection(filter.Ascending);
-                    executionplan.hasStartCollection = true;
-                }
-
             }
 
-            return executionplan;
+            /// verify the plan. or optimize it.
+            if (!executionPlan.HasStartCollection)
+            {
+                //make one of the range. pick any one now. should be pick by the optimizer.  
+                foreach (var item in executionPlan.IndexRanges)
+                {
+                    var index = filter.store.Indexes.getIndex(item.Key);
+                    if (index == null) continue;
+
+                    executionPlan.StartCollection = item.Value.SelectMany(s => index.GetCollection(
+                        s.lower,
+                        s.upper,
+                        s.lowerOpen,
+                        s.upperOpen,
+                        filter.Ascending)
+                    );
+
+                    executionPlan.HasStartCollection = true;
+                    executionPlan.IndexRanges.Remove(item.Key);
+                    break;
+                }
+
+                if (!executionPlan.HasStartCollection)
+                {
+                    executionPlan.StartCollection = filter.store.primaryIndex.allItemCollection(filter.Ascending);
+                    executionPlan.HasStartCollection = true;
+                }
+            }
+
+            return executionPlan;
         }
 
 
@@ -197,18 +224,17 @@ namespace Kooboo.IndexedDB.Query
         {
             if (string.IsNullOrWhiteSpace(FieldOrPropertyName))
             {
-                return null; 
+                return null;
             }
 
             FieldOrPropertyName = FieldOrPropertyName.ToLower();
 
             Range<byte[]> range = new Range<byte[]>();
 
-            List<int> removeditem = new List<int>();
+            List<int> removedItem = new List<int>();
 
             for (int i = 0; i < items.Count; i++)
             {
-
                 if (items[i].FieldOrProperty.ToLower() == FieldOrPropertyName)
                 {
                     switch (items[i].Compare)
@@ -219,27 +245,27 @@ namespace Kooboo.IndexedDB.Query
                             range.upperOpen = false;
                             range.lower = items[i].Value;
                             range.lowerOpen = false;
-                            removeditem.Add(i);
+                            removedItem.Add(i);
                             break;
                         case Comparer.GreaterThan:
                             range.lower = items[i].Value;
                             range.lowerOpen = true;
-                            removeditem.Add(i);
+                            removedItem.Add(i);
                             break;
                         case Comparer.GreaterThanOrEqual:
                             range.lower = items[i].Value;
                             range.lowerOpen = false;
-                            removeditem.Add(i);
+                            removedItem.Add(i);
                             break;
                         case Comparer.LessThan:
                             range.upper = items[i].Value;
                             range.upperOpen = true;
-                            removeditem.Add(i);
+                            removedItem.Add(i);
                             break;
                         case Comparer.LessThanOrEqual:
                             range.upper = items[i].Value;
                             range.upperOpen = false;
-                            removeditem.Add(i);
+                            removedItem.Add(i);
                             break;
                         case Comparer.NotEqualTo:
                             //does not do anything. 
@@ -253,19 +279,17 @@ namespace Kooboo.IndexedDB.Query
                         default:
                             break;
                     }
-
                 }
-
             }
 
-            bool hasmatch = false;
-            foreach (int item in removeditem.OrderByDescending(o => o))
+            bool hasMatch = false;
+            foreach (int item in removedItem.OrderByDescending(o => o))
             {
-                hasmatch = true;
+                hasMatch = true;
                 items.RemoveAt(item);
             }
 
-            if (hasmatch)
+            if (hasMatch)
             {
                 return range;
             }
@@ -274,7 +298,5 @@ namespace Kooboo.IndexedDB.Query
                 return null;
             }
         }
-
-
     }
 }

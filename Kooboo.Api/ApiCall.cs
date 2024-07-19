@@ -1,10 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 
 namespace Kooboo.Api
 {
@@ -58,7 +57,7 @@ namespace Kooboo.Api
             }
         }
 
-    
+
         private Guid _objectid;
 
         public Guid ObjectId
@@ -125,7 +124,7 @@ namespace Kooboo.Api
 
             if (!string.IsNullOrWhiteSpace(this.Context.Request.Body))
             {
-                var data =  Lib.Helper.JsonHelper.DeserializeJObject(this.Context.Request.Body);
+                var data = Lib.Helper.JsonHelper.DeserializeJObject(this.Context.Request.Body);
 
                 foreach (var item in data.Properties())
                 {
@@ -149,10 +148,28 @@ namespace Kooboo.Api
             return RequestManager.GetValue(this.Context.Request, name);
         }
 
+        public T GetValue<T>(string name, T DefaultValue)
+        {
+            string Value = GetValue(name);
+            if (string.IsNullOrEmpty(Value))
+            {
+                return DefaultValue;
+            }
+            else
+            {
+                return GetValue<T>(name);
+            }
+        }
+
         public T GetValue<T>(string name)
         {
             var type = typeof(T);
             string value = GetValue(name);
+            if (type.IsArray)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return default;
+                return JsonConvert.DeserializeObject<T>(value);
+            }
             if (string.IsNullOrEmpty(value))
             {
                 return default(T);
@@ -171,30 +188,30 @@ namespace Kooboo.Api
             }
             else if (type == typeof(int))
             {
-                int intvalue = 0; 
+                int intvalue = 0;
                 int.TryParse(value, out intvalue);
                 return (T)Convert.ChangeType(intvalue, type);
             }
             else if (type == typeof(long))
             {
-                long longvalue = 0; 
+                long longvalue = 0;
                 long.TryParse(value, out longvalue);
                 return (T)Convert.ChangeType(longvalue, type);
             }
-           else if (type == typeof(string))
+            else if (type == typeof(string))
             {
-                return (T)Convert.ChangeType(value, type); 
+                return (T)Convert.ChangeType(value, type);
             }
             else if (type == typeof(decimal))
             {
                 decimal decvalue = 0;
                 decimal.TryParse(value, out decvalue);
                 return (T)Convert.ChangeType(decvalue, type);
-                 
-            } 
+
+            }
             else
             {
-                throw new Exception("type of not supported"); 
+                throw new Exception("type not supported");
             }
 
         }
@@ -224,7 +241,7 @@ namespace Kooboo.Api
             bool.TryParse(value, out ok);
             return ok;
         }
-         
+
         public long GetLongValue(string name)
         {
             string value = GetValue(name);

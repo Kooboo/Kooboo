@@ -3,34 +3,28 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.BTree.Comparer;
 using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Btree.Comparer;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
     /// <summary>
     /// string index. 
     /// </summary>
-    public class BtreeIndex<T>
+    public class BTreeIndex<T>
     {
-
         public string fieldname;
         public bool unique;
-        public int keylength;
+        public int keyLength;
 
-        private string fullindexfilename;
+        private string FullIndexFileName;
 
-        private string fullduplicatefilename;
+        private string FullDuplicateFileName;
 
         internal int MaxCacheLevel { get; set; }
 
-        /// <summary>
-        /// the object for lock.
-        /// </summary>
-        private object _object = new object();
+
+        private object _lockObject = new object();
 
         private TreeFile _tree;
 
@@ -41,11 +35,11 @@ namespace Kooboo.IndexedDB.Btree
 
                 if (_tree == null)
                 {
-                    lock (_object)
+                    lock (_lockObject)
                     {
                         if (_tree == null)
                         {
-                            _tree = new TreeFile(this.fullindexfilename, this.unique, typeof(T), keylength, this.Comparer, this.EqualityComparer, MaxCacheLevel);
+                            _tree = new TreeFile(this.FullIndexFileName, this.unique, typeof(T), keyLength, this.Comparer, this.EqualityComparer, MaxCacheLevel);
                         }
                     }
                 }
@@ -60,36 +54,30 @@ namespace Kooboo.IndexedDB.Btree
 
         private IEqualityComparer<byte[]> EqualityComparer;  /// only used for dictionary to find key. 
 
-        ///only string key has the keylength, the rest does not have. 
-        private bool isString = false;
+        ///only string key has the keyLength, the rest does not have. 
+        private bool IsKeyLenVaries = false;
 
-        public BtreeIndex(string fieldname, bool unique, int keylength, string fullIndexFileName, int MaxCacheLevel = 0)
+        public BTreeIndex(string fieldname, bool unique, int keyLength, string fullIndexFileName, int MaxCacheLevel = 0)
         {
             this.fieldname = fieldname;
             this.unique = unique;
-            Type keytype = typeof(T);
-            this.keylength = Helper.KeyHelper.GetKeyLen(keytype, keylength);
+            Type keyType = typeof(T);
+            this.keyLength = Helper.KeyHelper.GetKeyLen(keyType, keyLength);
 
-            this.fullindexfilename = fullIndexFileName;
+            this.FullIndexFileName = fullIndexFileName;
 
             this.MaxCacheLevel = MaxCacheLevel;
 
-            this.fullduplicatefilename = fullindexfilename + ".duplicate";
+            this.FullDuplicateFileName = FullIndexFileName + ".duplicate";
 
-            Helper.IndexHelper.VerifyIndexType(keytype);
+            Helper.IndexHelper.VerifyIndexType(keyType);
 
             this.Converter = ObjectContainer.GetConverter<T>();
-            this.EqualityComparer = new EqualityComparer(this.keylength);
-            this.Comparer = ObjectContainer.getComparer(keytype, keylength);
+            this.EqualityComparer = new EqualityComparer(this.keyLength);
+            this.Comparer = ObjectContainer.getComparer(keyType, keyLength);
 
-            if (keytype == typeof(string))
-            {
-                isString = true;
-            }
-            else
-            {
-                isString = false;
-            }
+            this.IsKeyLenVaries = Helper.KeyHelper.IsKeyLenVar(keyType);
+
 
         }
 
@@ -97,13 +85,13 @@ namespace Kooboo.IndexedDB.Btree
         {
             get
             {
-                return File.Exists(this.fullindexfilename);
+                return File.Exists(this.FullIndexFileName);
             }
         }
 
         public void Close()
         {
-            lock (_object)
+            lock (_lockObject)
             {
                 if (_tree != null)
                 {
@@ -115,23 +103,23 @@ namespace Kooboo.IndexedDB.Btree
 
         public void DelSelf()
         {
-            lock (_object)
+            lock (_lockObject)
             {
                 if (_tree != null)
                 {
                     _tree.Close();
                     _tree = null;
                 }
-                if (System.IO.File.Exists(fullindexfilename))
+                if (System.IO.File.Exists(FullIndexFileName))
                 {
-                    File.Delete(fullindexfilename);
-                } 
+                    File.Delete(FullIndexFileName);
+                }
             }
         }
 
         public void Flush()
         {
-            lock (_object)
+            lock (_lockObject)
             {
                 if (_tree != null)
                 {
@@ -141,15 +129,15 @@ namespace Kooboo.IndexedDB.Btree
         }
 
 
-        private bool Add(byte[] keybytes, Int64 blockposition)
+        private bool Add(byte[] keyBytes, Int64 blockPosition)
         {
-            lock (_object)
+            lock (_lockObject)
             {
-                return this.Tree.Add(this.appendToFixedLength(keybytes), blockposition);
+                return this.Tree.Add(this.appendToFixedLength(keyBytes), blockPosition);
             }
         }
 
-        public bool Add(T key, Int64 blockposition)
+        public bool Add(T key, Int64 blockPosition)
         {
 
             if (key == null)
@@ -158,36 +146,31 @@ namespace Kooboo.IndexedDB.Btree
             }
 
 
-            return Add(this.Converter.ToByte(key), blockposition);
+            return Add(this.Converter.ToByte(key), blockPosition);
         }
 
-        /// <summary>
-        /// update key and blockposition.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        public void Update(T oldkey, T newkey, Int64 oldBlockPosition, Int64 newBlockPosition)
+        public void Update(T oldKey, T newKey, Int64 oldBlockPosition, Int64 newBlockPosition)
         {
-            if (oldkey == null)
+            if (oldKey == null)
             {
-                oldkey = default(T);
+                oldKey = default(T);
             }
-            if (newkey == null)
+            if (newKey == null)
             {
-                newkey = default(T);
+                newKey = default(T);
             }
 
-            byte[] oldkeybyte = this.appendToFixedLength(this.Converter.ToByte(oldkey));
-            byte[] newkeybyte = this.appendToFixedLength(this.Converter.ToByte(newkey));
+            byte[] oldKeyByte = this.appendToFixedLength(this.Converter.ToByte(oldKey));
+            byte[] newKeyByte = this.appendToFixedLength(this.Converter.ToByte(newKey));
 
-            if (ByteEqualComparer.isEqual(oldkeybyte, newkeybyte, this.keylength))
+            if (ByteEqualComparer.isEqual(oldKeyByte, newKeyByte, this.keyLength))
             {
-                Update(oldkey, oldBlockPosition, newBlockPosition);
+                Update(oldKey, oldBlockPosition, newBlockPosition);
             }
             else
             {
-                this.Add(newkeybyte, newBlockPosition);
-                this.Del(oldkeybyte, oldBlockPosition);
+                this.Add(newKeyByte, newBlockPosition);
+                this.Del(oldKeyByte, oldBlockPosition);
             }
         }
 
@@ -198,11 +181,11 @@ namespace Kooboo.IndexedDB.Btree
                 key = default(T);
             }
 
-            byte[] keybytes = this.Converter.ToByte(key);
+            byte[] keyBytes = this.Converter.ToByte(key);
 
-            lock (_object)
+            lock (_lockObject)
             {
-                this.Tree.Update(this.appendToFixedLength(keybytes), oldBlockPosition, newBlockPosition);
+                this.Tree.Update(this.appendToFixedLength(keyBytes), oldBlockPosition, newBlockPosition);
             }
         }
 
@@ -212,63 +195,77 @@ namespace Kooboo.IndexedDB.Btree
             {
                 key = default(T);
             }
-
-            byte[] keybytes = this.Converter.ToByte(key);
-
-            return Get(keybytes);
+            byte[] keyBytes = this.Converter.ToByte(key);
+            return Get(keyBytes);
         }
 
-        public Int64 Get(byte[] keybytes)
+        public Int64 Get(byte[] keyBytes)
         {
-            lock (_object)
+            lock (_lockObject)
             {
-                return this.Tree.Get(this.appendToFixedLength(keybytes));
+                return this.Tree.Get(this.appendToFixedLength(keyBytes));
             }
         }
 
+        public bool TryGet(T key, out Int64 position)
+        {
+            if (key == null)
+            {
+                key = default(T);
+            }
+            byte[] keyBytes = this.Converter.ToByte(key);
+            return TryGet(keyBytes, out position);
+        }
 
+        public bool TryGet(byte[] keyBytes, out Int64 position)
+        {
+            lock (_lockObject)
+            {
+                return this.Tree.TryGet(keyBytes, out position);
+            }
+        }
 
         public List<Int64> List(T key)
         {
             if (key == null)
             {
-                key = default(T);
+                key = default;
             }
 
-            byte[] keybytes = this.Converter.ToByte(key);
+            byte[] keyBytes = this.Converter.ToByte(key);
 
-            return List(keybytes);
+            return List(keyBytes);
         }
 
-        public List<Int64> List(byte[] keybytes)
+        public List<Int64> List(byte[] keyBytes)
         {
-            lock (_object)
+            lock (_lockObject)
             {
-                return this.Tree.ListAll(this.appendToFixedLength(keybytes));
+                return this.Tree.ListAll(this.appendToFixedLength(keyBytes));
             }
         }
 
-        public bool Del(T key, Int64 blockposition)
+        public bool Del(T key, Int64 blockPosition)
         {
-            if (blockposition <= 0)
+            if (blockPosition <= 0)
             {
-                throw new Exception("block position not privoided");
+                throw new Exception("block position not provided");
             }
 
             if (key == null)
             {
-                key = default(T);
+                key = default;
             }
 
-            byte[] keybytes = this.Converter.ToByte(key);
-            return Del(keybytes, blockposition);
+            byte[] keyBytes = this.Converter.ToByte(key);
+            return Del(keyBytes, blockPosition);
         }
 
-        private bool Del(byte[] keybytes, Int64 blockposition)
+        private bool Del(byte[] keyBytes, Int64 blockPosition)
         {
-            lock (_object)
+            lock (_lockObject)
             {
-                return this.Tree.Del(this.appendToFixedLength(keybytes), blockposition);
+                return this.Tree.Del(this.appendToFixedLength(keyBytes), blockPosition);
             }
         }
 
@@ -276,46 +273,42 @@ namespace Kooboo.IndexedDB.Btree
         {
             if (key == null)
             {
-                key = default(T);
+                key = default;
             }
 
-            byte[] keybytes = this.Converter.ToByte(key);
-            return Del(keybytes);
+            byte[] keyBytes = this.Converter.ToByte(key);
+            return Del(keyBytes);
         }
 
-        private List<Int64> Del(byte[] keybytes)
+        private List<Int64> Del(byte[] keyBytes)
         {
-            lock (_object)
+            lock (_lockObject)
             {
-                return this.Tree.Del(this.appendToFixedLength(keybytes));
+                return this.Tree.Del(this.appendToFixedLength(keyBytes));
             }
         }
 
-        /// <summary>
-        /// append byte 0 to the iput to make it match the keylength. 
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+
         private byte[] appendToFixedLength(byte[] input)
         {
-            return Helper.KeyHelper.AppendToKeyLength(input, isString, this.keylength);
+            return Helper.KeyHelper.AppendToKeyLength(input, IsKeyLenVaries, this.keyLength);
         }
 
         public T FirstKey
         {
             get
             {
-                lock (_object)
+                lock (_lockObject)
                 {
-                    byte[] keybytes = this.Tree.FirstKey();
+                    byte[] keyBytes = this.Tree.FirstKey();
 
-                    if (keybytes == null)
+                    if (keyBytes == null)
                     {
-                        return default(T);
+                        return default;
                     }
                     else
                     {
-                        return this.Converter.FromByte(keybytes);
+                        return this.Converter.FromByte(keyBytes);
                     }
                 }
             }
@@ -325,17 +318,17 @@ namespace Kooboo.IndexedDB.Btree
         {
             get
             {
-                lock (_object)
+                lock (_lockObject)
                 {
-                    byte[] keybytes = this.Tree.LastKey();
+                    byte[] keyBytes = this.Tree.LastKey();
 
-                    if (keybytes == null)
+                    if (keyBytes == null)
                     {
                         return default(T);
                     }
                     else
                     {
-                        return this.Converter.FromByte(keybytes);
+                        return this.Converter.FromByte(keyBytes);
                     }
                 }
             }
@@ -349,7 +342,7 @@ namespace Kooboo.IndexedDB.Btree
         /// <returns></returns>
         public int Count(Range<T> range, bool distinct)
         {
-            lock (_object)
+            lock (_lockObject)
             {
                 byte[] startKeyBytes = this.Converter.ToByte(range.lower);
                 byte[] endKeyBytes = this.Converter.ToByte(range.upper);
@@ -357,25 +350,24 @@ namespace Kooboo.IndexedDB.Btree
                 startKeyBytes = this.appendToFixedLength(startKeyBytes);
                 endKeyBytes = this.appendToFixedLength(endKeyBytes);
 
-                MemoryTreeNode startnode = MemoryTreeNodeManager.FindLeafByKey(this.Tree, this.Tree.RootCache, startKeyBytes);
-                MemoryTreeNode endnode = MemoryTreeNodeManager.FindLeafByKey(this.Tree, this.Tree.RootCache, endKeyBytes);
+                MemoryTreeNode startNode = MemoryTreeNodeManager.FindLeafByKey(this.Tree, this.Tree.RootNode, startKeyBytes);
+                MemoryTreeNode endNode = MemoryTreeNodeManager.FindLeafByKey(this.Tree, this.Tree.RootNode, endKeyBytes);
 
-                if (startnode.TreeNode.DiskPosition == endnode.TreeNode.DiskPosition)
+                if (startNode.TreeNode.DiskPosition == endNode.TreeNode.DiskPosition)
                 {
 
                     int count = 0;
-                    foreach (var item in startnode.TreeNode.KeyArray)
+                    foreach (var item in startNode.TreeNode.KeyArray)
                     {
                         if ((this.Comparer.Compare(startKeyBytes, item.Key) < 0 || (this.Comparer.Compare(startKeyBytes, item.Key) == 0 && !range.lowerOpen)) && ((this.Comparer.Compare(endKeyBytes, item.Key) > 0 || (this.Comparer.Compare(endKeyBytes, item.Key) == 0 && !range.upperOpen))))
 
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {
-                                    count = count + this.Tree.duplicate.count(pointer.PositionPointer);
+                                    count += this.Tree.duplicate.count(pointer.PositionPointer);
                                 }
                                 else
                                 {
@@ -393,116 +385,118 @@ namespace Kooboo.IndexedDB.Btree
                 }
                 else
                 {
-                    int firstnodecount = 0;
-                    int lastnodecount = 0;
-                    int middlecount = 0;
+                    int firstNodeCount = 0;
+                    int lastNodeCount = 0;
+                    int middleCount = 0;
 
-                    foreach (var item in startnode.TreeNode.KeyArray)
+                    foreach (var item in startNode.TreeNode.KeyArray)
                     {
                         if (this.Comparer.Compare(startKeyBytes, item.Key) < 0 || (this.Comparer.Compare(startKeyBytes, item.Key) == 0 && !range.lowerOpen))
                         {
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {
-                                    firstnodecount = firstnodecount + this.Tree.duplicate.count(pointer.PositionPointer);
+                                    firstNodeCount += this.Tree.duplicate.count(pointer.PositionPointer);
                                 }
                                 else
                                 {
-                                    firstnodecount += 1;
+                                    firstNodeCount += 1;
                                 }
                             }
                             else
                             {
-                                firstnodecount += 1;
+                                firstNodeCount += 1;
                             }
                         }
                     }
 
-                    foreach (var item in endnode.TreeNode.KeyArray)
+                    foreach (var item in endNode.TreeNode.KeyArray)
                     {
 
                         if (this.Comparer.Compare(endKeyBytes, item.Key) > 0 || (this.Comparer.Compare(endKeyBytes, item.Key) == 0 && !range.upperOpen))
                         {
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {
-                                    lastnodecount = lastnodecount + this.Tree.duplicate.count(pointer.PositionPointer);
+                                    lastNodeCount += this.Tree.duplicate.count(pointer.PositionPointer);
                                 }
                                 else
                                 {
-                                    lastnodecount += 1;
+                                    lastNodeCount += 1;
                                 }
                             }
                             else
                             {
-                                lastnodecount += 1;
+                                lastNodeCount += 1;
                             }
                         }
 
                     }
 
-                    var middlenode = MemoryTreeNodeManager.FindNextLeaf(this.Tree, startnode);
+                    var middleNode = MemoryTreeNodeManager.FindNextLeaf(this.Tree, startNode);
 
-                    while (middlenode.TreeNode.DiskPosition != endnode.TreeNode.DiskPosition)
+                    while (middleNode.TreeNode.DiskPosition != endNode.TreeNode.DiskPosition)
                     {
-                        foreach (var item in middlenode.TreeNode.KeyArray)
+                        foreach (var item in middleNode.TreeNode.KeyArray)
                         {
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {
-                                    middlecount = middlecount + this.Tree.duplicate.count(pointer.PositionPointer);
+                                    middleCount += this.Tree.duplicate.count(pointer.PositionPointer);
                                 }
                                 else
                                 {
-                                    middlecount += 1;
+                                    middleCount += 1;
                                 }
                             }
                             else
                             {
-                                middlecount += 1;
+                                middleCount += 1;
                             }
                         }
 
-                        middlenode = MemoryTreeNodeManager.FindNextLeaf(this.Tree, middlenode);
+                        middleNode = MemoryTreeNodeManager.FindNextLeaf(this.Tree, middleNode);
                     }
 
-                    return firstnodecount + middlecount + lastnodecount;
+                    return firstNodeCount + middleCount + lastNodeCount;
                 }
             }
         }
 
         public int Count(bool distinct)
         {
+            if (this.FirstKey == null && this.LastKey == null)
+            {
+                return 0;
+            }
+
             Range<T> range = Range<T>.bound(this.FirstKey, this.LastKey, false, false);
             return Count(range, distinct);
         }
 
-        public List<Int64> getRange(Range<T> range, int skipcount, int takecount, bool ascending)
+        public List<Int64> getRange(Range<T> range, int skipCount, int takeCount, bool ascending)
         {
 
             int skipped = 0;
             int taken = 0;
             List<long> list = new List<long>();
-            if (takecount <= 0)
+            if (takeCount <= 0)
             {
                 return list;
             }
 
             foreach (Int64 item in getCollection(range, ascending))
             {
-                if (skipped < skipcount)
+                if (skipped < skipCount)
                 {
                     skipped += 1;
                     continue;
@@ -512,7 +506,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 taken += 1;
 
-                if (taken >= takecount)
+                if (taken >= takeCount)
                 {
                     return list;
                 }
@@ -521,12 +515,7 @@ namespace Kooboo.IndexedDB.Btree
             return list;
         }
 
-        /// <summary>
-        /// get a collection object that contains of the range records. 
-        /// </summary>
-        /// <param name="range"></param>
-        /// <param name="ascending"></param>
-        /// <returns></returns>
+
         public ItemCollection getCollection(Range<T> range, bool ascending)
         {
             byte[] startKeyBytes = this.Converter.ToByte(range.lower);
@@ -561,27 +550,23 @@ namespace Kooboo.IndexedDB.Btree
 
             startKey = this.appendToFixedLength(startKey);
             endKey = this.appendToFixedLength(endKey);
-              
+
             ItemCollection collection = new ItemCollection(this.Tree, this.Comparer, startKey, endKey, lowerOpen, upperOpen, ascending);
 
             return collection;
         }
 
-        /// <summary>
-        /// get the collectiont that contains all items in the index. 
-        /// </summary>
-        /// <param name="ascending"></param>
-        /// <returns></returns>
+
         public ItemCollection allItemCollection(bool ascending)
         {
             Range<T> range = Range<T>.bound(this.FirstKey, this.LastKey, false, false);
             return getCollection(range, ascending);
         }
 
-        public List<Int64> All(bool acsending = false)
+        public List<Int64> All(bool ascending = false)
         {
             List<long> list = new List<long>();
-            foreach (var item in allItemCollection(acsending))
+            foreach (var item in allItemCollection(ascending))
             {
                 list.Add(item);
             }
@@ -592,9 +577,9 @@ namespace Kooboo.IndexedDB.Btree
         public KeyBytesCollection AllKeyBytesCollection(bool ascending)
         {
             Range<T> range = Range<T>.bound(this.FirstKey, this.LastKey, false, false);
-            return GetKeyBytesCollection(range, ascending); 
+            return GetKeyBytesCollection(range, ascending);
         }
-         
+
         private KeyBytesCollection GetKeyBytesCollection(byte[] startKey, byte[] endKey, bool lowerOpen, bool upperOpen, bool ascending)
         {
             if (startKey == null)
@@ -616,7 +601,7 @@ namespace Kooboo.IndexedDB.Btree
 
             return collection;
         }
-         
+
         private KeyBytesCollection GetKeyBytesCollection(Range<T> range, bool ascending)
         {
             byte[] startKeyBytes = this.Converter.ToByte(range.lower);

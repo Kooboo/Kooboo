@@ -18,8 +18,8 @@ namespace LumiSoft.Net.Mail
     /// </example>
     public class Mail_t_MailboxList : IEnumerable
     {
-        private bool                 m_IsModified = false;
-        private List<Mail_t_Mailbox> m_pList      = null;
+        private bool m_IsModified = false;
+        private List<Mail_t_Mailbox> m_pList = null;
 
         /// <summary>
         /// Default constructor.
@@ -41,29 +41,35 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ParseException">Is raised when <b>value</b> is not valid <b>mailbox-list</b> value.</exception>
         public static Mail_t_MailboxList Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
-            MIME_Reader        r      = new MIME_Reader(value);
+            MIME_Reader r = new MIME_Reader(value);
             Mail_t_MailboxList retVal = new Mail_t_MailboxList();
-            while(true){
-                string word = r.QuotedReadToDelimiter(new char[]{',','<'});
+            while (true)
+            {
+                string word = r.QuotedReadToDelimiter(new char[] { ',', '<' });
                 // We processed all data.
-                if(string.IsNullOrEmpty(word) && r.Available == 0){
+                if (string.IsNullOrEmpty(word) && r.Available == 0)
+                {
                     break;
                 }
                 // name-addr
-                else if(r.Peek(true) == '<'){
-                    retVal.Add(new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word.Trim())) : null,r.ReadParenthesized()));                    
+                else if (r.Peek(true) == '<')
+                {
+                    retVal.Add(new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word.Trim())) : null, r.ReadParenthesized()));
                 }
                 // addr-spec
-                else{
-                    retVal.Add(new Mail_t_Mailbox(null,word));
+                else
+                {
+                    retVal.Add(new Mail_t_Mailbox(null, word));
                 }
 
                 // We have more addresses.
-                if(r.Peek(true) == ','){
+                if (r.Peek(true) == ',')
+                {
                     r.Char(false);
                 }
             }
@@ -83,16 +89,18 @@ namespace LumiSoft.Net.Mail
         /// <param name="value">Address to insert.</param>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when <b>index</b> is out of range.</exception>
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference.</exception>
-        public void Insert(int index,Mail_t_Mailbox value)
+        public void Insert(int index, Mail_t_Mailbox value)
         {
-            if(index < 0 || index > m_pList.Count){
+            if (index < 0 || index > m_pList.Count)
+            {
                 throw new ArgumentOutOfRangeException("index");
             }
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
-            m_pList.Insert(index,value);
+            m_pList.Insert(index, value);
             m_IsModified = true;
         }
 
@@ -107,7 +115,8 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference value.</exception>
         public void Add(Mail_t_Mailbox value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
@@ -126,7 +135,8 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference value.</exception>
         public void Remove(Mail_t_Mailbox value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
@@ -170,11 +180,14 @@ namespace LumiSoft.Net.Mail
         public override string ToString()
         {
             StringBuilder retVal = new StringBuilder();
-            for(int i=0;i<m_pList.Count;i++){
-                if(i == (m_pList.Count - 1)){
+            for (int i = 0; i < m_pList.Count; i++)
+            {
+                if (i == (m_pList.Count - 1))
+                {
                     retVal.Append(m_pList[i].ToString());
                 }
-                else{
+                else
+                {
                     retVal.Append(m_pList[i].ToString() + ",");
                 }
             }
@@ -205,11 +218,11 @@ namespace LumiSoft.Net.Mail
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerator GetEnumerator()
-		{
-			return m_pList.GetEnumerator();
-		}
+        {
+            return m_pList.GetEnumerator();
+        }
 
-		#endregion
+        #endregion
 
         #region Properties implementation
 
@@ -217,8 +230,8 @@ namespace LumiSoft.Net.Mail
         /// Gets if list has modified since it was loaded.
         /// </summary>
         public bool IsModified
-        {            
-            get{ return m_IsModified; }
+        {
+            get { return m_IsModified; }
         }
 
         /// <summary>
@@ -226,7 +239,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public int Count
         {
-            get{ return m_pList.Count; }
+            get { return m_pList.Count; }
         }
 
         /// <summary>
@@ -237,12 +250,14 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentOutOfRangeException">Is raised when <b>index</b> is out of range.</exception>
         public Mail_t_Mailbox this[int index]
         {
-            get{ 
-                if(index < 0 || index >= m_pList.Count){
+            get
+            {
+                if (index < 0 || index >= m_pList.Count)
+                {
                     throw new ArgumentOutOfRangeException("index");
                 }
 
-                return m_pList[index]; 
+                return m_pList[index];
             }
         }
 

@@ -1,10 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System.Collections.Generic;
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data;
+using Kooboo.Data.Helper;
+using Kooboo.Data.Language;
 using Kooboo.Data.Models;
-using System;
+using Kooboo.Data.ViewModel;
+using Kooboo.Lib.Helper;
+using Kooboo.Web.Api.Implementation;
 using Kooboo.Web.ViewModel;
 
 namespace Kooboo.Web.Api
@@ -35,21 +39,21 @@ namespace Kooboo.Web.Api
             }
         }
 
-        public List<Organization> GetOrganizations(ApiCall call)
+        public List<OrganizationListItemViewModel> GetOrganizations(ApiCall call)
         {
             var user = call.Context.User;
 
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
-                List<Organization> org = new List<Organization>();
-                org.Add(new Organization() { AdminUser = user.Id, Name = user.UserName });
+                List<OrganizationListItemViewModel> org = new List<OrganizationListItemViewModel>();
+                org.Add(new OrganizationListItemViewModel() { AdminUser = user.Id, Name = user.UserName });
                 return org;
             }
 
-            return GlobalDb.Users.Organizations(call.Context.User.Id);
+            return GlobalDb.Users.OrganizationView(call.Context.User.Id);
         }
 
-        public List<User> GetUsers(ApiCall call)
+        public List<OrgUserViewModel> GetUsers(ApiCall call)
         {
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
@@ -57,18 +61,17 @@ namespace Kooboo.Web.Api
                 users.Add(call.Context.User);
             }
 
-            var org = GlobalDb.Organization.GetByUser(call.Context.User.Id);
-            if (org != null)
-            {
-                return GlobalDb.Organization.Users(org.Id);
-            }
-            return null;
+            var list = GlobalDb.Organization.OrgUserView(call.Context.User.CurrentOrgId);
+
+            return list.OrderByDescending(o => o.JoinDate).ToList();
         }
 
 
         public SimpleUser ChangeUserOrg(Guid organizationId, ApiCall call)
         {
-            var user = GlobalDb.Users.ChangeOrg(call.Context.User.Id, organizationId);
+            var token = call.Context.Request.GetValue("jwt_token");
+
+            var user = GlobalDb.Users.ChangeOrg(call.Context, organizationId);
             if (user != null)
             {
                 call.Context.User = user;
@@ -80,26 +83,26 @@ namespace Kooboo.Web.Api
 
             string redirecturl = "/_Admin/Account/Profile";
 
-            result.redirectUrl = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(call.Context, user, call.Context.Request.Url, redirecturl, false);
+            result.redirectUrl = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(call.Context, user, call.Context.Request.Url, redirecturl);
 
             return result;
         }
 
-        public string AddUser(string userName, Guid organizationId, ApiCall call)
+        public string AddUser(string userName, ApiCall call)
         {
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Default account can not add user"));
+                throw new Exception("Default account can not add user");
             }
 
-            string message = GlobalDb.Organization.AddUser(userName, organizationId);
+            string message = GlobalDb.Organization.AddUser(userName, call.Context);
 
             return message ?? "";
         }
 
-        public bool DeleteUser(string userName, Guid organizationId, ApiCall call)
+        public bool DeleteUser(string userName, ApiCall call)
         {
-            return GlobalDb.Organization.DeleteUser(userName, organizationId);
+            return GlobalDb.Organization.DeleteUser(userName, call.Context);
         }
 
 
@@ -108,6 +111,29 @@ namespace Kooboo.Web.Api
             var organizationId = call.Context.User.CurrentOrgId;
             return GlobalDb.Organization.Get(organizationId);
         }
+
+
+        public UserOrgViewModel GetUserOrg(ApiCall call)
+        {
+            var organizationId = call.Context.User.CurrentOrgId;
+            var org = GlobalDb.Organization.Get(organizationId);
+            UserOrgViewModel model = new UserOrgViewModel();
+            model.Id = org.Id;
+            model.Name = org.Name;
+            model.DisplayName = org.DisplayName;
+            model.UserName = call.Context.User.UserName;
+            model.UserId = call.Context.User.Id;
+            model.ServiceLevel = org.ServiceLevel;
+            model.IsPartner = org.IsPartner;
+            model.HasImap = org.ServiceLevel >= 2;
+
+            if (org.AdminUser == call.Context.User.Id || org.Id == call.Context.User.Id)
+            {
+                model.IsAdmin = true;
+            }
+            return model;
+        }
+
 
         public Organization GetOwnOrg(ApiCall call)
         {
@@ -121,12 +147,81 @@ namespace Kooboo.Web.Api
             return GlobalDb.Users.IsAdmin(organizationId, call.Context.User.Id);
         }
 
-        public bool RemoveLocal(string name, ApiCall call)
+        public bool CreateOrgUser(string username, string password, string email, ApiCall call)
         {
-            Guid id = Lib.Helper.IDHelper.ParseKey(name);
+            var user = call.Context.User;
+            //string username, string password, string Email, string Tel,
+            var tel = call.GetValue("Tel", "Phone");
 
-            GlobalDb.Organization.RemoveOrgCache(id);
-            return true; 
+            var IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
+            if (!IsAdmin)
+            {
+                var msg = Hardcoded.GetValue("Not Authorized", call.Context);
+                throw new Exception(msg);
+            }
+
+            var result = GlobalDb.Organization.CreateOrgUser(user.CurrentOrgId, username, password, email, tel, call.Context);
+            return true;
         }
+
+
+        //  public bool DepartOrg(Guid OrgId, ApiCall call)
+        public bool UserLeaveOrg(Guid OrgId, ApiCall call)
+        {
+            var para = new Dictionary<string, string>();
+            para.Add("OrgId", OrgId.ToString());
+            var AuthHeader = Kooboo.Data.Helper.ApiHelper.GetAuthHeaders(call.Context);
+            return HttpHelper.Post<bool>(AccountUrlHelper.Org("DepartOrg"), para, AuthHeader);
+        }
+
+        //  public void CreateSoleOrg(ApiCall call)
+        public bool CreateOwnOrg(ApiCall call)
+        {
+            var para = new Dictionary<string, string>();
+
+            var AuthHeader = Kooboo.Data.Helper.ApiHelper.GetAuthHeaders(call.Context);
+            return HttpHelper.Post<bool>(AccountUrlHelper.Org("CreateSoleOrg"), para, AuthHeader);
+        }
+
+
+        [Obsolete]
+        public List<DataCenterViewModelOld> DataCenterList(ApiCall call)
+        {
+            DataCenterApi api = new DataCenterApi();
+
+            var list = api.List(call);
+
+            List<DataCenterViewModelOld> result = new List<DataCenterViewModelOld>();
+
+
+            if (list != null && list.Count > 0)
+            {
+                foreach (var item in list)
+                {
+                    DataCenterViewModelOld model = new DataCenterViewModelOld();
+                    model.Selected = item.Default;
+                    string displayname = item.Name;
+
+                    model.Name = displayname;
+                    result.Add(model);
+                }
+            }
+            return result;
+        }
+
+    }
+
+
+
+    public class DataCenterViewModelOld
+    {
+        public string Name { get; set; }
+
+        public string Country { get; set; }
+
+        public int Id { get; set; }
+
+        public bool Selected { get; set; }
+
     }
 }

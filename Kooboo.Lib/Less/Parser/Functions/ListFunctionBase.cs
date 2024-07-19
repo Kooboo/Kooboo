@@ -1,6 +1,5 @@
 ﻿namespace dotless.Core.Parser.Functions
 {
-    using System;
     using System.Linq;
     using dotless.Core.Exceptions;
     using Infrastructure;
@@ -15,14 +14,14 @@
             Guard.ExpectMinArguments(1, Arguments.Count, this, Location);
             Guard.ExpectNodeToBeOneOf<Expression, Value>(Arguments[0], this, Arguments[0].Location);
 
-            if(Arguments[0] is Expression)
+            if (Arguments[0] is Expression)
             {
                 var list = Arguments[0] as Expression;
                 var args = Arguments.Skip(1).ToArray();
                 return Eval(env, list.Value.ToArray(), args);
             }
 
-            if(Arguments[0] is Value)
+            if (Arguments[0] is Value)
             {
                 var list = Arguments[0] as Value;
                 var args = Arguments.Skip(1).ToArray();

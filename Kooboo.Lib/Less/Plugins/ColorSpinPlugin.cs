@@ -1,10 +1,9 @@
 ﻿namespace dotless.Core.Plugins
 {
-    using System;
+    using System.ComponentModel;
     using Parser.Infrastructure.Nodes;
     using Parser.Tree;
     using Utils;
-    using System.ComponentModel;
 
     [Description("Automatically spins all colors in a less file"), DisplayName("ColorSpin")]
     public class ColorSpinPlugin : VisitorPlugin
@@ -25,12 +24,12 @@
         {
             visitDeeper = true;
 
-            if(node is Color)
+            if (node is Color)
             {
                 var color = node as Color;
 
                 var hslColor = HslColor.FromRgbColor(color);
-                hslColor.Hue += Spin/360.0d;
+                hslColor.Hue += Spin / 360.0d;
                 var newColor = hslColor.ToRgbColor();
 
                 //node = new Color(newColor.R, newColor.G, newColor.B);

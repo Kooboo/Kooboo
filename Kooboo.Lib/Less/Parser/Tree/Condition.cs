@@ -1,10 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
+    using System;
+    using dotless.Core.Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
-    using System;
-    using dotless.Core.Exceptions;
 
     public class Condition : Node
     {

@@ -1,11 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Esprima;
+using Esprima.Ast;
+using Kooboo.Data.Context;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Web.JsTest
 {
@@ -33,7 +32,7 @@ namespace Kooboo.Web.JsTest
                     fullname = fullname.Substring(root.Length);
                     fullname = fullname.Replace("\\", "/");
 
-                    var path = options.FolderPath(context); 
+                    var path = options.FolderPath(context);
 
                     if (!string.IsNullOrEmpty(path) && fullname.ToLower().StartsWith(path))
                     {
@@ -52,7 +51,7 @@ namespace Kooboo.Web.JsTest
 
             var root = option.GetDiskRoot(context);
 
-            var path = option.FolderPath(context); 
+            var path = option.FolderPath(context);
 
             if (!string.IsNullOrEmpty(path))
             {
@@ -73,10 +72,10 @@ namespace Kooboo.Web.JsTest
 
                         if (!option.AssertJs.Contains(info.Name))
                         {
-                            var jsPath=new JsFilePath();
+                            var jsPath = new JsFilePath();
                             if (!string.IsNullOrEmpty(Folder))
                             {
-                                var index = info.FullName.IndexOf(Folder.Replace("/","\\"), StringComparison.OrdinalIgnoreCase);
+                                var index = info.FullName.IndexOf(Folder.Replace("/", "\\"), StringComparison.OrdinalIgnoreCase);
                                 if (index > -1)
                                 {
                                     var relativePath = info.FullName.Substring(index);
@@ -89,7 +88,7 @@ namespace Kooboo.Web.JsTest
                                     jsPath.Folder = Folder;
                                     jsPath.file = info.Name;
                                 }
-                                
+
 
                             }
                             else
@@ -181,7 +180,7 @@ namespace Kooboo.Web.JsTest
         }
 
         private static string GetBlockJs(JsTestOption option, string js)
-        { 
+        {
             int start = js.IndexOf(option.FunctionBlockStart);
             int end = js.IndexOf(option.FunctionBlockEnd);
             if (start > -1 && end > -1 && end > start)
@@ -223,7 +222,7 @@ namespace Kooboo.Web.JsTest
             }
 
             string querystring = RelativeUrl;
-            if (querystring.IndexOf("?") > -1)
+            if (querystring?.IndexOf("?") > -1)
             {
                 querystring = querystring.Substring(querystring.IndexOf("?") + 1);
             }
@@ -297,9 +296,9 @@ namespace Kooboo.Web.JsTest
 
             string root = option.GetDiskRoot(context);
 
-            System.IO.DirectoryInfo basedir = new System.IO.DirectoryInfo(root); 
+            System.IO.DirectoryInfo basedir = new System.IO.DirectoryInfo(root);
 
-            var prepath = option.FolderPath(context); 
+            var prepath = option.FolderPath(context);
 
             if (!string.IsNullOrEmpty(prepath))
             {
@@ -321,14 +320,14 @@ namespace Kooboo.Web.JsTest
                     foreach (var line in alllines)
                     {
                         if (line != null)
-                        { 
-                                var lineresult = FindRelativeFileName(basedir, line, currentdir); 
+                        {
+                            var lineresult = FindRelativeFileName(basedir, line, currentdir);
 
-                                if (!string.IsNullOrEmpty(lineresult))
-                                { 
-                                    result.Add(lineresult);
-                                }
-                          
+                            if (!string.IsNullOrEmpty(lineresult))
+                            {
+                                result.Add(lineresult);
+                            }
+
                         }
                     }
                 }
@@ -343,32 +342,32 @@ namespace Kooboo.Web.JsTest
         {
             if (string.IsNullOrWhiteSpace(relativefilename))
             {
-                return null; 
+                return null;
             }
 
             relativefilename = relativefilename.Trim();
             relativefilename = relativefilename.Trim('"');
             relativefilename = relativefilename.Trim('\'');
-            relativefilename = relativefilename.Trim(); 
+            relativefilename = relativefilename.Trim();
 
 
-            relativefilename = relativefilename.Replace("/", "\\"); 
+            relativefilename = relativefilename.Replace("/", "\\");
             if (relativefilename.StartsWith("\\"))
             {
-                relativefilename = relativefilename.Substring(1); 
+                relativefilename = relativefilename.Substring(1);
             }
 
             // first check directly under root...
-            string fullname = System.IO.Path.Combine(root.FullName, relativefilename); 
+            string fullname = System.IO.Path.Combine(root.FullName, relativefilename);
             if (!System.IO.File.Exists(fullname))
             {
                 // search up from current path... till find the file name. 
-                fullname = System.IO.Path.Combine(current.FullName, relativefilename); 
-                 
-               while(!System.IO.File.Exists(fullname) && current.Parent !=null)
+                fullname = System.IO.Path.Combine(current.FullName, relativefilename);
+
+                while (!System.IO.File.Exists(fullname) && current.Parent != null)
                 {
                     current = current.Parent;
-                    fullname = System.IO.Path.Combine(current.FullName, relativefilename); 
+                    fullname = System.IO.Path.Combine(current.FullName, relativefilename);
                 }
             }
 
@@ -376,15 +375,15 @@ namespace Kooboo.Web.JsTest
             {
                 string result = fullname.Substring(root.FullName.Length);
 
-                result = result.Replace("\\", "/"); 
+                result = result.Replace("\\", "/");
                 if (!result.StartsWith("/"))
                 {
-                    result = "/" + result; 
+                    result = "/" + result;
                 }
-                return result; 
+                return result;
             }
 
-            return null; 
+            return null;
 
         }
 
@@ -411,48 +410,47 @@ namespace Kooboo.Web.JsTest
             return result;
         }
 
-        public static List<Jint.Parser.Ast.FunctionDeclaration> ListRequireJsFuncs(string requireJsBlock)
-        { 
-            Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
-
-            var prog = parser.Parse(requireJsBlock);
+        public static List<FunctionDeclaration> ListRequireJsFuncs(string requireJsBlock)
+        {
+            var prog = new JavaScriptParser().ParseScript(requireJsBlock);
 
             if (prog != null && prog.Body.Count() > 0)
             {
 
                 var item = prog.Body.First();
-                 
-                if (item is Jint.Parser.Ast.ExpressionStatement)
-                {
-                    var expres = item as Jint.Parser.Ast.ExpressionStatement;
 
-                    if (expres.Expression is Jint.Parser.Ast.CallExpression)
+                if (item is ExpressionStatement)
+                {
+                    var expres = item as ExpressionStatement;
+
+                    if (expres.Expression is CallExpression)
                     {
-                        var call = expres.Expression as Jint.Parser.Ast.CallExpression;
-                        if (call !=null && call.Arguments.Count() ==2)
+                        var call = expres.Expression as CallExpression;
+                        if (call != null && call.Arguments.Count() == 2)
                         {
                             var requireargu = call.Arguments[1];
 
-                            if (requireargu !=null && requireargu is Jint.Parser.Ast.FunctionExpression)
+                            if (requireargu != null && requireargu is FunctionExpression)
                             {
-                                var requireFunc = requireargu as Jint.Parser.Ast.FunctionExpression; 
-                                 
-                                if (requireFunc !=null)
-                                {
-                                    return requireFunc.FunctionDeclarations.ToList(); 
-                                }
-                            } 
+                                var requireFunc = requireargu as FunctionExpression;
 
-                        } 
-                      
+                                if (requireFunc != null)
+                                {
+                                    var functionDeclarations = JintHelper.GetFunctionDeclarations(requireFunc);
+                                    return functionDeclarations.ToList();
+                                }
+                            }
+
+                        }
+
                     }
                 }
             }
 
 
-            return new List<Jint.Parser.Ast.FunctionDeclaration>();
+            return new List<FunctionDeclaration>();
         }
-         
+
     }
 
     public class JsFilePath

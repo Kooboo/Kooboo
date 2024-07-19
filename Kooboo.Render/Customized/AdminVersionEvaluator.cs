@@ -1,12 +1,12 @@
-﻿using Kooboo.Dom;
-using Kooboo.Sites.Render;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq; 
+using System.Linq;
+using Kooboo.Dom;
+using Kooboo.Sites.Render;
+using Kooboo.Sites.Render.RenderTask;
 
 namespace Kooboo.Render.Customized
-{ 
+{
 
     public class AdminVersionEvaluator : IEvaluator
     {
@@ -17,7 +17,7 @@ namespace Kooboo.Render.Customized
                 return null;
             }
 
-            if (!options.EnableImageBrowserCache && !options.EnableJsCssBrowserCache)
+            if (!options.EnableImageBrowserCache && !options.EnableJsCssBrowserCache && !options.EnableResourceCDN)
             {
                 return null;
             }
@@ -37,24 +37,15 @@ namespace Kooboo.Render.Customized
 
             if (element.tagName == "img")
             {
-                if (!options.EnableImageBrowserCache)
+                if (!options.EnableImageBrowserCache && !options.EnableResourceCDN)
                 {
                     return null;
                 }
             }
 
-            if (element.tagName == "script" || element.tagName == "style")
+            if (element.tagName == "script" || Sites.Service.DomService.IsCssLinkElement(element))
             {
-                if (!options.EnableJsCssBrowserCache)
-                {
-                    return null;
-                }
-            }
-
-            if (element.tagName == "link")
-            {
-                var rel = element.getAttribute("rel");
-                if (rel == null || rel.ToLower() != "stylesheet")
+                if (!options.EnableJsCssBrowserCache && !options.EnableResourceCDN)
                 {
                     return null;
                 }
@@ -94,11 +85,38 @@ namespace Kooboo.Render.Customized
             EvaluatorResponse response = new EvaluatorResponse();
 
             List<IRenderTask> tasks = new List<IRenderTask>();
-            tasks.Add(new ContentRenderTask(" " + attname + "=\""));
+            tasks.Add(new StaticContentRenderTask(" " + attname + "=\""));
 
-            tasks.Add(new AdminVersionRenderTask(value, IsStyle, IsImage));
 
-            tasks.Add(new ContentRenderTask("\""));
+            if (options.EnableImageBrowserCache || options.EnableJsCssBrowserCache)
+            {
+                var versiontask = new AdminVersionRenderTask(value, IsStyle, IsImage);
+                if (options.EnableResourceCDN)
+                {
+                    var cdnTask = new ResourceCDNRenderTask(versiontask);
+                    tasks.Add(cdnTask);
+                }
+                else
+                {
+                    tasks.Add(versiontask);
+                }
+            }
+            else
+            {
+                if (options.EnableResourceCDN)
+                {
+                    var cdnTask = new ResourceCDNRenderTask(value);
+                    tasks.Add(cdnTask);
+                }
+                else
+                {
+                    // should not do anything. ignore work above.  Should not reach here. 
+                    return null;
+                }
+            }
+
+
+            tasks.Add(new StaticContentRenderTask("\""));
 
             if (response.AttributeTask == null)
             {
@@ -117,7 +135,10 @@ namespace Kooboo.Render.Customized
             {
                 return response;
             }
+
         }
+
+
     }
 
 

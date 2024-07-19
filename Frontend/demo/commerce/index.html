@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <script>
+      function getImage(data) {
+        var url = data.images[0]?.url;
+        if (url) url += `?SiteId=cacaf387-ea2e-6e6a-7bb6-b0e58c00f500`;
+        return url;
+      }
+    </script>
+    <div id="app">
+      <k-page title="Product list" back="/_Admin/component.html">
+        <k-data
+          id="products"
+          init-get="http://kcomponent.localkooboo.com/commerce/products"
+          loading
+        >
+          <k-data-query name="typeId" id="type"></k-data-query>
+          <k-data-query name="categoryId" id="category"></k-data-query>
+          <k-data-query name="enable" id="enable"></k-data-query>
+          <k-data-query name="size" id="page_size">5</k-data-query>
+          <k-data-query
+            id="current_page"
+            name="index"
+            get-on-change
+          ></k-data-query>
+          <k-data-item name="total" id="total" type="number"></k-data-item>
+          <k-data-item
+            name="pageCount"
+            id="page_count"
+            type="number"
+          ></k-data-item>
+          <k-data-item name="list" id="product_list"></k-data-item>
+        </k-data>
+
+        <k-data from="product_list" id="table_data">
+          <k-data-item name="id" hidden></k-data-item>
+          <k-data-item
+            name="image"
+            type="image"
+            width="80"
+            from="getImage"
+            source="code"
+          ></k-data-item>
+          <k-data-item name="title" label="Title"></k-data-item>
+          <k-data-item name="typeName" label="Type"></k-data-item>
+          <k-data-item name="enable" label="State" type="switch"></k-data-item>
+        </k-data>
+
+        <k-data
+          init-get="http://kcomponent.localkooboo.com/commerce/types"
+          id="types"
+        ></k-data>
+
+        <k-data
+          init-get="http://kcomponent.localkooboo.com/commerce/categories"
+          id="categories"
+        ></k-data>
+
+        <k-data id="product_states"
+          >[{"value":true,"label":"Enable"},{"value":false,"label":"Disable"}]</k-data
+        >
+
+        <k-data
+          id="product_detail"
+          to="/_Admin/demo/commerce/product-detail.html"
+        >
+          <k-data-query name="id"></k-data-query>
+        </k-data>
+
+        <k-inline>
+          <k-text>Type:</k-text>
+          <k-input options="types" data="type"></k-input>
+          <k-text>Category:</k-text>
+          <k-input options="categories" data="category"></k-input>
+          <k-text>State:</k-text>
+          <k-input options="product_states" data="enable"></k-input>
+          <k-text>Title:</k-text>
+          <k-input style="width: 300px" data=""></k-input>
+          <k-button get="products">Search</k-button>
+        </k-inline>
+        <k-table data="table_data">
+          <k-table-action to="product_detail" label="Detail"> </k-table-action>
+        </k-table>
+        <k-pagination
+          current-page="current_page"
+          page-size="page_size"
+          page_count="page_count"
+          total="total"
+        ></k-pagination>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

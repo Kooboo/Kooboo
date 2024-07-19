@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
-using Kooboo.Web.Backend.Menus;
-using Kooboo.Web.Menus;
+﻿using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Menus.FeatureMenus
 {
@@ -14,12 +9,12 @@ namespace Kooboo.Web.Menus.FeatureMenus
         public string Icon => "icon icon-picture";
 
         public string Url => "Contents/Images";
-         
+
         public int Order => 1;
 
         public List<ICmsMenu> SubItems { get; set; }
 
-       //public bool UrlSiteId => true;
+        //public bool UrlSiteId => true;
 
         public string GetDisplayName(RenderContext Context)
         {

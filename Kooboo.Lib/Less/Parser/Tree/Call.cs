@@ -41,7 +41,7 @@ namespace dotless.Core.Parser.Tree
             }
 
             env.Output.Push();
-            
+
             env.Output
                 .Append(Name)
                 .Append("(")

@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System;
 using Kooboo.Data.Context;
+using Kooboo.Lib.Helper;
+using Kooboo.Lib.Utilities;
 using Kooboo.Render.ObjectSource;
 using Kooboo.Sites.Render;
-using Kooboo.Lib;
-using Kooboo.Lib.Helper;
-using System;
 
 namespace Kooboo.Render
 {
@@ -28,8 +28,8 @@ namespace Kooboo.Render
 
         public static RenderRespnose Render(RenderContext Context, RenderOption option, string relativeurl)
         {
+            PathUtility.ValidatePath(relativeurl);
             var sourceprovider = GetSourceProvider(Context, option);
-
             var FileType = RenderHelper.GetFileType(relativeurl);
             RenderRespnose response = new RenderRespnose();
 
@@ -38,27 +38,30 @@ namespace Kooboo.Render
                 case UrlFileType.Image:
 
                     response = RenderImage(Context, option, relativeurl);
-                     
-                    break; 
+
+                    break;
 
                 case UrlFileType.JavaScript:
 
-                    if (sourceprovider is CommandDiskSourceProvider)
-                    {
-                        response = ServerSide.ServerEngine.RenderJs(sourceprovider as CommandDiskSourceProvider, option, Context, relativeurl); 
-                    }
-                    else
-                    {
-                        response.ContentType = "application/javascript";
-                        response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
-                    }
+                    //if (sourceprovider is CommandDiskSourceProvider)
+                    //{
+                    //  //  response = ServerSide.ServerEngine.RenderJs(sourceprovider as CommandDiskSourceProvider, option, Context, relativeurl);
+
+                    //}
+                    //else
+                    //{
+                    response.ContentType = "application/javascript";
+                    response.Stream = sourceprovider.GetStream(Context, relativeurl);
+                    //   response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                    // }
 
                     break;
 
                 case UrlFileType.Style:
 
                     response.ContentType = "text/css";
-                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                    // response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                    response.Stream = sourceprovider.GetStream(Context, relativeurl);
 
                     break;
                 case UrlFileType.File:
@@ -88,11 +91,11 @@ namespace Kooboo.Render
                         response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
 
                         if (contenttype.ToLower().Contains("font"))
-                        { 
-                            Context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                        {
+                            Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(388).ToString("r");
                         }
                     }
-                     
+
                     break;
                 case UrlFileType.Html:
 
@@ -101,14 +104,14 @@ namespace Kooboo.Render
                     break;
             }
 
-            var version = Context.Request.Get("version"); 
-            if(!string.IsNullOrEmpty(version))
+            var version = Context.Request.Get("version");
+            if (!string.IsNullOrEmpty(version))
             {
                 if (Lib.Helper.CharHelper.isAsciiDigit(version))
                 {
-                    Context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("r");
+                    Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(388).ToString("r");
                 }
-            } 
+            }
             return response;
         }
 
@@ -135,7 +138,7 @@ namespace Kooboo.Render
                 if (extension.ToLower() == "ico")
                 {
                     // favorite icon. 
-                   Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
+                    Context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
                 }
 
             }
@@ -151,7 +154,7 @@ namespace Kooboo.Render
 
         public static RenderRespnose RenderHtml(RenderContext Context, RenderOption option, string relativeurl)
         {
-            var sourceprovider = GetSourceProvider(Context, option);
+            var sourceProvider = GetSourceProvider(Context, option);
 
             RenderRespnose response = new RenderRespnose();
             response.ContentType = "text/html";
@@ -161,32 +164,39 @@ namespace Kooboo.Render
                 response.ContentType = minetype;
             }
 
-            if (Context == null || sourceprovider == null)
+            if (Context == null || sourceProvider == null)
             {
                 return response;
             }
-            string htmlbody = sourceprovider.GetString(Context, relativeurl);
+            string htmlBody = sourceProvider.GetString(Context, relativeurl);
 
-            if (string.IsNullOrEmpty(htmlbody))
+            if (string.IsNullOrEmpty(htmlBody))
             {
                 return response;
             }
+            else if (option.HtmlRaw)
+            {
+                response.Body = htmlBody;
+                return response;
+            }
 
-            var hashid = Lib.Security.Hash.ComputeHashGuid(htmlbody);
+            var hashId = Lib.Security.Hash.ComputeHashGuid(htmlBody);
 
+            // this seems like only for backend.
             var EvaluatorOption = new EvaluatorOption();
             EvaluatorOption.EnableImageBrowserCache = true;
-            EvaluatorOption.EnableJsCssBrowserCache = true; 
-             
-            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
-             
-            var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));
+            EvaluatorOption.EnableJsCssBrowserCache = true;
+
+
+            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent;
+
+            var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashId, () => RenderEvaluator.Evaluate(htmlBody, EvaluatorOption));
 
             // set the culture...
-            string culture = Context.Culture; 
+            string culture = Context.Culture;
             if (!string.IsNullOrEmpty(culture))
             {
-                Context.DataContext.Push("culture", culture); 
+                Context.DataContext.Push("culture", culture);
             }
 
             string result = Kooboo.Sites.Render.RenderHelper.Render(RenderPlan, Context);
@@ -204,7 +214,7 @@ namespace Kooboo.Render
 
             return response;
         }
-         
-         
+
+
     }
 }

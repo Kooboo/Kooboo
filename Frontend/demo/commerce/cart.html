@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <script>
+      function getImage(data) {
+        var url = data.images[0]?.url;
+        if (url) url += `?SiteId=cacaf387-ea2e-6e6a-7bb6-b0e58c00f500`;
+        return url;
+      }
+    </script>
+    <div id="app">
+      <k-page title="cart" back="/_Admin/component.html">
+        
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

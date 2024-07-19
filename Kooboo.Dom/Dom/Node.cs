@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -190,7 +188,7 @@ namespace Kooboo.Dom
 
         public Document ownerDocument;
 
-        public Node parentNode;
+        public Node parentNode { get; set; }
 
         /// <summary>
         /// A node's parent of type Element is known as a parent element. If the node has a parent of a different type, its parent element is null.

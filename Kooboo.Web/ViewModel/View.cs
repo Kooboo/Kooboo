@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -14,10 +10,12 @@ namespace Kooboo.Web.ViewModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-  
+
         public DateTime LastModified { get; set; }
 
         public string Preview { get; set; }
+
+        public string RelativeUrl { get; set; }
 
         public Guid KeyHash { get; set; }
 
@@ -29,7 +27,7 @@ namespace Kooboo.Web.ViewModel
     }
 
     public class ViewViewModel
-    { 
+    {
         public string Name { get; set; }
 
         public string Body { get; set; }
@@ -37,10 +35,14 @@ namespace Kooboo.Web.ViewModel
         public string DummyLayout { get; set; }
 
         public Dictionary<string, List<string>> Layouts = new Dictionary<string, List<string>>();
+
+        public long Version { get; set; }
+
+        public List<ContentProperty> PropDefines { get; set; } = new List<ContentProperty>();
     }
 
 
-    public class ViewEditViewModel
+    public class ViewEditViewModel : IDiffChecker
     {
         public Guid Id { get; set; }
 
@@ -50,8 +52,13 @@ namespace Kooboo.Web.ViewModel
 
         public List<ViewDataMethod> DataSources { get; set; }
 
+        public List<ContentProperty> PropDefines { get; set; } = new List<ContentProperty>();
+
+        public long Version { get; set; }
+        public bool? EnableDiffChecker { get; set; }
+
         /// public List<FormBinding> FormBindings { get; set; }
 
     }
-     
+
 }

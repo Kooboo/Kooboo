@@ -3,11 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -15,7 +12,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -58,11 +55,11 @@ namespace Kooboo.Mail.Imap.Commands
             if (Folder.ReservedFolder.Any(o => folderName.StartsWith(o.Value, StringComparison.OrdinalIgnoreCase)))
                 throw new CommandException("NO", "Reserved folders are always subscribed");
 
-            var folder = session.MailDb.Folders.Get(folderName);
+            var folder = session.MailDb.Folder.Get(folderName);
             if (folder == null)
                 throw new CommandException("NO", "No such a folder");
 
-            session.MailDb.Folders.Subscribe(folder);
+            session.MailDb.Folder.Subscribe(folder);
 
             return this.NullResult();
         }

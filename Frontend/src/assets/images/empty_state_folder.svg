@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="195px" height="159px" viewBox="0 0 195 159" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>admin/lv1/ empty_state_folder</title>
+    <defs>
+        <linearGradient x1="82.5076628%" y1="58.5514836%" x2="77.9110629%" y2="27.3096469%" id="linearGradient-1">
+            <stop stop-color="#D0DEFF" offset="0%"></stop>
+            <stop stop-color="#A2C0FF" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-2" x="0" y="0" width="164.966167" height="119.999942"></rect>
+        <linearGradient x1="57.4280952%" y1="4.09189526%" x2="79.1270324%" y2="28.940081%" id="linearGradient-4">
+            <stop stop-color="#BED3FF" offset="0%"></stop>
+            <stop stop-color="#3D78F6" offset="100%"></stop>
+        </linearGradient>
+        <filter x="-35.3%" y="-30.0%" width="170.7%" height="160.0%" filterUnits="objectBoundingBox" id="filter-5">
+            <feGaussianBlur stdDeviation="9.79591837" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <linearGradient x1="100%" y1="49.0460467%" x2="0%" y2="52.7207485%" id="linearGradient-6">
+            <stop stop-color="#9DBCFF" offset="0%"></stop>
+            <stop stop-color="#BBCFFF" offset="100%"></stop>
+        </linearGradient>
+        <path d="M55.5555125,41.1222406 L54.0885833,36.1762366 C51.7691673,28.3559341 44.6029044,22.9942884 36.4698867,22.9942884 L0,22.9942884 L28.7708756,119.999942 L193.737027,119.999942 L170.342717,41.1222406 L55.5555125,41.1222406 Z" id="path-7"></path>
+        <linearGradient x1="76.1116028%" y1="46.1949682%" x2="23.8883972%" y2="60.8522445%" id="linearGradient-8">
+            <stop stop-color="#9DBCFF" offset="0%"></stop>
+            <stop stop-color="#BBCFFF" offset="100%"></stop>
+        </linearGradient>
+        <path d="M18.5,0 C8.288,0 0,8.192 0,18.2857143 C0,20.3337143 1.628,21.9428571 3.7,21.9428571 C5.772,21.9428571 7.4,20.3337143 7.4,18.2857143 C7.4,12.2148571 12.358,7.31428571 18.5,7.31428571 C24.642,7.31428571 29.6,12.2148571 29.6,18.2857143 C29.6,24.3565714 24.642,29.2571429 18.5,29.2571429 C16.428,29.2571429 14.8,30.8662857 14.8,32.9142857 L14.8,47.5428571 C14.8,49.5908571 16.428,51.2 18.5,51.2 C20.572,51.2 22.2,49.5908571 22.2,47.5428571 L22.2,36.2057143 C30.636,34.5234286 37,27.136 37,18.2857143 C37,8.192 28.712,0 18.5,0 Z" id="path-9"></path>
+        <linearGradient x1="100%" y1="46.3443036%" x2="0%" y2="60.4263285%" id="linearGradient-10">
+            <stop stop-color="#9DBCFF" offset="0%"></stop>
+            <stop stop-color="#BBCFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="控件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="admin/lv1/-empty_state_folder" transform="translate(-176.000000, 0.000000)">
+            <g transform="translate(176.000000, 0.000000)">
+                <g id="编组" transform="translate(0.000000, 38.000000)">
+                    <g id="Rectangle" transform="translate(28.770860, 0.000000)">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <use id="蒙版" fill="url(#linearGradient-1)" fill-rule="nonzero" opacity="0.5" xlink:href="#path-2"></use>
+                        <rect fill="url(#linearGradient-4)" fill-rule="nonzero" opacity="0.5" filter="url(#filter-5)" mask="url(#mask-3)" x="90.2375436" y="30.2040816" width="83.1428571" height="97.9591837" rx="41.5714286"></rect>
+                    </g>
+                    <line x1="193.737027" y1="0" x2="193.737027" y2="119.999942" id="Path" stroke="#000000" stroke-width="0.832653061"></line>
+                    <g id="Path" fill-rule="nonzero">
+                        <use fill="#EDEEEF" xlink:href="#path-7"></use>
+                        <use fill="url(#linearGradient-6)" xlink:href="#path-7"></use>
+                    </g>
+                    <polyline id="Path" stroke="#000000" stroke-width="0.832653061" points="193.737027 120 170.342907 41.1221615 55.5555125 41.1221615"></polyline>
+                </g>
+                <g id="问号啊" transform="translate(93.000000, 0.000000)">
+                    <g id="路径">
+                        <use fill="#D8D8D8" xlink:href="#path-9"></use>
+                        <use fill="url(#linearGradient-8)" xlink:href="#path-9"></use>
+                    </g>
+                    <path d="M18.5,64 C20.904063,64 22.8529412,62.0897483 22.8529412,59.7333333 C22.8529412,57.3769184 20.904063,55.4666667 18.5,55.4666667 C16.095937,55.4666667 14.1470588,57.3769184 14.1470588,59.7333333 C14.1470588,62.0897483 16.095937,64 18.5,64 Z" id="椭圆形" fill="url(#linearGradient-10)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

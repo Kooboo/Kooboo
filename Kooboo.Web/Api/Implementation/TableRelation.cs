@@ -1,18 +1,17 @@
-﻿using Kooboo.Api;
+﻿using System.Linq;
+using Kooboo.Api;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class TableRelationApi : SiteObjectApi<TableRelation>
     {
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.VIEW)]
         public List<TableFieldsViewModel> getTablesAndFields(ApiCall call)
         {
             List<TableFieldsViewModel> Result = new List<TableFieldsViewModel>();
@@ -45,11 +44,13 @@ namespace Kooboo.Web.Api.Implementation
             return Result;
         }
 
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.EDIT)]
         public override Guid Post(ApiCall call)
         {
             return base.Post(call);
         }
 
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.VIEW)]
         public List<RelationTypeViewModel> GetRelationTypes(ApiCall call)
         {
             List<RelationTypeViewModel> Result = _GetRelationTypes(call);
@@ -71,38 +72,60 @@ namespace Kooboo.Web.Api.Implementation
             return Result;
         }
 
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.TABLE_RELATION, Action = Data.Permission.Action.VIEW)]
         public override List<object> List(ApiCall call)
         {
-            var types = _GetRelationTypes(call);
             var sitedb = call.Context.WebSite.SiteDb();
-            var list = sitedb.GetSiteRepository<TableRelationRepository>().All();
-
-            List<TableRelationViewModel> result = new List<TableRelationViewModel>();
-            foreach (var item in list)
-            {
-                var model = new TableRelationViewModel(item);
-                if (item.Relation == EnumTableRelation.OneOne)
+            return sitedb
+                .GetSiteRepository<TableRelationRepository>()
+                .All()
+                .Select(item =>
                 {
-                    model.relationName = Data.Language.Hardcoded.GetValue("OneOne", call.Context);
-                }
-                else if (item.Relation == EnumTableRelation.OneMany)
-                {
-                    model.relationName = Data.Language.Hardcoded.GetValue("OneMany", call.Context);
-                }
-                else if (item.Relation == EnumTableRelation.ManyMany)
-                {
-                    model.relationName = Data.Language.Hardcoded.GetValue("ManyMany", call.Context);
-                }
-                else if (item.Relation == EnumTableRelation.ManyOne)
-                {
-                    model.relationName = Data.Language.Hardcoded.GetValue("ManyOne", call.Context);
-                }
-
-                result.Add(model);
-
-            }
-
-            return result.ToList<object>();
+                    var model = new TableRelationViewModel(item);
+                    if (item.Relation == EnumTableRelation.OneOne)
+                    {
+                        model.relationName = Data.Language.Hardcoded.GetValue("OneOne", call.Context);
+                    }
+                    else if (item.Relation == EnumTableRelation.OneMany)
+                    {
+                        model.relationName = Data.Language.Hardcoded.GetValue("OneMany", call.Context);
+                    }
+                    else if (item.Relation == EnumTableRelation.ManyMany)
+                    {
+                        model.relationName = Data.Language.Hardcoded.GetValue("ManyMany", call.Context);
+                    }
+                    else if (item.Relation == EnumTableRelation.ManyOne)
+                    {
+                        model.relationName = Data.Language.Hardcoded.GetValue("ManyOne", call.Context);
+                    }
+                    return model;
+                })
+                .OrderBy(it => it.Name)
+                .ToList<object>();
         }
     }
 
@@ -136,9 +159,7 @@ namespace Kooboo.Web.Api.Implementation
         public EnumTableRelation Relation { get; set; }
 
         public string relationName { get; set; }
-
     }
-
 
 
     public class RelationTypeViewModel

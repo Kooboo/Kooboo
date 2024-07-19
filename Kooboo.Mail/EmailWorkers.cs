@@ -1,6 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System.Collections.Generic;   
+using System.Collections.Generic;
 using Kooboo.Tasks;
 
 namespace Kooboo.Mail
@@ -11,30 +11,22 @@ namespace Kooboo.Mail
         {
             Workers = new List<IWorkerStarter>();
             Workers.Add(new Smtp.SmtpServer("Receive"));
-             
+
             var imapServer = new Imap.ImapServer(143);
             Workers.Add(imapServer);
 
-            if (Data.AppSettings.IsOnlineServer)
+            //if (Data.AppSettings.IsOnlineServer)
+            //{
+            var dbcert = Kooboo.Data.SSL.SslCertificateProvider.SelectCertificate2(Settings.ImapDomain);
+
+            if (dbcert != null)
             {
-                var serverdomain =   Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
-
-                var dbcert = Kooboo.Data.GlobalDb.SslCertificate.GetByDomain(serverdomain)?.Content;
-
-                if (dbcert != null)
-                {
-                    var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(dbcert, "kooboo");
-                    if (cert != null)
-                    {
-                        var sslimapServer = new Imap.ImapServer(993, Imap.SslMode.SSL, cert);
-                        Workers.Add(sslimapServer);
-
-                        var sslSmtp = new Kooboo.Mail.Smtp.SmtpServer("sslreceive", 465, cert);
-                        Workers.Add(sslSmtp); 
-                    }   
-                }    
+                var sslimapServer = new Imap.ImapServer(993, Imap.SslMode.SSL);
+                Workers.Add(sslimapServer);
+                // var sslSmtp = new Kooboo.Mail.Smtp.SmtpServer("sslreceive", 465, dbcert);
+                // Workers.Add(sslSmtp);
             }
-                  
+            // }
             Workers.Add(new Smtp.SmtpServer("Relay", 587));
         }
 
@@ -42,17 +34,15 @@ namespace Kooboo.Mail
 
         public static void Start()
         {
-            Heartbeat.Instance.Start();
             foreach (var each in Workers)
             {
                 each.Start();
-            }  
-            Mail.Queue.MailQueueWorker.Instance.Start(); 
+            }
+            Mail.Queue.MailQueueWorker.Instance.Start();
         }
 
         public static void Stop()
         {
-            Heartbeat.Instance.Dispose();
             foreach (var each in Workers)
             {
                 each.Stop();

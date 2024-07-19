@@ -1,8 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -19,12 +18,22 @@ namespace Kooboo.IndexedDB.Helper
 
         public static bool IsWindow()
         {
-#if NETSTANDARD2_0
-            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
-#else
-            return true;
-#endif
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        }
 
+
+        public static void EnsureDirectoryExists(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        public static void EnsureFileDirectoryExists(string filePath)
+        {
+            var dir = Path.GetDirectoryName(filePath);
+            EnsureDirectoryExists(dir);
         }
     }
 }

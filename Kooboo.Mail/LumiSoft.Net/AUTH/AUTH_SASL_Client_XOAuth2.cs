@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -23,16 +22,20 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
         public AUTH_SASL_Client_XOAuth2(string userName, string accessToken)
         {
-            if(userName == null){
+            if (userName == null)
+            {
                 throw new ArgumentNullException("userName");
             }
-            if(userName == ""){
+            if (userName == "")
+            {
                 throw new ArgumentException("Argument 'userName' value must be specified.", "userName");
             }
-            if(accessToken == null){
+            if (accessToken == null)
+            {
                 throw new ArgumentNullException("accessToken");
             }
-            if(accessToken == ""){
+            if (accessToken == "")
+            {
                 throw new ArgumentException("Argument 'accessToken' value must be specified.", "accessToken");
             }
 
@@ -52,18 +55,21 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called when authentication is completed.</exception>
         public override byte[] Continue(byte[] serverResponse)
         {
-            if(m_IsCompleted){
+            if (m_IsCompleted)
+            {
                 throw new InvalidOperationException("Authentication is completed.");
             }
 
-            if(m_State == 0){
-                m_IsCompleted = true; 
+            if (m_State == 0)
+            {
+                m_IsCompleted = true;
 
-                string initialClientResponse = "user=" + m_UserName + "\u0001auth=Bearer " + m_AccessToken + "\u0001\u0001"; 
+                string initialClientResponse = "user=" + m_UserName + "\u0001auth=Bearer " + m_AccessToken + "\u0001\u0001";
 
                 return Encoding.UTF8.GetBytes(initialClientResponse);
             }
-            else{
+            else
+            {
                 return null;
             }
         }
@@ -78,7 +84,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsCompleted
         {
-            get{ return m_IsCompleted; }
+            get { return m_IsCompleted; }
         }
 
         /// <summary>
@@ -86,7 +92,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string Name
         {
-            get{ return "XOAUTH2"; }
+            get { return "XOAUTH2"; }
         }
 
         /// <summary>
@@ -94,7 +100,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         /// <summary>
@@ -102,7 +108,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool SupportsInitialResponse
         {
-            get{ return true; }
+            get { return true; }
         }
 
         #endregion

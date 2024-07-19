@@ -1,37 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Dom</AssemblyName>
-	<RootNamespace>Kooboo.Dom</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Dom</AssemblyName>
+		<RootNamespace>Kooboo.Dom</RootNamespace>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="CSSParser\ReferenceDoc\**" />
-    <Compile Remove="Doc\CSS Syntax Module Level 3_files\**" />
-    <Compile Remove="DomParser\8 The HTML syntax — HTML5_files\**" />
-    <EmbeddedResource Remove="CSSParser\ReferenceDoc\**" />
-    <EmbeddedResource Remove="Doc\CSS Syntax Module Level 3_files\**" />
-    <EmbeddedResource Remove="DomParser\8 The HTML syntax — HTML5_files\**" />
-    <None Remove="CSSParser\ReferenceDoc\**" />
-    <None Remove="Doc\CSS Syntax Module Level 3_files\**" />
-    <None Remove="DomParser\8 The HTML syntax — HTML5_files\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="CSSParser\ReferenceDoc\**" />
+		<Compile Remove="Doc\CSS Syntax Module Level 3_files\**" />
+		<Compile Remove="DomParser\8 The HTML syntax — HTML5_files\**" />
+		<EmbeddedResource Remove="CSSParser\ReferenceDoc\**" />
+		<EmbeddedResource Remove="Doc\CSS Syntax Module Level 3_files\**" />
+		<EmbeddedResource Remove="DomParser\8 The HTML syntax — HTML5_files\**" />
+		<None Remove="CSSParser\ReferenceDoc\**" />
+		<None Remove="Doc\CSS Syntax Module Level 3_files\**" />
+		<None Remove="DomParser\8 The HTML syntax — HTML5_files\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="CSSParser\AntlrParser.cs" />
-    <Compile Remove="CSSParser\CSSPraser.cs" />
-    <Compile Remove="CSSParser\ModelConverter.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="CSSParser\AntlrParser.cs" />
+		<Compile Remove="CSSParser\CSSPraser.cs" />
+		<Compile Remove="CSSParser\ModelConverter.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Doc\CSS Syntax Module Level 3.html" />
-    <None Remove="DomParser\8 The HTML syntax — HTML5.htm" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Doc\CSS Syntax Module Level 3.html" />
+		<None Remove="DomParser\8 The HTML syntax — HTML5.htm" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Doc\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Doc\" />
+	</ItemGroup>
 
 </Project>

@@ -1,0 +1,168 @@
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIwMDJlYWY4LTY4NDUtOGEwOC1jMzc0LTcyMjZiZmZjNzg4YSIsImtpbmQiOiJwYXNzd29yZCIsImlwIjoiNDgwPD0zNzdhNzw-PSIsInJlZGlyZWN0IjoiaHVhbmVudC5rb29ib28uY24iLCJleHAiOjE2NTY2NTM4Nzd9.NsNd93rnQoqJcxetkp0cByKmV4sOtPVxaJDlIP7LqSM
+
+### 检查域名是否可注册
+# domain: 域名 例如kooboo.com
+GET http://localhost/_api/v2/domain/IsAvailable?domain=kooboo.com HTTP/1.1
+Authorization: bearer {{token}}
+
+### 查看域名信息
+# domain: 域名 例如kooboo.com
+GET  http://localhost/_api/v2/domain/GetDomainInfo?domain=kooboo.com HTTP/1.1
+Authorization: bearer {{token}}
+
+
+### 注册域名
+# Name: length 1-60, 联系人名称（英文，CN、中国、网络、公司域名可用中文信息）
+# Country: 联系人所在国家 例如china
+# Province: 联系人所在省份（英文，CN、中国、网络、公司域名可用中文）
+# City: 联系人所在城市（英文，CN、中国、网络、公司域名可用中文）
+# Street: 联系人街道地址（英文，CN、中国、网络、公司域名可用中文）
+# PostalCode: length 1-10, 联系人邮编（字母数字横线空格组成）
+# Voice: length 1-17, 联系人电话号码（+国家代码.区号电话号码）
+# Email: length 1-60, 联系人邮箱
+# Password: length 6-10, 密码
+# Domain: 域名 例如kooboo.com
+# Period: 1-10 年，域名注册年数
+# CertificateType: (cn需要填写,其他不填) length 1-10, 证书类型：SFZ 身份证 YYZZ 营业执照 ORG 组织机构代码证 QT 其它
+# CertificateCode: (cn需要填写,其他不填) length 1-60, 证书号，证书类型所对应的证件上的编号
+# TemplateId: (cn需要填写,其他不填) CN/中国域名已实名模板 ID， 详情见 https://otecp.35.com/nwapi/apidoc/
+post  http://localhost/_api/v2/domain/CreateDomain HTTP/1.1
+Authorization: bearer {{token}}
+
+{
+    "Name":"yardi",
+    "Country":"China",
+    "Province":"FuJian",
+    "City":"XiaMen",
+    "Street":"XingLin",
+    "PostalCode":"362331",
+    "Voice":"+86.13359210283",
+    "Email":"abc@gmail.com",
+    "Password":"abc123",
+    "Domain":"kooboo1.com",
+    "Period":"1",
+    "CertificateType":"SFZ",
+    "CertificateCode":"350425199999999999",
+    "TemplateId":"kg35620b7c691fc9"
+}
+
+
+### 更新域名DNS
+# Domain length1-68，要修改的域名。域名的格式说明参考附件域名格式
+# NameServer1 Length1-120，域名 DNS
+# NameServer2 Length1-120，域名 DNS
+post  http://localhost/_api/v2/domain/UpdateDomainDns HTTP/1.1
+Authorization: bearer {{token}}
+
+{
+    "Domain":"kooboo.com",
+    "NameServer1":"ns2.dnscall.org",
+    "NameServer2":"ns8.dnscall.org"
+}
+
+### 实名认证
+/// <summary>
+///注册类型 E:组织 I:个人	
+/// <summary>
+# public string registrant_type { get; set; }
+# /// <summary>
+# ///联系人名字	
+# /// <summary>
+# public string name { get; set; }
+# /// <summary>
+# ///联系人名字(英语)	
+# /// <summary>
+# public string name_e { get; set; }
+# /// <summary>
+# ///联系人组织(母语) 如果个人 组织联系人和联系人名字一样	
+# /// <summary>
+# public string org { get; set; }
+# /// <summary>
+# ///联系人组织(英语) 如果个人 组织联系人和联系人名字一样	
+# /// <summary>
+# public string org_e { get; set; }
+# /// <summary>
+# ///国家	
+# /// <summary>
+# public string country { get; set; }
+# /// <summary>
+# ///模板支持的域名类型 1:非国内域名,2:国内域名	
+# /// <summary>
+# public string type { get; set; }
+# /// <summary>
+# ///省份(母语)	
+# /// <summary>
+# public string province { get; set; }
+# /// <summary>
+# ///省份(英语)	
+# /// <summary>
+# public string province_e { get; set; }
+# /// <summary>
+# ///城市(母语)	
+# /// <summary>
+# public string city { get; set; }
+# /// <summary>
+# ///城市(英语)	
+# /// <summary>
+# public string city_e { get; set; }
+# /// <summary>
+# ///地址(母语)	
+# /// <summary>
+# public string address { get; set; }
+# /// <summary>
+# ///地址(英语)	
+# /// <summary>
+# public string address_e { get; set; }
+# /// <summary>
+# ///邮政编码	
+# /// <summary>
+# public string postalcode { get; set; }
+# /// <summary>
+# ///联系电话 +86.17108479439	
+# /// <summary>
+# public string telephone { get; set; }
+# /// <summary>
+# ///传真 +86.17108479439	
+# /// <summary>
+# public string fax { get; set; }
+# /// <summary>
+# ///邮箱	
+# /// <summary>
+# public string email { get; set; }
+# /// <summary>
+# ///证件类型编码 如果个人 可以不用传	
+# /// <summary>
+# public string org_type { get; set; }
+# /// <summary>
+# ///证件号 如果个人 可以不用传	
+# /// <summary>
+# public string org_number { get; set; }
+# /// <summary>
+# ///图片数据 base64 如果个人 可以不用传	
+# /// <summary>
+# public string org_file_data { get; set; }
+# /// <summary>
+# ///证件类型编码	
+# /// <summary>
+# public string id_type { get; set; }
+# /// <summary>
+# ///证件号	
+# /// <summary>
+# public string id_number { get; set; }
+# /// <summary>
+# ///图片数据 base64	
+# /// <summary>
+# public string id_file_data { get; set; }
+post  http://localhost/_api/v2/domain/RealAuth HTTP/1.1
+Authorization: bearer {{token}}
+
+{
+}
+
+### 查看实名认证进度
+# ContactId: 调用实名认证返回的id
+
+# result
+# audit_status 审核状态 0:创建失败,1:未提交资料,2:待审核,3:审核拒绝,4:初审通过,5:待注册局审核,6:复审通过,7:客户撤销,10:完成
+GET  http://localhost/_api/v2/domain/RealAuthProcess?ContactId=kg35620b7c691fc9 HTTP/1.1
+Authorization: bearer {{token}}

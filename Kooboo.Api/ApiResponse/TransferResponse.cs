@@ -37,10 +37,10 @@ namespace Kooboo.Api.ApiResponse
             get; set;
         }
     }
-     
+
 
     public class SingleResponse : TransferResponse
-    { 
+    {
         public bool Finish { get; set; }
         public Object Page { get; set; }
     }

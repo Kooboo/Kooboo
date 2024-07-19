@@ -1,8 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Kooboo.Lib.Helper
 {
@@ -10,22 +8,12 @@ namespace Kooboo.Lib.Helper
     {
         public static bool IsLinux()
         {
-#if NETSTANDARD2_0
-            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux);
-#else
-             return false;
-#endif
-
+            return !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
 
         public static bool IsWindow()
         {
-#if NETSTANDARD2_0
-            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
-#else
-            return true;
-#endif
-
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
     }
 }

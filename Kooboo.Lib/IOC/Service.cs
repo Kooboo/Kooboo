@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -134,6 +133,12 @@ namespace Kooboo.Lib.IOC
             SingleTons[name] = instance;
         }
 
+
+        public static void AddInstance<T>(T instance)
+        {
+            var list = GetInstances<T>();
+        }
+
         public static List<Type> GetImplementationTypes<T>()
         {
             return GetImplementationTypes(typeof(T));
@@ -152,7 +157,7 @@ namespace Kooboo.Lib.IOC
                 {
                     if (!PriorityType.ContainsKey(name))
                     {
-                        Type SelectedType=null;
+                        Type SelectedType = null;
 
                         var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(type);
 
@@ -162,38 +167,39 @@ namespace Kooboo.Lib.IOC
                         {
                             foreach (var item in types)
                             {
-                                var prio = GetTypePriority(item); 
+                                var prio = GetTypePriority(item);
 
                                 if (SelectedType == null)
-                                { SelectedType = item;
-                                    current = prio; 
+                                {
+                                    SelectedType = item;
+                                    current = prio;
                                 }
-                                else 
+                                else
                                 {
                                     if (prio > current)
                                     {
                                         prio = current;
-                                        SelectedType = item; 
+                                        SelectedType = item;
                                     }
 
                                 }
                             }
-                        } 
+                        }
 
                         PriorityType[name] = SelectedType;
-                        
+
 
                     }
-                } 
+                }
             }
 
-            var righttype = PriorityType[name]; 
-            if (righttype !=null)
+            var righttype = PriorityType[name];
+            if (righttype != null)
             {
                 var instance = Activator.CreateInstance(righttype);
-                return (T)instance; 
+                return (T)instance;
             }
-            return default(T); 
+            return default(T);
         }
 
         public static long GetTypePriority(Type objType)
@@ -212,7 +218,7 @@ namespace Kooboo.Lib.IOC
 
         public static List<Type> GetImplementationTypes(Type InterfaceType)
         {
-            string name = InterfaceType.Name;
+            string name = InterfaceType.FullName;
             if (!InterfaceTypes.ContainsKey(name))
             {
                 lock (_lock)
@@ -245,7 +251,7 @@ namespace Kooboo.Lib.IOC
 
         public static List<object> GetInstances(Type InterfaceType)
         {
-            string name = InterfaceType.Name;
+            string name = InterfaceType.FullName;
 
             if (!Instances.ContainsKey(name))
             {

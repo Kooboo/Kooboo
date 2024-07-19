@@ -1,16 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Btree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.BTree;
 
 namespace Kooboo.IndexedDB.Dynamic
-{  
+{
     public interface ITableIndex
-    {  
+    {
         /// <summary>
         ///  the key length of this index. 
         /// </summary>
@@ -26,7 +23,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
         long Increment { get; set; }
 
-        long NextIncrement();  
+        long NextIncrement();
 
         Type keyType { get; set; }
 
@@ -35,18 +32,18 @@ namespace Kooboo.IndexedDB.Dynamic
         bool IsSystem { get; set; }
 
         bool Add(object key, Int64 blockPosition);
-         
-        void Update(object  oldKey,   Int64 oldBlockPosition, Int64 newBlockPosition);
 
-        void Update(object oldKey, object newkey, long oldBlockPosition, long newBlockPosition); 
-       
+        void Update(object oldKey, Int64 oldBlockPosition, Int64 newBlockPosition);
+
+        void Update(object oldKey, object newkey, long oldBlockPosition, long newBlockPosition);
+
         long Get(object key);
 
-        List<long> List(object key); 
+        List<long> List(object key);
 
-        bool Del(object  key, Int64 blockPosition);
+        bool Del(object key, Int64 blockPosition);
 
-        List<Int64> Del(object key);  
+        List<Int64> Del(object key);
 
         /// <summary>
         /// count of the total records number.
@@ -59,13 +56,13 @@ namespace Kooboo.IndexedDB.Dynamic
         ItemCollection GetCollection(byte[] startBytes, byte[] endBytes, bool lowerOpen, bool upperOpen, bool ascending);
 
         KeyBytesCollection AllKeys(bool ascending);
-         
+
 
         void Close();
 
         void Flush();
 
-        void DelSelf(); 
+        void DelSelf();
     }
-     
+
 }

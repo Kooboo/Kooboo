@@ -16,7 +16,7 @@
 
         public override Node Evaluate(Env env)
         {
-            return new Assignment(Key, Value.Evaluate(env)) {Location = Location};
+            return new Assignment(Key, Value.Evaluate(env)) { Location = Location };
         }
 
         public override void AppendCSS(Env env)

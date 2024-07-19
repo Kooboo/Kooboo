@@ -1,13 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Api;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Kooboo.Api;
+using Kooboo.Data.Events;
+using Kooboo.Data.Interface;
+using Kooboo.Data.Permission;
+using Kooboo.Events;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -19,6 +20,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireUser => true;
 
+        [Permission(Feature.CONFIG, Action = Data.Permission.Action.VIEW)]
         public List<SettingItem> Get(ApiCall call, string name)
         {
             var sitedb = call.Context.WebSite.SiteDb();
@@ -40,6 +42,7 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
+        [Permission(Feature.CONFIG, Action = Data.Permission.Action.VIEW)]
         public List<CoreSettingViewModel> List(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -92,14 +95,22 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        [Permission(Feature.CONFIG, Action = Data.Permission.Action.VIEW)]
         private List<SettingItem> GetValues(Dictionary<string, string> values, Type type)
         {
             values = new Dictionary<string, string>(values, StringComparer.OrdinalIgnoreCase);
             var result = new List<SettingItem>();
             var allfields = Lib.Reflection.TypeHelper.GetPublicPropertyOrFields(type);
+            var defaultObject = Activator.CreateInstance(type);
             foreach (var field in allfields)
             {
                 values.TryGetValue(field.Name, out var rawValue);
+
+                if (string.IsNullOrEmpty(rawValue))
+                {
+                    rawValue = type.GetProperty(field.Name).GetValue(defaultObject)?.ToString();
+                }
+
                 var item = new SettingItem { Name = field.Name, Value = rawValue };
 
                 var valueType = GetValueType(field);
@@ -136,6 +147,7 @@ namespace Kooboo.Web.Api.Implementation
             return typeof(string);
         }
 
+        [Permission(Feature.CONFIG, Action = Data.Permission.Action.EDIT)]
         public void Update(string name, Dictionary<string, string> model, ApiCall call)
         {
             var Core = new CoreSetting
@@ -145,6 +157,12 @@ namespace Kooboo.Web.Api.Implementation
             };
             call.WebSite.SiteDb().CoreSetting.AddOrUpdate(Core);
 
+            var coreSettingEvent = new CoreSettingChangeEvent()
+            {
+                Name = name,
+                CoreSettingRenderContext = call.Context
+            };
+            EventBus.Raise(coreSettingEvent, call.Context);
         }
 
         private string GetName(object instance)

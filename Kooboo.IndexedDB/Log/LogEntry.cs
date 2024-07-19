@@ -18,79 +18,79 @@ namespace Kooboo.IndexedDB
             get; set;
         }
 
-        private string _storename;
+        private string _storeName;
 
         public string StoreName
         {
             get
             {
-                return _storename;
+                return _storeName;
             }
             set
             {
-                _storename = value;
-                _storenamehash = _storename.GetHashCode32();
+                _storeName = value;
+                _storeNameHash = _storeName.GetHashCode32();
             }
         }
 
-        private int _storenamehash;
+        private int _storeNameHash;
 
         public int StoreNameHash
         {
             get
             {
-                if (_storenamehash == default(int))
+                if (_storeNameHash == default(int))
                 {
-                    if (!string.IsNullOrEmpty(_storename))
+                    if (!string.IsNullOrEmpty(_storeName))
                     {
-                        _storenamehash = _storename.GetHashCode32();
+                        _storeNameHash = _storeName.GetHashCode32();
                     }
-                    return _storenamehash;
+                    return _storeNameHash;
                 }
-                return _storenamehash;
+                return _storeNameHash;
             }
             set
             {
-                _storenamehash = value;
+                _storeNameHash = value;
             }
         }
 
 
-        private string _tablename { get; set; }
+        private string _tableName { get; set; }
 
         public string TableName
         {
             get
             {
-                return _tablename;
+                return _tableName;
             }
             set
             {
-                _tablename = value;
-                _tablenamehash = _tablename.GetHashCode32();
+                _tableName = value;
+                _tableNameHash = _tableName.GetHashCode32();
             }
         }
 
 
-        private int _tablenamehash;
+        private int _tableNameHash;
 
         public int TableNameHash
         {
             get
             {
-                if (_tablenamehash == default(int))
+                if (_tableNameHash == default(int))
                 {
-                    if (!string.IsNullOrEmpty(_tablename))
+                    if (!string.IsNullOrEmpty(_tableName))
                     {
-                        _tablenamehash = _tablename.GetHashCode32();
+                        _tableNameHash = _tableName.GetHashCode32();
                     }
-                    return _tablenamehash;
+                    return _tableNameHash;
                 }
-                return _tablenamehash;
+                return _tableNameHash;
             }
             set
             {
-                _tablenamehash = value;
+                _tableNameHash = value;
             }
         }
 
@@ -107,7 +107,7 @@ namespace Kooboo.IndexedDB
 
         public Guid UserId { get; set; }
 
-        private byte[] _keybytes;
+        private byte[] _keyBytes;
 
         /// <summary>
         /// The key value in the format of byte array. 
@@ -116,12 +116,12 @@ namespace Kooboo.IndexedDB
         {
             get
             {
-                return _keybytes;
+                return _keyBytes;
             }
             set
             {
-                _keybytes = value;
-                _keyHash = ToHashGuid(_keybytes);
+                _keyBytes = value;
+                _keyHash = ToHashGuid(_keyBytes);
             }
         }
 
@@ -135,7 +135,7 @@ namespace Kooboo.IndexedDB
             {
                 if (_keyHash == default(Guid))
                 {
-                    _keyHash = ToHashGuid(_keybytes);
+                    _keyHash = ToHashGuid(_keyBytes);
                 }
                 return _keyHash;
             }
@@ -152,24 +152,24 @@ namespace Kooboo.IndexedDB
         /// </summary>
         public EditType EditType { get; set; }
 
-        private DateTime _updatetime;
+        private DateTime _updateTime;
         public DateTime UpdateTime
         {
             get
             {
-                if (_updatetime == default(DateTime))
+                if (_updateTime == default(DateTime))
                 {
-                    _updatetime = DateTime.UtcNow;
+                    _updateTime = DateTime.UtcNow;
                 }
-                return _updatetime;
+                return _updateTime;
             }
             set
             {
-                _updatetime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+                _updateTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             }
         }
 
-        private Int64 _timetick;
+        private Int64 _timeTick;
 
         /// <summary>
         /// use timetick instead of datatime to roll back items. Tick is smaller and more accurace than datetime. 
@@ -178,15 +178,15 @@ namespace Kooboo.IndexedDB
         {
             get
             {
-                if (_timetick == default(Int64))
+                if (_timeTick == default(Int64))
                 {
-                    _timetick = UpdateTime.Ticks;
+                    _timeTick = UpdateTime.Ticks;
                 }
-                return _timetick;
+                return _timeTick;
             }
             set
             {
-                _timetick = value;
+                _timeTick = value;
             }
         }
 

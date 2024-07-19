@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.IndexedDB
+﻿namespace Kooboo.IndexedDB
 {
-  public  class FilePart
+    public class FilePart
     {
         public string FullFileName { get; set; }
 

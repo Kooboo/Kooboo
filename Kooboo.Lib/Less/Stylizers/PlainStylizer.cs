@@ -10,7 +10,7 @@
 
             var callStr = "";
 
-            if(zone.CallZone != null)
+            if (zone.CallZone != null)
             {
                 var callFile = "";
 

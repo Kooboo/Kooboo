@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Web;
 using System.Net;
 using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 
 namespace LumiSoft.Net.AUTH
 {
@@ -13,21 +12,21 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_Gmail_OAuth1_3leg
     {
-        private string m_ConsumerKey        = null;
-        private string m_ConsumerSecret     = null;
-        private string m_Scope              = "https://mail.google.com/ https://www.googleapis.com/auth/userinfo.email";        
-        private string m_RequestToken       = null;
+        private string m_ConsumerKey = null;
+        private string m_ConsumerSecret = null;
+        private string m_Scope = "https://mail.google.com/ https://www.googleapis.com/auth/userinfo.email";
+        private string m_RequestToken = null;
         private string m_RequestTokenSecret = null;
-        private string m_AccessToken        = null;
-        private string m_AccessTokenSecret  = null;
-        private string m_Email              = null;
-        private Random m_pRandom            = null;
+        private string m_AccessToken = null;
+        private string m_AccessTokenSecret = null;
+        private string m_Email = null;
+        private Random m_pRandom = null;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public AUTH_Gmail_OAuth1_3leg() : this("anonymous","anonymous")
-        {            
+        public AUTH_Gmail_OAuth1_3leg() : this("anonymous", "anonymous")
+        {
         }
 
         /// <summary>
@@ -37,22 +36,26 @@ namespace LumiSoft.Net.AUTH
         /// <param name="consumerSecret">OAuth consumer secret.</param>
         /// <exception cref="ArgumentNullException">Is riased when <b>consumerKey</b> or <b>consumerSecret</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is riased when any of the arguments has invalid value.</exception>
-        public AUTH_Gmail_OAuth1_3leg(string consumerKey,string consumerSecret)
+        public AUTH_Gmail_OAuth1_3leg(string consumerKey, string consumerSecret)
         {
-            if(consumerKey == null){
+            if (consumerKey == null)
+            {
                 throw new ArgumentNullException("consumerKey");
             }
-            if(consumerKey == ""){
-                throw new ArgumentException("Argument 'consumerKey' value must be specified.","consumerKey");
+            if (consumerKey == "")
+            {
+                throw new ArgumentException("Argument 'consumerKey' value must be specified.", "consumerKey");
             }
-            if(consumerSecret == null){
+            if (consumerSecret == null)
+            {
                 throw new ArgumentNullException("consumerSecret");
             }
-            if(consumerSecret == ""){
-                throw new ArgumentException("Argument 'consumerSecret' value must be specified.","consumerSecret");
+            if (consumerSecret == "")
+            {
+                throw new ArgumentException("Argument 'consumerSecret' value must be specified.", "consumerSecret");
             }
 
-            m_ConsumerKey    = consumerKey;
+            m_ConsumerKey = consumerKey;
             m_ConsumerSecret = consumerSecret;
 
             m_pRandom = new Random();
@@ -78,19 +81,21 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called in invalid state.</exception>
         public void GetRequestToken(string callback)
         {
-            if(callback == null){
+            if (callback == null)
+            {
                 throw new ArgumentNullException("callback");
             }
-            if(!string.IsNullOrEmpty(m_RequestToken)){
+            if (!string.IsNullOrEmpty(m_RequestToken))
+            {
                 throw new InvalidOperationException("Invalid state, you have already called this 'GetRequestToken' method.");
             }
 
             // For more info see: http://googlecodesamples.com/oauth_playground/
 
             string timestamp = GenerateTimeStamp();
-            string nonce     = GenerateNonce();
-                                    
-            string url    = "https://www.google.com/accounts/OAuthGetRequestToken?scope=" + UrlEncode(m_Scope);
+            string nonce = GenerateNonce();
+
+            string url = "https://www.google.com/accounts/OAuthGetRequestToken?scope=" + UrlEncode(m_Scope);
             string sigUrl = "https://www.google.com/accounts/OAuthGetRequestToken";
 
             // Build signature base.
@@ -102,11 +107,11 @@ namespace LumiSoft.Net.AUTH
             xxx.Append("&oauth_timestamp=" + UrlEncode(timestamp));
             xxx.Append("&oauth_version=" + UrlEncode("1.0"));
             xxx.Append("&scope=" + UrlEncode(m_Scope));
-            string signatureBase = "GET" + "&" + UrlEncode(sigUrl) + "&" +  UrlEncode(xxx.ToString());
+            string signatureBase = "GET" + "&" + UrlEncode(sigUrl) + "&" + UrlEncode(xxx.ToString());
 
             // Calculate signature.
-            string signature = ComputeHmacSha1Signature(signatureBase,m_ConsumerSecret,null);
-                        
+            string signature = ComputeHmacSha1Signature(signatureBase, m_ConsumerSecret, null);
+
             //Build Authorization header.
             StringBuilder authHeader = new StringBuilder();
             authHeader.Append("Authorization: OAuth ");
@@ -122,14 +127,19 @@ namespace LumiSoft.Net.AUTH
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             request.Headers.Add(authHeader.ToString());
-            using(WebResponse response = request.GetResponse()){
-                using(StreamReader reader = new StreamReader(response.GetResponseStream())){
-                    foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&')){
+            using (WebResponse response = request.GetResponse())
+            {
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    foreach (string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&'))
+                    {
                         string[] name_value = parameter.Split('=');
-                        if(string.Equals(name_value[0],"oauth_token",StringComparison.InvariantCultureIgnoreCase)){
+                        if (string.Equals(name_value[0], "oauth_token", StringComparison.InvariantCultureIgnoreCase))
+                        {
                             m_RequestToken = name_value[1];
                         }
-                        else if(string.Equals(name_value[0],"oauth_token_secret",StringComparison.InvariantCultureIgnoreCase)){
+                        else if (string.Equals(name_value[0], "oauth_token_secret", StringComparison.InvariantCultureIgnoreCase))
+                        {
                             m_RequestTokenSecret = name_value[1];
                         }
                     }
@@ -147,7 +157,8 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Returns Gmail authorization Url.</returns>
         public string GetAuthorizationUrl()
         {
-            if(m_RequestToken == null){
+            if (m_RequestToken == null)
+            {
                 throw new InvalidOperationException("You need call method 'GetRequestToken' before.");
             }
 
@@ -167,25 +178,29 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called in invalid state.</exception>
         public void GetAccessToken(string verificationCode)
         {
-            if(verificationCode == null){
+            if (verificationCode == null)
+            {
                 throw new ArgumentNullException("verificationCode");
             }
-            if(verificationCode == ""){
-                throw new ArgumentException("Argument 'verificationCode' value must be specified.","verificationCode");
+            if (verificationCode == "")
+            {
+                throw new ArgumentException("Argument 'verificationCode' value must be specified.", "verificationCode");
             }
-            if(string.IsNullOrEmpty(m_RequestToken)){
+            if (string.IsNullOrEmpty(m_RequestToken))
+            {
                 throw new InvalidOperationException("Invalid state, you need to call 'GetRequestToken' method first.");
             }
-            if(!string.IsNullOrEmpty(m_AccessToken)){
+            if (!string.IsNullOrEmpty(m_AccessToken))
+            {
                 throw new InvalidOperationException("Invalid state, you have already called this 'GetAccessToken' method.");
             }
 
             // For more info see: http://googlecodesamples.com/oauth_playground/
 
-            string url       = "https://www.google.com/accounts/OAuthGetAccessToken";
+            string url = "https://www.google.com/accounts/OAuthGetAccessToken";
             string timestamp = GenerateTimeStamp();
-            string nonce     = GenerateNonce();
-            
+            string nonce = GenerateNonce();
+
             // Build signature base.
             StringBuilder xxx = new StringBuilder();
             xxx.Append("oauth_consumer_key=" + UrlEncode(m_ConsumerKey));
@@ -195,11 +210,11 @@ namespace LumiSoft.Net.AUTH
             xxx.Append("&oauth_token=" + UrlEncode(m_RequestToken));
             xxx.Append("&oauth_verifier=" + UrlEncode(verificationCode));
             xxx.Append("&oauth_version=" + UrlEncode("1.0"));
-            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" +  UrlEncode(xxx.ToString());
+            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" + UrlEncode(xxx.ToString());
 
             // Calculate signature.
-            string signature = ComputeHmacSha1Signature(signatureBase,m_ConsumerSecret,m_RequestTokenSecret);
-            
+            string signature = ComputeHmacSha1Signature(signatureBase, m_ConsumerSecret, m_RequestTokenSecret);
+
             //Build Authorization header.
             StringBuilder authHeader = new StringBuilder();
             authHeader.Append("Authorization: OAuth ");
@@ -216,14 +231,19 @@ namespace LumiSoft.Net.AUTH
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             request.Headers.Add(authHeader.ToString());
-            using(WebResponse response = request.GetResponse()){
-                using(StreamReader reader = new StreamReader(response.GetResponseStream())){
-                    foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&')){
+            using (WebResponse response = request.GetResponse())
+            {
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    foreach (string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&'))
+                    {
                         string[] name_value = parameter.Split('=');
-                        if(string.Equals(name_value[0],"oauth_token",StringComparison.InvariantCultureIgnoreCase)){
+                        if (string.Equals(name_value[0], "oauth_token", StringComparison.InvariantCultureIgnoreCase))
+                        {
                             m_AccessToken = name_value[1];
                         }
-                        else if(string.Equals(name_value[0],"oauth_token_secret",StringComparison.InvariantCultureIgnoreCase)){
+                        else if (string.Equals(name_value[0], "oauth_token_secret", StringComparison.InvariantCultureIgnoreCase))
+                        {
                             m_AccessTokenSecret = name_value[1];
                         }
                     }
@@ -255,19 +275,22 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called in invalid state.</exception>
         public string GetXOAuthStringForSmtp(string email)
         {
-            if(email == null){
+            if (email == null)
+            {
                 throw new ArgumentNullException("email");
             }
-            if(email == ""){
-                throw new ArgumentException("Argument 'email' value must be specified.","email");
+            if (email == "")
+            {
+                throw new ArgumentException("Argument 'email' value must be specified.", "email");
             }
-            if(string.IsNullOrEmpty(m_AccessToken)){
+            if (string.IsNullOrEmpty(m_AccessToken))
+            {
                 throw new InvalidOperationException("Invalid state, you need to call 'GetAccessToken' method first.");
             }
 
-            string url       = "https://mail.google.com/mail/b/" + email + "/smtp/";
+            string url = "https://mail.google.com/mail/b/" + email + "/smtp/";
             string timestamp = GenerateTimeStamp();
-            string nonce     = GenerateNonce();
+            string nonce = GenerateNonce();
 
             // Build signature base.
             StringBuilder xxx = new StringBuilder();
@@ -277,10 +300,10 @@ namespace LumiSoft.Net.AUTH
             xxx.Append("&oauth_timestamp=" + UrlEncode(timestamp));
             xxx.Append("&oauth_token=" + UrlEncode(m_AccessToken));
             xxx.Append("&oauth_version=" + UrlEncode("1.0"));
-            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" +  UrlEncode(xxx.ToString());
+            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" + UrlEncode(xxx.ToString());
 
             // Calculate signature.
-            string signature = ComputeHmacSha1Signature(signatureBase,m_ConsumerSecret,m_AccessTokenSecret);
+            string signature = ComputeHmacSha1Signature(signatureBase, m_ConsumerSecret, m_AccessTokenSecret);
 
             StringBuilder retVal = new StringBuilder();
             retVal.Append("GET ");
@@ -320,19 +343,22 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called in invalid state.</exception>
         public string GetXOAuthStringForImap(string email)
         {
-            if(email == null){
+            if (email == null)
+            {
                 throw new ArgumentNullException("email");
             }
-            if(email == ""){
-                throw new ArgumentException("Argument 'email' value must be specified.","email");
+            if (email == "")
+            {
+                throw new ArgumentException("Argument 'email' value must be specified.", "email");
             }
-            if(string.IsNullOrEmpty(m_AccessToken)){
+            if (string.IsNullOrEmpty(m_AccessToken))
+            {
                 throw new InvalidOperationException("Invalid state, you need to call 'GetAccessToken' method first.");
             }
 
-            string url       = "https://mail.google.com/mail/b/" + email + "/imap/";
+            string url = "https://mail.google.com/mail/b/" + email + "/imap/";
             string timestamp = GenerateTimeStamp();
-            string nonce     = GenerateNonce();
+            string nonce = GenerateNonce();
 
             // Build signature base.
             StringBuilder xxx = new StringBuilder();
@@ -342,10 +368,10 @@ namespace LumiSoft.Net.AUTH
             xxx.Append("&oauth_timestamp=" + UrlEncode(timestamp));
             xxx.Append("&oauth_token=" + UrlEncode(m_AccessToken));
             xxx.Append("&oauth_version=" + UrlEncode("1.0"));
-            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" +  UrlEncode(xxx.ToString());
+            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" + UrlEncode(xxx.ToString());
 
             // Calculate signature.
-            string signature = ComputeHmacSha1Signature(signatureBase,m_ConsumerSecret,m_AccessTokenSecret);
+            string signature = ComputeHmacSha1Signature(signatureBase, m_ConsumerSecret, m_AccessTokenSecret);
 
             StringBuilder retVal = new StringBuilder();
             retVal.Append("GET ");
@@ -372,13 +398,14 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called in invalid state.</exception>
         public string GetUserEmail()
         {
-            if(string.IsNullOrEmpty(m_AccessToken)){
+            if (string.IsNullOrEmpty(m_AccessToken))
+            {
                 throw new InvalidOperationException("Invalid state, you need to call 'GetAccessToken' method first.");
             }
 
-            string url       = "https://www.googleapis.com/userinfo/email";
+            string url = "https://www.googleapis.com/userinfo/email";
             string timestamp = GenerateTimeStamp();
-            string nonce     = GenerateNonce();
+            string nonce = GenerateNonce();
 
             // Build signature base.
             StringBuilder xxx = new StringBuilder();
@@ -388,10 +415,10 @@ namespace LumiSoft.Net.AUTH
             xxx.Append("&oauth_timestamp=" + UrlEncode(timestamp));
             xxx.Append("&oauth_token=" + UrlEncode(m_AccessToken));
             xxx.Append("&oauth_version=" + UrlEncode("1.0"));
-            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" +  UrlEncode(xxx.ToString());
+            string signatureBase = "GET" + "&" + UrlEncode(url) + "&" + UrlEncode(xxx.ToString());
 
             // Calculate signature.
-            string signature = ComputeHmacSha1Signature(signatureBase,m_ConsumerSecret,m_AccessTokenSecret);
+            string signature = ComputeHmacSha1Signature(signatureBase, m_ConsumerSecret, m_AccessTokenSecret);
 
             //Build Authorization header.
             StringBuilder authHeader = new StringBuilder();
@@ -408,11 +435,15 @@ namespace LumiSoft.Net.AUTH
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             request.Headers.Add(authHeader.ToString());
-            using(WebResponse response = request.GetResponse()){
-                using(StreamReader reader = new StreamReader(response.GetResponseStream())){
-                    foreach(string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&')){
+            using (WebResponse response = request.GetResponse())
+            {
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    foreach (string parameter in HttpUtility.UrlDecode(reader.ReadToEnd()).Split('&'))
+                    {
                         string[] name_value = parameter.Split('=');
-                        if(string.Equals(name_value[0],"email",StringComparison.InvariantCultureIgnoreCase)){
+                        if (string.Equals(name_value[0], "email", StringComparison.InvariantCultureIgnoreCase))
+                        {
                             m_Email = name_value[1];
                         }
                     }
@@ -429,18 +460,22 @@ namespace LumiSoft.Net.AUTH
 
         private string UrlEncode(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
             string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
             StringBuilder retVal = new StringBuilder();
 
-            foreach (char symbol in value){
-                if(unreservedChars.IndexOf(symbol) != -1){
+            foreach (char symbol in value)
+            {
+                if (unreservedChars.IndexOf(symbol) != -1)
+                {
                     retVal.Append(symbol);
-                } 
-                else{
+                }
+                else
+                {
                     retVal.Append('%' + String.Format("{0:X2}", (int)symbol));
                 }
             }
@@ -452,12 +487,14 @@ namespace LumiSoft.Net.AUTH
 
         #region method ComputeHmacSha1Signature
 
-        private string ComputeHmacSha1Signature(string signatureBase,string consumerSecret,string tokenSecret)
+        private string ComputeHmacSha1Signature(string signatureBase, string consumerSecret, string tokenSecret)
         {
-            if(signatureBase == null){
+            if (signatureBase == null)
+            {
                 throw new ArgumentNullException("signatureBase");
             }
-            if(consumerSecret == null){
+            if (consumerSecret == null)
+            {
                 throw new ArgumentNullException("consumerSecret");
             }
 
@@ -478,9 +515,9 @@ namespace LumiSoft.Net.AUTH
         private string GenerateTimeStamp()
         {
             // Default implementation of UNIX time of the current UTC time
-            TimeSpan ts = DateTime.UtcNow - new DateTime(1970,1,1,0,0,0,0);
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
-            return Convert.ToInt64(ts.TotalSeconds).ToString();            
+            return Convert.ToInt64(ts.TotalSeconds).ToString();
         }
 
         #endregion
@@ -506,7 +543,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Email
         {
-            get{ return m_Email; }
+            get { return m_Email; }
         }
 
         #endregion

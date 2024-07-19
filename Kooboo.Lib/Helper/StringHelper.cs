@@ -6,12 +6,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
 {
     public static class StringHelper
     {
+        public static bool ContainChinese(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return false;
+            string pattern = "[\u4e00-\u9fbb]";
+            return Regex.IsMatch(input, pattern);
+        }
 
         public static string GetSummary(string input)
         {
@@ -25,7 +30,22 @@ namespace Kooboo.Lib.Helper
                 return input;
             }
 
-            return input.Substring(0, 50) + "...";
+            return input[..50] + "...";
+        }
+
+        public static string GetSummary(string input, int length)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null;
+            }
+
+            if (input.Length <= length)
+            {
+                return input;
+            }
+
+            return input[..length] + "...";
         }
 
         public static bool IsSameValue(string x, string y)
@@ -45,6 +65,25 @@ namespace Kooboo.Lib.Helper
         public static string GetUniqueBoundary()
         {
             return IDHelper.NewLongId().ToString();
+        }
+
+        public static string ToValidTextKey(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            { return input; }
+
+            StringBuilder sb = new StringBuilder();
+
+            char[] invalid = System.IO.Path.GetInvalidFileNameChars();
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (!invalid.Contains(input[i]) && input[i] != '#')
+                {
+                    sb.Append(input[i]);
+                }
+            }
+            return sb.ToString();
         }
 
         public static string ToValidFileName(string input)
@@ -81,7 +120,7 @@ namespace Kooboo.Lib.Helper
             {
                 var current = input[i];
 
-                if (Helper.CharHelper.isAlphanumeric(current) || current == '_')
+                if (Helper.CharHelper.isAlphanumeric(current) || current == '_' || current == '-')
                 {
                     sb.Append(current);
                 }
@@ -93,6 +132,39 @@ namespace Kooboo.Lib.Helper
             return sb.ToString();
         }
 
+        public static bool IsValidUserName(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                var current = input[i];
+
+                if (Helper.CharHelper.isAlphanumeric(current) || current == '_' || current == '-')
+                {
+                    // continue; 
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool IsUserNamePrefixReserved(string username)
+        {
+            var lower = username.ToLower();
+            if (lower.StartsWith("_mx") || lower.StartsWith("_dmarc") || lower.StartsWith("_acme-challenge") || lower.StartsWith("_domainkey"))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         ///  check whether this is a string value or not. 
@@ -109,6 +181,11 @@ namespace Kooboo.Lib.Helper
             }
 
             if (input.StartsWith("'") && input.EndsWith("'"))
+            {
+                return true;
+            }
+
+            if (input.StartsWith('`') && input.EndsWith('`'))
             {
                 return true;
             }
@@ -224,67 +301,87 @@ namespace Kooboo.Lib.Helper
         }
 
 
-        public static List<FindResult> FindText(string body, string keyword)
+        public static List<FindResult> FindText(
+            string body,
+            string keyword,
+            bool isRegex = false,
+            bool ignoreCase = true
+            )
         {
             List<FindResult> result = new List<FindResult>();
-            var seperators = " ,.;\r\n".ToCharArray();
 
-            using (StringReader reader = new StringReader(body))
+            if (isRegex)
             {
-                string line;
-                int counter = 0;
-                while ((line = reader.ReadLine()) != null)
+                var matches = Regex.Matches(body, keyword, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                foreach (Match item in matches)
                 {
-                    var index = line.IndexOf(keyword, StringComparison.OrdinalIgnoreCase);
-                    if (index > -1)
-                    {
-                        FindResult lineresult = new FindResult();
-                        lineresult.LineNumber = counter;
-
-                        int start = index - 20;
-                        if (start < 0)
-                        {
-                            start = 0;
-                        }
-                        int startindex = start;
-
-                        if (index < 10)
-                        {
-                            startindex = 0;
-                        }
-                        else
-                        {
-                            int findstartindex = line.IndexOfAny(seperators, start); 
-                            if (findstartindex > start && findstartindex < index)
-                            {
-                                startindex = findstartindex;
-                            }
-                        }
-                         
-
-                        int endindex = index + keyword.Length;
-                        int next = endindex + 5;
-                        if (next < line.Length)
-                        {
-                            int findendindex = line.IndexOfAny(seperators, next);
-                            if (findendindex > next)
-                            {
-                                next = findendindex;
-                            }
-                        }
-                        else
-                        {
-                            next = line.Length;
-                        }
-
-                        var subsummary = line.Substring(startindex, next - startindex);
-                        lineresult.Summary = subsummary;
-                        result.Add(lineresult);
-                    }
-                
-                    counter += 1;
+                    result.Add(GetFindResult(body, item.Index, item.Value));
                 }
             }
+            else
+            {
+
+                var seperators = " ,.;\r\n".ToCharArray();
+
+                using (StringReader reader = new StringReader(body))
+                {
+                    string line;
+                    int counter = 0;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        var stringComparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+                        var index = line.IndexOf(keyword, stringComparison);
+                        if (index > -1)
+                        {
+                            FindResult lineresult = new FindResult();
+                            lineresult.LineNumber = counter;
+
+                            int start = index - 20;
+                            if (start < 0)
+                            {
+                                start = 0;
+                            }
+                            int startindex = start;
+
+                            if (index < 10)
+                            {
+                                startindex = 0;
+                            }
+                            else
+                            {
+                                int findstartindex = line.IndexOfAny(seperators, start);
+                                if (findstartindex > start && findstartindex < index)
+                                {
+                                    startindex = findstartindex;
+                                }
+                            }
+
+
+                            int endindex = index + keyword.Length;
+                            int next = endindex + 5;
+                            if (next < line.Length)
+                            {
+                                int findendindex = line.IndexOfAny(seperators, next);
+                                if (findendindex > next)
+                                {
+                                    next = findendindex;
+                                }
+                            }
+                            else
+                            {
+                                next = line.Length;
+                            }
+
+                            var subsummary = line.Substring(startindex, next - startindex);
+                            lineresult.Summary = subsummary;
+                            result.Add(lineresult);
+                        }
+
+                        counter += 1;
+                    }
+                }
+            }
+
 
             if (result.Any())
             {
@@ -297,6 +394,192 @@ namespace Kooboo.Lib.Helper
 
         }
 
+        private static FindResult GetFindResult(string content, int index, string matched)
+        {
+            int currentLine = 0;
+            int summaryLeftOffset = 0;
+            bool summaryLeftIndexIsFind = false;
+            for (int i = index - 1; i >= 0; i--)
+            {
+                var @char = content[i];
+                if (@char == '\n')
+                {
+                    currentLine++;
+                    summaryLeftIndexIsFind = true;
+                }
+
+                if (!summaryLeftIndexIsFind)
+                {
+                    summaryLeftOffset++;
+                }
+
+                if (summaryLeftOffset >= 10)
+                {
+                    summaryLeftIndexIsFind = true;
+                }
+            }
+
+            int summaryRightOffset = 0;
+
+            for (int i = index + matched.Length; i < content.Length; i++)
+            {
+                var @char = content[i];
+                if (@char == '\n' || summaryRightOffset >= 10)
+                {
+                    break;
+                }
+                summaryRightOffset++;
+            }
+
+            return new FindResult
+            {
+                LineNumber = currentLine,
+                Summary = content.Substring(index - summaryLeftOffset, summaryLeftOffset + matched.Length + summaryRightOffset),
+                Start = summaryLeftOffset,
+                End = summaryLeftOffset + matched.Length
+            };
+        }
+        public static bool IsBase64String(string base64)
+        {
+            if (base64 == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+                return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
+            }
+            catch (Exception)
+            {
+
+            }
+            return false;
+        }
+
+        public static bool IsValidBracketKey(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                var currentChar = input[i];
+                if (!char.IsLetterOrDigit(currentChar) && currentChar != '-' && currentChar != '_' && currentChar != '.' && currentChar != '(' && currentChar != ')')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+
+        public static List<string> FindValues(string input, string start, char[] ends)
+        {
+
+            if (string.IsNullOrWhiteSpace(input) || string.IsNullOrEmpty(start))
+            {
+                return null;
+            }
+
+            List<string> result = new List<string>();
+
+            int startLen = start.Length;
+            int inputLen = input.Length;
+            bool foundStart = false;
+            string temp = null;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (!foundStart)
+                {
+                    // find the start. 
+                    if (input[i] == start[0])
+                    {
+                        var check = lookUp(i);
+                        if (check == start)
+                        {
+                            foundStart = true;
+                            temp = null;
+                        }
+                    }
+                }
+                else
+                {
+                    // find till the end...
+                    if (ends.Contains(input[i]))
+                    {
+                        if (!string.IsNullOrEmpty(temp))
+                        {
+                            result.Add(temp);
+                            foundStart = false;
+                        }
+                    }
+
+                }
+
+            }
+
+            return result;
+
+            string lookUp(int startI)
+            {
+                if (inputLen > startI + startLen)
+                {
+                    string found = "";
+                    for (int i = 0; i < startLen; i++)
+                    {
+                        found += input[startI + i];
+                    }
+
+                    return found;
+                }
+                return null;
+            }
+
+        }
+
+        public static string SplitToLines(string base64String, int lineLen = 76)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            int totalLen = base64String.Length;
+
+            int currentIndex = 0;
+
+            while (currentIndex < totalLen)
+            {
+                var nextIndex = currentIndex + lineLen;
+                if (nextIndex >= totalLen)
+                {
+                    var sub = base64String.Substring(currentIndex);
+                    sb.Append(sub);
+                    currentIndex = nextIndex;
+                    break;
+                }
+                else
+                {
+                    var sub = base64String.Substring(currentIndex, nextIndex - currentIndex);
+                    sb.Append(sub);
+                    sb.Append(Environment.NewLine);
+                }
+                currentIndex = nextIndex;
+            }
+
+            if (currentIndex < totalLen)
+            {
+                var sub = base64String.Substring(currentIndex, totalLen - currentIndex);
+
+                sb.Append(sub);
+            }
+
+            return sb.ToString();
+        }
+
     }
 
     public class FindResult
@@ -304,5 +587,7 @@ namespace Kooboo.Lib.Helper
         public int LineNumber { get; set; }
 
         public string Summary { get; set; }
+        public int Start { get; set; }
+        public int End { get; set; }
     }
 }

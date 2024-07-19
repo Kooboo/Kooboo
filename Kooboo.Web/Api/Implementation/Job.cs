@@ -1,19 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Api;
-using Kooboo.Data;
-using Kooboo.Data.Extensions;
-using Kooboo.Data.Models;
-using Kooboo.IndexedDB.Schedule;
-using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Context;
-using Kooboo.Data.Language;
+using Kooboo.Api;
 using Kooboo.Attributes;
+using Kooboo.Data;
+using Kooboo.Data.Context;
+using Kooboo.Data.Extensions;
+using Kooboo.Data.Language;
+using Kooboo.Data.Permission;
+using Kooboo.Data.Server;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Service;
+using Kooboo.Web.ViewModel;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -43,96 +42,52 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public List<JobViewModel> List(ApiCall call)
+        [Permission(Feature.JOB, Action = Data.Permission.Action.VIEW)]
+        public IEnumerable<SiteJob> List(ApiCall call)
         {
-            var jobs = new List<JobViewModel>();
-
-            foreach (var item in GlobalDb.ScheduleJob().GetByWebSiteId(call.Context.WebSite.Id))
-            {
-                jobs.Add(new JobViewModel(item));
-            }
-
-            foreach (var item in GlobalDb.RepeatingJob().GetByWebSiteId(call.Context.WebSite.Id))
-            {
-                jobs.Add(new JobViewModel(item));
-            }
-
-            SetCodeName(jobs, call.WebSite.SiteDb());
-
-            return jobs;
+            var siteDb = call.Context.WebSite.SiteDb();
+            return siteDb.Job.All().OrderByDescending(it => it.CreationDate);
         }
 
-        private void SetCodeName(List<JobViewModel> jobs, SiteDb sitedb)
-        {
-            foreach (var item in jobs)
-            {
-                var code = sitedb.Code.Get(item.CodeId);
-                if (code != null)
-                {
-                    item.CodeName = code.Name;
-                }
-            }
-        }
-
-
+        [Permission(Feature.JOB, Action = Data.Permission.Action.EDIT)]
         public bool Run(Guid id, ApiCall call)
         {
+
             var sitedb = call.WebSite.SiteDb();
 
-            var code = sitedb.Code.Get(id);
-
-            if (code != null)
-            {
-                Kooboo.Sites.Scripting.Manager.ExecuteCode(call.Context, code.Body, code.Id);
-                return true;
-            }
-
-            return false;
+            var job = sitedb.Job.Get(id);
+            if (job == null) throw new Exception("Job not found");
+            var jobService = WebHostServer.Services.GetHostedService<JobService>();
+            var jobRecord = new JobService.JobRecord(call.WebSite.Id, DateTime.Now, job);
+            jobService.ExecuteJob(call.WebSite, jobRecord, $"Manual trigger from {call.Context.User.UserName}");
+            return true;
         }
 
-        [RequireParameters("jobname")]
-        public IJob Get(string jobname, ApiCall call)
+        // [RequireParameters("jobname")]
+        // [Permission(Feature.JOB, Action = Data.Permission.Action.VIEW)]
+        // public IJob Get(string jobname, ApiCall call)
+        // {
+        //     var job = Jobs.JobContainer.GetJob(jobname);
+        //     job.Context = call.Context;
+        //     return job;
+        // }
+
+        [Permission(Feature.JOB, Action = Data.Permission.Action.VIEW)]
+        public SiteJob GetEdit(ApiCall call, Guid id)
         {
-            var job = Jobs.JobContainer.GetJob(jobname);
-            job.Context = call.Context;
-            return job;
-        }
-
-
-        public JobViewModel GetEdit(ApiCall call)
-        {
-            var id = call.GetValue<long>("id");
-            if (id > 0)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Job can not edit, you may delete and create a new one"));
-
-                var isrepeat = call.GetBoolValue("IsRepeat");
-
-                if (isrepeat)
-                {
-                    var item = GlobalDb.RepeatingJob().Get(id);
-                    if (item != null)
-                    {
-                        return new JobViewModel(item);
-                    }
-                }
-                else
-                {
-                    // var item = GlobalDb.ScheduleJob().
-                }
-            }
-
-            return new JobViewModel();
-
+            var model = call.Context.WebSite.SiteDb().Job.Get(id);
+            if (model == default) throw new Exception("Job not found");
+            return model;
         }
 
 
         [RequireParameters("success")]
+        [Permission(Feature.JOB, Action = Data.Permission.Action.VIEW)]
         public List<JobLog> Logs(ApiCall call)
         {
             string success = call.GetValue("success");
             bool IsSuccess = false;
-            if (!string.IsNullOrEmpty(success) && success.ToLower() == "true" || success.ToLower() == "yes")
+            if (!string.IsNullOrEmpty(success) && success?.ToLower() == "true" || success?.ToLower() == "yes")
             {
                 IsSuccess = true;
             }
@@ -140,147 +95,53 @@ namespace Kooboo.Web.Api.Implementation
             return GlobalDb.JobLog().GetByWebSiteId(call.Context.WebSite.Id, IsSuccess, 100);
         }
 
-
-        public void Post(JobEditViewModel model, ApiCall call)
+        [Permission(Feature.JOB, Action = Data.Permission.Action.EDIT)]
+        public void Post(SiteJob model, ApiCall call)
         {
-            //JobEditViewModel model = call.Context.Request.Model as JobEditViewModel;
-
-            Job newjob = new Job();
-
-            newjob.Description = model.Description;
-            newjob.JobName = model.Name;
-            newjob.WebSiteId = call.Context.WebSite.Id;
-            newjob.Script = model.Script;
-            newjob.CodeId = model.CodeId;
-
-            // add a new job. 
-            if (model.IsRepeat)
+            var job = call.Context.WebSite.SiteDb().Job.Get(model.Id);
+            var jobService = WebHostServer.Services.GetHostedService<JobService>();
+            if (job == default)
             {
-                RepeatItem<Job> repeatjob = new RepeatItem<Job>();
-                repeatjob.Item = newjob;
-                repeatjob.StartTime = model.StartTime;
-                repeatjob.FrequenceUnit = model.FrequenceUnit;
-
-                switch (model.Frequence.ToLower())
-                {
-                    case "month":
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Month;
-                            break;
-                        }
-                    case "day":
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Day;
-                            break;
-                        }
-                    case "minutes":
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Minutes;
-                            break;
-                        }
-                    case "minute": 
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Minutes;
-                            break;
-                        }
-                    case "second":
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Second;
-                            break;
-                        }
-                    case "week":
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Week;
-                            break;
-                        }
-                    case "hour":
-                        {
-                            repeatjob.Frequence = RepeatFrequence.Hour;
-                            break;
-                        }
-                    default:
-                        break;
-                }
-
-                GlobalDb.RepeatingJob().Add(repeatjob); 
-                GlobalDb.RepeatingJob().Close();  
+                job = model;
             }
             else
             {
-                GlobalDb.ScheduleJob().Add(newjob, model.StartTime);
-                GlobalDb.ScheduleJob().Close(); 
-            } 
+                job.Repeat = model.Repeat;
+                job.Code = model.Code;
+                job.Frequence = model.Frequence;
+                job.FrequenceUnit = model.FrequenceUnit;
+                job.StartTime = model.StartTime;
+                job.LastModified = DateTime.Now;
+                job.Active = model.Active;
+                job.Finish = false;
+            }
+
+            call.Context.WebSite.SiteDb().Job.AddOrUpdate(job, call.Context.User.Id);
         }
 
         [RequireModel(typeof(JobDeleteViewModel))]
-        public void Delete(ApiCall call)
+        [Permission(Feature.JOB, Action = Data.Permission.Action.DELETE)]
+        public void Delete(ApiCall call, Guid id)
         {
-            JobDeleteViewModel model = call.Context.Request.Model as JobDeleteViewModel;
-
-            _delete(model);
+            var model = GetEdit(call, id);
+            call.Context.WebSite.SiteDb().Job.Delete(model.Id, call.Context.User.Id);
+            var jobService = WebHostServer.Services.GetHostedService<JobService>();
         }
-        private void _delete(JobDeleteViewModel model)
+
+        [Permission(Feature.JOB, Action = Data.Permission.Action.DELETE)]
+        public void Deletes(ApiCall call, Guid[] ids)
         {
-            if (model.IsRepeat)
+            foreach (var id in ids)
             {
-                GlobalDb.RepeatingJob().Del(model.Id);
-                GlobalDb.RepeatingJob().Close(); 
-            }
-            else
-            {
-                GlobalDb.ScheduleJob().Delete(model.DayInt, model.SecondOfDay, model.BlockPosition);
-                GlobalDb.ScheduleJob().Close(); 
+                Delete(call, id);
             }
         }
 
-        public void Deletes(ApiCall call)
+        [Permission(Feature.JOB, Action = Data.Permission.Action.EDIT)]
+        public bool IsUniqueName(ApiCall call)
         {
- 
-            try
-            {
-
-                string body = call.GetValue("ids");
-                if (string.IsNullOrEmpty(body))
-                {
-                    body = call.Context.Request.Body;
-                }
-
-                var   ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(body);
-
-                if (ids !=null)
-                {
-                    var schedulejobs = GlobalDb.ScheduleJob().GetByWebSiteId(call.Context.WebSite.Id);
-                    var repeatjobs = GlobalDb.RepeatingJob().GetByWebSiteId(call.Context.WebSite.Id);
-
-                    foreach (var item in ids)
-                    {
-                        var findschedule = schedulejobs.Find(o => o.Item.Id == item); 
-                        if (findschedule !=null)
-                        {
-                            GlobalDb.ScheduleJob().Delete(findschedule.DayInt, findschedule.SecondOfDay, findschedule.BlockPosition);
-                        }
-                        else
-                        {
-                            var findrepeat = repeatjobs.Find(o => o.Item.Id == item);
-                            if (findrepeat !=null)
-                            {
-                                GlobalDb.RepeatingJob().Del(findrepeat);
-                            }
-
-                        }
-                    }
-
-                }
-            }
-            catch (Exception)
-            {
-
-            }
-
-
-
+            return call.WebSite.SiteDb().Job.Get(call.NameOrId) == null;
         }
-
     }
 
     public class FakeJob : IJob

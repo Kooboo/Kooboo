@@ -3,10 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
+using Kooboo.Mail.Utility;
+
 
 
 namespace Kooboo.Mail.Imap.Commands
@@ -15,7 +15,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -58,20 +58,24 @@ namespace Kooboo.Mail.Imap.Commands
             var fromName = IMAP_Utils.DecodeMailbox(TextUtils.UnQuoteString(parts[0]));
             var toName = IMAP_Utils.DecodeMailbox(TextUtils.UnQuoteString(parts[1]));
 
+            var specialCharPattern = @"^[a-zA-Z0-9-_.\/\u4e00-\u9fa5]{1,50}$";
+            if (!Regex.IsMatch(toName, specialCharPattern))
+                throw new CommandException("NO", "Folder names can not contain special characters when renaming.");
+
             if (Folder.ReservedFolder.Any(o => fromName.StartsWith(o.Value, StringComparison.OrdinalIgnoreCase)))
                 throw new CommandException("NO", "Can not rename reservered folders");
 
-            var folder = session.MailDb.Folders.Get(fromName);
+            var folder = session.MailDb.Folder.Get(fromName);
             if (folder == null)
-                throw new CommandException("NO", "Folder is not found");
+                throw new CommandException("NO", "Folder  not found");
 
             if (Folder.ReservedFolder.Any(o => toName.StartsWith(o.Value, StringComparison.OrdinalIgnoreCase)))
-                throw new CommandException("NO", "Can not rename folder to be under reservered folders");
+                throw new CommandException("NO", "Can not rename folder under reservered folders");
 
-            if (session.MailDb.Folders.Get(Folder.ToId(toName)) != null)
+            if (session.MailDb.Folder.Get(toName) != null)
                 throw new CommandException("NO", "Folder with new name already exist");
 
-            session.MailDb.Folders.Rename(folder, toName);
+            session.MailDb.Folder.Rename(folder, toName);
 
             return this.NullResult();
         }

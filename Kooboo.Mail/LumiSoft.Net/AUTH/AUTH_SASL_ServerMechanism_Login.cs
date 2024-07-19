@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -9,12 +8,12 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_SASL_ServerMechanism_Login : AUTH_SASL_ServerMechanism
     {
-        private bool   m_IsCompleted     = false;
-        private bool   m_IsAuthenticated = false;
-        private bool   m_RequireSSL      = false;
-        private string m_UserName        = null;
-        private string m_Password        = null;
-        private int    m_State           = 0;
+        private bool m_IsCompleted = false;
+        private bool m_IsAuthenticated = false;
+        private bool m_RequireSSL = false;
+        private string m_UserName = null;
+        private string m_Password = null;
+        private int m_State = 0;
 
         /// <summary>
         /// Default constructor.
@@ -33,11 +32,11 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override void Reset()
         {
-            m_IsCompleted     = false;
+            m_IsCompleted = false;
             m_IsAuthenticated = false;
-            m_UserName        = null;
-            m_Password        = null;
-            m_State           = 0;
+            m_UserName = null;
+            m_Password = null;
+            m_State = 0;
         }
 
         #endregion
@@ -52,7 +51,8 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentNullException">Is raised when <b>clientResponse</b> is null reference.</exception>
         public override byte[] Continue(byte[] clientResponse)
         {
-            if(clientResponse == null){
+            if (clientResponse == null)
+            {
                 throw new ArgumentNullException("clientResponse");
             }
 
@@ -66,25 +66,29 @@ namespace LumiSoft.Net.AUTH
             */
 
             // User name provided, so skip that state.
-            if(m_State == 0 && clientResponse.Length > 0){
+            if (m_State == 0 && clientResponse.Length > 0)
+            {
                 m_State++;
             }
 
-            if(m_State == 0){
+            if (m_State == 0)
+            {
                 m_State++;
 
                 return Encoding.ASCII.GetBytes("UserName:");
             }
-            else if(m_State == 1){
+            else if (m_State == 1)
+            {
                 m_State++;
                 m_UserName = Encoding.UTF8.GetString(clientResponse);
-            
+
                 return Encoding.ASCII.GetBytes("Password:");
             }
-            else{
+            else
+            {
                 m_Password = Encoding.UTF8.GetString(clientResponse);
 
-                AUTH_e_Authenticate result = OnAuthenticate("",m_UserName,m_Password);
+                AUTH_e_Authenticate result = OnAuthenticate("", m_UserName, m_Password);
                 m_IsAuthenticated = result.IsAuthenticated;
                 m_IsCompleted = true;
             }
@@ -102,7 +106,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsCompleted
         {
-            get{ return m_IsCompleted; }
+            get { return m_IsCompleted; }
         }
 
         /// <summary>
@@ -110,7 +114,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsAuthenticated
         {
-            get{ return m_IsAuthenticated; }
+            get { return m_IsAuthenticated; }
         }
 
         /// <summary>
@@ -126,7 +130,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool RequireSSL
         {
-            get{ return m_RequireSSL; }
+            get { return m_RequireSSL; }
         }
 
         /// <summary>
@@ -134,7 +138,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         #endregion
@@ -155,12 +159,13 @@ namespace LumiSoft.Net.AUTH
         /// <param name="userName">User name.</param>
         /// <param name="password">Password.</param>
         /// <returns>Returns authentication result.</returns>
-        private AUTH_e_Authenticate OnAuthenticate(string authorizationID,string userName,string password)
+        private AUTH_e_Authenticate OnAuthenticate(string authorizationID, string userName, string password)
         {
-            AUTH_e_Authenticate retVal = new AUTH_e_Authenticate(authorizationID,userName,password);
+            AUTH_e_Authenticate retVal = new AUTH_e_Authenticate(authorizationID, userName, password);
 
-            if(this.Authenticate != null){
-                this.Authenticate(this,retVal);
+            if (this.Authenticate != null)
+            {
+                this.Authenticate(this, retVal);
             }
 
             return retVal;

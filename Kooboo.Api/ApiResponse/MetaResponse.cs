@@ -3,42 +3,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Context;
 using System.Net;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Api.ApiResponse
 {
-    public class MetaResponse : IResponse
+    public class MetaResponse : JsonResponse
     {
         public MetaResponse()
         {
             this.FieldErrors = new List<FieldError>();
-            this.Messages = new List<string>(); 
-        }
-
-        public bool DataChange
-        {
-            get; set;
-        }
-
-        public List<FieldError> FieldErrors
-        {
-            get; set;
-        }
-
-        public List<string> Messages
-        {
-            get; set;
-        }
-
-        public object Model
-        {
-            get; set;
-        }
-
-        public bool Success
-        {
-            get; set;
+            this.Messages = new List<string>();
         }
 
         private HttpStringCollection _headers;
@@ -75,41 +50,41 @@ namespace Kooboo.Api.ApiResponse
             }
         }
 
-        private List<Cookie> _appendcookies;
+        private List<Cookie> _appendCookies;
         public List<Cookie> AppendedCookies
         {
             get
             {
-                if (_appendcookies == null)
+                if (_appendCookies == null)
                 {
-                    _appendcookies = new List<Cookie>();
+                    _appendCookies = new List<Cookie>();
                 }
-                return _appendcookies;
+                return _appendCookies;
             }
             set
             {
-                _appendcookies = new List<Cookie>();
+                _appendCookies = new List<Cookie>();
             }
         }
 
-        public void AppendCookie(string CookieName, string CookieValue, int days =30)
+        public void AppendCookie(string CookieName, string CookieValue, int days = 30)
         {
-            var oldcookie = AppendedCookies.Where(o => o.Name == CookieName).FirstOrDefault();
+            var oldCookie = AppendedCookies.Where(o => o.Name == CookieName).FirstOrDefault();
 
-            if (oldcookie != null)
+            if (oldCookie != null)
             {
-                AppendedCookies.Remove(oldcookie);
+                AppendedCookies.Remove(oldCookie);
             }
 
-            if (days==0)
+            if (days == 0)
             {
-                AppendedCookies.Add(new Cookie() { Name = CookieName, Value = CookieValue, Expires =default(DateTime) });
+                AppendedCookies.Add(new Cookie() { Name = CookieName, Value = CookieValue, Expires = default(DateTime) });
             }
             else
             {
                 AppendedCookies.Add(new Cookie() { Name = CookieName, Value = CookieValue, Expires = DateTime.Now.AddDays(days) });
             }
-           
+
         }
 
         public void DeleteCookie(string CookieName)
@@ -120,49 +95,14 @@ namespace Kooboo.Api.ApiResponse
             }
         }
 
-        //public class CookieOptions
-        //{
-        //    public string Domain;
-
-        //    private DateTime _expires;
-        //    public DateTime Expires
-        //    {
-        //        get
-        //        {
-        //            if (_expires == default(DateTime))
-        //            {
-        //                _expires = DateTime.Now.AddHours(24);
-        //            }
-        //            return _expires;
-        //        }
-        //        set
-        //        {
-        //            _expires = value;
-        //        }
-        //    }
-        //}
-
-        //public class Cookie
-        //{
-        //    public Cookie()
-        //    {
-        //        this.Options = new CookieOptions();
-        //    }
-
-        //    public string Name { get; set; }
-        //    public string Value { get; set; }
-
-        //    public CookieOptions Options { get; set; }
-        //} 
-
         public string RedirectUrl { get; set; }
 
-        public int StatusCode { get; set; } = 200; 
+        public int StatusCode { get; set; } = 200;
 
-        public void Redirect(string url, int statuscode = 302)
+        public void Redirect(string url, int statusCode = 302)
         {
             this.RedirectUrl = url;
-            this.StatusCode = statuscode; 
+            this.StatusCode = statusCode;
         }
     }
 }

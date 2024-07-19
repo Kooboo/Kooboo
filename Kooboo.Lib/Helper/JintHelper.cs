@@ -1,14 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System;
-using System.Collections;
-using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
-using Jint.Parser;
+using Esprima;
+using Esprima.Ast;
 
 namespace Kooboo.Lib.Helper
 {
@@ -63,32 +60,28 @@ namespace Kooboo.Lib.Helper
             return body;
         }
 
-        public static string GetFuncBody(string js, Jint.Parser.Ast.FunctionDeclaration func)
+        public static string GetFuncBody(string js, Esprima.Ast.FunctionDeclaration func)
         {
             return GetFuncBody(js, func.Location.Start.Line, func.Location.Start.Column, func.Location.End.Line, func.Location.End.Column);
         }
 
-        public static string GetFuncBody(string js, string functionName)
+        public static FunctionDeclaration[] GetFunctionDeclarations(Node script)
         {
-            Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
+            var nodes = script?.ChildNodes;
 
-            var jsprogram = parser.Parse(js);
-
-            if (jsprogram != null)
+            if (script?.Type == Nodes.FunctionExpression)
             {
-
-                var func = GetFuncByName(jsprogram, functionName);
-                if (func != null)
-                {
-                    return GetFuncBody(js, func);
-                }
+                nodes = script.As<FunctionExpression>().Body.ChildNodes;
             }
-            return null;
+
+            return nodes?.Where(w => w?.Type == Nodes.FunctionDeclaration)?.Select(s => s.As<FunctionDeclaration>())?.ToArray();
         }
 
-        public static Jint.Parser.Ast.FunctionDeclaration GetFuncByName(Jint.Parser.Ast.Program program, string FuncName)
+        public static Esprima.Ast.FunctionDeclaration GetFuncByName(Script program, string FuncName)
         {
-            if (program == null || program.FunctionDeclarations.Count == 0)
+            var functionDeclarations = GetFunctionDeclarations(program);
+
+            if (program == null || functionDeclarations.Count() == 0)
             {
                 return null;
             }
@@ -99,7 +92,7 @@ namespace Kooboo.Lib.Helper
             }
             string lower = FuncName.ToLower();
 
-            foreach (var item in program.FunctionDeclarations)
+            foreach (var item in functionDeclarations)
             {
                 if (item.Id.Name.ToLower() == lower)
                 {
@@ -119,16 +112,15 @@ namespace Kooboo.Lib.Helper
 
                 foreach (var item in functions)
                 {
-                    result.Add(item.Id.Name); 
+                    result.Add(item.Id.Name);
                 }
             }
             else
             {
-                Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
+                var jsprogram = new JavaScriptParser().ParseScript(js);
+                var functionDeclarations = GetFunctionDeclarations(jsprogram);
 
-                var jsprogram = parser.Parse(js);
-
-                foreach (var item in jsprogram.FunctionDeclarations)
+                foreach (var item in functionDeclarations)
                 {
                     result.Add(item.Id.Name);
                 }
@@ -136,10 +128,14 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-
-        public static Dictionary<string,List<string>> ListFunctions(string js)
+        public static Identifier[] GetParameters(IFunction function)
         {
-            Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();  
+            return function.Params.Where(w => w.Type == Nodes.Identifier)?.Select(s => (s as Identifier))?.ToArray();
+        }
+
+        public static Dictionary<string, List<string>> ListFunctions(string js)
+        {
+            Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();
 
             if (IsRequireJs(js))
             {
@@ -148,31 +144,32 @@ namespace Kooboo.Lib.Helper
                 foreach (var item in functions)
                 {
                     string name = item.Id.Name;
-                    List<string> paras = new List<string>(); 
-                    if (item.Parameters !=null)
+                    List<string> paras = new();
+                    var parameters = GetParameters(item);
+                    if (parameters != null)
                     {
-                        foreach (var p in item.Parameters)
+                        foreach (var p in parameters)
                         {
-                            paras.Add(p.Name); 
+                            paras.Add(p.Name);
                         }
                     }
 
-                    result[name] = paras; 
+                    result[name] = paras;
                 }
             }
             else
             {
-                Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
+                var jsprogram = new Esprima.JavaScriptParser().ParseScript(js);
+                var functionDeclarations = GetFunctionDeclarations(jsprogram);
 
-                var jsprogram = parser.Parse(js);
-
-                foreach (var item in jsprogram.FunctionDeclarations)
+                foreach (var item in functionDeclarations)
                 {
                     string name = item.Id.Name;
                     List<string> paras = new List<string>();
-                    if (item.Parameters != null)
+                    var parameters = GetParameters(item);
+                    if (parameters != null)
                     {
-                        foreach (var p in item.Parameters)
+                        foreach (var p in parameters)
                         {
                             paras.Add(p.Name);
                         }
@@ -184,36 +181,34 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-         
-        public static List<Jint.Parser.Ast.FunctionDeclaration> ListRequireJsFuncs(string requireJsBlock)
+        public static List<Esprima.Ast.FunctionDeclaration> ListRequireJsFuncs(string requireJsBlock)
         {
-            Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
-
-            var prog = parser.Parse(requireJsBlock);
+            var prog = new Esprima.JavaScriptParser().ParseScript(requireJsBlock);
 
             if (prog != null && prog.Body.Count() > 0)
             {
 
                 var item = prog.Body.First();
 
-                if (item is Jint.Parser.Ast.ExpressionStatement)
+                if (item is Esprima.Ast.ExpressionStatement)
                 {
-                    var expres = item as Jint.Parser.Ast.ExpressionStatement;
+                    var expres = item as Esprima.Ast.ExpressionStatement;
 
-                    if (expres.Expression is Jint.Parser.Ast.CallExpression)
+                    if (expres.Expression is Esprima.Ast.CallExpression)
                     {
-                        var call = expres.Expression as Jint.Parser.Ast.CallExpression;
+                        var call = expres.Expression as Esprima.Ast.CallExpression;
                         if (call != null && call.Arguments.Count() == 2)
                         {
                             var requireargu = call.Arguments[1];
 
-                            if (requireargu != null && requireargu is Jint.Parser.Ast.FunctionExpression)
+                            if (requireargu != null && requireargu is Esprima.Ast.FunctionExpression)
                             {
-                                var requireFunc = requireargu as Jint.Parser.Ast.FunctionExpression;
+                                var requireFunc = requireargu as Esprima.Ast.FunctionExpression;
 
                                 if (requireFunc != null)
                                 {
-                                    return requireFunc.FunctionDeclarations.ToList();
+                                    var functionDeclarations = GetFunctionDeclarations(requireFunc);
+                                    return functionDeclarations.ToList();
                                 }
                             }
 
@@ -224,28 +219,26 @@ namespace Kooboo.Lib.Helper
             }
 
 
-            return new List<Jint.Parser.Ast.FunctionDeclaration>();
+            return new List<Esprima.Ast.FunctionDeclaration>();
         }
 
         public static bool IsRequireJs(string JsBlock)
         {
-            Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
-
-            var prog = parser.Parse(JsBlock);
+            var prog = new Esprima.JavaScriptParser().ParseScript(JsBlock);
 
             foreach (var item in prog.Body)
             {
-                if (item is Jint.Parser.Ast.ExpressionStatement)
+                if (item is Esprima.Ast.ExpressionStatement)
                 {
-                    var expres = item as Jint.Parser.Ast.ExpressionStatement;
+                    var expres = item as Esprima.Ast.ExpressionStatement;
 
-                    if (expres.Expression is Jint.Parser.Ast.CallExpression)
+                    if (expres.Expression is Esprima.Ast.CallExpression)
                     {
-                        var call = expres.Expression as Jint.Parser.Ast.CallExpression;
+                        var call = expres.Expression as Esprima.Ast.CallExpression;
 
-                        if (call.Callee is Jint.Parser.Ast.Identifier)
+                        if (call.Callee is Esprima.Ast.Identifier)
                         {
-                            var id = call.Callee as Jint.Parser.Ast.Identifier;
+                            var id = call.Callee as Esprima.Ast.Identifier;
                             if (id.Name.ToLower() == "require" || id.Name.ToLower() == "define")
                             {
                                 return true;
@@ -259,7 +252,7 @@ namespace Kooboo.Lib.Helper
         }
 
         // append to end of the functions. 
-        public static string AppendRequireJsBlock(string Js, string append, List<Jint.Parser.Ast.FunctionDeclaration> list = null)
+        public static string AppendRequireJsBlock(string Js, string append, List<Esprima.Ast.FunctionDeclaration> list = null)
         {
             if (list == null)
             {
@@ -332,171 +325,6 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-        private static object GetValue(Jint.Runtime.Debugger.DebugInformation info, string property)
-        { 
-            var value = info.Locals.Where(item => item.Key.ToLower() == property).Select(item => item.Value).FirstOrDefault();
-            if (value == null)
-            {
-                value = info.Globals.Where(item => item.Key.ToLower() == property).Select(item => item.Value).FirstOrDefault();
-            }
-            return value;
-        }
-        public static object GetGebuggerValue(Jint.Engine engine, string FullProperty)
-        {
-            if (string.IsNullOrEmpty(FullProperty))
-            {
-                return null;
-            }
-               
-            FullProperty = FullProperty.Trim();
-            FullProperty = FullProperty.TrimEnd(';'); 
-
-            string[] parts = FullProperty.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            var info = engine.DebugHandler.GetDebugInformation();
-
-            object value = null;
-
-            for (int i = 0; i < parts.Length; i++)
-            {
-                if (i == 0)
-                {
-                    value = GetValue(info,parts[i]);
-                    if (value == null)
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    value = getMember(value, parts[i]);
-                    if (value == null)
-                    {
-                        return null;
-                    }
-                }
-            }
-
-
-            if (value is Jint.Native.JsValue)
-            {
-                var jsvalue = value as Jint.Native.JsValue;
-                if (jsvalue != null)
-                {
-                    return jsvalue.ToObject();
-                }
-            }
-
-            return value;
-
-
-        }
-
-
-        private static object getMember(object obj, string PropertyName)
-        {
-            if (obj is IDictionary)
-            {
-                var dict = obj as IDictionary;
-                return GetValueDic(dict, PropertyName);
-            }
-
-            else if (obj is JObject)
-            {
-                return Lib.Helper.JsonHelper.GetObject(obj as JObject, PropertyName);
-            }
-
-            else if (obj is System.Dynamic.ExpandoObject)
-            {
-                IDictionary<String, Object> value = obj as IDictionary<String, Object>;
-                if (value != null)
-                {
-                    return value.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
-                }
-                return null;
-            }
-            else if (obj is IDictionary<string, object>)
-            {
-                IDictionary<string, object> value = obj as IDictionary<string, object>;
-                if (value != null)
-                {
-                    return value.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
-                }
-                return null;
-            }
-            else if (obj is Jint.Native.JsValue)
-            {
-                var value = obj as Jint.Native.JsValue;
-
-                var jsObject = value.ToObject();
-                if (jsObject ==null)
-                {
-                    return null; 
-                }
-
-                IDictionary<String, Object> rightvalue = jsObject as IDictionary<String, Object>;
-                if (rightvalue != null)
-                {
-                    return rightvalue.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
-                }
-                else
-                {
-                    if (jsObject is System.Dynamic.ExpandoObject)
-                    {
-                        IDictionary<String, Object> expvalue = obj as IDictionary<String, Object>;
-                        if (expvalue != null)
-                        {
-                            return expvalue.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
-                        }
-                        return null;
-                    }
-                    else
-                    {
-                        return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, PropertyName);
-                    }
-                }
-
-            }
-
-            return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, PropertyName);
-        }
-
-        private static object GetValueDic(IDictionary dictionary,string name)
-        {
-            var keys = dictionary.Keys;
-            string matchKey=null;
-            foreach(var key in keys)
-            {
-                if (EqualsIgnoreCasing(name, key as string))
-                {
-                    matchKey = key as string;
-                    break;
-                }
-            }
-            if(!string.IsNullOrEmpty(matchKey))
-            {
-                return dictionary[matchKey];
-            }
-            return null;
-        }
-
-        private static bool EqualsIgnoreCasing(string s1, string s2)
-        {
-            bool equals = false;
-            if (s1.Length == s2.Length)
-            {
-                if (s1.Length > 0 && s2.Length > 0)
-                {
-                    equals = (s1.ToLower()[0] == s2.ToLower()[0]);
-                }
-                if (s1.Length > 1 && s2.Length > 1)
-                {
-                    equals = equals && (s1.Substring(1) == s2.Substring(1));
-                }
-            }
-            return equals;
-        }
-
-
         public static bool IsMemberExpression(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
@@ -509,34 +337,33 @@ namespace Kooboo.Lib.Helper
                 return false;
             }
 
-            var parser = new JavaScriptParser();
-            var prog = parser.Parse(code);
+            var prog = new Esprima.JavaScriptParser().ParseScript(code);
 
-            if (prog == null || prog.Body == null || prog.Body.Count() != 1)
+            if (prog?.Body.Count != 1)
             {
                 return false;
             }
 
-            var statement = prog.Body.First(); 
+            var statement = prog.Body.First();
 
             if (statement == null)
             {
-                return false; 
-            } 
-            var exp = statement as Jint.Parser.Ast.ExpressionStatement; 
+                return false;
+            }
+            var exp = statement as Esprima.Ast.ExpressionStatement;
 
             if (exp == null)
             {
-                return false; 
+                return false;
             }
-              
+
             var t = exp.Expression.GetType();
 
-            if (t == typeof(Jint.Parser.Ast.MemberExpression) || t== typeof(Jint.Parser.Ast.Identifier))
+            if (t == typeof(MemberExpression) || t == typeof(Identifier) || t == typeof(StaticMemberExpression))
             {
-                return true; 
-            } 
-            return false;  
+                return true;
+            }
+            return false;
         }
 
         public static bool IsAssignmentExpression(string code)
@@ -551,10 +378,9 @@ namespace Kooboo.Lib.Helper
                 return false;
             }
 
-            var parser = new JavaScriptParser();
-            var prog = parser.Parse(code);
+            var prog = new Esprima.JavaScriptParser().ParseScript(code);
 
-            if (prog == null || prog.Body == null || prog.Body.Count() != 1)
+            if (prog?.Body.Count != 1)
             {
                 return false;
             }
@@ -565,16 +391,16 @@ namespace Kooboo.Lib.Helper
             {
                 return false;
             }
-            var exp = statement as Jint.Parser.Ast.ExpressionStatement;
+            var exp = statement as Esprima.Ast.ExpressionStatement;
 
             if (exp == null)
             {
                 return false;
             }
-              
+
             var t = exp.Expression.GetType();
 
-            if (t == typeof(Jint.Parser.Ast.AssignmentExpression))
+            if (t == typeof(Esprima.Ast.AssignmentExpression))
             {
                 return true;
             }
@@ -582,25 +408,72 @@ namespace Kooboo.Lib.Helper
         }
 
         public static object GetAssignmentValue(string code)
-        { 
-            var parser = new JavaScriptParser();
-            var prog = parser.Parse(code);
-             
-            var statement = prog.Body.First(); 
-  
-            var exp = statement as Jint.Parser.Ast.ExpressionStatement;
+        {
+            var prog = new Esprima.JavaScriptParser().ParseScript(code);
 
-            var ass = exp.Expression as Jint.Parser.Ast.AssignmentExpression;
+            var statement = prog.Body.First();
 
-            var rightvalue = ass.Right as Jint.Parser.Ast.Literal; 
+            var exp = statement as Esprima.Ast.ExpressionStatement;
 
-            if (rightvalue !=null)
+            var ass = exp.Expression as Esprima.Ast.AssignmentExpression;
+
+            var rightvalue = ass.Right as Esprima.Ast.Literal;
+
+            if (rightvalue != null)
             {
-                return rightvalue.Value; 
+                return rightvalue.Value;
             }
 
-            return null; 
+            return null;
         }
 
+        public static List<string> GetDependencies(string code)
+        {
+            if (Lib.Helper.JsonHelper.IsJson(code)) return new List<string>();
+            var script = new Esprima.JavaScriptParser().ParseModule(code);
+            return GetDependencies(script);
+        }
+
+        public static List<string> GetDependencies(Module script)
+        {
+            var result = new List<string>();
+            // ImportDeclaration only allow define in top level
+            foreach (var item in script.ChildNodes)
+            {
+                if (item is ImportDeclaration importDeclaration)
+                {
+                    result.Add(importDeclaration.Source.StringValue);
+                }
+            }
+            return result;
+        }
+
+        public static Script ChangeTopLevelVariableDeclaration(string script, ParserOptions parserOptions = null, string source = null)
+        {
+            var parser = parserOptions == default ? new JavaScriptParser() : new JavaScriptParser(parserOptions);
+            var ast = parser.ParseScript(script, source);
+
+            // Change top level 'let','const' variableDeclaration to 'var'
+            // **强制将顶级的变量定义类型改为var,因为let 和 const 是执行时瞬态,无法保留到下一次,会导致kview的绑定无法正确获取到值.
+            // 此做法违反了标准执行方式,在必要时可酌情进行移除,但是会导致现有站点出现html模版取不到let和const定义的变量
+            var nodes = new List<Statement>();
+
+            foreach (var declaration in ast.Body)
+            {
+                if (declaration is VariableDeclaration variableDeclaration && variableDeclaration.Kind != VariableDeclarationKind.Var)
+                {
+                    var newVariableDeclaration = new VariableDeclaration(variableDeclaration.Declarations, VariableDeclarationKind.Var);
+                    newVariableDeclaration.Location = variableDeclaration.Location;
+                    newVariableDeclaration.Range = variableDeclaration.Range;
+                    nodes.Add(newVariableDeclaration);
+                }
+                else
+                {
+                    nodes.Add(declaration);
+                }
+            }
+
+            return new Script(NodeList.Create(nodes), ast.Strict);
+        }
     }
 }

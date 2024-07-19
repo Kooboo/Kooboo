@@ -79,13 +79,13 @@ namespace dotless.Core
 
                 var env = Env ??
                           new Env
-                              {
-                                  Compress = Compress,
-                                  Debug = Debug,
-                                  KeepFirstSpecialComment = KeepFirstSpecialComment,
-                                  DisableVariableRedefines = DisableVariableRedefines,
-                                  DisableColorCompression = DisableColorCompression
-                              };
+                          {
+                              Compress = Compress,
+                              Debug = Debug,
+                              KeepFirstSpecialComment = KeepFirstSpecialComment,
+                              DisableVariableRedefines = DisableVariableRedefines,
+                              DisableColorCompression = DisableColorCompression
+                          };
 
                 if (Plugins != null)
                 {

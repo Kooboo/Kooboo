@@ -13,7 +13,7 @@
 
         protected override Node EditHsl(HslColor color, Number number)
         {
-            color.Saturation += number.Value/100;
+            color.Saturation += number.Value / 100;
             return color.ToRgbColor();
         }
     }
@@ -26,7 +26,7 @@
         }
     }
 
-    public class SaturationFunction : SaturateFunction 
+    public class SaturationFunction : SaturateFunction
     {
         protected override Node EditHsl(HslColor color, Number number)
         {

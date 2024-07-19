@@ -1,89 +1,161 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
-using Kooboo.Data.Interface;
+using Kooboo.Data.Permission;
+using Kooboo.Dom;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class LayoutApi : SiteObjectApi<Layout>
     {
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
         public override object Get(ApiCall call)
         {
-            if (call.ObjectId != default(Guid))
+            Layout result = null;
+
+            if (call.ObjectId != default)
             {
                 var layoutobject = base.Get(call);
                 if (layoutobject != null)
                 {
                     var layout = layoutobject as Layout;
-                    var layoutclone = layout.Clone<Layout>();
-
-
-                    string basehrel = call.WebSite.BaseUrl();
-                    basehrel = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(basehrel, call.WebSite); 
-                     
-
-                    if (!string.IsNullOrEmpty(basehrel))
+                    result = layout.Clone<Layout>();
+                }
+            }
+            else
+            {
+                var name = call.GetValue("id");
+                if (!string.IsNullOrEmpty(name))
+                {
+                    result = call.WebSite.SiteDb().Layouts.GetByNameOrId(name);
+                }
+                if (result == null)
+                {
+                    result = new Layout
                     {
-                        layoutclone.Body = Sites.Service.HtmlHeadService.SetBaseHref(layoutclone.Body, basehrel);
-                        return layoutclone;
-                    }
+                        Body = @"<!DOCTYPE html>
+<html lang=""en"">
+
+<head>
+    <meta charset=""UTF-8"">
+    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Document</title>
+</head>
+
+<body>
+    <div k-placeholder=""Main""> Sample text inside the layout.. </div>
+</body>
+
+</html>"
+                    };
+                }
+
+            }
+            AppendDesignScript(result, call);
+            return result;
+        }
+
+        private static void AppendDesignScript(Layout layout, ApiCall call)
+        {
+            var design = call.GetValue("design") == "true";
+            if (!design)
+            {
+                return;
+            }
+
+            var html = layout.Body;
+            var script = VisualEditorHelper.GetInjects(call);
+
+            var dom = DomParser.CreateDom(html);
+            var changes = new List<SourceUpdate> {
+                new SourceUpdate
+                {
+                    StartIndex = dom.head.location.endTokenStartIndex - 1,
+                    EndIndex = dom.head.location.endTokenStartIndex - 1,
+                    NewValue = $"\t{script}\n"
+                }
+            };
+
+            var placeholders = dom.Select("[k-placeholder],[v-placeholder]");
+            foreach (var item in placeholders.item)
+            {
+                var placeholder = item.getAttribute("v-placeholder");
+                if (!string.IsNullOrEmpty(placeholder))
+                {
+                    item.setAttribute("k-placeholder", placeholder);
+                    item.removeAttribute("v-placeholder");
+                }
+                var attrs = item.attributes.Select(it => $"{it.name}=\"{it.value}\"").ToArray();
+                changes.Add(new SourceUpdate
+                {
+                    StartIndex = item.location.openTokenStartIndex,
+                    EndIndex = item.location.openTokenEndIndex,
+                    NewValue = $"<ve-placeholder {string.Join(" ", attrs)}>"
+                });
+                changes.Add(new SourceUpdate
+                {
+                    StartIndex = item.location.endTokenStartIndex,
+                    EndIndex = item.location.endTokenEndIndex,
+                    NewValue = "</ve-placeholder>"
+                });
+            }
+
+            layout.Body = DomService.UpdateSource(html, changes);
+        }
+
+        [Kooboo.Attributes.RequireModel(typeof(LayoutViewModel))]
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            var value = (LayoutViewModel)call.Context.Request.Model;
+            value.Body = Sites.Service.HtmlHeadService.RemoveBaseHrel(value.Body);
+
+            if (value.Id != Guid.Empty)
+            {
+                var oldValue = call.WebSite.SiteDb().Layouts.Get(value.Id);
+                if (oldValue != null)
+                {
+                    (value as IDiffChecker).CheckDiff(oldValue);
                 }
             }
 
-            Layout newlayout = new Layout();
-            newlayout.Body = getdummy(call);
-            return newlayout;
-        }
-
-        [Kooboo.Attributes.RequireModel(typeof(Layout))]
-        public override Guid Post(ApiCall call)
-        {
-            Layout value = (Layout)call.Context.Request.Model;
-            value.Body = Sites.Service.HtmlHeadService.RemoveBaseHrel(value.Body);
             call.WebSite.SiteDb().Layouts.AddOrUpdate(value, call.Context.User.Id);
             return value.Id;
         }
 
-        private string getdummy(ApiCall call)
-        {
-            string baseurl = call.WebSite.SiteDb().WebSite.BaseUrl();
-
-            string template = "<!DOCTYPE html>\r\n<html><head>\r\n<base href=\"{{BaseUrl}}\"></head><body>\r\n<div k-placeholder=\"Main\"> Sample text inside the layout.. </div>\r\n</body>\r\n</html>";
-
-            return template.Replace("{{BaseUrl}}", baseurl);
-        }
-
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
         public override List<object> List(ApiCall call)
         {
-            List<LayoutItemViewModel> result = new List<LayoutItemViewModel>();
-
             var sitedb = call.WebSite.SiteDb();
 
-            int storenamehash =  Lib.Security.Hash.ComputeInt(sitedb.Layouts.StoreName);
+            int storenamehash = Lib.Security.Hash.ComputeInt(sitedb.Layouts.StoreName);
 
-            foreach (var item in sitedb.Layouts.All())
-            {
-                LayoutItemViewModel model = new LayoutItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.LastModified = item.LastModified;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Layouts.GetUsedBy(item.Id));
-                result.Add(model);
-            }
-            return result.ToList<object>();
+            return sitedb
+                .Layouts
+                .All()
+                .SortByNameOrLastModified(call)
+                .Select(item => new LayoutItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenamehash,
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Layouts.GetUsedBy(item.Id))
+                })
+                .ToList<object>();
         }
 
         [Kooboo.Attributes.RequireParameters("id", "name")]
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.EDIT)]
         public LayoutItemViewModel Copy(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -93,12 +165,12 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var newlayout = Lib.Serializer.Copy.DeepCopy<Layout>(layout);
                 newlayout.CreationDate = DateTime.UtcNow;
-                newlayout.LastModified = DateTime.UtcNow; 
+                newlayout.LastModified = DateTime.UtcNow;
 
                 newlayout.Name = call.GetValue("name");
                 sitedb.Layouts.AddOrUpdate(newlayout, call.Context.User.Id);
 
-                int storenamehash = Lib.Security.Hash.ComputeInt(call.WebSite.SiteDb().Layouts.StoreName); 
+                int storenamehash = Lib.Security.Hash.ComputeInt(call.WebSite.SiteDb().Layouts.StoreName);
 
                 LayoutItemViewModel model = new LayoutItemViewModel();
                 model.Id = newlayout.Id;
@@ -113,10 +185,10 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.DELETE)]
         public override bool Deletes(ApiCall call)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
 
             string json = call.GetValue("ids");
             if (string.IsNullOrEmpty(json))
@@ -129,18 +201,40 @@ namespace Kooboo.Web.Api.Implementation
             {
                 foreach (var item in ids)
                 {
-                    var relations = sitedb.Relations.GetReferredBy(this.ModelType, item); 
-                    if (relations !=null && relations.Count>0)
+                    var relations = sitedb.Relations.GetReferredBy(this.ModelType, item);
+                    if (relations != null && relations.Count > 0)
                     {
-                        throw new Exception(Data.Language.Hardcoded.GetValue("Layout is being used, can not be deleted", call.Context)); 
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Layout is being used, can not be deleted", call.Context));
                     }
-                     
-                   sitedb.Layouts.Delete(item, call.Context.User.Id);
+
+                    sitedb.Layouts.Delete(item, call.Context.User.Id);
                 }
                 return true;
             }
             return false;
         }
 
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        public override bool IsUniqueName(ApiCall call)
+        {
+            return base.IsUniqueName(call);
+        }
+
+        [Permission(Feature.LAYOUT, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
     }
 }

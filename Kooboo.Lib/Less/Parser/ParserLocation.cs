@@ -1,7 +1,5 @@
 ﻿namespace dotless.Core.Parser
 {
-    using System;
-
     public class NodeLocation
     {
         public int Index { get; set; }

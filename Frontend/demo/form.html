@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page back="/_Admin/component.html" title="Create user form">
+        <k-data id="hobby_options">
+          <k-data-init>
+            [ {"id":1, "name":"game"}, {"id":2,
+            "name":"sport"} ]
+          </k-data-init>
+          <k-data-item name="value" from="id"></k-data-item>
+          <k-data-item name="label" from="name"></k-data-item>
+        </k-data>
+        <k-data
+          post="http://kcomponent.localkooboo.com/user_create"
+          id="add_user"
+        >
+          <k-data-item name="username" label="用户名">test1</k-data-item>
+          <k-data-item name="age" label="年龄" type="number">20</k-data-item>
+          <k-data-item name="password" label="密码"></k-data-item>
+          <k-data-item name="createDate" label="创建日期" type="datetime">2022-1-1 12:23</k-data-item>
+          <k-data-item
+            name="hobby"
+            label="爱好"
+            type="number"
+            options="hobby_options"
+          >1</k-data-item>
+          <k-data-item name="realName" label="真实姓名" type="object">
+            <k-data-item name="lastName" label="姓"></k-data-item>
+            <k-data-item name="firstName" label="名字"></k-data-item>
+          </k-data-item>
+          <k-data-item
+            name="summary"
+            type="textarea"
+            label="简介"
+          ></k-data-item>
+        </k-data>
+
+        <k-form data="add_user"></k-form>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

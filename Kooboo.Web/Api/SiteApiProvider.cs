@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Lib.Reflection;
+
 using Kooboo.Api;
 using Kooboo.Data.Context;
+using Kooboo.Lib.Reflection;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Web.Api
 {
@@ -14,88 +12,34 @@ namespace Kooboo.Web.Api
     {
         public SiteApiProvider()
         {
-            List = DefaultList();
-            CheckAccess = Kooboo.Web.Backend.ApiPermission.IsAllow; 
-        }
-
-        private Dictionary<string, IApi> DefaultList()
-        {
-            var defaultlist = new Dictionary<string, IApi>(StringComparer.OrdinalIgnoreCase);
-
-            var alldefinedTypes = GetAllDefinedApi();
-            foreach (var item in alldefinedTypes)
+            IApiProvider me = this;
+            var types = GetAllDefinedApi();
+            foreach (var item in types)
             {
                 var instance = Activator.CreateInstance(item) as IApi;
-                AddApi(defaultlist, instance);
+                me.AddApi(instance);
             }
 
-            AddApi(defaultlist, new SiteObjectApi<CmsFile>());
-            AddApi(defaultlist, new SiteObjectApi<CmsCssRule>());
-
-            AddApi(defaultlist, new SiteObjectApi<Folder>());
-            AddApi(defaultlist, new SiteObjectApi<ViewDataMethod>());
-
-            return defaultlist;
+            me.AddApi(new SiteObjectApi<CmsFile>());
+            me.AddApi(new SiteObjectApi<CmsCssRule>());
+            me.AddApi(new SiteObjectApi<Folder>());
+            me.AddApi(new SiteObjectApi<ViewDataMethod>());
+            CheckAccess = PermissionService.IsAllow;
         }
-
 
         private object _locker = new object();
 
-        public Dictionary<string, IApi> List
-        {
-            get; set;
-        }
+        public Dictionary<string, Dictionary<string, IApi>> List { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public string ApiPrefix { get; set; } = "/_api";
-        public Func<ApiCall, ApiMethod> GetMethod {
-            get
-            {
-                return getmethod; 
-            }
-            set
-            {
 
-            }
-        }
+        public Func<ApiCall, ApiMethod> GetMethod { get; set; } = call => Module.ModuleApiHelper.GetApiMethod(call);
 
         public Func<RenderContext, ApiMethod, bool> CheckAccess { get; set; }
 
-        public ApiMethod  getmethod(ApiCall call)
-        {
-            return Kooboo.Module.ModuleApiHelper.GetApiMethod(call);  
-        }
-
-        internal void AddApi(Dictionary<string, IApi> currentlist, IApi instance)
-        {
-            if (instance != null && currentlist != null)
-            {
-                var name = instance.ModelName;
-                currentlist[name] = instance;     
-            }
-        }
-
-        private List<Type> GetAllDefinedApi()
+        public static List<Type> GetAllDefinedApi()
         {
             return AssemblyLoader.LoadTypeByInterface(typeof(IApi));
-        }
-
-        public void Set(Type apitype)
-        {
-            var instance = Activator.CreateInstance(apitype) as IApi;
-            AddApi(List, instance);
-        }
-
-        public IApi Get(string ModelName)
-        {
-            if (string.IsNullOrEmpty(ModelName))
-            {
-                return null;
-            }
-            if (List.ContainsKey(ModelName))
-            {
-                return List[ModelName];
-            }
-            return null; 
         }
     }
 }

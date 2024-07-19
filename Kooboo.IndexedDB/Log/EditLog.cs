@@ -14,7 +14,7 @@ namespace Kooboo.IndexedDB
 
         private static ObjectStore<long, LogEntry> GetLog(Database db)
         {
-            string storename = GlobalSettings.EditLogUniqueName;
+            string storeName = GlobalSettings.EditLogUniqueName;
 
             ObjectStoreParameters paras = new ObjectStoreParameters();
             paras.EnableLog = false;
@@ -24,30 +24,28 @@ namespace Kooboo.IndexedDB
             paras.AddColumn<LogEntry>(o => o.TableNameHash);
             paras.AddColumn<LogEntry>(o => o.TimeTick);
             paras.SetPrimaryKeyField<LogEntry>(o => o.Id);
-            return db.GetOrCreateObjectStore<Int64, LogEntry>(storename, paras);
-
+            return db.GetOrCreateObjectStore<Int64, LogEntry>(storeName, paras);
         }
 
         public EditLog(Database db)
         {
             this.Store = GetLog(db);
-            Int64 initid = this.Store.LastKey;
+            Int64 initId = this.Store.LastKey;
             this.LogKey = "editlog" + db.AbsolutePath;
-            SetLogId(this.Store.OwnerDatabase.Name, initid);
+            SetLogId(initId);
         }
-
 
         /// <summary>
         /// get the new database log entry id. 
         /// </summary>
         /// <param name="databasename"></param>
         /// <returns></returns>
-        public long GetNewLogId(string databasename)
+        public long GetNewLogId()
         {
             return Config.SequenceId.GetNewLongId(this.LogKey);
         }
 
-        public void SetLogId(string databasename, long id)
+        public void SetLogId(long id)
         {
             Config.SequenceId.SetLong(this.LogKey, id);
         }
@@ -56,7 +54,7 @@ namespace Kooboo.IndexedDB
         {
             if (entry.Id == default(Int64))
             {
-                entry.Id = GetNewLogId(this.Store.OwnerDatabase.Name);
+                entry.Id = GetNewLogId();
             }
             this.Store.add(entry.Id, entry);
             this.Store.Close();
@@ -65,7 +63,7 @@ namespace Kooboo.IndexedDB
         public void DelSelf()
         {
             this.Store.DelSelf();
-            this.SetLogId(this.Store.OwnerDatabase.Name, 0);
+            this.SetLogId(0);
         }
 
         public List<LogEntry> List(int take, int skip = 0, bool ascending = false)
@@ -161,14 +159,14 @@ namespace Kooboo.IndexedDB
         public List<LogEntry> GetByTableNameAndKey(string TableName, byte[] Keys, int take, int skip = 0, bool ascending = false)
         {
             Guid HashKey = LogEntry.ToHashGuid(Keys);
-            int namehash = TableName.GetHashCode32();
+            int nameHash = TableName.GetHashCode32();
             if (ascending)
             {
-                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByAscending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.TableNameHash == nameHash && o.KeyHash == HashKey).OrderByAscending().Skip(skip).Take(take);
             }
             else
             {
-                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.TableNameHash == nameHash && o.KeyHash == HashKey).OrderByDescending().Skip(skip).Take(take);
             }
         }
 
@@ -181,16 +179,13 @@ namespace Kooboo.IndexedDB
         public LogEntry GetLastLogByTableNameAndKey(string TableName, byte[] Keys)
         {
             Guid HashKey = LogEntry.ToHashGuid(Keys);
-            int namehash = TableName.GetHashCode32();
-
-            return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
+            int nameHash = TableName.GetHashCode32();
+            return this.Store.Where(o => o.TableNameHash == nameHash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
         }
 
         public LogEntry GetPreviousTableLog(LogEntry current)
         {
-
             Guid HashKey = LogEntry.ToHashGuid(current.KeyBytes);
-
             return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == HashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
         }
 

@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
@@ -15,15 +11,15 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         {
             get
             {
-                return "UID"; 
-            } 
+                return "UID";
+            }
         }
 
         public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)
         {
             return new List<ImapResponse>
             {
-                new ImapResponse(dataItem.FullItemName + " " + message.Message.Id)
+                new ImapResponse(dataItem.FullItemName + " " + message.Message.MsgId)
             };
         }
     }

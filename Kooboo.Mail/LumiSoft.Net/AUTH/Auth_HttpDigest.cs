@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -9,32 +8,32 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class Auth_HttpDigest
     {
-        private string m_Method     = "";
-        private string m_Realm      = "";
-        private string m_Nonce      = "";
-        private string m_Opaque     = "";
-        private string m_Algorithm  = "";
-        private string m_Response   = "";
-        private string m_UserName   = "";
-        private string m_Password   = "";
-        private string m_Uri        = "";
-        private string m_Qop        = "";
-        private string m_Cnonce     = "";
-        private int    m_NonceCount = 1;
-        private string m_Charset    = "";
+        private string m_Method = "";
+        private string m_Realm = "";
+        private string m_Nonce = "";
+        private string m_Opaque = "";
+        private string m_Algorithm = "";
+        private string m_Response = "";
+        private string m_UserName = "";
+        private string m_Password = "";
+        private string m_Uri = "";
+        private string m_Qop = "";
+        private string m_Cnonce = "";
+        private int m_NonceCount = 1;
+        private string m_Charset = "";
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <param name="digestResponse">Server/Client returned digest response.</param>
         /// <param name="requestMethod">Request method.</param>
-        public Auth_HttpDigest(string digestResponse,string requestMethod)
+        public Auth_HttpDigest(string digestResponse, string requestMethod)
         {
             m_Method = requestMethod;
 
             Parse(digestResponse);
         }
-                
+
         /// <summary>
         /// Client constructor. This is used to build valid Authorization response to server.
         /// </summary>
@@ -44,18 +43,18 @@ namespace LumiSoft.Net.AUTH
         /// <param name="uri">Request URI.</param>
         /// <param name="digestResponse">Server authenticate resposne.</param>
         /// <param name="requestMethod">Request method.</param>
-        public Auth_HttpDigest(string userName,string password,string cnonce,string uri,string digestResponse,string requestMethod)
-        {            
+        public Auth_HttpDigest(string userName, string password, string cnonce, string uri, string digestResponse, string requestMethod)
+        {
             Parse(digestResponse);
 
-            m_UserName   = userName;
-            m_Password   = password;
-            m_Method     = requestMethod;
-            m_Cnonce     = cnonce;
-            m_Uri        = uri;            
-            m_Qop        = "auth";
+            m_UserName = userName;
+            m_Password = password;
+            m_Method = requestMethod;
+            m_Cnonce = cnonce;
+            m_Uri = uri;
+            m_Qop = "auth";
             m_NonceCount = 1;
-            m_Response   = CalculateResponse(m_UserName,m_Password);
+            m_Response = CalculateResponse(m_UserName, m_Password);
         }
 
         /// <summary>
@@ -64,14 +63,14 @@ namespace LumiSoft.Net.AUTH
         /// <param name="realm">Realm(domain).</param>
         /// <param name="nonce">Nonce value.</param>
         /// <param name="opaque">Opaque value.</param>
-        public Auth_HttpDigest(string realm,string nonce,string opaque)
+        public Auth_HttpDigest(string realm, string nonce, string opaque)
         {
-            m_Realm  = realm;
-            m_Nonce  = nonce;
+            m_Realm = realm;
+            m_Nonce = nonce;
             m_Opaque = opaque;
         }
 
-                
+
         #region method Authenticate
 
         /// <summary>
@@ -80,13 +79,15 @@ namespace LumiSoft.Net.AUTH
         /// <param name="userName">User name.</param>
         /// <param name="password">Password.</param>
         /// <returns>Returns true if authenticated, otherwise false.</returns>
-        public bool Authenticate(string userName,string password)
-        {                        
+        public bool Authenticate(string userName, string password)
+        {
             // Check that our computed digest is same as client provided.
-            if(this.Response == CalculateResponse(userName,password)){
+            if (this.Response == CalculateResponse(userName, password))
+            {
                 return true;
             }
-            else{
+            else
+            {
                 return false;
             }
         }
@@ -102,45 +103,58 @@ namespace LumiSoft.Net.AUTH
         /// <param name="digestResponse">Client returned digest response.</param>
         private void Parse(string digestResponse)
         {
-            string[] parameters = TextUtils.SplitQuotedString(digestResponse,',');
-            foreach(string parameter in parameters){
-                string[] name_value = parameter.Split(new char[]{'='},2);
-                string   name       = name_value[0].Trim();
+            string[] parameters = TextUtils.SplitQuotedString(digestResponse, ',');
+            foreach (string parameter in parameters)
+            {
+                string[] name_value = parameter.Split(new char[] { '=' }, 2);
+                string name = name_value[0].Trim();
 
-                if(name_value.Length == 2){
-                    if(string.Equals(name,"realm",StringComparison.InvariantCultureIgnoreCase)){
+                if (name_value.Length == 2)
+                {
+                    if (string.Equals(name, "realm", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Realm = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"nonce",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "nonce", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Nonce = TextUtils.UnQuoteString(name_value[1]);
                     }
                     // RFC bug ?: RFC 2831. digest-uri = "digest-uri" "=" <"> digest-uri-value <">
                     //            RFC 2617  digest-uri        = "uri" "=" digest-uri-value
-                    else if(string.Equals(name,"uri",StringComparison.InvariantCultureIgnoreCase) || string.Equals(name,"digest-uri",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "uri", StringComparison.InvariantCultureIgnoreCase) || string.Equals(name, "digest-uri", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Uri = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"qop",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "qop", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Qop = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"nc",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "nc", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_NonceCount = Convert.ToInt32(TextUtils.UnQuoteString(name_value[1]));
                     }
-                    else if(string.Equals(name,"cnonce",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "cnonce", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Cnonce = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"response",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "response", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Response = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"opaque",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "opaque", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Opaque = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"username",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "username", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_UserName = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"algorithm",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "algorithm", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Algorithm = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(string.Equals(name,"charset",StringComparison.InvariantCultureIgnoreCase)){
+                    else if (string.Equals(name, "charset", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         m_Charset = TextUtils.UnQuoteString(name_value[1]);
                     }
                 }
@@ -157,7 +171,7 @@ namespace LumiSoft.Net.AUTH
         /// <param name="userName">User name.</param>
         /// <param name="password">Password.</param>
         /// <returns>Returns 'rspauth' value.</returns>
-        public string CalculateRspAuth(string userName,string password)
+        public string CalculateRspAuth(string userName, string password)
         {
             /* RFC 2617 3.2.3.
                 The optional response digest in the "response-auth" directive
@@ -186,31 +200,38 @@ namespace LumiSoft.Net.AUTH
             string a1 = "";
             string a2 = "";
             // Create A1
-            if(string.IsNullOrEmpty(this.Algorithm) || String.Equals(this.Algorithm,"md5",StringComparison.InvariantCultureIgnoreCase)){
+            if (string.IsNullOrEmpty(this.Algorithm) || String.Equals(this.Algorithm, "md5", StringComparison.InvariantCultureIgnoreCase))
+            {
                 a1 = userName + ":" + this.Realm + ":" + password;
             }
-            else if(String.Equals(this.Algorithm,"md5-sess",StringComparison.InvariantCultureIgnoreCase)){
-                a1 = Net_Utils.ComputeMd5(userName + ":" + this.Realm + ":" + password,false) + ":" + this.Nonce + ":" + this.CNonce;
+            else if (String.Equals(this.Algorithm, "md5-sess", StringComparison.InvariantCultureIgnoreCase))
+            {
+                a1 = Net_Utils.ComputeMd5(userName + ":" + this.Realm + ":" + password, false) + ":" + this.Nonce + ":" + this.CNonce;
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid Algorithm value '" + this.Algorithm + "' !");
             }
             // Create A2            
-            if(string.IsNullOrEmpty(this.Qop) || String.Equals(this.Qop,"auth",StringComparison.InvariantCultureIgnoreCase)){
+            if (string.IsNullOrEmpty(this.Qop) || String.Equals(this.Qop, "auth", StringComparison.InvariantCultureIgnoreCase))
+            {
                 a2 = ":" + this.Uri;
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid qop value '" + this.Qop + "' !");
             }
 
             // Calculate response value.
             // qop present
-            if(!string.IsNullOrEmpty(this.Qop)){
-                return Net_Utils.ComputeMd5(Net_Utils.ComputeMd5(a1,true) + ":" + this.Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.CNonce + ":" + this.Qop + ":" + Net_Utils.ComputeMd5(a2,true),true);
+            if (!string.IsNullOrEmpty(this.Qop))
+            {
+                return Net_Utils.ComputeMd5(Net_Utils.ComputeMd5(a1, true) + ":" + this.Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.CNonce + ":" + this.Qop + ":" + Net_Utils.ComputeMd5(a2, true), true);
             }
             // qop not present
-            else{                
-                return Net_Utils.ComputeMd5(Net_Utils.ComputeMd5(a1,true) + ":" + this.Nonce + ":" + Net_Utils.ComputeMd5(a2,true),true);
+            else
+            {
+                return Net_Utils.ComputeMd5(Net_Utils.ComputeMd5(a1, true) + ":" + this.Nonce + ":" + Net_Utils.ComputeMd5(a2, true), true);
             }
         }
 
@@ -224,7 +245,7 @@ namespace LumiSoft.Net.AUTH
         /// <param name="userName">User name.</param>
         /// <param name="password">User password.</param>
         /// <returns>Returns calculated rsponse value.</returns>
-        public string CalculateResponse(string userName,string password)
+        public string CalculateResponse(string userName, string password)
         {
             /* RFC 2617.
              
@@ -281,37 +302,45 @@ namespace LumiSoft.Net.AUTH
             */
 
             string A1 = "";
-            if(string.IsNullOrEmpty(this.Algorithm) || string.Equals(this.Algorithm,"md5",StringComparison.InvariantCultureIgnoreCase)){
+            if (string.IsNullOrEmpty(this.Algorithm) || string.Equals(this.Algorithm, "md5", StringComparison.InvariantCultureIgnoreCase))
+            {
                 A1 = userName + ":" + this.Realm + ":" + password;
             }
-            else if(string.Equals(this.Algorithm,"md5-sess",StringComparison.InvariantCultureIgnoreCase)){
+            else if (string.Equals(this.Algorithm, "md5-sess", StringComparison.InvariantCultureIgnoreCase))
+            {
                 A1 = H(userName + ":" + this.Realm + ":" + password) + ":" + this.Nonce + ":" + this.CNonce;
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid 'algorithm' value '" + this.Algorithm + "'.");
             }
 
             string A2 = "";
-            if(string.IsNullOrEmpty(this.Qop) || string.Equals(this.Qop,"auth",StringComparison.InvariantCultureIgnoreCase)){
+            if (string.IsNullOrEmpty(this.Qop) || string.Equals(this.Qop, "auth", StringComparison.InvariantCultureIgnoreCase))
+            {
                 A2 = this.RequestMethod + ":" + this.Uri;
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid 'qop' value '" + this.Qop + "'.");
             }
 
-            if(string.Equals(this.Qop,"auth",StringComparison.InvariantCultureIgnoreCase) || string.Equals(this.Qop,"auth-int",StringComparison.InvariantCultureIgnoreCase)){
+            if (string.Equals(this.Qop, "auth", StringComparison.InvariantCultureIgnoreCase) || string.Equals(this.Qop, "auth-int", StringComparison.InvariantCultureIgnoreCase))
+            {
                 // request-digest  = <"> < KD ( H(A1),unq(nonce-value) ":" nc-value ":" unq(cnonce-value) ":" unq(qop-value) ":" H(A2) )> <">
                 // We don't add quoutes here.
 
-                return KD(H(A1),this.Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.CNonce + ":" + this.Qop + ":" + H(A2));
+                return KD(H(A1), this.Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.CNonce + ":" + this.Qop + ":" + H(A2));
             }
-            else if(string.IsNullOrEmpty(this.Qop)){
+            else if (string.IsNullOrEmpty(this.Qop))
+            {
                 // request-digest = <"> < KD ( H(A1), unq(nonce-value) ":" H(A2) ) > <">
                 // We don't add quoutes here.
 
-                return KD(H(A1),this.Nonce + ":" + H(A2));
+                return KD(H(A1), this.Nonce + ":" + H(A2));
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid 'qop' value '" + this.Qop + "'.");
             }
         }
@@ -330,7 +359,8 @@ namespace LumiSoft.Net.AUTH
             StringBuilder retVal = new StringBuilder();
             retVal.Append("realm=\"" + m_Realm + "\",");
             retVal.Append("username=\"" + m_UserName + "\",");
-            if(!string.IsNullOrEmpty(m_Qop)){
+            if (!string.IsNullOrEmpty(m_Qop))
+            {
                 retVal.Append("qop=\"" + m_Qop + "\",");
             }
             retVal.Append("nonce=\"" + m_Nonce + "\",");
@@ -338,7 +368,7 @@ namespace LumiSoft.Net.AUTH
             retVal.Append("cnonce=\"" + m_Cnonce + "\",");
             retVal.Append("response=\"" + m_Response + "\",");
             retVal.Append("opaque=\"" + m_Opaque + "\",");
-            retVal.Append("uri=\"" + m_Uri + "\"");            
+            retVal.Append("uri=\"" + m_Uri + "\"");
 
             return retVal.ToString();
         }
@@ -362,15 +392,17 @@ namespace LumiSoft.Net.AUTH
         /// <param name="addAuthMethod">Specifies if 'digest ' auth method string constant is added.</param>
         /// <returns>Returns Challenge data.</returns>
         public string ToChallenge(bool addAuthMethod)
-        {            
+        {
             // digest realm="",qop="",nonce="",opaque=""
 
             StringBuilder retVal = new StringBuilder();
-            if(addAuthMethod){
+            if (addAuthMethod)
+            {
                 retVal.Append("digest ");
             }
             retVal.Append("realm=" + TextUtils.QuoteString(m_Realm) + ",");
-            if(!string.IsNullOrEmpty(m_Qop)){
+            if (!string.IsNullOrEmpty(m_Qop))
+            {
                 retVal.Append("qop=" + TextUtils.QuoteString(m_Qop) + ",");
             }
             retVal.Append("nonce=" + TextUtils.QuoteString(m_Nonce) + ",");
@@ -404,49 +436,60 @@ namespace LumiSoft.Net.AUTH
                           maxbuf | charset | cipher | authzid | auth-param )
             */
 
-            
+
             string response = "";
-            if(string.IsNullOrEmpty(m_Password)){
+            if (string.IsNullOrEmpty(m_Password))
+            {
                 response = m_Response;
             }
-            else{
-                response = CalculateResponse(m_UserName,m_Password);
+            else
+            {
+                response = CalculateResponse(m_UserName, m_Password);
             }
 
             StringBuilder authData = new StringBuilder();
-            if(addAuthMethod){
+            if (addAuthMethod)
+            {
                 authData.Append("Digest ");
             }
             authData.Append("realm=\"" + m_Realm + "\",");
             authData.Append("username=\"" + m_UserName + "\",");
             authData.Append("nonce=\"" + m_Nonce + "\",");
-            if(!string.IsNullOrEmpty(m_Uri)){
+            if (!string.IsNullOrEmpty(m_Uri))
+            {
                 authData.Append("uri=\"" + m_Uri + "\",");
             }
-            if(!string.IsNullOrEmpty(m_Qop)){
+            if (!string.IsNullOrEmpty(m_Qop))
+            {
                 authData.Append("qop=" + m_Qop + ",");
             }
             // nc value must be specified only if qop is present.
-            if(!string.IsNullOrEmpty(m_Qop)){
+            if (!string.IsNullOrEmpty(m_Qop))
+            {
                 authData.Append("nc=" + m_NonceCount.ToString("x8") + ",");
             }
-            if(!string.IsNullOrEmpty(m_Cnonce)){
+            if (!string.IsNullOrEmpty(m_Cnonce))
+            {
                 authData.Append("cnonce=\"" + m_Cnonce + "\",");
             }
             authData.Append("response=\"" + response + "\",");
-            if(!string.IsNullOrEmpty(m_Algorithm)){
+            if (!string.IsNullOrEmpty(m_Algorithm))
+            {
                 authData.Append("algorithm=\"" + m_Algorithm + "\",");
             }
-            if(!string.IsNullOrEmpty(m_Opaque)){
+            if (!string.IsNullOrEmpty(m_Opaque))
+            {
                 authData.Append("opaque=\"" + m_Opaque + "\",");
             }
-            if(!string.IsNullOrEmpty(m_Charset)){
+            if (!string.IsNullOrEmpty(m_Charset))
+            {
                 authData.Append("charset=" + m_Charset + ",");
             }
 
             string retVal = authData.ToString().Trim();
-            if(retVal.EndsWith(",")){
-                retVal = retVal.Substring(0,retVal.Length - 1);
+            if (retVal.EndsWith(","))
+            {
+                retVal = retVal.Substring(0, retVal.Length - 1);
             }
 
             return retVal;
@@ -459,14 +502,14 @@ namespace LumiSoft.Net.AUTH
 
         private string H(string value)
         {
-            return Net_Utils.ComputeMd5(value,true);
+            return Net_Utils.ComputeMd5(value, true);
         }
 
         #endregion
 
         #region method KD
 
-        private string KD(string key,string data)
+        private string KD(string key, string data)
         {
             // KD(secret, data) = H(concat(secret, ":", data))
 
@@ -484,7 +527,7 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Returns nonce value.</returns>
         public static string CreateNonce()
         {
-            return Guid.NewGuid().ToString().Replace("-","");
+            return Guid.NewGuid().ToString().Replace("-", "");
         }
 
         #endregion
@@ -497,7 +540,7 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Renturn opaque value.</returns>
         public static string CreateOpaque()
         {
-            return Guid.NewGuid().ToString().Replace("-","");
+            return Guid.NewGuid().ToString().Replace("-", "");
         }
 
         #endregion
@@ -510,10 +553,12 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string RequestMethod
         {
-            get{ return m_Method; }
+            get { return m_Method; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     value = "";
                 }
                 m_Method = value;
@@ -528,10 +573,12 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Realm
         {
-            get{ return m_Realm; }
+            get { return m_Realm; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     value = "";
                 }
                 m_Realm = value;
@@ -546,10 +593,12 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentException">Is raised when invalid value is specified.</exception>
         public string Nonce
         {
-            get{ return m_Nonce; }
+            get { return m_Nonce; }
 
-            set{
-                if(string.IsNullOrEmpty(value)){
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
                     throw new ArgumentException("Nonce value can't be null or empty !");
                 }
 
@@ -564,9 +613,9 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentException">Is raised when invalid value is specified.</exception>
         public string Opaque
         {
-            get{ return m_Opaque; }
+            get { return m_Opaque; }
 
-            set{ m_Opaque = value; }
+            set { m_Opaque = value; }
         }
 
         /*
@@ -575,18 +624,18 @@ namespace LumiSoft.Net.AUTH
             get{ return false; }
         }
         */
-        
+
         /// <summary>
         /// Gets or sets algorithm to use to produce the digest and a checksum.
         /// This is normally MD5 or MD5-sess.
         /// </summary>
         public string Algorithm
         {
-            get{ return m_Algorithm; }
+            get { return m_Algorithm; }
 
-            set{ m_Algorithm = value; }
+            set { m_Algorithm = value; }
         }
-        
+
 
         /// <summary>
         /// Gets a string of 32 hex digits computed by HTTP digest algorithm, 
@@ -594,7 +643,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Response
         {
-            get{ return m_Response; }
+            get { return m_Response; }
         }
 
         /// <summary>
@@ -602,10 +651,12 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     value = "";
                 }
                 m_UserName = value;
@@ -617,10 +668,12 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Password
         {
-            get{ return m_Password; }
+            get { return m_Password; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     value = "";
                 }
                 m_Password = value;
@@ -632,9 +685,9 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Uri
         {
-            get{ return m_Uri; }
+            get { return m_Uri; }
 
-            set{ m_Uri = value; }
+            set { m_Uri = value; }
         }
 
         /// <summary>
@@ -645,9 +698,9 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Qop
         {
-            get{ return m_Qop; }
+            get { return m_Qop; }
 
-            set{ m_Qop = value; }
+            set { m_Qop = value; }
         }
 
         /// <summary>
@@ -656,10 +709,12 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string CNonce
         {
-            get{ return m_Cnonce; }
+            get { return m_Cnonce; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     value = "";
                 }
                 m_Cnonce = value;
@@ -673,11 +728,11 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public int NonceCount
         {
-            get{ return m_NonceCount;}
+            get { return m_NonceCount; }
 
-            set{ m_NonceCount = value; }
+            set { m_NonceCount = value; }
         }
-                
+
         #endregion
 
 
@@ -702,15 +757,17 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Returns Challange data.</returns>
         [Obsolete("Mispell error, use ToChallenge method instead.")]
         public string ToChallange(bool addAuthMethod)
-        {            
+        {
             // digest realm="",qop="",nonce="",opaque=""
 
             StringBuilder retVal = new StringBuilder();
-            if(addAuthMethod){
+            if (addAuthMethod)
+            {
                 retVal.Append("digest ");
             }
             retVal.Append("realm=" + TextUtils.QuoteString(m_Realm) + ",");
-            if(!string.IsNullOrEmpty(m_Qop)){
+            if (!string.IsNullOrEmpty(m_Qop))
+            {
                 retVal.Append("qop=" + TextUtils.QuoteString(m_Qop) + ",");
             }
             retVal.Append("nonce=" + TextUtils.QuoteString(m_Nonce) + ",");

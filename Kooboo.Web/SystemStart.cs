@@ -1,8 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Context;
+using Kooboo.Data.Reflection;
 using Kooboo.Data.Server;
 using Kooboo.Data.SSL;
 using Kooboo.Jobs;
@@ -12,9 +16,7 @@ using Kooboo.Web.Api;
 using Kooboo.Web.Frontend;
 using Kooboo.Web.JsTest;
 using Kooboo.Web.Spa;
-using System;
-using System.Collections.Generic; 
-using System.Threading;
+using MimeKit;
 
 namespace Kooboo.Web
 {
@@ -22,64 +24,69 @@ namespace Kooboo.Web
     {
         private static object _locker = new object();
 
-        public static Dictionary<int, IWebServer> WebServers = new Dictionary<int, IWebServer>();
+        public static WebHostServer WebServer { get; private set; }
 
         public static void Start(int port)
         {
+            var newLineFormat = MimeKit.FormatOptions.Default.GetType().GetField("newLineFormat", BindingFlags.NonPublic | BindingFlags.Instance);
+            newLineFormat.SetValue(MimeKit.FormatOptions.Default, NewLineFormat.Dos);
+
             ThreadPool.SetMinThreads(9600, 500);
 
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
+                if (args.ExceptionObject is Exception ex)
+                {
+                    Data.Log.Instance.Exception.WriteException(ex);
+                }
             };
 
-            Kooboo.Data.AppSettings.SetCustomSslCheck();
+            // init implementation. 
+            Lib.IOC.Service.AddSingleton<IObjectReader>(new Sites.Render.Reflection.ObjectReader());
+
+            AppSettings.SetCustomSslCheck();
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
 
-            Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
+            Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
 
-            Data.GlobalDb.Bindings.EnsureLocalBinding();
+            WebServer = new WebHostServer(port, Middleware);
 
-            StartNewWebServer(port);
-
-            foreach (var item in Kooboo.Data.GlobalDb.Bindings.All())
+            if (!Data.AppSettings.Proxy)
             {
-                if (item.Port > 0 && item.Port != port)
+                Data.Config.AppHost.BindingService.EnsureLocalBinding();
+
+                var AllPorts = Data.Config.AppHost.BindingRepo.All.Select(o => o.Port).Distinct().ToList();
+
+                // foreach (var item in Data.Config.AppHost.BindingRepo.All)
+                foreach (var item in AllPorts)
                 {
-                    StartNewWebServer(item.Port);
+                    if (item > 0 && item != port)
+                    {
+                        if (!Lib.Helper.NetworkHelper.IsPortInUse(item))
+                        {
+                            WebServer.AddPort(item);
+                        }
+                    }
                 }
+
+                //#if !DEBUG
+
+                var sslport = AppSettings.SslPort;
+
+                if (AppSettings.IsOnlineServer || !Lib.Helper.NetworkHelper.IsPortInUse(sslport))
+                {
+                    WebServer.AddPort(sslport, true);
+                    Console.WriteLine("SSL started " + sslport.ToString());
+                }
+                //#endif
             }
 
-            var sslport = Data.AppSettings.SslPort;
-
-            if (!WebServers.ContainsKey(sslport))
-            {
-                if (Data.AppSettings.IsOnlineServer)
-                {
-                    StartNewWebServer(sslport);
-                }
-
-                else if (!Lib.Helper.NetworkHelper.IsPortInUse(sslport))
-                {
-                    StartNewWebServer(sslport);
-                }
-            }
+            WebServer.Start();
 
             JobWorker.Instance.Start();
 
-            Service.UpGradeService.UpgradeFix(); 
-        }
-
-        public static void StartNewWebServer(int port)
-        {
-            if (!WebServers.ContainsKey(port))
-            {
-                var server = Kooboo.Data.Server.WebServerFactory.Create(port, Middleware);
-
-                server.Start();
-                WebServers[port] = server;
-            }
+            // Service.UpGradeService.UpgradeFix();
         }
 
 
@@ -95,26 +102,24 @@ namespace Kooboo.Web
                     {
                         if (_middlewares == null)
                         {
-                            _middlewares = new List<IKoobooMiddleWare>();
-                            _middlewares.Add(new FrontRequest.KoobooMiddleware());
-                            if (!AppSettings.IsOnlineServer) _middlewares.Add(new MonacoCacheMiddleware());
-                            _middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
+                            var middlewares = new List<IKoobooMiddleWare>();
+                            middlewares.Add(new PwaMiddleware());
+                            middlewares.Add(new FrontRequest.KoobooMiddleware());
+                            middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
+                            middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
+                            middlewares.Add(new SpaMultilingualMiddleware());
+                            middlewares.Add(new RenderMiddleWare(KoobooBackEndViewOption()));
+                            // middlewares.Add(new JsTestMiddleWare(KoobooJsTestOption()));
+                            // middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
+                            middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
+                            middlewares.Add(new SslCertMiddleWare());
 
-                            _middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
-
-                            _middlewares.Add(new RenderMiddleWare(KoobooBackEndViewOption()));
-
-                            _middlewares.Add(new JsTestMiddleWare(KoobooJsTestOption()));
-                            _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
-
-                           _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
-
-                            _middlewares.Add(new SslCertMiddleWare());
-
-                            _middlewares.Add(new EndMiddleWare());
+                            middlewares.Add(new EndMiddleWare());
+                            _middlewares = middlewares;
                         }
                     }
                 }
+
                 return _middlewares;
             }
         }
@@ -123,10 +128,7 @@ namespace Kooboo.Web
         public static void Stop(int port = 0)
         {
             // stop all web servers. 
-            foreach (var item in WebServers)
-            {
-                item.Value.Stop();
-            }
+            WebServer.Stop();
 
             // close all database. 
             //foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
@@ -134,38 +136,29 @@ namespace Kooboo.Web
             //    item.Value.Published = false; //set to false in the memory only..
             //}
 
-            foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
+            foreach (var item in Data.Config.AppHost.SiteRepo.AllSites)
             {
-                item.Value.SiteDb().DatabaseDb.Close();
+                item.SiteDb().DatabaseDb.Close();
             }
         }
 
         private static RenderOption KoobooBackEndViewOption()
         {
             RenderOption option = new RenderOption();
+            option.HtmlRaw = true;
             option.GetDiskRoot = GetRoot;
-            option.StartPath = "/_admin";
+            option.StartPath = "/_Admin";
             option.ViewFolder = "view";
             option.LayoutFolder = "_layout";
             option.RequireUser = true;
-            option.LoginPage = "/_admin/account/login";
-            option.PageAfterLogin = "/_Admin/Sites";
-            option.RequireUserIgnorePath.Add("/_admin/account");
-            option.RequireUserIgnorePath.Add("/_admin/scripts");
-            option.RequireUserIgnorePath.Add("/_admin/styles");
-            option.RequireUserIgnorePath.Add("/_admin/images");
-            //option.RequireUserIgnorePath.Add(Kooboo.DataConstants.Default404Page);
-            //option.RequireUserIgnorePath.Add(Kooboo.DataConstants.Default403Page);
-            //option.RequireUserIgnorePath.Add(Kooboo.DataConstants.Default500Page);
-            option.RequireUserIgnorePath.Add("/_admin/logo");
-            option.RequireUserIgnorePath.Add("/_admin/error");
-            option.RequireUserIgnorePath.Add("/_admin/kbtest");
-            option.RequireUserIgnorePath.Add("/_admin/development/kscript");
-            option.RequireUserIgnorePath.Add("/_admin/development/kview");
+            option.LoginPage = "/_Admin/login";
+            option.PageAfterLogin = "/_Admin";
+            option.RequireUserIgnorePath.Add("/_Admin");
+            option.RequireUserIgnorePath.Add("/.well-known");
 
             option.RequireSpeicalSite = true;
             Dictionary<string, object> data = new Dictionary<string, object>();
-            var value = Kooboo.Data.Language.LanguageSetting.CmsLangs;
+            var value = Data.Language.LanguageSetting.CmsLangs;
 
             List<CmsLanguage> langvalue = new List<CmsLanguage>();
             foreach (var item in value)
@@ -174,7 +167,7 @@ namespace Kooboo.Web
             }
 
             data.Add("cmslang", langvalue);
-            data.Add("kooboosetting", Kooboo.Data.Helper.SettingHelper.GetKoobooSetting());
+            data.Add("kooboosetting", Data.Helper.SettingHelper.GetKoobooSetting());
 
             option.InitData = data;
 
@@ -195,7 +188,7 @@ namespace Kooboo.Web
             option.LayoutFolder = "_layout";
 
             Dictionary<string, object> data = new Dictionary<string, object>();
-            var value = Kooboo.Data.Language.LanguageSetting.CmsLangs;
+            var value = Data.Language.LanguageSetting.CmsLangs;
 
             List<CmsLanguage> langvalue = new List<CmsLanguage>();
             foreach (var item in value)
@@ -204,7 +197,7 @@ namespace Kooboo.Web
             }
 
             data.Add("cmslang", langvalue);
-            data.Add("kooboosetting", Kooboo.Data.Helper.SettingHelper.GetKoobooSetting());
+            data.Add("kooboosetting", Data.Helper.SettingHelper.GetKoobooSetting());
 
             option.InitData = data;
             option.EnableMultilingual = true;
@@ -215,12 +208,14 @@ namespace Kooboo.Web
         {
             return AppSettings.RootPath;
         }
+
         private static string LocalServerRoot(RenderContext context)
         {
             if (context.WebSite != null)
             {
                 return context.WebSite.LocalRootPath;
             }
+
             return null;
         }
 
@@ -230,6 +225,7 @@ namespace Kooboo.Web
             {
                 return true;
             }
+
             return false;
         }
 
@@ -238,8 +234,8 @@ namespace Kooboo.Web
             RenderOption option = new RenderOption();
             option.GetDiskRoot = LocalServerRoot;
             option.ShouldTryHandle = LocalserverTryShouldHandle;
-            option.ViewFolder = "view";
-            option.LayoutFolder = "_layout";
+            option.ViewFolder = "_view, view";
+            option.LayoutFolder = "_layout, layout";
             return option;
         }
 
@@ -253,6 +249,7 @@ namespace Kooboo.Web
         }
 
         private static Kooboo.Api.IApiProvider _apiprovider;
+
         public static Kooboo.Api.IApiProvider CurrentApiProvider
         {
             get
@@ -269,8 +266,14 @@ namespace Kooboo.Web
                         }
                     }
                 }
+
                 return _apiprovider;
             }
+        }
+
+        public static void InitHeaders(RenderContext context)
+        {
+            context.Response.Headers["IsOnlineServer"] = Data.AppSettings.IsOnlineServer.ToString();
         }
     }
 
@@ -280,6 +283,4 @@ namespace Kooboo.Web
 
         public string Name { get; set; }
     }
-
-
 }

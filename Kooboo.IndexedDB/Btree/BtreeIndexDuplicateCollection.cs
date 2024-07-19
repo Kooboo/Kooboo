@@ -2,28 +2,25 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
 
     /// <summary>
     /// this implement the enumerable interface. 
     /// </summary>
-    public class BtreeIndexDuplicateCollection : IEnumerable<Int64>
+    public class BTreeIndexDuplicateCollection : IEnumerable<Int64>
     {
 
-        private BtreeIndexDuplicate duplicate;
+        private BTreeIndexDuplicate duplicate;
         private JumpRecord start;
 
-        public BtreeIndexDuplicateCollection(BtreeIndexDuplicate duplicate, JumpRecord start)
+        public BTreeIndexDuplicateCollection(BTreeIndexDuplicate duplicate, JumpRecord start)
         {
             this.duplicate = duplicate;
             this.start = start;
 
-           
+
         }
 
         IEnumerator<long> GetEnumerator()
@@ -42,14 +39,13 @@ namespace Kooboo.IndexedDB.Btree
         }
 
 
-
         public class Enumerator : IEnumerator<long>
         {
-            private BtreeIndexDuplicate duplicate;
+            private BTreeIndexDuplicate duplicate;
             private JumpRecord start;
             private JumpRecord current;
 
-            public Enumerator(BtreeIndexDuplicate duplicate, JumpRecord start)
+            public Enumerator(BTreeIndexDuplicate duplicate, JumpRecord start)
             {
                 this.duplicate = duplicate;
                 this.start = start;

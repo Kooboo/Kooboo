@@ -1,45 +1,39 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Kooboo.Data.Models;
 
 namespace Kooboo.Mail.Multipart
 {
     public class BodyComposer
     {
-        //always should be below format. 
-        //mixed
-        //alternative
-        //text
-        //related
-        //html
-        //inline image
-        //inline image
-        //attachment
-        //attachment
-
-        public BodyComposer(string HtmlBody, List<Models.Attachment> Attachments = null, User User = null)
+        public BodyComposer(string HTMLlBody, List<Models.Attachment> Attachments = null, User User = null)
         {
-            init(HtmlBody, null, User, Attachments);
+            init(HTMLlBody, null, null, User, Attachments);
         }
 
-        public BodyComposer(string htmlbody, string TextBody, List<Models.Attachment> attachments = null, User user = null)
+        public BodyComposer(string HTMLBody, string TextBody, List<Models.Attachment> attachments = null, User user = null)
         {
-            init(htmlbody, TextBody, user, attachments);
+            init(HTMLBody, TextBody, null, user, attachments);
         }
 
-        private void init(string HtmlBody, string TextBody, User user, List<Models.Attachment> attachments)
+        public BodyComposer(string HTMLBody, string TextBody, string ICalendarBody, List<Models.Attachment> attachments = null, User user = null)
+        {
+            init(HTMLBody, TextBody, ICalendarBody, user, attachments);
+        }
+
+        private void init(string HtmlBody, string TextBody, string ICalendarBody, User user, List<Models.Attachment> attachments)
         {
             if (user != null)
             {
                 this.InlineImages = ParseInlineImages(user, ref HtmlBody);
             }
-
 
             if (string.IsNullOrEmpty(TextBody))
             {
@@ -49,8 +43,33 @@ namespace Kooboo.Mail.Multipart
             this.CharSet = Utility.ComposeUtility.GetEncoding(ref TextBody, ref HtmlBody);
             this.TransferEncoding = Utility.ComposeUtility.GetTransferEncoding(ref TextBody, ref HtmlBody);
 
-            this.HtmlBody = HtmlBody;
+            //StringBuilder htmlBuilder = new StringBuilder();
+            //htmlBuilder.Append("<html>\r\n<head>\r\n    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\r\n</head>\r\n<body>\r\n");
+            //htmlBuilder.Append(HtmlBody);   
+            //htmlBuilder.Append("\r\n</body>\r\n</html>");
+
+            if (HtmlBody != null)
+            {
+                if (HtmlBody.IndexOf("</body>", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    this.HtmlBody = HtmlBody;
+                }
+                else
+                {
+                    if (this.CharSet != null)
+                    {
+                        this.HtmlBody = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=" + this.CharSet + "'></head><body>" + HtmlBody + "</body></html>";
+                    }
+                    else
+                    {
+                        this.HtmlBody = "<html><head><meta http-equiv='Content-Type' content='text/html'></head><body>" + HtmlBody + "</body></html>";
+                    }
+
+                }
+            }
+
             this.TextBody = TextBody;
+            this.ICalendarBody = ICalendarBody;
             this.Attachments = attachments;
 
             this.user = user;
@@ -61,128 +80,80 @@ namespace Kooboo.Mail.Multipart
 
         private string TextBody { get; set; }
 
+        private string ICalendarBody { get; set; }
+
         private User user { get; set; }
 
-        private List<InlineImageModel> InlineImages { get; set; }
+        private List<InlineImageModel> _inlineImg;
+        private List<InlineImageModel> InlineImages
+        {
+            get
+            {
+                if (_inlineImg == null)
+                {
+                    _inlineImg = new List<InlineImageModel>();
+                }
+                return _inlineImg;
+            }
+            set
+            {
+                _inlineImg = value;
+            }
+        }
 
-        private List<Models.Attachment> Attachments { get; set; }
+        private List<Models.Attachment> _attachments;
+        private List<Models.Attachment> Attachments
+        {
+            get
+            {
+                if (_attachments == null)
+                {
+                    _attachments = new List<Models.Attachment>();
+                }
+                return _attachments;
+            }
+            set
+            {
+                _attachments = value;
+            }
+        }
 
         public string CharSet { get; set; }
 
         public TransferEncoding TransferEncoding { get; set; }
 
+        private string MixedBoundary = System.Guid.NewGuid().ToString().Replace("-", "");
 
-        private string _mixedBoundary;
-        private string MixedBondary
-        {
-            get
-            {
-                if (_mixedBoundary == null)
-                {
-                    _mixedBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId();
-                }
-                return _mixedBoundary;
-            }
-        }
+        private string AlternativeBoundary = System.Guid.NewGuid().ToString().Replace("-", "");
 
-        private string _alterBoundary;
-        private string AlterBoundary
-        {
-            get
-            {
-                if (_alterBoundary == null)
-                {
-                    _alterBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId();
-                }
-                return _alterBoundary;
-            }
-        }
+        private string RelatedBoundary = System.Guid.NewGuid().ToString().Replace("-", "");
 
-        private string _relatedBoundary;
-        private string RelatedBoundary
-        {
-            get
-            {
-                if (_relatedBoundary == null)
-                {
-                    _relatedBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId();
-                }
-                return _relatedBoundary;
-            }
-        }
-
-        public string HeaderContentType()
-        {
-            string header = string.Empty;
-            if (this.Attachments != null && this.Attachments.Count > 0)
-            {
-                header += "MIME-Version: 1.0\r\n";
-                if (this.TransferEncoding != TransferEncoding.Unknown)
-                {
-                    header += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding) + "\r\n";
-                }
-
-                header += "Content-Type: multipart/mixed;";
-                if (this.CharSet != null)
-                {
-                    header += "Charset=" + this.CharSet + ";";
-                }
-                header += "boundary=\"" + this.MixedBondary + "\"; ";
-
-            }
-            else
-            {
-                header += "MIME-Version: 1.0\r\n";
-                if (this.TransferEncoding != TransferEncoding.Unknown)
-                {
-                    header += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding) + "\r\n";
-                }
-
-                header += "Content-Type: multipart/alternative;";
-                if (this.CharSet != null)
-                {
-                    header += "Charset=" + this.CharSet + ";";
-                }
-                header += "boundary=\"" + this.AlterBoundary + "\"; ";
-            }
-
-            return header;
-        }
+        private string ICalendarBoundary = System.Guid.NewGuid().ToString().Replace("-", "");
 
         public string Body()
         {
-
-            if (this.Attachments != null && this.Attachments.Count() > 0)
+            string body = "MIME-Version: 1.0\r\n";
+            if (!string.IsNullOrEmpty(ICalendarBody))
             {
-                // has attachmented with mixed.   
-                string body = "MIME-Version: 1.0\r\nContent-Type: multipart/Mixed; boundary=" + this.MixedBondary;
+                body += "Content-Type: multipart/Mixed; boundary=" + this.MixedBoundary + "\r\n\r\n";
 
-                if (this.CharSet != null)
-                {
-                    body += "\r\nContent-Transfer-Encoding: 8Bit";
-                }
-
-                body += "\r\n\r\nThis is a multipart message in MIME format\r\n\r\n";
-
-                body += "--" + this.MixedBondary + "\r\n";
-                body += TextHtmlAlternative(false);
-
+                body += "--" + this.MixedBoundary + "\r\n";
+                body += TextHtmlAlternative();
                 body += "\r\n";
 
                 foreach (var item in this.Attachments)
                 {
-                    string contenttype = null;
+                    string contentType = null;
                     if (!string.IsNullOrWhiteSpace(item.Type) && !string.IsNullOrWhiteSpace(item.SubType))
                     {
-                        contenttype = item.Type + "/" + item.SubType;
+                        contentType = item.Type + "/" + item.SubType;
                     }
                     else
                     {
-                        contenttype = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
+                        contentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
                     }
-                    body += "\r\n--" + this.MixedBondary + "\r\n";
-                    body += "Content-Type:" + contenttype + "; name=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
-
+                    body += "\r\n--" + this.MixedBoundary + "\r\n";
+                    body += "Content-Type:" + contentType + "; name=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
                     body += "Content-Disposition:attachment;filename=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
                     body += "Content-Transfer-Encoding:base64\r\n";
                     body += "\r\n";
@@ -190,122 +161,96 @@ namespace Kooboo.Mail.Multipart
                     var bytes = Kooboo.Mail.MultiPart.FileService.Get(user, item.FileName);
 
                     body += ToBase64(bytes);
-                    body += "\r\n\r\n";
+                    body += "\r\n";
                 }
 
-                body += "--" + this.MixedBondary + "--";
+                body += AttachICSContent();
+
+                body += "--" + this.MixedBoundary + "--";
+                return body;
+            }
+            else if (this.Attachments.Any())
+            {
+                body += "Content-Type: multipart/Mixed;boundary=" + this.MixedBoundary + "\r\n\r\n";
+
+                body += "--" + this.MixedBoundary + "\r\n";
+                body += TextHtmlAlternative();
+                body += "\r\n";
+
+                foreach (var item in this.Attachments)
+                {
+                    string contentType = null;
+                    if (!string.IsNullOrWhiteSpace(item.Type) && !string.IsNullOrWhiteSpace(item.SubType))
+                    {
+                        contentType = item.Type + "/" + item.SubType;
+                    }
+                    else
+                    {
+                        contentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
+                    }
+                    body += "\r\n--" + this.MixedBoundary + "\r\n";
+                    body += "Content-Type:" + contentType + ";name=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
+                    body += "Content-Disposition:attachment;filename=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
+                    body += "Content-Transfer-Encoding:base64\r\n";
+                    body += "\r\n";
+
+                    var bytes = Kooboo.Mail.MultiPart.FileService.Get(user, item.FileName);
+
+                    body += ToBase64(bytes);
+                    body += "\r\n";
+                }
+                body += "--" + this.MixedBoundary + "--";
                 return body;
             }
             else
             {
-                return TextHtmlAlternative(true);
+                return TextHtmlAlternative();
             }
         }
 
-        public string TextHtmlAlternative(bool mimemsessage = false)
+        private string ICalendarContent(string method)
         {
-            string body = null;
+            StringBuilder iCalendarContentBuilder = new StringBuilder();
+            iCalendarContentBuilder.Append("Content-Type: text/calendar; charset=\"UTF-8\"; method=" + method + "\n");
+            iCalendarContentBuilder.Append("Content-Transfer-Encoding: base64\n\n");
+            iCalendarContentBuilder.Append(ToBase64(Encoding.UTF8.GetBytes(ICalendarBody)));
 
-            if (mimemsessage)
-            {
-                body = "MIME-Version: 1.0\r\n";
-            }
-
-            body += "Content-Type: multipart/alternative; boundary=" + this.AlterBoundary;
-
-            if (this.CharSet != null)
-            {
-                body += "; CharSet=" + this.CharSet;
-            }
-
-            body += "\r\n\r\n";
-
-            if (mimemsessage)
-            {
-                body += "This is a multipart message in MIME format";
-                body += "\r\n\r\n";
-            }
-
-            body += "--" + this.AlterBoundary + "\r\n";
-            body += "Content-Type: text/plain";
-            if (this.CharSet != null)
-            {
-                body += "; CharSet=" + this.CharSet;
-            }
-
-            if (this.TransferEncoding != TransferEncoding.Unknown)
-            {
-                body += "\r\n";
-                body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
-            }
-
-
-            body += "\r\n\r\n";
-            body += Utility.ComposeUtility.Encode(this.TextBody, this.TransferEncoding);
-
-            body += "\r\n";
-
-            body += "--" + this.AlterBoundary + "\r\n";
-
-            body += Html();
-
-            body += "--" + this.AlterBoundary + "--";
-
-            return body;
+            return iCalendarContentBuilder.ToString();
         }
 
-        public string Html()
+        private string AttachICSContent()
         {
-            string body = null;
-            if (this.InlineImages == null || this.InlineImages.Count == 0)
+            StringBuilder attachmentICSBuilder = new StringBuilder();
+            attachmentICSBuilder.Append("\r\n--" + this.MixedBoundary + "\r\n");
+            attachmentICSBuilder.Append("Content-Type:application/ics; name=\"invite.ics\"\n");
+            attachmentICSBuilder.Append("Content-Disposition:attachment;filename=\"invite.ics\"\n");
+            attachmentICSBuilder.Append("Content-Transfer-Encoding: base64\n\n");
+            attachmentICSBuilder.Append(ToBase64(Encoding.UTF8.GetBytes(ICalendarBody)));
+
+            return attachmentICSBuilder.ToString();
+        }
+
+        public string TextHtmlAlternative()
+        {
+            var alternative = _html_text_alternative();
+
+            if (!this.InlineImages.Any())
             {
-                body = "Content-Type: text/html";
-                if (this.CharSet != null)
-                {
-                    body += "; CharSet=" + this.CharSet;
-                }
-
-                if (this.TransferEncoding != TransferEncoding.Unknown)
-                {
-                    body += "\r\n";
-                    body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
-                }
-
-                body += "\r\n\r\n" + Utility.ComposeUtility.Encode(this.HtmlBody, this.TransferEncoding) + "\r\n";
+                return alternative;
             }
             else
             {
-                body = "Content-Type: multipart/related; boundary=" + this.RelatedBoundary;
-                if (this.CharSet != null)
-                {
-                    body += "; CharSet=" + this.CharSet;
-                }
-
-                body += "\r\n\r\n";
+                string body = "Content-Type: multipart/related; boundary=" + this.RelatedBoundary + "\r\n\r\n";
 
                 body += "--" + this.RelatedBoundary + "\r\n";
 
-                if (this.TransferEncoding != TransferEncoding.Unknown)
-                {
-                    body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
-                    body += "\r\n";
-                }
-
-                body += "Content-Type: text/html";
-                if (this.CharSet != null)
-                {
-                    body += "; CharSet=" + this.CharSet;
-                }
-                body += "\r\n\r\n";
-
-                body += Utility.ComposeUtility.Encode(this.HtmlBody, this.TransferEncoding);
+                body += alternative;
 
                 body += "\r\n";
 
                 foreach (var item in this.InlineImages)
                 {
                     body += "--" + this.RelatedBoundary + "\r\n";
-
                     var contentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
                     body += "Content-Type:" + contentType + ";name=" + Utility.HeaderUtility.EncodeField(item.FileName) + "\r\n";
                     body += "Content-Transfer-Encoding:base64\r\n";
@@ -316,10 +261,100 @@ namespace Kooboo.Mail.Multipart
                     body += ToBase64(item.Binary);
                     body += "\r\n";
                 }
-
                 body += "--" + this.RelatedBoundary + "--\r\n";
+                return body;
+            }
+        }
+
+        private string _html_text_alternative()
+        {
+            string body = null;
+
+            body += "Content-Type: multipart/alternative;boundary=" + this.AlternativeBoundary;
+
+            if (this.CharSet != null)
+            {
+                body += "; CharSet=" + this.CharSet;
             }
 
+            body += "\r\n\r\n";
+
+            body += "This is a multipart message in MIME format";
+            body += "\r\n\r\n";
+
+            body += "--" + this.AlternativeBoundary + "\r\n";
+            body += "Content-Type: text/plain";
+            if (this.CharSet != null)
+            {
+                body += ";CharSet=" + this.CharSet;
+            }
+
+            if (this.TransferEncoding != TransferEncoding.Unknown)
+            {
+                body += "\r\n";
+                body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
+            }
+
+            body += "\n\n";
+
+            body += Utility.ComposeUtility.Encode(this.TextBody, this.TransferEncoding);
+
+            body += "\r\n";
+
+            body += "--" + this.AlternativeBoundary + "\r\n";
+
+            body += Html();
+
+            body += "\r\n";
+
+            if (ICalendarBody != null)
+            {
+                body += "--" + this.AlternativeBoundary + "\r\n";
+                Calendar calendar = Calendar.Load(ICalendarBody);
+                CalendarEvent calendarEvent = calendar.Events[0];
+                body += ICalendarContent(calendarEvent.Calendar.Method);
+                body += "\r\n";
+            }
+
+            body += "--" + this.AlternativeBoundary + "--";
+
+            return body;
+        }
+
+        public string Html()
+        {
+            string body = "Content-Type: text/html";
+            if (this.CharSet != null)
+            {
+                body += ";CharSet=" + this.CharSet;
+            }
+
+            if (this.TransferEncoding != TransferEncoding.Unknown)
+            {
+                body += "\r\n";
+                body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
+            }
+
+            body += "\r\n\r\n" + Utility.ComposeUtility.Encode(this.HtmlBody, this.TransferEncoding) + "\r\n";
+
+
+            return body;
+        }
+
+
+        public string Text()
+        {
+            string body = "Content-Type: text/plain";
+            if (this.CharSet != null)
+            {
+                body += ";CharSet=" + this.CharSet;
+            }
+            if (this.TransferEncoding != TransferEncoding.Unknown)
+            {
+                body += "\r\n";
+                body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
+            }
+            body += "\r\n\r\n" + Utility.ComposeUtility.Encode(this.TextBody, this.TransferEncoding) + "\r\n";
             return body;
         }
 
@@ -346,7 +381,7 @@ namespace Kooboo.Mail.Multipart
                 {
                     continue;
                 }
-                src = src.Trim(); 
+                src = src.Trim();
 
                 string filename = null;
                 byte[] bytes = null;
@@ -358,10 +393,26 @@ namespace Kooboo.Mail.Multipart
                 }
                 else if (src.StartsWith(InlineImageMessageFilePrefix))
                 {
-                    filename = src.Substring(InlineImageMessageFilePrefix.Length); 
-                    bytes = MsgFile(user, filename);  
+                    filename = src.Substring(InlineImageMessageFilePrefix.Length);
+                    bytes = MsgFile(user, ref filename);
                 }
-                else 
+                else if (Lib.Utilities.DataUriService.isDataUri(src))
+                {
+                    var uriItem = Lib.Utilities.DataUriService.PraseDataUri(src);
+                    if (uriItem.isBase64)
+                    {
+                        var exten = MimeMapping.MimeUtility.GetExtensions(uriItem.MineType);
+                        if (exten != null && exten.Any())
+                        {
+                            filename = Lib.Security.ShortGuid.GetNewShortId() + "." + exten.FirstOrDefault();
+
+                            bytes = Convert.FromBase64String(uriItem.DataString);
+                        }
+
+                    }
+
+                }
+                else
                 {
                     string relative = Kooboo.Lib.Helper.UrlHelper.RelativePath(src);
 
@@ -373,10 +424,10 @@ namespace Kooboo.Mail.Multipart
                     else if (relative.StartsWith(InlineImageMessageFilePrefix))
                     {
                         filename = relative.Substring(InlineImageMessageFilePrefix.Length);
-                        bytes = MsgFile(user, filename);
+                        bytes = MsgFile(user, ref filename);
                     }
                 }
-                 
+
 
                 if (bytes != null)
                 {
@@ -408,55 +459,56 @@ namespace Kooboo.Mail.Multipart
         }
 
 
-        private static byte[] MsgFile(User user, string path)
+        private static byte[] MsgFile(User user, ref string originalFileName)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(originalFileName))
             {
                 return null;
             }
 
-            path = path.Trim();
-            path = path.Replace("\\", "/");
+            originalFileName = originalFileName.Trim();
+            originalFileName = originalFileName.Replace("\\", "/");
 
-            var spe = "/".ToCharArray(); 
+            var spe = "/".ToCharArray();
 
-            string[] para = path.Split(spe,StringSplitOptions.RemoveEmptyEntries); 
-              
+            string[] para = originalFileName.Split(spe, StringSplitOptions.RemoveEmptyEntries);
+
             string filename = null;
             int messageid = 0;
 
-    
 
             if (para.Count() == 2)
             {
                 messageid = Convert.ToInt32(para[0]);
                 filename = System.Web.HttpUtility.UrlDecode(para[1]);
+                originalFileName = filename;
             }
-            else if (para.Count() ==1)
+            else if (para.Count() == 1)
             {
                 messageid = Convert.ToInt32(para[0]);
             }
 
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
 
-            var content = maildb.Messages.GetContent(messageid);
-             
+            ///var content = maildb.Msgstore.GetContent(messageid);
+            var content = maildb.Message2.GetContent(messageid);
+
             if (!string.IsNullOrEmpty(content))
             {
                 if (!string.IsNullOrEmpty(filename))
                 {
-                   return Kooboo.Mail.Utility.MessageUtility.GetFileBinary(content, filename);
-               
+                    return Kooboo.Mail.Utility.MessageUtility.GetFileBinary(content, filename);
+
                 }
                 else
                 {
-                    return Mail.Utility.MessageUtility.GenerateAllAttachmentZip(content); 
+                    return Mail.Utility.MessageUtility.GetAllAttachmentZip(content);
                 }
             }
 
             return null;
         }
-            
+
 
         public static string RestoreInlineImages(string html, User user, int MsgId)
         {
@@ -467,13 +519,13 @@ namespace Kooboo.Mail.Multipart
                 return html;
             }
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
-            var msgbody = maildb.Messages.GetContent(MsgId);
+            var msgbody = maildb.Message2.GetContent(MsgId);
             if (string.IsNullOrEmpty(msgbody))
             {
                 return html;
             }
 
-            var mimeMsg = Kooboo.Mail.Utility.MessageUtility.ParseMineMessage(msgbody);
+            var mimeMsg = Kooboo.Mail.Utility.MessageUtility.ParseMessage(msgbody);
 
             StringBuilder sb = new StringBuilder();
             int currentindex = 0;
@@ -509,9 +561,9 @@ namespace Kooboo.Mail.Multipart
             return sb.ToString();
         }
 
-        internal static string InlineImagePrefix = "/_api/emailattachment/file/";
+        public static string InlineImagePrefix = "/_api/emailattachment/file/";
 
-        internal static string InlineImageMessageFilePrefix = "/_api/emailattachment/msgfile/";
+        public static string InlineImageMessageFilePrefix = "/_api/emailattachment/msgfile/";
 
         public static List<Kooboo.Dom.Element> GetInlineImageElements(string htmlbody)
         {
@@ -538,13 +590,17 @@ namespace Kooboo.Mail.Multipart
                 {
                     if (src.ToLower().StartsWith("http"))
                     {
-                        var relative = Kooboo.Lib.Helper.UrlHelper.RelativePath(src);  
+                        var relative = Kooboo.Lib.Helper.UrlHelper.RelativePath(src);
 
-                        if (relative !=null && (relative.StartsWith(InlineImagePrefix) || relative.StartsWith(InlineImageMessageFilePrefix)))
+                        if (relative != null && (relative.StartsWith(InlineImagePrefix) || relative.StartsWith(InlineImageMessageFilePrefix)))
                         {
-                            result.Add(item); 
+                            result.Add(item);
                         }
-                    } 
+                    }
+                    else if (Lib.Utilities.DataUriService.isDataUri(src))
+                    {
+                        result.Add(item);
+                    }
                 }
             }
             return result;
@@ -586,7 +642,7 @@ namespace Kooboo.Mail.Multipart
 
             while (true)
             {
-                nextindex = index + 254;
+                nextindex = index + 76;
                 if (nextindex > len)
                 {
                     sb.Append(value.Substring(index)).Append("\r\n");
@@ -594,8 +650,8 @@ namespace Kooboo.Mail.Multipart
                 }
                 else
                 {
-                    sb.Append(value.Substring(index,254)).Append("\r\n");
-                    index = index + 254;
+                    sb.Append(value.Substring(index, 76)).Append("\r\n");
+                    index = index + 76;
                 }
             }
             return sb.ToString();
@@ -603,7 +659,5 @@ namespace Kooboo.Mail.Multipart
 
 
     }
-
-
 
 }

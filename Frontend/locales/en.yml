@@ -1,0 +1,1955 @@
+calendar:
+  awaiting: Awaiting
+  maybe: Maybe
+  no: No
+  participants: Participants
+  yes: Yes
+code:
+  create: Create {type}
+  editCode: Edit {name}
+  newCode: New {name}
+codelog:
+  level: Level
+commerce:
+  accordingBy: According by
+  active: Active
+  addVariant: Add variant
+  allConditions: All conditions
+  amount: Amount
+  anyConditions: Any conditions
+  associatedContent: Associated content
+  automatedProductTip: Existing and future products that match the conditions you
+    set will automatically be added to this category.
+  automaticDiscount: Automatic
+  canceled: Canceled
+  cancelOrder: Cancel order
+  cartNote: Cart note
+  checkout: Checkout
+  commerceSettings: Commerce settings
+  createProduct: Create product
+  dailyStats: Daily stats
+  delivered: Delivered
+  delivery: Delivery
+  deliveryMethod: Delivery method
+  deliveryStatus: Delivery status
+  discount: Discount
+  discountCode: Discount code
+  discountCodes: Discount code
+  discountMethod: Discount method
+  discountOff: Discount off
+  discountType: Discount type
+  emptyProduct: Empty product
+  freeShipping: Free shipping
+  inStock: In stock
+  isExclusion: Exclusive
+  manualProductTip: Add products to this category one by one.
+  method: Method
+  nameFields: "{name} fields"
+  newAddress: New address
+  noActive: No active
+  note: Note
+  notificationSettings: Notification settings
+  order: Order
+  orderAmountOff: Order amount off
+  orderCount: Order count
+  orderLineMustMatch: Order product line match rule
+  orderMustMatch: Order match rule
+  orderNote: Order note
+  orderNumber: Order number
+  orderStats: Order stats
+  orderStatus: Order status
+  orderTotalAmount: Order total amount
+  outOfStock: Out of stock
+  outOfStockProducts: Out of stock products
+  paidAt: Paid at
+  payment: Payment
+  payments: Payments
+  product: Product
+  productAmountOff: Product amount off
+  productMustMatch: Products must match
+  productStats: Product stats
+  selectCategory: Select category
+  selectCustomer: Select customer
+  selectVariant: Select variant
+  shipped: Shipped
+  shippingAddress: Shipping address
+  shippingAmount: Shipping
+  shippingAt: Shipping at
+  shippingCarrier: Shipping carrier
+  shippingCost: Shipping cost
+  subtotalAmount: Subtotal
+  totalAmount: Total
+  totalInventory: Total inventory
+  totalProducts: Total products
+  trackingNumber: Tracking number
+  unshipped: Unshipped
+  variantOptions: Variant options
+  variants: Variants
+  waitDeliver: Wait deliver
+  waitPay: Wait pay
+common:
+  abstract: Abstract
+  aCancellationEmailWillBeSentToParticipants: Cancellation emails will be sent to participants
+  aCancellationEmailWillBeSentToRemovedParticipants: Removed participants will receive a cancellation email
+  acceptedTheInvitation: Accepted the invitation
+  accessToken: Access token
+  account: Account
+  accountBalance: Account balance
+  action: Action
+  active: Active
+  activeDateRange: Active date range
+  activeTime: Active time
+  add: Add
+  addADomainNameToYourAccount: Add a domain name to your account
+  addBcc: Add BCC
+  addCc: Add CC
+  addChinese: Add chinese
+  addContact: Add contact
+  addCustomer: Add customer
+  addDepartment: Add department
+  addExisting: Attach existing account
+  additionalCodeSuggestions: Additional code suggestions
+  addJob: Add a job
+  addLabel: Add label
+  addMember: Add member
+  addMenu: Add menu
+  addMenuItem: Add menu item
+  addMigrationJob: Add Migration Job
+  addNewCategory: Add category
+  addProduct: Add product
+  addProductSuccess: Add product success
+  addProductType: Add type
+  addRecord: Add record
+  address: Address
+  addresses: Addresses
+  addressMaximumLength: The maximum length of the address is {max}
+  addRole: Add a role
+  addScript: Add script
+  addServer: Add server
+  addSite: Add site
+  addStyle: Add style
+  addSubAccount: Add sub account
+  addSuccess: Add success
+  addToIndexAutomaticallyWhenDocumentChanged: Update index when document changed.
+  addUser: Add user
+  admin: Admin
+  administration: Administration
+  advanced: Advanced
+  advancedSearch: Advanced Search
+  advancedSearchForEmail: Advanced Search for Email
+  agentAddress: Agent address
+  alias: Alias
+  all: All
+  allContent: All Content
+  allDay: All day
+  allEmails: All Emails
+  allLoaded: All loaded, {total} in total
+  allowRepetition: Allow repetition
+  allSettingsSynced: All settings are synchronized
+  allSites: All sites
+  allSummary: All Summary
+  altText: Alternate text
+  amount: Amount
+  analytics: Analytics
+  and: And
+  anEmailWillBeSentToAddedAndRemovedParticipants: An email will be sent to new and removed participants
+  anEmailWillBeSentToExistentAddedAndRemovedParticipants: An email will be sent to
+    participants, including both existing, new, and removed ones
+  anEmailWillBeSentToExistentAndAddedParticipants: An email will be sent to both existing and new participants
+  anEmailWillBeSentToExistentAndRemovedParticipants: An email will be sent to existing and removed participants
+  angle: Angle
+  AnInvitationEmailWillBeSentToAddedParticipants: New participants will receive an invitation email
+  anInvitationEmailWillBeSentToTheParticipants: Invitation Emails will be sent to the participants
+  anUpdatedEmailWillBeSentToTheParticipants: Participants will receive updated emails.
+  areYouSureToSetThisAddressAsTheDefaultEmailAddress: Are you sure you want to set
+    this address as the default sender email address?
+  areYouSureYouWantToDisableTheDataCenter: Are you sure you want to disable this data center?
+  areYouSureYouWantToDisableTheResourceCDN: Are you sure you want to disable resource CDN?
+  areYouSureYouWantToEnableTheDataCenter: Are you sure you want to enable this data center?
+  areYouSureYouWantToEnableTheResourceCDN: Are you sure you want to enable resource CDN?
+  array: Array
+  ascending: Ascending
+  assignDataCenterTips: Are you sure to change data center?
+  atMostOnePointCharacter: At most one . character
+  attachmentName: Attachment Name
+  attachments: Attachments
+  attributes: Attributes
+  atv: ATV
+  authentication: Authentication
+  author: Author
+  authorizationCodeHasGenerated: authorization code has been generated
+  authorizationCodesTips: Only the authorization code for the last one is valid.
+    Please save it for future use.
+  authorize: Authorize
+  authorizeName: Authorize name
+  authorizeNameExistsTips: Authorize name already exists
+  auto: Auto
+  autoDetectCulture: Auto Detect Culture
+  automateCovertImageToWebp: Automate covert image to webp
+  automated: Automated
+  automation: Automation
+  automationTaskStartToExecute: Automation task starts to execute...
+  autoRefresh: Auto refresh
+  autoUpdate: Auto update
+  availableUser: Available users
+  back: Back
+  backColor: Background color
+  backend: Backend
+  background: Background
+  backToAllSites: Back to all sites
+  backToEdit: Back to edit
+  balance: Balance
+  balancePayment: Balance
+  bandwidth: Bandwidth
+  bandwidthUsageInRecentSevenDays: Bandwidth usage in the last 7 days
+  bankCardPayment: Bank card
+  barcode: Barcode
+  baseUrl: Base URL
+  basic: Basic
+  basicInfo: Basic Info
+  basicInformation: Basic information
+  bearerInvalid: Bearer invalid
+  bgColor: Background Color
+  bind: Bind
+  bindAccount: Bind account
+  bindEmail: Bind email
+  bindingTo: Binding to
+  bindName: Bind name
+  bindPhone: Bind phone number
+  blankSite: Blank site
+  blindCarbonCopy: BCC
+  bold: Bold
+  boolean: Boolean
+  bot: Bot
+  bots: Bots
+  byProperty: By property
+  cache: Cache
+  cacheByVersion: Cache by version
+  cacheQueryKeys: Cache query keys
+  calendar: Calendar
+  cancel: Cancel
+  cancelReason: Cancel reason
+  canNotOpenFile: Can not open this file
+  canNotOpenFileTip: This file may be binary, or temporarily unrecognized by the system
+  canRegister: Available
+  cantRegister: Occupied
+  carbonCopy: CC
+  cardNumber: Card Number
+  cart: Cart
+  carts: Carts
+  categories: Categories
+  category: Category
+  categoryFolder: Category Folder
+  categoryFolders: Category Folders
+  categoryList: Category list
+  challenge: Challenge
+  change: Change
+  changeCover: Change cover
+  changeCurrency: Change currency
+  changeDataCenter: Change data center
+  changeEmail: Change email
+  changePassword: Change Password
+  changePhone: Change phone number
+  changeScreenshot: Change screenshot
+  changeSiteSetupModeHere: Change site building method
+  charset: Charset
+  chart: Chart
+  checkbox: Checkbox
+  checkout: Checkout
+  checkoutSite: Checkout site
+  checkoutSuccess: Checkout success
+  checkoutTip: The selected log and the previous logs will be checked out as a new website
+  children: Children
+  choose: Choose
+  city: City
+  clean: Clean
+  cleanFailed: Clean failed
+  cleanLog: Clean Log
+  cleanLogRemaining: Total {total} items,   completed {count} items
+  cleanLogTips: Cleaning the log will erase all past data, reducing disk size.
+    However, this action is permanent. Are you sure you want to continue?
+  cleanSearchIndexTips: Are you sure you want to clean all the search index?
+  cleanSuccess: Clean successfully
+  clearAll: Clear All
+  click: Click
+  clickLeaveTip: The editing function may not work properly when page redirects.
+    Please cancel.
+  clickReplace: Click to replace
+  clicks: Clicks
+  clickToCreateFirstLayout: Click to create your first layout
+  clickToHideSystemField: Click to hide system fields
+  clickToShowSystemField: Click to show system fields
+  clientId: Client id
+  clientInfo: Client info
+  clientSecret: Client secret
+  clone: Clone
+  cloneSite: Clone site
+  cloneTips: Enter any website URL, Kooboo will copy the website and allow you to
+    inline edit anything directly.
+  cloneVersionTips: "*This online version allows you to clone 3 pages with very
+    limited speed, use desktop version if you need more"
+  cloneWebsiteYouMayLeaveTips: Cloning the website, you may leave this page.
+  close: Close
+  closeAll: Close all
+  closeDevMode: Close Developer Mode
+  closeOthers: Close others
+  closeSaved: Close saved
+  closeToRight: Close to the right
+  cmsEdit: CMS edit
+  cmsFile: CmsFile
+  code: Code
+  codeFormatIsIncorrect: The code format is incorrect
+  codeLog: Code Logs
+  codeLogs: Code Logs
+  codeName: Code Name
+  codeNameExistsTips: Code name already exists
+  codeRequiredTips: Code required
+  codes: Codes
+  codeSearch: Code Search
+  codeSuggestions: Additional code suggestions
+  codeType: Code Type
+  color: Color
+  colorList: Color list
+  colorPicker: Color Picker
+  colors: Colors
+  columnIsReservedWord: "{columnName} is a reserved word and cannot be used"
+  columnName: Column Name
+  columnSettings: Column settings
+  combine: Combine
+  commerce: Commerce
+  commerceSettings: Commerce settings
+  commonValueLengthTips: "{value} must contain {min} to {max} characters"
+  company: Company
+  compare: Compare
+  compareWithCurrent: Compare with current
+  completed: Completed
+  compose: Compose
+  compressedPackageFileFormat: Compressed package file format「zip」
+  condition: Condition
+  conditions: Conditions
+  config: Config
+  configError: Please check the configuration.{message}
+  configNow: Config
+  confirm: Confirm
+  confirmDefaultDataCenter: This is the storage location of your main website and
+    emails, are you sure want to modify the default data center?
+  confirmPassword: Confirm password
+  confirmResetDefaultValues: Are you sure to reset to default values?
+  consigneeNotFound: No delivery address founded, please select again
+  console: Console
+  constraintFixOnSave: Constraint Fix on Save
+  constraintFixOnSaveTips: Automatically fix certain syntax errors when saving HTML
+  contact: Contact
+  contactInformation: Contact information
+  contacts: Contacts
+  content: Content
+  contentCategory: Content Category
+  contentFolder: Content Folder
+  contentFolders: Content folders
+  contentTitle: Content title
+  contentType: Content Type
+  contentTypes: Content Types
+  continue: Continue
+  continueDownload: Continue download
+  continueDownloadTips: If the site source is clone, enabled by default. When you
+    access a page that does not exist locally, the system automatically
+    downloads the page from the clone site
+  controlType: Control Type
+  convertedResourceTip: Success converted to internal resource
+  convertSuccess: Convert success
+  convertToHtmlBlock: Convert to HTML code block
+  convertToType: Convert to "{type}"
+  convertToView: Convert to view
+  copy: Copy
+  copyLayout: Copy layout
+  copyMode: Copy mode
+  copyPage: Copy page
+  copyPageWithRelationsTips: If you do not want the new and old pages to use the
+    same references, you can select the references below and fill in a new name.
+    Otherwise, the old and new pages will use the same references.
+  copySuccess: Copy successfully
+  copyTips: Are you sure you want to copy it?
+  copyTitle: Copy title
+  copyUrl: Copy URL
+  copyView: Copy view
+  CORS: CORS
+  corsTips: Cross-origin HTTP requests in web browsers are implemented by
+    including the specific HTTP header Access-Control-Allow-Origin in the
+    server's response
+  count: Count
+  countEmailSelected: "{count} email selected"
+  countEmailsSelected: "{count} emails selected"
+  country: Country
+  countryAndRegion: Country/Region
+  countSelected: "{count} selected"
+  cover: Cover
+  create: Create
+  createAddress: Create address
+  created: Created
+  createdAt: Created At
+  createEmbedded: Create embedded
+  createForm: Create a form
+  createItemNow: Create item
+  createItemNowToCreateAItem: You don't have an item yet. Clicking 'Create item' now.
+  createMember: Create member
+  createOrder: Create order
+  createOrderSuccess: Create order success
+  createOwnOrg: Create Sole
+  createSite: Create a website
+  createSiteInFolder: Click 'new site' to create a new site in this folder.
+  createSiteNow: Create site
+  createSuccess: Create success
+  createTable: Create Table
+  createTime: Creation time
+  createTips: Create a blank new website, and use well defined elements to develop
+    your website.
+  creator: Creator
+  creditCard: Credit Card
+  critical: Critical
+  crop: Crop
+  cssRule: Css Rule
+  csvField: CSV field
+  ctr: CTR
+  culture: culture
+  currency: Currency
+  currentBalance: Current balance
+  currentOrganization: Current organization
+  currentPosition: Current position
+  currentSite: CURRENT SITE
+  currentUrl: Current URL
+  currentVersion: " [Current version]"
+  custom: Custom
+  customAuth: Custom Auth
+  customer: Customer
+  customers: Customers
+  customSettings: Custom Settings
+  customSettingsTips: Customize site configuration information and retrieve the
+    configuration using k.site.info.setting
+  cvc: CVC
+  dashboard: Dashboard
+  data: Data
+  database: Database
+  databaseField: Database field
+  databaseTable: Database Table
+  dataCenter: Data center
+  dataMethodSetting: Data Method Setting
+  dataTable: Data table
+  datatypeExistsTips: The content type already exists
+  date: Date
+  dateRange: Date range
+  dateTime: Date
+  days: days
+  dbTypeTable: "{dbType} Tables"
+  debug: Debug
+  declinedTheInvitation: Declined the invitation
+  deeps: Deeps
+  default: Default
+  defaultAddress: Default address
+  defaultDatabase: Default Database
+  defaultDataBaseTips: The default database type corresponding to k.DB.sql, in
+    order of priority, is MySQL > SQL Server > SQLite
+  defaultDataCenterModifiedTips: The default data center has been updated
+  defaultLanguage: Default Language
+  defaultList: Default list
+  defaultValue: Default value
+  delete: Delete
+  deleteEmailFolderTips: After deleting the folder, the mail in the folder will be
+    moved to the Trash, are you sure you want to delete the folder?
+  deleteEmailTips: Emails under the selected email addresses will also be removed.
+    Are you sure you want to delete the email addresses?
+  deleteEmbeddedFolderTips: Deletion can not be undone. Are you sure you want to delete it?
+  deleteHasRelationProductTypeTips: Deleting the product type will also delete the
+    associated products. Are you sure you want to continue?
+  deleteItemsTips: Are you sure you want to delete these items?
+  deleteSuccess: Delete success
+  deleteTheseCountMessagesTips: Are you sure you want to delete these {count} emails?
+  deleteTheseCountRecordsTips: Are you sure you want to delete these {count} records？
+  deleteThisMessageTips: Are you sure you want to delete this email?
+  deleteThisRecordTips: Are you sure you want to delete this record?
+  deleteTips: Are you sure you want to delete it?
+  Delivering: Delivering
+  deliveringSuccessful: Send success
+  deliveryFailed: Delivery failed
+  deliveryLogs: Delivery logs
+  deliveryNote: Delivery note
+  deliveryStatus: Status
+  deliverySuccessful: Delivery successful
+  depart: Depart
+  departmentMembers: Department members
+  departments: Departments
+  departOrganizationTips: Are you sure you want to cancel your membership with the
+    selected organization?
+  descending: Descending
+  description: Description
+  design: Design
+  detail: Detail
+  detailedAddress: Detailed address
+  details: Details
+  development: Development
+  devMode: Developer Mode
+  devModeList1: Similar experience as VS Code
+  devModeList2: Open multiple files at the same time
+  devModeList3: Debug code
+  devPassword: Development Password
+  difference: Differences
+  Direction: Direction
+  disable: Disable
+  disabled: Disabled
+  disableDataCenterTips: Data center has been disabled
+  disableFailed: Disable failed
+  disablePaging: Disable paging
+  disableResourceCDNTips: Resource CDN has been disabled
+  disableSuccess: Disable successfully
+  discounts: Discounts
+  diskSize: Disk Size
+  display: Display
+  displayInSearchResult: Display in search result
+  displayName: Display Name
+  displayOnlyRegistrableInformation: Show only registrable names
+  dnsServer: Please change your domain DNS to below servers before adding, all DNS
+    records will be created automatically.
+  DNSSetting: DNS
+  document: Document
+  documentEntry: Document Entry
+  documentFound: Documents Found
+  domain: Domain
+  domainAlreadyExists: Domain already exists
+  domainCDN: Domain CDN
+  domainCount: Domain count
+  domainExample: "Example: mysite"
+  domainInvalid: Domain invalid
+  domainOrPort: Domain or Port
+  domainPurchase: Domain purchase
+  domainRequiredTips: " Domain required"
+  domains: Domains
+  domainSearch: Domain search
+  domainSearchTips: Only letters, digits - and . are allowed
+  download: Download
+  downloadAll: Download all
+  downloaded: Downloaded
+  downloadFailed: Download failed
+  downloadingImageTip: >-
+    >- Some images are being downloaded, please wait until all download are
+    completed
+
+    before closing the popup
+  downloads: Downloads
+  downloadTheSample: Download the sample
+  downloadThisFile: Download this file
+  downloadToMediaLibrary: Download to media library
+  draft: Draft
+  Drafts: Draft
+  drafts: Drafts
+  draftSavedAtTime: Draft saved at {time}
+  dragAndDrop: Drag & Drop
+  dragToSort: Drag to sort
+  dropOff: Take off
+  dynamicOptions: Dynamic Options
+  dynamicOptionsTips: You can write kscript to get the options and returns
+    key-value array.<br/>For example:<br/>{example}
+  edit: Edit
+  editAgain: Edit again
+  editCdn: Edit CDN
+  editCode: Edit code
+  editCommonName: Edit {name}
+  editCondition: Edit condition
+  editContact: Edit contact
+  editContentType: Edit content type
+  editForwarding: Edit forward
+  editForwardingAddress: Edit forward address
+  editGeneralAddress: Edit general address
+  editGroup: Edit group
+  editImage: Edit image
+  editJob: Edit a job
+  editLabel: Edit label
+  editLog: Edit log
+  editMenu: Edit menu
+  editMenuTips: Show or Hide left bar menus
+  editMigrationJob: Edit Migration Job
+  editName: Edit name
+  editOrder: Edit order
+  editPage: Edit Page
+  editProduct: Edit product
+  editRepeater: Edit repeater
+  editRole: Edit role
+  editSchedule: Edit schedule
+  editSignature: Edit signature
+  editSvg: Edit SVG
+  editTemplate: Edit template
+  editURL: Edit URL
+  editWildcardAddress: Edit wildcard address
+  email: Email
+  emailAddressExistsTips: Email address already exists
+  emailAreEnabledForDomainsThatUseOurDNSServer: Email are enabled for domains that use our DNS Server.
+  emailBody: Email Body
+  emailCannotBeTheSameAsTheCurrentBound: Email cannot be the same as the current address
+  emailHasSent: Email has been sent
+  emailMigrationTips: Migrate only inbox, sent, and custom folder messages; Some
+    mailboxes only migrate messages within 30 days, depending on the IMAP
+    collection range, which can usually be changed on the mailbox's Settings
+    page
+  emailNotFound: Email not found
+  emailNotifications: Email notifications
+  emailRangeTips: The maximum length of the username is {max}
+  emailUpdated: Email updated
+  embedded: Embedded
+  embeddedFolder: Embedded folder
+  embeddedFolders: Embedded Folders
+  embeddedForm: Embedded form
+  embeddedScript: Embedded script
+  embeddedStyle: Embedded style
+  empty: Empty
+  emptyAddressTips: You don't have a address yet, please add a new address before
+    composing an email
+  emptySiteAndCreateNowTips: You don't have a website yet. Clicking 'Create site' now.
+  enable: Enable
+  enableCssSplitByMedia: CSS Split By Media
+  enabled: Enabled
+  enableDataCenterTips: Data center has been enabled
+  enableDevPassword: Enable Development Password
+  enableEmailNotification: Enable email notification
+  enableFailed: Enable failed
+  enableImageAlt: Enable Image Alt Value
+  enableMultilingual: Enable Multilingual
+  enableMultiple: Enable multiple
+  enableResourceCDNTips: Resource CDN has been enabled
+  enableSSL: Enable the SSL
+  enableStatus: Status
+  enableSuccess: Enable successfully
+  enableUpdateSimilarPage: Enable update similar page on inline editor
+  enableWebhook: Enable webhook
+  end: end
+  endDate: End date
+  endTime: End Time
+  enterCVCHere: Enter CVC here
+  enteredPasswordsDiffer: Passwords do not match
+  enterIntegerTips: Please enter an integer
+  enterKeywords: Enter keywords
+  enterLink: Enter link
+  enterMultipleValuesTips: Multiple values are allowed
+  enterTheAmountYouWantToRecharge: Please enter the amount you want to top up
+  enterYourKeyword: Enter your keyword
+  enterYourNameHere: Enter your name here
+  error: Error
+  errorCount: Error Count
+  errorList: Error List
+  errorMessage: Error message
+  errorPage: Error page
+  event: Event
+  eventRequiredTips: Please select a event
+  every: Every
+  exampleCode: Example:<br/>{code}
+  exampleMysite: Example:mysite
+  exampleUrl: "Example: /user/list"
+  ExcludePath: Exclude Defined Paths
+  execute: Execute
+  executeCode: Execute Code
+  executing: Executing
+  executionTime: Execution Time
+  existingSite: Existing site
+  existOperations: You need to save current changes before opening CMS edit.
+  expandAll: Expand All
+  expandSelection: Expand the selection
+  expirationDate: Expiration date
+  expireDate: Expire date
+  expiresIn: Expires in
+  export: Export
+  exportAll: Export all
+  exportChanges: Export changes
+  exportChangesTip: The selected log and next logs will be exported
+  exportContent: Export content
+  exportData: Export data
+  exportEmail: Export email
+  exportExcel: Export excel
+  exportItem: Export item
+  exportItems: Export items
+  exportItemTip: The selected log(s) will be exported
+  exportSelectedItems: Export selected items
+  exportSite: Export Site
+  exportType: Export type
+  external: External
+  externalResource: ExternalResource
+  failed: Failed
+  failedAction: Failed Action
+  familyName: Family name
+  fast: Fast
+  features: Features
+  fieldA: Field A
+  fieldB: Field B
+  fieldEditor: Field Editor
+  fieldMaps: Field maps
+  fieldPattern: Field pattern
+  fieldRequiredTips: Field required
+  fieldRequiredTips2: "{field} required"
+  fields: Fields
+  fieldTooltip: Field tooltip
+  file: File
+  fileExistTip: A file with the same name already exists, are you sure you want to
+    overwrite it?
+  fileFormatIsIncorrect: The file format is incorrect
+  fileInvalid: File "{fileName}" is invalid
+  fileIsEmpty: File is empty
+  fileName: File Name
+  files: Files
+  fileSize: File size
+  fileSizeExceedLimitTips: "The following files exceed the maximum size limit of {size}:"
+  fileSizeLessTips: File size must be less than 10KB
+  fileTypes: File types
+  fileTypesNotAllowed: "The following files not match the allowed types {types}:"
+  finish: Finish
+  firstName: First name
+  foldAll: Fold All
+  folder: Folder
+  folderIsEmpty: "{folder} folder is empty."
+  folderNameExistsTips: The folder name already exists
+  folderNameRuleTips: Only letters, digits, -, _ and . are allowed
+  folderNameTip: name
+  folders: Folders
+  folderSetting: Folder setting
+  font: Font
+  fontSize: Font size
+  fontWeight: Font weight
+  forceSave: Force save
+  forceSaveTip: Force save will overwrite changes of other users. Are you sure you
+    want to continue?
+  forceSSL: Force SSL
+  forceSSLTips: Do not enable if the use of a proxy or CDN results in 'to many
+    redirects' errors
+  forgotPassword: Forgot password?
+  form: Form
+  forManagement: for management
+  format: Format
+  formName: Form name
+  forms: Forms
+  formSetting: Form setting
+  forward: Forward
+  forwardAddress: Forward address
+  forwardTo: Forward to
+  free: Free
+  FreeToHostYourself: Free Self-Host Option
+  friday: Friday
+  from: From
+  fromIp: Source IP
+  frontEvent: Front Events
+  frontEvents: Front Events
+  frontEventTips: Intercept front events to perform specific operations
+  fullMode: Full Mode
+  fullScreen: Full screen
+  function: Function
+  general: General
+  generate: Generate
+  generateAuthorizationCode: Generate authorization code
+  generateType: Type of Generation
+  globalImageList: Global image list
+  globalLinkList: Global link list
+  globalTextList: Global text list
+  goTo: Go to
+  goToCreate: Go to create
+  goToDataCenter: Go to data center
+  goToRecharge: Go to Top up
+  goToSet: Go to set
+  gridView: Grid view
+  group: Group
+  groupMembers: Group members
+  hasInstall: Installed
+  hasObject: Has Object
+  hasParameterTip: Inline edit of this page may not behave as you expected because
+    of external dependencies. Are you sure you want to enter the inline editing?
+  hasSelectCountMessage: Has selected {count} message
+  hasUnsaveChangeTip: You have unsaved changes, enter link will lose changes, are
+    you sure you want to continue?
+  haveAPromoCodeTips: Have a promo code?
+  haveKoobooAccount: Has an account?
+  haveMoveToFolder: Moved to {folder}
+  haveNotMailModuleTips: You don't have an mail module yet.
+  height: Height
+  hidden: Hidden
+  hideAdvanceSettings: Hide advance settings
+  hideDetails: Hide Details
+  homePage: Home page
+  host: Host
+  hostRecord: Host record
+  hours: hours
+  htmlBlock: HTML Block
+  htmlBlocks: HTML Blocks
+  htmlCompression: HTML Compression
+  HTMLMeta: HTML metadata
+  HtmlSourceCode: HTML source code
+  httpCode: HTTP code
+  httpCodeInvalidTips: HTTP Code invalid
+  httpCodeRequiredTips: HTTP code required
+  i18nUpdate: Update I18N
+  icon: icon
+  identity: Identity
+  ignore: Ignore
+  ignoreLogs: Ignore logs
+  ignoreSelected: Ignore selected
+  ignoreSettings: Ignore settings
+  ignoreSiteLogConfirm: Are you sure you want to ignore selected change objects ?
+  ignoreStore: Ignore store
+  ignoreSuccess: Ignore success
+  IhaveRead: I have read
+  image: Image
+  imageBrowserCache: Image Browser Cache
+  images: Images
+  imageTitle: |-
+    File name: {name}
+    File size: {size}
+    Dimensions: {width} x {height}
+  imapServer: IMAP Server
+  imapSetting: IMAP Setting
+  imgSizeTip: If style size exists, the values will be overridden
+  immediatelyChange: Change to CMS is effective immediately and cannot be undone
+  immediatelyGet: Register
+  impersonate: Impersonate
+  import: Import
+  import/exportSite: Import/Export Site
+  importCooperationBearer: Import Credential
+  importData: Import data
+  importError: Import error
+  importFailed: Import failed
+  importPackage: Import Package
+  importSite: Import a website
+  importSiteTips: Import a Kooboo or standard HTML package, Kooboo will convert it
+    into a Kooboo site
+  importSuccess: Import success
+  impressions: Impressions
+  inbox: Inbox
+  Inbox: Inbox
+  inboxLogo: Inbox Logo
+  IncludePath: Include Defined Paths Only
+  incremental: Incremental
+  index: Index
+  indexData: Index Data
+  indexedDBRelation: IndexedDB Relation
+  indexedDBTable: IndexedDB Table
+  information: Information
+  inlineEdit: Inline edit
+  inlineEditor: Inline editor
+  inlineStyle: Inline style
+  inputCachePathTips: Please enter cache path
+  inputCodeToExecuteTips: Please enter code to execute
+  inputConfirmPasswordTips: Please enter confirm password
+  inputCorrectEmailTips: Invalid email address
+  inputCorrectPhoneTips: Invalid phone number
+  inputCorrectSecurityCodeTips: Please enter correct security code
+  inputEmailTips: Email required
+  inputError: Input error
+  inputFolderNameTips: Folder name required
+  inputIntegerValueTips: Enter an integer greater than or equal to 1
+  inputIntervalTips: Please enter interval
+  inputKeyword: Please enter keyword
+  inputPasswordAgainTips: Please enter password again
+  inputPasswordTips: Password required
+  inputPhoneTips: Phone number required
+  inputSecurityCodeTips: Security code required
+  inputSubdomainTips: "Example: www"
+  inputURLTips: "Example: http://www.kooboo.com/"
+  inputUsernameOrEmailTips: User name or email required
+  inputUsernameTips: Username required
+  inputValue: please enter a value
+  insertImage: Insert image
+  insertLink: Insert link
+  insertSignature: Insert signature
+  install: Install
+  installationFailed: Installation failed
+  installSuccess: Install success
+  inStock: In stock
+  integerRuleTips: Integer greater than 0
+  internal: Internal
+  internalizeResource: Internalize resource
+  internalServerError: Internal server error
+  interval: Interval
+  inUse: In use
+  inventory: Inventory
+  isManager: Is manager
+  isSearchable: Searchable
+  italic: Italic
+  itemCount: Item count
+  items: Items
+  itemsCountExceedLimit: The number of items exceeds the maximum limit of {count}
+  itemState: Item state
+  job: Job
+  jobExists: Job name already exists
+  jobName: Job Name
+  jobs: Jobs
+  jobStartRunning: Job start running
+  joinDate: Join date
+  JsCssBrowserCache: JS CSS Browser Cache
+  JsCssCompression: JS CSS Compression
+  jumpToInbox: Jump to inbox
+  kConfig: KConfig
+  keepDays: Keep Days
+  key: Key
+  keyHasBeenTakenTips: Key already exists
+  keyValue: KeyValue
+  keyValueStore: Key-Value Store
+  keyword: Keyword
+  koobooAddress: Kooboo Address
+  KoobooConfig: Config
+  KoobooDevMode: Developer Mode
+  label: Label
+  labels: Labels
+  languagePath: Language Path
+  languagePathTips: Language path is a virtual path of your website. You may
+    create a path eg. www.kooboo.com/en, en is the language path
+  lastDownloaded: Last downloaded
+  lastestSearch: Lastest Search
+  lastModified: Last Modified
+  lastName: Last name
+  lastSubmitted: Last submitted
+  latestExecutionStatus: Latest Execution Status
+  layout: Layout
+  layoutName: Layout name
+  layoutNameExistsTips: The layout name already exists
+  layoutPage: Layout page
+  layouts: Layouts
+  leaveDevModeTip: Leaving development mode of the current site will close all
+    file tabs. Do you want to leave?
+  length: Length
+  letterAndDigitsAllowedToStarting: Letter, digits and _ are allowed, starting with a letter
+  lighthouseOptimization: Lighthouse Optimization
+  limitedFunctionalityOnMobile: Limited functionality on mobile
+  line: Line
+  lineHeight: Line height
+  link: Link
+  linkDialogTip: Please enter or select a URL
+  linked: Linked
+  links: Links
+  list: List
+  listView: List view
+  loadMore: Load more
+  localChanges: Local changes
+  localLastId: Local last ID
+  localProgress: Local progress
+  location: Location
+  log: Log
+  logCleaningInProgress: Log cleaning in progress
+  login: Login
+  logItem: Log Item
+  logout: Logout
+  mail: Mail
+  mailCount: Mail count
+  mailFrom: FROM
+  mailMigration: Mail Migration
+  mailModule: Mail Module
+  mailServer: Mail server
+  mailUnSaveTips: The content has been modified. Do you want to save this email as a draft?
+  makeAlias: Make alias
+  manage: Manage
+  manageShoppingCart: Manage shopping cart
+  manual: Manual
+  manuallyFillOut: Manually input
+  markAs: Mark as
+  markAsRead: Mark as read
+  markAsUnread: Mark as unread
+  market: Market
+  matchCase: Match Case
+  matcher: Matcher
+  max: Max
+  maxAmountOfPagesToClone: Max amount of pages to clone
+  maxChecked: Max checked
+  maximumValue: Maximum value
+  maxStringLength: Max string length
+  maxUploadFileSizeOutOfLimit: The uploaded file '{file}' exceeded the upper limit {size}M
+  maxWidthForMobileBrowser: Max Width for mobile browser
+  maxWidthForMobileBrowserDetail: eg:600px. Media Rule with Min-width > this value
+    will be removed for mobile visitors
+  mediaFile: Media File
+  mediaFileAdvanced: Media File (Advanced)
+  mediaFileAdvancedTips: You can configure metadata for media file, parameters
+    supported in default value. For example,<br/>Key:name<br/>Default value:This
+    is a sample image with the name {parameter}.
+  mediaLibrary: Media Library
+  meetAllConditions: Match all conditions
+  meetAnyCondition: Match any condition
+  meetingInvitation: Meeting invitation
+  member: Member
+  members: Members
+  menu: Menu
+  menuItem: Menu item
+  menuNameExistsTips: The menu name already exists
+  menus: Menus
+  message: Message
+  meta: Metadata
+  method: Method
+  migrationPasswordTips: Let it blank to use existing password
+  min: Min
+  minChecked: Min checked
+  minimalValue: Minimal value
+  minimumOfTopupAmount: The top-up amount must not be less than 10
+  minStringLength: Min string length
+  minutes: minutes
+  minWidthForDesktopBrowser: Min width for Desktop browser
+  minWidthForDesktopBrowserDetail: "eg: 1024px. Media rule with Max-Width < this
+    value will be removed from desktop visitors."
+  module: Module
+  modules: Modules
+  moduleViewEntrance: Module view homepage
+  moduleViewEntranceTips: The view named "index", "main", "default", "start" and
+    "home" will be used as the entry of module components
+  monday: Monday
+  month: Month
+  months: months
+  more: More
+  moreActions: More Actions
+  move: Move
+  moveBehind: Move behind
+  moveSiteToFolder: Move site to folder
+  moveSiteToThisFolder: Move the website to this folder
+  moveSuccess: Move success
+  moveTo: Move to
+  moveToFolder: Move to Folder
+  multiContent: Multi content
+  multilingual: Multilingual
+  multiple: Multiple
+  multipleLanguage: Multiple Language
+  myResource: My Resource
+  myResourceTips: Statistics on resources and their historical disk usage.
+    Deleting resources does not reduce disk usage
+  mySites: My Sites
+  mysqlTables: MySQL Tables
+  name: Name
+  nameExist: Name exist
+  nameExistsTips: Name already exists
+  nameOnCard: Name On Card
+  nameRequiredTips: Name required
+  nameYourFolder: Name your folder
+  nameYourFolderTips: Name your folder, then move any website to this folder
+  narrowSelection: Narrow the selection
+  networkError: Network error
+  new: New
+  newAddress: New address
+  newBinding: New binding
+  newColumn: New column
+  newContactInformation: New contact information
+  newContent: New content
+  newCooperationBearer: New Credential
+  newData: New data
+  newEvent: New event
+  newField: New field
+  newFolder: New folder
+  newForm: New form
+  newForwardingAddress: New forward address
+  newGeneralAddress: New general address
+  newGroup: New group
+  newLabel: New label
+  newLayout: New layout
+  newLayoutPage: Layout page
+  newLocalDomain: New local domain
+  newModule: New Module
+  newModuleType: New module {type}
+  newPage: Normal page
+  newPageDesign: Design page
+  newPassword: New password
+  newRichTextPage: Rich text page
+  newRule: New rule
+  newSchedule: New schedule
+  newScript: New script
+  newSite: New site
+  newStyle: New style
+  newSync: New sync
+  newVersionTip: You are using an outdated kooboo
+  newView: New view
+  newWildcardAddress: New wildcard address
+  newWindow: New window
+  no: NO
+  noAccessPermission: Not authorized to access
+  noCategory: No category
+  noConfigurationItem: No configuration item
+  noContent: No content
+  noData: No Data
+  noFieldYet: No field Yet
+  noIssueFound: No issue found
+  noMatchingWebsite: No matched website
+  noMoreData: No more data
+  none: None
+  noPermission: No permission
+  noProductInCart: Some items have changed. Please select other items
+  noRecipient: (No recipient)
+  noReferences: No references
+  normal: Normal
+  normalMode: Normal Mode
+  normalPage: Normal page
+  noScheduleForThatDay: "No agenda for that day "
+  noSubject: No subject
+  notBound: Not bound
+  notEditableTip: Click the refresh button to return to the edit page
+  notEditableTitle: This page is not editable
+  noTemplate: Coming soon
+  notesOnPlatformTopupBandwidth: 《Notes on top up bandwidth》
+  notFound: Not Found
+  noTheme: No theme
+  notifications: Notifications
+  notPaid: Not paid
+  notRecentVisits: Not recent visits
+  notSpam: No spam
+  number: Number
+  numberOfExpirationDaysAndUseVersionControl: Number of expiration days, using 0 or -1 to use version control
+  numberOfResources: Number
+  object: Object
+  objectType: Object Type
+  offline: Offline
+  ok: OK
+  oldPassword: Old password
+  online: Online
+  OnlineFeatures: Cloud Features
+  onlineSituation: Status
+  onlyBinary: Only Package
+  onlyLetterAndDigitsAllowedTips: Only letters, digits, -, _ and . are allowed
+  onlyScreen: Only Screenshot
+  openApi: OpenApi
+  openApiAuthorize: OpenApi Authorize
+  openDevMode: Open Developer Mode
+  openFileLocation: "Open file location: root{folder}"
+  operation: Setting
+  option: Option
+  optionalDefaultBearer: (Optional) default 'Bearer'
+  optionalHttp: (Optional) http://domain.com/api
+  optionalProducts: Selected products
+  options: Options
+  optionSchema: Option schema
+  or: Or
+  orCreateYourDomainWildcardTips: Or create your domain wildcard CNAME record to current server domain.
+  orderDetail: Order detail
+  orderId: Order ID
+  orderInfo: Order info
+  orders: Orders
+  orderState: Order state
+  orderSummary: Order Summary
+  organization: Organization
+  organizationAdmin: Organization Admin
+  organizationChangingSuccess: Organization switched, please login again
+  organizer: Organizer
+  originalAmount: Original amount
+  originalPrice: Original price
+  ourDomain: Our domain
+  overwrite: Overwrite
+  ownerType: Owner type
+  pad: Pad
+  page: Page
+  page404: 404 page
+  pageDownloadFail: page download failed
+  pageExists: Page exists
+  pageName: Page name
+  pages: Pages
+  pageSize: Page size
+  pageTree: Page tree
+  pageURL: Internal Page URL
+  pageUrlRequiredTips: Page URL required
+  pageView: Page view
+  paid: Paid
+  parameters: Parameters
+  parent: Parent
+  partialDeliverySuccessful: Partial delivery successful
+  participants: Participants
+  participantShouldNotBelongToThisAccount: Participant should not be your own email address
+  partner: Partner
+  pass: Pass
+  password: Password
+  passwordChanged: Password updated
+  passwordInvalidTips: Illegal password
+  passwordLengthLimitTips: Password must contain 8 to 30 characters
+  passwordMustContainTwoOfLettersNumbersAndSymbols: Password must contain two of letters, numbers, and symbols
+  path: Path
+  PathPattern: Custom Path Permissions (Support Regex)
+  pattern: Pattern
+  pay: Pay
+  paymentCallback: PaymentCallback
+  paymentMethod: Payment Method
+  paymentStatus: Payment status
+  paymentTime: Payment time
+  paymentWay: Payment way
+  pending: Pending
+  percent: Percent
+  period: Period
+  permission: Permission
+  phone: Phone
+  phoneLogin: Phone login
+  phoneNumber: Phone number
+  phoneNumberCannotBeTheSameAsTheCurrentBound: Phone number cannot be the same as the current number
+  phoneNumberUpdated: Phone number updated
+  pick: Pick
+  pickName: Pick name
+  pickTemplate: Pick a template
+  pickYourFavoriteDomain: Pick a name
+  playVideo: Play video
+  pleaseDeleteTheSubFoldersInThisFolderBeforeRetrying: Please delete the subfolders in this folder before retrying
+  pleaseEnterAddress: Please enter address
+  pleaseEnterTemplateName: Template name required
+  pleaseEnterTheCorrectFormat: Please enter the correct format
+  pleaseEnterTheFollowingAuthorizationCode: |-
+    When logging in on the client, please enter the following authorization code
+
+    in the password field
+  pleaseFillRecipientTips: Please fill in at least one recipient
+  pleaseInputSubdomain: Please enter subdomain
+  pleaseSelect: Select
+  pleaseSelectExportWay: Please select export type
+  pleaseSelectGoodsFirst: Please select products first
+  pleaseSelectPaymentMethod: Please select a payment method
+  pleaseSetADefaultEmailAddress: Please set a default email address.
+  pleaseUpgradeTip: Please upgrade to the latest version!
+  port: Port
+  portRangeTips: Port range 0-65535
+  portRequiredTips: Port required
+  position: Position
+  positionName: "Position: {name}"
+  positionNameAndFrom: "Position: {name} (from {from})"
+  postalCode: Postal code
+  postalDistrict: Postal code
+  preview: Preview
+  previewUrl: Preview Url
+  price: Price
+  primaryKey: Primary Key
+  priority: Priority
+  productCategories: Product categories
+  productCount: Product count
+  productManagement: Product management
+  productNews: Updates
+  ProductNotFound: Product not found
+  productRemovedShelves: Some products has been removed
+  products: Products
+  productsSettlement: Product payment
+  productTitle: Product title
+  productTypes: Product types
+  ProductVariantNotEnable: This product has been removed
+  productVariants: Product variants
+  profile: Profile
+  project: Project
+  promotions: Promotions
+  property: Property
+  province: Province
+  pull: Pull
+  pullConfirm: Are you sure you want to pull the changes from the remote site?
+  pullLogs: Pull logs
+  pullSuccess: Pull success
+  purchaseNow: Purchase
+  push: Push
+  pushAllConfirm: Are you sure you want to push all changes to remote site?
+  pushConfirm: Are you sure you want to push local changes to the remote site?
+  pushLogs: Push logs
+  pushSelected: Push selected
+  pushSuccess: Push success
+  PWA: PWA
+  quantity: Quantity
+  query: Query
+  radiobox: Radiobox
+  range: Range
+  rangeLengthTips: Please enter {min} to {max} characters
+  rangeValue: Range value
+  read: Read
+  readOrUnread: Read/Unread
+  rebuild: Rebuild
+  rebuildFailed: Rebuild failed
+  rebuildSiteIndexTips: Are you sure you want to rebuild site's index?
+  rebuildSuccess: Rebuild succeeded
+  receiveCountNewMessage: Receive {count} new message
+  recentlyEdited: Recently Edited
+  recentVisits: Recent Visit
+  recharge: Top up
+  rechargeAmount: Top up amount
+  record: Record
+  recordSiteLogVideo: Record site log video
+  recordType: Recordtype
+  recordValue: Record value
+  redirectRoutes: Redirect routes
+  redirectTo: Redirect to
+  redo: Redo
+  reExecute: Re-execute
+  references: References
+  referer: Referer
+  refresh: Refresh
+  refreshSelf: Refresh self
+  refreshSuccess: Refresh success
+  refreshToken: Refresh token
+  regex: Regex
+  region: Region
+  register: Register
+  registerTips: "Sign up means you agree to our "
+  registerVerifyCodeSentTip: A verification code has been sent to your email,
+    please enter below to complete the registration
+  reject: Reject
+  relation: Relation
+  relationFolders: Relation Folders
+  RelationNameExistsTips: The relation name already exists
+  reloadTip: You have unsaved changes, do you want to save them?
+  remainingBandwidth: Remaining Bandwidth
+  remark: Remark
+  reminder: Reminder
+  remoteChanges: Remote changes
+  remoteLastId: Remote last ID
+  remoteProgress: Remote progress
+  remoteSite: Remote Site
+  remove: Remove
+  removeDepartmentTips: Are you sure you want to remove this department?
+  removeFromCart: Removed from cart
+  removeMemberTips: Are you sure you want to remove this member?
+  removeProductSuccess: Remove product success
+  removeSuccess: Remove successfully
+  rename: Rename
+  renameFolder: Rename folder
+  repeat: Repeat
+  replace: Replace
+  replaceWarning: The field values of the list will be replaced. Are you sure you
+    want to import it?
+  reply: Reply
+  replyAll: Reply all
+  reportDomain: Report domain
+  required: Required
+  requireICP: Require ICP
+  reSelect: Reselect
+  reset: Reset
+  resetPassword: Reset
+  resetPasswordsSuccess: Reset password success
+  resourceCDN: Resource CDN
+  resourceGroup: Resource group
+  resourceNotFound: "{url} not found"
+  resourceType: Resource Type
+  restore: Restore to point
+  restoreSuccess: Restore successfully
+  restoreTip: Roll back to the selected log
+  restoreTo: Restore to
+  result: Result
+  retrieve: Reset password
+  retrieveByEmail: Reset by email
+  retrieveByPhone: Reset by phone
+  richEditor: Rich Text Editor
+  richEditorFontFamilyConfiguration: Rich Text Editor Font Family Configuration
+  richEditorFontSizeConfiguration: Rich Text Editor Font Size Configuration
+  richEditorToolbarConfiguration: Rich Text Editor Toolbar Configuration
+  richEditorToolbarConfigurationTips: Uncheck to hide unwanted edit items from the toolbar of the Rich Text Editor
+  richTextEditorConfigurationForContentType: Rich Text Editor Configuration for Content Type
+  richTextPage: Rich text page
+  role: Role
+  roleExists: The role name already exists
+  roleName: Role Name
+  roleRequiredTips: Role required
+  roles: Roles
+  rootDomainRequiredTips: Root domain required
+  rootFolder: Root folder
+  route: Route
+  router: Router
+  routeSetting: Route setting
+  rowsToSkip: Rows to skip
+  ruleMatching: Rule matching
+  rules: Rules
+  rulesCount: Rules Count
+  run: Run
+  sales: Sales
+  salesInformation: Sales Information
+  saleStats: Sale stats
+  same: Same
+  saturday: Saturday
+  save: Save
+  saveAndCreate: Save & Create
+  saveAndReturn: Save & Return
+  saveDraft: Save draft
+  saveSuccess: Save success
+  scale: Scale
+  scan: Scan
+  ScanI18N: Scan I18N
+  scanlabel: Scan Label
+  scanLabelTips: The selected attributes will be automatically converted to labels
+    for easy text editing
+  scanResult: Scan Result
+  scanToPay: Scan To Pay
+  schedule: Schedule
+  scheduleSubject: Schedule subject
+  screen: Screen
+  screenshot: Screenshot
+  script: Script
+  scriptGroup: Script group
+  scriptModule: Module
+  scriptName: Script name
+  scriptNameExistsTips: The script name already exists
+  scripts: Scripts
+  scriptType: Script Type
+  search: Search
+  searchCode: Search Code
+  searchConsoleLoginTip: Authorize to access Google Search Console data
+  searchContents: Search contents
+  searchEmails: Search emails
+  searchFileName: Search file name
+  searchKeywordTip: Please enter a keyword to search
+  searchLabels: Search labels
+  searchMessage: Please enter a keyword to search message
+  searchOnline: Search online
+  searchResult: Search result
+  searchResultEmpty: No search results for keyword '{keyword}'
+  searchStatistic: Search Statistics
+  searchWebsite: Search website
+  seconds: seconds
+  securityCode: Security code
+  securityReport: DMARC Report
+  seed: Seed
+  select: Select
+  selectAKoobooAddressToStoreMigratedMails: Select a Kooboo address to store migrated mails
+  selectAll: Select all
+  selectAllFiles: Select all files
+  selectAnAddressToStoreMigratedMails: Select an address to store migrated mails
+  selectAWeek: Select a week
+  selected: Selected
+  selectFile: Select file
+  selectFileTips: Please select a file
+  selection: Selection
+  selectOrDrag: Select or drag a zip file
+  selectProduct: Select product
+  selectProperty: Select property
+  selectSitePackageTips: Please select a site package
+  selectSourceTips: Select source
+  selectValidationRules: Select validation rules
+  semiAuto: Semi auto
+  send: Send
+  senderRequired: Sender required
+  sendState: Send state
+  sendSuccess: Send success
+  sendTo: Send to
+  sendVerificationCode: Send Code
+  sent: Sent
+  Sent: Sent
+  seoName: SEO Name
+  server: Server
+  serverAddSuccess: Server add success!
+  serverUrl: Server URL
+  serverUrlRequiredTips: Server address required
+  setAsCover: Set as cover
+  setAsDefault: Set as default
+  setDefaultEmailFirst: Go to Email Address page and set an default Email address first.
+  setHomePageAndErrorPage: Set pages for home, 404 and error pages
+  setServerInfo: Set server info
+  setting: Setting
+  settings: Settings
+  settingSchemaTips: Access UserOptions by 'k.userOptions.{name}'
+  settingsSyncTip: Turn off the items that you want to synchronize
+  settlement: Payment
+  share: Share
+  shareModuleConfirm: Are you sure you want to share this module?
+  shareSite: Share a website
+  shareSiteConnectionStringWarning: This site contains database connection
+    strings. Sharing may cause database information leakage. Are you sure you
+    want to continue sharing?
+  ShareSitesTips: Share your website as a template for public users
+  shareSuccess: Share success
+  shoppingCarUpdatedSuccessfully: Shopping cart updated successfully
+  showAdvanceSettings: Show advance settings
+  showAll: Show all
+  showOriginalMessage: " Show original message"
+  signature: Signature
+  simpleNameTips: Username can only contain letters, digits, -
+  singleContent: Single content
+  singleSignOn: Single Sign-On
+  site: Site
+  siteChangingSuccess: Site switched
+  siteExistsTips: Site already exists
+  siteIsBoundTips: Domain occupied
+  siteLogs: Site Logs
+  sitemap: Sitemap
+  sitemapTips: Sitemap is a structured file or page list that contains all
+    accessible pages on a website. It is typically provided to search engine
+    crawlers in XML format to help them index and crawl the website's pages more
+    effectively, thus improving SEO
+  siteModification: Change Site
+  siteName: Site name
+  siteNameExistsTips: Site name already exists
+  siteNotFound: Site not found
+  siteObject: Site object
+  siteOwner: Site owner
+  siteParsing: Importing website...
+  sites: Sites
+  siteSelected: 1 site selected
+  siteSettingDifferences: Site setting differences
+  siteSettings: Site settings
+  siteSettingsSync: Site settings Synchronization
+  sitesSelected: "{total} sites selected"
+  siteType: Access Rights
+  siteUnverifiedUser: Site unverified user
+  siteUser: Site Users
+  size: Size
+  smtpSetting: SMTP Setting
+  sortable: Sortable
+  sortField: Sort field
+  source: Source
+  SPA: SPA
+  spam: Spam
+  Spam: Spam
+  spaMultilingual: SPA Multilingual
+  spaTips: Redirect 404 to home page
+  specifications: Specifications
+  sqliteTables: SQLite Tables
+  sqlLog: SQL Logs
+  sqlLogs: SQL Logs
+  sqlServerTables: SQL Server Tables
+  SSLEnabled: SSL Enabled
+  start: Start
+  startAt: Start at
+  startClone: Start Clone
+  startCreate: Create
+  startDate: Start date
+  startImport: Start import
+  startTime: Start Time
+  startUrl: Start URL
+  state: State
+  stateAndProvince: State/Province
+  status: Status
+  stepInto: Step into
+  stepOut: Step out
+  stepOver: Step over
+  stock: Stock
+  stockOut: Out of stock, please refresh your page
+  stop: Stop
+  storage: Storage
+  street: Street
+  stringLength: String length
+  style: Style
+  styleGroup: Style group
+  styleName: Style name
+  styleNameExistsTips: The style name already exists
+  styles: Styles
+  subAccount: Sub account
+  subDomainExample: "Example: mysite"
+  subDomainInvalidTips: Subdomain invalid
+  subDomainRequiredTips: Subdomain required
+  subject: Subject
+  subjectRequiredTips: Subject required
+  submit: Submit
+  submitOrder: Submit order
+  submitPayment: Submit payment
+  submitter: Submitter
+  subtotal: Subtotal
+  success: Success
+  summaryField: Summary Field
+  sunday: Sunday
+  supportFile: Support file
+  supportFileTips: "Support file: .json"
+  supportTypes: "Support types: HTML, Word, ZIP"
+  svgEditor: SVG Editor
+  switch: Switch
+  switchOrganization: Switch organization
+  switchOrganizationTips: You need to re-login after switching organization, are
+    you sure you want to continue?
+  switchSite: Switch website
+  sync: Sync
+  syncLogs: Sync logs
+  syncProgress: Synchronization progress
+  system: System
+  systemConfig: System Config
+  systemFieldNotSupportDelete: System field not support delete
+  table: Table
+  tableA: Table A
+  tableB: Table B
+  tableData: Table Data
+  tableName: Table name
+  tableRelation: Table Relation
+  tableSchemaMapping: Table Schema Mapping
+  tag: Tag
+  tagName: Tag Name
+  tags: Tags
+  taskExecuteOver: Task execute over
+  taskExecutionCompleted: Task execution completed
+  TaskExecutionCompleted: Task execution completed
+  taskIsExecuting: Task is executing...
+  taskList: Task list
+  tax: Tax
+  template: Template
+  templateName: Template name
+  tentativelyAcceptedTheInvitation: Tentatively accepted the invitation
+  termsandcondition: Terms and Condition
+  text: Text
+  textArea: Text Area
+  textBox: Text Box
+  textColor: Text color
+  textContent: Text Content
+  theDefaultAddressUpdated: The default address updated
+  theEmailAlreadyExists: Email address already exists
+  theEndTimeShouldBeLaterThanTheStartTime: The end time should be later than the start time
+  theInvitationHasExpired: The invitation has expired
+  themeColor: Theme color
+  theNumberOfClicksAwayFromHomePage: The number of clicks away from home page
+  thePageNameAlreadyExists: The page already exists
+  thePicturesAndIconsDisplayedOnYourWebsiteAreSuggestedToBePutInThe:
+    The pictures and icons displayed on your website are recommended to put in
+    the
+  theProductOutOfStockTips: The product in the shopping cart is out of stock
+  thursday: Thursday
+  time: Time
+  timeElapsed: Time Elapsed
+  timeMinutes: Time (Minutes)
+  tinymceToolbarSettings: Rich Text Editor Configuration for Content Type
+  tips401: "Unauthorized: access denied due to invalid credentials."
+  tips402: Account limit reached. Site owner contact your hosting provider.
+  tips403: "Access Denied: User is not allowed to view this page.  You can Logout
+    and retry."
+  tips404: Page Not Found
+  tips407: Limitation reached
+  tips500: Server Internal Error
+  tipsWildcard: "* can be used to match any character. Only one * can be used in an address"
+  title: Title
+  titleRequiredTips: Title required
+  to: To
+  toggleDark: Toggle dark mode
+  toggleLight: Toggle light mode
+  toggleScreenSize: Toggle screen size
+  tooltip: Tooltip
+  topBots: Top bots
+  topics: Topics
+  topImages: Top Images
+  topPage: Top Page
+  topPages: Top Pages
+  topReference: Top Reference
+  topReferer: Top Referers
+  topupBandwidth: Top up bandwidth
+  total: Total
+  totalAmount: Total amount
+  totalAttachmentsSizeLimitTips: The total size of attachments must not exceed 20MB
+  totalEmailLoaded: "{total} email loaded"
+  totalEmailsLoaded: "{total} emails loaded"
+  totalFiles: Empty folder | {n} file | {n} file
+  totalQuantity: Total quantity
+  totalSites: "{total} Sites"
+  traceId: Trace ID
+  transferPage: TransferPage
+  transferTask: TransferTask
+  trash: Trash
+  Trash: Trash
+  trigger: Trigger
+  troubleshoot: Troubleshoot
+  tuesday: Tuesday
+  type: Type
+  unableChangeSelfIncrementalField: Unable to change auto-incremental field
+  underline: Underline
+  undo: Undo
+  undoChange: Undo Change
+  undoChanges: Undo Changes
+  undoChangeSuccess: Undo change successfully
+  undoChangeTip: The selected log(s) will be undone
+  unique: Unique
+  unknown: Unknown
+  unknownError: Unknown Error
+  unocss: unocss
+  unread: Unread
+  unreadEmail: Unread {unread}
+  unsavedChangesLeaveTips: There are unsaved changes, are you sure you want to leave?
+  unsavedTip: You have unsaved changes, do you want to leave this page and discard
+    your changes?
+  update: Update
+  updateDocument: Update document
+  updateLabel: Update label
+  updateSuccess: Update success
+  upload: Upload
+  uploadFiles: Upload files
+  uploadScreenshot: Upload screenshot
+  uploadScripts: Upload scripts
+  uploadStyles: Upload styles
+  uploadSuccess: Upload success
+  url: URL
+  urlInvalid: URL invalid
+  urlInvalidTips: URL is invalid
+  urlOccupied: URL occupied
+  urlRequiredTips: URL required
+  urls: URLs
+  usage: Usage
+  useCommaArray: Use Comma Array
+  usedBy: Used by
+  useFor: Use for
+  user: User
+  userCount: User count
+  userEditable: User Editable
+  useRegularExpression: Use Regular Expression
+  userGroup: UserGroup
+  username: Username
+  userName: User Name
+  usernameMustStartAndEndWithALetterOrDigit: Username must start and end with a letter or digit
+  usernameOrEmail: Username or email
+  usernameRuleTips: User name must contain 5 to 30 characters
+  userOptions: User options
+  userRequired: User required
+  validation: Validation
+  validationFailedMessage: Error message when validation failed
+  value: Value
+  valueExist: Value already exists
+  valueHasBeenTakenTips: Name already exists
+  valueRequiredTips: Value required
+  vat: VAT
+  vatAndFees: VAT and fees
+  verificationCodeHasSent: Verification code has been sent
+  verifyCode: Verify code
+  version: Versions
+  versionConflict: This file version has been modified by other users. Please
+    resolve the conflict!
+  versions: Versions
+  videoBrowserCache: Video Browser Cache
+  view: View
+  viewDataMethod: View Data Method
+  viewDetail: View detail
+  viewDetails: View details
+  viewMore: View More
+  viewName: View name
+  viewNameExistsTips: View name already exists
+  views: Views
+  visitorCountryRestriction: Visitor Country Restriction
+  visitorCountryRestrictionPage: Access Restriction Error Page
+  visitorLog: Visitor Log
+  visitorLogs: Visitor Logs
+  visitors: Visitors
+  waitSeconds: Wait {time} S
+  warning: Warning
+  webBrowser: Web Browser
+  webhookDescription: Webhook description
+  webSite: WebSite
+  Wechat: Wechat
+  wechat: Wechat
+  wechatPay: WechatPay
+  wechatPayment: Wechat
+  wednesday: Wednesday
+  week: Week
+  weeks: weeks
+  weight: Weight
+  weightUnit: Weight unit
+  whiteListPath: White list path
+  width: Width
+  wildcard: Wildcard
+  wildcardAddress: Wildcard address
+  withoutKoobooAccount: Without an account?
+  WYSIWYGEditor: WYSIWYG Editor
+  year: Year
+  years: Years
+  yes: YES
+  yourBalanceIsInsufficient: Insufficient account balance
+  zhCover: zh - Cover
+  zhScreenshot: zh - Screenshot
+  zhTemplateName: zh - Template name
+conflict:
+  keepLocalVersion: Keep local version
+  keepRemoteVersion: Keep remote version
+  local: Local version:{version} (editable)
+  localReadOnly: Local version:{version} (readonly)
+  remote: Remote version:{version} (readonly)
+  useLocalVersion: Use local version
+  useRemoteVersion: Use remote version
+console:
+  byPage: By page
+  keys: Keys
+  member: Member
+content:
+  details: Details
+  maybe: Maybe
+  no: No
+  online: Online
+  to: To
+  yes: Yes
+dashboard:
+  count: count
+domain:
+  amount: Amount
+  contact: Contact
+  name: Name
+  phone: Phone
+  switch: Switch
+ExcludePath: Exclude Defined Paths
+export:
+  complete: Complete
+IncludePath: Include Defined Paths Only
+inlineDesign:
+  phone: Phone
+login:
+  or: Or
+  register: Register
+mail:
+  addresses: Addresses
+  any: Any
+  contain: Contain
+  customise: Customise
+  from: From
+  inAMonth: In a month
+  inAWeek: In a week
+  inOneDay: In one day
+  inThreeDays: In three days
+  inTwoWeeks: In two weeks
+  members: Members
+  quantity: "{total} in total"
+  relatedEmails: Related Emails
+  sent: Sent
+  to: To
+order:
+  checkout: Checkout
+  IsDelivered: Delivery
+  IsPaid: Payment Status
+  LineTitle: Title
+  NonRefundNotice: For products that we purchase from third party, such as domain,
+    server etc, it is not possible to refund
+  Note: Important Note
+  TotalAmount: Total Amount
+organization:
+  members: Members
+page:
+  convertToExistingHTMLBlock: Convert to an existing HTML block
+  convertToExistingView: Convert to an existing View
+  createNewHTMLBlock: Create a new HTML block
+  createNewView: Create a new View
+  includeScriptTags: Include script tags
+  inlineHtml: Inline HTML
+  online: Online
+  outerHtml: Outer HTML
+  pagesRemaining: A total of {total} pages, with {count} pages completed
+  pageTreeDifferentTips: The content of child nodes has been detected to be
+    different, and this operation will batch replace them with identical
+    content. Do you want to continue?
+  pleaseFillValueTips: Please fill in at least one value
+partner:
+  resetPassword: Reset password
+PathPattern: Custom Path Permissions (Support Regex)
+permission:
+  view: View
+pickTemplate:
+  contents: Content
+profile:
+  change: Change
+  name: Name
+  phone: Phone
+settings:
+  atomicCss: Atomic CSS (unocss)
+  disableSsr: Disable SSR
+  resetDefaultStyle: Reset default style
+siteList:
+  offLine: Offline
+  onLine: Online
+storage:
+  AliyunOSS: Aliyun OSS
+  AmazonS3: Amazon S3
+  AzureBlob: Azure Blob Storage
+  default: Kooboo
+  HuaweiOBS: Huawei OBS
+  QCloudCOS: QCloud COS
+tinymce:
+  aligncenter: Align center
+  alignjustify: Justify
+  alignleft: Align left
+  alignright: Align right
+  backcolor: Background color
+  bold: Bold
+  bullist: Bullet list
+  code: HTML source code
+  codesample: Insert/edit code sample
+  emailAddress: Email address
+  fontselect: Fonts
+  fontsizeselect: Font sizes
+  forecolor: Text color
+  image: Insert/edit image
+  indent: Increase indent
+  italic: Italic
+  link: Insert/edit link
+  name: Name
+  numlist: Numbered list
+  outdent: Decrease indent
+  redo: Redo
+  removeformat: Remove format
+  undo: Undo
+type:
+  formSetting: Form Setting
+  frontEvent: Front Event
+  resourceGroup: Resource Group
+user:
+  changeSuccess: Change success
+ve:
+  actionType: Action type
+  alignBottom: Bottom
+  alignCenter: Center
+  alignLeft: Left
+  alignRight: Right
+  alignTop: Top
+  backgroundColor: Background color
+  backgroundImage: Background image
+  backgroundPosition: Background position
+  backgroundRepeat: Background repeat
+  bgNoRepeat: No repeat
+  bgRepeat: Repeat
+  bgRound: Scaled
+  bgSpace: Evenly distributed
+  borderColor: Border color
+  borderRadius: Border radius
+  borderStyle: Border style
+  borderWidth: Border width
+  bottom: Bottom
+  button: Button
+  buttonText: Button text
+  callPhone: Call phone number
+  circle: Circle
+  column: Column
+  columnIndex: Column {index}
+  columns: Columns
+  containerStyles: Container styles
+  contentProperties: CONTENT PROPERTIES
+  contentWidth: Content width
+  currentTab: Current window
+  dashed: Dashed
+  disc: Disc
+  divider: Divider
+  dotted: Dotted
+  double: Double
+  dragItHere: Drag it here
+  dropColumnBlocksHere: Drop column blocks here
+  dropContentBlocksHere: Drop content blocks here
+  editWidget: Edit widget - {name}
+  flexDirection: Direction
+  follow: Follow
+  fourColumns: Four columns
+  globalStyles: Global styles
+  horizontal: Horizontal
+  iconSize: Icon size (px)
+  justifyContent: Justify content
+  left: Left
+  letterSpacing: Letter spacing
+  linkBackgroundColor: Link background color
+  linkColor: Link color
+  linkHoverBackgroundColor: Link hover background color
+  linkHoverColor: Link hover color
+  linkHoverUnderline: Link hover underline
+  linkTarget: Link target
+  linkUnderline: Link underline
+  listItemBackgroundColor: List item background color
+  listItemMargin: List item margin (px)
+  listItemPadding: List item padding (px)
+  listItems: List items
+  listStyleType: List style type
+  margin: Margin (px)
+  mergeFields: Merge fields
+  mobileFullWidth: Full width on mobile devices
+  moreOptions: More options
+  newTab: New window
+  oneColumn: One column
+  openPage: Open internal page
+  openWebsite: Open Website
+  others: Others
+  padding: Padding (px)
+  pageStyle: Page style
+  paragraph: Paragraph
+  privacyMode: Enable privacy-enhanced mode
+  right: Right
+  row: Row
+  sendEmail: Send email
+  share: Share
+  showControls: Show player controls
+  social: Social
+  socialIcons: Social icons
+  solid: Solid
+  spacer: Spacer
+  specialLinks: Special links
+  square: Square
+  src: Upload image
+  textAlign: Text align
+  threeColumns: Three columns
+  titleType: Title type
+  top: Top
+  twoColumns11: 1:1 Two columns
+  twoColumns12: 1:2 Two columns
+  twoColumns13: 1:3 Two columns
+  twoColumns21: 2:1 Two columns
+  twoColumns31: 3:1 Two columns
+  unsubscribe: Unsubscribe
+  vertical: Vertical
+  widgets: Widgets
+  widthPercent: Width percent
+  youtube: YouTube
+visitorLog:
+  views: Views

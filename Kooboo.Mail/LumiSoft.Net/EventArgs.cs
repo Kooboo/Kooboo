@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LumiSoft.Net
 {
@@ -29,7 +27,7 @@ namespace LumiSoft.Net
         /// </summary>
         public T Value
         {
-            get{ return m_pValue; }
+            get { return m_pValue; }
         }
 
         #endregion

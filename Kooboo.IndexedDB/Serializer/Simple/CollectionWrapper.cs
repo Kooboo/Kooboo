@@ -4,9 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
@@ -20,7 +18,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         private readonly IList _list;
         private readonly ICollection<T> _genericCollection;
         private object _syncRoot;
-         
+
         public CollectionWrapper(ICollection<T> list)
         {
             _genericCollection = list;
@@ -273,7 +271,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         {
             if (!IsCompatibleObject(value))
             {
-               // throw new ArgumentException("The value '{0}' is not of type '{1}' and cannot be used in this generic collection.".FormatWith(CultureInfo.InvariantCulture, value, typeof(T)), nameof(value));
+                // throw new ArgumentException("The value '{0}' is not of type '{1}' and cannot be used in this generic collection.".FormatWith(CultureInfo.InvariantCulture, value, typeof(T)), nameof(value));
             }
         }
 

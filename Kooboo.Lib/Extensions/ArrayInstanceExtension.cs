@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Jint.Native.Array;
 using Jint.Native.Object;
-using Jint.Native.Array;
 using Jint.Runtime.Interop;
 namespace Jint
 {
@@ -18,11 +15,12 @@ namespace Jint
     {
         public static void AddTypeMapper()
         {
-            if (!Engine.TypeMappers.ContainsKey(typeof(byte[])))
-            {
-                Engine.TypeMappers.Add(typeof(byte[]), (Engine en, object v) => en.Array.Construct((byte[])v));
-            }
-            
+#warning todo
+            //if (!Engine.TypeMappers.ContainsKey(typeof(byte[])))
+            //{
+            //    Engine.TypeMappers.Add(typeof(byte[]), (Engine en, object v) => en.Array.Construct((byte[])v));
+            //}
+
         }
     }
 

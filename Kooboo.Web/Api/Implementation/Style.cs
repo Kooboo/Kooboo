@@ -1,21 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data.Models;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class StyleApi : SiteObjectApi<Style>
     {
         [Kooboo.Attributes.RequireParameters("id")]
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public StyleViewModel GetEdit(ApiCall call)
         {
             var style = call.WebSite.SiteDb().Styles.Get(call.ObjectId);
@@ -28,51 +28,57 @@ namespace Kooboo.Web.Api.Implementation
                 model.DisplayName = style.DisplayName;
                 model.FullUrl = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), style);
 
-                model.Extension = style.Extension; 
+                model.Extension = style.Extension;
 
-                if (model.Extension !=null && model.Extension != "css" && model.Extension != ".css")
+                if (model.Extension != null && model.Extension != "css" && model.Extension != ".css")
                 {
                     model.SourceChange = style.SourceChange;
                     if (!string.IsNullOrEmpty(style.Source))
                     {
                         model.Body = style.Source;
-                    }   
-                }     
+                    }
+                }
                 return model;
             }
             else
             {
-                return new StyleViewModel(); 
+                return new StyleViewModel();
             }
-                   
+
         }
 
         [Kooboo.Web.Menus.SiteObjectMenu]
-        public List<IEmbeddableItemListViewModel> External(ApiCall apiCall)
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public IEnumerable<IEmbeddableItemListViewModel> External(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();
-       
+
             int storenameHash = Lib.Security.Hash.ComputeInt(sitedb.Styles.StoreName);
-            List<IEmbeddableItemListViewModel> result = new List<IEmbeddableItemListViewModel>();
 
-            foreach (var item in sitedb.Styles.GetExternals().OrderBy(o => o.Name))
-            {
-                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item);
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenameHash;
-                result.Add(model);
-            }
-
-            return result;
+            return sitedb
+                .Styles
+                .GetExternals()
+                .SortByNameOrLastModified(apiCall)
+                .Select(item => new IEmbeddableItemListViewModel(sitedb, item)
+                {
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenameHash
+                });
         }
 
-        public List<IEmbeddableItemListViewModel> Embedded(ApiCall apiCall)
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public IEnumerable<IEmbeddableItemListViewModel> Embedded(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();
-            return sitedb.Styles.GetEmbeddeds()
-            .Select(o => new IEmbeddableItemListViewModel(sitedb, o)).ToList();
+            return sitedb.Styles
+                .GetEmbeddeds()
+                .SortByBodyOrLastModified(apiCall)
+                .Select(o => new IEmbeddableItemListViewModel(sitedb, o));
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public List<InlineItemViewModel> Inline(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();
@@ -95,41 +101,42 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        [Kooboo.Attributes.RequireModel(typeof(StyleEditViewModel))]
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
         public Guid Update(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
-            Guid id = call.ObjectId;
-            string name = call.GetValue("name");
-            string body = call.GetValue("body");
-            string extension = call.GetValue("extension");
-            if (string.IsNullOrEmpty(extension))
+            var model = call.Context.Request.Model as StyleEditViewModel;
+            if (string.IsNullOrEmpty(model.Extension))
             {
-                extension = "css";
-            }      
+                model.Extension = "css";
+            }
             string source = null;
-            
-            if (extension != "css" && extension != ".css")
+
+            if (model.Extension != "css" && model.Extension != ".css")
             {
-                source = body;
-                body = Kooboo.Sites.Engine.Manager.Execute(extension, call.Context, body); 
+                source = model.Body;
+                model.Body = Kooboo.Sites.Engine.Manager.Execute(model.Extension, call.Context, model.Body);
             }
 
 
-            if (id != default(Guid))
+            if (model.Id != default(Guid))
             {
-                var style = sitedb.Styles.Get(id);
+                var style = sitedb.Styles.Get(model.Id);
                 if (style != null)
                 {
-                    style.Body = body;
+                    (model as IDiffChecker).CheckDiff(style);
+
+                    style.Body = model.Body;
                     if (style.Extension == null)
                     {
-                        style.Extension = extension;
+                        style.Extension = model.Extension;
                     }
 
-                    if (source !=null)
+                    if (source != null)
                     {
                         style.Source = source;
-                        style.SourceChange = false; 
+                        style.SourceChange = false;
                     }
                     sitedb.Styles.AddOrUpdate(style, true, true, call.Context.User.Id);
                     return style.Id;
@@ -137,17 +144,17 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(model.Name))
                 {
                     return default(Guid);
                 }
 
-                if (!name.EndsWith("." + extension))
+                if (!model.Name.EndsWith("." + model.Extension))
                 {
-                    name = name + "." + extension;
+                    model.Name = model.Name + "." + model.Extension;
                 }
 
-                string url = name;
+                string url = model.Name;
                 if (url.StartsWith("\\"))
                 {
                     url = "/" + url.Substring(1);
@@ -162,26 +169,26 @@ namespace Kooboo.Web.Api.Implementation
                     var style = sitedb.Styles.Get(route.objectId);
                     if (style != null)
                     {
-                        style.Body = body;
+                        style.Body = model.Body;
                         if (style.Extension == null)
                         {
-                            style.Extension = extension;
+                            style.Extension = model.Extension;
                         }
 
                         if (source != null)
                         {
                             style.Source = source;
                             style.SourceChange = false;
-                        }      
+                        }
                         sitedb.Styles.AddOrUpdate(style, false, false, call.Context.User.Id);
                         return style.Id;
                     }
                 }
 
                 Style newstyle = new Style();
-                newstyle.Name = name;
-                newstyle.Body = body;
-                newstyle.Extension = extension;
+                newstyle.Name = model.Name;
+                newstyle.Body = model.Body;
+                newstyle.Extension = model.Extension;
 
                 if (source != null)
                 {
@@ -195,8 +202,8 @@ namespace Kooboo.Web.Api.Implementation
             }
             return default(Guid);
         }
-           
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public List<UsedByRelation> Relation(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -222,11 +229,13 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public List<CssRuleViewModel> GetRules(ApiCall call)
         {
             return GetCssRuleViews(call.WebSite.SiteDb(), call.ObjectId);
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public List<CssRuleViewModel> GetCssRuleViews(SiteDb SiteDb, Guid ParentStyleId)
         {
             var allrules = SiteDb.CssRules.Query.Where(o => o.ParentStyleId == ParentStyleId).SelectAll();
@@ -236,6 +245,7 @@ namespace Kooboo.Web.Api.Implementation
             return SetGetCssRule(allrules, current);
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
         private List<CssRuleViewModel> SetGetCssRule(List<CmsCssRule> allrules, List<CmsCssRule> currentrules)
         {
             List<CssRuleViewModel> result = new List<CssRuleViewModel>();
@@ -285,6 +295,7 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public List<CssRuleViewModel> GetCssRuleList(List<CmsCssRule> cssRules, Data.Models.WebSite website)
         {
             List<CssRuleViewModel> rules = new List<CssRuleViewModel>();
@@ -337,6 +348,7 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
         public void UpdateRules(ApiCall call)
         {
             Guid StyleId = call.ObjectId;
@@ -352,7 +364,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 model = Lib.Helper.JsonHelper.Deserialize<UpdateStyleRuleViewModel>(json);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -365,14 +377,14 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     if (rule.Value.RuleType == RuleType.StyleRule)
                     {
-                        CmsCssRuleChanges changeitem = GetStyleRuleChangeItem(rule.Value); 
+                        CmsCssRuleChanges changeitem = GetStyleRuleChangeItem(rule.Value);
                         changes.Add(changeitem);
                     }
                     else if (rule.Value.RuleType == RuleType.MediaRule)
                     {
                         CmsCssRuleChanges changeitem = GetMediaRuleAdded(rule.Value);
-                        changes.Add(changeitem); 
-                    } 
+                        changes.Add(changeitem);
+                    }
                 }
             }
             if (model.Modified != null && model.Modified.Count > 0)
@@ -406,7 +418,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         private static CmsCssRuleChanges GetStyleRuleChangeItem(CssRuleViewModel rule)
-        { 
+        {
             List<CmsCssDeclaration> declarations = new List<CmsCssDeclaration>();
             if (rule.Declarations != null)
             {
@@ -414,8 +426,8 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     declarations.Add(new CmsCssDeclaration() { PropertyName = item.Name, Value = item.Value, Important = item.Important });
                 }
-            } 
-            var changeitem = new CmsCssRuleChanges() { ChangeType = ChangeType.Add, CssRuleId = rule.Id, selectorText = rule.Selector,  Declarations = declarations };
+            }
+            var changeitem = new CmsCssRuleChanges() { ChangeType = ChangeType.Add, CssRuleId = rule.Id, selectorText = rule.Selector, Declarations = declarations };
 
             return changeitem;
         }
@@ -423,20 +435,20 @@ namespace Kooboo.Web.Api.Implementation
         private static CmsCssRuleChanges GetMediaRuleAdded(CssRuleViewModel rule)
         {
             CmsCssRuleChanges change = new CmsCssRuleChanges();
-            if (rule.Selector.IndexOf("@media",  StringComparison.OrdinalIgnoreCase) == -1)
+            if (rule.Selector.IndexOf("@media", StringComparison.OrdinalIgnoreCase) == -1)
             {
                 change.selectorText = "@media " + rule.Selector;
             }
             else
             {
-                change.selectorText = rule.Selector; 
+                change.selectorText = rule.Selector;
             }
 
-            string ruletext = string.Empty; 
+            string ruletext = string.Empty;
 
             foreach (var item in rule.Rules)
             {
-                ruletext += "\r\n" + item.Selector + "\r\n{\r\n"; 
+                ruletext += "\r\n" + item.Selector + "\r\n{\r\n";
                 List<CmsCssDeclaration> declarations = new List<CmsCssDeclaration>();
                 if (item.Declarations != null)
                 {
@@ -444,17 +456,15 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         declarations.Add(new CmsCssDeclaration() { PropertyName = decl.Name, Value = decl.Value, Important = decl.Important });
                     }
-                    ruletext += CssService.SerializeCmsCssDeclaration(declarations); 
+                    ruletext += CssService.SerializeCmsCssDeclaration(declarations);
                 }
-                ruletext += "\r\n}"; 
+                ruletext += "\r\n}";
             }
 
-            change.DeclarationText = ruletext; 
+            change.DeclarationText = ruletext;
 
-            return change; 
+            return change;
         }
-
- 
 
         public override bool IsUniqueName(ApiCall call)
         {
@@ -493,8 +503,6 @@ namespace Kooboo.Web.Api.Implementation
             return true;
         }
 
-
-
         private bool samename(string dbname, string name, List<string> extensionsWithDot)
         {
             if (dbname == null || name == null)
@@ -523,8 +531,6 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-
-
         public List<string> GetExtensions(ApiCall call)
         {
             HashSet<string> result = new HashSet<string>();
@@ -539,6 +545,46 @@ namespace Kooboo.Web.Api.Implementation
             return result.ToList();
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
 
-    } 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        public override List<object> List(ApiCall call)
+        {
+            return base.List(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            return base.Post(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+    }
 }

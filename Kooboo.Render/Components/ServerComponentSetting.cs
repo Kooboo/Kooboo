@@ -1,19 +1,18 @@
-﻿using Kooboo.Dom;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Kooboo.Dom;
 
 namespace Kooboo.Render.Components
 {
-     
+
     public class ServerComponentSetting
     {
         public string NameOrId { get; set; }
 
         public Dictionary<string, string> Settings { get; set; }
-  
+
         public Dictionary<string, string> Attributes { get; set; }
- 
+
         public string InnerHtml { get; set; }
 
         public ServerComponentSetting()
@@ -26,15 +25,15 @@ namespace Kooboo.Render.Components
         {
             ServerComponentSetting setting = new ServerComponentSetting();
 
-            setting.NameOrId = ComponentElement.id; 
+            setting.NameOrId = ComponentElement.id;
 
             setting.InnerHtml = ComponentElement.InnerHtml;
 
             foreach (var item in ComponentElement.attributes)
-            { 
+            {
                 setting.Attributes.Add(item.name, item.value);
             }
-             
+
 
             if (string.IsNullOrWhiteSpace(setting.NameOrId) && string.IsNullOrWhiteSpace(setting.InnerHtml))
             {
@@ -69,12 +68,12 @@ namespace Kooboo.Render.Components
     public class SettingNode
     {
         public string Key { get; set; }
-         
+
         public string Value { get; set; }
-         
+
         public Dictionary<string, string> Attributes { get; set; }
 
-        public List<SettingNode> ChildNodes { get; set; } 
+        public List<SettingNode> ChildNodes { get; set; }
     }
-     
+
 }

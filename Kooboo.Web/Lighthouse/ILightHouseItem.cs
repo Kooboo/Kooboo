@@ -1,7 +1,4 @@
 ﻿using Kooboo.Data.Context;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Lighthouse
 {
@@ -13,7 +10,7 @@ namespace Kooboo.Web.Lighthouse
 
         void Execute(RenderContext Context);
 
-        bool ImgTag { get;   }
+        bool ImgTag { get; }
 
         bool ATag { get; }
     }

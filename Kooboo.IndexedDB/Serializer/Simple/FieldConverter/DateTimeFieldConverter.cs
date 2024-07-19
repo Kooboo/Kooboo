@@ -1,15 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-  public  class DateTimeFieldConverter<T> : IFieldConverter<T>
+    public class DateTimeFieldConverter<T> : IFieldConverter<T>
     {
         Func<T, DateTime> getValue;
         Action<T, DateTime> setValue;
@@ -33,7 +29,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            DateTime bytevalue = ValueConverter.ToDateTime(bytes);  
+            DateTime bytevalue = ValueConverter.ToDateTime(bytes);
             this.setValue(value, bytevalue);
         }
 
@@ -41,10 +37,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             DateTime fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
-        } 
+        }
     }
 
-    public class DateTimeFieldConverter: IFieldConverter
+    public class DateTimeFieldConverter : IFieldConverter
     {
         Func<object, DateTime> getValue;
         Action<object, DateTime> setValue;
@@ -71,11 +67,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             DateTime bytevalue = ValueConverter.ToDateTime(bytes);
             this.setValue(value, bytevalue);
         }
-  
+
         public byte[] ToBytes(object Value)
         {
             DateTime fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
-        } 
+        }
     }
 }

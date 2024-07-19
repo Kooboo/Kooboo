@@ -2,10 +2,8 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-  
+
 namespace Kooboo.Mail.Imap.Commands
 {
     public class UID : ICommand
@@ -19,7 +17,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return "UID"; 
+                return "UID";
             }
         }
 
@@ -27,7 +25,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -35,7 +33,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -43,7 +41,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -55,8 +53,7 @@ namespace Kooboo.Mail.Imap.Commands
             switch (subCommand)
             {
                 case "FETCH":
-                    result = FetchCommand.FetchResponse.GenerateByUid(session.MailDb, session.SelectFolder, spl[1]);
-                    break;
+                    return FetchCommand.FetchResponse.GenerateByUid(session.MailDb, session.SelectFolder, spl[1], session);
                 case "STORE":
                     result = STORE.ExecuteByUid(session.MailDb, session.SelectFolder, spl[1]);
                     break;
@@ -67,7 +64,7 @@ namespace Kooboo.Mail.Imap.Commands
                     result = MOVE.ExecuteByUid(session.MailDb, session.SelectFolder, spl[1]);
                     break;
                 case "SEARCH":
-                    result = SearchCommand.Search.ExecuteByUid(session.MailDb, session.SelectFolder, spl[1]);
+                    result = SearchCommand.Search.Instance.ExecuteByUid(session.MailDb, session.SelectFolder, spl[1]);
                     break;
                 default:
                     throw new Exception("Not support for UID " + subCommand);

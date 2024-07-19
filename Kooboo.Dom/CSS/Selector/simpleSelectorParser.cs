@@ -1,11 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom;
 
 namespace Kooboo.Dom.CSS
 {
@@ -55,7 +51,7 @@ namespace Kooboo.Dom.CSS
 
         private void Reset()
         {
-            readIndex = -1; 
+            readIndex = -1;
         }
 
         private char LookupNext()
@@ -82,7 +78,7 @@ namespace Kooboo.Dom.CSS
                     escape = true;
                 }
 
-                if (item == ']' || item== ')')
+                if (item == ']' || item == ')')
                 { escape = false; }
 
                 if (escape)
@@ -109,17 +105,17 @@ namespace Kooboo.Dom.CSS
 
             //TODO: to be checked. 
             if (_selectorText.Contains("::"))
-            { 
-                  parsePseudoElement();
+            {
+                parsePseudoElement();
 
-                return simple; 
+                return simple;
             }
             if (_selectorText.Contains(":"))
-            {  
+            {
                 parsePseudoClass();
-                return simple; 
+                return simple;
             }
-            
+
             while (true)
             {
                 char currentChar = ReadNext();
@@ -170,7 +166,7 @@ namespace Kooboo.Dom.CSS
                     }
                     else
                     {
-                        parsePseudoClass(); 
+                        parsePseudoClass();
                     }
                     return simple;
                 }
@@ -189,7 +185,7 @@ namespace Kooboo.Dom.CSS
                 typeSelector typeselector = new typeSelector();
                 typeselector.elementE = AppendCleanBuffer(_buffer);
                 typeselector.wholeText = typeselector.elementE;
-               
+
                 simple = typeselector;
             }
             return simple;
@@ -217,7 +213,7 @@ namespace Kooboo.Dom.CSS
                 {
                     if (_buffer.Length > 0)
                     {
-                        attributeselector.attributeName = AppendCleanBuffer(_buffer); 
+                        attributeselector.attributeName = AppendCleanBuffer(_buffer);
                     }
                     if (attributeselector.matchType == enumAttributeType.defaultHas)
                     {
@@ -229,7 +225,7 @@ namespace Kooboo.Dom.CSS
                 {
                     if (_buffer.Length > 0)
                     {
-                        attributeselector.attributeName = AppendCleanBuffer(_buffer); 
+                        attributeselector.attributeName = AppendCleanBuffer(_buffer);
                     }
 
                     attributeselector.matchType = enumAttributeType.whitespaceSeperated;
@@ -275,7 +271,7 @@ namespace Kooboo.Dom.CSS
                 {
                     if (_buffer.Length > 0)
                     {
-                        attributeselector.attributeName = AppendCleanBuffer(_buffer); 
+                        attributeselector.attributeName = AppendCleanBuffer(_buffer);
                     }
                     attributeselector.matchType = enumAttributeType.hyphenSeperated;
                     current = ReadNext();
@@ -313,7 +309,7 @@ namespace Kooboo.Dom.CSS
                         attributeselector.attributeValue = value;
                     }
                 }
- 
+
             }
 
             simple = attributeselector;
@@ -328,7 +324,7 @@ namespace Kooboo.Dom.CSS
 
             if (_buffer.Length > 0)
             {
-                classselector.elementE = AppendCleanBuffer(_buffer); 
+                classselector.elementE = AppendCleanBuffer(_buffer);
             }
 
 
@@ -338,7 +334,7 @@ namespace Kooboo.Dom.CSS
             {
                 if (current == '.')
                 {
-                    classselector.classList.Add(AppendCleanBuffer(_buffer)); 
+                    classselector.classList.Add(AppendCleanBuffer(_buffer));
                     current = ReadNext();
                 }
                 else
@@ -351,7 +347,7 @@ namespace Kooboo.Dom.CSS
             if (_buffer.Length > 0)
             {
                 classselector.classList.Add(AppendCleanBuffer(_buffer));
- 
+
             }
 
             simple = classselector;
@@ -366,7 +362,7 @@ namespace Kooboo.Dom.CSS
 
             if (_buffer.Length > 0)
             {
-                idselector.elementE = AppendCleanBuffer(_buffer); 
+                idselector.elementE = AppendCleanBuffer(_buffer);
             }
 
             char current = ReadNext();
@@ -402,9 +398,9 @@ namespace Kooboo.Dom.CSS
                     if (_buffer.Length > 0)
                     {
                         pseudoelement.elementE += AppendCleanBuffer(_buffer);
-                    } 
+                    }
                 }
-               else
+                else
                 {
                     _buffer.Append(current);
                 }
@@ -423,12 +419,12 @@ namespace Kooboo.Dom.CSS
 
             if (_buffer.Length > 0)
             {
-                pseudoClass.elementE = AppendCleanBuffer(_buffer); 
+                pseudoClass.elementE = AppendCleanBuffer(_buffer);
             }
 
             char current = ReadNext();
 
-            bool InBracketState = false; 
+            bool InBracketState = false;
 
             while (!stop)
             {
@@ -436,10 +432,10 @@ namespace Kooboo.Dom.CSS
                 {
                     _buffer.Append(current);
 
-                    if (current==')')
+                    if (current == ')')
                     {
                         InBracketState = false;
-                        break; 
+                        break;
                     }
                 }
                 else
@@ -451,7 +447,7 @@ namespace Kooboo.Dom.CSS
                             pseudoClass.elementE += AppendCleanBuffer(_buffer);
                         }
                     }
-                    
+
                     else
                     {
                         if (current == '(')
@@ -466,7 +462,7 @@ namespace Kooboo.Dom.CSS
                 current = ReadNext();
             }
 
-            pseudoClass.matchText = AppendCleanBuffer(_buffer); 
+            pseudoClass.matchText = AppendCleanBuffer(_buffer);
 
             simple = pseudoClass;
 
@@ -489,7 +485,7 @@ namespace Kooboo.Dom.CSS
                     if (_buffer.Length > 0)
                     {
                         clause.selectorText = AppendCleanBuffer(_buffer);
-                       
+
                         clause.selector = new simpleSelectorParser(clause.selectorText).Parse();
                         combineSelector.item.Add(clause);
 
@@ -515,7 +511,7 @@ namespace Kooboo.Dom.CSS
                     if (_buffer.Length > 0)
                     {
                         clause.selectorText = AppendCleanBuffer(_buffer);
-                        
+
                         clause.selector = new simpleSelectorParser(clause.selectorText).Parse();
                         combineSelector.item.Add(clause);
 
@@ -540,7 +536,7 @@ namespace Kooboo.Dom.CSS
                     if (_buffer.Length > 0)
                     {
                         clause.selectorText = AppendCleanBuffer(_buffer);
-                       
+
                         clause.selector = new simpleSelectorParser(clause.selectorText).Parse();
                         combineSelector.item.Add(clause);
 
@@ -564,7 +560,7 @@ namespace Kooboo.Dom.CSS
                     if (_buffer.Length > 0)
                     {
                         clause.selectorText = AppendCleanBuffer(_buffer);
-  
+
                         clause.selector = new simpleSelectorParser(clause.selectorText).Parse();
                         combineSelector.item.Add(clause);
 
@@ -590,32 +586,32 @@ namespace Kooboo.Dom.CSS
             if (_buffer.Length > 0)
             {
                 clause.selectorText = AppendCleanBuffer(_buffer);
-  
+
                 clause.selector = new simpleSelectorParser(clause.selectorText).Parse();
                 combineSelector.item.Add(clause);
             }
-             
+
             simple = combineSelector;
 
         }
 
         private string AppendCleanBuffer(StringBuilder buffer)
         {
-            string value=null; 
+            string value = null;
             if (buffer.Length > 0)
             {
                 value = buffer.ToString();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    value = value.Trim(); 
+                    value = value.Trim();
                 }
                 else
                 {
-                    value = null; 
+                    value = null;
                 }
             }
             buffer.Clear();
-            return value; 
+            return value;
         }
     }
 }

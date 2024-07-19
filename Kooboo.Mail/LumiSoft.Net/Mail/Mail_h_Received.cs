@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
-
+using System.Text;
 using LumiSoft.Net.MIME;
 
 namespace LumiSoft.Net.Mail
@@ -53,17 +51,17 @@ namespace LumiSoft.Net.Mail
     /// </remarks>
     public class Mail_h_Received : MIME_h
     {
-        private bool           m_IsModified    = false;
-        private string         m_ParseValue    = null;
-        private string         m_From          = "";
+        private bool m_IsModified = false;
+        private string m_ParseValue = null;
+        private string m_From = "";
         private Mail_t_TcpInfo m_pFrom_TcpInfo = null;
-        private string         m_By            = "";
-        private Mail_t_TcpInfo m_pBy_TcpInfo   = null;
-        private string         m_Via           = null;
-        private string         m_With          = null;
-        private string         m_ID            = null;
-        private string         m_For           = null;
-        private DateTime       m_Time;
+        private string m_By = "";
+        private Mail_t_TcpInfo m_pBy_TcpInfo = null;
+        private string m_Via = null;
+        private string m_With = null;
+        private string m_ID = null;
+        private string m_For = null;
+        private DateTime m_Time;
 
         /// <summary>
         /// Default constructor.
@@ -73,23 +71,27 @@ namespace LumiSoft.Net.Mail
         /// <param name="time">Date time when message was received.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>from</b> or <b>by</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
-        public Mail_h_Received(string from,string by,DateTime time)
+        public Mail_h_Received(string from, string by, DateTime time)
         {
-            if(from == null){
+            if (from == null)
+            {
                 throw new ArgumentNullException("from");
             }
-            if(from == string.Empty){
-                throw new ArgumentException("Argument 'from' value must be specified.","from");
+            if (from == string.Empty)
+            {
+                throw new ArgumentException("Argument 'from' value must be specified.", "from");
             }
-            if(by == null){
+            if (by == null)
+            {
                 throw new ArgumentNullException("by");
             }
-            if(by == string.Empty){
-                throw new ArgumentException("Argument 'by' value must be specified.","by");
+            if (by == string.Empty)
+            {
+                throw new ArgumentException("Argument 'by' value must be specified.", "by");
             }
 
             m_From = from;
-            m_By   = by;
+            m_By = by;
             m_Time = time;
         }
 
@@ -105,120 +107,152 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ParseException">Is raised when header field parsing errors.</exception>
         public static Mail_h_Received Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
-            string[] name_value = value.Split(new char[]{':'},2);
-            if(name_value.Length != 2){
+            string[] name_value = value.Split(new char[] { ':' }, 2);
+            if (name_value.Length != 2)
+            {
                 throw new ParseException("Invalid header field value '" + value + "'.");
             }
 
-            Mail_h_Received retVal = new Mail_h_Received("a","b",DateTime.MinValue);
+            Mail_h_Received retVal = new Mail_h_Received("a", "b", DateTime.MinValue);
 
             MIME_Reader r = new MIME_Reader(name_value[1]);
 
-            while(true){
+            while (true)
+            {
                 string word = r.Word();
                 // We processed all data.
-                if(word == null && r.Available == 0){
+                if (word == null && r.Available == 0)
+                {
                     break;
                 }
                 // We have comment, just eat it.
-                else if(r.StartsWith("(")){
+                else if (r.StartsWith("("))
+                {
                     r.ReadParenthesized();
                 }
                 // We have date-time or unknown-data.
-                else if(r.StartsWith(";")){
+                else if (r.StartsWith(";"))
+                {
                     // Eat ';'
                     r.Char(false);
 
-                    try{
-                        retVal.m_Time = MIME_Utils.ParseRfc2822DateTime(r.QuotedReadToDelimiter(new char[]{';'}));
+                    try
+                    {
+                        retVal.m_Time = MIME_Utils.ParseRfc2822DateTime(r.QuotedReadToDelimiter(new char[] { ';' }));
                     }
-                    catch{
+                    catch
+                    {
                         // We hane some unknown data, skip it.
                     }
                 }
-                else{
+                else
+                {
                     // We have some unexpected char like: .,= ... . Just eat it.
-                    if(word == null){
+                    if (word == null)
+                    {
                         r.Char(true);
                         continue;
                     }
 
                     word = word.ToUpperInvariant();
 
-                    if(word == "FROM"){
+                    if (word == "FROM")
+                    {
                         retVal.m_From = r.DotAtom();
 
                         r.ToFirstChar();
-                        if(r.StartsWith("(")){
+                        if (r.StartsWith("("))
+                        {
                             string[] parts = r.ReadParenthesized().Split(' ');
-                            if(parts.Length == 1){
-                                if(Net_Utils.IsIPAddress(parts[0])){
-                                    retVal.m_pFrom_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[0]),null);
+                            if (parts.Length == 1)
+                            {
+                                if (Net_Utils.IsIPAddress(parts[0]))
+                                {
+                                    retVal.m_pFrom_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[0]), null);
                                 }
                             }
-                            else if(parts.Length == 2){
-                                if(Net_Utils.IsIPAddress(parts[1])){
-                                    retVal.m_pFrom_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[1]),parts[0]);
+                            else if (parts.Length == 2)
+                            {
+                                if (Net_Utils.IsIPAddress(parts[1]))
+                                {
+                                    retVal.m_pFrom_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[1]), parts[0]);
                                 }
                             }
                         }
                     }
-                    else if(word == "BY"){
+                    else if (word == "BY")
+                    {
                         retVal.m_By = r.DotAtom();
 
                         r.ToFirstChar();
-                        if(r.StartsWith("(")){
+                        if (r.StartsWith("("))
+                        {
                             string[] parts = r.ReadParenthesized().Split(' ');
-                            if(parts.Length == 1){
-                                if(Net_Utils.IsIPAddress(parts[0])){
-                                    retVal.m_pBy_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[0]),null);
+                            if (parts.Length == 1)
+                            {
+                                if (Net_Utils.IsIPAddress(parts[0]))
+                                {
+                                    retVal.m_pBy_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[0]), null);
                                 }
                             }
-                            else if(parts.Length == 2){
-                                if(Net_Utils.IsIPAddress(parts[1])){
-                                    retVal.m_pBy_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[1]),parts[0]);
+                            else if (parts.Length == 2)
+                            {
+                                if (Net_Utils.IsIPAddress(parts[1]))
+                                {
+                                    retVal.m_pBy_TcpInfo = new Mail_t_TcpInfo(IPAddress.Parse(parts[1]), parts[0]);
                                 }
                             }
                         }
                     }
-                    else if(word == "VIA"){
+                    else if (word == "VIA")
+                    {
                         retVal.m_Via = r.Word();
                     }
-                    else if(word == "WITH"){
+                    else if (word == "WITH")
+                    {
                         retVal.m_With = r.Word();
                     }
-                    else if(word == "ID"){
+                    else if (word == "ID")
+                    {
                         // msg-id = [CFWS] "<" id-left "@" id-right ">" [CFWS]
 
-                        if(r.StartsWith("<")){
+                        if (r.StartsWith("<"))
+                        {
                             retVal.m_ID = r.ReadParenthesized();
                         }
-                        else{
+                        else
+                        {
                             retVal.m_ID = r.Atom();
                         }
                     }
-                    else if(word == "FOR"){
+                    else if (word == "FOR")
+                    {
                         r.ToFirstChar();
 
                         // path / angle-address
-                        if(r.StartsWith("<")){
+                        if (r.StartsWith("<"))
+                        {
                             retVal.m_For = r.ReadParenthesized();
                         }
-                        else{
+                        else
+                        {
                             string mailbox = Mail_Utils.SMTP_Mailbox(r);
-                            if(mailbox == null){
+                            if (mailbox == null)
+                            {
                                 throw new ParseException("Invalid Received: For parameter value '" + r.ToEnd() + "'.");
                             }
-                            retVal.m_For = mailbox;  
+                            retVal.m_For = mailbox;
                         }
                     }
                     // Unknown, just eat value.
-                    else{
-                         r.Word();
+                    else
+                    {
+                        r.Word();
                     }
                 }
             }
@@ -240,30 +274,37 @@ namespace LumiSoft.Net.Mail
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header field value not modified, original encoding is kept.</param>
         /// <returns>Returns header field as string.</returns>
-        public override string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode)
+        public override string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode)
         {
-            if(reEncode || this.IsModified){
+            if (reEncode || this.IsModified)
+            {
                 StringBuilder retVal = new StringBuilder();
 
                 retVal.Append("Received: ");
                 retVal.Append("from " + m_From);
-                if(m_pFrom_TcpInfo != null){
+                if (m_pFrom_TcpInfo != null)
+                {
                     retVal.Append(" (" + m_pFrom_TcpInfo.ToString() + ")");
                 }
                 retVal.Append(" by " + m_By);
-                if(m_pBy_TcpInfo != null){
+                if (m_pBy_TcpInfo != null)
+                {
                     retVal.Append(" (" + m_pBy_TcpInfo.ToString() + ")");
                 }
-                if(!string.IsNullOrEmpty(m_Via)){
+                if (!string.IsNullOrEmpty(m_Via))
+                {
                     retVal.Append(" via " + m_Via);
                 }
-                if(!string.IsNullOrEmpty(m_With)){
+                if (!string.IsNullOrEmpty(m_With))
+                {
                     retVal.Append(" with " + m_With);
                 }
-                if(!string.IsNullOrEmpty(m_ID)){
+                if (!string.IsNullOrEmpty(m_ID))
+                {
                     retVal.Append(" id " + m_ID);
                 }
-                if(!string.IsNullOrEmpty(m_For)){
+                if (!string.IsNullOrEmpty(m_For))
+                {
                     retVal.Append(" for " + m_For);
                 }
                 retVal.Append("; " + MIME_Utils.DateTimeToRfc2822(m_Time));
@@ -296,14 +337,15 @@ namespace LumiSoft.Net.Mail
 
                 return retVal.ToString();
             }
-            else{
+            else
+            {
                 return m_ParseValue;
             }
-            
+
         }
 
         #endregion
-                       
+
 
         #region Properties implementation
 
@@ -314,7 +356,7 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ObjectDisposedException">Is riased when this class is disposed and this property is accessed.</exception>
         public override bool IsModified
         {
-            get{ return m_IsModified; }
+            get { return m_IsModified; }
         }
 
         /// <summary>
@@ -333,14 +375,17 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentException">Is raised when invalid value passed.</exception>
         public string From
         {
-            get{ return m_From; }
+            get { return m_From; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     throw new ArgumentNullException("From");
                 }
-                if(value == string.Empty){
-                    throw new ArgumentException("Property 'From' value must be specified","From");
+                if (value == string.Empty)
+                {
+                    throw new ArgumentException("Property 'From' value must be specified", "From");
                 }
 
                 m_From = value;
@@ -356,10 +401,11 @@ namespace LumiSoft.Net.Mail
         /// </remarks>
         public Mail_t_TcpInfo From_TcpInfo
         {
-            get{ return m_pFrom_TcpInfo; }
+            get { return m_pFrom_TcpInfo; }
 
-            set{ 
-                m_pFrom_TcpInfo = value; 
+            set
+            {
+                m_pFrom_TcpInfo = value;
                 m_IsModified = true;
             }
         }
@@ -371,14 +417,17 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentException">Is raised when invalid value passed.</exception>
         public string By
         {
-            get{ return m_By; }
+            get { return m_By; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     throw new ArgumentNullException("By");
                 }
-                if(value == string.Empty){
-                    throw new ArgumentException("Property 'By' value must be specified","By");
+                if (value == string.Empty)
+                {
+                    throw new ArgumentException("Property 'By' value must be specified", "By");
                 }
 
                 m_By = value;
@@ -392,9 +441,10 @@ namespace LumiSoft.Net.Mail
         /// <remarks>RFC defines it, but i don't see any point about that value.</remarks>
         public Mail_t_TcpInfo By_TcpInfo
         {
-            get{ return m_pBy_TcpInfo; }
+            get { return m_pBy_TcpInfo; }
 
-            set{ 
+            set
+            {
                 m_pBy_TcpInfo = value;
                 m_IsModified = true;
             }
@@ -405,9 +455,10 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string Via
         {
-            get{ return m_Via; }
+            get { return m_Via; }
 
-            set{ 
+            set
+            {
                 m_Via = value;
                 m_IsModified = true;
             }
@@ -418,10 +469,11 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string With
         {
-            get{ return m_With; }
+            get { return m_With; }
 
-            set{ 
-                m_With = value; 
+            set
+            {
+                m_With = value;
                 m_IsModified = true;
             }
         }
@@ -431,10 +483,11 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string ID
         {
-            get{ return m_ID; }
+            get { return m_ID; }
 
-            set{ 
-                m_ID = value; 
+            set
+            {
+                m_ID = value;
                 m_IsModified = true;
             }
         }
@@ -444,10 +497,11 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string For
         {
-            get{ return m_For; }
+            get { return m_For; }
 
-            set{ 
-                m_For = value; 
+            set
+            {
+                m_For = value;
                 m_IsModified = true;
             }
         }
@@ -457,10 +511,11 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public DateTime Time
         {
-            get{ return m_Time; }
+            get { return m_Time; }
 
-            set{ 
-                m_Time = value;                 
+            set
+            {
+                m_Time = value;
                 m_IsModified = true;
             }
         }

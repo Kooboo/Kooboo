@@ -1,12 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
+using Kooboo.Api;
+using Kooboo.Data.Permission;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Kooboo.Sites.Extensions;
-using Kooboo.Api;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -36,6 +35,8 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
         public List<ResourceGroupViewModel> Style(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -44,7 +45,7 @@ namespace Kooboo.Web.Api.Implementation
 
             string PreviewTemplate = Sites.Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", ConstObjectType.ResourceGroup.ToString());
 
-            var StyleGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Style).SelectAll();
+            var StyleGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Style).SelectAll().SortByNameOrLastModified(call);
 
             List<ResourceGroupViewModel> result = new List<ResourceGroupViewModel>();
             foreach (var item in StyleGroup)
@@ -55,14 +56,14 @@ namespace Kooboo.Web.Api.Implementation
                 newitem.Type = item.Type;
                 newitem.LastModified = item.LastModified;
                 newitem.ChildrenCount = item.Children.Count();
-                 
+
                 var usedby = sitedb.ResourceGroups.GetUsedBy(item.Id);
                 newitem.References = Sites.Helper.RelationHelper.Sum(usedby);
                 var route = sitedb.Routes.GetByObjectId(item.Id);
                 if (route != null)
                 {
-                    newitem.RelativeUrl = route.Name; 
-                } 
+                    newitem.RelativeUrl = route.Name;
+                }
                 else
                 {
                     newitem.RelativeUrl = PreviewTemplate.Replace("{nameorid}", item.Name);
@@ -74,6 +75,8 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
         public List<ResourceGroupViewModel> Script(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();
@@ -82,7 +85,7 @@ namespace Kooboo.Web.Api.Implementation
 
             string PreviewTemplate = Sites.Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", ConstObjectType.ResourceGroup.ToString());
 
-            var ScriptGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Script).SelectAll();
+            var ScriptGroup = sitedb.ResourceGroups.Query.Where(o => o.Type == ConstObjectType.Script).SelectAll().SortByNameOrLastModified(apiCall);
 
             List<ResourceGroupViewModel> result = new List<ResourceGroupViewModel>();
             foreach (var item in ScriptGroup)
@@ -100,18 +103,20 @@ namespace Kooboo.Web.Api.Implementation
                 var route = sitedb.Routes.GetByObjectId(item.Id);
                 if (route != null)
                 {
-                    newitem.RelativeUrl = route.Name; 
+                    newitem.RelativeUrl = route.Name;
                 }
                 else
                 {
                     newitem.RelativeUrl = PreviewTemplate.Replace("{nameorid}", item.Name);
                 }
                 newitem.PreviewUrl = Lib.Helper.UrlHelper.Combine(sitebaseurl, newitem.RelativeUrl);
-                result.Add(newitem); 
+                result.Add(newitem);
             }
             return result;
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
         public ResourceGroupViewModel Get(ApiCall apicall)
         {
             var sitedb = apicall.WebSite.SiteDb();
@@ -142,6 +147,8 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.EDIT)]
         public void Update(ApiCall call)
         {
             string json = call.Context.Request.Body;
@@ -182,15 +189,14 @@ namespace Kooboo.Web.Api.Implementation
                 var route = sitedb.Routes.GetByUrl(url);
                 if (route.objectId != model.Id)
                 {
-                    throw new Exception("name conflict");
+                    throw new Exception("name exists");
                 }
                 sitedb.ResourceGroups.AddOrUpdate(model, call.Context.User.Id);
             }
         }
 
-     
         public bool IsUniqueName(string name, string type, ApiCall call)
-        {       
+        {
             byte consttype = 0;
 
             if (type.ToLower() == "style")
@@ -206,6 +212,8 @@ namespace Kooboo.Web.Api.Implementation
             return sitedb.ResourceGroups.IsUniqueName(name, consttype);
         }
 
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.DELETE)]
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.DELETE)]
         public void Deletes(ApiCall call)
         {
             string json = call.GetValue("ids");

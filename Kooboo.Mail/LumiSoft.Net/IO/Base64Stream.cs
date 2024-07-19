@@ -1,26 +1,24 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LumiSoft.Net.IO
 {
     /// <summary>
     /// This class implements base64 encoder/decoder. Defined in RFC 4648.
     /// </summary>
-    public class Base64Stream : Stream,IDisposable
+    public class Base64Stream : Stream, IDisposable
     {
         #region BASE64_ENCODE_TABLE
 
         private readonly static byte[] BASE64_ENCODE_TABLE = new byte[]{
-		    (byte)'A',(byte)'B',(byte)'C',(byte)'D',(byte)'E',(byte)'F',(byte)'G',(byte)'H',(byte)'I',(byte)'J',
+            (byte)'A',(byte)'B',(byte)'C',(byte)'D',(byte)'E',(byte)'F',(byte)'G',(byte)'H',(byte)'I',(byte)'J',
             (byte)'K',(byte)'L',(byte)'M',(byte)'N',(byte)'O',(byte)'P',(byte)'Q',(byte)'R',(byte)'S',(byte)'T',
             (byte)'U',(byte)'V',(byte)'W',(byte)'X',(byte)'Y',(byte)'Z',(byte)'a',(byte)'b',(byte)'c',(byte)'d',
             (byte)'e',(byte)'f',(byte)'g',(byte)'h',(byte)'i',(byte)'j',(byte)'k',(byte)'l',(byte)'m',(byte)'n',
             (byte)'o',(byte)'p',(byte)'q',(byte)'r',(byte)'s',(byte)'t',(byte)'u',(byte)'v',(byte)'w',(byte)'x',
             (byte)'y',(byte)'z',(byte)'0',(byte)'1',(byte)'2',(byte)'3',(byte)'4',(byte)'5',(byte)'6',(byte)'7',
             (byte)'8',(byte)'9',(byte)'+',(byte)'/'
-		};
+        };
 
         #endregion
 
@@ -44,21 +42,21 @@ namespace LumiSoft.Net.IO
 
         #endregion
 
-        private bool        m_IsDisposed             = false;
-        private bool        m_IsFinished             = false;
-        private Stream      m_pStream                = null;
-        private bool        m_IsOwner                = false;
-        private bool        m_AddLineBreaks          = true;
-        private FileAccess  m_AccessMode             = FileAccess.ReadWrite;
-        private int         m_EncodeBufferOffset     = 0;
-        private int         m_OffsetInEncode3x8Block = 0;
-        private byte[]      m_pEncode3x8Block        = new byte[3];
-        private byte[]      m_pEncodeBuffer          = new byte[78];
-        private byte[]      m_pDecodedBlock          = null;
-        private int         m_DecodedBlockOffset     = 0;
-        private int         m_DecodedBlockCount      = 0;
-        private Base64      m_pBase64                = null;
-        private bool        m_IgnoreInvalidPadding   = false;
+        private bool m_IsDisposed = false;
+        private bool m_IsFinished = false;
+        private Stream m_pStream = null;
+        private bool m_IsOwner = false;
+        private bool m_AddLineBreaks = true;
+        private FileAccess m_AccessMode = FileAccess.ReadWrite;
+        private int m_EncodeBufferOffset = 0;
+        private int m_OffsetInEncode3x8Block = 0;
+        private byte[] m_pEncode3x8Block = new byte[3];
+        private byte[] m_pEncodeBuffer = new byte[78];
+        private byte[] m_pDecodedBlock = null;
+        private int m_DecodedBlockOffset = 0;
+        private int m_DecodedBlockCount = 0;
+        private Base64 m_pBase64 = null;
+        private bool m_IgnoreInvalidPadding = false;
 
         /// <summary>
         /// Default constructor.
@@ -67,7 +65,7 @@ namespace LumiSoft.Net.IO
         /// <param name="owner">Specifies if Base64Stream is owner of <b>stream</b>.</param>
         /// <param name="addLineBreaks">Specifies if encoder inserts CRLF after each 76 bytes.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null reference.</exception>
-        public Base64Stream(Stream stream,bool owner,bool addLineBreaks) : this(stream,owner,addLineBreaks,FileAccess.ReadWrite)
+        public Base64Stream(Stream stream, bool owner, bool addLineBreaks) : this(stream, owner, addLineBreaks, FileAccess.ReadWrite)
         {
         }
 
@@ -79,19 +77,20 @@ namespace LumiSoft.Net.IO
         /// <param name="addLineBreaks">Specifies if encoder inserts CRLF after each 76 bytes.</param>
         /// <param name="access">This stream access mode.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null reference.</exception>
-        public Base64Stream(Stream stream,bool owner,bool addLineBreaks,FileAccess access)
+        public Base64Stream(Stream stream, bool owner, bool addLineBreaks, FileAccess access)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            m_pStream       = stream;
-            m_IsOwner       = owner;
+            m_pStream = stream;
+            m_IsOwner = owner;
             m_AddLineBreaks = addLineBreaks;
-            m_AccessMode    = access;
+            m_AccessMode = access;
 
             m_pDecodedBlock = new byte[8000];
-            m_pBase64       = new Base64();
+            m_pBase64 = new Base64();
         }
 
         #region method Dispose
@@ -101,17 +100,21 @@ namespace LumiSoft.Net.IO
         /// </summary>
         public new void Dispose()
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 return;
             }
-            try{
+            try
+            {
                 Finish();
             }
-            catch{
+            catch
+            {
             }
             m_IsDisposed = true;
 
-            if(m_IsOwner){
+            if (m_IsOwner)
+            {
                 m_pStream.Close();
             }
         }
@@ -127,7 +130,8 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this method is accessed.</exception>
         public override void Flush()
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 throw new ObjectDisposedException("Base64Stream");
             }
         }
@@ -144,9 +148,10 @@ namespace LumiSoft.Net.IO
         /// <returns>The new position within the current stream.</returns>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this method is accessed.</exception>
         /// <exception cref="NotSupportedException">Is raised when this method is accessed.</exception>
-        public override long Seek(long offset,SeekOrigin origin)
+        public override long Seek(long offset, SeekOrigin origin)
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 throw new ObjectDisposedException("Base64Stream");
             }
 
@@ -165,7 +170,8 @@ namespace LumiSoft.Net.IO
         /// <exception cref="Seek">Is raised when this method is accessed.</exception>
         public override void SetLength(long value)
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 throw new ObjectDisposedException("Base64Stream");
             }
 
@@ -187,82 +193,99 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ArgumentNullException">Is raised when <b>buffer</b> is null reference.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when any of the arguments has out of valid range.</exception>
         /// <exception cref="NotSupportedException">Is raised when reading not supported.</exception>
-        public override int Read(byte[] buffer,int offset,int count)
+        public override int Read(byte[] buffer, int offset, int count)
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 throw new ObjectDisposedException("Base64Stream");
             }
-            if(buffer == null){
+            if (buffer == null)
+            {
                 throw new ArgumentNullException("buffer");
-            }           
-            if(offset < 0){
-                throw new ArgumentOutOfRangeException("offset","Argument 'offset' value must be >= 0.");
             }
-            if(count < 0){
-                throw new ArgumentOutOfRangeException("count","Argument 'count' value must be >= 0.");
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException("offset", "Argument 'offset' value must be >= 0.");
             }
-            if(offset + count > buffer.Length){
-                throw new ArgumentOutOfRangeException("count","Argument 'count' is bigger than than argument 'buffer' can store.");
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException("count", "Argument 'count' value must be >= 0.");
             }
-            if((m_AccessMode & FileAccess.Read) == 0){
+            if (offset + count > buffer.Length)
+            {
+                throw new ArgumentOutOfRangeException("count", "Argument 'count' is bigger than than argument 'buffer' can store.");
+            }
+            if ((m_AccessMode & FileAccess.Read) == 0)
+            {
                 throw new NotSupportedException();
             }
 
             // We havn't any decoded data left, decode new data block.
-            if((m_DecodedBlockCount - m_DecodedBlockOffset) == 0){
+            if ((m_DecodedBlockCount - m_DecodedBlockOffset) == 0)
+            {
                 byte[] readBuffer = new byte[m_pDecodedBlock.Length + 3];
-                int readedCount = m_pStream.Read(readBuffer,0,readBuffer.Length - 3);
+                int readedCount = m_pStream.Read(readBuffer, 0, readBuffer.Length - 3);
                 // We reached end of stream, no more data.
-                if(readedCount == 0){
+                if (readedCount == 0)
+                {
                     return 0;
                 }
 
                 // Decode block must contain only integral 4-byte base64 blocks.
                 // Count base64 chars.
                 int base64Count = 0;
-                for(int i=0;i<readedCount;i++){
+                for (int i = 0; i < readedCount; i++)
+                {
                     byte b = readBuffer[i];
-                    if(b == '=' || BASE64_DECODE_TABLE[b] != -1){
+                    if (b == '=' || BASE64_DECODE_TABLE[b] != -1)
+                    {
                         base64Count++;
                     }
                 }
                 // Read while last block is full 4-byte base64 block.
-                while((base64Count % 4) != 0){
+                while ((base64Count % 4) != 0)
+                {
                     int b = m_pStream.ReadByte();
                     // End of stream reached.
-                    if(b == -1){
+                    if (b == -1)
+                    {
                         // Add missing padding char(s) '='.
-                        if(m_IgnoreInvalidPadding){
+                        if (m_IgnoreInvalidPadding)
+                        {
                             // Per speifiction base64 block must have 2 bytes block + 2 padding bytes.
                             // Some x soft won't honour it, so add second block with 0-bits.
-                            if((base64Count % 4) == 1){
+                            if ((base64Count % 4) == 1)
+                            {
                                 readBuffer[readedCount++] = (byte)'A';
                                 base64Count++;
                             }
                             // Add missing paading char.
-                            else{
+                            else
+                            {
                                 readBuffer[readedCount++] = (byte)'=';
                                 base64Count++;
                             }
                         }
-                        else{
+                        else
+                        {
                             break;
                         }
                     }
-                    else if(b == '=' || BASE64_DECODE_TABLE[b] != -1){
+                    else if (b == '=' || BASE64_DECODE_TABLE[b] != -1)
+                    {
                         readBuffer[readedCount++] = (byte)b;
                         base64Count++;
                     }
                 }
 
                 // Decode block.
-                m_DecodedBlockCount  = m_pBase64.Decode(readBuffer,0,readedCount,m_pDecodedBlock,0,true);
+                m_DecodedBlockCount = m_pBase64.Decode(readBuffer, 0, readedCount, m_pDecodedBlock, 0, true);
                 m_DecodedBlockOffset = 0;
             }
 
-            int available   = m_DecodedBlockCount - m_DecodedBlockOffset;
-            int countToCopy = Math.Min(count,available);
-            Array.Copy(m_pDecodedBlock,m_DecodedBlockOffset,buffer,offset,countToCopy);
+            int available = m_DecodedBlockCount - m_DecodedBlockOffset;
+            int countToCopy = Math.Min(count, available);
+            Array.Copy(m_pDecodedBlock, m_DecodedBlockOffset, buffer, offset, countToCopy);
             m_DecodedBlockOffset += countToCopy;
 
             return countToCopy;
@@ -283,26 +306,32 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ArgumentNullException">Is raised when <b>buffer</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
         /// <exception cref="NotSupportedException">Is raised when reading not supported.</exception>
-        public override void Write(byte[] buffer,int offset,int count)        
+        public override void Write(byte[] buffer, int offset, int count)
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 throw new ObjectDisposedException(this.GetType().Name);
             }
-            if(m_IsFinished){
+            if (m_IsFinished)
+            {
                 throw new InvalidOperationException("Stream is marked as finished by calling Finish method.");
             }
-            if(buffer == null){
+            if (buffer == null)
+            {
                 throw new ArgumentNullException("buffer");
             }
-            if(offset < 0 || offset > buffer.Length){
+            if (offset < 0 || offset > buffer.Length)
+            {
                 throw new ArgumentException("Invalid argument 'offset' value.");
             }
-            if(count < 0 || count > (buffer.Length - offset)){
+            if (count < 0 || count > (buffer.Length - offset))
+            {
                 throw new ArgumentException("Invalid argument 'count' value.");
-            } 
-            if((m_AccessMode & FileAccess.Write) == 0){
+            }
+            if ((m_AccessMode & FileAccess.Write) == 0)
+            {
                 throw new NotSupportedException();
-            }           
+            }
 
             /* RFC 4648.
 			
@@ -338,24 +367,28 @@ namespace LumiSoft.Net.IO
             int encodeBufSize = m_pEncodeBuffer.Length;
 
             // Process all bytes.
-            for(int i=0;i<count;i++){
+            for (int i = 0; i < count; i++)
+            {
                 m_pEncode3x8Block[m_OffsetInEncode3x8Block++] = buffer[offset + i];
 
                 // 3x8-bit encode block is full, encode it.
-                if(m_OffsetInEncode3x8Block == 3){
-                    m_pEncodeBuffer[m_EncodeBufferOffset++] = BASE64_ENCODE_TABLE[ m_pEncode3x8Block[0] >> 2];
+                if (m_OffsetInEncode3x8Block == 3)
+                {
+                    m_pEncodeBuffer[m_EncodeBufferOffset++] = BASE64_ENCODE_TABLE[m_pEncode3x8Block[0] >> 2];
                     m_pEncodeBuffer[m_EncodeBufferOffset++] = BASE64_ENCODE_TABLE[(m_pEncode3x8Block[0] & 0x03) << 4 | m_pEncode3x8Block[1] >> 4];
                     m_pEncodeBuffer[m_EncodeBufferOffset++] = BASE64_ENCODE_TABLE[(m_pEncode3x8Block[1] & 0x0F) << 2 | m_pEncode3x8Block[2] >> 6];
                     m_pEncodeBuffer[m_EncodeBufferOffset++] = BASE64_ENCODE_TABLE[(m_pEncode3x8Block[2] & 0x3F)];
-                    
+
                     // Encode buffer is full, write buffer to underlaying stream (we reserved 2 bytes for CRLF).
-                    if(m_EncodeBufferOffset >= (encodeBufSize - 2)){
-                        if(m_AddLineBreaks){
+                    if (m_EncodeBufferOffset >= (encodeBufSize - 2))
+                    {
+                        if (m_AddLineBreaks)
+                        {
                             m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)'\r';
                             m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)'\n';
                         }
 
-                        m_pStream.Write(m_pEncodeBuffer,0,m_EncodeBufferOffset);
+                        m_pStream.Write(m_pEncodeBuffer, 0, m_EncodeBufferOffset);
                         m_EncodeBufferOffset = 0;
                     }
 
@@ -375,30 +408,35 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this method is accessed.</exception>
         public void Finish()
         {
-            if(m_IsDisposed){
+            if (m_IsDisposed)
+            {
                 throw new ObjectDisposedException(this.GetType().Name);
             }
-            if(m_IsFinished){
+            if (m_IsFinished)
+            {
                 return;
             }
             m_IsFinished = true;
-            
+
             // PADD left-over, if any. Write encode buffer to underlaying stream.
-            if(m_OffsetInEncode3x8Block == 1){
+            if (m_OffsetInEncode3x8Block == 1)
+            {
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)BASE64_ENCODE_TABLE[m_pEncode3x8Block[0] >> 2];
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)BASE64_ENCODE_TABLE[(m_pEncode3x8Block[0] & 0x03) << 4];
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)'=';
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)'=';
             }
-            else if(m_OffsetInEncode3x8Block == 2){
-                m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)BASE64_ENCODE_TABLE[ m_pEncode3x8Block[0] >> 2];
+            else if (m_OffsetInEncode3x8Block == 2)
+            {
+                m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)BASE64_ENCODE_TABLE[m_pEncode3x8Block[0] >> 2];
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)BASE64_ENCODE_TABLE[(m_pEncode3x8Block[0] & 0x03) << 4 | m_pEncode3x8Block[1] >> 4];
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)BASE64_ENCODE_TABLE[(m_pEncode3x8Block[1] & 0x0F) << 2];
                 m_pEncodeBuffer[m_EncodeBufferOffset++] = (byte)'=';
             }
 
-            if(m_EncodeBufferOffset > 0){
-                m_pStream.Write(m_pEncodeBuffer,0,m_EncodeBufferOffset);
+            if (m_EncodeBufferOffset > 0)
+            {
+                m_pStream.Write(m_pEncodeBuffer, 0, m_EncodeBufferOffset);
             }
         }
 
@@ -412,7 +450,7 @@ namespace LumiSoft.Net.IO
         /// </summary>
         public bool IsDisposed
         {
-            get{ return m_IsDisposed; }
+            get { return m_IsDisposed; }
         }
 
 
@@ -421,14 +459,16 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override bool CanRead
-        { 
-            get{
-                if(m_IsDisposed){
+        {
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException("SmartStream");
                 }
 
                 return true;
-            } 
+            }
         }
 
         /// <summary>
@@ -436,14 +476,16 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override bool CanSeek
-        { 
-            get{
-                if(m_IsDisposed){
+        {
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException("SmartStream");
                 }
 
                 return false;
-            } 
+            }
         }
 
         /// <summary>
@@ -451,14 +493,16 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override bool CanWrite
-        { 
-            get{
-                if(m_IsDisposed){
+        {
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException("SmartStream");
                 }
 
                 return false;
-            } 
+            }
         }
 
         /// <summary>
@@ -467,14 +511,16 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         /// <exception cref="NotSupportedException">Is raised when this property is accessed.</exception>
         public override long Length
-        { 
-            get{
-                if(m_IsDisposed){
+        {
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException("SmartStream");
                 }
 
                 throw new NotSupportedException();
-            } 
+            }
         }
 
         /// <summary>
@@ -483,17 +529,21 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         /// <exception cref="NotSupportedException">Is raised when this property is accessed.</exception>
         public override long Position
-        { 
-            get{
-                if(m_IsDisposed){
+        {
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException("SmartStream");
                 }
 
                 throw new NotSupportedException();
-            } 
+            }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException("SmartStream");
                 }
 
@@ -506,12 +556,12 @@ namespace LumiSoft.Net.IO
         /// </summary>
         public bool IgnoreInvalidPadding
         {
-            get{ return m_IgnoreInvalidPadding; }
+            get { return m_IgnoreInvalidPadding; }
 
-            set{ m_IgnoreInvalidPadding = value; }
+            set { m_IgnoreInvalidPadding = value; }
         }
 
         #endregion
-  
+
     }
 }

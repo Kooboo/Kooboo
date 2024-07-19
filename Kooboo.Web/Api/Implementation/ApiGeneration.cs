@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -16,7 +14,7 @@ namespace Kooboo.Web.Api.Implementation
         public bool RequireSite => true;
 
         public bool RequireUser => true;
-              
+
         public List<ApiGenerationViewModel> Objects(ApiCall call)
         {
             List<ApiGenerationViewModel> result = new List<ApiGenerationViewModel>();
@@ -33,15 +31,15 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in list)
             {
                 string type = "Database";
-                string typeDisplayName = Kooboo.Data.Language.Hardcoded.GetValue("Database", call.Context); 
+                string typeDisplayName = Kooboo.Data.Language.Hardcoded.GetValue("Database", call.Context);
                 ApiGenerationViewModel model = new ApiGenerationViewModel();
                 model.Type = type;
-                model.TypeDisplayName = typeDisplayName; 
+                model.TypeDisplayName = typeDisplayName;
                 model.Name = item;
                 model.DisplayName = item;
-                model.Actions = actions; 
-                result.Add(model); 
-            }    
+                model.Actions = actions;
+                result.Add(model);
+            }
             var sitedb = call.Context.WebSite.SiteDb();
             var folders = sitedb.ContentFolders.All();
 
@@ -51,13 +49,13 @@ namespace Kooboo.Web.Api.Implementation
                 string TypeDisplayName = Data.Language.Hardcoded.GetValue("TextContent", call.Context);
                 ApiGenerationViewModel model = new ApiGenerationViewModel();
                 model.Type = type;
-                model.TypeDisplayName = TypeDisplayName; 
+                model.TypeDisplayName = TypeDisplayName;
                 model.Name = item.Name;
                 model.DisplayName = item.DisplayName;
-                model.Actions = actions; 
-                result.Add(model); 
-            }                   
-            return result; 
+                model.Actions = actions;
+                result.Add(model);
+            }
+            return result;
         }
 
         private List<string> getActions()
@@ -73,9 +71,9 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool Generate(List<ApiGenerationViewModel> updatemodel, ApiCall call)
         {
-            var website = call.WebSite; 
+            var website = call.WebSite;
 
-            foreach (var item in updatemodel.GroupBy(o=>o.Type))
+            foreach (var item in updatemodel.GroupBy(o => o.Type))
             {
                 var key = item.Key.ToLower();
                 var list = item.ToList();
@@ -93,8 +91,8 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         Kooboo.Web.JQL.CodeGeneration.GenerateTextContent(website, name.Name, name.Actions);
                     }
-                }   
-            }      
+                }
+            }
             return true;
         }
 

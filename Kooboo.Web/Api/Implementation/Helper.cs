@@ -1,23 +1,18 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Reflection;
 using Kooboo.Api;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
-   public class Helper : IApi
+    public class Helper : IApi
     {
         public string ModelName
         {
             get
             {
-                return "help"; 
+                return "help";
             }
         }
 
@@ -25,7 +20,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -33,13 +28,13 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
         public List<ApiViewModel> Get(ApiCall call)
         {
-            List<ApiViewModel> result = new List<ApiViewModel>(); 
+            List<ApiViewModel> result = new List<ApiViewModel>();
             foreach (var item in ApiContainer.List)
             {
                 if (item.Key != this.ModelName)
@@ -50,24 +45,24 @@ namespace Kooboo.Web.Api.Implementation
 
                     result.Add(model);
                 }
-              
+
             }
 
-            return result; 
+            return result;
         }
 
         public object List(ApiCall call)
         {
-            string name = call.NameOrId; 
+            string name = call.NameOrId;
             if (string.IsNullOrEmpty(name))
             {
-                return null; 
+                return null;
             }
 
             List<ApiMethodViewModel> methods = new List<ApiMethodViewModel>();
 
-            var api = ApiContainer.List[name]; 
-              
+            var api = ApiContainer.List[name];
+
             var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(api.GetType());
 
             foreach (var item in allmethods)
@@ -85,24 +80,24 @@ namespace Kooboo.Web.Api.Implementation
                 var requiremodel = item.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
                 if (requiremodel != null)
                 {
-                    model.RequireModel = true; 
+                    model.RequireModel = true;
                     var required = requiremodel as Attributes.RequireModel;
                     var sampledata = Kooboo.Lib.Development.FakeData.GetFakeValue(required.ModelType);
-                    model.UpdateModel = Lib.Helper.JsonHelper.Serialize(sampledata);  
+                    model.UpdateModel = Lib.Helper.JsonHelper.Serialize(sampledata);
                 }
 
                 var defineReturnType = item.GetCustomAttribute(typeof(Kooboo.Attributes.ReturnType), true);
 
-                Type returnType=null; 
-                
+                Type returnType = null;
+
                 if (defineReturnType != null)
                 {
-                    var definereturn = defineReturnType as Attributes.ReturnType; 
-                    returnType = definereturn.Type; 
+                    var definereturn = defineReturnType as Attributes.ReturnType;
+                    returnType = definereturn.Type;
                 }
                 else
                 {
-                   returnType = item.ReturnType;
+                    returnType = item.ReturnType;
 
                     if (returnType == typeof(object) || returnType == typeof(List<object>))
                     {
@@ -137,22 +132,22 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (returnType == typeof(void))
                 {
-                    model.ResponseModel = ""; 
+                    model.ResponseModel = "";
                 }
                 else
                 {
                     var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(returnType);
-                    model.ResponseModel = Lib.Helper.JsonHelper.Serialize(SampleResponseData); 
+                    model.ResponseModel = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
                 }
 
-                methods.Add(model); 
+                methods.Add(model);
 
             }
 
             return methods;
 
         }
-        
-    } 
+
+    }
 
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LumiSoft.Net.AUTH
 {
@@ -62,7 +60,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public virtual bool SupportsInitialResponse
         {
-            get{ return false; }
+            get { return false; }
         }
 
         #endregion

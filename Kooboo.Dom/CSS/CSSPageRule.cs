@@ -1,42 +1,38 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
 
     [Serializable]
-  public  class CSSPageRule : CSSGroupingRule
+    public class CSSPageRule : CSSGroupingRule
     {
 
-// interface CSSPageRule : CSSGroupingRule {
-//   attribute DOMString selectorText;
-//  [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
-//};
+        // interface CSSPageRule : CSSGroupingRule {
+        //   attribute DOMString selectorText;
+        //  [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+        //};
 
 
-//Example
-//  @page :left {
-//    margin-left: 4cm;
-//    margin-right: 3cm;
-//  }
-//The @page at-rule consists of an optional page selector (the :left pseudoclass), 
-//    followed by a block of properties that apply to the page when printed. In this way, 
-//    it’s very similar to a normal style rule, except that its properties don’t apply to any "element", 
-//    but rather the page itself.
+        //Example
+        //  @page :left {
+        //    margin-left: 4cm;
+        //    margin-right: 3cm;
+        //  }
+        //The @page at-rule consists of an optional page selector (the :left pseudoclass), 
+        //    followed by a block of properties that apply to the page when printed. In this way, 
+        //    it’s very similar to a normal style rule, except that its properties don’t apply to any "element", 
+        //    but rather the page itself.
 
-      public CSSPageRule()
-      {
-          type = enumCSSRuleType.PAGE_RULE;
-      }
+        public CSSPageRule()
+        {
+            type = enumCSSRuleType.PAGE_RULE;
+        }
 
-      public string selectorText;
+        public string selectorText;
 
-      public CSSStyleDeclaration style;
+        public CSSStyleDeclaration style;
 
     }
 }

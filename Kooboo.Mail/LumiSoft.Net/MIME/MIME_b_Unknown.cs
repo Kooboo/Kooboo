@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using LumiSoft.Net.IO;
 
@@ -32,28 +30,33 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns parsed body.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b>, <b>defaultContentType</b> or <b>strean</b> is null reference.</exception>
         /// <exception cref="ParseException">Is raised when any parsing errors.</exception>
-        protected static new MIME_b Parse(MIME_Entity owner,MIME_h_ContentType defaultContentType,SmartStream stream)
+        protected static new MIME_b Parse(MIME_Entity owner, MIME_h_ContentType defaultContentType, SmartStream stream)
         {
-            if(owner == null){
+            if (owner == null)
+            {
                 throw new ArgumentNullException("owner");
             }
-            if(defaultContentType == null){
+            if (defaultContentType == null)
+            {
                 throw new ArgumentNullException("defaultContentType");
             }
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
             string mediaType = null;
-            try{
+            try
+            {
                 mediaType = owner.ContentType.TypeWithSubtype;
             }
-            catch{
+            catch
+            {
                 mediaType = "unparsable/unparsable";
             }
 
             MIME_b_Unknown retVal = new MIME_b_Unknown(mediaType);
-            Net_Utils.StreamCopy(stream,retVal.EncodedStream,stream.LineBufferSize);
+            Net_Utils.StreamCopy(stream, retVal.EncodedStream, stream.LineBufferSize);
 
             return retVal;
         }

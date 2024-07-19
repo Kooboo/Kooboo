@@ -1,28 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Api</AssemblyName>
-	<RootNamespace>Kooboo.Api</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Api</AssemblyName>
+		<RootNamespace>Kooboo.Api</RootNamespace>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.IO.Compression" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Kooboo.Data" Version="2.1.8966.33828" />
+	</ItemGroup>
 
 </Project>

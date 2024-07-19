@@ -1,29 +1,25 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.ViewModel
 {
 
     public class IEmbeddableItemListViewModel
-    { 
+    {
         public IEmbeddableItemListViewModel()
         {
 
         }
         public IEmbeddableItemListViewModel(SiteDb siteDb, IEmbeddable embeddedobject)
         {
-            string baseurl = siteDb.WebSite.BaseUrl(); 
+            string baseurl = siteDb.WebSite.BaseUrl();
             if (embeddedobject == null)
             {
                 throw new ArgumentNullException("embedded object");
@@ -35,38 +31,40 @@ namespace Kooboo.Web.ViewModel
             {
                 Name = StringHelper.GetSummary(embeddedobject.Body);
                 var info = ObjectService.GetObjectInfo(siteDb, embeddedobject as SiteObject);
-                FullUrl = info.Url;
-                RouteName = Name; 
+                FullUrl = info?.Url;
+                RouteName = Name;
+                IsEmbedded = true;
             }
             else
             {
-                var route = siteDb.Routes.GetByObjectId(embeddedobject.Id); 
+                var route = siteDb.Routes.GetByObjectId(embeddedobject.Id);
                 if (route != null)
                 {
-                   //  Name = route.Name;
+                    //  Name = route.Name;
                     FullUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, route.Name);
-                    RouteName = route.Name; 
+                    RouteName = route.Name;
                     RouteId = route.Id;
                 }
 
-                this.Name = embeddedobject.Name; 
+                this.Name = embeddedobject.Name;
                 if (string.IsNullOrEmpty(this.Name))
                 {
-                    if (route !=null)
+                    if (route != null)
                     {
-                        this.Name = route.Name; 
+                        this.Name = route.Name;
                     }
-                } 
+                }
                 if (string.IsNullOrEmpty(this.Name))
                 {
-                    this.Name = StringHelper.GetSummary(embeddedobject.Body); 
-                } 
-      
+                    this.Name = StringHelper.GetSummary(embeddedobject.Body);
+                }
+
             }
 
             LastModified = embeddedobject.LastModified;
+            OwnerObjectId = embeddedobject.OwnerObjectId;
 
-        
+
             List<UsedByRelation> usedby = null;
 
             if (embeddedobject.ConstType == ConstObjectType.Style)
@@ -77,16 +75,16 @@ namespace Kooboo.Web.ViewModel
             {
                 usedby = siteDb.Scripts.GetUsedBy(embeddedobject.Id);
             }
-           else if (embeddedobject.ConstType == ConstObjectType.Form)
+            else if (embeddedobject.ConstType == ConstObjectType.Form)
             {
-                usedby = siteDb.Forms.GetUsedBy(embeddedobject.Id); 
+                usedby = siteDb.Forms.GetUsedBy(embeddedobject.Id);
             }
             else if (embeddedobject.ConstType == ConstObjectType.Code)
             {
-                usedby = siteDb.Code.GetUsedBy(embeddedobject.Id); 
+                usedby = siteDb.Code.GetUsedBy(embeddedobject.Id);
             }
 
-            References = Sites.Helper.RelationHelper.Sum(usedby); 
+            References = Sites.Helper.RelationHelper.Sum(usedby);
 
         }
 
@@ -97,7 +95,7 @@ namespace Kooboo.Web.ViewModel
         public string Type { get; set; }
 
         public DateTime LastModified { get; set; }
- 
+
         public string FullUrl { get; set; }
 
         public string RouteName { get; set; }
@@ -112,10 +110,12 @@ namespace Kooboo.Web.ViewModel
 
         public Guid KeyHash { get; set; }
 
-        public int StoreNameHash { get; set; } 
+        public int StoreNameHash { get; set; }
+        public Guid OwnerObjectId { get; set; }
+        public bool IsEmbedded { get; set; }
 
     }
-    
+
     public class InlineItemViewModel
     {
         public Guid Id { get; set; }
@@ -135,12 +135,12 @@ namespace Kooboo.Web.ViewModel
 
         public string Source { get; set; }
     }
-    
+
     public class ResourceGroupViewModel
     {
         public ResourceGroupViewModel()
         {
-            this.Children = new List<ResourceGroupItem>();    
+            this.Children = new List<ResourceGroupItem>();
         }
         public Guid Id { get; set; }
 
@@ -161,9 +161,9 @@ namespace Kooboo.Web.ViewModel
 
         public string PreviewUrl { get; set; }
 
-        public string RelativeUrl { get; set;  }
+        public string RelativeUrl { get; set; }
 
-        public Dictionary<string, int> References = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase); 
+        public Dictionary<string, int> References = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     }
 
     [Serializable]
@@ -175,7 +175,7 @@ namespace Kooboo.Web.ViewModel
         /// Target source id
         /// </summary>
         public Guid RouteId { get; set; }
-         
+
         public int Order { get; set; }
     }
 

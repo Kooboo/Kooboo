@@ -1,10 +1,7 @@
-﻿using Kooboo.Api;
+﻿using System.Linq;
+using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq; 
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -19,7 +16,7 @@ namespace Kooboo.Web.Api.Implementation
         public List<OptimizationViewModel> List(ApiCall call)
         {
             var site = call.WebSite;
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
 
             List<OptimizationViewModel> result = new List<OptimizationViewModel>();
 
@@ -30,18 +27,18 @@ namespace Kooboo.Web.Api.Implementation
                 var model = new OptimizationViewModel();
                 model.Id = item.Id;
                 model.Content = item.CssText;
-                model.ParentId = item.ParentStyleId;  
+                model.ParentId = item.ParentStyleId;
                 result.Add(model);
             }
 
-            foreach (var item in result.GroupBy(o=>o.ParentId))
+            foreach (var item in result.GroupBy(o => o.ParentId))
             {
                 var list = item.ToList();
 
                 var styleid = item.Key;
 
-                var style = sitedb.Styles.Get(styleid); 
-                if (style !=null)
+                var style = sitedb.Styles.Get(styleid);
+                if (style != null)
                 {
                     try
                     {
@@ -50,33 +47,33 @@ namespace Kooboo.Web.Api.Implementation
                         foreach (var rule in list)
                         {
                             rule.StyleSheet = url;
-                        } 
+                        }
                     }
                     catch (Exception)
-                    { 
+                    {
                     }
-         
-                }  
-            } 
 
-            return result.OrderBy(o=>o.StyleSheet).ToList(); 
+                }
+            }
+
+            return result.OrderBy(o => o.StyleSheet).ToList();
         }
 
         public void Delete(ApiCall call, Guid[] ids)
         {
             var sitedb = call.WebSite.SiteDb();
-            List<CmsCssRule> rules = new List<CmsCssRule>(); 
+            List<CmsCssRule> rules = new List<CmsCssRule>();
 
             foreach (var item in ids)
             {
-                var rule = sitedb.CssRules.Get(item); 
-                if (rule !=null)
+                var rule = sitedb.CssRules.Get(item);
+                if (rule != null)
                 {
-                    rules.Add(rule); 
+                    rules.Add(rule);
                 }
             }
 
-            foreach (var item in rules.GroupBy(o=>o.ParentStyleId))
+            foreach (var item in rules.GroupBy(o => o.ParentStyleId))
             {
                 var rulelist = item.ToList();
 
@@ -87,12 +84,12 @@ namespace Kooboo.Web.Api.Implementation
                     CmsCssRuleChanges change = new CmsCssRuleChanges();
                     change.CssRuleId = delRule.Id;
                     change.ChangeType = ChangeType.Delete;
-                    changes.Add(change); 
+                    changes.Add(change);
                 }
 
-                sitedb.CssRules.UpdateStyle(changes, item.Key);  
-            } 
-             
+                sitedb.CssRules.UpdateStyle(changes, item.Key);
+            }
+
         }
     }
 

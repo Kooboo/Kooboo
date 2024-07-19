@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LumiSoft.Net
 {
     /// <summary>
     /// Represents a collection that can be accessed either with the key or with the index. 
     /// </summary>
-    public class KeyValueCollection<K,V> : IEnumerable
+    public class KeyValueCollection<K, V> : IEnumerable
     {
-        private Dictionary<K,V> m_pDictionary = null;
-        private List<V>         m_pList       = null;
+        private Dictionary<K, V> m_pDictionary = null;
+        private List<V> m_pList = null;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         public KeyValueCollection()
         {
-            m_pDictionary = new Dictionary<K,V>();
+            m_pDictionary = new Dictionary<K, V>();
             m_pList = new List<V>();
         }
 
@@ -30,9 +28,9 @@ namespace LumiSoft.Net
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
-        public void Add(K key,V value)
+        public void Add(K key, V value)
         {
-            m_pDictionary.Add(key,value);
+            m_pDictionary.Add(key, value);
             m_pList.Add(value);
         }
 
@@ -48,13 +46,15 @@ namespace LumiSoft.Net
         public bool Remove(K key)
         {
             V value = default(V);
-            if(m_pDictionary.TryGetValue(key,out value)){
+            if (m_pDictionary.TryGetValue(key, out value))
+            {
                 m_pDictionary.Remove(key);
                 m_pList.Remove(value);
 
                 return true;
             }
-            else{
+            else
+            {
                 return false;
             }
         }
@@ -96,9 +96,9 @@ namespace LumiSoft.Net
         /// <param name="key">Key.</param>
         /// <param name="value">When this method returns, contains the value associated with the specified key, if the key is found.</param>
         /// <returns>Returns true if the collection contains specified key and value stored to <b>value</b> argument.</returns>
-        public bool TryGetValue(K key,out V value)
+        public bool TryGetValue(K key, out V value)
         {
-            return m_pDictionary.TryGetValue(key,out value);
+            return m_pDictionary.TryGetValue(key, out value);
         }
 
         #endregion
@@ -111,11 +111,12 @@ namespace LumiSoft.Net
         /// <param name="index">Zero based item index.</param>
         /// <param name="value">When this method returns, contains the value associated with the specified key, if the key is found.</param>
         /// <returns>Returns true if the collection contains specified key and value stored to <b>value</b> argument.</returns>
-        public bool TryGetValueAt(int index,out V value)
+        public bool TryGetValueAt(int index, out V value)
         {
             value = default(V);
 
-            if(m_pList.Count > 0 && index >= 0 && index < m_pList.Count){
+            if (m_pList.Count > 0 && index >= 0 && index < m_pList.Count)
+            {
                 value = m_pList[index];
 
                 return true;
@@ -134,7 +135,8 @@ namespace LumiSoft.Net
         /// <returns>Returns elements in a new array.</returns>
         public V[] ToArray()
         {
-            lock(m_pList){
+            lock (m_pList)
+            {
                 return m_pList.ToArray();
             }
         }
@@ -149,11 +151,11 @@ namespace LumiSoft.Net
 		/// </summary>
 		/// <returns>Returns IEnumerator interface.</returns>
 		public IEnumerator GetEnumerator()
-		{
-			return m_pList.GetEnumerator();
-		}
+        {
+            return m_pList.GetEnumerator();
+        }
 
-		#endregion
+        #endregion
 
         #region Properties implementation
 
@@ -162,7 +164,7 @@ namespace LumiSoft.Net
         /// </summary>
         public int Count
         {
-            get{ return m_pList.Count; }
+            get { return m_pList.Count; }
         }
 
         /// <summary>
@@ -172,9 +174,9 @@ namespace LumiSoft.Net
         /// <returns>Returns item with the specified key. If the specified key is not found, a get operation throws a KeyNotFoundException.</returns>
         public V this[K key]
         {
-            get{ return m_pDictionary[key]; }
+            get { return m_pDictionary[key]; }
         }
-   
+
         #endregion
 
     }

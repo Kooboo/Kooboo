@@ -1,34 +1,36 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Mail.Multipart;
+using Kooboo.Mail.Utility;
+using MimeKit;
 using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
-
-using LumiSoft.Net;
-using LumiSoft.Net.MIME;
-using LumiSoft.Net.Mail;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 {
+
+    /*ENVELOPE
+    The envelope structure of the message.This is computed by the
+    server by parsing the[RFC - 2822] header into the component
+    parts, defaulting various fields as necessary
+        */
     public class ENVELOPE : ICommandResponse
     {
         public virtual string Name
         {
             get
             {
-                return "ENVELOPE"; 
-            } 
+                return "ENVELOPE";
+            }
         }
 
-        public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)
+        public List<ImapResponse> Render(MailDb mailDb, FetchMessage message, DataItem dataItem)
         {
             var builder = new StructureBuilder();
 
-            ConstructEnvelope(builder, message.Parsed);
+            ConstructEnvelope(builder, message.MailHeader);
 
             return new List<ImapResponse>
             {
@@ -36,20 +38,19 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             };
         }
 
-        public static void ConstructEnvelope(StructureBuilder builder, Mail_Message entity)
+        public static void ConstructEnvelope(StructureBuilder builder, HeaderList headerList)
         {
-            // date, subject, from, sender, reply-to, to, cc, bcc, in-reply-to, and message-id
-            var wordEncoder = new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B, Encoding.UTF8);
-            wordEncoder.Split = false;
+            var HeaderReader = new HeaderListReader(headerList);
 
+            // date, subject, from, sender, reply-to, to, cc, bcc, in-reply-to, and message-id 
             builder.Append("ENVELOPE").SpaceNBracket();
 
             // date
             try
             {
-                if (entity.Date != DateTime.MinValue)
+                if (HeaderReader.Date != default(DateTimeOffset))
                 {
-                    builder.Append(TextUtils.QuoteString(MIME_Utils.DateTimeToRfc2822(entity.Date)));
+                    builder.Append(TextUtils.QuoteString(MimeKit.Utils.DateUtils.FormatDate(HeaderReader.Date)));
                 }
                 else
                 {
@@ -62,11 +63,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // subject
-            if (entity.Subject != null)
+            if (HeaderReader.Subject != null)
             {
-                builder.Append(" " + TextUtils.QuoteString(wordEncoder.Encode(entity.Subject)));
-                //string val = wordEncoder.Encode(entity.Subject);
-                //builder.Append(" {").Append(val.Length).Append("}\r\n").Append(val);
+                builder.Append(" " + TextUtils.QuoteString(Utility.HeaderUtility.EncodeFieldB(HeaderReader.Subject)));
             }
             else
             {
@@ -74,10 +73,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // from
-            if (entity.From != null && entity.From.Count > 0)
+            if (HeaderReader.From != null && HeaderReader.From.Count > 0)
             {
-                builder.Append(" ");
-                ConstructAddresses(builder, entity.From.ToArray(), wordEncoder);
+                ConstructAddresses(builder, HeaderReader.From.Mailboxes);
             }
             else
             {
@@ -86,11 +84,11 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 
             // sender	
             //	NOTE: There is confusing part, according rfc 2822 Sender: is MailboxAddress and not AddressList.
-            if (entity.Sender != null)
+            if (HeaderReader.Sender != null)
             {
                 builder.SpaceNBracket();
 
-                ConstructAddress(builder, entity.Sender, wordEncoder);
+                ConstructAddress(builder, HeaderReader.Sender);
 
                 builder.EndBracket();
             }
@@ -100,10 +98,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // reply-to
-            if (entity.ReplyTo != null)
+            if (HeaderReader.ReplyTo != null)
             {
-                builder.Append(" ");
-                ConstructAddresses(builder, entity.ReplyTo.Mailboxes, wordEncoder);
+                ConstructAddresses(builder, HeaderReader.ReplyTo.Mailboxes);
             }
             else
             {
@@ -111,21 +108,19 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // to
-            if (entity.To != null && entity.To.Count > 0)
+            if (HeaderReader.To != null && HeaderReader.To.Count > 0)
             {
-                builder.Append(" ");
-                ConstructAddresses(builder, entity.To.Mailboxes, wordEncoder);
+                ConstructAddresses(builder, HeaderReader.To.Mailboxes);
             }
             else
             {
-                builder.Append(" NIL");
+                builder.AppendNil();
             }
 
             // cc
-            if (entity.Cc != null && entity.Cc.Count > 0)
+            if (HeaderReader.Cc != null && HeaderReader.Cc.Count > 0)
             {
-                builder.Append(" ");
-                ConstructAddresses(builder, entity.Cc.Mailboxes, wordEncoder);
+                ConstructAddresses(builder, HeaderReader.Cc.Mailboxes);
             }
             else
             {
@@ -133,10 +128,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // bcc
-            if (entity.Bcc != null && entity.Bcc.Count > 0)
+            if (HeaderReader.Bcc != null && HeaderReader.Bcc.Count > 0)
             {
-                builder.Append(" ");
-                ConstructAddresses(builder, entity.Bcc.Mailboxes, wordEncoder);
+                ConstructAddresses(builder, HeaderReader.Bcc.Mailboxes);
             }
             else
             {
@@ -144,9 +138,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // in-reply-to			
-            if (entity.InReplyTo != null)
+            if (HeaderReader.InReplyTo != null)
             {
-                builder.Append(" ").Append(TextUtils.QuoteString(wordEncoder.Encode(entity.InReplyTo)));
+                builder.Append(" ").Append(TextUtils.QuoteString(Utility.HeaderUtility.EncodeFieldB(HeaderReader.InReplyTo)));
             }
             else
             {
@@ -154,9 +148,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // message-id
-            if (entity.MessageID != null)
+            if (HeaderReader.MessageId != null)
             {
-                builder.Append(" ").Append(TextUtils.QuoteString(wordEncoder.Encode(entity.MessageID)));
+                builder.Append(" ").Append(TextUtils.QuoteString(Utility.HeaderUtility.EncodeFieldB(HeaderReader.MessageId)));
             }
             else
             {
@@ -166,19 +160,32 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             builder.EndBracket();
         }
 
-        public static void ConstructAddresses(StructureBuilder builder, Mail_t_Mailbox[] mailboxes, MIME_Encoding_EncodedWord wordEncoder)
-        {
-            builder.StartBracket();
 
-            foreach (Mail_t_Mailbox address in mailboxes)
+        public static void ConstructAddresses(StructureBuilder builder, IEnumerable<MailboxAddress> mailboxes)
+        {
+
+            if (mailboxes != null && mailboxes.Any())
             {
-                ConstructAddress(builder, address, wordEncoder);
+                builder.Append(" ");
+
+                builder.StartBracket();
+
+                foreach (var address in mailboxes)
+                {
+                    ConstructAddress(builder, address);
+                }
+
+                builder.EndBracket();
             }
 
-            builder.EndBracket();
+            else
+            {
+                builder.AppendNil();
+            }
+
         }
 
-        public static void ConstructAddress(StructureBuilder builder, Mail_t_Mailbox address, MIME_Encoding_EncodedWord wordEncoder)
+        public static void ConstructAddress(StructureBuilder builder, MailboxAddress address)
         {
             /* An address structure is a parenthesized list that describes an
 			   electronic mail address.  The fields of an address structure
@@ -191,9 +198,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             builder.StartBracket();
 
             // personal name
-            if (address.DisplayName != null)
+            if (address.Name != null)
             {
-                builder.Append(TextUtils.QuoteString(wordEncoder.Encode(RemoveCrlf(address.DisplayName))));
+                builder.Append(TextUtils.QuoteString(Utility.HeaderUtility.EncodeFieldB(RemoveCrlf(address.Name))));
             }
             else
             {
@@ -203,13 +210,15 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             // source route, always NIL (not used nowdays)
             builder.AppendNil();
 
+            var emailseg = Utility.AddressUtility.ParseSegment(address.Address);
+
             // mailbox name
-            builder.Append(" ").Append(TextUtils.QuoteString(wordEncoder.Encode(RemoveCrlf(address.LocalPart))));
+            builder.Append(" ").Append(TextUtils.QuoteString(Utility.HeaderUtility.EncodeFieldB(RemoveCrlf(emailseg.Address))));
 
             // host name
-            if (address.Domain != null)
+            if (emailseg.Host != null)
             {
-                builder.Append(" ").Append(TextUtils.QuoteString(wordEncoder.Encode(RemoveCrlf(address.Domain))));
+                builder.Append(" ").Append(TextUtils.QuoteString(Utility.HeaderUtility.EncodeFieldB(RemoveCrlf(emailseg.Host))));
             }
             else
             {

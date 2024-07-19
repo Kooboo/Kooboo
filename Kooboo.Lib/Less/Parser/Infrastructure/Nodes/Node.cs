@@ -86,7 +86,7 @@ namespace dotless.Core.Parser.Infrastructure.Nodes
                     }
                 }
             }
-            
+
             return (T)this;
         }
 
@@ -119,7 +119,7 @@ namespace dotless.Core.Parser.Infrastructure.Nodes
                 this is CharMatchResult;
         }
 
-        public virtual void Accept(IVisitor visitor) {}
+        public virtual void Accept(IVisitor visitor) { }
 
         /// <summary>
         /// Visits the node and throw an exception if the replacement mode isn't the right type, or the replacement is null
@@ -148,7 +148,7 @@ namespace dotless.Core.Parser.Infrastructure.Nodes
                 return typedReplacement;
             }
 
-            throw new Exception("Not allowed null for node of type "+typeof(T).ToString());
+            throw new Exception("Not allowed null for node of type " + typeof(T).ToString());
         }
     }
 }

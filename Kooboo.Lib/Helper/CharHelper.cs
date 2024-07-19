@@ -1,20 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Lib.Helper
 {
-   public static class CharHelper
+    public static class CharHelper
     {
 
         //The White_Space characters are those that have the Unicode property "White_Space" in the Unicode PropList.txt data file. [UNICODE]
         //This should not be confused with the "White_Space" value (abbreviated "WS") of the "Bidi_Class" property in the Unicode.txt data file.
         //The control characters are those whose Unicode "General_Category" property has the value "Cc" in the Unicode UnicodeData.txt data file. [UNICODE]
-         
+
         /// <summary>
         /// The space characters, for the purposes of this specification, are
         /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
@@ -47,11 +41,16 @@ namespace Kooboo.Lib.Helper
         {
             return (chr >= 65 && chr <= 90);
         }
-         
+
         public static bool IsAscii(char input)
         {
-            return isUppercaseAscii(input) || isLowercaseAscii(input); 
-        } 
+            return isUppercaseAscii(input) || isLowercaseAscii(input);
+        }
+
+        public static bool IsNumber(string numberString)
+        {
+            return isAsciiDigit(numberString);
+        }
 
         public static bool isAsciiDigit(string numberstring)
         {
@@ -83,7 +82,7 @@ namespace Kooboo.Lib.Helper
             //0-9, acsii 48-57. 
             return (chr >= 48 && chr <= 57);
         }
-         
+
         /// <summary>
         /// The alphanumeric ASCII characters are those that are either uppercase ASCII letters, lowercase ASCII letters, or ASCII digits.
         /// </summary>
@@ -133,7 +132,7 @@ namespace Kooboo.Lib.Helper
             }
 
             // if (chr >= 41 && chr <= 46)
-            if (chr >= 65 && chr <=70)
+            if (chr >= 65 && chr <= 70)
             {
                 return true;
             }

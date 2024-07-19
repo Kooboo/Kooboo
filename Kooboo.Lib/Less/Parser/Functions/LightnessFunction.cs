@@ -13,7 +13,7 @@
 
         protected override Node EditHsl(HslColor color, Number number)
         {
-            color.Lightness += number.Value/100;
+            color.Lightness += number.Value / 100;
             return color.ToRgbColor();
         }
     }

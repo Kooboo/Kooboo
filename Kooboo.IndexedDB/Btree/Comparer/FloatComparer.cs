@@ -2,22 +2,19 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree.Comparer
+namespace Kooboo.IndexedDB.BTree.Comparer
 {
- public   class FloatComparer : IComparer<byte[]>
+    public class FloatComparer : IComparer<byte[]>
     {
 
-     /// <summary>
-     /// TODO: For performance reason, this does not sounds like effective enought to cast. 
-     /// Should compare byte by byte directly in future. 
-     /// </summary>
-     /// <param name="x"></param>
-     /// <param name="y"></param>
-     /// <returns></returns>
+        /// <summary>
+        /// TODO: For performance reason, this does not sounds like effective enought to cast. 
+        /// Should compare byte by byte directly in future. 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public int Compare(byte[] x, byte[] y)
         {
             float floatx = BitConverter.ToSingle(x, 0);

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq; 
 
 namespace Kooboo.Render.Components
 {
-   public static  class ComponentService
-    { 
+    public static class ComponentService
+    {
         static ComponentService()
         {
             regularTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -15,8 +13,8 @@ namespace Kooboo.Render.Components
             regularTags.UnionWith(Sites.Tag.ContentModel.TextList);
             regularTags.UnionWith(Sites.Tag.ContentModel.FormList);
             regularTags.UnionWith(Sites.Tag.ContentModel.TableList);
-            regularTags.UnionWith(Sites.Tag.ContentModel.MetaList); 
-            regularTags.UnionWith(Sites.Tag.ContentModel.Interactive); 
+            regularTags.UnionWith(Sites.Tag.ContentModel.MetaList);
+            regularTags.UnionWith(Sites.Tag.ContentModel.Interactive);
         }
 
         private static HashSet<string> regularTags { get; set; }
@@ -25,22 +23,22 @@ namespace Kooboo.Render.Components
         {
             if (Source.ComponentList.ContainsKey(tagname))
             {
-                return true; 
+                return true;
             }
-             
+
             //TODO: when DEDUG, try reload, in order for people easier to use. 
             if (regularTags.Contains(tagname))
             {
-                return false; 
+                return false;
             }
 
-            return false; 
+            return false;
         }
 
         private static bool TryReload(string tagName)
         {
 
-            return false; 
+            return false;
         }
 
 

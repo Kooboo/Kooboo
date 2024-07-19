@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -9,10 +8,10 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_SASL_Client_XOAuth : AUTH_SASL_Client
     {
-        private bool   m_IsCompleted = false;
-        private int    m_State       = 0;
-        private string m_UserName    = null;
-        private string m_AuthString  = null;       
+        private bool m_IsCompleted = false;
+        private int m_State = 0;
+        private string m_UserName = null;
+        private string m_AuthString = null;
 
         /// <summary>
         /// Default constructor.
@@ -21,22 +20,26 @@ namespace LumiSoft.Net.AUTH
         /// <param name="authString">OAUTH authentication string. For example you can use <see cref="AUTH_Gmail_OAuth1_3leg.GetXOAuthStringForImap()"/> to get valid string.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>userName</b> or <b>authString</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is riased when any of the arguments has invalid value.</exception>
-        public AUTH_SASL_Client_XOAuth(string userName,string authString)
+        public AUTH_SASL_Client_XOAuth(string userName, string authString)
         {
-            if(userName == null){
+            if (userName == null)
+            {
                 throw new ArgumentNullException("userName");
             }
-            if(userName == ""){
-                throw new ArgumentException("Argument 'userName' value must be specified.","userName");
+            if (userName == "")
+            {
+                throw new ArgumentException("Argument 'userName' value must be specified.", "userName");
             }
-            if(authString == null){
+            if (authString == null)
+            {
                 throw new ArgumentNullException("authString");
             }
-            if(authString == ""){
-                throw new ArgumentException("Argument 'authString' value must be specified.","authString");
+            if (authString == "")
+            {
+                throw new ArgumentException("Argument 'authString' value must be specified.", "authString");
             }
 
-            m_UserName   = userName;
+            m_UserName = userName;
             m_AuthString = authString;
         }
 
@@ -51,12 +54,14 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentNullException">Is raised when <b>serverResponse</b> is null reference.</exception>
         /// <exception cref="InvalidOperationException">Is raised when this method is called when authentication is completed.</exception>
         public override byte[] Continue(byte[] serverResponse)
-        {            
-            if(m_IsCompleted){
+        {
+            if (m_IsCompleted)
+            {
                 throw new InvalidOperationException("Authentication is completed.");
             }
 
-            if(m_State == 0){
+            if (m_State == 0)
+            {
                 m_IsCompleted = true;
 
                 return Encoding.UTF8.GetBytes(m_AuthString);
@@ -75,7 +80,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsCompleted
         {
-            get{ return m_IsCompleted; }
+            get { return m_IsCompleted; }
         }
 
         /// <summary>
@@ -91,7 +96,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         /// <summary>
@@ -99,7 +104,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool SupportsInitialResponse
         {
-            get{ return true; }
+            get { return true; }
         }
 
         #endregion

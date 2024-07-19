@@ -1,11 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
@@ -24,7 +20,7 @@ namespace Kooboo.IndexedDB.Schedule
             ///some default values
             this.FrequenceUnit = 1;
             this.Frequence = RepeatFrequence.Day;
-            this.IsActive = true; 
+            this.IsActive = true;
         }
         /// <summary>
         /// The id that will be used to update this record. 
@@ -37,9 +33,9 @@ namespace Kooboo.IndexedDB.Schedule
         /// <summary>
         /// The last execute time. 
         /// </summary>
-        public DateTime LastExecute { get;  set; }
+        public DateTime LastExecute { get; set; }
 
-        public DateTime NextExecute { get;  set; }
+        public DateTime NextExecute { get; set; }
 
         /// <summary>
         /// The block to get task object. 
@@ -62,7 +58,7 @@ namespace Kooboo.IndexedDB.Schedule
 
     }
 
-    [Serializable] 
+    [Serializable]
     public enum RepeatFrequence
     {
         [Description("days")]
@@ -83,7 +79,4 @@ namespace Kooboo.IndexedDB.Schedule
         [Description("seconds")]
         Second = 6
     }
-
-
-
 }

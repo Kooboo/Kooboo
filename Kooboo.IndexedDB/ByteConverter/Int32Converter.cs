@@ -1,11 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
- 
+
 
 namespace Kooboo.IndexedDB.ByteConverter
 {
-  public  class Int32Converter : IByteConverter<int>
+    public class Int32Converter : IByteConverter<int>
     {
         public byte[] ToByte(int input)
         {

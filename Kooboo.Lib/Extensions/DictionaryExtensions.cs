@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Extensions
 {
@@ -29,30 +25,40 @@ namespace Kooboo.Extensions
         {
             if (dictionary.ContainsKey(key))
             {
-                return dictionary[key]; 
+                return dictionary[key];
             }
-            return string.Empty; 
+            return string.Empty;
         }
-   
+
         public static bool ContainsKeyIgnoreCase(this Dictionary<string, string> dict, string key)
         {
             if (key == null)
             {
-                return false; 
+                return false;
             }
 
-            key = key.ToLower(); 
+            key = key.ToLower();
 
             foreach (var item in dict)
             {
                 if (item.Key.ToLower() == key)
                 {
-                    return true; 
+                    return true;
                 }
             }
 
-            return false; 
+            return false;
         }
 
+        public static Dictionary<TKey, TValue> Merge<TKey, TValue>(this Dictionary<TKey, TValue> dict, Dictionary<TKey, TValue> dict2)
+        {
+            var result = dict ?? [];
+            dict2 ??= [];
+            foreach (var item in dict2)
+            {
+                result[item.Key] = item.Value;
+            }
+            return result;
+        }
     }
 }

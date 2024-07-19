@@ -44,8 +44,9 @@ namespace Kooboo.IndexedDB
 
                             string blockfileName = System.IO.Path.Combine(folder, "table.log");
 
-                            _tablelog = new BlockFile(blockfileName);
-                            _tablelog.OpenOrCreate();
+                            var tablelog = new BlockFile(blockfileName);
+                            tablelog.OpenOrCreate();
+                            _tablelog = tablelog;
                         }
                     }
                 }
@@ -208,7 +209,7 @@ namespace Kooboo.IndexedDB
                             var oldfolder = this.objectFolder(StoreName);
 
                             // primary key. 
-                            var primaryIndex = new Btree.BtreeIndex<Tkey>(oldsetting.primaryKeyFieldName, true, oldsetting.primaryKeyLength, Helper.IndexHelper.GetIndexFileName(oldfolder, oldsetting.primaryKeyFieldName), oldsetting.MaxCacheLevel);
+                            var primaryIndex = new BTree.BTreeIndex<Tkey>(oldsetting.primaryKeyFieldName, true, oldsetting.primaryKeyLength, Helper.IndexHelper.GetIndexFileName(oldfolder, oldsetting.primaryKeyFieldName), oldsetting.MaxCacheLevel);
 
                             string blockfileName = System.IO.Path.Combine(oldfolder, "Data.block");
                             var blockfile = new BlockFile(blockfileName);
@@ -331,7 +332,7 @@ namespace Kooboo.IndexedDB
 
         public Sequence<TValue> GetSequence<TValue>(string name)
         {
-            name = GetSeqScheduleFolder(name); 
+            name = GetSeqScheduleFolder(name);
 
             if (!this.openSequenceList.ContainsKey(name))
             {
@@ -344,12 +345,12 @@ namespace Kooboo.IndexedDB
                         this.openSequenceList.Add(name, log);
                     }
                 }
-            } 
+            }
             return this.openSequenceList[name] as Sequence<TValue>;
         }
         [Obsolete]
         public Sequence<TValue> GetSequenceOld<TValue>(string name)
-        {  
+        {
             if (!this.openSequenceList.ContainsKey(name))
             {
                 lock (_locker)
@@ -372,7 +373,7 @@ namespace Kooboo.IndexedDB
                 return FolderName;
             }
             else
-            {  
+            {
                 string dbfolder = System.IO.Path.Combine(this.AbsolutePath, GlobalSettings.SequencePath);
 
                 if (!System.IO.Directory.Exists(dbfolder))
@@ -485,7 +486,7 @@ namespace Kooboo.IndexedDB
 
                 this.Log.DeleteByStoreName(storename);
 
-                System.IO.Directory.Move(newfolder, oldfolder);
+                Directory.Move(newfolder, oldfolder);
 
                 if (this.openStoreList.ContainsKey(storename))
                 {
@@ -502,6 +503,50 @@ namespace Kooboo.IndexedDB
             }
 
             return this.GetObjectStore<OKey, OValue>(storename);
+        }
+
+
+        public void RestoreFromDisk<TKey, TValue>(string StoreName)
+        {
+            var store = this.GetObjectStore<TKey, TValue>(StoreName);
+            if (store != null)
+            {
+                RestoreFromDisk<TKey, TValue>(store);
+            }
+        }
+
+        public ObjectStore<TKey, TValue> RestoreFromDisk<TKey, TValue>(ObjectStore<TKey, TValue> store)
+        {
+            string newname = "_koobootemp" + "_rebuile_" + store.Name;
+
+            if (!store.HasPrimaryKeyDefined)
+            {
+                throw new Exception("restore requires setting the primary key field in ObjectStoreParameters.");
+            }
+
+
+            StoreRestore.RestoreTask<TKey, TValue> task = new StoreRestore.RestoreTask<TKey, TValue>(store);
+
+            var newstore = task.RestoreTo(newname);
+
+            lock (_locker)
+            {
+                if (this.openStoreList.ContainsKey(store.Name))
+                {
+                    this.openStoreList.Remove(store.Name);
+                }
+
+                store.Close();
+                store.DelSelf();
+                newstore.Close();
+
+                this.Log.DeleteByStoreName(store.Name);
+
+                Directory.Move(newstore.ObjectFolder, store.ObjectFolder);
+
+                return this.GetObjectStore<TKey, TValue>(store.Name);
+            }
+
         }
 
         public void DeleteObjectStore(string name)

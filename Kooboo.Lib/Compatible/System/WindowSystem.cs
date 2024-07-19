@@ -1,31 +1,15 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace Kooboo.Lib.Compatible
 {
     public class WindowSystem : ISystem
     {
-        public static List<string> TryPath { get; set; }
 
-        static WindowSystem()
-        {
-            TryPath = new List<string>
-            {
-                @"..\..\..\..\Github\Kooboo.Web",
-                @"..\..\..\Github\Kooboo.Web",
-                @"..\..\..\..\Kooboo.Web",
-                @"..\..\..\Kooboo.Web",
-                @"..\..\",
-                @"..\..\..\",
-                @"..\..\..\..\",
-                @"..\..\..\..\Kooboo\Kooboo.Web"
-            };
-        }
+
 
         public int GetLastSlash(string path)
         {
@@ -92,27 +76,6 @@ namespace Kooboo.Lib.Compatible
         }
         #endregion
 
-        #region port
-        public int GetPort(int port)
-        {
-            while (Lib.Helper.NetworkHelper.IsPortInUse(port) && port < 65535)
-            {
-                port += 1;
-            }
-            return port;
-        }
-
-        public bool IsPortInUsed(int port)
-        {
-            if (Lib.Helper.NetworkHelper.IsPortInUse(port))
-            {
-                return true;
-            }
-            return false;
-        }
-        #endregion
-
-        public List<string> GetTryPaths() => TryPath;
 
         public string GetUpgradeUrl(string convertApiUrl)
         {

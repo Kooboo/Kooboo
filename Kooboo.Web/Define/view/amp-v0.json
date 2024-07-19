@@ -1,0 +1,3487 @@
+{
+    "name": "amp-v0",
+    "tags": [
+        {
+            "name": "amp-3d-gltf",
+            "description": "Displays GL Transmission Format (gITF) 3D models.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The src attribute specifies the gltf file location."
+                },
+                {
+                    "name": "alpha",
+                    "description": "Use the alpha attribute to specify the behavior of the canvas background. This attribute takes a boolean value. To enable transparency instead of the default white, set the value to true.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "antialiasing",
+                    "description": "Use the antialiasing attribute to specify whether to enable antialiasing. To enable antialiasing, set the value to true.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "clearColor",
+                    "description": "The clearColor attribute specifies a CSS color, such as #FF8C00. This color fills free space on the canvas."
+                },
+                {
+                    "name": "maxPixelRatio",
+                    "description": "The maxPixelRatio attribute specifies an upper limit for the pixelRatio render option. It defaults to window.devicePixelRatio."
+                },
+                {
+                    "name": "autoRotate",
+                    "description": "Use the autoRotate attribute to enable automatic rotation around the model's center. To enable rotation, set the value to true. autorotate defaults to false.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "enableZoom",
+                    "description": "Use the enableZoom attribute to disable zooming in and out of the model. To disable zoom, set the value to false. autororate defaults to true.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element. The default value is 'GLTF 3D model'."
+                }
+            ]
+        },
+        {
+            "name": "amp-3q-player",
+            "description": "Embeds videos from 3Q SDN.",
+            "attributes": [
+                {
+                    "name": "data-id",
+                    "description": "The data-id attribute specifies the appropriate sdnPlayoutId from 3Q SDN."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If the autoplay attribute is present, and the browser supports autoplay, the following behaviors are enabled:"
+                },
+                {
+                    "name": "Common attributes",
+                    "description": "The amp-3q-player component includes the common attributes that are extended to all AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-access-poool",
+            "description": "Displays a Poool paywall.",
+            "attributes": [
+                {
+                    "name:": "bundleID ",
+                    "description": "Your App ID (you can find it on your Dashboard)."
+                },
+                {
+                    "name": "itemID",
+                    "description": "Your unique article ID."
+                },
+                {
+                    "name": "pageType",
+                    "description": "Used to tell Poool that a page has been visited by the current user. See documentation for more information."
+                },
+                {
+                    "name": "debug",
+                    "description": "Enable/disable debug mode. See documentation for more information."
+                },
+                {
+                    "name": "forceWidget",
+                    "description": "Override current widget for user. See documentation for more information."
+                },
+                {
+                    "name": "loginButtonEnabled",
+                    "description": "Enable/disable paywall 'login' button. See documentation for more information."
+                },
+                {
+                    "name": "signatureEnabled",
+                    "description": "Enable/disable paywall signature, shown under article content when the article has been unlocked. See documentation for more information."
+                },
+                {
+                    "name": "videoClient",
+                    "description": "Set default video client (vast, googima) for video widget. See documentation for more information."
+                },
+                {
+                    "name": "customSegment",
+                    "description": "Override native segments with a custom group/segment slug. See documentation for more information."
+                },
+                {
+                    "name": "cookiesEnabled",
+                    "description": "Following latest GDPR requirements, we decided to disable cookies by default inside our paywall. You will have to explicitly set this attribute to reflect the user's consent. See documentation for more information."
+                },
+                {
+                    "name": "locale",
+                    "description": "Set default locale for all texts inside the paywall. See documentation for more information."
+                },
+                {
+                    "name": "context",
+                    "description": "Override default or native contexts with a custom context value. See documentation for more information."
+                }
+            ]
+        },
+        {
+            "name": "amp-accordion ",
+            "description": "A stacked list of headers that collapse or expand content sections with user interaction.",
+            "attributes": [
+                {
+                    "name": "animate",
+                    "description": "Include the animate attribute in <amp-accordion> to add a 'roll down' animation when the content is expanded and 'roll up' animation when collapsed."
+                },
+                {
+                    "name": "expanded",
+                    "description": "Apply the expanded attribute to a nested <section> to expand that section when the page loads."
+                },
+                {
+                    "name": "expand-single-section",
+                    "description": "Allow only one section to expand at a time by applying the expand-single-section attribute to the <amp-accordion> element. This means if a user taps on a collapsed <section>, it will expand and collapse other expanded <section>'s."
+                }
+            ]
+        },
+        {
+            "name": "amp-action-macro",
+            "description": "Creates reusable actions.",
+            "attributes": [
+                {
+                    "name": "id",
+                    "description": "Used to uniquely identify the action. This id is referenced in an action invocation."
+                },
+                {
+                    "name": "execute",
+                    "description": "The action to invoke. Any valid amp action is allowed here."
+                },
+                {
+                    "name": "arguments",
+                    "description": "Used to define arguments that can be used in the called invocation and substituted in the amp action macro call."
+                }
+            ]
+        },
+        {
+            "name": "amp-ad-exit",
+            "description": "Provides configurable behavior for ad exits for AMPHTML ads.",
+            "attributes": [
+                {
+                    "name": "Id",
+                    "description": "An id is required so that amp-exit can be referenced by tappable elements."
+                }
+            ]
+        },
+        {
+            "name": "amp-ad",
+            "description": "A container to display an ad.",
+            "attributes": [
+                {
+                    "name": "type",
+                    "description": "Specifies an identifier for the ad network. The type attribute selects the template to use for the ad tag."
+                },
+                {
+                    "name": "sticky",
+                    "description": "Use to denote that this is a sticky ad unit and specify the position of this unit. Its value must be one of:",
+                    "values": [
+                        {
+                            "name": "top"
+                        },
+                        {
+                            "name": "bottom"
+                        },
+                        {
+                            "name": "bottom-right"
+                        },
+                        {
+                            "name": "left"
+                        },
+                        {
+                            "name": "right"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-foo-bar",
+                    "description": "Most ad networks require further configuration, which can be passed to the network by using HTML data– attributes. The parameter names are subject to standard data attribute dash to camel case conversion. For example, 'data-foo-bar' is send to the ad for configuration as 'fooBar'. See the documentation for the ad network on which attributes can be used."
+                },
+                {
+                    "name": "data-vars-foo-bar",
+                    "description": "Attributes starting with data-vars– are reserved for amp-analytics vars."
+                },
+                {
+                    "name": "src",
+                    "description": "Use this attribute to load a script tag for the specified ad network. This can be used for ad networks that require exactly a single script tag to be inserted in the page. The src value must have a prefix that is allow-listed for the specified ad network, and the value must use https protocol."
+                },
+                {
+                    "name": "json",
+                    "description": "Use this attribute to pass a configuration to the ad as an arbitrarily complex JSON object. The object is passed to the ad as-is with no mangling done on the names."
+                },
+                {
+                    "name": "data-consent-notification-id",
+                    "description": "If provided, requires confirming the amp-user-notification with the given HTML-id until the 'AMP client id' for the user (similar to a cookie) is passed to the ad. This means that ad rendering is delayed until the user confirms the notification."
+                },
+                {
+                    "name": "data-loading-strategy",
+                    "description": "Instructs the ad to start loading when the ad is within the given number of viewports away from the current viewport. Without the data-loading-strategy attribute, the number is 3 by default. You can specify a float value in the range of [0, 3] (If the value is not specified the value is set to 1.25)."
+                },
+                {
+                    "name": "data-ad-container-id",
+                    "description": "Informs the ad of the container component id in the case of attempting to collapse. The container component must be an <amp-layout> component that's parent of the ad. When the data-ad-container-id is specified, and such a <amp-layout> container component is found, AMP runtime will try to collapse the container component instead of the ad component during no fill. This feature can be useful when an ad indicator is in presence."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element. The default value is 'Advertisement'."
+                },
+                {
+                    "name": "common attributes",
+                    "description": "This element includes common attributes extended to AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-addthis",
+            "description": "Displays AddThis customizable social share buttons.",
+            "attributes": [
+                {
+                    "name": "data-pub-id",
+                    "description": "The AddThis publisher ID found in the URL in the AddThis dashboard after logging in."
+                },
+                {
+                    "name": "data-widget-id",
+                    "description": "The AddThis widget ID for the tool to be displayed, also found on the AddThis dashboard."
+                },
+                {
+                    "name": "data-widget-type",
+                    "description": "Attribute that describes the type of widget.",
+                    "values": [
+                        {
+                            "name": "Floating: data-widget-type='floating'"
+                        },
+                        {
+                            "name": "Inline: data-widget-type='inline'"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-title",
+                    "description": "Optional. If set, this is the title that the AddThis tool will attempt to share when sharing occurs. If not set, the title of the document containing the amp-addthis tag will be used."
+                },
+                {
+                    "name": "data-url",
+                    "description": "Optional. If set, this is the URL that the AddThis tool will attempt to share when sharing occurs. If not set, the location.href property of the document containing the amp-addthis tag will be used."
+                },
+                {
+                    "name": "data-media",
+                    "description": "Optional. If set, this is an URL for a piece of media (e.g., image or video) that the AddThis tool will attempt to share when sharing occurs. If not set, this is left undefined."
+                },
+                {
+                    "name": "data-description",
+                    "description": "Optional. If set, this is the description of the page that the AddThis tool will attempt to share when sharing occurs. If not set, this is left undefined."
+                }
+            ]
+        },
+        {
+            "name": "amp-analytics",
+            "description": "Captures analytics data from an AMP document.",
+            "attributes": [
+                {
+                    "name": "type",
+                    "description": "Specifies the type of vendor. For details, see the list of Analytics vendors."
+                },
+                {
+                    "name": "config",
+                    "description": "This is an optional attribute that can be used to load a configuration from a specified remote URL. The URL specified should use the HTTPS scheme. See also the data-include-credentials attribute below. The URL may include AMP URL vars. The response must follow the AMP CORS security guidelines."
+                },
+                {
+                    "name": "data-credentials",
+                    "description": "If set to include, this turns on the ability to read and write cookies on the request specified via the config attribute. This is an optional attribute."
+                },
+                {
+                    "name": "data-consent-notification-id",
+                    "description": "If provided, the page will not process analytics requests until an amp-user-notification with the given HTML element id is confirmed (accepted) by the user. This is an optional attribute."
+                }
+            ]
+        },
+        {
+            "name": "amp-anim",
+            "description": "Manages an animated image, typically a GIF.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "Specifies the URL for a GIF image."
+                },
+                {
+                    "name": "alt",
+                    "description": "Provides a string of alternate text for accessibility purposes. Operates the same as the alt attribute on the img tag."
+                },
+                {
+                    "name": "attribution",
+                    "description": "Indicates the attribution of the image."
+                },
+                {
+                    "name": "attribution",
+                    "description": "Indicates the attribution of the image."
+                },
+                {
+                    "name": "width",
+                    "description": "Provides the explicit size of the image."
+                },
+                {
+                    "name": "height",
+                    "description": "Provides the explicit size of the image."
+                },
+                {
+                    "name": "Common attributes",
+                    "description": "amp-anim includes the common attributes extended to AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-animation",
+            "description": "Defines and displays an animation.",
+            "attributes": [
+                {
+                    "name": "trigger",
+                    "description": "Determines when the animation should be triggered. This must be set to visibility so the animation starts when a story page becomes visible and active."
+                },
+                {
+                    "name": "layout",
+                    "description": "Should always be nodisplay."
+                },
+                {
+                    "name": "id",
+                    "description": "The id of the animation component. Used to reference the animation and chain a sequence of animations."
+                }
+            ]
+        },
+        {
+            "name": "amp-apester-media",
+            "description": "Displays an Apester smart unit.",
+            "attributes": [
+                {
+                    "name": "data-apester-media-id",
+                    "description": "This attribute is required for single mode, and it represents the ID of the media (string value)."
+                },
+                {
+                    "name": "data-apester-channel-token",
+                    "description": "This attribute is required for playlist mode, and it represents the token of the channel (string value)."
+                }
+            ]
+        },
+        {
+            "name": "amp-app-banner",
+            "description": "A wrapper and minimal UI for a cross-platform, fixed-position banner showing a call-to-action to install an app.",
+            "attributes": [
+                {
+                    "name": "id",
+                    "description": "Defines a unique identifier for an amp-app-banner component. The id value is used for persistence logic."
+                },
+                {
+                    "name": "layout",
+                    "description": "Specifies the layout of the banner. The value must be nodisplay."
+                }
+            ]
+        },
+        {
+            "name": "amp-audio",
+            "description": "Replaces the HTML5 audio tag.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "Required if no <source> children are present. Must be HTTPS."
+                },
+                {
+                    "name": "preload",
+                    "description": "If present, sets the preload attribute in the html <audio> tag which specifies if the author thinks that the audio file should be loaded when the page loads."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If present, the attribute implies that the audio will start playing as soon as it is ready."
+                },
+                {
+                    "name": "loop",
+                    "description": "If present, the audio will automatically loop back to the start upon reaching the end."
+                },
+                {
+                    "name": "muted",
+                    "description": "If present, will mute the audio by default."
+                },
+                {
+                    "name": "controlsList",
+                    "description": "Same as controlsList attribute of HTML5 audio element. "
+                },
+                {
+                    "name": "Media Session Attributes",
+                    "description": "amp-audio implements the Media Session API enabling developers to specify more information about the audio file that is playing to be displayed in the notification center of user's devices (along with play/pause controls).",
+                    "values": [
+                        {
+                            "name": "artwork",
+                            "description": "URL to a PNG/JPG/ICO image serving as the audio's artwork. If not present, the MediaSessionAPI Helper will use either the image field in the schema.org definition, the og:image or the website's favicon."
+                        },
+                        {
+                            "name": "artist",
+                            "description": "(string) indicates the author of the audio."
+                        },
+                        {
+                            "name": "album",
+                            "description": "(string) indicates the album the audio was taken from."
+                        },
+                        {
+                            "name": "title",
+                            "description": "(string) part of the common attributes, doubles as the audio's name displayed in the MediaSession notification. If not provided, the MediaSessionAPI Helper will use either the aria-label attribute or fall back to the page's title."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "amp-auto-ads",
+            "description": "Dynamically injects ads into an AMP page by using a remotely-served configuration file.",
+            "attributes": [
+                {
+                    "name": "type",
+                    "description": "An identifier for the ad network."
+                },
+                {
+                    "name": "data-foo-bar",
+                    "description": "Most ad networks require further configuration, which can be passed to the network by using HTML data– attributes. The parameter names are subject to standard data attribute dash to camel case conversion."
+                }
+            ]
+        },
+        {
+            "name": "amp-autocomplete",
+            "description": "Suggests completed results corresponding to the user input as they type into the input field.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The URL of the remote endpoint that returns the JSON that will be filtered and rendered within this amp-autocomplete. This must be a CORS HTTP service and the URL's protocol must be HTTPS. The endpoint must implement the requirements specified in the CORS Requests in AMP spec. If fetching the data at the src URL fails, the amp-autocomplete triggers a fallback. The src attribute may be omitted if the [src] attribute exists."
+                },
+                {
+                    "name": "query",
+                    "description": "The query parameter to generate a static remote endpoint that returns the JSON that will be filtered and rendered within this amp-autocomplete. This requires the presence of the src attribute."
+                },
+                {
+                    "name": "min-characters",
+                    "description": "The min character length of a user input to provide results, default 1"
+                },
+                {
+                    "name": "max-items",
+                    "description": "The max specified number of items to suggest at once based on a user input, displays all if unspecified"
+                },
+                {
+                    "name": "suggest-first",
+                    "description": "Suggest the first entry in the list of results by marking it active."
+                },
+                {
+                    "name": "submit-on-enter",
+                    "description": "The enter key is primarily used for selecting suggestions in autocomplete, so it shouldn’t also submit the form unless the developer explicitly sets it to do so (for search fields/one field forms, et cetera)."
+                },
+                {
+                    "name": "highlight-user-entry",
+                    "description": "If present, exposes the autocomplete-partial class on the substring within the suggested item that resulted in its match with the user input. This can be used to stylize the corresponding match to stand out to the user. Defaults to false."
+                },
+                {
+                    "name": "items",
+                    "description": "Specifies the key to the data array within the JSON response. Nested keys can be expressed with a dot-notated value such as field1.field2."
+                },
+                {
+                    "name": "inline",
+                    "description": "Whether the amp-autocomplete should autosuggest on the full user input or only a triggered substring of the user input."
+                },
+                {
+                    "name": "prefetch",
+                    "description": "Include the prefetch attribute to prefetch remote data to improve responsiveness for users. Requires src to be specified."
+                }
+            ]
+        },
+        {
+            "name": "amp-base-carousel",
+            "description": "Displays multiple similar pieces of content along a horizontal axis or vertical axis.",
+            "attributes": [
+                {
+                    "name": "Media Queries",
+                    "description": "The attributes for <amp-base-carousel> can be configured to use different options based on a media query."
+                }
+            ]
+        },
+        {
+            "name": "amp-beopinion",
+            "description": "Embeds BeOpinion content.",
+            "attributes": [
+                {
+                    "name": "data-account",
+                    "description": "The ID of the BeOpinion account (page owner)."
+                },
+                {
+                    "name": "data-content",
+                    "description": "The ID of the BeOpinion content to be displayed on the page."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element."
+                }
+            ]
+        },
+        {
+            "name": "amp-bodymovin-animation",
+            "description": "Displays an AirBnB Bodymovin animation player.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The path to the exported Bodymovin animation object. Must be https protocol."
+                },
+                {
+                    "name": "loop",
+                    "description": "Indicates whether the animation should be looping or not.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "noautoplay",
+                    "description": "By default, an animation autoplays. If this attribute is added the video waits for an action to start playing."
+                },
+                {
+                    "name": "renderer",
+                    "description": "Multiple renderers are supported and can be specified:",
+                    "values": [
+                        {
+                            "name": "canvas"
+                        },
+                        {
+                            "name": "html"
+                        },
+                        {
+                            "name": "svg"
+                        }
+                    ]
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element."
+                }
+            ]
+        },
+        {
+            "name": "amp-byside-content",
+            "description": "Displays dynamic content from the BySide service.",
+            "attributes": [
+                {
+                    "name": "data-webcare-id",
+                    "description": "The BySide customer account ID."
+                },
+                {
+                    "name": "data-label",
+                    "description": "The content label as seen in your BySide account."
+                },
+                {
+                    "name": "data-webcare-zone",
+                    "description": "The webcare zone property, as specified in the BySide customer account geographic zone."
+                },
+                {
+                    "name": "data-lang",
+                    "description": "The language to show the contents in, as specified in the BySide customer account localization."
+                },
+                {
+                    "name": "data-channel",
+                    "description": "The channel identifier to use for content validation. Defaults to an empty string."
+                },
+                {
+                    "name": "data-fid",
+                    "description": "The visitor force id. Use this when a unique visitor identifier is available, usually for authenticated users. Defaults to an empty string."
+                }
+            ]
+        },
+        {
+            "name": "amp-call-tracking",
+            "description": "Dynamically replaces a phone number in a hyperlink to enable call tracking.",
+            "attributes": [
+                {
+                    "name": "config",
+                    "description": "Defines a CORS URL. The URL's protocol must be HTTPS. The response must consist of a valid JSON object with the following fields:",
+                    "values": [
+                        {
+                            "name": "phoneNumber",
+                            "description": "Specifies the phone number to call when the user clicks the link."
+                        },
+                        {
+                            "name": "formattedPhoneNumber",
+                            "description": "Specifies the phone number to display. If not specified, the value in phoneNumber is used."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "amp-carousel",
+            "description": "Displays multiple similar pieces of content along a horizontal axis.",
+            "attributes": [
+                {
+                    "name": "type",
+                    "description": "Specifies the display type for the carousel items, which can be:",
+                    "values": [
+                        {
+                            "name": "carousel",
+                            "description": " All slides are shown and are scrollable horizontally. Each slide may specify a different width using CSS."
+                        },
+                        {
+                            "name": "slides",
+                            "description": "Shows a single slide at a time, with each slide snapping into place as the user swipes."
+                        }
+                    ]
+                },
+                {
+                    "name": "controls",
+                    "description": "Permanently displays left and right arrows for the user to navigate carousel items on mobile devices."
+                },
+                {
+                    "name": "data-next-button-aria-label",
+                    "description": "Sets the aria-label for the amp-carousel-button-next. If no value is given, the aria-label defaults to 'Next item in carousel'."
+                },
+                {
+                    "name": "data-prev-button-aria-label",
+                    "description": "Sets the aria-label for the amp-carousel-button-prev. If no value is given, the aria-label defaults to 'Previous item in carousel'."
+                },
+                {
+                    "name": "data-button-count-format",
+                    "description": "A format string that looks like (%s of %s), used as a suffix to the aria-label for amp-carousel-button-next amp-carousel-button-prev. This provides information to users using a screen reader on their progress through the carousel. If no value is given, this defaults to (%s of %s)."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "Regularly advances to the next slide without user interaction. If the user manually changes slides, then autoplay is stopped."
+                },
+                {
+                    "name": "delay",
+                    "description": "Specifies the duration (in milliseconds) to delay advancing to the next slide when autoplay is enabled. Note that the minimum allowed value for delay is 1000 milliseconds."
+                },
+                {
+                    "name": "loop",
+                    "description": "Allows the user to advance past the first item or the final item. There must be at least 3 slides for looping to occur."
+                },
+                {
+                    "name": "slide ",
+                    "description": "Specifies what index should be shown when the carousel is first rendered. This can be updated with amp-bind to change which index is shown."
+                }
+            ]
+        },
+        {
+            "name": "amp-connatix-player",
+            "description": "Displays a cloud-hosted Connatix Player.",
+            "attributes": [
+                {
+                    "name": "data-player-id",
+                    "description": "Connatix media id. This represents the unique ID of any media in your Library. This can be found at the Library section in the Connatix management dashboard."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* prefixed attributes are turned into URL parameters and passed to iframe src."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking extension. If this attribute is present and the video is playing manually, the video will be 'minimized' and fixed to a corner or an element when the user scrolls out of the video component's visual area. For more details, see documentation on the docking extension itself."
+                }
+            ]
+        },
+        {
+            "name": "amp-dailymotion",
+            "description": "Displays a Dailymotion video.",
+            "attributes": [
+                {
+                    "name": "play",
+                    "description": "Plays the video."
+                },
+                {
+                    "name": "pause",
+                    "description": "Pauses the video."
+                },
+                {
+                    "name": "mute",
+                    "description": "Mutes the video."
+                },
+                {
+                    "name": "unmute",
+                    "description": "Unmutes the video."
+                },
+                {
+                    "name": "fullscreenenter",
+                    "description": "Takes the video to fullscreen."
+                }
+            ]
+        },
+        {
+            "name": "amp-date-countdown",
+            "description": "Displays a countdown sequence to a specified date.",
+            "attributes": [
+                {
+                    "name": "end-dateend-date",
+                    "description": "An ISO formatted date to count down to."
+                },
+                {
+                    "name": "timestamp-ms",
+                    "description": "A POSIX epoch value in milliseconds; assumed to be UTC timezone."
+                },
+                {
+                    "name": "timestamp-seconds",
+                    "description": "A POSIX epoch value in seconds; assumed to be UTC timezone."
+                },
+                {
+                    "name": "timeleft-ms",
+                    "description": "A value in milliseconds left to be counting down."
+                },
+                {
+                    "name": "timeleft-ms",
+                    "description": "A value in milliseconds left to be counting down."
+                },
+                {
+                    "name": "offset-seconds",
+                    "description": "A positive or negative number that represents the number of seconds to add or subtract from the end-date."
+                },
+                {
+                    "name": "when-ended ",
+                    "description": "Specifies whether to stop the timer when it reaches 0 seconds. The value can be set to stop (default) to indicate the timer to stop at 0 seconds and will not pass the final date or continue to indicate the timer should continue after reaching 0 seconds."
+                },
+                {
+                    "name": "locale",
+                    "description": "An internationalization language string for each timer unit. The default value is en (for English).",
+                    "values": [
+                        {
+                            "name": "de",
+                            "description": "German"
+                        },
+                        {
+                            "name": "en",
+                            "description": "English"
+                        },
+                        {
+                            "name": "es",
+                            "description": "Spanish"
+                        },
+                        {
+                            "name": "fr",
+                            "description": "French"
+                        },
+                        {
+                            "name": "id",
+                            "description": "Indonesian"
+                        },
+                        {
+                            "name": "it",
+                            "description": "Italian"
+                        },
+                        {
+                            "name": "ja",
+                            "description": "Japanese"
+                        },
+                        {
+                            "name": "ko",
+                            "description": "Korean"
+                        },
+                        {
+                            "name": "nl",
+                            "description": "Dutch"
+                        },
+                        {
+                            "name": "pt",
+                            "description": "Portuguese"
+                        },
+                        {
+                            "name": "ru",
+                            "description": "Russian"
+                        },
+                        {
+                            "name": "th",
+                            "description": "Thai"
+                        },
+                        {
+                            "name": "tr",
+                            "description": "Turkish"
+                        },
+                        {
+                            "name": "vi",
+                            "description": "Vietnamese"
+                        },
+                        {
+                            "name": "zh-cn",
+                            "description": "Chinese Simplified"
+                        },
+                        {
+                            "name": "zh-tw",
+                            "description": "Chinese Traditional"
+                        }
+                    ]
+                },
+                {
+                    "name": "biggest-unit",
+                    "description": "Allows the amp-date-countdown component to calculate the time difference based on the specified biggest-unit value."
+                },
+                {
+                    "name": "data-count-up",
+                    "description": "Include this attribute to reverse the direction of the countdown to count up instead. This is useful to display the time elapsed since a target date in the past. To continue the countdown when the target date is in the past, be sure to include the when-ended attribute with the continue value. If the target date is in the future, amp-date-countdown will display a decrementing (toward 0) negative value."
+                }
+            ]
+        },
+        {
+            "name": "amp-date-display",
+            "description": "The amp-date-display component displays time data that you can render in your AMP page.",
+            "attributes": [
+                {
+                    "name": "datetime",
+                    "description": "The datetime attribute specifies the date and time in a standard ISO 8601 date string (e.g. 2017-08-02T15:05:05.000Z) or the string now. If set to now, amp-date-display will use the time the page loaded to render its template."
+                },
+                {
+                    "name": "timestamp-ms",
+                    "description": "The timestamp-ms attribute specifies the date and time using the number of milliseconds since 1970-01-01T0:00:00.000Z"
+                },
+                {
+                    "name": "timestamp-seconds",
+                    "description": "The timestamp-seconds attribute specifies the date and time using the number of seconds since 1970-01-01T0:00:00.000Z"
+                },
+                {
+                    "name": "locale",
+                    "description": "An internationalization language string for each timer unit. The default value is en (for English). This attribute supports all values that are supported by the user's browser."
+                },
+                {
+                    "name": "display-in ",
+                    "description": "If set to the value utc, the display-in attribute will convert the given date to UTC."
+                },
+                {
+                    "name": "offset-seconds",
+                    "description": "The offset-seconds attribute specifies an integer number of seconds to shift the given date."
+                },
+                {
+                    "name": "data-options-*",
+                    "description": "The data-options-* supports all the options under Intl.DateTimeFormat.options parameter that specifies the formatting style to use for localeString format. Valid attributes include: data-options-date-style, data-options-time-style, etc."
+                }
+            ]
+        },
+        {
+            "name": "amp-date-picker",
+            "description": "Provides a widget to select dates. The date picker can render as an overlay relative to input fields, or as a static calendar widget.",
+            "attributes": [
+                {
+                    "name": "clear",
+                    "description": "The clear action clears the date value or values from the single date picker or date range picker with the specified id, e.g. date-picker."
+                },
+                {
+                    "name": "setDate",
+                    "description": "The setDate action assigns the value of the date argument to the single date picker with the specified id, e.g. date-picker."
+                },
+                {
+                    "name": "setDates",
+                    "description": "The setDate action assigns the value of the start and end arguments to the date range picker with the specified id, e.g. date-picker."
+                },
+                {
+                    "name": "today",
+                    "description": "The today action assigns the value of the current day, plus an offset argument, to the single date picker with the specified id, e.g. date-picker. The offset argument value can be any integer."
+                },
+                {
+                    "name": "startToday",
+                    "description": "The startToday action assigns the value of the current day, plus an offset argument, to the date range picker with the specified id, e.g. date-picker. The offset argument value can be any integer."
+                },
+                {
+                    "name": "endToday",
+                    "description": "The endToday action assigns the value of the current day, plus an offset argument, to the date range picker with the specified id, e.g. date-picker. The offset argument value can be any integer."
+                }
+            ]
+        },
+        {
+            "name": "amp-delight-player",
+            "description": "The amp-delight-player element displays a cloud-hosted Delight Player.",
+            "attributes": [
+                {
+                    "name": "data-content-id",
+                    "description": "The video's content ID."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking extension. If this attribute is present and the video is playing manually, the video will be 'minimized' and fixed to a corner or an element when the user scrolls out of the video component's visual area."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible. There are some conditions that the component needs to meet to be played, which are outlined in the Video in AMP spec."
+                }
+            ]
+        },
+        {
+            "name": "amp-embedly-card",
+            "description": "Displays an Embedly card.",
+            "attributes": [
+                {
+                    "name": "data-url",
+                    "description": "The URL to retrieve embedding information."
+                },
+                {
+                    "name": "data-card-embed",
+                    "description": "The URL to a video or rich media. Use with static embeds like articles, instead of using the static page content in the card, the card will embed the video or rich media."
+                },
+                {
+                    "name": "data-card-image",
+                    "description": "The URL to an image. Specifies which image to use in article cards when data-url points to an article. Not all image URLs are supported, if the image is not loaded, try a different image or domain."
+                },
+                {
+                    "name": "data-card-controls",
+                    "description": "Enables share icons.",
+                    "values": [
+                        {
+                            "name": "0",
+                            "description": "Disable share icons"
+                        },
+                        {
+                            "name": "1",
+                            "description": "Enable share icons"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-card-align",
+                    "description": "Aligns the card. The possible values are left, center and right. The default value is center."
+                },
+                {
+                    "name": "data-card-recommend",
+                    "description": "When recommendations are supported, it disables embedly recommendations on video and rich cards. These are recommendations created by embedly.",
+                    "values": [
+                        {
+                            "name": "0",
+                            "description": "Disables embedly recommendations."
+                        },
+                        {
+                            "name": "1",
+                            "description": "Enables  embedly recommendations."
+                        }
+                    ]
+                },
+                {
+                    "name": "data-card-via",
+                    "description": "Specifies the via content in the card. This is a great way to do attribution."
+                },
+                {
+                    "name": "data-card-theme",
+                    "description": "Allows settings the dark theme which changes the background color of the main card container. Use dark to set this theme. For dark backgrounds it's better to specify this. The default is light, which sets no background color of the main card container."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element. The default value is 'Embedly card'."
+                }
+            ]
+        },
+        {
+            "name": "amp-facebook-comments",
+            "description": "Embeds the Facebook comments plugin.",
+            "attributes": [
+                {
+                    "name": "data-href",
+                    "description": "The URL of the comments page. For example, http://www.directlyrics.com/adele-25-complete-album-lyrics-news.html."
+                },
+                {
+                    "name": "data-locale",
+                    "description": "By default, the locale is set to user's system language; however, you can specify a locale as well."
+                },
+                {
+                    "name": "data-numposts",
+                    "description": "The number of comments to show. Currently Facebook SDK limits this to max 100."
+                },
+                {
+                    "name": "data-order-by",
+                    "description": "The order to use when displaying comments."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a attribute for the component to propagate to the underlying element. The default value is .title<iframe>'Facebook comments'"
+                }
+            ]
+        },
+        {
+            "name": "amp-facebook-like",
+            "description": "Embeds the Facebook like button plugin.",
+            "attributes": [
+                {
+                    "name": "data-href",
+                    "description": "The absolute URL of the page that will be liked."
+                },
+                {
+                    "name": "data-locale",
+                    "description": "By default, the locale is set to user's system language; however, you can specify a locale as well."
+                },
+                {
+                    "name": "data-action",
+                    "description": "The verb to display on the button. Can be either like or recommend. The default is like."
+                },
+                {
+                    "name": "data-colorscheme",
+                    "description": "The color scheme used by the plugin for any text outside of the button itsel",
+                    "values": [
+                        {
+                            "name": "light"
+                        },
+                        {
+                            "name": "dark"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-kd_site",
+                    "description": "This attribute is also known as data-kid_directed_site in the Facebook SDK. If your web site or online service, or a portion of your service, is directed to children under 13 you must enable this attribute."
+                },
+                {
+                    "name": "data-layout",
+                    "description": "Selects one of the different layouts that are available for the plugin. Can be one of standard, button_count, button or box_count."
+                },
+                {
+                    "name": "data-ref",
+                    "description": "A label for tracking referrals which must be less than 50 characters and can contain alphanumeric characters and some punctuation."
+                },
+                {
+                    "name": "data-share",
+                    "description": "Specifies whether to include a share button beside the Like button. This only works with the XFBML version."
+                },
+                {
+                    "name": "data-show_faces",
+                    "description": "Specifies whether to display profile photos below the button (standard layout only). You must not enable this on child-directed sites."
+                },
+                {
+                    "name": "data-size",
+                    "description": "The size of the button, which can be one of two sizes",
+                    "values": [
+                        {
+                            "name": "large"
+                        },
+                        {
+                            "name": "small"
+                        }
+                    ]
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element."
+                }
+            ]
+        },
+        {
+            "name": "amp-facebook-page",
+            "description": "Embeds the Facebook page plugin.",
+            "attributes": [
+                {
+                    "name": "data-href",
+                    "description": "The absolute URL of the Facebook page."
+                },
+                {
+                    "name": "data-locale",
+                    "description": "By default, the locale is set to the user's system language; however, you can specify a locale as well."
+                },
+                {
+                    "name": "data-tabs",
+                    "description": "Specifies the tabs to render (i.e., timeline, events, messages). Use a comma-separated list to add multiple tabs (e.g., timeline, events). By default, the Facebook page plugin shows the timeline activity."
+                },
+                {
+                    "name": "data-hide-cover",
+                    "description": "Hides the cover photo in the header."
+                },
+                {
+                    "name": "data-show-facepile",
+                    "description": "Shows profile photos of friends who like the page."
+                },
+                {
+                    "name": "data-hide-cta",
+                    "description": "Hides the custom call to action button (if available)"
+                },
+                {
+                    "name": "data-small-header",
+                    "description": "Uses the small header instead."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element."
+                }
+            ]
+        },
+        {
+            "name": "amp-facebook",
+            "description": "Displays a Facebook post, video or comment.",
+            "attributes": [
+                {
+                    "name": "data-href",
+                    "description": "The URL of the Facebook post/video/comment."
+                },
+                {
+                    "name": "data-embed-as",
+                    "description": "The value is either , or . The default is .postvideocommentpost",
+                    "values": [
+                        {
+                            "name": "either"
+                        },
+                        {
+                            "name": "or"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-include-comment-parent",
+                    "description": "The value is either true or false. The default is false.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-allowfullscreen",
+                    "description": "The value is either set or omitted. The default is omitted (no fullscreen)."
+                },
+                {
+                    "name": "data-align-center",
+                    "description": "The value is either true or false. The default is false.",
+                    "values": [
+                        {
+                            "name": "true"
+                        },
+                        {
+                            "name": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "data-locale",
+                    "description": "By default, the locale is set to user's system language; however, you can specify a locale as well."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a attribute for the component to propagate to the underlying element. The default value is .title<iframe>'Facebook'"
+                }
+            ]
+        },
+        {
+            "name": "amp-fit-text",
+            "description": "Expands or shrinks font size to fit the content within the space given.",
+            "attributes": [
+                {
+                    "name": "min-font-size",
+                    "description": "Specifies the minimum font size in pixels as an integer that the amp-fit-text can use."
+                },
+                {
+                    "name": "max-font-size",
+                    "description": "Specifies the maximum font size in pixels as an integer that the amp-fit-text can use."
+                }
+            ]
+        },
+        {
+            "name": "amp-font",
+            "description": "Trigger and monitor the loading of custom fonts on AMP pages.",
+            "attributes": [
+                {
+                    "name": "font-family",
+                    "description": "The font family of the custom loaded font."
+                },
+                {
+                    "name": "timeout",
+                    "description": "The allowed time in millisecond for the custom font to load. Defaults to 3000 when undefined. When set to 0 the component loads font only if the font is in the cache. If set to an invalid value it defaults back to 3000."
+                },
+                {
+                    "name": "on-load-add-class",
+                    "description": "CSS class to add to document root after custom font is available."
+                },
+                {
+                    "name": "on-load-remove-class",
+                    "description": "CSS class to remove from document root after custom font is available."
+                },
+                {
+                    "name": "on-error-add-class",
+                    "description": "CSS class to add to the document root if the timeout interval runs out before the font is available."
+                },
+                {
+                    "name": "on-error-remove-class",
+                    "description": "CSS class to remove from document root if the timeout interval runs out before the font is available."
+                },
+                {
+                    "name": "font-weight",
+                    "description": "Behaves same as standard CSS font-weight property."
+                },
+                {
+                    "name": "font-style",
+                    "description": "Behaves same as standard CSS font-style property."
+                },
+                {
+                    "name": "font-variant",
+                    "description": "Behaves same as standard CSS font-variant property."
+                },
+                {
+                    "name": "layout",
+                    "description": "The layout attribute must be set to nodisplay."
+                }
+            ]
+        },
+        {
+            "name": "amp-form",
+            "description": "Allows you to create forms to submit input fields in an AMP document.",
+            "attributes": [
+                {
+                    "name": "action-xhr",
+                    "description": "Specifies a server endpoint to handle the form input and submit the form via XMLHttpRequest (XHR)."
+                },
+                {
+                    "name": "Other form attributes",
+                    "description": "All other form attributes are optional."
+                }
+            ]
+        },
+        {
+            "name": "amp-fx-flying-carpet",
+            "description": "Wraps its children in a unique full-screen scrolling container allowing you to display a full-screen ad without taking up the entire viewport.",
+            "attributes": [
+                {
+                    "name": "height",
+                    "description": "The height of the flying carpet's 'window'."
+                },
+                {
+                    "name": "Common attributes",
+                    "description": "amp-fx-flying-carpet includes the common attributes extended to AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-gfycat",
+            "description": "Displays a Gfycat video GIF.",
+            "attributes": [
+                {
+                    "name": "data-gfyid",
+                    "description": "The Gfycat ID found in any Gfycat url."
+                },
+                {
+                    "name": "width",
+                    "description": "The width attributes are special for the Gfycat embed. These should be the actual width of the Gfycat."
+                },
+                {
+                    "name": "height",
+                    "description": "The height attributes are special for the Gfycat embed. These should be the actual height of the Gfycat."
+                },
+                {
+                    "name": "noautoplay",
+                    "description": "By default, a video autoplays.You can turn off autoplay by setting the noautoplay attribute."
+                }
+            ]
+        },
+        {
+            "name": "amp-gist",
+            "description": "Creates an iframe and displays a GitHub Gist.",
+            "attributes": [
+                {
+                    "name": "data-gistid",
+                    "description": "The ID of the gist to embed."
+                },
+                {
+                    "name": "layout",
+                    "description": "Currently only supports fixed-height."
+                },
+                {
+                    "name": "height",
+                    "description": "The initial height of the gist or gist file in pixels."
+                },
+                {
+                    "name": "data-file",
+                    "description": "If specified, display only one file in a gist."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element. The default value is 'Github gist"
+                }
+            ]
+        },
+        {
+            "name": "amp-google-document-embed",
+            "description": "Displays a document file supported by Google Drive.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The URL of the document."
+                },
+                {
+                    "name": "common attributes",
+                    "description": "This element includes common attributes extended to AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-google-read-aloud-player",
+            "description": "Embeds the Google Read Aloud Player.",
+            "attributes": [
+                {
+                    "name": "data-api-key",
+                    "description": "API key identifies the publisher, and must be provided in order to use the player."
+                },
+                {
+                    "name": "data-tracking-ids",
+                    "description": "The list of the Google Analytics tracking IDs to send the player metrics to (comma separated)."
+                },
+                {
+                    "name": "data-voice",
+                    "description": "The voice to use for generating the Text-to-Speech audio. Publishers should use only a single voice and only from the supported voices list (TBD)."
+                },
+                {
+                    "name": "data-url",
+                    "description": "The canonical URL of the web page to read aloud. The URL must be publicly accessible and free of any PII. The URL must be on a domain that was configured by Google and correlated with the specific API key."
+                },
+                {
+                    "name": "data-speakable",
+                    "description": "Controls the contents to read aloud."
+                },
+                {
+                    "name": "data-call-to-action-label",
+                    "description": "The call to action label that is shown before the user pressed on play for the first time."
+                },
+                {
+                    "name": "data-intro",
+                    "description": "The URL of the MP3 audio file which will be played before the player starts reading from the beginning."
+                },
+                {
+                    "name": "data-outro",
+                    "description": "The URL of the MP3 audio file which will be played after the player ends reading. "
+                },
+                {
+                    "name": "data-ad-tag-url",
+                    "description": "A complete VAST ad tag URL with parameters for playing pre-roll audio ads. When present, audio ads will be played before reading aloud page contents, after the user clicks on the play button for the first time."
+                }
+            ]
+        },
+        {
+            "name": "amp-hulu",
+            "description": "Displays an embedded Hulu video.",
+            "attributes": [
+                {
+                    "name": "data-eid",
+                    "description": "The id of the video."
+                }
+            ]
+        },
+        {
+            "name": "amp-iframe",
+            "description": "Displays an iframe.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The src attribute behaves mainly like on a standard iframe with one exception"
+                },
+                {
+                    "name": "srcdoc",
+                    "description": "These attributes should all behave like they do on standard iframes."
+                },
+                {
+                    "name": "frameborder",
+                    "description": "These attributes should all behave like they do on standard iframes."
+                },
+                {
+                    "name": "allowfullscreen",
+                    "description": "These attributes should all behave like they do on standard iframes."
+                },
+                {
+                    "name": "allowpaymentrequest",
+                    "description": "These attributes should all behave like they do on standard iframes."
+                },
+                {
+                    "name": "allowtransparency",
+                    "description": "These attributes should all behave like they do on standard iframes."
+                },
+                {
+                    "name": "referrerpolicy",
+                    "description": "These attributes should all behave like they do on standard iframes."
+                },
+                {
+                    "name": "sandbox",
+                    "description": "Iframes created by amp-iframe always have the sandbox attribute defined on them."
+                }
+            ]
+        },
+        {
+            "name": "amp-iframely",
+            "description": "Displays Iframely.com-powered rich media embeds",
+            "attributes": [
+                {
+                    "name": "Indentifying",
+                    "description": "There are two ways to identify rich media. Either with the help of Iframely-issued ID, or with a pair of media URL and your API key.",
+                    "values": [
+                        {
+                            "name": "data-id",
+                            "description": "Iframely content ID, if available"
+                        },
+                        {
+                            "name": "data-url",
+                            "description": "Alternatively, if no content ID, identify rich media by its canonical URL."
+                        },
+                        {
+                            "name": "data-key",
+                            "description": "If data-url is used, also add the MD5 hash of your Iframely API key as data-key attribute. Hash your key, the unencrypted value won't work here."
+                        }
+                    ]
+                },
+                {
+                    "name": "Placing",
+                    "description": "amp-iframely supports responsive and fixed-height layouts:",
+                    "values": [
+                        {
+                            "name": "width",
+                            "description": "Use both attributes for responsive media to define its aspect-ratio. Use only height for a fixed-height layout. If you don't have media sizes - use what works best as a placeholder, and add resizable as below."
+                        },
+                        {
+                            "name": "height",
+                            "description": "Use both attributes for responsive media to define its aspect-ratio. Use only height for a fixed-height layout. If you don't have media sizes - use what works best as a placeholder, and add resizable as below."
+                        },
+                        {
+                            "name": "resizable",
+                            "description": "A flag to add event listener and adjust component's height automatically to fit and match the rich media content. This works with both responsive and fixed-height layouts."
+                        },
+                        {
+                            "name": "data-img",
+                            "description": "Empty attribute, indicating that rich media's thumbnail image should be used as a placeholder while the component and its content loads. "
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "amp-ima-video",
+            "description": "Embeds a video player for instream video ads that are integrated with the IMA SDK.",
+            "attributes": [
+                {
+                    "name": "data-tag",
+                    "description": "The URL for your VAST ad document. A relative URL or a URL that uses https protocol."
+                },
+                {
+                    "name": "data-src",
+                    "description": "The URL of your video content. A relative URL or a URL that uses https protocol. This attribute is required if no <source> children are present."
+                },
+                {
+                    "name": "data-crossorigin",
+                    "description": "Required if a track resource is hosted on a different origin than the document."
+                },
+                {
+                    "name": "data-poster",
+                    "description": "An image for the frame to be displayed before video playback has started. By default, the first frame is displayed."
+                },
+                {
+                    "name": "data-delay-ad-request",
+                    "description": "If true, delay the ad request until either the user scrolls the page, or for 3 seconds, whichever occurs first. Defaults to false."
+                },
+                {
+                    "name": "data-ad-label",
+                    "description": "A format string that looks like 'Ad (%s of %s)', used to generate the ad disclosure when an ad is playing."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking extension. If this attribute is present and the video is playing manually, the video will be 'minimized' and fixed to a corner or an element when the user scrolls out of the video component's visual area. For more details, see documentation on the docking extension itself."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element. The default value is 'IMA video'."
+                }
+            ]
+        },
+        {
+            "name": "amp-image-lightbox",
+            "description": "Provides a lightbox effect for a specified image.",
+            "attributes": [
+                {
+                    "name": "layout",
+                    "description": "Must be set to nodisplay."
+                },
+                {
+                    "name": "id",
+                    "description": "The ID for the lightbox element that's used as a target for the image's on action."
+                },
+                {
+                    "name": "data-close-button-aria-label",
+                    "description": "An ARIA label that you can use for a close button."
+                }
+            ]
+        },
+        {
+            "name": "amp-image-slider",
+            "description": "A slider to compare two images.",
+            "attributes": [
+                {
+                    "name": "disable-hint-reappear",
+                    "description": "The hints that shows at the center of the vertical bar will disappear once the user starts interacting with the slider (such as clicking the mouse button, touch the slider, and pressing keys to move the slider). "
+                },
+                {
+                    "name": "initial-slider-position",
+                    "description": "The vertical slider bar sits at the center of the slider body by default."
+                },
+                {
+                    "name": "step-size",
+                    "description": "When focusing on the slider, left and right keyboard buttons move the slider bar by 10% each press. To use a different step size, set step-size to a value between 0 and 1, corresponding to moving 0% to moving 100% each key press."
+                }
+            ]
+        },
+        {
+            "name": "amp-img",
+            "description": "Replaces the HTML5 img tag.",
+            "attributes": [
+                {
+                    "name": "src"
+                },
+                {
+                    "name": "sizes",
+                    "description": "The value of the AMP sizes attribute is a sizes expression that selects the defined size corresponding to the media query based on the current window size."
+                },
+                {
+                    "name": "alt",
+                    "description": "A string of alternate text, similar to the alt attribute on img."
+                },
+                {
+                    "name": "attribution",
+                    "description": "A string that indicates the attribution of the image. For example, attribution='CC courtesy of Cats on Flicker'."
+                },
+                {
+                    "name": "height",
+                    "description": "An explicit size of the image, which is used by the AMP runtime to determine the aspect ratio without fetching the image."
+                },
+                {
+                    "name": "width",
+                    "description": "An explicit size of the image, which is used by the AMP runtime to determine the aspect ratio without fetching the image."
+                }
+            ]
+        },
+        {
+            "name": "amp-imgur",
+            "description": "Displays an Imgur post.",
+            "attributes": [
+                {
+                    "name": "data-imgur-id",
+                    "description": "The id of the Imgur post."
+                },
+                {
+                    "name": "width",
+                    "description": "The width of the Imgur post."
+                },
+                {
+                    "name": "height",
+                    "description": "The height of the Imgur post."
+                }
+            ]
+        },
+        {
+            "name": "amp-inputmask",
+            "description": "Provides input masking capabilities to inputs in AMP forms",
+            "attributes": [
+                {
+                    "name": "mask",
+                    "description": "Specifies the mask or masks to apply to the input element.",
+                    "values": [
+                        {
+                            "name": "L",
+                            "description": "The user must add an alphabetical character"
+                        },
+                        {
+                            "name": "0",
+                            "description": "The user must add a numeric character"
+                        },
+                        {
+                            "name": "A",
+                            "description": "The user must add an alphanumeric character"
+                        },
+                        {
+                            "name": "C",
+                            "description": "The user must add an arbitrary character"
+                        },
+                        {
+                            "name": "l",
+                            "description": "The user may optionally add an alphabetical character"
+                        },
+                        {
+                            "name": "a",
+                            "description": "The user may optionally add an alphanumeric character"
+                        },
+                        {
+                            "name": "c",
+                            "description": "The user may optionally add an arbitrary character"
+                        },
+                        {
+                            "name": "9",
+                            "description": "The user may optionally add a numeric character."
+                        },
+                        {
+                            "name": "\"",
+                            "description": "The backslash \" escapes the next character in the mask to be a character literal."
+                        },
+                        {
+                            "name": "_",
+                            "description": "The user must add an alphabetical character"
+                        }
+                    ]
+                },
+                {
+                    "name": "mask-trim-zeros",
+                    "description": "Specifies how many zeros the mask will remove from pasted values into custom masks. For backwards compatibility, the default is 2. Specify 0 to disable this behavior."
+                },
+                {
+                    "name": "mask-output",
+                    "description": "Specifies how the form will submit the input value.",
+                    "values": [
+                        {
+                            "name": "raw",
+                            "description": "Outputs the value as-is with all special characters."
+                        },
+                        {
+                            "name": "alphanumeric",
+                            "description": "Only outputs alphanumeric characters in the mask."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "amp-instagram",
+            "description": "Displays an Instagram embed.",
+            "attributes": [
+                {
+                    "name": "data-shortcode",
+                    "description": "The instagram data-shortcode is found in every instagram photo URL."
+                },
+                {
+                    "name": "data-captioned",
+                    "description": "Include the Instagram caption. amp-instagram will attempt to resize to the correct height including the caption."
+                },
+                {
+                    "name": "common attributes",
+                    "description": "This element includes common attributes extended to AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-install-serviceworker",
+            "description": "Installs a ServiceWorker for the current page.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The URL of the ServiceWorker to register, which must use https protocol."
+                },
+                {
+                    "name": "data-iframe-src",
+                    "description": "The URL of an HTML document that installs a ServiceWorker. The URL must use https protocol. This attribute is necessary if the AMP page is going to be served from an AMP Cache."
+                },
+                {
+                    "name": "data-scope",
+                    "description": "The scope of the service worker to be installed."
+                },
+                {
+                    "name": "layout",
+                    "description": "Must have the value nodisplay."
+                },
+                {
+                    "name": "data-no-service-worker-fallback-url-match",
+                    "description": "The is a regular expression that matches URLs to be rewritten to navigate via shell for no-service-worker fallback. See Shell URL rewrite section for more details. The value must be a valid JavaScript RegExp string."
+                },
+                {
+                    "name": "data-no-service-worker-fallback-shell-url",
+                    "description": "The URL to the shell to use to rewrite URL navigations for no-service-worker fallback. See Shell URL rewrite section for more details. The value must be an URL on the same origin as the AMP document itself."
+                }
+            ]
+        },
+        {
+            "name": "amp-izlesene",
+            "description": "Displays an Izlesene video.",
+            "attributes": [
+                {
+                    "name": "data-videoid",
+                    "description": "The ID of the Izlesene video, which can be found in the Izlesene video page URL. "
+                },
+                {
+                    "name": "data-param-showrel",
+                    "description": "This is an optional attribute that indicates whether to show related content. This functionality is not available for iOS devices."
+                },
+                {
+                    "name": "data-param-showreplay",
+                    "description": "This is an optional attribute that indicates whether to show the replay button at the end of the content."
+                }
+            ]
+        },
+        {
+            "name": "amp-jwplayer",
+            "description": "Displays a cloud-hosted JW Player.",
+            "attributes": [
+                {
+                    "name": "data-player-id",
+                    "description": "JW Platform player id. This is an 8-digit alphanumeric sequence that can be found in the Players section in your JW Player Dashboard. "
+                },
+                {
+                    "name": "data-media-id",
+                    "description": "The JW Platform media id. This is an 8-digit alphanumeric sequence that can be found in the Content section in your JW Player Dashboard."
+                },
+                {
+                    "name": "data-playlist-id",
+                    "description": "The JW Platform playlist id. This is an 8-digit alphanumeric sequence that can be found in the Playlists section in your JW Player Dashboard."
+                },
+                {
+                    "name": "data-content-search",
+                    "description": "Denotes the type of the playlist. If contextual article matching is desired, use the value `__CONTEXTUAL__`."
+                },
+                {
+                    "name": "data-content-backfill",
+                    "description": "Ensures that a search or contextual playlist always returns a result. If there are no relevant results for the given query, this parameter ensures that a list of trending videos are served instead."
+                },
+                {
+                    "name": "data-player-querystring",
+                    "description": "A querystring of parameters that will be added to the player iframe src. This can be used for things like token signing."
+                },
+                {
+                    "name": "data-player-param-*",
+                    "description": "An attribute that will be added as a query parameter to the player iframe src."
+                },
+                {
+                    "name": "data-ad-cust-params",
+                    "description": "A JSON string of custom parameters to add to ad tags."
+                },
+                {
+                    "name": "data-ad-macro-*",
+                    "description": "An attribute used to override the default value of macros in ad tags."
+                },
+                {
+                    "name": "data-config-plugin-url",
+                    "description": "A url string used to pass external JS plugins to the player."
+                },
+                {
+                    "name": "data-config-skin-url",
+                    "description": "A url string used to pass external CSS skins to the player. See JW Player's CSS Skin Reference for more information."
+                },
+                {
+                    "name": "data-config-json",
+                    "description": "A JSON string of a player config. This can be used to set specific configuration properties on the player."
+                },
+                {
+                    "name": "data-block-on-consent",
+                    "description": "Requires amp-consent extension. If this attribute is present, player loading will be delayed until the consent state is resolved. "
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible. "
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking extension. "
+                }
+            ]
+        },
+        {
+            "name": "amp-kaltura-player",
+            "description": "Displays the Kaltura Player as used in Kaltura's Video Platform.",
+            "attributes": [
+                {
+                    "name": "data-serviceUrl",
+                    "description": "The Kaltura service url. This attribute is optional."
+                },
+                {
+                    "name": "data-partner",
+                    "description": "The Kaltura partner id. This attribute is mandatory."
+                },
+                {
+                    "name": "data-uiconf",
+                    "description": "The Kaltura player id - uiconf id."
+                },
+                {
+                    "name": "data-entryid",
+                    "description": "The Kaltura entry id."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* attributes will be added as query parameter to the player iframe src."
+                }
+            ]
+        },
+        {
+            "name": "amp-lightbox ",
+            "description": "Displays elements in a full-viewport “lightbox” modal.",
+            "attributes": [
+                {
+                    "name": "id",
+                    "description": "A unique identifier for the lightbox."
+                },
+                {
+                    "name": "layout",
+                    "description": "Must be set to nodisplay."
+                },
+                {
+                    "name": "animate-in",
+                    "description": "Defines the style of animation for opening the lightbox. By default, this will be set to fade-in. Valid values are fade-in, fly-in-bottom, and fly-in-top."
+                }
+            ]
+        },
+        {
+            "name": "amp-list",
+            "description": "Dynamically downloads data and creates list items using a template.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "If fetching the data at the src URL fails, the <amp-list> triggers a low-trust fetch-error event."
+                },
+                {
+                    "name": "items",
+                    "description": "Defines the expression to locate the array to be rendered within the response. This is a dot-notated expression that navigates via fields of the JSON response. By defaut <amp-list> expects an array, the single-item attribute may be used to load data from an object."
+                },
+                {
+                    "name": "max-items",
+                    "description": "An integer value specifying the maximum length of the items array to be rendered. The items array will be truncated to max-items entries if the returned value exceeds max-items."
+                },
+                {
+                    "name": "single-item",
+                    "description": "Causes <amp-list> to treat the returned result as if it were a single element array. An object response will be wrapped in an array so {items: {...}} will behave as if it were {items: [{...}]}."
+                },
+                {
+                    "name": "binding",
+                    "description": "For pages using <amp-list> that also use amp-bind, controls whether or not to block render on the evaluation of bindings (e.g. [text]) in rendered children."
+                }
+            ]
+        },
+        {
+            "name": "amp-live-list",
+            "description": "Provides a way to display and update content live.",
+            "attributes": [
+                {
+                    "name": "id",
+                    "description": "To uniquely identify an amp-live-list (since multiple are allowed on a single page)."
+                },
+                {
+                    "name": "data-poll-interval",
+                    "description": "Time (in milliseconds) interval between checks for new content (15000 ms minimum is enforced). If no data-poll-interval is provided it will default to the 15000 ms minimum."
+                },
+                {
+                    "name": "data-max-items-per-page",
+                    "description": "Maximum number of child entries. Additional elements are assumed to be on the next 'page'. "
+                },
+                {
+                    "name": "disabled",
+                    "description": "No polling will occur. Recommended when not on page 1 (looking at archival data) and when the article is no longer fresh and should no longer be updated."
+                }
+            ]
+        },
+        {
+            "name": "amp-mathml",
+            "description": "Displays a MathML formula.",
+            "attributes": [
+                {
+                    "name": "data-formula",
+                    "description": "Specifies the formula to render."
+                },
+                {
+                    "name": "inline",
+                    "description": "If specified, the component renders inline (inline-block in CSS)."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element."
+                }
+            ]
+        },
+        {
+            "name": "amp-mega-menu",
+            "description": "Displays top-level navigational content inside expandable containers.",
+            "attributes": [
+                {
+                    "name": "data-close-button-aria-label ",
+                    "description": "Optional attribute used to set ARIA label for the close buttons added for accessibility."
+                },
+                {
+                    "name": "Common attributes",
+                    "description": "This element includes common attributes extended to AMP components."
+                }
+            ]
+        },
+        {
+            "name": "amp-megaphone",
+            "description": "Displays a Megaphone.fm podcast episode or playlist.",
+            "attributes": [
+                {
+                    "name": "data-episode",
+                    "description": "This attribute is required if data-playlist is not defined."
+                },
+                {
+                    "name": "data-playlist",
+                    "description": "This attribute is required if data-episode is not defined."
+                },
+                {
+                    "name": "data-start",
+                    "description": "(for episodes only) The time at which to start the episode in seconds."
+                },
+                {
+                    "name": "data-episodes",
+                    "description": "(for playlists only) Limits the number of episodes to display."
+                },
+                {
+                    "name": "data-tile",
+                    "description": "(for episodes only) If present, displays the player in a 'tile' mode where the internal components are layed out vertically."
+                },
+                {
+                    "name": "data-light",
+                    "description": "If present, this will switch the player theme to the 'light' scheme as opposed to the default dark version."
+                },
+                {
+                    "name": "data-sharing",
+                    "description": "If present, this will enable the social sharing button on the embedded player. The default value is to disable the button."
+                },
+                {
+                    "name": "width and height",
+                    "description": "The layout for amp-megaphone is set to fixed-height and it fills all of the available horizontal space. This is ideal for the 'classic' mode, but for 'tile' mode, it's recommended that the height is 455px, and the width is 275px, as per the Megaphone embed code."
+                }
+            ]
+        },
+        {
+            "name": "amp-minute-media-player",
+            "description": "Displays a Minute Media player.",
+            "attributes": [
+                {
+                    "name": "data-content-type",
+                    "description": "The Minute Media player type."
+                },
+                {
+                    "name": "data-content-id",
+                    "description": "The Minute Media player id."
+                },
+                {
+                    "name": "data-scanned-element-type",
+                    "description": "Choose the defining characteristic (class-name, tag-name or id) when pairing content with the video."
+                },
+                {
+                    "name": "data-scanned-element",
+                    "description": "Choose the specific element accoring to the choosen scanned element type to be considered when pairing content with the video."
+                },
+                {
+                    "name": "data-tags",
+                    "description": "Tags that taken into consideration when the decision which video content to play is made (in 'semantic' content type)."
+                },
+                {
+                    "name": "data-minimum-date-factor",
+                    "description": "This data reflects the last number of days the engine should take into consideration when searching for a matching video. Older videos will receive a lower score"
+                },
+                {
+                    "name": "data-scoped-keywords",
+                    "description": "This data is responsible to return only videos with the specified tags in the matching results."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay"
+                },
+                {
+                    "name": "dock",
+                    "description": "If this attribute is present and the video is playing manually, the video will be 'minimized' and fixed to a corner when the user scrolls out of the video component's visual area."
+                }
+            ]
+        },
+        {
+            "name": "amp-mowplayer",
+            "description": "Displays a cloud-hosted Mow Player.",
+            "attributes": [
+                {
+                    "name": "data-mediaid",
+                    "description": "The Mowplayer media id. This is an alphanumeric sequence that can be found in the Content section in your Mowplayer platform."
+                }
+            ]
+        },
+        {
+            "name": "amp-nested-menu",
+            "description": "Displays a drilldown menu with arbitrary levels of nested submenus.",
+            "attributes": [
+                {
+                    "name": "side",
+                    "description": "Optional attribute that indicates from which side the submenus open from, either left or right. Set to right by default, or left if the document is RTL."
+                }
+            ]
+        },
+        {
+            "name": "amp-next-page",
+            "description": "Infinite scrolling experience for document-level page recommendations.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The src attribute points to the remote endpoint that returns amp-next-page's JSON configuration. This must be A CORS HTTP service. The URL's protocol must be HTTPS."
+                },
+                {
+                    "name": "max-pages",
+                    "description": "The maximum number of pages to load and show to the user. The maximum number should be less than the total amount of pages. After meeting the number, <amp-next-page> displays the recommendation box. The default is Infinity."
+                },
+                {
+                    "name": "deep-parsing",
+                    "description": "The deep-parsing attribute enables recursive parsing of subsequently loaded documents's <amp-next-page> JSON configurations."
+                },
+                {
+                    "name": "xssi-prefix",
+                    "description": "When specified, this attribute enables amp-next-page to strip a prefix before parsing remotely hosted JSON. This can be useful for APIs that include security prefixes like )]} to help prevent cross site scripting attacks."
+                }
+            ]
+        },
+        {
+            "name": "amp-nexxtv-player",
+            "description": "Displays a media stream from the nexxOMNIA platform.",
+            "attributes": [
+                {
+                    "name": "data-mediaid",
+                    "description": "Represents the ID of the media you want to play."
+                },
+                {
+                    "name": "data-client OR data-domain-id",
+                    "description": "Your domain ID."
+                },
+                {
+                    "name": "data-streamtype",
+                    "description": "Indicates the media streaming type, which can be one of the following:"
+                },
+                {
+                    "name": "data-mode",
+                    "description": "Indicates the data mode, which can be static (default) or api."
+                },
+                {
+                    "name": "data-disable-ads ",
+                    "description": "Ads are enabled by default. Set value to 1 to disable."
+                },
+                {
+                    "name": "data-streaming-filter",
+                    "description": "Set streaming filter e.g. 'nxp-bitrate-0750' for max 750kbit max bitrate."
+                },
+                {
+                    "name": "data-exit-mode",
+                    "description": "Defines player exit screen"
+                }
+            ]
+        },
+        {
+            "name": "amp-o2-player",
+            "description": "Displays an AOL O2Player.",
+            "attributes": [
+                {
+                    "name": "data-pid",
+                    "description": "The Player ID for the O2Player."
+                },
+                {
+                    "name": "data-bcid",
+                    "description": "The Buyer Company ID (bcid) for the O2Player."
+                },
+                {
+                    "name": "data-bid",
+                    "description": "The Playlist ID (bid) for the O2Player."
+                },
+                {
+                    "name": "data-vid",
+                    "description": "The Video ID (vid) for the O2Player."
+                },
+                {
+                    "name": "data-macros",
+                    "description": "The macros for the O2Player."
+                }
+            ]
+        },
+        {
+            "name": "amp-onetap-google",
+            "description": "Displays Google One Tap.",
+            "attributes": [
+                {
+                    "name": "data-src",
+                    "description": "The URL of the intermediate iframe. You can use URL substitution variables to pass values like ACCESS_READER_ID."
+                }
+            ]
+        },
+        {
+            "name": "amp-ooyala-player",
+            "description": "Displays an Ooyala video.",
+            "attributes": [
+                {
+                    "name": "data-embedcode",
+                    "description": "The video embed code from Backlot."
+                },
+                {
+                    "name": "data-playerid",
+                    "description": "The ID of the player to load from Backlot."
+                },
+                {
+                    "name": "data-pcode",
+                    "description": "The provider code for the account owning the embed code and player."
+                },
+                {
+                    "name": "data-playerversion",
+                    "description": "Specifies which version of the Ooyala player to use, V3 or V4. Defaults to V3."
+                },
+                {
+                    "name": "data-config",
+                    "description": "Specifies a skin.json config file URL for player V4."
+                }
+            ]
+        },
+        {
+            "name": "amp-orientation-observer",
+            "description": "Monitors the orientation of an element within the viewport as a user scrolls, and dispatches events that can be used with other AMP components.",
+            "attributes": [
+                {
+                    "name": "alpha-range",
+                    "description": "Specifies that the associated action should only take place for changes between the specified range along the z axis."
+                },
+                {
+                    "name": "beta-range",
+                    "description": "Specifies that the associated action should only take place for changes between the specified range along the x axis."
+                },
+                {
+                    "name": "gamma-range",
+                    "description": "Specifies that the associated action should only take place for changes between the specified range along the y axis."
+                },
+                {
+                    "name": "smoothing",
+                    "description": "When enabled, outputs a moving average of the last n values instead of the raw value read from the sensor."
+                }
+            ]
+        },
+        {
+            "name": "amp-pan-zoom",
+            "description": "Provides zooming and panning for arbitrary content.",
+            "attributes": [
+                {
+                    "name": "max-scale",
+                    "description": "Specifies a max zoom scale, which should be a positive number from 1 - 9. The default value is 3."
+                },
+                {
+                    "name": "initial-scale",
+                    "description": "Specifies a default zoom scale, which should be a positive number from 1 - 9. The default value is 1."
+                },
+                {
+                    "name": "initial-x, initial-y",
+                    "description": "Specifies default translation coordinates, otherwise both are set to 0. The value is expected to be a whole number."
+                },
+                {
+                    "name": "reset-on-resize",
+                    "description": "Refers to the ability to center the image and set the image's scale back to 1. Setting this attribute causes the component to reset the zoomable content on resize of the image itself."
+                },
+                {
+                    "name": "controls",
+                    "description": "Shows default controls (zoom in / zoom out button) which can be customized via public CSS classes."
+                }
+            ]
+        },
+        {
+            "name": "amp-pixel",
+            "description": "A tracking pixel to count page views.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "A simple URL to a remote endpoint that must be https protocol."
+                },
+                {
+                    "name": "referrerpolicy",
+                    "description": "This attribute is similar to the referrerpolicy attribute on <img>, however no-referrer is the only accepted value. If referrerpolicy=no-referrer is specified, the referrer header is removed from the HTTP request.",
+                    "values": [
+                        {
+                            "name": "no-referrer"
+                        }
+                    ]
+                },
+                {
+                    "name": "allow-ssr-img",
+                    "description": "This attribute used in AMP4ADS creatives indicates that as part of post validation transformation, an img element may be placed directly within the amp-pixel element allowing the ping to be sent in parallel with AMP runtime fetch/execution. Note that it means that any macros within the url will NOT be expanded so only use if they are not present in the src."
+                }
+            ]
+        },
+        {
+            "name": "amp-position-observer",
+            "description": "Monitors the position of an element within the viewport as a user scrolls, and dispatches events that can be used with other AMP components.",
+            "attributes": [
+                {
+                    "name": "target",
+                    "description": "Specifies the ID of the element to observe. If not specified, the parent< of <amp-position-observer> is used as the target."
+                },
+                {
+                    "name": "intersection-ratios",
+                    "description": "Defines how much of the target should be visible in the viewport before <amp-position-observer> triggers any of its events. The value is a number between 0 and 1 (default is 0)."
+                },
+                {
+                    "name": "viewport-margins",
+                    "description": "A px or vh value which can be used to shrink the area of the viewport used for visibility calculations. A number without a unit will be assumed px. Defaults to 0."
+                },
+                {
+                    "name": "once",
+                    "description": "Only triggers the enter and exit events once. The scroll event will also only perform one iteration."
+                }
+            ]
+        },
+        {
+            "name": "amp-powr-player",
+            "description": "An amp-powr-player component displays the Powr Player as configured in the Powr platform.",
+            "attributes": [
+                {
+                    "name": "data-account",
+                    "description": "The Powr account id."
+                },
+                {
+                    "name": "data-player",
+                    "description": "The Powr player id."
+                },
+                {
+                    "name": "data-video",
+                    "description": "The Powr video id. Normally a string if characters."
+                },
+                {
+                    "name": "data-terms",
+                    "description": "A space separated list of keywords that describe the page displaying the player. Used to fetch a playlist relevant to the site content."
+                },
+                {
+                    "name": "data-referrer",
+                    "description": "Sets the referrer to be used for analytics within the player. This supports AMP variables such as EXTERNAL_REFERRER."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* attributes will be added as query parameter to the player iframe src. This may be used to pass custom values through to player plugins, such as ad parameters or video ids for Perform players."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible."
+                }
+            ]
+        },
+        {
+            "name": "amp-reach-player",
+            "description": "Displays a Beachfront Reach video player.",
+            "attributes": [
+                {
+                    "name": "data-embed-id",
+                    "description": "The Reach player embed id found in the 'players' section or in the generated embed itself."
+                }
+            ]
+        },
+        {
+            "name": "amp-recaptcha-input",
+            "description": "Appends a reCAPTCHA v3 token to AMP form submissions.",
+            "attributes": [
+                {
+                    "name": "layout",
+                    "description": "Required value is nodisplay."
+                },
+                {
+                    "name": "name",
+                    "description": "Name of the <amp-recaptcha-input>. Will be used as a parameter key in the AMP form body submission."
+                },
+                {
+                    "name": "data-sitekey",
+                    "description": "reCAPTCHA v3 site key for the registered website."
+                },
+                {
+                    "name": "data-action",
+                    "description": "reCAPTCHA v3 action to be executed on form submission."
+                },
+                {
+                    "name": "data-global",
+                    "description": "By default, the iframe loads the recaptcha api script using the www.google.com endpoint."
+                }
+            ]
+        },
+        {
+            "name": "amp-reddit",
+            "description": "Displays a Reddit comment or post embed.",
+            "attributes": [
+                {
+                    "name": "data-embedtype",
+                    "description": "The type of embed, either post or comment."
+                },
+                {
+                    "name": "data-src",
+                    "description": "The permamlink uri for the post or comment."
+                },
+                {
+                    "name": "data-uuid",
+                    "description": "The provided UUID for the comment embed. Supported when data-embedtype is comment."
+                },
+                {
+                    "name": "data-embedcreated",
+                    "description": "The datetime string for the comment embed. Supported when data-embedtype is comment."
+                },
+                {
+                    "name": "data-embedparent",
+                    "description": "The datetime string for the comment embed. Supported when data-embedtype is comment."
+                },
+                {
+                    "name": "data-embedlive",
+                    "description": "Indicates whether the embedded comment should update if the original comment is updated."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component. The default is Reddit."
+                }
+            ]
+        },
+        {
+            "name": "amp-render",
+            "description": "Renders remote or inline data using a template.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The URL of the remote endpoint that returns the JSON that will be rendered within this <amp-render>."
+                },
+                {
+                    "name": "template",
+                    "description": "References an ID of a defined templating element. This attribute is not necessary if the template is a child of the amp-render element."
+                },
+                {
+                    "name": "credentials",
+                    "description": "Defines a credentials option as specified by the Fetch API.",
+                    "values": [
+                        {
+                            "name": "omit"
+                        },
+                        {
+                            "name": "include"
+                        }
+                    ]
+                },
+                {
+                    "name": "xssi-prefix",
+                    "description": "Causes <amp-render> to strip a prefix from the fetched JSON before parsing. This can be useful for APIs that include security prefixes like )]} to help prevent cross site scripting attacks."
+                },
+                {
+                    "name": "key",
+                    "description": "Defines the expression to locate the sub-object to be rendered within the response."
+                },
+                {
+                    "name": "binding",
+                    "description": "Controls whether to block render to evaluate bindings (e.g. [text]) in children on pages using amp-render and amp-bind together.",
+                    "values": [
+                        {
+                            "name": "never",
+                            "description": "Never block render"
+                        },
+                        {
+                            "name": "no",
+                            "description": "Never block render"
+                        },
+                        {
+                            "name": "refresh",
+                            "description": "Don't block render on initial load"
+                        },
+                        {
+                            "name": "always",
+                            "description": " Always block render"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "amp-riddle-quiz",
+            "description": "Displays Riddle content (e.g., quiz, list, poll, etc.).",
+            "attributes": [
+                {
+                    "name": "data-riddle-id",
+                    "description": "Specifies the unique ID for the Riddle item."
+                }
+            ]
+        },
+        {
+            "name": "amp-script",
+            "description": "Runs custom JavaScript in a Web Worker.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The URL of a JS file that will be executed in the context of this <amp-script>. "
+                },
+                {
+                    "name": "script",
+                    "description": "The id of a script[type=text/plain][target=amp-script] element whose text content contains JS that will be executed in the context of this <amp-script>."
+                },
+                {
+                    "name": "sandbox",
+                    "description": "Applies extra restrictions to DOM that may be mutated by this <amp-script>."
+                },
+                {
+                    "name": "max-age",
+                    "description": "Requires the script attribute. This attribute is optional, but required for signed exchanges if script is specified."
+                },
+                {
+                    "name": "nodom",
+                    "description": "The optional nodom attribute optimizes <amp-script> for use as a data-layer rather than as a UI layer. It removes the ability for the <amp-script> to make DOM modifications, in favor of a signficantly smaller bundle size and therefore better performance. "
+                },
+                {
+                    "name": "sandboxed",
+                    "description": "If set, this will signal that worker-dom should activate sandboxed mode. In this mode the Worker lives in its own crossorigin iframe, creating a strong security boundary."
+                }
+            ]
+        },
+        {
+            "name": "amp-selector",
+            "description": "Represents a control that presents a menu of options and lets the user choose from it.",
+            "attributes": [
+                {
+                    "name": "disabled",
+                    "description": "The attributes above behave the same way as they do on a standard HTML <select> element."
+                },
+                {
+                    "name": "form",
+                    "description": "The attributes above behave the same way as they do on a standard HTML <select> element."
+                },
+                {
+                    "name": "multiple",
+                    "description": "The attributes above behave the same way as they do on a standard HTML <select> element."
+                },
+                {
+                    "name": "name",
+                    "description": "The attributes above behave the same way as they do on a standard HTML <select> element."
+                },
+                {
+                    "name": "keyboard-select-mode",
+                    "description": "The keyboard-select-mode attribute dictates the keyboard navigation behavior for options inside <amp-selector>."
+                },
+                {
+                    "name": "option",
+                    "description": "Indicates that the option is selectable. If a value is specified, the contents of the value is submitted with the form."
+                },
+                {
+                    "name": "selected",
+                    "description": "The attributes above behave the same way as they do on a standard HTML <select> element."
+                }
+            ]
+        },
+        {
+            "name": "amp-sidebar",
+            "description": "Provides a way to display meta content intended for temporary access such as navigation, links, buttons, menus.",
+            "attributes": [
+                {
+                    "name": "side",
+                    "description": "Indicates what side of the page the sidebar should open from, either left or right.",
+                    "values": [
+                        {
+                            "name": "left"
+                        },
+                        {
+                            "naem": "right"
+                        }
+                    ]
+                },
+                {
+                    "name": "layout",
+                    "description": "Specifies the display layout of the sidebar, which must be nodisplay."
+                },
+                {
+                    "name": "open",
+                    "description": "This attribute is present when the sidebar is open."
+                },
+                {
+                    "name": "data-close-button-aria-label",
+                    "description": "Optional attribute used to set ARIA label for the close button added for accessibility."
+                },
+                {
+                    "name": "toolbar",
+                    "description": "This attribute is present on child <nav toolbar='(media-query)' toolbar-target='elementID'> elements, and accepts a media query of when to show a toolbar."
+                },
+                {
+                    "name": "toolbar-target",
+                    "description": "This attribute is present on child <nav toolbar='(media-query)' toolbar-target='elementID'>, and accepts an id of an element on the page. The toolbar-target attribute will place the toolbar into the specified id of the element on the page, without the default toolbar styling."
+                },
+                {
+                    "name": "data-disable-swipe-close",
+                    "description": "Including this attribute on amp-sidebar disables swipe to close. When using a mobile device or other touch enabled device, swiping to close the sidebar will be disabled."
+                }
+            ]
+        },
+        {
+            "name": "amp-skimlinks",
+            "description": "Run skimlinks inside your AMP page.",
+            "attributes": [
+                {
+                    "name": "publisher-code",
+                    "description": "Your skimlinks publisher code"
+                },
+                {
+                    "name": "excluded-domains",
+                    "description": "A whitespace separated list of domain names. All the links belonging to a domain in that list will not be affiliated nor tracked by skimlinks. By default amp-skimlinks does not exclude any domains."
+                },
+                {
+                    "name": "link-selector",
+                    "description": "link-selector allows you to restrict which links amp-skimlinks should affiliate and track. All the links not matching the provided selector will simply be ignored."
+                },
+                {
+                    "name": "custom-tracking-id",
+                    "description": "The custom-tracking-id (also called xcust) is an optional parameter used to pass your own internal tracking id through Skimlinks' monetization system allowing you to segment your commission data in the way you want."
+                }
+            ]
+        },
+        {
+            "name": "amp-slikeplayer",
+            "description": "Displays a cloud-hosted Slike Player.",
+            "attributes": [
+                {
+                    "name": "data-apikey",
+                    "description": "The Slike apikey id. This attribute is mandatory"
+                },
+                {
+                    "name": "data-videoid",
+                    "description": "The Slike video content id - videoid. This attribute is mandatory"
+                },
+                {
+                    "name": "data-config",
+                    "description": "It is the player configuration passed as string and enentually capturen as query parameter."
+                },
+                {
+                    "name": "data-iframe-src",
+                    "description": "The iframe source can be overriden by users own source. The default template is binded the component"
+                }
+            ]
+        },
+        {
+            "name": "amp-smartlinks",
+            "description": "Run Narrativ's Linkmate process inside your AMP page",
+            "attributes": [
+                {
+                    "name": "nrtv-account-name",
+                    "description": "Your Narrativ account name given to you by your account manager."
+                },
+                {
+                    "name": "linkmate",
+                    "description": "Flag to run our Linkmate service on an article. Inserting the attribute linkmate in the amp-smartlinks element will run our linkmate service."
+                },
+                {
+                    "name": "exclusive-links",
+                    "description": "Flag to mark links as exclusive. Inserting the attribute exclusive-links in the amp-smartlinks element will generate exclusive links for the article."
+                },
+                {
+                    "name": "link-attribute",
+                    "description": "If you store the 'plain' url for a link in a different element attribute than href you can specify so here.",
+                    "values": [
+                        {
+                            "name": "href"
+                        }
+                    ]
+                },
+                {
+                    "name": "link-selector",
+                    "description": "A CSS selector to get all links you want monetized from an article.",
+                    "values": [
+                        {
+                            "name": "a"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "amp-social-share",
+            "description": "Usage",
+            "attributes": [
+                {
+                    "name": "type",
+                    "description": "Selects a provider type. This is required for both pre-configured and non-configured providers."
+                },
+                {
+                    "name": "data-target",
+                    "description": "Specifies the target in which to open the target. The default is _blank for all cases other than email/SMS on iOS, in which case the target is set to _top."
+                },
+                {
+                    "name": "data-share-endpoint",
+                    "description": "This attribute is required for non-configured providers."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* prefixed attributes are turned into URL parameters and passed to the share endpoint."
+                },
+                {
+                    "name": "aria-label",
+                    "description": "By default, the aria-label attribute will be populated with Share by type where 'type' is the type attribute provided to the component."
+                }
+            ]
+        },
+        {
+            "name": "amp-soundcloud",
+            "description": "Displays a Soundcloud clip.",
+            "attributes": [
+                {
+                    "name": "data-trackid",
+                    "description": "This attribute is required if data-playlistid is not defined."
+                },
+                {
+                    "name": "data-playlistid",
+                    "description": "This attribute is required if data-trackid is not defined."
+                },
+                {
+                    "name": "data-secret-token",
+                    "description": "The secret token of the track, if it is private."
+                },
+                {
+                    "name": "data-visual",
+                    "description": "If set to true, displays full-width 'Visual' mode; otherwise, it displays as 'Classic' mode. The default value is false."
+                },
+                {
+                    "name": "data-color",
+                    "description": "This attribute is a custom color override for the 'Classic' mode. "
+                },
+                {
+                    "name": "width",
+                    "description": "The layout for amp-soundcloud is set to fixed-height and it fills all of the available horizontal space."
+                },
+                {
+                    "name": "height",
+                    "description": "The layout for amp-soundcloud is set to fixed-height and it fills all of the available horizontal space."
+                }
+            ]
+        },
+        {
+            "name": "amp-springboard-player",
+            "description": "Displays a Springboard Platform video player.",
+            "attributes": [
+                {
+                    "name": "data-site-id",
+                    "description": "The SpringBoard site ID. Specific to every partner."
+                },
+                {
+                    "name": "data-mode",
+                    "description": "The SpringBoard player mode: video or playlist."
+                },
+                {
+                    "name": "data-content-id",
+                    "description": "The SpringBoard player content ID (video or playlist ID)."
+                },
+                {
+                    "name": "data-player-id",
+                    "description": "The Springboard player ID."
+                },
+                {
+                    "name": "data-domain",
+                    "description": "The Springboard partner domain."
+                },
+                {
+                    "name": "data-items",
+                    "description": "The number of videos in the playlist."
+                }
+            ]
+        },
+        {
+            "name": "amp-sticky-ad",
+            "description": "Provides a way to display and stick ad content at the bottom of the page.",
+            "attributes": [
+                {
+                    "name": "layout",
+                    "description": "Must be set to nodisplay."
+                }
+            ]
+        },
+        {
+            "name": "amp-subscriptions",
+            "description": "Implements subscription-style access protocol.",
+            "attributes": [
+                {
+                    "name": "subscription-action",
+                    "description": "In order to present the Reader with specific experiences, the Publisher provides specific actions which are declared in the 'actions' configuration and can be marked up using subscriptions-action attribute."
+                },
+                {
+                    "name": "subscription-service",
+                    "description": "In the markup the actions can be delegated to other services for them to execute the actions. This can be achieved by specifying subscriptions-service attribute."
+                },
+                {
+                    "name": "subscription-decorate",
+                    "description": "In addition to delegation of the action to another service, you can also ask another service to decorate the element. Just add the attribute subsciptions-decorate to get the element decorated."
+                },
+                {
+                    "name": "subscriptions-section",
+                    "description": "The premium sections are shown/hidden automatically based on the authorization/entitlements response."
+                },
+                {
+                    "name": "subscriptions-display",
+                    "description": "As well as showing/hiding premium and fallback content, there are more ways to customise the document using the subscriptions-display attribute which uses expressions for actions and dialogs."
+                }
+            ]
+        },
+        {
+            "name": "amp-tiktok",
+            "description": "Displays a TikTok video embed.",
+            "attributes": [
+                {
+                    "name": "data-src",
+                    "description": "The data-src attribute can contain one of two values: a video id or a full URL to a TikTok detail page."
+                }
+            ]
+        },
+        {
+            "name": "amp-timeago",
+            "description": "Provides fuzzy timestamps by formatting dates as time ago (for example, 3 hours ago).",
+            "attributes": [
+                {
+                    "name": "datetime",
+                    "description": "The required datetime attribute sets the date and time. The value must be an ISO datetime."
+                },
+                {
+                    "name": "locale",
+                    "description": "The local default is en. Add the locale attribute and specify one of the following values to chance the local.",
+                    "values": [
+                        {
+                            "name": "ar",
+                            "description": "Arabic"
+                        },
+                        {
+                            "name": "be",
+                            "description": "Belarusian"
+                        },
+                        {
+                            "name": "bg ",
+                            "description": "Bulgarian"
+                        },
+                        {
+                            "name": "bn-IN",
+                            "description": "Bangla"
+                        },
+                        {
+                            "name": "ca ",
+                            "description": "Catalan"
+                        },
+                        {
+                            "name": "cs ",
+                            "description": "Czech"
+                        },
+                        {
+                            "name": "da ",
+                            "description": "Danish"
+                        },
+                        {
+                            "name": "de ",
+                            "description": "German"
+                        },
+                        {
+                            "name": "el ",
+                            "description": "Greek"
+                        },
+                        {
+                            "name": "en ",
+                            "description": "English"
+                        },
+                        {
+                            "name": "en-short",
+                            "description": "English - short"
+                        },
+                        {
+                            "name": "es ",
+                            "description": "Spanish"
+                        },
+                        {
+                            "name": "eu ",
+                            "description": "Basque"
+                        },
+                        {
+                            "name": "fa ",
+                            "description": "Persian - Farsi"
+                        },
+                        {
+                            "name": "fi ",
+                            "description": "Finnish"
+                        },
+                        {
+                            "name": "fr ",
+                            "description": "French"
+                        },
+                        {
+                            "name": "gl ",
+                            "description": "Galician"
+                        },
+                        {
+                            "name": "he ",
+                            "description": "Hebrew"
+                        },
+                        {
+                            "name": "hi-IN",
+                            "description": "Hindi"
+                        },
+                        {
+                            "name": "hu ",
+                            "description": "Hungarian"
+                        },
+                        {
+                            "name": "id-ID",
+                            "description": "Malay"
+                        },
+                        {
+                            "name": "it ",
+                            "description": "Italian"
+                        },
+                        {
+                            "name": "ja ",
+                            "description": "Japanese"
+                        },
+                        {
+                            "name": "ka ",
+                            "description": "Georgian"
+                        },
+                        {
+                            "name": "ko ",
+                            "description": "Korean"
+                        },
+                        {
+                            "name": "ml ",
+                            "description": "Malayalam"
+                        },
+                        {
+                            "name": "my ",
+                            "description": "Burmese - Myanmar"
+                        },
+                        {
+                            "name": "nb-NO",
+                            "description": "Norwegian Bokmål"
+                        },
+                        {
+                            "name": "nl ",
+                            "description": "Dutch"
+                        },
+                        {
+                            "name": "ann-NOr",
+                            "description": "Norwegian Nynorsk"
+                        },
+                        {
+                            "name": "pl ",
+                            "description": "Polish"
+                        },
+                        {
+                            "name": "pt-BR",
+                            "description": "Portuguese"
+                        },
+                        {
+                            "name": "ro ",
+                            "description": "Romanian"
+                        },
+                        {
+                            "name": "ru ",
+                            "description": "Russian"
+                        },
+                        {
+                            "name": "sq ",
+                            "description": "Albanian"
+                        },
+                        {
+                            "name": "sr ",
+                            "description": "Serbian"
+                        },
+                        {
+                            "name": "sv ",
+                            "description": "Swedish"
+                        },
+                        {
+                            "name": "ta ",
+                            "description": "Tamil"
+                        },
+                        {
+                            "name": "th  ",
+                            "description": "Thai"
+                        },
+                        {
+                            "name": "tr  ",
+                            "description": "Turkish"
+                        },
+                        {
+                            "name": "uk  ",
+                            "description": "Ukrainian"
+                        },
+                        {
+                            "name": "vi  ",
+                            "description": "Vietnamese"
+                        },
+                        {
+                            "name": "zh-CN ",
+                            "description": "Chinese"
+                        },
+                        {
+                            "name": "zh-TW ",
+                            "description": "Taiwanese"
+                        }
+                    ]
+                },
+                {
+                    "name": "cutoff",
+                    "description": "Add the cutoff attribute to display the date specified in the datatime attribute after passing the specified date in seconds."
+                }
+            ]
+        },
+        {
+            "name": "amp-twitter",
+            "description": "Displays a Twitter Tweet or Moment.",
+            "attributes": [
+                {
+                    "name": "data-tweetid",
+                    "description": "The ID of the Tweet or Moment, or the source type if a Timeline should be displayed. "
+                },
+                {
+                    "name": " data-momentid",
+                    "description": "The ID of the Tweet or Moment, or the source type if a Timeline should be displayed. "
+                },
+                {
+                    "name": "data-timeline-source-type",
+                    "description": "The ID of the Tweet or Moment, or the source type if a Timeline should be displayed. "
+                },
+                {
+                    "name": "data-timeline-*",
+                    "description": "When displaying a timeline, further arguments need to be provided in addition to timeline-source-type."
+                },
+                {
+                    "name": "data-*",
+                    "description": "You can specify options for the Tweet, Moment, or Timeline appearance by setting data- attributes. "
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component. The default is Twitter."
+                }
+            ]
+        },
+        {
+            "name": "amp-user-notification",
+            "description": "Displays a dismissable notification to the user.",
+            "attributes": [
+                {
+                    "name": "data-show-if-href",
+                    "description": "When specified, AMP will make a CORS GET request with credentials to the specified URL to determine whether the notification should be shown."
+                },
+                {
+                    "name": "data-show-if-geo",
+                    "description": "When specified amp-user-notification will only trigger if an amp-geo country group for matches one of the comma delimited list of country groups."
+                },
+                {
+                    "name": "data-show-if-not-geo",
+                    "description": "This is the opposite of data-show-if-geo. When specified amp-user-notification will only trigger if the amp-geo country group does not match the supplied list."
+                },
+                {
+                    "name": "data-dismiss-href",
+                    "description": "When specified, AMP will make a CORS POST request to the specified URL transmitting the elementId and ampUserId only when the user has explicitly agreed."
+                },
+                {
+                    "name": "data-persist-dismissal",
+                    "description": "By default, this is set to true. If set to false, AMP will not remember the user's dismissal of the notification. "
+                },
+                {
+                    "name": "enctype",
+                    "description": "By default, this is set to application/json;charset=utf-8. But you can set it to application/x-www-form-urlencoded, AMP will send the post dismiss request using this content type instead."
+                }
+            ]
+        },
+        {
+            "name": "amp-video-iframe",
+            "description": "Embeds an iframe containing a video player.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The src attribute behaves mainly like on a standard iframe with one exception: the #amp=1 fragment is added to the URL to allow source documents to know that they are embedded in the AMP context. This fragment is only added if the URL specified by src does not already have a fragment."
+                },
+                {
+                    "name": "poster",
+                    "description": "URL to an image displayed while the video loads. "
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible. "
+                },
+                {
+                    "name": "common attributes",
+                    "description": "This element includes common attributes extended to AMP components."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking extension."
+                },
+                {
+                    "name": "implements-media-session",
+                    "description": "Set this attribute if the document inside the iframe implements the MediaSession API independently."
+                },
+                {
+                    "name": "implements-rotate-to-fullscreen",
+                    "description": "Set this attribute if the document inside the iframe implements rotate-to-fullscreen independently."
+                },
+                {
+                    "name": "referrerpolicy",
+                    "description": "The referrerpolicy to be set on the iframe element."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* attributes are added as query parameters to the iframe's src."
+                }
+            ]
+        },
+        {
+            "name": "amp-video-iframe",
+            "description": "Embeds an iframe containing a video player.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "The src attribute behaves mainly like on a standard iframe with one exception: the #amp=1 fragment is added to the URL to allow source documents to know that they are embedded in the AMP context. This fragment is only added if the URL specified by src does not already have a fragment."
+                },
+                {
+                    "name": "poster",
+                    "description": "URL to an image displayed while the video loads. It's recommended to always set this attribute for best perceived performance."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible. "
+                },
+                {
+                    "name": "common attributes",
+                    "description": "This element includes common attributes extended to AMP components."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking extension. "
+                },
+                {
+                    "name": "implements-media-session",
+                    "description": "Set this attribute if the document inside the iframe implements the MediaSession API independently."
+                },
+                {
+                    "name": "implements-rotate-to-fullscreen",
+                    "description": "Set this attribute if the document inside the iframe implements rotate-to-fullscreen independently."
+                },
+                {
+                    "name": "referrerpolicy",
+                    "description": "The referrerpolicy to be set on the iframe element."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* attributes are added as query parameters to the iframe's src."
+                }
+            ]
+        },
+        {
+            "name": "amp-video",
+            "description": "Replaces the HTML5 video tag.",
+            "attributes": [
+                {
+                    "name": "src",
+                    "description": "Required if no <source> children are present. Must be HTTPS."
+                },
+                {
+                    "name": "poster",
+                    "description": "The image for the frame to be displayed before video playback has started. By default, the first frame is displayed."
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible. "
+                },
+                {
+                    "name": "controls",
+                    "description": "This attribute is similar to the controls attribute in the HTML5 video. If this attribute is present, the browser offers controls to allow the user to control video playback."
+                },
+                {
+                    "name": "controlsList",
+                    "description": "Same as controlsList attribute of HTML5 video element. Only supported by certain browsers."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking component. If this attribute is present and the video is playing manually, the video will be 'minimized' and fixed to a corner or an element when the user scrolls out of the video component's visual area."
+                },
+                {
+                    "name": "loop",
+                    "description": "If present, the video will automatically loop back to the start upon reaching the end."
+                },
+                {
+                    "name": "crossorigin",
+                    "description": "Required if a track resource is hosted on a different origin than the document."
+                },
+                {
+                    "name": "disableremoteplayback",
+                    "description": "Determines whether the media element is allowed to have a remote playback UI such as Chromecast or AirPlay."
+                },
+                {
+                    "name": "muted",
+                    "description": "The muted attribute is deprecated and no longer has any effect. The autoplay attribute automatically controls the mute behavior."
+                },
+                {
+                    "name": "noaudio",
+                    "description": "Annotates the video as having no audio. This hides the equalizer icon that is displayed when the video has autoplay."
+                },
+                {
+                    "name": "rotate-to-fullscreen",
+                    "description": "If the video is visible, the video displays fullscreen after the user rotates their device into landscape mode. For more details, see the Video in AMP spec."
+                },
+                {
+                    "name": "artwork",
+                    "description": "Specifies a URL to a PNG/JPG/ICO image serving as the video's artwork. If artwork is not present, the Media Session API helper uses either the image field in the schema.org definition, the og:image, or the website's favicon."
+                },
+                {
+                    "name": "artist",
+                    "description": "Indicates the author of the video file, specified as a string."
+                },
+                {
+                    "name": "album",
+                    "description": "Indicates the album/collection the video was taken from, specified as a string."
+                },
+                {
+                    "name": "title",
+                    "description": "Indicates the name/title of the video, specified as a string. If not provided, the Media Session API helper uses either the aria-label attribute or falls back to the page's title."
+                }
+            ]
+        },
+        {
+            "name": "amp-vimeo",
+            "description": "Displays a Vimeo video.",
+            "attributes": [
+                {
+                    "name": "data-videoid",
+                    "description": "The Vimeo video id found in every Vimeo video page URL"
+                },
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay, the video will be automatically played as soon as it becomes visible. "
+                },
+                {
+                    "name": "do-not-track",
+                    "description": "If this attribute is present the player will be blocked from tracking any session data, including all cookies and stats. "
+                }
+            ]
+        },
+        {
+            "name": "amp-vine",
+            "description": "Displays a Vine simple embed.",
+            "attributes": [
+                {
+                    "name": "data-vineid ",
+                    "description": "The ID of the Vine. In a URL like https://vine.co/v/MdKjXez002d, MdKjXez002d is the vineID."
+                }
+            ]
+        },
+        {
+            "name": "amp-viqeo-player",
+            "description": "Displays a Viqeo video player.",
+            "attributes": [
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay"
+                },
+                {
+                    "name": "data-profileid",
+                    "description": "Viqeo is a registration only video platform for Publishers to add videos as illustrations. All videos are played automaticaly without sound and only when fully visible (minimum visible area possible is 50%). Detailed description of Viqeo is in presentation"
+                },
+                {
+                    "name": "data-videoid",
+                    "description": "The identifier of the video. All videos have unique id, and can be found in Viqeo account after authorisation. Viqeo do not let embed videos by 3rd party websites so only one way to get a data-videoid and other attributes to sign in to Viqeo account."
+                },
+                {
+                    "name": "width",
+                    "description": "The width and height attributes are special for the Viqeo embed. Viqeo supports any proportions of videos. Basically Viqeo generates an unique code for each video depending on video size and proportions, but Viqeo user may change proportions in interface. Anyway after pressing 'Get code' button an unique code will be generated."
+                },
+                {
+                    "name": "height",
+                    "description": "The width and height attributes are special for the Viqeo embed. Viqeo supports any proportions of videos. Basically Viqeo generates an unique code for each video depending on video size and proportions, but Viqeo user may change proportions in interface. Anyway after pressing 'Get code' button an unique code will be generated."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component. The default is Viqeo video."
+                }
+            ]
+        },
+        {
+            "name": "amp-vk",
+            "description": "Embeds a VK post or poll widget.",
+            "attributes": [
+                {
+                    "name": "data-embedtype",
+                    "description": "The type of embed, either `post` or `poll`."
+                },
+                {
+                    "name": "data-owner-id",
+                    "description": "Owner id of a vk.com post. Supported when `data-embedtype` is `post`."
+                },
+                {
+                    "name": "data-post-id",
+                    "description": "Post id of a post. Supported when `data-embedtype` is `post`."
+                },
+                {
+                    "name": "data-hash",
+                    "description": "Security hash for the widget connection. Supported when `data-embedtype` is `post`."
+                },
+                {
+                    "name": "data-api-id",
+                    "description": "API id of a poll. Supported when `data-embedtype` is `poll`."
+                },
+                {
+                    "name": "data-poll-id",
+                    "description": "Id of a poll. Supported when `data-embedtype` is `poll`."
+                },
+                {
+                    "name": "common attributes",
+                    "description": "This element includes [common attributes]"
+                }
+            ]
+        },
+        {
+            "name": "amp-web-push",
+            "description": "Allows users to subscribe to web push notifications.",
+            "attributes": [
+                {
+                    "name": "visibility",
+                    "description": "Describes when the widget is shown. The value can be one of unsubscribed, subscribed, or blocked."
+                }
+            ]
+        },
+        {
+            "name": "amp-wistia-player",
+            "description": "Displays a Wistia video.",
+            "attributes": [
+                {
+                    "name": "data-media-hashed-id",
+                    "description": "data-media-hashed-id"
+                }
+            ]
+        },
+        {
+            "name": "amp-wordpress-embed",
+            "description": "Embeds a WordPress post.",
+            "attributes": [
+                {
+                    "name": "data-url",
+                    "description": "The URL of the post to embed."
+                }
+            ]
+        },
+        {
+            "name": "amp-yotpo",
+            "description": "Embeds a Yotpo on-site widget.",
+            "attributes": [
+                {
+                    "name": " data-momentid",
+                    "description": "Specifies the account app key"
+                },
+                {
+                    "name": "data-**",
+                    "description": "Each Yotpo widget has optional data attributes. For example, the reviews widget has an optional attribute named product-id."
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component. The default is Yotpo widget."
+                }
+            ]
+        },
+        {
+            "name": "amp-youtube",
+            "description": "Displays a YouTube video.",
+            "attributes": [
+                {
+                    "name": "autoplay",
+                    "description": "If this attribute is present, and the browser supports autoplay"
+                },
+                {
+                    "name": "loop",
+                    "description": "If this attribute is present, the video or playlist will play again (from the beginning) once it ends."
+                },
+                {
+                    "name": "data-videoid",
+                    "description": "The YouTube video id found in every YouTube video page URL."
+                },
+                {
+                    "name": "data-live-channelid",
+                    "description": "The Youtube channel id that provides a stable livestream url."
+                },
+                {
+                    "name": "data-param-*",
+                    "description": "All data-param-* attributes (with the exception of data-param-autoplay and data-param-loop) will be added as query parameter to the YouTube iframe src. This may be used to pass custom values through to YouTube plugins, such as whether to show controls."
+                },
+                {
+                    "name": "dock",
+                    "description": "Requires amp-video-docking component. If this attribute is present and the video is playing manually, the video will be 'minimized' and fixed to a corner or an element when the user scrolls out of the video component's visual area."
+                },
+                {
+                    "name": "credentials",
+                    "description": "Defines a credentials option as specified by the Fetch API.",
+                    "values": [
+                        {
+                            "name": "omit"
+                        },
+                        {
+                            "name": "include"
+                        }
+                    ]
+                },
+                {
+                    "name": "title",
+                    "description": "Define a title attribute for the component to propagate to the underlying <iframe> element. The default value is 'YouTube video'."
+                }
+            ]
+        }
+    ],
+    "globalAttributes": [
+        {
+            "name": "data-sort-time",
+            "description": "Timestamp used for sorting entries. Higher timestamps will be inserted before older entries."
+        },
+        {
+            "name": "data-update-time",
+            "description": "Timestamp when the entry was last updated. Use this attribute to trigger an update on an existing item: the client will replace all existing content in this item with the new, updated content, without triggering the appearance of the update reference point."
+        },
+        {
+            "name": "data-tombstone",
+            "description": "If present, the entry is assumed to be deleted."
+        },
+        {
+            "name": "sort",
+            "description": "If present and has a value of 'ascending' (any other value is currently invalid), newer items will be inserted at the bottom of the live-list instead of the top."
+        },
+        {
+            "name": "min-visible-count",
+            "description": "A number, defaults to 1. Determines the minimum number of slides that should be shown at a given time. Fractional values can be used to make part of a(n) additional slide(s) visible."
+        },
+        {
+            "name": "max-visible-count",
+            "description": "A number, defaults to Number.MAX_VALUE. Determines the maximum number of slides that should be shown at a given time. Fractional values can be used to make part of a(n) additional slide(s) visible."
+        },
+        {
+            "name": "min-item-width",
+            "description": "A number, defaults to 1. Determines the minimum width of each item, used to resolve how many whole items can be shown at once within the overall width of the gallery."
+        },
+        {
+            "name": "max-item-width",
+            "description": "A number, defaults to Number.MAX_VALUE. Determines the maximum width of each item, used to resolve how many whole items can be shown at once within the overall width of the gallery."
+        },
+        {
+            "name": "slide-align",
+            "description": "Either start or center. When start aligning, the start of a slide (e.g. the left edge, when horizontal aligning) is aligned with the start of a carousel. When center aligning, the center of a slide is aligned with the center of a carousel.",
+            "values": [
+                {
+                    "name": "center"
+                },
+                {
+                    "name": "start"
+                }
+            ]
+        },
+        {
+            "name": "snap",
+            "description": "Either true or false, defaults to true. Determines whether or not the carousel should snap on slides when scrolling.",
+            "values": [
+                {
+                    "name": "true"
+                },
+                {
+                    "name": "false"
+                }
+            ]
+        },
+        {
+            "name": "mixed-length",
+            "description": "Either true or false, defaults to false.",
+            "values": [
+                {
+                    "name": "true"
+                },
+                {
+                    "name": "false"
+                }
+            ]
+        },
+        {
+            "name": "visible-count",
+            "description": "A number, defaults to 1."
+        },
+        {
+            "name": "advance-count",
+            "description": "A number, defaults to 1. Determines how many slides the carousel will advance when advancing using the previous or next arrows. This is useful when specifying the visible-count attribute."
+        },
+        {
+            "name": "auto-advance",
+            "description": "Either true or false, defaults to false. Automatically advances the carousel to the next slide based on a delay. If the user manually changes slides, then the auto advance is stopped. Note that if loop is not enabled, when reaching the last item, the auto advance will move backwards to the first item."
+        },
+        {
+            "name": "auto-advance-count",
+            "description": "A number, defaults to 1. Determines how many slides the carousel will advance when automatically advancing. This is useful when specifying the visible-count attribute."
+        },
+        {
+            "name": "auto-advance-interval",
+            "description": "A number, defaults to 1000. Specifies the amount of time, in milliseconds, between subsequent automatic advances of the carousel."
+        },
+        {
+            "name": "auto-advance-loops",
+            "description": "A number, defaults to ∞. The number of times the carousel should advance through the slides before stopping."
+        },
+        {
+            "name": "snap",
+            "description": "Either true or false, defaults to true. Determines whether or not the carousel should snap on slides when scrolling."
+        },
+        {
+            "name": "snap-align",
+            "description": "Either start or center. When start aligning, the start of a slide (e.g. the left edge, when horizontal aligning) is aligned with the start of a carousel. When center aligning, the center of a slide is aligned with the center of a carousel."
+        },
+        {
+            "name": "snap-by",
+            "description": "A number, defaults to 1. This determines the granularity of snapping and is useful when using visible-count. This"
+        },
+        {
+            "name": "controls",
+            "description": "Either 'always', 'auto', or 'never', defaults to 'auto'. This determines if and when prev/next navigational arrows are displayed. Note: When outset-arrows is true, the arrows are shown 'always'.",
+            "values": [
+                {
+                    "name": "always",
+                    "description": "Arrows are always displayed."
+                },
+                {
+                    "name": "auto",
+                    "description": "Arrows are displayed when the carousel has most recently received interaction via mouse, and not displayed when the carousel has most recently received interaction via touch."
+                },
+                {
+                    "name": "never",
+                    "description": "Arrows are never displayed."
+                }
+            ]
+        },
+        {
+            "name": "slide",
+            "description": "A number, defaults to 0. This determines the initial slide shown in the carousel. This may be used with amp-bind to control which slide is currently showing."
+        },
+        {
+            "name": "loop",
+            "description": "Either true or false, defaults to false when omitted. When true, the carousel will allow the user to move from the first item back to the last item and visa versa. There must be at least three times the visible-count of slides present for looping to occur."
+        },
+        {
+            "name": "horizontal",
+            "description": "Either true or false, defaults to true. When true the carousel will lay out horizontally, with the user being able to swipe left and right. When false, the carousel lays out vertically, with the user being able to swipe up and down."
+        },
+        {
+            "name": "fallback",
+            "description": "A fallback is displayed when the browser does not support the element or when loading the underlying resource failed."
+        },
+        {
+            "name": "heights",
+            "description": "All AMP elements that support the responsive layout, also support the heights attribute."
+        },
+        {
+            "name": "layout",
+            "description": "AMP provides a set of layouts that specify how an AMP component behaves in the document layout."
+        },
+        {
+            "name": "media",
+            "description": "Most AMP elements support the media attribute. The value of media is a media query."
+        },
+        {
+            "name": "noloading",
+            "description": "The noloading attribute indicates whether the 'loading indicator' should be turned off for this element."
+        },
+        {
+            "name": "on",
+            "description": "The on attribute is used to install event handlers on elements. The events that are supported depend on the element."
+        },
+        {
+            "name": "placeholder",
+            "description": "The placeholder attribute indicates that the element marked with this attribute acts as a placeholder for the parent AMP element."
+        },
+        {
+            "name": "sizes",
+            "description": "All AMP elements that support the responsive layout, also support the sizes attribute."
+        },
+        {
+            "name": "width",
+            "description": "For some layouts, AMP components must have a width and height attribute that contains an integer pixel value."
+        },
+        {
+            "name": "height",
+            "description": "For some layouts, AMP components must have a width and height attribute that contains an integer pixel value."
+        }
+    ]
+}

@@ -1,11 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom.CSS;
 using System.Text.RegularExpressions;
 
 namespace Kooboo.Dom.CSS
@@ -48,10 +43,10 @@ namespace Kooboo.Dom.CSS
 
         /// <summary>
         ///  desrialized rule list. ImportRule is at the beginning of file, and should be ignored. 
-      /// </summary>
-      /// <param name="cssText"></param>
-      /// <param name="basehref">the base href for import rule. </param>
-      /// <returns></returns>
+        /// </summary>
+        /// <param name="cssText"></param>
+        /// <param name="basehref">the base href for import rule. </param>
+        /// <returns></returns>
         public static CSSRuleList deserializeRuleList(string cssText, string basehref)
         {
             CSSRuleList rules = new CSSRuleList();
@@ -87,7 +82,7 @@ namespace Kooboo.Dom.CSS
                 }
                 else
                 {
-                  //TODO: other rules are not implemented now. 
+                    //TODO: other rules are not implemented now. 
 
                 }
 
@@ -229,7 +224,7 @@ namespace Kooboo.Dom.CSS
 
                     url = PathHelper.combine(BaseHref, url);
 
-               
+
 
                 }
 
@@ -291,6 +286,11 @@ namespace Kooboo.Dom.CSS
 
             CSSStyleDeclaration styleDeclaration = new CSSStyleDeclaration();
 
+            if (string.IsNullOrEmpty(cssBlockText))
+            {
+                return styleDeclaration;
+            }
+
             // remvove the {} if it contains.
             int startMark = cssBlockText.IndexOf("{");
 
@@ -339,7 +339,7 @@ namespace Kooboo.Dom.CSS
             return styleDeclaration;
         }
 
-         public static string serializeCSSStyleRule(CSSStyleRule Rule)
+        public static string serializeCSSStyleRule(CSSStyleRule Rule)
         {
             string returnstring = string.Empty;
 
@@ -381,20 +381,20 @@ namespace Kooboo.Dom.CSS
         public static string serializeDeclarationBlock(CSSStyleDeclaration styleDeclaration)
         {
             string cssText = string.Empty;
-            bool first = true; 
+            bool first = true;
             foreach (var item in styleDeclaration.item)
             {
-                string declarationText = null; 
+                string declarationText = null;
                 if (first)
                 {
                     declarationText = item.propertyname + ": " + item.value;
-                    first = false; 
+                    first = false;
                 }
                 else
                 {
-                    declarationText = "\r\n" +  item.propertyname + ": " + item.value;
+                    declarationText = "\r\n" + item.propertyname + ": " + item.value;
                 }
-                 
+
                 if (item.important)
                 {
                     declarationText = declarationText + " !important";

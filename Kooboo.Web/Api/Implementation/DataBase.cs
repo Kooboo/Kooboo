@@ -1,14 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
+using Csv;
 using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Permission;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Helper;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Kooboo.Web.Api.Implementation.Database;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -29,6 +32,7 @@ namespace Kooboo.Web.Api.Implementation
             get { return true; }
         }
 
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.VIEW)]
         public List<string> Tables(ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
@@ -41,17 +45,20 @@ namespace Kooboo.Web.Api.Implementation
             return list;
         }
 
-        public PagedListViewModel<List<DataValue>> Data(string table, ApiCall call)
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.EDIT)]
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.VIEW)]
+        public PagedListViewModelWithPrimaryKey<List<DataValue>> Data(string table, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
             var dbtable = Kooboo.Data.DB.GetOrCreateTable(db, table);
 
             string sortfield = call.GetValue("sort", "orderby", "order");
+            var desc = call.GetBoolValue("desc");
             // verify sortfield. 
 
             if (sortfield != null)
             {
-                var col = dbtable.Setting.Columns.First(o => o.Name == sortfield);
+                var col = dbtable.Setting.Columns.FirstOrDefault(o => o.Name == sortfield);
                 if (col == null)
                 {
                     sortfield = null;
@@ -60,7 +67,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (sortfield == null)
             {
-                var primarycol = dbtable.Setting.Columns.First(o => o.IsPrimaryKey);
+                var primarycol = dbtable.Setting.Columns.FirstOrDefault(o => o.IsPrimaryKey);
                 if (primarycol != null)
                 {
                     sortfield = primarycol.Name;
@@ -70,7 +77,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var pager = ApiHelper.GetPager(call, 30);
 
-            PagedListViewModel<List<DataValue>> result = new PagedListViewModel<List<DataValue>>(); 
+            var result = new PagedListViewModelWithPrimaryKey<List<DataValue>>(dbtable.Setting.Columns);
 
             int totalcount = (int)dbtable.length;
 
@@ -89,7 +96,8 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrWhiteSpace(sortfield))
             {
-                query.OrderByDescending(sortfield);
+                if (desc) query.OrderByDescending(sortfield);
+                else query.OrderByAscending(sortfield);
             }
 
             var items = query.Skip(totalskip).Take(pager.PageSize).ToList();
@@ -100,6 +108,34 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return result;
+        }
+
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.EDIT)]
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.VIEW)]
+        public BinaryResponse ExportData(string table, ApiCall call)
+        {
+            var result = Data(table, call);
+            var header = result.Columns.Where(w => w.Name != "_id").Select(s => s.Name).ToArray();
+
+            var body = result.List.Select(s => s.Where(w => w.key != "_id").Select(s =>
+            {
+                if (s.value is DateTime dateTime)
+                {
+                    return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                }
+                return s.value?.ToString() ?? string.Empty;
+            }).ToArray());
+
+            var csv = CsvWriter.WriteToText(header, body);
+
+            var response = new BinaryResponse
+            {
+                ContentType = "application/octet-stream"
+            };
+
+            response.Headers.Add("Content-Disposition", $"attachment;filename={table}.csv");
+            response.BinaryBytes = System.Text.Encoding.UTF8.GetBytes(csv);
+            return response;
         }
 
         public List<List<DataValue>> ConvertDataValue(List<IDictionary<string, object>> input)
@@ -119,14 +155,8 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-        public class DataValue
-        {
-            public string key { get; set; }
 
-            public object value { get; set; }
-
-        }
-
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.EDIT)]
         public void CreateTable(string name, ApiCall call)
         {
             if (!Kooboo.IndexedDB.Helper.CharHelper.IsValidTableName(name))
@@ -135,10 +165,11 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
-            repo.AddOrUpdate(new DatabaseTable() { Name = name });
+            repo.AddOrUpdate(new DatabaseTable() { Name = name }, call.Context.User.Id);
             return;
         }
 
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.DELETE)]
         public void DeleteTables(string names, ApiCall call)
         {
             List<string> ids = Lib.Helper.JsonHelper.Deserialize<List<string>>(names);
@@ -146,13 +177,11 @@ namespace Kooboo.Web.Api.Implementation
             repo.DeleteTable(ids, call.Context.User.Id);
         }
 
-
         public bool IsUniqueTableName(string name, ApiCall call)
         {
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
 
             return repo.isUniqueName(name);
-
         }
 
         public List<string> AvailableControlTypes(ApiCall call)
@@ -160,6 +189,7 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Data.Definition.ControlTypes.List;
         }
 
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.VIEW)]
         public List<DbTableColumn> Columns(string table, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
@@ -176,11 +206,11 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in dbTable.Setting.Columns)
             {
 
-                if (item.IsSystem && item.Name == IndexedDB.Dynamic.Constants.DefaultIdFieldName)
+                if (item.Name == IndexedDB.Dynamic.Constants.DefaultIdFieldName)
                 {
                     continue;
                 }
-                 
+
                 DbTableColumn model = new DbTableColumn() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
                 model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
@@ -195,6 +225,7 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.VIEW)]
         public List<DatabaseItemEdit> GetEdit(string tablename, string Id, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
@@ -225,22 +256,22 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-
-        public Guid UpdateData(string tablename, Guid id, List<DatabaseItemEdit> Values, ApiCall call)
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.EDIT)]
+        public Guid UpdateData(string tableName, Guid id, List<DatabaseItemEdit> Values, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = Kooboo.Data.DB.GetOrCreateTable(db, tablename);
+            var dbTable = Kooboo.Data.DB.GetOrCreateTable(db, tableName);
             dbTable.CurrentUserId = call.Context.User.Id;
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
 
-            if (id != default(Guid))
+            if (id != default)
             {
                 var obj = dbTable.Get(id);
                 if (obj == null)
                 {
-                    return default(Guid);
+                    return default;
                 }
 
                 foreach (var item in dbTable.Setting.Columns.Where(o => !o.IsSystem))
@@ -252,8 +283,7 @@ namespace Kooboo.Web.Api.Implementation
                     }
                     else
                     {
-                        var rightvalue = Lib.Reflection.TypeHelper.ChangeType(value.Value, item.ClrType);
-                        obj[item.Name] = rightvalue;
+                        obj[item.Name] = JsonHelper.Deserialize(value.RawValue, item.ClrType);
                     }
                 }
                 dbTable.Update(id, obj);
@@ -273,8 +303,7 @@ namespace Kooboo.Web.Api.Implementation
                         }
                         else
                         {
-                            var rightvalue = Lib.Reflection.TypeHelper.ChangeType(value.Value, item.ClrType);
-                            obj[item.Name] = rightvalue;
+                            obj[item.Name] = JsonHelper.Deserialize(value.RawValue, item.ClrType);
                         }
                     }
                 }
@@ -284,6 +313,7 @@ namespace Kooboo.Web.Api.Implementation
             return default(Guid);
         }
 
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.DELETE)]
         public void DeleteData(string tablename, List<Guid> values, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
@@ -297,6 +327,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
+        [Permission(Feature.DATABASE, Action = Kooboo.Data.Permission.Action.EDIT)]
         public void UpdateColumn(string tablename, List<DbTableColumn> columns, ApiCall call)
         {
             DatabaseTable table = new DatabaseTable();
@@ -308,6 +339,4 @@ namespace Kooboo.Web.Api.Implementation
         }
 
     }
-
-
 }

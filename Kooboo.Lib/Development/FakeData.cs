@@ -1,12 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Lib.Reflection;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections;
 using System.Threading;
+using Kooboo.Lib.Reflection;
 
 namespace Kooboo.Lib.Development
 {
@@ -111,7 +111,7 @@ namespace Kooboo.Lib.Development
             {
                 return Activator.CreateInstance(FieldType);
             }
-       
+
             else
             {
                 throw new Exception(FieldType.Name + " can not be identified.");
@@ -180,15 +180,15 @@ namespace Kooboo.Lib.Development
 
         public static object GetFakeClass(Type classType)
         {
-            var result = Activator.CreateInstance(classType); 
+            var result = Activator.CreateInstance(classType);
             var allfields = TypeHelper.GetPublicMembers(classType);
 
             foreach (var item in allfields)
             {
                 if (item is PropertyInfo)
-                { 
+                {
                     var property = item as PropertyInfo;
-                    var ptype = property.PropertyType; 
+                    var ptype = property.PropertyType;
 
                     if (!IsSelfReference(classType, ptype))
                     {
@@ -197,7 +197,7 @@ namespace Kooboo.Lib.Development
                             if (!TypeHelper.IsGenericCollection(ptype) && !TypeHelper.IsDictionary(ptype) && !TypeHelper.IsList(ptype))
                             {
                                 continue;
-                            } 
+                            }
                         }
 
                         var value = GetFakeValue(property.PropertyType);
@@ -207,7 +207,7 @@ namespace Kooboo.Lib.Development
                 else if (item is FieldInfo)
                 {
                     var field = item as FieldInfo;
-                    var ftype = field.FieldType; 
+                    var ftype = field.FieldType;
 
                     if (!IsSelfReference(classType, ftype))
                     {
@@ -217,7 +217,7 @@ namespace Kooboo.Lib.Development
                             {
                                 continue;
                             }
-                            
+
                         }
 
                         var value = GetFakeValue(field.FieldType);

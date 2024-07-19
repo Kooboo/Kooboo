@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Kooboo.Mail.Imap.Commands.FetchCommand;
@@ -89,7 +88,7 @@ namespace Kooboo.Mail.Imap.Commands
                     break;
                 case "-FLAGS.SILENT":
                     result.DataItem = "-FLAGS";
-                    result.Silent = false;
+                    result.Silent = true;
                     break;
                 default:
                     throw new Exception("Error in arguments.");
@@ -155,35 +154,36 @@ namespace Kooboo.Mail.Imap.Commands
         }
 
         public static List<ImapResponse> ExecuteNew(MailDb Maildb, List<FetchMessage> messages, string dataItem, string[] flags, bool silent)
-        {  
+        {
             var response = new List<ImapResponse>();
             foreach (var each in messages)
-            { 
+            {
                 switch (dataItem)
                 {
                     case "FLAGS":
-                        Maildb.Messages.ReplaceFlags(each.Message.Id, flags);  
+                        Maildb.Message2.ReplaceFlags(each.Message.MsgId, flags);
                         break;
                     case "+FLAGS":
-                        Maildb.Messages.AddFlags(each.Message.Id, flags);
+                        Maildb.Message2.AddFlags(each.Message.MsgId, flags);
                         break;
                     case "-FLAGS":
-                        Maildb.Messages.RemoveFlags(each.Message.Id, flags);  
+                        Maildb.Message2.RemoveFlags(each.Message.MsgId, flags);
                         break;
                     default:
                         throw new Exception("Error in argument");
                 }
-                  
+
                 if (!silent)
                 {
-                    var eachflags = Maildb.Messages.GetFlags(each.Message.Id); 
+                    //var eachflags = Maildb.Msgstore.GetFlags(each.Message.MsgId); 
+                    var eachflags = Maildb.Message2.GetFlags(each.Message.MsgId);
                     var flagStr = String.Join(" ", eachflags.Select(o => "\\" + o));
-                    response.Add(new ImapResponse($"* {each.SeqNo} FETCH ({flagStr})"));
+                    response.Add(new ImapResponse($"* {each.SeqNo} FETCH (FLAGS ({flagStr}))"));
                 }
             }
             return response;
         }
-         
+
         public class StoreArgs
         {
             public List<ImapHelper.Range> Ranges { get; set; }

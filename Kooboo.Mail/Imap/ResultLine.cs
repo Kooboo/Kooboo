@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using LumiSoft.Net.IMAP;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Mail.Utility;
+
 
 namespace Kooboo.Mail.Imap
 {
@@ -47,7 +45,7 @@ namespace Kooboo.Mail.Imap
         public static string FLAGS(List<string> flags)
         {
             // Example:   S: * FLAGS (\Answered \Flagged \Deleted \Seen \Draft) 
-            string result = "* FLAGS ("; 
+            string result = "* FLAGS (";
             if (flags != null && flags.Count() > 0)
             {
                 for (int i = 0; i < flags.Count; i++)
@@ -57,11 +55,11 @@ namespace Kooboo.Mail.Imap
                     {
                         flags[i] = "\\" + value;
                     }
-                } 
+                }
                 result += string.Join(" ", flags);
             }
             result += ")";
-            return result; 
+            return result;
         }
 
         public static string PERMANENTFLAGS(List<string> flags)
@@ -83,7 +81,7 @@ namespace Kooboo.Mail.Imap
             result += ")";
             return result;
         }
-  
+
         public static string LIST(string FolderName, char delimiter, List<string> attributes)
         {
             //   Example:    C: A101 LIST "" ""

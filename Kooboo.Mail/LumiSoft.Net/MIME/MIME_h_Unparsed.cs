@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.MIME
@@ -9,9 +8,9 @@ namespace LumiSoft.Net.MIME
     /// </summary>
     public class MIME_h_Unparsed : MIME_h
     {
-        private string    m_ParseValue = null;
-        private string    m_Name       = null;
-        private string    m_Value      = null;
+        private string m_ParseValue = null;
+        private string m_Name = null;
+        private string m_Value = null;
         private Exception m_pException = null;
 
         /// <summary>
@@ -21,19 +20,21 @@ namespace LumiSoft.Net.MIME
         /// <param name="exception">Parsing error.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference.</exception>
         /// <exception cref="ParseException">Is raised when header field parsing errors.</exception>
-        internal MIME_h_Unparsed(string value,Exception exception)
+        internal MIME_h_Unparsed(string value, Exception exception)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
-            
-            string[] name_value = value.Split(new char[]{':'},2);
-            if(name_value.Length != 2){
+
+            string[] name_value = value.Split(new char[] { ':' }, 2);
+            if (name_value.Length != 2)
+            {
                 throw new ParseException("Invalid Content-Type: header field value '" + value + "'.");
             }
 
-            m_Name       = name_value[0];
-            m_Value      = name_value[1].Trim();
+            m_Name = name_value[0];
+            m_Value = name_value[1].Trim();
             m_ParseValue = value;
             m_pException = exception;
         }
@@ -56,7 +57,7 @@ namespace LumiSoft.Net.MIME
 
 
         #region override method ToString
-                
+
         /// <summary>
         /// Returns header field as string.
         /// </summary>
@@ -64,7 +65,7 @@ namespace LumiSoft.Net.MIME
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header field value not modified, original encoding is kept.</param>
         /// <returns>Returns header field as string.</returns>
-        public override string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode)
+        public override string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode)
         {
             return m_ParseValue;
         }
@@ -81,7 +82,7 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ObjectDisposedException">Is riased when this class is disposed and this property is accessed.</exception>
         public override bool IsModified
         {
-            get{ return false; }
+            get { return false; }
         }
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public string Value
         {
-            get{ return m_Value; }
+            get { return m_Value; }
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public Exception Exception
         {
-            get{ return m_pException; }
+            get { return m_pException; }
         }
 
         #endregion

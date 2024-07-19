@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page back="/_Admin/demo/blog/index.html" title="Create category">
+        <k-data
+          id="category"
+          init-get="http://kcomponent.localkooboo.com/blog/category_list"
+        >
+          <k-data-item name="_id" hidden></k-data-item>
+          <k-data-item name="name" label="分类名称"></k-data-item>
+        </k-data>
+
+        <k-data
+          id="remove_category"
+          post="http://kcomponent.localkooboo.com/blog/remove_category"
+        >
+          <k-data-query name="_id"></k-data-query>
+        </k-data>
+
+        <k-data
+          post="http://kcomponent.localkooboo.com/blog/create_category"
+          id="add_category"
+        >
+          <k-data-item name="name" label="分类名称"></k-data-item>
+        </k-data>
+
+        <k-inline align="start">
+          <k-fill>
+            <k-card>
+              <k-form
+                data="add_category"
+                to="/_Admin/demo/blog/category.html"
+              ></k-form>
+            </k-card>
+          </k-fill>
+          <k-fill>
+            <k-card>
+              <k-table data="category" remove="remove_category"></k-table>
+            </k-card>
+          </k-fill>
+        </k-inline>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data;
+using Kooboo.Data.Config;
 using Kooboo.Data.Models;
+using Kooboo.Data.Permission;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -37,11 +37,13 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("id")]
+        [Permission(Feature.DOMAIN, Action = Data.Permission.Action.DELETE)]
         public void Delete(ApiCall call)
         {
-            GlobalDb.Bindings.Delete(call.ObjectId);
+            Data.Config.AppHost.BindingRepo.Delete(call.ObjectId);
         }
 
+        [Permission(Feature.DOMAIN, Action = Data.Permission.Action.DELETE)]
         public virtual bool Deletes(ApiCall call)
         {
 
@@ -66,7 +68,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 foreach (var item in ids)
                 {
-                    GlobalDb.Bindings.Delete(item);
+                    Data.Config.AppHost.BindingRepo.Delete(item);
                 }
                 return true;
             }
@@ -74,11 +76,15 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("SiteId")]
+        [Permission(Feature.DOMAIN, Action = Data.Permission.Action.EDIT)]
         public virtual void Post(ApiCall call)
         {
             string subdomain = call.GetValue("subdomain");
             string RootDomain = call.GetValue("rootdomain");
+            string redirect = call.GetValue("redirect");
+            string culture = call.GetValue("culture");
             Guid SiteId = call.GetGuidValue("SiteId");
+            var sitename = Data.Config.AppHost.SiteRepo.Get(SiteId)?.Name;
             int port = (int)call.GetLongValue("Port");
 
             if (string.IsNullOrEmpty(RootDomain))
@@ -105,17 +111,24 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (port > 0)
                 {
-                    if (!SystemStart.WebServers.ContainsKey(port) && Lib.Helper.NetworkHelper.IsPortInUse(port))
+                    if (SystemStart.WebServer.Ports.Contains(port) || Lib.Helper.NetworkHelper.IsPortInUse(port))
                     {
-                        throw new Exception(Data.Language.Hardcoded.GetValue("port in use", call.Context) + ": " + port.ToString());
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Port", call.Context) + " " + port.ToString() + " " + Data.Language.Hardcoded.GetValue("is occupied", call.Context));
                     }
                 }
 
 
                 if (DefaultBinding && port > 0)
                 {
-
-                    GlobalDb.Bindings.AddOrUpdate(null, null, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+                    SiteBinding bind = new SiteBinding();
+                    bind.OrganizationId = call.Context.User.CurrentOrgId;
+                    bind.WebSiteId = SiteId;
+                    // bind.WebSiteName = sitename;
+                    bind.Port = port;
+                    bind.FullDomain = Data.Config.ConfigHelper.ToFullDomain(RootDomain, subdomain);
+                    bind.Redirect = redirect;
+                    bind.Culture = culture;
+                    Data.Config.AppHost.BindingRepo.AddOrUpdate(bind);
                 }
                 else
                 {
@@ -126,20 +139,35 @@ namespace Kooboo.Web.Api.Implementation
                         throw new Exception(Data.Language.Hardcoded.GetValue("Domain does not owned by current user", call.Context));
                     }
 
-                    GlobalDb.Bindings.AddOrUpdate(RootDomain, subdomain, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+                    if (domain.MailOnly)
+                    {
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Domain configure to use mail server only", call.Context));
+                    }
 
+                    // TODO: if domain is share domain. 
+
+                    SiteBinding bind = new SiteBinding();
+                    bind.FullDomain = Data.Config.ConfigHelper.ToFullDomain(RootDomain, subdomain);
+                    bind.WebSiteId = SiteId;
+                    // bind.WebSiteName = sitename;
+                    bind.OrganizationId = call.Context.User.CurrentOrgId;
+                    bind.Port = port;
+                    bind.Redirect = redirect;
+                    bind.Culture = culture;
+
+                    Data.Config.AppHost.BindingRepo.AddOrUpdate(bind);
                 }
 
             }
         }
 
 
+        [Permission(Feature.DOMAIN, Action = Data.Permission.Action.VIEW)]
         public List<BindingViewModel> ListBySite(Guid SiteId, ApiCall call)
         {
             List<BindingViewModel> result = new List<BindingViewModel>();
 
-
-            var list = GlobalDb.Bindings.GetByWebSite(SiteId);
+            var list = Data.Config.AppHost.BindingService.GetBySiteId(SiteId);
 
             foreach (var item in list)
             {
@@ -157,14 +185,28 @@ namespace Kooboo.Web.Api.Implementation
             Guid domainid = call.GetGuidValue("domainid");
             if (domainid != default(Guid))
             {
-                var bindings = GlobalDb.Bindings.GetByDomain(domainid);
+                var domain = GlobalDb.Domains.Get(domainid, call.Context.User.CurrentOrgId);
+                if (domain == null)
+                {
+                    return new List<BindingInfo>();
+                }
+
+                var user = call.Context.User;
+
+                var bindings = Data.Config.AppHost.BindingService.GetByRootDomain(domain.DomainName, false);
                 List<BindingInfo> bindinginfos = new List<BindingInfo>();
                 foreach (var item in bindings)
                 {
+
+                    if (!Kooboo.Sites.Service.WebSiteService.UserHasRight(user, item.WebSiteId))
+                    {
+                        continue;
+                    }
+
                     BindingInfo info = new BindingInfo();
                     info.Id = item.Id;
-                    info.FullName = item.FullName;
-                    info.SubDomain = item.SubDomain;
+                    info.FullName = item.FullDomain;
+                    info.SubDomain = item.GetSubDomain();
                     info.OrganizationId = item.OrganizationId;
 
                     if (item.Port > 0 && item.Port != 80)
@@ -172,7 +214,7 @@ namespace Kooboo.Web.Api.Implementation
                         info.Port = item.Port;
                     }
 
-                    var site = Kooboo.Data.GlobalDb.WebSites.Get(item.WebSiteId);
+                    var site = Data.Config.AppHost.SiteRepo.Get(item.WebSiteId);
                     info.SiteName = site != null ? site.Name : "";
                     info.Device = item.Device;
                     info.DomainId = item.DomainId;
@@ -199,7 +241,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates"));
+                throw new Exception("Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates");
             }
         }
 
@@ -255,13 +297,13 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
-            var sites = Data.GlobalDb.WebSites.ListByOrg(user.CurrentOrgId);
+            var sites = Data.Config.AppHost.SiteService.ListByOrg(user.CurrentOrgId);
 
             List<SiteBindingViewModel> result = new List<SiteBindingViewModel>();
 
             foreach (var item in sites)
             {
-                var bindings = Data.GlobalDb.Bindings.GetByWebSite(item.Id);
+                var bindings = Data.Config.AppHost.BindingService.GetBySiteId(item.Id);
                 int count = 0;
                 if (bindings != null)
                 {
@@ -283,6 +325,17 @@ namespace Kooboo.Web.Api.Implementation
             return (item != null);
         }
 
+        public bool IsUniqueName(string name, ApiCall call)
+        {
+            var commonshare = new Kooboo.Data.Service.ShareStagingDomainService().IsAvailable(name);
+
+            if (!commonshare)
+            {
+                return false;
+            }
+
+            return !AppHost.BindingRepo.All.Any(a => name.Equals(a.FullDomain, StringComparison.CurrentCultureIgnoreCase));
+        }
 
         public class BindingViewModel
         {
@@ -297,6 +350,25 @@ namespace Kooboo.Web.Api.Implementation
                 this.Device = binding.Device;
                 this.DomainId = binding.DomainId;
                 this.FullName = binding.FullName;
+                this.Port = binding.Port;
+            }
+
+            public BindingViewModel(SiteBinding binding)
+            {
+                this.Id = binding.Id;
+                this.OrganizationId = binding.OrganizationId;
+                this.WebSiteId = binding.WebSiteId;
+                this.SubDomain = binding.GetSubDomain();
+                this.IpAddress = binding.IpAddress;
+                this.DefaultPortBinding = binding.IsDefaultPortBinding;
+                this.Device = binding.Device;
+                // this.DomainId = binding.DomainId;
+                this.FullName = binding.FullDomain;
+                this.Port = binding.Port;
+                this.Redirect = binding.Redirect;
+                this.Culture = binding.Culture;
+                var rootdomain = binding.GetRootDomain();
+                this.DomainId = Kooboo.Data.IDGenerator.GetDomainId(rootdomain);
             }
 
             public bool EnableSsl { get; set; }
@@ -321,6 +393,8 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             public string Device { get; set; }
+            public string Redirect { get; set; }
+            public string Culture { get; set; }
 
 
             public string IpAddress

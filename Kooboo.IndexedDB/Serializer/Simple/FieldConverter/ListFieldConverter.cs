@@ -1,9 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
@@ -32,7 +32,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
             this.GetFieldValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
             this.SetFieldValue = ObjectHelper.GetSetObjectValue<T>(FieldName, this.ListType);
-            
+
             this.GetObjectBytes = ConverterHelper.GetValueToBytes(this.DataType);
             this.GetObjectValue = ConverterHelper.GetBytesToValue(this.DataType);
 
@@ -88,7 +88,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     }
                     else
                     {
-                        list.Add(null); 
+                        list.Add(null);
                     }
                 }
 
@@ -133,7 +133,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     else
                     {
                         results.Add(BitConverter.GetBytes(0));
-                        totallen += 4 + result.Length;
+                        totallen += 4;
                     }
                 }
             }

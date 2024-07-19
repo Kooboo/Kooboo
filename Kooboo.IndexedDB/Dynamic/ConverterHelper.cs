@@ -1,21 +1,17 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Serializer.Simple;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Serializer.Simple;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
     public static class ConverterHelper
-    {  
+    {
         public static Func<object, byte[]> GetToBytes(Type type)
         {
             if (type == typeof(int))
             {
-                return ValueConverter.IntToBytes; 
+                return ValueConverter.IntToBytes;
             }
             else if (type == typeof(string))
             {
@@ -64,11 +60,11 @@ namespace Kooboo.IndexedDB.Dynamic
             else if (type == typeof(System.Net.IPAddress))
             {
                 return ValueConverter.IpAddressToBytes;
-            } 
+            }
             else
             {
-                throw new Exception(type.Name + " Value type not supported"); 
-            }  
+                throw new Exception(type.Name + " Value type not supported");
+            }
         }
 
         public static Func<byte[], object> GetFromBytes(Type type)
@@ -79,7 +75,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else if (type == typeof(string))
             {
-                return ValueConverter.FromStringBytes;  
+                return ValueConverter.FromStringBytes;
             }
             else if (type == typeof(bool))
             {
@@ -87,7 +83,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else if (type == typeof(DateTime))
             {
-                return ValueConverter.FromDateTimeBytes;  
+                return ValueConverter.FromDateTimeBytes;
             }
             else if (type == typeof(Guid))
             {
@@ -95,7 +91,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else if (type == typeof(byte))
             {
-                return ValueConverter.FromByteBytes; 
+                return ValueConverter.FromByteBytes;
             }
             else if (type == typeof(byte[]))
             {
@@ -103,23 +99,23 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else if (type == typeof(decimal))
             {
-                return ValueConverter.FromDecimalBytes;  
+                return ValueConverter.FromDecimalBytes;
             }
             else if (type == typeof(double))
             {
-                return ValueConverter.FromDoubleBytes; 
+                return ValueConverter.FromDoubleBytes;
             }
             else if (type == typeof(float))
             {
-                return ValueConverter.FromFloatBytes;  
+                return ValueConverter.FromFloatBytes;
             }
             else if (type == typeof(Int16))
             {
-                return ValueConverter.FromShortBytes;  
+                return ValueConverter.FromShortBytes;
             }
             else if (type == typeof(Int64))
             {
-                return ValueConverter.FromLongBytes;  
+                return ValueConverter.FromLongBytes;
             }
             else if (type == typeof(System.Net.IPAddress))
             {
@@ -130,6 +126,6 @@ namespace Kooboo.IndexedDB.Dynamic
                 throw new Exception(type.Name + " Value type not supported");
             }
         }
-         
+
     }
 }

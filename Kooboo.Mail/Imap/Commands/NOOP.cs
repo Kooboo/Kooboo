@@ -1,9 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -28,7 +25,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -62,7 +59,8 @@ namespace Kooboo.Mail.Imap.Commands
                 result.Add(new ImapResponse(ResultLine.EXPUNGE(item)));
             }
 
-            session.SelectFolder.Stat = session.MailDb.Messages.GetStat(session.SelectFolder.Folder);
+            //session.SelectFolder.Stat = session.MailDb.Msgstore.GetStat(session.SelectFolder.Folder);
+            session.SelectFolder.Stat = session.MailDb.Message2.GetStat(session.SelectFolder.FolderId, session.SelectFolder.AddressId);
 
             var stat = session.SelectFolder.Stat;
 
@@ -71,11 +69,11 @@ namespace Kooboo.Mail.Imap.Commands
 
             result.Add(new ImapResponse(ResultLine.UIDNEXT(stat.NextUid)));
 
-            result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(stat.FolderUid)));
+            result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(stat.UIDVALIDITY)));
 
             return Task.FromResult(result);
         }
-    
+
     }
 }
 

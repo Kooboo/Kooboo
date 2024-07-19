@@ -1,10 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -18,7 +15,7 @@ namespace Kooboo.Dom
         internal int _readIndex;
         private int _maxColLastLine;
         private int _length;
-          
+
         private TreeConstruction _treeConstruction;
 
         private StringBuilder _buffer;
@@ -404,7 +401,7 @@ namespace Kooboo.Dom
             //The additional allowed character, if there is one
             if (isEOF || current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020', '\u003C', '\u0026') || (additionalAllowedChar != null && current == additionalAllowedChar))
             {
-               
+
                 //No characters are consumed, and nothing is returned
                 reConsume();
                 return null;
@@ -497,8 +494,8 @@ namespace Kooboo.Dom
                         ParseError("; expected");
                     }
 
-                    int.TryParse(asciiString, out codepoint); 
-   
+                    int.TryParse(asciiString, out codepoint);
+
                 }
 
                 //If one or more characters match the range, then take them all and interpret the string of characters as a number (either hexadecimal or decimal as appropriate).
@@ -763,7 +760,7 @@ namespace Kooboo.Dom
                 {
                     return beforeAttributeName(token);
                 }
- 
+
                 //"/" (U+002F)
                 //Switch to the self-closing start tag state.
                 else if (current == '\u002F')
@@ -804,7 +801,7 @@ namespace Kooboo.Dom
                 //Anything else
                 //Append the current input character to the current tag token's tag name.
                 else
-                { 
+                {
                     token.tagName += current.ToString();
                 }
 
@@ -1007,7 +1004,7 @@ namespace Kooboo.Dom
                 //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)    //U+0020 SPACE
                 //Switch to the after attribute name state.
                 if (CommonIdoms.isSpaceCharacters(current))
-              //  if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
+                //  if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
                 {
                     return afterAttributeName(token);
                 }
@@ -1085,7 +1082,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)  //"LF" (U+000A)  //"FF" (U+000C) //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
             {
                 return afterAttributeName(token);   //recursive = ignore = advanceone && continue.
             }
@@ -1174,7 +1171,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)    //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
             {
                 return beforeAttributeValue(token);   //recursive = ignore = advanceone && continue.
             }
@@ -1187,7 +1184,7 @@ namespace Kooboo.Dom
             }
             //U+0026 AMPERSAND (&)
             //Switch to the attribute value (unquoted) state. Reconsume the current input character.
-            else if (current == '\u0022')
+            else if (current == '\u0026')
             {
                 reConsume();
                 return attributeValueUnquoted(token);
@@ -1304,7 +1301,7 @@ namespace Kooboo.Dom
                 //Switch to the character reference in attribute value state, with the additional allowed character being U+0022 QUOTATION MARK (").
                 else if (current == '\u0026')
                 {
-                     characterReferenceInAttributeValue(token, '\u0022');
+                    characterReferenceInAttributeValue(token, '\u0022');
                 }
                 //U+0000 NULL
                 //Parse error. Append a U+FFFD REPLACEMENT CHARACTER character to the current attribute's value.
@@ -1351,7 +1348,7 @@ namespace Kooboo.Dom
                 //Switch to the before attribute name state.
                 if (CommonIdoms.isSpaceCharacters(current))
                 //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
-               // if (current == '\u0009' || current == '\u000A' || current == '\u000C' || current == '\u0020')
+                // if (current == '\u0009' || current == '\u000A' || current == '\u000C' || current == '\u0020')
                 {
                     return beforeAttributeName(token);
                 }
@@ -1359,7 +1356,7 @@ namespace Kooboo.Dom
                 //Switch to the character reference in attribute value state, with the additional allowed character being ">" (U+003E).
                 else if (current == '\u0026')
                 {
-                      characterReferenceInAttributeValue(token, '\u003E');
+                    characterReferenceInAttributeValue(token, '\u003E');
                 }
 
                 //">" (U+003E)
@@ -1435,7 +1432,7 @@ namespace Kooboo.Dom
                 //Switch to the character reference in attribute value state, with the additional allowed character being "'" (U+0027).
                 else if (current == '\u0026')
                 {
-                      characterReferenceInAttributeValue(token, '\u0027');
+                    characterReferenceInAttributeValue(token, '\u0027');
                 }
                 //U+0000 NULL
                 //Parse error. Append a U+FFFD REPLACEMENT CHARACTER character to the current attribute's value.
@@ -1480,7 +1477,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)  //U+0020 SPACE
             //Switch to the before attribute name state.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return beforeAttributeName(token);
             }
@@ -1970,7 +1967,7 @@ namespace Kooboo.Dom
 
                 //"tab" (U+0009)        //"LF" (U+000A)        //"FF" (U+000C)        //U+0020 SPACE
                 if (CommonIdoms.isSpaceCharacters(current))
-             // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+                // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
                 {
                     //If the current end tag token is an appropriate end tag token, then switch to the before attribute name state. Otherwise, treat it as per the "anything else" entry below.
                     return beforeAttributeName(token);
@@ -2713,7 +2710,7 @@ namespace Kooboo.Dom
             char current = consumeNext();
 
             //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)  //U+0020 SPACE   //"/" (U+002F)   //">" (U+003E)
-            if (current.isOneOf('\u0009', '\u000A','\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
+            if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
             {
                 //If the temporary buffer is the string "script", then switch to the script data double escaped state. Otherwise, switch to the script data escaped state. Emit the current input character as a character token.
                 if (_buffer.ToString().ToLower() == "script")
@@ -2948,7 +2945,7 @@ namespace Kooboo.Dom
 
                 //"tab" (U+0009)       //"LF" (U+000A)           //"FF" (U+000C)           //U+0020 SPACE
                 if (CommonIdoms.isSpaceCharacters(current))
-               // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+                // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
                 {
                     //If the current end tag token is an appropriate end tag token, then switch to the before attribute name state. Otherwise, treat it as per the "anything else" entry below.
                     return beforeAttributeName(token);
@@ -3157,7 +3154,7 @@ namespace Kooboo.Dom
             char current = consumeNext();
 
             //"tab" (U+0009)    //"LF" (U+000A)   //"FF" (U+000C)    //U+0020 SPACE    //"/" (U+002F)    //">" (U+003E)
-            if (current.isOneOf('\u0009', '\u000A','\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
+            if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
             {
                 //If the temporary buffer is the string "script", then switch to the script data escaped state. Otherwise, switch to the script data double escaped state. Emit the current input character as a character token.
                 if (_buffer.ToString().ToLower() == "script")
@@ -3301,7 +3298,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)      //"LF" (U+000A)      //"FF" (U+000C)     //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-         // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return beforeDOCTYPEName();
                 //Ignore the character.
@@ -3375,7 +3372,7 @@ namespace Kooboo.Dom
 
                 //"tab" (U+0009)      //"LF" (U+000A)      //"FF" (U+000C)      //U+0020 SPACE
                 if (CommonIdoms.isSpaceCharacters(current))
-              //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+                //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
                 {
                     return afterDOCTYPEName(token);
                     //Switch to the after DOCTYPE name state.
@@ -3434,7 +3431,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)     //"LF" (U+000A)    //"FF" (U+000C)   //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-          // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Ignore the character.
                 return afterDOCTYPEName(token);
@@ -3497,7 +3494,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)     //"LF" (U+000A)     //"FF" (U+000C)   //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-          // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Switch to the before DOCTYPE public identifier state.
                 return beforeDOCTYPEPublicIdentifier(token);
@@ -3564,7 +3561,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)    //"LF" (U+000A)       //"FF" (U+000C)       //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-         // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Switch to the before DOCTYPE system identifier state.
                 return beforeDOCTYPESystemIdentifier(token);
@@ -3663,7 +3660,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)      //"LF" (U+000A)           //"FF" (U+000C)           //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-           //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Ignore the character.
                 return beforeDOCTYPEPublicIdentifier(token);
@@ -3835,7 +3832,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)      //"LF" (U+000A)       //"FF" (U+000C)         //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-          // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Switch to the between DOCTYPE public and system identifiers state.
                 return betweenDOCTYPEPublicAndSystemIdentifier(token);
@@ -3898,7 +3895,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)    //"LF" (U+000A)        //"FF" (U+000C)     //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return betweenDOCTYPEPublicAndSystemIdentifier(token);
             }
@@ -4071,7 +4068,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)     //"LF" (U+000A)      //"FF" (U+000C)      //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return beforeDOCTYPESystemIdentifier(token);
             }
@@ -4138,7 +4135,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)       //"LF" (U+000A)           //"FF" (U+000C)           //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return afterDOCTYPESystemIdentifier(token);
             }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LumiSoft.Net.MIME
+﻿namespace LumiSoft.Net.MIME
 {
     /// <summary>
     /// This class holds well known Content-Type header field media types. For example: text/plain, application/octet-stream.
@@ -77,7 +73,7 @@ namespace LumiSoft.Net.MIME
             /// </summary>
             public static readonly string tiff = "image/tiff";
         }
-                
+
         #endregion
 
         #region text
@@ -91,7 +87,7 @@ namespace LumiSoft.Net.MIME
             /// "text/calendar". Defined in RFC 2445.
             /// </summary>
             public static readonly string calendar = "text/calendar";
-        
+
             /// <summary>
             /// "text/css". Defined in RFC 2854
             /// </summary>
@@ -165,7 +161,7 @@ namespace LumiSoft.Net.MIME
             /// <summary>
             /// "multipart/related". Defined in RFC 2387.
             /// </summary>
-            public static readonly string related  = "multipart/related";
+            public static readonly string related = "multipart/related";
 
             /// <summary>
             /// "multipart/report". Defined in RFC 1892.

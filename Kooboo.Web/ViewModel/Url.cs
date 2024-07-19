@@ -1,11 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Web.ViewModel
 {
     public class RouteItemViewModel
@@ -20,9 +14,11 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime LastModified { get; set; }
 
-        public string FullUrl { get
+        public string FullUrl
+        {
+            get
             {
-                return this.Name; 
+                return this.Name;
             }
         }
 

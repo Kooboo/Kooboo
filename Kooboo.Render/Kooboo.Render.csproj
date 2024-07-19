@@ -1,28 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Render</AssemblyName>
-	<RootNamespace>Kooboo.Render</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Render</AssemblyName>
+		<RootNamespace>Kooboo.Render</RootNamespace>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+		<ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Kooboo.Data" Version="2.1.8966.33828" />
+	  <PackageReference Include="Kooboo.Sites" Version="2.1.8966.33828" />
+	</ItemGroup>
 </Project>

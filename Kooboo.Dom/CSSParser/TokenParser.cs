@@ -1,10 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Dom.CSS;
-using System;
 using System.Collections.Generic;
-using Kooboo.Dom.CSS.Tokens;
 using Kooboo.Dom.CSS.rawmodel;
+using Kooboo.Dom.CSS.Tokens;
 
 namespace Kooboo.Dom.CSS
 {
@@ -264,7 +262,7 @@ namespace Kooboo.Dom.CSS
                     simpleblock.endindex = token.endIndex;
                     if (token.Type == enumTokenType.EOF)
                     {
-                        simpleblock.endindex = simpleblock.endindex - 1; 
+                        simpleblock.endindex = simpleblock.endindex - 1;
                     }
                     return simpleblock;
                 }
@@ -346,7 +344,7 @@ namespace Kooboo.Dom.CSS
                     func.endindex = nexttoken.endIndex;
                     if (nexttoken.Type == enumTokenType.EOF)
                     {
-                        func.endindex = func.endindex - 1; 
+                        func.endindex = func.endindex - 1;
                     }
                     return func;
                 }
@@ -395,7 +393,7 @@ namespace Kooboo.Dom.CSS
 
                     if (token.Type == enumTokenType.EOF)
                     {
-                        rule.endindex = rule.endindex - 1; 
+                        rule.endindex = rule.endindex - 1;
                     }
                     return rule;
                 }

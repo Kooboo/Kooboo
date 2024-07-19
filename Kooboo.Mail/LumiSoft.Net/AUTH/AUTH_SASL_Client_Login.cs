@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -9,10 +8,10 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_SASL_Client_Login : AUTH_SASL_Client
     {
-        private bool   m_IsCompleted = false;
-        private int    m_State       = 0;
-        private string m_UserName    = null;
-        private string m_Password    = null;
+        private bool m_IsCompleted = false;
+        private int m_State = 0;
+        private string m_UserName = null;
+        private string m_Password = null;
 
         /// <summary>
         /// Default constructor.
@@ -21,15 +20,18 @@ namespace LumiSoft.Net.AUTH
         /// <param name="password">User password.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>userName</b> or <b>password</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
-        public AUTH_SASL_Client_Login(string userName,string password)
+        public AUTH_SASL_Client_Login(string userName, string password)
         {
-            if(userName == null){
+            if (userName == null)
+            {
                 throw new ArgumentNullException("userName");
             }
-            if(userName == string.Empty){
-                throw new ArgumentException("Argument 'username' value must be specified.","userName");
+            if (userName == string.Empty)
+            {
+                throw new ArgumentException("Argument 'username' value must be specified.", "userName");
             }
-            if(password == null){
+            if (password == null)
+            {
                 throw new ArgumentNullException("password");
             }
 
@@ -49,10 +51,12 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="InvalidOperationException">Is raised when this method is called when authentication is completed.</exception>
         public override byte[] Continue(byte[] serverResponse)
         {
-            if(serverResponse == null){
+            if (serverResponse == null)
+            {
                 throw new ArgumentNullException("serverResponse");
             }
-            if(m_IsCompleted){
+            if (m_IsCompleted)
+            {
                 throw new InvalidOperationException("Authentication is completed.");
             }
 
@@ -65,18 +69,21 @@ namespace LumiSoft.Net.AUTH
                 NOTE: UserName may be included in initial client response.
             */
 
-            if(m_State == 0){
+            if (m_State == 0)
+            {
                 m_State++;
 
                 return Encoding.UTF8.GetBytes(m_UserName);
             }
-            else if(m_State == 1){
+            else if (m_State == 1)
+            {
                 m_State++;
                 m_IsCompleted = true;
 
                 return Encoding.UTF8.GetBytes(m_Password);
             }
-            else{
+            else
+            {
                 throw new InvalidOperationException("Authentication is completed.");
             }
         }
@@ -91,7 +98,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsCompleted
         {
-            get{ return m_IsCompleted; }
+            get { return m_IsCompleted; }
         }
 
         /// <summary>
@@ -107,7 +114,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         #endregion

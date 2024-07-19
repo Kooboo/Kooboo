@@ -2,9 +2,9 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -20,23 +20,49 @@ namespace Kooboo.Lib.Reflection
         {
             var dlls = new List<Assembly>();
 
-            var allassembs = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
 
-            foreach (var item in allassembs)
+            foreach (var item in assemblies)
             {
+                if (dlls.Any(a => a.FullName == item.FullName))
+                {
+                    continue;
+                }
+
                 if (!item.GlobalAssemblyCache)
                 {
                     if (!IsIgnoredName(item.FullName))
                     {
                         dlls.Add(item);
+                        LoadReferences(dlls, item);
                     }
                 }
             }
 
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-            dlls = LoadKoobooDlls(dlls, path);
+            // var path = AppDomain.CurrentDomain.BaseDirectory;
+            // dlls = LoadKoobooDlls(dlls, path);
 
             return dlls;
+        }
+
+        private static void LoadReferences(List<Assembly> assemblies, Assembly assembly)
+        {
+            var references = assembly.GetReferencedAssemblies();
+
+            foreach (var item in references)
+            {
+                if (assemblies.Any(a => a.FullName == item.FullName))
+                {
+                    continue;
+                }
+
+                if (!IsIgnoredName(item.FullName) && item.Name.StartsWith("Kooboo."))
+                {
+                    var reference = Assembly.Load(item);
+                    assemblies.Add(reference);
+                    LoadReferences(assemblies, reference);
+                }
+            }
         }
 
         public static List<Assembly> LoadKoobooDlls(List<Assembly> dlls, string path)
@@ -67,7 +93,7 @@ namespace Kooboo.Lib.Reflection
                         var find = dlls.Find(o => o.FullName.StartsWith(koobooname));
                         if (find == null && !IsIgnoredName(koobooname))
                         {
-                            var otherAssembly = Assembly.LoadFile(name);
+                            var otherAssembly = AppDomain.CurrentDomain.Load(File.ReadAllBytes(name));
                             dlls.Add(otherAssembly);
                         }
                     }
@@ -145,6 +171,23 @@ namespace Kooboo.Lib.Reflection
 
             return typelist;
         }
+
+        public static List<Type> FindAssemblyTypes(Assembly assembly, Type interfaceType)
+        {
+            List<Type> typelist = new List<Type>();
+
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsAbstract && !type.IsInterface && !type.IsGenericType && interfaceType.IsAssignableFrom(type))
+                {
+                    typelist.Add(type);
+                }
+            }
+
+            return typelist;
+        }
+
 
         public static List<Type> LoadTypeByBaseClass(Type baseType)
         {

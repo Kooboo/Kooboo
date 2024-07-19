@@ -1,11 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Mail.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Mail.Models;
 
 namespace Kooboo.Mail.Queue.Executor
 {
@@ -13,14 +9,14 @@ namespace Kooboo.Mail.Queue.Executor
     {
         public async Task<ActionResponse> Execute(string JsonModel)
         {
-            var model = Lib.Helper.JsonHelper.Deserialize<Model.OutGoing>(JsonModel); 
+            var model = Lib.Helper.JsonHelper.Deserialize<Model.OutGoing>(JsonModel);
             if (model != null)
             {
                 var result = await Kooboo.Mail.Transport.Delivery.Send(model.MailFrom, model.RcptTo, model.MsgBody);
                 return result;
             }
             return new ActionResponse() { Success = false, ShouldRetry = false, Message = "Invalid message body" };
-         }
+        }
 
         public async Task SendFail(string JsonModel, string FailReason)
         {

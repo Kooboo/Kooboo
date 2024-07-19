@@ -1,22 +1,16 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Mail.Smtp
 {
-   
-    public class CommandScanner  
+
+    public class CommandScanner
     {
         public CommandScanner(string commandLine)
         {
             this.CommmandLine = commandLine;
-            this.totalLength = commandLine == null ? 0 : commandLine.Length; 
+            this.totalLength = commandLine == null ? 0 : commandLine.Length;
         }
-        
+
         private string CommmandLine { get; set; }
 
         private int currentIndex { get; set; }
@@ -24,7 +18,7 @@ namespace Kooboo.Mail.Smtp
         private string currentValue { get; set; }
 
         private int totalLength { get; set; }
-         
+
         public string ConsumeRest()
         {
             while (currentIndex < totalLength)
@@ -32,9 +26,9 @@ namespace Kooboo.Mail.Smtp
                 var currentChar = this.CommmandLine[currentIndex];
                 if (!Lib.Helper.CharHelper.isSpaceCharacters(currentChar))
                 {
-                    return this.CommmandLine.Substring(currentIndex).Trim(); 
+                    return this.CommmandLine.Substring(currentIndex).Trim();
                 }
-                currentIndex += 1; 
+                currentIndex += 1;
             }
             return null;
         }
@@ -47,42 +41,42 @@ namespace Kooboo.Mail.Smtp
                 if (currentChar == ':')
                 {
                     this.currentIndex += 1;
-                    return ConsumeRest();  
-                } 
+                    return ConsumeRest();
+                }
                 currentIndex += 1;
-            } 
-            return null; 
+            }
+            return null;
         }
 
         public string ConsumeNext()
-        { 
+        {
             while (currentIndex < totalLength)
             {
                 var currentChar = this.CommmandLine[currentIndex];
 
                 if (Lib.Helper.CharHelper.IsAscii(currentChar))
-                { 
-                    this.currentValue += currentChar; 
+                {
+                    this.currentValue += currentChar;
                 }
                 else
-                { 
+                {
                     if (!string.IsNullOrEmpty(this.currentValue))
-                    { 
-                        string returnvalue = this.currentValue; 
+                    {
+                        string returnvalue = this.currentValue;
                         this.currentValue = string.Empty;
-                      
+
                         return returnvalue;
                     }
-                } 
+                }
 
                 currentIndex += 1;
             }
-             
+
             if (!string.IsNullOrEmpty(this.currentValue))
             {
-                return this.currentValue; 
+                return this.currentValue;
             }
-            return null; 
-        } 
+            return null;
+        }
     }
 }

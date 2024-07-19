@@ -1,0 +1,20 @@
+@mixin ve-empty($color) {
+  background-color: rgba(222, 242, 250, 0.85);
+  border: 1px dashed #4cb9ea;
+  min-height: 60px;
+  align-items: center;
+  display: flex;
+  box-sizing: border-box;
+
+  &:before {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    min-height: 60px;
+    color: $color;
+    content: attr(data-placeholder);
+  }
+}

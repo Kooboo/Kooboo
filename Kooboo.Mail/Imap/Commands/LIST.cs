@@ -3,8 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -12,7 +11,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public virtual string CommandName
@@ -43,12 +42,13 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
         public Task<List<ImapResponse>> Execute(ImapSession session, string args)
         {
+
             string[] parts = TextUtils.SplitQuotedString(args, ' ', true);
 
             string refName = IMAP_Utils.DecodeMailbox(parts[0]);
@@ -70,8 +70,11 @@ namespace Kooboo.Mail.Imap.Commands
 
             var user = Data.GlobalDb.Users.Get(session.AuthenticatedUserIdentity.Name);
             var result = new List<ImapResponse>();
-            foreach (var each in GetAllFolders(user))
-            { 
+
+            var orgId = session.MailDb.OrganizationId;
+
+            foreach (var each in GetAllFolders(user, orgId))
+            {
                 if (System.Text.RegularExpressions.Regex.IsMatch(each.Name, pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase))
                 {
                     result.Add(new ImapResponse(Response(each.Name, '/', each.Attributes)));
@@ -81,9 +84,9 @@ namespace Kooboo.Mail.Imap.Commands
             return Task.FromResult(result);
         }
 
-        protected virtual List<ImapFolder> GetAllFolders(Data.Models.User user)
+        protected virtual List<ImapFolder> GetAllFolders(Data.Models.User user, Guid LoginOrganizationId)
         {
-            return ImapHelper.GetAllFolder(user);
+            return ImapHelper.GetAllFolder(user, LoginOrganizationId);
         }
 
         protected virtual string Response(string folderName, char delimiter, List<string> attributes)
@@ -138,7 +141,7 @@ namespace Kooboo.Mail.Imap.Commands
 //      hierarchy.The returned mailbox names will be in the interpreted
 //      form.
 
-     
+
 
 
 
@@ -189,7 +192,7 @@ namespace Kooboo.Mail.Imap.Commands
 //      this rule, the client would have to have knowledge of the server's
 //      naming semantics including what characters are "breakouts" that
 //      override a naming context.
- 
+
 
 //Crispin Standards Track[Page 41]
 
@@ -248,7 +251,7 @@ namespace Kooboo.Mail.Imap.Commands
 
 
 //Crispin                     Standards Track                    [Page 42]
- 
+
 //RFC 3501                         IMAPv4                       March 2003
 
 

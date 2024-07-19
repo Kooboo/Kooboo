@@ -19,8 +19,8 @@ namespace LumiSoft.Net.Mail
     /// </example>
     public class Mail_t_AddressList : IEnumerable
     {
-        private bool                 m_IsModified = false;
-        private List<Mail_t_Address> m_pList      = null;
+        private bool m_IsModified = false;
+        private List<Mail_t_Address> m_pList = null;
 
         /// <summary>
         /// Default constructor.
@@ -42,7 +42,8 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ParseException">Is raised when <b>value</b> is not valid <b>address-list</b> value.</exception>
         public static Mail_t_AddressList Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
@@ -58,46 +59,56 @@ namespace LumiSoft.Net.Mail
                 group-list      =   mailbox-list / CFWS / obs-group-list
             */
 
-            MIME_Reader        r      = new MIME_Reader(value);
+            MIME_Reader r = new MIME_Reader(value);
             Mail_t_AddressList retVal = new Mail_t_AddressList();
-            while(true){
-                string word = r.QuotedReadToDelimiter(new char[]{',','<',':'});
+            while (true)
+            {
+                string word = r.QuotedReadToDelimiter(new char[] { ',', '<', ':' });
                 // We processed all data.
-                if(word == null && r.Available == 0){
+                if (word == null && r.Available == 0)
+                {
                     break;
                 }
                 // group
-                else if(r.Peek(true) == ':'){
+                else if (r.Peek(true) == ':')
+                {
                     Mail_t_Group group = new Mail_t_Group(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word)) : null);
                     // Consume ':'
                     r.Char(true);
-           
-                    while(true){
-                        word = r.QuotedReadToDelimiter(new char[]{',','<',':',';'});
+
+                    while (true)
+                    {
+                        word = r.QuotedReadToDelimiter(new char[] { ',', '<', ':', ';' });
                         // We processed all data.
-                        if((word == null && r.Available == 0) || r.Peek(false) == ';'){
+                        if ((word == null && r.Available == 0) || r.Peek(false) == ';')
+                        {
                             break;
                         }
                         // In valid address list value.
-                        else if(word == string.Empty){
+                        else if (word == string.Empty)
+                        {
                             throw new ParseException("Invalid address-list value '" + value + "'.");
                         }
                         // name-addr
-                        else if(r.Peek(true) == '<'){  
-                            group.Members.Add(new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word)) : null,r.ReadParenthesized()));                    
+                        else if (r.Peek(true) == '<')
+                        {
+                            group.Members.Add(new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word)) : null, r.ReadParenthesized()));
                         }
                         // addr-spec
-                        else{
-                            group.Members.Add(new Mail_t_Mailbox(null,word));
+                        else
+                        {
+                            group.Members.Add(new Mail_t_Mailbox(null, word));
                         }
-                       
+
                         // We reached at the end of group.
-                        if(r.Peek(true) == ';'){
+                        if (r.Peek(true) == ';')
+                        {
                             r.Char(true);
                             break;
                         }
                         // We have more addresses.
-                        if(r.Peek(true) == ','){
+                        if (r.Peek(true) == ',')
+                        {
                             r.Char(false);
                         }
                     }
@@ -105,16 +116,19 @@ namespace LumiSoft.Net.Mail
                     retVal.Add(group);
                 }
                 // name-addr
-                else if(r.Peek(true) == '<'){
-                    retVal.Add(new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word.Trim())) : null,r.ReadParenthesized()));                    
+                else if (r.Peek(true) == '<')
+                {
+                    retVal.Add(new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word.Trim())) : null, r.ReadParenthesized()));
                 }
                 // addr-spec
-                else{
-                    retVal.Add(new Mail_t_Mailbox(null,word));
+                else
+                {
+                    retVal.Add(new Mail_t_Mailbox(null, word));
                 }
 
                 // We have more addresses.
-                if(r.Peek(true) == ','){
+                if (r.Peek(true) == ',')
+                {
                     r.Char(false);
                 }
             }
@@ -134,16 +148,18 @@ namespace LumiSoft.Net.Mail
         /// <param name="value">Address to insert.</param>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when <b>index</b> is out of range.</exception>
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference.</exception>
-        public void Insert(int index,Mail_t_Address value)
+        public void Insert(int index, Mail_t_Address value)
         {
-            if(index < 0 || index > m_pList.Count){
+            if (index < 0 || index > m_pList.Count)
+            {
                 throw new ArgumentOutOfRangeException("index");
             }
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
-            m_pList.Insert(index,value);
+            m_pList.Insert(index, value);
             m_IsModified = true;
         }
 
@@ -158,7 +174,8 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference value.</exception>
         public void Add(Mail_t_Address value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
@@ -177,7 +194,8 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference value.</exception>
         public void Remove(Mail_t_Address value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
@@ -221,11 +239,14 @@ namespace LumiSoft.Net.Mail
         public override string ToString()
         {
             StringBuilder retVal = new StringBuilder();
-            for(int i=0;i<m_pList.Count;i++){
-                if(i == (m_pList.Count - 1)){
+            for (int i = 0; i < m_pList.Count; i++)
+            {
+                if (i == (m_pList.Count - 1))
+                {
                     retVal.Append(m_pList[i].ToString());
                 }
-                else{
+                else
+                {
                     retVal.Append(m_pList[i].ToString() + ",");
                 }
             }
@@ -256,11 +277,11 @@ namespace LumiSoft.Net.Mail
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerator GetEnumerator()
-		{
-			return m_pList.GetEnumerator();
-		}
+        {
+            return m_pList.GetEnumerator();
+        }
 
-		#endregion
+        #endregion
 
         #region Properties implementation
 
@@ -268,8 +289,8 @@ namespace LumiSoft.Net.Mail
         /// Gets if list has modified since it was loaded.
         /// </summary>
         public bool IsModified
-        {            
-            get{ return m_IsModified; }
+        {
+            get { return m_IsModified; }
         }
 
         /// <summary>
@@ -277,7 +298,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public int Count
         {
-            get{ return m_pList.Count; }
+            get { return m_pList.Count; }
         }
 
         /// <summary>
@@ -288,12 +309,14 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentOutOfRangeException">Is raised when <b>index</b> is out of range.</exception>
         public Mail_t_Address this[int index]
         {
-            get{ 
-                if(index < 0 || index >= m_pList.Count){
+            get
+            {
+                if (index < 0 || index >= m_pList.Count)
+                {
                     throw new ArgumentOutOfRangeException("index");
                 }
 
-                return m_pList[index]; 
+                return m_pList[index];
             }
         }
 
@@ -302,18 +325,22 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public Mail_t_Mailbox[] Mailboxes
         {
-            get{
+            get
+            {
                 List<Mail_t_Mailbox> retVal = new List<Mail_t_Mailbox>();
-                foreach(Mail_t_Address address in this){
-                    if(address is Mail_t_Mailbox){
+                foreach (Mail_t_Address address in this)
+                {
+                    if (address is Mail_t_Mailbox)
+                    {
                         retVal.Add((Mail_t_Mailbox)address);
                     }
-                    else{
+                    else
+                    {
                         retVal.AddRange(((Mail_t_Group)address).Members);
                     }
                 }
 
-                return retVal.ToArray(); 
+                return retVal.ToArray();
             }
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 using LumiSoft.Net.MIME;
@@ -21,7 +20,8 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ArgumentNullException">Is raised when <b>reader</b> is null reference.</exception>
         internal static string SMTP_Mailbox(MIME_Reader reader)
         {
-            if(reader == null){
+            if (reader == null)
+            {
                 throw new ArgumentNullException("reader");
             }
 
@@ -34,24 +34,28 @@ namespace LumiSoft.Net.Mail
             */
 
             StringBuilder retVal = new StringBuilder();
-            if(reader.Peek(true) == '\"'){
+            if (reader.Peek(true) == '\"')
+            {
                 retVal.Append("\"" + reader.QuotedString() + "\"");
             }
-            else{
+            else
+            {
                 retVal.Append(reader.DotAtom());
             }
 
-            if(reader.Peek(true) != '@'){
+            if (reader.Peek(true) != '@')
+            {
                 return null;
             }
-            else{
+            else
+            {
                 // Eat "@".
                 reader.Char(true);
 
                 retVal.Append('@');
                 retVal.Append(reader.DotAtom());
             }
-                        
+
             return retVal.ToString();
         }
 

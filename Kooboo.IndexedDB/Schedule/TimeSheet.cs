@@ -3,9 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
@@ -16,16 +13,16 @@ namespace Kooboo.IndexedDB.Schedule
     public class TimeSheet
     {
 
-        private ISchedule _schedule; 
+        private ISchedule _schedule;
 
         private object _object = new object();
 
         private FileStream _stream;
 
-        private int oldcounter;
-        private int newcounter;
-        private int _positioncachecounter;
-        private Dictionary<int, Int64> _positioncache;
+        private int oldCounter;
+        private int newCounter;
+        private int _positionCacheCounter;
+        private Dictionary<int, Int64> _positionCache;
 
         internal string FileName { get; set; }
 
@@ -41,7 +38,7 @@ namespace Kooboo.IndexedDB.Schedule
 
         public static bool isExists(int DayInt, ISchedule schedule)
         {
-           return File.Exists(FileNameGenerator.GetTimeFullFileName(DayInt, schedule)); 
+            return File.Exists(FileNameGenerator.GetTimeFullFileName(DayInt, schedule));
         }
 
         public bool IsToday()
@@ -71,21 +68,21 @@ namespace Kooboo.IndexedDB.Schedule
 
         public TimeSheet(int DayInt, ISchedule schedule)
         {
-            this._schedule = schedule; 
+            this._schedule = schedule;
 
-            _positioncache = new Dictionary<int, long>();
-            _positioncachecounter = 0;
+            _positionCache = new Dictionary<int, long>();
+            _positionCacheCounter = 0;
 
-            this.FileName = FileNameGenerator.GetTimeFileName(DayInt); 
+            this.FileName = FileNameGenerator.GetTimeFileName(DayInt);
             this.DayInt = DayInt;
-            this.FullFileName = FileNameGenerator.GetTimeFullFileName(DayInt, schedule); 
+            this.FullFileName = FileNameGenerator.GetTimeFullFileName(DayInt, schedule);
 
             if (!File.Exists(this.FullFileName))
             {
 
-                int currentday = DateTime.Now.DayToInt(); 
+                int currentDay = DateTime.Now.DayToInt();
 
-                if (DayInt >= currentday)
+                if (DayInt >= currentDay)
                 {
                     Create();
                 }
@@ -123,11 +120,11 @@ namespace Kooboo.IndexedDB.Schedule
         {
             if (SecondOfDay < 0)
             {
-                SecondOfDay = 0; 
+                SecondOfDay = 0;
             }
 
-            int timesheetposition = SecondOfDay * 8 + 8;
-            return GetItemPosition(timesheetposition); 
+            int timesheetPosition = SecondOfDay * 8 + 8;
+            return GetItemPosition(timesheetPosition);
         }
 
         public Int64 GetItemPosition(int TimeSheetPosition)
@@ -139,11 +136,11 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 lock (_object)
                 {
-                    byte[] contentbytes = new byte[8];
+                    byte[] contentBytes = new byte[8];
 
                     Stream.Position = TimeSheetPosition;
-                    Stream.Read(contentbytes, 0, 8);
-                    ItemPosition = BitConverter.ToInt64(contentbytes, 0);
+                    Stream.Read(contentBytes, 0, 8);
+                    ItemPosition = BitConverter.ToInt64(contentBytes, 0);
 
                     if (ItemPosition > 0)
                     {
@@ -154,23 +151,23 @@ namespace Kooboo.IndexedDB.Schedule
             return ItemPosition;
         }
 
-    
+
 
         public int GetCounterWithoutModify()
         {
-            if (newcounter > 0)
+            if (newCounter > 0)
             {
-                return newcounter;
+                return newCounter;
             }
             else
             {
                 lock (_object)
                 {
-                    byte[] counterbytes = new byte[4];
+                    byte[] counterBytes = new byte[4];
                     Stream.Position = 4;
-                    Stream.Read(counterbytes, 0, 4);
+                    Stream.Read(counterBytes, 0, 4);
 
-                    return BitConverter.ToInt32(counterbytes, 0);
+                    return BitConverter.ToInt32(counterBytes, 0);
                 }
             }
         }
@@ -181,7 +178,7 @@ namespace Kooboo.IndexedDB.Schedule
         /// <returns></returns>
         public bool isStartRead()
         {
-            return this.GetCounter() >= 0; 
+            return this.GetCounter() >= 0;
         }
 
         /// <summary>
@@ -190,7 +187,7 @@ namespace Kooboo.IndexedDB.Schedule
         /// <returns></returns>
         public bool isFinishRead()
         {
-            return this.GetCounter() >= (24 * 60 * 60 - 1); 
+            return this.GetCounter() >= (24 * 60 * 60 - 1);
         }
 
         public bool isBeingRead()
@@ -204,38 +201,38 @@ namespace Kooboo.IndexedDB.Schedule
         /// <returns></returns>
         public int GetCounter()
         {
-            if (newcounter > 0)
+            if (newCounter > 0)
             {
-                return newcounter;
+                return newCounter;
             }
             else
             {
                 lock (_object)
                 {
-                    byte[] counterbytes = new byte[4];
+                    byte[] counterBytes = new byte[4];
                     Stream.Position = 4;
-                    Stream.Read(counterbytes, 0, 4);
+                    Stream.Read(counterBytes, 0, 4);
 
-                    oldcounter = BitConverter.ToInt32(counterbytes, 0);
-                    newcounter = oldcounter;
-                    return oldcounter;
+                    oldCounter = BitConverter.ToInt32(counterBytes, 0);
+                    newCounter = oldCounter;
+                    return oldCounter;
                 }
             }
         }
 
         public void SetCounter(int counter)
         {
-            newcounter = counter;
+            newCounter = counter;
             // this should not be a problem to write every 10 reads, because every record is removed from schdulerecord after dequeue. .
 
-            if ((newcounter - oldcounter) > 10)
+            if ((newCounter - oldCounter) > 10)
             {
                 lock (_object)
                 {
                     Stream.Position = 4;
                     Stream.Write(BitConverter.GetBytes(counter), 0, 4);
 
-                    oldcounter = newcounter;
+                    oldCounter = newCounter;
                 }
             }
 
@@ -263,13 +260,13 @@ namespace Kooboo.IndexedDB.Schedule
 
             try
             {
-                System.IO.File.Delete(this.FullFileName); 
+                System.IO.File.Delete(this.FullFileName);
             }
             catch (Exception)
             {
                 //
             }
-        
+
         }
 
 
@@ -283,7 +280,7 @@ namespace Kooboo.IndexedDB.Schedule
                     {
                         if (_stream == null || _stream.CanRead == false)
                         {
-                            _stream = StreamManager.GetFileStream(this.FullFileName); 
+                            _stream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
                 }
@@ -301,9 +298,9 @@ namespace Kooboo.IndexedDB.Schedule
 
         private Int64 getcacheposition(int time)
         {
-            if (_positioncache.ContainsKey(time))
+            if (_positionCache.ContainsKey(time))
             {
-                return _positioncache[time];
+                return _positionCache[time];
             }
             else
             {
@@ -313,18 +310,18 @@ namespace Kooboo.IndexedDB.Schedule
 
         private void positionaddtocache(int time, Int64 position)
         {
-            if (_positioncache.ContainsKey(time))
+            if (_positionCache.ContainsKey(time))
             {
-                _positioncache.Add(time, position);
-                _positioncachecounter++;
+                _positionCache.Add(time, position);
+                _positionCacheCounter++;
             }
 
-            if (_positioncachecounter > 300)
+            if (_positionCacheCounter > 300)
             {
-                _positioncachecounter = _positioncachecounter - 150;
+                _positionCacheCounter = _positionCacheCounter - 150;
                 List<int> keystoremove = new List<int>();
                 int counter = 0;
-                foreach (var item in _positioncache)
+                foreach (var item in _positionCache)
                 {
                     keystoremove.Add(item.Key);
                     counter++;
@@ -336,7 +333,7 @@ namespace Kooboo.IndexedDB.Schedule
 
                 foreach (var item in keystoremove)
                 {
-                    _positioncache.Remove(item);
+                    _positionCache.Remove(item);
                 }
             }
         }
@@ -346,9 +343,9 @@ namespace Kooboo.IndexedDB.Schedule
 
         private static int GetTimeSheetSecondPosition(DateTime ExactScheduleTime)
         {
-            int timeoftoday = (int)ExactScheduleTime.TimeOfDay.TotalSeconds;
+            int timeofToday = (int)ExactScheduleTime.TimeOfDay.TotalSeconds;
 
-            int position = timeoftoday * 8;
+            int position = timeofToday * 8;
             position = position + 8;  /// the first 8 bytes is the counter. 
             return position;
         }

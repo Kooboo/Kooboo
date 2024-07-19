@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Kooboo.Mail.Imap.Commands.SearchCommand.SearchKeyword.Argument;
 
 namespace Kooboo.Mail.Imap.Commands.SearchCommand
@@ -22,7 +20,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             this.WholeText = CommandText;
             this.TotalLen = this.WholeText.Length;
         }
-         
+
         internal bool IsLookupCharEnd(int currentindex)
         {
             while (currentindex < TotalLen)
@@ -191,7 +189,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                                 else
                                 {
                                     // convert to right DataType.  
-                                    var rightvalue = ToRightDataType(next, item.DataType); 
+                                    var rightvalue = ToRightDataType(next, item.DataType);
                                     result.Parameters.Add(item.FieldName, rightvalue);
                                 }
                             }
@@ -209,31 +207,31 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
         {
             if (string.IsNullOrEmpty(value))
             {
-                return null; 
+                return null;
             }
 
-           if (type == SearchDataType.Text)
+            if (type == SearchDataType.Text)
             {
-                return value; 
+                return value;
             }
-           else if  (type == SearchDataType.Number)
+            else if (type == SearchDataType.Number)
             {
-                int intvalue = 0; 
+                int intvalue = 0;
 
                 if (int.TryParse(value, out intvalue))
                 {
-                    return intvalue; 
+                    return intvalue;
                 }
                 else
                 {
                     return null;
-                } 
+                }
             }
-           else if (type == SearchDataType.Date)
+            else if (type == SearchDataType.Date)
             {
-              return  ImapHelper.ParseRfc2822Time(value); 
+                return ImapHelper.ParseRfc2822Time(value);
             }
-            return null; 
+            return null;
         }
 
         public List<SearchItem> ReadAllDataItems()
@@ -241,15 +239,15 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             List<SearchItem> items = new List<SearchItem>();
             var next = this.ReadItem();
 
-            while (next != null && next.Name !=null)
-            {  
+            while (next != null && next.Name != null)
+            {
                 items.Add(next);
 
                 next = this.ReadItem();
             }
             return items;
         }
-         
+
     }
 }
 

@@ -2,8 +2,12 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Kooboo.Lib.Helper
 {
@@ -62,11 +66,10 @@ namespace Kooboo.Lib.Helper
             return type.Contains("image");
         }
 
-
         //the link like: //kooboo.com/abc.png
         public static bool IsRelativeExternal(string link)
         {
-            if (link.StartsWith("//"))
+            if (link.StartsWith("//") && link.Length > 3)
             {
                 var index = link.IndexOf("/", 3);
                 if (index > -1)
@@ -76,64 +79,11 @@ namespace Kooboo.Lib.Helper
                     {
                         string domain = link.Substring(2, index - 2);
 
-                        return IsValidDomain(domain);
+                        return Kooboo.Lib.Domain.DomainService.IsValidDomain(domain);
                     }
                 }
             }
             return false;
-        }
-
-        public static bool IsValidDomain(string domain)
-        {
-            if (domain == null)
-            {
-                return false;
-            }
-
-            int index = domain.LastIndexOf(".");
-            if (index == -1 || index == 0)
-            {
-                return false;
-            }
-
-            var lastpart = domain.Substring(index, domain.Length - index);
-            if (string.IsNullOrEmpty(lastpart))
-            {
-                return false;
-            }
-
-            if (lastpart.Length < 3)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < lastpart.Length; i++)
-            {
-                if (!Helper.CharHelper.IsAscii(lastpart[i]) && lastpart[i] != '.')
-                {
-                    return false;
-                }
-            }
-
-            //for (int i = 0; i < domain.Length; i++)
-            //{
-            //    var current = domain[i];
-            //    if (!Helper.CharHelper.isAlphanumeric(current))
-            //    {
-            //        if (current == '-' || current == '-' || current == '.')
-            //        {
-            //            continue;
-            //        }
-            //    }
-            //}
-
-            return true;
-            //A complete domain name must have one or more subdomain names and one top-level domain name.
-            //A complete domain name must use dots(.) to separate domain names.
-            //Domain names must use only alphanumeric characters and dashes(-).
-            //Domain names must not begin or end with dashes(-).
-            //Domain names must mot have more than 63 characters.
-            //The top-level domain name must be one of the predefined top - level domain names, like (com), (org), or (ca)
         }
 
         /// <summary>
@@ -144,7 +94,7 @@ namespace Kooboo.Lib.Helper
         /// <param name="baseUrl"></param>
         /// <param name="subUrl"></param>
         /// <returns></returns>
-        public static string Combine(string baseUrl, string subUrl)
+        public static string Combine(string baseUrl, string subUrl, bool RemoveFragment = true)
         {
             if (subUrl == null)
             {
@@ -156,14 +106,26 @@ namespace Kooboo.Lib.Helper
             {
                 return baseUrl;
             }
-            if (subUrl.ToLower().StartsWith("http") || string.IsNullOrEmpty(baseUrl) || Kooboo.Lib.Utilities.DataUriService.isDataUri(subUrl))
+            if ((subUrl.ToLower().StartsWith("http://") || subUrl.ToLower().StartsWith("https://")) || string.IsNullOrEmpty(baseUrl) || Kooboo.Lib.Utilities.DataUriService.isDataUri(subUrl))
             {
                 return subUrl;
             }
 
             if (IsRelativeExternal(subUrl))
             {
-                return subUrl; 
+                if (baseUrl != null)
+                {
+                    baseUrl = baseUrl.ToLower();
+                    if (baseUrl.StartsWith("http://"))
+                    {
+                        return "http:" + subUrl;
+                    }
+                    else
+                    {
+                        return "https:" + subUrl;
+                    }
+                }
+                return subUrl;
             }
 
             if (baseUrl.ToLower().StartsWith("http"))
@@ -177,7 +139,7 @@ namespace Kooboo.Lib.Helper
                 catch (Exception)
                 {
                 }
-                
+
                 return uri.OriginalString;
             }
             else
@@ -187,11 +149,11 @@ namespace Kooboo.Lib.Helper
 
                 if (baseUrl.StartsWith(@"\") || baseUrl.StartsWith(@"/"))
                 {
-                    return UrlHelper.RelativePath(combined);
+                    return UrlHelper.RelativePath(combined, RemoveFragment);
                 }
                 else
                 {
-                    return UrlHelper.RelativePath(combined).Substring(1);
+                    return UrlHelper.RelativePath(combined, RemoveFragment).Substring(1);
                 }
             }
         }
@@ -202,7 +164,7 @@ namespace Kooboo.Lib.Helper
         /// <param name="absoluteUrl"></param>
         /// <param name="isSameHost"></param>
         /// <returns></returns>
-        public static string RelativePath(string absoluteUrl, bool isSameHost)
+        public static string RelativeHostPath(string absoluteUrl, bool isSameHost)
         {
             if (isSameHost)
             {
@@ -239,17 +201,17 @@ namespace Kooboo.Lib.Helper
         /// <param name="domain"></param>
         /// <param name="sitepath"></param>
         /// <returns></returns>
-        public static string RelativePath(string fullurl)
+        public static string RelativePath(string fullurl, bool RemoveFragment = true)
         {
             if (IsRelativeExternal(fullurl))
             {
-                return fullurl; 
+                return fullurl;
             }
 
             if (fullurl.ToLower().StartsWith("http"))
             {
                 Uri url = new Uri(fullurl);
-                return RelativePath(url);
+                return RelativePath(url, RemoveFragment);
             }
             else
             {
@@ -261,15 +223,84 @@ namespace Kooboo.Lib.Helper
             }
         }
 
-        public static string RelativePath(Uri uri)
-        {
-            string localpath = uri.LocalPath + uri.Query;
 
-            if (string.IsNullOrEmpty(localpath))
+        public static string RemoveQueryStringKey(string url, string keyToRemove)
+        {
+            if (url == null)
             {
-                localpath = "/";
+                return null;
             }
-            return RemoveLocalLink(RemoveSessionId(localpath));
+            url = url.Trim();
+
+            if (url.Contains("?"))
+            {
+
+                bool absUrl = url.ToLower().Contains("http://") || url.ToLower().Contains("https://");
+
+                if (!absUrl)
+                {
+                    if (url.StartsWith("/"))
+                    {
+                        url = "http://www.kooboo.com" + url;
+                    }
+                    else
+                    {
+                        url = "http://www.kooboo.com/" + url;
+                    }
+                }
+
+                string result = null;
+
+                UriBuilder uriBuilder = new UriBuilder(url);
+                NameValueCollection queryParameters = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+                // Remove the query parameter if it exists
+                if (queryParameters.AllKeys.Contains(keyToRemove))
+                {
+                    queryParameters.Remove(keyToRemove);
+
+                    // Reconstruct the URL without the removed query parameter
+                    uriBuilder.Query = queryParameters.ToString();
+                    result = uriBuilder.Uri.AbsoluteUri;
+                }
+                else
+                {
+                    result = url;
+                }
+
+                if (!absUrl)
+                {
+                    return RelativePath(result);
+                }
+                else
+                {
+                    return result;
+                }
+
+            }
+
+            return url;
+        }
+
+
+
+        public static string RelativePath(Uri uri, bool RemoveFragment = true)
+        {
+            string localPath = uri.LocalPath + uri.Query;
+
+            if (!RemoveFragment)
+            {
+                localPath += uri.Fragment;
+            }
+
+            if (string.IsNullOrEmpty(localPath))
+            {
+                localPath = "/";
+            }
+            //  return RemoveFragment(RemoveSessionId(localpath));
+
+            return RemoveSessionId(localPath);
+
         }
 
         /// <summary>
@@ -321,7 +352,7 @@ namespace Kooboo.Lib.Helper
         /// </summary>
         /// <param name="urlinput"></param>
         /// <returns></returns>
-        public static string RemoveLocalLink(string urlinput)
+        public static string RemoveFragment(string urlinput)
         {
             int localIndex = urlinput.LastIndexOf("#");
             if (localIndex >= 0)
@@ -381,6 +412,24 @@ namespace Kooboo.Lib.Helper
                 }
                 return host;
             }
+            else
+            {
+                try
+                {
+                    Uri url = new Uri(fullurl);
+                    string host = url.Host.ToLower();
+                    //with or without www should be treated the same.
+                    if (host.StartsWith("www."))
+                    {
+                        host = host.Substring(4);
+                    }
+                    return host;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
 
             return null;
 
@@ -392,45 +441,45 @@ namespace Kooboo.Lib.Helper
         /// <summary>
         /// the original host reture by Uri class includes www
         /// </summary>
-        /// <param name="fullurl"></param>
+        /// <param name="fullUrl"></param>
         /// <returns></returns>
-        public static string UriHost(string fullurl, bool keepwww)
+        public static string UriHost(string fullUrl, bool keepWWW)
         {
-            if (fullurl == null)
+            if (fullUrl == null)
             {
                 return null;
             }
 
-            fullurl = fullurl.ToLower().Replace("\\", "/");
+            fullUrl = fullUrl.ToLower().Replace("\\", "/");
 
-            if (!keepwww)
+            if (!keepWWW)
             {
-                return HostWithoutWWW(fullurl);
+                return HostWithoutWWW(fullUrl);
             }
 
-            if (!fullurl.StartsWith("http"))
+            if (!fullUrl.StartsWith("http"))
             {
-                int slashindex = fullurl.IndexOf("/");
-                if (slashindex > 0)
+                int slashIndex = fullUrl.IndexOf("/");
+                if (slashIndex > 0)
                 {
-                    return fullurl.Substring(0, slashindex);
+                    return fullUrl.Substring(0, slashIndex);
                 }
                 else
                 {
-                    return fullurl;
+                    return fullUrl;
                 }
             }
 
-            if (Uri.IsWellFormedUriString(fullurl, UriKind.RelativeOrAbsolute))
+            if (Uri.IsWellFormedUriString(fullUrl, UriKind.RelativeOrAbsolute))
             {
-                Uri url = new Uri(fullurl);
+                Uri url = new Uri(fullUrl);
                 return url.Host.ToLower();
             }
             else
             {
                 try
                 {
-                    Uri url = new Uri(fullurl);
+                    Uri url = new Uri(fullUrl);
                     return url.Host.ToLower();
                 }
                 catch (Exception)
@@ -440,6 +489,71 @@ namespace Kooboo.Lib.Helper
 
             return null;
         }
+
+
+        public static string GetHost(string Url)
+        {
+            if (string.IsNullOrWhiteSpace(Url))
+            {
+                return null;
+            }
+
+            var lower = Url.ToLower();
+
+            if (lower.Length <= 10)
+            {
+                return lower;
+            }
+
+            if (lower.StartsWith("https://"))
+            {
+                var rest = lower.Substring(8);
+                var index = rest.IndexOf("/");
+                var slashIndex = rest.IndexOf("\\");
+
+                if (slashIndex > 0 && index > slashIndex)
+                {
+                    index = slashIndex;
+                }
+
+                if (index > 0)
+                {
+                    return rest.Substring(0, index);
+                }
+                else
+                {
+                    return rest;
+                }
+
+            }
+            else if (lower.Contains("http://"))
+            {
+                var rest = lower.Substring(7);
+                var index = rest.IndexOf("/");
+                var slashIndex = rest.IndexOf("\\");
+
+                if (index > slashIndex && slashIndex > 0)
+                {
+                    index = slashIndex;
+                }
+
+                if (index > 0)
+                {
+                    return rest.Substring(0, index);
+                }
+                else
+                {
+                    return rest;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+
 
         /// <summary>
         /// check whether the two url are from the same host or not. 
@@ -468,35 +582,33 @@ namespace Kooboo.Lib.Helper
         /// <summary>
         /// get the file name from url. 
         /// </summary>
-        /// <param name="fullurl"></param>
+        /// <param name="fullUrl"></param>
         /// <returns></returns>
-        public static string FileName(string fullurl)
+        public static string FileName(string fullUrl)
         {
-            if (string.IsNullOrEmpty(fullurl))
+            if (string.IsNullOrEmpty(fullUrl))
             {
                 return string.Empty;
             }
-            return System.IO.Path.GetFileName(fullurl.Split('?')[0]);
+            return System.IO.Path.GetFileName(fullUrl.Split('?')[0]);
         }
 
-        public static string FileExtension(string fullurl)
+        public static string FileExtension(string fullUrl)
         {
-            if (String.IsNullOrWhiteSpace(fullurl))
+            if (String.IsNullOrWhiteSpace(fullUrl))
             {
                 return String.Empty;
             }
 
-            if (fullurl.IndexOf("?") > -1)
+            if (fullUrl.IndexOf("?") > -1)
             {
-                var index = fullurl.IndexOf("?");
-                fullurl = fullurl.Substring(0, index);
+                var index = fullUrl.IndexOf("?");
+                fullUrl = fullUrl.Substring(0, index);
             }
 
-            fullurl = fullurl.Trim('\\', '/');
-            //fullurl = fullurl.Remove('\n');
-            //fullurl = fullurl.Remove('\r');
+            fullUrl = fullUrl.Trim('\\', '/');
 
-            return System.IO.Path.GetExtension(fullurl.ToLower());
+            return System.IO.Path.GetExtension(fullUrl.ToLower());
         }
 
         public static string GetImageExtensionFromMine(string input)
@@ -533,14 +645,14 @@ namespace Kooboo.Lib.Helper
         /// used to add download content to make sure the next link is continue within current domain. 
         /// TODO: should handle https as well. 
         /// </summary>
-        /// <param name="pagesource"></param>
-        /// <param name="fullurl">The url of current request. </param>
+        /// <param name="pageSource"></param>
+        /// <param name="fullURL">The url of current request. </param>
         /// <returns></returns>
-        public static string ClearUrlAndEncoding(string fullurl, string pagesource)
+        public static string ClearUrlAndEncoding(string fullURL, string pageSource)
         {
-            string righturl = ReplaceUrlsWithRelative(fullurl, pagesource);
+            string CorrectURL = ReplaceUrlsWithRelative(fullURL, pageSource);
 
-            return ReplaceMetaCharSet(righturl);
+            return ReplaceMetaSecurityPolicy(CorrectURL);
         }
 
         /// <summary>
@@ -556,18 +668,19 @@ namespace Kooboo.Lib.Helper
 
             string urlpattern = "<a.*?href\\s*=\\s*(\"(?<strUrl>\\S.*?)\"|'(?<strUrl>\\S.*?)'|(?<strUrl>.*?)[\\s\\>])";
 
-            return Regex.Replace(PageSource, urlpattern, o => replacelink(o, httpdomain, FullUrl), RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+            return Regex.Replace(PageSource, urlpattern, o => replaceLink(o, httpdomain, FullUrl), RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
 
         }
 
-        public static string ReplaceMetaCharSet(string input)
+        public static string ReplaceMetaSecurityPolicy(string input)
         {
-            return input;
-            // string metacharset = "<meta.*?charset.*?>";
-            //return Regex.Replace(input, metacharset, "", RegexOptions.IgnoreCase);
+            string metacharset = """
+            <meta\s*http-equiv=["']\s*Content-Security-Policy\s*["']\s*content\s*=\s*["']\s*upgrade-insecure-requests\s*["']\s*\/?\s*>
+            """;
+            return Regex.Replace(input, metacharset, "", RegexOptions.IgnoreCase);
         }
 
-        private static string replacelink(Match match, string httpdomain, string originalFullUrl)
+        private static string replaceLink(Match match, string httpDomain, string originalFullUrl)
         {
             string url = match.Groups["strUrl"].Value;
 
@@ -575,9 +688,9 @@ namespace Kooboo.Lib.Helper
 
             if (isSameHost(FullUrl, originalFullUrl))
             {
-                string newurl = RelativePath(FullUrl);
+                string newURL = RelativePath(FullUrl);
 
-                return match.Value.Replace(url, newurl);
+                return match.Value.Replace(url, newURL);
             }
             else
             {
@@ -589,7 +702,7 @@ namespace Kooboo.Lib.Helper
         {
             string[] segments;
             if (RuntimeSystemHelper.IsWindow())
-            { 
+            {
                 if (toLower)
                 {
                     input = input.Replace("/", "\\").ToLower();
@@ -598,7 +711,7 @@ namespace Kooboo.Lib.Helper
                 {
                     input = input.Replace("/", "\\");
                 }
-              
+
                 segments = input.Split('\\');
             }
             else
@@ -611,21 +724,21 @@ namespace Kooboo.Lib.Helper
                 {
                     input = input.Replace("\\", "/");
                 }
-             
+
                 segments = input.Split('/');
             }
 
-            List<string> stringlist = new List<string>();
+            List<string> stringList = new List<string>();
 
             foreach (var item in segments)
             {
                 if (!string.IsNullOrEmpty(item))
                 {
-                    stringlist.Add(item);
+                    stringList.Add(item);
                 }
             }
 
-            return stringlist;
+            return stringList;
         }
 
         /// <summary>
@@ -687,11 +800,11 @@ namespace Kooboo.Lib.Helper
 
             if (string.IsNullOrEmpty(path))
             {
-                int lastslash = fullurl.LastIndexOf("/");
+                int lastsLash = fullurl.LastIndexOf("/");
 
-                if (lastslash > -1)
+                if (lastsLash > -1)
                 {
-                    path = fullurl.Substring(lastslash);
+                    path = fullurl.Substring(lastsLash);
                 }
             }
 
@@ -720,19 +833,25 @@ namespace Kooboo.Lib.Helper
             {
                 return UrlFileType.Unknow;
             }
-            string cleanurl = url.ToLower();
+            string cleanURL = url.ToLower();
             int QuestionMark = url.IndexOf("?");
             if (QuestionMark > 0)
             {
-                cleanurl = url.Substring(0, QuestionMark);
+                cleanURL = url.Substring(0, QuestionMark);
             }
-            cleanurl = cleanurl.Trim('\t', '\r', '\n');
+            cleanURL = cleanURL.Trim('\t', '\r', '\n');
             var extension = string.Empty;
             try
             {
-                extension = System.IO.Path.GetExtension(cleanurl);
+                if (Uri.TryCreate(cleanURL, UriKind.Absolute, out var uri))
+                {
+                    if (uri.PathAndQuery == "/") return UrlFileType.PageOrView;
+                }
+
+                extension = System.IO.Path.GetExtension(cleanURL);
+
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -748,7 +867,7 @@ namespace Kooboo.Lib.Helper
                     return UrlFileType.Style;
                 }
 
-                if (extension == ".jpg" || extension == ".ico" || extension == ".gif" || extension == ".bmp" || extension == ".png" || extension == ".jpeg" || extension == ".svg")
+                if (extension == ".jpg" || extension == ".ico" || extension == ".gif" || extension == ".bmp" || extension == ".png" || extension == ".jpeg" || extension == ".svg" || extension == ".webp" || extension == ".avif" || extension == ".apng ")
                 {
                     return UrlFileType.Image;
                 }
@@ -763,7 +882,7 @@ namespace Kooboo.Lib.Helper
                     return UrlFileType.PageOrView;
                 }
 
-                if (extension == ".swf" || extension == ".flv" || extension == ".mid" || extension == ".midi" || extension == ".mp3" || extension == ".mpg" || extension == ".mpeg" || extension == ".mov" || extension == ".rar" || extension == ".zip" || extension == ".7z" || extension == ".wav" || extension == ".tiff")
+                if (extension == ".swf" || extension == ".flv" || extension == ".mid" || extension == ".midi" || extension == ".mp3" || extension == ".mpg" || extension == ".mpeg" || extension == ".mov" || extension == ".rar" || extension == ".zip" || extension == ".7z" || extension == ".wav" || extension == ".tiff" || extension == ".map" || extension == ".json" || extension == ".xml")
                 {
                     return UrlFileType.File;
                 }
@@ -842,26 +961,26 @@ namespace Kooboo.Lib.Helper
                 return UrlFileType.PageOrView;
             }
 
-            string fakename = "kooboofake" + extension;
+            string MockName = "kooboofake" + extension;
 
-            var minetype = IOHelper.MimeType(fakename);
+            var mineType = IOHelper.MimeType(MockName);
 
-            if (minetype.StartsWith("application"))
+            if (mineType.StartsWith("application"))
             {
                 return UrlFileType.File;
             }
-            else if (minetype.StartsWith("image"))
+            else if (mineType.StartsWith("image"))
             {
                 return UrlFileType.Image;
             }
-            else if (minetype.StartsWith("text"))
+            else if (mineType.StartsWith("text"))
             {
 
-                if (minetype.Contains("css"))
+                if (mineType.Contains("css"))
                 {
                     return UrlFileType.Style;
                 }
-                else if (minetype.Contains("javascript"))
+                else if (mineType.Contains("javascript"))
                 {
                     return UrlFileType.JavaScript;
                 }
@@ -888,13 +1007,13 @@ namespace Kooboo.Lib.Helper
             {
                 return input;
             }
-            string newvalue = input.Replace("\\", "/");
+            string newValue = input.Replace("\\", "/");
 
-            if (withRoot && !newvalue.StartsWith("/"))
+            if (withRoot && !newValue.StartsWith("/"))
             {
-                newvalue = "/" + newvalue;
+                newValue = "/" + newValue;
             }
-            return newvalue;
+            return newValue;
         }
 
         public static string AppendQueryString(string baseUrl, Dictionary<string, string> Parameters)
@@ -905,23 +1024,23 @@ namespace Kooboo.Lib.Helper
             }
 
             string local = null;
-            int marklocal = baseUrl.IndexOf("#");
-            if (marklocal > -1)
+            int markLocal = baseUrl.IndexOf("#");
+            if (markLocal > -1)
             {
-                local = baseUrl.Substring(marklocal);
-                baseUrl = baseUrl.Substring(0, marklocal);
+                local = baseUrl.Substring(markLocal);
+                baseUrl = baseUrl.Substring(0, markLocal);
             }
 
-            int markindex = baseUrl.IndexOf("?");
-            string querypart = "";
+            int markIndex = baseUrl.IndexOf("?");
+            string queryPart = "";
             string url = baseUrl;
-            if (markindex > 0)
+            if (markIndex > 0)
             {
-                url = baseUrl.Substring(0, markindex);
-                querypart = baseUrl.Substring(markindex + 1);
+                url = baseUrl.Substring(0, markIndex);
+                queryPart = baseUrl.Substring(markIndex + 1);
             }
 
-            var queryStrings = System.Web.HttpUtility.ParseQueryString(querypart);
+            var queryStrings = System.Web.HttpUtility.ParseQueryString(queryPart);
 
             var keys = queryStrings.Keys;
             if (keys != null && keys.Count > 0)
@@ -932,7 +1051,7 @@ namespace Kooboo.Lib.Helper
                     string value = queryStrings.Get(key);
                     if (!string.IsNullOrEmpty(value))
                     {
-                        if (!Parameters.ContainsKey(key))
+                        if (key != null && !Parameters.ContainsKey(key))
                         {
                             Parameters[key] = value;
                         }
@@ -945,6 +1064,7 @@ namespace Kooboo.Lib.Helper
             foreach (var item in Parameters)
             {
                 string para = item.Key;
+                if (para == string.Empty) continue;
 
                 if (!string.IsNullOrEmpty(item.Value))
                 {
@@ -975,8 +1095,39 @@ namespace Kooboo.Lib.Helper
             return AppendQueryString(baseurl, query);
         }
 
+        public static string BuildQueryString(IEnumerable<KeyValuePair<string, string>> arguments)
+        {
+            return string.Join("&", arguments.Select(it => $"{it.Key}={PercentEncode(it.Value?.Trim() ?? string.Empty)}"));
+        }
 
-        public static string GetEncodedLocation(string location)
+        public static bool IsSameUrl(string left, string right)
+        {
+            if (left == default && right == default) return true;
+            if (left == default || right == default) return false;
+            left = left.ToLower().Trim();
+            var queryStringStart = left.IndexOf('?');
+            if (queryStringStart > -1) left = left[..queryStringStart];
+            queryStringStart = right.IndexOf('?');
+            if (queryStringStart > -1) right = right[..queryStringStart];
+            return left == right;
+        }
+
+        public static string ToPrUrl(string url)
+        {
+            if (url.StartsWith("https:", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return url[6..];
+            }
+
+            if (url.StartsWith("http:", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return url[5..];
+            }
+
+            return url;
+        }
+
+        public static string GetEncodedLocation(string location, bool onlyHttp = true)
         {
             if (string.IsNullOrEmpty(location))
                 return location;
@@ -985,23 +1136,36 @@ namespace Kooboo.Lib.Helper
             // /admin/sites will be parse to uri.schema= file in linux
             if (Uri.TryCreate(location, UriKind.Absolute, out uri))
             {
-                if (!string.IsNullOrEmpty(uri.Scheme) &&
-                    (uri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
-                    uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)))
+                if (!string.IsNullOrEmpty(uri.Scheme))
                 {
-                    var baseUrl = uri.Scheme + "://" + uri.Authority;
-                    builder.Append(baseUrl);
-                    location = location.Replace(baseUrl, "");
+                    void UseBaseUrl()
+                    {
+                        var baseUrl = uri.Scheme + "://" + uri.Authority;
+                        builder.Append(baseUrl);
+                        location = location.Replace(baseUrl, "");
+                    }
+
+                    if (onlyHttp)
+                    {
+                        if (uri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) || uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+                        {
+                            UseBaseUrl();
+                        }
+                    }
+                    else
+                    {
+                        UseBaseUrl();
+                    }
                 }
             }
 
             var queryString = string.Empty;
 
-            int questionmark = location.IndexOf("?");
-            if (questionmark > -1)
+            int questionMark = location.IndexOf("?");
+            if (questionMark > -1)
             {
-                queryString = location.Substring(questionmark);
-                location = location.Substring(0, questionmark);
+                queryString = location.Substring(questionMark);
+                location = location.Substring(0, questionMark);
 
             }
             var segments = location.Split('/');
@@ -1023,8 +1187,6 @@ namespace Kooboo.Lib.Helper
             return builder.ToString();
         }
 
-
-
         public enum UrlFileType
         {
             Unknow = 0,
@@ -1033,6 +1195,44 @@ namespace Kooboo.Lib.Helper
             Style = 3,
             File = 4,
             PageOrView = 5
+        }
+
+        public static string GetEncodePath(string path)
+        {
+            List<string> list = new List<string>();
+            string[] array = path.Split('/');
+            foreach (string value in array)
+            {
+                list.Add(PercentEncode(value));
+            }
+
+            return string.Join("/", list);
+        }
+
+        public static string PercentEncode(string raw)
+        {
+            if (raw == null)
+            {
+                return null;
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+            string text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+            byte[] bytes = Encoding.UTF8.GetBytes(raw);
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                char c = (char)bytes[i];
+                if (text.IndexOf(c) >= 0)
+                {
+                    stringBuilder.Append(c);
+                    continue;
+                }
+
+                stringBuilder.Append("%").Append(string.Format(CultureInfo.InvariantCulture, "{0:X2}", (int)c));
+            }
+
+            return stringBuilder.ToString().Replace("+", "%20").Replace("*", "%2A")
+                .Replace("%7E", "~");
         }
     }
 }

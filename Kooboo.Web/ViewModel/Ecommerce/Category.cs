@@ -1,14 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Web.ViewModel.Ecommerce
 {
-   public class CategoryViewModel
+    public class CategoryViewModel
     {
         public Guid Id { get; set; }
 
@@ -16,20 +10,21 @@ namespace Kooboo.Web.ViewModel.Ecommerce
 
         public string Values { get; set; }
 
-        private List<CategoryViewModel> _subcats; 
+        private List<CategoryViewModel> _subcats;
 
-        public List<CategoryViewModel> SubCats {
+        public List<CategoryViewModel> SubCats
+        {
             get
             {
                 if (_subcats == null)
                 {
-                    _subcats = new List<CategoryViewModel>(); 
+                    _subcats = new List<CategoryViewModel>();
                 }
-                return _subcats; 
+                return _subcats;
             }
             set
             {
-                _subcats = value; 
+                _subcats = value;
             }
 
         }

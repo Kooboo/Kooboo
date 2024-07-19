@@ -11,7 +11,7 @@ namespace Kooboo.IndexedDB
         {
             if (System.IO.File.Exists(filePath))
             {
-                BinaryFormatter formatter = new BinaryFormatter(); 
+                BinaryFormatter formatter = new BinaryFormatter();
                 Stream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 ObjectStoreSetting settings = (ObjectStoreSetting)formatter.Deserialize(stream);
                 formatter = null;

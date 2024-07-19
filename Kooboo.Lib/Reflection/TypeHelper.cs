@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using Kooboo.Extensions;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Reflection.Emit;
+using Kooboo.Extensions;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -98,6 +98,48 @@ namespace Kooboo.Lib.Reflection
 
         }
 
+
+        public static Type GetGenericType(Type typeinfo, Type assignableFrom)
+        {
+            if (typeinfo == default) return null;
+            var argus = typeinfo.GetGenericArguments();
+            if (argus != null && argus.Length > 0 && assignableFrom.IsAssignableFrom(argus[0]))
+            {
+                return argus[0];
+            }
+
+            var basetype = typeinfo;
+
+            while (basetype != default)
+            {
+                basetype = basetype.BaseType;
+
+                if (basetype == null)
+                {
+                    break;
+                }
+
+                argus = basetype.GetGenericArguments();
+                if (argus != null && argus.Length > 0 && assignableFrom.IsAssignableFrom(argus[0]))
+                {
+                    return argus[0];
+                }
+            }
+
+            var allinterfaces = typeinfo.GetInterfaces();
+
+            foreach (var item in allinterfaces)
+            {
+                argus = item.GetGenericArguments();
+                if (argus != null && argus.Length > 0 && assignableFrom.IsAssignableFrom(argus[0]))
+                {
+                    return argus[0];
+                }
+            }
+
+            return null;
+
+        }
 
         public static List<Type> GetGenericTypes(Type typeinfo)
         {
@@ -250,7 +292,7 @@ namespace Kooboo.Lib.Reflection
 
             foreach (FieldInfo info in fieldInfo)
             {
-                if (info.IsPublic)
+                if (info.IsPublic && !info.IsStatic)
                 {
                     fieldlist.Add(info.Name, info.FieldType);
                 }
@@ -330,7 +372,7 @@ namespace Kooboo.Lib.Reflection
             }
             return result;
         }
-         
+
         public static bool IsDictionary(Type type)
         {
             if (!type.IsGenericType)
@@ -379,7 +421,7 @@ namespace Kooboo.Lib.Reflection
                         return true;
                     }
                 }
-            } 
+            }
             return false;
         }
 
@@ -387,16 +429,16 @@ namespace Kooboo.Lib.Reflection
         {
             if (type.IsGenericType)
             {
-                return IsGenericCollection(type); 
+                return IsGenericCollection(type);
             }
             else
             {
                 if (HasInterface(type, typeof(System.Collections.IEnumerable)))
                 {
-                    return true; 
+                    return true;
                 }
             }
-            return false; 
+            return false;
         }
 
         public static bool HasInterface(Type CheckType, Type InterfaceType)
@@ -519,7 +561,6 @@ namespace Kooboo.Lib.Reflection
             var valueExp = Expression.Parameter(typeof(TFieldType));
             return Expression.Lambda<Action<TValue, TFieldType>>(Expression.Assign(expr, valueExp), arg, valueExp).Compile();
         }
-
 
 
         public static Action<TValue, object> GetSetObjectValue<TValue>(string FieldName, Type fieldtype)
@@ -863,7 +904,7 @@ namespace Kooboo.Lib.Reflection
 
             return Expression.Lambda<Action<object, object[]>>(methodCall, instanceParam, argsParam).Compile();
         }
-         
+
 
 
         public static bool IsFieldType(Type type)
@@ -893,7 +934,17 @@ namespace Kooboo.Lib.Reflection
                 {
                     return Activator.CreateInstance(ConversionType);
                 }
+                else
+                {
+                    return ParameterHelper.DefaultValue(ConversionType);
+                }
             }
+
+            if (ConversionType.IsGenericType && ConversionType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                ConversionType = Nullable.GetUnderlyingType(ConversionType)!;
+            }
+
 
             object result;
 
@@ -918,7 +969,7 @@ namespace Kooboo.Lib.Reflection
             else if (ConversionType == typeof(Guid))
             {
                 Guid id;
-                if (Guid.TryParse(value.ToString(), out id))
+                if (Guid.TryParse(value?.ToString(), out id))
                 {
                     return id;
                 }
@@ -927,15 +978,52 @@ namespace Kooboo.Lib.Reflection
             else if (ConversionType == typeof(bool))
             {
                 bool ok;
-                if (bool.TryParse(value.ToString(), out ok))
+                if (bool.TryParse(value?.ToString(), out ok))
                 {
                     return ok;
                 }
                 return false;
             }
+            else if (ConversionType == typeof(DateOnly))
+            {
+                if (value is DateTime)
+                {
+                    var datevalue = (DateTime)value;
+                    return DateOnly.FromDateTime(datevalue);
+                }
+                else
+                {
+                    if (DateTime.TryParse(value?.ToString(), out var dateValue))
+                    {
+                        return DateOnly.FromDateTime(dateValue);
+                    }
+                    return DateOnly.MinValue;
+                }
+            }
+            else if (ConversionType.IsEnum)
+            {
+                return Enum.Parse(ConversionType, value.ToString());
+            }
             else
             {
+
+                var type = value.GetType();
+
+                if (type == ConversionType || Lib.Reflection.TypeHelper.HasBaseType(type, ConversionType))
+                {
+                    return value;
+                }
+
+                //  if (value is IConvertible)
+                //  {
                 result = Convert.ChangeType(value, ConversionType);
+                //}
+                //else
+                //{
+                //   return ParameterHelper.DefaultValue(ConversionType); 
+                //   // return null;
+                //}
+
             }
 
             return result;
@@ -945,12 +1033,12 @@ namespace Kooboo.Lib.Reflection
         public static T ToObject<T>(IDictionary<string, object> source)
         {
             var result = ToObject(source, typeof(T));
-            return (T)result; 
+            return (T)result;
         }
 
         public static object ToObject(IDictionary<string, object> source, Type ObjectType)
         {
-            var result = Activator.CreateInstance(ObjectType); 
+            var result = Activator.CreateInstance(ObjectType);
 
             var allproperties = _GetProperties(ObjectType);
             var allfields = _GetFields(ObjectType);
@@ -995,16 +1083,16 @@ namespace Kooboo.Lib.Reflection
         }
 
         private static List<PropertyInfo> _GetProperties(Type type)
-        {      
+        {
             var props = type.GetProperties();
             if (props != null)
             {
                 return props.ToList();
             }
-            else    
+            else
             {
                 return new List<PropertyInfo>();
-            }   
+            }
         }
 
         private static List<FieldInfo> _GetFields(Type type)
@@ -1016,7 +1104,7 @@ namespace Kooboo.Lib.Reflection
             }
             else
             {
-                return new List<FieldInfo>(); 
+                return new List<FieldInfo>();
             }
         }
 
@@ -1042,8 +1130,6 @@ namespace Kooboo.Lib.Reflection
 
             return null;
         }
-
-         
 
     }
 }

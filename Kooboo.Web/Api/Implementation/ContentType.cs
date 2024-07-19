@@ -1,46 +1,46 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data.Definition;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class ContentTypeApi : SiteObjectApi<ContentType>
     {
         [Kooboo.Attributes.ReturnType(typeof(List<ContentTypeItemViewModel>))]
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.VIEW)]
         public override List<object> List(ApiCall call)
         {
-            var all = call.WebSite.SiteDb().ContentTypes.All();
-            List<ContentTypeItemViewModel> result = new List<ContentTypeItemViewModel>();
-            foreach (var item in all)
-            {
-                ContentTypeItemViewModel model = new ContentTypeItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.PropertyCount = item.Properties.Count();
-                model.LastModified = item.LastModified;
-                result.Add(model);
-            }
-            return result.ToList<object>();
+            return call.WebSite.SiteDb()
+                .ContentTypes
+                .All()
+                .OrderBy(it => it.Name)
+                .Select(item => new ContentTypeItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    PropertyCount = item.Properties.Count,
+                    LastModified = item.LastModified
+                }).ToList<object>();
         }
 
         [Attributes.RequireModel(typeof(ContentType))]
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.EDIT)]
         public override Guid Post(ApiCall call)
         {
-            ContentType value = (ContentType)call.Context.Request.Model; 
+            ContentType value = (ContentType)call.Context.Request.Model;
 
             EnsureSystemFields(value);
 
             ValidateReservedFields(value, call);
 
             call.WebSite.SiteDb().ContentTypes.AddOrUpdate(value, call.Context.User.Id);
-            return value.Id; 
+            return value.Id;
         }
 
         private void EnsureSystemFields(ContentType contenttype)
@@ -51,21 +51,21 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     item.MultipleLanguage = false;
                     item.DataType = Data.Definition.DataTypes.String;
-                    item.ControlType = ControlTypes.TextBox; 
+                    item.ControlType = ControlTypes.TextBox;
                     item.IsSystemField = true;
                 }
                 else if (item.Name.ToLower() == SystemFields.Sequence.Name.ToLower())
                 {
                     item.MultipleLanguage = SystemFields.Sequence.MultipleLanguage;
                     item.DataType = SystemFields.Sequence.DataType;
-                    item.ControlType = SystemFields.Sequence.ControlType; 
+                    item.ControlType = SystemFields.Sequence.ControlType;
                     item.IsSystemField = true;
                 }
                 else if (item.Name.ToLower() == SystemFields.Online.Name.ToLower())
                 {
                     item.MultipleLanguage = SystemFields.Online.MultipleLanguage;
                     item.DataType = SystemFields.Online.DataType;
-                    item.ControlType = SystemFields.Online.ControlType; 
+                    item.ControlType = SystemFields.Online.ControlType;
                     item.IsSystemField = true;
                 }
             }
@@ -75,7 +75,7 @@ namespace Kooboo.Web.Api.Implementation
 
             bool hasuserkey = false;
             bool hasseq = false;
-            bool hasonline = false; 
+            bool hasonline = false;
 
             foreach (var item in contenttype.Properties)
             {
@@ -83,11 +83,11 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     if (hasuserkey)
                     {
-                        removeProp.Add(item); 
+                        removeProp.Add(item);
                     }
-                    else { hasuserkey = true;  }
+                    else { hasuserkey = true; }
                 }
-               else  if (item.Name.ToLower() == SystemFields.Sequence .Name.ToLower())
+                else if (item.Name.ToLower() == SystemFields.Sequence.Name.ToLower())
                 {
                     if (hasseq)
                     {
@@ -103,8 +103,8 @@ namespace Kooboo.Web.Api.Implementation
                         removeProp.Add(item);
                     }
                     else { hasonline = true; }
-                } 
-            } 
+                }
+            }
         }
 
         private void ValidateReservedFields(ContentType contentType, ApiCall call)
@@ -118,6 +118,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.VIEW)]
         public override object Get(ApiCall call)
         {
             if (call.ObjectId == default(Guid))
@@ -134,28 +135,50 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 var type = call.WebSite.SiteDb().ContentTypes.Get(call.ObjectId);
-                removeSystemField(type); 
-                return type; 
+                removeSystemField(type);
+                return type;
             }
         }
-         
+
         private void removeSystemField(ContentType type)
         {
             foreach (var item in SystemFields.ReservedFields)
             {
-                var find = type.Properties.Find(o => o.Name.ToLower() == item.ToLower()); 
-                if (find !=null)
+                var find = type.Properties.Find(o => o.Name.ToLower() == item.ToLower());
+                if (find != null)
                 {
-                    type.Properties.Remove(find); 
+                    type.Properties.Remove(find);
                 }
             }
 
             // SET online field to boolean. 
             var online = type.Properties.Find(o => o.Name == SystemFields.Online.Name);
 
-            online.ControlType = ControlTypes.Boolean; 
+            online.ControlType = ControlTypes.Boolean;
         }
 
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
 
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
     }
 }

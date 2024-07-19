@@ -15,7 +15,7 @@ namespace dotless.Core
         public ILogger Logger { get; set; }
 
         public CacheDecorator(ILessEngine underlying, ICache cache) : this(underlying, cache, NullLogger.Instance)
-        {}
+        { }
 
         public CacheDecorator(ILessEngine underlying, ICache cache, ILogger logger)
         {
@@ -35,9 +35,9 @@ namespace dotless.Core
 
                 var css = Underlying.TransformToCss(source, fileName);
                 var dependancies = new[] { fileName }.Concat(GetImports());
-                
+
                 Cache.Insert(cacheKey, dependancies, css);
-                
+
                 return css;
             }
             Logger.Debug(String.Format("Retrieving cache entry {0}", cacheKey));

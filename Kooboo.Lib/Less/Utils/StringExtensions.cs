@@ -1,11 +1,9 @@
 ﻿namespace dotless.Core.Utils
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Parser.Infrastructure;
-    using Parser.Infrastructure.Nodes;
-    using System;
 
     public static class StringExtensions
     {
@@ -18,7 +16,7 @@
         {
             if (!source.Any())
                 return "";
-  
+
             var path = source.Aggregate("", Path.Combine);
 
             return CanonicalizePath(path, currentDirectory);
@@ -85,7 +83,7 @@
 
                 // skip out the ../ that match directories we are already in
                 pathList = pathList.Take(numberOfParents - numberOfMatchingParents)
-                    .Concat(pathList.Skip((numberOfParents - numberOfMatchingParents) + (numberOfMatchingParents*2)));
+                    .Concat(pathList.Skip((numberOfParents - numberOfMatchingParents) + (numberOfMatchingParents * 2)));
             }
 
             // Recombine the path segments. Note that there is a difference between doing this

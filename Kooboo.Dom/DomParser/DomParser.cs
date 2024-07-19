@@ -3,30 +3,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-   public static class DomParser
+    public static class DomParser
     {
 
-       public static Document CreateDom(string htmlText)
-       {
-           TreeConstruction treeParser = new TreeConstruction();
-           Document doc = treeParser.Parse(htmlText);
-           doc.HtmlSource = htmlText;
-           return doc;
-       }
+        public static Document CreateDom(string htmlText)
+        {
+            TreeConstruction treeParser = new TreeConstruction();
+            Document doc = treeParser.Parse(htmlText);
+            doc.HtmlSource = htmlText;
+            return doc;
+        }
 
         public static Document CreateDom(string htmlText, List<string> ParserErrors)
         {
             TreeConstruction treeParser = new TreeConstruction();
-            treeParser.EnableErrorLogging = true; 
+            treeParser.EnableErrorLogging = true;
             Document doc = treeParser.Parse(htmlText);
             doc.HtmlSource = htmlText;
 
-            ParserErrors.AddRange(_getErrors(treeParser.Errors, htmlText)); 
+            ParserErrors.AddRange(_getErrors(treeParser.Errors, htmlText));
             return doc;
         }
 
@@ -35,7 +33,7 @@ namespace Kooboo.Dom
             List<string> ErrList = new List<string>();
             int currentposition = 0;
 
-            int totallines = 1; 
+            int totallines = 1;
 
             foreach (var item in errors)
             {
@@ -48,9 +46,9 @@ namespace Kooboo.Dom
                 currentposition = item.Key;
 
                 string newerr = "line " + totallines.ToString() + ". " + item.Value;
-                ErrList.Add(newerr); 
+                ErrList.Add(newerr);
             }
-            return ErrList; 
+            return ErrList;
         }
 
         /// <summary>
@@ -60,34 +58,34 @@ namespace Kooboo.Dom
         /// <param name="applyCss">parse and apply css to dom elements</param>
         /// <returns></returns>
         public static Document CreateDomFromUri(string FullUrlOrPath)
-       {
-           string htmlstring = Loader.LoadHtml(FullUrlOrPath);
+        {
+            string htmlstring = Loader.LoadHtml(FullUrlOrPath);
 
-           if (string.IsNullOrEmpty(htmlstring))
-           {
-               return null;
-           }
+            if (string.IsNullOrEmpty(htmlstring))
+            {
+                return null;
+            }
 
-           Document doc = CreateDom(htmlstring);
-           doc.URL = FullUrlOrPath;
-       
-           return doc;
-       }
+            Document doc = CreateDom(htmlstring);
+            doc.URL = FullUrlOrPath;
 
-       public static NodeList ParseFragment(string input , Element context)
-       { 
-           TreeConstruction treeParser = new TreeConstruction();
-             return treeParser.ParseFragment(input, context); 
-       }
+            return doc;
+        }
 
-       public static NodeList ParseFragment(string input)
-       {
-           
-           TreeConstruction treeParser = new TreeConstruction();
-           treeParser.doc.HtmlSource = input;
-           return treeParser.ParseFragment(input);
+        public static NodeList ParseFragment(string input, Element context)
+        {
+            TreeConstruction treeParser = new TreeConstruction();
+            return treeParser.ParseFragment(input, context);
+        }
 
-       }
+        public static NodeList ParseFragment(string input)
+        {
+
+            TreeConstruction treeParser = new TreeConstruction();
+            treeParser.doc.HtmlSource = input;
+            return treeParser.ParseFragment(input);
+
+        }
 
     }
 }

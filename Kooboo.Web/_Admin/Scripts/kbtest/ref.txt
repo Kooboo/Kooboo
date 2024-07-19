@@ -1,6 +1,0 @@
-/_Admin/Scripts/lib/jquery.min.js
-/_Admin/Scripts/KoobooBase.js
-/_Admin/Scripts/kooboo/Eventbus.js
-/_Admin/Scripts/layoutEditor/components/KBFrame.js
-/_Admin/Scripts/Kooboo.VersionManager.js
-/_Admin/Scripts/DataCache.js

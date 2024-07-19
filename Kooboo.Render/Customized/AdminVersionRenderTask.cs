@@ -1,8 +1,6 @@
-﻿using Kooboo.Data.Context;
+﻿using System.Collections.Generic;
+using Kooboo.Data.Context;
 using Kooboo.Sites.Render;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Render.Customized
 {
@@ -42,7 +40,7 @@ namespace Kooboo.Render.Customized
             if (version == null)
             {
                 return this.Url;
-            } 
+            }
 
             if (this.Url == null)
             {
@@ -53,22 +51,22 @@ namespace Kooboo.Render.Customized
 
             if (result.Contains("text.js"))
             {
-                result = result + "?lang=" + GetCulture(context); 
+                result = result + "?lang=" + GetCulture(context);
             }
 
             if (result.Contains("?"))
             {
-              return  result + "&version=" + version;
+                return result + "&version=" + version;
             }
             else
             {
-              return    result + "?version=" + version;
-            } 
+                return result + "?version=" + version;
+            }
         }
 
         public string GetVersion(RenderContext context)
-        { 
-            return Data.AppSettings.Version.ToString(); 
+        {
+            return Data.AppSettings.Version.ToString();
         }
 
         public string GetCulture(RenderContext context)
@@ -89,7 +87,7 @@ namespace Kooboo.Render.Customized
 
             if (string.IsNullOrWhiteSpace(culture))
             {
-                culture = Kooboo.Data.AppSettings.CmsLang; 
+                culture = Kooboo.Data.AppSettings.CmsLang;
             }
 
             return culture;

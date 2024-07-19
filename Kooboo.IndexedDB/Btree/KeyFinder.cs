@@ -1,12 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
     public class KeyFinder
     {
@@ -63,7 +59,7 @@ namespace Kooboo.IndexedDB.Btree
             if (keybytes == null)
             {
                 // this is when it is the previous pointer. 
-                return null; 
+                return null;
             }
 
             byte[] currentkey = null;
@@ -154,8 +150,8 @@ namespace Kooboo.IndexedDB.Btree
 
             }
 
-            return foundkey; 
-        } 
+            return foundkey;
+        }
 
     }
 }

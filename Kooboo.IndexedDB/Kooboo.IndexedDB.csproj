@@ -1,16 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.IndexedDB</AssemblyName>
-	<RootNamespace>Kooboo.IndexedDB</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.IndexedDB</AssemblyName>
+		<RootNamespace>Kooboo.IndexedDB</RootNamespace>
+		<Deterministic>False</Deterministic>
+		<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="JumpTable\**" />
-    <EmbeddedResource Remove="JumpTable\**" />
-    <None Remove="JumpTable\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="BPlusTree\**" />
+		<Compile Remove="JumpTable\**" />
+		<EmbeddedResource Remove="BPlusTree\**" />
+		<EmbeddedResource Remove="JumpTable\**" />
+		<None Remove="BPlusTree\**" />
+		<None Remove="JumpTable\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+		<Compile Include="BPlusTree\BPlusCollection.cs" />
+		<Compile Include="BPlusTree\BPlusQuery.cs" />
+		<Compile Include="BPlusTree\BPlusStore.cs" />
+		<Compile Include="BPlusTree\BPlusTreeFile.cs" />
+		<Compile Include="BPlusTree\BPlusTreeIndex.cs" />
+		<Compile Include="BPlusTree\IBPlusTreeObject.cs" />
+	</ItemGroup>
 
 </Project>

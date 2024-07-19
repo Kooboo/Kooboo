@@ -3,32 +3,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Principal;
 using System.Security.Authentication;
-
-using LumiSoft.Net.AUTH;
-using LumiSoft.Net;
+using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
-    public class ImapSession : IManagedConnection, IDisposable
+    public class ImapSession : IDisposable
     {
         private CancellationTokenSource _cancellationTokenSource;
-        private long _timeoutTimestamp = Int64.MaxValue;    // To check connection alive timeout
-        private int _disposing;
 
-        public ImapSession(ImapServer server, TcpClient client, long connectionId)
+        public ImapSession(ImapServer server, TcpClient client)
         {
             Server = server;
             TcpClient = client;
-            Id = connectionId;
         }
-
-        public long Id { get; set; }
 
         public ImapServer Server { get; private set; }
 
@@ -61,23 +53,6 @@ namespace Kooboo.Mail.Imap
 
         public bool IsSecureConnection { get; set; }
 
-        private Dictionary<string, AUTH_SASL_ServerMechanism> _authentications;
-        public Dictionary<string, AUTH_SASL_ServerMechanism> Authentications
-        {
-            get
-            {
-                if (_authentications == null)
-                {
-                    _authentications = new Dictionary<string, AUTH_SASL_ServerMechanism>();
-                }
-                return _authentications;
-            }
-            set
-            {
-                _authentications = value;
-            }
-        }
-
         public SelectFolder SelectFolder { get; set; }
 
         private MailDb _db;
@@ -98,15 +73,12 @@ namespace Kooboo.Mail.Imap
                 }
                 return _db;
             }
-            set { _db = value;  }
-
+            set { _db = value; }
         }
 
         public async Task Start()
         {
-            Server._connectionManager.AddConnection(this);
             _cancellationTokenSource = new CancellationTokenSource();
-            Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(Server.Options.LiveTimeout).Ticks);
 
             try
             {
@@ -122,37 +94,60 @@ namespace Kooboo.Mail.Imap
                     Stream = new ImapStream(TcpClient, stream);
                 }
 
-                await OnStart();
+                var capabilities = String.Join(" ", Capabilities);
+
+                await Stream.WriteLineAsync($"* OK Kooboo Imap server ready.");
 
                 var cancellationToken = _cancellationTokenSource.Token;
+
+                // List<string> history = new List<string>();
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var commandLine = await Stream.ReadCommandAsync();
-                    if (commandLine == null)
+                    try
                     {
-                        await Stream.WriteStatusAsync("BAD", "Error: Command not recognized."); 
+                        var commandLine = await Stream.ReadCommandAsync();
+                        if (commandLine != null)
+                        {
+                            await Kooboo.Mail.Imap.Commands.CommandManager.Execute(this, commandLine.Tag, commandLine.Name, commandLine.Args);
+                            // TODO: Execute should return to cancel connection. 
+                            if (commandLine.Name == "LOGOUT")
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            _cancellationTokenSource?.Cancel();
+                        }
+
                     }
-                    else
+                    catch (InvalidDataException)
                     {
-                        await Kooboo.Mail.Imap.Commands.CommandManager.Execute(this, commandLine.Tag, commandLine.Name, commandLine.Args);
-                        OnCommandExecuted();
+                        await Stream.WriteLineAsync("BAD Error: Command not recognized.");
+                        throw;
                     }
+
+                    // history.Add(commandLine.Name + "  " + commandLine.Args);
                 }
             }
-            catch (SessionCloseException)
-            {
-                // No need to dispose for finally block will do it
-            }
+
             catch (SocketException)
             {
             }
-            catch (Exception ex)
+
+            catch (IOException)
             {
-                await Stream.WriteLineAsync("Local server error occured, bye!");
+                //client close connection.
+            }
+            catch (Exception)
+            {
+                //if (Stream != null)
+                //{
+                //    await Stream.WriteLineAsync("Local server error occured, bye!");
+                //} 
             }
             finally
             {
-                Server._connectionManager.RemoveConnection(Id);
                 Dispose();
             }
         }
@@ -160,7 +155,10 @@ namespace Kooboo.Mail.Imap
         public async Task StartSecureConnection()
         {
             var sslStream = new SslStream(TcpClient.GetStream(), false);
-            await sslStream.AuthenticateAsServerAsync(Server.Certificate, false, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, false);
+
+            var cert = Kooboo.Data.SSL.SslCertificateProvider.SelectCertificate2(Settings.ImapDomain);
+
+            await sslStream.AuthenticateAsServerAsync(cert, false, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13, false);
 
             IsSecureConnection = true;
 
@@ -171,31 +169,17 @@ namespace Kooboo.Mail.Imap
 
         public void Dispose()
         {
-            if (Interlocked.Exchange(ref _disposing, 1) == 0)
+            if (!_cancellationTokenSource.IsCancellationRequested) _cancellationTokenSource.Cancel();
+            if (Stream != null)
             {
-                _cancellationTokenSource.Cancel();
                 Stream.Dispose();
-                TcpClient.Close();
             }
+
+            TcpClient.Close();
+
         }
 
-        public void CheckTimeout()
-        {
-            var timestamp = Server.Heartbeat.UtcNow.Ticks;
-            if (timestamp > Interlocked.Read(ref _timeoutTimestamp))
-            {
-                _timeoutTimestamp = Int64.MaxValue;
-                Dispose();
-            }
-        }
 
-        protected virtual Task OnStart()
-        {
-            var capabilities = String.Join(" ", Capabilities);
-            var hostName = Net_Utils.GetLocalHostName(Server.HostName);
-
-            return Stream.WriteLineAsync($"* OK <{hostName}> Kooboo Imap server ready.");
-        }
 
         private List<string> EnsureCapabilities()
         {
@@ -234,12 +218,7 @@ namespace Kooboo.Mail.Imap
             return result;
         }
 
-        private void OnCommandExecuted()
-        {
-            // Todo: Could add max connection period limit with max connections limit later
 
-            Interlocked.Exchange(ref _timeoutTimestamp, DateTime.UtcNow.Add(Server.Options.LiveTimeout).Ticks);
-        }
     }
 }
 

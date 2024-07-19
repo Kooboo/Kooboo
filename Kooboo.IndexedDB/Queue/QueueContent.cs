@@ -1,12 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.ByteConverter;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.ByteConverter;
 
 namespace Kooboo.IndexedDB.Queue
 {
@@ -14,18 +10,18 @@ namespace Kooboo.IndexedDB.Queue
     /// The content body of TValue class. 
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-   public class QueueContent<TValue>
+    public class QueueContent<TValue>
     {
-       private object _object = new object();
+        private object _object = new object();
 
         public string FullFileName;
         private FileStream _stream;
 
         private IByteConverter<TValue> ValueConverter;
-           
+
         private void _initialize()
         {
-           
+
             if (!File.Exists(FullFileName))
             {
                 FileInfo fileinfo = new FileInfo(FullFileName);
@@ -34,7 +30,7 @@ namespace Kooboo.IndexedDB.Queue
                 {
                     fileinfo.Directory.Create();
                 }
-               
+
 
                 FileStream openstream = File.Create(FullFileName);
 
@@ -90,7 +86,7 @@ namespace Kooboo.IndexedDB.Queue
         {
             lock (_object)
             {
-                Stream.Position = Position; 
+                Stream.Position = Position;
 
                 byte[] counterbyte = new byte[4];
 
@@ -124,7 +120,7 @@ namespace Kooboo.IndexedDB.Queue
                     {
                         if (_stream == null || _stream.CanRead == false)
                         {
-                            _stream = StreamManager.GetFileStream(this.FullFileName); 
+                            _stream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
                 }

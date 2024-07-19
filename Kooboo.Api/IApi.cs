@@ -21,12 +21,12 @@ namespace Kooboo.Api
         public abstract bool RequireUser { get; }
 
 
-        public virtual IResponse OnActionExecuting(ApiCall ApiCall)
+        public virtual IResponse OnActionExecuting(ApiCall call)
         {
             return null;
         }
 
-        public virtual void OnActionExecuted(ApiCall ApiCall)
+        public virtual void OnActionExecuted(ApiCall call)
         {
         }
     }

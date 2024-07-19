@@ -16,7 +16,7 @@ namespace Kooboo.Mail
         /// <summary>
         /// Connections that have been switched to a different protocol.
         /// </summary>
-        public ResourceCounter ConnectionCount { get; set;  }
+        public ResourceCounter ConnectionCount { get; set; }
 
         public void AddConnection(IManagedConnection connection)
         {

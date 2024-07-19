@@ -1,104 +1,59 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Lib</AssemblyName>
-	<RootNamespace>Kooboo.Lib</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Lib</AssemblyName>
+		<RootNamespace>Kooboo.Lib</RootNamespace>
+		<RestoreSources>../nuget;https://api.nuget.org/v3/index.json;</RestoreSources>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="ServiceProcess\**" />
-    <EmbeddedResource Remove="ServiceProcess\**" />
-    <None Remove="ServiceProcess\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Helper\Html\**" />
+		<Compile Remove="NUglify\**" />
+		<Compile Remove="ServiceProcess\**" />
+		<EmbeddedResource Remove="Helper\Html\**" />
+		<EmbeddedResource Remove="NUglify\**" />
+		<EmbeddedResource Remove="ServiceProcess\**" />
+		<None Remove="Helper\Html\**" />
+		<None Remove="NUglify\**" />
+		<None Remove="ServiceProcess\**" />
+		<None Remove="Jint" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Extensions\ImageFormatExtensions.cs" />
-    <Compile Remove="Less\configuration\DotlessConfigurationSectionHandler.cs" />
-    <Compile Remove="Less\Parser\Functions\GradientImageFunction.cs" />
-    <Compile Remove="Utilities\CacheUtility.cs" />
-    <Compile Remove="Utilities\NetworkUtility.cs" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="SharpZipLib" Version="1.2.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)'=='net461'">
+	<ItemGroup>
+		<Compile Remove="Extensions\ImageFormatExtensions.cs" />
+		<Compile Remove="Less\configuration\DotlessConfigurationSectionHandler.cs" />
+		<Compile Remove="Less\Parser\Functions\GradientImageFunction.cs" />
+		<Compile Remove="Utilities\CacheUtility.cs" />
+		<Compile Remove="Utilities\NetworkUtility.cs" />
+	</ItemGroup>
 
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Device" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Serialization" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
-    <PackageReference Include="MimeMapping" Version="1.0.1.12" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="NUglify\CommonStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CommonStrings.resx</DependentUpon>
-    </Compile>
-    <Compile Update="NUglify\Css\CssStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CssStrings.resx</DependentUpon>
-    </Compile>
-    <Compile Update="NUglify\JavaScript\JScript.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>JScript.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="NUglify\CommonStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CommonStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="NUglify\Css\CssStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CssStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="NUglify\JavaScript\JScript.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>JScript.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="DNS" Version="7.0.0" />
+		<PackageReference Include="DnsClient" Version="1.7.0" />
+		<PackageReference Include="MaxMind.GeoIP2" Version="5.2.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+		<PackageReference Include="NUglify" Version="1.20.3" />
+		<PackageReference Include="SharpZipLib" Version="1.4.1" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+		<PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
+		<PackageReference Include="MimeMapping" Version="1.0.1.37" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+		<PackageReference Include="System.IO.Pipelines" Version="6.0.3" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+		<PackageReference Include="Jint" Version="3.0.0-beta-2047" />
+	</ItemGroup>
 
 </Project>

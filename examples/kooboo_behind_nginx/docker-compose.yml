@@ -1,0 +1,27 @@
+services:
+  web:
+    image: kooboo/kooboo:latest
+    restart: always
+    container_name: kooboo
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    volumes:
+      - /var/lib/kooboo:/data # for linux users
+      # - $USERPROFILE/AppData/Local/kooboo:/data # for windows users
+
+  gateway:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d:ro
+      - ./certs:/etc/nginx/certs:ro
+      - ./Kooboo.Web.dll.config:/app/Kooboo.Web.dll.config:ro
+    links:
+      - "web"
+
+networks:
+  default:

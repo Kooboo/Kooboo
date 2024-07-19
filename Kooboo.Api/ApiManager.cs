@@ -1,11 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Api.ApiResponse;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Language;
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Context;
+using Kooboo.Data.Language;
+using Kooboo.Lib.Exceptions;
 
 namespace Kooboo.Api
 {
@@ -15,11 +17,11 @@ namespace Kooboo.Api
         {
             ApiMethod apimethod = null;
 
-            var apiobject = apiProvider.Get(call.Command.ObjectType);
+            var apiobject = apiProvider.Get(call.Command);
 
             if (apiobject != null)
             {
-                apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method);
+                apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command);
             }
 
             if (apimethod == null && apiProvider.GetMethod != null)
@@ -39,29 +41,30 @@ namespace Kooboo.Api
             {
                 if (!apiProvider.CheckAccess(call.Context, apimethod))
                 {
-                    var result = new JsonResponse() { Success = false };
-                    result.Messages.Add(Hardcoded.GetValue("Unauthorized access", call.Context));
+                    var result = new JsonResponse() { Success = false, HttpCode = 403 };
+                    result.Messages.Add(Hardcoded.GetValue("Access denied", call.Context));
                     return result;
                 }
             }
 
             if (call.IsFake)
             {
-                var fakedata = Lib.Development.FakeData.GetFakeValue(apimethod.ReturnType);
-                return new JsonResponse(fakedata) { Success = true };
+                var fakeData = Lib.Development.FakeData.GetFakeValue(apimethod.ReturnType);
+                return new JsonResponse(fakeData) { Success = true };
             }
+
             if (apiobject != null)
             {
                 if (!ValidateRequirement(call.Command, call.Context, apiProvider))
                 {
-                    var result = new JsonResponse() { Success = false };
+                    var result = new JsonResponse() { Success = false, HttpCode = 401 };
                     result.Messages.Add(Hardcoded.GetValue("User or website not valid", call.Context));
                     return result;
                 }
             }
 
             List<string> errors = new List<string>();
-            if (!ValideAssignModel(apimethod, call, errors.Add))
+            if (!ValidAssignModel(apimethod, call, errors.Add))
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.AddRange(errors);
@@ -74,16 +77,40 @@ namespace Kooboo.Api
                 result.Messages.AddRange(errors);
                 return result;
             }
+
             try
             {
                 return ExecuteMethod(call, apimethod);
+            }
+            catch (DiffException ex)
+            {
+                var result = new JsonResponse() { Success = true };
+
+                result.Model = new
+                {
+                    ex.Version,
+                    ex.Body
+                };
+
+                result.HttpCode = 409;
+                return result;
+            }
+            catch (TranslationLanguageException ex)
+            {
+                var value = Hardcoded.GetValue(ex.Message, call.Context);
+                var result = new JsonResponse() { Success = false };
+                result.Messages.Add(value);
+
+                Data.Log.Instance.Exception.WriteException(ex);
+
+                return result;
             }
             catch (Exception ex)
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(ex.Message);
 
-                Kooboo.Data.Log.Instance.Exception.WriteException(ex);
+                Data.Log.Instance.Exception.WriteException(ex);
 
                 return result;
             }
@@ -131,22 +158,21 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = ok };
                 if (!ok)
                 {
-                    result.Messages.Add(Hardcoded.GetValue("Api method define a bool return type and return false", call.Context));
+                    result.Messages.Add(Hardcoded.GetValue("Api method define a bool return type and return false",
+                        call.Context));
                 }
+
                 return result;
             }
 
             if (response == null)
             {
-                var result = new JsonResponse() { Success = false };
-                result.Messages.Add(Hardcoded.GetValue("method return null for required object type", call.Context) + " :" + apimethod.ReturnType.ToString());
-                return result;
+                return new JsonResponse(null);
             }
 
             if (response is IResponse)
             {
                 return response as IResponse;
-                //TODO: set the response message to multiple lingual. 
             }
             else
             {
@@ -162,7 +188,7 @@ namespace Kooboo.Api
                 return false;
             }
 
-            var apiobject = apiProvider.Get(command.ObjectType);
+            var apiobject = apiProvider.Get(command);
             if (apiobject == null)
             {
                 return false;
@@ -180,7 +206,7 @@ namespace Kooboo.Api
 
             if (apiobject.RequireSite && apiobject.RequireUser)
             {
-                if (context.WebSite.OrganizationId != context.User.CurrentOrgId)
+                if (context.WebSite.OrganizationId != context.User.CurrentOrgId && context.WebSite.OrganizationId != context.User.Id)
                 {
                     return false;
                 }
@@ -199,13 +225,35 @@ namespace Kooboo.Api
             return true;
         }
 
-
-        public static bool ValideAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
+        public static bool ValidAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
         {
             bool IsSuccess = true;
             if (method.RequireModelType != null)
             {
-                string json = call.Context.Request.Body;
+                // if has more parameters. 
+                bool HasMoreParaMeter = false;
+                string ParaName = null;
+                foreach (var item in method.Parameters)
+                {
+                    if (item.ClrType == method.RequireModelType)
+                    {
+                        ParaName = item.Name;
+                    }
+                    else if (item.ClrType != typeof(ApiCall))
+                    {
+                        HasMoreParaMeter = true;
+                    }
+                }
+                string json = null;
+                if (HasMoreParaMeter && ParaName != null)
+                {
+                    json = call.GetValue(ParaName);
+                }
+                else
+                {
+                    json = call.Context.Request.Body;
+                }
+
 
                 if (!string.IsNullOrEmpty(json))
                 {
@@ -238,7 +286,8 @@ namespace Kooboo.Api
 
                     if (values.Count() == 0)
                     {
-                        callback.Invoke(Hardcoded.GetValue("required model type not provided", call.Context) + ": " + method.RequireModelType.Name);
+                        callback.Invoke(Hardcoded.GetValue("required model type not provided", call.Context) + ": " +
+                                        method.RequireModelType.Name);
                         IsSuccess = false;
                     }
                     else
@@ -246,7 +295,8 @@ namespace Kooboo.Api
                         string dictjson = Lib.Helper.JsonHelper.Serialize(values);
                         try
                         {
-                            call.Context.Request.Model = Lib.Helper.JsonHelper.Deserialize(dictjson, method.RequireModelType);
+                            call.Context.Request.Model =
+                                Lib.Helper.JsonHelper.Deserialize(dictjson, method.RequireModelType);
                         }
                         catch (Exception ex)
                         {
@@ -256,6 +306,7 @@ namespace Kooboo.Api
                     }
                 }
             }
+
             return IsSuccess;
         }
 
@@ -270,7 +321,7 @@ namespace Kooboo.Api
                     if (string.IsNullOrEmpty(value))
                     {
                         IsSuccess = false;
-                        callback.Invoke(Hardcoded.GetValue("Require parameter not found", call.Context) + ": " + item);
+                        callback.Invoke(Hardcoded.GetValue("Parameter not found", call.Context) + ": " + item);
                     }
                 }
             }
@@ -283,7 +334,8 @@ namespace Kooboo.Api
                     if (string.IsNullOrEmpty(value))
                     {
                         IsSuccess = false;
-                        callback.Invoke(Hardcoded.GetValue("Require parameter not found", call.Context) + ": " + item.Name);
+                        callback.Invoke(Hardcoded.GetValue("Parameter not found", call.Context) + ": " +
+                                        item.Name);
                     }
                 }
             }

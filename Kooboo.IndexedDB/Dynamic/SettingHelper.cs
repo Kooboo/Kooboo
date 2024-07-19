@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static Kooboo.IndexedDB.Helper.StringHelper;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
@@ -413,7 +412,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 foreach (var item in AllProperties)
                 {
                     setting.AppendColumn(item.Key, item.Value, 0);
-                     
+
                 }
             }
 
@@ -424,16 +423,16 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             if (objvalue == null)
             {
-                return Constants.DefaultColLen; 
+                return Constants.DefaultColLen;
             }
 
-            var value = objvalue.ToString(); 
-              
+            var value = objvalue.ToString();
+
             int len = Constants.DefaultColLen;
 
             int valuelen = value.Length;
 
-            while (valuelen +100> len)
+            while (valuelen + 100 > len)
             {
                 len = len + Constants.DefaultColLen;
             }

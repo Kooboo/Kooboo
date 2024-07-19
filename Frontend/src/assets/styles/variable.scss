@@ -1,0 +1,57 @@
+$main-color: #192845;
+$main-blue: #2296f3;
+$main-bg: #f3f5f5;
+$main-orange: #ef673f;
+
+:root {
+  --el-component-size: 40px;
+  --el-border-radius-base: 8px;
+  --el-color-primary: #2296f3;
+
+}
+
+@mixin overrideElButton($color) {
+  --el-button-bg-color: #{$color} !important;
+  --el-button-border-color: #{$color} !important;
+  --el-button-hover-bg-color: #{rgba($color, 0.8)} !important;
+  --el-button-hover-border-color: #{rgba($color, 0.8)} !important;
+  --el-button-text-color: #fff !important;
+  --el-button-hover-text-color: #fff !important;
+
+  &.is-plain {
+    --el-button-bg-color: rgba(255, 255, 255, 0.7) !important;
+    --el-button-border-color: #{$color} !important;
+    --el-button-hover-bg-color: #{rgba($color, 0.1)} !important;
+    --el-button-hover-border-color: #{$color} !important;
+    --el-button-text-color: #{$color} !important;
+    --el-button-hover-text-color: #{$color} !important;
+    --el-button-active-bg-color: #{rgba($color, 0.1)} !important;
+    --el-button-active-text-color: #{$color} !important;
+    --el-button-active-border-color: #{$color} !important;
+
+    .dark & {
+      --el-button-bg-color: #444 !important;
+      --el-button-hover-bg-color: #555 !important;
+      --el-button-border-color: #{$color} !important;
+    }
+  }
+}
+
+@mixin overrideElDefaultButton($color, $hover-bg) {
+  --el-button-text-color: #{$color};
+
+  .dark & {
+    --el-button-bg-color: #444;
+    --el-button-hover-bg-color: #555;
+    --el-button-text-color: #{rgba(#fff, 0.87)};
+    --el-button-hover-text-color: #{rgba(#fff, 0.87)};
+    --el-button-disabled-bg-color: rgba(24, 34, 44, 1) !important;
+  }
+
+  --el-button-border-color: transparent;
+  --el-button-hover-text-color: #{$color};
+  --el-button-hover-bg-color: #{rgba($hover-bg, 0.1)};
+  --el-button-hover-border-color: transparent;
+  --el-button-active-border-color: transparent;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+}

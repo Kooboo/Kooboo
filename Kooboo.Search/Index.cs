@@ -1,9 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Search.Scanner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kooboo.Search.Scanner;
 
 namespace Kooboo.Search
 {
@@ -37,7 +37,7 @@ namespace Kooboo.Search
         }
 
         private DocumentStore _docstore;
-       internal DocumentStore DocumentStore
+        internal DocumentStore DocumentStore
         {
             get
             {
@@ -114,8 +114,8 @@ namespace Kooboo.Search
             else
             {
                 this.Folder = folder;
-            } 
-            Lib.Helper.IOHelper.EnsureDirectoryExists(this.Folder); 
+            }
+            Lib.Helper.IOHelper.EnsureDirectoryExists(this.Folder);
         }
 
         public Index(string folder)
@@ -127,7 +127,7 @@ namespace Kooboo.Search
             this.Tokenizer = Tokenizer;
             init(folder);
         }
-         
+
         public void Flush()
         {
             lock (_locker)
@@ -138,24 +138,24 @@ namespace Kooboo.Search
 
         public string GetMeta(int id)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                return this.DocumentStore.GetMeta(id); 
-            } 
+                return this.DocumentStore.GetMeta(id);
+            }
         }
 
         public IndexDocument LoadByMeta(string meta)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                var id =  this.DocumentStore.FindByMeta(meta);
-                if (id >-1)
+                var id = this.DocumentStore.FindByMeta(meta);
+                if (id > -1)
                 {
-                 return this.DocumentStore.Get(id);  
+                    return this.DocumentStore.Get(id);
                 }
             }
 
-            return null; 
+            return null;
         }
 
         public HashSet<int> ListWords(string content)
@@ -166,7 +166,7 @@ namespace Kooboo.Search
             tokenizer.SetDoc(content);
             var token = tokenizer.ConsumeNext();
             while (token != null)
-            { 
+            {
                 var wordid = WordIndex.GetOrAddWord(token.Value);
                 if (wordid >= 0)
                 {
@@ -258,14 +258,14 @@ namespace Kooboo.Search
         public void AddOrUpdate(string metakey, string body)
         {
             lock (_locker)
-            { 
-                var find = this.DocumentStore.FindByMeta(metakey); 
+            {
+                var find = this.DocumentStore.FindByMeta(metakey);
                 if (find > -1)
                 {
                     var doc = this.DocumentStore.Get(find);
                     HashSet<int> oldwords = new HashSet<int>();
                     if (doc != null)
-                    { oldwords = ListWords(doc.Body); } 
+                    { oldwords = ListWords(doc.Body); }
                     this.DocumentStore.Update(find, body);
                     HashSet<int> newwords = ListWords(body);
                     this.Map.Update(find, oldwords, newwords);
@@ -316,7 +316,7 @@ namespace Kooboo.Search
                 }
             }
         }
-         
+
         public IndexStat GetIndexStat()
         {
             lock (_locker)

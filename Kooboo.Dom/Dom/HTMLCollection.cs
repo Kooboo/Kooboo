@@ -3,51 +3,49 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
     [Serializable]
-   public class HTMLCollection
+    public class HTMLCollection
     {
-       private List<Element> _item; 
+        private List<Element> _item;
 
-       public List<Element> item
-       {
-           get
-           {
-               if (_item == null)
-               {
-                   _item = new List<Element>(); 
-               }
-               return _item; 
-           }
-           set
-           {
-               _item = value; 
-           }
-       }
+        public List<Element> item
+        {
+            get
+            {
+                if (_item == null)
+                {
+                    _item = new List<Element>();
+                }
+                return _item;
+            }
+            set
+            {
+                _item = value;
+            }
+        }
 
-       public int length
-       {
-           get
-           {
-               return item.Count();
-           }
-       }
+        public int length
+        {
+            get
+            {
+                return item.Count();
+            }
+        }
 
-       public void Add(Element element)
-       {
-           item.Add(element);
-       }
+        public void Add(Element element)
+        {
+            item.Add(element);
+        }
 
-       public void Merge(HTMLCollection collection)
-       {
-           foreach (var anotheritem in collection.item)
-           {
-               item.Add(anotheritem);
-           }
-       }
+        public void Merge(HTMLCollection collection)
+        {
+            foreach (var anotheritem in collection.item)
+            {
+                item.Add(anotheritem);
+            }
+        }
     }
 }

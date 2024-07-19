@@ -17,7 +17,7 @@
     {
         public T GetSection<T>(string sectionName)
         {
-            return (T) ConfigurationManager.GetSection(sectionName);
+            return (T)ConfigurationManager.GetSection(sectionName);
         }
     }
 }

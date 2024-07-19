@@ -3,16 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO;
 using System.Threading.Tasks;
-
-using LumiSoft.Net;
-using LumiSoft.Net.Mail;
-using LumiSoft.Net.IMAP;
-
+using Kooboo.Lib.Helper.EncodingHelper;
 using Kooboo.Mail.Utility;
-using Kooboo.Mail.Imap.Commands.FetchCommand;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -65,27 +58,85 @@ namespace Kooboo.Mail.Imap.Commands
 
             var bytes = await session.Stream.ReadAsync(appendArgs.Size);
 
-            var content = SmtpUtility.GetString(bytes);
+            var mailEncoding = Lib.Helper.EncodingDetector.GetEmailEncoding(bytes);
+            var content = GetString(bytes, mailEncoding);
 
-            await session.Stream.ReadLineAsync();
-
+            //var content = SmtpUtility.GetString(bytes); 
+            content = Kooboo.Mail.Utility.MessageUtility.CheckNFixMessage(content);
             var message = MessageUtility.ParseMeta(content);
-            message.FolderId = session.SelectFolder.FolderId;
+
             message.UserId = session.MailDb.UserId;
 
-            var folderName = session.SelectFolder.Folder.ToLower();
-            if (folderName == "sent" || folderName == "drafts")
+            string folderName = null;
+            if (!string.IsNullOrEmpty(appendArgs.FodlerName))
+            {
+                folderName = appendArgs.FodlerName;
+            }
+            if (folderName == null && session.SelectFolder != null)
+            {
+                folderName = session.SelectFolder.Folder.ToLower();
+            }
+
+            message.FolderId = session.MailDb.Folder.GetFolderId(folderName);
+
+            if (folderName.ToLower() == "sent" || folderName.ToLower() == "drafts")
             {
                 var user = Data.GlobalDb.Users.Get(session.MailDb.UserId);
                 var orgDb = Kooboo.Mail.Factory.DBFactory.OrgDb(user.CurrentOrgId);
-                var address = orgDb.EmailAddress.Get(Mail_t_Mailbox.Parse(message.From).Address);
+
+                var finalAddress = Utility.AddressUtility.GetAddress(message.From);
+
+                var address = orgDb.Email.Get(finalAddress);
                 if (address != null)
                 {
                     message.AddressId = address.Id;
                 }
+                message.Read = true;
+                message.OutGoing = true;
             }
-            session.MailDb.Messages.Add(message, content);
 
+            //if (folderName.ToLower() == "drafts")
+            //{
+            //    // drafts should try to find it msg exists and delete that in order to sync across devices.
+
+            //    var all = session.MailDb.Message2.Query.Where(o=>o.FolderId == message.FolderId).SelectAll(); 
+
+            //    var Exists = session.MailDb.Message2.Query.Where(o => o.FolderId == message.FolderId && o.SmtpMessageId == message.SmtpMessageId).FirstOrDefault(); 
+
+            //    if (Exists !=null)
+            //    {
+            //        message.MsgId = Exists.MsgId;
+            //        message.CreationTime = DateTime.UtcNow; 
+            //        session.MailDb.Message2.Update(message, content); 
+            //    }
+            //    else
+            //    {
+            //        session.MailDb.Message2.Add(message, content);
+            //    }
+            //}
+            //else
+            //{
+            // should be sent. add.
+
+            if (folderName.ToLower() == "drafts")
+            {
+                var exist = session.MailDb.Message2.Query.Where(o => o.FolderId == message.FolderId && o.SmtpMessageId == message.SmtpMessageId).FirstOrDefault();
+                if (exist != null)
+                {
+                    session.MailDb.Message2.Delete(exist.MsgId);
+                    message.CreationTime = DateTime.UtcNow;
+                }
+            }
+            else
+            {
+                var exist = session.MailDb.Message2.Query.Where(o => o.FolderId == message.FolderId && o.SmtpMessageId == message.SmtpMessageId).FirstOrDefault();
+                if (exist != null)
+                    message.MsgId = exist.MsgId;
+            }
+            message.Body = content;
+            session.MailDb.Message2.AddOrUpdate(message);
+            Transport.Incoming.CalendarMailDealing(session.MailDb, content);
+            //}
             return null;
         }
 
@@ -137,7 +188,28 @@ namespace Kooboo.Mail.Imap.Commands
 
             return result;
         }
+        private string GetString(byte[] data, EmailEncodingResult encodingresult)
+        {
+            System.Text.Encoding encoding = null;
+            if (encodingresult != null && !string.IsNullOrEmpty(encodingresult.Charset))
+            {
+                encoding = System.Text.Encoding.GetEncoding(encodingresult.Charset);
+            }
 
+            if (encoding == null)
+            {
+                encoding = System.Text.Encoding.UTF8;
+            }
+
+            string text = encoding.GetString(data);
+
+            if (text != null && encodingresult != null && !string.IsNullOrWhiteSpace(encodingresult.CharSetText))
+            {
+                text = text.Replace(encodingresult.CharSetText, "charset=utf-8");
+            }
+
+            return text;
+        }
         public class AppendArgs
         {
             public string FodlerName { get; set; }
@@ -171,7 +243,7 @@ namespace Kooboo.Mail.Imap.Commands
 //      to the end of the specified destination mailbox.This argument
 //      SHOULD be in the format of an[RFC - 2822] message.  8-bit
 //       characters are permitted in the message.A server implementation
- 
+
 //       that is unable to preserve 8-bit data properly MUST be able to
 //       reversibly convert 8-bit APPEND data to 7-bit using a [MIME-IMB]
 //content transfer encoding.

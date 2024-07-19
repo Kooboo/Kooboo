@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page title="Login" back="/_Admin/component.html">
+        <k-data
+          id="data"
+          post="http://kcomponent.localkooboo.com/commerce/login"
+        >
+          <k-data-storage
+            name="commerce_token"
+            from="header"
+            to="local-storage"
+          ></k-data-storage>
+          <k-data-item name="username">test1</k-data-item>
+          <k-data-item name="password" type="password">abc123</k-data-item>
+        </k-data>
+        <k-inline>
+          <k-fill></k-fill>
+          <k-fill>
+            <k-inline style="height: 120px">
+              <k-image
+                data="/_Admin/demo/commerce/logo.png"
+                style="width: 200px"
+              ></k-image>
+            </k-inline>
+            <k-form data="data" to="/_Admin/demo/commerce/index.html"></k-form>
+          </k-fill>
+          <k-fill></k-fill>
+        </k-inline>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

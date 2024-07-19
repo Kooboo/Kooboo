@@ -2,12 +2,9 @@
 //All rights reserved.
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -24,6 +21,7 @@ namespace Kooboo.Mail.Smtp
             _stream = stream;
             _reader = new StreamReader(_stream);
             _writer = new StreamWriter(_stream, Encoding.GetEncoding("us-ascii"));
+            _writer.NewLine = "\r\n";
         }
 
         #region Async
@@ -66,7 +64,7 @@ namespace Kooboo.Mail.Smtp
                 return new ReadResult { Text = line, EndLine = line };
 
             var builder = new StringBuilder();
-            while (!isEndLine(line))    
+            while (!isEndLine(line))
             {
                 builder.AppendLine(line);
                 line = await ReadLineAsync();
@@ -103,7 +101,7 @@ namespace Kooboo.Mail.Smtp
         public string ReadLine()
         {
             return _reader.ReadLine();
-        }   
+        }
 
         public ReadResult ReadBeforeEnd(Func<string, bool> isEndLine)
         {

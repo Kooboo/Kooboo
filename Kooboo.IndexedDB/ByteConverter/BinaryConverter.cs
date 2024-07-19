@@ -1,25 +1,20 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.ByteConverter
 {
     class BinaryConverter<T> : IByteConverter<T>
     {
 
-     BinaryFormatter bf;
+        BinaryFormatter bf;
 
-     public BinaryConverter()
-     {
-      
-        bf = new BinaryFormatter();
-     }
+        public BinaryConverter()
+        {
+
+            bf = new BinaryFormatter();
+        }
 
         public byte[] ToByte(T input)
         {
@@ -33,7 +28,7 @@ namespace Kooboo.IndexedDB.ByteConverter
             int length = inputbytes.Length;
             if (length == 0)
             {
-                return default(T); 
+                return default(T);
             }
             MemoryStream memStream = new MemoryStream();
             memStream.Write(inputbytes, 0, inputbytes.Length);

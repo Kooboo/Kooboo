@@ -1,10 +1,10 @@
 namespace dotless.Core.Parser.Functions
 {
     using System;
+    using dotless.Core.Utils;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Tree;
-    using dotless.Core.Utils;
 
     public class RoundFunction : NumberFunctionBase
     {

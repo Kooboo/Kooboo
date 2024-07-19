@@ -65,10 +65,10 @@ namespace dotless.Core.Parser
             {
                 _importer = value;
                 _importer.Parser = () => new Parser(Tokenizer.Optimization, Stylizer, _importer)
-                                             {
-                                                 NodeProvider = NodeProvider,
-                                                 Debug = Debug
-                                             };
+                {
+                    NodeProvider = NodeProvider,
+                    Debug = Debug
+                };
             }
         }
 

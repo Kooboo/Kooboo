@@ -2,17 +2,14 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree.Comparer
+namespace Kooboo.IndexedDB.BTree.Comparer
 {
- public   class DoubleComparer : IComparer<byte[]>
+    public class DoubleComparer : IComparer<byte[]>
     {
         public int Compare(byte[] x, byte[] y)
         {
-           
+
             double doublex = BitConverter.ToDouble(x, 0);
 
             double doubley = BitConverter.ToDouble(y, 0);

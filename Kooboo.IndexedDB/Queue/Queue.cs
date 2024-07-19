@@ -1,12 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Queue;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Queue;
 
 namespace Kooboo.IndexedDB
 {
@@ -79,7 +75,7 @@ namespace Kooboo.IndexedDB
 
                         filename = filename.Replace(this.queueListExtension, "");
 
-                        filename = filename.Replace("\\", "").Replace("/","");
+                        filename = filename.Replace("\\", "").Replace("/", "");
 
                         this.queueFileIdList.Add(Convert.ToInt32(filename));
                     }

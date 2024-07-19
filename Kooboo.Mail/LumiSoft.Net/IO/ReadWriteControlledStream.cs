@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LumiSoft.Net.IO
 {
@@ -10,7 +8,7 @@ namespace LumiSoft.Net.IO
     /// </summary>
     public class ReadWriteControlledStream : Stream
     {
-        private Stream     m_pStream    = null;
+        private Stream m_pStream = null;
         private FileAccess m_AccessMode = FileAccess.ReadWrite;
 
         /// <summary>
@@ -19,13 +17,14 @@ namespace LumiSoft.Net.IO
         /// <param name="stream">Source stream.</param>
         /// <param name="access">This stream access mode.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null reference.</exception>
-        public ReadWriteControlledStream(Stream stream,FileAccess access)
+        public ReadWriteControlledStream(Stream stream, FileAccess access)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            m_pStream    = stream;
+            m_pStream = stream;
             m_AccessMode = access;
         }
 
@@ -51,9 +50,9 @@ namespace LumiSoft.Net.IO
         /// <param name="offset">A byte offset relative to the <b>origin</b> parameter.</param>
         /// <param name="origin">A value of type SeekOrigin indicating the reference point used to obtain the new position.</param>
         /// <returns>The new position within the current stream.</returns>
-        public override long Seek(long offset,SeekOrigin origin)
+        public override long Seek(long offset, SeekOrigin origin)
         {
-            return m_pStream.Seek(offset,origin);
+            return m_pStream.Seek(offset, origin);
         }
 
         #endregion
@@ -83,22 +82,26 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ArgumentNullException">Is raised when <b>buffer</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
         /// <exception cref="NotSupportedException">Is raised when reading not supported.</exception>
-        public override int Read(byte[] buffer,int offset,int count)
+        public override int Read(byte[] buffer, int offset, int count)
         {
-            if(buffer == null){
+            if (buffer == null)
+            {
                 throw new ArgumentNullException("buffer");
             }
-            if(offset < 0 || offset > buffer.Length){
+            if (offset < 0 || offset > buffer.Length)
+            {
                 throw new ArgumentException("Invalid argument 'offset' value.");
             }
-            if(offset + count > buffer.Length){
+            if (offset + count > buffer.Length)
+            {
                 throw new ArgumentException("Invalid argument 'count' value.");
             }
-            if((m_AccessMode & FileAccess.Read) == 0){
+            if ((m_AccessMode & FileAccess.Read) == 0)
+            {
                 throw new NotSupportedException();
             }
 
-            return m_pStream.Read(buffer,offset,count);
+            return m_pStream.Read(buffer, offset, count);
         }
 
         #endregion
@@ -114,22 +117,26 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ArgumentNullException">Is raised when <b>buffer</b> is null reference.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
         /// <exception cref="NotSupportedException">Is raised when reading not supported.</exception>
-        public override void Write(byte[] buffer,int offset,int count)
+        public override void Write(byte[] buffer, int offset, int count)
         {
-            if(buffer == null){
+            if (buffer == null)
+            {
                 throw new ArgumentNullException("buffer");
             }
-            if(offset < 0 || offset > buffer.Length){
+            if (offset < 0 || offset > buffer.Length)
+            {
                 throw new ArgumentException("Invalid argument 'offset' value.");
             }
-            if(offset + count > buffer.Length){
+            if (offset + count > buffer.Length)
+            {
                 throw new ArgumentException("Invalid argument 'count' value.");
             }
-            if((m_AccessMode & FileAccess.Write) == 0){
+            if ((m_AccessMode & FileAccess.Write) == 0)
+            {
                 throw new NotSupportedException();
             }
 
-            m_pStream.Write(buffer,offset,count);
+            m_pStream.Write(buffer, offset, count);
         }
 
         #endregion
@@ -142,8 +149,8 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override bool CanRead
-        { 
-            get{ return (m_AccessMode & FileAccess.Read) != 0; } 
+        {
+            get { return (m_AccessMode & FileAccess.Read) != 0; }
         }
 
         /// <summary>
@@ -151,8 +158,8 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override bool CanSeek
-        { 
-            get{ return m_pStream.CanSeek; } 
+        {
+            get { return m_pStream.CanSeek; }
         }
 
         /// <summary>
@@ -160,8 +167,8 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override bool CanWrite
-        { 
-            get{ return (m_AccessMode & FileAccess.Write) != 0; } 
+        {
+            get { return (m_AccessMode & FileAccess.Write) != 0; }
         }
 
         /// <summary>
@@ -169,8 +176,8 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override long Length
-        { 
-            get{ return m_pStream.Length; } 
+        {
+            get { return m_pStream.Length; }
         }
 
         /// <summary>
@@ -178,10 +185,10 @@ namespace LumiSoft.Net.IO
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public override long Position
-        { 
-            get{ return m_pStream.Position; } 
+        {
+            get { return m_pStream.Position; }
 
-            set{ m_pStream.Position = value; }
+            set { m_pStream.Position = value; }
         }
 
         #endregion

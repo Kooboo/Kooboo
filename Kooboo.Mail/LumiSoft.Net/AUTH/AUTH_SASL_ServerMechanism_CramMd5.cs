@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace LumiSoft.Net.AUTH
 {
@@ -10,12 +9,12 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_SASL_ServerMechanism_CramMd5 : AUTH_SASL_ServerMechanism
     {
-        private bool   m_IsCompleted     = false;
-        private bool   m_IsAuthenticated = false;
-        private bool   m_RequireSSL      = false;
-        private string m_UserName        = "";
-        private int    m_State           = 0;
-        private string m_Key             = "";
+        private bool m_IsCompleted = false;
+        private bool m_IsAuthenticated = false;
+        private bool m_RequireSSL = false;
+        private string m_UserName = "";
+        private int m_State = 0;
+        private string m_Key = "";
 
         /// <summary>
         /// Default constructor.
@@ -34,11 +33,11 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override void Reset()
         {
-            m_IsCompleted     = false;
+            m_IsCompleted = false;
             m_IsAuthenticated = false;
-            m_UserName        = "";
-            m_State           = 0;
-            m_Key             = "";
+            m_UserName = "";
+            m_State = 0;
+            m_Key = "";
         }
 
         #endregion
@@ -53,7 +52,8 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentNullException">Is raised when <b>clientResponse</b> is null reference.</exception>
         public override byte[] Continue(byte[] clientResponse)
         {
-            if(clientResponse == null){
+            if (clientResponse == null)
+            {
                 throw new ArgumentNullException("clientResponse");
             }
 
@@ -122,22 +122,27 @@ namespace LumiSoft.Net.AUTH
                     dGltIGI5MTNhNjAyYzdlZGE3YTQ5NWI0ZTZlNzMzNGQzODkw
             */
 
-            if(m_State == 0){
+            if (m_State == 0)
+            {
                 m_State++;
                 m_Key = "<" + Guid.NewGuid().ToString() + "@host" + ">";
 
                 return Encoding.UTF8.GetBytes(m_Key);
             }
-            else{
+            else
+            {
                 // Parse client response. response = userName SP hash.
                 string[] user_hash = Encoding.UTF8.GetString(clientResponse).Split(' ');
-                if(user_hash.Length == 2 && !string.IsNullOrEmpty(user_hash[0])){
+                if (user_hash.Length == 2 && !string.IsNullOrEmpty(user_hash[0]))
+                {
                     m_UserName = user_hash[0];
                     AUTH_e_UserInfo result = OnGetUserInfo(user_hash[0]);
-                    if(result.UserExists){
+                    if (result.UserExists)
+                    {
                         // hash = Hex(HmacMd5(hashKey,password))
-                        string hash = Net_Utils.ToHex(HmacMd5(m_Key,result.Password));
-                        if(hash == user_hash[1]){
+                        string hash = Net_Utils.ToHex(HmacMd5(m_Key, result.Password));
+                        if (hash == user_hash[1])
+                        {
                             m_IsAuthenticated = true;
                         }
                     }
@@ -154,20 +159,20 @@ namespace LumiSoft.Net.AUTH
 
         #region method HmacMd5
 
-		/// <summary>
-		/// Calculates keyed md5 hash from specifieed text and with specified hash key.
-		/// </summary>
-		/// <param name="hashKey">MD5 key.</param>
-		/// <param name="text">Text to hash.</param>
-		/// <returns>Returns MD5 hash.</returns>
-		private byte[] HmacMd5(string hashKey,string text)
-		{
-			HMACMD5 kMd5 = new HMACMD5(Encoding.Default.GetBytes(text));
-			
-			return kMd5.ComputeHash(Encoding.ASCII.GetBytes(hashKey));
-		}
+        /// <summary>
+        /// Calculates keyed md5 hash from specifieed text and with specified hash key.
+        /// </summary>
+        /// <param name="hashKey">MD5 key.</param>
+        /// <param name="text">Text to hash.</param>
+        /// <returns>Returns MD5 hash.</returns>
+        private byte[] HmacMd5(string hashKey, string text)
+        {
+            HMACMD5 kMd5 = new HMACMD5(Encoding.Default.GetBytes(text));
 
-		#endregion
+            return kMd5.ComputeHash(Encoding.ASCII.GetBytes(hashKey));
+        }
+
+        #endregion
 
 
         #region Properties implementation
@@ -177,7 +182,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsCompleted
         {
-            get{ return m_IsCompleted; }
+            get { return m_IsCompleted; }
         }
 
         /// <summary>
@@ -185,7 +190,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsAuthenticated
         {
-            get{ return m_IsAuthenticated; }
+            get { return m_IsAuthenticated; }
         }
 
         /// <summary>
@@ -201,7 +206,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool RequireSSL
         {
-            get{ return m_RequireSSL; }
+            get { return m_RequireSSL; }
         }
 
         /// <summary>
@@ -209,7 +214,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         #endregion
@@ -232,8 +237,9 @@ namespace LumiSoft.Net.AUTH
         {
             AUTH_e_UserInfo retVal = new AUTH_e_UserInfo(userName);
 
-            if(this.GetUserInfo != null){
-                this.GetUserInfo(this,retVal);
+            if (this.GetUserInfo != null)
+            {
+                this.GetUserInfo(this, retVal);
             }
 
             return retVal;

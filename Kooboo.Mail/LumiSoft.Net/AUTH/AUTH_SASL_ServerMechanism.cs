@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LumiSoft.Net.AUTH
-{    
+{
     /// <summary>
     /// This base class for server SASL authentication mechanisms.
     /// </summary>
     public abstract class AUTH_SASL_ServerMechanism
     {
-        private Dictionary<string,object> m_pTags = null;
+        private Dictionary<string, object> m_pTags = null;
 
         /// <summary>
         /// Default constructor.
@@ -88,11 +87,11 @@ namespace LumiSoft.Net.AUTH
         /// Gets user data items collection.
         /// </summary>
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
-        public Dictionary<string,object> Tags
+        public Dictionary<string, object> Tags
         {
-            get{ return m_pTags; }
+            get { return m_pTags; }
         }
-        
+
         #endregion
 
     }

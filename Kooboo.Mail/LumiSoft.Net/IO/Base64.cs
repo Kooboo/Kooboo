@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.IO
@@ -12,14 +11,14 @@ namespace LumiSoft.Net.IO
         #region BASE64_ENCODE_TABLE
 
         private readonly static byte[] BASE64_ENCODE_TABLE = new byte[]{
-		    (byte)'A',(byte)'B',(byte)'C',(byte)'D',(byte)'E',(byte)'F',(byte)'G',(byte)'H',(byte)'I',(byte)'J',
+            (byte)'A',(byte)'B',(byte)'C',(byte)'D',(byte)'E',(byte)'F',(byte)'G',(byte)'H',(byte)'I',(byte)'J',
             (byte)'K',(byte)'L',(byte)'M',(byte)'N',(byte)'O',(byte)'P',(byte)'Q',(byte)'R',(byte)'S',(byte)'T',
             (byte)'U',(byte)'V',(byte)'W',(byte)'X',(byte)'Y',(byte)'Z',(byte)'a',(byte)'b',(byte)'c',(byte)'d',
             (byte)'e',(byte)'f',(byte)'g',(byte)'h',(byte)'i',(byte)'j',(byte)'k',(byte)'l',(byte)'m',(byte)'n',
             (byte)'o',(byte)'p',(byte)'q',(byte)'r',(byte)'s',(byte)'t',(byte)'u',(byte)'v',(byte)'w',(byte)'x',
             (byte)'y',(byte)'z',(byte)'0',(byte)'1',(byte)'2',(byte)'3',(byte)'4',(byte)'5',(byte)'6',(byte)'7',
             (byte)'8',(byte)'9',(byte)'+',(byte)'/'
-		};
+        };
 
         #endregion
 
@@ -61,7 +60,7 @@ namespace LumiSoft.Net.IO
         /// <param name="count">Number of bytes available in the buffer.</param>
         /// <param name="last">Last data block.</param>
         /// <returns>Returns encoded data.</returns>
-        public byte[] Encode(byte[] buffer,int offset,int count,bool last)
+        public byte[] Encode(byte[] buffer, int offset, int count, bool last)
         {
             throw new NotImplementedException();
         }
@@ -78,18 +77,19 @@ namespace LumiSoft.Net.IO
         /// <returns>Returns decoded data.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference.</exception>
         /// <exception cref="FormatException">Is raised when <b>value</b> contains invalid base64 data.</exception>
-        public byte[] Decode(string value,bool ignoreNonBase64Chars)
+        public byte[] Decode(string value, bool ignoreNonBase64Chars)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
             byte[] encBuffer = Encoding.ASCII.GetBytes(value);
-            byte[] buffer    = new byte[encBuffer.Length];
+            byte[] buffer = new byte[encBuffer.Length];
 
-            int decodedCount = Decode(encBuffer,0,encBuffer.Length,buffer,0,ignoreNonBase64Chars);
+            int decodedCount = Decode(encBuffer, 0, encBuffer.Length, buffer, 0, ignoreNonBase64Chars);
             byte[] retVal = new byte[decodedCount];
-            Array.Copy(buffer,retVal,decodedCount);
+            Array.Copy(buffer, retVal, decodedCount);
 
             return retVal;
         }
@@ -104,17 +104,18 @@ namespace LumiSoft.Net.IO
         /// <returns>Returns decoded data.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>data</b> is null reference.</exception>
         /// <exception cref="FormatException">Is raised when <b>value</b> contains invalid base64 data.</exception>
-        public byte[] Decode(byte[] data,int offset,int count,bool ignoreNonBase64Chars)
+        public byte[] Decode(byte[] data, int offset, int count, bool ignoreNonBase64Chars)
         {
-            if(data == null){
+            if (data == null)
+            {
                 throw new ArgumentNullException("data");
             }
 
             byte[] buffer = new byte[data.Length];
 
-            int decodedCount = Decode(data,offset,count,buffer,0,ignoreNonBase64Chars);
+            int decodedCount = Decode(data, offset, count, buffer, 0, ignoreNonBase64Chars);
             byte[] retVal = new byte[decodedCount];
-            Array.Copy(buffer,retVal,decodedCount);
+            Array.Copy(buffer, retVal, decodedCount);
 
             return retVal;
         }
@@ -132,24 +133,30 @@ namespace LumiSoft.Net.IO
         /// <exception cref="ArgumentNullException">Is raised when <b>encBuffer</b> or <b>encBuffer</b> is null reference.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when any of the arguments has out of valid range.</exception>
         /// <exception cref="FormatException">Is raised when <b>encBuffer</b> contains invalid base64 data.</exception>
-        public int Decode(byte[] encBuffer,int encOffset,int encCount,byte[] buffer,int offset,bool ignoreNonBase64Chars)
+        public int Decode(byte[] encBuffer, int encOffset, int encCount, byte[] buffer, int offset, bool ignoreNonBase64Chars)
         {
-            if(encBuffer == null){
+            if (encBuffer == null)
+            {
                 throw new ArgumentNullException("encBuffer");
-            }           
-            if(encOffset < 0){
-                throw new ArgumentOutOfRangeException("encOffset","Argument 'encOffset' value must be >= 0.");
             }
-            if(encCount < 0){
-                throw new ArgumentOutOfRangeException("encCount","Argument 'encCount' value must be >= 0.");
+            if (encOffset < 0)
+            {
+                throw new ArgumentOutOfRangeException("encOffset", "Argument 'encOffset' value must be >= 0.");
             }
-            if(encOffset + encCount > encBuffer.Length){
-                throw new ArgumentOutOfRangeException("encCount","Argument 'count' is bigger than than argument 'encBuffer'.");
+            if (encCount < 0)
+            {
+                throw new ArgumentOutOfRangeException("encCount", "Argument 'encCount' value must be >= 0.");
             }
-            if(buffer == null){
+            if (encOffset + encCount > encBuffer.Length)
+            {
+                throw new ArgumentOutOfRangeException("encCount", "Argument 'count' is bigger than than argument 'encBuffer'.");
+            }
+            if (buffer == null)
+            {
                 throw new ArgumentNullException("buffer");
             }
-            if(offset < 0 || offset >= buffer.Length){
+            if (offset < 0 || offset >= buffer.Length)
+            {
                 throw new ArgumentOutOfRangeException("offset");
             }
 
@@ -184,67 +191,81 @@ namespace LumiSoft.Net.IO
 					// |    8-bit         |    8-bit        |    8-bit         |
 			*/
 
-            int    decodeOffset  = encOffset;
-            int    decodedOffset = 0;
-            byte[] base64Block   = new byte[4];
+            int decodeOffset = encOffset;
+            int decodedOffset = 0;
+            byte[] base64Block = new byte[4];
 
             // Decode while we have data.
-            while((decodeOffset - encOffset) < encCount){
+            while ((decodeOffset - encOffset) < encCount)
+            {
                 // Read 4-byte base64 block.
                 int offsetInBlock = 0;
-                while(offsetInBlock < 4){
+                while (offsetInBlock < 4)
+                {
                     // Check that we won't exceed buffer data.
-                    if((decodeOffset - encOffset) >= encCount){
-                        if(offsetInBlock == 0){
+                    if ((decodeOffset - encOffset) >= encCount)
+                    {
+                        if (offsetInBlock == 0)
+                        {
                             break;
                         }
                         // Incomplete 4-byte base64 data block.
-                        else{
+                        else
+                        {
                             throw new FormatException("Invalid incomplete base64 4-char block");
                         }
                     }
 
                     // Read byte.
                     short b = encBuffer[decodeOffset++];
-             
+
                     // Pad char.
-                    if(b == '='){
+                    if (b == '=')
+                    {
                         // Padding may appear only in last two chars of 4-char block.
                         // ab==
                         // abc=
-                        if(offsetInBlock < 2){
+                        if (offsetInBlock < 2)
+                        {
                             throw new FormatException("Invalid base64 padding.");
                         }
-                                                                        
+
                         // Skip next padding char.
-                        if(offsetInBlock == 2){
+                        if (offsetInBlock == 2)
+                        {
                             decodeOffset++;
                         }
-                        
+
                         break;
                     }
                     // Non-base64 char.
-                    else if(b > 127 || BASE64_DECODE_TABLE[b] == -1){
-                        if(!ignoreNonBase64Chars){
+                    else if (b > 127 || BASE64_DECODE_TABLE[b] == -1)
+                    {
+                        if (!ignoreNonBase64Chars)
+                        {
                             throw new FormatException("Invalid base64 char '" + b + "'.");
                         }
                         // Igonre that char.
                         //else{
                     }
                     // Base64 char.
-                    else{
+                    else
+                    {
                         base64Block[offsetInBlock++] = (byte)BASE64_DECODE_TABLE[b];
                     }
                 }
 
                 // Decode base64 block.
-                if(offsetInBlock > 1){
+                if (offsetInBlock > 1)
+                {
                     buffer[decodedOffset++] = (byte)((base64Block[0] << 2) | (base64Block[1] >> 4));
                 }
-                if(offsetInBlock > 2){
+                if (offsetInBlock > 2)
+                {
                     buffer[decodedOffset++] = (byte)(((base64Block[1] & 0xF) << 4) | (base64Block[2] >> 2));
                 }
-                if(offsetInBlock > 3){
+                if (offsetInBlock > 3)
+                {
                     buffer[decodedOffset++] = (byte)(((base64Block[2] & 0x3) << 6) | base64Block[3]);
                 }
             }

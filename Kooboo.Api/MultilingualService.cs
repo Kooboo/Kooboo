@@ -1,9 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Context;
 using Kooboo.Data.Language;
-using System.Linq;
 
 namespace Kooboo.Api
 {
@@ -24,7 +24,7 @@ namespace Kooboo.Api
             }
             else
             {
-                lang = LanguageSetting.SystemLangCode;  
+                lang = LanguageSetting.SystemLangCode;
             }
 
             if (lang.ToLower() != "en")
@@ -37,10 +37,10 @@ namespace Kooboo.Api
                         var value = Kooboo.Data.Language.LanguageProvider.GetValue(msg, context);
                         if (msg != value)
                         {
-                            response.Messages[i] = value; 
+                            response.Messages[i] = value;
                         }
-                    }  
-                } 
+                    }
+                }
             }
         }
 

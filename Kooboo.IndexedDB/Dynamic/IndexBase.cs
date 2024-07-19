@@ -1,8 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Btree;
 using System;
 using System.Collections.Generic;
+using Kooboo.IndexedDB.BTree;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
@@ -36,7 +36,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public bool IsUnique { get; set; }
 
         private int KeyLen { get; set; }
-          
+
         public TableIndexBase(string FieldName, string indexfile, bool IsUnique, int keyLen)
         {
             this.IndexFile = indexfile;
@@ -45,14 +45,14 @@ namespace Kooboo.IndexedDB.Dynamic
             this.KeyLen = Helper.KeyHelper.GetKeyLen(this.keyType, keyLen);
 
             this.Seed = 1;
-            this.Increment = 1; 
+            this.Increment = 1;
         }
 
-        private BtreeIndex<T> _index;
+        private BTreeIndex<T> _index;
 
         private object _locker = new object();
 
-        public  BtreeIndex<T> index
+        public BTreeIndex<T> index
         {
             get
             {
@@ -64,7 +64,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         {
                             if (!string.IsNullOrEmpty(IndexFile))
                             {
-                                _index = new BtreeIndex<T>(null, IsUnique, Constants.DefaultKeyLen, this.IndexFile);
+                                _index = new BTreeIndex<T>(null, IsUnique, Constants.DefaultKeyLen, this.IndexFile);
                             }
                         }
                     }
@@ -77,13 +77,14 @@ namespace Kooboo.IndexedDB.Dynamic
         public bool IsIncremental { get; set; }
         public long Seed { get; set; }
 
-        private long _increment; 
-        public long Increment {
+        private long _increment;
+        public long Increment
+        {
             get
             {
-                return _increment; 
+                return _increment;
             }
-            set { _increment = value; if (_increment <=1) { _increment = 1;  } }
+            set { _increment = value; if (_increment <= 1) { _increment = 1; } }
         }
 
         public bool Add(object key, long blockPosition)
@@ -127,7 +128,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public void Close()
         {
-            this.index.Close(); 
+            this.index.Close();
         }
 
         public int Count(bool distinct)
@@ -168,22 +169,22 @@ namespace Kooboo.IndexedDB.Dynamic
             this.index.Update(old, oldBlockPosition, newBlockPosition);
         }
 
-        public void Update(object oldKey, object newkey,  long oldBlockPosition, long newBlockPosition)
+        public void Update(object oldKey, object newkey, long oldBlockPosition, long newBlockPosition)
         {
             var old = ParseKey(oldKey);
-            var newer = ParseKey(newkey); 
-            this.index.Update(old, newer,  oldBlockPosition, newBlockPosition);
+            var newer = ParseKey(newkey);
+            this.index.Update(old, newer, oldBlockPosition, newBlockPosition);
         }
 
         private long CurrentSeed { get; set; } = -1;
-  
+
 
         private object _seedlock = new object();
 
         public long NextIncrement()
         {
             lock (_seedlock)
-            { 
+            {
                 if (CurrentSeed == -1)
                 {
                     CurrentSeed = this.Seed;
@@ -193,14 +194,14 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         CurrentSeed = first;
                     }
-                    long last  = (long)Convert.ChangeType(this.index.LastKey, typeof(long));
+                    long last = (long)Convert.ChangeType(this.index.LastKey, typeof(long));
 
                     if (last > CurrentSeed)
                     {
                         CurrentSeed = last;
                     }
 
-                } 
+                }
                 CurrentSeed += this.Increment;
 
                 long nextvalue = CurrentSeed;

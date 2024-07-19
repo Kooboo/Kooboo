@@ -1,20 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
 
-    /// <summary>
-    /// duplcate items sequence reader. 
-    /// </summary>
-    public class BtreeIndexDuplicateReader
+    public class BTreeIndexDuplicateReader
     {
-        private BtreeIndexDuplicate duplicate;
+        private BTreeIndexDuplicate duplicate;
         private JumpRecord start;
         private JumpRecord current;
 
@@ -22,8 +15,8 @@ namespace Kooboo.IndexedDB.Btree
         ///
         /// </summary>
         /// <param name="duplicate"></param>
-        /// <param name="start"> the start jumprecord in the most bottom</param>
-        public BtreeIndexDuplicateReader(BtreeIndexDuplicate duplicate, JumpRecord start)
+        /// <param name="start"> the start jumpRecord in the most bottom</param>
+        public BTreeIndexDuplicateReader(BTreeIndexDuplicate duplicate, JumpRecord start)
         {
             this.duplicate = duplicate;
             this.start = start;
@@ -39,11 +32,11 @@ namespace Kooboo.IndexedDB.Btree
                 if (current != null)
                 {
                     return current.BlockPosition;
-                } 
-            } 
-         
-            return -1; 
-        } 
+                }
+            }
+
+            return -1;
+        }
 
         public byte[] ReadNextPointerBytes()
         {
@@ -53,12 +46,12 @@ namespace Kooboo.IndexedDB.Btree
                 current = this.duplicate.getJumpRecord(current.Next);
 
                 if (current != null)
-                { 
+                {
                     return current.pointerBytes;
                 }
             }
 
-            return null; 
+            return null;
         }
     }
 }

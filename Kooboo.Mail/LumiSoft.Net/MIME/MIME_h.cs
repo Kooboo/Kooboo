@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.MIME
@@ -16,7 +15,7 @@ namespace LumiSoft.Net.MIME
         {
         }
 
-                
+
         #region method ToString
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns header field as string.</returns>
         public override string ToString()
         {
-            return ToString(null,null,false);
+            return ToString(null, null, false);
         }
 
         /// <summary>
@@ -35,9 +34,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.
         /// If encoding needed, UTF-8 is strongly reccomended if not sure.</param>
         /// <returns>Returns header field as string.</returns>
-        public string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset)
+        public string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset)
         {
-            return ToString(wordEncoder,parmetersCharset,false);
+            return ToString(wordEncoder, parmetersCharset, false);
         }
 
         /// <summary>
@@ -48,7 +47,7 @@ namespace LumiSoft.Net.MIME
         /// If encoding needed, UTF-8 is strongly reccomended if not sure.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header field value not modified, original encoding is kept.</param>
         /// <returns>Returns header field as string.</returns>
-        public abstract string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode);
+        public abstract string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode);
 
         #endregion
 
@@ -60,7 +59,7 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns header field value as string.</returns>
         public string ValueToString()
         {
-            return ValueToString(null,null);
+            return ValueToString(null, null);
         }
 
         /// <summary>
@@ -70,9 +69,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.
         /// If encoding needed, UTF-8 is strongly reccomended if not sure.</param>
         /// <returns>Returns header field value as string.</returns>
-        public string ValueToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset)
+        public string ValueToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset)
         {
-            return ToString(wordEncoder,parmetersCharset).Split(new char[]{':'},2)[1].TrimStart();
+            return ToString(wordEncoder, parmetersCharset).Split(new char[] { ':' }, 2)[1].TrimStart();
         }
 
         #endregion

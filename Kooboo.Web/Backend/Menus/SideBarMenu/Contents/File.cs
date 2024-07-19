@@ -1,13 +1,12 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 using Kooboo.Web.Menus;
-using System.Collections.Generic;
 
 namespace Kooboo.Web.Backend.Menus.SideBarMenu.Contents
 {
     public class File : ISideBarMenu
     {
-        public SideBarSection Parent => SideBarSection.Contents; 
+        public SideBarSection Parent => SideBarSection.Contents;
 
         public string Name => "Files";
 
@@ -21,7 +20,7 @@ namespace Kooboo.Web.Backend.Menus.SideBarMenu.Contents
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("Files", Context); 
+            return Hardcoded.GetValue("Files", Context);
         }
     }
 }

@@ -1,17 +1,17 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Kooboo.Extensions
 {
     public static class StringExtension
     {
-    
         public static bool IsFont(this string urlinput)
         {
             string extension = Kooboo.Lib.Helper.UrlHelper.FileExtension(urlinput);
@@ -26,11 +26,12 @@ namespace Kooboo.Extensions
             }
         }
 
+
         private static bool IsFontExtension(this string fileExtension)
         {
             if (string.IsNullOrEmpty(fileExtension))
             {
-                return false; 
+                return false;
             }
 
             fileExtension = fileExtension.ToLower();
@@ -39,6 +40,7 @@ namespace Kooboo.Extensions
             {
                 return true;
             }
+
             if (fileExtension.Contains("svg#"))
             {
                 return true;
@@ -56,7 +58,7 @@ namespace Kooboo.Extensions
 
             return false;
         }
-     
+
         public static Guid ToHashGuid(this string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -74,40 +76,40 @@ namespace Kooboo.Extensions
             // convert the hash to a Guid
             return new Guid(data);
         }
- 
-        
-       public static List<string> SplitToList(this string input, string seperator)
+
+
+        public static List<string> SplitToList(this string input, string seperator)
         {
             List<string> result = new List<string>();
 
             if (string.IsNullOrEmpty(input))
             {
-                return result; 
+                return result;
             }
 
             int totallen = input.Length;
-            int seperatorlen = seperator.Length; 
+            int seperatorlen = seperator.Length;
 
-            int currentposition = 0; 
-            int currentindex = input.IndexOf(seperator, StringComparison.OrdinalIgnoreCase); 
+            int currentposition = 0;
+            int currentindex = input.IndexOf(seperator, StringComparison.OrdinalIgnoreCase);
 
-            while(currentindex >=0)
+            while (currentindex >= 0)
             {
                 int len = currentindex - currentposition;
                 if (len > 0)
-                { 
+                {
                     result.Add(input.Substring(currentposition, len));
                 }
                 else
                 {
-                    result.Add(""); 
+                    result.Add("");
                 }
 
                 currentposition = currentindex + seperatorlen;
 
-                if (currentposition > totallen-1)
-                { 
-                    break; 
+                if (currentposition > totallen - 1)
+                {
+                    break;
                 }
                 currentindex = input.IndexOf(seperator, currentposition, StringComparison.OrdinalIgnoreCase);
             }
@@ -120,7 +122,7 @@ namespace Kooboo.Extensions
             return result;
 
         }
-          
+
         public static bool ContainsAllParts(this string CurrentSegment, List<string> PartialParts)
         {
             foreach (var item in PartialParts)
@@ -143,12 +145,13 @@ namespace Kooboo.Extensions
                 else
                 {
                     CurrentSegment = CurrentSegment.Substring(index + item.Length);
-                } 
+                }
             }
+
             return true;
         }
-          
-    
+
+
         public static string RemoveRoutingCurlyBracket(this string input)
         {
             int leftindex = input.IndexOf("{");
@@ -159,8 +162,10 @@ namespace Kooboo.Extensions
                 {
                     return input.Substring(0, leftindex + 1) + input.Substring(rightindex);
                 }
+
                 return input;
             }
+
             return input;
         }
 
@@ -168,9 +173,9 @@ namespace Kooboo.Extensions
         {
             string pattern = "{.*?}";
             string back = Regex.Replace(input, pattern, "{}");
-            return back; 
+            return back;
         }
-         
+
         public static bool IsAsciiDigit(this string numberstring)
         {
             if (string.IsNullOrEmpty(numberstring))
@@ -178,9 +183,10 @@ namespace Kooboo.Extensions
                 return false;
             }
 
-            return numberstring.ToCharArray().Where(item => !IsAsciiDigit(item)).All(item => item == '.' || item == ',');
+            return numberstring.ToCharArray().Where(item => !IsAsciiDigit(item))
+                .All(item => item == '.' || item == ',');
         }
-         
+
         private static bool IsAsciiDigit(char chr)
         {
             //0-9, acsii 48-57. 
@@ -207,6 +213,7 @@ namespace Kooboo.Extensions
                     break;
                 }
             }
+
             if (string.IsNullOrEmpty(digit))
             {
                 return 0;
@@ -215,40 +222,40 @@ namespace Kooboo.Extensions
             {
                 return Convert.ToInt32(digit);
             }
-
         }
 
         public static bool EqualsOrNullEmpty(this string str1, string str2, StringComparison comparisonType)
         {
             return String.Compare(str1 ?? "", str2 ?? "", comparisonType) == 0;
         }
-          
-         
+
+
         public static Position GetPosition(this string input, int index)
         {
             if (index <= 0)
             {
-                return null; 
+                return null;
             }
+
             if (index > input.Length)
             {
-                return null; 
-            } 
+                return null;
+            }
 
             int linecount = 0;
             int columncount = 0;
 
             for (int i = 0; i < index; i++)
             {
-                var current = input[i]; 
+                var current = input[i];
                 if (current == '\n')
                 {
                     linecount += 1;
-                    columncount = 0; 
-                }  
+                    columncount = 0;
+                }
                 else
                 {
-                    columncount += 1; 
+                    columncount += 1;
                 }
             }
 
@@ -256,10 +263,10 @@ namespace Kooboo.Extensions
             pos.Line = linecount;
             pos.Column = columncount;
 
-            return pos;  
+            return pos;
         }
-         
-         
+
+
         public static string ToValidPath(this string input)
         {
             StringBuilder sb = new StringBuilder();
@@ -306,12 +313,16 @@ namespace Kooboo.Extensions
 
             return false;
         }
-          
+
+        public static string ToCamelCaseName(this string pascalCaseName)
+        {
+            return pascalCaseName[0].ToString().ToLower() + pascalCaseName.Substring(1);
+        }
     }
 
     public class Position
     {
-       public int Line { get; set; }
-      public  int Column { get; set; }
+        public int Line { get; set; }
+        public int Column { get; set; }
     }
 }

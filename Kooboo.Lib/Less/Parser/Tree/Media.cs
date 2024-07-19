@@ -12,10 +12,10 @@ namespace dotless.Core.Parser.Tree
     {
         public Node Features { get; set; }
         public Ruleset Ruleset { get; set; }
-		public List<Extender> Extensions { get; set; }
+        public List<Extender> Extensions { get; set; }
 
         public Media(Node features, NodeList rules)
-            : this(features, new Ruleset(GetEmptySelector(), rules),null)
+            : this(features, new Ruleset(GetEmptySelector(), rules), null)
         {
         }
 
@@ -23,7 +23,7 @@ namespace dotless.Core.Parser.Tree
         {
             Features = features;
             Ruleset = ruleset;
-			Extensions = extensions ?? new List<Extender>();
+            Extensions = extensions ?? new List<Extender>();
         }
 
         public static NodeList<Selector> GetEmptySelector()
@@ -51,7 +51,7 @@ namespace dotless.Core.Parser.Tree
             var features = Features.Evaluate(env);
             var ruleset = Ruleset.Evaluate(env) as Ruleset;
 
-            var media = new Media(features, ruleset,Extensions).ReducedFrom<Media>(this);
+            var media = new Media(features, ruleset, Extensions).ReducedFrom<Media>(this);
 
             env.MediaPath.Pop();
             env.MediaBlocks[blockIndex] = media;
@@ -214,7 +214,7 @@ namespace dotless.Core.Parser.Tree
 
             Ruleset.IsRoot = ctx.Count == 0;
 
-			//Track the last media block being appended for extender filters
+            //Track the last media block being appended for extender filters
             env.ExtendMediaScope.Push(this);
 
             // Set the current feeatures to filter extenders
@@ -252,7 +252,7 @@ namespace dotless.Core.Parser.Tree
                 env.Output.Append('}');
             else
                 env.Output.Append("\n}\n");
-}
+        }
 
         public void AddExtension(Selector selector, Extend extends, Env env)
         {

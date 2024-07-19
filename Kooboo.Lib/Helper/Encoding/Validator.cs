@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper.EncodingHelper
 {
@@ -15,52 +11,52 @@ namespace Kooboo.Lib.Helper.EncodingHelper
         {
             foreach (var item in System.Text.Encoding.GetEncodings())
             {
-                var encoding = item.GetEncoding(); 
+                var encoding = item.GetEncoding();
 
-               if (IsRightEncoding(input, encoding))
+                if (IsRightEncoding(input, encoding))
                 {
-                   return encoding; 
+                    return encoding;
                 }
-            } 
-            return null; 
+            }
+            return null;
         }
-         
+
         public static bool IsRightEncoding(byte[] input, System.Text.Encoding encoding)
-        { 
+        {
             var text = encoding.GetString(input);
 
-            var bytes = encoding.GetBytes(text); 
-            
+            var bytes = encoding.GetBytes(text);
+
             if (IsSameArray(input, bytes))
             {
-                return true; 
+                return true;
             }
-            return false;  
+            return false;
         }
 
         public static bool IsSameArray(byte[] x, byte[] y)
         {
             if (x == null || y == null)
             {
-                return false; 
+                return false;
             }
 
-            int len = x.Length; 
+            int len = x.Length;
             if (len != y.Length)
             {
-                return false; 
+                return false;
             }
 
             for (int i = 0; i < len; i++)
             {
                 if (x[i] != y[i])
                 {
-                    return false; 
+                    return false;
                 }
 
             }
 
-            return true; 
+            return true;
         }
 
 

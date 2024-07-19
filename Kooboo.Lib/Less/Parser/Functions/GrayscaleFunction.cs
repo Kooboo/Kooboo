@@ -8,7 +8,7 @@ namespace dotless.Core.Parser.Functions
     {
         protected override Node Eval(Color color)
         {
-            var grey = (color.RGB.Max() + color.RGB.Min())/2;
+            var grey = (color.RGB.Max() + color.RGB.Min()) / 2;
 
             return new Color(grey, grey, grey);
         }

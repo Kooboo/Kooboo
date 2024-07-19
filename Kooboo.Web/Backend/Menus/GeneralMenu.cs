@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Menus
 {
@@ -9,30 +6,32 @@ namespace Kooboo.Web.Menus
     {
         public string Name { get; set; }
 
-        public string Icon  {get;set;}
+        public string Icon { get; set; }
 
         public string Url { get; set; }
 
         public int Order { get; set; }
 
-        private List<ICmsMenu> _Subitems; 
-        public List<ICmsMenu> SubItems {
-            get {
+        private List<ICmsMenu> _Subitems;
+        public List<ICmsMenu> SubItems
+        {
+            get
+            {
                 if (_Subitems == null)
                 {
-                    _Subitems = new List<ICmsMenu>(); 
+                    _Subitems = new List<ICmsMenu>();
                 }
-                return _Subitems; 
+                return _Subitems;
             }
             set
             {
-                _Subitems = value; 
-            } 
+                _Subitems = value;
+            }
         }
 
         public string GetDisplayName(RenderContext Context)
         {
-            return this.Name; 
+            return this.Name;
         }
     }
 }

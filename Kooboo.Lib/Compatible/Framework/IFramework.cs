@@ -1,18 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Lib.Utilities;
-using Kooboo.Lib.Security;
+using System.IO;
 using Kooboo.Lib.Helper;
+using Kooboo.Lib.Security;
+using Kooboo.Lib.Utilities;
 
 namespace Kooboo.Lib.Compatible
 {
     public interface IFramework
     {
-        void OpenDefaultUrl(string url);
-
         string GetMimeMapping(string extension);
 
         void ConsoleWait();
@@ -23,7 +19,8 @@ namespace Kooboo.Lib.Compatible
 
         SizeMeansurement GetImageSize(byte[] imagebytes);
 
-        byte[] GetThumbnailImage(byte[] contentBytes, int width, int height);
+        byte[] GetThumbnailImage(byte[] contentBytes, int width, int height, string format = null);
+        Stream GetThumbnailImageStream(byte[] contentBytes, int width, int height, string format = null);
 
         void SaveThumbnailImage(byte[] contentBytes, int width, int height, string path);
 

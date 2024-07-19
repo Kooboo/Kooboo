@@ -1,28 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Columns
 {
-    public interface IColumn<TValue>
+    public interface IColumn
     {
         string FieldName { get; set; }
-          
-       
-        // fieldname + len. 8 bytes. this is for the fixed len column. 
-        byte[] FieldNameLengthBytes { get; set; }
-
-        bool IsString { get; set; }
-
-        int FieldNameHash { get; set; }
-
-        byte[] GetBytes(TValue input);
- 
-        void SetBytes(TValue input, byte[] bytes);
 
         /// <summary>
         /// The data type, string/int/decimal, etc of this column.
@@ -34,6 +19,20 @@ namespace Kooboo.IndexedDB.Columns
         /// </summary>
         int Length { get; set; }
 
-        int relativePosition { get; set; }
+        int RelativePosition { get; set; }
+    }
+
+    public interface IColumn<TValue> : IColumn
+    {
+        // fieldname + len. 8 bytes. this is for the fixed len column. 
+        byte[] FieldNameLengthBytes { get; set; }
+
+        bool IsLenVaries { get; set; }
+
+        int FieldNameHash { get; set; }
+
+        byte[] GetBytes(TValue input);
+
+        void SetBytes(TValue input, byte[] bytes);
     }
 }

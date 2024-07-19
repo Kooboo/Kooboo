@@ -1,13 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Web.ViewModel
-{ 
+{
 
     public class DatabaseItemEdit
     {
@@ -17,7 +13,25 @@ namespace Kooboo.Web.ViewModel
         {
             get; set;
         }
-         
+
+        private string _rawValue;
+        public string RawValue
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_rawValue))
+                {
+                    return JsonHelper.Serialize(Value);
+                }
+
+                return _rawValue;
+            }
+            set
+            {
+                _rawValue = value;
+            }
+        }
+
         public object Value { get; set; }
 
         public bool IsIncremental { get; set; }

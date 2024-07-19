@@ -1,13 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Helper;
-using Kooboo.IndexedDB.Serializer.Simple;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.ByteConverter;
+using Kooboo.IndexedDB.Serializer.Simple;
 
 namespace Kooboo.IndexedDB.Columns
 {
@@ -32,7 +27,7 @@ namespace Kooboo.IndexedDB.Columns
             this.FieldName = FieldName;
             this.Get = Helper.ObjectHelper.GetGetValue<TValue, DateTime>(FieldName);
             this.Set = Helper.ObjectHelper.GetSetValue<TValue, DateTime>(FieldName);
-              
+
             byteConverter = ObjectContainer.GetConverter<Int64>();
 
             this.DataType = typeof(DateTime);
@@ -40,7 +35,7 @@ namespace Kooboo.IndexedDB.Columns
             this.FieldNameHash = Helper.ObjectHelper.GetHashCode(this.FieldName);
             var fieldnamehashbytes = BitConverter.GetBytes(FieldNameHash);
 
-            this.IsString = false;
+            this.IsLenVaries = false;
 
             this.FieldNameLengthBytes = new byte[8];
             var lenbytes = BitConverter.GetBytes(this.Length);
@@ -51,15 +46,15 @@ namespace Kooboo.IndexedDB.Columns
 
         public byte[] GetBytes(TValue input)
         {
-            DateTime fieldvalue = this.Get(input); 
-            return ValueConverter.DateTimeToBytes(fieldvalue);  
+            DateTime fieldvalue = this.Get(input);
+            return ValueConverter.DateTimeToBytes(fieldvalue);
         }
 
         public void SetBytes(TValue input, byte[] bytes)
         {
             if (this.Set != null)
             {
-                var date = (DateTime)ValueConverter.FromDateTimeBytes(bytes); 
+                var date = (DateTime)ValueConverter.FromDateTimeBytes(bytes);
                 this.Set(input, date);
             }
         }
@@ -82,13 +77,13 @@ namespace Kooboo.IndexedDB.Columns
             }
         }
 
-        public int relativePosition
+        public int RelativePosition
         {
             get;
             set;
         }
 
-        public bool IsString { get; set; }
+        public bool IsLenVaries { get; set; }
 
         public byte[] FieldNameLengthBytes { get; set; }
         public int FieldNameHash { get; set; }

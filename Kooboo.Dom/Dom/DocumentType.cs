@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -13,18 +9,18 @@ namespace Kooboo.Dom
     /// /DocumentType nodes are simply known as doctypes.
     /// Doctypes have an associated name, public ID, and system ID.
     /// </summary>
-   [Serializable]
-  public  class DocumentType : Node
+    [Serializable]
+    public class DocumentType : Node
     {
 
-      public DocumentType()
-      {
-          nodeType = enumNodeType.DOCUMENT_TYPE;
-      }
+        public DocumentType()
+        {
+            nodeType = enumNodeType.DOCUMENT_TYPE;
+        }
 
-      public string name;
-      public string publicId;
-      public string systemId;
+        public string name;
+        public string publicId;
+        public string systemId;
 
     }
 }

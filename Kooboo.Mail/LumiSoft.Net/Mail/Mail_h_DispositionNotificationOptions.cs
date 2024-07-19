@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 using LumiSoft.Net.MIME;
@@ -26,7 +25,7 @@ namespace LumiSoft.Net.Mail
             importance = "required" / "optional"
         */
 
-        
+
         #region override method ToString
 
         /// <summary>
@@ -36,7 +35,7 @@ namespace LumiSoft.Net.Mail
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header field value not modified, original encoding is kept.</param>
         /// <returns>Returns header field as string.</returns>
-        public override string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode)
+        public override string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode)
         {
             return "TODO:";
         }
@@ -53,7 +52,7 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ObjectDisposedException">Is riased when this class is disposed and this property is accessed.</exception>
         public override bool IsModified
         {
-            get{ return true; } //m_pAddresses.IsModified; }
+            get { return true; } //m_pAddresses.IsModified; }
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public override string Name
         {
-            get{ return "Disposition-Notification-Options"; }
+            get { return "Disposition-Notification-Options"; }
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string Address
         {
-            get{ return "TODO:"; }
+            get { return "TODO:"; }
         }
 
         #endregion

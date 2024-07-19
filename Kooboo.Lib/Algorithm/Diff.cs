@@ -1,8 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 
 namespace Kooboo.Lib.Algorithm
@@ -57,15 +56,15 @@ namespace Kooboo.Lib.Algorithm
 
             int ALen = A.Length;
             int BLen = B.Length;
-            bool foundshorter = false; 
+            bool foundshorter = false;
 
             int jstartindex = 0; // the current compare position of string B. 
             int istartindex = 0; // current/last index positionn of string A. 
 
             for (int i = 0; i < ALen; i++)
             {
-              char Achar = A[i];
-              for (int j = jstartindex; j < BLen; j++)
+                char Achar = A[i];
+                for (int j = jstartindex; j < BLen; j++)
                 {
                     char Bchar = B[j];
 
@@ -77,7 +76,7 @@ namespace Kooboo.Lib.Algorithm
                             {
                                 if (istartindex < i)
                                 {
-                                    AddAction(actionlist, EditAction.ActionType.Del, A.Substring(istartindex, i - istartindex)); 
+                                    AddAction(actionlist, EditAction.ActionType.Del, A.Substring(istartindex, i - istartindex));
                                 }
                                 AddAction(actionlist, EditAction.ActionType.Keep, Achar.ToString());
 
@@ -86,7 +85,7 @@ namespace Kooboo.Lib.Algorithm
 
                                 if (CheckEnd(actionlist, ALen, BLen, istartindex, jstartindex, A, B))
                                 {
-                                    return actionlist; 
+                                    return actionlist;
                                 }
                             }
                             else
@@ -101,7 +100,7 @@ namespace Kooboo.Lib.Algorithm
 
                                 jstartindex = jstartindex + 2;
 
-                                istartindex = i+ 1;
+                                istartindex = i + 1;
 
                                 if (CheckEnd(actionlist, ALen, BLen, istartindex, jstartindex, A, B))
                                 {
@@ -115,14 +114,14 @@ namespace Kooboo.Lib.Algorithm
                             int distince = j - jstartindex;  // the current distance. 
                             int maxLookAheadIndex = i + distince;
 
-                            foundshorter = false; 
+                            foundshorter = false;
 
                             if (maxLookAheadIndex > ALen)
                             {
                                 maxLookAheadIndex = ALen;
                             }
 
-                            for (int xi = i+ 1; xi < maxLookAheadIndex; xi++)
+                            for (int xi = i + 1; xi < maxLookAheadIndex; xi++)
                             {
                                 char XAChar = A[xi];
                                 for (int xj = jstartindex; xj < j; xj++)
@@ -136,7 +135,7 @@ namespace Kooboo.Lib.Algorithm
                                         if (Xdistince < distince)
                                         {
                                             // shorter path found. use it.
-                                            foundshorter = true; 
+                                            foundshorter = true;
 
                                             // remove x, add y and keep current. 
                                             if (i < xi)
@@ -150,7 +149,7 @@ namespace Kooboo.Lib.Algorithm
                                             AddAction(actionlist, EditAction.ActionType.Keep, A[xi].ToString());
 
                                             i = xi;
-                                            istartindex = i+1; 
+                                            istartindex = i + 1;
                                             jstartindex = xj + 1;
 
                                             if (CheckEnd(actionlist, ALen, BLen, istartindex, jstartindex, A, B))
@@ -195,7 +194,7 @@ namespace Kooboo.Lib.Algorithm
 
         public static List<EditAction> GetChangePath(string A, string B)
         {
-            return GetPath(A, B).TakeWhile(o => o.EditType != EditAction.ActionType.Keep).ToList(); 
+            return GetPath(A, B).TakeWhile(o => o.EditType != EditAction.ActionType.Keep).ToList();
         }
 
         private static void AddAction(List<EditAction> currentSet, EditAction.ActionType type, string value)
@@ -229,14 +228,14 @@ namespace Kooboo.Lib.Algorithm
             {
                 // end of A. Add all the rest of B. 
                 AddAction(actionlist, EditAction.ActionType.Add, B.Substring(currentBIndex));
-                return true; 
+                return true;
             }
 
-            if (currentBIndex == BLen  && currentAIndex <= ALen - 1)
+            if (currentBIndex == BLen && currentAIndex <= ALen - 1)
             {
                 // end of B. Remove all rest of A. 
                 AddAction(actionlist, EditAction.ActionType.Del, A.Substring(currentAIndex));
-                return true; 
+                return true;
             }
 
             if (currentAIndex == ALen && currentBIndex == BLen)
@@ -244,7 +243,7 @@ namespace Kooboo.Lib.Algorithm
                 return true;
             }
 
-            return false; 
+            return false;
 
         }
 

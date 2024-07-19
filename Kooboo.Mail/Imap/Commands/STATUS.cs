@@ -2,14 +2,10 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using LumiSoft.Net;
-using LumiSoft.Net.IMAP;
-
 using Kooboo.Mail.Imap.Commands.FetchCommand;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -24,7 +20,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return "STATUS"; 
+                return "STATUS";
             }
         }
 
@@ -32,7 +28,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -40,7 +36,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -48,7 +44,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 

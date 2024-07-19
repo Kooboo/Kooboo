@@ -1,10 +1,8 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Text;
 
 using LumiSoft.Net.IO;
-using LumiSoft.Net.MIME;
 
 namespace LumiSoft.Net.MIME
 {
@@ -13,11 +11,12 @@ namespace LumiSoft.Net.MIME
     /// </summary>
     public class MIME_Entity : IDisposable
     {
-        private bool              m_IsDisposed    = false;
-        private MIME_Entity       m_pParent       = null;
-        private MIME_h_Collection m_pHeader       = null;
-        private MIME_b            m_pBody         = null;
-        private MIME_b_Provider   m_pBodyProvider = null;
+        private readonly object lockObj = new object();
+        private bool m_IsDisposed = false;
+        private MIME_Entity m_pParent = null;
+        private MIME_h_Collection m_pHeader = null;
+        private MIME_b m_pBody = null;
+        private MIME_b_Provider m_pBodyProvider = null;
 
         /// <summary>
         /// Default constructor.
@@ -35,8 +34,10 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public void Dispose()
         {
-            lock(this){
-                if(m_IsDisposed){
+            lock (lockObj)
+            {
+                if (m_IsDisposed)
+                {
                     return;
                 }
                 m_IsDisposed = true;
@@ -60,22 +61,25 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns created entity.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>transferEncoding</b>, <b>charset</b> or <b>text</b> is null reference.</exception>
         /// <exception cref="NotSupportedException">Is raised when body contains not supported Content-Transfer-Encoding.</exception>
-        public static MIME_Entity CreateEntity_Text_Plain(string transferEncoding,Encoding charset,string text)
+        public static MIME_Entity CreateEntity_Text_Plain(string transferEncoding, Encoding charset, string text)
         {
-            if(transferEncoding == null){
+            if (transferEncoding == null)
+            {
                 throw new ArgumentNullException("transferEncoding");
             }
-            if(charset == null){
+            if (charset == null)
+            {
                 throw new ArgumentNullException("charset");
             }
-            if(text == null){
+            if (text == null)
+            {
                 throw new ArgumentNullException("text");
             }
 
             MIME_Entity retVal = new MIME_Entity();
             MIME_b_Text body = new MIME_b_Text(MIME_MediaTypes.Text.plain);
             retVal.Body = body;
-            body.SetText(transferEncoding,charset,text);
+            body.SetText(transferEncoding, charset, text);
 
             return retVal;
         }
@@ -93,22 +97,25 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns created entity.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>transferEncoding</b>, <b>charset</b> or <b>text</b> is null reference.</exception>
         /// <exception cref="NotSupportedException">Is raised when body contains not supported Content-Transfer-Encoding.</exception>
-        public static MIME_Entity CreateEntity_Text_Html(string transferEncoding,Encoding charset,string text)
+        public static MIME_Entity CreateEntity_Text_Html(string transferEncoding, Encoding charset, string text)
         {
-            if(transferEncoding == null){
+            if (transferEncoding == null)
+            {
                 throw new ArgumentNullException("transferEncoding");
             }
-            if(charset == null){
+            if (charset == null)
+            {
                 throw new ArgumentNullException("charset");
             }
-            if(text == null){
+            if (text == null)
+            {
                 throw new ArgumentNullException("text");
             }
 
             MIME_Entity retVal = new MIME_Entity();
             MIME_b_Text body = new MIME_b_Text(MIME_MediaTypes.Text.html);
             retVal.Body = body;
-            body.SetText(transferEncoding,charset,text);
+            body.SetText(transferEncoding, charset, text);
 
             return retVal;
         }
@@ -125,12 +132,14 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>fileName</b> is null reference.</exception>
         public static MIME_Entity CreateEntity_Attachment(string fileName)
         {
-            if(fileName == null){
+            if (fileName == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            using(Stream stream = File.OpenRead(fileName)){
-                return CreateEntity_Attachment(Path.GetFileName(fileName),stream);
+            using (Stream stream = File.OpenRead(fileName))
+            {
+                return CreateEntity_Attachment(Path.GetFileName(fileName), stream);
             }
         }
 
@@ -141,14 +150,16 @@ namespace LumiSoft.Net.MIME
         /// <param name="fileName">File name with path.</param>
         /// <returns>Returns created entity.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>fileName</b> is null reference.</exception>
-        public static MIME_Entity CreateEntity_Attachment(string attachmentName,string fileName)
+        public static MIME_Entity CreateEntity_Attachment(string attachmentName, string fileName)
         {
-            if(fileName == null){
+            if (fileName == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            using(Stream stream = File.OpenRead(fileName)){
-                return CreateEntity_Attachment(string.IsNullOrEmpty(attachmentName) ? Path.GetFileName(fileName) : attachmentName,stream);
+            using (Stream stream = File.OpenRead(fileName))
+            {
+                return CreateEntity_Attachment(string.IsNullOrEmpty(attachmentName) ? Path.GetFileName(fileName) : attachmentName, stream);
             }
         }
 
@@ -159,12 +170,14 @@ namespace LumiSoft.Net.MIME
         /// <param name="stream">Attachment data stream. Data is read from stream current position.</param>
         /// <returns>Returns created entity.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>attachmentName</b> or <b>stream</b> is null reference.</exception>
-        public static MIME_Entity CreateEntity_Attachment(string attachmentName,Stream stream)
+        public static MIME_Entity CreateEntity_Attachment(string attachmentName, Stream stream)
         {
-            if(attachmentName == null){
+            if (attachmentName == null)
+            {
                 throw new ArgumentNullException("attachmentName");
             }
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
@@ -173,12 +186,12 @@ namespace LumiSoft.Net.MIME
             MIME_Entity retVal = new MIME_Entity();
             MIME_b_Application body = new MIME_b_Application(MIME_MediaTypes.Application.octet_stream);
             retVal.Body = body;
-            body.SetData(stream,MIME_TransferEncodings.Base64);
+            body.SetData(stream, MIME_TransferEncodings.Base64);
             retVal.ContentType.Param_Name = Path.GetFileName(attachmentName);
 
             MIME_h_ContentDisposition disposition = new MIME_h_ContentDisposition(MIME_DispositionTypes.Attachment);
-            disposition.Param_FileName           = Path.GetFileName(attachmentName);
-            disposition.Param_Size               = fileSize;
+            disposition.Param_FileName = Path.GetFileName(attachmentName);
+            disposition.Param_Size = fileSize;
             //disposition.Param_CreationDate     = fileInfo.CreationTime;
             //disposition.Param_ModificationDate = fileInfo.LastWriteTime;
             //disposition.Param_ReadDate         = fileInfo.LastAccessTime;
@@ -200,9 +213,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerParmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>file</b> is null.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
-        public void ToFile(string file,MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset)
+        public void ToFile(string file, MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset)
         {
-            ToFile(file,headerWordEncoder,headerParmetersCharset,false);
+            ToFile(file, headerWordEncoder, headerParmetersCharset, false);
         }
 
         /// <summary>
@@ -215,17 +228,20 @@ namespace LumiSoft.Net.MIME
         /// original encoding is kept.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>file</b> is null.</exception>
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
-        public void ToFile(string file,MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset,bool headerReencode)
+        public void ToFile(string file, MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset, bool headerReencode)
         {
-            if(file == null){
+            if (file == null)
+            {
                 throw new ArgumentNullException("file");
             }
-            if(file == ""){
+            if (file == "")
+            {
                 throw new ArgumentException("Argument 'file' value must be specified.");
             }
 
-            using(FileStream fs = File.Create(file)){
-                ToStream(fs,headerWordEncoder,headerParmetersCharset,headerReencode);
+            using (FileStream fs = File.Create(file))
+            {
+                ToStream(fs, headerWordEncoder, headerParmetersCharset, headerReencode);
             }
         }
 
@@ -240,9 +256,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerWordEncoder">Header 8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="headerParmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null.</exception>
-        public void ToStream(Stream stream,MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset)
+        public void ToStream(Stream stream, MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset)
         {
-            ToStream(stream,headerWordEncoder,headerParmetersCharset,false);
+            ToStream(stream, headerWordEncoder, headerParmetersCharset, false);
         }
 
         /// <summary>
@@ -254,15 +270,16 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerReencode">If true always specified encoding is used for header. If false and header field value not modified, 
         /// original encoding is kept.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null.</exception>
-        public void ToStream(Stream stream,MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset,bool headerReencode)
+        public void ToStream(Stream stream, MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset, bool headerReencode)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            m_pHeader.ToStream(stream,headerWordEncoder,headerParmetersCharset,headerReencode);
-            stream.Write(new byte[]{(int)'\r',(int)'\n'},0,2);
-            m_pBody.ToStream(stream,headerWordEncoder,headerParmetersCharset,headerReencode);
+            m_pHeader.ToStream(stream, headerWordEncoder, headerParmetersCharset, headerReencode);
+            stream.Write(new byte[] { (int)'\r', (int)'\n' }, 0, 2);
+            m_pBody.ToStream(stream, headerWordEncoder, headerParmetersCharset, headerReencode);
         }
 
         #endregion
@@ -275,7 +292,7 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns MIME entity as string.</returns>
         public override string ToString()
         {
-            return ToString(null,null);
+            return ToString(null, null);
         }
 
         /// <summary>
@@ -284,9 +301,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerWordEncoder">Header 8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="headerParmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <returns>Returns MIME entity as string.</returns>
-        public string ToString(MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset)
+        public string ToString(MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset)
         {
-            return ToString(headerWordEncoder,headerParmetersCharset,false);
+            return ToString(headerWordEncoder, headerParmetersCharset, false);
         }
 
         /// <summary>
@@ -297,10 +314,11 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerReencode">If true always specified encoding is used for header. If false and header field value not modified, 
         /// original encoding is kept.</param>
         /// <returns>Returns MIME entity as string.</returns>
-        public string ToString(MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset,bool headerReencode)
+        public string ToString(MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset, bool headerReencode)
         {
-            using(MemoryStream ms = new MemoryStream()){
-                ToStream(ms,headerWordEncoder,headerParmetersCharset,headerReencode);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ToStream(ms, headerWordEncoder, headerParmetersCharset, headerReencode);
 
                 return Encoding.UTF8.GetString(ms.ToArray());
             }
@@ -316,9 +334,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerWordEncoder">Header 8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="headerParmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <returns>Returns MIME entity as byte[].</returns>
-        public byte[] ToByte(MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset)
+        public byte[] ToByte(MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset)
         {
-            return ToByte(headerWordEncoder,headerParmetersCharset,false);
+            return ToByte(headerWordEncoder, headerParmetersCharset, false);
         }
 
         /// <summary>
@@ -329,10 +347,11 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerReencode">If true always specified encoding is used for header. If false and header field value not modified, 
         /// original encoding is kept.</param>
         /// <returns>Returns MIME entity as byte[].</returns>
-        public byte[] ToByte(MIME_Encoding_EncodedWord headerWordEncoder,Encoding headerParmetersCharset,bool headerReencode)
+        public byte[] ToByte(MIME_Encoding_EncodedWord headerWordEncoder, Encoding headerParmetersCharset, bool headerReencode)
         {
-            using(MemoryStream ms = new MemoryStream()){
-                ToStream(ms,headerWordEncoder,headerParmetersCharset,headerReencode);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ToStream(ms, headerWordEncoder, headerParmetersCharset, headerReencode);
 
                 return ms.ToArray();
             }
@@ -350,19 +369,23 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="InvalidOperationException">Is raised when this method is called for multipart entity.</exception>
         public void DataToStream(Stream stream)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
-            if(this.Body == null){
+            if (this.Body == null)
+            {
                 throw new InvalidOperationException("Mime entity body has been not set yet.");
             }
-            if(!(this.Body is MIME_b_SinglepartBase)){
+            if (!(this.Body is MIME_b_SinglepartBase))
+            {
                 throw new InvalidOperationException("This method is available only for single part entities, not for multipart.");
             }
 
             MIME_b_SinglepartBase body = (MIME_b_SinglepartBase)this.Body;
-            using(Stream dataStream = body.GetDataStream()){
-                Net_Utils.StreamCopy(dataStream,stream,64000);
+            using (Stream dataStream = body.GetDataStream())
+            {
+                Net_Utils.StreamCopy(dataStream, stream, 64000);
             }
         }
 
@@ -379,23 +402,29 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="InvalidOperationException">Is raised when this method is called for multipart entity.</exception>
         public void DataToFile(string fileName)
         {
-            if(fileName == null){
+            if (fileName == null)
+            {
                 throw new ArgumentNullException("fileName");
-            }            
-            if(fileName == string.Empty){
+            }
+            if (fileName == string.Empty)
+            {
                 throw new ArgumentException("Argument 'fileName' value must be specified.");
             }
-            if(this.Body == null){
+            if (this.Body == null)
+            {
                 throw new InvalidOperationException("Mime entity body has been not set yet.");
             }
-            if(!(this.Body is MIME_b_SinglepartBase)){
+            if (!(this.Body is MIME_b_SinglepartBase))
+            {
                 throw new InvalidOperationException("This method is available only for single part entities, not for multipart.");
             }
 
             MIME_b_SinglepartBase body = (MIME_b_SinglepartBase)this.Body;
-            using(Stream fs = File.Create(fileName)){
-                using(Stream dataStream = body.GetDataStream()){
-                    Net_Utils.StreamCopy(dataStream,fs,64000);
+            using (Stream fs = File.Create(fileName))
+            {
+                using (Stream dataStream = body.GetDataStream())
+                {
+                    Net_Utils.StreamCopy(dataStream, fs, 64000);
                 }
             }
         }
@@ -411,17 +440,20 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns body data as byte[].</returns>
         public byte[] DataToByte()
         {
-            if(this.Body == null){
+            if (this.Body == null)
+            {
                 throw new InvalidOperationException("Mime entity body has been not set yet.");
             }
-            if(!(this.Body is MIME_b_SinglepartBase)){
+            if (!(this.Body is MIME_b_SinglepartBase))
+            {
                 throw new InvalidOperationException("This method is available only for single part entities, not for multipart.");
             }
 
             MemoryStream stream = new MemoryStream();
             MIME_b_SinglepartBase body = (MIME_b_SinglepartBase)this.Body;
-            using(Stream dataStream = body.GetDataStream()){
-                Net_Utils.StreamCopy(dataStream,stream,64000);
+            using (Stream dataStream = body.GetDataStream())
+            {
+                Net_Utils.StreamCopy(dataStream, stream, 64000);
             }
 
             return stream.ToArray();
@@ -439,22 +471,25 @@ namespace LumiSoft.Net.MIME
         /// <param name="headerEncoding">Header reading encoding. If not sure UTF-8 is recommended.</param>
         /// <param name="defaultContentType">Default content type.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b>,<b>headerEncoding</b> or <b>defaultContentType</b> is null reference.</exception>
-        internal protected void Parse(SmartStream stream,Encoding headerEncoding,MIME_h_ContentType defaultContentType)
+        internal protected void Parse(SmartStream stream, Encoding headerEncoding, MIME_h_ContentType defaultContentType)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
-            if(headerEncoding == null){
+            if (headerEncoding == null)
+            {
                 throw new ArgumentNullException("headerEncoding");
             }
-            if(defaultContentType == null){
+            if (defaultContentType == null)
+            {
                 throw new ArgumentNullException("defaultContentType");
             }
-            
-            m_pHeader.Parse(stream,headerEncoding); 
-          
-            m_pBody = m_pBodyProvider.Parse(this,stream,defaultContentType);
-            m_pBody.SetParent(this,false);         
+
+            m_pHeader.Parse(stream, headerEncoding);
+
+            m_pBody = m_pBodyProvider.Parse(this, stream, defaultContentType);
+            m_pBody.SetParent(this, false);
         }
 
         #endregion
@@ -482,7 +517,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public bool IsDisposed
         {
-            get{ return m_IsDisposed; }
+            get { return m_IsDisposed; }
         }
 
         /// <summary>
@@ -491,12 +526,14 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ObjectDisposedException">Is riased when this class is disposed and this property is accessed.</exception>
         public bool IsModified
         {
-            get{ 
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
-                return m_pHeader.IsModified || m_pBody.IsModified; 
+                return m_pHeader.IsModified || m_pBody.IsModified;
             }
         }
 
@@ -506,12 +543,14 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public MIME_Entity Parent
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
-                return m_pParent; 
+                return m_pParent;
             }
         }
 
@@ -521,15 +560,17 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ObjectDisposedException">Is raised when this object is disposed and this property is accessed.</exception>
         public MIME_h_Collection Header
         {
-            get{ 
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                return m_pHeader; 
+
+                return m_pHeader;
             }
         }
-                                
+
         /// <summary>
         /// Gets or sets MIME version number. Value null means that header field does not exist. Normally this value is 1.0. Defined in RFC 2045 section 4.
         /// </summary>
@@ -538,35 +579,45 @@ namespace LumiSoft.Net.MIME
         /// standard, and an indication of which version of MIME is used.</remarks>
         public string MimeVersion
         {
-            get{ 
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("MIME-Version");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("MIME-Version");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("MIME-Version");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("MIME-Version",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("MIME-Version", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -580,35 +631,45 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Specifies a Unique ID for one MIME body part of the content of a message.</remarks>
         public string ContentID
         {
-            get{ 
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-ID");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
-                if(value == null){
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-ID");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-ID");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-ID",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-ID", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -622,35 +683,45 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Description of a particular body part of a message; for example, a caption for an image body part.</remarks>
         public string ContentDescription
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Description");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Description");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Description");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Description",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Description", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -665,35 +736,45 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Coding method used in a MIME message body part.</remarks>
         public string ContentTransferEncoding
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Transfer-Encoding");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value.Trim();
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Transfer-Encoding");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Transfer-Encoding");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Transfer-Encoding",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Transfer-Encoding", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -707,38 +788,49 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ParseException">Is raised when header field parsing errors.</exception>
         public MIME_h_ContentType ContentType
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Type");
-                if(h != null){
-                    if(!(h is MIME_h_ContentType)){
+                if (h != null)
+                {
+                    if (!(h is MIME_h_ContentType))
+                    {
                         throw new ParseException("Header field 'ContentType' parsing failed.");
                     }
 
                     return (MIME_h_ContentType)h;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Type");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Type");
-                    if(h == null){
+                    if (h == null)
+                    {
                         m_pHeader.Add(value);
                     }
-                    else{
+                    else
+                    {
                         m_pHeader.ReplaceFirst(value);
                     }
                 }
@@ -752,35 +844,45 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Base to be used for resolving relative URIs within this content part. See also Content-Location.</remarks>
         public string ContentBase
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Base");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Base");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Base");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Base",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Base", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -795,35 +897,45 @@ namespace LumiSoft.Net.MIME
         /// might be retrievable, or which otherwise gives a globally unique identification of the content.</remarks>
         public string ContentLocation
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Location");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Location");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Location");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Location",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Location", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -838,35 +950,45 @@ namespace LumiSoft.Net.MIME
         /// to indicate features of the body part content. See also RFC 2533, RFC 2506, and RFC 2045.</remarks>
         public string Contentfeatures
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-features");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
-                if(value == null){
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-features");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-features");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-features",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-features", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -882,38 +1004,49 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ParseException">Is raised when header field parsing errors.</exception>
         public MIME_h_ContentDisposition ContentDisposition
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Disposition");
-                if(h != null){
-                    if(!(h is MIME_h_ContentDisposition)){
+                if (h != null)
+                {
+                    if (!(h is MIME_h_ContentDisposition))
+                    {
                         throw new ParseException("Header field 'ContentDisposition' parsing failed.");
                     }
 
                     return (MIME_h_ContentDisposition)h;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Disposition");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Disposition");
-                    if(h == null){
+                    if (h == null)
+                    {
                         m_pHeader.Add(value);
                     }
-                    else{
+                    else
+                    {
                         m_pHeader.ReplaceFirst(value);
                     }
                 }
@@ -928,35 +1061,45 @@ namespace LumiSoft.Net.MIME
         /// Can also contain a list of languages for a message containing more than one language.</remarks>
         public string ContentLanguage
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Language");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Language");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Language");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Language",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Language", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -970,41 +1113,51 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Information about the media features of alternative content formats available for the current message.</remarks>
         public string ContentAlternative
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Alternative");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Alternative");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Alternative");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Alternative",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Alternative", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
             }
         }
-        
+
         /// <summary>
         /// Gets or sets content MD5 checksum. Value null means that header field does not exist.
         /// </summary>
@@ -1012,41 +1165,51 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Checksum of content to ensure that it has not been modified.</remarks>
         public string ContentMD5
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-MD5");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-MD5");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-MD5");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-MD5",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-MD5", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
             }
         }
-        
+
         /// <summary>
         /// Gets or sets time duration of content. Value null means that header field does not exist.
         /// </summary>
@@ -1054,35 +1217,45 @@ namespace LumiSoft.Net.MIME
         /// <remarks>Time duration of body part content, in seconds (e.g., for audio message).</remarks>
         public string ContentDuration
         {
-            get{
-                if(m_IsDisposed){
+            get
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 MIME_h h = m_pHeader.GetFirst("Content-Duration");
-                if(h != null){
+                if (h != null)
+                {
                     return ((MIME_h_Unstructured)h).Value;
                 }
-                else{
+                else
+                {
                     return null;
                 }
             }
 
-            set{
-                if(m_IsDisposed){
+            set
+            {
+                if (m_IsDisposed)
+                {
                     throw new ObjectDisposedException(this.GetType().Name);
                 }
-                
-                if(value == null){
+
+                if (value == null)
+                {
                     m_pHeader.RemoveAll("Content-Duration");
                 }
-                else{
+                else
+                {
                     MIME_h h = m_pHeader.GetFirst("Content-Duration");
-                    if(h == null){
-                        h = new MIME_h_Unstructured("Content-Duration",value);
+                    if (h == null)
+                    {
+                        h = new MIME_h_Unstructured("Content-Duration", value);
                         m_pHeader.Add(h);
                     }
-                    else{
+                    else
+                    {
                         ((MIME_h_Unstructured)h).Value = value;
                     }
                 }
@@ -1095,18 +1268,20 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when null reference passed.</exception>
         public MIME_b Body
         {
-            get{ return m_pBody; }
+            get { return m_pBody; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     throw new ArgumentNullException("Body");
                 }
 
                 m_pBody = value;
-                m_pBody.SetParent(this,true);
+                m_pBody.SetParent(this, true);
             }
         }
-                        
+
         #endregion
 
     }

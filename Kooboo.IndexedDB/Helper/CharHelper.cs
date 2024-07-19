@@ -1,43 +1,37 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.IndexedDB.Helper
-{ 
+{
     /// <summary>
     ///  2.4.1 Common parser idioms
     /// </summary>
     public static class CharHelper
-    {  
+    {
         public static bool IsValidTableName(string name)
-        { 
+        {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return false; 
-            } 
+                return false;
+            }
             int len = name.Length;
             for (int i = 0; i < len; i++)
             {
-                var currentchar = name[i];  
+                var currentchar = name[i];
                 if (!isAlphanumeric(currentchar))
                 {
                     if (currentchar != '.' && currentchar != ',' && currentchar != '_' && currentchar != '-')
                     {
-                        return false; 
+                        return false;
                     }
-                } 
-            } 
-            return true; 
+                }
+            }
+            return true;
         }
 
         //The White_Space characters are those that have the Unicode property "White_Space" in the Unicode PropList.txt data file. [UNICODE]
         //This should not be confused with the "White_Space" value (abbreviated "WS") of the "Bidi_Class" property in the Unicode.txt data file.
         //The control characters are those whose Unicode "General_Category" property has the value "Cc" in the Unicode UnicodeData.txt data file. [UNICODE]
-         
+
         /// <summary>
         /// The space characters, for the purposes of this specification, are
         /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).

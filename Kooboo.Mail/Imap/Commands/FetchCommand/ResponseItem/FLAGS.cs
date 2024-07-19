@@ -1,10 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
@@ -15,13 +12,13 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         {
             get
             {
-                return "FLAGS"; 
-            } 
+                return "FLAGS";
+            }
         }
 
         public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)
         {
-            var flags = maildb.Messages.GetFlags(message.Message.Id);  
+            var flags = maildb.Message2.GetFlags(message.Message);
 
             var result = new StringBuilder()
                 .Append(dataItem.FullItemName)

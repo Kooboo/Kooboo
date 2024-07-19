@@ -1,14 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
+    using dotless.Core.Importers;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using Utils;
-    using Exceptions;
     using Plugins;
-    using dotless.Core.Importers;
 
     public class Url : Node
     {

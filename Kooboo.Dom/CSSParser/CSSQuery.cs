@@ -1,12 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom.CSS;
-
 namespace Kooboo.Dom.CSS
 {
 
@@ -119,15 +112,15 @@ namespace Kooboo.Dom.CSS
             {
                 if (item.type == enumCSSRuleType.STYLE_RULE)
                 {
-                  //  ownerRuleList.appendRule(item);
+                    //  ownerRuleList.appendRule(item);
                 }
                 else if (item.type == enumCSSRuleType.IMPORT_RULE)
                 {
-                   // addImportRule((CSSImportRule)item, ownerRuleList);
+                    // addImportRule((CSSImportRule)item, ownerRuleList);
                 }
                 else if (item.type == enumCSSRuleType.MEDIA_RULE)
                 {
-                   // addMediaRule((CSSMediaRule)item, ownerRuleList);
+                    // addMediaRule((CSSMediaRule)item, ownerRuleList);
 
                     CSSMediaRule mediarule = (CSSMediaRule)item;
 
@@ -184,7 +177,7 @@ namespace Kooboo.Dom.CSS
                 {
                     ownerRuleList.appendRule(item);
                 }
-                else if(item.type == enumCSSRuleType.IMPORT_RULE)
+                else if (item.type == enumCSSRuleType.IMPORT_RULE)
                 {
                     addImportRule((CSSImportRule)item, ownerRuleList);
                 }

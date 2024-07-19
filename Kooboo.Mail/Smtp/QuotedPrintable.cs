@@ -1,19 +1,57 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Text;
+using MimeKit.Encodings;
 
 namespace Kooboo.Mail.Smtp
 {
-    public class QuotedPrintable 
+    public class QuotedPrintable
     {
         private const int MaxLineLength = 76;
-        private const string SoftLinebreak = "=\r\n";
+        private const string SoftLineBreak = "=\r\n";
 
-        public static string Encode(string str)
+        private static MimeKit.Encodings.QuotedPrintableEncoder coder = new MimeKit.Encodings.QuotedPrintableEncoder();
+
+        public static string Encode(string input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(input);
+
+            MimeKit.Encodings.QuotedPrintableEncoder encoder = new MimeKit.Encodings.QuotedPrintableEncoder(76);
+
+            var output = new byte[encoder.EstimateOutputLength(bytes.Length)];
+            var outputLength = encoder.Flush(bytes, 0, bytes.Length, output);
+
+            return Encoding.UTF8.GetString(output, 0, outputLength);
+        }
+
+        public static string Decode(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            var buffer = Encoding.UTF8.GetBytes(input);
+
+            var decoder = new QuotedPrintableDecoder();
+            var length = decoder.EstimateOutputLength(buffer.Length);
+            var decoded = new byte[length];
+            var n = decoder.Decode(buffer, 0, buffer.Length, decoded);
+
+            return Encoding.UTF8.GetString(decoded, 0, n);
+
+        }
+
+        [Obsolete]
+        public static string Encode_old(string str)
+        {
+
             var bytes = Encoding.UTF8.GetBytes(str);
 
             var builder = new StringBuilder();
@@ -30,7 +68,7 @@ namespace Kooboo.Mail.Smtp
                         if (i + 1 < bytes.Length && !IsLinebreak(bytes[i + 1]))
                         {
                             // Next character is not line break or not end of content, need soft line break
-                            builder.Append(SoftLinebreak);
+                            builder.Append(SoftLineBreak);
                             lineLength = 0;
                         }
                     }
@@ -44,7 +82,7 @@ namespace Kooboo.Mail.Smtp
                     {
                         // See Rule #5, max 76 line length and line could not end with space character
                         // If over max length, use soft break
-                        builder.Append(SoftLinebreak);
+                        builder.Append(SoftLineBreak);
                         lineLength = 0;
                     }
                     builder.Append((char)ch);
@@ -64,7 +102,7 @@ namespace Kooboo.Mail.Smtp
                         if (i + 1 < bytes.Length && !IsLinebreak(bytes[i + 1]))
                         {
                             // Next character is not line break or not end of content, need soft line break
-                            builder.Append(SoftLinebreak);
+                            builder.Append(SoftLineBreak);
                             lineLength = 0;
                         }
                     }

@@ -1,31 +1,31 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
-using Kooboo.Render.ObjectSource;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kooboo.Data.Context;
+using Kooboo.Render.ObjectSource;
 using VirtualFile;
 
 namespace Kooboo.Render.ServerSide
 {
     public static class ServerEngine
     {
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
         public static Dictionary<string, JsRenderPlan> cache = new Dictionary<string, JsRenderPlan>(StringComparer.OrdinalIgnoreCase);
 
         private static JsRenderPlan GetJs(string relativeUrl)
         {
-            lock(_locker)
+            lock (_locker)
             {
                 if (cache.ContainsKey(relativeUrl))
                 {
-                    return cache[relativeUrl]; 
+                    return cache[relativeUrl];
                 }
                 else
                 {
-                    return null; 
+                    return null;
                 }
             }
 
@@ -33,15 +33,15 @@ namespace Kooboo.Render.ServerSide
 
         private static void SetJs(string relativeUrl, JsRenderPlan plan)
         {
-           lock(_locker)
+            lock (_locker)
             {
-                cache[relativeUrl] = plan; 
+                cache[relativeUrl] = plan;
             }
         }
-         
+
 
         public static RenderRespnose RenderJs(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context, string RelativeUrl)
-        { 
+        {
             var fullname = sourceProvider.GetFullFileName(context, RelativeUrl);
 
             if (string.IsNullOrEmpty(fullname))
@@ -49,17 +49,17 @@ namespace Kooboo.Render.ServerSide
                 return new RenderRespnose() { Body = null };
             }
 
-           // cache
-           if (RelativeUrl.ToLower().Contains("monaco"))
+            // cache
+            if (RelativeUrl.ToLower().Contains("monaco"))
             {
-                context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
-            } 
+                context.Response.Headers["Expires"] = DateTime.UtcNow.AddDays(120).ToString("r");
+            }
 
             if (option.EnableMultilingual && RelativeUrl.ToLower().EndsWith(option.MultilingualJsFile))
-            { 
+            {
                 return RenderJsLangFile(fullname, context);
             }
-             
+
             System.IO.FileInfo info = new System.IO.FileInfo(fullname);
 
             if (info != null && info.LastWriteTime != null)
@@ -72,9 +72,9 @@ namespace Kooboo.Render.ServerSide
 
                 if (cacheplan != null && cacheplan.Hash == hash)
                 {
-                    renderplan = cacheplan; 
+                    renderplan = cacheplan;
                 }
-                  
+
                 //either not key found not hash not the same. 
                 if (renderplan == null)
                 {
@@ -83,7 +83,7 @@ namespace Kooboo.Render.ServerSide
                     renderplan = new JsRenderPlan();
                     renderplan.Tasks = GetJsRenderPlan(fulltext);
                     renderplan.Hash = hash;
-                    SetJs(RelativeUrl, renderplan);  
+                    SetJs(RelativeUrl, renderplan);
                 }
 
                 if (renderplan != null)
@@ -95,13 +95,13 @@ namespace Kooboo.Render.ServerSide
                     }
                     return new RenderRespnose() { Body = result, ContentType = "application/javascript" };
 
-                }  
+                }
             }
             else
             {
                 return new RenderRespnose() { Body = null };
             }
-             
+
             return new RenderRespnose() { Body = null };
 
         }
@@ -118,7 +118,7 @@ namespace Kooboo.Render.ServerSide
                 values = Kooboo.Data.Cache.MultiLingualRender.SetGetJs(context, bytes);
             }
 
-            return new RenderRespnose() { BinaryBytes = values, ContentType =  "application/javascript" }; 
+            return new RenderRespnose() { BinaryBytes = values, ContentType = "application/javascript" };
 
         }
 
@@ -261,7 +261,7 @@ namespace Kooboo.Render.ServerSide
                 {
                     // find the end..
                     int end = source.IndexOf(";", index);
-                    int EndLine=source.IndexOf("\r\n", index);
+                    int EndLine = source.IndexOf("\r\n", index);
 
                     if (EndLine > 0 && EndLine < end)
                     {

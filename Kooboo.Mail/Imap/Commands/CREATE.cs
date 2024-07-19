@@ -3,11 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
-using System.Security.Principal;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -15,7 +13,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -55,14 +53,17 @@ namespace Kooboo.Mail.Imap.Commands
         {
             var folderName = IMAP_Utils.DecodeMailbox(TextUtils.UnQuoteString(args));
 
+            var specialCharPattern = @"^[a-zA-Z0-9-_.\u4e00-\u9fa5]{1,50}$";
+            if (!Regex.IsMatch(folderName, specialCharPattern))
+                throw new CommandException("NO", "Folder names can not contain special characters when creating.");
+
             if (Folder.ReservedFolder.Any(o => folderName.StartsWith(o.Value, StringComparison.OrdinalIgnoreCase)))
                 throw new CommandException("NO", "Can not create folder under reservered folders");
 
-            var folderId = Folder.ToId(folderName);
-            if (session.MailDb.Folders.Get(folderId) != null)
+            if (session.MailDb.Folder.Get(folderName) != null)
                 throw new CommandException("NO", "Folder already exist");
 
-            session.MailDb.Folders.Add(folderName);
+            session.MailDb.Folder.Add(folderName);
 
             return this.NullResult();
         }

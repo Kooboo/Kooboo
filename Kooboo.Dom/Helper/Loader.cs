@@ -1,13 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -139,6 +136,10 @@ namespace Kooboo.Dom
                     }
                 }
             }
+            else
+            {
+                return Encoding.UTF8;
+            }
 
             //
             // if ContentType is null, or did not contain charset, we search in body
@@ -171,7 +172,7 @@ namespace Kooboo.Dom
                 {
                     e = Encoding.GetEncoding(charset);
                 }
-                catch (Exception ee)
+                catch (Exception)
                 {
                     e = Encoding.UTF8;
                 }
@@ -249,7 +250,7 @@ namespace Kooboo.Dom
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -289,7 +290,7 @@ namespace Kooboo.Dom
 
                     encoding = ParseEncoding(databytes, contentType);
 
-                    text = encoding.GetString(databytes).Trim(new []{'\uFEFF','\u200B'});
+                    text = encoding.GetString(databytes).Trim(new[] { '\uFEFF', '\u200B' });
 
                     downcontent.isString = true;
                     downcontent.ContentString = text;

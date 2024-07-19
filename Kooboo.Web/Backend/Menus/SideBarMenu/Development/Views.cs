@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Development
 {
     public class Views : ISideBarMenu
     {
-        public SideBarSection Parent =>  SideBarSection.Development;
+        public SideBarSection Parent => SideBarSection.Development;
 
         public string Name => "Views";
 
-        public string Icon =>"";
+        public string Icon => "";
 
         public string Url => "Development/Views";
 

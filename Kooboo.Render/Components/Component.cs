@@ -1,23 +1,23 @@
-﻿using Kooboo.Sites.Render;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Kooboo.Sites.Render;
 using VirtualFile;
 
 namespace Kooboo.Render.Components
 {
     public class Component
     {
-        private string _fulldiskpath; 
-        public string FullDiskPath {
+        private string _fulldiskpath;
+        public string FullDiskPath
+        {
             get
             {
-                return _fulldiskpath; 
+                return _fulldiskpath;
             }
             set
             {
                 _fulldiskpath = value;
-                _rendertask = null; 
+                _rendertask = null;
             }
         }
 
@@ -25,32 +25,32 @@ namespace Kooboo.Render.Components
 
         public DateTime LastModified { get; set; }
 
-        private List<IRenderTask> _rendertask; 
+        private List<IRenderTask> _rendertask;
 
         public List<IRenderTask> RenderTasks
         {
             get
             {
-                if (_rendertask== null)
+                if (_rendertask == null)
                 {
                     if (VirtualResources.FileExists(this.FullDiskPath))
                     {
                         var html = VirtualResources.ReadAllText(this.FullDiskPath);
                         var option = new EvaluatorOption();
-                        option.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
-                        _rendertask = Kooboo.Sites.Render.RenderEvaluator.Evaluate(html, option); 
-                    } 
+                        option.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent;
+                        _rendertask = Kooboo.Sites.Render.RenderEvaluator.Evaluate(html, option);
+                    }
                 }
-                return _rendertask; 
+                return _rendertask;
 
             }
             set
             {
-                _rendertask = value; 
+                _rendertask = value;
             }
 
         }
 
-         
+
     }
 }

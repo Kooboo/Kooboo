@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -81,7 +79,7 @@ namespace Kooboo.Dom
                 IdToRemoved.Add(i);
             }
 
-            foreach (var removeid in IdToRemoved.OrderByDescending(o=>o))
+            foreach (var removeid in IdToRemoved.OrderByDescending(o => o))
             {
                 item.RemoveAt(removeid);
             }
@@ -113,7 +111,7 @@ namespace Kooboo.Dom
                 }
             }
 
-            foreach (var removeid in IdToRemoved.OrderByDescending(o=>o))
+            foreach (var removeid in IdToRemoved.OrderByDescending(o => o))
             {
                 item.RemoveAt(removeid);
             }
@@ -144,14 +142,14 @@ namespace Kooboo.Dom
             //Let entry be the last (most recently added) element in the list of active formatting elements.
             FormattingElement entry = item[index];
 
-           //Rewind: If there are no entries before entry in the list of active formatting elements, then jump to the step labeled create.
+        //Rewind: If there are no entries before entry in the list of active formatting elements, then jump to the step labeled create.
         Rewind:
 
             if (index == 0)
             {
                 goto Create;
             }
-        
+
             //Let entry be the entry one earlier than entry in the list of active formatting elements.
             index = index - 1;
             entry = item[index];
@@ -162,9 +160,9 @@ namespace Kooboo.Dom
                 goto Rewind;
             }
 
-          //Advance: Let entry be the element one later than entry in the list of active formatting elements.
+        //Advance: Let entry be the element one later than entry in the list of active formatting elements.
 
-          Advance:
+        Advance:
 
             index = index + 1;
             entry = item[index];
@@ -186,9 +184,9 @@ namespace Kooboo.Dom
             {
                 goto Advance;
             }
-            
+
             //This has the effect of reopening all the formatting elements that were opened in the current body, cell, or caption (whichever is youngest) that haven't been explicitly closed.
-            
+
         }
 
         public void Push(FormattingElement element)
@@ -226,7 +224,7 @@ namespace Kooboo.Dom
         public void Push(Element element, HtmlToken token)
         {
             FormattingElement formatelement = new FormattingElement();
-            
+
             formatelement.element = element;
             formatelement.token = token;
             formatelement.isMarker = false;
@@ -323,9 +321,9 @@ namespace Kooboo.Dom
             foreach (var one in item)
             {
                 if (one.isMarker)
-                { return true;  }
+                { return true; }
             }
-            return false; 
+            return false;
         }
 
         public bool hasElement(Element element)
@@ -337,7 +335,7 @@ namespace Kooboo.Dom
                     return true;
                 }
             }
-         return false;
+            return false;
         }
     }
 }

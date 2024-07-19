@@ -1,10 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Mail;
+using System.Linq;
 using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
+using Kooboo.Mail;
+using Kooboo.Mail.Utility;
 using Kooboo.Mail.ViewModel;
+using Kooboo.Web.Api.Implementation.Mails.ViewModel;
+using MimeKit;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
@@ -19,69 +22,46 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
         }
 
-        public bool RequireSite
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool RequireSite => false;
 
-        public bool RequireUser
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool RequireUser => true;
 
-        public List<Message> List(ApiCall call)
+        public List<MessageViewModel> More(ApiCall call)
         {
+            string keyword = call.GetValue("keyword");
+            var add = call.GetValue("address");
+
             if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
-                dic.Add("address", call.GetValue("address"));
+
+                if (add != null)
+                {
+                    dic.Add("address", add);
+                }
+
+                if (keyword != null)
+                {
+                    dic.Add("keyword", keyword);
+                }
+
                 dic.Add("folder", call.GetValue("folder"));
-                return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.List), call.Context.User, dic);
+                dic.Add("messageId", call.GetValue("messageId"));
+
+                return EmailForwardManager.Get<List<MessageViewModel>>(this.ModelName, nameof(EmailMessageApi.More), call.Context.User, dic);
             }
 
             var maildb = Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
-            int addressid = EmailAddress.ToId(call.GetValue("address"));
-
-            var folderid = Folder.ToId(call.GetValue("Folder"));
-
-            var query = maildb.Messages.Query().Where(o => o.FolderId == folderid);
-            if (addressid != 0)
+            if (add != null)
             {
-                query.Where(o => o.AddressId == addressid);
-            } 
-            var list = query.OrderByDescending(o => o.Id).Take(PageSize);
-
-            MarkStatus(maildb, list);
-
-            return list;
-        }
-
-
-        public List<Message> More(ApiCall call)
-        {
-            if (EmailForwardManager.RequireForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("address", call.GetValue("address"));
-                dic.Add("folder", call.GetValue("folder"));
-                dic.Add("messageId", call.GetValue("messageId"));
-                return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.More), call.Context.User, dic);
+                add = add.Replace(" ", "+");
             }
-
-            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
-
-            var add = call.GetValue("address");
 
             int addressid = EmailAddress.ToId(add);
 
-            var folderid = Folder.ToId(call.GetValue("folder"));
+            string folderName = call.GetValue("folder");
+            var folderid = Folder.ToId(folderName);
 
             var messageid = call.GetValue<int>("messageId");
 
@@ -90,37 +70,83 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 messageid = int.MaxValue;
             }
 
-            var query = maildb.Messages.Query().Where(o => o.FolderId == folderid && o.Id < messageid);
-           // var list = maildb.Messages.Query().Where(o => o.AddressId == addressid && o.FolderId == folderid && o.Id < messageid).OrderByDescending(o => o.Id).Take(PageSize);
+            SqlWhere<Message> query = maildb.Message2.Query.Where(o => o.MsgId < messageid);
+
+            if (folderName != null && folderName.ToLower() != "searchemail" && folderName.ToLower() != "allfolder")
+            {
+                query.Where(o => o.FolderId == folderid);
+            }
+
+            if (folderid == 0)
+            {
+                var ids = Folder.ReservedFolder.Keys.ToList();
+                query.WhereNotIn(nameof(Message.FolderId), ids);
+            }
+
             if (addressid != 0)
             {
-                query.Where(o => o.AddressId == addressid);
-            } 
-            var list = query.OrderByDescending(o => o.Id).Take(PageSize);
-              
-            MarkStatus(maildb, list);
-
-            return list;
-        }
-         
-        private void MarkStatus(MailDb maildb, List<Message> msgs)
-        {
-            foreach (var item in msgs)
-            {
-                var status = maildb.Messages.Store.GetFromColumns(item.Id);
-                if (status != null)
-                {
-                    item.Read = status.Read;
-                    item.Answered = status.Answered;
-                    item.Deleted = status.Deleted;
-                    item.Flagged = status.Flagged;
-                }
-
-                if (item.Date == default(DateTime))
-                {
-                    item.Date = item.CreationTime;
-                }
+                query = query.Where(o => o.AddressId == addressid);
             }
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.AND });
+
+                string condition = " ([" + nameof(Message.From) + "] like '%" + keyword + "%' OR " + nameof(Message.Subject) + " like '%" + keyword + "%')";
+
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition });
+
+            }
+
+            query.OrderByDescending(o => o.MsgId);
+
+            var list = query.Take(PageSize).ToList();
+
+            list = maildb.Message2.ToFullMessage(list);
+
+            var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(maildb.OrganizationId);
+
+            return list.Select(o => MessageViewModel.FromMessage(o, maildb, orgdb)).ToList();
+        }
+
+
+        private static SqlWhere<Message> GetMessages(MailDb maildb, ApiCall call)
+        {
+            var messageid = call.GetValue<int>("messageId");
+
+            if (messageid <= 0)
+            {
+                messageid = int.MaxValue;
+            }
+
+            var folder = call.GetValue("folder");
+            if (string.IsNullOrEmpty(folder))
+            {
+                var ids = Folder.ReservedFolder.Keys.ToList();
+                return maildb
+                    .Message2
+                    .Query
+                    .Where(it => it.MsgId < messageid)
+                    .AddOperator(SqlWhere<Message>.OperatorType.AND)
+                    .WhereNotIn(nameof(Message.FolderId), ids);
+            }
+            else if (folder.Equals("searchEmail", StringComparison.OrdinalIgnoreCase))
+            {
+                return maildb.Message2.Query.Where(o => o.MsgId < messageid);
+            }
+            folder = System.Web.HttpUtility.UrlDecode(folder);
+            var folderid = Folder.ToId(folder);
+            return maildb.Message2.Query.Where(o => o.FolderId == folderid && o.MsgId < messageid);
+        }
+
+        public long LatestMsgId(ApiCall call)
+        {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                return EmailForwardManager.Get<long>(this.ModelName, nameof(EmailMessageApi.LatestMsgId), call.Context.User);
+            }
+            var maildb = Mail.Factory.DBFactory.UserMailDb(call.Context.User);
+            return maildb.Message2.LastKey;
         }
 
         public ContentViewModel Content(ApiCall call)
@@ -130,7 +156,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 var dic = new Dictionary<string, string>();
                 dic.Add("messageId", call.GetValue("messageId"));
                 return EmailForwardManager.Get<ContentViewModel>(this.ModelName, nameof(EmailMessageApi.Content), call.Context.User, dic);
-                
+
             }
             int messageid = call.GetValue<int>("messageId");
 
@@ -140,12 +166,41 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
             else
             {
-                var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
-                maildb.Messages.MarkAsRead(messageid);
-
+                var maildb = Mail.Factory.DBFactory.UserMailDb(call.Context.User);
+                maildb.Message2.MarkAsRead(messageid);
                 return Mail.Utility.MessageUtility.GetContentViewModel(call.Context.User, messageid);
             }
         }
+
+        public string ViewSource(string messageId, ApiCall call)
+        {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("messageId", call.GetValue("messageId"));
+                return EmailForwardManager.Get<string>(this.ModelName, nameof(EmailMessageApi.ViewSource), call.Context.User, dic);
+
+            }
+            int messageid = call.GetValue<int>("messageId");
+
+            if (messageid <= 0)
+            {
+                return null;
+            }
+            else
+            {
+                var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
+
+                var msg = maildb.Message2.Get(messageid);
+
+                if (msg != null)
+                {
+                    return msg.Body;
+                }
+            }
+            return null;
+        }
+
 
         [Kooboo.Attributes.RequireModel(typeof(ComposeViewModel))]
         public void Send(ApiCall call)
@@ -156,63 +211,87 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 dic.Add("messageId", call.GetValue("messageId"));
 
                 var json = Kooboo.Lib.Helper.JsonHelper.Serialize(call.Context.Request.Model);
-                var message= EmailForwardManager.Post<string>(this.ModelName, nameof(EmailMessageApi.Send), call.Context.User, json, dic);
-                if (!string.IsNullOrEmpty(message))
-                {
-                    throw new Exception(message);
-                }
-                return; 
+
+                EmailForwardManager.Post<string>(this.ModelName, nameof(EmailMessageApi.Send), call.Context.User, json, dic);
+                return;
             }
 
             var user = call.Context.User;
-            var model = call.Context.Request.Model as Mail.ViewModel.ComposeViewModel;
-            var msg = Kooboo.Mail.Utility.ComposeUtility.FromComposeViewModel(model, user);
 
-            string messagebody = Kooboo.Mail.Utility.ComposeUtility.ComposeMessageBody(model, user);
+            // blacklist.
+            if (Kooboo.Mail.SecurityControl.BlackList.IsUserBanned(user))
+            {
+                throw new Exception(Data.Language.Hardcoded.GetValue("you have been blacklisted", call.Context));
+            }
+
+
+            var model = call.Context.Request.Model as Mail.ViewModel.ComposeViewModel;
+            /// model.Html = Kooboo.Sites.Service.HTMLService.SplitBase64Lines(model.Html); 
+            string msgid = Kooboo.Mail.Utility.SmtpUtility.GenerateMessageId(model.FromAddress);
+
+            if (model.MessageId.HasValue && model.MessageId.Value > 0)
+            {
+                model.Html = EmailHelper.ReplaceOldMsg(model.Html, model.MessageId.Value);
+            }
+
+
+            string messageBody = Kooboo.Mail.Utility.ComposeUtility.ComposeMessageBody(model, user, false, msgid);
+
+            string msgSaveSent = Kooboo.Mail.Utility.ComposeUtility.ComposeMessageBody(model, user, true, msgid);
 
             List<string> rcpttos = new List<string>(model.To);
             rcpttos.AddRange(model.Cc);
             rcpttos.AddRange(model.Bcc);
 
-            string fromaddress = Mail.Utility.AddressUtility.GetAddress(msg.From);
+            var msginfo = Kooboo.Mail.Utility.MessageUtility.ParseMeta(msgSaveSent);
 
-            var msginfo = Kooboo.Mail.Utility.MessageUtility.ParseMeta(messagebody);
+            string fromaddress = Mail.Utility.AddressUtility.GetAddress(msginfo.From);
 
-            if (rcpttos.Count>0)
-            { 
-                // verify sending quota.
-                if (!Kooboo.Data.Infrastructure.InfraManager.Test(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count))
+            if (rcpttos.Count > 0)
+            {
+                var cansend = Kooboo.Data.Infrastructure.InfraManager.Test(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email, rcpttos.Count);
+
+                if (!cansend)
                 {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("you have no enough credit to send emails", call.Context));
+                    throw new Exception(Data.Language.Hardcoded.GetValue("you have no enough credit to send emails, please contact system administrators", call.Context));
                 }
 
                 // save sent.. 
-                Kooboo.Mail.Transport.Incoming.SaveSent(fromaddress, msginfo, messagebody);
+                Kooboo.Mail.Transport.Incoming.SaveSent(fromaddress, msginfo, msgSaveSent, user);
 
-                Kooboo.Mail.Transport.Incoming.Receive(fromaddress, rcpttos, messagebody, msginfo);
+                msginfo.Bcc = null;
+                msginfo.Read = false;
+
+                _ = Kooboo.Mail.Transport.Incoming.Receive(fromaddress, rcpttos, messageBody, msginfo);
+
+                var usermaildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
                 // draft message id. 
                 var messageid = call.GetValue<int>("messageId");
                 if (messageid > 0)
                 {
-                    var usermaildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
-                    usermaildb.Messages.Delete(messageid);
-                } 
+                    usermaildb.Message2.Delete(messageid);
+                }
 
-                Kooboo.Data.Infrastructure.InfraManager.Add(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count, string.Join(",", rcpttos));
-                 
+                usermaildb.AddBook.AddList(rcpttos);
+
+                Kooboo.Data.Infrastructure.InfraManager.Add(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email, rcpttos.Count, string.Join(",", rcpttos));
+
             }
 
         }
+
 
         public void Moves(ApiCall call)
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
-                dic.Add("folder", call.Context.Request.GetValue("folder"));
-                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.Moves), call.Context.User,dic);
+                var dic = new Dictionary<string, string>
+                {
+                    { "ids", call.GetValue("ids") },
+                    { "folder", call.Context.Request.GetValue("folder") }
+                };
+                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.Moves), call.Context.User, dic);
                 return;
             }
 
@@ -225,24 +304,36 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             var newfolder = new Folder(folder);
 
+            var spamFolder = new Folder(Folder.Spam);
+
+
             foreach (var id in ids)
             {
-                var msg = maildb.Messages.Get(id);
+                var msg = maildb.Message2.Get(id);
                 if (msg != null)
                 {
-                    maildb.Messages.Move(msg, newfolder);
+                    if (msg.FolderId == spamFolder.Id && newfolder.Id != spamFolder.Id)
+                    {
+                        // move out of spam, should add to contact user.
+
+                        maildb.AddBook.Add(msg.From);
+                    }
+
+                    maildb.Message2.Move(msg, newfolder);
+
                 }
             }
         }
 
-        public void Deletes(ApiCall call)
+        public bool Deletes(ApiCall call)
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
-                EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailMessageApi.Deletes), call.Context.User, dic);
-                return;
+                var dic = new Dictionary<string, string>
+                {
+                    { "ids", call.GetValue("ids") }
+                };
+                return EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailMessageApi.Deletes), call.Context.User, dic);
             }
 
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
@@ -252,8 +343,10 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             foreach (var id in ids)
             {
-                maildb.Messages.Delete(id);
+                maildb.Message2.Delete(id);
             }
+
+            return true;
         }
 
         public ComposeViewModel Forward(ApiCall call)
@@ -262,23 +355,67 @@ namespace Kooboo.Web.Api.Implementation.Mails
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("sourceId", call.GetValue("sourceId"));
+                dic.Add("timeZoneId", call.GetValue("timeZoneId"));
                 return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.Forward), call.Context.User, dic);
             }
             int messageId = call.GetValue<int>("sourceId");
-            return Kooboo.Mail.Multipart.ReferenceComposer.ComposeForward(messageId, call.Context);
+            var timeZoneId = call.GetValue<string>("timeZoneId");
+
+            return Kooboo.Mail.Multipart.ReferenceComposer.ComposeForward(messageId, call.Context, timeZoneId);
         }
 
         public ComposeViewModel Reply(ApiCall call)
         {
+            var messageId = call.GetValue<int>("messageId");
+            if (messageId == 0)
+            {
+                messageId = call.GetValue<int>("sourceId");
+            }
+
+            bool ReplyAll = false;
+            var type = call.GetValue("type");
+            if (type != null && type.ToLower() == "all")
+            {
+                ReplyAll = true;
+            }
+            var timeZoneId = call.GetValue("timeZoneId");
+
             if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
-                dic.Add("sourceId", call.GetValue("sourceId"));
+                dic.Add("sourceId", messageId.ToString());
+                dic.Add("type", type);
+                dic.Add("timeZoneId", timeZoneId);
                 return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.Reply), call.Context.User, dic);
             }
 
-            int messageId = call.GetValue<int>("sourceId");
-            return Kooboo.Mail.Multipart.ReferenceComposer.ComposeReply(messageId, call.Context);
+
+            return Kooboo.Mail.Multipart.ReferenceComposer.ComposeReply(messageId, call.Context, ReplyAll, timeZoneId);
+        }
+
+        public ComposeViewModel ReEdit(ApiCall call)
+        {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>
+                {
+                    { "messageId", call.GetValue("messageId") },
+                    { "sourceId", call.GetValue("sourceId") }
+                };
+                return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.ReEdit), call.Context.User, dic);
+            }
+
+            var messageId = call.GetValue<int>("messageId");
+            if (messageId == 0)
+            {
+                messageId = call.GetValue<int>("sourceId");
+            }
+            if (messageId <= 0)
+            {
+                return new ComposeViewModel();
+            }
+
+            return Kooboo.Mail.Multipart.ReferenceComposer.ComposeReEdit(call.Context.User, messageId, call.Context);
         }
 
         public void MarkReads(ApiCall call)
@@ -288,7 +425,8 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", call.GetValue("ids"));
                 dic.Add("value", call.GetValue("value"));
-                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.MarkReads), call.Context.User, dic);
+                EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailMessageApi.MarkReads), call.Context.User, dic);
+                return;
             }
 
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
@@ -300,12 +438,275 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             foreach (var id in ids)
             {
-                var msg = maildb.Messages.Get(id);
+                var msg = maildb.Message2.Get(id);
                 if (msg != null)
                 {
-                    maildb.Messages.MarkAsRead(msg.Id, value);
+                    maildb.Message2.MarkAsRead(msg.MsgId, value);
                 }
             }
+        }
+
+        public AdvanceSearchViewModel AdvancedSearch(ApiCall call, MailAdvancedSearch model)
+        {
+            var searchModel = call.GetValue("model");
+            var messageId = call.GetValue<int>("messageId");
+            if (messageId <= 0)
+            {
+                messageId = int.MaxValue;
+            }
+            var maildb = Mail.Factory.DBFactory.UserMailDb(call.Context.User);
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("model", call.GetValue("model"));
+                dic.Add("messageId", call.GetValue("messageId"));
+                return EmailForwardManager.Post<AdvanceSearchViewModel>(this.ModelName, nameof(EmailMessageApi.More), call.Context.User, dic);
+            }
+
+            var list = AdvancedSearchByMultipleCondition(maildb, call, model);
+            list = list.OrderBy(o => o.MsgId).ToList();
+            var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(maildb.OrganizationId);
+            var viewModel = list.OrderByDescending(o => o.MsgId).Where(o => o.MsgId < messageId).Select(o => MessageViewModel.FromMessage(o, maildb, orgdb)).Take(PageSize).ToList();
+            var advanceSearchViewModel = new AdvanceSearchViewModel()
+            {
+                Count = list.Count,
+                Data = viewModel
+            };
+            return advanceSearchViewModel;
+        }
+
+        public BinaryResponse ExportEmlFile(ApiCall call)
+        {
+            var messageId = Convert.ToInt32(call.Command.Value);
+            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
+            var subject = call.GetValue<string>("subject");
+            if (string.IsNullOrEmpty(subject))
+                subject = "No subject";
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dict = new Dictionary<string, string>()
+                {
+                    { "subject", System.Web.HttpUtility.UrlEncode(subject) }
+                };
+                var method = nameof(ExportEmlFile) + "/" + messageId;
+                var bytes = EmailForwardManager.Post(this.ModelName, method, call.Context.User, null, dict);
+                var response = new BinaryResponse();
+                response.ContentType = "application/octet-stream";
+                response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(subject)}.eml");
+                response.BinaryBytes = bytes;
+                return response;
+            }
+
+            string filename = System.IO.Path.Combine(maildb.MsgFolder, messageId.ToString() + ".eml");
+            if (System.IO.File.Exists(filename))
+            {
+                var response = new BinaryResponse();
+                response.ContentType = "application/octet-stream";
+                response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(subject)}.eml");
+                response.BinaryBytes = System.IO.File.ReadAllBytes(filename);
+                return response;
+            }
+
+            return null;
+        }
+
+        private List<Message> AdvancedSearchByMultipleCondition(MailDb maildb, ApiCall call, MailAdvancedSearch model)
+        {
+            var messageid = call.GetValue<int>("messageId");
+
+            if (messageid <= 0)
+            {
+                messageid = int.MaxValue;
+            }
+            var query = maildb
+                    .Message2
+                    .Query;
+            query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = "1=1" });
+
+
+            if (!string.IsNullOrEmpty(model.SearchFolder) && !model.SearchFolder.Equals("AllEmails", StringComparison.OrdinalIgnoreCase))
+            {
+                var folderId = Folder.ToId(model.SearchFolder);
+                string condition = $"[FolderId] == {folderId}";
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.AND });
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition });
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.From))
+            {
+                string condition = $"[{nameof(model.From)}] like '%{model.From}%'";
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.AND });
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition });
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.To))
+            {
+                string condition = $"([{nameof(model.To)}] like '%{model.To}%' OR [Cc] like '%{model.To}%' OR [Bcc] like '%{model.To}%')";
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.AND });
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition });
+            }
+
+            if (model.ReadOrUnRead >= 0)
+            {
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.AND });
+                string condition = string.Empty;
+                switch (model.ReadOrUnRead)
+                {
+                    case 0:
+                        condition = $"[Read] == 0";
+                        query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition });
+                        break;
+                    case 1:
+                        condition = $"[Read] == 1";
+                        query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition });
+                        break;
+                }
+            }
+
+            if (model.DateType != DateType.NoLimit)
+            {
+                query.WhereConditions.Add(new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.AND });
+                var timeQuery = GenerateTimeQuery(model.DateType, model.StartDate, model.EndDate);
+                query.WhereConditions.Add(timeQuery);
+            }
+
+            query.OrderByDescending(o => o.MsgId);
+
+            var list = query.Take(int.MaxValue).ToList();
+            list = maildb.Message2.ToFullMessage(list);
+
+
+            if (!string.IsNullOrWhiteSpace(model.Keyword))
+            {
+                list = SearchByKeywordAndPosition(list, model.Keyword, model.Position);
+            }
+
+            return list;
+        }
+
+        private List<Message> SearchByKeywordAndPosition(List<Message> messages, string keyword, string position)
+        {
+            keyword = keyword.Trim();
+            var mimeMessages = new List<MimeMessage>();
+            var result = new List<Message>();
+
+            messages.ForEach(v =>
+            {
+                var mimeMessage = MailKitUtility.LoadMessage(v.Body);
+                mimeMessages.Add(mimeMessage);
+            });
+
+            switch (position)
+            {
+                case "subject":
+                    for (int i = 0; i <= messages.Count - 1; i++)
+                    {
+                        if (!string.IsNullOrEmpty(mimeMessages[i].Subject) && mimeMessages[i].Subject.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                            result.Add(messages[i]);
+                    }
+                    break;
+                case "emailBody":
+                    for (int i = 0; i <= messages.Count - 1; i++)
+                    {
+                        if (!string.IsNullOrEmpty(mimeMessages[i].TextBody) && mimeMessages[i].TextBody.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                            result.Add(messages[i]);
+                    }
+                    break;
+                case "attachments":
+                    for (int i = 0; i <= messages.Count - 1; i++)
+                    {
+                        if (messages[i].Attachments.Any())
+                        {
+                            foreach (var item in messages[i].Attachments)
+                            {
+                                if (item is not null && !string.IsNullOrEmpty(item.FileName) && item.FileName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                                    result.Add(messages[i]);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    foreach (var item in messages)
+                    {
+                        if (!string.IsNullOrEmpty(item.Body))
+                        {
+                            var mimeMessage = MailKitUtility.LoadMessage(item.Body);
+                            if (mimeMessage.From.FirstOrDefault() is not null && mimeMessage.From.First().ToString().Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(item);
+                                continue;
+                            }
+                            if (!string.IsNullOrEmpty(mimeMessage.TextBody) && mimeMessage.TextBody.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(item);
+                                continue;
+                            }
+                            if (!string.IsNullOrEmpty(mimeMessage.Subject) && mimeMessage.Subject.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(item);
+                                continue;
+                            }
+                            if (item.Attachments.Any())
+                            {
+                                foreach (var attachment in item.Attachments)
+                                {
+                                    if (attachment is not null && !string.IsNullOrEmpty(attachment.FileName) && attachment.FileName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        result.Add(item);
+                                        continue;
+                                    }
+                                }
+                            }
+                            if (mimeMessage.To is not null)
+                            {
+                                var rcptToList = mimeMessage.To;
+                                rcptToList.AddRange(mimeMessage.Cc);
+                                rcptToList.AddRange(mimeMessage.Bcc);
+                                foreach (var rcptTo in rcptToList)
+                                {
+                                    if (rcptTo.ToString().Contains(keyword))
+                                    {
+                                        result.Add(item);
+                                        break;
+                                    }
+                                }
+
+                                continue;
+                            }
+                        }
+                    }
+                    break;
+            }
+            mimeMessages.Clear();
+            return result;
+        }
+
+        private SqlWhere<Message>.WhereTerm GenerateTimeQuery(DateType dateType, string startDate, string endDate)
+        {
+            string condition = string.Empty;
+            switch (dateType)
+            {
+                case DateType.OneDay:
+                    condition = $"[Date] >= '{DateTime.UtcNow.Date:yyyy-MM-dd 00:00:00}'  AND [Date] < '{DateTime.UtcNow.AddDays(1).Date:yyyy-MM-dd 00:00:00}' ";
+                    break;
+                case DateType.ThreeDay:
+                    condition = $"[Date] >= '{DateTime.UtcNow.AddDays(-2).Date:yyyy-MM-dd 00:00:00}'  AND [Date] < '{DateTime.UtcNow.AddDays(1).Date:yyyy-MM-dd 00:00:00}' ";
+                    break;
+                case DateType.OneWeek:
+                    condition = $"[Date] >= '{DateTime.UtcNow.AddDays(-6).Date:yyyy-MM-dd 00:00:00}'  AND [Date] < '{DateTime.UtcNow.AddDays(1).Date:yyyy-MM-dd 00:00:00}' ";
+                    break;
+                case DateType.TwoWeek:
+                    condition = $"[Date] >= '{DateTime.UtcNow.Date.AddDays(-13).Date:yyyy-MM-dd 00:00:00}'  AND [Date] < '{DateTime.UtcNow.AddDays(1).Date:yyyy-MM-dd 00:00:00}' ";
+                    break;
+                case DateType.OneMonth:
+                    condition = $"[Date] >= '{DateTime.UtcNow.Date.AddMonths(-1).AddDays(2).Date:yyyy-MM-dd 00:00:00}'  AND [Date] < '{DateTime.UtcNow.AddDays(1).Date:yyyy-MM-dd 00:00:00}' ";
+                    break;
+                default:
+                    condition = $"[Date] >= '{startDate}'  AND [Date] < '{endDate}' ";
+                    break;
+            }
+
+            return new SqlWhere<Message>.WhereTerm() { Type = SqlWhere<Message>.WhereTerm.TermType.ConditionText, Sql = condition };
         }
 
     }

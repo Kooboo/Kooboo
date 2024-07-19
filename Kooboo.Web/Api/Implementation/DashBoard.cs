@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Api;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Permission;
+using Kooboo.Sites.Scripting.Global.SiteItem.DashBoard;
+using Kooboo.Web.Service;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -15,15 +15,14 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return "dashboard"; 
+                return "dashboard";
             }
         }
-
         public bool RequireSite
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -31,17 +30,37 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return false;
             }
         }
 
-        public List<string> All(ApiCall call)
+        public JsonTextResponse Item(string name, ApiCall call)
         {
-            return Kooboo.Web.DashBoard.DashBoardManager.Render(call.Context); 
-        } 
-        public List<Kooboo.Web.ViewModel.DashBoardItemHtml> Items(ApiCall call)
+            var items = Resource.instance.SiteScript(call.Context.WebSite);
+            var item = items.FirstOrDefault(f => f.Name == name);
+
+            if (item != null)
+            {
+                var content = Kooboo.Sites.Scripting.Global.SiteItem.DashBoard.Manager.ExecuteAsJson(call.Context, item.ScriptBody);
+                return new JsonTextResponse(content);
+            }
+
+            return null;
+        }
+
+        [Permission(Feature.DASH_BOARD, Action = Data.Permission.Action.VIEW)]
+        public JsonTextResponse All(ApiCall call)
         {
-            return Kooboo.Web.DashBoard.DashBoardManager.ItemHtml(call.Context); 
-        } 
+            var content = Kooboo.Sites.Scripting.Global.SiteItem.DashBoard.Manager.SiteDashBoardSetting(call.Context);
+
+            return new JsonTextResponse(content);
+        }
+
+        public DashBoardInfo info(ApiCall call)
+        {
+            DashBoardInfo item = new DashBoardInfo(call.Context);
+
+            return item;
+        }
     }
 }

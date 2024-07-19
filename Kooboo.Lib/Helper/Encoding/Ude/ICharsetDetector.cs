@@ -1,30 +1,29 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.IO;
 
 namespace Ude
 {
-	public interface ICharsetDetector
-	{
-		string Charset
-		{
-			get;
-		}
+    public interface ICharsetDetector
+    {
+        string Charset
+        {
+            get;
+        }
 
-		float Confidence
-		{
-			get;
-		}
+        float Confidence
+        {
+            get;
+        }
 
-		void Feed(byte[] buf, int offset, int len);
+        void Feed(byte[] buf, int offset, int len);
 
-		void Feed(Stream stream);
+        void Feed(Stream stream);
 
-		void Reset();
+        void Reset();
 
-		bool IsDone();
+        bool IsDone();
 
-		void DataEnd();
-	}
+        void DataEnd();
+    }
 }

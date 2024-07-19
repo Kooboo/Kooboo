@@ -1,25 +1,21 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.ByteConverter
 {
-  public  class GuidConverter : IByteConverter<Guid>
+    public class GuidConverter : IByteConverter<Guid>
     {
 
         public byte[] ToByte(Guid input)
         {
-           return input.ToByteArray();
+            return input.ToByteArray();
         }
 
-        public Guid FromByte(byte[] inputbytes)
+        public Guid FromByte(byte[] inputBytes)
         {
-            Guid newguid = new Guid(inputbytes);
-            return newguid;
+            Guid newGuid = new Guid(inputBytes);
+            return newGuid;
         }
 
 
@@ -28,10 +24,10 @@ namespace Kooboo.IndexedDB.ByteConverter
             return input.ToByteArray();
         }
 
-        public static Guid ConvertFromByte(byte[] inputbytes)
+        public static Guid ConvertFromByte(byte[] inputBytes)
         {
-            Guid newguid = new Guid(inputbytes);
-            return newguid;
+            Guid newGuid = new Guid(inputBytes);
+            return newGuid;
         }
     }
 }

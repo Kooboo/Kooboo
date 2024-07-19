@@ -1,10 +1,10 @@
 namespace dotless.Core.Parser.Tree
 {
+    using System.Text.RegularExpressions;
     using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
-    using System.Text.RegularExpressions;
 
     public class Rule : Node
     {
@@ -16,7 +16,7 @@ namespace dotless.Core.Parser.Tree
         public bool Variadic { get; set; }
 
         public Rule(string name, Node value) : this(name, value, false)
-        { 
+        {
         }
 
         public Rule(string name, Node value, bool variadic)

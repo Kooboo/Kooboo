@@ -1,17 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Data;
+using Kooboo.Data.Context;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Helper;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Routing;
-using Kooboo.Sites.SiteTransfer;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Service;
-using Kooboo.Data.Context;
-using Kooboo.Data.Server;
 using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting;
-using Kooboo.Sites.Helper;
+using Kooboo.Sites.Service;
+using Kooboo.Sites.SiteTransfer;
+using Kooboo.Web.Frontend;
 
 namespace Kooboo.Web.FrontRequest
 {
@@ -23,23 +24,67 @@ namespace Kooboo.Web.FrontRequest
         }
         public async Task Invoke(RenderContext context)
         {
+            Kooboo.Web.SystemStart.InitHeaders(context);
+
             FrontContext kooboocontext = new FrontContext(context);
+
+            if (HandleBySsoLogin(context)) return;
 
             if (context.WebSite != null)
             {
+                if (!Security.AccessControl.HasCountryAccess(context.WebSite, context) && !CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl) && kooboocontext.RenderContext.Request.Channel == RequestChannel.Default)
+                {
+                    var pageRoute = kooboocontext.WebSite.SiteDb().Pages.GetByUrl(kooboocontext.RenderContext.Request.RelativeUrl);
+
+                    if (pageRoute != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(context.WebSite.VisitorCountryRestrictionPage))
+                        {
+                            var route = context.WebSite.SiteDb().Routes.GetByUrl(context.WebSite.VisitorCountryRestrictionPage);
+                            if (route != null)
+                            {
+                                kooboocontext.Route = route;
+                                await PageRenderer.RenderAsync(kooboocontext);
+                                context.Response.StatusCode = 451;
+                                context.Response.End = true;
+                                return;
+                            }
+                        }
+                        var errorBody = await WebSiteService.RenderCustomError(kooboocontext, 451);
+                        if (!string.IsNullOrWhiteSpace(errorBody))
+                        {
+                            kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorBody);
+                        }
+                        context.Response.End = true;
+                        return;
+                    }
+                }
+
+                if (context.Request.Binding != default && !string.IsNullOrWhiteSpace(context.Request.Binding.Redirect))
+                {
+                    var fullDomain = context.Request.Binding.Redirect;
+                    var isHttps = GlobalDb.SslCertificate.GetByDomain(fullDomain) != default;
+                    fullDomain = (isHttps ? "https://" : "http://") + fullDomain + context.Request.RawRelativeUrl;
+                    context.Response.Redirect(301, fullDomain);
+                    return;
+                }
+
                 if (!Kooboo.Web.Security.AccessControl.HasWebsiteAccess(context.WebSite, context))
                 {
                     if (!CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
                     {
                         if (context.User == null)
                         {
-                            context.Response.Redirect(302, "/_admin/account/login?type=site&returnurl=" + System.Web.HttpUtility.UrlEncode(context.Request.RawRelativeUrl));
-                            context.Response.End = true;
+                            RedirectToLogin(context);
                             return;
                         }
                         else
                         {
-                            context.Response.Redirect(302, Kooboo.DataConstants.Default403Page);
+                            var errorBody = await WebSiteService.RenderCustomError(kooboocontext, 403);
+                            if (!string.IsNullOrWhiteSpace(errorBody))
+                            {
+                                kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorBody);
+                            }
                             context.Response.End = true;
                             return;
                         }
@@ -53,7 +98,7 @@ namespace Kooboo.Web.FrontRequest
                     if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
                     {
                         var success = AuthenticationHelper.Authentication(kooboocontext);
-                        if(success) await ExecuteKooboo(kooboocontext);
+                        if (success) await ExecuteKooboo(kooboocontext);
                         return;
                     }
                 }
@@ -74,22 +119,30 @@ namespace Kooboo.Web.FrontRequest
                             if (Data.AppSettings.IsOnlineServer && !Kooboo.Web.Security.ActionControl.CanServerDownloadMorePages(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RelativeUrl))
                             {
                                 kooboocontext.RenderContext.Response.StatusCode = 402;
-                                var errorbody = await WebSiteService.RenderCustomError(kooboocontext, 402);
-                                if (!string.IsNullOrWhiteSpace(errorbody))
+                                var errorBody = await WebSiteService.RenderCustomError(kooboocontext, 402);
+                                if (!string.IsNullOrWhiteSpace(errorBody))
                                 {
-                                    kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
+                                    kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorBody);
                                 }
                                 return;
                             }
                             else
                             {
-                                 
-                                var continuedownload = await TransferManager.continueDownload(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RawRelativeUrl, kooboocontext.RenderContext);
-                                if (continuedownload != null)
+
+                                var continueDownload = await TransferManager.continueDownload(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RawRelativeUrl, kooboocontext.RenderContext);
+                                if (continueDownload != null)
                                 {
                                     ObjectRoute.Parse(kooboocontext);
                                 }
                             }
+                        }
+
+                        var sitemapSettings = context.WebSite.SitemapSettings;
+
+                        if (sitemapSettings.Enable && context.Request.RelativeUrl.StartsWith(sitemapSettings.Path))
+                        {
+                            SitemapHelper.HandleSitemap(context, sitemapSettings);
+                            return;
                         }
                     }
 
@@ -100,29 +153,59 @@ namespace Kooboo.Web.FrontRequest
                     }
                     else
                     {
-                        kooboocontext.RenderContext.Response.StatusCode = 404;
+                        if (!kooboocontext.WebSite.EnableSPA || !kooboocontext.WebSite.StartPages().Any(o => o.DefaultStart))
+                        {
+                            kooboocontext.RenderContext.Response.StatusCode = 404;
+                        }
                         var errorbody = await WebSiteService.RenderCustomError(kooboocontext, 404);
                         if (!string.IsNullOrWhiteSpace(errorbody))
                         {
                             kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
+                            if (kooboocontext.WebSite.EnableVisitorLog && kooboocontext.RenderContext.Request.Channel == RequestChannel.Default)
+                            {
+
+                                var errorLog = new Data.Models.SiteErrorLog
+                                {
+                                    ClientIP = kooboocontext.RenderContext.Request.IP,
+                                    StatusCode = 404,
+                                    Url = kooboocontext.RenderContext.Request.RawRelativeUrl,
+                                    StartTime = kooboocontext.StartTime,
+                                };
+
+                                Kooboo.Sites.Worker.LogWriter.Instance.Add(kooboocontext.SiteDb, errorLog);
+
+                                // kooboocontext.SiteDb.ErrorLog.Add();
+
+
+
+                            }
                         }
                         return;
                     }
                 }
                 else
                 {
+                    kooboocontext.RenderContext.IsBackendView = true;
+
                     // reensure siteid... in case of the same url used for login. 
                     var siteid = Kooboo.Data.Context.WebServerContext.RequestSiteId(context.Request);
                     if (siteid != kooboocontext.RenderContext.WebSite.Id)
                     {
-                        var site = Kooboo.Data.GlobalDb.WebSites.Get(siteid);
+                        var site = Data.Config.AppHost.SiteRepo.Get(siteid);
                         if (site != null)
                         {
                             kooboocontext.WebSite = site;
                         }
                     }
 
+                    if (kooboocontext.RenderContext.Request.SitePath != null)
+                    {
+                        kooboocontext.RenderContext.Response.Redirect(302, "/_Admin/");
+                        return;
+                    }
                 }
+
+
             }
 
             if (RenderThumbnail(kooboocontext))
@@ -132,15 +215,53 @@ namespace Kooboo.Web.FrontRequest
             await Next.Invoke(context);
         }
 
+        private bool HandleBySsoLogin(RenderContext context)
+        {
+            if (!"/_admin/login".Equals(context.Request.Path, StringComparison.CurrentCultureIgnoreCase)) return false;
+            if (context.Request.QueryString.Get("sso") != "1") return false;
+            var token = context.Request.QueryString.Get("access_token");
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                context.Request.Cookies.TryGetValue("jwt_token", out token);
+            }
+            else
+            {
+                context.HttpContext.Response.Cookies.Append(DataConstants.UserJwtToken, token, new Microsoft.AspNetCore.Http.CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                });
+            }
+            if (string.IsNullOrWhiteSpace(token)) return false;
+            var server = context.Request.QueryString.Get("server");
+            var returnUrl = context.Request.QueryString.Get("returnurl");
+            var redirectUrl = $"{server}/_api/v2/user/ssoLogin?accessToken={token}&returnurl={returnUrl}";
+            context.Response.Redirect(302, redirectUrl);
+            context.Response.End = true;
+            return true;
+        }
+
+        private void RedirectToLogin(RenderContext context)
+        {
+            var returnUrl = System.Web.HttpUtility.UrlEncode(context.Request.RawRelativeUrl);
+            var redirectUrl = $"/_admin/login?permission={context.WebSite.SiteType}&returnurl={returnUrl}";
+            if (context.WebSite.SsoLogin)
+            {
+                redirectUrl = $"{UrlSetting.SsoLogin}{redirectUrl}&sso=1&server={context.Request.Scheme}://{context.Request.Host}";
+            }
+            context.Response.Redirect(302, redirectUrl);
+            context.Response.End = true;
+        }
+
         private static bool CheckIsBackEndOrImageUrl(string Relativeurl)
         {
             string relativeUrl = Relativeurl.ToLower();
 
             if (relativeUrl.StartsWith("/_api/") ||
-                relativeUrl.StartsWith("/_admin/") ||
+                relativeUrl.StartsWith("/_admin/", StringComparison.CurrentCultureIgnoreCase) ||
+                relativeUrl.Equals("/_admin", StringComparison.CurrentCultureIgnoreCase) ||
                 relativeUrl.StartsWith("/_spa/") ||
                  relativeUrl.StartsWith("/_thumbnail/") ||
-                 relativeUrl.StartsWith("/.well-known/acme-challenge")
+                 relativeUrl.StartsWith("/.well-known/")
                 )
             {
                 return true;
@@ -153,14 +274,9 @@ namespace Kooboo.Web.FrontRequest
         {
             DateTime endtime = default(DateTime);
 
-            if (!frontContext.WebSite.Published && frontContext.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
+            if (frontContext.RenderContext.Request.Channel == RequestChannel.Default && !frontContext.WebSite.Published)
             {
-                if ((frontContext.Route != null && frontContext.Route.DestinationConstType == ConstObjectType.Page) || frontContext.RenderContext.User == null)
-                {
-                    frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes("WebSite set to offline");
-                    frontContext.RenderContext.Response.StatusCode = 503;
-                    return;
-                }
+                frontContext.RenderContext.Response.StatusCode = 503;
             }
 
             if (frontContext.RenderContext.Response.StatusCode == 200)
@@ -170,7 +286,7 @@ namespace Kooboo.Web.FrontRequest
                     await RouteRenderers.RenderAsync(frontContext);
                     endtime = DateTime.UtcNow;
                     // check for rights...
-                    CheckUserBandwidth(frontContext);
+                    await CheckUserBandwidth(frontContext);
                 }
                 catch (Exception ex)
                 {
@@ -179,11 +295,6 @@ namespace Kooboo.Web.FrontRequest
 
                     frontContext.RenderContext.Response.StatusCode = 500;
 
-                    var errorbody = await WebSiteService.RenderCustomError(frontContext, 500);
-                    if (!string.IsNullOrWhiteSpace(errorbody))
-                    {
-                        frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
-                    }
                     frontContext.Log.AddEntry("500", ex.Message, DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message);
                 }
             }
@@ -191,10 +302,15 @@ namespace Kooboo.Web.FrontRequest
 
             if (frontContext.RenderContext.Response.StatusCode != 200)
             {
-                if (string.IsNullOrEmpty(frontContext.RenderContext.Response.RedirectLocation))
+                var custom = frontContext.RenderContext.GetItem<CustomStatusCode>();
+                if (custom == null)
                 {
-                    var custom = frontContext.RenderContext.GetItem<CustomStatusCode>();
-                    if (custom == null)
+                    var errorBody = await WebSiteService.RenderCustomError(frontContext, frontContext.RenderContext.Response.StatusCode);
+                    if (!string.IsNullOrWhiteSpace(errorBody))
+                    {
+                        frontContext.RenderContext.Response.Body = Encoding.UTF8.GetBytes(errorBody);
+                    }
+                    else if (string.IsNullOrEmpty(frontContext.RenderContext.Response.RedirectLocation))
                     {
                         frontContext.RenderContext.Response.RedirectLocation = WebSiteService.GetCustomErrorUrl(frontContext.WebSite, frontContext.RenderContext.Response.StatusCode);
                     }
@@ -228,16 +344,20 @@ namespace Kooboo.Web.FrontRequest
                     {
                         frontContext.Log.Size = frontContext.RenderContext.Response.Body.Length;
                     }
-                    frontContext.SiteDb.VisitorLog.Add(frontContext.Log);
+                    // frontContext.SiteDb.VisitorLog.Add(frontContext.Log);
+
+                    Kooboo.Sites.Worker.LogWriter.Instance.Add(frontContext.SiteDb, frontContext.Log);
                 }
 
-                if (frontContext.RenderContext.Response.StatusCode != 200)
+                if (frontContext.RenderContext.Response.StatusCode >= 400)
                 {
                     var log = new Data.Models.SiteErrorLog();
                     log.ClientIP = frontContext.RenderContext.Request.IP;
                     log.Url = frontContext.RenderContext.Request.RawRelativeUrl;
                     log.StatusCode = frontContext.RenderContext.Response.StatusCode;
-                    frontContext.SiteDb.ErrorLog.Add(log);
+
+                    Kooboo.Sites.Worker.LogWriter.Instance.Add(frontContext.SiteDb, log);
+                    // frontContext.SiteDb.ErrorLog.Add(log);
                 }
             }
         }
@@ -260,7 +380,7 @@ namespace Kooboo.Web.FrontRequest
         }
 
 
-        public async void CheckUserBandwidth(FrontContext frontContext)
+        public async Task CheckUserBandwidth(FrontContext frontContext)
         {
             bool shouldcheck = false;
             if (frontContext.RenderContext.Response.StatusCode == 200)

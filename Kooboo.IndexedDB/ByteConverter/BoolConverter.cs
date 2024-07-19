@@ -3,7 +3,7 @@
 
 namespace Kooboo.IndexedDB.ByteConverter
 {
-   public class BoolConverter : IByteConverter<bool>
+    public class BoolConverter : IByteConverter<bool>
     {
         public byte[] ToByte(bool input)
         {

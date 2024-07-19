@@ -1,0 +1,1724 @@
+[
+  {
+    "name": "Afghanistan",
+    "dialCode": "+93",
+    "isoCode": "AF",
+    "nameCN": "阿富汗",
+    "namePY": "AFuHan"
+  },
+  {
+    "name": "Aland Islands",
+    "dialCode": "+358",
+    "isoCode": "AX",
+    "nameCN": "奥兰群岛",
+    "namePY": "AoLanQunDao"
+  },
+  {
+    "name": "Albania",
+    "dialCode": "+355",
+    "isoCode": "AL",
+    "nameCN": "阿尔巴尼亚",
+    "namePY": "AErBaNiYa"
+  },
+  {
+    "name": "Algeria",
+    "dialCode": "+213",
+    "isoCode": "DZ",
+    "nameCN": "阿尔及利亚",
+    "namePY": "AErJiLiYa"
+  },
+  {
+    "name": "American Samoa",
+    "dialCode": "+1684",
+    "isoCode": "AS",
+    "nameCN": "美属萨摩亚",
+    "namePY": "MeiShuSaMoYa"
+  },
+  {
+    "name": "Andorra",
+    "dialCode": "+376",
+    "isoCode": "AD",
+    "nameCN": "安道尔",
+    "namePY": "AnDaoEr"
+  },
+  {
+    "name": "Angola",
+    "dialCode": "+244",
+    "isoCode": "AO",
+    "nameCN": "安哥拉",
+    "namePY": "AnGeLa"
+  },
+  {
+    "name": "Anguilla",
+    "dialCode": "+1264",
+    "isoCode": "AI",
+    "nameCN": "安圭拉",
+    "namePY": "AnGuiLa"
+  },
+  {
+    "name": "Antarctica",
+    "dialCode": "+672",
+    "isoCode": "AQ",
+    "nameCN": "南极洲",
+    "namePY": "NanJiZhou"
+  },
+  {
+    "name": "Antigua and Barbuda",
+    "dialCode": "+1268",
+    "isoCode": "AG",
+    "nameCN": "安提瓜和巴布达",
+    "namePY": "AnTiGuaHeBaBuDa"
+  },
+  {
+    "name": "Argentina",
+    "dialCode": "+54",
+    "isoCode": "AR",
+    "nameCN": "阿根廷",
+    "namePY": "AGenTing"
+  },
+  {
+    "name": "Armenia",
+    "dialCode": "+374",
+    "isoCode": "AM",
+    "nameCN": "亚美尼亚",
+    "namePY": "YaMeiNiYa"
+  },
+  {
+    "name": "Aruba",
+    "dialCode": "+297",
+    "isoCode": "AW",
+    "nameCN": "阿鲁巴",
+    "namePY": "ALuBa"
+  },
+  {
+    "name": "Ascension Island",
+    "dialCode": "+247",
+    "isoCode": "AC",
+    "nameCN": "阿森松岛",
+    "namePY": "ASenSongDao"
+  },
+  {
+    "name": "Australia",
+    "dialCode": "+61",
+    "isoCode": "AU",
+    "nameCN": "澳大利亚",
+    "namePY": "AoDaLiYa"
+  },
+  {
+    "name": "Austria",
+    "dialCode": "+43",
+    "isoCode": "AT",
+    "nameCN": "奥地利",
+    "namePY": "AoDiLi"
+  },
+  {
+    "name": "Azerbaijan",
+    "dialCode": "+994",
+    "isoCode": "AZ",
+    "nameCN": "阿塞拜疆",
+    "namePY": "ASaiBaiJiang"
+  },
+  {
+    "name": "Bahamas",
+    "dialCode": "+1242",
+    "isoCode": "BS",
+    "nameCN": "巴哈马",
+    "namePY": "BaHaMa"
+  },
+  {
+    "name": "Bahrain",
+    "dialCode": "+973",
+    "isoCode": "BH",
+    "nameCN": "巴林",
+    "namePY": "BaLin"
+  },
+  {
+    "name": "Bangladesh",
+    "dialCode": "+880",
+    "isoCode": "BD",
+    "nameCN": "孟加拉国",
+    "namePY": "MengJiaLaGuo"
+  },
+  {
+    "name": "Barbados",
+    "dialCode": "+1246",
+    "isoCode": "BB",
+    "nameCN": "巴巴多斯",
+    "namePY": "BaBaDuoSi"
+  },
+  {
+    "name": "Belarus",
+    "dialCode": "+375",
+    "isoCode": "BY",
+    "nameCN": "白俄罗斯",
+    "namePY": "BaiELuoSi"
+  },
+  {
+    "name": "Belgium",
+    "dialCode": "+32",
+    "isoCode": "BE",
+    "nameCN": "比利时",
+    "namePY": "BiLiShi"
+  },
+  {
+    "name": "Belize",
+    "dialCode": "+501",
+    "isoCode": "BZ",
+    "nameCN": "伯利兹",
+    "namePY": "BoLiZi"
+  },
+  {
+    "name": "Benin",
+    "dialCode": "+229",
+    "isoCode": "BJ",
+    "nameCN": "贝宁",
+    "namePY": "BeiNing"
+  },
+  {
+    "name": "Bermuda",
+    "dialCode": "+1441",
+    "isoCode": "BM",
+    "nameCN": "百慕大",
+    "namePY": "BaiMuDa"
+  },
+  {
+    "name": "Bhutan",
+    "dialCode": "+975",
+    "isoCode": "BT",
+    "nameCN": "不丹",
+    "namePY": "BuDan"
+  },
+  {
+    "name": "Bolivia",
+    "dialCode": "+591",
+    "isoCode": "BO",
+    "nameCN": "玻利维亚",
+    "namePY": "BoLiWeiYa"
+  },
+  {
+    "name": "Bosnia and Herzegovina",
+    "dialCode": "+387",
+    "isoCode": "BA",
+    "nameCN": "波黑",
+    "namePY": "BoHei"
+  },
+  {
+    "name": "Botswana",
+    "dialCode": "+267",
+    "isoCode": "BW",
+    "nameCN": "博茨瓦纳",
+    "namePY": "BoCiWaNa"
+  },
+  {
+    "name": "Brazil",
+    "dialCode": "+55",
+    "isoCode": "BR",
+    "nameCN": "巴西",
+    "namePY": "BaXi"
+  },
+  {
+    "name": "British Indian Ocean Territory",
+    "dialCode": "+246",
+    "isoCode": "IO",
+    "nameCN": "英属印度洋领地",
+    "namePY": "YingShuYinDuYangLingDi"
+  },
+  {
+    "name": "Brunei Darussalam",
+    "dialCode": "+673",
+    "isoCode": "BN",
+    "nameCN": "文莱",
+    "namePY": "WenLai"
+  },
+  {
+    "name": "Bulgaria",
+    "dialCode": "+359",
+    "isoCode": "BG",
+    "nameCN": "保加利亚",
+    "namePY": "BaoJiaLiYa"
+  },
+  {
+    "name": "Burkina Faso",
+    "dialCode": "+226",
+    "isoCode": "BF",
+    "nameCN": "布基纳法索",
+    "namePY": "BuJiNaFaSuo"
+  },
+  {
+    "name": "Burundi",
+    "dialCode": "+257",
+    "isoCode": "BI",
+    "nameCN": "布隆迪",
+    "namePY": "BuLongDi"
+  },
+  {
+    "name": "Cambodia",
+    "dialCode": "+855",
+    "isoCode": "KH",
+    "nameCN": "柬埔寨",
+    "namePY": "JianPuZhai"
+  },
+  {
+    "name": "Cameroon",
+    "dialCode": "+237",
+    "isoCode": "CM",
+    "nameCN": "喀麦隆",
+    "namePY": "KaMaiLong"
+  },
+  {
+    "name": "Canada",
+    "dialCode": "+1",
+    "isoCode": "CA",
+    "nameCN": "加拿大",
+    "namePY": "JiaNaDa"
+  },
+  {
+    "name": "Cape Verde",
+    "dialCode": "+238",
+    "isoCode": "CV",
+    "nameCN": "佛得角",
+    "namePY": "FuDeJiao"
+  },
+  {
+    "name": "Cayman Islands",
+    "dialCode": "+1345",
+    "isoCode": "KY",
+    "nameCN": "开曼群岛",
+    "namePY": "KaiManQunDao"
+  },
+  {
+    "name": "Central African Republic",
+    "dialCode": "+236",
+    "isoCode": "CF",
+    "nameCN": "中非",
+    "namePY": "ZhongFei"
+  },
+  {
+    "name": "Chad",
+    "dialCode": "+235",
+    "isoCode": "TD",
+    "nameCN": "乍得",
+    "namePY": "ZhaDe"
+  },
+  {
+    "name": "Chile",
+    "dialCode": "+56",
+    "isoCode": "CL",
+    "nameCN": "智利",
+    "namePY": "ZhiLi"
+  },
+  {
+    "name": "China",
+    "dialCode": "+86",
+    "isoCode": "CN",
+    "nameCN": "中国",
+    "namePY": "ZhongGuo"
+  },
+  {
+    "name": "Christmas Island",
+    "dialCode": "+61",
+    "isoCode": "CX",
+    "nameCN": "圣诞岛",
+    "namePY": "ShengDanDao"
+  },
+  {
+    "name": "Cocos (Keeling) Islands",
+    "dialCode": "+61",
+    "isoCode": "CC",
+    "nameCN": "科科斯（基林）群岛",
+    "namePY": "KeKeSi（JiLin）QunDao"
+  },
+  {
+    "name": "Colombia",
+    "dialCode": "+57",
+    "isoCode": "CO",
+    "nameCN": "哥伦比亚",
+    "namePY": "GeLunBiYa"
+  },
+  {
+    "name": "Comoros",
+    "dialCode": "+269",
+    "isoCode": "KM",
+    "nameCN": "科摩罗",
+    "namePY": "KeMoLuo"
+  },
+  {
+    "name": "Congo",
+    "dialCode": "+242",
+    "isoCode": "CG",
+    "nameCN": "刚果（布）",
+    "namePY": "GangGuo（Bu）"
+  },
+  {
+    "name": "Cook Islands",
+    "dialCode": "+682",
+    "isoCode": "CK",
+    "nameCN": "库克群岛",
+    "namePY": "KuKeQunDao"
+  },
+  {
+    "name": "Costa Rica",
+    "dialCode": "+506",
+    "isoCode": "CR",
+    "nameCN": "哥斯达黎加",
+    "namePY": "GeSiDaLiJia"
+  },
+  {
+    "name": "Croatia",
+    "dialCode": "+385",
+    "isoCode": "HR",
+    "nameCN": "克罗地亚",
+    "namePY": "KeLuoDiYa"
+  },
+  {
+    "name": "Cuba",
+    "dialCode": "+53",
+    "isoCode": "CU",
+    "nameCN": "古巴",
+    "namePY": "GuBa"
+  },
+  {
+    "name": "Cyprus",
+    "dialCode": "+357",
+    "isoCode": "CY",
+    "nameCN": "塞浦路斯",
+    "namePY": "SaiPuLuSi"
+  },
+  {
+    "name": "Czech Republic",
+    "dialCode": "+420",
+    "isoCode": "CZ",
+    "nameCN": "捷克",
+    "namePY": "JieKe"
+  },
+  {
+    "name": "Democratic Republic of the Congo",
+    "dialCode": "+243",
+    "isoCode": "CD",
+    "nameCN": "刚果（金）",
+    "namePY": "GangGuo（Jin）"
+  },
+  {
+    "name": "Denmark",
+    "dialCode": "+45",
+    "isoCode": "DK",
+    "nameCN": "丹麦",
+    "namePY": "DanMai"
+  },
+  {
+    "name": "Djibouti",
+    "dialCode": "+253",
+    "isoCode": "DJ",
+    "nameCN": "吉布提",
+    "namePY": "JiBuTi"
+  },
+  {
+    "name": "Dominica",
+    "dialCode": "+1767",
+    "isoCode": "DM",
+    "nameCN": "多米尼克",
+    "namePY": "DuoMiNiKe"
+  },
+  {
+    "name": "Dominican Republic",
+    "dialCode": "+1849",
+    "isoCode": "DO",
+    "nameCN": "多米尼加",
+    "namePY": "DuoMiNiJia"
+  },
+  {
+    "name": "Ecuador",
+    "dialCode": "+593",
+    "isoCode": "EC",
+    "nameCN": "厄瓜多尔",
+    "namePY": "EGuaDuoEr"
+  },
+  {
+    "name": "Egypt",
+    "dialCode": "+20",
+    "isoCode": "EG",
+    "nameCN": "埃及",
+    "namePY": "AiJi"
+  },
+  {
+    "name": "El Salvador",
+    "dialCode": "+503",
+    "isoCode": "SV",
+    "nameCN": "萨尔瓦多",
+    "namePY": "SaErWaDuo"
+  },
+  {
+    "name": "Equatorial Guinea",
+    "dialCode": "+240",
+    "isoCode": "GQ",
+    "nameCN": "赤道几内亚",
+    "namePY": "ChiDaoJiNaYa"
+  },
+  {
+    "name": "Eritrea",
+    "dialCode": "+291",
+    "isoCode": "ER",
+    "nameCN": "厄立特里亚",
+    "namePY": "ELiTeLiYa"
+  },
+  {
+    "name": "Estonia",
+    "dialCode": "+372",
+    "isoCode": "EE",
+    "nameCN": "爱沙尼亚",
+    "namePY": "AiShaNiYa"
+  },
+  {
+    "name": "Eswatini",
+    "dialCode": "+268",
+    "isoCode": "SZ",
+    "nameCN": "斯威士兰",
+    "namePY": "SiWeiShiLan"
+  },
+  {
+    "name": "Ethiopia",
+    "dialCode": "+251",
+    "isoCode": "ET",
+    "nameCN": "埃塞俄比亚",
+    "namePY": "AiSaiEBiYa"
+  },
+  {
+    "name": "Falkland Islands (Malvinas)",
+    "dialCode": "+500",
+    "isoCode": "FK",
+    "nameCN": "福克兰群岛（马尔维纳斯）",
+    "namePY": "FuKeLanQunDao（MaErWeiNaSi）"
+  },
+  {
+    "name": "Faroe Islands",
+    "dialCode": "+298",
+    "isoCode": "FO",
+    "nameCN": "法罗群岛",
+    "namePY": "FaLuoQunDao"
+  },
+  {
+    "name": "Fiji",
+    "dialCode": "+679",
+    "isoCode": "FJ",
+    "nameCN": "斐济",
+    "namePY": "FeiJi"
+  },
+  {
+    "name": "Finland",
+    "dialCode": "+358",
+    "isoCode": "FI",
+    "nameCN": "芬兰",
+    "namePY": "FenLan"
+  },
+  {
+    "name": "France",
+    "dialCode": "+33",
+    "isoCode": "FR",
+    "nameCN": "法国",
+    "namePY": "FaGuo"
+  },
+  {
+    "name": "French Guiana",
+    "dialCode": "+594",
+    "isoCode": "GF",
+    "nameCN": "法属圭亚那",
+    "namePY": "FaShuGuiYaNa"
+  },
+  {
+    "name": "French Polynesia",
+    "dialCode": "+689",
+    "isoCode": "PF",
+    "nameCN": "法属波利尼西亚",
+    "namePY": "FaShuBoLiNiXiYa"
+  },
+  {
+    "name": "Gabon",
+    "dialCode": "+241",
+    "isoCode": "GA",
+    "nameCN": "加蓬",
+    "namePY": "JiaPeng"
+  },
+  {
+    "name": "Gambia",
+    "dialCode": "+220",
+    "isoCode": "GM",
+    "nameCN": "冈比亚",
+    "namePY": "GangBiYa"
+  },
+  {
+    "name": "Georgia",
+    "dialCode": "+995",
+    "isoCode": "GE",
+    "nameCN": "格鲁吉亚",
+    "namePY": "GeLuJiYa"
+  },
+  {
+    "name": "Germany",
+    "dialCode": "+49",
+    "isoCode": "DE",
+    "nameCN": "德国",
+    "namePY": "DeGuo"
+  },
+  {
+    "name": "Ghana",
+    "dialCode": "+233",
+    "isoCode": "GH",
+    "nameCN": "加纳",
+    "namePY": "JiaNa"
+  },
+  {
+    "name": "Gibraltar",
+    "dialCode": "+350",
+    "isoCode": "GI",
+    "nameCN": "直布罗陀",
+    "namePY": "ZhiBuLuoTuo"
+  },
+  {
+    "name": "Greece",
+    "dialCode": "+30",
+    "isoCode": "GR",
+    "nameCN": "希腊",
+    "namePY": "XiLa"
+  },
+  {
+    "name": "Greenland",
+    "dialCode": "+299",
+    "isoCode": "GL",
+    "nameCN": "格陵兰",
+    "namePY": "GeLingLan"
+  },
+  {
+    "name": "Grenada",
+    "dialCode": "+1473",
+    "isoCode": "GD",
+    "nameCN": "格林纳达",
+    "namePY": "GeLinNaDa"
+  },
+  {
+    "name": "Guadeloupe",
+    "dialCode": "+590",
+    "isoCode": "GP",
+    "nameCN": "瓜德罗普",
+    "namePY": "GuaDeLuoPu"
+  },
+  {
+    "name": "Guam",
+    "dialCode": "+1671",
+    "isoCode": "GU",
+    "nameCN": "关岛",
+    "namePY": "GuanDao"
+  },
+  {
+    "name": "Guatemala",
+    "dialCode": "+502",
+    "isoCode": "GT",
+    "nameCN": "危地马拉",
+    "namePY": "WeiDiMaLa"
+  },
+  {
+    "name": "Guernsey",
+    "dialCode": "+44",
+    "isoCode": "GG",
+    "nameCN": "格恩西岛",
+    "namePY": "GeEnXiDao"
+  },
+  {
+    "name": "Guinea",
+    "dialCode": "+224",
+    "isoCode": "GN",
+    "nameCN": "几内亚",
+    "namePY": "JiNaYa"
+  },
+  {
+    "name": "Guinea-Bissau",
+    "dialCode": "+245",
+    "isoCode": "GW",
+    "nameCN": "几内亚比绍",
+    "namePY": "JiNaYaBiShao"
+  },
+  {
+    "name": "Guyana",
+    "dialCode": "+592",
+    "isoCode": "GY",
+    "nameCN": "圭亚那",
+    "namePY": "GuiYaNa"
+  },
+  {
+    "name": "Haiti",
+    "dialCode": "+509",
+    "isoCode": "HT",
+    "nameCN": "海地",
+    "namePY": "HaiDi"
+  },
+  {
+    "name": "Holy See (Vatican City State)",
+    "dialCode": "+379",
+    "isoCode": "VA",
+    "nameCN": "梵蒂冈",
+    "namePY": "FanDiGang"
+  },
+  {
+    "name": "Honduras",
+    "dialCode": "+504",
+    "isoCode": "HN",
+    "nameCN": "洪都拉斯",
+    "namePY": "HongDuLaSi"
+  },
+  {
+    "name": "Hong Kong",
+    "dialCode": "+852",
+    "isoCode": "HK",
+    "nameCN": "中国香港",
+    "namePY": "ZhongGuoXiangGang"
+  },
+  {
+    "name": "Hungary",
+    "dialCode": "+36",
+    "isoCode": "HU",
+    "nameCN": "匈牙利",
+    "namePY": "XiongYaLi"
+  },
+  {
+    "name": "Iceland",
+    "dialCode": "+354",
+    "isoCode": "IS",
+    "nameCN": "冰岛",
+    "namePY": "BingDao"
+  },
+  {
+    "name": "India",
+    "dialCode": "+91",
+    "isoCode": "IN",
+    "nameCN": "印度",
+    "namePY": "YinDu"
+  },
+  {
+    "name": "Indonesia",
+    "dialCode": "+62",
+    "isoCode": "ID",
+    "nameCN": "印度尼西亚",
+    "namePY": "YinDuNiXiYa"
+  },
+  {
+    "name": "Iran",
+    "dialCode": "+98",
+    "isoCode": "IR",
+    "nameCN": "伊朗",
+    "namePY": "YiLang"
+  },
+  {
+    "name": "Iraq",
+    "dialCode": "+964",
+    "isoCode": "IQ",
+    "nameCN": "伊拉克",
+    "namePY": "YiLaKe"
+  },
+  {
+    "name": "Ireland",
+    "dialCode": "+353",
+    "isoCode": "IE",
+    "nameCN": "爱尔兰",
+    "namePY": "AiErLan"
+  },
+  {
+    "name": "Isle of Man",
+    "dialCode": "+44",
+    "isoCode": "IM",
+    "nameCN": "英国属地曼岛",
+    "namePY": "YingGuoShuDiManDao"
+  },
+  {
+    "name": "Israel",
+    "dialCode": "+972",
+    "isoCode": "IL",
+    "nameCN": "以色列",
+    "namePY": "YiSeLie"
+  },
+  {
+    "name": "Italy",
+    "dialCode": "+39",
+    "isoCode": "IT",
+    "nameCN": "意大利",
+    "namePY": "YiDaLi"
+  },
+  {
+    "name": "Ivory Coast / Cote d'Ivoire",
+    "dialCode": "+225",
+    "isoCode": "CI",
+    "nameCN": "科特迪瓦",
+    "namePY": "KeTeDiWa"
+  },
+  {
+    "name": "Jamaica",
+    "dialCode": "+1876",
+    "isoCode": "JM",
+    "nameCN": "牙买加",
+    "namePY": "YaMaiJia"
+  },
+  {
+    "name": "Japan",
+    "dialCode": "+81",
+    "isoCode": "JP",
+    "nameCN": "日本",
+    "namePY": "RiBen"
+  },
+  {
+    "name": "Jersey",
+    "dialCode": "+44",
+    "isoCode": "JE",
+    "nameCN": "泽西岛",
+    "namePY": "ZeXiDao"
+  },
+  {
+    "name": "Jordan",
+    "dialCode": "+962",
+    "isoCode": "JO",
+    "nameCN": "约旦",
+    "namePY": "YueDan"
+  },
+  {
+    "name": "Kazakhstan",
+    "dialCode": "+77",
+    "isoCode": "KZ",
+    "nameCN": "哈萨克斯坦",
+    "namePY": "HaSaKeSiTan"
+  },
+  {
+    "name": "Kenya",
+    "dialCode": "+254",
+    "isoCode": "KE",
+    "nameCN": "肯尼亚",
+    "namePY": "KenNiYa"
+  },
+  {
+    "name": "Kiribati",
+    "dialCode": "+686",
+    "isoCode": "KI",
+    "nameCN": "基里巴斯",
+    "namePY": "JiLiBaSi"
+  },
+  {
+    "name": "North Korea",
+    "dialCode": "+850",
+    "isoCode": "KP",
+    "nameCN": "朝鲜",
+    "namePY": "ChaoXian"
+  },
+  {
+    "name": "South Korea",
+    "dialCode": "+82",
+    "isoCode": "KR",
+    "nameCN": "韩国",
+    "namePY": "HanGuo"
+  },
+  {
+    "name": "Kosovo",
+    "dialCode": "+383",
+    "isoCode": "XK",
+    "nameCN": "科索沃",
+    "namePY": "KeSuoWo"
+  },
+  {
+    "name": "Kuwait",
+    "dialCode": "+965",
+    "isoCode": "KW",
+    "nameCN": "科威特",
+    "namePY": "KeWeiTe"
+  },
+  {
+    "name": "Kyrgyzstan",
+    "dialCode": "+996",
+    "isoCode": "KG",
+    "nameCN": "吉尔吉斯斯坦",
+    "namePY": "JiErJiSiSiTan"
+  },
+  {
+    "name": "Laos",
+    "dialCode": "+856",
+    "isoCode": "LA",
+    "nameCN": "老挝",
+    "namePY": "LaoWo"
+  },
+  {
+    "name": "Latvia",
+    "dialCode": "+371",
+    "isoCode": "LV",
+    "nameCN": "拉脱维亚",
+    "namePY": "LaTuoWeiYa"
+  },
+  {
+    "name": "Lebanon",
+    "dialCode": "+961",
+    "isoCode": "LB",
+    "nameCN": "黎巴嫩",
+    "namePY": "LiBaNen"
+  },
+  {
+    "name": "Lesotho",
+    "dialCode": "+266",
+    "isoCode": "LS",
+    "nameCN": "莱索托",
+    "namePY": "LaiSuoTuo"
+  },
+  {
+    "name": "Liberia",
+    "dialCode": "+231",
+    "isoCode": "LR",
+    "nameCN": "利比里亚",
+    "namePY": "LiBiLiYa"
+  },
+  {
+    "name": "Libya",
+    "dialCode": "+218",
+    "isoCode": "LY",
+    "nameCN": "利比亚",
+    "namePY": "LiBiYa"
+  },
+  {
+    "name": "Liechtenstein",
+    "dialCode": "+423",
+    "isoCode": "LI",
+    "nameCN": "列支敦士登",
+    "namePY": "LieZhiDunShiDeng"
+  },
+  {
+    "name": "Lithuania",
+    "dialCode": "+370",
+    "isoCode": "LT",
+    "nameCN": "立陶宛",
+    "namePY": "LiTaoWan"
+  },
+  {
+    "name": "Luxembourg",
+    "dialCode": "+352",
+    "isoCode": "LU",
+    "nameCN": "卢森堡",
+    "namePY": "LuSenBao"
+  },
+  {
+    "name": "Macau",
+    "dialCode": "+853",
+    "isoCode": "MO",
+    "nameCN": "中国澳门",
+    "namePY": "ZhongGuoAoMen"
+  },
+  {
+    "name": "Madagascar",
+    "dialCode": "+261",
+    "isoCode": "MG",
+    "nameCN": "马达加斯加",
+    "namePY": "MaDaJiaSiJia"
+  },
+  {
+    "name": "Malawi",
+    "dialCode": "+265",
+    "isoCode": "MW",
+    "nameCN": "马拉维",
+    "namePY": "MaLaWei"
+  },
+  {
+    "name": "Malaysia",
+    "dialCode": "+60",
+    "isoCode": "MY",
+    "nameCN": "马来西亚",
+    "namePY": "MaLaiXiYa"
+  },
+  {
+    "name": "Maldives",
+    "dialCode": "+960",
+    "isoCode": "MV",
+    "nameCN": "马尔代夫",
+    "namePY": "MaErDaiFu"
+  },
+  {
+    "name": "Mali",
+    "dialCode": "+223",
+    "isoCode": "ML",
+    "nameCN": "马里",
+    "namePY": "MaLi"
+  },
+  {
+    "name": "Malta",
+    "dialCode": "+356",
+    "isoCode": "MT",
+    "nameCN": "马耳他",
+    "namePY": "MaErTa"
+  },
+  {
+    "name": "Marshall Islands",
+    "dialCode": "+692",
+    "isoCode": "MH",
+    "nameCN": "马绍尔群岛",
+    "namePY": "MaShaoErQunDao"
+  },
+  {
+    "name": "Martinique",
+    "dialCode": "+596",
+    "isoCode": "MQ",
+    "nameCN": "马提尼克",
+    "namePY": "MaTiNiKe"
+  },
+  {
+    "name": "Mauritania",
+    "dialCode": "+222",
+    "isoCode": "MR",
+    "nameCN": "毛利塔尼亚",
+    "namePY": "MaoLiTaNiYa"
+  },
+  {
+    "name": "Mauritius",
+    "dialCode": "+230",
+    "isoCode": "MU",
+    "nameCN": "毛里求斯",
+    "namePY": "MaoLiQiuSi"
+  },
+  {
+    "name": "Mayotte",
+    "dialCode": "+262",
+    "isoCode": "YT",
+    "nameCN": "马约特",
+    "namePY": "MaYueTe"
+  },
+  {
+    "name": "Mexico",
+    "dialCode": "+52",
+    "isoCode": "MX",
+    "nameCN": "墨西哥",
+    "namePY": "MoXiGe"
+  },
+  {
+    "name": "Micronesia",
+    "dialCode": "+691",
+    "isoCode": "FM",
+    "nameCN": "密克罗尼西亚联邦",
+    "namePY": "MiKeLuoNiXiYaLianBang"
+  },
+  {
+    "name": "Moldova",
+    "dialCode": "+373",
+    "isoCode": "MD",
+    "nameCN": "摩尔多瓦",
+    "namePY": "MoErDuoWa"
+  },
+  {
+    "name": "Monaco",
+    "dialCode": "+377",
+    "isoCode": "MC",
+    "nameCN": "摩纳哥",
+    "namePY": "MoNaGe"
+  },
+  {
+    "name": "Mongolia",
+    "dialCode": "+976",
+    "isoCode": "MN",
+    "nameCN": "蒙古",
+    "namePY": "MengGu"
+  },
+  {
+    "name": "Montenegro",
+    "dialCode": "+382",
+    "isoCode": "ME",
+    "nameCN": "黑山",
+    "namePY": "HeiShan"
+  },
+  {
+    "name": "Montserrat",
+    "dialCode": "+1664",
+    "isoCode": "MS",
+    "nameCN": "蒙特塞拉特",
+    "namePY": "MengTeSaiLaTe"
+  },
+  {
+    "name": "Morocco",
+    "dialCode": "+212",
+    "isoCode": "MA",
+    "nameCN": "摩洛哥",
+    "namePY": "MoLuoGe"
+  },
+  {
+    "name": "Mozambique",
+    "dialCode": "+258",
+    "isoCode": "MZ",
+    "nameCN": "莫桑比克",
+    "namePY": "MoSangBiKe"
+  },
+  {
+    "name": "Myanmar",
+    "dialCode": "+95",
+    "isoCode": "MM",
+    "nameCN": "缅甸",
+    "namePY": "MianDian"
+  },
+  {
+    "name": "Namibia",
+    "dialCode": "+264",
+    "isoCode": "NA",
+    "nameCN": "纳米比亚",
+    "namePY": "NaMiBiYa"
+  },
+  {
+    "name": "Nauru",
+    "dialCode": "+674",
+    "isoCode": "NR",
+    "nameCN": "瑙鲁",
+    "namePY": "NaoLu"
+  },
+  {
+    "name": "Nepal",
+    "dialCode": "+977",
+    "isoCode": "NP",
+    "nameCN": "尼泊尔",
+    "namePY": "NiBoEr"
+  },
+  {
+    "name": "Netherlands",
+    "dialCode": "+31",
+    "isoCode": "NL",
+    "nameCN": "荷兰",
+    "namePY": "HeLan"
+  },
+  {
+    "name": "Netherlands Antilles",
+    "dialCode": "+599",
+    "isoCode": "AN",
+    "nameCN": "荷属安的列斯",
+    "namePY": "HeShuAnDeLieSi"
+  },
+  {
+    "name": "New Caledonia",
+    "dialCode": "+687",
+    "isoCode": "NC",
+    "nameCN": "新喀里多尼亚",
+    "namePY": "XinKaLiDuoNiYa"
+  },
+  {
+    "name": "New Zealand",
+    "dialCode": "+64",
+    "isoCode": "NZ",
+    "nameCN": "新西兰",
+    "namePY": "XinXiLan"
+  },
+  {
+    "name": "Nicaragua",
+    "dialCode": "+505",
+    "isoCode": "NI",
+    "nameCN": "尼加拉瓜",
+    "namePY": "NiJiaLaGua"
+  },
+  {
+    "name": "Niger",
+    "dialCode": "+227",
+    "isoCode": "NE",
+    "nameCN": "尼日尔",
+    "namePY": "NiRiEr"
+  },
+  {
+    "name": "Nigeria",
+    "dialCode": "+234",
+    "isoCode": "NG",
+    "nameCN": "尼日利亚",
+    "namePY": "NiRiLiYa"
+  },
+  {
+    "name": "Niue",
+    "dialCode": "+683",
+    "isoCode": "NU",
+    "nameCN": "纽埃",
+    "namePY": "NiuAi"
+  },
+  {
+    "name": "Norfolk Island",
+    "dialCode": "+672",
+    "isoCode": "NF",
+    "nameCN": "诺福克岛",
+    "namePY": "NuoFuKeDao"
+  },
+  {
+    "name": "North Macedonia",
+    "dialCode": "+389",
+    "isoCode": "MK",
+    "nameCN": "前南马其顿",
+    "namePY": "QianNanMaQiDun"
+  },
+  {
+    "name": "Northern Mariana Islands",
+    "dialCode": "+1670",
+    "isoCode": "MP",
+    "nameCN": "北马里亚纳",
+    "namePY": "BeiMaLiYaNa"
+  },
+  {
+    "name": "Norway",
+    "dialCode": "+47",
+    "isoCode": "NO",
+    "nameCN": "挪威",
+    "namePY": "NuoWei"
+  },
+  {
+    "name": "Oman",
+    "dialCode": "+968",
+    "isoCode": "OM",
+    "nameCN": "阿曼",
+    "namePY": "AMan"
+  },
+  {
+    "name": "Pakistan",
+    "dialCode": "+92",
+    "isoCode": "PK",
+    "nameCN": "巴基斯坦",
+    "namePY": "BaJiSiTan"
+  },
+  {
+    "name": "Palau",
+    "dialCode": "+680",
+    "isoCode": "PW",
+    "nameCN": "帕劳",
+    "namePY": "PaLao"
+  },
+  {
+    "name": "Palestine",
+    "dialCode": "+970",
+    "isoCode": "PS",
+    "nameCN": "巴勒斯坦",
+    "namePY": "BaLeSiTan"
+  },
+  {
+    "name": "Panama",
+    "dialCode": "+507",
+    "isoCode": "PA",
+    "nameCN": "巴拿马",
+    "namePY": "BaNaMa"
+  },
+  {
+    "name": "Papua New Guinea",
+    "dialCode": "+675",
+    "isoCode": "PG",
+    "nameCN": "巴布亚新几内亚",
+    "namePY": "BaBuYaXinJiNaYa"
+  },
+  {
+    "name": "Paraguay",
+    "dialCode": "+595",
+    "isoCode": "PY",
+    "nameCN": "巴拉圭",
+    "namePY": "BaLaGui"
+  },
+  {
+    "name": "Peru",
+    "dialCode": "+51",
+    "isoCode": "PE",
+    "nameCN": "秘鲁",
+    "namePY": "MiLu"
+  },
+  {
+    "name": "Philippines",
+    "dialCode": "+63",
+    "isoCode": "PH",
+    "nameCN": "菲律宾",
+    "namePY": "FeiLvBin"
+  },
+  {
+    "name": "Pitcairn",
+    "dialCode": "+872",
+    "isoCode": "PN",
+    "nameCN": "皮特凯恩",
+    "namePY": "PiTeKaiEn"
+  },
+  {
+    "name": "Poland",
+    "dialCode": "+48",
+    "isoCode": "PL",
+    "nameCN": "波兰",
+    "namePY": "BoLan"
+  },
+  {
+    "name": "Portugal",
+    "dialCode": "+351",
+    "isoCode": "PT",
+    "nameCN": "葡萄牙",
+    "namePY": "PuTaoYa"
+  },
+  {
+    "name": "Puerto Rico",
+    "dialCode": "+1939",
+    "isoCode": "PR",
+    "nameCN": "波多黎各",
+    "namePY": "BoDuoLiGe"
+  },
+  {
+    "name": "Qatar",
+    "dialCode": "+974",
+    "isoCode": "QA",
+    "nameCN": "卡塔尔",
+    "namePY": "KaTaEr"
+  },
+  {
+    "name": "Reunion",
+    "dialCode": "+262",
+    "isoCode": "RE",
+    "nameCN": "留尼汪",
+    "namePY": "LiuNiWang"
+  },
+  {
+    "name": "Romania",
+    "dialCode": "+40",
+    "isoCode": "RO",
+    "nameCN": "罗马尼亚",
+    "namePY": "LuoMaNiYa"
+  },
+  {
+    "name": "Russia",
+    "dialCode": "+7",
+    "isoCode": "RU",
+    "nameCN": "俄罗斯联邦",
+    "namePY": "ELuoSiLianBang"
+  },
+  {
+    "name": "Rwanda",
+    "dialCode": "+250",
+    "isoCode": "RW",
+    "nameCN": "卢旺达",
+    "namePY": "LuWangDa"
+  },
+  {
+    "name": "Saint Barthelemy",
+    "dialCode": "+590",
+    "isoCode": "BL",
+    "nameCN": "圣巴泰勒米岛",
+    "namePY": "ShengBaTaiLeMiDao"
+  },
+  {
+    "name": "Saint Helena",
+    "dialCode": "+290",
+    "isoCode": "SH",
+    "nameCN": "圣赫勒拿",
+    "namePY": "ShengHeLeNa"
+  },
+  {
+    "name": "Saint Kitts and Nevis",
+    "dialCode": "+1869",
+    "isoCode": "KN",
+    "nameCN": "圣基茨和尼维斯",
+    "namePY": "ShengJiCiHeNiWeiSi"
+  },
+  {
+    "name": "Saint Lucia",
+    "dialCode": "+1758",
+    "isoCode": "LC",
+    "nameCN": "圣卢西亚",
+    "namePY": "ShengLuXiYa"
+  },
+  {
+    "name": "Saint Martin",
+    "dialCode": "+590",
+    "isoCode": "MF",
+    "nameCN": "圣马丁岛",
+    "namePY": "ShengMaDingDao"
+  },
+  {
+    "name": "Saint Pierre and Miquelon",
+    "dialCode": "+508",
+    "isoCode": "PM",
+    "nameCN": "圣皮埃尔和密克隆",
+    "namePY": "ShengPiAiErHeMiKeLong"
+  },
+  {
+    "name": "Saint Vincent and the Grenadines",
+    "dialCode": "+1784",
+    "isoCode": "VC",
+    "nameCN": "圣文森特和格林纳丁斯",
+    "namePY": "ShengWenSenTeHeGeLinNaDingSi"
+  },
+  {
+    "name": "Samoa",
+    "dialCode": "+685",
+    "isoCode": "WS",
+    "nameCN": "萨摩亚",
+    "namePY": "SaMoYa"
+  },
+  {
+    "name": "San Marino",
+    "dialCode": "+378",
+    "isoCode": "SM",
+    "nameCN": "圣马力诺",
+    "namePY": "ShengMaLiNuo"
+  },
+  {
+    "name": "Sao Tome and Principe",
+    "dialCode": "+239",
+    "isoCode": "ST",
+    "nameCN": "圣多美和普林西比",
+    "namePY": "ShengDuoMeiHePuLinXiBi"
+  },
+  {
+    "name": "Saudi Arabia",
+    "dialCode": "+966",
+    "isoCode": "SA",
+    "nameCN": "沙特阿拉伯",
+    "namePY": "ShaTeALaBo"
+  },
+  {
+    "name": "Senegal",
+    "dialCode": "+221",
+    "isoCode": "SN",
+    "nameCN": "塞内加尔",
+    "namePY": "SaiNaJiaEr"
+  },
+  {
+    "name": "Serbia",
+    "dialCode": "+381",
+    "isoCode": "RS",
+    "nameCN": "塞尔维亚",
+    "namePY": "SaiErWeiYa"
+  },
+  {
+    "name": "Seychelles",
+    "dialCode": "+248",
+    "isoCode": "SC",
+    "nameCN": "塞舌尔",
+    "namePY": "SaiSheEr"
+  },
+  {
+    "name": "Sierra Leone",
+    "dialCode": "+232",
+    "isoCode": "SL",
+    "nameCN": "塞拉利昂",
+    "namePY": "SaiLaLiAng"
+  },
+  {
+    "name": "Singapore",
+    "dialCode": "+65",
+    "isoCode": "SG",
+    "nameCN": "新加坡",
+    "namePY": "XinJiaPo"
+  },
+  {
+    "name": "Sint Maarten",
+    "dialCode": "+1721",
+    "isoCode": "SX",
+    "nameCN": "圣马丁岛",
+    "namePY": "ShengMaDingDao"
+  },
+  {
+    "name": "Slovakia",
+    "dialCode": "+421",
+    "isoCode": "SK",
+    "nameCN": "斯洛伐克",
+    "namePY": "SiLuoFaKe"
+  },
+  {
+    "name": "Slovenia",
+    "dialCode": "+386",
+    "isoCode": "SI",
+    "nameCN": "斯洛文尼亚",
+    "namePY": "SiLuoWenNiYa"
+  },
+  {
+    "name": "Solomon Islands",
+    "dialCode": "+677",
+    "isoCode": "SB",
+    "nameCN": "所罗门群岛",
+    "namePY": "SuoLuoMenQunDao"
+  },
+  {
+    "name": "Somalia",
+    "dialCode": "+252",
+    "isoCode": "SO",
+    "nameCN": "索马里",
+    "namePY": "SuoMaLi"
+  },
+  {
+    "name": "South Africa",
+    "dialCode": "+27",
+    "isoCode": "ZA",
+    "nameCN": "南非",
+    "namePY": "NanFei"
+  },
+  {
+    "name": "South Georgia and the South Sandwich Islands",
+    "dialCode": "+500",
+    "isoCode": "GS",
+    "nameCN": "南乔治亚岛和南桑德韦奇岛",
+    "namePY": "NanQiaoZhiYaDaoHeNanSangDeWeiQiDao"
+  },
+  {
+    "name": "South Sudan",
+    "dialCode": "+211",
+    "isoCode": "SS",
+    "nameCN": "南苏丹",
+    "namePY": "NanSuDan"
+  },
+  {
+    "name": "Spain",
+    "dialCode": "+34",
+    "isoCode": "ES",
+    "nameCN": "西班牙",
+    "namePY": "XiBanYa"
+  },
+  {
+    "name": "Sri Lanka",
+    "dialCode": "+94",
+    "isoCode": "LK",
+    "nameCN": "斯里兰卡",
+    "namePY": "SiLiLanKa"
+  },
+  {
+    "name": "Sudan",
+    "dialCode": "+249",
+    "isoCode": "SD",
+    "nameCN": "苏丹",
+    "namePY": "SuDan"
+  },
+  {
+    "name": "Suriname",
+    "dialCode": "+597",
+    "isoCode": "SR",
+    "nameCN": "苏里南",
+    "namePY": "SuLiNan"
+  },
+  {
+    "name": "Svalbard and Jan Mayen",
+    "dialCode": "+47",
+    "isoCode": "SJ",
+    "nameCN": "斯瓦尔巴岛和扬马延岛",
+    "namePY": "SiWaErBaDaoHeYangMaYanDao"
+  },
+  {
+    "name": "Sweden",
+    "dialCode": "+46",
+    "isoCode": "SE",
+    "nameCN": "瑞典",
+    "namePY": "RuiDian"
+  },
+  {
+    "name": "Switzerland",
+    "dialCode": "+41",
+    "isoCode": "CH",
+    "nameCN": "瑞士",
+    "namePY": "RuiShi"
+  },
+  {
+    "name": "Syrian Arab Republic",
+    "dialCode": "+963",
+    "isoCode": "SY",
+    "nameCN": "叙利亚",
+    "namePY": "XuLiYa"
+  },
+  {
+    "name": "Taiwan",
+    "dialCode": "+886",
+    "isoCode": "TW",
+    "nameCN": "中国台湾",
+    "namePY": "ZhongGuoTaiWan"
+  },
+  {
+    "name": "Tajikistan",
+    "dialCode": "+992",
+    "isoCode": "TJ",
+    "nameCN": "塔吉克斯坦",
+    "namePY": "TaJiKeSiTan"
+  },
+  {
+    "name": "Tanzania",
+    "dialCode": "+255",
+    "isoCode": "TZ",
+    "nameCN": "坦桑尼亚",
+    "namePY": "TanSangNiYa"
+  },
+  {
+    "name": "Thailand",
+    "dialCode": "+66",
+    "isoCode": "TH",
+    "nameCN": "泰国",
+    "namePY": "TaiGuo"
+  },
+  {
+    "name": "Timor-Leste",
+    "dialCode": "+670",
+    "isoCode": "TL",
+    "nameCN": "东帝汶",
+    "namePY": "DongDiWen"
+  },
+  {
+    "name": "Togo",
+    "dialCode": "+228",
+    "isoCode": "TG",
+    "nameCN": "多哥",
+    "namePY": "DuoGe"
+  },
+  {
+    "name": "Tokelau",
+    "dialCode": "+690",
+    "isoCode": "TK",
+    "nameCN": "托克劳",
+    "namePY": "TuoKeLao"
+  },
+  {
+    "name": "Tonga",
+    "dialCode": "+676",
+    "isoCode": "TO",
+    "nameCN": "汤加",
+    "namePY": "TangJia"
+  },
+  {
+    "name": "Trinidad and Tobago",
+    "dialCode": "+1868",
+    "isoCode": "TT",
+    "nameCN": "特立尼达和多巴哥",
+    "namePY": "TeLiNiDaHeDuoBaGe"
+  },
+  {
+    "name": "Tunisia",
+    "dialCode": "+216",
+    "isoCode": "TN",
+    "nameCN": "突尼斯",
+    "namePY": "TuNiSi"
+  },
+  {
+    "name": "Turkey",
+    "dialCode": "+90",
+    "isoCode": "TR",
+    "nameCN": "土耳其",
+    "namePY": "TuErQi"
+  },
+  {
+    "name": "Turkmenistan",
+    "dialCode": "+993",
+    "isoCode": "TM",
+    "nameCN": "土库曼斯坦",
+    "namePY": "TuKuManSiTan"
+  },
+  {
+    "name": "Turks and Caicos Islands",
+    "dialCode": "+1649",
+    "isoCode": "TC",
+    "nameCN": "特克斯和凯科斯群岛",
+    "namePY": "TeKeSiHeKaiKeSiQunDao"
+  },
+  {
+    "name": "Tuvalu",
+    "dialCode": "+688",
+    "isoCode": "TV",
+    "nameCN": "图瓦卢",
+    "namePY": "TuWaLu"
+  },
+  {
+    "name": "Uganda",
+    "dialCode": "+256",
+    "isoCode": "UG",
+    "nameCN": "乌干达",
+    "namePY": "WuGanDa"
+  },
+  {
+    "name": "Ukraine",
+    "dialCode": "+380",
+    "isoCode": "UA",
+    "nameCN": "乌克兰",
+    "namePY": "WuKeLan"
+  },
+  {
+    "name": "United Arab Emirates",
+    "dialCode": "+971",
+    "isoCode": "AE",
+    "nameCN": "阿联酋",
+    "namePY": "ALianQiu"
+  },
+  {
+    "name": "United Kingdom",
+    "dialCode": "+44",
+    "isoCode": "GB",
+    "nameCN": "英国",
+    "namePY": "YingGuo"
+  },
+  {
+    "name": "United States",
+    "dialCode": "+1",
+    "isoCode": "US",
+    "nameCN": "美国",
+    "namePY": "MeiGuo"
+  },
+  {
+    "name": "United States Minor Outlying Islands",
+    "dialCode": "+246",
+    "isoCode": "UMI",
+    "nameCN": "美国本土外小岛屿",
+    "namePY": "MeiGuoBenTuWaiXiaoDaoYu"
+  },
+  {
+    "name": "Uruguay",
+    "dialCode": "+598",
+    "isoCode": "UY",
+    "nameCN": "乌拉圭",
+    "namePY": "WuLaGui"
+  },
+  {
+    "name": "Uzbekistan",
+    "dialCode": "+998",
+    "isoCode": "UZ",
+    "nameCN": "乌兹别克斯坦",
+    "namePY": "WuZiBieKeSiTan"
+  },
+  {
+    "name": "Vanuatu",
+    "dialCode": "+678",
+    "isoCode": "VU",
+    "nameCN": "瓦努阿图",
+    "namePY": "WaNuATu"
+  },
+  {
+    "name": "Venezuela",
+    "dialCode": "+58",
+    "isoCode": "VE",
+    "nameCN": "委内瑞拉",
+    "namePY": "WeiNaRuiLa"
+  },
+  {
+    "name": "Vietnam",
+    "dialCode": "+84",
+    "isoCode": "VN",
+    "nameCN": "越南",
+    "namePY": "YueNan"
+  },
+  {
+    "name": "British Virgin Islands",
+    "dialCode": "+1284",
+    "isoCode": "VG",
+    "nameCN": "英属维尔京群岛",
+    "namePY": "YingShuWeiErJingQunDao"
+  },
+  {
+    "name": "U.S. Virgin Islands",
+    "dialCode": "+1340",
+    "isoCode": "VI",
+    "nameCN": "美属维尔京群岛",
+    "namePY": "MeiShuWeiErJingQunDao"
+  },
+  {
+    "name": "Wallis and Futuna",
+    "dialCode": "+681",
+    "isoCode": "WF",
+    "nameCN": "瓦利斯和富图纳",
+    "namePY": "WaLiSiHeFuTuNa"
+  },
+  {
+    "name": "Yemen",
+    "dialCode": "+967",
+    "isoCode": "YE",
+    "nameCN": "也门",
+    "namePY": "YeMen"
+  },
+  {
+    "name": "Zambia",
+    "dialCode": "+260",
+    "isoCode": "ZM",
+    "nameCN": "赞比亚",
+    "namePY": "ZanBiYa"
+  },
+  {
+    "name": "Zimbabwe",
+    "dialCode": "+263",
+    "isoCode": "ZW",
+    "nameCN": "津巴布韦",
+    "namePY": "JinBaBuWei"
+  }
+]

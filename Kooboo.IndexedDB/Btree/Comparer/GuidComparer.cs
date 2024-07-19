@@ -1,19 +1,15 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree.Comparer
+namespace Kooboo.IndexedDB.BTree.Comparer
 {
     /// <summary>
     /// GUID has not bigger or smaller value, as long as it is constant, it is ok. 
     /// </summary>
-  public  class GuidComparer : IComparer<byte[]>
+    public class GuidComparer : IComparer<byte[]>
     {
-      private int len = 16;
+        private int len = 16;
 
         public int Compare(byte[] x, byte[] y)
         {
@@ -31,7 +27,7 @@ namespace Kooboo.IndexedDB.Btree.Comparer
                 {
                     return -1;
                 }
-            } 
+            }
             return 0;
         }
     }

@@ -3,7 +3,6 @@ namespace dotless.Core.Parser.Functions
     using System;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using System.Web;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Tree;

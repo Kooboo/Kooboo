@@ -1,10 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using VirtualFile;
 
 namespace Kooboo.Web.Api.Implementation
@@ -45,7 +43,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (SiteId != default(Guid))
             {
-                var site = Data.GlobalDb.WebSites.Get(SiteId);
+                var site = Data.Config.AppHost.SiteRepo.Get(SiteId);
                 if (site == null || site.OrganizationId != call.Context.User.CurrentOrgId)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("User does not own website", call.Context));
@@ -58,11 +56,11 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (call.Context.User != null)
                 {
-                    var sites = Data.GlobalDb.WebSites.AllSites.Where(o => o.Value.OrganizationId == call.Context.User.CurrentOrgId).ToList();
+                    var sites = Data.Config.AppHost.SiteRepo.AllSites.Where(o => o.OrganizationId == call.Context.User.CurrentOrgId).ToList();
 
                     foreach (var item in sites)
                     {
-                        var site = item.Value;
+                        var site = item;
                         var db = site.SiteDb();
                         var last = db.Log.Store.LastKey;
                         version.SiteVersions.Add(site.Id, last.ToString());
@@ -122,25 +120,17 @@ namespace Kooboo.Web.Api.Implementation
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            var apires = Kooboo.Data.AppSettings.ApiResource;
-
-            if (apires != null)
-            {
-                result.Add("account", apires.AccountUrl);
-                result.Add("resource", apires.ThemeUrl);
-                result.Add("converter", apires.ConvertUrl);
-            }
-            else
-            {
-                result.Add("ApiResource", null);
-            }
-
             if (Data.AppSettings.ServerSetting != null)
             {
                 result.Add("setting", Lib.Helper.JsonHelper.Serialize(Data.AppSettings.ServerSetting));
             }
 
             return result;
+        }
+
+        public Dictionary<string, object> Status()
+        {
+            return Web.Monitor.Manager.GetServerStatus();
         }
     }
 

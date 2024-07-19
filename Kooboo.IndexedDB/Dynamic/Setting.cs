@@ -23,8 +23,11 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 if (_columns == null)
                 {
-                    _columns = new HashSet<TableColumn>();
-                    _columns.Add(new TableColumn() { Name = Constants.DefaultIdFieldName, DataType = typeof(Guid).FullName, relativePosition = 0, Length = 16, IsPrimaryKey = true, IsSystem = true, IsUnique = true, IsIndex = true });
+                    var newCol = new HashSet<TableColumn>();
+
+                    newCol.Add(new TableColumn() { Name = Constants.DefaultIdFieldName, DataType = typeof(Guid).FullName, relativePosition = 0, Length = 16, IsPrimaryKey = true, IsSystem = true, IsUnique = true, IsIndex = true });
+
+                    _columns = newCol;
                 }
                 return _columns;
             }

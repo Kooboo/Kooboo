@@ -3,10 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
     public class ItemCollection : IEnumerable<long>
     {
@@ -71,7 +69,7 @@ namespace Kooboo.IndexedDB.Btree
                 init();
 
                 if (recordlistcount == 0)
-                { 
+                {
                     if ((this.isCurrentEndNode && this.isCurrentStartNode) == false)
                     {
                         getnextnode();
@@ -97,14 +95,14 @@ namespace Kooboo.IndexedDB.Btree
             {
                 if (ascending)
                 {
-                    this.startnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootCache, startKeyBytes);
-                    this.endnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootCache, endKeyBytes);
+                    this.startnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootNode, startKeyBytes);
+                    this.endnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootNode, endKeyBytes);
                 }
                 else
                 {
                     //load the last key as startnode, firstkey as endnode.
-                    this.endnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootCache, startKeyBytes);
-                    this.startnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootCache, endKeyBytes);
+                    this.endnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootNode, startKeyBytes);
+                    this.startnode = MemoryTreeNodeManager.FindLeafByKey(this.treefile, this.treefile.RootNode, endKeyBytes);
                 }
 
                 this.currentnode = startnode;
@@ -148,8 +146,7 @@ namespace Kooboo.IndexedDB.Btree
                             //both start and end in the same leaf. 
                             if ((this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen)) && (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen)))
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
                                 recordlist.Add(pointer);
                             }
                         }
@@ -158,8 +155,7 @@ namespace Kooboo.IndexedDB.Btree
                             // the start node.  
                             if (this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen))
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
                                 recordlist.Add(pointer);
                             }
 
@@ -174,8 +170,7 @@ namespace Kooboo.IndexedDB.Btree
 
                             if (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen))
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
                                 recordlist.Add(pointer);
                             }
 
@@ -183,8 +178,7 @@ namespace Kooboo.IndexedDB.Btree
                         else
                         {
                             //not start, not end, the middle one, insert everything. 
-                            NodePointer pointer = new NodePointer();
-                            pointer.PointerBytes = item.Value;
+                            var pointer = NodePointer.FromBytes(item.Value);
                             recordlist.Add(pointer);
 
                         }
@@ -195,7 +189,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 recordlistcount = recordlist.Count;
             }
-            
+
             /// <summary>
             /// load the record, this is in the DESC mode. 
             /// </summary>
@@ -215,8 +209,7 @@ namespace Kooboo.IndexedDB.Btree
                             //both start and end in the same leaf. 
                             if ((this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen)) && (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen)))
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
                                 recordlist.Add(pointer);
                             }
                         }
@@ -226,8 +219,7 @@ namespace Kooboo.IndexedDB.Btree
 
                             if (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen))
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
                                 recordlist.Add(pointer);
                             }
 
@@ -242,17 +234,15 @@ namespace Kooboo.IndexedDB.Btree
 
                             if (this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen))
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                var pointer = NodePointer.FromBytes(item.Value);
                                 recordlist.Add(pointer);
                             }
 
                         }
                         else
                         {
-                            //not start, not end, the middle one, insert everything. 
-                            NodePointer pointer = new NodePointer();
-                            pointer.PointerBytes = item.Value;
+                            //not start, not end, the middle one, insert everything.  
+                            var pointer = NodePointer.FromBytes(item.Value);
                             recordlist.Add(pointer);
 
                         }
@@ -261,7 +251,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 }
 
-                recordlistcount = recordlist.Count;             
+                recordlistcount = recordlist.Count;
             }
 
 
@@ -278,11 +268,11 @@ namespace Kooboo.IndexedDB.Btree
 
                 if (ascending)
                 {
-                    this.currentnode = MemoryTreeNodeManager.FindNextLeaf(this.treefile, currentnode); 
+                    this.currentnode = MemoryTreeNodeManager.FindNextLeaf(this.treefile, currentnode);
                 }
                 else
                 {
-                    this.currentnode = MemoryTreeNodeManager.FindPreviousLeaf(this.treefile, currentnode); 
+                    this.currentnode = MemoryTreeNodeManager.FindPreviousLeaf(this.treefile, currentnode);
                 }
 
                 if (this.currentnode == null)
@@ -356,9 +346,9 @@ namespace Kooboo.IndexedDB.Btree
             {
                 get { return Current; }
             }
-            
+
             private bool inDuplicateMode = false;
-            private BtreeIndexDuplicateReader duplicatereader;
+            private BTreeIndexDuplicateReader duplicatereader;
 
             public bool MoveNext()
             {

@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
-using Kooboo.Data.Language;
+using Kooboo.Data.Permission;
 
 namespace Kooboo.Api.Methods
 {
@@ -32,15 +30,15 @@ namespace Kooboo.Api.Methods
             }
         }
 
-        public static ApiMethod Get(IApi instance, string MethodName)
+        public static ApiMethod Get(IApi instance, ApiCommand command)
         {
             var currentlist = List;
 
-            if (string.IsNullOrEmpty(MethodName))
+            if (command == null || string.IsNullOrWhiteSpace(command.Method))
             {
                 return null;
             }
-            string key = instance.ModelName + "." + MethodName;
+            string key = instance.ModelName + "." + command.Method + "." + command.Version;
             if (currentlist.ContainsKey(key))
             {
                 return currentlist[key];
@@ -49,10 +47,10 @@ namespace Kooboo.Api.Methods
             if (instance is IDynamicApi)
             {
                 var dynamic = instance as IDynamicApi;
-                return GetDynamicApiMethod(dynamic, MethodName); 
+                return GetDynamicApiMethod(dynamic, command.Method);
             }
 
-            var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(instance.GetType(), MethodName);
+            var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(instance.GetType(), command.Method);
 
             if (methodinfo == null)
             {
@@ -66,6 +64,7 @@ namespace Kooboo.Api.Methods
             newmethod.ReturnType = methodinfo.ReturnType;
             newmethod.DeclareType = instance.GetType();
             newmethod.IsVoid = methodinfo.ReturnType == typeof(void);
+            newmethod.Permissions = methodinfo.GetCustomAttributes<PermissionAttribute>(true).ToList();
 
             var acceptmodel = methodinfo.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
             if (acceptmodel != null)
@@ -139,7 +138,7 @@ namespace Kooboo.Api.Methods
             {
                 return currentlist[key];
             }
-              
+
             var info = instance.GetMethod(MethodName);
 
             //var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
@@ -156,6 +155,7 @@ namespace Kooboo.Api.Methods
             newmethod.ReturnType = info.Method.ReturnType;
             newmethod.DeclareType = info.Type;
             newmethod.IsVoid = info.Method.ReturnType == typeof(void);
+            newmethod.Permissions = info.Method.GetCustomAttributes<PermissionAttribute>(true).ToList();
 
             var acceptmodel = info.Method.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
             if (acceptmodel != null)
@@ -207,7 +207,7 @@ namespace Kooboo.Api.Methods
             }
             return newmethod;
         }
-         
+
 
         public static string GetApiCallName(Type apiType)
         {
@@ -264,7 +264,7 @@ namespace Kooboo.Api.Methods
                 }
             }
         }
-         
+
         public static List<object> BindParameters(ApiMethod method, ApiCall call)
         {
             List<object> result = new List<object>();
@@ -317,7 +317,7 @@ namespace Kooboo.Api.Methods
 
                     return model;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -332,7 +332,7 @@ namespace Kooboo.Api.Methods
                 {
                     model = Lib.Helper.JsonHelper.Deserialize(json, ModelType);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -354,22 +354,18 @@ namespace Kooboo.Api.Methods
                     values[item] = value;
                 }
 
-                if (values.Count() >= 0)
+                string dictjson = Lib.Helper.JsonHelper.Serialize(values);
+                try
                 {
-                    string dictjson = Lib.Helper.JsonHelper.Serialize(values);
-                    try
-                    {
-                        model = Lib.Helper.JsonHelper.Deserialize(dictjson, ModelType);
-                    }
-                    catch (Exception ex)
-                    {
-                    }
+                    model = Lib.Helper.JsonHelper.Deserialize(dictjson, ModelType);
                 }
-
+                catch (Exception)
+                {
+                }
             }
 
             return model;
         }
-         
+
     }
 }

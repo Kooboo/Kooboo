@@ -1,73 +1,64 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+
+using System.Linq;
 using Kooboo.Api;
-using Kooboo.Data.Models;
-using Kooboo.Lib.Utilities;
+using Kooboo.Data.Permission;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
-using Kooboo.Sites.ViewModel;
+using Kooboo.Sites.Storage;
+using Kooboo.Sites.Storage.Kooboo;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class MediaApi : IApi
+    public class MediaApi : StorageBase, IApi
     {
-        public string ModelName
-        {
-            get
-            {
-                return "media";
-            }
-        }
+        public string ModelName => "media";
 
-        public bool RequireSite { get { return true; } }
+        public bool RequireSite => true;
 
-        public bool RequireUser { get { return true; } }
+        public bool RequireUser => true;
 
         [Kooboo.Attributes.RequireParameters("path", "name")]
-        public ImageFolderViewModel CreateFolder(ApiCall call)
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.EDIT)]
+        public StorageFolderModel CreateFolder(ApiCall call)
         {
-            var sitedb = call.Context.WebSite.SiteDb();
-
             string name = call.GetValue("name");
             string path = call.GetValue("path");
             if (!path.EndsWith("/"))
             {
-                path = path + "/"; 
+                path = path + "/";
             }
 
-            string fullpath = Lib.Helper.UrlHelper.Combine(path, name);
+            string fullpath = UrlHelper.Combine(path, name);
             if (!fullpath.StartsWith("/"))
             {
                 fullpath = "/" + fullpath;
             }
+
             if (fullpath.EndsWith("/"))
             {
                 fullpath = fullpath.TrimEnd('/');
             }
 
-            Folder folder = new Folder(ConstObjectType.Image);
-            folder.FullPath = fullpath;
+            var storage = GetStorageProvider(call);
 
-            sitedb.Folders.AddOrUpdate(folder);
-
-            return new ImageFolderViewModel
+            if (storage is KoobooStorageProvider)
             {
-                Id = folder.FullPath,
-                Name = folder.Segment,
-                FullPath = folder.FullPath,
-                LastModified = PathService.GetLastModified(sitedb, folder.FullPath, ConstObjectType.Image),
-                Count = sitedb.Folders.GetFolderObjects<Image>(folder.FullPath, true, false).Count +
-                sitedb.Folders.GetSubFolders(folder.FullPath, ConstObjectType.Image).Count
-            };
+                fullpath = KoobooStorageProvider.RemoveCustomSettingPrefix(call.WebSite, fullpath);
+                fullpath = KoobooStorageProvider.HandleCustomSettingPrefix(call.WebSite, fullpath);
+            }
+
+            return storage.CreateMediaFolder(fullpath);
         }
 
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.EDIT)]
         public MediaLibraryViewModel List(ApiCall call)
         {
             string path = call.GetValue("path", "fullpath");
@@ -76,65 +67,68 @@ namespace Kooboo.Web.Api.Implementation
                 path = "/";
             }
 
-            MediaLibraryViewModel model = new MediaLibraryViewModel();
+            return new MediaLibraryViewModel
+            {
+                Folders = GetFolders(call.WebSite.SiteDb(), path),
+                Files = GetFiles(call.WebSite.SiteDb(), path),
+                CrumbPath = PathService.GetCrumbPath(path)
+            };
+        }
 
-            model.Folders = GetFolders(call.WebSite.SiteDb(), path);
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.EDIT)]
+        public MediaLibraryViewModel ListBy(ApiCall call)
+        {
+            string by = call.GetValue("by");
+            if (string.IsNullOrEmpty(by))
+            {
+                return null;
+            }
 
-            model.Files = GetFiles(call.WebSite.SiteDb(), path);
+            var lower = by.ToLower();
+            if (lower == "page" || lower == "view" || lower == "layout" || lower == "textcontent" || lower == "style" ||
+                lower == "htmlblock")
+            {
+                return new MediaLibraryViewModel
+                {
+                    Files = GetFilesBy(call.WebSite.SiteDb(), by),
+                    CrumbPath = PathService.GetCrumbPath("/")
+                };
+            }
 
-            model.CrumbPath = PathService.GetCrumbPath(path);
+            return null;
+        }
+
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.EDIT)]
+        public MediaPagedViewModel PagedListBy(ApiCall call)
+        {
+            string by = call.GetValue("by");
+            if (string.IsNullOrEmpty(by))
+            {
+                return null;
+            }
+
+            var lower = by.ToLower();
+            if (lower != "page" && lower != "view" && lower != "layout" && lower != "textcontent" && lower != "style" &&
+                lower != "htmlblock") return null;
+            int pageSize = ApiHelper.GetPageSize(call, 50);
+            int pageNumber = ApiHelper.GetPageNr(call);
+
+            MediaPagedViewModel model = new MediaPagedViewModel
+            {
+                Files = GetPagedFilesBy(call.WebSite.SiteDb(), by, pageSize, pageNumber),
+                CrumbPath = PathService.GetCrumbPath("/")
+            };
 
             return model;
         }
 
-        public MediaLibraryViewModel ListBy(ApiCall call)
-        {
-            string by = call.GetValue("by");
-            if (string.IsNullOrEmpty(by)) { return null; }
-
-            var lower = by.ToLower();
-            if (lower == "page" || lower == "view" || lower == "layout" || lower == "textcontent" || lower == "style" || lower == "htmlblock")
-            {
-                MediaLibraryViewModel model = new MediaLibraryViewModel(); 
-
-                model.Files = GetFilesBy(call.WebSite.SiteDb(), by);
-
-                model.CrumbPath = PathService.GetCrumbPath("/");
-
-                return model; 
-            }
-            else
-            {
-                return null;
-            } 
-        }
-
-        public MediaPagedViewModel PagedListBy(ApiCall call)
-        {
-            string by = call.GetValue("by");
-            if (string.IsNullOrEmpty(by)) { return null; }
-
-            var lower = by.ToLower();
-            if (lower == "page" || lower == "view" || lower == "layout" || lower == "textcontent" || lower == "style" || lower == "htmlblock")
-            {
-             
-                int pagesize = ApiHelper.GetPageSize(call, 50);
-                int pagenr = ApiHelper.GetPageNr(call);
-
-                MediaPagedViewModel model = new MediaPagedViewModel();
-
-                model.Files = GetPagedFilesBy(call.WebSite.SiteDb(), by, pagesize, pagenr);
-
-                model.CrumbPath = PathService.GetCrumbPath("/");
-
-                return model;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.EDIT)]
         public MediaPagedViewModel PagedList(ApiCall call)
         {
             string path = call.GetValue("path", "fullpath");
@@ -143,179 +137,94 @@ namespace Kooboo.Web.Api.Implementation
                 path = "/";
             }
 
-            int pagesize = ApiHelper.GetPageSize(call, 50);
-            int pagenr = ApiHelper.GetPageNr(call);
-             
-            MediaPagedViewModel model = new MediaPagedViewModel();
+            var storage = GetStorageProvider(call);
+            var request = new GetObjectsRequest
+            {
+                Path = path,
+                PageSize = ApiHelper.GetPageSize(call, 50),
+                Keyword = call.GetValue("keyword"),
+                Page = ApiHelper.GetPageNr(call),
+                StartAfter = call.GetValue("startAfter"),
+            };
 
-            model.Folders = GetFolders(call.WebSite.SiteDb(), path);
+            if (storage is KoobooStorageProvider)
+            {
+                path = KoobooStorageProvider.RemoveCustomSettingPrefix(call.WebSite, path);
+            }
 
-            model.Files = GetPagedFiles(call.WebSite.SiteDb(), path, pagesize, pagenr);
+            var isSearch = !string.IsNullOrWhiteSpace(request.Keyword);
+            var response = new MediaPagedViewModel
+            {
+                Providers = StorageProviderFactory.GetEnabledProviders(call.Context),
+                CrumbPath = isSearch ? CrumbPath.SearchResultCrumbs : PathService.GetCrumbPath(path)
+            };
+            try
+            {
+                if (storage is KoobooStorageProvider)
+                {
+                    if (request.Path == "/")
+                    {
+                        request.Path = KoobooStorageProvider.HandleCustomSettingPrefix(call.WebSite, request.Path);
+                    }
+                }
+                var data = storage.GetMediaObjects(request);
+                response.Folders = data.Folders;
 
-            model.CrumbPath = PathService.GetCrumbPath(path);
+                response.Files = new PagedListViewModel<MediaStorageFileModel>
+                {
+                    Infinite = data.Infinite,
+                    List = data.Files.DataList.ToList(),
+                    TotalPages = data.Files.TotalPages,
+                    PageNr = data.Files.PageNr,
+                    TotalCount = data.Files.TotalCount,
+                    PageSize = data.Files.PageSize,
+                };
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "<br/>" + ex.Message;
+            }
 
-            return model;
+            return response;
         }
 
-         
         private List<ImageFolderViewModel> GetFolders(SiteDb siteDb, string path)
         {
             var SubFolders = siteDb.Folders.GetSubFolders(path, ConstObjectType.Image);
 
-            List<ImageFolderViewModel> Result = new List<ImageFolderViewModel>();
-
-            foreach (var item in SubFolders)
+            return SubFolders.Select(x => new ImageFolderViewModel()
             {
-                ImageFolderViewModel model = new ImageFolderViewModel();
-                // model.Id = path; 
-                model.Name = item.Segment;
-                model.FullPath = item.FullPath;
-                model.Count = siteDb.Folders.GetFolderObjects<Image>(item.FullPath, true, false).Count +
-                                siteDb.Folders.GetSubFolders(item.FullPath, ConstObjectType.Image).Count;
-                model.LastModified = PathService.GetLastModified(siteDb, item.FullPath, ConstObjectType.Image);
-
-                Result.Add(model);
-            }
-
-            return Result;
+                Name = x.Segment,
+                FullPath = x.FullPath,
+                Count = siteDb.Folders.GetFolderObjects<Image>(x.FullPath, true, false).Count +
+                        siteDb.Folders.GetSubFolders(x.FullPath, ConstObjectType.Image).Count,
+                LastModified = PathService.GetLastModified(siteDb, x.FullPath, ConstObjectType.Image)
+            }).OrderByDescending(x => x.LastModified).ToList();
         }
 
-        private List<MediaFileViewModel> GetFiles(SiteDb siteDb, string path)
-        {
-            string baseurl = siteDb.WebSite.BaseUrl(); 
-
-            List<Image> images = siteDb.Folders.GetFolderObjects<Image>(path, true);
-
-            List<MediaFileViewModel> Result = new List<MediaFileViewModel>();
-
-            foreach (var item in images)
-            {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
-                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url); 
-                
-                var usedby = siteDb.Images.GetUsedBy(item.Id);
-
-                if (usedby != null)
-                {
-                    model.References = usedby.GroupBy(it => it.ConstType).ToDictionary(
-                                      key =>
-                                      {
-                                          return  ConstTypeService.GetModelType(key.Key).Name;
-                                      }, value => value.Count());
-                }
-
-                Result.Add(model);
-            }
-            return Result;
-        }
-
-        // public PagedListViewModel<MediaFileViewModel> Files { get; set; }
-
-        private PagedListViewModel<MediaFileViewModel>  GetPagedFiles(SiteDb siteDb, string path, int PageSize, int PageNumber)
+        private List<MediaStorageFileModel> GetFiles(SiteDb siteDb, string path)
         {
             string baseurl = siteDb.WebSite.BaseUrl();
 
             List<Image> images = siteDb.Folders.GetFolderObjects<Image>(path, true);
 
-            int totalskip = 0;
-            if (PageNumber > 1)
-            {
-                totalskip = (PageNumber - 1) * PageSize;
-            }
-
-            PagedListViewModel<MediaFileViewModel> Result = new PagedListViewModel<MediaFileViewModel>();
-
-            Result.TotalCount = images.Count();
-            Result.TotalPages = ApiHelper.GetPageCount(Result.TotalCount, PageSize);
-            Result.PageSize = PageSize;
-            Result.PageNr = PageNumber; 
-
-
-            List<MediaFileViewModel> pagedlist = new List<MediaFileViewModel>(); 
-
-            foreach (var item in images.Skip(totalskip).Take(PageSize))
-            {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
-                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
-
-                var usedby = siteDb.Images.GetUsedBy(item.Id);
-
-                if (usedby != null)
-                {
-                    model.References = usedby.GroupBy(it => it.ConstType).ToDictionary(
-                                      key =>
-                                      {
-                                          return ConstTypeService.GetModelType(key.Key).Name;
-                                      }, value => value.Count());
-                }
-
-                pagedlist.Add(model);
-            }
-            Result.List = pagedlist;  
-            return Result;
+            return MediaFileViewModels(siteDb, images, baseurl).ToList();
         }
 
-        private List<MediaFileViewModel> GetFilesBy(SiteDb siteDb, string by)
+        private List<MediaStorageFileModel> GetFilesBy(SiteDb siteDb, string by)
         {
-            string baseurl = siteDb.WebSite.BaseUrl(); 
+            string baseurl = siteDb.WebSite.BaseUrl();
             // by = View, Page, Layout, TextContent, Style. 
             byte consttype = ConstTypeContainer.GetConstType(by);
-             
+
             var images = siteDb.Images.ListUsedBy(consttype);
 
-            List<MediaFileViewModel> Result = new List<MediaFileViewModel>();
-
-            foreach (var item in images)
-            {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
-                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
-
-                var usedby = siteDb.Images.GetUsedBy(item.Id);
-
-                if (usedby != null)
-                {
-                    model.References = usedby.GroupBy(it => it.ConstType).ToDictionary(
-                                      key =>
-                                      {
-                                          return  ConstTypeService.GetModelType(key.Key).Name;
-                                      }, value => value.Count());
-                }
-
-                Result.Add(model);
-            }
-            return Result;
-             
+            return MediaFileViewModels(siteDb, images, baseurl).ToList();
         }
 
 
-        private PagedListViewModel<MediaFileViewModel> GetPagedFilesBy(SiteDb siteDb, string by, int PageSize, int PageNumber)
+        private PagedListViewModel<MediaStorageFileModel> GetPagedFilesBy(SiteDb siteDb, string by, int PageSize,
+            int PageNumber)
         {
             string baseurl = siteDb.WebSite.BaseUrl();
             // by = View, Page, Layout, TextContent, Style. 
@@ -329,172 +238,110 @@ namespace Kooboo.Web.Api.Implementation
                 totalskip = (PageNumber - 1) * PageSize;
             }
 
-            PagedListViewModel<MediaFileViewModel> Result = new PagedListViewModel<MediaFileViewModel>();
+            PagedListViewModel<MediaStorageFileModel> Result = new PagedListViewModel<MediaStorageFileModel>();
 
             Result.TotalCount = images.Count();
             Result.TotalPages = ApiHelper.GetPageCount(Result.TotalCount, PageSize);
             Result.PageSize = PageSize;
             Result.PageNr = PageNumber;
 
-
-            List<MediaFileViewModel> list = new List<MediaFileViewModel>();
-
-            foreach (var item in images.Skip(totalskip).Take(PageSize))
-            {
-                MediaFileViewModel model = new MediaFileViewModel();
-                model.Id = item.Id;
-                model.Height = item.Height;
-                model.Width = item.Width;
-                model.Size = item.Size;
-                model.Name = item.Name;
-                model.LastModified = item.LastModified;
-                model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
-                model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
-                model.IsImage = true;
-                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
-
-                var usedby = siteDb.Images.GetUsedBy(item.Id);
-
-                if (usedby != null)
-                {
-                    model.References = usedby.GroupBy(it => it.ConstType).ToDictionary(
-                                      key =>
-                                      {
-                                          return ConstTypeService.GetModelType(key.Key).Name;
-                                      }, value => value.Count());
-                }
-
-                list.Add(model);
-            }
-
-            Result.List = list;  
+            Result.List = MediaFileViewModels(siteDb, images, baseurl).Skip(totalskip).Take(PageSize).ToList();
             return Result;
-
         }
 
-
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.DELETE)]
         public void DeleteFolders(ApiCall call)
         {
             string jsonvalue = call.Context.Request.Body;
 
-            List<string> FolderFullPaths = Lib.Helper.JsonHelper.Deserialize<List<string>>(jsonvalue);
+            var folders = JsonHelper.Deserialize<string[]>(jsonvalue);
 
-            foreach (var item in FolderFullPaths)
-            {
-                call.WebSite.SiteDb().Folders.Delete(item, ConstObjectType.Image, call.Context.User.Id);
-            }
+            var storage = GetStorageProvider(call);
+            storage.DeleteMediaFolders(folders);
         }
 
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.DELETE)]
         public void DeleteImages(ApiCall call)
         {
             string jsonvalue = call.Context.Request.Body;
 
-            List<Guid> ImageIds = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(jsonvalue);
-
-            foreach (var item in ImageIds)
-            {
-                call.WebSite.SiteDb().Images.Delete(item, call.Context.User.Id);
-            }
+            var keys = JsonHelper.Deserialize<string[]>(jsonvalue);
+            var storage = GetStorageProvider(call);
+            storage.DeleteMediaObjects(keys);
         }
 
         [Kooboo.Attributes.RequireParameters("id")]
-        public ImageViewModel Get(ApiCall call)
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.VIEW)]
+        public ImageEditModel Get(ApiCall call)
         {
-            var image = call.WebSite.SiteDb().Images.Get(call.ObjectId);
-
-            if (image != null)
-            {
-                ImageViewModel model = new ImageViewModel();
-                model.Name = image.Name;
-                model.Url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), image);
-
-                Dictionary<string, string> query = new Dictionary<string, string>();
-                query.Add("SiteId", call.WebSite.Id.ToString());
-                model.SiteUrl = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(model.Url, query);
-                model.Id = image.Id;
-                model.Alt = image.Alt;
-                model.FullUrl = Kooboo.Lib.Helper.UrlHelper.Combine(call.WebSite.BaseUrl(), model.Url);
-                return model;
-            }
-            return null;
+            var storage = GetStorageProvider(call);
+            var id = call.GetValue("id");
+            return storage.GetMediaFile(id);
         }
 
         [Kooboo.Attributes.RequireParameters("id")]
-        public void ImageUpdate(ApiCall call)
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.EDIT)]
+        public bool ImageUpdate(ApiCall call)
         {
-            var image = call.WebSite.SiteDb().Images.Get(call.ObjectId);
-
-            if (image != null)
+            string alt = call.GetValue("alt");
+            string base64 = call.GetValue("base64");
+            var id = call.GetValue("id");
+            var storage = GetStorageProvider(call);
+            var metas = new Dictionary<string, string>
             {
-                string alt = call.GetValue("alt");
-                string base64 = call.GetValue("base64");
-                image.Alt = alt;
-
-                if (!string.IsNullOrEmpty(base64))
-                {
-                    if (DataUriService.isDataUri(base64))
-                    {
-                        var datauri = DataUriService.PraseDataUri(base64);
-
-                        if (datauri.isBase64)
-                        {
-                            image.ContentBytes = Convert.FromBase64String(datauri.DataString);
-                            image.ResetSize(); 
-                        }
-
-                    }
-                    else
-                    {
-                        image.ContentBytes = Convert.FromBase64String(base64);
-                        image.ResetSize(); 
-                    } 
-                } 
-                call.WebSite.SiteDb().Images.AddOrUpdate(image, call.Context.User.Id); 
-            }
-
+                ["alt"] = alt,
+                ["name"] = call.GetValue("name"),
+            };
+            return storage.UpdateImage(id, base64, metas);
         }
 
-       public string ContentImage(ApiCall call)
+        [Permission(Feature.MEDIA_LIBRARY, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.VIEW)]
+        public string ContentImage(ApiCall call)
         {
-            var files = Kooboo.Lib.NETMultiplePart.FormReader.ReadFile(call.Context.Request.PostData);
+            var files = call.Context.Request.Files;
 
-            if (files == null || files.Count() ==0)
+            if (files == null || files.Count() == 0)
             {
-                return null; 
+                return null;
             }
-            
+
             foreach (var f in files)
             {
                 string filename = f.FileName;
 
-                string url = GetUploadUrl(call, filename); 
-                 
-                var siteobject = call.WebSite.SiteDb().Images.UploadImage(f.Bytes, url, call.Context.User.Id);
-                return url; 
-            } 
+                string url = GetUploadUrl(call, filename);
 
-            return null; 
+                var siteobject = call.WebSite.SiteDb().Images.UploadImage(f.Bytes, url, call.Context.User.Id);
+                return url;
+            }
+
+            return null;
         }
 
-        private string GetUploadUrl(ApiCall call, string filename) 
+        private string GetUploadUrl(ApiCall call, string filename)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
             if (string.IsNullOrEmpty(filename))
             {
                 return null;
             }
-            string fullname =  filename.Replace("\\", "/"); 
+
+            string fullname = filename.Replace("\\", "/");
             if (fullname.StartsWith("/"))
             {
-                fullname = fullname.Substring(1); 
+                fullname = fullname.Substring(1);
             }
 
             string checkurl = "/" + fullname;
 
-            var image = sitedb.Images.GetByUrl(checkurl); 
-            if (image ==null)
+            var image = sitedb.Images.GetByUrl(checkurl);
+            if (image == null)
             {
-                return checkurl; 
+                return checkurl;
             }
 
             for (int i = 0; i < 999; i++)
@@ -504,10 +351,39 @@ namespace Kooboo.Web.Api.Implementation
                 if (image == null)
                 {
                     return checkurl;
-                } 
+                }
             }
 
-            return null; 
+            return null;
         }
+
+        private static IEnumerable<MediaStorageFileModel> MediaFileViewModels(SiteDb siteDb, IEnumerable<Image> images,
+            string baseurl)
+        {
+            return images.Select(x =>
+            {
+                var usedby = siteDb.Images.GetUsedByForCount(x.Id);
+                var imageUrl = ObjectService.GetObjectRelativeUrl(siteDb, x) + $"?version={x.Version}";
+                return new MediaStorageFileModel()
+                {
+                    Id = x.Id,
+                    Key = x.Id.ToString(),
+                    Height = x.Height,
+                    Alt = x.Alt,
+                    Width = x.Width,
+                    Size = x.Size,
+                    Name = x.Name,
+                    LastModified = x.LastModified,
+                    Thumbnail = ThumbnailService.GenerateThumbnailUrl(x.Id, 90, 0, siteDb.Id, x.Version),
+                    Url = ObjectService.GetObjectRelativeUrl(siteDb, x),
+                    IsImage = true,
+                    PreviewUrl = UrlHelper.Combine(baseurl, imageUrl),
+                    References = usedby?.GroupBy(it => it.ModelType).ToDictionary(
+                        key => key.Key.Name, value => value.Count())
+                };
+            }).OrderByDescending(x => x.LastModified.ToLocalTime());
+        }
+
+
     }
 }

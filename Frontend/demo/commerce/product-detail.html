@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <script>
+      function getSpecifications(data) {
+        return data.specifications
+          .map((m) => `[${m.key}:${m.value}]`)
+          .join(" ");
+      }
+    </script>
+    <div id="app">
+      <k-page
+        back="/_Admin/demo/commerce/index.html"
+        title="Product detail"
+        auth="/_Admin/demo/commerce/login.html"
+      >
+        <k-data init-get="http://kcomponent.localkooboo.com/commerce/product">
+          <k-data-query name="id" source="query"></k-data-query>
+          <k-data-item name="title" id="title"></k-data-item>
+          <k-data-item name="typeName" id="typeName"></k-data-item>
+          <k-data-item name="enable" id="enable"></k-data-item>
+          <k-data-item name="description" id="description"></k-data-item>
+          <k-data-item
+            name="productVariants"
+            id="productVariants"
+          ></k-data-item>
+        </k-data>
+
+        <k-data from="productVariants" id="variants_data">
+          <k-data-item name="id" hidden></k-data-item>
+          <k-data-item name="name" label="Name"></k-data-item>
+          <k-data-item
+            name="specifications"
+            from="getSpecifications"
+            source="code"
+            label="Specifications"
+          ></k-data-item>
+          <k-data-item name="tax" label="Tax"></k-data-item>
+          <k-data-item name="price" label="Price"></k-data-item>
+          <k-data-item name="stock" label="Stock"></k-data-item>
+          <k-data-item name="enable" type="switch" label="State"></k-data-item>
+        </k-data>
+
+        <k-data
+          id="add_to_cart"
+          post="http://kcomponent.localkooboo.com/commerce/add_to_cart"
+          to="/_Admin/demo/commerce/cart.html"
+        >
+          <k-data-header name="jwt_token" source="cookie"></k-data-header>
+          <k-data-query name="id"></k-data-query>
+        </k-data>
+
+        <k-card>
+          <k-inline align="end">
+            <k-text>Title:</k-text>
+            <k-text data="title" color="#777"></k-text>
+          </k-inline>
+          <k-inline>
+            <k-fill>
+              <k-inline>
+                <k-text>Type:</k-text>
+                <k-text data="typeName" color="#777"></k-text>
+              </k-inline>
+            </k-fill>
+            <k-fill>
+              <k-inline>
+                <k-text>State:</k-text>
+                <k-input type="switch" data="enable" disabled></k-input>
+              </k-inline>
+            </k-fill>
+          </k-inline>
+          <k-text>Description:</k-text>
+          <k-html data="description"></k-html>
+        </k-card>
+        <k-table data="variants_data">
+          <k-table-action
+            post="add_to_cart"
+            label="Add to cart"
+          ></k-table-action>
+        </k-table>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

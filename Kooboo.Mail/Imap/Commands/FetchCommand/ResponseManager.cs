@@ -1,37 +1,33 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand
 {
-    public static  class ResponseManager
+    public static class ResponseManager
     {
-        private static List<ICommandResponse> _list; 
+        private static List<ICommandResponse> _list;
         public static List<ICommandResponse> List
         {
             get
             {
-                if (_list  ==null)
+                if (_list == null)
                 {
                     _list = new List<ICommandResponse>();
-                    _list.Add(new ResponseItem.FLAGS()); 
-                    _list.Add(new ResponseItem.INTERNALDATE()); 
+                    _list.Add(new ResponseItem.FLAGS());
+                    _list.Add(new ResponseItem.INTERNALDATE());
                     _list.Add(new ResponseItem.UID());
                     _list.Add(new ResponseItem.BODY());
                     _list.Add(new ResponseItem.BODY_PEEK());
                     _list.Add(new ResponseItem.BODYSTRUCTURE());
                     _list.Add(new ResponseItem.ENVELOPE());
-                    _list.Add(new ResponseItem.RFC822_SIZE()); 
+                    _list.Add(new ResponseItem.RFC822_SIZE());
                     _list.Add(new ResponseItem.RFC822_HEADER());
                     _list.Add(new ResponseItem.RFC822_TEXT());
                     _list.Add(new ResponseItem.RFC822());
                 }
-                return _list; 
+                return _list;
             }
         }
 
@@ -39,8 +35,14 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
         {
             string Name = dataItem.Name.ToUpper();
             var item = List.Find(o => o.Name == Name);
-
-            return item.Render(maildb, message, dataItem); 
+            if (item != null)
+            {
+                return item.Render(maildb, message, dataItem);
+            }
+            else
+            {
+                return new List<ImapResponse>();
+            }
         }
     }
 }

@@ -2,9 +2,6 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Render.ServerSide
 {
@@ -12,33 +9,33 @@ namespace Kooboo.Render.ServerSide
     {
         static TaskContainer()
         {
-             
-                _list = new Dictionary<string, Type>();
 
-                List<Type> types = new List<Type>();
-                types.Add(typeof(LoadJs));
-                types.Add(typeof(SetHtml));
-                types.Add(typeof(LoadJsFolder));
-                types.Add(typeof(LoadFolder));
-                types.Add(typeof(SetMethods));
+            _list = new Dictionary<string, Type>();
 
-                foreach (var type in types)
-                {
+            List<Type> types = new List<Type>();
+            types.Add(typeof(LoadJs));
+            types.Add(typeof(SetHtml));
+            types.Add(typeof(LoadJsFolder));
+            types.Add(typeof(LoadFolder));
+            types.Add(typeof(SetMethods));
 
-                    var instance = Activator.CreateInstance(type) as IServerTask;
+            foreach (var type in types)
+            {
 
-                    var name = instance.name;
-                    name = "k." + name;
+                var instance = Activator.CreateInstance(type) as IServerTask;
 
-                    _list.Add(name, type);
+                var name = instance.name;
+                name = "k." + name;
 
-                }
-        
-         
+                _list.Add(name, type);
+
+            }
+
+
         }
 
 
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
         private static Dictionary<string, Type> _list;
         public static Dictionary<string, Type> list
@@ -51,7 +48,7 @@ namespace Kooboo.Render.ServerSide
                     {
                         if (_list == null)
                         {
-                            _list = new Dictionary<string, Type>();
+                            var list = new Dictionary<string, Type>();
 
                             List<Type> types = new List<Type>();
                             types.Add(typeof(LoadJs));
@@ -68,17 +65,17 @@ namespace Kooboo.Render.ServerSide
                                 var name = instance.name;
                                 name = "k." + name;
 
-                                _list.Add(name, type);
+                                list.Add(name, type);
 
                             }
-                             
+                            _list = list;
                         }
                     }
                 }
                 return _list;
             }
         }
-  
+
 
     }
 }

@@ -1,11 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -15,7 +10,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return "session"; 
+                return "session";
             }
         }
 
@@ -23,7 +18,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -31,16 +26,24 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
         public virtual Kooboo.Data.Session.Requirement Requirement(ApiCall call)
         {
             // return the session requirement. 
-           return new Data.Session.Requirement() { };    
+            return new Data.Session.Requirement() { };
         }
-          
 
+        public bool ValidDevPassword(ApiCall call)
+        {
+
+            var pass = call.Context.Request.Body;
+
+            return Kooboo.Sites.Service.WebSiteService.DevelopmentAccess.TryGrantAccess(call.Context, pass);
+
+            // return AccessControl.ValidDevAccess(call.Context);
+        }
     }
 }

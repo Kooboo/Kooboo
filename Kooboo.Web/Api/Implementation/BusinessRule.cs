@@ -1,35 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.ComponentModel;
+using System.Linq;
 using Kooboo.Api;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.FrontEvent;
 using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Kooboo.Sites.Repository;
+using Microsoft.OpenApi.Extensions;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class BusinessRuleApi : SiteObjectApi<BusinessRule>
     {
-
-        public virtual Dictionary<Guid, string> GetAvailableCodes(string eventname, ApiCall call)
-        {
-            Enum.TryParse(eventname, out Kooboo.Sites.FrontEvent.enumEventType enumeventyptye);
-
-            var sitedb = call.WebSite.SiteDb();
-
-            var allcode = sitedb.Code.GetByEvent(enumeventyptye);
-
-            Dictionary<Guid, string> result = new Dictionary<Guid, string>();
-
-            foreach (var item in allcode)
-            {
-                result.Add(item.Id, item.Name);
-            }
-            return result;
-        }
-
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
         public List<Data.Models.SimpleSetting> GetSetting(Guid id, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -42,6 +27,7 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Sites.Scripting.Manager.GetSetting(call.Context.WebSite, code);
         }
 
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
         public virtual void Post(string eventName, List<IFElseRule> rules, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -49,6 +35,15 @@ namespace Kooboo.Web.Api.Implementation
             string righteventname = getname<Sites.FrontEvent.enumEventType>(eventName);
 
             Enum.TryParse(righteventname, out Sites.FrontEvent.enumEventType eventtype);
+            var oldRules = sitedb.Rules.List().Where(o => o.EventType == eventtype).ToList();
+
+            foreach (var item in oldRules)
+            {
+                if (rules.All(a => a.Id != item.Id))
+                {
+                    sitedb.Rules.Delete(item.Id);
+                }
+            }
 
             foreach (var item in rules)
             {
@@ -81,18 +76,21 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.VIEW)]
         public override List<object> List(ApiCall call)
         {
-            List<eventcount> counts = new List<eventcount>();
             var sitedb = call.WebSite.SiteDb();
-            var groupby = sitedb.Rules.List().GroupBy(o => o.EventType);
-
-            foreach (var item in groupby)
-            {
-                var name = Enum.GetName(typeof(Kooboo.Sites.FrontEvent.enumEventType), item.Key);
-                counts.Add(new eventcount() { name = name, count = item.Count() });
-            }
-            return counts.ToList<object>();
+            return sitedb
+                .Rules
+                .List()
+                .GroupBy(o => o.EventType)
+                .Select(item =>
+                {
+                    var name = Enum.GetName(typeof(enumEventType), item.Key);
+                    return new eventcount() { name = name, count = item.Count() };
+                })
+                .OrderBy(it => it.name)
+                .ToList<object>();
         }
 
         public class eventcount
@@ -101,29 +99,55 @@ namespace Kooboo.Web.Api.Implementation
             public int count { get; set; }
         }
 
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.VIEW)]
         public virtual List<IFElseRule> ListByEvent(string eventname, ApiCall call)
         {
-            var enumvalue = Lib.Helper.EnumHelper.GetEnum<Kooboo.Sites.FrontEvent.enumEventType>(eventname);
-
+            var enumvalue = Lib.Helper.EnumHelper.GetEnum<enumEventType>(eventname);
             var sitedb = call.WebSite.SiteDb();
+            var list = sitedb.Rules.List().Where(o => o.EventType == enumvalue).Select(s => s.Rule).ToList();
 
-            return convert(sitedb.Rules.List().Where(o => o.EventType == enumvalue).ToList());
+            foreach (var item in list)
+            {
+                SetCodeSource(item, call.Context.WebSite.SiteDb());
+            }
+
+            return list;
         }
 
-        List<IFElseRule> convert(List<BusinessRule> rules)
+        void SetCodeSource(IFElseRule rule, SiteDb siteDb)
         {
-            if (rules == null)
+            if (rule.Do != null)
             {
-                return null;
-            }
-            List<IFElseRule> converted = new List<IFElseRule>();
-            foreach (var item in rules)
-            {
-                converted.Add(item.Rule);
-            }
-            return converted;
-        }
+                foreach (var action in rule.Do)
+                {
+                    if (action.Code == null && action.CodeId != default)
+                    {
+                        var code = siteDb.Code.Get(action.CodeId);
 
+                        if (code != null)
+                        {
+                            action.Code = code.Body;
+                        }
+                    }
+                }
+            }
+
+            if (rule.Then != null)
+            {
+                foreach (var i in rule.Then)
+                {
+                    SetCodeSource(i, siteDb);
+                }
+            }
+
+            if (rule.Else != null)
+            {
+                foreach (var i in rule.Else)
+                {
+                    SetCodeSource(i, siteDb);
+                }
+            }
+        }
 
         public List<EventConditionSetting> ConditionOption(string eventname, ApiCall call)
         {
@@ -133,11 +157,68 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
         public virtual void DeleteRule(Guid id, ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
             sitedb.Rules.Delete(id);
         }
 
+        public object[] EventList()
+        {
+
+            return Enum.GetNames(typeof(enumEventType)).Select(s =>
+            {
+                var attribute = Enum.Parse<enumEventType>(s).GetAttributeOfType<CategoryAttribute>();
+
+                return new
+                {
+                    Name = s,
+                    attribute.Category
+                };
+            }).ToArray();
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public override bool IsUniqueName(ApiCall call)
+        {
+            return base.IsUniqueName(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            return base.Post(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
     }
 }

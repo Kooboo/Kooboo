@@ -1,16 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Mail.Imap
 {
- public static  class Setting
+    public static class Setting
     {
-        private static string[] _flags; 
+        private static string[] _flags;
 
         public static string[] SupportFlags
         {
@@ -19,15 +13,15 @@ namespace Kooboo.Mail.Imap
                 if (_flags == null)
                 {
                     //\Answered \Flagged \Deleted \Seen \Draft
-                    _flags = new string[] { "Seen", "Answered", "Flagged", "Deleted" }; 
+                    _flags = new string[] { "Seen", "Answered", "Flagged", "Deleted" };
 
                 }
-                return _flags; 
+                return _flags;
             }
         }
 
         //PERMANENTFLAGS
-        private static string[] _permanentflags; 
+        private static string[] _permanentflags;
         public static string[] PermanentFlags
         {
             get

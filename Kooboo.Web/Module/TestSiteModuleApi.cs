@@ -2,11 +2,6 @@
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Module;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Modules
 {
@@ -17,12 +12,12 @@ namespace Kooboo.Web.Modules
         public Dictionary<string, string> methodone(ApiCall call)
         {
             Dictionary<string, string> response = new Dictionary<string, string>();
-            response.Add("callfrom", call.Context.Request.IP); 
-            if (call.WebSite !=null)
+            response.Add("callfrom", call.Context.Request.IP);
+            if (call.WebSite != null)
             {
-                response.Add("sitename", call.WebSite.Name); 
-            } 
-            return response; 
+                response.Add("sitename", call.WebSite.Name);
+            }
+            return response;
         }
     }
 }

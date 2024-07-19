@@ -1,9 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Render.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kooboo.Lib;
+using Kooboo.Render.Response;
 
 namespace Kooboo.Render
 {
@@ -196,7 +197,7 @@ namespace Kooboo.Render
 
         private string GetAppSetting(string Name)
         {
-            return System.Configuration.ConfigurationManager.AppSettings.Get(Name);
+            return AppSettingsUtility.Get(Name);
         }
 
         public bool RequireUser { get; set; }
@@ -218,6 +219,7 @@ namespace Kooboo.Render
 
         public string MultilingualJsFile { get; set; }
 
+        public bool HtmlRaw { get; set; }
 
     }
 

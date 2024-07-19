@@ -43,7 +43,7 @@ namespace dotless.Core.Parser.Infrastructure
 
         //expressions
         Expression Expression(NodeList expression, NodeLocation location);
- #if CSS3EXPERIMENTAL
+#if CSS3EXPERIMENTAL
         RepeatEntity RepeatEntity(Node value, Node repeatCount, int index);
 #endif
         Value Value(IEnumerable<Node> values, string important, NodeLocation location);

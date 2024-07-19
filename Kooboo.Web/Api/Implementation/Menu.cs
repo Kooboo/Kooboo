@@ -1,20 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Sites.Models;
-using Kooboo.Api.ApiResponse;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using Kooboo.Web.ViewModel;
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Models;
+using Kooboo.Data.Permission;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Web.ViewModel;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class MenuApi : SiteObjectApi<Menu>
     {
         [Kooboo.Attributes.RequireParameters("data", "rootid")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public JsonResponse Update(ApiCall call)
         {
             string data = call.GetValue("Data");
@@ -42,13 +42,14 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("rootid", "id", "Value")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public bool UpdateText(ApiCall call)
         {
             Guid id = call.ObjectId;
-            string strroot = call.GetValue("RootId");
+            string strRoot = call.GetValue("RootId");
             Guid RootId = default(Guid);
 
-            if (System.Guid.TryParse(strroot, out RootId))
+            if (System.Guid.TryParse(strRoot, out RootId))
             {
                 var root = call.WebSite.SiteDb().Menus.Get(RootId);
 
@@ -59,7 +60,7 @@ namespace Kooboo.Web.Api.Implementation
                     string text = call.GetValue("Value");
                     sub.Name = text;
                     sub.Values[call.WebSite.DefaultCulture] = text;
-                     
+
                     call.WebSite.SiteDb().Menus.AddOrUpdate(root, call.Context.User.Id);
                     return true;
                 }
@@ -69,6 +70,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId", "Url")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public bool UpdateUrl(ApiCall call)
         {
             Guid id = call.ObjectId;
@@ -94,6 +96,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         //[Kooboo.Attributes.RequireParameters("Id", "RootId", "SubItemTemplate", "SubItemContainer")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public bool UpdateTemplate(ApiCall call)
         {
             string template = call.GetValue("Template");
@@ -129,6 +132,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.VIEW)]
         public Dictionary<string, string> GetLang(ApiCall call)
         {
             Guid id = call.ObjectId;
@@ -168,6 +172,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId", "Values")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public string UpdateLang(ApiCall call)
         {
             Guid id = call.ObjectId;
@@ -201,26 +206,29 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
+        [Permission(Feature.MENU, Action = Data.Permission.Action.VIEW)]
         public override List<object> List(ApiCall call)
         {
-            List<MainMenuItemViewModel> result = new List<MainMenuItemViewModel>();
             var sitedb = call.WebSite.SiteDb();
             int StoreNameHash = Lib.Security.Hash.ComputeInt(sitedb.Menus.StoreName);
-            foreach (var item in sitedb.Menus.All())
-            {
-                MainMenuItemViewModel model = new MainMenuItemViewModel();
-                model.Id = item.Id;
-                model.Name = item.Name;
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = StoreNameHash;
-                model.LastModified = item.LastModified;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Menus.GetUsedBy(item.Id));
-                result.Add(model);
-            }
-            return result.ToList<object>();
+
+            return sitedb.Menus
+                .All()
+                .SortByNameOrLastModified(call)
+                .Select(item => new MainMenuItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = StoreNameHash,
+                    LastModified = item.LastModified,
+                    Relations = Sites.Helper.RelationHelper.Sum(sitedb.Menus.GetUsedBy(item.Id))
+                })
+                .ToList<object>();
         }
 
         [Kooboo.Attributes.RequireParameters("Name")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public Menu Create(ApiCall call)
         {
             string Name = call.GetValue("Name");
@@ -240,7 +248,7 @@ namespace Kooboo.Web.Api.Implementation
                 menu.Name = Name;
                 sitedb.Menus.AddOrUpdate(menu);
                 return menu;
-            } 
+            }
             return null;
         }
 
@@ -251,7 +259,8 @@ namespace Kooboo.Web.Api.Implementation
 
 
         [Kooboo.Attributes.RequireParameters("ParentId", "RootId", "Name", "Url")]
-        public Menu CreateSub(ApiCall call)
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
+        public virtual Menu CreateSub(ApiCall call)
         {
             Guid ParentId = call.GetGuidValue("ParentId");
             Guid RootId = call.GetGuidValue("RootId");
@@ -283,7 +292,8 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-        private Menu GetSubMenu(Menu Menu, Guid SubId)
+        [Permission(Feature.MENU, Action = Data.Permission.Action.VIEW)]
+        protected Menu GetSubMenu(Menu Menu, Guid SubId)
         {
             if (Menu.Id == SubId)
             {
@@ -302,7 +312,8 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-        public List<SiteMenuItemViewModel> GetFlat(ApiCall call)
+        [Permission(Feature.MENU, Action = Data.Permission.Action.VIEW)]
+        public virtual List<SiteMenuItemViewModel> GetFlat(ApiCall call)
         {
             Menu menu = null;
             if (call.ObjectId != default(Guid))
@@ -342,6 +353,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public override bool Delete(ApiCall call)
         {
 
@@ -410,6 +422,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("rootid", "ida", "idb")]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
         public void Swap(ApiCall call)
         {
             Guid rootid = call.GetGuidValue("rootid");
@@ -417,6 +430,36 @@ namespace Kooboo.Web.Api.Implementation
             Guid idb = call.GetGuidValue("idb");
 
             call.WebSite.SiteDb().Menus.Swap(rootid, ida, idb, call.Context.User.Id);
-        } 
+        }
+
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.MENU, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.MENU, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            return base.Post(call);
+        }
+
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
     }
 }

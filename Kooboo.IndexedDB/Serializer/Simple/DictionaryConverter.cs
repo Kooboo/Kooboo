@@ -1,13 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
+using Kooboo.IndexedDB.Helper;
 
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
-  public  class DictionaryConverter
+    public class DictionaryConverter
     {
 
         private Type KeyType;
@@ -24,18 +24,18 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         private Func<byte[], object> GetValueObjectValue;
 
         private bool IsIgnoreCase { get; set; }
-   
+
         public DictionaryConverter(Type DictionaryType, bool KeyIgnoreCase = false)
         {
-            this.IsIgnoreCase = KeyIgnoreCase; 
+            this.IsIgnoreCase = KeyIgnoreCase;
 
             this.DictionaryType = DictionaryType;
             KeyType = ObjectHelper.GetDictionaryKeyType(DictionaryType);
             ValueType = ObjectHelper.GetDictionaryValueType(DictionaryType);
- 
+
             KeyLength = ConverterHelper.GetTypeLength(KeyType);
             Valuelength = ConverterHelper.GetTypeLength(ValueType);
- 
+
             GetKeyObjectBytes = ConverterHelper.GetValueToBytes(KeyType);
             GetKeyObjectValue = ConverterHelper.GetBytesToValue(KeyType);
 
@@ -53,7 +53,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
         }
 
-   
+
         public object FromBytes(byte[] bytes)
         {
             List<byte[]> keybytes = new List<byte[]>();
@@ -134,7 +134,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 if (valuestartposition >= ValueByteLen)
                 { break; }
             }
-             
+
             System.Collections.IDictionary dict = null;
             if (this.IsIgnoreCase)
             {
@@ -159,12 +159,26 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     var dictkey = this.GetKeyObjectValue(keybyte);
                     if (valuebyte == null)
                     {
-                        dict.Add(dictkey, null);
+                        if (!dict.Contains(dictkey))
+                        {
+                            dict.Add(dictkey, null);
+                        }
                     }
                     else
                     {
                         var dictvalue = this.GetValueObjectValue(valuebyte);
-                        dict.Add(dictkey, dictvalue);
+                        if (!dict.Contains(dictkey))
+                        {
+                            dict.Add(dictkey, dictvalue);
+                        }
+                        else
+                        {
+                            var current = dict[dictkey];
+                            if (current == null)
+                            {
+                                dict[dictkey] = dictvalue;
+                            }
+                        }
                     }
                 }
 
@@ -172,22 +186,39 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 {
                     if (valuebyte == null)
                     {
-                        dict.Add(string.Empty, null);
+                        if (!dict.Contains(string.Empty))
+                        {
+                            dict.Add(string.Empty, null);
+                        }
                     }
                     else
                     {
                         var dictvalue = this.GetValueObjectValue(valuebyte);
-                        dict.Add(string.Empty, dictvalue);
+
+                        if (!dict.Contains(string.Empty))
+                        {
+
+                            dict.Add(string.Empty, dictvalue);
+                        }
+                        else
+                        {
+                            var current = dict[string.Empty];
+                            if (current == null)
+                            {
+                                dict[string.Empty] = dictvalue;
+                            }
+                        }
+
                     }
                 }
 
             }
 
-            return dict; 
+            return dict;
         }
 
         public byte[] ToBytes(object value)
-        {  
+        {
             if (value == null)
             { return null; }
             var dict = value as System.Collections.IDictionary;
@@ -240,11 +271,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 }
                 else
                 {
-                    int len = this.Valuelength; 
-                    if (len ==0 && ValueResult !=null)
+                    int len = this.Valuelength;
+                    if (len == 0 && ValueResult != null)
                     {
-                        len = ValueResult.Length; 
-                    } 
+                        len = ValueResult.Length;
+                    }
                     ValueResults.Add(BitConverter.GetBytes(len));
                     ValueResults.Add(ValueResult);
                     ValueTotalLen += 4 + len;

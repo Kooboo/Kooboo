@@ -3,11 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Kooboo.Reflection
 {
@@ -17,7 +13,7 @@ namespace Kooboo.Reflection
     }
 
     public class CollectionWrapper<T> : ICollection<T>, IWrappedCollection
-    { 
+    {
         private readonly ICollection<T> _genericCollection;
         private object _syncRoot;
 
@@ -43,68 +39,68 @@ namespace Kooboo.Reflection
             if (_genericCollection != null)
             {
                 _genericCollection.Add(item);
-            } 
+            }
         }
 
         public virtual void Clear()
         {
-            _genericCollection.Clear(); 
-        
+            _genericCollection.Clear();
+
         }
-  
+
         public virtual void CopyTo(T[] array, int arrayIndex)
         {
-               _genericCollection.CopyTo(array, arrayIndex);
-       
+            _genericCollection.CopyTo(array, arrayIndex);
+
         }
 
         public virtual int Count
         {
             get
-            { 
-                    return _genericCollection.Count; 
+            {
+                return _genericCollection.Count;
             }
-        } 
+        }
 
         public virtual bool Remove(T item)
         {
-           
-             return _genericCollection.Remove(item);
-    
+
+            return _genericCollection.Remove(item);
+
         }
 
         public virtual IEnumerator<T> GetEnumerator()
-        { 
-            return _genericCollection.GetEnumerator(); 
+        {
+            return _genericCollection.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-                return _genericCollection.GetEnumerator(); 
+            return _genericCollection.GetEnumerator();
         }
 
         int IList.Add(object value)
-        { 
-            Add((T)value); 
+        {
+            Add((T)value);
             return (Count - 1);
         }
-   
+
 
         bool IList.IsFixedSize
         {
             get
             {
-                
-               return _genericCollection.IsReadOnly;
-        
+
+                return _genericCollection.IsReadOnly;
+
             }
         }
 
         void IList.Remove(object value)
-        { 
-                Remove((T)value); 
+        {
+            Remove((T)value);
         }
-         
+
 
         void ICollection.CopyTo(Array array, int arrayIndex)
         {
@@ -128,11 +124,11 @@ namespace Kooboo.Reflection
                 return _syncRoot;
             }
         }
-         
-         
+
+
         public bool Contains(T item)
         {
-            return _genericCollection.Contains(item); 
+            return _genericCollection.Contains(item);
         }
 
         public bool Contains(object value)
@@ -158,7 +154,8 @@ namespace Kooboo.Reflection
         public object UnderlyingCollection
         {
             get
-            {     return _genericCollection; 
+            {
+                return _genericCollection;
             }
         }
 

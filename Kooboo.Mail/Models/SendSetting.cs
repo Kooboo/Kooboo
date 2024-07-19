@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Mail.Models
 {
@@ -19,7 +17,13 @@ namespace Kooboo.Mail.Models
 
         public int Port { get; set; } = 25;
 
-        public string KoobooServerIp { get; set; }
+        public bool CustomSmtp { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+
+        public string Server { get; set; }
 
         public List<string> Mxs { get; set; }
     }

@@ -1,87 +1,106 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using Kooboo.Api;
+using Kooboo.Data.Permission;
+using Kooboo.Dom;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class PageApi : SiteObjectApi<Page>
     {
-        public PageListViewModel All(ApiCall apiCall)
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.MENU, Action = Data.Permission.Action.EDIT)]
+        public List<PageViewModel> All(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();
+            var result = new List<PageViewModel>();
 
-            PageListViewModel model = new PageListViewModel();
-            model.Layouts = sitedb.Layouts.All();
-            model.BaseUrl = sitedb.WebSite.BaseUrl();
+            var pages = sitedb.Pages.All();
 
-            foreach (var item in sitedb.Pages.All().OrderBy(o => o.Name))
+            foreach (var item in pages.SortByNameOrLastModified(apiCall))
             {
-                PageViewModel pagemodel = ToPageModel(sitedb, item);
+                PageViewModel model = ToPageModel(sitedb, item);
 
-                model.Pages.Add(pagemodel);
+                result.Add(model);
             }
-            return model;
+
+            return result;
         }
 
-        private PageViewModel ToPageModel(SiteDb sitedb, Page item)
+        protected PageViewModel ToPageModel(SiteDb sitedb, Page item)
         {
-            PageViewModel pagemodel = new PageViewModel()
+            PageViewModel pageModel = new PageViewModel();
+
+            pageModel.Id = item.Id;
+            pageModel.Name = item.Name;
+            pageModel.Type = item.Type;
+            pageModel.Online = item.Online;
+
+            if (item.HasLayout)
             {
-                Id = item.Id,
-                Name = item.Name,
-                Type = item.Type,
-                Online = item.Online,
-                Path = Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, item),
-                PreviewUrl = PageService.GetPreviewUrl(sitedb, item),
-                Linked = sitedb.Relations.GetReferredBy(item).Count(),
-                LayoutId = GetLayoutId(item),
-                // PageView = sitedb.VisitorLog.QueryDescending(o => o.ObjectId == item.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
-                LastModified = item.LastModified,
-                StartPage = item.DefaultStart,
-                InlineUrl = "/_api/redirect/inline?siteid=" + sitedb.WebSite.Id + "&pageid=" + item.Id
-            };
+                pageModel.LayoutId = Data.IDGenerator.Generate(item.LayoutName, ConstObjectType.Layout);
+            }
+
+            pageModel.LastModified = item.LastModified;
+            pageModel.StartPage = item.DefaultStart;
+            pageModel.InlineUrl = "/_api/v2/redirect/inline?siteid=" + sitedb.WebSite.Id + "&pageid=" + item.Id;
+
+            pageModel.Path = Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, item);
+            pageModel.PreviewUrl = PageService.GetPreviewUrl(sitedb, item);
+            pageModel.Linked = sitedb.Relations.GetReferredBy(item).Count();
+            pageModel.HasParameter = PageService.GetUrlParas(sitedb, item.Id).Any();
+
+            if (item.Type == PageType.RichText)
+            {
+                string body = item.Body;
+                var doc = Kooboo.Dom.DomParser.CreateDom(body);
+                var titleTag = doc.head.getElementsByTagName("title");
+                if (titleTag != null && titleTag.length > 0)
+                {
+                    pageModel.Title = titleTag.item[0].InnerHtml;
+                }
+            }
 
             var relations = sitedb.Relations.GetRelations(item.Id);
 
             if (relations != null && relations.Count() > 0)
             {
-                var relationresult = pagemodel.Relations;
-                foreach (var onerelation in relations.Where(o => o.ConstTypeY == ConstObjectType.Layout || o.ConstTypeY == ConstObjectType.View || o.ConstTypeY == ConstObjectType.Form || o.ConstTypeY == ConstObjectType.HtmlBlock || o.ConstTypeY == ConstObjectType.Menu))
+                var relationResult = pageModel.Relations;
+                foreach (var oneRelation in relations.Where(o => o.ConstTypeY == ConstObjectType.Layout || o.ConstTypeY == ConstObjectType.View || o.ConstTypeY == ConstObjectType.Form || o.ConstTypeY == ConstObjectType.HtmlBlock || o.ConstTypeY == ConstObjectType.Menu))
                 {
-                    var objecttypename = ConstTypeService.GetModelType(onerelation.ConstTypeY).Name;
-                    if (relationresult.ContainsKey(objecttypename))
+                    var objectTypeName = ConstTypeService.GetModelType(oneRelation.ConstTypeY).Name;
+                    if (relationResult.ContainsKey(objectTypeName))
                     {
-                        var value = relationresult[objecttypename];
+                        var value = relationResult[objectTypeName];
                         value = value + 1;
-                        relationresult[objecttypename] = value;
+                        relationResult[objectTypeName] = value;
                     }
                     else
-                    { relationresult.Add(objecttypename, 1); }
+                    { relationResult.Add(objectTypeName, 1); }
                 }
             }
 
-            return pagemodel;
+            return pageModel;
         }
 
-        public Guid GetLayoutId(Page page)
+        public static Guid GetLayoutId(Page page)
         {
-            string layoutname = Kooboo.Sites.Service.PageService.GetLayoutName(page);
-            if (string.IsNullOrEmpty(layoutname))
+            string layoutName = Kooboo.Sites.Service.PageService.GetLayoutName(page);
+            if (string.IsNullOrEmpty(layoutName))
             {
                 return default(Guid);
             }
             else
             {
-                return Data.IDGenerator.Generate(layoutname, ConstObjectType.Layout);
+                return Data.IDGenerator.Generate(layoutName, ConstObjectType.Layout);
             }
         }
 
@@ -95,33 +114,33 @@ namespace Kooboo.Web.Api.Implementation
                 Path = ObjectService.GetObjectRelativeUrl(SiteDb, page),
                 PreviewUrl = PageService.GetPreviewUrl(SiteDb, page),
                 Linked = SiteDb.Relations.GetReferredBy(page).Count(),
-                PageView = SiteDb.VisitorLog.QueryDescending(o => o.ObjectId == page.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
+                //PageView = SiteDb.VisitorLog.QueryDescending(o => o.ObjectId == page.Id).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Take(999999).Count(),
                 LastModified = page.LastModified,
                 InlineUrl = "/_api/redirect/inline?siteid=" + SiteDb.WebSite.Id + "&pageid=" + page.Id
             };
         }
 
-        public PageEditViewModel GetEdit(ApiCall call)
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public virtual PageEditViewModel GetEdit(ApiCall call)
         {
             // optional type.  
-            string baseurl = call.Context.WebSite.BaseUrl();
-            baseurl = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(baseurl, call.Context.WebSite);
             Guid PageId = call.ObjectId;
             var sitedb = call.WebSite.SiteDb();
 
-            if (PageId == default(Guid))
+            if (PageId == default)
             {
-                string layoutid = call.GetValue("layoutid");
+                string layoutId = call.GetValue("layoutid");
                 string type = call.GetValue("type");
 
                 var result = new PageEditViewModel();
 
-                if (!string.IsNullOrEmpty(layoutid))
+                if (!string.IsNullOrEmpty(layoutId))
                 {
-                    var Layout = sitedb.Layouts.GetByNameOrId(layoutid);
+                    var Layout = sitedb.Layouts.GetByNameOrId(layoutId);
                     if (Layout != null)
                     {
                         result.Body = InitPageLayoutSource(Layout);
+                        result.Type = PageType.Layout;
                     }
                 }
                 else if (!string.IsNullOrEmpty(type) && (type.ToLower() == "richtext"))
@@ -130,8 +149,26 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-                    result.Body = "<html><head></head><body><div></div></body></html>";
-                    result.Body = HtmlHeadService.SetBaseHref(result.Body, baseurl);
+                    result.Body = $@"<!DOCTYPE html>
+<html lang=""en"">
+
+<head>
+    <meta charset=""UTF-8"">
+    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Document</title>
+</head>
+
+<body>
+    <div></div>
+</body>
+
+</html>";
+                }
+
+                if (Enum.TryParse<PageType>(type, out var pageType))
+                {
+                    result.Type = pageType;
                 }
 
                 return result;
@@ -140,17 +177,21 @@ namespace Kooboo.Web.Api.Implementation
             var page = sitedb.Pages.Get(PageId);
             var route = sitedb.Routes.GetByObjectId(page.Id);
 
-            var model = new PageEditViewModel();
-            model.Id = page.Id;
-            model.Name = page.Name;
-            model.Published = page.Online;
-            model.UrlPath = route == null ? null : route.Name;
-            model.Type = page.Type;
-            model.EnableCache = page.EnableCache;
-            model.CacheMinutes = page.CacheMinutes;
-            model.CacheQueryKeys = page.CacheQueryKeys;
-
-            model.CacheByVersion = page.CacheByVersion;
+            var model = new PageEditViewModel
+            {
+                Id = page.Id,
+                Name = page.Name,
+                Published = page.Online,
+                UrlPath = route == null ? null : route.Name,
+                Type = page.Type,
+                EnableCache = page.EnableCache,
+                CacheMinutes = page.CacheMinutes,
+                CacheQueryKeys = page.CacheQueryKeys,
+                CacheByVersion = page.CacheByVersion,
+                Version = page.Version,
+                PreviewUrl = PageService.GetPreviewUrl(sitedb, page),
+                DesignConfig = page.DesignConfig
+            };
 
             if (page.Type == PageType.RichText)
             {
@@ -170,9 +211,6 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     // HtmlHeadService.AppendHeader(page.Body, page.Headers);
                 }
-
-                string body = string.IsNullOrEmpty(page.Body) ? string.Empty : HtmlHeadService.SetBaseHref(page.Body, baseurl);
-
                 model.LayoutName = page.LayoutName;
                 model.LayoutId = Kooboo.Data.IDGenerator.GetOrGenerate(page.LayoutName, ConstObjectType.Layout);
                 model.Metas = page.Headers.Metas;
@@ -181,15 +219,54 @@ namespace Kooboo.Web.Api.Implementation
                 model.UrlParamsBindings = PageService.GetUrlParas(sitedb, PageId);
                 model.ContentTitle = page.Headers.Titles;
                 model.Parameters = page.Parameters;
-                model.Body = body;
                 model.Scripts = page.Headers.Scripts;
                 model.Styles = page.Headers.Styles;
+                model.Body = page.Body;
+                model.DesignConfig = page.DesignConfig;
             }
 
             return model;
         }
 
-        private string InitPageLayoutSource(Layout layout)
+        public string GetDesignTemplate(ApiCall call)
+        {
+            var html = $@"<!DOCTYPE html>
+<html lang=""en"">
+
+<head>
+    <meta charset=""UTF-8"">
+    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Document</title>
+</head>
+
+<body>
+    <div></div>
+</body>
+
+</html>";
+            var script = VisualEditorHelper.GetInjects(call);
+
+            var dom = DomParser.CreateDom(html);
+            var changes = new List<SourceUpdate> {
+                new SourceUpdate
+                {
+                    StartIndex = dom.head.location.endTokenStartIndex - 1,
+                    EndIndex = dom.head.location.endTokenStartIndex - 1,
+                    NewValue = $"\t{script}\n"
+                },
+                new SourceUpdate
+                {
+                    StartIndex = dom.body.location.openTokenEndIndex + 1,
+                    EndIndex = dom.body.location.endTokenStartIndex - 1,
+                    NewValue = "<ve-placeholder></ve-placeholder>"
+                }
+            };
+
+            return DomService.UpdateSource(html, changes);
+        }
+
+        protected string InitPageLayoutSource(Layout layout)
         {
             var dom = layout.Dom;
             HashSet<string> placeholderNames = new HashSet<string>();
@@ -225,33 +302,46 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireModel(typeof(PageUpdateViewModel))]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
         public override Guid Post(ApiCall call)
         {
             var model = call.Context.Request.Model as PageUpdateViewModel;
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("invalid name", call.Context));
+            }
 
-            var page = new Page();
-            page.Id = model.Id;
-            page.Name = model.Name;
-            page.EnableCache = model.EnableCache;
-            page.CacheByVersion = model.CacheByVersion;
-            page.CacheMinutes = model.CacheMinutes;
-            page.CacheQueryKeys = model.CacheQueryKeys;
-            page.Parameters = new Dictionary<string, string>(model.Parameters, StringComparer.OrdinalIgnoreCase);
+            var page = new Page
+            {
+                Id = model.Id,
+                Name = model.Name,
+                EnableCache = model.EnableCache,
+                CacheByVersion = model.CacheByVersion,
+                CacheMinutes = model.CacheMinutes,
+                CacheQueryKeys = model.CacheQueryKeys,
+                Online = model.Published,
+                Parameters = new Dictionary<string, string>(model.Parameters, StringComparer.OrdinalIgnoreCase)
+            };
             page.Headers.Metas = model.Metas;
             page.Headers.Styles = model.Styles;
             page.Headers.Scripts = model.Scripts;
             page.Headers.CustomHeader = model.CustomHeader;
             page.Headers.Titles = model.ContentTitle;
+            page.DesignConfig = model.DesignConfig;
 
             string body = HtmlHeadService.RemoveBaseHrel(model.Body);
 
             page.Body = body;
 
             page.LayoutName = PageService.GetLayoutName(page);
-
-            if (!string.IsNullOrEmpty(page.LayoutName))
+            if (string.IsNullOrEmpty(page.LayoutName) && !string.IsNullOrEmpty(model.LayoutName))
             {
-                page.Type = PageType.Layout;
+                page.LayoutName = model.LayoutName;
+            }
+
+            if (model.Type != null)
+            {
+                page.Type = model.Type.Value;
             }
 
             string routename = string.IsNullOrWhiteSpace(model.UrlPath) ? page.Name : model.UrlPath;
@@ -270,7 +360,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             //----
-            if (model.Id == default(Guid))
+            if (model.Id == default)
             {
                 sitedb.Routes.AddOrUpdate(routename, page, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
@@ -278,10 +368,9 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 var oldpage = sitedb.Pages.Get(model.Id);
-                if (oldpage == null)
-                {
-                    return model.Id;
-                }
+                if (oldpage == null) return model.Id;
+
+                (model as IDiffChecker).CheckDiff(oldpage);
 
                 page.DefaultStart = oldpage.DefaultStart;
                 page.IsSecure = oldpage.IsSecure;
@@ -305,7 +394,8 @@ namespace Kooboo.Web.Api.Implementation
             return page.Id;
         }
 
-        public Guid PostRichText(string name, string title, string body, string url, bool enableCache, bool cacheByVersion, int cacheMinutes, string cacheQueryKeys, ApiCall call)
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
+        public Guid PostRichText(string name, string body, string url, bool enableCache, bool cacheByVersion, int cacheMinutes, string cacheQueryKeys, bool published, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
@@ -316,6 +406,7 @@ namespace Kooboo.Web.Api.Implementation
 
             url = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(url);
             string PageBody = "<html>";
+            var title = call.Context.Request.GetValue("title");
             if (!string.IsNullOrEmpty(title))
             {
                 PageBody += "<head><title>" + title + "</title></head><body>";
@@ -334,6 +425,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 // new add. 
                 Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText, EnableCache = enableCache, CacheByVersion = cacheByVersion, CacheMinutes = cacheMinutes, CacheQueryKeys = cacheQueryKeys };
+                newpage.Online = published;
                 sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(newpage, call.Context.User.Id);
                 PageId = newpage.Id;
@@ -352,6 +444,7 @@ namespace Kooboo.Web.Api.Implementation
                 oldpage.CacheByVersion = cacheByVersion;
                 oldpage.CacheMinutes = cacheMinutes;
                 oldpage.CacheQueryKeys = cacheQueryKeys;
+                oldpage.Online = published;
 
                 sitedb.Pages.AddOrUpdate(oldpage, call.Context.User.Id);
 
@@ -366,10 +459,10 @@ namespace Kooboo.Web.Api.Implementation
             return PageId;
         }
 
-
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
         public void ConvertFile(ApiCall call)
         {
-            var files = Kooboo.Lib.NETMultiplePart.FormReader.ReadFile(call.Context.Request.PostData);
+            var files = call.Context.Request.Files;
 
             if (files != null && files.Count() > 0)
             {
@@ -383,7 +476,13 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         extension = extension.ToLower();
                     }
-                    if (extension == ".aspx" || extension == ".axd" || extension == ".asx" || extension == ".ashx" || extension == ".asmx" || extension == ".asp" || extension == ".cfm" || extension == ".yaws" || extension == ".html" || extension == ".htm" || extension == ".shtml" || extension == ".xhtml" || extension == ".jhtml" || extension == ".cshtml" || extension == ".jsp" || extension == ".jspx" || extension == ".wss" || extension == ".do" || extension == ".action" || extension == ".pl" || extension == ".php" || extension == ".php3" || extension == ".php4" || extension == ".phtml" || extension == ".py" || extension == ".cgi" || extension == ".dll" || extension == ".rb" || extension == ".rhtml")
+                    var textFileExtensions = new string[] { ".aspx", ".axd", ".asx", ".ashx", ".asmx", ".asp",
+                        ".cfm", ".yaws", ".html", ".htm", ".shtml", ".shtm",".xhtml",".ehtml",
+                        ".jhtml", ".cshtml", ".jsp", ".jspx", ".wss", ".do",
+                        ".action", ".pl", ".php", ".php3", ".php4", ".phtml",
+                        ".py", ".cgi", ".dll", ".rb", ".rhtml" };
+
+                    if (textFileExtensions.Contains(extension))
                     {
                         // import single page. 
                         var sitedb = call.WebSite.SiteDb();
@@ -403,7 +502,7 @@ namespace Kooboo.Web.Api.Implementation
                         return;
                     }
                     // upload to api...
-                    string api = Data.AppSettings.ConvertApiUrl + "/_api/converter/Convert";
+                    string api = Data.UrlSetting.Converter + "/_api/converter/Convert";
 
                     Dictionary<string, string> header = new Dictionary<string, string>();
                     header.Add("filename", System.Net.WebUtility.UrlEncode(filename));
@@ -456,6 +555,7 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Data.Cache.AccessTokenCache.GetNewToken(call.Context.User.Id);
         }
 
+        [Permission(Feature.PAGES, Action = "router")]
         public PageDefaultRouteViewModel DefaultRoute(ApiCall call)
         {
             PageDefaultRouteViewModel model = new PageDefaultRouteViewModel();
@@ -502,6 +602,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireModel(typeof(PageDefaultRouteViewModel))]
+        [Permission(Feature.PAGES, Action = "router")]
         public void DefaultRouteUpdate(ApiCall call)
         {
             PageDefaultRouteViewModel model = call.Context.Request.Model as PageDefaultRouteViewModel;
@@ -544,10 +645,11 @@ namespace Kooboo.Web.Api.Implementation
             {
                 website.CustomErrors.Remove(500);
             }
-            Data.GlobalDb.WebSites.AddOrUpdate(website);
+            Data.Config.AppHost.SiteRepo.AddOrUpdate(website);
         }
 
         [Kooboo.Attributes.RequireParameters("id", "name", "url")]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
         public PageViewModel Copy(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -558,7 +660,6 @@ namespace Kooboo.Web.Api.Implementation
                 var newpage = Lib.Serializer.Copy.DeepCopy<Page>(page);
                 newpage.CreationDate = DateTime.UtcNow;
                 newpage.LastModified = DateTime.UtcNow;
-
                 newpage.Name = call.GetValue("name");
                 newpage.Id = default(Guid);
                 string url = call.GetValue("url");
@@ -568,12 +669,81 @@ namespace Kooboo.Web.Api.Implementation
                     throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
                 }
 
-                sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
+                var model = JsonSerializer.Deserialize<JsonElement>(call.Context.Request.Body);
 
+                var nodes = model.GetProperty("pageStructure")
+                    .Deserialize<PageCopyService.NodeViewModel[]>(
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true,
+                        }
+                    );
+                var apply = new List<System.Action>();
+                newpage.Body = PageCopyService.ApplyCopyStructure(newpage.Body, nodes, sitedb, apply);
+                apply.ForEach(f => f());
+                var layoutNode = nodes.FirstOrDefault(f => f.Type == "layout" && f.Name == newpage.LayoutName);
+                if (layoutNode != default && layoutNode.Selected) newpage.LayoutName = layoutNode.NewName;
+                sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(newpage, call.Context.User.Id);
                 return ToPageModel(sitedb, newpage);
             }
             return null;
+        }
+
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public override List<object> List(ApiCall call)
+        {
+            return base.List(call);
+        }
+
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+
+        public override bool IsUniqueName(ApiCall call)
+        {
+            var page = call.Context.WebSite.SiteDb()
+                    .Pages
+                    .Query
+                    .Where(p => p.Name == call.NameOrId)
+                    .FirstOrDefault();
+
+            return page == null;
+        }
+
+        public PageCopyService.Node[] PageStructure(ApiCall call)
+        {
+            Guid pageId = call.ObjectId;
+            var siteDb = call.Context.WebSite.SiteDb();
+            var page = siteDb.Pages.Get(pageId);
+            if (page == default) throw new Exception("Page not found");
+            return PageCopyService.AnalyzeStructure(page.Body, siteDb, call.Context.Culture);
         }
     }
 }

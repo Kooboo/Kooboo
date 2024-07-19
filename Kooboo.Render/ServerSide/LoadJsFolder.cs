@@ -1,9 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
-using Kooboo.Render.ObjectSource;
 using System.Collections.Generic;
 using System.Linq;
+using Kooboo.Data.Context;
+using Kooboo.Render.ObjectSource;
 
 namespace Kooboo.Render.ServerSide
 {
@@ -39,7 +39,7 @@ namespace Kooboo.Render.ServerSide
                             {
                                 string itemrelative = item.Substring(root.Length);
 
-                                itemrelative = itemrelative.Replace("\\", "/"); 
+                                itemrelative = itemrelative.Replace("\\", "/");
 
                                 var response = ServerEngine.RenderJs(sourceProvider, option, context, itemrelative);
                                 if (response != null)
@@ -56,7 +56,7 @@ namespace Kooboo.Render.ServerSide
                                 }
                             }
                         }
-                    }  
+                    }
                 }
 
             }

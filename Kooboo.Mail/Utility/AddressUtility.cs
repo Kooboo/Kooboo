@@ -2,11 +2,8 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using Kooboo.Data.Interface;
+using Kooboo.Mail.Transport;
+using MimeKit;
 
 namespace Kooboo.Mail.Utility
 {
@@ -64,20 +61,37 @@ namespace Kooboo.Mail.Utility
 
         public static string GetAddress(string address)
         {
-            if (string.IsNullOrEmpty(address))
+            if (address == null)
             {
                 return null;
             }
 
-            int start = address.IndexOf("<");
-            int end = address.IndexOf(">");
+            var add = MailKitUtility.ParseAddress(address);
 
-            if (start > -1 && end > -1 && end > start + 1)
+            if (add != null)
             {
-                return address.Substring(start + 1, end - start - 1);
+                return add.GetAddress(false);
             }
 
-            return address;
+            if (address.Contains("<") && address.Contains(">"))
+            {
+                var index = address.IndexOf('<');
+                if (index > -1)
+                {
+                    var end = address.IndexOf('>', index + 1);
+
+                    var InnerPart = address.Substring(index + 1, end - index - 1);
+
+                    add = MailKitUtility.ParseAddress(InnerPart);
+                    if (add != null)
+                    {
+                        return add.GetAddress(false);
+                    }
+                }
+            }
+
+            return null;
+
         }
 
         public static bool IsLocalEmailAddress(string input)
@@ -85,6 +99,17 @@ namespace Kooboo.Mail.Utility
             return GetLocalEmailAddress(input) != null;
         }
 
+        public static string GetEmailDomain(string emailAddress)
+        {
+            if (string.IsNullOrEmpty(emailAddress))
+                return null;
+
+            emailAddress = GetAddress(emailAddress);
+
+            int index = emailAddress.LastIndexOf("@");
+
+            return index > -1 ? emailAddress.Substring(index + 1) : null;
+        }
 
         public static bool IsOrganizationOk(string emailaddress)
         {
@@ -117,22 +142,16 @@ namespace Kooboo.Mail.Utility
                 return null;
             }
 
-            var segs = ParseSegment(Address);
-            if (segs.Address == null || segs.Host == null)
-            {
-                return null;
-            }
+            var domain = MailDomainCheck.Instance.GetByEmailAddress(Address);
 
-            var domain = Kooboo.Data.GlobalDb.Domains.Get(segs.Host);
-
-            if (domain == null || domain.OrganizationId == default(Guid))
+            if (domain == null)
             {
                 return null;
             }
 
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(domain.OrganizationId);
 
-            var add = orgdb.EmailAddress.Find(Address);
+            var add = orgdb.Email.Find(Address);
             if (add != null)
             {
                 add.OrgId = orgdb.OrganizationId;
@@ -150,25 +169,12 @@ namespace Kooboo.Mail.Utility
         }
 
 
-        public static bool IsOnlineDomainLocal(Kooboo.Data.Models.Domain domain)
-        {
-            var org = Kooboo.Data.GlobalDb.Organization.Get(domain.OrganizationId);
-
-            if (org != null)
-            {
-                var checker = Lib.IOC.Service.GetSingleTon<IMailServerProvider>(false);
-                if (checker != null)
-                {
-                    return checker.IsLocal(org);
-                }
-            }
-
-            return false;
-        }
-
-
         public static bool WildcardMatch(string NormalAddress, string WildcardAddress)
         {
+            if (WildcardAddress == null)
+            {
+                return false;
+            }
             var normal = ParseSegment(NormalAddress);
             return WildcardMatch(normal, WildcardAddress);
         }
@@ -245,6 +251,103 @@ namespace Kooboo.Mail.Utility
             return new EmailSegment() { Address = emailaddress.Substring(0, index), Host = emailaddress.Substring(index + 1) };
         }
 
+        public static string GetDisplayName(string FullAddress)
+        {
+            if (string.IsNullOrEmpty(FullAddress))
+            {
+                return null;
+            }
+
+            if (FullAddress.Contains(";"))
+            {
+                FullAddress = FullAddress.Replace(";", ",");
+                return GetDisplayNameList(FullAddress);
+            }
+
+            if (MimeKit.MailboxAddress.TryParse(FullAddress, out var mailbox))
+            {
+                var address = mailbox.GetAddress(false);
+
+                if (string.IsNullOrWhiteSpace(address))
+                {
+                    return null;
+                }
+
+                string name = mailbox.Name;
+
+                if (!string.IsNullOrEmpty(name))
+                {
+                    return name.Trim('\'').Trim('\"');
+                }
+
+                var segments = Kooboo.Mail.Utility.AddressUtility.ParseSegment(address);
+
+                return segments.Address;
+            }
+            return null;
+        }
+
+        public static string GetDisplayNameList(string addressLine)
+        {
+            var addlist = MailKitUtility.GetMailKitAddressList(addressLine);
+            if (addlist != null && addlist.Count > 0)
+            {
+                List<string> names = new List<string>();
+
+                foreach (var item in addlist)
+                {
+
+                    var address = item.GetAddress(false);
+
+                    if (string.IsNullOrWhiteSpace(address))
+                    {
+                        continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(item.Name))
+                    {
+                        names.Add(item.Name.Trim('\'').Trim('\"'));
+                    }
+                    else
+                    {
+                        var segments = Kooboo.Mail.Utility.AddressUtility.ParseSegment(address);
+
+                        names.Add(segments.Address);
+                    }
+                }
+
+                return String.Join(";", names);
+            }
+
+            return null;
+
+        }
+
+
+        public static string GetDisplayName(MailboxAddress add)
+        {
+            if (add == null)
+            {
+                return null;
+            }
+
+            string name = add.Name;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                var segments = Kooboo.Mail.Utility.AddressUtility.ParseSegment(add.Address);
+                return segments.Address;
+            }
+            else
+            {
+                name = name.Trim(' ').Trim('\'').Trim('\"');
+                name = name.Replace("\\", "");
+                name = name.Trim('\"');
+                name = name.Trim('\'');
+                return name;
+            }
+
+        }
 
         internal static HashSet<string> GetExternalRcpts(Smtp.SmtpSession session)
         {
@@ -259,7 +362,7 @@ namespace Kooboo.Mail.Utility
 
                         var islocal = IsLocalEmailAddress(address);
 
-                        Kooboo.Data.Log.Instance.Email.Write("--islocal: " + islocal.ToString() + address); 
+                        Kooboo.Data.Log.Instance.Email.Write("--islocal: " + islocal.ToString() + address);
 
                         if (!islocal)
                         {

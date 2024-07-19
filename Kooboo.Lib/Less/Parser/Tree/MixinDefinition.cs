@@ -6,7 +6,6 @@ namespace dotless.Core.Parser.Tree
     using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using Utils;
 
     public class MixinDefinition : Ruleset
     {
@@ -24,7 +23,7 @@ namespace dotless.Core.Parser.Tree
             Rules = rules;
             Condition = condition;
             Variadic = variadic;
-            Selectors = new NodeList<Selector> {new Selector(new NodeList<Element>(new Element(null, name)))};
+            Selectors = new NodeList<Selector> { new Selector(new NodeList<Element>(new Element(null, name))) };
 
             _arity = Params.Count;
             _required = Params.Count(r => String.IsNullOrEmpty(r.Name) || r.Value == null);
@@ -97,9 +96,9 @@ namespace dotless.Core.Parser.Tree
 
             var argumentNodes = new List<Node>();
 
-            for(var i = 0; i < Math.Max(Params.Count, args.Count); i++)
+            for (var i = 0; i < Math.Max(Params.Count, args.Count); i++)
             {
-              argumentNodes.Add(i < args.Count ? args[i].Value : Params[i].Value);
+                argumentNodes.Add(i < args.Count ? args[i].Value : Params[i].Value);
             }
 
             var frame = new Ruleset(new NodeList<Selector>(), new NodeList());
@@ -117,7 +116,7 @@ namespace dotless.Core.Parser.Tree
         [Obsolete("This method will be removed in a future release. Use Evaluate(List<NamedArgument>, Env) instead.", false)]
         public Ruleset Evaluate(List<NamedArgument> args, Env env, List<Ruleset> closureFrames)
         {
-            var childEnv = env.CreateChildEnvWithClosure(new Closure() {Context = closureFrames, Ruleset = this});
+            var childEnv = env.CreateChildEnvWithClosure(new Closure() { Context = closureFrames, Ruleset = this });
             return Evaluate(args, childEnv);
         }
 
@@ -201,7 +200,7 @@ namespace dotless.Core.Parser.Tree
 
             for (var i = 0; i < Math.Min(argsLength, _arity); i++)
             {
-                if (String.IsNullOrEmpty(Params[i].Name))
+                if (String.IsNullOrEmpty(Params[i].Name) && arguments != null)
                 {
                     if (arguments[i].Value.Evaluate(env).ToCSS(env) != Params[i].Value.Evaluate(env).ToCSS(env))
                     {
@@ -223,7 +222,7 @@ namespace dotless.Core.Parser.Tree
 
         public override void AppendCSS(Env env, Context context)
         {
-            
+
         }
     }
 }

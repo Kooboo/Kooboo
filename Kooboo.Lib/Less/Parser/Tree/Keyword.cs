@@ -1,8 +1,8 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
+    using System;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using System;
 
     public class Keyword : Node, IComparable
     {
@@ -15,7 +15,7 @@
 
         public override Node Evaluate(Env env)
         {
-            return ((Node) Color.GetColorFromKeyword(Value) ?? this).ReducedFrom<Node>(this);
+            return ((Node)Color.GetColorFromKeyword(Value) ?? this).ReducedFrom<Node>(this);
         }
 
         public override void AppendCSS(Env env)

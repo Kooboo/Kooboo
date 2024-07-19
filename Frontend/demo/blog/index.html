@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page title="Blog system" back="/_Admin/component.html">
+        <k-data
+          id="category"
+          init-get="http://kcomponent.localkooboo.com/blog/category_list"
+        >
+          <k-data-item name="value" from="_id"></k-data-item>
+          <k-data-item name="label" from="name"></k-data-item>
+        </k-data>
+
+        <k-data
+          init-get="http://kcomponent.localkooboo.com/blog/post_list"
+          id="post_list"
+          loading
+        >
+          <k-data-query name="title" id="query_title"></k-data-query>
+          <k-data-query name="startDate" id="query_start_date"></k-data-query>
+          <k-data-query name="endDate" id="query_end_date"></k-data-query>
+          <k-data-query
+            name="category"
+            id="query_category"
+            get-on-change
+          ></k-data-query>
+          <k-data-query name="index" id="query_index" get-on-change
+            >1</k-data-query
+          >
+          <k-data-query name="size" id="query_size">5</k-data-query>
+          <k-data-item name="total" id="body_total"></k-data-item>
+          <k-data-item name="list" type="array" id="body_list"></k-data-item>
+        </k-data>
+
+        <k-data from="body_list" id="table_data">
+          <k-data-item name="_id" hidden></k-data-item>
+          <k-data-item name="title" label="标题"></k-data-item>
+          <k-data-item name="createDate" label="添加时间"></k-data-item>
+          <k-data-item name="categoryName" label="分类"></k-data-item>
+        </k-data>
+
+        <k-data
+          confirm="确定删除此博客吗?"
+          id="remove_post"
+          post="http://kcomponent.localkooboo.com/blog/remove_post"
+        >
+          <k-data-query name="_id"></k-data-query>
+        </k-data>
+
+        <k-data id="edit_post" to="/_Admin/demo/blog/edit-post.html">
+          <k-data-query name="_id"></k-data-query>
+        </k-data>
+
+        <k-card>
+          <k-inline>
+            <k-button type="primary" to="/_Admin/demo/blog/create-post.html">
+              Create post
+            </k-button>
+            <k-button to="/_Admin/demo/blog/category.html">
+              Category settings
+            </k-button>
+          </k-inline>
+        </k-card>
+
+        <k-card>
+          <k-inline>
+            <k-text>Start Date:</k-text>
+            <k-input
+              type="date"
+              data="query_start_date"
+              style="width: 200px"
+            ></k-input>
+            <k-text>End Date:</k-text>
+            <k-input
+              type="date"
+              data="query_end_date"
+              style="width: 200px"
+            ></k-input>
+            <k-text>Category:</k-text>
+            <k-input
+              options="category"
+              data="query_category"
+              style="width: 200px"
+            ></k-input>
+            <k-text>Title:</k-text>
+            <k-input
+              placeholder="keyword"
+              data="query_title"
+              style="width: 200px"
+            ></k-input>
+            <k-button get="post_list" type="primary">Filter</k-button>
+          </k-inline>
+          <k-table
+            data="table_data"
+            edit="edit_post"
+            remove="remove_post"
+          ></k-table>
+          <k-pagination
+            total="body_total"
+            page-size="query_size"
+            current-page="query_index"
+          ></k-pagination>
+        </k-card>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

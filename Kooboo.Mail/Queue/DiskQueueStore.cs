@@ -2,9 +2,6 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Queue
 {
@@ -131,14 +128,11 @@ namespace Kooboo.Mail.Queue
                 {
                     System.IO.File.Move(file, GetBadMailFileName(model));
                 }
-
                 return new SendFailResponse() { WillRetry = false, LogOk = true };
-
             }
             else
             {
                 this.Retrys.Add(model.Id);
-
                 return new SendFailResponse() { WillRetry = true, LogOk = true };
             }
 

@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Search
 {
@@ -19,9 +19,9 @@ namespace Kooboo.Search
 
         private string GetFilePath(int filenumber = -1)
         {
-            if (filenumber ==-1)
+            if (filenumber == -1)
             {
-                filenumber = this.FileNumber; 
+                filenumber = this.FileNumber;
             }
             string path = "main." + filenumber.ToString() + ".dat";
             path = System.IO.Path.Combine(this.Folder, path);
@@ -35,7 +35,7 @@ namespace Kooboo.Search
                 if (string.IsNullOrEmpty(_filepath))
                 {
                     _filepath = GetFilePath();
-                } 
+                }
                 return _filepath;
             }
             set
@@ -46,35 +46,36 @@ namespace Kooboo.Search
 
         public string Folder { get; set; }
 
-        private long _currentsize; 
-        public long CurrentSize {
+        private long _currentsize;
+        public long CurrentSize
+        {
             get
             {
-                if (_currentsize ==0)
+                if (_currentsize == 0)
                 {
-                    return Setting.Size; 
+                    return Setting.Size;
                 }
                 else
                 {
-                    return _currentsize; 
+                    return _currentsize;
                 }
             }
             set
             {
-                _currentsize = value; 
+                _currentsize = value;
             }
         }
 
         public BitMap(string Folder)
         {
-            this.Folder = Folder; 
+            this.Folder = Folder;
             this.Init();
         }
 
         public BitMap(string Folder, long size)
         {
             this.Folder = Folder;
-            this.CurrentSize = size; 
+            this.CurrentSize = size;
             this.Init();
         }
 
@@ -106,7 +107,7 @@ namespace Kooboo.Search
                     this.FilePath = file;
                     FileNumber = number;
                 }
-            } 
+            }
             LoadStream();
         }
 
@@ -121,7 +122,7 @@ namespace Kooboo.Search
             }
             set
             {
-                _stream = value; 
+                _stream = value;
             }
         }
 
@@ -133,6 +134,7 @@ namespace Kooboo.Search
                 {
                     if (_stream == null)
                     {
+                        FileStream stream;
                         if (!File.Exists(this.FilePath))
                         {
                             Lib.Helper.IOHelper.EnsureFileDirectoryExists(FilePath);
@@ -141,18 +143,19 @@ namespace Kooboo.Search
                             initbytes[0] = 10;
                             initbytes[1] = 13;
                             Buffer.BlockCopy(BitConverter.GetBytes(CurrentSize), 0, initbytes, 2, 8);
-                            _stream = File.Open(this.FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
-                            _stream.Write(initbytes, 0, 10);
+                            stream = File.Open(this.FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                            stream.Write(initbytes, 0, 10);
                         }
                         else
                         {
-                            _stream = File.Open(this.FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                            stream = File.Open(this.FilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
 
                             byte[] sizebytes = new byte[8];
-                            _stream.Position = 2; 
-                            _stream.Read(sizebytes, 0, 8);
+                            stream.Position = 2;
+                            stream.Read(sizebytes, 0, 8);
                             this.CurrentSize = BitConverter.ToInt64(sizebytes, 0);
                         }
+                        _stream = stream;
                     }
                 }
             }
@@ -185,8 +188,8 @@ namespace Kooboo.Search
 
                     // if condition, write to disk.  
                     // TO BE IMPROVED for performance.
-                   WriteIndex();
-                   
+                    WriteIndex();
+
                 }
                 else
                 {
@@ -218,7 +221,7 @@ namespace Kooboo.Search
                 EnsureSize(wordids.Max());
 
                 if (docId < this.CurrentSize)
-                { 
+                {
                     foreach (var item in wordids)
                     {
                         BitArray bitarray;
@@ -232,41 +235,41 @@ namespace Kooboo.Search
                             Changes.Add(item, bitarray);
                         }
                         bitarray.Set(docId, false);
-                    } 
+                    }
                     // if condition, write to disk.  
                     WriteIndex();
-                } 
+                }
             }
         }
-         
+
         internal void IncreaseSize(long increased = -1)
         {
             if (increased == -1)
-            { increased = Setting.Size;  }
+            { increased = Setting.Size; }
 
             int newnumber = this.FileNumber + 1;
             string filename = GetFilePath(newnumber);
 
-            long newsize = this.CurrentSize + increased; 
-             
+            long newsize = this.CurrentSize + increased;
+
             byte[] initbytes = new byte[10];
             initbytes[0] = 10;
             initbytes[1] = 13;
             Buffer.BlockCopy(BitConverter.GetBytes(newsize), 0, initbytes, 2, 8);
-            var newstream  = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+            var newstream = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
             newstream.Write(initbytes, 0, 10);
 
             var currentlen = this.IndexStream.Length;
-            var currentBlockByteLen = (int)CurrentSize / 8; 
-            var currentrecords = (int)(currentlen-10) / currentBlockByteLen;
-             
+            var currentBlockByteLen = (int)CurrentSize / 8;
+            var currentrecords = (int)(currentlen - 10) / currentBlockByteLen;
+
             var newblocklen = (int)newsize / 8;
             var newtotallen = currentrecords * newblocklen;
-            newstream.SetLength(newtotallen); 
+            newstream.SetLength(newtotallen);
 
             for (int i = 0; i < currentrecords; i++)
             {
-                var oldposition = i * currentBlockByteLen +10;
+                var oldposition = i * currentBlockByteLen + 10;
                 byte[] oldbyte = new byte[currentBlockByteLen];
 
                 var newposition = i * newblocklen + 10;
@@ -279,18 +282,18 @@ namespace Kooboo.Search
                 Buffer.BlockCopy(oldbyte, 0, newbyte, 0, currentBlockByteLen);
 
                 newstream.Position = newposition;
-                newstream.Write(newbyte, 0, newblocklen);   
+                newstream.Write(newbyte, 0, newblocklen);
             }
-             
-            var oldstream = this.IndexStream;
-            var oldfile = this.FilePath; 
 
-            this.FileNumber = newnumber; 
+            var oldstream = this.IndexStream;
+            var oldfile = this.FilePath;
+
+            this.FileNumber = newnumber;
             this.FilePath = filename;
-            this.CurrentSize = newsize; 
+            this.CurrentSize = newsize;
             this.IndexStream = newstream;
             oldstream.Close();
-             File.Delete(oldfile);  
+            File.Delete(oldfile);
         }
 
         // return document ids. 
@@ -343,11 +346,11 @@ namespace Kooboo.Search
                         }
                     }
                     idscroes.Add(item, score);
-                } 
-                return idscroes.OrderByDescending(o => o.Value).Select(o => o.Key).ToList(); 
+                }
+                return idscroes.OrderByDescending(o => o.Value).Select(o => o.Key).ToList();
             }
-            
-            return result; 
+
+            return result;
         }
 
         internal List<int> GetBitTrueValues(BitArray array)
@@ -355,13 +358,13 @@ namespace Kooboo.Search
             List<int> result = new List<int>();
             int len = array.Length;
 
-            for (int i = len-1; i >=0; i--)
+            for (int i = len - 1; i >= 0; i--)
             {
                 if (array[i])
                 {
                     result.Add(i);
                 }
-            }  
+            }
             return result;
         }
 
@@ -415,37 +418,37 @@ namespace Kooboo.Search
         private void EnsureSize(int max)
         {
             var currentlength = this.IndexStream.Length;
-            var maxlen = this.CurrentSize/8 * (max+1) + 10;
+            var maxlen = this.CurrentSize / 8 * (max + 1) + 10;
             if (currentlength < maxlen)
             {
                 this.IndexStream.SetLength(maxlen);
             }
-        } 
+        }
 
         public void Close()
         {
-             if (_stream !=null)
+            if (_stream != null)
             {
                 _stream.Close();
                 _stream.Dispose();
-                _stream = null; 
+                _stream = null;
             }
         }
         public long DiskSize
         {
-           get
+            get
             {
                 return this.IndexStream.Length;
-            } 
+            }
         }
     }
-     
+
     public struct sortResult
     {
         public int DocId { get; set; }
 
         public int Score { get; set; }
     }
-    
+
 
 }

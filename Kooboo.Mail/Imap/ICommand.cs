@@ -1,27 +1,24 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
 {
-  public  interface ICommand
+    public interface ICommand
     {
-        string CommandName { get;}
+        string CommandName { get; }
 
-        bool RequireAuth { get;  }
-        bool RequireFolder { get; } 
+        bool RequireAuth { get; }
+        bool RequireFolder { get; }
 
         // at lumisoft,some commands has additional check of arg contains two parts. Like Fetch.. 
-        bool RequireTwoPartCommand { get;  }
+        bool RequireTwoPartCommand { get; }
 
-        Task<List<ImapResponse>> Execute(ImapSession session, string args); 
+        Task<List<ImapResponse>> Execute(ImapSession session, string args);
 
         string AdditionalResponse { get; set; }
-         
+
     }
 
 

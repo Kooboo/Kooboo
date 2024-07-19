@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="24px" viewBox="0 0 26 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>template_label_bar_cell_icon_love_24_stroke</title>
+    <defs>
+        <linearGradient x1="72.1420288%" y1="16.533957%" x2="-4.64172363%" y2="98.8918944%" id="linearGradient-1">
+            <stop stop-color="#FC8686" offset="0%"></stop>
+            <stop stop-color="#FE6B91" offset="58.6191668%"></stop>
+            <stop stop-color="#FF509C" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="模版" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="模版首页内容无限延展" transform="translate(-1210.000000, -97.000000)" stroke="url(#linearGradient-1)" stroke-width="2">
+            <g id="sc/template/label_bar" transform="translate(0.000000, 80.000000)">
+                <g id="sc/template/label_bar/cell/my_favourite" transform="translate(1125.000000, 8.000000)">
+                    <g id="形状结合" transform="translate(85.000000, 9.000000)">
+                        <path d="M16.6463368,3.97758965 C17.719573,3.97758965 18.7678474,4.34672786 19.5819307,5.11768672 C20.4874841,6.07168618 20.9520037,7.23854947 20.9763256,8.39452973 C21.0008008,9.55780048 20.5785904,10.7054956 19.728471,11.5956826 L19.728471,11.5956826 L13.0851465,18.5521192 L10.9774022,16.3452871 L6.2896554,11.5455696 C5.43850738,10.6742812 5.00900016,9.54414948 5.00258612,8.41162161 C4.99617207,7.27909374 5.41285121,6.14416969 6.2540759,5.26329654 C7.03467824,4.44590298 8.07269523,4.02229361 9.11991002,3.99818322 C10.1671248,3.97407283 11.2235374,4.34946141 12.040931,5.13006376 C12.2789549,5.35737417 12.4835873,5.60651249 12.6547726,5.87118114 C12.8661455,5.6250553 13.1026448,5.39415128 13.3627185,5.18253452 C14.3351164,4.39131388 15.5045066,3.97758965 16.6463368,3.97758965 Z"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

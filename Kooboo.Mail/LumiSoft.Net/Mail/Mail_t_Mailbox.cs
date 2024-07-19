@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using LumiSoft.Net.MIME;
 
 namespace LumiSoft.Net.Mail
-{    
+{
     /// <summary>
     /// This class represents "mailbox" address. Defined in RFC 5322 3.4.
     /// </summary>
@@ -21,7 +19,7 @@ namespace LumiSoft.Net.Mail
     public class Mail_t_Mailbox : Mail_t_Address
     {
         private string m_DisplayName = null;
-        private string m_Address     = null;
+        private string m_Address = null;
 
         /// <summary>
         /// Default constructor.
@@ -29,14 +27,15 @@ namespace LumiSoft.Net.Mail
         /// <param name="displayName">Display name. Value null means not specified.</param>
         /// <param name="address">Email address.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>address</b> is null reference.</exception>
-        public Mail_t_Mailbox(string displayName,string address)
+        public Mail_t_Mailbox(string displayName, string address)
         {
-            if(address == null){
+            if (address == null)
+            {
                 throw new ArgumentNullException("address");
             }
 
             m_DisplayName = displayName;
-            m_Address     = address;
+            m_Address = address;
         }
 
         #region static method Parse
@@ -50,25 +49,30 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ParseException">Is raised when <b>value</b> is not valid <b>mailbox</b> value.</exception>
         public static Mail_t_Mailbox Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
-            MIME_Reader        r      = new MIME_Reader(value);
+            MIME_Reader r = new MIME_Reader(value);
             Mail_t_MailboxList retVal = new Mail_t_MailboxList();
-            while(true){
-                string word = r.QuotedReadToDelimiter(new char[]{',','<'});
+            while (true)
+            {
+                string word = r.QuotedReadToDelimiter(new char[] { ',', '<' });
                 // We processed all data.
-                if(string.IsNullOrEmpty(word) && r.Available == 0){
+                if (string.IsNullOrEmpty(word) && r.Available == 0)
+                {
                     throw new ParseException("Not valid 'mailbox' value '" + value + "'.");
                 }
                 // name-addr
-                else if(r.Peek(true) == '<'){
-                    return new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word.Trim())) : null,r.ReadParenthesized());
+                else if (r.Peek(true) == '<')
+                {
+                    return new Mail_t_Mailbox(word != null ? MIME_Encoding_EncodedWord.DecodeS(TextUtils.UnQuoteString(word.Trim())) : null, r.ReadParenthesized());
                 }
                 // addr-spec
-                else{
-                    return new Mail_t_Mailbox(null,word);
+                else
+                {
+                    return new Mail_t_Mailbox(null, word);
                 }
             }
 
@@ -96,17 +100,22 @@ namespace LumiSoft.Net.Mail
         /// <returns>Returns address as string value.</returns>
         public override string ToString(MIME_Encoding_EncodedWord wordEncoder)
         {
-            if(string.IsNullOrEmpty(m_DisplayName)){
+            if (string.IsNullOrEmpty(m_DisplayName))
+            {
                 return m_Address;
             }
-            else{
-                if(wordEncoder != null && MIME_Encoding_EncodedWord.MustEncode(m_DisplayName)){
+            else
+            {
+                if (wordEncoder != null && MIME_Encoding_EncodedWord.MustEncode(m_DisplayName))
+                {
                     return wordEncoder.Encode(m_DisplayName) + " " + "<" + m_Address + ">";
                 }
-                else if(System.Text.RegularExpressions.Regex.IsMatch(m_DisplayName,@"[""(),:;<>@\[\\\]]")){
+                else if (System.Text.RegularExpressions.Regex.IsMatch(m_DisplayName, @"[""(),:;<>@\[\\\]]"))
+                {
                     return TextUtils.QuoteString(m_DisplayName) + " " + "<" + m_Address + ">";
                 }
-                else{
+                else
+                {
                     return m_DisplayName + " " + "<" + m_Address + ">";
                 }
             }
@@ -122,7 +131,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string DisplayName
         {
-            get{ return m_DisplayName; }
+            get { return m_DisplayName; }
         }
 
         /// <summary>
@@ -130,7 +139,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string Address
         {
-            get{ return m_Address; }
+            get { return m_Address; }
         }
 
         /// <summary>
@@ -138,10 +147,11 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string LocalPart
         {
-            get{ 
+            get
+            {
                 string[] localpart_domain = m_Address.Split('@');
 
-                return localpart_domain[0]; 
+                return localpart_domain[0];
             }
         }
 
@@ -150,13 +160,16 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string Domain
         {
-            get{ 
+            get
+            {
                 string[] localpart_domain = m_Address.Split('@');
 
-                if(localpart_domain.Length == 2){
-                    return localpart_domain[1]; 
+                if (localpart_domain.Length == 2)
+                {
+                    return localpart_domain[1];
                 }
-                else{
+                else
+                {
                     return "";
                 }
             }

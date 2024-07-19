@@ -3,14 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
- public   class StackTemplateMode
+    public class StackTemplateMode
     {
-     public List<enumInsertionMode> item = new List<enumInsertionMode>();
+        public List<enumInsertionMode> item = new List<enumInsertionMode>();
 
         public int length
         {
@@ -62,8 +60,8 @@ namespace Kooboo.Dom
                     return;
                 }
             }
-           
-           
+
+
         }
 
 

@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Interface;
@@ -9,9 +10,6 @@ using Kooboo.Sites.DataSources.New.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
 using Kooboo.Web.Areas.Admin.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -34,7 +32,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 item.Methods.RemoveAll(o => !o.IsGlobal && !o.IsPublic);
             }
-            SetRelation(all, call.WebSite.SiteDb());   
+            SetRelation(all, call.WebSite.SiteDb());
             return all;
         }
 
@@ -462,7 +460,7 @@ namespace Kooboo.Web.Api.Implementation
         private List<DataSourceViewModel> FilterOut(List<DataSourceViewModel> input, WebSite site)
         {
             // filter out not used datasource. 
-            List<DataSourceViewModel> result = new List<DataSourceViewModel>();      
+            List<DataSourceViewModel> result = new List<DataSourceViewModel>();
             foreach (var item in input)
             {
                 if (item.DataSourceType == typeof(Kooboo.Sites.DataSources.Search))
@@ -476,7 +474,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     result.Add(item);
                 }
-            }     
+            }
             return result;
         }
     }

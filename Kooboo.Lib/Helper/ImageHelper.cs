@@ -1,8 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Linq;
+using SixLabors.ImageSharp;
 
 namespace Kooboo.Lib.Helper
 {
@@ -46,6 +47,33 @@ namespace Kooboo.Lib.Helper
                 Height = height,
                 Width = width
             };
+        }
+
+
+        public static string GetFileExtension(byte[] image)
+        {
+            if (image == null)
+            {
+                return null;
+            }
+
+            MemoryStream mo = new MemoryStream(image);
+            try
+            {
+                var formate = Image.DetectFormat(mo);
+                if (formate != null && formate.FileExtensions != null && formate.FileExtensions.Any())
+                {
+                    return formate.FileExtensions.FirstOrDefault();
+                }
+
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return null;
         }
     }
 

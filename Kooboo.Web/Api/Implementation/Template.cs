@@ -1,24 +1,26 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Template;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Sync;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Kooboo.Web.ViewModel;
 using Kooboo.Api;
-using Kooboo.Sites.Routing;
 using Kooboo.Data;
+using Kooboo.Data.Context.UserProviders;
+using Kooboo.IndexedDB.Serializer.Simple;
 using Kooboo.Lib.Helper;
-using System.Threading;
-using Kooboo.Sites.TaskQueue.Model;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
+using Kooboo.Sites.Scripting.Global;
+using Kooboo.Sites.Scripting.Global.Mysql;
+using Kooboo.Sites.Scripting.Global.SqlServer;
+using Kooboo.Sites.Store;
+using Kooboo.Sites.Store.Model;
+using Kooboo.Sites.Sync;
+using KScript;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public    class TemplateApi : IApi
+    public class TemplateApi : IApi
     {
         public string ModelName
         {
@@ -44,127 +46,59 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-    
-        public PagedListViewModel<TemplateItemViewModel> List(ApiCall call)
+        public string GetLang(ApiCall call)
         {
-            int pagenr = ApiHelper.GetPageNr(call);
-            int pagesize = ApiHelper.GetPageSize(call);
-
-            Dictionary<string, string> paras = new Dictionary<string, string>();
-            if (pagenr != 0)
+            if (call.Context.User != null & call.Context.User.Language != null)
             {
-                paras.Add("PageNr", pagenr.ToString());
+                return call.Context.User.Language;
             }
-            if (pagesize != 0)
-            {
-                paras.Add("PageSize", pagesize.ToString());
-            }
-
-            string Url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/template/List2");
-            Url = UrlHelper.AppendQueryString(Url, paras);
-
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url);
-            SetThumbnailUrl(pagedlist.List);
-
-
-            return pagedlist;
-
+            return null;
         }
 
-     
-        public TemplateDetailViewModel Get(ApiCall call)
+        private Dictionary<string, string> loginHeader(ApiCall call)
         {
-            string Url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/template/Get2");
+            return new Dictionary<string, string> {
+                               { "Authorization",$"bearer {UserProviderHelper.GetJtwTokentFromContext(call.Context)}" }
+                            };
+        }
+
+        public TemplateItemViewModel Detail(Guid Id, ApiCall call)
+        {
+            string Url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/Detail");
             Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("id", call.ObjectId.ToString());
-            var detail = HttpHelper.Get<TemplateDetailViewModel>(Url, para);
+            para.Add("id", Id.ToString());
 
-            detail.LastModified = DateTime.SpecifyKind(detail.LastModified, DateTimeKind.Utc);
+            var lang = GetLang(call);
 
-            SetImageDownloadUrl(detail);
+            if (lang != null)
+            {
+                para["lang"] = lang;
+            }
+
+            var detail = HttpHelper.Get2<TemplateItemViewModel>(Url, para, loginHeader(call));
+
+            detail.Type.Name = Data.Language.Hardcoded.GetValue(detail.Type.Name, call.Context);
 
             return detail;
         }
 
-   
-        public PagedListViewModel<TemplateItemViewModel> Private(ApiCall call)
+        public object FullTextSearch(ApiCall call)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("OrganizationId", call.Context.User.CurrentOrgId.ToString());
-
-            int pagenr = ApiHelper.GetPageNr(call);
-            int pagesize = ApiHelper.GetPageSize(call);
-
-            if (pagenr != 0)
+            var lang = GetLang(call);
+            var url = "/_api/templateserver/fulltextsearch";
+            if (lang != null)
             {
-                para.Add("PageNr", pagenr.ToString());
+                url = $"{url}?lang={lang}";
             }
-            if (pagesize != 0)
-            {
-                para.Add("PageSize", pagesize.ToString());
-            }
-
-            string Url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Private2");
-
-            Url = UrlHelper.AppendQueryString(Url, para);
-
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url, para);
-            SetThumbnailUrl(pagedlist.List);
-            return pagedlist;
+            url = UrlHelper.Combine(Kooboo.Data.UrlSetting.AppStore, url);
+            return HttpHelper.Post<object>(url, call.Context.Request.Body, loginHeader(call));
         }
 
-   
-        public PagedListViewModel<TemplateItemViewModel> Personal(ApiCall call)
+        public object Type(ApiCall call)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Id", call.Context.User.Id.ToString());
-
-            int pagenr = ApiHelper.GetPageNr(call);
-            int pagesize = ApiHelper.GetPageSize(call);
-
-            if (pagenr != 0)
-            {
-                para.Add("PageNr", pagenr.ToString());
-            }
-            if (pagesize != 0)
-            {
-                para.Add("PageSize", pagesize.ToString());
-            }
-
-            string Url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Personal2");
-
-            Url = UrlHelper.AppendQueryString(Url, para);
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url, para);
-            SetThumbnailUrl(pagedlist.List);
-            return pagedlist;
+            return new KTemplate(call.Context).Types;
         }
 
-   
-        public PagedListViewModel<TemplateItemViewModel> Search(ApiCall call)
-        {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Keyword", call.GetValue("keyword"));
-
-            int pagenr = ApiHelper.GetPageNr(call);
-            int pagesize = ApiHelper.GetPageSize(call);
-
-            if (pagenr != 0)
-            {
-                para.Add("PageNr", pagenr.ToString());
-            }
-            if (pagesize != 0)
-            {
-                para.Add("PageSize", pagesize.ToString());
-            }
-
-            string Url = UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Search2");
-            Url = UrlHelper.AppendQueryString(Url, para);
-            var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url, para);
-            SetThumbnailUrl(pagedlist.List);
-            return pagedlist;
-        }
-
-             
         protected string GetStartRelativeUrl(Data.Models.WebSite site)
         {
             var startpages = site.StartPages();
@@ -212,7 +146,6 @@ namespace Kooboo.Web.Api.Implementation
             return "/";
         }
 
-
         protected void SetThumbnailUrl(List<TemplateItemViewModel> items)
         {
             if (items == null)
@@ -220,12 +153,12 @@ namespace Kooboo.Web.Api.Implementation
                 return;
             }
 
-            string imgbase = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/themeimg/");
+            string imgBaseUrl = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/themeimg/");
             foreach (var item in items)
             {
                 if (!string.IsNullOrEmpty(item.ThumbNail) && !item.ThumbNail.ToLower().StartsWith("http://"))
                 {
-                    item.ThumbNail = UrlHelper.Combine(imgbase, item.ThumbNail);
+                    item.ThumbNail = UrlHelper.Combine(imgBaseUrl, item.ThumbNail);
                 }
                 item.ThumbNail += "?width=200";
             }
@@ -237,29 +170,15 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return;
             }
-            string imgbase = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/themeimg/");
+            string imgBaseUrl = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/themeimg/");
 
             int count = detail.Images.Count();
             for (int i = 0; i < count; i++)
             {
                 var current = detail.Images[i];
-                var newurl = UrlHelper.Combine(imgbase, current);
-                detail.Images[i] = newurl;
+                var newUrl = UrlHelper.Combine(imgBaseUrl, current);
+                detail.Images[i] = newUrl;
             }
-        }
-
-        protected static bool ContainSeach(string input, string keyword)
-        {
-            if (string.IsNullOrEmpty(keyword))
-            {
-                return true;
-            }
-
-            if (string.IsNullOrEmpty(input))
-            {
-                return false;
-            }
-            return input.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) > -1;
         }
 
         protected SiteDb GetSiteDb(ApiCall call)
@@ -269,118 +188,99 @@ namespace Kooboo.Web.Api.Implementation
             {
                 Guid SiteId = call.GetGuidValue("SiteId");
 
-                var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+                var website = Data.Config.AppHost.SiteRepo.Get(SiteId);
                 siteDb = website != null ? website.SiteDb() : null;
             }
             return siteDb;
         }
 
-        protected TemplateDataModel InitData(Kooboo.Lib.NETMultiplePart.FormResult formResult, ApiCall call)
-        {
-            TemplateDataModel data = new TemplateDataModel();
-
-            if (formResult.FormData.ContainsKey("sitename"))
-            {
-                data.Name = formResult.FormData["sitename"];
-            }
-
-            if (formResult.FormData.ContainsKey("link"))
-            {
-                data.Link = formResult.FormData["link"];
-            }
-            if (formResult.FormData.ContainsKey("description"))
-            {
-                data.Description = formResult.FormData["description"];
-            }
-            if (formResult.FormData.ContainsKey("tags"))
-            {
-                data.Tags = formResult.FormData["tags"];
-            }
-
-            if (formResult.FormData.ContainsKey("price"))
-            {
-                data.Price=decimal.Parse(formResult.FormData["price"]);
-            }
-            if (formResult.FormData.ContainsKey("currency"))
-            {
-                data.Price = decimal.Parse(formResult.FormData["currency"]);
-            }
-
-            data.UserId = call.Context.User.Id;
-
-            if (formResult.FormData.ContainsKey("IsPrivate"))
-            {
-                string strisprivae = formResult.FormData["IsPrivate"];
-                bool isprivate = false;
-                bool.TryParse(strisprivae, out isprivate);
-
-                if (isprivate)
-                {
-                    data.OrganizationId = call.Context.User.CurrentOrgId;
-                }
-            }
-
-            foreach (var item in formResult.Files)
-            {
-                TemplateUserImages image = new TemplateUserImages();
-                image.FileName = item.FileName;
-                image.Base64 = Convert.ToBase64String(item.Bytes);
-                data.Images.Add(image);
-            }
-
-            if (data.Images.Count() > 0)
-            {
-                if (formResult.FormData.ContainsKey("defaultimg"))
-                {
-                    string strindex = formResult.FormData["defaultimg"];
-                    int index = 0;
-                    int.TryParse(strindex, out index);
-
-                    if (data.Images.Count() > index)
-                    {
-                        data.Images[index].IsDefault = true;
-                    }
-                }
-            }
-
-            return data;
-        }
-
         public virtual void Share(ApiCall call)
         {
-            SiteDb siteDb = call.WebSite != null ? call.WebSite.SiteDb() : null;
-            if (siteDb == null)
-            { return; }
+            var data = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(call.Context.Request.Body);
 
-            var tempFolder = Kooboo.Data.AppSettings.TempDataPath;
+            var siteId = Kooboo.Lib.Helper.DictionaryHelper.GetValue<Guid>(data, "siteid");
+            var website = Kooboo.Data.Config.AppHost.SiteRepo.Get(siteId);
 
-            var exportfile = ImportExport.ExportInter(siteDb);
-            if (!File.Exists(exportfile))
+            if (website == null)
+            {
+                throw new Exception("website not found");
+            }
+            var siteDb = website.SiteDb();
+            TemplateTransferModel transfer = new TemplateTransferModel();
+
+            CopyMode copyMode = CopyMode.Normal;
+
+            var shareMethod = DictionaryHelper.GetString(data, "shareMethod");
+            if (!string.IsNullOrEmpty(shareMethod) && shareMethod.ToLower() == "update")
+            {
+                transfer.IsUpdate = true;
+                copyMode = CopyMode.Fast;
+            }
+
+            string exportFile = ImportExport.ExportInter(siteDb, copyMode);
+
+            if (!File.Exists(exportFile))
             {
                 return;
             }
+            var zipBytes = IOHelper.ReadAllBytes(exportFile);
 
-            var formreader = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
-
-            var postdata = InitData(formreader, call);
-
-            var zipbytes = IOHelper.ReadAllBytes(exportfile);
-            postdata.Bytes = zipbytes;
-
-            if (zipbytes.Length > AppSettings.MaxTemplateSize)
+            if (zipBytes.Length > AppSettings.MaxTemplateSize)
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Exceed max template size", call.Context));
+                var error = Data.Language.Hardcoded.GetValue("Exceed max template size", call.Context);
+                error += " " + Lib.Utilities.CalculateUtility.GetSizeString(AppSettings.MaxTemplateSize);
+                throw new Exception(error);
             }
 
-            postdata.ByteHash = Kooboo.Lib.Security.Hash.ComputeGuid(zipbytes);
+            transfer.TypeName = DictionaryHelper.GetValue<string>(data, "typeName");
+            transfer.Cover = DictionaryHelper.GetValue<string>(data, "coverimage");
+            transfer.ScreenShot = DictionaryHelper.GetValue<string>(data, "ScreenShot");
+            transfer.Name = DictionaryHelper.GetString(data, "sitename"); 
 
-            Kooboo.IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel>();
+            transfer.ZhCover = DictionaryHelper.GetValue<string>(data, "zhCoverimage");
+            transfer.ZhScreenShot = DictionaryHelper.GetValue<string>(data, "zhScreenShot");
 
-            var postbytes = converter.ToBytes(postdata);
+            transfer.ZhName = DictionaryHelper.GetString(data, "zhSitename");
 
-            string url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/receiver/template");
+            transfer.Bytes = zipBytes;
+            transfer.ByteHash = Kooboo.Lib.Security.Hash.ComputeGuid(zipBytes);
 
-            var response = HttpHelper.PostData(url, new Dictionary<string, string>(), postbytes);
+            transfer.IsPublic = siteDb.WebSite.SiteType == Data.Definition.WebsiteType.p; 
+
+            transfer.TemplateId = DictionaryHelper.GetValue<Guid>(data, nameof(TemplateTransferModel.TemplateId));
+
+            var updateItem = DictionaryHelper.GetString(data, "updateItem");
+
+            if (updateItem != null)
+            {
+                if (updateItem.ToLower() == "onlyscreen")
+                {
+                    transfer.UpdateScreenOnly = true;
+                }
+                else if (updateItem.ToLower() == "onlybinary")
+                {
+                    transfer.UpdateBinaryOnly = true;
+                }
+            }
+
+            if (transfer.UpdateBinaryOnly)
+            {
+                UpdateBinary(transfer, call);
+                return;
+            }
+
+            if (transfer.UpdateScreenOnly)
+            {
+                UpdateScreen(transfer, call);
+                return;
+            }
+
+            SimpleConverter<TemplateTransferModel> converter = new();
+            var postBytes = converter.ToBytes(transfer);
+
+            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/share");
+
+            var response = HttpHelper.PostData(url, Data.Helper.ApiHelper.GetAuthHeaders(call.Context), postBytes);
 
             if (!response)
             {
@@ -388,210 +288,114 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public virtual void ShareBatch(ApiCall call)
+        public void UpdateScreen(TemplateTransferModel model, ApiCall call)
         {
-            SiteDb siteDb = call.WebSite != null ? call.WebSite.SiteDb() : null;
+            ScreenUpdate update = new ScreenUpdate();
+            update.TemplateId = model.TemplateId;
+            update.Cover = model.Cover;
+            update.ScreenShot = model.ScreenShot;
+            update.ZhCover = model.ZhCover;
+            update.ZhScreenShot = model.ZhScreenShot;
 
-            var formreader = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
-            if (siteDb == null)
-            {
-                Guid siteId;
-                if (!Guid.TryParse(formreader.FormData["SiteId"], out siteId))
-                {
-                    return;
-                }
-                var website = Kooboo.Data.GlobalDb.WebSites.Get(siteId);
-                siteDb = website.SiteDb();
-            }
-
-            if (siteDb == null)
-            {
-                return;
-            }
-
-            var tempFolder = Kooboo.Data.AppSettings.TempDataPath;
-
-            var exportfile = ImportExport.ExportInter(siteDb);
-            if (!File.Exists(exportfile))
-            {
-                return;
-            }
+            update.ZHName = model.ZhName;
+            update.Name = model.Name;
 
 
-            var postdata = InitData(formreader, call);
+            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateupdate/screenshot");
 
-            var zipbytes = IOHelper.ReadAllBytes(exportfile);
-            postdata.Bytes = zipbytes;
+            SimpleConverter<ScreenUpdate> converter = new SimpleConverter<ScreenUpdate>();
 
-            if (zipbytes.Length > AppSettings.MaxTemplateSize)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Exceed max template size", call.Context));
-            }
+            var bytes = converter.ToBytes(update);
 
-            postdata.ByteHash = Kooboo.Lib.Security.Hash.ComputeGuid(zipbytes);
+            var response = HttpHelper.PostData(url, loginHeader(call), bytes);
 
-            Kooboo.IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel>();
-
-            var postbytes = converter.ToBytes(postdata);
-
-            string url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/receiver/template");
-
-            var response = HttpHelper.PostData(url, new Dictionary<string, string>(), postbytes);
-
-            if (!response)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Share template failed", call.Context));
-            }
         }
-         
-        public void Update(ApiCall call)
+
+        public void UpdateBinary(TemplateTransferModel model, ApiCall call)
         {
-            var formResult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
+            BinaryUpdate update = new BinaryUpdate();
+            update.TemplateId = model.TemplateId;
+            update.Bytes = model.Bytes;
 
-            TemplateUpdateModel update = new TemplateUpdateModel();
+            update.ByteHash = Kooboo.Lib.Security.Hash.ComputeGuid(update.Bytes);
 
-            update.UserId = call.Context.User.Id;
+            SimpleConverter<BinaryUpdate> converter = new SimpleConverter<BinaryUpdate>();
 
-            if (formResult.FormData.ContainsKey("id"))
-            {
-                string strid = formResult.FormData["id"];
-                Guid id;
-                if (System.Guid.TryParse(strid, out id))
-                {
-                    update.Id = id;
-                }
-                else
-                {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("Invalid package id", call.Context));
-                }
-            }
-            else
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Missing package id", call.Context));
-            }
+            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateupdate/binary");
 
-            if (formResult.FormData.ContainsKey("category"))
-            {
-                update.Category = formResult.FormData["category"];
-            }
-            if (formResult.FormData.ContainsKey("link"))
-            {
-                update.Link = formResult.FormData["link"];
-            }
-            if (formResult.FormData.ContainsKey("description"))
-            {
-                update.Description = formResult.FormData["description"];
-            }
-            if (formResult.FormData.ContainsKey("tags"))
-            {
-                update.Tags = formResult.FormData["tags"];
-            }
-            if (formResult.FormData.ContainsKey("Images"))
-            {
-                update.Images = formResult.FormData["Images"];
-            }
+            var bytes = converter.ToBytes(update);
 
-            if (formResult.FormData.ContainsKey("IsPrivate"))
-            {
-                string strisprivae = formResult.FormData["IsPrivate"];
-                bool isprivate = false;
-                bool.TryParse(strisprivae, out isprivate);
-
-                if (isprivate)
-                {
-                    update.OrganizationId = call.Context.User.CurrentOrgId;
-                }
-                else
-                {
-                    update.OrganizationId = default(Guid); 
-                }
-            }
-
-            foreach (var item in formResult.Files)
-            {
-                string contenttype = item.ContentType;
-                if (contenttype == null) { contenttype = "image"; }
-                else { contenttype = contenttype.ToLower(); }
-
-                if (contenttype.Contains("image"))
-                {
-                    TemplateUserImages image = new TemplateUserImages();
-                    image.FileName = item.FileName;
-                    image.Base64 = Convert.ToBase64String(item.Bytes);
-                    update.NewImages.Add(image);
-                }
-                else if (contenttype.Contains("zip"))
-                {
-                    update.Bytes = item.Bytes;
-                } 
-            }
-
-            if (formResult.FormData.ContainsKey("defaultimg"))
-            {
-                string defaultimage = formResult.FormData["defaultimg"];
-                update.NewDefault = defaultimage;
-            }
-
-            if (formResult.FormData.ContainsKey("thumbnail"))
-            {
-                string defaultimage = formResult.FormData["thumbnail"];
-                update.NewDefault = defaultimage;
-            }
-
-            if (update.NewImages.Count() > 0)
-            {
-                if (formResult.FormData.ContainsKey("defaultfile"))
-                {
-                    string defaultimg = formResult.FormData["defaultfile"];
-                    int index = 0;
-                    if (int.TryParse(defaultimg, out index))
-                    {
-                        if (update.NewImages.Count() > index)
-                        {
-                            update.NewImages[index].IsDefault = true;
-                        }
-                    }
-                }
-            }
-
-            IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel>();
-
-            var allbytes = converter.ToBytes(update);
-
-            string Url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/receiver/updatetemplate");
-
-            var response = HttpHelper.PostData(Url, null, allbytes);
-
-            if (!response)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Update template failed", call.Context));
-            }
+            var response = HttpHelper.PostData(url, loginHeader(call), bytes);
         }
-          
+
+        public ValidateResult ShareValidate(Guid siteid, ApiCall call)
+        {
+            var website = Kooboo.Data.Config.AppHost.SiteRepo.Get(siteid);
+
+            if (website == null || !Security.AccessControl.HasWebsiteAccess(website, call.Context))
+            {
+                throw new Exception("Access denied");
+            }
+
+            var siteDb = website.SiteDb();
+
+            ValidateResult result = new ValidateResult();
+            result.IsSecure = true;
+
+            var error = Data.Language.Hardcoded.GetValue("Contains sensitive data such as payment information or database connection", call.Context);
+
+            var mysql = siteDb.CoreSetting.GetSetting<MysqlSetting>();
+            if (mysql != null)
+            {
+                result.IsSecure = false;
+                result.Message = error;
+                result.Violation = mysql.ConnectionString;
+            }
+
+            var sql = siteDb.CoreSetting.GetSetting<SqlServerSetting>();
+
+            if (sql != null)
+            {
+                result.IsSecure = false;
+                result.Message = error;
+                result.Violation = sql.ConnectionString;
+            }
+
+            var mongo = siteDb.CoreSetting.GetSetting<MongoSetting>();
+
+            if (mongo != null)
+            {
+                result.IsSecure = false;
+                result.Message = error;
+                result.Violation = mongo.ConnectionString;
+            }
+
+            // result.ShowScreenShot = siteDb.WebSite.SiteType != Data.Definition.WebsiteType.p;
+            //Temp
+            result.ShowScreenShot = true;
+
+            return result;
+
+        }
+
         public void Delete(ApiCall call)
         {
-            var packageid = call.ObjectId;
-            var userid = call.Context.User.Id;
-            string Url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/template/Delete2");
+            string Url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/templateserver/Delete");
             Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("userid", userid.ToString());
-            para.Add("packageid", packageid.ToString());
-
-            var ok = HttpHelper.Post<bool>(Url, para);
+            para.Add("Id", call.ObjectId.ToString());
+            var ok = HttpHelper.Post<bool>(Url, para, loginHeader(call));
             return;
         }
 
-        [Kooboo.Attributes.RequireParameters("SiteName", "RootDomain", "SubDomain", "DownloadCode")]
-        public Guid Use(ApiCall call)
+
+        public Guid Use(string SiteName, string RootDomain, string SubDomain, string id, ApiCall call)
         {
-            string SiteName = call.GetValue("SiteName");
-            if (!Data.GlobalDb.WebSites.CheckNameAvailable(SiteName, call.Context.User.CurrentOrgId))
+
+            if (!Data.Config.AppHost.SiteService.CheckNameAvailable(SiteName, call.Context.User.CurrentOrgId))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("SiteName is taken", call.Context));
             }
 
-            string RootDomain = call.GetValue("RootDomain");
-            string SubDomain = call.GetValue("SubDomain");
 
             string FullDomain = RootDomain;
             if (!string.IsNullOrEmpty(SubDomain))
@@ -606,13 +410,11 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-            string downloadcode = call.GetValue("DownloadCode");
-
-            string url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/package/" + downloadcode);
+            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/download?id=" + id);
 
             if (call.Context.User != null)
             {
-                url += "?userid=" + call.Context.User.Id.ToString();
+                url += "&userid=" + call.Context.User.Id.ToString();
             }
 
             var download = DownloadHelper.DownloadFile(url, "zip");
@@ -625,6 +427,60 @@ namespace Kooboo.Web.Api.Implementation
             var newsite = ImportExport.ImportZip(memory, call.Context.User.CurrentOrgId, SiteName, FullDomain, call.Context.User.Id);
             return newsite.Id;
         }
-          
-    } 
+
+
+        // used for update package. 
+        public List<OwnPackage> Personal(ApiCall call)
+        {
+            //var mock = new List<OwnPackage>();
+            //mock.Add(new OwnPackage() { Name = "coming feature", TemplateId = System.Guid.NewGuid() });
+            ////mock.Add(new OwnPackage() { Name = "Test Name 2", TemplateId = System.Guid.NewGuid() });
+            //return mock;
+
+
+            var lang = GetLang(call);
+
+            Dictionary<string, string> paras = new Dictionary<string, string>();
+
+            if (lang != null)
+            {
+                paras["lang"] = lang;
+            }
+
+            string Url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/Personal");
+            Url = UrlHelper.AppendQueryString(Url, paras);
+
+
+            var fullList = HttpHelper.Get2<List<TemplateItemViewModel>>(Url, null, Data.Helper.ApiHelper.GetAuthHeaders(call.Context));
+
+            if (fullList != null)
+            {
+                return fullList.Select(o => new OwnPackage() { TemplateId = o.Id, Name = o.Name }).ToList();
+            }
+
+            return null;
+
+        }
+
+
+    }
+
+    public class ValidateResult
+    {
+        public bool IsSecure { get; set; }
+
+        public string Message { get; set; }
+
+        public string Violation { get; set; }
+
+        public bool ShowScreenShot { get; set; }
+    }
+
+
+    public class OwnPackage
+    {
+        public string Name { get; set; }
+
+        public Guid TemplateId { get; set; }
+    }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="14px" viewBox="0 0 16 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>attachment</title>
+    <g id="Pay" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="attachment16" transform="translate(-42.000000, -58.000000)">
+            <g id="attachment/gray" transform="translate(42.000000, 57.000000)">
+                <rect id="bg_16" fill-opacity="0" fill="#D8D8D8" x="0" y="0" width="16" height="16"></rect>
+                <g id="编组" transform="translate(0.750218, 1.634091)" stroke="#828282" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7.28555417,0.142979167 L1.09835,6.33018333 C-0.366116667,7.79464167 -0.366116667,10.1690167 1.09835,11.633475 L1.09835,11.633475 C2.56280417,13.0979333 4.93717917,13.0979333 6.4016375,11.633475 L13.7673458,4.26776667 C14.7436375,3.291475 14.7436375,1.70855833 13.7673458,0.732225 L13.7673458,0.732225 C12.7910542,-0.244075 11.2081375,-0.244075 10.2318042,0.732225 L2.8661375,8.09793333 C2.37797083,8.5861 2.37797083,9.37755833 2.8661375,9.86568333 L2.8661375,9.86568333 C3.3542625,10.35385 4.14572083,10.35385 4.6338875,9.86568333 L10.8210542,3.67851667" id="路径"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

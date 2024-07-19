@@ -1,0 +1,829 @@
+{
+    "name": "bootstrap-v3",
+    "references": [
+        {
+            "type": "Style",
+            "url": "https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css"
+        }
+    ],
+    "classes": [
+        {
+            "name": "container",
+            "description": "Use ```.container``` for a responsive fixed width container."
+        },
+        {
+            "name": "container-fluid",
+            "description": "Use ```.container-fluid``` for a full width container, spanning the entire width of your viewport."
+        },{
+            "name": "col-xs-1",
+            "description":"```.col-xs-1``` is used for 1/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-2",
+            "description":"```.col-xs-2``` is used for 2/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-3",
+            "description":"```.col-xs-3``` is used for 3/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-4",
+            "description":"```.col-xs-4``` is used for 4/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-5",
+            "description":"```.col-xs-5``` is used for 5/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-6",
+            "description":"```.col-xs-6``` is used for 6/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-7",
+            "description":"```.col-xs-7``` is used for 7/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-8",
+            "description":"```.col-xs-8``` is used for 8/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-9",
+            "description":"```.col-xs-9``` is used for 9/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-10",
+            "description":"```.col-xs-10``` is used for 10/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-11",
+            "description":"```.col-xs-11``` is used for 11/12 of the ultra small device phone (<768px)."
+        },{
+            "name": "col-xs-12",
+            "description":"```.col-xs-12``` is used for 12/12 of the ultra small device phone (<768px)."
+        },
+        {
+            "name": "col-sm-1",
+            "description":"```.col-sm-1``` is used for 1/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-2",
+            "description":"```.col-sm-2``` is used for 2/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-3",
+            "description":"```.col-sm-3``` is used for31/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-4",
+            "description":"```.col-sm-4``` is used for 4/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-5",
+            "description":"```.col-sm-5``` is used for 5/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-6",
+            "description":"```.col-sm-6``` is used for 6/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-7",
+            "description":"```.col-sm-7``` is used for 7/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-8",
+            "description":"```.col-sm-8``` is used for 8/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-9",
+            "description":"```.col-sm-9``` is used for 9/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-10",
+            "description":"```.col-sm-10``` is used for 10/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-11",
+            "description":"```.col-sm-11``` is used for 11/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-sm-12",
+            "description":"```.col-sm-12``` is used for 12/12 of the  Small devices Tablets (≥768px)."
+        },
+        {
+            "name": "col-md-1",
+            "description":"```.col-md-1``` is used for 1/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-2",
+            "description":"```.col-md-2``` is used for 2/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-3",
+            "description":"```.col-md-3``` is used for 3/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-4",
+            "description":"```.col-md-4``` is used for 4/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-5",
+            "description":"```.col-md-5``` is used for 5/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-6",
+            "description":"```.col-md-6``` is used for 6/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-7",
+            "description":"```.col-md-7``` is used for 7/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-8",
+            "description":"```.col-md-8``` is used for 8/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-9",
+            "description":"```.col-md-9``` is used for 9/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-10",
+            "description":"```.col-md-10``` is used for 10/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-11",
+            "description":"```.col-md-11``` is used for 11/12 of the Medium devices Desktops (≥992px)."
+        },
+        {
+            "name": "col-md-12",
+            "description":"```.col-md-12``` is used for 12/12 of the Medium devices Desktops (≥992px)."
+        },{
+            "name":"col-lg-1",
+            "description":"```.col-lg-1``` is used for 1/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-2",
+            "description":"```.col-lg-2``` is used for 2/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-3",
+            "description":"```.col-lg-3``` is used for 3/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-4",
+            "description":"```.col-lg-4``` is used for 4/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-5",
+            "description":"```.col-lg-5``` is used for 5/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-6",
+            "description":"```.col-lg-6``` is used for 6/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-7",
+            "description":"```.col-lg-7``` is used for 7/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-8",
+            "description":"```.col-lg-8``` is used for 8/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-9",
+            "description":"```.col-lg-9``` is used for 9/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-10",
+            "description":"```.col-lg-10``` is used for 10/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-11",
+            "description":"```.col-lg-11``` is used for 11/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"col-lg-12",
+            "description":"```.col-lg-12``` is used for 12/12 of the Large devices Desktops (≥1200px)."
+        },{
+            "name":"clearfix",
+            "description":"Use ```.clearfix``` for Responsive column resets."
+        },{
+            "name":"row-no-gutters",
+            "description":"Use ```.row-no-gutters``` for Remove the gutters from a row and it's columns."
+        },{
+            "name":"col-md-offset-1",
+            "description":"Move columns to the right using ```.col-md-offset-1``` classes. \nThese classes increase the left margin of a column by 1 columns. "
+        },{
+            "name":"col-md-offset-2",
+            "description":"Move columns to the right using ```.col-md-offset-2``` classes. \nThese classes increase the left margin of a column by 2 columns. "
+        },{
+            "name":"col-md-offset-3",
+            "description":"Move columns to the right using ```.col-md-offset-3``` classes. \nThese classes increase the left margin of a column by 3 columns."
+        },{
+            "name":"col-md-offset-4",
+            "description":"Move columns to the right using ```.col-md-offset-4``` classes. \nThese classes increase the left margin of a column by 4 columns. "
+        },{
+            "name":"col-md-offset-5",
+            "description":"Move columns to the right using ```.col-md-offset-5``` classes. \nThese classes increase the left margin of a column by 5 columns. "
+        },{
+            "name":"col-md-offset-6",
+            "description":"Move columns to the right using ```.col-md-offset-6``` classes. \nThese classes increase the left margin of a column by 6 columns. "
+        },{
+            "name":"col-md-offset-7",
+            "description":"Move columns to the right using ```.col-md-offset-7``` classes. \nThese classes increase the left margin of a column by 7 columns. "
+        },{
+            "name":"col-md-offset-8",
+            "description":"Move columns to the right using ```.col-md-offset-8``` classes. \nThese classes increase the left margin of a column by 8 columns. "
+        },{
+            "name":"col-md-offset-9",
+            "description":"Move columns to the right using ```.col-md-offset-9``` classes. \nThese classes increase the left margin of a column by 9 columns. "
+        },{
+            "name":"col-md-offset-10",
+            "description":"Move columns to the right using ```.col-md-offset-10``` classes. \nThese classes increase the left margin of a column by 10 columns. "
+        },{
+            "name":"col-md-offset-11",
+            "description":"Move columns to the right using ```.col-md-offset-11``` classes. \nThese classes increase the left margin of a column by 11 columns. "
+        },{
+            "name":"row",
+            "description":"To nest your content with the default grid, add a new ```.row``` and set of ```.col-sm-*``` columns within an existing ```.col-sm-*``` column. "
+        },
+        {
+            "name":"col-md-push-1",
+            "description":"Easily change the order of our built-in grid columns by move 1 column to the left"
+        },
+        {
+            "name":"col-md-push-2",
+            "description":"Easily change the order of our built-in grid columns by move 2 column to the left"
+        },
+        {
+            "name":"col-md-push-3",
+            "description":"Easily change the order of our built-in grid columns by move 3 column to the left"
+        },
+        {
+            "name":"col-md-push-4",
+            "description":"Easily change the order of our built-in grid columns by move 4 column to the left"
+        },
+        {
+            "name":"col-md-push-5",
+            "description":"Easily change the order of our built-in grid columns by move 5 column to the left"
+        },
+        {
+            "name":"col-md-push-6",
+            "description":"Easily change the order of our built-in grid columns by move 6 column to the left"
+        },
+        {
+            "name":"col-md-push-7",
+            "description":"Easily change the order of our built-in grid columns by move 7 column to the left"
+        },
+        {
+            "name":"col-md-push-8",
+            "description":"Easily change the order of our built-in grid columns by move 8 column to the left"
+        },
+        {
+            "name":"col-md-push-9",
+            "description":"Easily change the order of our built-in grid columns by move 9 column to the left"
+        },
+        {
+            "name":"col-md-push-10",
+            "description":"Easily change the order of our built-in grid columns by move 10 column to the left"
+        },
+        {
+            "name":"col-md-push-11",
+            "description":"Easily change the order of our built-in grid columns by move 11 column to the left"
+        },{
+            "name":"col-md-pull-1",
+            "description":"Easily change the order of our built-in grid columns by move 1 column to the right"
+        },{
+            "name":"col-md-pull-2",
+            "description":"Easily change the order of our built-in grid columns by move 2 column to the right"
+        },{
+            "name":"col-md-pull-3",
+            "description":"Easily change the order of our built-in grid columns by move 3 column to the right"
+        },{
+            "name":"col-md-pull-4",
+            "description":"Easily change the order of our built-in grid columns by move 4 column to the right"
+        },{
+            "name":"col-md-pull-5",
+            "description":"Easily change the order of our built-in grid columns by move 5 column to the right"
+        },{
+            "name":"col-md-pull-6",
+            "description":"Easily change the order of our built-in grid columns by move 6 column to the right"
+        },{
+            "name":"col-md-pull-7",
+            "description":"Easily change the order of our built-in grid columns by move 7 column to the right"
+        },{
+            "name":"col-md-pull-8",
+            "description":"Easily change the order of our built-in grid columns by move 8 column to the right"
+        },{
+            "name":"col-md-pull-9",
+            "description":"Easily change the order of our built-in grid columns by move 9 column to the right"
+        },{
+            "name":"col-md-pull-10",
+            "description":"Easily change the order of our built-in grid columns by move 10 column to the right"
+        },{
+            "name":"col-md-pull-11",
+            "description":"Easily change the order of our built-in grid columns by move 11 column to the right"
+        },{
+            "name":"lead",
+            "description":"Make a paragraph stand out by adding .lead."
+        },{
+            "name":"text-left",
+            "description":"Left aligned text."
+        },{
+            "name":"text-center",
+            "description":"Center aligned text."
+        },{
+            "name":"text-right",
+            "description":"Right aligned text."
+        },{
+            "name":"text-justify",
+            "description":"Justified text."
+        },{
+            "name":"text-nowrap",
+            "description":"No wrap text."
+        },{
+            "name":"text-lowercase",
+            "description":"Lowercased text."
+        },{
+            "name":"text-uppercase",
+            "description":"Uppercased text."
+        },{
+            "name":"text-capitalize",
+            "description":"Capitalized text."
+        },{
+            "name":"initialism",
+            "description":"Add ```.initialism``` to an abbreviation for a slightly smaller font-size."
+        },{
+            "name":"blockquote-reverse",
+            "description":"Add ```.blockquote-reverse``` for a blockquote with right-aligned content."
+        },{
+            "name":"list-unstyled",
+            "description":"Remove the default list-style and left margin on list items (immediate children only). \nThis only applies to immediate children list items, \nmeaning you will need to add the class for any nested lists as well."
+        },{
+            "name":"list-inline",
+            "description":"Place all list items on a single line with display: inline-block; and some light padding."
+        },{
+            "name":"dl-horizontal",
+            "description":"Make terms and descriptions in <dl> line up side-by-side. \nStarts off stacked like default <dl>s, but when the navbar expands, so do these."
+        },{
+            "name":"pre-scrollable",
+            "description":"Add the ```.pre-scrollable``` class, which will set a max-height of 350px and provide a y-axis scrollbar."
+        },{
+            "name":"table",
+            "description":"Add the base class ```.table``` to any <table> for basic styling—light padding and only horizontal dividers"
+        },{
+            "name":"table-striped",
+            "description":"Use ```.table-striped``` to add zebra-striping to any table row within the <tbody>."
+        },{
+            "name":"table-bordered",
+            "description":"Add ```.table-bordered``` for borders on all sides of the table and cells."
+        },{
+            "name":"table-hover",
+            "description":"Add ```.table-hover``` to enable a hover state on table rows within a <tbody>."
+        },{
+            "name":"table-condensed",
+            "description":"Add ```.table-condensed``` to make tables more compact by cutting cell padding in half."
+        },{
+            "name":"active",
+            "description":"Applies the hover color to a particular row or cell"
+        },{
+            "name":"success",
+            "description":"Indicates a successful or positive action"
+        },{
+            "name":"info",
+            "description":"Indicates a neutral informative change or action"
+        },{
+            "name":"warning",
+            "description":"Indicates a warning that might need attention"
+        },{
+            "name":"danger",
+            "description":"Indicates a dangerous or potentially negative action"
+        },{
+            "name":"table-responsive",
+            "description":"Create responsive tables by wrapping any ```.table``` in ```.table-responsive``` to make them scroll horizontally on small devices (under 768px)."
+        },{
+            "name":"form-group",
+            "description":"Wrap labels and controls in ```.form-group``` for optimum spacing."
+        },{
+            "name":"form-inline",
+            "description":"Add ```.form-inline``` to your form (which doesn't have to be a <form>)\n for left-aligned and inline-block controls."
+        },{
+            "name":"sr-only",
+            "description":"For these inline forms, you can hide the labels using the ```.sr-only``` class. "
+        },{
+            "name":"form-horizontal",
+            "description":"Use Bootstrap's predefined grid classes to align labels and groups of form controls in a horizontal layout by adding ```.form-horizontal``` to the form (which doesn't have to be a <form>). \nDoing so changes ```.form-groups``` to behave as grid rows, so no need for ```.row```."
+        },{
+            "name":"disabled",
+            "description":"To provide a 'not-allowed' cursor on hover of the parent <label> \nyou'll need to add the ```.disabled``` class to the parent ```.radio```,```.radio-inline```, ```.checkbox```, or ```.checkbox-inline```.\nOr add the disabled attribute to <button> buttons or <a> buttons."
+        },{
+            "name":"checkbox-inline",
+            "description":"Use the ```.checkbox-inline``` classes on a series of checkboxes for controls that appear on the same line."
+        },{
+            "name":"radio-inline",
+            "description":"Use the ```.radio-inline``` classes on a series of radios for controls that appear on the same line."
+        },{
+            "name":"form-control-static",
+            "description":"When you need to place plain text next to a form label within a form, use the ```.form-control-static``` class on a <p>."
+        },{
+            "name":"has-warning",
+            "description":"Bootstrap includes validation styles for error, warning, and success states on form controls. \nTo use, add ```.has-warning```, ```.has-error```, or ```.has-success``` to the parent element. \nAny ```.control-label```, ```.form-control```, and ```.help-block``` within that element will receive the validation styles."
+        },{
+            "name":"has-error",
+            "description":"Bootstrap includes validation styles for error, warning, and success states on form controls. \nTo use, add ```.has-warning```, ```.has-error```, or ```.has-success``` to the parent element. \nAny ```.control-label```, ```.form-control```, and ```.help-block``` within that element will receive the validation styles."
+        },{
+            "name":"has-success",
+            "description":"Bootstrap includes validation styles for error, warning, and success states on form controls. \nTo use, add ```.has-warning```, ```.has-error```, or ```.has-success``` to the parent element. \nAny ```.control-label```, ```.form-control```, and ```.help-block``` within that element will receive the validation styles."
+        },{
+            "name":"has-feedback",
+            "description":"You can also add optional feedback icons with the addition of ```.has-feedback``` and the right icon.\nFeedback icons only work with textual ```<input class='form-control'>``` elements.```"
+        },{
+            "name":"input-lg",
+            "description":"Set heights using classes like ```.input-lg```, and set widths using grid column classes like ```.col-lg-*```."
+        },{
+            "name":"form-group-lg",
+            "description":"Quickly size labels and form controls within ```.form-horizontal```."
+        },{
+            "name":"form-group-sm",
+            "description":"Quickly size labels and form controls within ```.form-horizontal```."
+        },{
+            "name":"btn",
+            "description":"Use the ```.btn``` classes on an ```<a>```, ```<button>```, or ```<input>``` element."
+        },{
+            "name":"btn-default",
+            "description":"Standard button"
+        },{
+            "name":"btn-primary",
+            "description":"Provides extra visual weight and identifies the primary action in a set of buttons"
+        },{
+            "name":"btn-success",
+            "description":"Indicates a successful or positive action"
+        },{
+            "name":"btn-info",
+            "description":"Contextual button for informational alert messages"
+        },{
+            "name":"btn-warning",
+            "description":"Indicates caution should be taken with this action"
+        },{
+            "name":"btn-danger",
+            "description":"Indicates a dangerous or potentially negative action"
+        },{
+            "name":"btn-link",
+            "description":"Deemphasize a button by making it look like a link while maintaining button behavior"
+        },{
+            "name":"btn-lg",
+            "description":"Add ```.btn-lg``` for additional sizes."
+        },{
+            "name":"btn-sm",
+            "description":"Add ```.btn-sm``` for additional sizes."
+        },{
+            "name":"btn-xs",
+            "description":"Add ```.btn-xs``` for additional sizes."
+        },{
+            "name":"btn-block",
+            "description":"Create block level buttons—those that span the full width of a parent— by adding ```.btn-block```."
+        },{
+            "name":"img-responsive",
+            "description":"Images in Bootstrap 3 can be made responsive-friendly via the addition of the ```.img-responsive``` class. \nThis applies max-width: 100%;, height: auto; and display: block; to the image so that it scales nicely to the parent element."
+        },{
+            "name":"img-rounded",
+            "description":"Add rounded corners to the <img> element."
+        },{
+            "name":"img-circle",
+            "description":"Add ```.img-circle``` classes to turn image into a circle."
+        },{
+            "name":"img-thumbnail",
+            "description":"Add ```.img-thumbnail``` classes to an <img> element to easily style images in any project."
+        },{
+            "name":"text-muted",
+            "description":"Indicates a muted text"
+        },{
+            "name":"text-primary",
+            "description":"Provides extra visual weight and indicates that the paragraph is the main text"
+        },{
+            "name":"text-success",
+            "description":"Indicates a successful or positive text" 
+        },{
+            "name":"text-warning",
+            "description":"Indicates caution should be taken with this text"
+        },{
+            "name":"text-danger",
+            "description":"Indicates a dangerous or potentially negative text"
+        },{
+            "name":"bg-primary",
+            "description":"Set the background color of the element to indicate emphasis"
+        },{
+            "name":"bg-success",
+            "description":"Set the background color of the element to indicate success."
+        },{
+            "name":"bg-info",
+            "description":"Set the background color for informational messages."
+        },{
+            "name":"bg-warning",
+            "description":"Set the background color of the element to indicates caution should be taken."
+        },{
+            "name":"bg-danger",
+            "description":"Set the background color of the element to indicates danger"
+        },{
+            "name":"close",
+            "description":"Use the generic close icon for dismissing content like modals and alerts."
+        },{
+            "name":"caret",
+            "description":"Use carets to indicate dropdown functionality and direction. \nNote that the default caret will reverse automatically in dropup menus."
+        },{
+            "name":"pull-left",
+            "description":"Float an element to the left with a class. \n!important is included to avoid specificity issues. \nClasses can also be used as mixins."
+        },{
+            "name":"pull-right",
+            "description":"Float an element to the right with a class. \n!important is included to avoid specificity issues. \nClasses can also be used as mixins."
+        },{
+            "name":"center-block",
+            "description":"Set an element to display: block and center via margin."
+        },{
+            "name":"clearfix",
+            "description":"Easily clear floats by adding ```.clearfix``` to the parent element."
+        },{
+            "name":"show",
+            "description":"Force an element to be shown (including for screen readers) with the use of ```.show``` classes."
+        },{
+            "name":"hidden",
+            "description":"Force an element to be hidden (including for screen readers) with the use of ```.hidden``` classes."
+        },{
+            "name":"text-hide",
+            "description":"Utilize the ```.text-hide``` class or mixin to help replace an element's text content with a background image."
+        },{
+            "name":"visible-xs-block",
+            "description":"Extra small devices are visible and set its display:block."
+        },{
+            "name":"visible-xs-inline",
+            "description":"Extra small devices are visible and set its display:inline."
+        },{
+            "name":"visible-xs-inline-block",
+            "description":"Extra small devices are visible and set its display:inline-block."
+        },{
+            "name":"visible-sm-block",
+            "description":"Small devices are visible and set its display:block."
+        },{
+            "name":"visible-sm-inline",
+            "description":"Small devices are visible and set its display:inline."
+        },{
+            "name":"visible-sm-inline-block",
+            "description":"Small devices are visible and set its display:inline-block."
+        },{
+            "name":"visible-md-block",
+            "description":"Medium devices are visible and set its display:block."
+        },{
+            "name":"visible-md-inline",
+            "description":"Medium devices are visible and set its display:inline."
+        },{
+            "name":"visible-md-inline-block",
+            "description":"Medium devices are visible and set its display:inline-block."
+        },{
+            "name":"visible-lg-block",
+            "description":"Large devices are visible and set its display:block."
+        },{
+            "name":"visible-lg-inline",
+            "description":"Large devices are visible and set its display:inline."
+        },{
+            "name":"visible-lg-inline-block",
+            "description":"Large devices are visible and set its display:inline-block."
+        },{
+            "name":"dropdown",
+            "description":"Wrap the dropdown's trigger and the dropdown menu within ```.dropdown```, or another element that declares position: relative;. \nThen add the menu's HTML."
+        },{
+            "name":"dropup",
+            "description":"Dropdown menus can be changed to expand upwards (instead of downwards) by adding ```.dropup``` to the parent."
+        },{
+            "name":"dropdown-menu",
+            "description":"Declared as a drop-down menu, you can add elements to it"
+        },{
+            "name":"dropdown-menu-right",
+            "description":"Add ```.dropdown-menu-right``` to a ```.dropdown-menu``` to right align the dropdown menu."
+        },{
+            "name":"dropdown-header",
+            "description":"Add a header to label sections of actions in any dropdown menu."
+        },{
+            "name":"divider",
+            "description":"Add a divider to separate series of links in a dropdown menu."
+        },{
+            "name":"btn-group",
+            "description":"Wrap a series of buttons with ```.btn``` in ```.btn-group```."
+        },{
+            "name":"btn-toolbar",
+            "description":"Combine sets of ```<div class='btn-group'>``` into a ```<div class='btn-toolbar'>``` for more complex components."
+        },{
+            "name":"btn-group-xs",
+            "description":"Using ```.btn-group-xs``` classes to change the buttons size"
+        },{
+            "name":"btn-group-sm",
+            "description":"Using ```.btn-group-sm``` classes to change the buttons size"
+        },{
+            "name":"btn-group-lg",
+            "description":"Using ```.btn-group-lg``` classes to change the buttons size"
+        },{
+            "name":"btn-group-vertical",
+            "description":"Make a set of buttons appear vertically stacked rather than horizontally. Split button dropdowns are not supported here."
+        },{
+            "name":"btn-group-justified",
+            "description":"Just wrap a series of ```.btns``` in ```.btn-group.btn-group-justified```."
+        },{
+            "name":"input-group",
+            "description":"Wrap a series of input."
+        },{
+            "name":"input-group-addon",
+            "description":"Insert add-ons (```.input-group-addon```) into a single side of <input> element."
+        },{
+            "name":"input-group-btn",
+            "description":"Insert add-ons (```.input-group-btn```) into a single side of <input> element."
+        },{
+            "name":"input-group-lg",
+            "description":"Using ```.input-group-lg``` classes to change the input-group size"
+        },{
+            "name":"input-group-sm",
+            "description":"Using ```.input-group-sm``` classes to change the input-group size"
+        },{
+            "name":"nav",
+            "description":"Add ```.nav``` to use element as navigation base class"
+        },{
+            "name":"nav-tabs",
+            "description":"Add ```.nav-tabs``` class and note the .nav-tabs class requires the .nav base class."
+        },{
+            "name":"nav-pills",
+            "description":"Take that same HTML, but use ```.nav-pills``` instead nav-tabs"
+        },{
+            "name":"nav-stacked",
+            "description":"Pills are also vertically stackable. Just add ```.nav-stacked```."
+        },{
+            "name":"nav-justified",
+            "description":"Easily make tabs or pills equal widths of their parent at screens wider than 768px with ```.nav-justified```. \nOn smaller screens, the nav links are stacked."
+        },{
+            "name":"navbar-form",
+            "description":"Place form content within ```.navbar-form``` for proper vertical alignment and collapsed behavior in narrow viewports."
+        },{
+            "name":"navbar-btn",
+            "description":"Add the ```.navbar-btn``` class to <button> elements not residing in a <form> to vertically center them in the navbar."
+        },{
+            "name":"navbar-text",
+            "description":"Wrap strings of text in an element with ```.navbar-text```, usually on a <p> tag for proper leading and color."
+        },{
+            "name":"navbar-right",
+            "description":"Add navigation items with right alignment"
+        },{
+            "name":"navbar-link",
+            "description":"For folks using standard links that are not within the regular navbar navigation component,use the ```.navbar-link``` class to add the proper colors for the default and inverse navbar options."
+        },{
+            "name":"navbar-left",
+            "description":"Add navigation items with Left alignment"
+        },{
+            "name":"navbar-fixed-top",
+            "description":"Add ```.navbar-fixed-top``` and include a ```.container``` or ```.container-fluid``` to center and pad navbar content."
+        },{
+            "name":"navbar-fixed-bottom",
+            "description":"Add ```.navbar-fixed-bottom``` and include a ```.container``` or ```.container-fluid``` to center and pad navbar content."
+        },{
+            "name":"navbar-static-top",
+            "description":"Create a full-width navbar that scrolls away with the page by adding ```.navbar-static-top``` and include a ```.container``` or ```.container-fluid``` to center and pad navbar content."
+        },{
+            "name":"navbar-inverse",
+            "description":"Modify the look of the navbar by adding ```.navbar-inverse```."
+        },{
+            "name":"breadcrumb",
+            "description":"Indicate the current page's location within a navigational hierarchy."
+        },{
+            "name":"pagination",
+            "description":"Indicates that this is a paged list."
+        },{
+            "name":"pagination-lg",
+            "description":"Add ```.pagination-lg``` for additional sizes."
+        },{
+            "name":"pagination-sm",
+            "description":"Add ```.pagination-sm``` for additional sizes."
+        },{
+            "name":"pager",
+            "description":"Quick previous and next links for simple pagination implementations with light markup and styles."
+        },{
+            "name":"previous",
+            "description":"Align the link to the left sides"
+        },{
+            "name":"next",
+            "description":"Align the link to the right sides"
+        },{
+            "name":"label",
+            "description":"Add ```.label``` class to make the element become a label"
+        },{
+            "name":"label-default",
+            "description":"This is the default label style"
+        },{
+            "name":"label-primary",
+            "description":"Labels indicate importance"
+        },{
+            "name":"label-success",
+            "description":"Label indicate positice or successful"
+        },{
+            "name":"label-warning",
+            "description":"Labels indicate caution"
+        },{
+            "name":"label-info",
+            "description":"Indicates that this is an information label."
+        },{
+            "name":"label-danger",
+            "description":"Indicates that this is a danger label."
+        },{
+            "name":"badge",
+            "description":"Easily highlight new or unread items by adding a ```<span class='badge'>``` to links, Bootstrap navs, and more."
+        },{
+            "name":"jumbotron",
+            "description":"A lightweight, flexible component that can optionally extend the entire viewport to showcase key content on your site."
+        },{
+            "name":"page-header",
+            "description":"A simple shell for an h1 to appropriately space out and segment sections of content on a page. \n It can utilize the h1's default small element, as well as most other components (with additional styles)."
+        },{
+            "name":"thumbnail",
+            "description":"Extend Bootstrap's grid system with the thumbnail component to easily display grids of images, videos, text, and more."
+        },{
+            "name":"alert",
+            "description":"Provide contextual feedback messages for typical user actions with the handful of available and flexible alert messages."
+        },{
+            "name":"alert-success",
+            "description":"Indicates a successful alert."
+        },{
+            "name":"alert-warning",
+            "description":"Indicates a warning alert."
+        },{
+            "name":"alert-info",
+            "description":"Indicates a message alert."
+        },{
+            "name":"alert-danger",
+            "description":"Indicate danger alarm."
+        },{
+            "name":"alert-link",
+            "description":"Use the ```.alert-link``` utility class to quickly provide matching colored links within any alert."
+        },{
+            "name":"progress",
+            "description":"Add the ```.progress``` to use the element as a container for the progress bar"
+        },{
+            "name":"progress-bar",
+            "description":"Add the ```.progress-bar``` to take the parent element as the progress bar"
+        },{
+            "name":"progress-bar-success",
+            "description":"Change the style of the progress bar to indicate successful states"
+        },{
+            "name":"progress-bar-info",
+            "description":"Change the style of the progress bar to indicate message states"
+        },{
+            "name":"progress-bar-warning",
+            "description":"Change the style of the progress bar to indicate successful states"
+        },{
+            "name":"progress-bar-danger",
+            "description":"Change the style of the progress bar to indicate dangerous states"
+        },{
+            "name":"progress-bar-striped",
+            "description":"Uses a gradient to create a striped effect. Not available in IE9 and below."
+        },{
+            "name":"media",
+            "description":"The default media displays a media object (images, video, audio) to the left or right of a content block."
+        },{
+            "name":"media-list",
+            "description":"With a bit of extra markup, you can use media inside list (useful for comment threads or articles lists)."
+        },{
+            "name":"list-group",
+            "description":"Add ```.list-group``` to the parent element of list group"
+        },{
+            "name":"list-group-item",
+            "description":"Take the element with ```.list-group-item``` added as a list item"
+        },{
+            "name":"list-group-item-success",
+            "description":"Changing the style of list items."
+        },{
+            "name":"list-group-item-info",
+            "description":"Changing the style of list items."
+        },{
+            "name":"list-group-item-warning",
+            "description":"Changing the style of list items."
+        },{
+            "name":"list-group-item-danger",
+            "description":"Changing the style of list items."
+        },{
+            "name":"panel",
+            "description":"By default, all the ```.panel``` does is apply some basic border and padding to contain some content."
+        },{
+            "name":"panel-heading",
+            "description":"This is the head area of the panel"
+        },{
+            "name":"panel-title",
+            "description":"Add ```.panel-title``` class as the title of the panel"
+        },{
+            "name":"panel-body",
+            "description":"Add ```.panel-body``` class as the body of the panel"
+        },{
+            "name":"panel-footer",
+            "description":"Wrap buttons or secondary text in ```.panel-footer```. \nNote that panel footers do not inherit colors and borders when using contextual variations as they are not meant to be in the foreground."
+        },{
+            "name":"panel-primary",
+            "description":"Changing the style of panel."
+        },{
+            "name":"panel-success",
+            "description":"Changing the style of panel."
+        },{
+            "name":"panel-info",
+            "description":"Changing the style of panel."
+        },{
+            "name":"panel-warning",
+            "description":"Changing the style of panel."
+        },{
+            "name":"panel-danger",
+            "description":"Changing the style of panel."
+        },{
+            "name":"table",
+            "description":"Add ```.table``` class as the base class of the table."
+        },{
+            "name":"well",
+            "description":"Use the ```.well``` as a simple effect on an element to give it an inset effect."
+        },{
+            "name":"well-lg",
+            "description":"Add ```.well-lg``` for additional sizes."
+        },
+        {
+            "name":"well-sm",
+            "description":"Add ```.well-sm``` for additional sizes."
+        }
+    ]
+}

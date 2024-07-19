@@ -1,0 +1,322 @@
+{
+  "name": "kview-k",
+  "globalAttributes": [
+    {
+      "name": "repeat-self",
+      "description": "The loop contains current container element",
+      "values": [
+        {
+          "name": "true",
+          "description": "repeating action includes current element."
+        },
+        {
+          "name": "false",
+          "description": "repeating action does not include current element."
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-for",
+      "description": "repeat items",
+      "values": [
+        {
+          "name": "item list",
+          "description": "```<p #$prefix$#-for=\"item list\"></p>```"
+        },
+        {
+          "name": "item in list",
+          "description": "```<li #$prefix$#-for=\"item in items\">{{ item.name }}</li>```"
+        },
+        {
+          "name": "{fieldOne, fieldTwo} in items",
+          "description": "```<div #$prefix$#-for=\"{fieldOne, fieldTwo} in items\"></div>```"
+        },
+        {
+          "name": "(item, index) in items",
+          "description": "```<div #$prefix$#-for=\"(item, index) in items\"></div>```"
+        },
+        {
+          "name": "(value, key) in object",
+          "description": "```\n<div #$prefix$#-for=\"(value, key) in object\">\n  {{value}} {{key}}\n</div>\n```"
+        },
+        {
+          "name": "(value, name, index) in object",
+          "description": "```<div #$prefix$#-for=\"(value, name, index) in object\"></div>```"
+        },
+        {
+          "name": "n in 10",
+          "description": "```<span #$prefix$#-for=\"n in 10\">{{ n }}</span>```"
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-content",
+      "description": "set innerHTML of the element",
+      "values": [
+        {
+          "name": "item.fieldName",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-slot-define",
+      "description": "define a slot that can accept content from outside.",
+      "values": [
+        {
+          "name": "NameOrNull",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-slot-insert",
+      "description": "Insert content into sub component that contains a slot, same as v-slot",
+      "values": [
+        {
+          "name": "NameOrNull",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-text",
+      "description": "set innerText of the element, with HTML encoded value",
+      "values": [
+        {
+          "name": "item.fieldName",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-attribute",
+      "description": "value as Element attribute",
+      "values": [
+        {
+          "name": "attName BindingKey",
+          "description": ""
+        }
+      ]
+    },
+
+    {
+      "name": "#$prefix$#-href",
+      "description": "set the element href attribute value",
+      "values": [
+        {
+          "name": "VariableKey",
+          "description": ""
+        }
+      ]
+    },
+
+    {
+      "name": "#$prefix$#-label",
+      "description": "get or set value from content label repository. If the key exists, it will get the value from label repository and replace the tag innerhtml. If the key is not exists, it will be created with the tag's innerhtml as the default value.",
+      "values": [
+        {
+          "name": "lableName",
+          "description": "get or set a label"
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-htmlblock",
+      "description": "get or set value from content HTML block repository. If the key exists, it will get the value  and replace the tag innerhtml. If the key is not exists, it will be created with the tag's innerhtml as the default value.",
+      "values": [
+        {
+          "name": "name",
+          "description": "get or set a htmlblock"
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-if",
+      "description": "When the if condition return true, the element will be rendered",
+      "values": [
+        {
+          "name": "key > compareValue",
+          "description": ""
+        },
+        {
+          "name": "key >= compareValue",
+          "description": ""
+        },
+        {
+          "name": "key <= compareValue",
+          "description": ""
+        },
+        {
+          "name": "key == comparevalue",
+          "description": ""
+        },
+        {
+          "name": "key contains 'textPart'",
+          "description": ""
+        },
+        {
+          "name": "key startWith 'textPart'",
+          "description": ""
+        },
+        {
+          "name": "repeat/even",
+          "description": ""
+        },
+        {
+          "name": "repeat/odd",
+          "description": ""
+        },
+        {
+          "name": "repeat/first",
+          "description": ""
+        },
+        {
+          "name": "repeat/last",
+          "description": ""
+        },
+        {
+          "name": "repeat/!first",
+          "description": ""
+        },
+        {
+          "name": "repeat/2n+1",
+          "description": ""
+        },
+        {
+          "name": "true",
+          "description": ""
+        },
+        {
+          "name": "false",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-elseif",
+      "description": "When the if condition return false, continue check this condition",
+      "values": [
+        {
+          "name": "key > compareValue",
+          "description": ""
+        },
+        {
+          "name": "key >= compareValue",
+          "description": ""
+        },
+        {
+          "name": "key <= compareValue",
+          "description": ""
+        },
+        {
+          "name": "key == comparevalue",
+          "description": ""
+        },
+        {
+          "name": "key contains 'textPart'",
+          "description": ""
+        },
+        {
+          "name": "key startWith 'textPart'",
+          "description": ""
+        },
+        {
+          "name": "repeat/even",
+          "description": ""
+        },
+        {
+          "name": "repeat/odd",
+          "description": ""
+        },
+        {
+          "name": "repeat/first",
+          "description": ""
+        },
+        {
+          "name": "repeat/last",
+          "description": ""
+        },
+        {
+          "name": "repeat/!first",
+          "description": ""
+        },
+        {
+          "name": "repeat/2n+1",
+          "description": ""
+        },
+        {
+          "name": "true",
+          "description": ""
+        },
+        {
+          "name": "false",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-else",
+      "description": "When previous conditions are not matched",
+      "values": []
+    },
+    {
+      "name": "#$prefix$#-placeholder",
+      "description": "Used to mark an element as a placeholder/container in the layout. Components can be added into that placeholder from page designer.",
+      "values": [
+        {
+          "name": "name",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-config",
+      "description": "Make the element editable from backend interface.",
+      "values": [
+        {
+          "name": "key",
+          "description": "the record key in the backend UI."
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-device",
+      "description": "Render elements when user agaent is a mobile or desktop device.",
+      "values": [
+        {
+          "name": "mobile",
+          "description": ""
+        },
+        {
+          "name": "desktop",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-lazy-load-image",
+      "description": "Render all images as loading=lazy after this element",
+      "values": [
+        {
+          "name": "true",
+          "description": ""
+        },
+        {
+          "name": "false",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "#$prefix$#-define",
+      "description": "define a variable",
+      "values": [
+        {
+          "name": "item {'field': 'text value'}",
+          "description": "Set variable to value"
+        }
+      ]
+    }
+  ]
+}

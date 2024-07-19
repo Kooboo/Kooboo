@@ -15,7 +15,7 @@ namespace dotless.Core.Parser.Functions
                 Guard.ExpectNode<Color>(Arguments[0], this, Location);
                 Guard.ExpectNode<Number>(Arguments[1], this, Location);
 
-                return new Color(((Color) Arguments[0]).RGB, ((Number) Arguments[1]).Value);
+                return new Color(((Color)Arguments[0]).RGB, ((Number)Arguments[1]).Value);
             }
 
             Guard.ExpectNumArguments(4, Arguments.Count, this, Location);

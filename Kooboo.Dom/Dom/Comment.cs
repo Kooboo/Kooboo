@@ -14,7 +14,7 @@ namespace Kooboo.Dom
 
         public Comment(string data) : this()
         {
-            this.appendData(data); 
+            this.appendData(data);
         }
 
     }

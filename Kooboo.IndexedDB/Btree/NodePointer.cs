@@ -1,66 +1,27 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
-
     /// <summary>
     /// The tree node pointer to sub leaf or node or block
     /// </summary>
     public class NodePointer
     {
-        private EnumValues.TypeIndicator _indicator;
-
         /// <summary>
         /// The object type of pointer destination.
         /// </summary>
-        public EnumValues.TypeIndicator Indicator
-        {
-            get
-            {
-                if (_indicator == default(EnumValues.TypeIndicator) && _pointerbytes != null)
-                {
-                    _indicator = (EnumValues.TypeIndicator)_pointerbytes[0];
-                }
-                return _indicator;
-            }
-            set
-            {
-                _indicator = value;
-            }
-        }
-
-        private Int16 _relativeposition;
+        public EnumValues.TypeIndicator Indicator;
 
         /// <summary>
-        /// relative disk position of this key-pointer pair within the leaf/node, this is used to delete a record quickly. 
+        /// relative disk position of this key-pointer pair within the leaf/node, this is used to delete a record quickly. This value is set when loading.
         /// </summary>
-        public Int16 RelativePosition
-        {
-            get
-            {
-                if (_relativeposition == default(Int16) && _pointerbytes != null)
-                {
-                    _relativeposition =BitConverter.ToInt16(_pointerbytes, 1);
-                }
-                return _relativeposition;
-            }
-            set
-            {
-                _relativeposition = value;
-            }
-
-
-
-        }
+        public Int16 RelativePosition;
 
         /// <summary>
-        /// The key value that is connected with this pointer.
+        /// The key value that is connected with this pointer.It is set by loading. 
         /// </summary>
         public byte[] KeyToPosition;
 
@@ -68,117 +29,115 @@ namespace Kooboo.IndexedDB.Btree
         ///  The fixed length of a node pointer. point to sub node or leaf or block or duplicate. 
         ///  a pointer fixed at 11 length.
         /// </summary>
-        public static Int16 Length = 11;
+        public int Length = 11;
 
-        private long _positionpointer;
+        public static int GetPointerLength(int MetaLen = 0)
+        {
+            return MetaLen + 11;
+        }
 
         /// <summary>
         /// Pointer to the next position
         /// </summary>
-        public long PositionPointer
-        {
-            get
-            {
-                if (_positionpointer == default(long) && _pointerbytes != null)
-                {
-                    _positionpointer = BitConverter.ToInt64(_pointerbytes, 3);
-                }
-                return _positionpointer;
-            }
-            set
-            {
-                _positionpointer = value;
-            }
-        }
+        public long PositionPointer;
 
-        /// <summary>
-        /// Convert value to bytes. 
-        /// </summary>
-        /// <returns></returns>
         public byte[] ToBytes()
         {
-            byte[] bytearray = new byte[NodePointer.Length];
+            byte[] bytearray = new byte[this.Length];
 
             bytearray[0] = (byte)Indicator;
 
             System.Buffer.BlockCopy(BitConverter.GetBytes(this.RelativePosition), 0, bytearray, 1, 2);
 
             // 8 bytes for pointer
-            System.Buffer.BlockCopy(BitConverter.GetBytes(this.PositionPointer), 0, bytearray, 3, 8);
+            Buffer.BlockCopy(BitConverter.GetBytes(this.PositionPointer), 0, bytearray, 3, 8);
+
+            if (this.Length > 11 && this.BPlusBytes != null)
+            {
+                int appendLen = this.Length - 11;
+                if (this.BPlusBytes.Length < appendLen)
+                {
+                    appendLen = this.BPlusBytes.Length;
+                }
+                Buffer.BlockCopy(this.BPlusBytes, 0, bytearray, 11, appendLen);
+            }
 
             return bytearray;
         }
 
-        private byte[] _pointerbytes;
-
-        public byte[] PointerBytes
+        public static NodePointer FromBytes(byte[] bytes)
         {
-            get
-            {
-                return _pointerbytes;
-            }
-            set
-            {
-                _pointerbytes = value;
-                //when assign value, reset other values. 
-                _positionpointer = default(long);
-                _relativeposition = default(Int16);
-                _indicator = default(EnumValues.TypeIndicator);
-            }
+            NodePointer pointer = new NodePointer();
+            pointer.Indicator = (EnumValues.TypeIndicator)bytes[0];
+            pointer.RelativePosition = BitConverter.ToInt16(bytes, 1);
+            pointer.PositionPointer = BitConverter.ToInt64(bytes, 3);
+            return pointer;
         }
 
-        public byte[] GetBytes()
+        public static NodePointer FromBytes(byte[] bytes, byte[] KeysToPosition)
         {
-            if (_pointerbytes != null)
-            {
-                return _pointerbytes;
-            }
-            else
-            {
-                return ToBytes();
-            }
+            var pointer = FromBytes(bytes);
+            pointer.KeyToPosition = KeysToPosition;
+            return pointer;
+        }
+
+        public static NodePointer FromBytes(byte[] bytes, bool IsPreviousPointer)
+        {
+            var pointer = FromBytes(bytes);
+            pointer.IsPreviousPointer = IsPreviousPointer;
+            return pointer;
+        }
+
+        public static NodePointer Create(EnumValues.TypeIndicator indicator, long diskposition)
+        {
+            NodePointer pointer = new NodePointer();
+            pointer.PositionPointer = diskposition;
+            pointer.Indicator = indicator;
+            return pointer;
         }
 
 
-        public bool hasPointer
+        public static NodePointer FromBPlusBytes(byte[] bytes, byte[] KeysToPosition, int BplusLen)
         {
-            get
-            {
-                return (this.PositionPointer != 0);
-            }
+            var pointer = FromBPlusBytes(bytes, BplusLen);
+            pointer.KeyToPosition = KeysToPosition;
+            return pointer;
         }
 
-        private bool _isPreviousPoionter;
+        public static NodePointer FromBPlusBytes(byte[] bytes, bool IsPreviousPointer, int BplusLen)
+        {
+            var pointer = FromBPlusBytes(bytes, BplusLen);
+            pointer.IsPreviousPointer = IsPreviousPointer;
+            return pointer;
+        }
+
+
+        public static NodePointer FromBPlusBytes(byte[] bytes, int BPlusLen)
+        {
+            NodePointer pointer = new NodePointer();
+            pointer.Indicator = (EnumValues.TypeIndicator)bytes[0];
+            pointer.RelativePosition = BitConverter.ToInt16(bytes, 1);
+            pointer.PositionPointer = BitConverter.ToInt64(bytes, 3);
+            pointer.BPlusBytes = bytes.Skip(11).ToArray();
+            return pointer;
+        }
+
+        public static NodePointer CreateBPlus(EnumValues.TypeIndicator indicator, long diskposition, int BplusLen, byte[] BPlusBytes)
+        {
+            var pointer = new NodePointer();
+            pointer.PositionPointer = diskposition;
+            pointer.Indicator = indicator;
+            pointer.Length = BplusLen + 11;
+            pointer.BPlusBytes = BPlusBytes;
+            return pointer;
+        }
 
         /// <summary>
         ///  whether this is the left preious pointer of current node or not. 
         /// </summary>
-        public bool IsFirstPreviousPointer
-        {
-            get
-            {
-                if (_isPreviousPoionter)
-                {
-                    return true;
-                }
-                else
-                {
-                    if (KeyToPosition == null)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            set
-            {
-                _isPreviousPoionter = value;
-            }
+        public bool IsPreviousPointer;
 
-        }
+        public byte[] BPlusBytes;
 
     }
 }

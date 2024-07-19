@@ -1,21 +1,15 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.IndexedDB
-{  
+{
     public class ObjectStorePool<TKey, TValue>
-    { 
+    {
         private System.Collections.Queue myqueue = new System.Collections.Queue();
         private string storeName;
         private Database database;
         private ObjectStoreParameters parameters;
 
-        private object _lock = new object(); 
+        private object _lock = new object();
 
         public ObjectStorePool(Database Database, string StoreName, ObjectStoreParameters Parameters)
         {
@@ -27,10 +21,10 @@ namespace Kooboo.IndexedDB
             }
             else
             {
-                this.parameters = new ObjectStoreParameters(); 
+                this.parameters = new ObjectStoreParameters();
             }
         }
-          
+
         public ObjectStore<TKey, TValue> Current
         {
             get
@@ -65,7 +59,7 @@ namespace Kooboo.IndexedDB
         }
 
     }
-     
+
 
 
 }

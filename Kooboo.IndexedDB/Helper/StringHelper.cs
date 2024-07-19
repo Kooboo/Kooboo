@@ -151,7 +151,7 @@ namespace Kooboo.IndexedDB.Helper
 
                 case Query.Comparer.Contains:
                     {
-                        return CurrentValue.Contains(TargetValue); 
+                        return CurrentValue.Contains(TargetValue);
                     }
 
                 default:

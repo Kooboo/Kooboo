@@ -1,7 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Dom.CSS;
 using Kooboo.Dom.CSS.rawmodel;
 using Kooboo.Dom.CSS.Tokens;
@@ -26,11 +24,18 @@ namespace Kooboo.Dom
             //this.baseurl = baseurl;
             //this.downloadimportrule = downloadImportRule;
 
-            TokenParser parser = new TokenParser();
-            stylesheet rawstylesheet = parser.ParseStyleSheet(cssText);
-            CSSStyleSheet stylesheet = ParseCSSStyleSheet(rawstylesheet, baseurl, downloadImportRule, ref cssText);
-            stylesheet.cssText = cssText;
-            return stylesheet;
+            if (!string.IsNullOrWhiteSpace(cssText))
+            {
+                TokenParser parser = new TokenParser();
+                stylesheet rawStylesheet = parser.ParseStyleSheet(cssText);
+                CSSStyleSheet stylesheet = ParseCSSStyleSheet(rawStylesheet, baseurl, downloadImportRule, ref cssText);
+                stylesheet.cssText = cssText;
+                return stylesheet;
+            }
+            else
+            {
+                return new CSSStyleSheet();
+            }
         }
 
         public static CSSStyleSheet ParseCSSStyleSheet(string cssText, string baseurl)
@@ -252,8 +257,6 @@ namespace Kooboo.Dom
                         }
                         else
                         {
-                            // must start with a string or url token as the next. 
-                            string error = "this is an error";
                         }
                     }
                     else
@@ -429,11 +432,15 @@ namespace Kooboo.Dom
                 mediarule.media.appendMedium(item);
             }
 
-            CSSRuleList blockrulelist = ParseMediaRuleList(rule.block, ref endindex, mediarule, ref OriginalCss);
-            if (blockrulelist != null)
+            if (rule.block != null)
             {
-                mediarule.cssRules = blockrulelist;
+                CSSRuleList blockrulelist = ParseMediaRuleList(rule.block, ref endindex, mediarule, ref OriginalCss);
+                if (blockrulelist != null)
+                {
+                    mediarule.cssRules = blockrulelist;
+                }
             }
+
 
             mediarule.conditionText = wholeconditiontext;
 
@@ -653,7 +660,7 @@ namespace Kooboo.Dom
 
                             if (block.value[i].Type == CompoenentValueType.preservedToken)
                             {
-                               
+
                                 //PreservedToken pretoken = block.value[i] as PreservedToken;
 
                                 //if (pretoken.token.Type == enumTokenType.comma)
@@ -680,7 +687,7 @@ namespace Kooboo.Dom
                                 //}
                             }
                             else if (block.value[i].Type == CompoenentValueType.simpleBlock)
-                            { 
+                            {
                                 // not implemented now. 
                                 //CSSRuleList mediarulelist = ParseMediaRuleList(block.value[i] as SimpleBlock, ref endindex, mediarule, ref OriginalCss);
 
@@ -700,7 +707,7 @@ namespace Kooboo.Dom
 
                                 //rulelist.appendRule(mediarule);
 
-                                state =  MediaRuleParseState.init; 
+                                state = MediaRuleParseState.init;
                                 startindex = -1;
                             }
 
@@ -727,8 +734,8 @@ namespace Kooboo.Dom
             {
                 rulelist.appendRule(mediarule);
                 mediarule = null;
-            } 
-            return rulelist; 
+            }
+            return rulelist;
         }
 
         /// <summary>

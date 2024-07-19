@@ -835,6 +835,8 @@ namespace dotless.Core.Parser.Infrastructure
             {".wbmp", "image/vnd.wap.wbmp"},
             {".xif", "image/vnd.xiff"},
             {".webp", "image/webp"},
+             {".avif", "image/avif"},
+              {".apng", "image/apng"},
             {".3ds", "image/x-3ds"},
             {".ras", "image/x-cmu-raster"},
             {".cmx", "image/x-cmx"},

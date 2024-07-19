@@ -1,23 +1,18 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Web.ViewModel
 {
-  public  class ExternalResourceItemViewModel 
-    {  
-        public Guid Id { get; set;  }
+    public class ExternalResourceItemViewModel
+    {
+        public Guid Id { get; set; }
 
         public string FullUrl { get; set; }
 
-        public string Name {
-            get 
-            { return this.FullUrl;  }
-            set { this.FullUrl = value;  }
+        public string Name
+        {
+            get
+            { return this.FullUrl; }
+            set { this.FullUrl = value; }
         }
 
         public DateTime LastModified { get; set; }
@@ -27,7 +22,7 @@ namespace Kooboo.Web.ViewModel
 
         public string PreviewUrl
         {
-            get { return this.FullUrl;  }
-        } 
+            get { return this.FullUrl; }
+        }
     }
 }

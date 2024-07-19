@@ -2,11 +2,7 @@
 //All rights reserved.
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using System;
-
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
+using Kooboo.Mail.Utility;
 
 
 namespace Kooboo.Mail.Imap.Commands
@@ -15,7 +11,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -26,13 +22,12 @@ namespace Kooboo.Mail.Imap.Commands
             }
         }
 
-        public bool RequireAuth 
+        public bool RequireAuth
         {
             get
             {
                 return true;
             }
-
         }
 
         public bool RequireFolder
@@ -55,19 +50,34 @@ namespace Kooboo.Mail.Imap.Commands
         {
             var folderName = IMAP_Utils.DecodeMailbox(TextUtils.UnQuoteString(args));
 
-            if (Folder.ReservedFolder.Any(o => folderName.StartsWith(o.Value, StringComparison.OrdinalIgnoreCase)))
+            var prasedFolder = Utility.FolderUtility.ParseFolder(folderName);
+
+            if (prasedFolder.AddressId != 0)
+            {
+                var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(session.MailDb.OrganizationId);
+                orgdb.Email.Delete(prasedFolder.AddressId);
+                return this.NullResult();
+            }
+
+            if (Folder.ReservedFolder.ContainsKey(prasedFolder.FolderId))
+            {
                 throw new CommandException("NO", "Can not delete reservered folders");
+            }
 
-            var folder = session.MailDb.Folders.Get(folderName);
+            var folder = session.MailDb.Folder.Get(folderName);
             if (folder == null)
-                throw new CommandException("NO", "Folder is not found");
+                throw new CommandException("NO", "Folder not found");
 
-            // Todo: Remove messages
+            try
+            {
+                session.MailDb.Folder.Delete(folder);
+            }
+            catch (System.Exception ex)
+            {
+                throw new CommandException("NO", ex.Message);
+            }
 
-            // Remove folder
-            session.MailDb.Folders.Delete(folder);
-
-            if (session.SelectFolder.FolderId == folder.Id)
+            if (session.SelectFolder != null && session.SelectFolder.FolderId == folder.Id)
             {
                 session.SelectFolder = null;
             }

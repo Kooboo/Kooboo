@@ -1,16 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
- public   class CollectionConverter
+    public class CollectionConverter
     {
         private Type DataType;
         private Type CollectionType;
@@ -37,13 +34,13 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         }
 
         public object FromBytes(byte[] bytes)
-        { 
-            var GenericHashSet =  typeof(CollectionWrapper<>).MakeGenericType(DataType);
+        {
+            var GenericHashSet = typeof(CollectionWrapper<>).MakeGenericType(DataType);
 
-            var OriginalInstance = Activator.CreateInstance(this.CollectionType); 
+            var OriginalInstance = Activator.CreateInstance(this.CollectionType);
 
             var list = Activator.CreateInstance(GenericHashSet, OriginalInstance) as System.Collections.IList;
-            
+
             int startposition = 0;
             int totallength = bytes.Length;
 
@@ -120,7 +117,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     else
                     {
                         results.Add(BitConverter.GetBytes(0));
-                        totallen += 4 + result.Length;
+                        totallen += 4;
                     }
                 }
             }

@@ -1,15 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Columns;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
-    public class FieldConverter
-    { 
+    public class FieldConverter : IColumn
+    {
         public int FieldNameHash { get; set; }
 
         public string FieldName { get; set; }
@@ -23,12 +21,14 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public bool IsIncremental { get; set; }
 
-        public Type ClrType { get; set; }
+        public Type DataType { get; set; }
+
+        public bool SkipDefaultValue { get; set; }
 
         // dynamic object... 
         public Func<object, byte[]> ToBytes { get; set; }
-  
+
         // for dynamic object.. 
-        public Func<byte[], object> FromBytes { get; set; }  
+        public Func<byte[], object> FromBytes { get; set; }
     }
 }

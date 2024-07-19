@@ -3,12 +3,12 @@ using System.Configuration;
 namespace dotless.Core.configuration
 {
     using System;
-    using System.Xml;
-    using Loggers;
-    using Plugins;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Xml;
+    using Loggers;
+    using Plugins;
 
     public class XmlConfigurationInterpreter
     {
@@ -61,8 +61,8 @@ namespace dotless.Core.configuration
             var sessionMode = GetStringValue(section, "sessionMode");
             dotlessConfiguration.SessionMode = string.IsNullOrEmpty(sessionMode)
                                                    ? DotlessSessionStateMode.Disabled
-                                                   : (DotlessSessionStateMode) Enum.Parse(typeof (DotlessSessionStateMode), sessionMode, true);
-            
+                                                   : (DotlessSessionStateMode)Enum.Parse(typeof(DotlessSessionStateMode), sessionMode, true);
+
             dotlessConfiguration.SessionQueryParamName = GetStringValue(section, "sessionQueryParamName")
                                                          ?? DotlessConfiguration.DEFAULT_SESSION_QUERY_PARAM_NAME;
 
@@ -144,7 +144,8 @@ namespace dotless.Core.configuration
 
                 if (assembly != null)
                 {
-                    if (!assemblies.Contains(assembly)) {
+                    if (!assemblies.Contains(assembly))
+                    {
                         dotlessPlugins = dotlessPlugins.Union(PluginFinder.GetConfigurators(Assembly.Load(assembly)));
                         assemblies.Add(assembly);
                     }

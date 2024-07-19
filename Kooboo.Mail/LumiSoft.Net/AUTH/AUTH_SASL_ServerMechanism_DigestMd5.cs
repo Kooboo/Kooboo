@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -9,13 +8,13 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_SASL_ServerMechanism_DigestMd5 : AUTH_SASL_ServerMechanism
     {
-        private bool   m_IsCompleted     = false;
-        private bool   m_IsAuthenticated = false;
-        private bool   m_RequireSSL      = false;
-        private string m_Realm           = "";
-        private string m_Nonce           = "";
-        private string m_UserName        = "";
-        private int    m_State           = 0;
+        private bool m_IsCompleted = false;
+        private bool m_IsAuthenticated = false;
+        private bool m_RequireSSL = false;
+        private string m_Realm = "";
+        private string m_Nonce = "";
+        private string m_UserName = "";
+        private int m_State = 0;
 
         /// <summary>
         /// Default constructor.
@@ -36,10 +35,10 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override void Reset()
         {
-            m_IsCompleted     = false;
+            m_IsCompleted = false;
             m_IsAuthenticated = false;
-            m_UserName        = "";
-            m_State           = 0;
+            m_UserName = "";
+            m_State = 0;
         }
 
         #endregion
@@ -54,7 +53,8 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ArgumentNullException">Is raised when <b>clientResponse</b> is null reference.</exception>
         public override byte[] Continue(byte[] clientResponse)
         {
-            if(clientResponse == null){
+            if (clientResponse == null)
+            {
                 throw new ArgumentNullException("clientResponse");
             }
 
@@ -74,41 +74,49 @@ namespace LumiSoft.Net.AUTH
                 The password in this example was "secret".
             */
 
-            if(m_State == 0){
-                m_State++;
-                
-                AUTH_SASL_DigestMD5_Challenge callenge = new AUTH_SASL_DigestMD5_Challenge(new string[]{m_Realm},m_Nonce,new string[]{"auth"},false);
-     
-                return Encoding.UTF8.GetBytes(callenge.ToChallenge());
-            }
-            else if(m_State == 1){
+            if (m_State == 0)
+            {
                 m_State++;
 
-                try{
+                AUTH_SASL_DigestMD5_Challenge callenge = new AUTH_SASL_DigestMD5_Challenge(new string[] { m_Realm }, m_Nonce, new string[] { "auth" }, false);
+
+                return Encoding.UTF8.GetBytes(callenge.ToChallenge());
+            }
+            else if (m_State == 1)
+            {
+                m_State++;
+
+                try
+                {
                     AUTH_SASL_DigestMD5_Response response = AUTH_SASL_DigestMD5_Response.Parse(Encoding.UTF8.GetString(clientResponse));
 
                     // Check realm and nonce value.
-                    if(m_Realm != response.Realm || m_Nonce != response.Nonce){
+                    if (m_Realm != response.Realm || m_Nonce != response.Nonce)
+                    {
                         return Encoding.UTF8.GetBytes("rspauth=\"\"");
                     }
 
                     m_UserName = response.UserName;
                     AUTH_e_UserInfo result = OnGetUserInfo(response.UserName);
-                    if(result.UserExists){            
-                        if(response.Authenticate(result.UserName,result.Password)){
+                    if (result.UserExists)
+                    {
+                        if (response.Authenticate(result.UserName, result.Password))
+                        {
                             m_IsAuthenticated = true;
 
-                            return Encoding.UTF8.GetBytes(response.ToRspauthResponse(result.UserName,result.Password));
+                            return Encoding.UTF8.GetBytes(response.ToRspauthResponse(result.UserName, result.Password));
                         }
                     }
                 }
-                catch{
+                catch
+                {
                     // Authentication failed, just reject request.
                 }
 
                 return Encoding.UTF8.GetBytes("rspauth=\"\"");
             }
-            else{
+            else
+            {
                 m_IsCompleted = true;
             }
 
@@ -125,7 +133,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsCompleted
         {
-            get{ return m_IsCompleted; }
+            get { return m_IsCompleted; }
         }
 
         /// <summary>
@@ -133,7 +141,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool IsAuthenticated
         {
-            get{ return m_IsAuthenticated; }
+            get { return m_IsAuthenticated; }
         }
 
         /// <summary>
@@ -149,7 +157,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override bool RequireSSL
         {
-            get{ return m_RequireSSL; }
+            get { return m_RequireSSL; }
         }
 
         /// <summary>
@@ -158,10 +166,12 @@ namespace LumiSoft.Net.AUTH
         /// <remarks>Normally this is host or domain name.</remarks>
         public string Realm
         {
-            get{ return m_Realm; }
+            get { return m_Realm; }
 
-            set{
-                if(value == null){
+            set
+            {
+                if (value == null)
+                {
                     value = "";
                 }
                 m_Realm = value;
@@ -173,7 +183,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public override string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         #endregion
@@ -196,8 +206,9 @@ namespace LumiSoft.Net.AUTH
         {
             AUTH_e_UserInfo retVal = new AUTH_e_UserInfo(userName);
 
-            if(this.GetUserInfo != null){
-                this.GetUserInfo(this,retVal);
+            if (this.GetUserInfo != null)
+            {
+                this.GetUserInfo(this, retVal);
             }
 
             return retVal;

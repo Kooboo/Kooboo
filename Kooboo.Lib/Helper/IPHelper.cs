@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
 {
@@ -27,13 +23,13 @@ namespace Kooboo.Lib.Helper
 
         private static long part1 { get; set; } = 256 * 256 * 256;
         private static long part2 { get; set; } = 256 * 256;
-        private static long part3 { get; set; } = 256; 
+        private static long part3 { get; set; } = 256;
 
         public static int ToInt(string ip)
         {
             if (string.IsNullOrWhiteSpace(ip))
             {
-                return 0; 
+                return 0;
             }
             string[] segs = ip.Split('.');
             if (segs != null && segs.Length == 4)
@@ -44,68 +40,68 @@ namespace Kooboo.Lib.Helper
                 long three = long.Parse(segs[2]) * part3;
                 long four = long.Parse(segs[3]);
                 addvalue = one + two + three + four;
-                var value = addvalue + int.MinValue;  
-                return (int)value;  
+                var value = addvalue + int.MinValue;
+                return (int)value;
             }
-            return int.MinValue;  
+            return int.MinValue;
         }
-        
+
         public static string FromInt(int value)
         {
-           long orgvalue = (long)value - (long)int.MinValue;
+            long orgvalue = (long)value - (long)int.MinValue;
 
-            long onevalue = orgvalue % part1; 
+            long onevalue = orgvalue % part1;
             long one = (orgvalue - onevalue) / part1;
 
-            long twovalue = onevalue % part2; 
+            long twovalue = onevalue % part2;
             long two = (onevalue - twovalue) / part2;
 
             long threevalue = twovalue % part3;
 
             long three = (twovalue - threevalue) / part3;
 
-            return one.ToString() + "." + two.ToString() + "." + three.ToString() + "." + threevalue;  
+            return one.ToString() + "." + two.ToString() + "." + three.ToString() + "." + threevalue;
         }
-  
+
         public static int CompareIp(string ipx, string ipy)
-        { 
-           return  ToInt(ipx) -ToInt(ipy);  
-        } 
+        {
+            return ToInt(ipx) - ToInt(ipy);
+        }
 
         public static bool IsIP(string input)
         {
             System.Net.IPAddress ipout;
-            return System.Net.IPAddress.TryParse(input, out ipout); 
+            return System.Net.IPAddress.TryParse(input, out ipout);
         }
 
         public static bool IsInSameCClass(string ipx, string ipy)
         {
-            if (ipx == null || ipx == null)
+            if (ipx == null || ipy == null)
             {
-                return false; 
+                return false;
             }
 
             string[] x = ipx.Split('.');
-            string[] y = ipy.Split('.'); 
-           if (x == null || x.Length !=4)
+            string[] y = ipy.Split('.');
+            if (x == null || x.Length != 4)
             {
-                return false; 
+                return false;
             }
 
-           if (y == null || y.Length !=4)
+            if (y == null || y.Length != 4)
             {
-                return false; 
+                return false;
             }
 
-           if (x[0] == y[0] && x[1] == y[1]  && x[2] == y[2])
+            if (x[0] == y[0] && x[1] == y[1] && x[2] == y[2])
             {
-                return true; 
+                return true;
             }
-            return false; 
+            return false;
         }
-         
+
         public static bool IsLocalIp(string Ip)
-        {  
+        {
             //TODO: improve it.  
             foreach (var item in InternalIpPrefix)
             {
@@ -114,8 +110,8 @@ namespace Kooboo.Lib.Helper
                     return true;
                 }
             }
-            return false; 
-        } 
+            return false;
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 namespace dotless.Core.Plugins
 {
-    using Parser.Tree;
     using dotless.Core.Parser.Infrastructure;
+    using Parser.Tree;
 
     public interface IVisitorPlugin : IPlugin
     {

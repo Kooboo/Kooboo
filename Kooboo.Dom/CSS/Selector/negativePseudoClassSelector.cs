@@ -1,14 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Dom.CSS.Selector
 {
-    
+
 
     public class negativePseudoClassSelector : simpleSelector
     {
@@ -48,7 +42,7 @@ namespace Kooboo.Dom.CSS.Selector
                 if (_InnerNotSelector == null && !string.IsNullOrEmpty(matchText))
                 {
                     _InnerNotSelector = SelectorParser.parseOneSelector(matchText);
-                } 
+                }
                 return _InnerNotSelector;
             }
         }

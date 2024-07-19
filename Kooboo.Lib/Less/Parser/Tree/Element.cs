@@ -64,7 +64,7 @@
                     env.Output.Append(Value);
                 }
             }
-            
+
             env.Output
                 .PopAndAppend();
         }

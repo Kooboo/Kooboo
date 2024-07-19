@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
-
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
+using System.Threading.Tasks;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -16,8 +14,8 @@ namespace Kooboo.Mail.Imap.Commands
             get
             {
                 return "[READ-WRITE]";
-            } 
-            set { } 
+            }
+            set { }
         }
 
         public string CommandName
@@ -80,24 +78,46 @@ namespace Kooboo.Mail.Imap.Commands
 
             var stat = session.SelectFolder.Stat;
 
-            session.MailDb.Messages.UpdateRecentByMaxId(stat.LastestMsgId); 
+            // session.MailDb.Msgstore.UpdateRecentByMaxId(stat.LastestMsgId); 
+            session.MailDb.Message2.UpdateRecentByMaxId(stat.LastestMsgId);
 
             Result.Add(new ImapResponse(ResultLine.EXISTS(stat.Exists)));
-            Result.Add(new ImapResponse(ResultLine.RECENT(stat.Recent)));  
+            Result.Add(new ImapResponse(ResultLine.RECENT(stat.Recent)));
 
             if (stat.FirstUnSeen > -1)
             {
-                Result.Add(new ImapResponse(ResultLine.UNSEEN(stat.FirstUnSeen))); 
+                Result.Add(new ImapResponse(ResultLine.UNSEEN(stat.FirstUnSeen)));
             }
 
             Result.Add(new ImapResponse(ResultLine.UIDNEXT(stat.NextUid)));
 
-            Result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(stat.FolderUid)));
-             
+            //if (foldername.ToLower() == "drafts")
+            //{
+            //    // trying to make drafts able to sync. 
+            //    var maxedit = session.MailDb.Message2.Query.Where(o => o.FolderId == session.SelectFolder.FolderId).OrderByDescending(o => o.MsgId).FirstOrDefault();
+
+            //    var timeStamp = DateTime.UtcNow; 
+
+            //    if (maxedit !=null)
+            //    {
+            //        timeStamp = maxedit.CreationTime; 
+            //    }
+
+            //    var validaty = Kooboo.Lib.Helper.DateTimeHelper.DateToInt32(timeStamp); 
+
+            //    Result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(validaty)));
+            //}
+            //else
+            //{
+            Result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(stat.UIDVALIDITY)));
+            // }
+
+
             Result.Add(new ImapResponse(ResultLine.FLAGS(Setting.SupportFlags.ToList())));
 
             return Task.FromResult(Result);
         }
+
 
     }
 }

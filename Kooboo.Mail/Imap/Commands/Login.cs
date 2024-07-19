@@ -2,12 +2,10 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.Principal;
-
-using LumiSoft.Net;
+using System.Threading.Tasks;
+using Kooboo.Mail.Factory;
+using Kooboo.Mail.Utility;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -32,7 +30,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return false;
             }
-
         }
 
         public bool RequireFolder
@@ -53,6 +50,7 @@ namespace Kooboo.Mail.Imap.Commands
 
         public Task<List<ImapResponse>> Execute(ImapSession session, string args)
         {
+            EmailAddress emailAddress = null;
             if (string.IsNullOrEmpty(args))
             {
                 throw new Exception("User Or Password not provided");
@@ -78,27 +76,29 @@ namespace Kooboo.Mail.Imap.Commands
                 }
                 else
                 {
-                    username =  Data.GlobalDb.Users.GetUserName(emailadd.UserId);
-                    OrganizationId = emailadd.OrgId; 
+                    username = Data.GlobalDb.Users.GetUserName(emailadd.UserId);
+                    OrganizationId = emailadd.OrgId;
                 }
+
+                emailAddress = emailadd;
+            }
+            else
+            {
+                throw new Exception("Login user must be an email address");
             }
 
-            var user = Kooboo.Data.GlobalDb.Users.Validate(username, user_pass[1]);
 
-            if (user == null)
+            var orgdb = DBFactory.OrgDb(OrganizationId);
+            var validate = orgdb.Email.LoginByAuthorizationCode(emailAddress.Address, user_pass[1]);
+            var user = Data.GlobalDb.Users.Get(emailAddress.UserId);
+
+            if (!validate)
             {
                 throw new Exception("LOGIN Failed");
             }
-
-           
-            if (OrganizationId == default(Guid))
-            {
-                OrganizationId = user.CurrentOrgId; 
-            }
-
             session.AuthenticatedUserIdentity = new GenericIdentity(user.UserName, "IMAP-LOGIN");
 
-            session.MailDb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user.Id,OrganizationId);
+            session.MailDb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user.Id, OrganizationId);
 
             return this.NullResult();
         }

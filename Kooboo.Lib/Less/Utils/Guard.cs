@@ -3,10 +3,10 @@ using System;
 namespace dotless.Core.Utils
 {
     using System.Collections.Generic;
+    using dotless.Core.Parser;
     using Exceptions;
     using Parser.Infrastructure;
     using Parser.Infrastructure.Nodes;
-    using dotless.Core.Parser;
 
     public static class Guard
     {
@@ -33,7 +33,7 @@ namespace dotless.Core.Utils
             if (actual is TExpected)
                 return;
 
-            var expected = typeof (TExpected).Name.ToLowerInvariant();
+            var expected = typeof(TExpected).Name.ToLowerInvariant();
 
             var message = string.Format("Expected {0} in {1}, found {2}", expected, @in, actual.ToCSS(new Env()));
 
@@ -92,6 +92,6 @@ namespace dotless.Core.Utils
             throw new ParsingException(message, location);
         }
 
-         
+
     }
 }

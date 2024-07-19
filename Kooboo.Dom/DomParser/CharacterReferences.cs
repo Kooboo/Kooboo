@@ -51,14 +51,14 @@ namespace Kooboo.Dom
 
         }
 
-        private static Dictionary<string, string> _charRef;
+        private static Dictionary<string, string> _charReference;
         public static Dictionary<string, string> namedCharacters()
         {
-            if (_charRef == null)
+            if (_charReference == null)
             {
-                _charRef = new Dictionary<string, string>();
+                var _charRef = new Dictionary<string, string>();
 
-                 _charRef.Add("&Aacute;", "\u00C1");
+                _charRef.Add("&Aacute;", "\u00C1");
                 _charRef.Add("&Aacute", "\u00C1");
                 _charRef.Add("&aacute;", "\u00E1");
                 _charRef.Add("&aacute", "\u00E1");
@@ -2290,17 +2290,19 @@ namespace Kooboo.Dom
                 _charRef.Add("&zwj;", "\u200D");
                 _charRef.Add("&zwnj;", "\u200C");
 
+                _charReference = _charRef;
+
             }
-            return _charRef;
+            return _charReference;
         }
 
 
-        private static Dictionary<int, string> _unicodeChar;
+        private static Dictionary<int, string> _unicodeChars;
         public static Dictionary<int, string> unicodeCharacters()
         {
-            if (_unicodeChar == null)
+            if (_unicodeChars == null)
             {
-                _unicodeChar = new Dictionary<int, string>();
+                var _unicodeChar = new Dictionary<int, string>();
 
                 Dictionary<string, string> originalList = new Dictionary<string, string>();
                 originalList.Add("0x00", "U+FFFD");
@@ -2373,9 +2375,10 @@ namespace Kooboo.Dom
                 //0x9E	U+017E	LATIN SMALL LETTER Z WITH CARON (ž)
                 //0x9F	U+0178	LATIN CAPITAL LETTER Y WITH DIAERESIS (Ÿ)
 
+                _unicodeChars = _unicodeChar;
             }
 
-            return _unicodeChar;
+            return _unicodeChars;
 
         }
 
@@ -2389,32 +2392,32 @@ namespace Kooboo.Dom
             ///0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 
             ///0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE, or 0x10FFFF, 
             ///then this is a parse error.
-      
-         
-           /// 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F, 0xFDD0 to 0xFDEF,
-            if ((codepoint >= Convert.ToInt32("0x0001", 16) && codepoint <= Convert.ToInt32("0x0008", 16)) || (codepoint >= Convert.ToInt32("0x000D", 16) && codepoint <= Convert.ToInt32("0x001F", 16))  || (codepoint >= Convert.ToInt32("0x007F", 16) && codepoint <= Convert.ToInt32("0x009F", 16))  ||  (codepoint >= Convert.ToInt32("0xFDD0", 16) && codepoint <= Convert.ToInt32("0xFDEF", 16)))
+
+
+            /// 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F, 0xFDD0 to 0xFDEF,
+            if ((codepoint >= Convert.ToInt32("0x0001", 16) && codepoint <= Convert.ToInt32("0x0008", 16)) || (codepoint >= Convert.ToInt32("0x000D", 16) && codepoint <= Convert.ToInt32("0x001F", 16)) || (codepoint >= Convert.ToInt32("0x007F", 16) && codepoint <= Convert.ToInt32("0x009F", 16)) || (codepoint >= Convert.ToInt32("0xFDD0", 16) && codepoint <= Convert.ToInt32("0xFDEF", 16)))
             {
                 return false;
             }
-            else 
+            else
             {
-               string listofchars = "0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE, 0x2FFFF, 0x3FFFE, 0x3FFFF, 0x4FFFE, 0x4FFFF, 0x5FFFE, 0x5FFFF, 0x6FFFE, 0x6FFFF, 0x7FFFE, 0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE,0x10FFFF";
+                string listofchars = "0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE, 0x2FFFF, 0x3FFFE, 0x3FFFF, 0x4FFFE, 0x4FFFF, 0x5FFFE, 0x5FFFF, 0x6FFFE, 0x6FFFF, 0x7FFFE, 0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE,0x10FFFF";
 
-                string [] charitems = listofchars.Split(',');
+                string[] charitems = listofchars.Split(',');
 
                 foreach (var item in charitems)
-	            {
-		             int decode = Convert.ToInt32(item.ToString().Trim(), 16);
+                {
+                    int decode = Convert.ToInt32(item.ToString().Trim(), 16);
                     if (codepoint == decode)
                     {
                         return false;
                     }
-	            }
+                }
 
             }
-           
-           return true;
-          
+
+            return true;
+
         }
 
     }

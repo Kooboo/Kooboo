@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Database
 {
     public class Table : ISideBarMenu
     {
-        public SideBarSection Parent =>  SideBarSection.Database;
+        public SideBarSection Parent => SideBarSection.Database;
 
         public string Name => "Table";
 
@@ -22,7 +19,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Database
 
         public string GetDisplayName(RenderContext Context)
         {
-          return  Hardcoded.GetValue("Table", Context); 
+            return Hardcoded.GetValue("Table", Context);
         }
     }
 }

@@ -3,9 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom;
 
 namespace Kooboo.Dom.CSS
 {
@@ -65,7 +62,7 @@ namespace Kooboo.Dom.CSS
 
                 case enumSimpleSelectorType.pseudoElement:
                     return matchPseudoElement(element, (pseudoElementSelector)selector);
-                     
+
                 default:
                     return false;
             }
@@ -91,9 +88,13 @@ namespace Kooboo.Dom.CSS
             {
                 string classvalue = element.getAttribute("class");
 
-                if (string.IsNullOrEmpty(classvalue) && classselector.classList.Count > 0)
+                if (string.IsNullOrEmpty(classvalue))
                 {
-                    return false;
+                    if (classselector.classList.Count > 0)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
 
                 foreach (var item in classselector.classList)
@@ -248,10 +249,10 @@ namespace Kooboo.Dom.CSS
                     }
                 case enumAttributeType.hyphenSeperated:
                     {
-                       /// The following selector represents an a element for which the 
-                       /// value of the hreflang attribute begins with "en", 
-                       /// including "en", "en-US", and "en-scouse":
-                        
+                        /// The following selector represents an a element for which the 
+                        /// value of the hreflang attribute begins with "en", 
+                        /// including "en", "en-US", and "en-scouse":
+
 
                         string attvalue = element.getAttribute(attSelector.attributeName);
 
@@ -261,7 +262,7 @@ namespace Kooboo.Dom.CSS
                         }
 
                         if (attvalue == attSelector.attributeValue)
-                        { 
+                        {
                             return true;
                         }
 
@@ -269,7 +270,7 @@ namespace Kooboo.Dom.CSS
                         {
                             return true;
                         }
-                          
+
 
                         return false;
 
@@ -434,14 +435,14 @@ namespace Kooboo.Dom.CSS
         {
             if (!string.IsNullOrEmpty(pseudoClass.elementE))
             {
-                if (!selectorMatch.Match(element, pseudoClass.ElementSelector)) 
+                if (!selectorMatch.Match(element, pseudoClass.ElementSelector))
                 {
                     return false;
                 }
             }
 
             pseudoClass.matchText = pseudoClass.matchText.ToLower().Trim();
-    
+
             // E:root	an E element, root of the document	Structural pseudo-classes	3
             if (pseudoClass.matchText == "root")
             {
@@ -458,18 +459,18 @@ namespace Kooboo.Dom.CSS
             //E:nth-child(n)	an E element, the n-th child of its parent	Structural pseudo-classes	3
             else if (pseudoClass.matchText.Contains("nth-child"))
             {
-                return _pseudoClassNthMatch(element, pseudoClass, false, false); 
+                return _pseudoClassNthMatch(element, pseudoClass, false, false);
             }
             else if (pseudoClass.matchText.Contains("not"))
             {
                 if (pseudoClass.NotSelector == null)
                 {
-                    return false; 
+                    return false;
                 }
 
                 var innermatch = selectorMatch.Match(element, pseudoClass.NotSelector);
 
-                return !innermatch; 
+                return !innermatch;
             }
             //E:nth-last-child(n)	an E element, the n-th child of its parent, counting from the last one	Structural pseudo-classes	3
             else if (pseudoClass.matchText.Contains("nth-last-child"))
@@ -549,19 +550,19 @@ namespace Kooboo.Dom.CSS
 
             else if (pseudoClass.matchText.isOneOf("active", "hover", "focus"))
             {
-                return true; 
+                return true;
             }
             else if (pseudoClass.matchText.isOneOf("link", "visited"))
             {
-                return (element.tagName == "a" || element.tagName == "area");                
+                return (element.tagName == "a" || element.tagName == "area");
             }
             else if (pseudoClass.matchText.isOneOf("enabled", "disabled"))
             {
-                return true; 
+                return true;
             }
-            else if (pseudoClass.matchText=="checked")
+            else if (pseudoClass.matchText == "checked")
             {
-                return element.tagName == "input"; 
+                return element.tagName == "input";
             }
 
             //E:target	an E element being the target of the referring URI	The target pseudo-class	3
@@ -592,9 +593,9 @@ namespace Kooboo.Dom.CSS
             int firstindex = pseudoClass.matchText.IndexOf("(");
             int lastindex = pseudoClass.matchText.IndexOf(")");
 
-            if (firstindex < 0 || lastindex <0)
+            if (firstindex < 0 || lastindex < 0)
             {
-                return false; 
+                return false;
             }
 
             string strnumber = pseudoClass.matchText.Substring(firstindex + 1, lastindex - firstindex - 1).Trim();
@@ -611,41 +612,41 @@ namespace Kooboo.Dom.CSS
                 if (strnumber.Contains("n"))
                 {
                     int beforen = 0;
-                    int aftern = 0; 
+                    int aftern = 0;
                     string strbefore = strnumber.Substring(0, strnumber.IndexOf("n")).Trim();
                     if (string.IsNullOrEmpty(strbefore))
-                    { return false;  }
+                    { return false; }
                     if (!int.TryParse(strbefore, out beforen))
                     {
                         return false;
                     }
-  
+
                     if (CommonIdoms.isAsciiDigit(strbefore))
-                    { 
-                          beforen = Convert.ToInt32(strbefore); 
+                    {
+                        beforen = Convert.ToInt32(strbefore);
                     }
 
-                    if (strnumber.IndexOf("+")>0)
+                    if (strnumber.IndexOf("+") > 0)
                     {
                         string strafter = strnumber.Substring(strnumber.IndexOf("+") + 1).Trim();
                         if (!string.IsNullOrEmpty(strafter))
                         {
                             if (!int.TryParse(strafter, out aftern))
                             {
-                                return false; 
+                                return false;
                             }
                         }
                     }
 
                     if (beforen == 0)
                     {
-                        return (counter + 1) == aftern; 
+                        return (counter + 1) == aftern;
                     }
                     else
                     {
                         return ((counter + 1) % beforen == aftern);
-                    } 
-                    
+                    }
+
                 }
                 else if (strnumber == "odd")
                 {
@@ -713,7 +714,7 @@ namespace Kooboo.Dom.CSS
                 if (!selectorMatch.Match(element, pseudoElement.ElementSelector))
                 {
                     return false;
-                }  
+                }
             }
 
             //E::first-line	the first formatted line of an E element	The ::first-line pseudo-element	1

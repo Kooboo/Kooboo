@@ -1,12 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Kooboo.Lib.NETMultiplePart
 {
@@ -57,8 +54,8 @@ namespace Kooboo.Lib.NETMultiplePart
 
         public static FormResult ReadForm(byte[] input)
         {
-            FormResult result = new FormResult(); 
- 
+            FormResult result = new FormResult();
+
             string boundary = Boundary.GetBoundary(input);
             if (!string.IsNullOrEmpty(boundary))
             {
@@ -77,7 +74,7 @@ namespace Kooboo.Lib.NETMultiplePart
                     if (attributes.ContainsKey("filename"))
                     {
                         File file = new File();
-                        file.Bytes = memory.ToArray(); 
+                        file.Bytes = memory.ToArray();
                         file.ContentType = sectionResult.ContentType;
 
                         if (attributes.ContainsKey("filename"))
@@ -88,16 +85,16 @@ namespace Kooboo.Lib.NETMultiplePart
                         {
                             file.FileName = attributes["name"];
                         }
-                        result.Files.Add(file); 
+                        result.Files.Add(file);
                     }
                     else if (attributes.ContainsKey("name"))
                     {
                         string parakey = attributes["name"];
                         if (!string.IsNullOrEmpty(parakey))
-                        { 
+                        {
                             var bytes = memory.ToArray();
                             var encoding = Helper.EncodingDetector.GetEncoding(ref bytes);
-                            string paravalue = encoding.GetString(bytes); 
+                            string paravalue = encoding.GetString(bytes);
                             result.FormData.Add(parakey, paravalue);
                         }
                     }
@@ -112,50 +109,57 @@ namespace Kooboo.Lib.NETMultiplePart
 
 
             }
-            return result; 
+            return result;
         }
     }
 
     public class File
     {
+        public string Name { get; set; }
         public string ContentType { get; set; }
-
         public string FileName { get; set; }
 
-        private byte[] _bytes; 
-        public byte[] Bytes {
-            get {
-                if ((_bytes == null||_bytes.Length ==0)  && _stream != null)
+        private byte[] _bytes;
+        public byte[] Bytes
+        {
+            get
+            {
+                if (_bytes == null || _bytes.Length == 0)
                 {
-                    MemoryStream memory = new MemoryStream();
-                    _stream.CopyTo(memory);
-                    _bytes = memory.ToArray(); 
+                    _bytes = Stream.ToArray();
                 }
-                return _bytes; 
+                return _bytes;
             }
-            set { _bytes = value;  }
+            set { _bytes = value; }
         }
 
-        private Stream _stream;
+        private MemoryStream _stream;
         [JsonIgnore]
-        public  Stream Stream {
-            get {
-                if (_stream == null && _bytes != null)
+        public MemoryStream Stream
+        {
+            get
+            {
+                if (_stream == null)
                 {
-                    _stream = new MemoryStream(_bytes);  
+                    _stream = new MemoryStream();
+                    CopyTo(_stream);
                 }
-                return _stream; 
+                return _stream;
             }
-            set {
-                _stream = value; 
+            set
+            {
+                _stream = value;
             }
         }
+
+        [JsonIgnore]
+        public Action<Stream> CopyTo { get; set; }
     }
 
-   public class FormResult
+    public class FormResult
     {
         public Dictionary<string, string> FormData { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-       public List<File> Files { get; set; } = new List<File>(); 
+        public List<File> Files { get; set; } = new List<File>();
     }
 }

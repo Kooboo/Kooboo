@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Reflection;
-    using System.ComponentModel;
 
     public class GenericPluginConfigurator<T> : IPluginConfigurator where T : IPlugin
     {
@@ -52,12 +50,12 @@
             {
                 var constructorArguments = parameterConstructor.GetParameters()
                     .OrderBy(parameter => parameter.Position)
-                    .Select(parameter => 
+                    .Select(parameter =>
                     {
                         var p = pluginParameters.FirstOrDefault(pluginParameter => pluginParameter.Name == parameter.Name);
                         if (p == null)
                         {
-                            if (parameter.ParameterType.IsValueType) 
+                            if (parameter.ParameterType.IsValueType)
                             {
                                 return Activator.CreateInstance(parameter.ParameterType);
                             }
@@ -92,24 +90,29 @@
             List<ConstructorInfo> constructors = typeof(T).GetConstructors()
                 .Where(constructorInfo => constructorInfo.IsPublic && !constructorInfo.IsStatic).ToList();
 
-            if (constructors.Count > 2  || constructors.Count == 0) 
+            if (constructors.Count > 2 || constructors.Count == 0)
             {
                 throw new Exception("Generic plugin configurator doesn't support less than 1 or more than 2 constructors. Add your own IPluginConfigurator to the assembly.");
-            } else if (constructors.Count == 2) 
+            }
+            else if (constructors.Count == 2)
             {
-                if (constructors[0].GetParameters().Length == 0) 
+                if (constructors[0].GetParameters().Length == 0)
                 {
                     defaultConstructor = constructors[0];
                     parameterConstructor = constructors[1];
-                } else if (constructors[1].GetParameters().Length == 0) 
+                }
+                else if (constructors[1].GetParameters().Length == 0)
                 {
                     defaultConstructor = constructors[1];
                     parameterConstructor = constructors[0];
-                } else 
+                }
+                else
                 {
                     throw new Exception("Generic plugin configurator only supports 1 parameterless constructor and 1 with parameters. Add your own IPluginConfigurator to the assembly.");
                 }
-            } else {
+            }
+            else
+            {
                 if (constructors[0].GetParameters().Length == 0)
                 {
                     defaultConstructor = constructors[0];
@@ -128,13 +131,13 @@
             ConstructorInfo defaultConstructor;
             ConstructorInfo parameterConstructor;
             GetConstructorInfos(out parameterConstructor, out defaultConstructor);
-            if (parameterConstructor == null) 
+            if (parameterConstructor == null)
             {
                 return new List<IPluginParameter>();
             }
 
             return parameterConstructor.GetParameters().Select(parameter => (IPluginParameter)new PluginParameter(
-                parameter.Name, parameter.ParameterType, defaultConstructor == null)).ToList(); 
+                parameter.Name, parameter.ParameterType, defaultConstructor == null)).ToList();
         }
     }
 }

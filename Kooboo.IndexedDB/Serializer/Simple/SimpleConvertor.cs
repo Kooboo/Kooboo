@@ -1,10 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Columns;
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
-using System.Collections;
+using Kooboo.IndexedDB.Columns;
+using Kooboo.IndexedDB.Helper;
 
 
 namespace Kooboo.IndexedDB.Serializer.Simple
@@ -59,7 +58,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     {
                         var collen = columns[item.Key];
                         IColumn<T> created = Helper.ColumnHelper.GetColumn<T>(item.Key, item.Value, collen);
-                        created.relativePosition = relativepos;
+                        created.RelativePosition = relativepos;
                         relativepos += created.Length + 8; // 4 bytes for fieldnamehash and 4 bytes for lenmark. 
                         this.Columns.Add(created);
                     }

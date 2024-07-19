@@ -3,13 +3,11 @@
 using Kooboo.Data.Definition;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.ViewModel;
-using System;
-using System.Collections.Generic;
 
 namespace Kooboo.Web.ViewModel
 {
     public class LangTextContentViewModel
-    { 
+    {
         /// <summary>
         /// {folderid,categoriesids}
         /// </summary>
@@ -28,7 +26,7 @@ namespace Kooboo.Web.ViewModel
         public string ContentTypeId { get; set; }
 
         public bool Online { get; set; }
-         
+
         private Dictionary<string, Dictionary<string, string>> _values;
 
         /// <summary>
@@ -48,12 +46,8 @@ namespace Kooboo.Web.ViewModel
         }
     }
 
-    public class ColumnViewModel
+    public class ColumnViewModel : BaseColumnViewModel
     {
-        public string Name { get; set; }
-
-        public string DisplayName { get; set; }
-
         public DataTypes DataType { get; set; }
 
         public List<string> Operators
@@ -67,18 +61,18 @@ namespace Kooboo.Web.ViewModel
 
                 foreach (var item in support)
                 {
-                    result.Add(item.ToString()); 
+                    result.Add(item.ToString());
                 }
 
-                return result; 
-      //  EqualTo = 0,
-      //GreaterThan = 1,
-      //GreaterThanOrEqual = 2,
-      //LessThan = 3,
-      //LessThanOrEqual = 4,
-      //NotEqualTo = 5,
-      //StartWith = 6,
-      //Contains = 7, 
+                return result;
+                //  EqualTo = 0,
+                //GreaterThan = 1,
+                //GreaterThanOrEqual = 2,
+                //LessThan = 3,
+                //LessThanOrEqual = 4,
+                //NotEqualTo = 5,
+                //StartWith = 6,
+                //Contains = 7, 
 
                 //List<string> operators = new List<string>();
                 //operators.Add("EqualTo");
@@ -101,17 +95,15 @@ namespace Kooboo.Web.ViewModel
         }
     }
 
-    public class ContentFieldViewModel
+    public class ContentFieldViewModel : BaseColumnViewModel
     {
-        public string Name { get; set; }
+        public Dictionary<string, string> Values = new Dictionary<string, string>();
 
-        public string  DisplayName { get; set; }
-
-        public Dictionary<string, string> Values = new Dictionary<string, string>(); 
-  
         public string ControlType { get; set; }
 
-        public string Validations { get; set; } 
+        public string Validations { get; set; }
+
+        public string Settings { get; set; }
 
         public string ToolTip { get; set; }
 
@@ -121,26 +113,23 @@ namespace Kooboo.Web.ViewModel
 
         public bool MultipleValue { get; set; }
 
-        public string selectionOptions { get; set; }    
+        public string selectionOptions { get; set; }
 
     }
-    
+
     public class CategoryContentViewModel
     {
-        public ContentFolder CategoryFolder { get;   set; }
+        public ContentFolder CategoryFolder { get; set; }
 
         public string Alias { get; set; }
 
-        public List<TextContentViewModel> Contents { get; set; } = new List<TextContentViewModel>(); 
+        public List<TextContentViewModel> Contents { get; set; } = new List<TextContentViewModel>();
 
-        public string Display
-        {
-            get { return  CategoryFolder!=null? CategoryFolder.DisplayName:null; }
-        }
-        
+        public string Display { get; set; }
+
         public bool MultipleChoice { get; set; }
     }
-     
+
 
     public class ContentEditViewModel
     {
@@ -151,5 +140,23 @@ namespace Kooboo.Web.ViewModel
         public List<EmbeddedContentViewModel> Embedded { get; set; }
 
         public Guid FolderId { get; set; }
+    }
+
+    public class CategoryOptionViewModel
+    {
+        public Guid Id { get; set; }
+
+        public string Alias { get; set; }
+
+        public List<KeyValuePair<Guid, string>> Options { get; set; } = new List<KeyValuePair<Guid, string>>();
+
+        public string Display { get; set; }
+
+        public bool MultipleChoice { get; set; }
+    }
+
+    public class PagedTextContentListViewModel : PagedListViewModel<TextContentViewModel, BaseColumnViewModel>
+    {
+        public List<CategoryOptionViewModel> Categories { get; set; }
     }
 }

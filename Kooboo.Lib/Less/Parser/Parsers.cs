@@ -274,7 +274,7 @@ namespace dotless.Core.Parser
 
         // Assignments are argument entities for calls.
         // They are present in ie filter properties as shown below.
- 	    //
+        //
         //     filter: progid:DXImageTransform.Microsoft.Alpha( *opacity=50* )	
         //
         public Assignment Assignment(Parser parser)
@@ -288,7 +288,8 @@ namespace dotless.Core.Parser
 
             var value = Entity(parser);
 
-            if (value) {
+            if (value)
+            {
                 return NodeProvider.Assignment(key.Value, value, key.Location);
             }
 
@@ -415,7 +416,7 @@ namespace dotless.Core.Parser
                     {
                         exact.Add(s);
                     }
-                    
+
                     if (!parser.Tokenizer.Match(','))
                     {
                         break;
@@ -424,7 +425,7 @@ namespace dotless.Core.Parser
 
                 if (!parser.Tokenizer.Match(')'))
                 {
-                    throw new ParsingException(@"Extend rule not correctly terminated",parser.Tokenizer.GetNodeLocation(index));
+                    throw new ParsingException(@"Extend rule not correctly terminated", parser.Tokenizer.GetNodeLocation(index));
                 }
 
                 if (extendKeyword.Match.Value[0] == '&')
@@ -437,7 +438,7 @@ namespace dotless.Core.Parser
                     return null;
                 }
 
-                return NodeProvider.Extend(exact,partial, parser.Tokenizer.GetNodeLocation(index));
+                return NodeProvider.Extend(exact, partial, parser.Tokenizer.GetNodeLocation(index));
             }
             return null;
         }
@@ -468,7 +469,7 @@ namespace dotless.Core.Parser
         //     0.5em 95%
         //
         public Number Dimension(Parser parser)
-        { 
+        {
             var c = parser.Tokenizer.CurrentChar;
             if (!(char.IsNumber(c) || c == '.' || c == '-' || c == '+'))
                 return null;
@@ -706,15 +707,17 @@ namespace dotless.Core.Parser
                     else
                         parameters.Add(NodeProvider.Rule(param.Value, null, parser.Tokenizer.GetNodeLocation(i)));
 
-                } else if (param2 = Literal(parser) || Keyword(parser))
+                }
+                else if (param2 = Literal(parser) || Keyword(parser))
                 {
                     parameters.Add(NodeProvider.Rule(null, param2, parser.Tokenizer.GetNodeLocation(i)));
-                } else
+                }
+                else
                     break;
 
                 GatherAndPullComments(parser);
 
-				if (!(parser.Tokenizer.Match(',') || parser.Tokenizer.Match(';')))
+                if (!(parser.Tokenizer.Match(',') || parser.Tokenizer.Match(';')))
                     break;
 
                 GatherAndPullComments(parser);
@@ -753,8 +756,10 @@ namespace dotless.Core.Parser
         {
             Condition condition, nextCondition;
 
-            if (condition = Condition(parser)) {
-                while(parser.Tokenizer.Match(',')) {
+            if (condition = Condition(parser))
+            {
+                while (parser.Tokenizer.Match(','))
+                {
                     nextCondition = Expect(Condition(parser), ", without recognised condition", parser);
 
                     condition = NodeProvider.Condition(condition, "or", nextCondition, false, parser.Tokenizer.GetNodeLocation());
@@ -881,19 +886,20 @@ namespace dotless.Core.Parser
 
             PushComments();
             GatherComments(parser); // to collect, combinator must have picked up something which would require memory anyway
-            Node e = ExtendRule(parser) 
+            Node e = ExtendRule(parser)
                 || NonPseudoClassSelector(parser)
                 || PseudoClassSelector(parser)
-                || parser.Tokenizer.Match('*') 
-                || parser.Tokenizer.Match('&') 
-                || Attribute(parser) 
+                || parser.Tokenizer.Match('*')
+                || parser.Tokenizer.Match('&')
+                || Attribute(parser)
                 || parser.Tokenizer.MatchAny(parenthesizedTokenRegex)
-                || parser.Tokenizer.Match(@"[\.#](?=@\{)") 
+                || parser.Tokenizer.Match(@"[\.#](?=@\{)")
                 || VariableCurly(parser);
 
             if (!e)
             {
-                if (parser.Tokenizer.Match('(')) {
+                if (parser.Tokenizer.Match('('))
+                {
                     var variable = Variable(parser) ?? VariableCurly(parser);
                     if (variable)
                     {
@@ -916,18 +922,22 @@ namespace dotless.Core.Parser
             return null;
         }
 
-        private static RegexMatchResult PseudoClassSelector(Parser parser) {
+        private static RegexMatchResult PseudoClassSelector(Parser parser)
+        {
             return parser.Tokenizer.Match(@":(\\.|[a-zA-Z0-9_-])+");
         }
 
-        private Node NonPseudoClassSelector(Parser parser) {
+        private Node NonPseudoClassSelector(Parser parser)
+        {
             var memo = Remember(parser);
             var match = parser.Tokenizer.Match(@"[.#]?(\\.|[a-zA-Z0-9_-])+");
-            if (!match) {
+            if (!match)
+            {
                 return null;
             }
 
-            if (parser.Tokenizer.Match('(')) {
+            if (parser.Tokenizer.Match('('))
+            {
                 // Argument list implies that we actually matched a mixin call
                 // Rewind back to where we started and return a null match
                 Recall(parser, memo);
@@ -1032,7 +1042,7 @@ namespace dotless.Core.Parser
                     (val = Quoted(parser) || parser.Tokenizer.Match(@"[\w-]+")))
                     // Would be nice if this wasn't one block - we could make Attribute node
                     // see CommentsInSelectorAttributes in CommentsFixture.cs
-                    attr = string.Format("{0}{1}{2}", key, op, val.ToCSS(new Env())); 
+                    attr = string.Format("{0}{1}{2}", key, op, val.ToCSS(new Env()));
                 else
                     attr = key.ToString();
             }
@@ -1120,7 +1130,7 @@ namespace dotless.Core.Parser
                 if ((name[0] != '@') && (parser.Tokenizer.Peek(@"([^#@+\/*`(;{}'""-]*);")))
                 {
                     value = parser.Tokenizer.Match(@"[^#@+\/*`(;{}'""-]*");
-                } 
+                }
                 else if (name == "font")
                 {
                     value = Font(parser);
@@ -1237,13 +1247,15 @@ namespace dotless.Core.Parser
             var index = parser.Tokenizer.Location.Index;
 
             var importMatch = parser.Tokenizer.Match(@"@import(-(once))?\s+");
-            if (!importMatch) {
+            if (!importMatch)
+            {
                 return null;
             }
 
             var optionIndex = parser.Tokenizer.Location.Index;
             var optionsMatch = parser.Tokenizer.Match(@"\((?<keywords>.*)\)");
-            if (optionsMatch) {
+            if (optionsMatch)
+            {
                 throw new ParsingException("Unsupported @import option", parser.Tokenizer.GetNodeLocation(optionIndex));
             }
 
@@ -1251,7 +1263,7 @@ namespace dotless.Core.Parser
             if (path = Quoted(parser) || Url(parser))
             {
                 const bool isOnce = true;
-                
+
                 var features = MediaFeatures(parser);
 
                 Expect(parser, ';', "Expected ';' (possibly unrecognised media sequence)");
@@ -1362,7 +1374,8 @@ namespace dotless.Core.Parser
             {
                 rules = Block(parser);
 
-                if (rules != null) {
+                if (rules != null)
+                {
                     rules.PreComments = preRulesComments;
                     return NodeProvider.Directive(name, identifier, rules, parser.Tokenizer.GetNodeLocation(index));
                 }
@@ -1376,7 +1389,8 @@ namespace dotless.Core.Parser
             else
             {
                 Node value;
-                if (value = Expression(parser)) {
+                if (value = Expression(parser))
+                {
                     value.PreComments = preRulesComments;
                     value.PostComments = GatherAndPullComments(parser);
 
@@ -1528,7 +1542,8 @@ namespace dotless.Core.Parser
 
                 NodeList keyFrameElements = new NodeList();
 
-                while(true) {
+                while (true)
+                {
                     RegexMatchResult keyFrameIdentifier;
 
                     if (keyFrameElements.Count > 0)
@@ -1543,12 +1558,12 @@ namespace dotless.Core.Parser
                             break;
                         }
                     }
-                    
+
                     keyFrameElements.Add(new Element(null, keyFrameIdentifier));
 
                     GatherComments(parser);
 
-                    if(!parser.Tokenizer.Match(","))
+                    if (!parser.Tokenizer.Match(","))
                         break;
 
                     GatherComments(parser);
@@ -1556,7 +1571,7 @@ namespace dotless.Core.Parser
 
                 if (keyFrameElements.Count == 0)
                     break;
-                
+
                 var preComments = GatherAndPullComments(parser);
 
                 var block = Expect(Block(parser), "Expected css block after key frame identifier", parser);
@@ -1838,7 +1853,7 @@ namespace dotless.Core.Parser
             throw new ParsingException(string.Format(message, expectedString, parser.Tokenizer.NextChar), parser.Tokenizer.GetNodeLocation());
         }
 
-        public T Expect<T>(T node, string message, Parser parser) where T:Node
+        public T Expect<T>(T node, string message, Parser parser) where T : Node
         {
             if (node)
                 return node;

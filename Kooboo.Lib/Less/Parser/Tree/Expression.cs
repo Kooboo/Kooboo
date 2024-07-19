@@ -1,9 +1,9 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using System.Linq;
-    using System.Collections.Generic;
     using Plugins;
 
     public class Expression : Node
@@ -12,7 +12,7 @@
 
         public Expression(IEnumerable<Node> value)
         {
-            if(value is NodeList)
+            if (value is NodeList)
                 Value = value as NodeList;
             else
                 Value = new NodeList(value);

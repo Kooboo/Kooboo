@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
-
 using LumiSoft.Net.IO;
 
 namespace LumiSoft.Net.MIME
@@ -13,9 +12,9 @@ namespace LumiSoft.Net.MIME
     /// </summary>
     public class MIME_h_Collection : IEnumerable
     {
-        private bool            m_IsModified = false;
-        private MIME_h_Provider m_pProvider  = null;
-        private List<MIME_h>    m_pFields    = null;
+        private bool m_IsModified = false;
+        private MIME_h_Provider m_pProvider = null;
+        private List<MIME_h> m_pFields = null;
 
         /// <summary>
         /// Default constructor.
@@ -24,7 +23,8 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>provider</b> is null reference.</exception>
         public MIME_h_Collection(MIME_h_Provider provider)
         {
-            if(provider == null){
+            if (provider == null)
+            {
                 throw new ArgumentNullException("provider");
             }
 
@@ -43,16 +43,18 @@ namespace LumiSoft.Net.MIME
         /// <param name="field">Header field to insert.</param>
         /// <exception cref="ArgumentOutOfRangeException">Is raised when <b>index</b> is out of range.</exception>
         /// <exception cref="ArgumentNullException">Is raised when <b>field</b> is null reference.</exception>
-        public void Insert(int index,MIME_h field)
+        public void Insert(int index, MIME_h field)
         {
-            if(index < 0 || index > m_pFields.Count){
+            if (index < 0 || index > m_pFields.Count)
+            {
                 throw new ArgumentOutOfRangeException("index");
             }
-            if(field == null){
+            if (field == null)
+            {
                 throw new ArgumentNullException("field");
             }
 
-            m_pFields.Insert(index,field);
+            m_pFields.Insert(index, field);
             m_IsModified = true;
         }
 
@@ -68,10 +70,11 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>field</b> is null reference.</exception>
         public MIME_h Add(string field)
         {
-            if(field == null){
+            if (field == null)
+            {
                 throw new ArgumentNullException("field");
             }
-   
+
             MIME_h h = m_pProvider.Parse(field);
             m_pFields.Add(h);
             m_IsModified = true;
@@ -86,7 +89,8 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>field</b> is null reference value.</exception>
         public void Add(MIME_h field)
         {
-            if(field == null){
+            if (field == null)
+            {
                 throw new ArgumentNullException("field");
             }
 
@@ -105,7 +109,8 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>field</b> is null reference value.</exception>
         public void Remove(MIME_h field)
         {
-            if(field == null){
+            if (field == null)
+            {
                 throw new ArgumentNullException("field");
             }
 
@@ -125,15 +130,19 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
         public void RemoveAll(string name)
         {
-            if(name == null){
+            if (name == null)
+            {
                 throw new ArgumentNullException("name");
             }
-            if(name == string.Empty){
-                throw new ArgumentException("Argument 'name' value must be specified.","name");
+            if (name == string.Empty)
+            {
+                throw new ArgumentException("Argument 'name' value must be specified.", "name");
             }
 
-            foreach(MIME_h field in m_pFields.ToArray()){
-                if(string.Compare(name,field.Name,true) == 0){
+            foreach (MIME_h field in m_pFields.ToArray())
+            {
+                if (string.Compare(name, field.Name, true) == 0)
+                {
                     m_pFields.Remove(field);
                 }
             }
@@ -166,15 +175,19 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentException">Is raised when any of the arguments has invalid value.</exception>
         public bool Contains(string name)
         {
-            if(name == null){
+            if (name == null)
+            {
                 throw new ArgumentNullException("name");
             }
-            if(name == string.Empty){
-                throw new ArgumentException("Argument 'name' value must be specified.","name");
+            if (name == string.Empty)
+            {
+                throw new ArgumentException("Argument 'name' value must be specified.", "name");
             }
 
-            foreach(MIME_h field in m_pFields.ToArray()){
-                if(string.Compare(name,field.Name,true) == 0){
+            foreach (MIME_h field in m_pFields.ToArray())
+            {
+                if (string.Compare(name, field.Name, true) == 0)
+                {
                     return true;
                 }
             }
@@ -190,7 +203,8 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>field</b> is null reference.</exception>
         public bool Contains(MIME_h field)
         {
-            if(field == null){
+            if (field == null)
+            {
                 throw new ArgumentNullException("field");
             }
 
@@ -209,12 +223,15 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>name</b> is null reference.</exception>
         public MIME_h GetFirst(string name)
         {
-            if(name == null){
+            if (name == null)
+            {
                 throw new ArgumentNullException("name");
             }
 
-            foreach(MIME_h field in m_pFields.ToArray()){
-                if(string.Equals(name,field.Name,StringComparison.InvariantCultureIgnoreCase)){
+            foreach (MIME_h field in m_pFields.ToArray())
+            {
+                if (string.Equals(name, field.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
                     return field;
                 }
             }
@@ -233,14 +250,17 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>field</b> is null reference.</exception>
         public void ReplaceFirst(MIME_h field)
         {
-            if(field == null){
+            if (field == null)
+            {
                 throw new ArgumentNullException("field");
             }
 
-            for(int i=0;i<m_pFields.Count;i++){
-                if(string.Equals(field.Name,m_pFields[i].Name,StringComparison.CurrentCultureIgnoreCase)){
+            for (int i = 0; i < m_pFields.Count; i++)
+            {
+                if (string.Equals(field.Name, m_pFields[i].Name, StringComparison.CurrentCultureIgnoreCase))
+                {
                     m_pFields.RemoveAt(i);
-                    m_pFields.Insert(i,field);
+                    m_pFields.Insert(i, field);
 
                     return;
                 }
@@ -272,14 +292,16 @@ namespace LumiSoft.Net.MIME
         /// <param name="wordEncoder">8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="parmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>fileName</b> is null reference.</exception>
-        public void ToFile(string fileName,MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset)
+        public void ToFile(string fileName, MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset)
         {
-            if(fileName == null){
+            if (fileName == null)
+            {
                 throw new ArgumentNullException("fileName");
             }
 
-            using(FileStream fs = File.Create(fileName)){
-                ToStream(fs,wordEncoder,parmetersCharset);
+            using (FileStream fs = File.Create(fileName))
+            {
+                ToStream(fs, wordEncoder, parmetersCharset);
             }
         }
 
@@ -293,10 +315,11 @@ namespace LumiSoft.Net.MIME
         /// <param name="wordEncoder">8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="parmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <returns>Returns header as byte[] data.</returns>
-        public byte[] ToByte(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset)
+        public byte[] ToByte(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset)
         {
-            using(MemoryStream ms = new MemoryStream()){
-                ToStream(ms,wordEncoder,parmetersCharset);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ToStream(ms, wordEncoder, parmetersCharset);
                 ms.Position = 0;
 
                 return ms.ToArray();
@@ -314,9 +337,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="wordEncoder">8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="parmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null reference.</exception>
-        public void ToStream(Stream stream,MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset)
+        public void ToStream(Stream stream, MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset)
         {
-            ToStream(stream,wordEncoder,parmetersCharset,false);
+            ToStream(stream, wordEncoder, parmetersCharset, false);
         }
 
         /// <summary>
@@ -328,14 +351,15 @@ namespace LumiSoft.Net.MIME
         /// <param name="reEncod">If true always specified encoding is used for header. If false and header field value not modified, 
         /// original encoding is kept.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null reference.</exception>
-        public void ToStream(Stream stream,MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncod)
+        public void ToStream(Stream stream, MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncod)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            byte[] header = Encoding.UTF8.GetBytes(ToString(wordEncoder,parmetersCharset,reEncod));
-            stream.Write(header,0,header.Length);
+            byte[] header = Encoding.UTF8.GetBytes(ToString(wordEncoder, parmetersCharset, reEncod));
+            stream.Write(header, 0, header.Length);
         }
 
         #endregion
@@ -348,7 +372,7 @@ namespace LumiSoft.Net.MIME
         /// <returns>Returns MIME header as string.</returns>
         public override string ToString()
         {
-            return ToString(null,null,false);
+            return ToString(null, null, false);
         }
 
         /// <summary>
@@ -357,9 +381,9 @@ namespace LumiSoft.Net.MIME
         /// <param name="wordEncoder">8-bit words ecnoder. Value null means that words are not encoded.</param>
         /// <param name="parmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <returns>Returns MIME header as string.</returns>
-        public string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset)
+        public string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset)
         {
-            return ToString(wordEncoder,parmetersCharset,false);
+            return ToString(wordEncoder, parmetersCharset, false);
         }
 
         /// <summary>
@@ -369,11 +393,12 @@ namespace LumiSoft.Net.MIME
         /// <param name="parmetersCharset">Charset to use to encode 8-bit header parameters. Value null means parameters not encoded.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header fields which value not modified, original encoding is kept.</param>
         /// <returns>Returns MIME header as string.</returns>
-        public string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode)
+        public string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode)
         {
             StringBuilder retVal = new StringBuilder();
-            foreach(MIME_h field in m_pFields){
-                retVal.Append(field.ToString(wordEncoder,parmetersCharset,reEncode));
+            foreach (MIME_h field in m_pFields)
+            {
+                retVal.Append(field.ToString(wordEncoder, parmetersCharset, reEncode));
             }
 
             return retVal.ToString();
@@ -390,11 +415,12 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>value</b> is null reference.</exception>
         public void Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
-                        
-            Parse(new SmartStream(new MemoryStream(Encoding.UTF8.GetBytes(value)),true));
+
+            Parse(new SmartStream(new MemoryStream(Encoding.UTF8.GetBytes(value)), true));
         }
 
         /// <summary>
@@ -404,11 +430,12 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> is null.</exception>
         public void Parse(SmartStream stream)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            Parse(stream,Encoding.UTF8);
+            Parse(stream, Encoding.UTF8);
         }
 
         /// <summary>
@@ -417,25 +444,31 @@ namespace LumiSoft.Net.MIME
         /// <param name="stream">MIME header stream.</param>
         /// <param name="encoding">Headers fields reading encoding. If not sure, UTF-8 is recommended.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>stream</b> or <b>encoding</b> is null.</exception>
-        public void Parse(SmartStream stream,Encoding encoding)
+        public void Parse(SmartStream stream, Encoding encoding)
         {
-            if(stream == null){
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
-            if(encoding == null){
+            if (encoding == null)
+            {
                 throw new ArgumentNullException("encoding");
             }
 
-            StringBuilder               currentHeader = new StringBuilder();
-            SmartStream.ReadLineAsyncOP readLineOP    = new SmartStream.ReadLineAsyncOP(new byte[84000],SizeExceededAction.ThrowException);
-            while(true){                
-                stream.ReadLine(readLineOP,false);
-                if(readLineOP.Error != null){
+            StringBuilder currentHeader = new StringBuilder();
+            SmartStream.ReadLineAsyncOP readLineOP = new SmartStream.ReadLineAsyncOP(new byte[84000], SizeExceededAction.ThrowException);
+            while (true)
+            {
+                stream.ReadLine(readLineOP, false);
+                if (readLineOP.Error != null)
+                {
                     throw readLineOP.Error;
                 }
                 // We reached end of stream.
-                else if(readLineOP.BytesInBuffer == 0){
-                    if(currentHeader.Length > 0){
+                else if (readLineOP.BytesInBuffer == 0)
+                {
+                    if (currentHeader.Length > 0)
+                    {
                         Add(currentHeader.ToString());
                     }
                     m_IsModified = false;
@@ -443,34 +476,40 @@ namespace LumiSoft.Net.MIME
                     return;
                 }
                 // We got blank header terminator line.
-                else if(readLineOP.LineBytesInBuffer == 0){
-                    if(currentHeader.Length > 0){
+                else if (readLineOP.LineBytesInBuffer == 0)
+                {
+                    if (currentHeader.Length > 0)
+                    {
                         Add(currentHeader.ToString());
                     }
                     m_IsModified = false;
 
                     return;
                 }
-                else{
-                    string line = encoding.GetString(readLineOP.Buffer,0,readLineOP.BytesInBuffer);
- 
+                else
+                {
+                    string line = encoding.GetString(readLineOP.Buffer, 0, readLineOP.BytesInBuffer);
+
                     // New header field starts.
-                    if(currentHeader.Length == 0){
-                         currentHeader.Append(line);
+                    if (currentHeader.Length == 0)
+                    {
+                        currentHeader.Append(line);
                     }
                     // Header field continues.
-                    else if(char.IsWhiteSpace(line[0])){
+                    else if (char.IsWhiteSpace(line[0]))
+                    {
                         currentHeader.Append(line);
                     }
                     // Current header field closed, new starts.
-                    else{
+                    else
+                    {
                         Add(currentHeader.ToString());
 
                         currentHeader = new StringBuilder();
                         currentHeader.Append(line);
                     }
                 }
-            }        
+            }
         }
 
         #endregion
@@ -483,11 +522,11 @@ namespace LumiSoft.Net.MIME
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerator GetEnumerator()
-		{
-			return m_pFields.GetEnumerator();
-		}
+        {
+            return m_pFields.GetEnumerator();
+        }
 
-		#endregion
+        #endregion
 
         #region Properties implementation
 
@@ -495,19 +534,23 @@ namespace LumiSoft.Net.MIME
         /// Gets if header has modified since it was loaded.
         /// </summary>
         public bool IsModified
-        {            
-            get{
-               if(m_IsModified){
-                   return true;
-               }
+        {
+            get
+            {
+                if (m_IsModified)
+                {
+                    return true;
+                }
 
-                foreach(MIME_h field in m_pFields){
-                    if(field.IsModified){
+                foreach (MIME_h field in m_pFields)
+                {
+                    if (field.IsModified)
+                    {
                         return true;
                     }
                 }
 
-                return false; 
+                return false;
             }
         }
 
@@ -516,7 +559,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public int Count
         {
-            get{ return m_pFields.Count; }
+            get { return m_pFields.Count; }
         }
 
         /// <summary>
@@ -527,12 +570,14 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentOutOfRangeException">Is raised when <b>index</b> is out of range.</exception>
         public MIME_h this[int index]
         {
-            get{ 
-                if(index < 0 || index >= m_pFields.Count){
+            get
+            {
+                if (index < 0 || index >= m_pFields.Count)
+                {
                     throw new ArgumentOutOfRangeException("index");
                 }
 
-                return m_pFields[index]; 
+                return m_pFields[index];
             }
         }
 
@@ -544,19 +589,23 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>name</b> is null reference.</exception>
         public MIME_h[] this[string name]
         {
-            get{
-                if(name == null){
+            get
+            {
+                if (name == null)
+                {
                     throw new ArgumentNullException("name");
                 }
 
                 List<MIME_h> retVal = new List<MIME_h>();
-                foreach(MIME_h field in m_pFields.ToArray()){
-                    if(string.Compare(name,field.Name,true) == 0){
+                foreach (MIME_h field in m_pFields.ToArray())
+                {
+                    if (string.Compare(name, field.Name, true) == 0)
+                    {
                         retVal.Add(field);
                     }
                 }
 
-                return retVal.ToArray(); 
+                return retVal.ToArray();
             }
         }
 
@@ -565,7 +614,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public MIME_h_Provider FieldsProvider
         {
-            get{ return m_pProvider; }
+            get { return m_pProvider; }
         }
 
         #endregion

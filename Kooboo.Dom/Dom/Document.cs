@@ -1,10 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom.CSS;
 
 namespace Kooboo.Dom
@@ -14,7 +11,7 @@ namespace Kooboo.Dom
     /// see:  http://www.w3.org/TR/dom/#document
     /// </summary>
     [Serializable]
-    public class Document : Node  
+    public class Document : Node
     {
 
         public Document()
@@ -27,7 +24,7 @@ namespace Kooboo.Dom
         public string URL;
 
         public string documentURI;
-         
+
         private string _baseurl;
         /// <summary>
         /// get the base href tag or document url when base is not defined. 
@@ -38,19 +35,19 @@ namespace Kooboo.Dom
             if (string.IsNullOrEmpty(_baseurl))
             {
 
-                string baseUri = this.baseURI; 
+                string baseUri = this.baseURI;
 
                 if (!string.IsNullOrEmpty(baseUri))
                 {
                     _baseurl = baseUri;
                 }
-                
+
 
                 if (!string.IsNullOrEmpty(_baseurl) && _baseurl.StartsWith("http"))
                 {
                     return _baseurl;
                 }
-                
+
                 _baseurl = this.URL;
 
                 if (!string.IsNullOrEmpty(_baseurl) && _baseurl.StartsWith("http"))
@@ -78,9 +75,9 @@ namespace Kooboo.Dom
                 var basehref = this.documentElement.getOneElementByTagName("base");
                 if (basehref == null)
                 {
-                    return null; 
+                    return null;
                 }
-                return basehref.getAttribute("href");             
+                return basehref.getAttribute("href");
             }
         }
 
@@ -137,7 +134,7 @@ namespace Kooboo.Dom
                     }
                 }
                 return null;
-            } 
+            }
         }
 
         /// <summary>
@@ -542,7 +539,7 @@ namespace Kooboo.Dom
                     }
                 }
 
-            }  
+            }
         }
 
         public void ApplyCssText(string cssText)
@@ -566,7 +563,7 @@ namespace Kooboo.Dom
 
             this.documentElement.Dispose();
 
-            this.StyleSheets = null; 
+            this.StyleSheets = null;
 
             base.Dispose();
         }

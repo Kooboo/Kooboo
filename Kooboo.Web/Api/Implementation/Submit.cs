@@ -1,9 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Sites.Extensions;
-using Kooboo.Api.ApiResponse;
-using System;
 using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
+using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -36,7 +35,7 @@ namespace Kooboo.Web.Api.Implementation
         public IResponse Form(ApiCall call)
         {
             // in the format of /_api/submit/form/xxxyyssss; 
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
             Guid FormId = Lib.Security.ShortGuid.Decode(call.Command.Value);
 
             var formsetting = sitedb.FormSetting.GetByFormId(FormId);
@@ -48,7 +47,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (call.Context.Response.End || call.Context.Response.StatusCode >= 300)
                 {
-                    return new NoResponse(); 
+                    return new NoResponse();
                 }
 
                 MetaResponse response = new MetaResponse();
@@ -73,7 +72,7 @@ namespace Kooboo.Web.Api.Implementation
                             }
                             else
                             {
-                                var form = sitedb.Forms.Get(FormId); 
+                                var form = sitedb.Forms.Get(FormId);
                                 url = Kooboo.Sites.Service.ObjectService.GetObjectFullUrl(call.Context.WebSite, form.OwnerObjectId);
                             }
                         }

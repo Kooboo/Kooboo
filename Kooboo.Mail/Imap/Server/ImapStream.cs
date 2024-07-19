@@ -2,22 +2,23 @@
 //All rights reserved.
 using System;
 using System.IO;
-using System.Threading.Tasks;
+using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Kooboo.Mail.Utility;
 
-using LumiSoft.Net;
-using Kooboo.Mail.Smtp;
 
 namespace Kooboo.Mail.Imap
 {
     public class ImapStream : IDisposable
     {
+
         private Stream _stream;
-        private StreamReader _reader;
-        private StreamWriter _writer;
+        private PipeReader _reader;
+        private PipeWriter _writer;
 
         private IPEndPoint _local;
         private IPEndPoint _remote;
@@ -32,70 +33,42 @@ namespace Kooboo.Mail.Imap
             _remote = client.Client.RemoteEndPoint as IPEndPoint;
 
             _stream = stream;
-            _reader = new StreamReader(_stream);
-            _writer = new StreamWriter(_stream);
-            _writer.AutoFlush = true;
+
+            _reader = PipeReader.Create(_stream);
+            _writer = PipeWriter.Create(_stream);
         }
 
-        public virtual async Task ReadAsync(byte[] buffer, int offset, int count)
+        public virtual async Task<byte[]> ReadAsync(int count, CancellationToken cancellationToken = default)
         {
-            int hasRead = 0, actual = 0;
-            do
-            {
-                actual = await _stream.ReadAsyncWithTimeout(buffer, offset + hasRead, count - hasRead);
-
-                hasRead += actual;
-            }
-            while (hasRead < count && actual > 0);
-
-            LogRead("...");
-        }
-
-        public virtual async Task<byte[]> ReadAsync(int count)
-        {
-            var buffer = new byte[count];
-
-            await ReadAsync(buffer, 0, count);
-
-            return buffer;
+            var result = await _reader.ReadToAsync(count, TimeSpan.FromMinutes(30));
+            MailLogger.WriteLine(_stream, result, "IMAP", true);
+            return result;
         }
 
         public virtual async Task<string> ReadLineAsync()
         {
-            var line = await _reader.ReadLineAsyncWithTimeout();
-
-            LogRead(line);
-
-            return line;
+            var result = await _reader.ReadLineAsync(Encoding.Default, TimeSpan.FromSeconds(30));
+            MailLogger.WriteLine(_stream, result, "IMAP", true);
+            return result;
         }
 
         public virtual async Task WriteAsync(byte[] buffer)
         {
-            await _stream.WriteAsyncWithTimeout(buffer, 0, buffer.Length);
-            await _stream.FlushAsync();
-
-            var str = Encoding.UTF8.GetString(buffer);
-            var index = 0;
-            while (index >= 0)
-            {
-                index = str.IndexOf("\r\n", index + 2);
-            }
-
-            LogWrite("...");
+            MailLogger.WriteLine(_stream, buffer, "IMAP", false);
+            await _writer.WriteAsync(buffer);
+            await _writer.FlushAsync();
         }
 
         public virtual async Task WriteLineAsync(string line)
         {
-            await _writer.WriteLineAsyncWithTimeout(line);
-
-            LogWrite(line);
+            MailLogger.WriteLine(_stream, line, "IMAP", false);
+            await _writer.WriteLineAsync(line, Encoding.UTF8, 30);
+            await _writer.FlushAsync();
         }
-        
 
         public void Dispose()
         {
-            _reader.Dispose();
-            _writer.Dispose();
+
         }
 
         private static Logging.ILogger _logger;
@@ -130,10 +103,11 @@ namespace Kooboo.Mail.Imap
         public static async Task<CommandLine> ReadCommandAsync(this ImapStream stream)
         {
             var line = await stream.ReadLineAsync();
-            while (String.IsNullOrEmpty(line))
+            if (String.IsNullOrWhiteSpace(line))
             {
-                await stream.WriteLineAsync("* BAD Empty command line");
-                line = await stream.ReadLineAsync();
+                // await stream.WriteLineAsync("* BAD Empty command line");
+                return null;
+                //line = await stream.ReadLineAsync();
             }
 
             var spl = line.Split(new char[] { ' ' }, 3);
@@ -182,10 +156,11 @@ namespace Kooboo.Mail.Imap
 
                 // Read bytes secified by literal {size}
                 var bytes = await stream.ReadAsync(partialArgs.Size.Value);
-                builder.Append(TextUtils.QuoteString(Encoding.UTF8.GetString(bytes)));
+                builder.Append(TextUtils.QuoteString(Encoding.ASCII.GetString(bytes)));
 
                 // Try to read last line
                 line = await stream.ReadLineAsync();
+                if (line == null) return null;
                 partialArgs = ArgumentUtility.Parse(line);
             }
 
@@ -195,9 +170,6 @@ namespace Kooboo.Mail.Imap
             return result;
         }
 
-        public static Task WriteStatusAsync(this ImapStream stream, string status, string message)
-        {
-            return stream.WriteLineAsync(status + " " + message);
-        }
+
     }
 }

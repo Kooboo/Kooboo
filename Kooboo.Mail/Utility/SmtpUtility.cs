@@ -1,21 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks; 
-using DNS.Client;
-using DNS.Protocol.ResourceRecords;
-using System.Configuration;
+using System.Threading.Tasks;
+using MimeKit;
 
 namespace Kooboo.Mail.Utility
 {
-   public static class SmtpUtility
-    {  
-
+    public static class SmtpUtility
+    {
         public static string GetString(byte[] data)
         {
             var encodingresult = Lib.Helper.EncodingDetector.GetEmailEncoding(data);
@@ -43,152 +36,176 @@ namespace Kooboo.Mail.Utility
 
         public static async Task<List<string>> GetMxRecords(string RcptTo)
         {
-            string To = Utility.AddressUtility.GetAddress(RcptTo); 
-            int index = To.IndexOf("@");  
-            if (index >-1)
+            string To = Utility.AddressUtility.GetAddress(RcptTo);
+            int index = To.IndexOf("@");
+            if (index > -1)
             {
-                string domain = To.Substring(index + 1); 
-                var mxs = await DnsLookup.ResolveCachedMX(domain); 
-                return mxs.ToList(); 
-            } 
-            return null; 
-        }
-                 
-    }
-
-
-    public class DnsLookup
-    {
-        public static TimeSpan MXCacheExpire = TimeSpan.FromHours(1);
-        private static object mxResolveLock = new object();
-
-        private static Dictionary<string, CacheItem> DefaultCache = new Dictionary<string, CacheItem>();
-
-        static DnsLookup()
-        {
-            var localMtaDns = System.Configuration.ConfigurationManager.AppSettings["localMtaDns"];
-            if (!String.IsNullOrEmpty(localMtaDns))
-            {
-                Client = new DnsClient(localMtaDns);
+                string domain = To.Substring(index + 1);
+                return Kooboo.Lib.DnsRequest.RequestManager.GetMx(domain);
             }
-            else
-            {
-                var localDns = GetLocalDns();
-                if (localDns == null)
-                    throw new Exception("Can not find local DNS, specify extra DNS in app.config");
-
-                Client = new DnsClient(localDns);
-            }
-        }
-
-        public static DnsClient Client { get; set; }
-
-        public static async Task<string[]> ResolveCachedMX(string domainName)
-        {
-            var key = "MXCache_" + domainName;
-            CacheItem mxsItem = null;
-            if(DefaultCache.ContainsKey(key))
-            {
-                mxsItem = DefaultCache[key];
-            }
-
-            if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire)>DateTime.UtcNow)
-            {
-                var mxs = await ResolveMX(domainName);
-                
-                lock (mxResolveLock)
-                {
-                    if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire) > DateTime.UtcNow)
-                    {
-                        mxsItem = new CacheItem
-                        {
-                            MXs = mxs,
-                            CacheTime = DateTime.UtcNow
-                        };
-                        if (DefaultCache.ContainsKey(key))
-                        {
-                            DefaultCache[key] = mxsItem;
-                        }
-                        else
-                        {
-                            DefaultCache.Add(key, mxsItem);
-                        }
-                    }
-                        
-                }
-                return mxs;
-            }
-            return mxsItem.MXs;
-        }
-
-        public static async Task<string[]> ResolveMX(string domainName)
-        {
-            string[] result = null;
-            for (int i = 0; i < 3 && result == null; i++)
-            {
-                try
-                {
-                    result = await ResolveMXOnce(domainName);
-                    if (result.Length > 0)
-                        return result;
-                }
-                catch (ResponseException)
-                {
-                    // Get result from server but failed result
-                    return new string[0];
-                }
-                catch (OperationCanceledException)
-                {
-                    // Retry when connection timeout
-                }
-                catch
-                {
-                    // Unknown exception
-                    return new string[0];
-                }
-            }
-            return result;
-        }
-
-        public static async Task<string[]> ResolveMXOnce(string domainName)
-        {
-            var response = await Client.Resolve(domainName, DNS.Protocol.RecordType.MX);
-
-            var result = response.AnswerRecords
-                .Where(r => r.Type == DNS.Protocol.RecordType.MX)
-                .Cast<MailExchangeResourceRecord>()
-                .OrderBy(o => o.Preference)
-                .Select(o => o.ExchangeDomainName.ToString())
-                .ToArray();
-
-            return result;
-        }
-
-        private static IPAddress GetLocalDns()
-        {
-            foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                if (nic.OperationalStatus == OperationalStatus.Up)
-                {
-                    foreach (IPAddress ip in nic.GetIPProperties().DnsAddresses)
-                    {
-                        if (ip.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            return ip;
-                        }
-                    }
-                }
-            }
-
             return null;
         }
 
-        class CacheItem
+        public static bool IsValidMailFrom(string fromAddress)
         {
-            public string[] MXs { get; set; }
+            if (fromAddress == null)
+            {
+                return false;
+            }
 
-            public DateTime CacheTime { get; set; }
+            var add = GetEmailFromMailFromLine(fromAddress);
+            return add != null;
+
+        }
+
+        public static string GetEmailFromMailFromLine(string MailFromLine)
+        {
+            MailFromLine = MailFromLine.ToLower();
+
+            //SIZE=  number_of_bytes
+            // BODY = 7BIT
+            //BODY = 8BITMIME
+            //<from@mycode.dev> SIZE=597  
+            string address = Utility.AddressUtility.GetAddress(MailFromLine);
+
+            if (address != null && AddressUtility.IsValidEmailAddress(address))
+            {
+                return address;
+            }
+
+            var indexLeft = MailFromLine.IndexOf("<");
+            var indexRight = MailFromLine.IndexOf(">");
+            if (indexLeft > -1 && indexRight > -1)
+            {
+                address = MailFromLine.Substring(indexLeft + 1, indexRight - indexLeft - 1);
+                if (address != null && AddressUtility.IsValidEmailAddress(address))
+                {
+                    return address;
+                }
+            }
+
+            if (address == null)
+            {
+                var indexS = MailFromLine.IndexOf(" size");
+                var indexb = MailFromLine.IndexOf(" body");
+
+                if (indexS > -1 || indexb > -1)
+                {
+                    int startIndex = 0;
+
+                    if (indexS > -1)
+                    {
+                        startIndex = indexS;
+                    }
+
+                    if (indexb > -1)
+                    {
+                        if (startIndex <= 0)
+                        {
+                            startIndex = indexb;
+                        }
+                        else if (indexb < startIndex)
+                        {
+                            startIndex = indexb;
+                        }
+                    }
+
+                    var sub = MailFromLine.Substring(0, startIndex);
+
+                    address = Utility.AddressUtility.GetAddress(sub);
+
+                    if (address != null && AddressUtility.IsValidEmailAddress(address))
+                    {
+                        return address;
+                    }
+
+                    if (sub != null && AddressUtility.IsValidEmailAddress(sub))
+                    {
+                        return sub;
+                    }
+                }
+
+            }
+            return null;
+        }
+
+        public static string GenerateMessageId(string mailFrom)
+        {
+            var mailbox = AddressUtility.GetAddress(mailFrom);
+
+            return _generateFromStrictAddress(mailbox);
+        }
+
+        private static string _generateFromStrictAddress(string emailaddress)
+        {
+            if (emailaddress != null)
+            {
+                var seg = AddressUtility.ParseSegment(emailaddress);
+                if (!string.IsNullOrEmpty(seg.Host))
+                {
+                    return "<" + System.Guid.NewGuid().ToString().Replace("-", "") + "@" + seg.Host + ">";
+                }
+            }
+
+            return "<" + Guid.NewGuid().ToString().Replace("-", "") + "@mailprotected.com>";
+        }
+
+        public static string GenerateMessageId(MailboxAddress add)
+        {
+            if (add != null)
+            {
+                return _generateFromStrictAddress(add.GetAddress(false));
+            }
+
+            return _generateFromStrictAddress(null);
+        }
+
+        public static string GenerateMessageId(InternetAddressList add)
+        {
+            if (add != null)
+            {
+                foreach (var item in add)
+                {
+                    var mailbox = item as MailboxAddress;
+                    if (mailbox != null)
+                    {
+                        return GenerateMessageId(mailbox);
+                    }
+                }
+            }
+
+            return _generateFromStrictAddress(null);
         }
     }
-     
+
 }
+
+
+/*
+ * The MAIL FROM: command is used (once), after a HELO or EHLO command, to identify the sender of a piece of mail.
+Read syntax diagramSkip visual syntax diagram
+MAIL FROM:
+<
+ sender_path_address
+>
+SIZE=
+ number_of_bytes
+BODY=7BIT
+BODY=8BITMIME
+Operand
+Description
+sender_path_address
+Specifies the full path address of the sender of the mail. Definitions for valid sender_path_address specifications can be obtained from the RFCs that define the naming conventions used throughout the Internet. For detailed information, consult the RFCs listed in the section SMTP Commands.
+SIZE=number_of_bytes
+Specifies the size of the mail, in bytes, including carriage return/line feed (CRLF, X'0D0A') pairs. The SIZE parameter has a range from 0 to 2,147,483,647.
+BODY=7BIT
+Specifies that the message is encoded using seven significant bits per 8-bit octet (byte). In practice, however, the body is typically encoded using all eight bits.
+BODY=8BITMIME
+Specifies that the message is encoded using all eight bits of each octet (byte) and may contain MIME headers.
+Note: The SIZE, BODY=7BIT, and BODY=8BITMIME options of the MAIL FROM: command should be used only if an EHLO command was used to initiate a mail transaction. If an EHLO command was not used for this purpose, SMTP ignores these parameters if they are present.
+If the SMTP server is known to support the SMTP service extension for Message Size Declaration, the client sending the mail can specify the optional SIZE= parameter with its MAIL FROM: commands. The client then can use the responses to these commands to determine whether the receiving SMTP server has sufficient resources available to process its mail before any data is transmitted to that server.
+
+When a MAIL FROM: command is received that includes the optional SIZE= parameter, the SMTP server compares the supplied number_of_bytes value to its allowed maximum message size (defined by the MAXMAILBYTES statement in the SMTP CONFIG file) to determine if the mail should be accepted. If number_of_bytes exceeds the MAXMAILBYTES value, a reply code 552 is returned to the client.
+ * 
+ * 
+ */

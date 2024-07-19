@@ -1,28 +1,25 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
     public class ClassFieldConverter<T> : IFieldConverter<T>
     {
         Type ClassType;
-        
+
         Func<T, object> getValue;
         Action<T, object> setValue;
 
         public ClassFieldConverter(string FieldName)
-        { 
-            Type type = typeof(T); 
+        {
+            Type type = typeof(T);
             this.ClassType = ObjectHelper.GetFieldType(type, FieldName);
 
             this.Items = new List<IFieldConverter>();
-            this.getValue = ObjectHelper.GetGetObjectValue<T>(FieldName); 
+            this.getValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
             this.setValue = ObjectHelper.GetSetObjectValue<T>(FieldName, ClassType);
             this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
 
@@ -33,19 +30,19 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 AddFields(ClassType, item.Value, item.Key);
             }
- 
+
         }
 
-        private void AddFields(Type ClassType, Type FieldType,  string FieldName)
+        private void AddFields(Type ClassType, Type FieldType, string FieldName)
         {
-           
-                var converter = ConverterHelper.GetFieldConverter(ClassType, FieldType, FieldName);
 
-                if (converter != null)
-                {
-                    Items.Add(converter);
-                }
-            
+            var converter = ConverterHelper.GetFieldConverter(ClassType, FieldType, FieldName);
+
+            if (converter != null)
+            {
+                Items.Add(converter);
+            }
+
         }
 
         public int ByteLength
@@ -64,7 +61,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         public void SetByteValues(T value, byte[] bytes)
         {
 
-            var FieldObject = Activator.CreateInstance(this.ClassType); 
+            var FieldObject = Activator.CreateInstance(this.ClassType);
 
             int startposition = 0;
             int totallength = bytes.Length;
@@ -92,7 +89,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 if (startposition + 8 >= totallength)
                 { break; }
             }
-               
+
             this.setValue(value, FieldObject);
         }
 
@@ -140,7 +137,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 currentposition += len;
             }
 
-            return BackValue; 
+            return BackValue;
         }
 
         private List<IFieldConverter> Items
@@ -151,7 +148,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
     }
 
     public class ClassFieldConverter : IFieldConverter
-    { 
+    {
 
         Type ClassType;
 
@@ -165,11 +162,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public ClassFieldConverter(Type ObjectType, Type ClassFieldType, string FieldName)
         {
-             ClassType = ClassFieldType; 
-             Items = new List<IFieldConverter>();
-             getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
-             setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, ClassType);
-             FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            ClassType = ClassFieldType;
+            Items = new List<IFieldConverter>();
+            getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
+            setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, ClassType);
+            FieldNameHash = ObjectHelper.GetHashCode(FieldName);
 
             foreach (var item in ClassType.GetProperties())
             {
@@ -192,7 +189,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             if (ClassType == FieldType)
             {
-                Items.Add(this);  
+                Items.Add(this);
             }
             else
             {
@@ -217,7 +214,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             get; set;
         }
-          
+
         public void SetByteValues(object value, byte[] bytes)
         {
             var FieldObject = Activator.CreateInstance(this.ClassType);
@@ -260,7 +257,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             int TotalLength = 0;
 
             if (fieldvalue != null)
-            { 
+            {
                 foreach (var item in this.Items)
                 {
                     byte[] result = item.ToBytes(fieldvalue);

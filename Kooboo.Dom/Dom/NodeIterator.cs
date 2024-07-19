@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -18,7 +14,7 @@ namespace Kooboo.Dom
 
         public NodeIterator()
         {
-            this.pointerBeforeReferenceNode = false; 
+            this.pointerBeforeReferenceNode = false;
         }
 
         private Node _root;
@@ -33,14 +29,14 @@ namespace Kooboo.Dom
                 {
                     while (_root.parentNode != null)
                     {
-                        _root = _root.parentNode; 
+                        _root = _root.parentNode;
                     }
                 }
-                return _root; 
+                return _root;
             }
             set
             {
-                _root = value; 
+                _root = value;
             }
         }
 
@@ -142,12 +138,12 @@ namespace Kooboo.Dom
 
         public Node nextNode()
         {
-            return Following(); 
+            return Following();
         }
 
         public Node previousNode()
         {
-            return Proceeding(); 
+            return Proceeding();
         }
 
         public void detach()
@@ -338,7 +334,7 @@ namespace Kooboo.Dom
 
             }
 
-            // when there is no child any more. 
+        // when there is no child any more. 
         checksibling:
 
             if (node.previousSibling() != null)
@@ -381,7 +377,7 @@ namespace Kooboo.Dom
                 else if (result == enumNodeFilterAcceptNode.FILTER_SKIP)
                 {
                     this.referenceNode = node;
-                    return  Proceeding();
+                    return Proceeding();
                 }
                 else
                 {
@@ -389,7 +385,7 @@ namespace Kooboo.Dom
                     goto checkparentSibling;
                 }
             }
-            return null; 
+            return null;
         }
 
         private Node getParentNextSibling(Node checknode)

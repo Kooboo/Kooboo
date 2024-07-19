@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Data.Models;
 
 namespace Kooboo.Mail.Imap
 {
@@ -130,7 +128,7 @@ namespace Kooboo.Mail.Imap
                 return folder.Stat.Exists;
             }
         }
-         
+
         public class Range
         {
             public int LowBound { get; set; }
@@ -181,25 +179,25 @@ namespace Kooboo.Mail.Imap
             return hasnumber;
         }
 
-        public static List<ImapFolder> GetSubscribedFolder(User user)
+        public static List<ImapFolder> GetSubscribedFolder(User user, Guid LoginOrganizationId)
         {
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
 
-            var allfolder = maildb.Folders.All().Where(o => o.Subscribed).ToList();
+            var allfolder = maildb.Folder.All().Where(o => o.Subscribed).ToList();
 
-            return ToImapFolders(user, allfolder);
+            return ToImapFolders(user, LoginOrganizationId, allfolder);
         }
 
-        public static List<ImapFolder> GetAllFolder(User User)
+        public static List<ImapFolder> GetAllFolder(User User, Guid LoginOrganizationId)
         {
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(User);
 
-            var allfolder = maildb.Folders.All();
+            var allfolder = maildb.Folder.All();
 
-            return ToImapFolders(User, allfolder);
+            return ToImapFolders(User, LoginOrganizationId, allfolder);
         }
 
-        public static List<ImapFolder> ToImapFolders(User user, List<Folder> folders)
+        public static List<ImapFolder> ToImapFolders(User user, Guid LoginOrganizatioId, List<Folder> folders)
         {
             var attributes = new List<string>();
             attributes.Add("\\NoInferiors");
@@ -223,9 +221,10 @@ namespace Kooboo.Mail.Imap
                 AllImapFolder.Add(newfolder);
             }
 
-            var orgdb = Factory.DBFactory.OrgDb(user.CurrentOrgId);
+            // var orgdb = Factory.DBFactory.OrgDb(user.CurrentOrgId);
+            var orgdb = Factory.DBFactory.OrgDb(LoginOrganizatioId);
 
-            var address = orgdb.EmailAddress.Query().Where(o => o.UserId == user.Id).SelectAll();
+            var address = orgdb.Email.ByUser(user.Id); // orgdb.EmailAddress.Query().Where(o => o.UserId == user.Id).SelectAll();
 
             var defaults = GetDefaultFolders(address);
 
@@ -322,8 +321,9 @@ namespace Kooboo.Mail.Imap
             var messages = new List<Commands.FetchCommand.FetchMessage>();
             foreach (var item in ranges)
             {
-                var dbMessages = mailDb.Messages.GetBySeqNos(Folder.Folder, Folder.Stat.LastestMsgId, Folder.Stat.Exists, item.LowBound, item.UpBound);
+                var dbMessages = mailDb.Message2.GetBySeqNos(Folder, item.LowBound, item.UpBound);
                 var seqNo = item.LowBound;
+
                 messages.AddRange(dbMessages.Select(o => new Commands.FetchCommand.FetchMessage
                 {
                     MailDb = mailDb,
@@ -342,15 +342,27 @@ namespace Kooboo.Mail.Imap
             var messages = new List<Commands.FetchCommand.FetchMessage>();
             foreach (var item in ranges)
             {
-                var messagesInRange = mailDb.Messages.ByUidRange(Folder.Folder, item.LowBound, item.UpBound);
+                var messagesInRange = mailDb.Message2.ByUidRange(Folder, item.LowBound, item.UpBound);
+
+                int seqno = -1;
+
                 foreach (var message in messagesInRange)
                 {
-                    messages.Add(new Commands.FetchCommand.FetchMessage
+                    if (seqno == -1)
+                    {
+                        seqno = mailDb.Message2.GetSeqNo(Folder, message.MsgId);
+                    }
+
+                    var model = new Commands.FetchCommand.FetchMessage
                     {
                         MailDb = mailDb,
                         Message = message,
-                        SeqNo = mailDb.Messages.GetSeqNo(Folder.Folder, Folder.Stat.LastestMsgId, Folder.Stat.Exists, message.Id)
-                    });
+                        SeqNo = seqno
+                    };
+
+                    seqno += 1;
+
+                    messages.Add(model);
                 }
             }
 

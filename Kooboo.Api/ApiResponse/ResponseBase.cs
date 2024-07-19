@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace Kooboo.Api.ApiResponse
 {
-    public  class ResponseBase : IResponse
+    public class ResponseBase : IResponse
     {
         public ResponseBase()
         {
             this.FieldErrors = new List<FieldError>();
-            this.Messages = new List<string>(); 
+            this.Messages = new List<string>();
         }
         public bool DataChange
         {

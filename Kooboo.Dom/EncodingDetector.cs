@@ -2,16 +2,14 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
     public class EncodingDetector
     {
 
-        public static string SystemDefaultEncoding = "windows-1252"; 
+        public static string SystemDefaultEncoding = "windows-1252";
 
         private static Dictionary<string, string> _defaultEncoding;
 
@@ -76,7 +74,7 @@ namespace Kooboo.Dom
             return null;
 
         }
-         
+
         public static Encoding PreScanEncoding(byte[] input)
         {
             int len = input.Length;
@@ -100,7 +98,7 @@ namespace Kooboo.Dom
 
             int position = 0;
 
-            LOOP:
+        LOOP:
             //A sequence of bytes starting with: 0x3C 0x21 0x2D 0x2D(ASCII '<!--')
             if (GetByte(position) == 0x3C && GetByte(position + 1) == 0x21 && GetByte(position + 2) == 0x2D && GetByte(position + 3) == 0x2D)
             {
@@ -137,7 +135,7 @@ namespace Kooboo.Dom
                     bool NeedPragmaIsNull = true;
                     string CharSet = null;
 
-                    Attributes:
+                Attributes:
 
                     //6. Attributes: Get an attribute and its value. If no attribute was sniffed, then jump to the processing step below. 
                     var attributevalue = GetAttribute(ref input, ref position, len);
@@ -190,7 +188,7 @@ namespace Kooboo.Dom
                     //Return to the step labeled attributes.
                     goto Attributes;
 
-                    Processing:
+                Processing:
                     {
 
                         //  Processing:
@@ -227,33 +225,33 @@ namespace Kooboo.Dom
 
 
                 }
-                 
+
             }
-             
+
             //A sequence of bytes starting with: 0x3C 0x21(ASCII '<!')
             //A sequence of bytes starting with: 0x3C 0x2F(ASCII '</')
             //A sequence of bytes starting with: 0x3C 0x3F(ASCII '<?')
             //Advance the position pointer so that it points at the first 0x3E byte (ASCII >) that comes after the 0x3C byte that was found.
-            if ((GetByte(position) == 0x3C && GetByte(position +1) == 0x21) || (GetByte(position) == 0x3C && GetByte(position + 1) == 0x2F) || (GetByte(position) == 0x3C && GetByte(position + 1) == 0x3F))
+            if ((GetByte(position) == 0x3C && GetByte(position + 1) == 0x21) || (GetByte(position) == 0x3C && GetByte(position + 1) == 0x2F) || (GetByte(position) == 0x3C && GetByte(position + 1) == 0x3F))
             {
-                position += 1; 
+                position += 1;
                 while (true)
                 {
                     position += 1;
                     if (GetByte(position) == 0x3E)
-                    { 
+                    {
                         break;
                     }
                 }
             }
 
-             
-            NextByte:
+
+        NextByte:
 
             position += 1;
-            if (position >=len)
+            if (position >= len)
             {
-                return null; 
+                return null;
             }
             goto LOOP;
 
@@ -281,8 +279,8 @@ namespace Kooboo.Dom
 
             //Let position be a pointer into s, initially pointing at the start of the string. 
             int position = 0;
-            //Loop: Find the first seven characters in s after position that are an ASCII case-insensitive match for the word "charset".If no such match is found, return nothing and abort these steps.
-            Loop:
+        //Loop: Find the first seven characters in s after position that are an ASCII case-insensitive match for the word "charset".If no such match is found, return nothing and abort these steps.
+        Loop:
             position = s.IndexOf("charset", position);
             if (position < 0)
             {
@@ -388,9 +386,9 @@ namespace Kooboo.Dom
             string AttributeName = string.Empty;
             string AttributeValue = string.Empty;
 
-            ///  4.Attribute name: Process the byte at position as follows:
+        ///  4.Attribute name: Process the byte at position as follows:
 
-            GetAttributeName:
+        GetAttributeName:
             //If it is 0x3D(ASCII =), and the attribute name is longer than the empty string
             //Advance position to the next byte and jump to the step below labeled value.
 
@@ -436,7 +434,7 @@ namespace Kooboo.Dom
             currentbyte = GetByte(ref Input, Index, Len);
             goto GetAttributeName;
 
-            Space:
+        Space:
 
             //Spaces: If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), or 0x20(ASCII space) then advance position to the next byte, then, repeat this step.
 
@@ -460,7 +458,7 @@ namespace Kooboo.Dom
             Index += 1;
             currentbyte = GetByte(ref Input, Index, Len);
 
-            AttributeValue:
+        AttributeValue:
 
             // 9.Value: If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), or 0x20(ASCII space) then advance position to the next byte, then, repeat this step.
             while (currentbyte == 0x09 || currentbyte == 0x0A || currentbyte == 0x0C || currentbyte == 0x0D || currentbyte == 0x20)
@@ -476,8 +474,8 @@ namespace Kooboo.Dom
             if (currentbyte == 0x22 || currentbyte == 0x27)
             {
                 var B = currentbyte;
-                //Quote loop: Advance position to the next byte.
-                QuoteLoop:
+            //Quote loop: Advance position to the next byte.
+            QuoteLoop:
 
                 Index += 1;
                 currentbyte = GetByte(ref Input, Index, Len);

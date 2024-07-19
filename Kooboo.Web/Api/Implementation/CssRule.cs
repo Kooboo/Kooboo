@@ -1,12 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -23,10 +22,11 @@ namespace Kooboo.Web.Api.Implementation
 
             }
         }
-         
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
         public List<InlineItemViewModel> InlineList(ApiCall apiCall)
         {
-            var sitedb = apiCall.WebSite.SiteDb(); 
+            var sitedb = apiCall.WebSite.SiteDb();
 
             List<InlineItemViewModel> result = new List<InlineItemViewModel>();
 
@@ -82,15 +82,57 @@ namespace Kooboo.Web.Api.Implementation
             model.Declarations = CssService.ParseDeclarationBlock(item.CssText, call.ObjectId);
 
             return model;
-        } 
-        
-        [Kooboo.Attributes.RequireParameters("id", "RuleText")]
-        public void UpdateInline(ApiCall call)
-        {
-            string ruletext = call.GetValue("RuleText"); 
-            call.WebSite.SiteDb().CssRules.UpdateInlineCss(call.ObjectId, ruletext);  
         }
 
-      
+        [Kooboo.Attributes.RequireParameters("id", "RuleText")]
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public void UpdateInline(ApiCall call)
+        {
+            string ruletext = call.GetValue("RuleText");
+            call.WebSite.SiteDb().CssRules.UpdateInlineCss(call.ObjectId, ruletext);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.VIEW)]
+        public override List<object> List(ApiCall call)
+        {
+            return base.List(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            return base.Post(call);
+        }
+
+        [Permission(Feature.STYLE, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+
     }
 }

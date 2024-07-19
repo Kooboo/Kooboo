@@ -5,7 +5,6 @@
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
-    using System;
 
     public class Value : Node
     {
@@ -22,8 +21,8 @@
         public override void AppendCSS(Env env)
         {
             env.Output.AppendMany(Values, env.Compress ? "," : ", ");
- 
-            if  (!string.IsNullOrEmpty(Important)) 
+
+            if (!string.IsNullOrEmpty(Important))
             {
                 if (PreImportantComments)
                 {

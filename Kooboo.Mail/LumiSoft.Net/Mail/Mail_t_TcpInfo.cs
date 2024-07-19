@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 
 namespace LumiSoft.Net.Mail
@@ -17,8 +15,8 @@ namespace LumiSoft.Net.Mail
     /// </remarks>
     public class Mail_t_TcpInfo
     {
-        private IPAddress m_pIP      = null;
-        private string    m_HostName = null;
+        private IPAddress m_pIP = null;
+        private string m_HostName = null;
 
         /// <summary>
         /// Default constructor.
@@ -26,13 +24,14 @@ namespace LumiSoft.Net.Mail
         /// <param name="ip">IP address.</param>
         /// <param name="hostName">Host name.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>ip</b> is null reference.</exception>
-        public Mail_t_TcpInfo(IPAddress ip,string hostName)
+        public Mail_t_TcpInfo(IPAddress ip, string hostName)
         {
-            if(ip == null){
+            if (ip == null)
+            {
                 throw new ArgumentNullException("ip");
             }
 
-            m_pIP      = ip;
+            m_pIP = ip;
             m_HostName = hostName;
         }
 
@@ -45,10 +44,12 @@ namespace LumiSoft.Net.Mail
         /// <returns>Returns this as string.</returns>
         public override string ToString()
         {
-            if(string.IsNullOrEmpty(m_HostName)){
-                return "["  + m_pIP.ToString() + "]";
+            if (string.IsNullOrEmpty(m_HostName))
+            {
+                return "[" + m_pIP.ToString() + "]";
             }
-            else{
+            else
+            {
                 return m_HostName + " [" + m_pIP.ToString() + "]";
             }
         }
@@ -63,7 +64,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public IPAddress IP
         {
-            get{ return m_pIP; }
+            get { return m_pIP; }
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string HostName
         {
-            get{ return m_HostName; }
+            get { return m_HostName; }
         }
 
         #endregion

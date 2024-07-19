@@ -1,10 +1,10 @@
 namespace dotless.Core.configuration
 {
     using System;
+    using System.Collections.Generic;
     using Input;
     using Loggers;
     using Plugins;
-    using System.Collections.Generic;
 
     public enum DotlessSessionStateMode
     {
@@ -32,7 +32,7 @@ namespace dotless.Core.configuration
 
         public static DotlessConfiguration GetDefault()
         {
-            return new DotlessConfiguration();;
+            return new DotlessConfiguration(); ;
         }
 
         public static DotlessConfiguration GetDefaultWeb()
@@ -45,7 +45,7 @@ namespace dotless.Core.configuration
 
         public DotlessConfiguration()
         {
-            LessSource = typeof (FileReader);
+            LessSource = typeof(FileReader);
             MinifyOutput = false;
             Debug = false;
             CacheEnabled = true;
@@ -124,7 +124,7 @@ namespace dotless.Core.configuration
         ///  This corresponds to 'rootpath' option of lessc.
         /// </summary>
         public string RootPath { get; set; }
-        
+
         /// <summary>
         ///  Disables variables being redefined, so less will search from the bottom of the input up.
         ///  Makes dotless behave like less.js with regard variables

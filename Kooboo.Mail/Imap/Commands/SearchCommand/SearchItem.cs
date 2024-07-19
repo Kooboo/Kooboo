@@ -2,9 +2,6 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands.SearchCommand
 {
@@ -41,7 +38,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             }
         }
 
-        public int SeqCompareUid { get; set; } = -1; 
+        public int SeqCompareUid { get; set; } = -1;
 
     }
 }

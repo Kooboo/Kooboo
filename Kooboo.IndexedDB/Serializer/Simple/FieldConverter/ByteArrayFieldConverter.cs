@@ -1,15 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-  public  class ByteArrayFieldConverter<T> : IFieldConverter<T>
+    public class ByteArrayFieldConverter<T> : IFieldConverter<T>
     {
 
         Func<T, byte[]> getValue;
@@ -36,14 +32,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         }
 
         public void SetByteValues(T value, byte[] bytes)
-        { 
+        {
             this.setValue(value, bytes);
         }
 
         public byte[] ToBytes(T Value)
         {
-           return this.getValue(Value);
-        } 
+            return this.getValue(Value);
+        }
     }
 
     public class ByteArrayFieldConverter : IFieldConverter
@@ -55,7 +51,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             this.getValue = ObjectHelper.GetGetFieldValue<byte[]>(FieldName, ObjectType);
             this.setValue = ObjectHelper.GetSetFieldValue<byte[]>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName); 
+            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
         }
 
         public int ByteLength
@@ -69,19 +65,19 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         public int FieldNameHash
         {
             get; set;
-        } 
-       
+        }
+
 
         public void SetByteValues(object value, byte[] bytes)
         {
             this.setValue(value, bytes);
         }
- 
+
 
         public byte[] ToBytes(object Value)
         {
             return this.getValue(Value);
         }
-         
+
     }
 }

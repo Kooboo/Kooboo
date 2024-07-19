@@ -1,9 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kooboo.IndexedDB.Helper;
 
 
 namespace Kooboo.IndexedDB.Query
@@ -14,51 +14,51 @@ namespace Kooboo.IndexedDB.Query
         private Comparer compareType { get; set; }
         private IComparer<byte[]> byteCompare { get; set; }
         private byte[] ValueBytes { get; set; }
-         
+
         private bool IsString { get; set; }
 
         private bool IsDateTime { get; set; }
         private string TargetString
         {
-            get;set;
+            get; set;
         }
-         
+
         private DateTime TargetDate
         {
-            get;set;
+            get; set;
         }
 
         private int columnLength; // the actually column length. Maybe adjusted by different compare type. 
         private int maxColumnLength;   // the setting defined column length. 
 
-        public ColumnEvaluator(Type datatype, Comparer comparertype, IComparer<byte[]> bytecompare, byte[] valuebytes, int columnlength, int maxcolumnlength)
+        public ColumnEvaluator(Type dataType, Comparer comparerType, IComparer<byte[]> byteCompare, byte[] valueBytes, int columnLength, int maxcolumnLength)
         {
-            this.DataType = datatype;
-            this.compareType = comparertype;
-            this.byteCompare = bytecompare;
-            this.ValueBytes = valuebytes;
-            this.columnLength = columnlength;
-            this.maxColumnLength = maxcolumnlength;
+            this.DataType = dataType;
+            this.compareType = comparerType;
+            this.byteCompare = byteCompare;
+            this.ValueBytes = valueBytes;
+            this.columnLength = columnLength;
+            this.maxColumnLength = maxcolumnLength;
 
             if (this.DataType == typeof(DateTime))
             {
-                this.TargetDate =   DateTimeUtcHelper.ToDateTime(this.ValueBytes);
-                this.IsDateTime = true; 
+                this.TargetDate = DateTimeUtcHelper.ToDateTime(this.ValueBytes);
+                this.IsDateTime = true;
             }
-             
+
             if (this.DataType == typeof(string))
             {
                 this.TargetString = System.Text.Encoding.UTF8.GetString(this.ValueBytes);
-                if (this.TargetString !=null)
+                if (this.TargetString != null)
                 {
                     this.TargetString = this.TargetString.Trim('\0');
                     this.TargetString = this.TargetString.Trim();
                 }
 
-                this.IsString = true; 
+                this.IsString = true;
             }
         }
-  
+
         public ColumnEvaluator()
         {
 
@@ -67,57 +67,57 @@ namespace Kooboo.IndexedDB.Query
         /// <summary>
         /// test column value match the condition. 
         /// </summary>
-        /// <param name="columnbytes"></param>
+        /// <param name="columnBytes"></param>
         /// <returns></returns>
-        public virtual bool isMatch(byte[] columnbytes)
+        public virtual bool isMatch(byte[] columnBytes)
         {
-            if (columnbytes == null)
+            if (columnBytes == null)
             {
                 return false;
             }
             if (this.IsDateTime)
             {
-                var coltime = DateTimeUtcHelper.ToDateTime(columnbytes); 
-                return DateTimeUtcHelper.Compare(compareType, coltime, this.TargetDate);  
+                var colTime = DateTimeUtcHelper.ToDateTime(columnBytes);
+                return DateTimeUtcHelper.Compare(compareType, colTime, this.TargetDate);
             }
             else if (this.IsString)
             {
-                var currentValue = System.Text.Encoding.UTF8.GetString(columnbytes);
-                if (currentValue !=null)
+                var currentValue = System.Text.Encoding.UTF8.GetString(columnBytes);
+                if (currentValue != null)
                 {
                     currentValue = currentValue.Trim('\0');
                     currentValue = currentValue.Trim();
                 }
-                return Helper.StringHelper.Compare(this.compareType, currentValue, this.TargetString); 
+                return Helper.StringHelper.Compare(this.compareType, currentValue, this.TargetString);
             }
             else
             {
                 switch (compareType)
                 {
                     case Comparer.EqualTo:
-                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) == 0;
+                        return this.byteCompare.Compare(columnBytes, this.ValueBytes) == 0;
 
                     case Comparer.GreaterThan:
-                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) > 0;
+                        return this.byteCompare.Compare(columnBytes, this.ValueBytes) > 0;
 
                     case Comparer.GreaterThanOrEqual:
-                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) >= 0;
+                        return this.byteCompare.Compare(columnBytes, this.ValueBytes) >= 0;
 
                     case Comparer.LessThan:
-                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) < 0;
+                        return this.byteCompare.Compare(columnBytes, this.ValueBytes) < 0;
 
                     case Comparer.LessThanOrEqual:
-                        return this.byteCompare.Compare(columnbytes, this.ValueBytes) <= 0;
+                        return this.byteCompare.Compare(columnBytes, this.ValueBytes) <= 0;
 
                     case Comparer.NotEqualTo:
 
-                        return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this.ValueBytes, columnLength);
-                         
+                        return !BTree.Comparer.ByteEqualComparer.isEqual(columnBytes, this.ValueBytes, columnLength);
+
                     case Comparer.StartWith:
-                        return Btree.Comparer.MoreComparer.StartWith(columnbytes, this.ValueBytes, this.columnLength);
+                        return BTree.Comparer.MoreComparer.StartWith(columnBytes, this.ValueBytes, this.columnLength);
 
                     case Comparer.Contains:
-                        return Btree.Comparer.MoreComparer.Contains(columnbytes, this.ValueBytes, this.columnLength, this.maxColumnLength);
+                        return BTree.Comparer.MoreComparer.Contains(columnBytes, this.ValueBytes, this.columnLength, this.maxColumnLength);
 
                     default:
                         return false;

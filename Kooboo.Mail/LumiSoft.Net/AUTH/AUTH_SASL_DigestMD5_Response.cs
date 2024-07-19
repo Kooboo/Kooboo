@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -10,18 +9,18 @@ namespace LumiSoft.Net.AUTH
     public class AUTH_SASL_DigestMD5_Response
     {
         private AUTH_SASL_DigestMD5_Challenge m_pChallenge = null;
-        private string                        m_UserName   = null;
-        private string                        m_Password   = null;
-        private string                        m_Realm      = null;
-        private string                        m_Nonce      = null;
-        private string                        m_Cnonce     = null;
-        private int                           m_NonceCount = 0;
-        private string                        m_Qop        = null;
-        private string                        m_DigestUri  = null;
-        private string                        m_Response   = null;
-        private string                        m_Charset    = null;
-        private string                        m_Cipher     = null;
-        private string                        m_Authzid    = null;
+        private string m_UserName = null;
+        private string m_Password = null;
+        private string m_Realm = null;
+        private string m_Nonce = null;
+        private string m_Cnonce = null;
+        private int m_NonceCount = 0;
+        private string m_Qop = null;
+        private string m_DigestUri = null;
+        private string m_Response = null;
+        private string m_Charset = null;
+        private string m_Cipher = null;
+        private string m_Authzid = null;
 
         /// <summary>
         /// Default constructor.
@@ -35,41 +34,48 @@ namespace LumiSoft.Net.AUTH
         /// <param name="qop">Indicates what "quality of protection" the client accepted. This must be one value of the challenge QopOptions.</param>
         /// <param name="digestUri">Digest URI.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>challenge</b>,<b>realm</b>,<b>password</b>,<b>nonce</b>,<b>qop</b> or <b>digestUri</b> is null reference.</exception>
-        public AUTH_SASL_DigestMD5_Response(AUTH_SASL_DigestMD5_Challenge challenge,string realm,string userName,string password,string cnonce,int nonceCount,string qop,string digestUri)
-        {    
-            if(challenge == null){
+        public AUTH_SASL_DigestMD5_Response(AUTH_SASL_DigestMD5_Challenge challenge, string realm, string userName, string password, string cnonce, int nonceCount, string qop, string digestUri)
+        {
+            if (challenge == null)
+            {
                 throw new ArgumentNullException("challenge");
             }
-            if(realm == null){
+            if (realm == null)
+            {
                 throw new ArgumentNullException("realm");
             }
-            if(userName == null){
+            if (userName == null)
+            {
                 throw new ArgumentNullException("userName");
             }
-            if(password == null){
+            if (password == null)
+            {
                 throw new ArgumentNullException("password");
             }
-            if(cnonce == null){
+            if (cnonce == null)
+            {
                 throw new ArgumentNullException("cnonce");
             }
-            if(qop == null){
+            if (qop == null)
+            {
                 throw new ArgumentNullException("qop");
             }
-            if(digestUri == null){
+            if (digestUri == null)
+            {
                 throw new ArgumentNullException("digestUri");
             }
 
             m_pChallenge = challenge;
-            m_Realm      = realm;
-            m_UserName   = userName;
-            m_Password   = password;
-            m_Nonce      = m_pChallenge.Nonce;
-            m_Cnonce     = cnonce;
+            m_Realm = realm;
+            m_UserName = userName;
+            m_Password = password;
+            m_Nonce = m_pChallenge.Nonce;
+            m_Cnonce = cnonce;
             m_NonceCount = nonceCount;
-            m_Qop        = qop;
-            m_DigestUri  = digestUri;                        
-            m_Response   = CalculateResponse(userName,password);
-            m_Charset    = challenge.Charset;
+            m_Qop = qop;
+            m_DigestUri = digestUri;
+            m_Response = CalculateResponse(userName, password);
+            m_Charset = challenge.Charset;
         }
 
         /// <summary>
@@ -91,7 +97,8 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ParseException">Is raised when response parsing + validation fails.</exception>
         public static AUTH_SASL_DigestMD5_Response Parse(string digestResponse)
         {
-            if(digestResponse == null){
+            if (digestResponse == null)
+            {
                 throw new ArgumentNullException(digestResponse);
             }
 
@@ -126,50 +133,63 @@ namespace LumiSoft.Net.AUTH
                 cipher           = "cipher" "=" cipher-value
                 authzid          = "authzid" "=" <"> authzid-value <">
                 authzid-value    = qdstr-val
-            */    
-            
+            */
+
             AUTH_SASL_DigestMD5_Response retVal = new AUTH_SASL_DigestMD5_Response();
 
             // Set default values.
             retVal.m_Realm = "";
 
-            string[] parameters = TextUtils.SplitQuotedString(digestResponse,',');
-            foreach(string parameter in parameters){
-                string[] name_value = parameter.Split(new char[]{'='},2);
-                string   name       = name_value[0].Trim();
+            string[] parameters = TextUtils.SplitQuotedString(digestResponse, ',');
+            foreach (string parameter in parameters)
+            {
+                string[] name_value = parameter.Split(new char[] { '=' }, 2);
+                string name = name_value[0].Trim();
 
-                if(name_value.Length == 2){
-                    if(name.ToLower() == "username"){
+                if (name_value.Length == 2)
+                {
+                    if (name.ToLower() == "username")
+                    {
                         retVal.m_UserName = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "realm"){
+                    else if (name.ToLower() == "realm")
+                    {
                         retVal.m_Realm = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "nonce"){            
+                    else if (name.ToLower() == "nonce")
+                    {
                         retVal.m_Nonce = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "cnonce"){
+                    else if (name.ToLower() == "cnonce")
+                    {
                         retVal.m_Cnonce = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "nc"){
-                        retVal.m_NonceCount = Int32.Parse(TextUtils.UnQuoteString(name_value[1]),System.Globalization.NumberStyles.HexNumber);
+                    else if (name.ToLower() == "nc")
+                    {
+                        retVal.m_NonceCount = Int32.Parse(TextUtils.UnQuoteString(name_value[1]), System.Globalization.NumberStyles.HexNumber);
                     }
-                    else if(name.ToLower() == "qop"){
+                    else if (name.ToLower() == "qop")
+                    {
                         retVal.m_Qop = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "digest-uri"){
+                    else if (name.ToLower() == "digest-uri")
+                    {
                         retVal.m_DigestUri = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "response"){
+                    else if (name.ToLower() == "response")
+                    {
                         retVal.m_Response = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "charset"){
+                    else if (name.ToLower() == "charset")
+                    {
                         retVal.m_Charset = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "cipher"){
+                    else if (name.ToLower() == "cipher")
+                    {
                         retVal.m_Cipher = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "authzid"){
+                    else if (name.ToLower() == "authzid")
+                    {
                         retVal.m_Authzid = TextUtils.UnQuoteString(name_value[1]);
                     }
                 }
@@ -178,19 +198,24 @@ namespace LumiSoft.Net.AUTH
             /* Validate required fields.
                 Per RFC 2831 2.1.2. Only [username nonce cnonce nc response] parameters are required.
             */
-            if(string.IsNullOrEmpty(retVal.UserName)){
+            if (string.IsNullOrEmpty(retVal.UserName))
+            {
                 throw new ParseException("The response-string doesn't contain required parameter 'username' value.");
             }
-            if(string.IsNullOrEmpty(retVal.Nonce)){
+            if (string.IsNullOrEmpty(retVal.Nonce))
+            {
                 throw new ParseException("The response-string doesn't contain required parameter 'nonce' value.");
             }
-            if(string.IsNullOrEmpty(retVal.Cnonce)){
+            if (string.IsNullOrEmpty(retVal.Cnonce))
+            {
                 throw new ParseException("The response-string doesn't contain required parameter 'cnonce' value.");
-            }            
-            if(retVal.NonceCount < 1){
+            }
+            if (retVal.NonceCount < 1)
+            {
                 throw new ParseException("The response-string doesn't contain required parameter 'nc' value.");
             }
-            if(string.IsNullOrEmpty(retVal.Response)){
+            if (string.IsNullOrEmpty(retVal.Response))
+            {
                 throw new ParseException("The response-string doesn't contain required parameter 'response' value.");
             }
 
@@ -209,16 +234,19 @@ namespace LumiSoft.Net.AUTH
         /// <param name="password">Password.</param>
         /// <returns>Returns true if user authenticated, otherwise false.</returns>
         /// <exception cref="ArgumentNullException">Is raised when <b>userName</b> or <b>password</b> is null reference.</exception>
-        public bool Authenticate(string userName,string password)
+        public bool Authenticate(string userName, string password)
         {
-            if(userName == null){
+            if (userName == null)
+            {
                 throw new ArgumentNullException("userName");
             }
-            if(password == null){
+            if (password == null)
+            {
                 throw new ArgumentNullException("password");
             }
 
-            if(this.Response == CalculateResponse(userName,password)){
+            if (this.Response == CalculateResponse(userName, password))
+            {
                 return true;
             }
 
@@ -278,13 +306,16 @@ namespace LumiSoft.Net.AUTH
             retVal.Append(",qop=" + this.Qop);
             retVal.Append(",digest-uri=\"" + this.DigestUri + "\"");
             retVal.Append(",response=" + this.Response);
-            if(!string.IsNullOrEmpty(this.Charset)){
+            if (!string.IsNullOrEmpty(this.Charset))
+            {
                 retVal.Append(",charset=" + this.Charset);
             }
-            if(!string.IsNullOrEmpty(this.Cipher)){
+            if (!string.IsNullOrEmpty(this.Cipher))
+            {
                 retVal.Append(",cipher=\"" + this.Cipher + "\"");
             }
-            if(!string.IsNullOrEmpty(this.Authzid)){
+            if (!string.IsNullOrEmpty(this.Authzid))
+            {
                 retVal.Append(",authzid=\"" + this.Authzid + "\"");
             }
             // auth-param
@@ -300,7 +331,7 @@ namespace LumiSoft.Net.AUTH
         /// Creates <b>response-auth</b> response for client.
         /// </summary>
         /// <returns>Returns <b>response-auth</b> response.</returns>
-        public string ToRspauthResponse(string userName,string password)
+        public string ToRspauthResponse(string userName, string password)
         {
             /* RFC 2831 2.1.3.
                 The server receives and validates the "digest-response". The server
@@ -333,22 +364,26 @@ namespace LumiSoft.Net.AUTH
             */
 
             byte[] a2 = null;
-            if(string.IsNullOrEmpty(this.Qop) || this.Qop.ToLower() == "auth"){
+            if (string.IsNullOrEmpty(this.Qop) || this.Qop.ToLower() == "auth")
+            {
                 a2 = Encoding.UTF8.GetBytes(":" + this.DigestUri);
             }
-            else if(this.Qop.ToLower() == "auth-int" || this.Qop.ToLower() == "auth-conf"){
+            else if (this.Qop.ToLower() == "auth-int" || this.Qop.ToLower() == "auth-conf")
+            {
                 a2 = Encoding.UTF8.GetBytes(":" + this.DigestUri + ":00000000000000000000000000000000");
-            }            
+            }
 
-            if(this.Qop.ToLower() == "auth"){
+            if (this.Qop.ToLower() == "auth")
+            {
                 // RFC 2831 2.1.2.1.
                 // response-value = HEX(KD(HEX(H(A1)),{nonce-value,":" nc-value,":",cnonce-value,":",qop-value,":",HEX(H(A2))}))
 
-                return "rspauth=" + hex(kd(hex(h(a1(userName,password))),m_Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.Cnonce + ":" + this.Qop + ":" + hex(h(a2))));
+                return "rspauth=" + hex(kd(hex(h(a1(userName, password))), m_Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.Cnonce + ":" + this.Qop + ":" + hex(h(a2))));
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid 'qop' value '" + this.Qop + "'.");
-            }            
+            }
         }
 
         #endregion
@@ -362,7 +397,7 @@ namespace LumiSoft.Net.AUTH
         /// <param name="userName">User name.</param>
         /// <param name="password">Password.</param>
         /// <returns>Returns digest response.</returns>
-        private string CalculateResponse(string userName,string password)
+        private string CalculateResponse(string userName, string password)
         {
             /* RFC 2831.2.1.2.1.
                 The definition of "response-value" above indicates the encoding for
@@ -426,14 +461,16 @@ namespace LumiSoft.Net.AUTH
                 These directives are not needed when Digest is used as a SASL
                 mechanism (i.e., MUST NOT be sent, and MUST be ignored if received).
             */
-                        
-            if(string.IsNullOrEmpty(this.Qop) || this.Qop.ToLower() == "auth"){
+
+            if (string.IsNullOrEmpty(this.Qop) || this.Qop.ToLower() == "auth")
+            {
                 // RFC 2831 2.1.2.1.
                 // response-value = HEX(KD(HEX(H(A1)),{nonce-value,":" nc-value,":",cnonce-value,":",qop-value,":",HEX(H(A2))}))
 
-                return hex(kd(hex(h(a1(userName,password))),m_Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.Cnonce + ":" + this.Qop + ":" + hex(h(a2()))));
+                return hex(kd(hex(h(a1(userName, password))), m_Nonce + ":" + this.NonceCount.ToString("x8") + ":" + this.Cnonce + ":" + this.Qop + ":" + hex(h(a2()))));
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid 'qop' value '" + this.Qop + "'.");
             }
         }
@@ -448,8 +485,8 @@ namespace LumiSoft.Net.AUTH
         /// <param name="userName">User name.</param>
         /// <param name="password">Password.</param>
         /// <returns>Returns A1 value.</returns>
-        private byte[] a1(string userName,string password)
-        {   
+        private byte[] a1(string userName, string password)
+        {
             /* RFC 2831 2.1.2.1.
                 If authzid is specified, then A1 is
 
@@ -463,24 +500,26 @@ namespace LumiSoft.Net.AUTH
              
                 NOTE: HTTP MD5 RFC 2617 supports more algorithms. SASL requires md5-sess.
             */
-  
-            if(string.IsNullOrEmpty(this.Authzid)){
+
+            if (string.IsNullOrEmpty(this.Authzid))
+            {
                 byte[] user_realm_pwd = h(Encoding.UTF8.GetBytes(userName + ":" + this.Realm + ":" + password));
-                byte[] nonce_cnonce   = Encoding.UTF8.GetBytes(":" + m_Nonce + ":" + this.Cnonce);
+                byte[] nonce_cnonce = Encoding.UTF8.GetBytes(":" + m_Nonce + ":" + this.Cnonce);
 
                 byte[] retVal = new byte[user_realm_pwd.Length + nonce_cnonce.Length];
-                Array.Copy(user_realm_pwd,0,retVal,0,user_realm_pwd.Length);
-                Array.Copy(nonce_cnonce,0,retVal,user_realm_pwd.Length,nonce_cnonce.Length);
+                Array.Copy(user_realm_pwd, 0, retVal, 0, user_realm_pwd.Length);
+                Array.Copy(nonce_cnonce, 0, retVal, user_realm_pwd.Length, nonce_cnonce.Length);
 
                 return retVal;
             }
-            else{
-                byte[] user_realm_pwd       = h(Encoding.UTF8.GetBytes(userName + ":" + this.Realm + ":" + password));
+            else
+            {
+                byte[] user_realm_pwd = h(Encoding.UTF8.GetBytes(userName + ":" + this.Realm + ":" + password));
                 byte[] nonce_cnonce_authzid = Encoding.UTF8.GetBytes(":" + m_Nonce + ":" + this.Cnonce + ":" + this.Authzid);
 
                 byte[] retVal = new byte[user_realm_pwd.Length + nonce_cnonce_authzid.Length];
-                Array.Copy(user_realm_pwd,0,retVal,0,user_realm_pwd.Length);
-                Array.Copy(nonce_cnonce_authzid,0,retVal,user_realm_pwd.Length,nonce_cnonce_authzid.Length);
+                Array.Copy(user_realm_pwd, 0, retVal, 0, user_realm_pwd.Length);
+                Array.Copy(nonce_cnonce_authzid, 0, retVal, user_realm_pwd.Length, nonce_cnonce_authzid.Length);
 
                 return retVal;
             }
@@ -514,13 +553,16 @@ namespace LumiSoft.Net.AUTH
                 NOTE: In SASL entity-body hash always "00000000000000000000000000000000".
             */
 
-            if(string.IsNullOrEmpty(this.Qop) || this.Qop.ToLower() == "auth"){
+            if (string.IsNullOrEmpty(this.Qop) || this.Qop.ToLower() == "auth")
+            {
                 return Encoding.UTF8.GetBytes("AUTHENTICATE:" + this.DigestUri);
             }
-            else if(this.Qop.ToLower() == "auth-int" || this.Qop.ToLower() == "auth-conf"){
+            else if (this.Qop.ToLower() == "auth-int" || this.Qop.ToLower() == "auth-conf")
+            {
                 return Encoding.UTF8.GetBytes("AUTHENTICATE:" + this.DigestUri + ":00000000000000000000000000000000");
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid 'qop' value '" + this.Qop + "'.");
             }
         }
@@ -536,7 +578,8 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Return MD5 hash.</returns>
         private byte[] h(byte[] value)
         {
-            using(System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider()){
+            using (System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
+            {
 
                 return md5.ComputeHash(value);
             }
@@ -546,7 +589,7 @@ namespace LumiSoft.Net.AUTH
 
         #region method kd
 
-        private byte[] kd(string secret,string data)
+        private byte[] kd(string secret, string data)
         {
             // KD(secret, data) = H(concat(secret, ":", data))
 
@@ -571,13 +614,13 @@ namespace LumiSoft.Net.AUTH
 
 
         #region Properties implementation
-                
+
         /// <summary>
         /// Gets user name.
         /// </summary>
         public string UserName
         {
-            get{ return m_UserName; }
+            get { return m_UserName; }
         }
 
         /// <summary>
@@ -585,7 +628,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Realm
         {
-            get{ return m_Realm; }
+            get { return m_Realm; }
         }
 
         /// <summary>
@@ -593,7 +636,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Nonce
         {
-            get{ return m_Nonce; }
+            get { return m_Nonce; }
         }
 
         /// <summary>
@@ -601,7 +644,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Cnonce
         {
-            get{ return m_Cnonce; }
+            get { return m_Cnonce; }
         }
 
         /// <summary>
@@ -609,7 +652,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public int NonceCount
         {
-            get{ return m_NonceCount; }
+            get { return m_NonceCount; }
         }
 
         /// <summary>
@@ -617,7 +660,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Qop
         {
-            get{ return m_Qop; }
+            get { return m_Qop; }
         }
 
         /// <summary>
@@ -625,7 +668,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string DigestUri
         {
-            get{ return m_DigestUri; }
+            get { return m_DigestUri; }
         }
 
         /// <summary>
@@ -633,7 +676,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Response
         {
-            get{ return m_Response; }
+            get { return m_Response; }
         }
 
         /// <summary>
@@ -641,7 +684,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Charset
         {
-            get{ return m_Charset; }
+            get { return m_Charset; }
         }
 
         /// <summary>
@@ -649,7 +692,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Cipher
         {
-            get{ return m_Cipher; }
+            get { return m_Cipher; }
         }
 
         /// <summary>
@@ -657,7 +700,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Authzid
         {
-            get{ return m_Authzid; }
+            get { return m_Authzid; }
         }
 
         #endregion

@@ -2,10 +2,10 @@ namespace dotless.Core.Parser.Functions
 {
     using System;
     using System.Linq;
+    using dotless.Core.Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Tree;
-    using dotless.Core.Exceptions;
 
     public class FormatStringFunction : Function
     {
@@ -16,7 +16,7 @@ namespace dotless.Core.Parser.Functions
             if (Arguments.Count == 0)
                 return new Quoted("", false);
 
-            Func<Node, string> unescape = n => n is Quoted ? ((Quoted) n).UnescapeContents() : n.ToCSS(env);
+            Func<Node, string> unescape = n => n is Quoted ? ((Quoted)n).UnescapeContents() : n.ToCSS(env);
 
             var format = unescape(Arguments[0]);
 

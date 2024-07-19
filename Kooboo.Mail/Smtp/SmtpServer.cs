@@ -1,19 +1,16 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
-using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
     public class SmtpServer : Kooboo.Tasks.IWorkerStarter
     {
         internal static Logging.ILogger _logger;
-        private static long _nextConnectionId;
 
         static SmtpServer()
         {
@@ -23,7 +20,6 @@ namespace Kooboo.Mail.Smtp
         private CancellationTokenSource _cancellationTokenSource;
         private TcpListener _listener;
         private Task _listenTask;
-        internal ConnectionManager _connectionManager;
 
         public SmtpServer(string name)
             : this(name, 25)
@@ -31,27 +27,15 @@ namespace Kooboo.Mail.Smtp
         }
 
         public SmtpServer(string name, int port)
-            : this(name, port, null)
-        {
-        }
-
-        public SmtpServer(string name, int port, X509Certificate cert)
         {
             Name = name;
             Port = port;
-            Certificate = cert;
-
             Timeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-
-            Heartbeat = Heartbeat.Instance;
-            _connectionManager = new ConnectionManager(Options.MaxConnections);
-            Heartbeat.Add(_connectionManager);
         }
 
-        [JsonIgnore]
-        public X509Certificate Certificate { get; private set; }
-
         public string Name { get; set; }
+
+        public bool SSL { get; set; }
 
         public int Port { get; set; }
 
@@ -60,8 +44,6 @@ namespace Kooboo.Mail.Smtp
         public bool AuthenticationRequired { get; set; }
 
         public SmtpServerOptions Options { get; set; } = new SmtpServerOptions();
-
-        internal Heartbeat Heartbeat { get; }
 
         public void Start()
         {
@@ -122,25 +104,22 @@ namespace Kooboo.Mail.Smtp
                 var needawait = false;
                 try
                 {
-                    var cid = _nextConnectionId++;
-                    _logger.LogInformation($"<ac {cid} {Thread.CurrentThread.ManagedThreadId}");
                     var tcpClient = await _listener.AcceptTcpClientAsync();
-                    _logger.LogInformation($">ac {cid} {Thread.CurrentThread.ManagedThreadId} {tcpClient.Client.RemoteEndPoint}");
 
-                    var session = new SmtpConnector(this, tcpClient, cid);
+                    var session = new SmtpConnector(this, tcpClient);
                     _ = session.Accept();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Kooboo.Data.Log.Instance.Exception.Write(DateTime.Now.ToString()+ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
+                    Kooboo.Data.Log.Instance.Exception.Write(DateTime.Now.ToString() + ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
                     needawait = true;
                 }
 
                 if (needawait)
                 {
-                    await Task.Delay(200);
+                    await Task.Delay(100);
                 }
-                
+
             }
         }
     }
@@ -152,7 +131,7 @@ namespace Kooboo.Mail.Smtp
         {
 
             this.LiveTimeout = TimeSpan.FromMinutes(1);
-            this.MailsPerConnection = 10;
+            this.MailsPerConnection = 100;
 
 #if DEBUG
             {
@@ -169,4 +148,4 @@ namespace Kooboo.Mail.Smtp
 
         public int? MaxConnections { get; set; }
     }
-} 
+}

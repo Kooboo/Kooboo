@@ -1,10 +1,7 @@
 ﻿using Kooboo.Api;
-using Kooboo.Sites.Extensions;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -33,6 +30,7 @@ namespace Kooboo.Web.Api.Implementation
 
         private int PageSize = 50;
 
+        [Permission(Feature.DATABASE, Action = "log")]
         public PagedListViewModel<Data.Logging.SqlLog> List(ApiCall apiCall)
         {
             var pageIndex = apiCall.GetIntValue("pageIndex");
@@ -54,9 +52,10 @@ namespace Kooboo.Web.Api.Implementation
             };
         }
 
-        public IEnumerable<string> Weeks()
+        [Permission(Feature.DATABASE, Action = "log")]
+        public IEnumerable<string> Weeks(ApiCall apiCall)
         {
-            return SqlLogService.GetWeeks();
+            return SqlLogService.GetWeeks(apiCall.WebSite.Id);
         }
     }
 }

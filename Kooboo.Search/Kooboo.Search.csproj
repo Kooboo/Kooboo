@@ -1,20 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0;</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Search</AssemblyName>
-	<RootNamespace>Kooboo.Search</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Search</AssemblyName>
+		<RootNamespace>Kooboo.Search</RootNamespace>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Scanner\EncodingHelper.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Scanner\EncodingHelper.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+		<ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+		<ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+	</ItemGroup>
 
 </Project>

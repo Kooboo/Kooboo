@@ -1,10 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
+    using System;
     using System.Globalization;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Utils;
-    using System;
 
     public class Number : Node, IOperable, IComparable
     {
@@ -33,7 +33,7 @@
         /// </summary>
         private string FormatValue()
         {
-            return Value.ToString("0." +new string('#', GetPrecision()), CultureInfo.InvariantCulture);
+            return Value.ToString("0." + new string('#', GetPrecision()), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@
         {
             Guard.ExpectNode<Number>(other, "right hand side of " + op.Operator, op.Location);
 
-            var dim = (Number) other;
+            var dim = (Number)other;
 
             var unit = Unit;
             var otherUnit = dim.Unit;
@@ -86,7 +86,7 @@
 
         public Color ToColor()
         {
-            return new Color(new[] {Value, Value, Value});
+            return new Color(new[] { Value, Value, Value });
         }
 
         public double ToNumber()
@@ -96,7 +96,7 @@
 
         public double ToNumber(double max)
         {
-            return Unit == "%" ? Value*max/100d : Value;
+            return Unit == "%" ? Value * max / 100d : Value;
         }
 
         public static Number operator -(Number n)

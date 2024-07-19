@@ -6,7 +6,6 @@ namespace dotless.Core.Parser
     using System.Text.RegularExpressions;
     using Exceptions;
     using Infrastructure.Nodes;
-    using Utils;
 
     public class Tokenizer
     {
@@ -45,7 +44,7 @@ namespace dotless.Core.Parser
             // delmited by '\n}' (see rationale above),
             // depending on the level of optimization.
 
-            if(Optimization == 0)
+            if (Optimization == 0)
                 _chunks.Add(new Chunk(_input));
             else
             {
@@ -56,54 +55,56 @@ namespace dotless.Core.Parser
                 var level = 0;
                 var lastBlock = 0;
                 var inParam = false;
-                
+
                 int i = 0;
-                while(i < _inputLength)
+                while (i < _inputLength)
                 {
                     var match = skip.Match(_input, i);
-                    if(match.Success)
+                    if (match.Success)
                     {
                         Chunk.Append(match.Value, _chunks);
                         i += match.Length;
                         continue;
                     }
-                    
+
                     var c = _input[i];
-                    
-                    if(i < _inputLength - 1 && c == '/')
+
+                    if (i < _inputLength - 1 && c == '/')
                     {
                         var cc = _input[i + 1];
                         if ((!inParam && cc == '/') || cc == '*')
                         {
                             match = comment.Match(_input, i);
-                            if(match.Success)
+                            if (match.Success)
                             {
                                 i += match.Length;
                                 _chunks.Add(new Chunk(match.Value, ChunkType.Comment));
                                 continue;
-                            } else
+                            }
+                            else
                             {
                                 throw new ParsingException("Missing closing comment", GetNodeLocation(i));
                             }
                         }
                     }
-                    
-                    if(c == '"' || c == '\'')
+
+                    if (c == '"' || c == '\'')
                     {
                         match = quotedstring.Match(_input, i);
-                        if(match.Success)
+                        if (match.Success)
                         {
                             i += match.Length;
                             _chunks.Add(new Chunk(match.Value, ChunkType.QuotedString));
                             continue;
-                        } else
+                        }
+                        else
                         {
                             throw new ParsingException(string.Format("Missing closing quote ({0})", c), GetNodeLocation(i));
                         }
                     }
-                    
+
                     // we are not in a quoted string or comment - process '{' level
-                    if(!inParam && c == '{')
+                    if (!inParam && c == '{')
                     {
                         level++;
                         lastBlock = i;
@@ -111,14 +112,15 @@ namespace dotless.Core.Parser
                     else if (!inParam && c == '}')
                     {
                         level--;
-                        
-                        if(level < 0)
+
+                        if (level < 0)
                             throw new ParsingException("Unexpected '}'", GetNodeLocation(i));
-                        
+
                         Chunk.Append(c, _chunks, true);
                         i++;
                         continue;
-                    } if (c == '(')
+                    }
+                    if (c == '(')
                     {
                         inParam = true;
                     }
@@ -126,15 +128,15 @@ namespace dotless.Core.Parser
                     {
                         inParam = false;
                     }
-                    
+
                     Chunk.Append(c, _chunks);
                     i++;
                 }
-                
-                if(level > 0)
+
+                if (level > 0)
                     throw new ParsingException("Missing closing '}'", GetNodeLocation(lastBlock));
 
-                _input =  Chunk.CommitAll(_chunks);
+                _input = Chunk.CommitAll(_chunks);
 
                 _inputLength = _input.Length;
             }
@@ -145,7 +147,8 @@ namespace dotless.Core.Parser
         public string GetComment()
         {
             // if we've hit the end we might still be looking at a valid chunk, so return early
-            if (_i == _inputLength) {
+            if (_i == _inputLength)
+            {
                 return null;
             }
 
@@ -153,7 +156,7 @@ namespace dotless.Core.Parser
             int startI = _i;
             int endI = 0;
 
-            if  (Optimization == 0)
+            if (Optimization == 0)
             {
                 if (this.CurrentChar != '/')
                     return null;
@@ -193,18 +196,23 @@ namespace dotless.Core.Parser
         public string GetQuotedString()
         {
             // if we've hit the end we might still be looking at a valid chunk, so return early
-            if (_i == _inputLength) {
+            if (_i == _inputLength)
+            {
                 return null;
             }
-            
-            if (Optimization == 0) {
+
+            if (Optimization == 0)
+            {
                 if (this.CurrentChar != '"' && this.CurrentChar != '\'')
                     return null;
-                
+
                 var quotedstring = this.Match(this._quotedRegEx);
                 return quotedstring.Value;
-            } else {
-                if (_chunks[_j].Type == ChunkType.QuotedString) {
+            }
+            else
+            {
+                if (_chunks[_j].Type == ChunkType.QuotedString)
+                {
                     string val = _chunks[_j].Value;
                     Advance(_chunks[_j].Value.Length);
                     return val;
@@ -233,7 +241,8 @@ namespace dotless.Core.Parser
 
         public CharMatchResult Match(char tok)
         {
-            if  (_i == _inputLength || _chunks[_j].Type != ChunkType.Text) {
+            if (_i == _inputLength || _chunks[_j].Type != ChunkType.Text)
+            {
                 return null;
             }
 
@@ -257,7 +266,8 @@ namespace dotless.Core.Parser
 
         public RegexMatchResult Match(string tok, bool caseInsensitive)
         {
-            if (_i == _inputLength || _chunks[_j].Type != ChunkType.Text) {
+            if (_i == _inputLength || _chunks[_j].Type != ChunkType.Text)
+            {
                 return null;
             }
 
@@ -276,20 +286,21 @@ namespace dotless.Core.Parser
 
             Advance(match.Length);
 
-            return new RegexMatchResult(match) {Location = GetNodeLocation(index)};
+            return new RegexMatchResult(match) { Location = GetNodeLocation(index) };
         }
 
         // Match a string, but include the possibility of matching quoted and comments
         public RegexMatchResult MatchAny(string tok)
         {
-            if (_i == _inputLength) {
+            if (_i == _inputLength)
+            {
                 return null;
             }
 
             var regex = GetRegex(tok, RegexOptions.None);
-            
+
             var match = regex.Match(_input, _i);
-            
+
             if (!match.Success)
                 return null;
 
@@ -321,7 +332,7 @@ namespace dotless.Core.Parser
 
             while (true)
             {
-                if(_i == _inputLength)
+                if (_i == _inputLength)
                     break;
 
                 if (_i >= endIndex)
@@ -367,7 +378,7 @@ namespace dotless.Core.Parser
         {
             var memo = this.Location;
 
-            while(GetComment() != null);
+            while (GetComment() != null) ;
 
             var peekSuccess = Peek(tok);
 
@@ -386,17 +397,20 @@ namespace dotless.Core.Parser
 
         public char GetPreviousCharIgnoringComments()
         {
-            if  (_i == 0) {
+            if (_i == 0)
+            {
                 return '\0';
             }
 
-            if  (_i != _lastCommentEnd) {
+            if (_i != _lastCommentEnd)
+            {
                 return PreviousChar;
             }
 
             int i = _lastCommentStart - 1;
 
-            if  (i < 0) {
+            if (i < 0)
+            {
                 return '\0';
             }
 
@@ -425,7 +439,7 @@ namespace dotless.Core.Parser
 
         public Location Location
         {
-            get 
+            get
             {
                 return new Location
                 {
@@ -500,7 +514,7 @@ namespace dotless.Core.Parser
             private static Chunk ReadyForText(List<Chunk> chunks)
             {
                 Chunk last = chunks.LastOrDefault();
-                if  (last == null || last.Type != ChunkType.Text || last._final == true)
+                if (last == null || last.Type != ChunkType.Text || last._final == true)
                 {
                     last = new Chunk();
                     chunks.Add(last);
@@ -530,9 +544,9 @@ namespace dotless.Core.Parser
             public static string CommitAll(List<Chunk> chunks)
             {
                 StringBuilder all = new StringBuilder();
-                foreach(Chunk chunk in chunks)
+                foreach (Chunk chunk in chunks)
                 {
-                    if  (chunk._builder != null)
+                    if (chunk._builder != null)
                     {
                         string val = chunk._builder.ToString();
                         chunk._builder = null;
@@ -546,7 +560,7 @@ namespace dotless.Core.Parser
         }
     }
 
-    public class Location 
+    public class Location
     {
         public int Index { get; set; }
         public int CurrentChunk { get; set; }

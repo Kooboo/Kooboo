@@ -1,11 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Lib.Reflection;
 using Kooboo.Api;
+using Kooboo.Lib.Reflection;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Web.Api
 {
@@ -25,28 +23,29 @@ namespace Kooboo.Web.Api
                     {
                         if (_list == null)
                         {
-                            _list = new Dictionary<string, IApi>(StringComparer.OrdinalIgnoreCase);
+                            var list = new Dictionary<string, IApi>(StringComparer.OrdinalIgnoreCase);
 
                             var alldefinedTypes = GetAllDefinedApi();
                             foreach (var item in alldefinedTypes)
                             {
                                 var instance = Activator.CreateInstance(item) as IApi;
-                                AddApi(_list, instance);
+                                AddApi(list, instance);
                             }
 
-                            AddApi(_list, new SiteObjectApi<CmsFile>());
-                            AddApi(_list, new SiteObjectApi<CmsCssRule>());
+                            AddApi(list, new SiteObjectApi<CmsFile>());
+                            AddApi(list, new SiteObjectApi<CmsCssRule>());
 
-                            AddApi(_list, new SiteObjectApi<ExternalResource>());
-                            AddApi(_list, new SiteObjectApi<Folder>());
-                            AddApi(_list, new SiteObjectApi<Form>());
+                            AddApi(list, new SiteObjectApi<ExternalResource>());
+                            AddApi(list, new SiteObjectApi<Folder>());
+                            AddApi(list, new SiteObjectApi<Form>());
 
-                            AddApi(_list, new SiteObjectApi<Image>());
-                            AddApi(_list, new SiteObjectApi<Script>());
-                            AddApi(_list, new SiteObjectApi<ViewDataMethod>());
+                            AddApi(list, new SiteObjectApi<Image>());
+                            AddApi(list, new SiteObjectApi<Script>());
+                            AddApi(list, new SiteObjectApi<ViewDataMethod>());
 
-                            AddApi(_list, new SiteObjectApi<ContentType>());
-                            AddApi(_list, new SiteObjectApi<Label>());
+                            AddApi(list, new SiteObjectApi<ContentType>());
+                            AddApi(list, new SiteObjectApi<Label>());
+                            _list = list;
                         }
                     }
                 }
@@ -57,7 +56,7 @@ namespace Kooboo.Web.Api
         private static List<Type> GetAllDefinedApi()
         {
             return AssemblyLoader.LoadTypeByInterface(typeof(IApi));
-        }            
+        }
 
         public static void Init()
         {
@@ -85,11 +84,11 @@ namespace Kooboo.Web.Api
                 AddApi(_list, new SiteObjectApi<ViewDataMethod>());
 
                 AddApi(_list, new SiteObjectApi<ContentType>());
-                AddApi(_list, new SiteObjectApi<Label>());    
+                AddApi(_list, new SiteObjectApi<Label>());
 
             }
         }
-           
+
 
         internal static void AddApi(Dictionary<string, IApi> currentlist, IApi instance)
         {
@@ -127,5 +126,5 @@ namespace Kooboo.Web.Api
         }
 
     }
-     
+
 }

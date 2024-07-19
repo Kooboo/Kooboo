@@ -1,42 +1,47 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class ScriptApi : SiteObjectApi<Script>
     {
-        public List<IEmbeddableItemListViewModel> External(ApiCall call)
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public IEnumerable<IEmbeddableItemListViewModel> External(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             int storenameHash = Lib.Security.Hash.ComputeInt(sitedb.Scripts.StoreName);
-            List<IEmbeddableItemListViewModel> result = new List<IEmbeddableItemListViewModel>();
 
-            foreach (var item in sitedb.Scripts.GetExternals().OrderBy(o => o.Name))
+            foreach (var item in sitedb.Scripts.GetExternals().SortByNameOrLastModified(call))
             {
-                IEmbeddableItemListViewModel model = new IEmbeddableItemListViewModel(sitedb, item);
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenameHash;
-                result.Add(model);
+                yield return new IEmbeddableItemListViewModel(sitedb, item)
+                {
+                    KeyHash = Sites.Service.LogService.GetKeyHash(item.Id),
+                    StoreNameHash = storenameHash
+                };
             }
-
-            return result;
         }
 
-        public List<IEmbeddableItemListViewModel> Embedded(ApiCall apiCall)
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.PAGES, Action = Data.Permission.Action.VIEW)]
+        public IEnumerable<IEmbeddableItemListViewModel> Embedded(ApiCall apiCall)
         {
-            return apiCall.WebSite.SiteDb().Scripts.GetEmbeddeds()
-            .Select(o => new IEmbeddableItemListViewModel(apiCall.WebSite.SiteDb(), o)).ToList();
+            return apiCall
+                .WebSite
+                .SiteDb()
+                .Scripts
+                .GetEmbeddeds()
+                .SortByBodyOrLastModified(apiCall)
+                .Select(o => new IEmbeddableItemListViewModel(apiCall.WebSite.SiteDb(), o));
         }
 
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
         public object Relation(ApiCall call)
         {
             string type = call.GetValue("type", "by");
@@ -61,27 +66,28 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
+        [Kooboo.Attributes.RequireModel(typeof(ScriptEditViewModel))]
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.EDIT)]
         public Guid Update(ApiCall call)
         {
-            Guid id = call.ObjectId;
-            string name = call.GetValue("name");
-            string body = call.GetValue("body");
-            string extension = call.GetValue("extension");
+            var model = call.Context.Request.Model as ScriptEditViewModel;
 
-            if (string.IsNullOrEmpty(extension))
+            if (string.IsNullOrEmpty(model.Extension))
             {
-                extension = "js"; 
+                model.Extension = "js";
             }
-                   
-            if (id != default(Guid))
+
+            if (model.Id != default(Guid))
             {
-                var script = call.WebSite.SiteDb().Scripts.Get(id);
+                var script = call.WebSite.SiteDb().Scripts.Get(model.Id);
                 if (script != null)
                 {
-                    script.Body = body;
+                    (model as IDiffChecker).CheckDiff(script);
+
+                    script.Body = model.Body;
                     if (script.Extension == null)
                     {
-                        script.Extension = extension; 
+                        script.Extension = model.Extension;
                     }
                     call.WebSite.SiteDb().Scripts.AddOrUpdate(script, true, true, call.Context.User.Id);
                     return script.Id;
@@ -89,17 +95,17 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(model.Name))
                 {
                     return default(Guid);
                 }
 
-                if (!name.EndsWith("." + extension))
+                if (!model.Name.EndsWith("." + model.Extension))
                 {
-                    name = name + "." + extension;
+                    model.Name = model.Name + "." + model.Extension;
                 }
 
-                string url = name;
+                string url = model.Name;
                 if (url.StartsWith("\\"))
                 {
                     url = "/" + url.Substring(1);
@@ -114,30 +120,28 @@ namespace Kooboo.Web.Api.Implementation
                     var script = call.WebSite.SiteDb().Scripts.Get(route.objectId);
                     if (script != null)
                     {
-                        script.Body = body;
+                        script.Body = model.Body;
                         call.WebSite.SiteDb().Scripts.AddOrUpdate(script, true, true, call.Context.User.Id);
                         return script.Id;
                     }
                 }
 
                 Script newscript = new Script();
-                newscript.Name = name;
-                newscript.Body = body;
-                newscript.Extension = extension;
+                newscript.Name = model.Name;
+                newscript.Body = model.Body;
+                newscript.Extension = model.Extension;
                 call.WebSite.SiteDb().Routes.AddOrUpdate(url, newscript, call.Context.User.Id);
                 call.WebSite.SiteDb().Scripts.AddOrUpdate(newscript, true, true, call.Context.User.Id);
                 return newscript.Id;
             }
             return default(Guid);
         }
-              
-
 
         public override bool IsUniqueName(ApiCall call)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
             string name = call.NameOrId;
-                                                  
+
             if (!string.IsNullOrEmpty(name))
             {
                 var value = sitedb.Scripts.GetByNameOrId(name);
@@ -149,22 +153,22 @@ namespace Kooboo.Web.Api.Implementation
                 List<string> dotextension = new List<string>();
                 foreach (var item in GetExtensions(call))
                 {
-                    string dotitem = item; 
+                    string dotitem = item;
                     if (!dotitem.StartsWith("."))
                     {
-                        dotitem = "." + dotitem; 
+                        dotitem = "." + dotitem;
                     }
-                    dotextension.Add(dotitem); 
+                    dotextension.Add(dotitem);
                 }
 
                 name = name.ToLower();
 
-                var find = sitedb.Scripts.Store.FullScan(o => samename(o.Name, name, dotextension)).FirstOrDefault(); 
+                var find = sitedb.Scripts.Store.FullScan(o => samename(o.Name, name, dotextension)).FirstOrDefault();
 
-                if (find !=null)
+                if (find != null)
                 {
-                    return false; 
-                }   
+                    return false;
+                }
             }
 
             return true;
@@ -177,7 +181,7 @@ namespace Kooboo.Web.Api.Implementation
                 return false;
             }
 
-            dbname = dbname.ToLower();      
+            dbname = dbname.ToLower();
             if (dbname == name)
             {
                 return true;
@@ -194,7 +198,7 @@ namespace Kooboo.Web.Api.Implementation
                         return true;
                     }
                 }
-            }     
+            }
             return false;
         }
 
@@ -210,6 +214,48 @@ namespace Kooboo.Web.Api.Implementation
                 result.Add(item.Extension);
             }
             return result.ToList();
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.EDIT)]
+        public override Guid Post(ApiCall call)
+        {
+            return base.Post(call);
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
+        public override object Get(ApiCall call)
+        {
+            return base.Get(call);
+        }
+
+        [Permission(Feature.SCRIPT, Action = Data.Permission.Action.VIEW)]
+        public override List<object> List(ApiCall call)
+        {
+            return base.List(call);
         }
     }
 }

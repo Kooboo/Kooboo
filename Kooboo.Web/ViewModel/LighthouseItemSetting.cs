@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Web.ViewModel
+﻿namespace Kooboo.Web.ViewModel
 {
     public class LighthouseItemSetting
     {

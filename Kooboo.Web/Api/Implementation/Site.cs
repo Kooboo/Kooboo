@@ -1,22 +1,29 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text.Json;
+using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data;
+using Kooboo.Data.Language;
 using Kooboo.Data.Models;
+using Kooboo.Data.Permission;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
+using Kooboo.Sites.ScriptModules;
+using Kooboo.Sites.ScriptModules.Models;
+using Kooboo.Sites.ScriptModules.Render.View;
 using Kooboo.Sites.Service;
 using Kooboo.Sites.Sync;
-using Kooboo.Api.ApiResponse;
-using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Kooboo.Api;
-using Kooboo.Lib.Helper;
-using Kooboo.Data.Language;
-using Kooboo.Sites.Models;
 using Kooboo.Web.Lighthouse;
-using System.ComponentModel;
+using Kooboo.Web.ViewModel;
+
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -50,14 +57,15 @@ namespace Kooboo.Web.Api.Implementation
         {
             Dictionary<string, string> types = new Dictionary<string, string>();
             types.Add("p", Data.Language.Hardcoded.GetValue("public", call.Context));
-            types.Add("o", Data.Language.Hardcoded.GetValue("private", call.Context));
-            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));
+            types.Add("o", Data.Language.Hardcoded.GetValue("organization", call.Context));
+            types.Add("m", Data.Language.Hardcoded.GetValue("site user", call.Context));
+            types.Add("u", Data.Language.Hardcoded.GetValue("login user", call.Context));
             return types;
         }
 
         public SiteCultureViewModel Langs(ApiCall request)
         {
-            SiteCultureViewModel viewmodel = new SiteCultureViewModel();
+            SiteCultureViewModel viewModel = new SiteCultureViewModel();
             string strid = request.GetValue("SiteId");
             if (string.IsNullOrEmpty(strid))
             {
@@ -68,19 +76,19 @@ namespace Kooboo.Web.Api.Implementation
 
             if (Guid.TryParse(strid, out SiteId))
             {
-                var site = GlobalDb.WebSites.Get(SiteId);
+                var site = Data.Config.AppHost.SiteRepo.Get(SiteId);
                 if (site != null)
                 {
                     var cultures = Kooboo.Data.Language.SiteCulture.List(SiteId);
 
-                    string defaultname = site.DefaultCulture;
+                    string defaultName = site.DefaultCulture;
 
                     if (Data.Language.LanguageSetting.ISOTwoLetterCode.ContainsKey(site.DefaultCulture))
                     {
-                        defaultname = Data.Language.LanguageSetting.ISOTwoLetterCode[site.DefaultCulture];
+                        defaultName = Data.Language.LanguageSetting.ISOTwoLetterCode[site.DefaultCulture];
                     }
 
-                    Dictionary<string, string> sitecultures = new Dictionary<string, string>();
+                    Dictionary<string, string> siteCultures = new Dictionary<string, string>();
 
                     if (site.EnableMultilingual)
                     {
@@ -88,7 +96,7 @@ namespace Kooboo.Web.Api.Implementation
                         {
                             foreach (var item in site.Culture)
                             {
-                                sitecultures.Add(item.Key, item.Value);
+                                siteCultures.Add(item.Key, item.Value);
                             }
                         }
                         else
@@ -97,21 +105,21 @@ namespace Kooboo.Web.Api.Implementation
                             {
                                 if (cultures.ContainsKey(item))
                                 {
-                                    sitecultures[item] = cultures[item];
+                                    siteCultures[item] = cultures[item];
                                 }
                             }
                         }
                     }
                     else
                     {
-                        sitecultures.Add(site.DefaultCulture, defaultname);
+                        siteCultures.Add(site.DefaultCulture, defaultName);
                     }
 
-                    viewmodel.Default = site.DefaultCulture;
-                    viewmodel.DefaultName = defaultname;
-                    viewmodel.Cultures = sitecultures;
+                    viewModel.Default = site.DefaultCulture;
+                    viewModel.DefaultName = defaultName;
+                    viewModel.Cultures = siteCultures;
 
-                    return viewmodel;
+                    return viewModel;
                 }
             }
             return null;
@@ -122,7 +130,7 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Data.Language.SiteCulture.List(call.WebSite.Id);
         }
 
-        public List<SiteSummaryViewModel> List(ApiCall apiCall)
+        public virtual List<SiteSummaryViewModel> List(ApiCall apiCall)
         {
             var user = apiCall.Context.User;
             if (user.CurrentOrgId == default(Guid))
@@ -130,45 +138,104 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
-            var sites = Kooboo.Sites.Service.WebSiteService.ListByUser(user);
+            var sites = WebSiteService.ListByUser(user);
 
             List<SiteSummaryViewModel> result = new List<SiteSummaryViewModel>();
 
             foreach (var item in sites)
             {
                 var sitedb = item.SiteDb();
-
                 SiteSummaryViewModel summary = new SiteSummaryViewModel();
                 summary.SiteId = item.Id;
                 summary.SiteName = item.Name;
                 summary.SiteDisplayName = item.DisplayName;
-                summary.PageCount = sitedb.Pages.Count();
-                summary.ImageCount = sitedb.Images.Count();
+                //  summary.PageCount = sitedb.Pages.Count();
+                //  summary.ImageCount = sitedb.Images.Count();
                 // if user has not right to access the site. present the preview link.  
 
                 summary.Online = item.Published;
-                summary.Visitors = sitedb.VisitorLog.QueryDescending(o => true).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-12)).Count();
+                //  summary.Visitors = sitedb.VisitorLog.QueryDescending(o => true).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-12)).Count();
 
-                var alltask = sitedb.TransferTasks.All();
-
-                if (alltask != null && alltask.Count() > 0)
+                try
                 {
-                    foreach (var ttask in alltask.Where(o => o.done == false))
+                    var allTasks = sitedb.TransferTasks.All();
+
+                    if (allTasks != null && allTasks.Any())
                     {
-                        if (ttask.CreationDate > DateTime.UtcNow.AddMinutes(-2))
+                        var tasks = allTasks.FindAll(o => o != null && o.done == false);
+
+                        foreach (var task in tasks)
                         {
-                            summary.InProgress = true;
-                            break;
+                            if (task.CreationDate > DateTime.UtcNow.AddMinutes(-2))
+                            {
+                                summary.InProgress = true;
+                                break;
+                            }
                         }
                     }
                 }
+                catch (Exception)
+                {
+                }
 
-                summary.HomePageLink = item.BaseUrl();
+
+                try
+                {
+                    var defaultRoute = ObjectRoute.GetDefaultRoute(item.SiteDb());
+
+                    if (defaultRoute != null)
+                    {
+                        summary.HomePageLink = item.BaseUrl()?.TrimEnd('/') + defaultRoute.Name;
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+
                 result.Add(summary);
             }
             return result;
         }
 
+        [Permission(Feature.SITE, Action = "export")]
+        public virtual string ExportGenerate(ApiCall call)
+        {
+            var site = call.WebSite;
+            if (site == null)
+            {
+                return null;
+            }
+            var siteDb = site.SiteDb();
+
+            var copyModeString = call.GetValue("copyMode");
+            var copyMode = string.IsNullOrWhiteSpace(copyModeString)
+                ? CopyMode.Normal
+                : (CopyMode)Enum.Parse(typeof(CopyMode), copyModeString, true);
+
+            if (copyMode == CopyMode.Normal)
+            {
+                var size = IOHelper.GetDirectorySize(siteDb.Name);
+                if (size > AppSettings.MaxNormalExportSize * 5)
+                {
+                    throw new Exception(Hardcoded.GetValue("Site too large,please use full mode.", call.Context));
+                }
+            }
+
+            string zipFile = ImportExport.ExportInter(siteDb, copyMode);
+
+            var info = new System.IO.FileInfo(zipFile);
+
+            if (copyMode == CopyMode.Normal && info != null && info.Length > AppSettings.MaxNormalExportSize)
+            {
+                throw new Exception(Hardcoded.GetValue("Site too large,please use full mode.", call.Context));
+            }
+
+            return zipFile;
+        }
+
+
+        [Permission(Feature.SITE, Action = "export")]
         public virtual BinaryResponse Export(ApiCall call)
         {
             var site = call.WebSite;
@@ -176,9 +243,13 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return null;
             }
-            var exportfile = ImportExport.ExportInter(site.SiteDb());
+            var siteDb = site.SiteDb();
+            var exportfile = call.GetValue("exportfile");
             var path = System.IO.Path.GetFullPath(exportfile);
-
+            if (!path.StartsWith(AppSettings.TempDataPath, StringComparison.CurrentCultureIgnoreCase))
+            {
+                throw new Exception("Not allow path");
+            }
             string name = site.DisplayName;
             if (string.IsNullOrEmpty(name))
             {
@@ -189,19 +260,18 @@ namespace Kooboo.Web.Api.Implementation
 
             if (File.Exists(exportfile))
             {
-                var allbytes = System.IO.File.ReadAllBytes(path);
-
                 BinaryResponse response = new BinaryResponse();
                 response.ContentType = "application/zip";
                 response.Headers.Add("Content-Disposition", $"attachment;filename={name}.zip");
-                response.BinaryBytes = allbytes;
+                response.Stream = new FileStream(path, FileMode.Open);
                 return response;
             }
             return null;
         }
 
+        [Permission(Feature.SITE, Action = "export")]
         [Attributes.RequireParameters("stores")]
-        public virtual BinaryResponse ExportStore(ApiCall call)
+        public virtual string ExportStoreGenerate(ApiCall call)
         {
             var site = call.WebSite;
             if (site == null)
@@ -209,21 +279,35 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
-            var storevalue = call.GetValue("stores");
+            var storeValue = call.GetValue("stores");
 
-            var stores = storevalue.Split(',').ToList();
+            var stores = storeValue.Split(',').ToList();
+            return ImportExport.ExportInterSelected(site.SiteDb(), stores);
+        }
 
-            var exportfile = ImportExport.ExportInterSelected(site.SiteDb(), stores);
-            var path = System.IO.Path.GetFullPath(exportfile);
 
-            if (File.Exists(exportfile))
+        [Permission(Feature.SITE, Action = "export")]
+        public virtual BinaryResponse ExportStore(ApiCall call)
+        {
+            var site = call.WebSite;
+            if (site == null)
             {
-                var allbytes = System.IO.File.ReadAllBytes(path);
+                return null;
+            }
+            var exportFile = call.GetValue("exportfile");
+            var path = System.IO.Path.GetFullPath(exportFile);
+            if (!path.StartsWith(AppSettings.TempDataPath, StringComparison.CurrentCultureIgnoreCase))
+            {
+                throw new Exception("Not allow path");
+            }
+
+            if (File.Exists(exportFile))
+            {
 
                 BinaryResponse response = new BinaryResponse();
                 response.ContentType = "application/zip";
                 response.Headers.Add("Content-Disposition", $"attachment;filename={site.Name}.zip");
-                response.BinaryBytes = allbytes;
+                response.Stream = new FileStream(path, FileMode.Open);
                 return response;
             }
             return null;
@@ -231,53 +315,60 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<ExportStoreNameViewModel> ExportStoreNames(ApiCall call)
         {
+            // TODO: Change into attribute definition or Interface to define available store names for the menu. 
+
+            var context = call.Context;
 
             List<ExportStoreNameViewModel> names = new List<ExportStoreNameViewModel>();
-            names.Add(new ExportStoreNameViewModel() { Name = "Page", DisplayName = Hardcoded.GetValue("Page", call.Context) });
-            names.Add(new ExportStoreNameViewModel() { Name = "View", DisplayName = Hardcoded.GetValue("View", call.Context) });
-            names.Add(new ExportStoreNameViewModel() { Name = "Layout", DisplayName = Hardcoded.GetValue("Layout", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Image", DisplayName = Hardcoded.GetValue("Image", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Script", DisplayName = Hardcoded.GetValue("Script", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Style", DisplayName = Hardcoded.GetValue("Style", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "TextContent", DisplayName = Hardcoded.GetValue("TextContent", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "ContentType", DisplayName = Hardcoded.GetValue("ContentType", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "ContentFolder", DisplayName = Hardcoded.GetValue("ContentFolder", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "HtmlBlock", DisplayName = Hardcoded.GetValue("HtmlBlock", call.Context) });
-
-            names.Add(new ExportStoreNameViewModel() { Name = "Label", DisplayName = Hardcoded.GetValue("Label", call.Context) });
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Models.Page), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Models.View), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Models.Layout), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Models.Image), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Models.Script), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Models.Style), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Contents.Models.TextContent), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Contents.Models.ContentType), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Contents.Models.ContentFolder), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Contents.Models.HtmlBlock), context));
+            names.Add(new ExportStoreNameViewModel(typeof(Sites.Contents.Models.Label), context));
 
             names.Add(new ExportStoreNameViewModel() { Name = "Menu", DisplayName = Hardcoded.GetValue("Menu", call.Context) });
 
-            names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Storage", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "Storage", DisplayName = Hardcoded.GetValue("Database", call.Context) });
 
             names.Add(new ExportStoreNameViewModel() { Name = typeof(Code).Name, DisplayName = Hardcoded.GetValue("Code", call.Context) });
 
             names.Add(new ExportStoreNameViewModel() { Name = "Authentication", DisplayName = Hardcoded.GetValue("Authentication", call.Context) });
 
+            names.Add(new ExportStoreNameViewModel() { Name = "CmsFile", DisplayName = Hardcoded.GetValue("File", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "SiteJob", DisplayName = Hardcoded.GetValue("Job", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "BusinessRule", DisplayName = Hardcoded.GetValue("Front Event", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "ScriptModule", DisplayName = Hardcoded.GetValue("Modules", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "Form", DisplayName = Hardcoded.GetValue("Form", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "OpenApi", DisplayName = Hardcoded.GetValue("OpenApi", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "KConfig", DisplayName = Hardcoded.GetValue("Text", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "SPAMultilingual", DisplayName = Hardcoded.GetValue("SPA Multilingual", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "TransferTask", DisplayName = Hardcoded.GetValue("Transfer task", call.Context) });
+
             return names;
         }
 
+        [Permission(Feature.SITE, Action = Data.Permission.Action.EDIT)]
         public void SwitchStatus(ApiCall call)
         {
-            var site = Data.GlobalDb.WebSites.Get(call.ObjectId);
+            var site = call.WebSite;
+
             if (site != null)
             {
                 site.Published = !site.Published;
             }
-            Data.GlobalDb.WebSites.AddOrUpdate(site);
-        }
 
+            Data.Config.AppHost.SiteRepo.AddOrUpdate(site);
+        }
 
         public void Preview(ApiCall call, Guid SiteId)
         {
-            var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            var site = Data.Config.AppHost.SiteRepo.Get(SiteId);
             if (site != null)
             {
                 var baseurl = site.BaseUrl();
@@ -287,48 +378,131 @@ namespace Kooboo.Web.Api.Implementation
                     call.Context.Response.Redirect(301, baseurl);
                 }
             }
-
         }
 
-        public WebSite Get(ApiCall call)
+        public SiteViewModel Get(ApiCall call)
         {
-            string strsiteid = call.GetValue("siteid");
-            if (!string.IsNullOrEmpty(strsiteid))
+            var webSite = call.WebSite;
+
+            var result = new SiteViewModel
             {
-                Guid siteid;
-                if (System.Guid.TryParse(strsiteid, out siteid))
-                {
-                    return GlobalDb.WebSites.Get(siteid);
-                }
+                Site = webSite,
+                IsAdmin = call.Context.User.IsAdmin,
+            };
+
+            if (!string.IsNullOrEmpty(result.Site.PreviewUrl))
+            {
+                result.BaseUrl = result.Site.PreviewUrl;
+                result.PrUrl = result.Site.PreviewUrl;
             }
-            return null;
+            else
+            {
+                result.BaseUrl = result.Site.BaseUrl();
+                result.PrUrl = Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(result.BaseUrl, call.WebSite);
+            }
+
+
+            var sitedb = webSite.SiteDb();
+            if (sitedb.TransferTasks.History()?.Any() ?? false)
+            {
+                result.ShowContinueDownload = true;
+            }
+
+            var user = PermissionService.GetSiteUser(call.Context);
+
+            if (user != default && user.VisibleAdvancedMenus != default)
+            {
+                result.VisibleAdvancedMenus = user.VisibleAdvancedMenus.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            }
+            else
+            {
+                result.VisibleAdvancedMenus = webSite.VisibleAdvancedMenus;
+            }
+
+            if (!result.IsAdmin && user != null)
+            {
+                var role = PermissionService.GetRole(sitedb, user.SiteRole);
+                result.Permissions = role?.Permissions;
+            }
+
+            SiteCoverService.Add(webSite.Id);
+
+
+            var org = GlobalDb.Organization.Get(call.Context.WebSite.OrganizationId);
+            result.ServiceLevel = org.ServiceLevel;
+            if (WebSiteService.DevelopmentAccess.RequireDevelopmentPassword(call.Context, org))
+            {
+                result.Site.Status = WebSite.SiteStatus.Development; // Set as development so that the password will appear. 
+            }
+
+            try
+            {
+                result.ModuleMenus = GetModuleMenus(call, webSite, sitedb);
+            }
+            catch { }
+
+            return result;
         }
 
+        private static ModuleMenu[] GetModuleMenus(ApiCall call, WebSite webSite, SiteDb sitedb)
+        {
+            var moduleMenus = new List<ModuleMenu>();
+            var modules = sitedb.ScriptModule.All().Where(w => w.Online).ToArray();
+            foreach (var module in modules)
+            {
+                var moduleContext = ModuleContext.CreateNewFromRenderContext(call.Context, module);
+                var diskHandle = DiskHandler.FromModuleContext(moduleContext, new ResourceType(EnumResourceType.root));
+                if (!diskHandle.Exists("/", "module.config")) continue;
+                var moduleConfig = diskHandle.Read("/", "module.config");
+                var jsonRoot = JsonSerializer.Deserialize<JsonElement>(moduleConfig, Defaults.JsonSerializerOptions);
+                if (!jsonRoot.TryGetProperty("name", out var moduleName)) continue;
+                if (!jsonRoot.TryGetProperty("menu", out var moduleMenuJson)) continue;
+                var moduleMenu = moduleMenuJson.Deserialize<ModuleMenu>(Defaults.JsonSerializerOptions);
+                if (moduleMenu == default) continue;
+                moduleMenu.Id = moduleName.GetString();
+
+                if (string.IsNullOrWhiteSpace(moduleMenu.Url) || !moduleMenu.Url.StartsWith("http"))
+                {
+                    var modulePath = Settings.ModulePath(module.Name);
+                    var startView = moduleMenu.Url;
+                    if (string.IsNullOrWhiteSpace(startView))
+                    {
+                        startView = ViewRender.GetStartView(moduleContext);
+                    }
+                    if (string.IsNullOrWhiteSpace(modulePath) || string.IsNullOrWhiteSpace(startView)) continue;
+                    moduleMenu.Url = $"{modulePath}/{startView}?SiteId={webSite.Id}";
+                }
+
+                if (!string.IsNullOrWhiteSpace(moduleMenu.Icon) || !(moduleMenu.Icon?.StartsWith("http") ?? true))
+                {
+                    var modulePath = Settings.ModulePath(module.Name);
+                    if (string.IsNullOrWhiteSpace(modulePath)) continue;
+                    moduleMenu.Icon = $"{modulePath}/img/{moduleMenu.Icon}?SiteId={webSite.Id}";
+                }
+                moduleMenus.Add(moduleMenu);
+            }
+
+            return [.. moduleMenus];
+        }
+
+        [Permission(Feature.SITE, Action = Data.Permission.Action.EDIT)]
         [Kooboo.Attributes.RequireModel(typeof(SiteUpdate))]
         public void Post(ApiCall call)
         {
             var siteid = call.GetValue<Guid>("siteid");
 
-            var currentsite = Kooboo.Data.GlobalDb.WebSites.Get(siteid);
+            var currentsite = Data.Config.AppHost.SiteRepo.Get(siteid);
+            var org = GlobalDb.Organization.Get(currentsite.OrganizationId);
 
-            bool shouldinitDisk = false;
 
             if (currentsite != null)
             {
                 var newinfo = call.Context.Request.Model as SiteUpdate;
-
-                if (!currentsite.EnableDiskSync && newinfo.EnableDiskSync)
-                {
-                    shouldinitDisk = true;
-                }
-
-                currentsite.DiskSyncFolder = newinfo.DiskSyncFolder;
                 currentsite.DisplayName = newinfo.DisplayName;
 
                 currentsite.EnableVisitorLog = newinfo.EnableVisitorLog;
                 currentsite.EnableConstraintFixOnSave = newinfo.EnableConstraintFixOnSave;
                 currentsite.EnableFrontEvents = newinfo.EnableFrontEvents;
-                currentsite.EnableDiskSync = newinfo.EnableDiskSync;
                 currentsite.EnableMultilingual = newinfo.EnableMultilingual;
 
                 currentsite.CustomSettings = newinfo.CustomSettings;
@@ -341,42 +515,98 @@ namespace Kooboo.Web.Api.Implementation
 
                 currentsite.EnableJsCssBrowerCache = newinfo.EnableJsCssBrowerCache;
                 currentsite.EnableImageBrowserCache = newinfo.EnableImageBrowserCache;
+                currentsite.EnableImageAlt = newinfo.EnableImageAlt;
                 currentsite.ImageCacheDays = newinfo.ImageCacheDays;
 
                 currentsite.EnableSPA = newinfo.EnableSPA;
                 currentsite.EnableVideoBrowserCache = newinfo.EnableVideoBrowserCache;
 
                 currentsite.EnableJsCssCompress = newinfo.EnableJsCssCompress;
+                currentsite.EnableHtmlMinifier = newinfo.EnableHtmlMinifier;
 
+                // if (currentsite.SiteType != newinfo.SiteType)
+                // {
+                //     CmsApiHelper.EnsureAdminRights(call, "SiteType");
                 currentsite.SiteType = newinfo.SiteType;
+                // }
+                currentsite.WhiteListPath = newinfo.WhiteListPath;
+                currentsite.SpecialPath = newinfo.SpecialPath;
+                currentsite.IncludePath = newinfo.IncludePath;
+
                 currentsite.EnableCORS = newinfo.EnableCORS;
                 currentsite.EnableSqlLog = newinfo.EnableSqlLog;
 
                 currentsite.PreviewUrl = newinfo.PreviewUrl;
                 currentsite.EnableLighthouseOptimization = newinfo.EnableLighthouseOptimization;
                 currentsite.LighthouseSettingsJson = newinfo.LighthouseSettingsJson;
+                currentsite.DefaultDatabase = newinfo.DefaultDatabase;
+                currentsite.Pwa = newinfo.Pwa;
+                currentsite.CodeLogSettings = newinfo.CodeLogSettings;
+                currentsite.SitemapSettings = newinfo.SitemapSettings;
+                currentsite.UnocssSettings = newinfo.UnocssSettings;
+                currentsite.LastUpdateTime = DateTime.UtcNow.Ticks;
+                currentsite.EnableCssSplitByMedia = newinfo.EnableCssSplitByMedia;
+                currentsite.DesktopMinWidth = newinfo.DesktopMinWidth;
+                currentsite.MobileMaxWidth = newinfo.MobileMaxWidth;
+                currentsite.TinymceToolbarSettings = newinfo.TinymceToolbarSettings;
+                currentsite.TinymceSettings = newinfo.TinymceSettings;
+                currentsite.EnableTinymceToolbarSettings = newinfo.EnableTinymceToolbarSettings;
+                currentsite.SsoLogin = newinfo.SsoLogin;
+                currentsite.AutomateCovertImageToWebp = newinfo.AutomateCovertImageToWebp;
+                currentsite.CodeSuggestions = newinfo.CodeSuggestions;
+                currentsite.RecordSiteLogVideo = newinfo.RecordSiteLogVideo;
+                currentsite.EnableUpdateSimilarPage = newinfo.EnableUpdateSimilarPage;
+                currentsite.ContinueDownload = newinfo.ContinueDownload;
+                currentsite.EnableVisitorCountryRestriction = newinfo.EnableVisitorCountryRestriction;
+                currentsite.VisitorCountryRestrictions = newinfo.VisitorCountryRestrictions;
+                currentsite.VisitorCountryRestrictionPage = newinfo.VisitorCountryRestrictionPage;
 
+                if (org.ServiceLevel > 0)
+                {
+                    currentsite.Status = newinfo.Status;
+                }
                 // the cluster... 
-
-                GlobalDb.WebSites.AddOrUpdate(currentsite);
+                Data.Config.AppHost.SiteRepo.AddOrUpdate(currentsite);
             }
+        }
 
-            if (shouldinitDisk)
+        public void UpdateAdvancedMenus(string[] menus, ApiCall call)
+        {
+            var siteDb = call.WebSite.SiteDb();
+            var user = siteDb.SiteUser.Get(call.Context.User.Id);
+
+            if (user != default)
             {
-                WebSiteService.InitDiskSync(currentsite, true);
+                user.VisibleAdvancedMenus = string.Join(',', menus);
+                siteDb.SiteUser.AddOrUpdate(user);
+            }
+            else
+            {
+                call.WebSite.VisibleAdvancedMenus = menus;
+                Data.Config.AppHost.SiteRepo.AddOrUpdate(call.WebSite);
             }
 
         }
 
-        public bool Delete(ApiCall call)
+        [Permission(Feature.SITE, Action = Data.Permission.Action.DELETE)]
+        public bool BatchDelete(ApiCall call)
         {
-            Guid SiteId = call.GetGuidValue("SiteId");
-
-            if (SiteId == default(Guid) && call.ObjectId != default(Guid))
+            var ids = call.GetValue<Guid[]>("ids");
+            var hasSuccess = false;
+            foreach (var siteId in ids)
             {
-                SiteId = call.ObjectId;
+                if (siteId == default(Guid) || siteId == Guid.Empty) continue;
+                WebSiteService.Delete(siteId, call.Context.User);
+                hasSuccess = true;
             }
 
+            return hasSuccess;
+        }
+
+        [Permission(Feature.SITE, Action = Data.Permission.Action.DELETE)]
+        public bool Delete(ApiCall call)
+        {
+            var SiteId = call.GetValue<Guid>(DataConstants.SiteId);
             if (SiteId != default(Guid))
             {
                 WebSiteService.Delete(SiteId, call.Context.User);
@@ -385,80 +615,8 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-        public virtual bool Deletes(ApiCall call)
-        {
-            string json = call.GetValue("ids");
-            if (string.IsNullOrEmpty(json))
-            {
-                json = call.Context.Request.Body;
-            }
-
-            List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
-
-            if (ids != null && ids.Count() > 0)
-            {
-                foreach (var item in ids)
-                {
-                    WebSiteService.Delete(item, call.Context.User);
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public SiteDiskSyncViewModel DiskSyncGet(ApiCall apiCall)
-        {
-            SiteDiskSyncViewModel model = new SiteDiskSyncViewModel();
-            model.Folder = apiCall.WebSite.SiteDb().WebSite.DiskSyncFolder;
-
-            model.EnableDiskSync = apiCall.WebSite.SiteDb().WebSite.EnableDiskSync;
-
-            if (model.EnableDiskSync)
-            {
-                model.DiskFileCount = IOHelper.CountFiles(model.Folder);
-            }
-
-            return model;
-        }
-
-        [Kooboo.Attributes.RequireParameters("localpath")]
-        public void DiskSyncUpdate(ApiCall call)
-        {
-            Data.Models.WebSite website = null;
-
-            Guid SiteId = call.GetGuidValue("SiteId");
-            website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
-            if (SiteId == default(Guid) || website == null)
-            {
-                return;
-            }
-
-            bool enable = call.GetBoolValue("EnableDiskSync");
-            string path = call.GetValue("localpath");
-
-            bool hasSamePath = Lib.Helper.StringHelper.IsSameValue(website.DiskSyncFolder, path);
-
-            if (website.EnableDiskSync != enable || Lib.Helper.StringHelper.IsSameValue(website.DiskSyncFolder, path) == false)
-            {
-                website.EnableDiskSync = enable;
-                website.DiskSyncFolder = path;
-                GlobalDb.WebSites.AddOrUpdate(website);
-            }
-
-            if (enable)
-            {
-                // init disk.. 
-                if (!hasSamePath)
-                {
-                }
-                WebSiteService.InitDiskSync(website, true);
-            }
-
-        }
-
         public WebSite Create(ApiCall call)
         {
-            Sites.DataSources.DataSourceHelper.InitIDataSource();
             string fulldomain = call.GetValue("FullDomain");
             if (string.IsNullOrEmpty(fulldomain))
             {
@@ -473,7 +631,7 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
-            WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id);
+            WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id, true);
             return newsite;
         }
 
@@ -493,51 +651,108 @@ namespace Kooboo.Web.Api.Implementation
                 RootDomain = RootDomain.Substring(1);
             }
 
-            var bindings = GlobalDb.Bindings.GetByDomain(RootDomain);
-            foreach (var item in bindings)
-            {
-                if (Lib.Helper.StringHelper.IsSameValue(item.SubDomain, subdomain))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return Kooboo.Sites.Service.WebSiteService.DomainAvailable(RootDomain, subdomain);
         }
+
 
         public Guid ImportSite(ApiCall call)
         {
-            var files = call.Context.Request.Files;
-
-            if (files == null || files.Count() == 0)
-            {
-                return default(Guid);
-            }
-
             string RootDomain = null;
             string SubDomain = null;
             string SiteName = null;
+            string packageName = null;
             if (call.Context.Request.Forms != null)
             {
                 RootDomain = call.Context.Request.Forms["RootDomain"];
                 SubDomain = call.Context.Request.Forms["SubDomain"];
                 SiteName = call.Context.Request.Forms["SiteName"];
+                packageName = call.Context.Request.Forms["packageName"];
             }
 
-            if (string.IsNullOrEmpty(SiteName) || string.IsNullOrEmpty(RootDomain))
+            if (string.IsNullOrEmpty(SiteName) || string.IsNullOrEmpty(RootDomain) || string.IsNullOrEmpty(packageName))
             {
                 return default(Guid);
             }
 
             string fulldomain = string.IsNullOrEmpty(SubDomain) ? RootDomain : SubDomain + "." + RootDomain;
-
-            var newsite = ImportExport.ImportZip(new MemoryStream(files[0].Bytes), call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
+            var packagePath = System.IO.Path.Combine(AppSettings.TempDataPath, packageName);
+            using var fileStream = new FileStream(packagePath, FileMode.Open);
+            var newsite = ImportExport.ImportZip(fileStream, call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
+            fileStream.Dispose();
+            File.Delete(packagePath);
             return newsite.Id;
+        }
+
+        public void MultiChunkUpload(ApiCall call, Guid id)
+        {
+            var name = call.GetValue("name");
+            var temDir = System.IO.Path.Combine(AppSettings.TempDataPath, id.ToString());
+            IOHelper.EnsureDirectoryExists(temDir);
+
+            if (name != default)
+            {
+                var fileName = System.IO.Path.Combine(AppSettings.TempDataPath, name);
+                using var stream = new FileStream(fileName, FileMode.Append);
+
+                var chunks = Directory.GetFiles(temDir).OrderBy(c =>
+                {
+                    c = System.IO.Path.GetFileName(c);
+                    return int.Parse(c.Split(".")[0]);
+                }).ToArray();
+
+                foreach (var item in chunks)
+                {
+                    using var chunk = new FileStream(item, FileMode.Open);
+                    chunk.CopyTo(stream);
+                }
+                stream.Dispose();
+                Directory.Delete(temDir, true);
+            }
+            else
+            {
+                var index = call.GetIntValue("index");
+                var path = System.IO.Path.Combine(temDir, $"{index}.chunk");
+                using var stream = new FileStream(path, FileMode.Append);
+                call.Context.Request.Files[0].CopyTo(stream);
+            }
+        }
+
+        public Guid ImportUrl(string RootDomain, string SubDomain, string SiteName, string Url, ApiCall call)
+        {
+
+            var bytes = Kooboo.Lib.Helper.DownloadHelper.DownloadFileAsync(Url).Result;
+
+            if (bytes != null)
+            {
+                string fulldomain = string.IsNullOrEmpty(SubDomain) ? RootDomain : SubDomain + "." + RootDomain;
+
+                var newsite = ImportExport.ImportZip(new MemoryStream(bytes), call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
+                return newsite.Id;
+            }
+
+            return default(Guid);
+        }
+
+        public void RenewSite(ApiCall call, Guid SiteId, string replaceStores)
+        {
+            var files = call.Context.Request.Files;
+
+            if (files == null || files.Count() == 0)
+            {
+                throw new Exception("No files uploaded");
+            }
+
+            var fileStream = new MemoryStream(files[0].Bytes);
+            var site = Kooboo.Data.Config.AppHost.SiteRepo.Get(SiteId);
+            var sitedb = site.SiteDb();
+            var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+            ImportExport.ImportInter(archive, sitedb, replaceStores.Split(',').ToList());
         }
 
         public bool IsUniqueName(ApiCall apiCall)
         {
             var sitename = apiCall.GetValue("SiteName", "Name");
-            return Kooboo.Data.GlobalDb.WebSites.CheckNameAvailable(sitename, apiCall.Context.User.CurrentOrgId);
+            return Kooboo.Data.Config.AppHost.SiteService.CheckNameAvailable(sitename, apiCall.Context.User.CurrentOrgId);
         }
 
         public bool IsSubdomainAvailable(ApiCall apiCall)
@@ -546,8 +761,9 @@ namespace Kooboo.Web.Api.Implementation
             string SubDomain = apiCall.GetValue("SubDomain");
             string fulldomain = SubDomain + "." + RootDomain;
 
-            var site = Kooboo.Data.GlobalDb.Bindings.GetByFullDomain(fulldomain);
-            return site == null;
+            var site = Kooboo.Data.Config.AppHost.BindingService.GetByFullDomain(fulldomain);
+
+            return site == null || site.Count == 0;
         }
 
         public String GetName(ApiCall call)
@@ -558,7 +774,7 @@ namespace Kooboo.Web.Api.Implementation
                 Guid siteid;
                 if (System.Guid.TryParse(strsiteid, out siteid))
                 {
-                    var site = GlobalDb.WebSites.Get(siteid);
+                    var site = Data.Config.AppHost.SiteRepo.Get(siteid);
                     if (site != null)
                     {
                         return site.DisplayName;

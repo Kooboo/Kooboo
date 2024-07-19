@@ -1,121 +1,160 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
+		<TypeScriptSourceMap>False</TypeScriptSourceMap>
+		<TypeScriptNoEmitOnError>False</TypeScriptNoEmitOnError>
+		<TypeScriptTarget>ESNext</TypeScriptTarget>
+	</PropertyGroup>
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
+		<TypeScriptSourceMap>False</TypeScriptSourceMap>
+		<TypeScriptNoEmitOnError>False</TypeScriptNoEmitOnError>
+		<TypeScriptTarget>ESNext</TypeScriptTarget>
+		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Web</AssemblyName>
+		<RootNamespace>Kooboo.Web</RootNamespace>
+		<OutputType>Exe</OutputType>
+		<StartupObject />
+		<UserSecretsId>b6278c81-f3ad-4570-b2af-1685f28cae67</UserSecretsId>
+		<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+		<ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>.</DockerfileContext>
+		<DockerfileTag>kooboo</DockerfileTag>
+		<Deterministic>False</Deterministic>
+		<ApplicationIcon>favicon.ico</ApplicationIcon>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="%2a%2a\**" />
+		<Compile Remove="Api\Implementation\Ecommerce\**" />
+		<Compile Remove="AppData\**" />
+		<Compile Remove="Areas\**" />
+		<Compile Remove="Backend\Menus\Hooker\**" />
+		<Compile Remove="EmailMarketing\**" />
+		<Compile Remove="kooboo-web-editor\**" />
+		<Compile Remove="KoobooData\**" />
+		<Compile Remove="Lighthouse\CssMinimizer\**" />
+		<Compile Remove="logs\**" />
+		<Compile Remove="upgradePackage\**" />
+		<Compile Remove="_Admin\**" />
+		<Content Remove="AppData\**" />
+		<Content Remove="EmailMarketing\**" />
+		<Content Remove="kooboo-web-editor\**" />
+		<Content Remove="Lighthouse\CssMinimizer\**" />
+		<Content Remove="logs\**" />
+		<Content Remove="_Admin\**" />
+		<Content Remove="_Admin2\**" />
+		<EmbeddedResource Remove="%2a%2a\**" />
+		<EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
+		<EmbeddedResource Remove="AppData\**" />
+		<EmbeddedResource Remove="Areas\**" />
+		<EmbeddedResource Remove="Backend\Menus\Hooker\**" />
+		<EmbeddedResource Remove="EmailMarketing\**" />
+		<EmbeddedResource Remove="kooboo-web-editor\**" />
+		<EmbeddedResource Remove="KoobooData\**" />
+		<EmbeddedResource Remove="Lighthouse\CssMinimizer\**" />
+		<EmbeddedResource Remove="logs\**" />
+		<EmbeddedResource Remove="upgradePackage\**" />
+		<EmbeddedResource Remove="_Admin\**" />
+		<EmbeddedResource Remove="_Admin2\**" />
+		<None Remove="%2a%2a\**" />
+		<None Remove="Api\Implementation\Ecommerce\**" />
+		<None Remove="AppData\**" />
+		<None Remove="Areas\**" />
+		<None Remove="Backend\Menus\Hooker\**" />
+		<None Remove="EmailMarketing\**" />
+		<None Remove="kooboo-web-editor\**" />
+		<None Remove="KoobooData\**" />
+		<None Remove="Lighthouse\CssMinimizer\**" />
+		<None Remove="logs\**" />
+		<None Remove="upgradePackage\**" />
+		<None Remove="_Admin\**" />
+		<None Remove="_Admin2\**" />
+		<Compile Remove="Components\**" />
+		<EmbeddedResource Remove="Components\**" />
+		<None Remove="Components\**" />
+		<Content Remove="Components\**" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Web</AssemblyName>
-	<RootNamespace>Kooboo.Web</RootNamespace>
-  </PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Api\Implementation\Cluster.cs" />
+		<Compile Remove="Api\Implementation\Extension.cs" />
+		<Compile Remove="Backend\Menus\ICmsMenu.cs" />
+		<Compile Remove="Backend\Menus\IDynamicMenu.cs" />
+		<Compile Remove="Backend\Menus\IFeatureMenu.cs" />
+		<Compile Remove="Backend\Menus\IHeaderMenu.cs" />
+		<Compile Remove="Backend\Menus\ISideBarMenu.cs" />
+		<Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
+		<Compile Remove="Backend\Menus\SideBarSection.cs" />
+		<Compile Remove="Security\IDevelopmentAccess.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="%2a%2a\**" />
-    <Compile Remove="Api\Implementation\Ecommerce\**" />
-    <Compile Remove="AppData\**" />
-    <Compile Remove="Areas\**" />
-    <Compile Remove="Backend\Menus\Hooker\**" />
-    <Compile Remove="kooboo-web-editor\**" />
-    <Compile Remove="KoobooData\**" />
-    <Compile Remove="Payment\**" />
-    <Compile Remove="upgradePackage\**" />
-    <Compile Remove="_Admin\**" />
-    <EmbeddedResource Remove="%2a%2a\**" />
-    <EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
-    <EmbeddedResource Remove="AppData\**" />
-    <EmbeddedResource Remove="Areas\**" />
-    <EmbeddedResource Remove="Backend\Menus\Hooker\**" />
-    <EmbeddedResource Remove="kooboo-web-editor\**" />
-    <EmbeddedResource Remove="KoobooData\**" />
-    <EmbeddedResource Remove="Payment\**" />
-    <EmbeddedResource Remove="upgradePackage\**" />
-    <EmbeddedResource Remove="_Admin\**" />
-    <None Remove="%2a%2a\**" />
-    <None Remove="Api\Implementation\Ecommerce\**" />
-    <None Remove="AppData\**" />
-    <None Remove="Areas\**" />
-    <None Remove="Backend\Menus\Hooker\**" />
-    <None Remove="kooboo-web-editor\**" />
-    <None Remove="KoobooData\**" />
-    <None Remove="Payment\**" />
-    <None Remove="upgradePackage\**" />
-    <None Remove="_Admin\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="Api\tempData.json" />
+		<Content Remove="backup.config" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Api\Implementation\Download.cs" />
-    <Compile Remove="Api\Implementation\Payment.cs" />
-    <Compile Remove="Backend\Menus\ICmsMenu.cs" />
-    <Compile Remove="Backend\Menus\IDynamicMenu.cs" />
-    <Compile Remove="Backend\Menus\IFeatureMenu.cs" />
-    <Compile Remove="Backend\Menus\IHeaderMenu.cs" />
-    <Compile Remove="Backend\Menus\ISideBarMenu.cs" />
-    <Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
-    <Compile Remove="Backend\Menus\SideBarSection.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="DashBoard\DashBoardItem.html" />
+		<None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
+		<None Remove="DashBoard\Resource\SiteResource.html" />
+		<None Remove="DashBoard\TopPages\TopPages.html" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="DashBoard\DashBoardItem.html" />
-    <None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
-    <None Remove="DashBoard\Resource\SiteResource.html" />
-    <None Remove="DashBoard\TopPages\TopPages.html" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="DashBoard\DashBoardItem.html" />
-    <EmbeddedResource Include="DashBoard\MyVisitor\FrontVisitors.html" />
-    <EmbeddedResource Include="DashBoard\Resource\SiteResource.html" />
-    <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Api\tempData.json" />
+		<EmbeddedResource Include="DashBoard\DashBoardItem.html" />
+		<EmbeddedResource Include="DashBoard\MyVisitor\FrontVisitors.html" />
+		<EmbeddedResource Include="DashBoard\Resource\SiteResource.html" />
+		<EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net461'">
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-    <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Kooboo.Api\Kooboo.Api.csproj" />
+		<ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+		<ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+		<ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+		<ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
+		<ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj" />
+		<ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.csproj" />
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
-    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
-    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj" />
-    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\PublishProfiles\" />
+		<Folder Include="ViewModel\Market\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="modules\DaFang.Module.zip">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="modules\SqlEx.Module.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Resource\DashBoard\DiskSize.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Resource\DashBoard\EditLog.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Resource\DashBoard\Referer.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Resource\DashBoard\Top5Page.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Resource\DashBoard\PageTrend.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Resource\DashBoard\Resources.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Lighthouse\Css\" />
-  </ItemGroup>
-
+	<ItemGroup>
+	  <PackageReference Include="Kooboo.Data" Version="2.1.8966.33828" />
+	  <PackageReference Include="Kooboo.Sites" Version="2.1.8966.33828" />
+	</ItemGroup>
 </Project>

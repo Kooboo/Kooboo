@@ -4,12 +4,12 @@ namespace dotless.Core.Importers
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
     using Input;
     using Parser;
     using Parser.Tree;
     using Utils;
-    using System.Text.RegularExpressions;
-    using System.Reflection;
 
     public class Importer : IImporter
     {
@@ -17,12 +17,12 @@ namespace dotless.Core.Importers
 
         public static Regex EmbeddedResourceRegex { get { return _embeddedResourceRegex; } }
         public IFileReader FileReader { get; set; }
-        
+
         /// <summary>
         ///  List of successful imports
         /// </summary>
         public List<string> Imports { get; set; }
-        
+
         public Func<Parser> Parser { get; set; }
         protected readonly List<string> _paths = new List<string>();
 
@@ -158,8 +158,8 @@ namespace dotless.Core.Importers
             }
 
             var file = import.Path;
-            
-            if (!IsNonRelativeUrl(file)) 
+
+            if (!IsNonRelativeUrl(file))
             {
                 file = GetAdjustedFilePath(import.Path, _paths);
             }
@@ -173,7 +173,7 @@ namespace dotless.Core.Importers
             {
                 if (InlineCssFiles)
                 {
-                    if (IsEmbeddedResource(import.Path) && ImportEmbeddedCssContents(file, import))                         
+                    if (IsEmbeddedResource(import.Path) && ImportEmbeddedCssContents(file, import))
                         return ImportAction.ImportCss;
                     if (ImportCssFileContents(file, import))
                         return ImportAction.ImportCss;
@@ -291,7 +291,7 @@ namespace dotless.Core.Importers
         /// </summary>
         public string AlterUrl(string url, List<string> pathList)
         {
-            if (!IsProtocolUrl (url) && !IsNonRelativeUrl (url))
+            if (!IsProtocolUrl(url) && !IsNonRelativeUrl(url))
             {
                 if (pathList.Any() && !IsUrlRewritingDisabled)
                 {

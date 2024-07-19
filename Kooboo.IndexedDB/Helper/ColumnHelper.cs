@@ -1,8 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Columns;
 using System;
 using System.Linq.Expressions;
+using Kooboo.IndexedDB.Columns;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -12,7 +12,7 @@ namespace Kooboo.IndexedDB.Helper
         {
             if (FieldType == null)
             {
-                throw new Exception("Field Type is required"); 
+                throw new Exception("Field Type is required");
             }
             if (FieldType == typeof(string))
             {
@@ -32,7 +32,7 @@ namespace Kooboo.IndexedDB.Helper
             }
             else if (FieldType == typeof(decimal))
             {
-                return new ColumnBase<T, decimal>(FieldName); 
+                return new ColumnBase<T, decimal>(FieldName);
             }
             else if (FieldType == typeof(double))
             {
@@ -60,7 +60,7 @@ namespace Kooboo.IndexedDB.Helper
             }
             else if (FieldType.IsEnum)
             {
-                return new EnumColumn<T>(FieldName, FieldType); 
+                return new EnumColumn<T>(FieldName, FieldType);
             }
             else
             {
@@ -76,15 +76,15 @@ namespace Kooboo.IndexedDB.Helper
 
             if (expression.Body is MemberExpression)
             {
-                var exp = (MemberExpression)expression.Body; 
+                var exp = (MemberExpression)expression.Body;
                 fieldname = exp.Member.Name;
-                type = GetType(exp);                   
+                type = GetType(exp);
             }
             else if (expression.Body is UnaryExpression)
             {
-                var exp = (MemberExpression)((UnaryExpression)expression.Body).Operand; 
+                var exp = (MemberExpression)((UnaryExpression)expression.Body).Operand;
                 fieldname = exp.Member.Name;
-                type = GetType(exp);     
+                type = GetType(exp);
             }
             else
             {
@@ -106,10 +106,10 @@ namespace Kooboo.IndexedDB.Helper
             else if (x.MemberType == System.Reflection.MemberTypes.Field)
             {
                 var field = x as System.Reflection.FieldInfo;
-                return field.FieldType; 
-            } 
-            return null; 
+                return field.FieldType;
+            }
+            return null;
         }
-        
+
     }
 }

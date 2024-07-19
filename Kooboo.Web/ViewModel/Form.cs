@@ -1,12 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Interface;
 using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -144,14 +138,14 @@ namespace Kooboo.Web.ViewModel
         public string Body { get; set; }
 
         public bool IsEmbedded { get; set; }
-         
+
 
         public string Fields { get; set; }
 
         public string Style { get; set; }
 
         public bool Enable { get; set; }
-        
+
         public string Method { get; set; }
 
         public string RedirectUrl { get; set; }

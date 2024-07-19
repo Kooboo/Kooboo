@@ -3,13 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper.EncodingHelper
 {
     public static class EmailEncoding
-    { 
+    {
         public static EmailEncodingResult ScanCharSet(byte[] input)
         {
             int len = input.Length;
@@ -39,12 +37,12 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                     // charset found... get the value. 
 
                     int start = position;
-                    int end = -1;  
-                    string value =  GetCharSetValue(input, position + 7, len, ref end); 
+                    int end = -1;
+                    string value = GetCharSetValue(input, position + 7, len, ref end);
 
-                    if (value !=null && end > -1 && end > start)
+                    if (value != null && end > -1 && end > start)
                     {
-                        int charlen = end - start + 1; 
+                        int charlen = end - start + 1;
 
                         var charbytes = new byte[charlen];
 
@@ -52,29 +50,29 @@ namespace Kooboo.Lib.Helper.EncodingHelper
 
                         string charsettext = System.Text.Encoding.ASCII.GetString(charbytes);
 
-                        return new EmailEncodingResult() { CharSetText = charsettext, Charset = value }; 
-                         
+                        return new EmailEncodingResult() { CharSetText = charsettext, Charset = value };
+
                     }
-                     
+
                 }
 
-                else if (GetByte(position) == 13 && GetByte(position +1) == 10 && GetByte(position + 2) == 13 && GetByte(position + 3) == 10)
+                else if (GetByte(position) == 13 && GetByte(position + 1) == 10 && GetByte(position + 2) == 13 && GetByte(position + 3) == 10)
                 {
-                    return null; 
+                    return null;
 
-                } 
-               position += 1; 
+                }
+                position += 1;
             }
 
 
-            return null; 
+            return null;
 
         }
-         
+
 
 
         public static string GetCharSetValue(byte[] Input, int Index, int Len, ref int end)
-        { 
+        {
 
             Func<int, byte> GetByte = (index) =>
             {
@@ -118,20 +116,20 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                     Index += 1;
                     currentbyte = GetByte(Index);
 
-                    while(currentbyte != B && currentbyte != 0)
+                    while (currentbyte != B && currentbyte != 0)
                     {
                         bytes.Add(currentbyte);
                         Index += 1;
                         currentbyte = GetByte(Index);
                     }
-                      
-                    if (bytes.Count()>0)
+
+                    if (bytes.Count() > 0)
                     {
-                        end = Index; 
-                        return System.Text.Encoding.ASCII.GetString(bytes.ToArray()).Trim(); 
-                    } 
-                } 
- 
+                        end = Index;
+                        return System.Text.Encoding.ASCII.GetString(bytes.ToArray()).Trim();
+                    }
+                }
+
                 else
                 {
                     List<byte> bytes = new List<byte>();
@@ -153,22 +151,22 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                             {
                                 break;
                             }
-                        } 
+                        }
                     }
-                      
+
                     if (bytes.Count() > 0)
                     {
-                        end = Index-1; 
+                        end = Index - 1;
                         return System.Text.Encoding.ASCII.GetString(bytes.ToArray()).Trim();
                     }
-                } 
+                }
 
             }
-  
- 
+
+
             return null;
         }
-         
+
 
         /// <summary>
         /// The lowercase ASCII letters are the characters in the range lowercase ASCII letters. a-z
@@ -190,7 +188,7 @@ namespace Kooboo.Lib.Helper.EncodingHelper
         {
             return (chr >= 65 && chr <= 90);
         }
-          
+
         /// <summary>
         /// The ASCII digits are the characters in the range ASCII digits.
         /// </summary>
@@ -208,18 +206,18 @@ namespace Kooboo.Lib.Helper.EncodingHelper
         /// <param name="chr"></param>
         /// <returns></returns>
         public static bool isCharSet(byte chr)
-        { 
-            if  (isUppercaseAscii(chr) || isLowercaseAscii(chr) || isAsciiDigit(chr))
+        {
+            if (isUppercaseAscii(chr) || isLowercaseAscii(chr) || isAsciiDigit(chr))
             {
-                return true; 
+                return true;
             }
             // - or _
             if (chr == 45 || chr == 95)
             {
-                return true; 
+                return true;
             }
-            return false; 
-        } 
+            return false;
+        }
 
 
     }

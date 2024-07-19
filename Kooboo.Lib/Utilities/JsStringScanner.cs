@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Lib.Utilities
 {
     public class JsStringScanner
     {
 
-      public static List<string> ScanStringList(string jstext)
+        public static List<string> ScanStringList(string jstext)
         {
-            JsStringScanner scanner = new JsStringScanner(jstext); 
-            return scanner.GetStringList(); 
+            JsStringScanner scanner = new JsStringScanner(jstext);
+            return scanner.GetStringList();
         }
 
         private char[] chars;
@@ -71,8 +70,8 @@ namespace Kooboo.Lib.Utilities
             {
                 result.Add(item);
                 item = ConsumeString();
-            } 
-            return result; 
+            }
+            return result;
         }
 
         private void moveNext()
@@ -122,7 +121,7 @@ namespace Kooboo.Lib.Utilities
             }
             else
             {
-               return chars[_readIndex]; 
+                return chars[_readIndex];
             }
         }
 
@@ -341,7 +340,7 @@ namespace Kooboo.Lib.Utilities
         }
 
         private static bool NewLine(char input)
-        { 
+        {
             if (input == '\u000A')
             {
                 return true;

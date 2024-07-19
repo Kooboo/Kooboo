@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Kooboo.Api.ModelBinding
 {
-   public class ModelBinder
-    { 
+    public class ModelBinder
+    {
         public static BindingResponse TryBind(string Json, Type ObjectType)
         {
             try
@@ -17,7 +17,7 @@ namespace Kooboo.Api.ModelBinding
                 var context = new ValidationContext(data);
                 var results = new List<ValidationResult>();
                 var isSuccess = Validator.TryValidateObject(data, context, results, true);
-                
+
                 if (!isSuccess)
                 {
                     var messages = new Dictionary<string, string>();

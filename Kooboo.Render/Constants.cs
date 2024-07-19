@@ -1,14 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Render
 {
-  public   class Constants
+    public class Constants
     {
         /// <summary>
         /// the Kooboo  placeholder tag, can be:
@@ -17,7 +11,7 @@ namespace Kooboo.Render
         public static readonly string[] PlaceHolderAttributes = new[] { "tal-placeholder", "position", "placeholder" };
 
         public const string CommentPlaceHolderEndTag = "end";
-         
+
         public const string KoobooIdAttributeName = "kooboo-id";
 
         public const string BindingKoobooContent = "kooboo_content";

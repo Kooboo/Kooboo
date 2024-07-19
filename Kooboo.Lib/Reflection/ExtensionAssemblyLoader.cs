@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Linq;
-using VirtualFile;
+using System.Reflection;
 using Kooboo.Lib.Utilities;
+using VirtualFile;
 using VirtualFile.Zip;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -142,7 +140,7 @@ namespace Kooboo.Lib.Reflection
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }
@@ -192,8 +190,7 @@ namespace Kooboo.Lib.Reflection
         private static void LoadModuleZip()
         {
             var rootPath = PathUtility.TryRootPath();
-
-            var folder =  Path.Combine(AppContext.BaseDirectory, "modules"); 
+            var folder = PathUtility.ModulesPath;
 
             if (System.IO.Directory.Exists(folder))
             {
@@ -209,7 +206,7 @@ namespace Kooboo.Lib.Reflection
                 });
             }
 
-            
+
         }
     }
 }

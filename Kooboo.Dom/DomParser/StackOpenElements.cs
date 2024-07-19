@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -66,9 +64,9 @@ namespace Kooboo.Dom
         {
             int index = length - 1;
 
-            string tagName = node.tagName; 
+            string tagName = node.tagName;
 
-            if (this.TreeConstruction.IsSameDomElement(item[index], node))    
+            if (this.TreeConstruction.IsSameDomElement(item[index], node))
             {
 
                 if (TreeConstruction.CurrentProcessingToken.tagName == tagName)
@@ -94,8 +92,8 @@ namespace Kooboo.Dom
 
                     }
                 }
-                
-                
+
+
                 item.RemoveAt(index);
             }
         }
@@ -182,7 +180,7 @@ namespace Kooboo.Dom
             {
                 foreach (var removeIndex in itemToRemoved)
                 {
-                    string currentTagName = item[removeIndex].tagName; 
+                    string currentTagName = item[removeIndex].tagName;
                     if (TreeConstruction.CurrentProcessingToken.tagName == currentTagName)
                     {
                         item[removeIndex].location.endTokenStartIndex = this.TreeConstruction.CurrentProcessingToken.startIndex;
@@ -216,7 +214,7 @@ namespace Kooboo.Dom
         public void popOffTillOneOf(bool selfIncluded, params string[] tagNames)
         {
             string foundTagName = null;
-            
+
             List<int> itemToRemoved = new List<int>();
 
             int index = length - 1;
@@ -433,7 +431,7 @@ namespace Kooboo.Dom
                     }
 
                     else
-                    { 
+                    {
                         //Otherwise, if node is one of the element types in list, terminate in a failure state.
                         foreach (var tagNameItem in scopeElements(type))
                         {
@@ -443,7 +441,7 @@ namespace Kooboo.Dom
                             }
                         }
                     }
-                     
+
 
                 }
 

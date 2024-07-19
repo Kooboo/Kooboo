@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -130,10 +129,10 @@ namespace Kooboo.Search.Scanner
         public bool IsSeperator(char input)
         {
             if (input < 128 && !Lib.Helper.CharHelper.isAlphanumeric(input))
-            { 
-                return true; 
-            } 
-            return false; 
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

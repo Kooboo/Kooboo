@@ -2,9 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Lib;
 
 namespace Kooboo.Logging
 {
@@ -15,7 +13,7 @@ namespace Kooboo.Logging
 
         static LogProvider()
         {
-            var str = System.Configuration.ConfigurationManager.AppSettings["LogLevel"];
+            var str = AppSettingsUtility.Get("LogLevel");
             if (!String.IsNullOrEmpty(str))
             {
                 LogLevel level;
@@ -31,7 +29,7 @@ namespace Kooboo.Logging
         public static ILogger GetLogger(string group, string name)
         {
             var key = group + "_" + name;
-            
+
             ILogger result;
             if (_loggers.TryGetValue(key, out result))
                 return result;

@@ -1,18 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Web.ViewModel
 {
     public class BindingInfo
-    { 
+    {
         public Guid Id
         {
-            get;set;
+            get; set;
         }
 
         public Guid OrganizationId { get; set; }
@@ -37,15 +31,15 @@ namespace Kooboo.Web.ViewModel
         /// </summary>
         public string FullName
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
         /// Device is the user agent. It used a contains to match the user agent.
         /// blank = match all. 
         /// </summary>
-        public string Device { get; set; } 
+        public string Device { get; set; }
 
-        public int Port { get; set;  }
+        public int Port { get; set; }
     }
 }

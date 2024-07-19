@@ -1,17 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
-  public class ListConverter
-    {  
+    public class ListConverter
+    {
         private Type DataType;
         private Type ListType;
 
@@ -19,14 +16,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         private Func<object, byte[]> GetObjectBytes;
         private Func<byte[], object> GetObjectValue;
-   
+
         public ListConverter(Type ListType)
         {
             this.ListType = ListType;
             this.DataType = ObjectHelper.GetEnumberableType(ListType);
-  
+
             this.FieldLength = ConverterHelper.GetTypeLength(this.DataType);
- 
+
             this.GetObjectBytes = ConverterHelper.GetValueToBytes(this.DataType);
             this.GetObjectValue = ConverterHelper.GetBytesToValue(this.DataType);
 
@@ -34,8 +31,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 throw new Exception(this.DataType.Name + " is not yet supported.");
             }
-        } 
-   
+        }
+
         public object FromBytes(byte[] bytes)
         {
             var list = Activator.CreateInstance(this.ListType) as System.Collections.IList;
@@ -77,19 +74,19 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 { break; }
             }
 
-            return list; 
+            return list;
 
         }
 
         public byte[] ToBytes(object value)
-        { 
+        {
             if (value == null)
             {
                 return null;
             }
 
             List<byte[]> results = new List<byte[]>();
-             
+
 
             int totallen = 0;
 
@@ -113,7 +110,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     else
                     {
                         results.Add(BitConverter.GetBytes(0));
-                        totallen += 4 + result.Length;
+                        totallen += 4;
                     }
                 }
             }
@@ -131,6 +128,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             return BackValue;
 
         }
-        
+
     }
 }

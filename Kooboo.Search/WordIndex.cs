@@ -109,9 +109,9 @@ namespace Kooboo.Search
                     if (!String.IsNullOrEmpty(value.Key))
                     {
                         this.Words[value.Key] = value.Value;
-                        if(CurrentIndex < value.Value)
+                        if (CurrentIndex < value.Value)
                         {
-                            CurrentIndex = value.Value; 
+                            CurrentIndex = value.Value;
                         }
                     }
 
@@ -136,7 +136,7 @@ namespace Kooboo.Search
 
             lock (_locker)
             {
-                CurrentIndex += 1; 
+                CurrentIndex += 1;
                 this.Words[word] = CurrentIndex;
                 WriteToWordFile(word, CurrentIndex);
                 return CurrentIndex;
@@ -149,7 +149,7 @@ namespace Kooboo.Search
             {
                 return this.Words[word];
             }
-            return -1; 
+            return -1;
         }
 
         public HashSet<int> ListWordIndex(List<string> words)
@@ -294,5 +294,5 @@ namespace Kooboo.Search
         {
             get { return this.Stream.Length; }
         }
-    } 
+    }
 }

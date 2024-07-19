@@ -2,9 +2,8 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Linq;
+using System.Text;
 
 namespace Kooboo.Search
 {
@@ -90,7 +89,7 @@ namespace Kooboo.Search
 
         public int Add(string body, string meta, bool storebody = true)
         {
-            Guid metahash = Lib.Security.Hash.ComputeGuidIgnoreCase(meta); 
+            Guid metahash = Lib.Security.Hash.ComputeGuidIgnoreCase(meta);
             if (storebody)
             {
                 var currentposition = this.AddDoc(body, meta);
@@ -102,12 +101,12 @@ namespace Kooboo.Search
                 return this.AddIndex(currentposition, metahash);
             }
         }
-          
+
         internal long AddDoc(string body, string meta)
         {
             byte[] bodyBytes = null;
             int bodyLen = 0;
-            int bodyBufferLen = 0; 
+            int bodyBufferLen = 0;
             byte[] metaBytes = null;
             int metaLen = 0;
             if (!string.IsNullOrEmpty(body))
@@ -118,12 +117,12 @@ namespace Kooboo.Search
                     bodyLen = bodyBytes.Length;
                 }
 
-                int extra = (int)bodyLen / 10; 
+                int extra = (int)bodyLen / 10;
                 if (extra < 50)
                 {
-                    extra = 50; 
-                } 
-                bodyBufferLen = bodyLen + extra; 
+                    extra = 50;
+                }
+                bodyBufferLen = bodyLen + extra;
             }
 
             if (!string.IsNullOrEmpty(meta))
@@ -184,7 +183,7 @@ namespace Kooboo.Search
 
                 int metalen = BitConverter.ToInt32(header, 2);
                 int bodylen = BitConverter.ToInt32(header, 6);
-                int bodybufferlen = BitConverter.ToInt32(header, 10); 
+                int bodybufferlen = BitConverter.ToInt32(header, 10);
 
                 int totallen = metalen + bodylen;
                 byte[] content = new byte[totallen];
@@ -192,7 +191,7 @@ namespace Kooboo.Search
                 this.DataStream.Position = Position + 14;
                 this.DataStream.Read(content, 0, totallen);
 
-                IndexDocument doc = new IndexDocument() { MetaLen = metalen, BodyBufferLen = bodybufferlen, BodyLen = bodylen }; 
+                IndexDocument doc = new IndexDocument() { MetaLen = metalen, BodyBufferLen = bodybufferlen, BodyLen = bodylen };
 
                 if (metalen > 0)
                 {
@@ -245,14 +244,14 @@ namespace Kooboo.Search
             {
                 var info = this.Docs[id];
                 lock (_locker)
-                { 
+                {
                     this.DeleteIndex(id);
                     this.Docs.Remove(id);
                     byte[] removeheader = new byte[14];
 
                     this.DataStream.Position = info.Position;
                     this.DataStream.Write(removeheader, 0, 14);
-                } 
+                }
             }
         }
 
@@ -266,22 +265,22 @@ namespace Kooboo.Search
 
                 if (currentdoc != null)
                 {
-                    var newposition = updatebody(info.Position, currentdoc, body, currentdoc.Meta);  
-                     
+                    var newposition = updatebody(info.Position, currentdoc, body, currentdoc.Meta);
+
                     UpdateIndex(id, newposition, currentdoc.Meta);
                 }
             }
         }
 
-        private  long updatebody(long position, IndexDocument doc, string newbody, string meta)
+        private long updatebody(long position, IndexDocument doc, string newbody, string meta)
         {
-            int bodylen = 0;  
+            int bodylen = 0;
             var bodybytes = this.Encoding.GetBytes(newbody);
-            if (bodybytes !=null)
+            if (bodybytes != null)
             {
                 bodylen = bodybytes.Length;
             }
-           
+
             if (bodylen < doc.BodyBufferLen)
             {
                 this.DataStream.Position = position + 6;
@@ -289,12 +288,12 @@ namespace Kooboo.Search
 
                 //write body bytes. 
                 this.DataStream.Position = position + 14 + doc.MetaLen;
-                this.DataStream.Write(bodybytes, 0, bodylen);   
-                return position; 
+                this.DataStream.Write(bodybytes, 0, bodylen);
+                return position;
             }
             else
             {
-                return AddDoc(newbody, meta); 
+                return AddDoc(newbody, meta);
             }
 
         }
@@ -432,7 +431,7 @@ namespace Kooboo.Search
             {
                 if (_indexstream == null)
                 {
-                    Lib.Helper.IOHelper.EnsureFileDirectoryExists(this.IndexFile); 
+                    Lib.Helper.IOHelper.EnsureFileDirectoryExists(this.IndexFile);
                     _indexstream = File.Open(this.IndexFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
                 }
                 return _indexstream;
@@ -447,7 +446,7 @@ namespace Kooboo.Search
             {
                 if (_datastream == null)
                 {
-                    Lib.Helper.IOHelper.EnsureFileDirectoryExists(this.DataFile); 
+                    Lib.Helper.IOHelper.EnsureFileDirectoryExists(this.DataFile);
 
                     _datastream = File.Open(this.DataFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
 
@@ -464,8 +463,8 @@ namespace Kooboo.Search
         {
             get
             {
-                return this.IndexStream.Length + this.DataStream.Length; 
-            } 
+                return this.IndexStream.Length + this.DataStream.Length;
+            }
         }
     }
 

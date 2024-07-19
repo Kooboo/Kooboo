@@ -1,26 +1,20 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Dom
 {
-  public enum enumScriptParseState
+    public enum enumScriptParseState
     {
-      initial=0,
-      dataEscapeStart =1,
-      dataEscapeStartDash=2,
-      dataEscapedDashDash =3,
-      dataEscaped =4,
-      dataDoubleEscapeStart=5,
-      dataEscapedDash =6,
-      dataDoubleEscapedDashDash =7,
-      dataDoubleEscapedLessThanSign=8,
-      dataDoubleEscaped =9,
-      dataDoubleEscapedDash =10,
-      dataDoubleEscapeEnd=11
+        initial = 0,
+        dataEscapeStart = 1,
+        dataEscapeStartDash = 2,
+        dataEscapedDashDash = 3,
+        dataEscaped = 4,
+        dataDoubleEscapeStart = 5,
+        dataEscapedDash = 6,
+        dataDoubleEscapedDashDash = 7,
+        dataDoubleEscapedLessThanSign = 8,
+        dataDoubleEscaped = 9,
+        dataDoubleEscapedDash = 10,
+        dataDoubleEscapeEnd = 11
     }
 }

@@ -1,16 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-   public class CollectionFieldConverter<T> : IFieldConverter<T>
+    public class CollectionFieldConverter<T> : IFieldConverter<T>
     {
 
         private Type DataType;
@@ -66,7 +63,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             var OriginalInstance = Activator.CreateInstance(this.CollectionType);
 
             var list = Activator.CreateInstance(GenericHashSet, OriginalInstance) as System.Collections.IList;
-              
+
             int startposition = 0;
             int totallength = bytes.Length;
 
@@ -141,7 +138,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     else
                     {
                         results.Add(BitConverter.GetBytes(0));
-                        totallen += 4 + result.Length;
+                        totallen += 4;
                     }
                 }
             }
@@ -159,7 +156,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             return BackValue;
 
         }
-        
+
     }
 
     public class CollectionFieldConverter : IFieldConverter
@@ -170,8 +167,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         private int FieldLength;
 
-        private CollectionConverter converter; 
-         
+        private CollectionConverter converter;
+
         private Func<object, object> GetFieldValue;
         private Action<object, object> SetFieldValue;
 
@@ -188,8 +185,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.GetFieldValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
             this.SetFieldValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, this.CollectionType);
 
-            this.converter = new CollectionConverter(this.CollectionType); 
-         
+            this.converter = new CollectionConverter(this.CollectionType);
+
             if (this.converter == null)
             {
                 throw new Exception(this.CollectionType.Name + " is not yet supported.");
@@ -212,14 +209,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         public void SetByteValues(object value, byte[] bytes)
         {
             object fieldvalue = converter.FromBytes(bytes);
-            SetFieldValue(value, fieldvalue); 
+            SetFieldValue(value, fieldvalue);
         }
 
         public byte[] ToBytes(object value)
         {
             object fieldvalue = this.GetFieldValue(value);
             return converter.ToBytes(fieldvalue);
-        } 
+        }
     }
 
 }

@@ -1,10 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
-using System.Threading.Tasks;
-using Kooboo.Data.Server;
 using System.IO;
-using System.Collections.Generic; 
+using System.Threading.Tasks;
+using Kooboo.Data;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Spa
 {
@@ -14,14 +13,14 @@ namespace Kooboo.Web.Spa
 
         public SpaMiddleWare(SpaRenderOption options)
         {
-            this.options = options; 
+            this.options = options;
         }
 
         public IKoobooMiddleWare Next
         {
             get; set;
-        } 
-    
+        }
+
         public async Task Invoke(RenderContext context)
         {
             if (!options.ShouldTryHandle(context, this.options))
@@ -29,23 +28,23 @@ namespace Kooboo.Web.Spa
                 await Next.Invoke(context); return;
             }
 
-            if (this.options.InitData!=null)
+            if (this.options.InitData != null)
             {
                 foreach (var item in this.options.InitData)
                 {
-                    context.DataContext.Push(item.Key, item.Value); 
+                    context.DataContext.Push(item.Key, item.Value);
                 }
-            } 
+            }
 
             if (string.IsNullOrWhiteSpace(context.Culture))
             {
-                context.Culture = context.Request.GetValue("lang"); 
+                context.Culture = context.Request.GetValue("lang");
             }
-            
+
             var Response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
 
             if (Response != null)
-            { 
+            {
 
                 context.Response.ContentType = Response.ContentType;
 
@@ -68,7 +67,7 @@ namespace Kooboo.Web.Spa
                     return;
                 }
             }
-            
+
             await Next.Invoke(context);
         }
     }

@@ -1,14 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
+using Esprima;
 using Jint.Native;
 using Jint.Runtime.Debugger;
 using Kooboo.Api;
-using Kooboo.Data.Extensions;
+using Kooboo.Data.Permission;
+using Kooboo.Data.Typescript;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.ScriptDebugger;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -20,71 +22,91 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireUser => true;
 
+        [Permission(Feature.CODE, Action = "debug")]
         public object GetSession(ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context, DebugSession.GetWay.AutoCreate);
 
             return new
             {
-                session.BreakLines,
+                session.Breakpoints,
                 session.DebugInfo,
                 session.End,
-                session.CurrentCodeId,
-                session.Exception
+                session.CurrentCode,
             };
         }
 
+        [Permission(Feature.CODE, Action = "debug")]
         public void StartSession(ApiCall call)
         {
-            SessionManager.GetSession(call.Context, DebugSession.GetWay.AutoCreate).Clear();
+            var session = SessionManager.GetSession(call.Context, DebugSession.GetWay.AutoCreate);
+            session.Clear();
         }
 
+        [Permission(Feature.CODE, Action = "debug")]
         public void StopSession(ApiCall call)
         {
             SessionManager.RemoveSession(call.Context);
         }
 
-        public List<DebugSession.Breakpoint> SetBreakPoint(DebugSession.Breakpoint point, ApiCall call)
+        public class Breakpoints
+        {
+            public string[] Sources { get; set; }
+            public int Line { get; set; }
+        }
+
+        [Permission(Feature.CODE, Action = "debug")]
+        public List<Breakpoint> SetBreakPoint(string source, int line, int column, ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context, DebugSession.GetWay.AutoCreate);
-            var exist = session.BreakLines.Any(a => a.codeId == point.codeId && a.Line == point.Line);
+            var code = call.WebSite.SiteDb().Code.GetByNameOrId(source);
+            var cache = TypescriptCache.Instance.GetOrCreate(call.WebSite, code);
+            var breakpoint = new Breakpoint(source, line, column, cache.SourceMap);
 
-            if (exist)
+            var exist = session.Breakpoints.FirstOrDefault(f => f.Equals(breakpoint));
+            if (exist == default)
             {
-                session.BreakLines = session.BreakLines.Where(w => w.codeId != point.codeId || w.Line != point.Line).ToList();
+                session.Breakpoints.Add(breakpoint);
             }
             else
             {
-                session.BreakLines.Add(point);
+                session.Breakpoints.Remove(exist);
             }
 
-            if (session.JsEngine != null && point.codeId == session.CurrentCodeId)
-            {
-                var bk = session.JsEngine.BreakPoints.FirstOrDefault(a => a.Line == point.Line);
-                if (bk != null) session.JsEngine.BreakPoints.Remove(bk);
-                else session.JsEngine.BreakPoints.Add(new BreakPoint(point.Line, 0));
-            }
-
-            return session == null ? new List<DebugSession.Breakpoint>() : session.BreakLines;
+            session.SyncBreakpoints();
+            return session.Breakpoints;
         }
 
+        [Permission(Feature.CODE, Action = "debug")]
         public void Step(string action, ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context);
+
+            if (action?.ToLower() == "stop")
+            {
+                session.Stop();
+                return;
+            }
+
             if (session == null || !Enum.TryParse<StepMode>(action, out var step)) return;
             session.Next(step);
         }
 
+        [Permission(Feature.CODE, Action = "debug")]
         public string Execute(string JsStatement, ApiCall call)
         {
             var session = SessionManager.GetSession(call.Context);
             if (session == null || session.JsEngine == null) return null;
-            var old = session.JsEngine.SetDebugHandlerMode(StepMode.None);
-            session.JsEngine.ExecuteWithErrorHandle(JsStatement, new Jint.Parser.ParserOptions() { Tolerant = true });
-            session.JsEngine.SetDebugHandlerMode(old);
-            var result = session.JsEngine.GetCompletionValue().ToObject();
-            session.DebugInfo.Variables = Sites.Scripting.Manager.GetVariables(session.JsEngine);
-            return Sites.Scripting.Manager.GetString(result);
+            var result = session.JsEngine.DebugHandler.Evaluate(JsStatement, new ParserOptions() { Tolerant = true });
+
+            try
+            {
+                return new Jint.Native.Json.JsonSerializer(session.JsEngine).Serialize(result, JsValue.Undefined, JsValue.Undefined).ToString();
+            }
+            catch (System.Exception)
+            {
+                return JsonHelper.Serialize(result?.ToObject());
+            }
         }
     }
 }

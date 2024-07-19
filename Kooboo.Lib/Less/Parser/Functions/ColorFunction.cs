@@ -1,11 +1,11 @@
 ﻿namespace dotless.Core.Parser.Functions
 {
+    using System;
+    using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Tree;
     using Utils;
-    using System;
-    using Exceptions;
 
     public class ColorFunction : Function
     {
@@ -14,7 +14,7 @@
             Guard.ExpectNumArguments(1, Arguments.Count, this, Location);
             Guard.ExpectNode<TextNode>(Arguments[0], this, Location);
 
-            var rgb = ((TextNode) Arguments[0]).Value.TrimStart('#');
+            var rgb = ((TextNode)Arguments[0]).Value.TrimStart('#');
             try
             {
                 return new Color(rgb);

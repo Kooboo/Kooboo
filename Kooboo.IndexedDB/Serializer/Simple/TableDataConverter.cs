@@ -1,22 +1,22 @@
-﻿using Kooboo.IndexedDB.Helper;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
     // TEMP, this is used for table log, which is dictionary<string, object>. 
     public class TableDataLogConverter
     {
-        private static TableDataLogConverter _instance; 
-        public static TableDataLogConverter Instance {
+        private static TableDataLogConverter _instance;
+        public static TableDataLogConverter Instance
+        {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new TableDataLogConverter(); 
+                    _instance = new TableDataLogConverter();
                 }
-                return _instance;  
+                return _instance;
             }
         }
 
@@ -125,7 +125,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             if (value == null)
             { return null; }
             var dict = value as Dictionary<string, object>;
-    
+
             return ToBytes(dict);
         }
 

@@ -2,9 +2,6 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom.CSS;
 
 namespace Kooboo.Dom
@@ -153,12 +150,16 @@ namespace Kooboo.Dom
             //The getAttribute(name) method must run these steps:
             //If the context object is in the HTML namespace and its node document is an HTML document, let name be converted to ASCII lowercase.
             //Return the value of the first attribute in the context object's attribute list whose name is name, and null otherwise.
+            if (_attribute == null)
+            {
+                return null;
+            }
 
             if (string.IsNullOrWhiteSpace(name))
             {
                 return string.Empty;
             }
-            
+
             name = name.ToLower().Trim();
             foreach (var item in attributes)
             {
@@ -198,7 +199,6 @@ namespace Kooboo.Dom
             Attr newAttribute = new Attr();
             newAttribute.name = name;
             newAttribute.value = value;
-
             attributes.Add(newAttribute);
         }
 
@@ -228,6 +228,11 @@ namespace Kooboo.Dom
 
         public bool hasAttribute(string name)
         {
+            if (_attribute == null)
+            {
+                return false;
+            }
+
             name = name.ToLower();
             foreach (var item in attributes)
             {
@@ -256,27 +261,27 @@ namespace Kooboo.Dom
 
         public Element getOneElementByTagName(string tagname)
         {
-            string lowername = tagname.ToLower(); 
-              return  _getOneElementByTagName(this, lowername);         
+            string lowername = tagname.ToLower();
+            return _getOneElementByTagName(this, lowername);
         }
 
         private Element _getOneElementByTagName(Element topElement, string tagname)
         {
-            if(topElement.tagName.ToLower()== tagname)
+            if (topElement.tagName.ToLower() == tagname)
             {
-                return topElement; 
+                return topElement;
             }
 
             foreach (var item in topElement.childNodes.item)
             {
-               if (item.nodeType == enumNodeType.ELEMENT)
+                if (item.nodeType == enumNodeType.ELEMENT)
                 {
-                 var result = _getOneElementByTagName(item as Element, tagname);
+                    var result = _getOneElementByTagName(item as Element, tagname);
                     if (result != null)
                     {
-                        return result; 
+                        return result;
                     }
-                } 
+                }
             }
 
             return null;
@@ -630,7 +635,7 @@ namespace Kooboo.Dom
                 _getElementByCSSSelector(item, collection, selectorList);
             }
         }
-        
+
 
         private CSSStyleDeclaration _rawComputedStyle;
         public CSSStyleDeclaration RawComputedStyle
@@ -671,19 +676,25 @@ namespace Kooboo.Dom
 
         /// <summary>
         /// matached cssrules will be append to this.
-        /// </summary>
-        public List<CSSStyleRule> StyleRules = new List<CSSStyleRule>();
+        /// </summary> 
+        private List<CSSStyleRule> _styleRules;
+        public List<CSSStyleRule> StyleRules
+        {
+            get
+            {
+                if (_styleRules == null)
+                {
+                    _styleRules = new List<CSSStyleRule>();
+                }
+                return _styleRules;
 
+            }
+            set
+            {
+                _styleRules = value;
+            }
+        }
 
-        /// <summary>
-        /// Customize value here. used for machine learning or other purposes. 
-        /// </summary>
-        public Dictionary<string, object> notation = new Dictionary<string, object>();
-
-        /// <summary>
-        /// The calculated score to be used like how much score to be like an layout placeholder.
-        /// </summary>
-        public double Score;
 
         public override void Dispose()
         {
@@ -695,9 +706,10 @@ namespace Kooboo.Dom
             this.classList.item.Clear();
             this.classList = null;
 
-            this.className = null;  
+            this.className = null;
             base.Dispose();
         }
+
 
 
     }

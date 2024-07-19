@@ -1,9 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
@@ -49,7 +46,7 @@ namespace Kooboo.Mail.Imap.Commands
 
         public Task<List<ImapResponse>> Execute(ImapSession session, string args)
         {
-            var result = SearchCommand.Search.ExecuteBySeqNo(session.MailDb, session.SelectFolder, args);
+            var result = SearchCommand.Search.Instance.ExecuteBySeqNo(session.MailDb, session.SelectFolder, args);
             return Task.FromResult(result);
         }
     }

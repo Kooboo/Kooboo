@@ -144,7 +144,7 @@ namespace dotless.Core.Parser.Infrastructure
 
         public Assignment Assignment(string key, Node value, NodeLocation location)
         {
-            return new Assignment(key, value) {Location = location};
+            return new Assignment(key, value) { Location = location };
         }
 
         public Comment Comment(string value, NodeLocation location)
@@ -164,7 +164,7 @@ namespace dotless.Core.Parser.Infrastructure
 
         public Extend Extend(List<Selector> exact, List<Selector> partial, NodeLocation location)
         {
-            return new Extend(exact,partial) { Location = location };
+            return new Extend(exact, partial) { Location = location };
         }
 
         public Paren Paren(Node value, NodeLocation location)

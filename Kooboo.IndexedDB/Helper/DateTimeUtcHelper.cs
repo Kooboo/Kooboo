@@ -61,14 +61,14 @@ namespace Kooboo.IndexedDB.Helper
 
             return isUtc;
         }
-         
+
         public static bool Compare(Kooboo.IndexedDB.Query.Comparer Compare, DateTime DateA, DateTime DateB)
         {
             switch (Compare)
             {
                 case Query.Comparer.EqualTo:
                     return EqualDate(DateA, DateB);
-                  
+
                 case Query.Comparer.GreaterThan:
                     return DateA > DateB;
 
@@ -88,7 +88,7 @@ namespace Kooboo.IndexedDB.Helper
                 default:
                     return false;
             }
-             
+
         }
 
         public static bool EqualDate(DateTime DateA, DateTime DateB)

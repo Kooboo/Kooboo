@@ -3,9 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
@@ -76,7 +73,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             if (header.BlockPosition <= 0)
             {
-                return; 
+                return;
             }
 
             Item nextitem = loadItem(header.FirstRecordPointer);
@@ -95,7 +92,7 @@ namespace Kooboo.IndexedDB.Schedule
                 {
                     header.counter = header.counter - 1;
                     Stream.Position = header.BlockPosition;
-                    Stream.Write(header.ToBytes(), 0, 14); 
+                    Stream.Write(header.ToBytes(), 0, 14);
                 }
             }
         }
@@ -103,7 +100,7 @@ namespace Kooboo.IndexedDB.Schedule
         private bool Del(Item currentItem, long BlockPosition)
         {
             Item previousitem = currentItem;
-            currentItem = loadItem(currentItem.NextRecord); 
+            currentItem = loadItem(currentItem.NextRecord);
 
             while (true)
             {
@@ -114,18 +111,18 @@ namespace Kooboo.IndexedDB.Schedule
 
                     Stream.Position = previousitem.ItemDiskLocation;
 
-                    Stream.Write(previousitem.ToBytes(), 0, 18); 
+                    Stream.Write(previousitem.ToBytes(), 0, 18);
 
-                    return true; 
+                    return true;
                 }
 
                 else if (currentItem.NextRecord <= 0)
                 {
-                    return false; 
+                    return false;
                 }
 
                 previousitem = currentItem;
-                currentItem = loadItem(previousitem.NextRecord); 
+                currentItem = loadItem(previousitem.NextRecord);
             }
 
 
@@ -172,7 +169,7 @@ namespace Kooboo.IndexedDB.Schedule
 
         public List<long> GetAll(long SectionPosition)
         {
-            return ReadAll(SectionPosition); 
+            return ReadAll(SectionPosition);
         }
 
         public List<long> ReadAll(long SectionPosition)
@@ -212,7 +209,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             long writeposition = Stream.Length;
 
-            Stream.Position = writeposition; 
+            Stream.Position = writeposition;
             Stream.Write(item.ToBytes(), 0, 18);
 
             header.FirstRecordPointer = writeposition;
@@ -233,7 +230,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             item.ParseBytes(itembytes);
 
-            item.ItemDiskLocation = itemBlockPosition; 
+            item.ItemDiskLocation = itemBlockPosition;
 
             return item;
         }
@@ -283,7 +280,7 @@ namespace Kooboo.IndexedDB.Schedule
                     {
                         if (_indexstream == null || _indexstream.CanRead == false)
                         {
-                            _indexstream = StreamManager.GetFileStream(this.FullFileName); 
+                            _indexstream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
 

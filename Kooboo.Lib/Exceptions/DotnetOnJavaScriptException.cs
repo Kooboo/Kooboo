@@ -1,7 +1,5 @@
-﻿using Jint.Parser;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using Esprima;
 
 namespace Kooboo.Lib.Exceptions
 {

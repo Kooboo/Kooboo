@@ -15,7 +15,7 @@ namespace dotless.Core.Parser.Functions
             var index = (int)(args[0] as Number).Value;
 
             // Extract function indecies are 1-based
-            return list[index-1];
+            return list[index - 1];
         }
     }
 }

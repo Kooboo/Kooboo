@@ -7,15 +7,15 @@ using System.Linq.Expressions;
 
 namespace Kooboo.IndexedDB.Helper
 {
-  public static  class ObjectHelper
+    public static class ObjectHelper
     {
         public static int GetHashCode(string FieldName)
         {
             if (FieldName == null)
             {
-                FieldName = string.Empty; 
+                FieldName = string.Empty;
             }
-            return FieldName.ToLower().GetHashCode32(); 
+            return FieldName.ToLower().GetHashCode32();
         }
 
         /// <summary>
@@ -27,29 +27,29 @@ namespace Kooboo.IndexedDB.Helper
         {
             if (!type.IsGenericType)
             {
-                return false; 
+                return false;
             }
 
-            return type.GetGenericTypeDefinition() == typeof(Dictionary<,>); 
-          
+            return type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+
         }
 
         public static bool IsList(Type type)
         {
             if (!type.IsGenericType)
-            { return false;  }
+            { return false; }
 
-            var EnumeGenericDefi = typeof(IList<>); 
+            var EnumeGenericDefi = typeof(IList<>);
 
             foreach (var item in type.GetInterfaces())
-            { 
+            {
                 if (item.IsGenericType && item.GetGenericTypeDefinition() == EnumeGenericDefi)
                 {
-                    return true; 
+                    return true;
                 }
             }
 
-            return false; 
+            return false;
         }
 
         public static bool IsCollection(Type type)
@@ -67,7 +67,7 @@ namespace Kooboo.IndexedDB.Helper
                 }
             }
 
-            return false; 
+            return false;
         }
 
         /// <summary>
@@ -77,12 +77,12 @@ namespace Kooboo.IndexedDB.Helper
         /// <returns></returns>
         public static Type GetEnumberableType(Type EnumberableType)
         {
-           return EnumberableType.GetGenericArguments().Single(); 
+            return EnumberableType.GetGenericArguments().Single();
         }
 
         public static Type GetDictionaryKeyType(Type DictionaryType)
         {
-            return DictionaryType.GetGenericArguments()[0]; 
+            return DictionaryType.GetGenericArguments()[0];
         }
 
         public static Type GetDictionaryValueType(Type DictionaryType)
@@ -92,18 +92,18 @@ namespace Kooboo.IndexedDB.Helper
 
         public static Type GetFieldType(Type ObjectType, string FieldName)
         {
-            var property = ObjectType.GetProperty(FieldName); 
+            var property = ObjectType.GetProperty(FieldName);
             if (property != null)
             {
-                return property.PropertyType; 
+                return property.PropertyType;
             }
 
-            var field = ObjectType.GetField(FieldName); 
+            var field = ObjectType.GetField(FieldName);
             if (field != null)
             {
-                return field.FieldType; 
+                return field.FieldType;
             }
-            return null; 
+            return null;
         }
 
         public static Func<TValue, TFieldType> GetGetValue<TValue, TFieldType>(string FieldName)
@@ -112,7 +112,7 @@ namespace Kooboo.IndexedDB.Helper
             Expression expr = Expression.PropertyOrField(arg, FieldName);
             return Expression.Lambda<Func<TValue, TFieldType>>(expr, arg).Compile();
         }
-      
+
         public static Action<TValue, TFieldType> GetSetValue<TValue, TFieldType>(string FieldName)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
@@ -120,7 +120,7 @@ namespace Kooboo.IndexedDB.Helper
             var valueExp = Expression.Parameter(typeof(TFieldType));
             return Expression.Lambda<Action<TValue, TFieldType>>(Expression.Assign(expr, valueExp), arg, valueExp).Compile();
         }
-        
+
         public static Action<TValue, object> GetSetObjectValue<TValue>(string FieldName, Type fieldtype)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
@@ -192,7 +192,7 @@ namespace Kooboo.IndexedDB.Helper
             return Expression.Lambda<Func<object, object>>(convertobject, objectPara).Compile();
 
         }
-        
+
 
         public static Action<object, TFieldType> GetSetFieldValue<TFieldType>(string FieldName, Type ObjectType)
         {

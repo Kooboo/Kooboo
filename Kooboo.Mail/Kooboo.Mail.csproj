@@ -1,41 +1,52 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<AssemblyName>Kooboo.Mail</AssemblyName>
-	<RootNamespace>Kooboo.Mail</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyName>Kooboo.Mail</AssemblyName>
+		<RootNamespace>Kooboo.Mail</RootNamespace>
+		<Deterministic>False</Deterministic>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Helper\MineTypeHelper.cs" />
-  </ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Dns\**" />
+	  <EmbeddedResource Remove="Dns\**" />
+	  <None Remove="Dns\**" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="MimeMapping" Version="1.0.1.12" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0-preview1-26216-02" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
-    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Helper\MineTypeHelper.cs" />
+		<Compile Remove="Multipart\NewBodyGenerator.cs" />
+		<Compile Remove="Smtp\Pooling\SmtpPoolItem.cs" />
+		<Compile Remove="Smtp\Pooling\SmtpPool.cs" />
+		<Compile Remove="Utility\MIME_Utils.cs" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="DNS" Version="7.0.0" />
+		<PackageReference Include="Ical.Net" Version="4.2.0" />
+		<PackageReference Include="Kooboo.Data" Version="2.1.8966.33828" />
+		<PackageReference Include="MailKit" Version="4.2.0" />
+		<PackageReference Include="SharpCompress" Version="0.33.0" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.3" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+		<ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+		<ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+		<ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Extension\Events\Impl\" />
+		<Folder Include="Spf\" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Spf\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\AssemblyInfoGlobal.cs" Link="AssemblyInfoGlobal.cs" />
+	</ItemGroup>
 </Project>

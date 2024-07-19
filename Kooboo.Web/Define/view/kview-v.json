@@ -1,0 +1,378 @@
+{
+    "name": "kview-v",
+    "tags": [
+        {
+            "name": "view",
+            "description": ""
+        },
+        {
+            "name": "htmlblock",
+            "description": ""
+        },
+        {
+            "name": "layout",
+            "description": ""
+        },
+        {
+            "name": "menu",
+            "description": ""
+        },
+        {
+            "name": "placeholder",
+            "description": ""
+        },
+        {
+            "name": "module",
+            "description": ""
+        },
+        {
+            "name": "slot",
+            "description": ""
+        },
+        {
+            "name": "script",
+            "description": "",
+            "attributes": [
+                {
+                    "name": "type",
+                    "description": "execution environment, server or client",
+                    "values": [
+                        {
+                            "name": "module",
+                            "description": "For HTML5-compliant browsers the code is treated as a JavaScript module. The processing of the script contents is not affected by the charset and defer attributes. For information on using module, see ES6 in Depth: Modules. Code may behave differently when the module keyword is used."
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "globalAttributes": [
+        {
+            "name": "env",
+            "description": "execution environment, server or client",
+            "values": [
+                {
+                    "name": "server",
+                    "description": "Script executed in the server"
+                },
+                {
+                    "name": "client",
+                    "description": "render all content to client browser without server side render"
+                }
+            ]
+        },
+        {
+            "name": "v-ignore",
+            "description": "ignore evaluation of current element, does not include child elements",
+            "values": [
+                {
+                    "name": "true",
+                    "description": "value can only be true or null"
+                }
+            ]
+        },
+        {
+            "name": "v-for",
+            "description": "repeat items",
+            "values": [
+                {
+                    "name": "item in list",
+                    "description": "```<p v-for=\"item list\"></p>```"
+                },
+                {
+                    "name": "{felid1One, felidTwo} in items",
+                    "description": "```<li v-for=\"{felid1One, felidTwo} in items\">{{ felid1One }}</li>```"
+                },
+                {
+                    "name": "(item, index) in items",
+                    "description": "```<div v-for=\"(item, index) in items\"></div>```"
+                },
+                {
+                    "name": "(value, key) in object",
+                    "description": "```\n<div v-for=\"(value, key) in object\">\n  {{value}} {{key}}\n</div>\n```"
+                },
+                {
+                    "name": "(value, name, index) in object",
+                    "description": "```<div v-for=\"(value, name, index) in object\"></div>```"
+                },
+                {
+                    "name": "n in 10",
+                    "description": "```<span v-for=\"n in 10\">{{ n }}</span>```"
+                }
+            ]
+        },
+        {
+            "name": "v-html",
+            "description": "set innerHTML of the element",
+            "values": [
+                {
+                    "name": "item.fieldName",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-text",
+            "description": "set innerText of the element, with HTML encoded value",
+            "values": [
+                {
+                    "name": "item.fieldName",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-slot-define",
+            "description": "define a slot that can accept content from outside.",
+            "values": [
+                {
+                    "name": "NameOrNull",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-slot-insert",
+            "description": "Insert content into sub component that contains a slot, same as v-slot",
+            "values": [
+                {
+                    "name": "NameOrNull",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-slot",
+            "description": "Insert content into sub component that contains a slot",
+            "values": [
+                {
+                    "name": "NameOrNull",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-bind:attributeName",
+            "description": "value as Element attribute",
+            "values": [
+                {
+                    "name": "itemKey",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": ":attributeName",
+            "description": "value as Element attribute",
+            "values": [
+                {
+                    "name": "itemKey",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-label",
+            "description": "get or set value from content label repository. If the key exists, it will get the value from label repository and replace the tag innerhtml. If the key is not exists, it will be created with the tag's innerhtml as the default value.",
+            "values": [
+                {
+                    "name": "lableName",
+                    "description": "get or set a label"
+                }
+            ]
+        },
+        {
+            "name": "v-htmlblock",
+            "description": "get or set value from content HTML block repository. If the key exists, it will get the value  and replace the tag innerhtml. If the key is not exists, it will be created with the tag's innerhtml as the default value.",
+            "values": [
+                {
+                    "name": "name",
+                    "description": "get or set a htmlblock"
+                }
+            ]
+        },
+        {
+            "name": "v-if",
+            "description": "When the if condition return true, the element will be rendered",
+            "values": [
+                {
+                    "name": "key > compareValue",
+                    "description": ""
+                },
+                {
+                    "name": "key >= compareValue",
+                    "description": ""
+                },
+                {
+                    "name": "key <= compareValue",
+                    "description": ""
+                },
+                {
+                    "name": "key == comparevalue",
+                    "description": ""
+                },
+                {
+                    "name": "key contains 'textPart'",
+                    "description": ""
+                },
+                {
+                    "name": "key startWith 'textPart'",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/even",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/odd",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/first",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/last",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/!first",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/2n+1",
+                    "description": ""
+                },
+                {
+                    "name": "true",
+                    "description": ""
+                },
+                {
+                    "name": "false",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-elseif",
+            "description": "When the if condition return false, continue check this condition",
+            "values": [
+                {
+                    "name": "key > compareValue",
+                    "description": ""
+                },
+                {
+                    "name": "key >= compareValue",
+                    "description": ""
+                },
+                {
+                    "name": "key <= compareValue",
+                    "description": ""
+                },
+                {
+                    "name": "key == comparevalue",
+                    "description": ""
+                },
+                {
+                    "name": "key contains 'textPart'",
+                    "description": ""
+                },
+                {
+                    "name": "key startWith 'textPart'",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/even",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/odd",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/first",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/last",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/!first",
+                    "description": ""
+                },
+                {
+                    "name": "repeat/2n+1",
+                    "description": ""
+                },
+                {
+                    "name": "true",
+                    "description": ""
+                },
+                {
+                    "name": "false",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-else",
+            "description": "When previous conditions are not matched",
+            "values": []
+        },
+        {
+            "name": "v-placeholder",
+            "description": "Used to mark an element as a placeholder/container in the layout. Components can be added into that placeholder from page designer.",
+            "values": [
+                {
+                    "name": "name",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-config",
+            "description": "Make the element editable from backend interface.",
+            "values": [
+                {
+                    "name": "key",
+                    "description": "the record key in the backend UI."
+                }
+            ]
+        },
+        {
+            "name": "v-device",
+            "description": "Render elements when user agaent is a mobile or desktop device.",
+            "values": [
+                {
+                    "name": "mobile",
+                    "description": ""
+                },
+                {
+                    "name": "desktop",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "name": "v-define",
+            "description": "define a variable",
+            "values": [
+                {
+                    "name": "item {'field': 'text value'}",
+                    "description": "Set variable to value"
+                }
+            ]
+        },
+        {
+            "name": "v-pre",
+            "description": "same as env=client, send the whole element to client browser without server side render",
+            "values": [
+                {
+                    "name": "true",
+                    "description": "value can only be true or null"
+                }
+            ]
+        }
+    ]
+}

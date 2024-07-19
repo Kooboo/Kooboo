@@ -1,0 +1,19 @@
+services:
+  web:
+    image: kooboo/kooboo:latest
+    restart: always
+    container_name: kooboo
+    build:
+      context: Kooboo.Web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+      - $USERPROFILE/AppData/Local/kooboo:/data # for windows users
+      # - /var/lib/kooboo:/data # for linux users
+
+networks:
+  default:

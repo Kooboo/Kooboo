@@ -1,20 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data.Definition;
 using Kooboo.Data.Models;
+using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Web.Areas.Admin.ViewModels;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class ViewApi : SiteObjectApi<View>
     {
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.VIEW)]
         public override object Get(ApiCall call)
         {
             var view = call.WebSite.SiteDb().Views.Get(call.ObjectId);
@@ -24,7 +24,13 @@ namespace Kooboo.Web.Api.Implementation
                 view.Body = DefaultView();
             }
 
-            ViewViewModel viewmodel = new ViewViewModel() { Name = view.Name, Body = view.Body };
+            ViewViewModel viewmodel = new ViewViewModel()
+            {
+                Name = view.Name,
+                Body = view.Body,
+                Version = view.Version,
+                PropDefines = view.PropDefines,
+            };
 
             viewmodel.DummyLayout = GetDummary(call.WebSite);
 
@@ -36,25 +42,29 @@ namespace Kooboo.Web.Api.Implementation
             return viewmodel;
         }
 
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.VIEW)]
         public override List<object> List(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             List<ViewItem> result = new List<ViewItem>();
             string baseurl = call.WebSite.BaseUrl();
 
-            var allviews = sitedb.Views.All(true).OrderBy(o => o.Name);
+            var allviews = sitedb.Views.All(true).SortByNameOrLastModified(call);
             int storenamehash = Lib.Security.Hash.ComputeInt(sitedb.Views.StoreName);
 
             foreach (var item in allviews)
             {
-                string url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, item);
-                string previewurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
-                ViewItem model = new ViewItem() { Name = item.Name, Id = item.Id, LastModified = item.LastModified, Preview = previewurl };
-                model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
-                model.StoreNameHash = storenamehash;
-                model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Views.GetUsedBy(item.Id));
-                model.DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == item.Id).Count();
-                result.Add(model);
+                if (item.Id != default(Guid))
+                {
+                    string url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, item);
+                    string previewurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
+                    ViewItem model = new ViewItem() { Name = item.Name, Id = item.Id, LastModified = item.LastModified, Preview = previewurl, RelativeUrl = url };
+                    model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
+                    model.StoreNameHash = storenamehash;
+                    model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Views.GetUsedBy(item.Id));
+                    model.DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == item.Id).Count();
+                    result.Add(model);
+                }
             }
             return result.ToList<object>();
         }
@@ -73,6 +83,7 @@ namespace Kooboo.Web.Api.Implementation
             return body;
         }
 
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.VIEW)]
         public List<ViewDataMethod> ViewMethods(ApiCall call)
         {
             var methods = call.WebSite.SiteDb().ViewDataMethods.Query.Where(o => o.ViewId == call.ObjectId).SelectAll();
@@ -114,12 +125,12 @@ namespace Kooboo.Web.Api.Implementation
 
         private string DefaultView()
         {
-            string defaultview = @"<div class=""jumbotron"">
-    <h2>Welcome!</h2>
+            string defaultview = @"<div>
+    <h2>Welcome</h2>
     <p>Welcome to Kooboo CMS</p>
     <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam.Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-    <p class=""text-center"">
-        <a class=""btn blue btn-lg"" href=""setup-step-1.shtml"" role=""button"">Get start!</a>
+    <p>
+        <a href=""#"">Get start!</a>
     </p>
 </div>";
             return defaultview;
@@ -127,36 +138,44 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireModel(typeof(ViewModel.ViewEditViewModel))]
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.EDIT)]
         public override Guid Post(ApiCall call)
         {
             var model = call.Context.Request.Model as ViewEditViewModel;
             View view;
             if (model.Id == default(Guid))
             {
-                view = new View() { Name = model.Name, Body = model.Body };
+                view = new View()
+                {
+                    Name = model.Name,
+                    Body = model.Body,
+                    PropDefines = model.PropDefines
+                };
                 call.WebSite.SiteDb().Views.AddOrUpdate(view, call.Context.User.Id);
             }
             else
             {
                 view = call.WebSite.SiteDb().Views.Get(model.Id);
+
+                (model as IDiffChecker).CheckDiff(view);
+
                 view.Body = model.Body;
+                view.PropDefines = model.PropDefines;
                 call.WebSite.SiteDb().Views.AddOrUpdate(view, call.Context.User.Id);
             }
 
-            if (model.DataSources == null)
-            {
-                model.DataSources = new List<ViewDataMethod>();
-            }
+            //if (model.DataSources == null)
+            //{
+            //    model.DataSources = new List<ViewDataMethod>();
+            //}
 
-            call.WebSite.SiteDb().Views.UpdateDataSources(view.Id, model.DataSources, call.Context.User.Id);
+            //call.WebSite.SiteDb().Views.UpdateDataSources(view.Id, model.DataSources, call.Context.User.Id);
 
-            Kooboo.Sites.Service.CleanerService.CleanDataMethod(call.WebSite.SiteDb());
+            //Kooboo.Sites.Service.CleanerService.CleanDataMethod(call.WebSite.SiteDb());
 
             return view.Id;
         }
-                     
-        
-        
+
         public Dictionary<string, ComparerModel[]> CompareType(ApiCall call)
         {
             var types = Data.Helper.DataTypeHelper.GetDataTypeCompareModel();
@@ -177,8 +196,8 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var name = Enum.GetName(typeof(Kooboo.Data.Definition.DataTypes), item.Key);
 
-                result[name] = item.Value;   
-            }        
+                result[name] = item.Value;
+            }
             return result;
         }
 
@@ -197,6 +216,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Kooboo.Attributes.RequireParameters("id", "name")]
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.EDIT)]
         public ViewItem Copy(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -253,5 +273,28 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.EDIT)]
+        public override Guid AddOrUpdate(ApiCall call)
+        {
+            return base.AddOrUpdate(call);
+        }
+
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.DELETE)]
+        public override bool Delete(ApiCall call)
+        {
+            return base.Delete(call);
+        }
+
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.DELETE)]
+        public override bool Deletes(ApiCall call)
+        {
+            return base.Deletes(call);
+        }
+
+        [Permission(Feature.VIEW, Action = Data.Permission.Action.EDIT)]
+        public override Guid put(ApiCall call)
+        {
+            return base.put(call);
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Contents

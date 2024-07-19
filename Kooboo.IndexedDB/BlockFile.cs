@@ -1,10 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
@@ -12,39 +10,44 @@ namespace Kooboo.IndexedDB
     public class BlockFile
     {
 
-        internal string _fullfilename;
+        internal string Fullfilename;
         private FileStream _filestream;
 
-        private object _object = new object();
+        private object _locker = new object();
 
         public BlockFile(string fullfilename)
         {
-            this._fullfilename = fullfilename;
+            this.Fullfilename = fullfilename;
         }
 
         public void OpenOrCreate()
         {
-            if (!File.Exists(this._fullfilename))
+            if (!File.Exists(this.Fullfilename))
             {
                 // file not exists.first check directory exists or not.
-                string dirname = Path.GetDirectoryName(this._fullfilename);
+                string dirname = Path.GetDirectoryName(this.Fullfilename);
                 if (!System.IO.Directory.Exists(dirname))
                 {
                     System.IO.Directory.CreateDirectory(dirname);
                 }
 
-                File.WriteAllText(this._fullfilename, "block content file, do not modify\r\n");
+                File.WriteAllText(this.Fullfilename, "block content file, do not modify\r\n");
             }
         }
 
         internal byte[] GetPartial(long position, int offset, int count)
         {
-            byte[] partial = new byte[count]; 
             if (Stream.Length >= position + offset + count)
             {
-                Stream.Position = position + offset;
-                Stream.Read(partial, 0, count);
-                return partial;
+                byte[] partial = new byte[count];
+
+                lock (_locker)
+                {
+                    Stream.Position = position + offset;
+                    Stream.Read(partial, 0, count);
+                    return partial;
+                }
+
             }
             return null;
         }
@@ -52,17 +55,24 @@ namespace Kooboo.IndexedDB
         private async Task<byte[]> GetPartialAsync(long position, int offset, int count)
         {
             byte[] partial = new byte[count];
-        
+
             if (Stream.Length >= position + offset + count)
             {
+
                 Stream.Position = position + offset;
                 await Stream.ReadAsync(partial, 0, count);
                 return partial;
+
             }
             return null;
         }
 
-        // keep for upgrade.. not used any more. 
+        /// <summary>
+        /// used by very old database file, this format is not used any more since the change of setting file format. 
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="KeyColumnOffset"></param>
+        /// <returns></returns>
         public byte[] GetContent(long position, int KeyColumnOffset)
         {
             byte[] counterbytes = GetPartial(position, 26, 4);
@@ -70,10 +80,6 @@ namespace Kooboo.IndexedDB
             return GetPartial(position, 30 + KeyColumnOffset, counter);
         }
 
-        public byte[] GetKey(long position, int ColumnOffset, int KeyLength)
-        {
-            return GetPartial(position, 30 + ColumnOffset, KeyLength);
-        }
 
         #region  NewAPI
 
@@ -84,67 +90,134 @@ namespace Kooboo.IndexedDB
             header[1] = 13;
             System.Buffer.BlockCopy(BitConverter.GetBytes(TotalByteLen), 0, header, 2, 4);
 
-            Int64 currentposition;
-            currentposition = Stream.Length;
-            Stream.Position = currentposition;
-            Stream.Write(header, 0, 10);
-            Stream.Write(bytes, 0, TotalByteLen);
-            return currentposition;
+            lock (_locker)
+            {
+                Int64 currentposition;
+                currentposition = Stream.Length;
+                Stream.Position = currentposition;
+                Stream.Write(header, 0, 10);
+                Stream.Write(bytes, 0, TotalByteLen);
+                return currentposition;
+            }
+        }
 
+        public bool UpdatePart(long diskPosition, byte[] parts)
+        {
+            var header = this.GetPartial(diskPosition, 0, 10);
+            if (header == null)
+            {
+                return false;
+            }
+            if (header[0] == 10 && header[1] == 13)
+            {
+                Stream.Position = diskPosition + 10;
+                Stream.Write(parts, 0, parts.Length);
+                return true;
+            }
+            return false;
         }
 
         public byte[] Get(long position)
         {
-            byte[] counterbytes = GetPartial(position, 2, 4);
-            if (counterbytes == null)
-            {
-                return null;
-            }
-            int counter = BitConverter.ToInt32(counterbytes, 0);
-            return GetPartial(position, 10, counter);
+            //byte[] counterbytes = GetPartial(position, 2, 4);
+            //if (counterbytes == null)
+            //{
+            //    return null;
+            //}
+            //int counter = BitConverter.ToInt32(counterbytes, 0);
+            //if (counter <= 0)
+            //{
+            //    return null;
+            //}
+            //return GetPartial(position, 10, counter);
+            int counter = GetLength(position);
+            return counter > 0 ? GetPartial(position, 10, counter) : null;
         }
 
         public async Task<byte[]> GetAsync(long position)
         {
-            byte[] counterbytes = GetPartial(position, 2, 4);
-            if (counterbytes == null)
-            {
-                return null;
-            }
-            int counter = BitConverter.ToInt32(counterbytes, 0);
-            return await GetPartialAsync(position, 10, counter);
+            //byte[] counterbytes = GetPartial(position, 2, 4);
+            //if (counterbytes == null)
+            //{
+            //    return null;
+            //}
+            //int counter = BitConverter.ToInt32(counterbytes, 0);
+            var counter = GetLength(position);
+            return counter > 0 ? await GetPartialAsync(position, 10, counter) : null;
         }
 
+        public void Delete(long position)
+        {
+            var header = this.GetPartial(position, 0, 10);
+            if (header != null && header[6] == 0)
+            {
+                lock (_locker)
+                {
+                    this.Stream.Position = position + 6;
+                    this.Stream.WriteByte(1);
+                }
+            }
+
+        }
 
         public int GetLength(long position)
         {
-            byte[] counterbytes = GetPartial(position, 2, 4);
-            int counter = BitConverter.ToInt32(counterbytes, 0);
-            return counter;
+            byte[] counterbytes = GetPartial(position, 0, 10);
+
+            if (counterbytes != null && counterbytes[0] == 10 && counterbytes[1] == 13 && counterbytes[6] == 0)
+            {
+                return BitConverter.ToInt32(counterbytes, 2);
+            }
+
+            return 0;
         }
 
-        public byte[] Get(long position, int ColumnLen)
+        public byte[] GetAllCols(long position, int ColumnLen)
         {
-            return GetPartial(position, 10, ColumnLen);
+            var all = GetPartial(position, 0, ColumnLen + 10);
+            if (all != null)
+            {
+                if (all[0] == 10 && all[1] == 13 && all[6] == 0)
+                {
+                    return all.Skip(10).ToArray();
+                }
+            }
+            return null;
+        }
+
+        public async Task<byte[]> GetAllColsAsync(long position, int ColumnLen)
+        {
+            var all = await GetPartialAsync(position, 0, ColumnLen + 10);
+            if (all != null)
+            {
+                if (all[0] == 10 && all[1] == 13 && all[6] == 0)
+                {
+                    return all.Skip(10).ToArray();
+                }
+            }
+            return null;
         }
 
         public byte[] GetCol(long position, int relativePos, int len)
         {
+            // because this is used for filter query, for performance reason, did not check deletion byte. 
+
+
             if (len > 0)
             {
                 return GetPartial(position, relativePos + 10 + 8, len);
-            }
-            else
-            {
-                // TODO: This should not needed.... 
             }
             return null;
         }
 
         public void UpdateCol(long position, int relativeposition, int length, byte[] values)
         {
-            this.Stream.Position = position + 10 + relativeposition + 8;
-            this.Stream.Write(values, 0, length);
+            lock (_locker)
+            {
+                this.Stream.Position = position + 10 + relativeposition + 8;
+                this.Stream.Write(values, 0, length);
+            }
+
         }
 
         #endregion
@@ -152,7 +225,7 @@ namespace Kooboo.IndexedDB
         {
             if (_filestream != null)
             {
-                lock (_object)
+                lock (_locker)
                 {
                     if (_filestream != null)
                     {
@@ -165,40 +238,39 @@ namespace Kooboo.IndexedDB
 
         public void DelSelf()
         {
-            lock (_object)
+            lock (_locker)
             {
                 this.Close();
-                if (System.IO.File.Exists(this._fullfilename))
+                if (System.IO.File.Exists(this.Fullfilename))
                 {
-                    System.IO.File.Delete(this._fullfilename);
+                    System.IO.File.Delete(this.Fullfilename);
                 }
-            }  
+            }
         }
 
         public void Flush()
         {
             if (_filestream != null)
             {
-                lock (_object)
-                {
-                    _filestream.Flush();
-                }
+
+                _filestream.Flush();
+
             }
         }
 
         public FileStream Stream
-        { 
+        {
             get
             {
 
                 if (_filestream == null || !_filestream.CanRead)
                 {
-                    lock (_object)
+                    lock (_locker)
                     {
                         if (_filestream == null || !_filestream.CanRead)
                         {
                             this.OpenOrCreate();
-                            _filestream = StreamManager.GetFileStream(this._fullfilename);
+                            _filestream = StreamManager.GetFileStream(this.Fullfilename);
                         }
                     }
                 }

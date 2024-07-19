@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Development
 {
     public class Search : ISideBarMenu
     {
-        public SideBarSection Parent =>  SideBarSection.Development;
+        public SideBarSection Parent => SideBarSection.Development;
 
         public string Name => "Search";
 
@@ -22,7 +19,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("Search", Context); 
+            return Hardcoded.GetValue("Search", Context);
         }
     }
 }

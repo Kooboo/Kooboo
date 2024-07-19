@@ -1,13 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 
 namespace Kooboo.Web.DashBoard.TopPages
@@ -44,24 +41,24 @@ namespace Kooboo.Web.DashBoard.TopPages
 
             List<ResourceCount> pagecountes = new List<ResourceCount>();
 
-            List<TempCounter> temp = new List<TempCounter>(); 
+            List<TempCounter> temp = new List<TempCounter>();
 
             var logs = DashBoardHelper.GetLogs(Context);
 
             foreach (var item in logs.GroupBy(o => o.ObjectId))
-            { 
+            {
                 TempCounter one = new TempCounter();
-                one.Item = item.First(); 
+                one.Item = item.First();
                 one.Count = item.Count();
                 one.ObjectId = item.Key;
 
-                temp.Add(one);  
+                temp.Add(one);
 
             }
 
-            int counter = 0; 
-            foreach (var item in temp.OrderByDescending(o=>o.Count))
-            { 
+            int counter = 0;
+            foreach (var item in temp.OrderByDescending(o => o.Count))
+            {
                 var page = sitedb.Pages.Get(item.ObjectId, true);
                 if (page != null)
                 {
@@ -69,18 +66,18 @@ namespace Kooboo.Web.DashBoard.TopPages
                     var pageurl = ObjectService.GetObjectRelativeUrl(sitedb, item.ObjectId, ConstObjectType.Page);
                     count.Name = pageurl;
                     count.Count = item.Count;
-                    count.Size = item.Size; 
+                    count.Size = item.Size;
                     pagecountes.Add(count);
 
-                    counter += 1; 
-                    if (counter>=3)
+                    counter += 1;
+                    if (counter >= 3)
                     {
-                        return pagecountes; 
+                        return pagecountes;
                     }
-                }  
+                }
             }
 
-            return pagecountes; 
+            return pagecountes;
         }
 
     }

@@ -1,0 +1,8 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+.vscode/settings.json
+src/auto-import-components.d.ts
+/src/auto-imports.d.ts

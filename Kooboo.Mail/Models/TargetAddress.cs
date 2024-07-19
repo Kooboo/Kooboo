@@ -1,13 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Kooboo.Extensions;
-
 namespace Kooboo.Mail
 {
     public class TargetAddress : IMailObject
@@ -32,7 +24,7 @@ namespace Kooboo.Mail
 
         public static int ToId(string address)
         {
-            return  Lib.Security.Hash.ComputeInt(address);
+            return Lib.Security.Hash.ComputeInt(address);
         }
     }
 }

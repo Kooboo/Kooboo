@@ -1,11 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.IndexedDB.Helper;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
@@ -77,11 +73,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             short bytevalue = BitConverter.ToInt16(bytes, 0);
             this.setValue(value, bytevalue);
         }
-  
+
         public byte[] ToBytes(object Value)
         {
             short fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
-        } 
+        }
     }
 }

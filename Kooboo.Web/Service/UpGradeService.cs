@@ -1,34 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Web.Service
+﻿namespace Kooboo.Web.Service
 {
     public static class UpGradeService
     {
 
         public static void UpgradeFix()
         {
-            FixBefore13();
+            FixOLDSSL();
+            MigrateConfigFile();
         }
 
-        public static void FixBefore13()
+        public static void FixOLDSSL()
         {
-            //if (Kooboo.Data.AppSettings.Version.Major ==1 && Data.AppSettings.Version.Minor < 3)
-            //{
-            foreach (var item in Kooboo.Data.GlobalDb.WebSites.All())
+            System.Threading.Tasks.Task.Run(RenewSSL);
+        }
+
+        private static void RenewSSL()
+        {
+            // RENEW SSL..
+            var OldSsl = Kooboo.Data.GlobalDb.OldSslCertificate.Store.Filter.SelectAll();
+
+            foreach (var ssl in OldSsl)
             {
-                try
+                if (ssl.Expiration > DateTime.Now)
                 {
-                    Kooboo.Sites.Service.WebSiteService.VerifyFrontendEvent(item);
+                    Kooboo.Data.GlobalDb.SslCertificate.AddCert(ssl.Content);
                 }
-                catch (Exception ex)
-                {
-                    Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.Source + ex.StackTrace); 
-                }
-   
             }
-            //}
+
+        }
+
+        private static void MigrateConfigFile()
+        {
+            Kooboo.Data.Config.MigrateOld.Migration.Execute();
         }
 
     }

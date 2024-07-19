@@ -2,11 +2,6 @@
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB.Schedule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -54,14 +49,14 @@ namespace Kooboo.Web.ViewModel
         public string JobName { get; set; }
 
         public string Script { get; set; }
-         
+
         public RepeatFrequence Frequence { get; set; }
 
         public int FrequenceUnit { get; set; }
 
         public int DayInt { get; set; }
 
-        public int SecondOfDay {get;set;}
+        public int SecondOfDay { get; set; }
 
         public long BlockPosition { get; set; }
 
@@ -77,13 +72,13 @@ namespace Kooboo.Web.ViewModel
             StartTime = ScheduleJob.ScheduleTime;
             IsRepeat = false;
             JobName = ScheduleJob.Item.JobName;
-            this.CodeId = ScheduleJob.Item.CodeId;  
+            this.CodeId = ScheduleJob.Item.CodeId;
             this.DayInt = ScheduleJob.DayInt;
             this.BlockPosition = ScheduleJob.BlockPosition;
             this.SecondOfDay = ScheduleJob.SecondOfDay;
             this.Script = ScheduleJob.Item.Script;
 
-            this.Id = ScheduleJob.Item.Id; 
+            this.Id = ScheduleJob.Item.Id;
         }
 
         public JobViewModel(RepeatItem<Job> repeatjob)
@@ -93,20 +88,20 @@ namespace Kooboo.Web.ViewModel
             IsRepeat = true;
             Frequence = repeatjob.Frequence;
             FrequenceUnit = repeatjob.FrequenceUnit;
-            JobName = repeatjob.Item.JobName; 
+            JobName = repeatjob.Item.JobName;
 
             this.Id = repeatjob.Item.Id;
 
-            this.CodeId = repeatjob.Item.CodeId; 
-            
+            this.CodeId = repeatjob.Item.CodeId;
+
 
         }
 
-    
+
     }
 
     public class JobDeleteViewModel
-    { 
+    {
         public long Id { get; set; }
 
         public bool IsRepeat { get; set; }
@@ -115,7 +110,7 @@ namespace Kooboo.Web.ViewModel
 
         public int SecondOfDay { get; set; }
 
-        public long BlockPosition { get; set; }  
+        public long BlockPosition { get; set; }
     }
 
 }

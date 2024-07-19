@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -16,8 +12,8 @@ namespace Kooboo.Dom
     /// The DocumentFragment node's host concept is useful for HTML's template element
     /// and the ShadowRoot object and impacts the pre-insert and replace algorithms.
     /// </summary>
-   [Serializable]
- public   class DocumentFragment : Node
+    [Serializable]
+    public class DocumentFragment : Node
     {
 
     }

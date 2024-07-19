@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Api.ApiResponse
 {
@@ -19,6 +15,6 @@ namespace Kooboo.Api.ApiResponse
         public string ContentType { get; set; } = "Application/Json";
         public string Content { get; set; }
 
-        public int statusCode { get; set; } = 200; 
+        public int statusCode { get; set; } = 200;
     }
 }

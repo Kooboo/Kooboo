@@ -1,16 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.Columns;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Query
 {
-
     /// <summary>
     /// Use the filter to select records. 
     /// NOTE: only && operator is supported now, || operator is not supported for the time being.
@@ -40,7 +36,7 @@ namespace Kooboo.IndexedDB.Query
         {
             this.store = store;
             this.skip = 0;
-            filter = store.Filter; 
+            filter = store.Filter;
         }
 
 
@@ -65,22 +61,20 @@ namespace Kooboo.IndexedDB.Query
 
         public WhereFilter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> FieldExpression, List<T> Values)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldExpression); 
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldExpression);
 
             if (!string.IsNullOrEmpty(fieldname))
             {
                 this.filter.WhereIn<T>(fieldname, Values);
             }
+
             return this;
         }
-
-
 
 
         public bool Exists()
         {
             return this.filter.Exists();
-
         }
 
 
@@ -106,10 +100,9 @@ namespace Kooboo.IndexedDB.Query
         }
 
 
-
         public WhereFilter<TKey, TValue> OrderByAscending(Expression<Func<TValue, object>> expression)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression); 
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression);
 
             if (!string.IsNullOrEmpty(fieldname))
             {
@@ -134,7 +127,7 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public WhereFilter<TKey, TValue> OrderByDescending(string FieldOrPropertyName)
         {
-            this.OrderByFieldName = FieldOrPropertyName; 
+            this.OrderByFieldName = FieldOrPropertyName;
             this.filter.OrderByDescending(FieldOrPropertyName);
             return this;
         }
@@ -142,7 +135,7 @@ namespace Kooboo.IndexedDB.Query
 
         public WhereFilter<TKey, TValue> OrderByDescending(Expression<Func<TValue, object>> expression)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression); 
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression);
 
             if (!string.IsNullOrEmpty(fieldname))
             {
@@ -162,7 +155,7 @@ namespace Kooboo.IndexedDB.Query
             this.filter.UseColumnData();
             return this;
         }
-         
+
         public WhereFilter<TKey, TValue> Skip(int count)
         {
             this.skip = count;
@@ -197,18 +190,16 @@ namespace Kooboo.IndexedDB.Query
             ParseExpression(lambda.Body);
         }
 
-        private void ParseAndAlso(Expression expression)
+        private void ParseAndAlso(System.Linq.Expressions.Expression expression)
         {
             BinaryExpression binary = expression as BinaryExpression;
 
             ParseExpression(binary.Left);
             ParseExpression(binary.Right);
-
         }
 
-        private void ParseExpression(Expression expression)
+        private void ParseExpression(System.Linq.Expressions.Expression expression)
         {
-
             if (expression.NodeType == ExpressionType.Equal)
             {
                 ParseComparer(expression, Comparer.EqualTo);
@@ -252,24 +243,25 @@ namespace Kooboo.IndexedDB.Query
             }
             else
             {
-                throw new Exception("expression not supported " + expression.NodeType.ToString());
+                var msg = "expression not supported " + expression.NodeType.ToString();
+                throw new Exception(msg);
             }
         }
 
-        private void ParseMemberAccess(Expression expression)
+        private void ParseMemberAccess(System.Linq.Expressions.Expression expression)
         {
             MemberExpression member = expression as MemberExpression;
             string name = member.Member.Name;
             this.filter.WhereEqual(name, true);
         }
 
-        private void ParseCallExpresion(Expression expression)
+        private void ParseCallExpresion(System.Linq.Expressions.Expression expression)
         {
             MethodCallExpression call = expression as MethodCallExpression;
             this.filter.MethodCall(call);
         }
 
-        private void ParseNotExpression(Expression expression)
+        private void ParseNotExpression(System.Linq.Expressions.Expression expression)
         {
             UnaryExpression unary = expression as UnaryExpression;
             if (unary.Operand.NodeType == ExpressionType.MemberAccess)
@@ -285,7 +277,7 @@ namespace Kooboo.IndexedDB.Query
             }
         }
 
-        private void ParseComparer(Expression expression, Comparer compare)
+        private void ParseComparer(System.Linq.Expressions.Expression expression, Comparer compare)
         {
             BinaryExpression binary = expression as BinaryExpression;
             string name = string.Empty;
@@ -309,20 +301,22 @@ namespace Kooboo.IndexedDB.Query
             }
             else if (binary.Right.NodeType == ExpressionType.MemberAccess)
             {
-                constatvalue = Expression.Lambda<Func<object>>(Expression.Convert(binary.Right, typeof(object))).Compile().Invoke();
+                constatvalue = System.Linq.Expressions.Expression
+                    .Lambda<Func<object>>(System.Linq.Expressions.Expression.Convert(binary.Right, typeof(object)))
+                    .Compile().Invoke();
             }
             else if (binary.Right.NodeType == ExpressionType.Convert)
             {
-
                 UnaryExpression unary = binary.Right as UnaryExpression;
                 MemberExpression member = unary.Operand as MemberExpression;
 
-                constatvalue = Expression.Lambda<Func<object>>(Expression.Convert(member, typeof(object))).Compile().Invoke();
+                constatvalue = System.Linq.Expressions.Expression
+                    .Lambda<Func<object>>(System.Linq.Expressions.Expression.Convert(member, typeof(object))).Compile()
+                    .Invoke();
             }
             else
             {
                 throw new Exception("operation not supported yet, please report " + binary.Right.NodeType.ToString());
-
             }
 
 
@@ -330,11 +324,11 @@ namespace Kooboo.IndexedDB.Query
         }
 
 
-        private object GetExpressionValue(Expression member)
+        private object GetExpressionValue(System.Linq.Expressions.Expression member)
         {
-            var objectMember = Expression.Convert(member, typeof(object));
+            var objectMember = System.Linq.Expressions.Expression.Convert(member, typeof(object));
 
-            var getterLambda = Expression.Lambda<Func<object>>(objectMember);
+            var getterLambda = System.Linq.Expressions.Expression.Lambda<Func<object>>(objectMember);
 
             var getter = getterLambda.Compile();
 
@@ -344,15 +338,13 @@ namespace Kooboo.IndexedDB.Query
 
         private object GetValue(MemberExpression member)
         {
-            var objectMember = Expression.Convert(member, typeof(object));
+            var objectMember = System.Linq.Expressions.Expression.Convert(member, typeof(object));
 
-            var getterLambda = Expression.Lambda<Func<object>>(objectMember);
+            var getterLambda = System.Linq.Expressions.Expression.Lambda<Func<object>>(objectMember);
 
             var getter = getterLambda.Compile();
 
             return getter();
         }
-
     }
-
 }

@@ -168,7 +168,7 @@ namespace Microsoft.AspNet.WebUtilities
             return tcs.Task;
         }
 
-        private async void InternalReadAsync(byte[] buffer, int offset, int size, AsyncCallback callback, TaskCompletionSource<int> tcs)
+        private async Task InternalReadAsync(byte[] buffer, int offset, int size, AsyncCallback callback, TaskCompletionSource<int> tcs)
         {
             try
             {

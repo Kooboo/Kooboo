@@ -5,12 +5,14 @@ namespace Kooboo.Api.ApiRoute
 {
     public static class ApiRouting
     {
-        public static bool TryParseCommand(string RelativeUrl, string HttpMethod, out ApiCommand command, string beforeapi = null)
+        public static bool TryParseCommand(string RelativeUrl, string HttpMethod, out ApiCommand command,
+            string beforeapi = null)
         {
             if (string.IsNullOrEmpty(beforeapi))
             {
-                beforeapi = "_api"; 
+                beforeapi = "_api";
             }
+
             command = new ApiCommand();
             command.HttpMethod = HttpMethod;
             if (string.IsNullOrEmpty(RelativeUrl))
@@ -18,6 +20,7 @@ namespace Kooboo.Api.ApiRoute
                 command = null;
                 return false;
             }
+
             int questionMarkIndex = RelativeUrl.IndexOf("?");
             if (questionMarkIndex > -1)
             {
@@ -30,9 +33,10 @@ namespace Kooboo.Api.ApiRoute
                     RelativeUrl = RelativeUrl.Substring(0, questionMarkIndex);
                 }
             }
+
             RelativeUrl = RelativeUrl.Replace("\\", "/");
 
-            RoutingState state =RoutingState.BeforeApi;
+            RoutingState state = RoutingState.BeforeApi;
 
             string[] segments = RelativeUrl.Split('/');
 
@@ -51,6 +55,11 @@ namespace Kooboo.Api.ApiRoute
                 }
                 else
                 {
+                    if (state == RoutingState.BeforeObject && ApiVersion.IsVersion(item))
+                    {
+                        state = RoutingState.BeforeVersion;
+                    }
+
                     switch (state)
                     {
                         case RoutingState.BeforeApi:
@@ -66,11 +75,15 @@ namespace Kooboo.Api.ApiRoute
                                 }
                             }
                         case RoutingState.BeforeObject:
-
-                          
-                            command.ObjectType = item; 
+                            command.ObjectType = item;
                             state = RoutingState.AfterObject;
                             break;
+
+                        case RoutingState.BeforeVersion:
+                            command.Version = ApiVersion.GetVersion(item);
+                            state = RoutingState.BeforeObject;
+                            break;
+
                         case RoutingState.AfterObject:
                             command.Method = item;
                             state = RoutingState.AfterCommand;
@@ -80,18 +93,18 @@ namespace Kooboo.Api.ApiRoute
                             state = RoutingState.AfterValue;
                             break;
                         case RoutingState.AfterValue:
-                           
+
                             if (command.Parameters.Count == 0)
                             {
-                                command.Parameters.Add(command.Value); 
+                                command.Parameters.Add(command.Value);
                             }
+
                             command.Parameters.Add(item);
                             // return false;
-                            break; 
+                            break;
                         default:
                             break;
                     }
-
                 }
             }
 
@@ -105,9 +118,10 @@ namespace Kooboo.Api.ApiRoute
                 {
                     command.Method = HttpMethod;
                 }
+
                 return true;
             }
-        } 
+        }
     }
 
     public enum RoutingState
@@ -116,6 +130,7 @@ namespace Kooboo.Api.ApiRoute
         BeforeObject = 1,
         AfterObject = 2,
         AfterCommand = 3,
-        AfterValue = 4
+        AfterValue = 4,
+        BeforeVersion = 5
     }
 }

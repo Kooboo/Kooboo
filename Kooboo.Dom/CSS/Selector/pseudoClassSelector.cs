@@ -1,11 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kooboo.Dom.CSS
 {
 
@@ -23,7 +17,7 @@ namespace Kooboo.Dom.CSS
         public string elementE { get; set; }
 
         public string matchText { get; set; }
-  
+
 
         private simpleSelector _elementSelector;
         public simpleSelector ElementSelector
@@ -67,13 +61,13 @@ namespace Kooboo.Dom.CSS
                     }
                 }
 
-                return _notselector; 
+                return _notselector;
 
             }
         }
     }
 }
-        
+
 
 //E:root	an E element, root of the document	Structural pseudo-classes	3
 //E:nth-child(n)	an E element, the n-th child of its parent	Structural pseudo-classes	3

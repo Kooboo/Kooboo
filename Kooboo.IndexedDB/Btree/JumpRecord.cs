@@ -1,21 +1,17 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.IndexedDB.Btree
+namespace Kooboo.IndexedDB.BTree
 {
-   /// <summary>
-   /// each record with the jump table list.
-   /// </summary>
+    /// <summary>
+    /// each record with the jump table list.
+    /// </summary>
     public class JumpRecord
     {
         public JumpRecord()
         {
-            //this.pointerBytes = pointerbytes;
+            //this.pointerBytes = pointerBytes;
         }
 
         public Int64 diskLocation;
@@ -105,45 +101,45 @@ namespace Kooboo.IndexedDB.Btree
 
         }
 
-        private Int64 _buttom;
+        private Int64 _bottom;
 
-        public Int64 Buttom
+        public Int64 Bottom
         {
             get
             {
-                if (_buttom == default(Int64))
+                if (_bottom == default(Int64))
                 {
                     if (pointerBytes != null)
                     {
-                        _buttom = BitConverter.ToInt64(pointerBytes, 27);
+                        _bottom = BitConverter.ToInt64(pointerBytes, 27);
                     }
                 }
-                return _buttom;
+                return _bottom;
             }
             set
             {
-                _buttom = value;
+                _bottom = value;
             }
 
         }
 
-        private Int64 _blockposition;
+        private Int64 _blockPosition;
         public Int64 BlockPosition
         {
             get
             {
-                if (_blockposition == default(Int64))
+                if (_blockPosition == default(Int64))
                 {
                     if (pointerBytes != null)
                     {
-                        _blockposition = BitConverter.ToInt64(pointerBytes, 35);
+                        _blockPosition = BitConverter.ToInt64(pointerBytes, 35);
                     }
                 }
-                return _blockposition;
+                return _blockPosition;
             }
             set
             {
-                _blockposition = value;
+                _blockPosition = value;
             }
 
         }
@@ -176,23 +172,23 @@ namespace Kooboo.IndexedDB.Btree
 
         public byte[] ToBytes()
         {
-            byte[] bytearray = new byte[46];
+            byte[] byteArray = new byte[46];
 
-            bytearray[0] = BtreeIndexDuplicate.startbyteone;
-            bytearray[1] = BtreeIndexDuplicate.startbytetwo;
-            bytearray[44] = BtreeIndexDuplicate.startbyteone;
-            bytearray[45] = BtreeIndexDuplicate.startbytetwo;
+            byteArray[0] = BTreeIndexDuplicate.startByteOne;
+            byteArray[1] = BTreeIndexDuplicate.startByteTwo;
+            byteArray[44] = BTreeIndexDuplicate.startByteOne;
+            byteArray[45] = BTreeIndexDuplicate.startByteTwo;
 
-            bytearray[2] = (byte)Indicator;
-            System.Buffer.BlockCopy(BitConverter.GetBytes(Previous), 0, bytearray, 3, 8);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(Next), 0, bytearray, 11, 8);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(TOP), 0, bytearray, 19, 8);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(Buttom), 0, bytearray, 27, 8);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(BlockPosition), 0, bytearray, 35, 8);
+            byteArray[2] = (byte)Indicator;
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Previous), 0, byteArray, 3, 8);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Next), 0, byteArray, 11, 8);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(TOP), 0, byteArray, 19, 8);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Bottom), 0, byteArray, 27, 8);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(BlockPosition), 0, byteArray, 35, 8);
 
-            bytearray[43] = level;
+            byteArray[43] = level;
 
-            return bytearray;
+            return byteArray;
         }
     }
 

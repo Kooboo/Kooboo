@@ -21,14 +21,14 @@
         public override void AppendCSS(Env env)
         {
             env.Output.Append(
-                new Dictionary<string, string> { 
-                  { "", "" }, 
+                new Dictionary<string, string> {
+                  { "", "" },
                   { " ", " " },
                   { ":", " :" },
                   { "::", "::" },
                   { "+", env.Compress ? "+" : " + " },
                   { "~", env.Compress ? "~" : " ~ " },
-                  { ">", env.Compress ? ">" : " > " } 
+                  { ">", env.Compress ? ">" : " > " }
               }[Value]);
         }
     }

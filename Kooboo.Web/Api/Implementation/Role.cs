@@ -1,10 +1,10 @@
-﻿using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Linq;
+using Kooboo.Api;
+using Kooboo.Data.Permission;
+using Kooboo.Sites.Authorization;
 using Kooboo.Sites.Authorization.Model;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Permission;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -16,85 +16,107 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireUser => true;
 
-
-        public List<Kooboo.Sites.Authorization.Model.PermissionViewModel> List(ApiCall call)
+        [Permission(Feature.ROLE, Action = Data.Permission.Action.VIEW)]
+        public IEnumerable<RolePermission> List(ApiCall call)
         {
             var db = call.WebSite.SiteDb();
+            var roles = db.GetSiteRepository<RolePermissionRepository>().All();
 
-            var items = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().All();
+            foreach (var item in roles)
+            {
+                Migrator.run(item, PermissionService.GetList());
+            }
 
-            return items.Select(o => Sites.Authorization.PermissionService.ToViewModel(o, call.Context)).ToList();
+            foreach (var item in PermissionService.EmbeddedRoles)
+            {
+                if (roles.Any(a => a.Name == item.Name)) continue;
+                roles.Add(item);
+            }
+
+            return roles.OrderByDescending(it => it.CreationDate);
         }
 
-
-        public Kooboo.Sites.Authorization.Model.PermissionViewModel GetEdit(ApiCall call)
+        public record RolePermissionViewModel(string Name, List<PermissionItem> Permissions);
+        [Permission(Feature.ROLE, Action = Data.Permission.Action.VIEW)]
+        public RolePermissionViewModel GetEdit(ApiCall call)
         {
-            RolePermission permission=null;
             var db = call.WebSite.SiteDb();
-            var repo = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
-
+            var repo = db.GetSiteRepository<RolePermissionRepository>();
             string name = call.GetValue("name");
+            var permissionList = PermissionService.GetList();
+
             if (!string.IsNullOrWhiteSpace(name))
             {
-                permission = repo.Get(name);
-            }
-            else
-            {
-                if (call.ObjectId != default(Guid))
+                var permission = repo.Get(name);
+                if (permission == null)
                 {
-                    permission = repo.Get(call.ObjectId);
+                    permission = PermissionService.EmbeddedRoles.FirstOrDefault(f => f.Name == name);
                 }
-                else
+
+                Migrator.run(permission, PermissionService.GetList());
+
+                var permissions = new List<PermissionItem>();
+
+                foreach (var item in permissionList)
                 {
-                    var id = call.GetValue<Guid>("id");
-                    if (id != default(Guid))
+                    var exist = permission.Permissions.FirstOrDefault(f =>
+                        f.Feature == item.Feature && f.Action == item.Action);
+
+                    if (exist == null)
                     {
-                        permission = repo.Get(id);
+                        permissions.Add(item);
+                    }
+                    else
+                    {
+                        permissions.Add(exist);
                     }
                 }
-            }
 
-
-            if (permission != null)
-            {
-                return Kooboo.Sites.Authorization.PermissionService.ToViewModel(permission, call.Context);
+                return new RolePermissionViewModel(permission.Name, permissions);
             }
             else
             {
-                return Kooboo.Sites.Authorization.DefaultData.Available;
-            } 
+                return new RolePermissionViewModel("", permissionList);
+            }
         }
-         
-        public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
-        {
-            var permission = Kooboo.Sites.Authorization.PermissionService.ExtractPermissionFromModel(model);
-            Kooboo.Sites.Authorization.Model.RolePermission role = new Sites.Authorization.Model.RolePermission();
-            role.Name = model.Name;
-            role.Permission = permission;
 
-            var sitedb = call.WebSite.SiteDb();
-            sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role, call.Context.User.Id);
+        [Kooboo.Attributes.RequireModel(typeof(RolePermissionViewModel))]
+        [Permission(Feature.ROLE, Action = Data.Permission.Action.EDIT)]
+        public void Post(ApiCall call, RolePermission role)
+        {
+            var db = call.WebSite.SiteDb();
+            var repo = db.GetSiteRepository<RolePermissionRepository>();
+            var model = repo.Get(role.Name);
+
+            if (model == null)
+            {
+                model = new RolePermission();
+                model.Name = role.Name;
+            }
+
+            model.Permissions = role.Permissions;
+            repo.AddOrUpdate(model, call.Context.User.Id);
         }
 
         public bool IsUniqueName(ApiCall call, string name)
         {
             name = name.ToLower();
-            if (name == "master" || name == "developer" || name == "contentmanager")
+            if (PermissionService.EmbeddedRoles.Any(a => a.Name == name))
             {
                 return false;
             }
 
             var sitedb = call.WebSite.SiteDb();
-            var item = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().Get(name);
+            var item = sitedb.GetSiteRepository<RolePermissionRepository>().Get(name);
 
             return item == null;
         }
 
-
+        [Permission(Feature.ROLE, Action = Data.Permission.Action.DELETE)]
         public bool Deletes(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
-            var repo = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
+            var repo = sitedb.GetSiteRepository<RolePermissionRepository>();
 
             string json = call.GetValue("ids");
             if (string.IsNullOrEmpty(json))
@@ -105,15 +127,22 @@ namespace Kooboo.Web.Api.Implementation
 
             if (ids != null && ids.Count() > 0)
             {
+                var users = sitedb.SiteUser.All();
+                var roles = ids.Select(s => repo.Get(s).Name).ToArray();
+
+                if (users.Any(a => roles.Contains(a.SiteRole)))
+                {
+                    throw new Exception("The role is in use and cannot be deleted");
+                }
+
                 foreach (var item in ids)
                 {
                     repo.Delete(item, call.Context.User.Id);
                 }
+
                 return true;
             }
             return false;
         }
-
-
     }
 }

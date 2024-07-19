@@ -4,8 +4,6 @@ using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Render.Components;
 using Kooboo.Sites.Service;
-using System;
-using System.Collections.Generic;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -52,9 +50,14 @@ namespace Kooboo.Web.Api.Implementation
                         model.EngineName = item.Value.StoreEngineName;
                     }
 
+                    if (item.Value.IsRegularHtmlTag)
+                    {
+                        model.Attribute = "env='server'";
+                    }
                     result.Add(model);
                 }
             }
+
             ComponentNames layout = new ComponentNames() { TagName = "Layout", DisplayName = Data.Language.Hardcoded.GetValue("Layout", call.Context) };
             result.Add(layout);
             return result;
@@ -85,7 +88,7 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
- 
+
         public string PreviewHtml(ApiCall call)
         {
             string tag = call.GetValue("tag");
@@ -109,7 +112,7 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-    
+
         public ComponentSource GetSource(ApiCall call)
         {
             ComponentSource source = new ComponentSource();
@@ -173,5 +176,8 @@ namespace Kooboo.Web.Api.Implementation
         public bool RequireEngine { get; set; }
 
         public string EngineName { get; set; }
+
+
+        public string Attribute { get; set; }
     }
 }

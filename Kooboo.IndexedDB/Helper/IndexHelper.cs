@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -19,7 +17,7 @@ namespace Kooboo.IndexedDB.Helper
                 throw new Exception("Invalid field name or keytype.");
             }
 
-            if (type == typeof(string) || type == typeof(byte) || type == typeof(Int32) || type == typeof(Int64) || type == typeof(Int16) || type == typeof(DateTime) || type == typeof(Guid) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
+            if (type == typeof(string) || type == typeof(byte[]) || type == typeof(byte) || type == typeof(Int32) || type == typeof(Int64) || type == typeof(Int16) || type == typeof(DateTime) || type == typeof(Guid) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
             {
                 return;
             }
@@ -88,7 +86,7 @@ namespace Kooboo.IndexedDB.Helper
 
             byte[] tickbytes = BitConverter.GetBytes(tick);
 
-            tickbytes = tickbytes.Reverse().ToArray(); 
+            tickbytes = tickbytes.Reverse().ToArray();
 
             var newid = Guid.NewGuid();
 
@@ -113,7 +111,7 @@ namespace Kooboo.IndexedDB.Helper
 
             System.Buffer.BlockCopy(bytes, 0, longbyte, 0, 8);
 
-            longbyte = longbyte.Reverse().ToArray(); 
+            longbyte = longbyte.Reverse().ToArray();
 
             var longtick = BitConverter.ToInt64(longbyte, 0);
 

@@ -1,23 +1,19 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands.SearchCommand
 {
-   public static class Keywords
+    public static class Keywords
     {
-        private static List<SearchKeyword> _list; 
+        private static List<SearchKeyword> _list;
 
         public static List<SearchKeyword> List
         {
             get
             {
-               if (_list == null)
-                { 
+                if (_list == null)
+                {
                     _list = new List<SearchKeyword>();
 
                     string keywordsWithPara = "ALL ANSWERED DELETED DRAFT FLAGGED NEW OLD RECENT SEEN UNANSWERED UNDELETED UNDRAFT UNFLAGGED UNSEEN";
@@ -30,7 +26,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                             _list.Add(new SearchKeyword() { Name = item });
                         }
                     }
-                     
+
                     string oneStringkey = "BCC BODY CC FROM SUBJECT TEXT TO";
 
                     foreach (var item in oneStringkey.Split(' '))
@@ -40,8 +36,8 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                             SearchKeyword textkey = new SearchKeyword();
                             textkey.Name = item;
                             textkey.Arguments = new List<SearchKeyword.Argument>();
-                            textkey.Arguments.Add(new SearchKeyword.Argument() { FieldName = "STRING", DataType = SearchKeyword.Argument.SearchDataType.Text }); 
-                            _list.Add(textkey); 
+                            textkey.Arguments.Add(new SearchKeyword.Argument() { FieldName = "STRING", DataType = SearchKeyword.Argument.SearchDataType.Text });
+                            _list.Add(textkey);
                         }
                     }
 
@@ -51,25 +47,25 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                     {
                         if (!string.IsNullOrEmpty(item))
                         {
-                            SearchKeyword datekey = new SearchKeyword() { Name = item, UseAsCollection = true };  
-                            datekey.Arguments = new List<SearchKeyword.Argument>(); 
+                            SearchKeyword datekey = new SearchKeyword() { Name = item, UseAsCollection = true };
+                            datekey.Arguments = new List<SearchKeyword.Argument>();
                             datekey.Arguments.Add(new SearchKeyword.Argument() { FieldName = "DATE", DataType = SearchKeyword.Argument.SearchDataType.Date });
                             _list.Add(datekey);
                         }
                     }
 
-                    SearchKeyword key = new SearchKeyword() { Name = "HEADER" };  
-                    key.Arguments = new List<SearchKeyword.Argument>(); 
+                    SearchKeyword key = new SearchKeyword() { Name = "HEADER" };
+                    key.Arguments = new List<SearchKeyword.Argument>();
                     key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "FIELD-NAME", DataType = SearchKeyword.Argument.SearchDataType.Text });
-                    key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "STRING",  DataType = SearchKeyword.Argument.SearchDataType.Text, Optional = true});
+                    key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "STRING", DataType = SearchKeyword.Argument.SearchDataType.Text, Optional = true });
                     _list.Add(key);
 
                     key = new SearchKeyword() { Name = "KEYWORD" };
-                    key.Arguments = new List<SearchKeyword.Argument>(); 
+                    key.Arguments = new List<SearchKeyword.Argument>();
                     key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "FLAG", DataType = SearchKeyword.Argument.SearchDataType.Text });
                     _list.Add(key);
 
-                    key = new SearchKeyword() { Name = "LARGER", UseAsCollection = true  };
+                    key = new SearchKeyword() { Name = "LARGER", UseAsCollection = true };
                     key.Arguments = new List<SearchKeyword.Argument>();
                     key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "N", DataType = SearchKeyword.Argument.SearchDataType.Number });
                     _list.Add(key);
@@ -80,29 +76,29 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                     _list.Add(key);
 
                     key = new SearchKeyword() { Name = "UID", UseAsCollection = true };
-                    key.Arguments = new List<SearchKeyword.Argument>(); 
+                    key.Arguments = new List<SearchKeyword.Argument>();
                     key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "SEQUENCE-SET", DataType = SearchKeyword.Argument.SearchDataType.Text });
                     _list.Add(key);
 
-                    key = new SearchKeyword() { Name = "OR",  Type = SearchType.OR };
+                    key = new SearchKeyword() { Name = "OR", Type = SearchType.OR };
                     key.Arguments = new List<SearchKeyword.Argument>();
                     key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "Searchkeys", DataType = SearchKeyword.Argument.SearchDataType.Text });
                     _list.Add(key);
 
-                    key = new SearchKeyword() { Name = "NOT", Type = SearchType.NOT};
+                    key = new SearchKeyword() { Name = "NOT", Type = SearchType.NOT };
                     key.Arguments = new List<SearchKeyword.Argument>();
                     key.Arguments.Add(new SearchKeyword.Argument() { FieldName = "Searchkey", DataType = SearchKeyword.Argument.SearchDataType.Text });
-                    _list.Add(key); 
+                    _list.Add(key);
                 }
 
-                return _list; 
+                return _list;
             }
         }
 
         public static SearchKeyword Find(string name)
         {
-            name = name.ToUpper(); 
-            return List.Find(o => o.Name == name); 
+            name = name.ToUpper();
+            return List.Find(o => o.Name == name);
         }
     }
 
@@ -114,9 +110,9 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
         public bool UseAsCollection { get; set; }
 
-        public SearchType Type { get; set; } = SearchType.Normal; 
-         
-          
+        public SearchType Type { get; set; } = SearchType.Normal;
+
+
         public class Argument
         {
             public string FieldName { get; set; }
@@ -134,19 +130,19 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
         }
     }
 }
- 
+
 //ALL
 //   All messages in the mailbox; the default initial key for
 //         ANDing.
 
 //      ANSWERED
 //         Messages with the \Answered flag set.
- 
+
 
 //Crispin Standards Track[Page 50]
 
 //RFC 3501                         IMAPv4 March 2003
- 
+
 //      BCC<string>
 //         Messages that contain the specified string in the envelope
 //         structure's BCC field.
@@ -233,7 +229,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 //          timezone) is within the specified date.
 
 //       SENTSINCE<date>
- 
+
 //          Messages whose [RFC-2822] Date: header (disregarding time and
 //          timezone) is within or later than the specified date.
 
@@ -244,10 +240,10 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 //      SMALLER<n>
 //         Messages with an[RFC - 2822] size smaller than the specified
 //          number of octets.
-     
+
 //       SUBJECT<string>
 //          Messages that contain the specified string in the envelope
- 
+
 //          structure's SUBJECT field.
 
 
@@ -257,7 +253,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
 //       TO<string>
 //          Messages that contain the specified string in the envelope
- 
+
 //          structure's TO field.
 
 

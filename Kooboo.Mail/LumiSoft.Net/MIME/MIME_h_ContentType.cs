@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.MIME
@@ -53,10 +52,10 @@ namespace LumiSoft.Net.MIME
     /// </remarks>
     public class MIME_h_ContentType : MIME_h
     {
-        private bool                       m_IsModified  = false;
-        private string                     m_ParseValue  = null;
-        private string                     m_Type        = "";
-        private string                     m_SubType     = "";
+        private bool m_IsModified = false;
+        private string m_ParseValue = null;
+        private string m_Type = "";
+        private string m_SubType = "";
         private MIME_h_ParameterCollection m_pParameters = null;
 
         /// <summary>
@@ -66,28 +65,33 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ArgumentNullException">Is raised when <b>mediaType</b> is null reference.</exception>
         public MIME_h_ContentType(string mediaType)
         {
-            if(mediaType == null){
+            if (mediaType == null)
+            {
                 throw new ArgumentNullException(mediaType);
             }
 
-            string[] type_subtype = mediaType.Split(new char[]{'/',},2);
-            if(type_subtype.Length == 2){
-                if(type_subtype[0] == "" || !MIME_Reader.IsToken(type_subtype[0])){
+            string[] type_subtype = mediaType.Split(new char[] { '/', }, 2);
+            if (type_subtype.Length == 2)
+            {
+                if (type_subtype[0] == "" || !MIME_Reader.IsToken(type_subtype[0]))
+                {
                     throw new ArgumentException("Invalid argument 'mediaType' value '" + mediaType + "', value must be token.");
-                }                
-                if(type_subtype[1] == "" || !MIME_Reader.IsToken(type_subtype[1])){
+                }
+                if (type_subtype[1] == "" || !MIME_Reader.IsToken(type_subtype[1]))
+                {
                     throw new ArgumentException("Invalid argument 'mediaType' value '" + mediaType + "', value must be token.");
                 }
 
-                m_Type    = type_subtype[0];
+                m_Type = type_subtype[0];
                 m_SubType = type_subtype[1];
             }
-            else{
+            else
+            {
                 throw new ArgumentException("Invalid argument 'mediaType' value '" + mediaType + "'.");
             }
 
             m_pParameters = new MIME_h_ParameterCollection(this);
-            m_IsModified  = true;
+            m_IsModified = true;
         }
 
         /// <summary>
@@ -110,7 +114,8 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ParseException">Is raised when header field parsing errors.</exception>
         public static MIME_h_ContentType Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
@@ -118,30 +123,35 @@ namespace LumiSoft.Net.MIME
             string valueDecoded = MIME_Encoding_EncodedWord.DecodeS(value);
 
             MIME_h_ContentType retVal = new MIME_h_ContentType();
-            
-            string[] name_value = valueDecoded.Split(new char[]{':'},2);
-            if(name_value.Length != 2){
+
+            string[] name_value = valueDecoded.Split(new char[] { ':' }, 2);
+            if (name_value.Length != 2)
+            {
                 throw new ParseException("Invalid Content-Type: header field value '" + value + "'.");
             }
-            
+
             MIME_Reader r = new MIME_Reader(name_value[1]);
             string type = r.Token();
-            if(type == null){
+            if (type == null)
+            {
                 throw new ParseException("Invalid Content-Type: header field value '" + value + "'.");
             }
             retVal.m_Type = type;
 
-            if(r.Char(false) != '/'){
+            if (r.Char(false) != '/')
+            {
                 throw new ParseException("Invalid Content-Type: header field value '" + value + "'.");
             }
 
             string subtype = r.Token();
-            if(subtype == null){
+            if (subtype == null)
+            {
                 throw new ParseException("Invalid Content-Type: header field value '" + value + "'.");
             }
             retVal.m_SubType = subtype;
 
-            if(r.Available > 0){
+            if (r.Available > 0)
+            {
                 retVal.m_pParameters.Parse(r);
             }
 
@@ -163,12 +173,14 @@ namespace LumiSoft.Net.MIME
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header field value not modified, original encoding is kept.</param>
         /// <returns>Returns header field as string.</returns>
-        public override string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode)
+        public override string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode)
         {
-            if(!reEncode && !this.IsModified){
+            if (!reEncode && !this.IsModified)
+            {
                 return m_ParseValue;
             }
-            else{
+            else
+            {
                 StringBuilder retVal = new StringBuilder();
                 retVal.Append("Content-Type: " + m_Type + "/" + m_SubType);
                 retVal.Append(m_pParameters.ToString(parmetersCharset));
@@ -190,7 +202,7 @@ namespace LumiSoft.Net.MIME
         /// <exception cref="ObjectDisposedException">Is riased when this class is disposed and this property is accessed.</exception>
         public override bool IsModified
         {
-            get{ return m_IsModified || m_pParameters.IsModified; }
+            get { return m_IsModified || m_pParameters.IsModified; }
         }
 
         /// <summary>
@@ -207,7 +219,7 @@ namespace LumiSoft.Net.MIME
         /// <remarks>The official list of reggistered types are http://www.iana.org/assignments/media-types .</remarks>
         public string Type
         {
-            get{ return m_Type; }
+            get { return m_Type; }
         }
 
         /// <summary>
@@ -216,7 +228,7 @@ namespace LumiSoft.Net.MIME
         /// <remarks>The official list of reggistered types are http://www.iana.org/assignments/media-types .</remarks>
         public string SubType
         {
-            get{ return m_SubType; }
+            get { return m_SubType; }
         }
 
         /// <summary>
@@ -225,7 +237,7 @@ namespace LumiSoft.Net.MIME
         [Obsolete("Mispelled 'TypeWithSubype', use TypeWithSubtype instead !")]
         public string TypeWithSubype
         {
-            get{ return m_Type + "/" + m_SubType; }
+            get { return m_Type + "/" + m_SubType; }
         }
 
         /// <summary>
@@ -233,7 +245,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public string TypeWithSubtype
         {
-            get{ return m_Type + "/" + m_SubType; }
+            get { return m_Type + "/" + m_SubType; }
         }
 
         /// <summary>
@@ -241,7 +253,7 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public MIME_h_ParameterCollection Parameters
         {
-            get{ return m_pParameters; }
+            get { return m_pParameters; }
         }
 
         /// <summary>
@@ -249,19 +261,19 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public string Param_Name
         {
-            get{ return m_pParameters["name"]; }
+            get { return m_pParameters["name"]; }
 
-            set{ m_pParameters["name"] = value; }
+            set { m_pParameters["name"] = value; }
         }
-        
+
         /// <summary>
         /// Gets or sets Content-Type <b>charset</b> parameter value. Value null means not specified.
         /// </summary>
         public string Param_Charset
         {
-            get{ return m_pParameters["charset"]; }
+            get { return m_pParameters["charset"]; }
 
-            set{ m_pParameters["charset"] = value; }
+            set { m_pParameters["charset"] = value; }
         }
 
         /// <summary>
@@ -269,9 +281,9 @@ namespace LumiSoft.Net.MIME
         /// </summary>
         public string Param_Boundary
         {
-            get{ return m_pParameters["boundary"]; }
+            get { return m_pParameters["boundary"]; }
 
-            set{ m_pParameters["boundary"] = value; }
+            set { m_pParameters["boundary"] = value; }
         }
 
         #endregion

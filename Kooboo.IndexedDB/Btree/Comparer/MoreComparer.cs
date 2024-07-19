@@ -1,14 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Kooboo.IndexedDB.Btree.Comparer
+namespace Kooboo.IndexedDB.BTree.Comparer
 {
- public class MoreComparer
+    public class MoreComparer
     {
         /// <summary>
         /// test whether input start with comparevalue or not. 
@@ -40,7 +34,7 @@ namespace Kooboo.IndexedDB.Btree.Comparer
         /// <returns></returns>
         public static bool Contains(byte[] input, byte[] comparevalue, int ValueLength, int MaxInputLength)
         {
-            int maxi = MaxInputLength - ValueLength +1;   // when this i reach, return false. 
+            int maxi = MaxInputLength - ValueLength + 1;   // when this i reach, return false. 
 
             byte startbyte = comparevalue[0];
 

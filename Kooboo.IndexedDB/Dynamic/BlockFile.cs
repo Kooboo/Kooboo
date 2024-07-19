@@ -47,8 +47,8 @@ namespace Kooboo.IndexedDB.Dynamic
         // keep for upgrade.. not used any more. 
         public byte[] GetContent(long position, int KeyColumnOffset)
         {
-            byte[] counterbytes = GetPartial(position, 26, 4);
-            int counter = BitConverter.ToInt32(counterbytes, 0);
+            byte[] counterBytes = GetPartial(position, 26, 4);
+            int counter = BitConverter.ToInt32(counterBytes, 0);
             return GetPartial(position, 30 + KeyColumnOffset, counter);
         }
 
@@ -73,24 +73,24 @@ namespace Kooboo.IndexedDB.Dynamic
 
             System.Buffer.BlockCopy(bytes, 0, total, 0, TotalByteLen);
 
-            Int64 currentposition;
-            currentposition = Stream.Length;
-            Stream.Position = currentposition;
+            Int64 currentPosition;
+            currentPosition = Stream.Length;
+            Stream.Position = currentPosition;
             Stream.Write(header, 0, 10);
             Stream.Write(total, 0, tolerance);
 
-            return currentposition;
+            return currentPosition;
         }
 
-        public void UpdateBlock(byte[] bytes, long blockposition)
+        public void UpdateBlock(byte[] bytes, long blockPosition)
         {
             byte[] counter = BitConverter.GetBytes(bytes.Length);
 
-            Stream.Position = blockposition + 2;
+            Stream.Position = blockPosition + 2;
 
             Stream.Write(counter, 0, 4);
 
-            Stream.Position = blockposition + 10;
+            Stream.Position = blockPosition + 10;
             Stream.Write(bytes, 0, bytes.Length);
 
         }
@@ -98,15 +98,15 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public byte[] Get(long position)
         {
-            byte[] counterbytes = GetPartial(position, 2, 4);
-            int counter = BitConverter.ToInt32(counterbytes, 0);
+            byte[] counterBytes = GetPartial(position, 2, 4);
+            int counter = BitConverter.ToInt32(counterBytes, 0);
             return GetPartial(position, 10, counter);
         }
 
         public int GetTolerance(long position)
         {
-            byte[] counterbytes = GetPartial(position, 6, 4);
-            return BitConverter.ToInt32(counterbytes, 0);
+            byte[] counterBytes = GetPartial(position, 6, 4);
+            return BitConverter.ToInt32(counterBytes, 0);
         }
 
 
@@ -130,7 +130,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     byte[] header = GetPartial(position, relativePos + 10, 8);
                     int counter = BitConverter.ToInt32(header, 4);
                     if (counter > 0)
-                    { 
+                    {
                         return GetPartial(position, relativePos + 10 + 8, counter);
                     }
                 }

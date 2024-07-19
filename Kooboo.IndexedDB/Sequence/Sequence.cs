@@ -1,10 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.IndexedDB.ByteConverter;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Kooboo.IndexedDB.Sequence; 
+using Kooboo.IndexedDB.ByteConverter;
+using Kooboo.IndexedDB.Sequence;
 
 namespace Kooboo.IndexedDB
 {
@@ -55,7 +55,7 @@ namespace Kooboo.IndexedDB
         /// </summary>
         /// <param name="sequencename"></param>
         public Sequence(string SequenceNameOrFullFileName)
-        { 
+        {
             if (System.IO.Path.IsPathRooted(SequenceNameOrFullFileName))
             {
                 this.FullFileName = SequenceNameOrFullFileName;
@@ -155,6 +155,11 @@ namespace Kooboo.IndexedDB
 
         public TValue Get(Int64 position, int bytescount)
         {
+            if (position <= 0 || bytescount < 0)
+            {
+                return default(TValue);
+            }
+
             // the first 6 byte are the sanity checker and bytecounter. 
             byte[] contentbytes = new byte[bytescount];
 
@@ -163,21 +168,29 @@ namespace Kooboo.IndexedDB
                 Stream.Position = position + 6;
                 Stream.Read(contentbytes, 0, bytescount);
             }
-
             return this.ValueConverter.FromByte(contentbytes);
         }
 
         public TValue Get(long position)
         {
             int count = GetValueBytesCount(position, true);
-            return Get(position, count);
+
+            if (count < DBSetting.MaxSequenceObjectSize)
+            {
+                return Get(position, count);
+            }
+            else
+            {
+                return default(TValue);
+            }
+
         }
 
         public Stream GetBlockStream(long position)
         {
             int count = GetValueBytesCount(position, true);
 
-            return new BlockStream(this.FullFileName, position + 6, count); 
+            return new BlockStream(this.FullFileName, position + 6, count);
         }
 
         public SequenceCollection<TValue> GetCollection(bool ascending = false)
@@ -197,11 +210,11 @@ namespace Kooboo.IndexedDB
             foreach (var item in this.GetCollection(ascending))
             {
                 list.Add(item);
-            } 
-            return list; 
+            }
+            return list;
         }
 
-        public  List<TValue> Take(bool ascending, int skip = 0, int count = 100)
+        public List<TValue> Take(bool ascending, int skip = 0, int count = 100)
         {
             List<TValue> col = new List<TValue>();
 
@@ -227,14 +240,14 @@ namespace Kooboo.IndexedDB
             }
             return col;
         }
- 
+
 
         public SequenceQuery<TValue> QueryAscending(Predicate<TValue> Query)
         {
             SequenceQuery<TValue> query = new SequenceQuery<TValue>(this);
             query.Ascending = true;
             query.Predicate = Query;
-            return query;            
+            return query;
         }
 
         public SequenceQuery<TValue> QueryDescending(Predicate<TValue> Query)
@@ -309,11 +322,11 @@ namespace Kooboo.IndexedDB
 
         public void Flush()
         {
-            lock(_object)
+            lock (_object)
             {
-                if (_stream !=null)
+                if (_stream != null)
                 {
-                    _stream.Flush(); 
+                    _stream.Flush();
                 }
             }
         }
@@ -336,7 +349,7 @@ namespace Kooboo.IndexedDB
                         {
 
                             _initialize();
-                            _stream = StreamManager.GetFileStream(this.FullFileName); 
+                            _stream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
                 }
@@ -367,25 +380,25 @@ namespace Kooboo.IndexedDB
         public SequenceQuery(Sequence<TResult> Seq)
         {
             this._seq = Seq;
-            this.skip = 0; 
+            this.skip = 0;
         }
 
         public SequenceQuery<TResult> Skip(int skipcount)
         {
             this.skip = skipcount;
-            return this; 
+            return this;
         }
 
         public SequenceQuery<TResult> EndQueryCondition(Predicate<TResult> EndCondition)
         {
             this.EndPredicate = EndCondition;
-            return this; 
+            return this;
         }
 
         public List<TResult> Take(int takecount)
         {
             List<TResult> col = new List<TResult>();
-       
+
             int skipped = 0;
             int taken = 0;
 
@@ -414,7 +427,7 @@ namespace Kooboo.IndexedDB
                     taken += 1;
                 }
 
-          
+
             }
             return col;
 
@@ -422,8 +435,8 @@ namespace Kooboo.IndexedDB
 
         public int Count()
         {
-            int counter = 0;  
- 
+            int counter = 0;
+
             foreach (var item in this._seq.GetCollection(Ascending))
             {
                 if (this.EndPredicate != null && this.EndPredicate(item))
@@ -432,13 +445,13 @@ namespace Kooboo.IndexedDB
                 }
 
                 if (Predicate(item))
-                { 
-                    counter += 1;  
-                } 
+                {
+                    counter += 1;
+                }
             }
             return counter;
 
         }
- 
+
     }
 }

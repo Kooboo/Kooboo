@@ -1,18 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
-using Kooboo.Data.Interface;
+using Kooboo.Data;
+using Kooboo.Data.Config;
+using Kooboo.Data.Context.UserProviders;
+using Kooboo.Data.Language;
 using Kooboo.Data.Models;
-using Kooboo.Lib.Utilities;
+using Kooboo.Data.Permission;
+using Kooboo.IndexedDB;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using Kooboo.Sites.Sync;
-using Kooboo.Sites.TaskQueue.Model;
+using Kooboo.Sites.Sync.Settings;
+using Kooboo.Sites.ViewModel;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -42,6 +47,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
+
         public List<SimpleSiteItemViewModel> SiteList(ApiCall call)
         {
             User user = call.Context.User;
@@ -50,60 +56,95 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
-            var orgid = call.GetValue<Guid>("OrganizationId");
-            if (orgid == default(Guid))
+            var OrgId = call.GetValue<Guid>("OrganizationId");
+            if (OrgId == default(Guid))
             {
-                orgid = user.CurrentOrgId;
+                OrgId = user.CurrentOrgId;
             }
 
-            var sites = WebSiteService.RemoteListByUser(user.Id, orgid);
+            var sites = WebSiteService.RemoteListByUser(user, OrgId);
 
             List<SimpleSiteItemViewModel> result = new List<SimpleSiteItemViewModel>();
 
             foreach (var item in sites)
             {
-                var lastversion = item.SiteDb().Log.Store.LastKey;
+                var lastVersion = item.SiteDb().Log.Store.LastKey;
 
-                result.Add(new SimpleSiteItemViewModel { Id = item.Id, Name = item.Name, LastVersion = lastversion });
+                result.Add(new SimpleSiteItemViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    LastVersion = lastVersion,
+                    Url = item.BaseUrl()?.TrimEnd('/')
+                });
             }
 
             return result;
         }
 
-        public List<SimpleSiteItemViewModel> RemoteSiteList(string remoteurl, ApiCall call)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public List<SimpleSiteItemViewModel> RemoteSiteList(string remoteUrl, Guid orgId, ApiCall call)
         {
-            if (string.IsNullOrEmpty(remoteurl))
-            {
-                return null;
-            }
+            var model = UserPublishService.RemoteSiteList(remoteUrl, orgId, call.Context);
+            var list = call.Context.WebSite.SiteDb()
+                .SyncSettings.All()
+                .Select(s => s.RemoteWebSiteId)
+                .Union([call.WebSite.Id]);
 
-            var user = call.Context.User;
-            Guid OrganizationId = Service.UserService.GuessOrgId(user, remoteurl);
-            string username = user.UserName;
-            string password = Data.Service.UserLoginService.GetUserPassword(user);
-
-
-            if (!remoteurl.ToLower().StartsWith("http"))
-            {
-                remoteurl = "http://" + remoteurl;
-            }
-            remoteurl = remoteurl.Replace("\\", "/");
-            if (!remoteurl.EndsWith("/"))
-            {
-                remoteurl = remoteurl + "/";
-            }
-
-            remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + OrganizationId.ToString();
-
-            List<SimpleSiteItemViewModel> model = Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
-
+            model = model.Where(w => !list.Contains(w.Id)).ToList();
             return model;
         }
 
-
-        public List<SyncItemViewModel> List(ApiCall call)
+        public WebSite CreateSiteFromRemote(ApiCall call)
         {
-            List<SyncItemViewModel> result = new List<SyncItemViewModel>();
+            var domain = call.GetValue("FullDomain");
+            if (string.IsNullOrEmpty(domain))
+            {
+                throw new Exception("Domain is empty");
+            }
+
+            var siteName = call.GetValue("SiteName");
+            if (string.IsNullOrEmpty(siteName))
+            {
+                throw new Exception("siteName is empty");
+            }
+
+            var orgId = call.GetValue<Guid>("OrgId");
+            var orgs = GlobalDb.Users.Organizations(call.Context.User.Id);
+            if (orgs.All(a => a.Id != orgId))
+            {
+                throw new Exception("User does not have permission on this organization");
+            }
+
+            var existBinding = AppHost.BindingService.GetByFullDomain(domain);
+            if (existBinding?.Any() ?? false)
+            {
+                throw new Exception("Domain is in use");
+            }
+
+            if (!AppHost.SiteService.CheckNameAvailable(siteName, orgId))
+            {
+                throw new Exception("Site name is occupied");
+            }
+
+            var newSite = Kooboo.Sites.Service.WebSiteService.AddNewSite(
+                orgId,
+                siteName,
+                domain,
+                call.Context.User.Id, true
+            );
+
+            if (string.IsNullOrWhiteSpace(newSite.BaseUrl))
+            {
+                newSite.BaseUrl = newSite.BaseUrl()?.Trim('/');
+            }
+
+            return newSite;
+        }
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public List<SyncSettingViewModel> List(ApiCall call)
+        {
+            List<SyncSettingViewModel> result = new List<SyncSettingViewModel>();
 
             var sitedb = call.WebSite.SiteDb();
 
@@ -111,21 +152,78 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in list)
             {
-                SyncItemViewModel model = new SyncItemViewModel();
+                SyncSettingViewModel model = new SyncSettingViewModel();
                 model.Id = item.Id;
                 model.RemoteServerUrl = item.RemoteServerUrl;
                 model.RemoteSiteName = item.RemoteSiteName;
-                model.Difference = sitedb.Synchronization.QueueCount(item.Id);
+                model.ServerName = item.ServerName;
+                model.LocalDifference = sitedb.SyncLog.PushItemsCount(item, call);
+                model.Difference = model.LocalDifference;
+                model.RemoteDifference = RemoteDiffer(item, sitedb, call);
                 result.Add(model);
             }
             return result;
         }
 
+        [Kooboo.Attributes.RequireParameters("id", "type")]
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public Dictionary<string, IEnumerable<KeyValuePair<string, string>>> Options(ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var type = call.GetValue("type");
+            FacetSource source = FacetSource.PushOut;
+            switch (type)
+            {
+                case "in":
+                    source = FacetSource.PullIn;
+                    break;
+                case "out":
+                    source = FacetSource.PushOut;
+                    break;
+                case "ignore":
+                    source = FacetSource.Ignore;
+                    break;
+                default:
+                    source = FacetSource.PushQueue;
+                    break;
+            }
+
+            var facet = sitedb.SyncLog.ScanFacet(call.ObjectId, source, call);
+
+            var storeNames = facet.StoreNames;
+            var editTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                EditType.Add.ToString(),
+                EditType.Update.ToString(),
+                EditType.Delete.ToString()
+            };
+
+            var userMaps = new Dictionary<string, string>();
+
+            foreach (var item in facet.UserIds)
+            {
+                if (!Kooboo.Data.Definition.BuiltInUser.IsBuiltInOrDefault(item))
+                {
+                    userMaps[item.ToString()] = Data.GlobalDb.Users.GetUserName(item);
+                }
+            }
+
+            return new Dictionary<string, IEnumerable<KeyValuePair<string, string>>>
+            {
+                [nameof(LogEntry.EditType)] = editTypes.ToArray()
+                .Select(it => new KeyValuePair<string, string>(it, Hardcoded.GetValue(it, call.Context))),
+                [nameof(LogEntry.StoreName)] = storeNames.ToArray()
+                .Select(it => new KeyValuePair<string, string>(it, Hardcoded.GetValue(it, call.Context))).OrderBy(it => it.Key),
+                [nameof(User)] = userMaps.ToList().OrderBy(it => it.Value)
+            };
+        }
+
         [Kooboo.Attributes.RequireModel(typeof(SyncSetting))]
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
         public void Post(ApiCall call)
         {
-            var siteid = call.GetGuidValue("SiteId");
-            Data.Models.WebSite website = Data.GlobalDb.WebSites.Get(siteid);
+            var siteId = call.GetGuidValue("SiteId");
+            WebSite website = Data.Config.AppHost.SiteRepo.Get(siteId);
 
             if (website == null)
             {
@@ -135,8 +233,6 @@ namespace Kooboo.Web.Api.Implementation
 
             if (website != null)
             {
-                ///TODO: if remotesiteId == default(guid), call to create remote site id... 
-                // url... /_api/site/create, FullDomain, SiteName.... 
 
                 if (!setting.RemoteServerUrl.ToLower().StartsWith("http"))
                 {
@@ -150,17 +246,21 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (!string.IsNullOrEmpty(FullDomain) && !string.IsNullOrEmpty(SiteName))
                     {
-                        string url = setting.RemoteServerUrl + "/_api/site/create";
+                        string url = setting.RemoteServerUrl + "/_api/publish/CreateSiteFromRemote";
                         Dictionary<string, string> para = new Dictionary<string, string>();
                         para.Add("FullDomain", FullDomain);
                         para.Add("SiteName", SiteName);
+                        para.Add("OrgId", setting.OrgId.ToString());
 
-                        var newsite = Lib.Helper.HttpHelper.Get<WebSite>(url, para, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
+                        var newSite = Lib.Helper.HttpHelper.Post<WebSite>(url, para,
+                            new Dictionary<string, string> {
+                               { "Authorization",$"bearer {UserProviderHelper.GetJtwTokentFromContext(call.Context)}" }
+                            }, true);
 
-                        if (newsite != null)
+                        if (newSite != null)
                         {
-                            setting.RemoteSiteName = newsite.Name;
-                            setting.RemoteWebSiteId = newsite.Id;
+                            setting.RemoteSiteName = newSite.Name;
+                            setting.RemoteWebSiteId = newSite.Id;
                         }
                     }
                 }
@@ -170,27 +270,17 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
         }
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public void Import(ApiCall call)
+        {
+            var setting = JsonHelper.Deserialize<SyncSetting>(call.Context.Request.Body);
+            call.WebSite.SiteDb().SyncSettings.AddOrUpdate(setting, call.Context.User.Id);
+        }
 
-        public virtual bool Deletes(ApiCall call)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.DELETE)]
+        public virtual bool Deletes(List<Guid> ids, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
-
-            string json = call.GetValue("ids");
-            if (string.IsNullOrEmpty(json))
-            {
-                json = call.Context.Request.Body;
-            }
-
-            List<Guid> ids = new List<Guid>();
-
-            try
-            {
-                ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
-            }
-            catch (Exception)
-            {
-                //throw;
-            }
 
             if (ids != null && ids.Count() > 0)
             {
@@ -203,368 +293,686 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-        [Kooboo.Attributes.RequireParameters("id")]
-        public List<PushItemViewModel> PushItems(ApiCall call)
-        {
-            List<PushItemViewModel> result = new List<PushItemViewModel>();
 
-            var sitedb = call.WebSite.SiteDb();
-            var kdb = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-
-            foreach (var item in sitedb.Synchronization.GetPushItems(call.ObjectId))
-            {
-                ChangeType changetype = ChangeType.Add;
-                if (item.EditType == IndexedDB.EditType.Delete)
-                {
-                    changetype = ChangeType.Delete;
-                }
-                else if (item.EditType == IndexedDB.EditType.Update)
-                {
-                    changetype = ChangeType.Update;
-                }
-
-                if (item.IsTable)
-                {
-
-                    var table = Data.DB.GetTable(kdb, item.TableName);
-                    if (table != null)
-                    {
-                        var logdata = table.GetLogData(item);
-                        PushItemViewModel viewmodel = new PushItemViewModel
-                        {
-                            Id = item.Id,
-                            ObjectType = Kooboo.Data.Language.Hardcoded.GetValue("Table", call.Context),
-                            Name = LogService.GetTableDisplayName(sitedb, item, call.Context),
-                            // KoobooType = siteojbect.ConstType,
-                            ChangeType = changetype,
-                            LastModified = item.UpdateTime,
-                            LogId = item.Id
-                        };
-                        result.Add(viewmodel);
-                    }
-                }
-                else
-                {
-
-                    var siteojbect = ObjectService.GetSiteObject(sitedb, item);
-                    if (siteojbect == null)
-                    {
-                        continue;
-                    }
-
-                    PushItemViewModel viewmodel = new PushItemViewModel
-                    {
-                        Id = item.Id,
-                        ObjectType = ConstTypeService.GetModelType(siteojbect.ConstType).Name,
-                        Name = LogService.GetLogDisplayName(sitedb, item),
-                        KoobooType = siteojbect.ConstType,
-                        ChangeType = changetype,
-                        LastModified = siteojbect.LastModified,
-                        LogId = item.Id
-                    };
-
-                    viewmodel.Size = CalculateUtility.GetSizeString(ObjectService.GetSize(siteojbect));
-
-                    if (siteojbect.ConstType == ConstObjectType.Image)
-                    {
-                        viewmodel.Thumbnail = ThumbnailService.GenerateThumbnailUrl(siteojbect.Id, 50, 50, call.WebSite.Id);
-                    }
-
-                    result.Add(viewmodel);
-                }
-
-            }
-
-            return result.OrderBy(o=>o.LogId).ToList();
-        }
-
-        [Kooboo.Attributes.RequireParameters("id", "logids")]
-        public void Push(ApiCall call)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public PagedListViewModel<ChangeItemViewModel> LocalChanges(Guid id, int PageNr, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
-            var setting = sitedb.SyncSettings.Get(call.ObjectId);
-            if (setting == null)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context));
-            }
-
-            verifysite(setting.RemoteServerUrl, setting.RemoteWebSiteId, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
-
-            string ApiReceiveUrl = "/_api/receiver/push";
-            string serveapiurl = setting.RemoteServerUrl;
-            if (!serveapiurl.ToLower().StartsWith("http"))
-            {
-                serveapiurl = "http://" + serveapiurl;
-            }
-            serveapiurl = Kooboo.Lib.Helper.UrlHelper.Combine(serveapiurl, ApiReceiveUrl);
-
-            string json = call.GetValue("logids");
-
-            List<long> ids = new List<long>();
-
-            bool DirectSubmit = false;
-
-            try
-            {
-                ids = Lib.Helper.JsonHelper.Deserialize<List<long>>(json);
-                if (ids.Count() < 5)
-                {
-                    DirectSubmit = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-
-            bool hasqueue = false;
-            Kooboo.Sites.TaskQueue.TaskExecutor.PostSyncObjectTask executor = new Sites.TaskQueue.TaskExecutor.PostSyncObjectTask();
-
-            string username = call.Context.User.UserName;
-            string password = Data.Service.UserLoginService.GetUserPassword(call.Context.User);
-
-
-            foreach (var item in ids)
-            {
-                var eachsync = SyncService.Prepare(sitedb, item);
-                PostSyncObject postobject = new PostSyncObject();
-                postobject.SyncObject = eachsync;
-                postobject.RemoteSiteId = setting.RemoteWebSiteId;
-                postobject.RemoteUrl = serveapiurl;
-                postobject.UserName = username;
-                postobject.Password = password;
-                postobject.RemoteSiteId = setting.RemoteWebSiteId;
-
-                if (DirectSubmit)
-                {
-                    if (!executor.Execute(sitedb, Lib.Helper.JsonHelper.Serialize(postobject)))
-                    {
-                        Sites.TaskQueue.QueueManager.Add(postobject, call.WebSite.Id);
-                        hasqueue = true;
-                    }
-                }
-                else
-                {
-                    Sites.TaskQueue.QueueManager.Add(postobject, call.WebSite.Id);
-                    hasqueue = true;
-                }
-
-                sitedb.Synchronization.AddOrUpdate(new Synchronization { SyncSettingId = setting.Id, StoreName = eachsync.StoreName, ObjectId = eachsync.ObjectId, In = false, Version = item });
-            }
-
-            if (hasqueue)
-            {
-                System.Threading.Tasks.Task.Run(() => Sites.TaskQueue.QueueManager.Execute(call.WebSite.Id));
-            }
-        }
-         
-        public PullResult Pull(Guid id, ApiCall call)
-        {
-            var sitedb = call.WebSite.SiteDb();
             var setting = sitedb.SyncSettings.Get(id);
-            if (setting == null)
+
+            var all = sitedb.SyncLog.PushItems(setting, call).OrderBy(o => o.Id);
+
+            int TotalCount = all.Count();
+
+            int PageSize = 50;
+            if (PageNr < 1)
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context));
+                PageNr = 1;
             }
-            long currentRemoteVersion = call.GetValue<long>("senderVersion");
-            if (currentRemoteVersion <= 0)
+            int skip = PageSize * (PageNr - 1);
+
+            var dataList = all.Skip(skip).Take(PageSize);
+
+
+            var renderContext = call.Context;
+
+            List<ChangeItemViewModel> items = new List<ChangeItemViewModel>();
+
+            foreach (var item in dataList)
             {
-                currentRemoteVersion = sitedb.Synchronization.GetLastIn(setting.Id);
+                var model = ChangeItemViewModel.FromLog(call.Context, item);
+                if (model != default) items.Add(model);
             }
 
-            string ApiSendToLocalUrl = "/_api/publish/SendToClient";
-            string serveapiurl = setting.RemoteServerUrl;
+            PagedListViewModel<ChangeItemViewModel> result = new PagedListViewModel<ChangeItemViewModel>();
+            result.List = items.ToList();
+            result.TotalCount = TotalCount;
+            result.PageNr = PageNr;
+            result.PageSize = PageSize;
 
-            verifysite(setting.RemoteServerUrl, setting.RemoteWebSiteId, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
+            return result;
+        }
 
-            if (!serveapiurl.ToLower().StartsWith("http"))
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public PushFeedBack PushItem(Guid SettingId, ApiCall call)
+        {
+            var logId = call.GetValue<long>("LogId");
+            return _Push(SettingId, logId, call, false);
+        }
+
+        public PushFeedBack ForcePush(Guid SettingId, long LogId, bool IgnoreCurrent, ApiCall call)
+        {
+            if (IgnoreCurrent)
             {
-                serveapiurl = "http://" + serveapiurl;
-            }
-            serveapiurl = Kooboo.Lib.Helper.UrlHelper.Combine(serveapiurl, ApiSendToLocalUrl);
+                var sitedb = call.Context.WebSite.SiteDb();
+                var log = sitedb.Log.Get(LogId);
+                Guid objectId = default;
+                if (log == null)
+                {
+                    log = new LogEntry();
+                }
+                else
+                {
+                    objectId = ObjectContainer.GuidConverter.FromByte(log.KeyBytes);
+                }
 
-            Dictionary<string, string> query = new Dictionary<string, string>();
-            query.Add("SiteId", setting.RemoteWebSiteId.ToString());
-            query.Add("LastId", currentRemoteVersion.ToString());
-
-            var syncobject = Kooboo.Lib.Helper.HttpHelper.Get<SyncObject>(serveapiurl, query, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
-
-            PullResult result = new PullResult();
-
-            if (syncobject != null)
-            {
-                SyncService.Receive(sitedb, syncobject, setting);
-                result.IsFinish = false;
-                result.SenderVersion = syncobject.SenderVersion;
+                sitedb.SyncLog.AddOut(SettingId, log.StoreName, log.TableColName, objectId, LogId, 0, call.Context.User.Id);
+                return new PushFeedBack();
             }
             else
             {
-                result.IsFinish = true;
+                return _Push(SettingId, LogId, call, true);
+            }
+        }
+
+        private PushFeedBack _Push(Guid SettingId, long LogId, ApiCall call, bool ForcePush)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var setting = sitedb.SyncSettings.Get(SettingId);
+
+            if (setting == null)
+            {
+                throw new Exception(Hardcoded.GetValue("Setting not found", call.Context));
+            }
+
+            var pushLog = GetPushLog(setting, sitedb, LogId, call);
+            if (pushLog.IsFinish || pushLog.Log == null)
+            {
+                return new PushFeedBack() { IsFinish = true };
+            }
+
+            string ApiReceiveUrl = ForcePush ? "/_api/receiver/ForcePush" : "/_api/receiver/Push";
+            string serverApiUrl = setting.RemoteServerUrl;
+            if (!serverApiUrl.ToLower().StartsWith("http"))
+            {
+                serverApiUrl = "http://" + serverApiUrl;
+            }
+            serverApiUrl = UrlHelper.Combine(serverApiUrl, ApiReceiveUrl);
+
+            var SyncItem = SyncService.Prepare(sitedb, pushLog.Log);
+            SyncItem.SenderIdentifier = setting.UniqueId;
+            SyncItem.RemoteSiteId = setting.RemoteWebSiteId;
+            SyncItem.RemoteLastVersion = sitedb.SyncLog.GetRemoteBackVersion(setting.Id, SyncItem.ObjectId);
+
+            var response = SyncService.SendToRemote(sitedb, SyncItem, serverApiUrl, setting.AccessToken ?? UserProviderHelper.GetJtwTokentFromContext(call.Context));
+
+            if (response.HasConflict == false)
+            {
+                sitedb.SyncLog.AddOut(setting.Id, SyncItem.StoreName, SyncItem.TableName, SyncItem.ObjectId, SyncItem.SenderVersion, response.ReceiverVersion, SyncItem.UserId);
+
+                return new PushFeedBack() { IsFinish = false, SiteLogId = pushLog.SiteLogId };
+            }
+            else
+            {
+                var result = new PushFeedBack() { HasConflict = true, IsFinish = false, RemoteBody = response.DisplayBody, RemoteVersion = response.ReceiverVersion, RemoteUserName = response.UserName, RemoteTime = response.LastModified, IsImage = response.IsImage };
+
+                result.IsImage = response.IsImage;
+
+                result.LocalBody = SyncService.GetLogSummaryBody(sitedb, pushLog.Log);
+                result.SiteLogId = pushLog.SiteLogId;
+
+                result.LocalTime = pushLog.Log.UpdateTime;
+                result.LocalUserName = Data.GlobalDb.Users.GetUserName(pushLog.Log.UserId);
+
+                return result;
+            }
+        }
+
+        private PushLog GetPushLog(SyncSetting setting, SiteDb sitedb, long LogId, ApiCall call)
+        {
+            var result = new PushLog();
+
+
+            if (LogId > 0)
+            {
+                result.SiteLogId = LogId;
+                result.Log = sitedb.Log.Get(LogId);
+            }
+            else
+            {
+                var logs = sitedb.SyncLog.PushItems(setting, call, 3);
+
+                if (logs == null || !logs.Any())
+                {
+                    return new PushLog() { IsFinish = true };
+                }
+                else
+                {
+                    result.SiteLogId = logs[0].Id;
+                    result.Log = logs.FirstOrDefault();
+                    result.SiteLogId = result.Log != null ? result.Log.Id : 0;
+                }
             }
             return result;
         }
 
 
-        private void verifysite(string removeservrerurl, Guid remotesiteid, string username, string password)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public void IgnoreLog(Guid SettingId, List<long> logs, ApiCall call)
         {
-            string ApiSendToLocalUrl = "/_api/publish/CheckSite?SiteId=" + remotesiteid.ToString();
-
-            if (!removeservrerurl.ToLower().StartsWith("http"))
+            var siteDb = call.WebSite.SiteDb();
+            foreach (var item in logs)
             {
-                removeservrerurl = "http://" + removeservrerurl;
-            }
-            string fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(removeservrerurl, ApiSendToLocalUrl);
-
-            try
-            {
-                var model = Lib.Helper.HttpHelper.Get<CheckResponse>(fullurl, null, username, password);
-                if (model.CheckResult == false)
-                {
-                    throw new Exception(model.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
+                siteDb.SyncLog.IgnoreLog(SettingId, item);
             }
         }
 
-        public CheckResponse CheckSite(Guid SiteId, ApiCall call)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public PagedListViewModel<ChangeItemViewModel> IgnoreList(Guid SettingId, int PageNr, int PageSize, ApiCall call)
         {
-            var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
-
-            var res = new CheckResponse();
-
-            if (site == null)
+            var sitedb = call.WebSite.SiteDb();
+            var filter = new LogFilter(call);
+            var ignoreList = sitedb.SyncLog.ListIgnoreObj(SettingId).Where(w =>
             {
-                res.CheckResult = false;
-                res.Message = Data.Language.Hardcoded.GetValue("Website not found", call.Context);
-                res.Translated = true;
+                var logEntry = sitedb.Log.Get(w.LogId);
+                if (logEntry == default) return false;
+                return filter.Match(logEntry);
+            }).ToList();
+
+
+            PagedListViewModel<ChangeItemViewModel> result = new PagedListViewModel<ChangeItemViewModel>();
+            result.TotalCount = ignoreList.Count;
+
+            if (PageSize < 1)
+            {
+                PageSize = 20;
+            }
+
+            if (PageNr < 1)
+            {
+                PageNr = 1;
+            }
+            int skip = PageSize * (PageNr - 1);
+
+            ignoreList = ignoreList.OrderByDescending(o => o.lastModified).Skip(skip).Take(PageSize).ToList();
+            result.PageNr = PageNr;
+            result.PageSize = PageSize;
+            result.List = new List<ChangeItemViewModel>();
+
+            foreach (var item in ignoreList)
+            {
+                var logEntry = sitedb.Log.Get(item.LogId);
+                var model = ChangeItemViewModel.FromLog(call.Context, logEntry);
+                result.List.Add(model);
+
+            }
+
+            return result;
+
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public void UnIgnore(Guid SettingId, List<Guid> ObjectIds, ApiCall call)
+        {
+            var sitedb = call.Context.WebSite.SiteDb();
+            foreach (var item in ObjectIds)
+            {
+                sitedb.SyncLog.UnIgnore(SettingId, item);
+            }
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public PullFeedBack Pull(Guid id, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+
+            var setting = sitedb.SyncSettings.Get(id);
+            if (setting == null)
+            {
+                throw new Exception(Hardcoded.GetValue("Setting not found", call.Context));
+            }
+
+            long currentRemoteVersion = call.GetValue<long>("senderVersion");
+
+            var lastIn = sitedb.SyncLog.GetRemoteVersion(setting.Id);
+
+            if (currentRemoteVersion < lastIn)
+            {
+                currentRemoteVersion = lastIn;
+            }
+            return _pull(setting, currentRemoteVersion, false, call);
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public PullFeedBack ForcePull(Guid id, long currentSenderVersion, bool IgnoreCurrent, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+
+            var setting = sitedb.SyncSettings.Get(id);
+            if (setting == null)
+            {
+                throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context));
+            }
+
+            //when IgnoreCurrent = use local.
+            if (IgnoreCurrent)
+            {
+                var localLogId = call.GetValue<long>("localLogId");
+                var senderVersion = call.GetValue<long>("senderVersion");
+
+                var log = sitedb.Log.Get(localLogId);
+                if (log != null)
+                {
+                    var objectId = ObjectContainer.GuidConverter.FromByte(log.KeyBytes);
+                    sitedb.SyncLog.AddIn(setting.Id, log.StoreName, log.TableColName, objectId, 0, senderVersion, log.UserId);
+                }
+                return new PullFeedBack() { IsFinish = false, SenderVersion = senderVersion };
             }
             else
             {
-                res.CheckResult = true;
+                return _pull(setting, currentSenderVersion, true, call);
             }
-            return res;
+
+
         }
 
-        // [Kooboo.Attributes.RequireParameters("SiteId", "LastId")]
-        public SyncObject SendToClient(long LastId, Guid SiteId,  ApiCall call)
+
+        private PullFeedBack _pull(SyncSetting setting, long currentRemoteVersion, bool ForcePull, ApiCall call)
         {
-              return PullRequest.PullNext(call.WebSite.SiteDb(), LastId);
-          
+
+            var syncObject = _getRemote(setting, currentRemoteVersion, call);
+
+            if (syncObject != null)
+            {
+                var sitedb = call.Context.WebSite.SiteDb();
+
+                if (!ForcePull)
+                {
+                    var conflictCheck = Kooboo.Sites.Sync.ConflictService.instance.CheckPullFrom(syncObject, sitedb, setting);
+
+                    if (conflictCheck.HasConflict)
+                    {
+
+                        PullFeedBack feedback = new PullFeedBack();
+                        feedback.IsFinish = false;
+                        feedback.SenderVersion = syncObject.SenderVersion;
+                        feedback.CurrentSenderVersion = currentRemoteVersion;
+
+                        feedback.HasConflict = true;
+
+                        feedback.RemoteUserName = Kooboo.Data.GlobalDb.Users.GetUserName(syncObject.UserId);
+
+                        if (conflictCheck.log != null)
+                        {
+                            feedback.LocalUserName = Kooboo.Data.GlobalDb.Users.GetUserName(conflictCheck.log.UserId);
+                            feedback.LocalTime = conflictCheck.log.UpdateTime;
+                            feedback.LocalLogId = conflictCheck.log.Id;
+                        }
+
+                        if (conflictCheck.IsTable)
+                        {
+                            feedback.LocalBody = Kooboo.Sites.Service.ObjectService.GetSummaryText(conflictCheck.TableData);
+
+                            var data = SyncObjectConvertor.FromTableSyncObject(syncObject);
+
+                            feedback.RemoteBody = ObjectService.GetSummaryText(data);
+
+                        }
+                        else
+                        {
+
+                            var remoteSiteObject = SyncObjectConvertor.FromSyncObject(syncObject);
+
+                            if (remoteSiteObject != null)
+                            {
+                                feedback.RemoteTime = remoteSiteObject.LastModified;
+                            }
+
+
+                            if (conflictCheck.SiteObject is Kooboo.Sites.Models.Image)
+                            {
+                                feedback.IsImage = true;
+
+                                var localImage = conflictCheck.SiteObject as Kooboo.Sites.Models.Image;
+                                if (localImage != null)
+                                {
+                                    feedback.LocalBody = Convert.ToBase64String(localImage.ContentBytes);
+                                }
+
+                                if (remoteSiteObject != null)
+                                {
+                                    var remoteImage = remoteSiteObject as Kooboo.Sites.Models.Image;
+
+                                    if (remoteImage != null)
+                                    {
+                                        feedback.RemoteBody = Convert.ToBase64String(remoteImage.ContentBytes);
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                feedback.LocalBody = Kooboo.Sites.Service.ObjectService.GetSummaryText(conflictCheck.SiteObject);
+                                if (remoteSiteObject != null)
+                                {
+                                    feedback.RemoteBody = ObjectService.GetSummaryText(remoteSiteObject);
+                                }
+
+                            }
+
+                        }
+                        return feedback;
+
+                    }
+                    else
+                    {
+                        SyncService.Receive(sitedb, syncObject, setting);
+
+                        return new PullFeedBack() { IsFinish = false, SenderVersion = syncObject.SenderVersion };
+                    }
+
+                }
+
+                else
+                {
+                    SyncService.Receive(sitedb, syncObject, setting);
+
+                    return new PullFeedBack() { IsFinish = false, SenderVersion = syncObject.SenderVersion };
+                }
+
+            }
+            else
+            {
+                return new PullFeedBack() { IsFinish = true };
+            }
+
         }
 
-        //[Kooboo.Attributes.RequireParameters("logid")]
+
+        private SyncObject _getRemote(SyncSetting setting, long LastId, ApiCall call)
+        {
+            string ApiSendToLocalUrl = "/_api/publish/SendToClient";
+            string serverApiURL = setting.RemoteServerUrl;
+
+            if (!serverApiURL.ToLower().StartsWith("http"))
+            {
+                serverApiURL = "http://" + serverApiURL;
+            }
+            serverApiURL = UrlHelper.Combine(serverApiURL, ApiSendToLocalUrl);
+
+            PullRequestParameter para = new()
+            {
+                LastId = LastId,
+                SiteId = setting.RemoteWebSiteId,
+                SenderUniqueId = setting.UniqueId,
+                IgnoreStores = setting.IgnoreInStoreNames
+            };
+
+            string paraJson = System.Text.Json.JsonSerializer.Serialize(para);
+
+            return Kooboo.Lib.Helper.HttpHelper.Post<SyncObject>(serverApiURL, paraJson,
+               new Dictionary<string, string>
+               {
+                      { "Authorization",$"bearer {setting.AccessToken??UserProviderHelper.GetJtwTokentFromContext(call.Context)}"}
+               });
+        }
+
+        public SyncObject SendToClient(PullRequestParameter model, ApiCall call)
+        {
+            return PullRequest.PullNext(call.WebSite.SiteDb(), model);
+        }
+
+        private int RemoteDiffer(SyncSetting setting, SiteDb sitedb, ApiCall call)
+        {
+            var lastIn = sitedb.SyncLog.GetRemoteVersion(setting.Id);
+
+            string ApiSendToLocalUrl = "/_api/publish/ClientPullDiffer";
+            string serverApiURL = setting.RemoteServerUrl;
+
+            if (!serverApiURL.ToLower().StartsWith("http"))
+            {
+                serverApiURL = "http://" + serverApiURL;
+            }
+            serverApiURL = UrlHelper.Combine(serverApiURL, ApiSendToLocalUrl);
+
+            PullRequestParameter para = new()
+            {
+                LastId = lastIn,
+                SiteId = setting.RemoteWebSiteId,
+                SenderUniqueId = setting.UniqueId,
+                IgnoreStores = setting.IgnoreInStoreNames
+            };
+
+            string paraJson = System.Text.Json.JsonSerializer.Serialize(para);
+
+            try
+            {
+                return Kooboo.Lib.Helper.HttpHelper.Post<int>(serverApiURL, paraJson,
+              new Dictionary<string, string>
+              {
+                      { "Authorization",$"bearer {setting.AccessToken?? UserProviderHelper.GetJtwTokentFromContext(call.Context)}"}
+              });
+            }
+            catch (Exception)
+            {
+
+            }
+            return 0;
+        }
+
+
+        public int ClientPullDiffer(PullRequestParameter para, ApiCall call)
+        {
+            var siteDb = call.Context.WebSite.SiteDb();
+            PullDiffer differ = new PullDiffer(siteDb, para);
+
+            return differ.Count();
+        }
+
+
         public long VersionNumber(ApiCall call)
         {
             return call.WebSite.SiteDb().Log.Store.LastKey;
         }
 
-        [Kooboo.Attributes.RequireParameters("SyncSettingId")]
-        public PagedListViewModel<SyncLogItemViewModel> OutItem(ApiCall call)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public PagedListViewModel<ChangeItemViewModel> OutItem(Guid SyncSettingId, ApiCall call)
         {
-            return GetLogItem(call, false);
+            return GetLogItem(call, SyncSettingId, false);
         }
 
-        [Kooboo.Attributes.RequireParameters("SyncSettingId")]
-        public PagedListViewModel<SyncLogItemViewModel> InItem(ApiCall call)
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public PagedListViewModel<ChangeItemViewModel> InItem(Guid SyncSettingId, ApiCall call)
         {
-            return GetLogItem(call, true);
+            return GetLogItem(call, SyncSettingId, true);
         }
 
-        private PagedListViewModel<SyncLogItemViewModel> GetLogItem(ApiCall call, bool initem)
+        private PagedListViewModel<ChangeItemViewModel> GetLogItem(ApiCall call, Guid SyncSettingId, bool InItem)
+        {
+            int pageSize = ApiHelper.GetPageSize(call);
+            int pageNr = ApiHelper.GetPageNr(call);
+
+            var (dataList, total) = getSyncLog(call, SyncSettingId, pageSize, pageNr, InItem);
+
+            var sitedb = call.Context.WebSite.SiteDb();
+
+            PagedListViewModel<ChangeItemViewModel> result = new PagedListViewModel<ChangeItemViewModel>();
+
+            result.TotalCount = (int)total;
+            result.PageSize = pageSize;
+            result.PageNr = pageNr;
+            result.List = new List<ChangeItemViewModel>();
+
+            foreach (var item in dataList.OrderByDescending(o => o.Id))
+            {
+                var log = sitedb.Log.Get(item.LocalVersion);
+
+                if (log != null)
+                {
+                    var model = ChangeItemViewModel.FromLog(call.Context, log);
+                    if (model != default) result.List.Add(model);
+                }
+            }
+
+            return result;
+
+        }
+
+        private (List<SyncLog>, long) getSyncLog(ApiCall call, Guid SettingId, int PageSize, int PageNr, bool IsIn)
+        {
+            var siteDb = call.Context.WebSite.SiteDb();
+            if (IsIn)
+            {
+                return siteDb.SyncLog.GetInRecords(SettingId, PageSize, PageNr, call);
+            }
+            else
+            {
+                return siteDb.SyncLog.GetOutRecords(SettingId, PageSize, PageNr, call);
+            }
+        }
+
+        public void SetProgress(Guid SyncSettingId, long LocalProgress, long RemoteProgress, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var setting = _getSetting(sitedb, SyncSettingId);
+
+            sitedb.SyncLog.SetLastReadVersion(setting.Id, LocalProgress);
+
+            sitedb.SyncLog.SetOutProgress(SyncSettingId, RemoteProgress);
+        }
+
+        public SyncProgress GetProgress(Guid SyncSettingId, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
-            int pagesize = ApiHelper.GetPageSize(call);
-            int pagenr = ApiHelper.GetPageNr(call);
+            var setting = _getSetting(sitedb, SyncSettingId);
 
-            PagedListViewModel<SyncLogItemViewModel> model = new PagedListViewModel<SyncLogItemViewModel>();
-            model.PageNr = pagenr;
-            model.PageSize = pagesize;
+            // call to set the last read.
+            sitedb.SyncLog.PushItems(setting, call, 3);
 
-            List<SyncLogItemViewModel> result = new List<SyncLogItemViewModel>();
+            var localProgress = sitedb.SyncLog.GetLastReadVersion(SyncSettingId);
+            var localMax = sitedb.Log.Store.LastKey;
 
-            Guid settingid = call.GetGuidValue("SyncSettingId");
+            var remoteProgress = sitedb.SyncLog.GetRemoteVersion(SyncSettingId);
 
-            var items = sitedb.Synchronization.Query.Where(o => o.SyncSettingId == settingid && o.In == initem).SelectAll().OrderByDescending(o => o.LastModifyTick);
+            string ApiSendToLocalUrl = "/_api/publish/LogLastKey";
+            string serverApiURL = setting.RemoteServerUrl;
 
-            model.TotalCount = items.Count();
-            model.TotalPages = ApiHelper.GetPageCount(model.TotalCount, model.PageSize);
-
-            foreach (var item in items.Skip(model.PageNr * model.PageSize - model.PageSize).Take(model.PageSize))
+            if (!serverApiURL.ToLower().StartsWith("http"))
             {
-                var log = sitedb.Log.Get(item.Version);
-                if (log != null)
-                {
-                    ChangeType changetype;
-                    if (log.EditType == IndexedDB.EditType.Add)
-                    {
-                        changetype = ChangeType.Add;
-                    }
-                    else if (log.EditType == IndexedDB.EditType.Update)
-                    { changetype = ChangeType.Update; }
-                    else
-                    {
-                        changetype = ChangeType.Delete;
-                    }
-
-                    if (log.IsTable)
-                    {
-                        var kdb = Kooboo.Data.DB.GetKDatabase(sitedb.WebSite);
-                        var table = Data.DB.GetTable(kdb, log.TableName);
-
-                        if (table != null)
-                        {
-                            var logdata = table.GetLogData(log);
-
-                            string size = null;
-                            if (logdata != null)
-                            {
-                                var json = Lib.Helper.JsonHelper.Serialize(logdata);
-                                size = CalculateUtility.GetSizeString(json.Length);
-                            }
-
-                            var name = Kooboo.Sites.Service.LogService.GetTableDisplayName(sitedb, log, call.Context, logdata);
-
-                            SyncLogItemViewModel logitem = new SyncLogItemViewModel();
-                            logitem.Name = name;
-
-                            logitem.ObjectType = Data.Language.Hardcoded.GetValue("Table", call.Context);
-                            logitem.LastModified = log.UpdateTime;
-                            logitem.LogId = log.Id;
-                            logitem.ChangeType = changetype;
-
-                            result.Add(logitem);
-                        }
-                    }
-
-                    else
-                    {
-                        var repo = sitedb.GetRepository(item.StoreName);
-
-                        if (repo != null)
-                        {
-                            var siteobject = repo.GetByLog(log);
-
-                            SyncLogItemViewModel logitem = new SyncLogItemViewModel();
-                            var info = ObjectService.GetObjectInfo(sitedb, siteobject as ISiteObject);
-                            logitem.Name = info.Name;
-                            logitem.Size = Lib.Utilities.CalculateUtility.GetSizeString(info.Size);
-                            logitem.ObjectType = repo.StoreName;
-                            logitem.LastModified = log.UpdateTime;
-                            logitem.LogId = log.Id;
-                            logitem.ChangeType = changetype;
-
-                            result.Add(logitem);
-                        }
-                    }
-                }
+                serverApiURL = "http://" + serverApiURL;
             }
-            model.List = result;
-            return model;
+            serverApiURL = UrlHelper.Combine(serverApiURL, ApiSendToLocalUrl);
+
+            Dictionary<string, string> para = new Dictionary<string, string>();
+            para.Add("remoteSiteId", setting.RemoteWebSiteId.ToString());
+
+            long remoteLastVersion = 0;
+
+            try
+            {
+                remoteLastVersion = Kooboo.Lib.Helper.HttpHelper.Post<long>(serverApiURL, para,
+                new Dictionary<string, string>
+                {
+                      { "Authorization",$"bearer {UserProviderHelper.GetJtwTokentFromContext(call.Context)}"}
+                });
+            }
+            catch (Exception)
+            {
+
+            }
+
+
+            return new SyncProgress() { LocalLastId = localMax, LocalProgress = localProgress, RemoteLastId = remoteLastVersion, RemoteProgress = remoteProgress };
+        }
+
+
+        public long LogLastKey(Guid remoteSiteId, ApiCall call)
+        {
+            var website = AppHost.SiteRepo.Get(remoteSiteId);
+            if (website != null)
+            {
+                return website.SiteDb().Log.Store.LastKey;
+            }
+            return 0;
+        }
+
+        public List<OrgServerHost> OrgServerList(Guid orgId, ApiCall call)
+        {
+            return UserPublishService.OrgServerList(orgId, call.Context);
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public Difference[] GetSettingDifferences(Guid id, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var setting = _getSetting(sitedb, id);
+            return SettingsSync.GetDifferences(call.WebSite.Id, setting, UserProviderHelper.GetJtwTokentFromContext(call.Context));
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public Sites.Sync.Settings.SettingsItem[] GetSettings(ApiCall call)
+        {
+            return SettingsSync.GetSettings(call.WebSite.Id);
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public void PullSettings(ApiCall call)
+        {
+            var settings = JsonHelper.Deserialize<Sites.Sync.Settings.SettingsItem[]>(call.Context.Request.Body);
+            SettingsSync.Pull(call.WebSite.Id, settings);
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public void PushSettings(Guid id, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var setting = _getSetting(sitedb, id);
+            var settings = JsonHelper.Deserialize<SettingsItem[]>(call.Context.Request.Body);
+            SettingsSync.Push(setting, UserProviderHelper.GetJtwTokentFromContext(call.Context), settings);
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
+        public SyncSetting GetSyncSetting(Guid id, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var setting = _getSetting(sitedb, id);
+            return setting;
+        }
+
+        [Permission(Feature.SYNC, Action = Data.Permission.Action.EDIT)]
+        public void UpdateSyncSetting(Guid id, ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var setting = _getSetting(sitedb, id);
+            var newSetting = JsonHelper.Deserialize<SyncSetting>(call.Context.Request.Body);
+            setting.IgnoreInStoreNames = newSetting.IgnoreInStoreNames;
+            setting.IgnoreOutStoreNames = newSetting.IgnoreOutStoreNames;
+            sitedb.SyncSettings.AddOrUpdate(setting);
+
+
+        }
+
+        readonly string[] _ignoreStores = new[] { "PaymentCustomer", "PaymentRequest", "TableSchemaMapping", "ViewDataMethod", "ScriptModule", "DataMethodSetting" };
+        public KeyValuePair<string, string>[] StoreNames(ApiCall call)
+        {
+            var types = SiteRepositoryContainer.CoreObjectTypes;
+            var result = new List<KeyValuePair<string, string>>();
+
+            foreach (var item in types)
+            {
+                var name = ConstTypeContainer.GetName(ConstTypeContainer.GetConstType(item));
+                if (_ignoreStores.Contains(name)) continue;
+                result.Add(new KeyValuePair<string, string>(name, Hardcoded.GetValue(name, call.Context)));
+            }
+            result.Add(new KeyValuePair<string, string>("Storage", Hardcoded.GetValue("Table", call.Context)));
+            return result.OrderBy(o => o.Value).ToArray();
+        }
+
+        private SyncSetting _getSetting(SiteDb sitedb, Guid SyncSettingId)
+        {
+            if (sitedb != null)
+            {
+                var setting = sitedb.SyncSettings.Get(SyncSettingId);
+                if (setting == null)
+                {
+                    throw new Exception("Setting Not Found");
+                }
+                return setting;
+            }
+            return null;
         }
     }
 }

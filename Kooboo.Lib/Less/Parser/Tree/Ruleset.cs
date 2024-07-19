@@ -5,8 +5,8 @@ namespace dotless.Core.Parser.Tree
     using System.Text;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using Utils;
     using Plugins;
+    using Utils;
 
     public class Ruleset : Node
     {
@@ -184,14 +184,14 @@ namespace dotless.Core.Parser.Tree
                     //If we're in a media block, then extenders can only apply to that media block
                     if (env.MediaPath.Any())
                     {
-                        env.MediaPath.Peek().AddExtension(s, (Extend) r.Evaluate(env), env);
+                        env.MediaPath.Peek().AddExtension(s, (Extend)r.Evaluate(env), env);
                     }
                     else //Global extend
                     {
-                        env.AddExtension(s, (Extend) r.Evaluate(env), env);
+                        env.AddExtension(s, (Extend)r.Evaluate(env), env);
                     }
                 }
-                
+
                 Rules.Remove(r);
             }
 
@@ -215,7 +215,7 @@ namespace dotless.Core.Parser.Tree
             if (Rules == null || !Rules.Any())
                 return;
 
-            ((Ruleset) Evaluate(env)).AppendCSS(env, new Context());
+            ((Ruleset)Evaluate(env)).AppendCSS(env, new Context());
         }
 
         /// <summary>

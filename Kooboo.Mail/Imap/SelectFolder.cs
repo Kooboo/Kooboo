@@ -1,35 +1,32 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
-   public class SelectFolder
-    {   
+    public class SelectFolder
+    {
         private MailDb mailDb { get; set; }
 
-        public  Models.MessageStat Stat { get; set; }
+        public Models.MessageStat Stat { get; set; }
 
         public int FolderId { get; set; }
 
-        private int AddressId { get; set; }
+        public int AddressId { get; set; }
 
         public SelectFolder(string folder, MailDb maildb)
         {
             if (folder == null)
             {
-                throw new CommandException("BAD", "Folder not provided"); 
-            } 
-            this.mailDb =  maildb;
+                throw new CommandException("BAD", "Folder not provided");
+            }
+            this.mailDb = maildb;
             this.Folder = folder;
 
             var prasedfolder = Utility.FolderUtility.ParseFolder(folder);
-             
-            var dbfolder = this.mailDb.Folders.Get(prasedfolder.FolderId);
+
+            var dbfolder = this.mailDb.Folder.Get(prasedfolder.FolderId);
 
             if (dbfolder == null)
             {
@@ -37,9 +34,10 @@ namespace Kooboo.Mail.Imap
             }
 
             this.FolderId = prasedfolder.FolderId;
-            this.AddressId = prasedfolder.AddressId; 
-             
-            this.Stat =this.mailDb.Messages.GetStat(this.FolderId, this.AddressId);
+            this.AddressId = prasedfolder.AddressId;
+
+            // this.Stat =this.mailDb.Msgstore.GetStat(this.FolderId, this.AddressId);
+            this.Stat = this.mailDb.Message2.GetStat(this.FolderId, this.AddressId);
         }
 
         public List<int> EXPUNGE()
@@ -69,34 +67,39 @@ namespace Kooboo.Mail.Imap
              Note: In this example, messages 3, 4, 7, and 11 had the
              \Deleted flag set.  See the description of the EXPUNGE
              response for further explanation.
-     */   
-            var query = this.mailDb.Messages.Query().UseColumnData().Where(o => o.FolderId == this.FolderId).Where(o => o.Deleted == true); 
-             
-            if (this.AddressId != default(int))
+     */
+            List<Message> all = null;
+
+            if (this.AddressId != 0)
             {
-                query.Where(o => o.AddressId == this.AddressId); 
-            } 
-            var all = query.SelectAll();
+                all = this.mailDb.Message2.Query.Where(o => o.FolderId == this.FolderId && o.AddressId == this.AddressId && o.Deleted).SelectAll().ToList();
+            }
+            else
+
+            {
+                all = this.mailDb.Message2.Query.Where(o => o.FolderId == this.FolderId && o.Deleted).SelectAll().ToList();
+            }
 
             List<int> result = new List<int>();
 
             foreach (var item in all)
             {
-                var seqno = this.mailDb.Messages.GetSeqNo(this.Folder, this.Stat.LastestMsgId, this.Stat.Exists, item.Id);
-                result.Add(seqno); 
+                var seqno = this.mailDb.Message2.GetSeqNo(this, item.MsgId);
+                result.Add(seqno);
             }
-             
+
             foreach (var item in all)
             {
-                this.mailDb.Messages.Delete(item.Id); 
-            } 
-            this.Stat = this.mailDb.Messages.GetStat(this.FolderId, this.AddressId); 
-            return result; 
+                this.mailDb.Message2.Delete(item.MsgId);
+            }
+            this.Stat = this.mailDb.Message2.GetStat(this.FolderId, this.AddressId);
+
+            return result;
         }
 
         internal void Reset()
         {
-            this.Stat = mailDb.Messages.GetStat(this.Folder);
+            this.Stat = mailDb.Message2.GetStat(this.FolderId, this.AddressId);
         }
 
         #region Properties implementation
@@ -106,7 +109,7 @@ namespace Kooboo.Mail.Imap
         /// </summary>
         public string Folder
         {
-            get;set;
+            get; set;
         }
 
         #endregion

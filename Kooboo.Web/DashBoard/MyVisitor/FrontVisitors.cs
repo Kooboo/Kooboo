@@ -1,14 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Interface;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
-using Kooboo.Data.Models;
 
 namespace Kooboo.Web.DashBoard.MyVisitor
 {
@@ -26,14 +21,14 @@ namespace Kooboo.Web.DashBoard.MyVisitor
             {
                 return "Visitors";
             }
-        } 
-  
+        }
+
         public IDashBoardResponse Render(RenderContext Context)
         {
             var sitedb = Context.WebSite.SiteDb();
 
-            var logs = DashBoardHelper.GetLogs(Context); 
-              
+            var logs = DashBoardHelper.GetLogs(Context);
+
             SiteVisitorModel model = new SiteVisitorModel();
             if (logs.Count() > 0)
             {

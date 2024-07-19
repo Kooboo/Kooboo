@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -42,7 +38,7 @@ namespace Kooboo.Dom
             }
             set
             {
-                _root = value; 
+                _root = value;
             }
 
         }
@@ -64,13 +60,13 @@ namespace Kooboo.Dom
             //If the nth bit (where 0 is the least significant bit) of whatToShow is not set, return FILTER_SKIP.
             if (!this.WhatToShowCanShow(node))
             {
-                return enumNodeFilterAcceptNode.FILTER_SKIP; 
+                return enumNodeFilterAcceptNode.FILTER_SKIP;
             }
 
             //If filter is null, return FILTER_ACCEPT.
             if (this.filter == null)
             {
-                return enumNodeFilterAcceptNode.FILTER_ACCEPT; 
+                return enumNodeFilterAcceptNode.FILTER_ACCEPT;
             }
 
             //Set the active flag.
@@ -82,7 +78,7 @@ namespace Kooboo.Dom
             var result = this.filter.AcceptNode(node);
             this.Active = false;
 
-            return result; 
+            return result;
         }
 
 
@@ -159,7 +155,7 @@ namespace Kooboo.Dom
 
         public Node firstChild()
         {
-            return firstChild(this.currentNode); 
+            return firstChild(this.currentNode);
         }
 
         public Node firstChild(Node node)
@@ -169,7 +165,7 @@ namespace Kooboo.Dom
 
         public Node lastChild(Node node)
         {
-            return TraverseChildren(TraverseType.Last, node); 
+            return TraverseChildren(TraverseType.Last, node);
         }
 
         public Node lastChild()
@@ -182,8 +178,8 @@ namespace Kooboo.Dom
             //To traverse children of type type, run these steps:
 
             //Let node be the value of the currentNode attribute.
-            var node = currentnode; 
-            
+            var node = currentnode;
+
             //Set node to node's first child if type is first, and node's last child if type is last.
             if (type == TraverseType.First && node.childNodes.item.Count > 0)
             {
@@ -199,20 +195,20 @@ namespace Kooboo.Dom
                 node = null;
             }
 
-            //Main: While node is not null, run these substeps:
+        //Main: While node is not null, run these substeps:
 
-            main:
+        main:
 
             if (node != null)
             {
                 //Filter node and let result be the return value.
-                var result = FilterNode(node); 
+                var result = FilterNode(node);
 
                 //If result is FILTER_ACCEPT, then set the currentNode attribute to node and return node.
                 if (result == enumNodeFilterAcceptNode.FILTER_ACCEPT)
                 {
                     this.currentNode = node;
-                    return node; 
+                    return node;
                 }
                 //If result is FILTER_SKIP, run these subsubsteps:
                 else if (result == enumNodeFilterAcceptNode.FILTER_SKIP)
@@ -232,12 +228,12 @@ namespace Kooboo.Dom
                     {
                         child = null;
                     }
-                    
+
                     //If child is not null, set node to child and goto Main.
                     if (child != null)
                     {
                         node = child;
-                        goto main; 
+                        goto main;
                     }
                 }
 
@@ -248,7 +244,7 @@ namespace Kooboo.Dom
                 {
 
                     //Let sibling be node's next sibling if type is first, and node's previous sibling if type is last.
-                    var sibling = this.nextSibling(node); 
+                    var sibling = this.nextSibling(node);
 
                     //If sibling is not null, set node to sibling and goto Main.
                     if (sibling != null)
@@ -258,7 +254,7 @@ namespace Kooboo.Dom
                     }
 
                     //Let parent be node's parent.
-                    var parent = node.parentNode; 
+                    var parent = node.parentNode;
 
                     //If parent is null, parent is root, or parent is currentNode attribute's value, return null.
                     if (parent == null || parent.Equals(this.root) || parent.Equals(this.currentNode))
@@ -268,22 +264,22 @@ namespace Kooboo.Dom
                     else
                     {
                         //Otherwise, set node to parent.
-                        node = parent; 
+                        node = parent;
                     }
                 }
 
-                
+
             }
 
             //Return null.
-            return null; 
+            return null;
 
         }
 
 
         public Node previousSibling(Node node)
         {
-            return TraverseSibling(TraverseType.Previous, node); 
+            return TraverseSibling(TraverseType.Previous, node);
         }
 
         public Node previousSibling()
@@ -293,7 +289,7 @@ namespace Kooboo.Dom
 
         public Node nextSibling(Node node)
         {
-            return TraverseSibling(TraverseType.Next, node); 
+            return TraverseSibling(TraverseType.Next, node);
         }
 
         public Node nextSibling()
@@ -307,21 +303,21 @@ namespace Kooboo.Dom
             // To traverse siblings of type type run these steps:
             //Let node be the value of the currentNode attribute.
 
-            var node = currentnode; 
+            var node = currentnode;
 
             //If node is root, return null.
 
             if (node.Equals(this.root))
             {
-                return null; 
+                return null;
             }
             Node sibling;
-            //Run these substeps:
+        //Run these substeps:
 
-            substeps:
+        substeps:
 
             //Let sibling be node's next sibling if type is next, and node's previous sibling if type is previous.
-           
+
             if (type == TraverseType.Next)
             {
                 sibling = node.nextSibling();
@@ -333,7 +329,7 @@ namespace Kooboo.Dom
             else
             {
                 // will not run.
-                sibling = null; 
+                sibling = null;
             }
 
             //While sibling is not null, run these subsubsteps:
@@ -342,7 +338,7 @@ namespace Kooboo.Dom
             if (sibling != null)
             {
                 //Set node to sibling.
-                node = sibling; 
+                node = sibling;
                 //Filter node and let result be the return value.
 
                 var result = this.FilterNode(node);
@@ -351,7 +347,7 @@ namespace Kooboo.Dom
                 if (result == enumNodeFilterAcceptNode.FILTER_ACCEPT)
                 {
                     this.currentNode = node;
-                    return node; 
+                    return node;
                 }
                 else if (result == enumNodeFilterAcceptNode.FILTER_SKIP)
                 {
@@ -362,7 +358,7 @@ namespace Kooboo.Dom
                     }
                     else if (type == TraverseType.Previous)
                     {
-                        sibling = node.lastChild(); 
+                        sibling = node.lastChild();
                     }
                 }
 
@@ -376,48 +372,48 @@ namespace Kooboo.Dom
                     }
                     else if (type == TraverseType.Previous)
                     {
-                        sibling = node.previousSibling(); 
+                        sibling = node.previousSibling();
                     }
 
 
                 }
             }
 
-            node = node.parentNode; 
+            node = node.parentNode;
             //Set node to its parent.
 
             //If node is null or is root, return null.
             if (node == null || node.Equals(this.root))
             {
-                return null; 
+                return null;
             }
 
             //Filter node and if the return value is FILTER_ACCEPT, then return null.
             if (this.FilterNode(node) == enumNodeFilterAcceptNode.FILTER_ACCEPT)
             {
-                return null; 
+                return null;
             }
             //Run these substeps again.
-            goto substeps; 
+            goto substeps;
 
         }
 
         public Node PreviousNode()
         {
-            return previousNode(this.currentNode); 
+            return previousNode(this.currentNode);
         }
 
         public Node previousNode(Node currentnode)
         {
             //Let node be the value of the currentNode attribute.
             var node = currentnode;
-            Node sibling; 
+            Node sibling;
 
             //While node is not root, run these substeps:
             if (node.Equals(this.root))
             {
                 //Let sibling be the previous sibling of node.
-                sibling = node.previousSibling(); 
+                sibling = node.previousSibling();
 
                 //While sibling is not null, run these subsubsteps:
 
@@ -425,7 +421,7 @@ namespace Kooboo.Dom
                 {
 
                     //Set node to sibling.
-                    node = sibling; 
+                    node = sibling;
 
                     //Filter node and let result be the return value.
                     var result = this.FilterNode(node);
@@ -435,7 +431,7 @@ namespace Kooboo.Dom
                         //While result is not FILTER_REJECT and node has a child, set node to its last child and then filter node and set result to the return value.
                         node = node.lastChild();
 
-                        result = this.FilterNode(node); 
+                        result = this.FilterNode(node);
 
                     }
                     //If result is FILTER_ACCEPT, then set the currentNode attribute to node and return node.
@@ -447,64 +443,64 @@ namespace Kooboo.Dom
                     }
 
                     //Set sibling to the previous sibling of node.
-                    sibling = node.previousSibling(); 
+                    sibling = node.previousSibling();
                 }
 
                 //If node is root or node's parent is null, return null.
                 if (node.Equals(this.root) || node.parentNode == null)
                 {
-                    return null; 
+                    return null;
                 }
 
                 //Set node to its parent.
 
-                node = node.parentNode; 
+                node = node.parentNode;
 
                 //Filter node and if the return value is FILTER_ACCEPT, then set the currentNode attribute to node and return node.
                 if (this.FilterNode(node) == enumNodeFilterAcceptNode.FILTER_ACCEPT)
                 {
                     this.currentNode = node;
-                    return node; 
+                    return node;
                 }
             }
 
             //Return null.
-            return null; 
+            return null;
 
         }
 
         public Node nextNode()
         {
-            return nextNode(this.currentNode); 
+            return nextNode(this.currentNode);
         }
 
         public Node nextNode(Node currentnode)
         {
             //  Let node be the value of the currentNode attribute.
-            var node = currentnode; 
+            var node = currentnode;
             //Let result be FILTER_ACCEPT.
 
-            var result = enumNodeFilterAcceptNode.FILTER_ACCEPT; 
+            var result = enumNodeFilterAcceptNode.FILTER_ACCEPT;
 
             //Run these substeps:
-           //substeps:
+            //substeps:
 
             //While result is not FILTER_REJECT and node has a child, run these subsubsteps:
             if (result != enumNodeFilterAcceptNode.FILTER_REJECT && node.childNodes.item.Count > 0)
             {
                 //Set node to its first child.
 
-                node = node.firstChild(); 
+                node = node.firstChild();
 
                 //Filter node and set result to the return value.
-                result = this.FilterNode(node); 
+                result = this.FilterNode(node);
 
                 //If result is FILTER_ACCEPT, then set the currentNode attribute to node and return node.
 
                 if (result == enumNodeFilterAcceptNode.FILTER_ACCEPT)
                 {
                     this.currentNode = node;
-                    return node; 
+                    return node;
                 }
             }
 
@@ -519,17 +515,17 @@ namespace Kooboo.Dom
 
             //Run these substeps again.
 
-            return null; 
+            return null;
 
         }
 
 
         public enum TraverseType
         {
-            First=0,
+            First = 0,
             Last = 1,
             Previous = 2,
-            Next =3
+            Next = 3
         }
 
 

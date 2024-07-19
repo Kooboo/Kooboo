@@ -1,14 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data.Models;
-using Kooboo.IndexedDB;
+using Kooboo.Data.Permission;
+using Kooboo.Data.Storage;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -38,49 +37,79 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
+        [Permission(Feature.VISITOR_LOG)]
         public virtual PagedListViewModel<VisitorLog> List(ApiCall call)
         {
             string weekname = call.GetValue("weekname");
-            var log = call.WebSite.SiteDb().VisitorLog;
-            if (!string.IsNullOrEmpty(weekname))
-            {
-                log = call.WebSite.SiteDb().LogByWeek<VisitorLog>(weekname);
-            }
 
-            var pager = ApiHelper.GetPager(call, 50);   
+            var siteDb = call.Context.WebSite.SiteDb();
+
+            var logStore = siteDb.VisitorLogByWeek(weekname);
+
+            var pager = ApiHelper.GetPager(call, 50);
 
             PagedListViewModel<VisitorLog> result = new PagedListViewModel<VisitorLog>();
 
-            var alllog = log.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);  
+            var logResult = logStore.List(pager.PageNr, pager.PageSize);
 
-            var total = alllog.Count();
-            result.TotalCount = total;
-            result.TotalPages = ApiHelper.GetPageCount(total, pager.PageSize);
+            result.TotalCount = logResult.TotalCount;
+            result.TotalPages = logResult.TotalPages;
             result.PageNr = pager.PageNr;
-
-            List<VisitorLog> logs = alllog.Skip(pager.SkipCount).Take(pager.PageSize).ToList();
-            result.List = logs;
-            return result;   
-        }
-
-        public List<ResourceCount> TopPages(ApiCall call)
-        {
-            string weekname = call.GetValue("weekname");
-            return Kooboo.Sites.Service.VisitorLogService.TopPages(call.WebSite.SiteDb(), weekname).Take(100).ToList();
-        }
-
-        public List<string> WeekNames(ApiCall call)
-        {
-            return call.WebSite.SiteDb().LogWeekNames();
-        }
-
-        public List<ResourceCount> TopReferer(ApiCall call)
-        {
-            string weekname = call.GetValue("weekname");
-            var result = VisitorLogService.TopReferers(call.WebSite.SiteDb(), weekname).Take(100).ToList();
+            result.List = logResult.DataList.ToList();
             return result;
         }
 
+        [Permission(Feature.VISITOR_LOG)]
+        public virtual PagedListViewModel<VisitorLog> BotList(ApiCall call)
+        {
+            string weekname = call.GetValue("weekname");
+
+            var siteDb = call.Context.WebSite.SiteDb();
+
+            var logStore = siteDb.BotLogByWeek(weekname);
+
+            var pager = ApiHelper.GetPager(call, 50);
+
+            PagedListViewModel<VisitorLog> result = new PagedListViewModel<VisitorLog>();
+
+            var logResult = logStore.List(pager.PageNr, pager.PageSize);
+
+            result.TotalCount = logResult.TotalCount;
+            result.TotalPages = logResult.TotalPages;
+            result.PageNr = pager.PageNr;
+            result.List = logResult.DataList?.ToList() ?? [];
+            return result;
+        }
+
+        [Permission(Feature.VISITOR_LOG)]
+        public List<ResourceCount> TopBots(ApiCall call)
+        {
+            return Kooboo.Sites.Service.VisitorLogService.TopBots(call.WebSite.SiteDb(), 100, call.GetValue("weekname"));
+        }
+
+
+        [Permission(Feature.VISITOR_LOG)]
+        public List<ResourceCount> TopPages(ApiCall call)
+        {
+            return Kooboo.Sites.Service.VisitorLogService.TopPages(call.WebSite.SiteDb(), 100, call.GetValue("weekname"));
+        }
+
+        [Permission(Feature.VISITOR_LOG)]
+        public IEnumerable<string> WeekNames(ApiCall call)
+        {
+            return call.WebSite.SiteDb().VisitorLogWeekNames();
+        }
+
+        [Permission(Feature.VISITOR_LOG)]
+        public List<ResourceCount> TopReferer(ApiCall call)
+        {
+
+            string weekname = call.GetValue("weekname");
+            var result = VisitorLogService.TopReferrers(call.WebSite.SiteDb(), weekname).Take(100).ToList();
+            return result;
+        }
+
+        [Permission(Feature.VISITOR_LOG)]
         public List<ResourceCount> TopReferUrl(ApiCall call)
         {
             string weekname = call.GetValue("weekname");
@@ -88,51 +117,74 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+        [Permission(Feature.VISITOR_LOG)]
         public List<ImageLogItemViewModel> TopImages(ApiCall call)
         {
             List<ImageLogItemViewModel> result = new List<ImageLogItemViewModel>();
-            string weekname = call.GetValue("weekname");
-            var imagelogs = VisitorLogService.GetImageLogs(call.WebSite.SiteDb(), weekname);
+            string weekName = call.GetValue("weekname");
 
-            string baseurl = call.WebSite.BaseUrl();
+            var siteDb = call.Context.WebSite.SiteDb();
 
-            foreach (var item in imagelogs.GroupBy(o => o.ImageId))
+            var logStore = siteDb.ImageLogByWeek(weekName);
+
+            string baseUrl = call.WebSite.BaseUrl();
+
+            int counter = 0;
+
+            foreach (var item in logStore.TopUrl)
             {
-                string url = item.First().Url;
+                string url = item.Key;
+
                 ImageLogItemViewModel model = new ImageLogItemViewModel();
                 model.Name = url;
-                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Name);
-                model.Size = item.First().Size;
-                model.Count = item.Count();
+                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseUrl, model.Name);
+
+                var image = siteDb.Images.GetByUrl(url);
+                if (image != null)
+                {
+                    model.Size = image.Size;
+                }
+
+                model.Count = item.Value;
                 model.ThumbNail = Sites.Service.ThumbnailService.GenerateThumbnailUrl(item.Key, 50, 50, call.WebSite.Id);
                 result.Add(model);
+
+                counter += 1;
+                if (counter > 100)
+                {
+                    break;
+                }
             }
-            return result.OrderByDescending(o => o.Count).Take(100).ToList();
+            return result.ToList();
         }
 
+        [Permission(Feature.VISITOR_LOG)]
         public List<ErrorSummaryViewModel> ErrorList(ApiCall call)
         {
-            string weekname = call.GetValue("weekname");
+            string weekName = call.GetValue("weekname");
+
             var sitedb = call.WebSite.SiteDb();
 
             List<ErrorSummaryViewModel> errors = new List<ErrorSummaryViewModel>();
-            Sequence<SiteErrorLog> repo = string.IsNullOrEmpty(weekname) ? sitedb.ErrorLog : sitedb.LogByWeek<SiteErrorLog>(weekname);
-            string baseurl = call.WebSite.BaseUrl();
-            var allitems = repo.AllItemList();
 
-            foreach (var item in allitems.GroupBy(o => o.Id))
+            var logStore = sitedb.ErrorLogByWeek(weekName);
+
+            string baseUrl = call.WebSite.BaseUrl();
+
+            foreach (var item in logStore.TopErrorUrl)
             {
                 ErrorSummaryViewModel model = new ErrorSummaryViewModel();
-                model.Id = item.Key;
-                model.Count = item.Count();
-                model.Url = item.First().Url;
+                model.Id = Lib.Security.Hash.ComputeGuidIgnoreCase(item.Key);
+                model.Count = item.Value;
+
+                model.Url = item.Key;
                 try
                 {
-                    model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
+                    model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseUrl, model.Url);
                 }
                 catch (Exception)
                 {
-                    model.PreviewUrl = baseurl;
+                    model.PreviewUrl = baseUrl;
                 }
 
                 errors.Add(model);
@@ -140,23 +192,62 @@ namespace Kooboo.Web.Api.Implementation
             return errors.OrderByDescending(o => o.Count).ToList();
         }
 
+        [Permission(Feature.VISITOR_LOG)]
+        public PagedList<SiteErrorLogViewModel> Errors(ApiCall call)
+        {
+            string weekName = call.GetValue("weekname");
+
+            var sitedb = call.WebSite.SiteDb();
+
+            var logStore = sitedb.ErrorLogByWeek(weekName);
+
+            var result = new PagedList<SiteErrorLogViewModel>();
+
+            var pager = ApiHelper.GetPager(call, 50);
+
+            var logResult = logStore.List(pager.PageNr, pager.PageSize);
+
+            string baseUrl = call.WebSite.BaseUrl();
+
+            List<SiteErrorLogViewModel> DataItems = new List<SiteErrorLogViewModel>();
+
+            if (logResult.DataList != null)
+            {
+                foreach (var item in logResult.DataList)
+                {
+                    SiteErrorLogViewModel model = new SiteErrorLogViewModel(item, baseUrl);
+
+                    DataItems.Add(model);
+                }
+            }
+
+            result.PageNr = pager.PageNr;
+            result.PageSize = pager.PageSize;
+            result.TotalCount = logResult.TotalCount;
+            result.DataList = DataItems.ToArray();
+
+            return result;
+        }
+
+
+
         [Kooboo.Attributes.RequireParameters("id")]
+        [Permission(Feature.VISITOR_LOG)]
         public List<SiteErrorLog> ErrorDetail(ApiCall call)
         {
-            string weekname = call.GetValue("weekname");
+            string weekName = call.GetValue("weekname");
             var sitedb = call.WebSite.SiteDb();
 
             List<ErrorSummaryViewModel> errors = new List<ErrorSummaryViewModel>();
 
-            Sequence<SiteErrorLog> repo = string.IsNullOrEmpty(weekname) ? sitedb.ErrorLog : sitedb.LogByWeek<SiteErrorLog>(weekname);
-
-            string baseurl = call.WebSite.BaseUrl();
-            return repo.QueryDescending(o => o.Id == call.ObjectId).Take(99999).ToList();
-
+            var logStore = sitedb.ErrorLogByWeek(weekName);
+            return logStore.ByObjId(call.ObjectId, 499);
         }
 
+        [Permission(Feature.VISITOR_LOG)]
         public List<ResourceCount> Monthly(ApiCall call)
         {
+
             var sitedb = call.WebSite.SiteDb();
             return VisitorLogService.MonthlyVisitors(sitedb);
         }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kooboo</title>
+  </head>
+  <body>
+    <div id="app">
+      <k-page back="/_Admin/component.html" title="Create user form">
+        <k-data id="options">["option1","option2"]</k-data>
+        <k-input></k-input>
+        <k-input type="textarea"></k-input>
+        <k-inline>
+          <k-input type="number"></k-input>
+          <k-input options="options"></k-input>
+          <k-input type="date"></k-input>
+          <k-input type="datetime"></k-input>
+          <k-input type="switch"></k-input>
+        </k-inline>
+      </k-page>
+    </div>
+    <script type="module" src="/src/k-components/index.ts"></script>
+  </body>
+</html>

@@ -7,11 +7,11 @@ namespace dotless.Core.Parser.Infrastructure
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
+    using dotless.Core.Loggers;
     using Functions;
     using Nodes;
     using Plugins;
     using Tree;
-    using dotless.Core.Loggers;
 
     public class Env
     {
@@ -82,7 +82,8 @@ namespace dotless.Core.Parser.Infrastructure
         /// <summary>
         ///  Creates a new Env variable for the purposes of scope
         /// </summary>
-        public virtual Env CreateVariableEvaluationEnv(string variableName) {
+        public virtual Env CreateVariableEvaluationEnv(string variableName)
+        {
             var env = CreateChildEnv();
             env.EvaluatingVariable = variableName;
             return env;
@@ -90,19 +91,23 @@ namespace dotless.Core.Parser.Infrastructure
 
         private string EvaluatingVariable { get; set; }
 
-        public bool IsEvaluatingVariable(string variableName) {
-            if (string.Equals(variableName, EvaluatingVariable, StringComparison.InvariantCulture)) {
+        public bool IsEvaluatingVariable(string variableName)
+        {
+            if (string.Equals(variableName, EvaluatingVariable, StringComparison.InvariantCulture))
+            {
                 return true;
             }
 
-            if (Parent != null) {
+            if (Parent != null)
+            {
                 return Parent.IsEvaluatingVariable(variableName);
             }
 
             return false;
         }
 
-        public virtual Env CreateChildEnvWithClosure(Closure closure) {
+        public virtual Env CreateChildEnvWithClosure(Closure closure)
+        {
             var env = CreateChildEnv();
             env.Rule = Rule;
             env.ClosureEnvironment = CreateChildEnv();
@@ -124,7 +129,7 @@ namespace dotless.Core.Parser.Infrastructure
             IFunctionPlugin functionPlugin = plugin as IFunctionPlugin;
             if (functionPlugin != null)
             {
-                foreach(KeyValuePair<string, Type> function in functionPlugin.GetFunctions())
+                foreach (KeyValuePair<string, Type> function in functionPlugin.GetFunctions())
                 {
                     string functionName = function.Key.ToLowerInvariant();
 
@@ -136,7 +141,7 @@ namespace dotless.Core.Parser.Infrastructure
                     }
 
                     AddFunction(functionName, function.Value);
-                 }
+                }
             }
         }
 
@@ -199,15 +204,18 @@ namespace dotless.Core.Parser.Infrastructure
             }
 
             Rule result = null;
-            if (Parent != null) {
+            if (Parent != null)
+            {
                 result = Parent.FindVariable(name, rule);
             }
 
-            if (result != null) {
+            if (result != null)
+            {
                 return result;
             }
 
-            if (ClosureEnvironment != null) {
+            if (ClosureEnvironment != null)
+            {
                 return ClosureEnvironment.FindVariable(name, rule);
             }
 
@@ -230,7 +238,8 @@ namespace dotless.Core.Parser.Infrastructure
                 .Select(frame => frame.Find<Ruleset>(this, selector, null))
                 .Select(
                     matchedClosuresList => matchedClosuresList.Where(
-                            matchedClosure => {
+                            matchedClosure =>
+                            {
                                 if (!Frames.Any(frame => frame.IsEqualOrClonedFrom(matchedClosure.Ruleset)))
                                     return true;
 
@@ -239,24 +248,28 @@ namespace dotless.Core.Parser.Infrastructure
                                     return mixinDef.Condition != null;
 
                                 return false;
-                        }
+                            }
                     )
                 )
                 .FirstOrDefault(matchedClosuresList => matchedClosuresList.Count() != 0);
 
-            if (matchingRuleSets != null) {
+            if (matchingRuleSets != null)
+            {
                 return matchingRuleSets;
             }
 
-            if (Parent != null) {
+            if (Parent != null)
+            {
                 matchingRuleSets = Parent.FindRulesets(selector);
             }
 
-            if (matchingRuleSets != null) {
+            if (matchingRuleSets != null)
+            {
                 return matchingRuleSets;
             }
 
-            if (ClosureEnvironment != null) {
+            if (ClosureEnvironment != null)
+            {
                 return ClosureEnvironment.FindRulesets(selector);
             }
 
@@ -281,7 +294,7 @@ namespace dotless.Core.Parser.Infrastructure
         {
             if (assembly == null) throw new ArgumentNullException("assembly");
 
-            var functionType = typeof (Function);
+            var functionType = typeof(Function);
 
             foreach (var func in assembly
                 .GetTypes()
@@ -296,7 +309,7 @@ namespace dotless.Core.Parser.Infrastructure
         private void AddCoreFunctions()
         {
             AddFunctionsFromAssembly(Assembly.GetExecutingAssembly());
-            AddFunction("%", typeof (CFormatString));
+            AddFunction("%", typeof(CFormatString));
         }
 
         /// <summary>
@@ -329,7 +342,7 @@ namespace dotless.Core.Parser.Infrastructure
 
             yield return new KeyValuePair<string, Type>(name, t);
 
-            if(name.Contains("-"))
+            if (name.Contains("-"))
                 yield return new KeyValuePair<string, Type>(name.Replace("-", ""), t);
         }
 
@@ -344,7 +357,7 @@ namespace dotless.Core.Parser.Infrastructure
                     _extensions.Add(match);
                 }
 
-                match.AddExtension(selector,env);
+                match.AddExtension(selector, env);
             }
 
             foreach (var extending in extends.Partial)
@@ -356,15 +369,17 @@ namespace dotless.Core.Parser.Infrastructure
                     _extensions.Add(match);
                 }
 
-                match.AddExtension(selector,env);
+                match.AddExtension(selector, env);
             }
 
-            if (Parent != null) {
+            if (Parent != null)
+            {
                 Parent.AddExtension(selector, extends, env);
             }
         }
 
-        public void RegisterExtensionsFrom(Env child) {
+        public void RegisterExtensionsFrom(Env child)
+        {
             _extensions.AddRange(child._extensions);
         }
 

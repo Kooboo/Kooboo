@@ -1,25 +1,25 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using Kooboo.IndexedDB.BTree.Comparer;
 using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Btree.Comparer;
 
 namespace Kooboo.IndexedDB
-{  
+{
     public static class ObjectContainer
     {
 
-        private static GuidConverter _guidConverter; 
+        private static GuidConverter _guidConverter;
         public static GuidConverter GuidConverter
         {
             get
             {
                 if (_guidConverter == null)
                 {
-                    _guidConverter = new GuidConverter(); 
+                    _guidConverter = new GuidConverter();
                 }
-                return _guidConverter; 
+                return _guidConverter;
             }
         }
 
@@ -30,7 +30,7 @@ namespace Kooboo.IndexedDB
         {
             if (_ByteConverterList == null)
             {
-                _ByteConverterList = new Dictionary<Type, object>(); 
+                _ByteConverterList = new Dictionary<Type, object>();
                 _ByteConverterList.Add(typeof(bool), new BoolConverter());
                 _ByteConverterList.Add(typeof(byte), new IndexedDB.ByteConverter.ByteConverter());
                 _ByteConverterList.Add(typeof(byte[]), new BytesConverter());
@@ -42,7 +42,7 @@ namespace Kooboo.IndexedDB
                 _ByteConverterList.Add(typeof(short), new Int16Converter());
                 _ByteConverterList.Add(typeof(int), new Int32Converter());
                 _ByteConverterList.Add(typeof(long), new Int64Converter());
-                _ByteConverterList.Add(typeof(string), new StringConverter());  
+                _ByteConverterList.Add(typeof(string), new StringConverter());
             }
 
             return _ByteConverterList;
@@ -69,7 +69,7 @@ namespace Kooboo.IndexedDB
             {
                 supportok = false;
             }
-            
+
             if (!supportok)
             {
                 converter = new BinaryConverter<T>();
@@ -97,7 +97,7 @@ namespace Kooboo.IndexedDB
             return new BinaryConverter<T>();
         }
 
-   
+
         private static Dictionary<Type, IComparer<byte[]>> _comparelist;
 
         private static Dictionary<Type, IComparer<byte[]>> comparelist
@@ -116,6 +116,7 @@ namespace Kooboo.IndexedDB
                     _comparelist.Add(typeof(DateTime), new DateTimeComparer());
                     _comparelist.Add(typeof(byte), new ByteComparer());
                     _comparelist.Add(typeof(Guid), new GuidComparer());
+                    _comparelist.Add(typeof(byte[]), new ByteArrayComparer());
                 }
 
                 return _comparelist;
@@ -123,16 +124,16 @@ namespace Kooboo.IndexedDB
         }
 
         public static IComparer<byte[]> getComparer(Type keytype, int keylength)
-        { 
+        {
             if (comparelist.ContainsKey(keytype))
             {
                 return comparelist[keytype];
             }
             else
             {
-                return new Kooboo.IndexedDB.Btree.Comparer.StringComparer(keylength, GlobalSettings.DefaultEncoding);
-            } 
-        } 
+                return new Kooboo.IndexedDB.BTree.Comparer.StringComparer(keylength, GlobalSettings.DefaultEncoding);
+            }
+        }
     }
 
 

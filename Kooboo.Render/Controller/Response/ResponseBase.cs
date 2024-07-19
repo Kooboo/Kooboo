@@ -1,21 +1,21 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net; 
+using System.Net;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Render.Response
-{ 
-    public class ResponseBase  
+{
+    public class ResponseBase
     {
         public ResponseBase()
-        { 
+        {
         }
         public int StatusCode { get; set; } = 200;
-         
-        public string ContentType { get; set; } 
+
+        public string ContentType { get; set; }
 
         private HttpStringCollection _headers;
         public HttpStringCollection Headers
@@ -94,7 +94,7 @@ namespace Kooboo.Render.Response
             {
                 this.DeletedCookieNames.Add(CookieName);
             }
-        }  
-         
-    } 
+        }
+
+    }
 }

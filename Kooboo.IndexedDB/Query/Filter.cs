@@ -1,14 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Indexs;
-using Kooboo.IndexedDB.Btree;
-using Kooboo.IndexedDB.Columns;
 using System.Linq.Expressions;
-using Kooboo.IndexedDB.Serializer.Simple;
+using Kooboo.IndexedDB.ByteConverter;
+using Kooboo.IndexedDB.Columns;
+using Kooboo.IndexedDB.Condition.Expression;
 
 namespace Kooboo.IndexedDB.Query
 {
@@ -24,233 +23,224 @@ namespace Kooboo.IndexedDB.Query
         public bool Ascending;
         public string OrderByFieldName;
         internal bool OrderByPrimaryKey;
-        
+
         /// <summary>
         /// Use the column data to generate object only, but not read entire object from disk. 
         /// This is used for faster performance in senarios like MailMessage contains a raw body that is not needed most of the time. 
         /// </summary>
-        private bool ColumnDataOnly;
-        
-        internal ObjectStore<TKey, TValue> store;
+        private bool _columnDataOnly;
 
-        public List<FilterItem> items = new List<FilterItem>();
+        internal readonly ObjectStore<TKey, TValue> store;
 
-        public Dictionary<string, List<byte[]>> InItems = new Dictionary<string, List<byte[]>>();
+        public Node Node { get; private set; }
 
-        public List<MethodCallExpression> calls = new List<MethodCallExpression>(); 
+        public readonly Dictionary<string, List<byte[]>> InItems = new();
+
+        public readonly List<MethodCallExpression> calls = new();
 
         public Filter(ObjectStore<TKey, TValue> store)
         {
             this.store = store;
-            this.SkipCount = 0;
-            this.OrderByPrimaryKey = false;
-            this.Ascending = true;
-            this.ColumnDataOnly = false;
+            SkipCount = 0;
+            OrderByPrimaryKey = false;
+            Ascending = true;
+            _columnDataOnly = false;
         }
 
-        public Filter<TKey, TValue> Where(string FieldOrPropertyName, Comparer comparer, object CompareValue)
+        public Filter<TKey, TValue> Where(string fieldOrPropertyName, Comparer comparer, object compareValue)
         {
-            FilterItem item = new FilterItem();
+            var item = new FilterNode
+            {
+                Value = new ValueNode(null, false),
+                Comparer = comparer,
+                Property = fieldOrPropertyName
+            };
 
             // check to see if there is in the column. 
-            IColumn<TValue> column = this.store.GetColumn(FieldOrPropertyName);
+            var column = store.GetColumn(fieldOrPropertyName);
 
             if (column != null)
             {
-                item.FieldType = column.DataType;
-                item.Length = column.Length;
+                item.Value.Type = column.DataType;
+                item.Value.Length = column.Length;
             }
             else
             {
-                IIndex<TValue> index = this.store.Indexes.getIndex(FieldOrPropertyName);
+                var index = store.Indexes.getIndex(fieldOrPropertyName);
 
                 if (index != null)
                 {
-                    item.FieldType = index.keyType;
-                    item.Length = index.Length;
+                    item.Value.Type = index.keyType;
+                    item.Value.Length = index.Length;
                 }
                 else
                 {
-                    if (FieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
+                    if (fieldOrPropertyName.IsSameValue(store.StoreSetting.PrimaryKey))
                     {
-                        var keytype = Helper.TypeHelper.GetFieldType(this.store.StoreSetting.ValueType, this.store.StoreSetting.PrimaryKey);
+                        var keyType = Helper.TypeHelper.GetFieldType(store.StoreSetting.ValueType,
+                            store.StoreSetting.PrimaryKey);
 
-                        item.FieldType = keytype;
-                        item.Length = this.store.StoreSetting.PrimaryKeyLen; 
+                        item.Value.Type = keyType;
+                        item.Value.Length = store.StoreSetting.PrimaryKeyLen;
                     }
                 }
-
             }
 
-            if (item.FieldType == null || item.Length < 1)
+            if (item.Value.Type == null || item.Value.Length < 1)
             {
-                throw new Exception("only index or column are allowed in the where condition, consider adding the field into columns in order to search");
+                throw new Exception(
+                    "only index or column are allowed in the where condition, consider adding the field into columns in order to search");
             }
 
-            item.Compare = comparer;
+            var byteValue = getByteValue(item.Value.Type, compareValue);
 
-            item.FieldOrProperty = FieldOrPropertyName;
+            if (byteValue == null) return this;
+            item.Value.ValueBytes = byteValue;
 
-            byte[] bytevalue = getByteValue(item.FieldType, CompareValue);
-
-            if (bytevalue != null)
+            //bool and guid, there is not > < =, only equal or not equal. 
+            if (item.Value.Type == typeof(bool) || item.Value.Type == typeof(Guid))
             {
-                item.Value = bytevalue;
-
-                //bool and guid, there is not > < =, only equal or not equal. 
-                if (item.FieldType == typeof(bool) || item.FieldType == typeof(Guid))
+                if (item.Comparer != Comparer.EqualTo && item.Comparer != Comparer.NotEqualTo)
                 {
-                    if (item.Compare != Comparer.EqualTo && item.Compare != Comparer.NotEqualTo)
-                    {
-                        item.Compare = Comparer.EqualTo;
-                    }
+                    item.Comparer = Comparer.EqualTo;
                 }
+            }
 
-                //date time, must have specify comare till min, second, millsecond, etc. 
-                if (item.FieldType == typeof(DateTime))
+            //date time, must have specify comare till min, second, millsecond, etc. 
+            if (item.Value.Type == typeof(DateTime))
+            {
+                if (item.Value.TimeScope == default(DateTimeScope))
                 {
-                    if (item.TimeScope == default(DateTimeScope))
-                    {
-                        item.TimeScope = DateTimeScope.day;
-                    }
+                    item.Value.TimeScope = DateTimeScope.day;
                 }
-
-                this.items.Add(item);
             }
+
+            Node = Node.And(Node, item);
 
             return this;
         }
 
-        public Filter<TKey, TValue> WhereEqual(string FieldOrPropertyName, bool Value)
+        public Filter<TKey, TValue> WhereEqual(string name, bool value)
         {
-            FilterItem item = new FilterItem();
-
-            item.Compare = Comparer.EqualTo;
-
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(bool);
-            item.Length = 1;
-
-            byte[] valuebyte = new byte[1];
-            if (Value)
+            var filter = new FilterNode
             {
-                valuebyte[0] = 1;
-            }
-            else
-            {
-                valuebyte[0] = 0;
-            }
-            item.Value = valuebyte;
+                Comparer = Comparer.EqualTo,
+                Property = name,
+                Value = new ValueNode(null, false)
+                {
+                    Type = typeof(bool),
+                    Length = 1,
+                    ValueBytes = new[] { (byte)(value ? 1 : 0) }
+                }
+            };
 
-            this.items.Add(item);
-
+            Node = Node.And(Node, filter);
             return this;
         }
 
-        public Filter<TKey, TValue> WhereIn(string FieldOrPropertyName, List<object> Values)
-        { 
-            IColumn<TValue> column = this.store.GetColumn(FieldOrPropertyName);
-
-            if (column == null)
-            {
-                throw new Exception("Only Fields defined in Column are allowed to use In query"); 
-            }
-
-            List<byte[]> invalues = new List<byte[]>(); 
-
-            foreach (var item in Values)
-            {
-                byte[] value = getByteValue(column.DataType, item);
-                invalues.Add(value); 
-            }
-
-            this.InItems[FieldOrPropertyName] = invalues; 
-
-            return this;
-        }
-         
-        public Filter<TKey, TValue> MethodCall(MethodCallExpression call)
+        public Filter<TKey, TValue> WhereIn(string fieldOrPropertyName, List<object> values)
         {
-            this.calls.Add(call); 
-            return this; 
-        }
-
-        public Filter<TKey, TValue> WhereIn<Type>(string FieldOrPropertyName, List<Type> Values)
-        {
-            IColumn<TValue> column = this.store.GetColumn(FieldOrPropertyName);
+            var column = store.GetColumn(fieldOrPropertyName);
 
             if (column == null)
             {
                 throw new Exception("Only Fields defined in Column are allowed to use In query");
             }
 
-            List<byte[]> invalues = new List<byte[]>();
+            var invalues = new List<byte[]>();
 
-            foreach (var item in Values)
+            foreach (var item in values)
             {
                 byte[] value = getByteValue(column.DataType, item);
                 invalues.Add(value);
             }
 
-            this.InItems[FieldOrPropertyName] = invalues;
+            InItems[fieldOrPropertyName] = invalues;
 
             return this;
         }
 
-        public Filter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> FieldExpression, List<T> Values)
+        public Filter<TKey, TValue> MethodCall(MethodCallExpression call)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldExpression); 
+            calls.Add(call);
+            return this;
+        }
 
-            if (!string.IsNullOrEmpty(fieldname))
+        public Filter<TKey, TValue> WhereIn<Type>(string FieldOrPropertyName, List<Type> Values)
+        {
+            IColumn<TValue> column = store.GetColumn(FieldOrPropertyName);
+
+            if (column == null)
             {
-                this.WhereIn<T>(fieldname, Values);
+                throw new Exception("Only Fields defined in Column are allowed to use In query");
             }
-            return this;
-        }
 
-        
-        public Filter<TKey, TValue> WhereEqual(string FieldOrPropertyName, Guid Value)
-        {
-            FilterItem item = new FilterItem();
+            List<byte[]> inValues = new List<byte[]>();
 
-            item.Compare = Comparer.EqualTo;
+            foreach (var item in Values)
+            {
+                byte[] value = getByteValue(column.DataType, item);
+                inValues.Add(value);
+            }
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(Guid);
-            IByteConverter<Guid> x = ObjectContainer.GetConverter<Guid>();
-            item.Value = x.ToByte(Value);
-
-            item.Length = 16;
-
-            this.items.Add(item);
+            InItems[FieldOrPropertyName] = inValues;
 
             return this;
         }
 
-        public Filter<TKey, TValue> WhereEqual(string FieldOrPropertyName, object Value)
+        public Filter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> fieldExpression, List<T> values)
         {
-            return Where(FieldOrPropertyName, Comparer.EqualTo, Value);
+            string fieldName = Helper.ExpressionHelper.GetFieldName<TValue>(fieldExpression);
+
+            if (!string.IsNullOrEmpty(fieldName))
+            {
+                WhereIn<T>(fieldName, values);
+            }
+
+            return this;
         }
 
-        public Filter<TKey, TValue> Where(string FieldOrPropertyName, Comparer comparer, DateTime CompareValue, DateTimeScope scope)
+
+        public Filter<TKey, TValue> WhereEqual(string name, Guid value)
         {
-            FilterItem item = new FilterItem();
+            var filter = new FilterNode
+            {
+                Comparer = Comparer.EqualTo,
+                Property = name,
+                Value = new ValueNode(null, false)
+                {
+                    Type = typeof(Guid),
+                    Length = 16,
+                    ValueBytes = ObjectContainer.GetConverter<Guid>().ToByte(value)
+                }
+            };
 
-            item.Compare = comparer;
+            Node = Node.And(Node, filter);
+            return this;
+        }
 
-            item.TimeScope = scope;
+        public Filter<TKey, TValue> WhereEqual(string fieldOrPropertyName, object value)
+        {
+            return Where(fieldOrPropertyName, Comparer.EqualTo, value);
+        }
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(DateTime);
+        public Filter<TKey, TValue> Where(string fieldOrPropertyName, Comparer comparer, DateTime compareValue,
+            DateTimeScope scope)
+        {
+            var filter = new FilterNode
+            {
+                Comparer = comparer,
+                Property = fieldOrPropertyName,
+                Value = new ValueNode(null, false)
+                {
+                    TimeScope = scope,
+                    Type = typeof(DateTime),
+                    Length = 8,
+                    ValueBytes = ObjectContainer.GetConverter<DateTime>().ToByte(compareValue)
+                }
+            };
 
-            item.Length = 8;
-
-            IByteConverter<DateTime> x = ObjectContainer.GetConverter<DateTime>();
-
-            item.Value = x.ToByte(CompareValue);
-
-            this.items.Add(item);
-
+            Node = Node.And(Node, filter);
             return this;
         }
 
@@ -259,79 +249,78 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         /// <param name="FieldOrPropertyName"></param>
         /// <param name="comparer"></param>
-        /// <param name="CompareValue"></param>
+        /// <param name="compareValue"></param>
         /// <returns></returns>
-        public Filter<TKey, TValue> WhereKey(Comparer comparer, object CompareValue)
+        public Filter<TKey, TValue> WhereKey(Comparer comparer, object compareValue)
         {
-            FilterItem item = new FilterItem();
+            var bytes = getByteValue(typeof(TKey), compareValue);
+            if (bytes == null) return this;
 
-            item.FieldType = typeof(TKey); 
-            item.Length = this.store.StoreSetting.PrimaryKeyLen;
-
-            item.Compare = comparer;
-
-            item.FieldOrProperty = this.store.StoreSetting.PrimaryKey;
-
-            byte[] bytevalue = this.getByteValue(typeof(TKey), CompareValue);
-             
-            if (bytevalue != null)
+            var filter = new FilterNode
             {
-                item.Value = bytevalue; 
-                this.items.Add(item);
-            }
+                Comparer = comparer,
+                Property = store.StoreSetting.PrimaryKey,
+                Value = new ValueNode(null, false)
+                {
+                    Type = typeof(TKey),
+                    Length = store.StoreSetting.PrimaryKeyLen,
+                    ValueBytes = bytes
+                }
+            };
 
+            Node = Node.And(Node, filter);
             return this;
         }
 
-        private byte[] getByteValue(Type datatype, object objectvalue)
+        private byte[] getByteValue(Type datatype, object objectValue)
         {
             if (datatype == typeof(Int32))
             {
-                int value = Convert.ToInt32(objectvalue);
+                int value = Convert.ToInt32(objectValue);
                 IByteConverter<Int32> x = ObjectContainer.GetConverter<Int32>();
                 return x.ToByte(value);
             }
             else if (datatype == typeof(Int16))
-            {  
-                Int16 value = Convert.ToInt16(objectvalue);
+            {
+                Int16 value = Convert.ToInt16(objectValue);
                 IByteConverter<Int16> x = ObjectContainer.GetConverter<Int16>();
                 return x.ToByte(value);
             }
             else if (datatype == typeof(string))
             {
-                string value = Convert.ToString(objectvalue);
+                string value = Convert.ToString(objectValue);
                 IByteConverter<string> x = ObjectContainer.GetConverter<string>();
 
                 return x.ToByte(value);
             }
             else if (datatype == typeof(Int64))
             {
-                Int64 value = Convert.ToInt64(objectvalue);
+                Int64 value = Convert.ToInt64(objectValue);
                 IByteConverter<Int64> x = ObjectContainer.GetConverter<Int64>();
                 return x.ToByte(value);
             }
             else if (datatype == typeof(float))
             {
-                float value = Convert.ToSingle(objectvalue);
+                float value = Convert.ToSingle(objectValue);
                 IByteConverter<float> x = ObjectContainer.GetConverter<float>();
                 return x.ToByte(value);
             }
             else if (datatype == typeof(double))
             {
-                double value = Convert.ToDouble(objectvalue);
+                double value = Convert.ToDouble(objectValue);
                 IByteConverter<double> x = ObjectContainer.GetConverter<double>();
                 return x.ToByte(value);
             }
             else if (datatype == typeof(decimal))
             {
-                double value = Convert.ToDouble(objectvalue);
+                double value = Convert.ToDouble(objectValue);
                 IByteConverter<double> x = ObjectContainer.GetConverter<double>();
                 return x.ToByte(value);
             }
 
             else if (datatype == typeof(Guid))
             {
-                Guid value = Guid.Parse(Convert.ToString(objectvalue));
+                Guid value = Guid.Parse(Convert.ToString(objectValue));
 
                 if (value == null)
                 {
@@ -346,8 +335,8 @@ namespace Kooboo.IndexedDB.Query
 
             else if (datatype == typeof(bool))
             {
-                bool value = Convert.ToBoolean(objectvalue);
-                 
+                bool value = Convert.ToBoolean(objectValue);
+
                 byte[] valuebyte = new byte[1];
                 if (value)
                 {
@@ -363,31 +352,30 @@ namespace Kooboo.IndexedDB.Query
 
             else if (datatype == typeof(DateTime))
             {
-                DateTime datevalue = (DateTime)objectvalue; 
-                 
+                DateTime datevalue = (DateTime)objectValue;
+
                 IByteConverter<DateTime> x = ObjectContainer.GetConverter<DateTime>();
-                return x.ToByte(datevalue); 
+                return x.ToByte(datevalue);
             }
 
             else if (datatype == typeof(byte))
             {
                 byte[] valuebyte = new byte[1];
-                valuebyte[0] = Convert.ToByte(objectvalue);
+                valuebyte[0] = Convert.ToByte(objectValue);
 
                 return valuebyte;
             }
 
             else if (datatype.IsEnum)
             {
-                int intvalue = (int)objectvalue;
+                int intvalue = (int)objectValue;
                 IByteConverter<Int32> x = ObjectContainer.GetConverter<Int32>();
                 return x.ToByte(intvalue);
-            } 
+            }
             else
-            { 
+            {
                 throw new Exception("data type not supported for filter");
             }
-
         }
 
         /// <summary>
@@ -395,9 +383,9 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public Filter<TKey, TValue> OrderByAscending()
         {
-            this.Ascending = true;
-            this.OrderByPrimaryKey = true;
-            this.OrderByFieldName = string.Empty;
+            Ascending = true;
+            OrderByPrimaryKey = true;
+            OrderByFieldName = string.Empty;
             return this;
         }
 
@@ -407,15 +395,15 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public Filter<TKey, TValue> OrderByAscending(string FieldOrPropertyName)
         {
-            if (FieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
+            if (FieldOrPropertyName.IsSameValue(store.StoreSetting.PrimaryKey))
             {
-                return this.OrderByAscending();
+                return OrderByAscending();
             }
             else
             {
-                this.Ascending = true;
-                this.OrderByFieldName = FieldOrPropertyName;
-                this.OrderByPrimaryKey = false;
+                Ascending = true;
+                OrderByFieldName = FieldOrPropertyName;
+                OrderByPrimaryKey = false;
                 return this;
             }
         }
@@ -425,9 +413,9 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public Filter<TKey, TValue> OrderByDescending()
         {
-            this.Ascending = false;
-            this.OrderByPrimaryKey = true;
-            this.OrderByFieldName = string.Empty;
+            Ascending = false;
+            OrderByPrimaryKey = true;
+            OrderByFieldName = string.Empty;
             return this;
         }
 
@@ -436,15 +424,15 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public Filter<TKey, TValue> OrderByDescending(string FieldOrPropertyName)
         {
-            if (FieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
+            if (FieldOrPropertyName.IsSameValue(store.StoreSetting.PrimaryKey))
             {
-                return this.OrderByDescending();
+                return OrderByDescending();
             }
             else
             {
-                this.Ascending = false;
-                this.OrderByFieldName = FieldOrPropertyName;
-                this.OrderByPrimaryKey = false;
+                Ascending = false;
+                OrderByFieldName = FieldOrPropertyName;
+                OrderByPrimaryKey = false;
                 return this;
             }
         }
@@ -455,14 +443,14 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public Filter<TKey, TValue> UseColumnData()
         {
-            this.ColumnDataOnly = true;
+            _columnDataOnly = true;
             return this;
         }
 
 
         public Filter<TKey, TValue> Skip(int count)
         {
-            this.SkipCount = count;
+            SkipCount = count;
             return this;
         }
 
@@ -505,11 +493,11 @@ namespace Kooboo.IndexedDB.Query
 
             List<long> list = GetList(count);
 
-            if (this.ColumnDataOnly)
+            if (_columnDataOnly)
             {
                 foreach (var item in list)
                 {
-                    TValue record = this.store.getValueFromColumns(item);
+                    TValue record = store.getValueFromColumns(item);
                     listvalue.Add(record);
                 }
             }
@@ -517,7 +505,7 @@ namespace Kooboo.IndexedDB.Query
             {
                 foreach (var item in list)
                 {
-                    TValue record = this.store.getValue(item);
+                    TValue record = store.getValue(item);
                     listvalue.Add(record);
                 }
             }
@@ -528,7 +516,7 @@ namespace Kooboo.IndexedDB.Query
 
         internal List<long> GetList(int count)
         {
-            lock (this.store._Locker)
+            lock (store._Locker)
             {
                 int skipped = 0;
                 int taken = 0;
@@ -539,26 +527,23 @@ namespace Kooboo.IndexedDB.Query
 
                 List<long> returnlist = new List<long>();
 
-                foreach (var item in executionplan.indexRanges)
+                foreach (var item in executionplan.IndexRanges)
                 {
-
                     /// check if the primary key is included. 
+                    var collection = item.Value.SelectMany(s => store.Indexes.getIndex(item.Key).GetCollection(
+                        s.lower,
+                        s.upper,
+                        s.lowerOpen,
+                        s.upperOpen,
+                        Ascending)
+                    );
 
-                    List<long> blockpositionList = new List<long>();
-
-                    ItemCollection collection = this.store.Indexes.getIndex(item.Key).GetCollection(item.Value.lower, item.Value.upper, item.Value.lowerOpen, item.Value.upperOpen, this.Ascending);
-
-                    foreach (Int64 position in collection)
-                    {
-                        blockpositionList.Add(position);
-                    }
-
-                    rangelist.Add(blockpositionList);
+                    rangelist.Add(collection.ToList());
                 }
 
                 bool itemMatch = true;
 
-                foreach (Int64 item in executionplan.startCollection)
+                foreach (Int64 item in executionplan.StartCollection)
                 {
                     /// check matches. 
                     itemMatch = true;
@@ -576,25 +561,14 @@ namespace Kooboo.IndexedDB.Query
                         continue;
                     }
 
-                    /// check column matchs. 
-                    foreach (ColumnScan plan in executionplan.scanColumns)
-                    {
-                        byte[] columnbytes = this.store.getColumnsBytes(item, plan.relativeStartPosition, plan.length);
-
-                        if (!plan.Evaluator.isMatch(columnbytes))
-                        {
-                            itemMatch = false;
-                            break;
-                        }
-
-                    }
-
-                    if (!itemMatch)
+                    /// check column matchs.
+                    if (executionplan.ColumnScanner != null &&
+                        !executionplan.ColumnScanner.Match(item, store.getColumnsBytes))
                     {
                         continue;
                     }
 
-                    if (skipped < this.SkipCount)
+                    if (skipped < SkipCount)
                     {
                         skipped += 1;
                         continue;
@@ -629,44 +603,37 @@ namespace Kooboo.IndexedDB.Query
         }
 
 
-
         public int Count()
         {
-            lock (this.store._Locker)
+            lock (store._Locker)
             {
-
                 int skipped = 0;
                 int taken = 0;
 
-                ExecutionPlan executionplan = FilterParser<TKey, TValue>.GetExecutionPlan(this);
+                var executionPlan = FilterParser<TKey, TValue>.GetExecutionPlan(this);
+                var list = new List<List<long>>();
 
-                List<List<long>> rangelist = new List<List<long>>();
-                List<TValue> returnlist = new List<TValue>();
-
-                foreach (var item in executionplan.indexRanges)
+                foreach (var item in executionPlan.IndexRanges)
                 {
-
                     /// check if the primary key is included. 
+                    var collection = item.Value.SelectMany(s => store.Indexes.getIndex(item.Key).GetCollection(
+                        s.lower,
+                        s.upper,
+                        s.lowerOpen,
+                        s.upperOpen,
+                        Ascending)
+                    );
 
-                    List<long> blockpositionList = new List<long>();
-
-                    ItemCollection collection = this.store.Indexes.getIndex(item.Key).GetCollection(item.Value.lower, item.Value.upper, item.Value.lowerOpen, item.Value.upperOpen, this.Ascending);
-
-                    foreach (Int64 position in collection)
-                    {
-                        blockpositionList.Add(position);
-                    }
-
-                    rangelist.Add(blockpositionList);
+                    list.Add(collection.ToList());
                 }
 
                 bool itemMatch = true;
 
-                foreach (Int64 item in executionplan.startCollection)
+                foreach (Int64 item in executionPlan.StartCollection)
                 {
                     /// check matches. 
                     itemMatch = true;
-                    foreach (List<long> rangeitem in rangelist)
+                    foreach (List<long> rangeitem in list)
                     {
                         if (!rangeitem.Contains(item))
                         {
@@ -682,26 +649,15 @@ namespace Kooboo.IndexedDB.Query
 
 
                     /// check column matchs. 
-                    foreach (ColumnScan plan in executionplan.scanColumns)
-                    {
-                        byte[] columnbytes = this.store.getColumnsBytes(item, plan.relativeStartPosition, plan.length);
-
-                        if (!plan.Evaluator.isMatch(columnbytes))
-                        {
-                            itemMatch = false;
-                            break;
-                        }
-
-                    }
-
-                    if (!itemMatch)
+                    if (executionPlan.ColumnScanner != null &&
+                        !executionPlan.ColumnScanner.Match(item, store.getColumnsBytes))
                     {
                         continue;
                     }
 
                     /// pass all tests. 
 
-                    if (skipped < this.SkipCount)
+                    if (skipped < SkipCount)
                     {
                         skipped += 1;
                         continue;
@@ -709,15 +665,12 @@ namespace Kooboo.IndexedDB.Query
 
 
                     taken += 1;
-
                 }
 
-                executionplan = null;
+                executionPlan = null;
 
                 return taken;
             }
         }
-
-
     }
 }

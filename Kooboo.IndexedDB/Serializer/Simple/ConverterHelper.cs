@@ -1,17 +1,15 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using Kooboo.IndexedDB.Serializer.Simple.FieldConverter;
+using System.Collections.Generic;
 using Kooboo.IndexedDB.Helper;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic; 
+using Kooboo.IndexedDB.Serializer.Simple.FieldConverter;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
     public static class ConverterHelper
     {
-        
+
 
         public static Func<object, byte[]> GetValueToBytes(Type type)
         {
@@ -616,7 +614,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         }
 
 
-        private static Dictionary<string, Func<byte[], object>> _typenameconverter; 
+        private static Dictionary<string, Func<byte[], object>> _typenameconverter;
         public static Dictionary<string, Func<byte[], object>> TypeNameConverter
         {
             get
@@ -642,12 +640,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     result.Add(typeof(System.Net.IPAddress).Name, ValueConverter.FromBytesToIpaddress);
                     result.Add(typeof(object).Name, ValueConverter.FromObjectBytes);
 
-                    _typenameconverter = result; 
+                    _typenameconverter = result;
                 }
-                return _typenameconverter; 
+                return _typenameconverter;
             }
         }
 
-         
+
     }
 }

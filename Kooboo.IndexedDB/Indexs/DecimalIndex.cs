@@ -1,12 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.IndexedDB.Btree;
+using Kooboo.IndexedDB.BTree;
 
 namespace Kooboo.IndexedDB.Indexs
 {
@@ -31,7 +26,7 @@ namespace Kooboo.IndexedDB.Indexs
             set;
         }
 
-        public Btree.BtreeIndex<double> index;
+        public BTree.BTreeIndex<double> index;
 
         Func<TValue, decimal> getValue;
 
@@ -44,9 +39,9 @@ namespace Kooboo.IndexedDB.Indexs
 
 
             getValue = Helper.ObjectHelper.GetGetValue<TValue, decimal>(FieldName);
-            index = new Btree.BtreeIndex<double>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
+            index = new BTree.BTreeIndex<double>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
 
-            this.Length = index.keylength;
+            this.Length = index.keyLength;
         }
 
 
@@ -106,7 +101,7 @@ namespace Kooboo.IndexedDB.Indexs
 
         public KeyBytesCollection AllKeys(bool ascending)
         {
-            return this.index.AllKeyBytesCollection(ascending); 
+            return this.index.AllKeyBytesCollection(ascending);
         }
     }
 }

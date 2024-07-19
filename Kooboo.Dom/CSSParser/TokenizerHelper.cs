@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
@@ -84,7 +80,7 @@ namespace Kooboo.Dom.CSS
         /// 4.3.10. Check if three code points would start a number. the three code points in question are the current input code point and the next two input code points, in that order.
         /// </summary>
         /// <returns></returns>
-        public static bool isStartWithNumber(char one, char two,  char three)
+        public static bool isStartWithNumber(char one, char two, char three)
         {
             //This section describes how to check if three code points would start a number. The algorithm described here can be called explicitly with three code points, or can be called with the input stream itself. In the latter case, the three code points in question are the current input code point and the next two input code points, in that order.
 
@@ -168,7 +164,7 @@ namespace Kooboo.Dom.CSS
 
             //A sign: a single U+002B PLUS SIGN (+) or U+002D HYPHEN-MINUS (-), or the empty string. Let s be the number -1 if the sign is U+002D HYPHEN-MINUS (-); otherwise, let s be the number 1.
 
-         if (input[index] == '\u002B' || input[index] == '\u002D')
+            if (input[index] == '\u002B' || input[index] == '\u002D')
             {
                 if (input[index] == '\u002D')
                 {
@@ -185,7 +181,7 @@ namespace Kooboo.Dom.CSS
 
 
             //An integer part: zero or more digits. If there is at least one digit, let i be the number formed by interpreting the digits as a base-10 integer; otherwise, let i be the number 0.
-            
+
             string intpart = string.Empty;
 
             while (input[index].isDigit())
@@ -198,6 +194,7 @@ namespace Kooboo.Dom.CSS
 
                     if (intpart.Length > 0)
                     {
+                        if (intpart.Length > 10) intpart = intpart[..10];
                         i = Convert.ToInt64(intpart, 10);
                     }
 
@@ -240,15 +237,23 @@ namespace Kooboo.Dom.CSS
 
                     if (d > 0)
                     {
+                        if (d > 18)
+                        {
+                            fintpart = fintpart[..18];
+                        }
                         f = Convert.ToInt64(fintpart, 10);
                     }
                     goto processdigit;
                 }
             }
-             d = fintpart.Length;
+            d = fintpart.Length;
 
             if (d > 0)
             {
+                if (d > 18)
+                {
+                    fintpart = fintpart[..18];
+                }
                 f = Convert.ToInt64(fintpart, 10);
             }
 
@@ -268,7 +273,7 @@ namespace Kooboo.Dom.CSS
 
             //An exponent sign: a single U+002B PLUS SIGN (+) or U+002D HYPHEN-MINUS (-), or the empty string. Let t be the number -1 if the sign is U+002D HYPHEN-MINUS (-); otherwise, let t be the number 1.
 
-             if (input[index] == '\u002B' || input[index] == '\u002D')
+            if (input[index] == '\u002B' || input[index] == '\u002D')
             {
                 if (input[index] == '\u002D')
                 {
@@ -314,10 +319,10 @@ namespace Kooboo.Dom.CSS
 
         processdigit:
             //Return the number s·(i + f·10-d)·10te.
-          
-           double middle = i + f * Math.Pow(10, -1 * d);
-        double last = Math.Pow(10, t * e);
-        return s * middle * last;
+
+            double middle = i + f * Math.Pow(10, -1 * d);
+            double last = Math.Pow(10, t * e);
+            return s * middle * last;
 
         }
 

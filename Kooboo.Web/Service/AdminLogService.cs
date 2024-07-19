@@ -1,16 +1,12 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Lib.Helper;
 using Kooboo.Render;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Service
 {
@@ -19,7 +15,7 @@ namespace Kooboo.Web.Service
         static AdminLogService()
         {
             GlobalDatabase = Kooboo.Data.DB.Global();
-            LogFolder = System.IO.Path.Combine(Data.AppSettings.RootPath, "AppData", "AdminLog"); 
+            LogFolder = System.IO.Path.Combine(Data.AppSettings.AppDataFolder, "AdminLog");
             IOHelper.EnsureDirectoryExists(LogFolder);
 
             var setting = new Setting();
@@ -48,7 +44,7 @@ namespace Kooboo.Web.Service
 
         public static Sequence<AdminLog> LogByWeek<AdminLog>(DateTime weektime)
         {
-            string weekname = _GetWeekName(weektime);
+            string weekname = Kooboo.Sites.Helper.WeekNameHelper.GetWeekName(weektime);
 
             var filename = weekname + ".log";
             string FullFileName = System.IO.Path.Combine(LogFolder, filename);
@@ -56,17 +52,6 @@ namespace Kooboo.Web.Service
             return GlobalDatabase.GetSequence<AdminLog>(FullFileName) as Sequence<AdminLog>;
         }
 
-        private static int GetWeekOfYear(DateTime datetime)
-        {
-            return System.Globalization.CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(datetime, System.Globalization.CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-        }
-
-        internal static string _GetWeekName(DateTime datetime)
-        {
-            var weekname = GetWeekOfYear(datetime);
-            string strweekname = weekname > 9 ? weekname.ToString() : "0" + weekname.ToString();
-            return datetime.Year.ToString() + "-" + strweekname;
-        }
 
         private static object _lock = new object();
 
@@ -88,7 +73,7 @@ namespace Kooboo.Web.Service
                     }
                 }
 
-                if (GetWeekOfYear(_logtime) != GetWeekOfYear(DateTime.Now))
+                if (Sites.Helper.WeekNameHelper.GetWeekOfYear(_logtime) != Sites.Helper.WeekNameHelper.GetWeekOfYear(DateTime.Now))
                 {
                     _logstore = null;
                     return LogStore;
@@ -99,7 +84,7 @@ namespace Kooboo.Web.Service
 
         public static void Add(BackendLog log)
         {
-            LogStore.Add(log); 
+            LogStore.Add(log);
             LogStore.Flush();
         }
 
@@ -296,7 +281,7 @@ namespace Kooboo.Web.Service
             }
             return result;
         }
-         
+
 
         public static string GetLastPath(Guid UserId)
         {
@@ -312,6 +297,6 @@ namespace Kooboo.Web.Service
             }
             return null;
         }
-          
+
     }
 }

@@ -1,16 +1,11 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.Linq;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
-using Kooboo.Lib.Reflection;
 using Kooboo.Sites.DataSources;
 using Kooboo.Sites.DataSources.New.Models;
 using Kooboo.Sites.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Areas.Admin.ViewModels
 {
@@ -20,7 +15,7 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
         {
             this.Methods = new List<DataMethodViewModel>();
         }
-         
+
         private Type _type;
         internal Type DataSourceType
         {
@@ -33,13 +28,13 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
                 return _type;
             }
         }
-         
+
         public string Type { get; set; }
 
         public string DisplayName
         {
             get
-            { 
+            {
                 return this.DataSourceType?.Name;
             }
         }
@@ -54,13 +49,13 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
                 {
                     return DataSourceType.Assembly.GetName().Name;
                 }
-                return null; 
+                return null;
             }
         }
 
         public bool IsThridPartyDataSource { get; set; }
 
-        public List<DataMethodViewModel> Methods { get; set; } = new List<DataMethodViewModel>(); 
+        public List<DataMethodViewModel> Methods { get; set; } = new List<DataMethodViewModel>();
 
         public void AddMethod(SiteDb siteDb, IDataMethodSetting dataMethod, bool isGlobal)
         {
@@ -80,17 +75,17 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
                 IsNew = dataMethod.Id == Guid.Empty,
                 IsPublic = dataMethod.IsPublic,
                 ReturnType = dataMethod.ReturnType,
-                IsPagedResult = dataMethod.IsPagedResult, 
+                IsPagedResult = dataMethod.IsPagedResult,
                 IsConfigurable = dataMethod.Parameters.Any(),
                 ItemFields = typeInfo.ItemFields,
                 Enumerable = typeInfo.Enumerable
             };
 
-           if (!dataMethod.IsPublic && !isGlobal)
-            { 
-               
+            if (!dataMethod.IsPublic && !isGlobal)
+            {
+
                 var viewdatamethod = siteDb.ViewDataMethods.Query.Where(o => o.MethodId == dataMethod.Id).SelectAll();
-  
+
                 foreach (var item in viewdatamethod)
                 {
                     if (item.ViewId != default(Guid))
@@ -99,12 +94,12 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
                         if (view != null)
                         {
                             model.ViewId = view.Id;
-                            model.ViewName = view.Name; 
+                            model.ViewName = view.Name;
                         }
-                        break; 
+                        break;
                     }
-                } 
-            } 
+                }
+            }
 
             if (model.IsGlobal && model.Parameters.Any())
             {
@@ -112,8 +107,8 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
             }
             Methods.Add(model);
         }
-    
-}
+
+    }
 
     public class DataMethodViewModel
     {
@@ -121,8 +116,8 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
         {
             this.Parameters = new Dictionary<string, string>();
         }
-         
-        public Guid Id { get; set; } = default(Guid); 
+
+        public Guid Id { get; set; } = default(Guid);
 
         public string MethodName { get; set; }
 
@@ -133,15 +128,15 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
         public string ReturnType { get; set; }
         public bool IsPagedResult { get; set; }
 
-        public Dictionary<string, string> BindingParas  { get; set; } = new Dictionary<string, string>(); 
+        public Dictionary<string, string> BindingParas { get; set; } = new Dictionary<string, string>();
 
         public string OriginalMethodName { get; set; }
 
-        public Guid ViewId { get; set; } = default(Guid); 
+        public Guid ViewId { get; set; } = default(Guid);
 
         public string ViewName { get; set; }
 
-        public Dictionary<string, int> Relations { get; set; } = new Dictionary<string, int>(); 
+        public Dictionary<string, int> Relations { get; set; } = new Dictionary<string, int>();
 
         /// <summary>
         /// whether this is a global method or not. Global method can not be configured. 
@@ -183,5 +178,5 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
         /// </summary>
         public List<TypeFieldModel> ItemFields { get; set; }
     }
-    
+
 }

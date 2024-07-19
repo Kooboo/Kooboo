@@ -1,11 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Net.Mime;
+using System.Text;
+using Kooboo.Data.Models;
+using Kooboo.Mail.Factory;
+using MimeKit;
 
 namespace Kooboo.Mail.Utility
 {
@@ -17,11 +19,12 @@ namespace Kooboo.Mail.Utility
 
             var fromaddress = AddressUtility.GetAddress(message.From);
             var orgdb = Factory.DBFactory.OrgDb(user.CurrentOrgId);
-            var dbaddress = orgdb.EmailAddress.Get(fromaddress);
+            var dbaddress = orgdb.Email.Get(fromaddress);
             if (dbaddress != null)
             {
                 model.From = dbaddress.Id;
             }
+            model.MessageId = (int)message.MsgId;
             model.Cc = GetAddressList(message.Cc);
             model.Bcc = GetAddressList(message.Bcc);
             model.To = GetAddressList(message.To);
@@ -37,6 +40,7 @@ namespace Kooboo.Mail.Utility
             if (model.MessageId != null)
             {
                 msg.Id = model.MessageId.Value;
+                msg.MsgId = model.MessageId.Value;
             }
             msg.From = GetFrom(model, user);
             msg.Cc = ToAddress(model.Cc);
@@ -86,86 +90,245 @@ namespace Kooboo.Mail.Utility
         public static string GetFrom(ViewModel.ComposeViewModel model, User user)
         {
             var orgdb = Factory.DBFactory.OrgDb(user.CurrentOrgId);
-            var dbaddress = orgdb.EmailAddress.Get(model.From);
+            var dbaddress = orgdb.Email.Get(model.From);
             if (dbaddress != null)
             {
-                if (!string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
+                var add = dbaddress.Address;
+                if (dbaddress.AddressType == EmailAddressType.Wildcard)
                 {
-                    return "\"" + user.FirstName + " " + user.LastName + "\"<" + dbaddress.Address + ">";
+                    add = model.FromAddress;
+                }
+
+                string name = null;
+
+                if (!string.IsNullOrEmpty(dbaddress.Name))
+                {
+                    // return dbaddress.Name + " <" + add + ">";
+                    name = dbaddress.Name;
+                }
+
+                else if (!string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
+                {
+                    // return user.FirstName + " " + user.LastName + " <" + add + ">";
+                    name = user.FirstName + " " + user.LastName;
                 }
                 else
                 {
-                    return dbaddress.Address;
+                    name = AddressUtility.GetDisplayName(dbaddress.Address);
                 }
+
+                string FullAddress = name + "<" + dbaddress.Address + ">";
+
+                return FullAddress;
+
+                ///string FullAddress = "\"" + name + "\"<" + dbaddress.Address + ">";
+                if (MailboxAddress.TryParse(FullAddress, out var internetadd))
+                {
+                    return internetadd.ToString();
+                }
+
+                MailboxAddress mailbox = new MailboxAddress(name, dbaddress.Address);
+                return mailbox.ToString();
             }
             return null;
         }
 
-        public static string ComposeMessageBody(ViewModel.ComposeViewModel model, User user)
+        public static string ComposeMessageBody(ViewModel.ComposeViewModel model, User user, bool IncludeBcc = false, string msgId = null)
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            var maildb = DBFactory.OrgDb(user.CurrentOrgId);
+
+            string fromAdd = GetFrom(model, user);
+            headers.Add("From", fromAdd);
+            var to = model.To;
+            var cc = model.Cc;
+
+            headers.Add("To", ToAddress(to));
+            if (cc != null && cc.Any())
+            {
+                headers.Add("Cc", ToAddress(cc));
+            }
+
+            if (IncludeBcc)
+            {
+                var bcc = model.Bcc;
+
+                if (bcc != null && bcc.Any())
+                {
+                    headers.Add("Bcc", ToAddress(bcc));
+                }
+            }
+
+            headers.Add("Subject", model.Subject);
+
+            if (msgId == null)
+            {
+                msgId = Kooboo.Mail.Utility.SmtpUtility.GenerateMessageId(fromAdd);
+            }
+
+            headers.Add("Message-ID", msgId);
+
+            string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
+
+            if (model.Calendar is null)
+            {
+                var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, model.Attachments, user);
+                return strHeader + bodycomposer.Body();
+            }
+            else
+            {
+                string calendarContent = ICalendarUtility.GenerateICalendarContent(model.Calendar);
+                var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, null, calendarContent, model.Attachments, user);
+                return strHeader + bodycomposer.Body();
+            }
+        }
+
+        public static string ComposeUpdateOrCancelEventBody(ViewModel.ComposeViewModel model, User user, bool IncludeBcc = false, string msgId = null, bool isCancel = false)
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            var maildb = DBFactory.OrgDb(user.CurrentOrgId);
+
+            string fromAdd = GetFrom(model, user);
+
+            headers.Add("From", fromAdd);
+            var to = model.To;
+
+            List<string> toReal = new List<string>();
+            foreach (var item in to)
+            {
+                var x = MessageUtility.GetAddressModel(item);
+                EmailAddress emailAddress = maildb.Email.Get(x.Address);
+                if (emailAddress != null && !string.IsNullOrEmpty(emailAddress.ForwardAddress))
+                {
+                    toReal.Add(emailAddress.ForwardAddress);
+                }
+                else
+                {
+                    toReal.Add(item);
+                }
+            }
+            to = toReal;
+            headers.Add("To", ToAddress(to));
+
+            var cc = model.Cc;
+            if (cc != null && cc.Any())
+            {
+                headers.Add("Cc", ToAddress(cc));
+            }
+
+            if (IncludeBcc)
+            {
+                var bcc = model.Bcc;
+
+                if (bcc != null && bcc.Any())
+                {
+                    headers.Add("Bcc", ToAddress(bcc));
+                }
+            }
+
+            headers.Add("Subject", model.Subject);
+
+            if (msgId == null)
+            {
+                msgId = Kooboo.Mail.Utility.SmtpUtility.GenerateMessageId(fromAdd);
+            }
+
+            headers.Add("Message-ID", msgId);
+
+            string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
+
+            if (model.Calendar is null)
+            {
+                var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, model.Attachments, user);
+                return strHeader + bodycomposer.Body();
+            }
+            else
+            {
+                string calendarContent = ICalendarUtility.UpdateAndCancelICalendar(model.Calendar, isCancel);
+                var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, null, calendarContent, model.Attachments, user);
+                return strHeader + bodycomposer.Body();
+            }
+
+        }
+
+        public static string ComposeMessageBodySaveSent(ViewModel.ComposeViewModel model, User user)
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("From", GetFrom(model, user));
 
             var to = model.To;
-            to.AddRange(model.Cc);
+            var cc = model.Cc;
+            var bcc = model.Bcc;
 
             headers.Add("To", ToAddress(to));
+
+            if (cc != null && cc.Any())
+            {
+                headers.Add("Cc", ToAddress(cc));
+            }
+
+            if (bcc != null && bcc.Any())
+            {
+                headers.Add("Bcc", ToAddress(bcc));
+            }
+
             headers.Add("Subject", model.Subject);
 
             string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
 
-            var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, model.Attachments, user);
-
-            return strHeader + bodycomposer.Body();
-        }
-             
-        public static string ComposeTextEmailBody(string from, string to, string subject, string textbody)
-        {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("From", from);  
-            headers.Add("To", to);
-            headers.Add("Subject", subject);
-            string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
-
-            string contenttype = "Content-Type:text/plain"; 
-                        
-            var charset = Lib.Helper.EncodingDetector.GetTextCharset(textbody); 
-            if (charset !=null && charset.ToLower() != "ascii")
+            if (model.Calendar is null)
             {
-                contenttype += "; CharSet=" + charset + ";\r\n Content-Transfer-Encoding: 8bit"; 
+                var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, model.Attachments, user);
+                return strHeader + bodycomposer.Body();
             }
-
-            strHeader += contenttype + "\r\n"; 
-                                                               
-            string body = strHeader + "\r\n" + textbody;
-            return body; 
+            else
+            {
+                string calendarContent = ICalendarUtility.GenerateICalendarContent(model.Calendar);
+                var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(model.Html, null, calendarContent, model.Attachments, user);
+                return strHeader + bodycomposer.Body();
+            }
         }
 
-        public static string ComposeHtmlTextEmailBody(string from, string to, string subject, string htmlbody, string textbody)
+        public static string ComposeTextEmailBody(string from, string to, string subject, string textbody)
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("From", from);
             headers.Add("To", to);
             headers.Add("Subject", subject);
-            string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
-                
-            var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(htmlbody, textbody);
+            string strHeader = Multipart.HeaderComposer.Compose(headers);
 
-            return strHeader + bodycomposer.Body();  
+            string contenttype = "Content-Type:text/plain";
+
+            var charset = Lib.Helper.EncodingDetector.GetTextCharset(textbody);
+            if (charset != null && charset.ToLower() != "ascii")
+            {
+                contenttype += "; CharSet=" + charset + ";\r\n Content-Transfer-Encoding:8bit";
+            }
+
+            strHeader += contenttype + "\r\n";
+
+            string body = strHeader + "\r\n" + textbody;
+            return body;
+        }
+
+        public static string ComposeHtmlTextEmailBody(string from, string to, string subject, string htmlBody, string textBody)
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("From", from);
+            headers.Add("To", to);
+            headers.Add("Subject", subject);
+            string strHeader = Multipart.HeaderComposer.Compose(headers);
+
+            var bodyComposer = new Multipart.BodyComposer(htmlBody, textBody);
+            return strHeader + bodyComposer.Body();
         }
 
 
         public static string RestoreHtmlOrText(User user, int MsgId)
         {
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
-            string body = maildb.Messages.GetContent(MsgId);
-
-            if (string.IsNullOrEmpty(body))
-            {
-                return null;
-            }
-
-            var mine = MessageUtility.ParseMineMessage(body);
+            var mine = maildb.Message2.GetMimeMessageContent(MsgId);
+            var body = mine.ToString();
 
             if (mine == null)
             {
@@ -174,7 +337,7 @@ namespace Kooboo.Mail.Utility
 
             string html = MessageUtility.GetHtmlBody(mine);
 
-            if (html != null)
+            if (!string.IsNullOrWhiteSpace(html))
             {
                 return Kooboo.Mail.Multipart.BodyComposer.RestoreInlineImages(html, user, MsgId);
             }
@@ -182,7 +345,17 @@ namespace Kooboo.Mail.Utility
             html = MessageUtility.GetTextBody(mine);
             if (!string.IsNullOrEmpty(html))
             {
-                return "<pre>" + html + "</pre>";
+                return "<pre>" + html.Replace("<", "&lt;").Replace(">", "&gt;") + "</pre>";
+            }
+
+            if (MessageUtility.GetAllAttachmentZip(body) != null && string.IsNullOrEmpty(html))
+            {
+                return "";
+            }
+
+            if (string.IsNullOrEmpty(mine.TextBody) && string.IsNullOrEmpty(mine.HtmlBody))
+            {
+                return "";
             }
 
             int index = body.IndexOf("\r\n\r\n");
@@ -198,112 +371,119 @@ namespace Kooboo.Mail.Utility
 
         }
 
+        //   internal static string ToAddress(List<string> address)
+        //  {
+        //var result = new List<string>();
+        //foreach(var item in address)
+        //{
+        //   // string mailAddress = AddQuotationInMailAddressName(item);
+        //    if (MailboxAddress.TryParse(item, out var mailboxAddress))
+        //        result.Add(mailboxAddress.ToString());
+        //    else
+        //        result.Add(item);
+        //}
+        //return string.Join(",", result);
+
+        //  }
+
         internal static string ToAddress(List<string> address)
         {
-            return string.Join(";", address);
+            return string.Join(",", address);
+        }
+
+        private static string AddQuotationInMailAddressName(string item)
+        {
+            var index = item.LastIndexOf("<");
+            var mailAddress = item;
+            if (index > 0)
+            {
+                mailAddress = $"\"{item}";
+                mailAddress = mailAddress.Insert(index, "\"");
+            }
+            return mailAddress;
         }
 
         internal static List<string> GetAddressList(string address)
         {
-            if (string.IsNullOrEmpty(address))
+            var models = MessageUtility.GetAddressModels(address);
+
+            return GetAddressList(models);
+        }
+
+        internal static List<string> GetAddressList(List<ViewModel.AddressModel> models)
+        {
+            List<string> result = new List<string>();
+            if (models == null)
             {
-                return new List<string>();
+                return result;
             }
 
-            var seprator = new List<char>();
-            seprator.Add(';');
-            return address.Split(seprator.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach (var item in models)
+            {
+                var add = item.Name + " <" + item.Address + ">";
+                result.Add(add);
+            }
+
+            return result;
         }
 
         // For forward type email address. 
         public static string ComposeForwardAddressMessage(string MessageSource)
         {
-            string kforwardheader = "x-kforward";
+            var msg = MessageUtility.ParseMessage(MessageSource);
 
-            var newbody = GetMessageBodyPart(ref MessageSource);
-            if (string.IsNullOrEmpty(newbody))
-            {
-                return null;
-            }
-            // recompose the email header... 
-            var mime = Mail.Utility.MessageUtility.ParseMineMessage(MessageSource);
-            var forwardheader = MessageUtility.GetHeaderValue(mime, kforwardheader);
-            if (!string.IsNullOrEmpty(forwardheader))
+            var find = msg.Headers.FirstOrDefault(o => o.Field == "x-kforward");
+
+            if (find != null && find.Field == "x-kforward" && find.Value != null)
             {
                 return null;
             }
 
-            Dictionary<string, string> headers = new Dictionary<string, string>();
+            msg.Headers.Add("x-kforward", "via Kooboo");
 
-            string prefix = "(Forwarded By Kooboo)";
+            var newSource = msg.ToString().Trim();
 
-            var From = MessageUtility.GetHeaderValue(mime, "From");
+            return newSource;
 
-            if (From.Contains(prefix))
-            {
-                return null;
-            }
-
-            var to = MessageUtility.GetHeaderValue(mime, "To");
-            var subject = MessageUtility.GetHeaderValue(mime, "Subject");
-
-            string fromaddress = Utility.AddressUtility.GetAddress(From);
-
-            From = "\"" + prefix + "\"<" + fromaddress + ">";
-
-            headers.Add("From", From);
-            headers.Add("to", to);
-            headers.Add("subject", subject);
-
-            if (mime.ContentType != null && !string.IsNullOrEmpty(mime.ContentType.ValueToString()))
-            {
-                headers.Add("Content-Type", mime.ContentType.ValueToString());
-            }
-
-            if (!string.IsNullOrEmpty(mime.ContentTransferEncoding))
-            {
-                headers.Add("Content-Transfer-Encoding", mime.ContentTransferEncoding);
-            }
-
-            if (!string.IsNullOrEmpty(mime.MimeVersion))
-            {
-                headers.Add("MIME-Version", mime.MimeVersion);
-            }
-
-            List<string> optionalFields = new List<string>();
-            //optionalFields.Add("Content-Type");
-            //optionalFields.Add("MIME-Version");
-            //optionalFields.Add("Content-Transfer-Encoding");
-            optionalFields.Add("Charset");
-
-            foreach (var item in optionalFields)
-            {
-                var optionValue = MessageUtility.GetHeaderValue(mime, item);
-                if (!string.IsNullOrEmpty(optionValue))
-                {
-                    headers.Add(item, optionValue);
-                }
-            }
-
-            var newheader = Multipart.HeaderComposer.Compose(headers);
-            return newheader + "\r\n" + newbody;
         }
-
 
         public static string ComposeGroupMail(string MessageSource, string NewReplyTo)
         {
-            // send the group mail... 
-            // Change reply-to header to the group email address... ReGenerate the emai.... 
-            return HeaderUtility.RepalceRepyTo(MessageSource, NewReplyTo);
-        }
+            // send the group mail...
+            // Change reply-to header to the group email address...ReGenerate the emai....
 
+            var msg = MessageUtility.ParseMessage(MessageSource);
+
+            if (msg.Headers.Contains(MimeKit.HeaderId.ReplyTo))
+            {
+                msg.Headers.Replace(MimeKit.HeaderId.ReplyTo, NewReplyTo);
+            }
+            else
+            {
+                msg.Headers.Add(MimeKit.HeaderId.ReplyTo, NewReplyTo);
+            }
+
+            // also change from. otherwise, message can not be delivered,may due to SPF or others. 
+
+
+            msg.Headers.Add(MimeKit.HeaderId.ResentFrom, msg.From.Mailboxes.First().Address);
+
+            msg.Sender = msg.From.Mailboxes.FirstOrDefault();
+
+            msg.From.Clear();
+            msg.From.Add(new MailboxAddress("Group Mail", NewReplyTo));
+
+            var newSource = msg.ToString().Trim();
+
+            return newSource;
+        }
 
         public static string ComposeDeliveryFailed(string MailFrom, string RcptTo, string OrginalMessageBody, string errorMessage)
         {
             // string mailfrom, string rcptto, string messagebody, string errorreason
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("Subject", "Delivery Status Notification (Failure)");
-            headers.Add("From", "postmaster@noreply.kooboo.com");
+            headers.Add("From", "postmaster@noreply.kooboo.net");
             headers.Add("To", MailFrom);
 
             var newheader = Multipart.HeaderComposer.Compose(headers);
@@ -316,7 +496,6 @@ namespace Kooboo.Mail.Utility
 
             return newheader + bodycomposer.Body();
         }
-
 
         private static string GetMessageBodyPart(ref string MessageSource)
         {
@@ -343,7 +522,6 @@ namespace Kooboo.Mail.Utility
                     {
                         biggercount += 1;
                     }
-
                 }
             }
             if (htmlbody != null)
@@ -365,11 +543,55 @@ namespace Kooboo.Mail.Utility
             }
             else
             {
+                // 5% of bigger char, make it into base64.
+
+                return TransferEncoding.Base64;
+
+                // int percent5 = (int)totallen / 10;
+
+                //if (biggercount > percent5)
+                //{
+                //    return TransferEncoding.Base64;
+                //}
+                //else
+                //{
+                //    return TransferEncoding.QuotedPrintable;
+                //}
+            }
+
+        }
+
+        public static TransferEncoding GetTransferEncoding(ref string MsgBody)
+        {
+            if (MsgBody == null)
+            {
+                return TransferEncoding.Unknown;
+            }
+
+            int totalLen = 0;
+            int biggerCount = 0;
+
+            if (MsgBody != null)
+            {
+                totalLen += MsgBody.Length;
+
+                for (int i = 0; i < MsgBody.Length; i++)
+                {
+                    if (MsgBody[i] > 127)
+                    {
+                        biggerCount += 1;
+                    }
+                }
+            }
+
+            if (biggerCount == 0)
+            {
+                return TransferEncoding.Unknown;
+            }
+            else
+            {
                 // 5% of bigger char, make it into base64. 
-
-                int percent5 = (int)totallen / 10;
-
-                if (biggercount > percent5)
+                if (biggerCount * 20 > totalLen)
                 {
                     return TransferEncoding.Base64;
                 }
@@ -382,6 +604,9 @@ namespace Kooboo.Mail.Utility
         }
 
 
+
+
+
         public static string GetTransferEncodingHeader(TransferEncoding transferEncoding)
         {
             //Content - Transfer - Encoding := "BASE64" / "QUOTED-PRINTABLE" /
@@ -389,11 +614,11 @@ namespace Kooboo.Mail.Utility
             // "BINARY" / x - token 
             if (transferEncoding == TransferEncoding.QuotedPrintable)
             {
-                return "Content-Transfer-Encoding: QUOTED-PRINTABLE";
+                return "Content-Transfer-Encoding:QUOTED-PRINTABLE";
             }
             else if (transferEncoding == TransferEncoding.Base64)
             {
-                return "Content-Transfer-Encoding: BASE64";
+                return "Content-Transfer-Encoding:BASE64";
             }
             return null;
         }
@@ -425,6 +650,21 @@ namespace Kooboo.Mail.Utility
         }
 
 
+        public static string GetEncoding(ref string MsgBody)
+        {
+            if (MsgBody != null)
+            {
+                for (int i = 0; i < MsgBody.Length; i++)
+                {
+                    if (MsgBody[i] > 127)
+                    {
+                        return "UTF-8";
+                    }
+                }
+            }
+            return null;
+        }
+
         public static string Encode(string input, TransferEncoding transferEncoding)
         {
             if (transferEncoding == TransferEncoding.QuotedPrintable)
@@ -434,13 +674,41 @@ namespace Kooboo.Mail.Utility
             else if (transferEncoding == TransferEncoding.Base64)
             {
                 var bytes = System.Text.Encoding.UTF8.GetBytes(input);
-                return Convert.ToBase64String(bytes);
+                return ToBase64(bytes);
             }
 
             return input;
         }
 
+
+        public static string ToBase64(byte[] binary)
+        {
+            var value = Convert.ToBase64String(binary);
+
+            var len = value.Length;
+
+            StringBuilder sb = new StringBuilder();
+
+            int index = 0;
+            int nextindex = 0;
+
+            while (true)
+            {
+                nextindex = index + 75;
+                if (nextindex > len)
+                {
+                    sb.Append(value.Substring(index)).Append("\r\n");
+                    break;
+                }
+                else
+                {
+                    sb.Append(value.Substring(index, 75)).Append("\r\n");
+                    index = index + 75;
+                }
+            }
+            return sb.ToString();
+        }
+
+
     }
-
-
 }

@@ -56,7 +56,7 @@
 
         public static double Operate(string op, double first, double second)
         {
-            if(op == "/" && second == 0)
+            if (op == "/" && second == 0)
                 throw new DivideByZeroException();
 
             switch (op)

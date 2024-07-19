@@ -1,10 +1,7 @@
-﻿using ICSharpCode.SharpZipLib.Core;
-using Kooboo.Lib.VirtualFile.Zip;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO;
 using System.Text;
+using ICSharpCode.SharpZipLib.Core;
+using Kooboo.Lib.VirtualFile.Zip;
 
 namespace VirtualFile.Zip
 {

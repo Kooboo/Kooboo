@@ -2,29 +2,13 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace Kooboo.Lib.Compatible
 {
     public class LinuxSystem : ISystem
     {
-        public static List<string> TryPath { get; set; }
-
-        static LinuxSystem()
-        {
-            TryPath = new List<string>
-            {
-                @"../../../Github/Kooboo.Web",
-                @"../../../../Kooboo/Kooboo.Web",
-                @"../Kooboo.Web",
-                @"../",
-                @"../../",
-                @"../../../"
-            };
-        }
-
         public int GetLastSlash(string path)
         {
             return path.LastIndexOf('/');
@@ -147,23 +131,6 @@ namespace Kooboo.Lib.Compatible
             return input.Split('/').ToList();
         }
         #endregion
-
-        #region port
-        public int GetPort(int port)
-        {
-            return port;
-        }
-
-        public bool IsPortInUsed(int port)
-        {
-            //when linux or macos port is closed,it still have active tcp.
-            //so only bind to the defaultPort.
-            //NetworkHelper.IsPortInUse will get wrong result
-            return false;
-        }
-        #endregion
-
-        public List<string> GetTryPaths() => TryPath;
 
         public string GetUpgradeUrl(string convertApiUrl)
         {

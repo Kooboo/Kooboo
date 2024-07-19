@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 using LumiSoft.Net.MIME;
@@ -19,8 +18,8 @@ namespace LumiSoft.Net.Mail
     /// </example>
     public class Mail_h_ReturnPath : MIME_h
     {
-        private bool   m_IsModified = false;
-        private string m_Address    = null;
+        private bool m_IsModified = false;
+        private string m_Address = null;
 
         /// <summary>
         /// Default constructor.
@@ -43,12 +42,14 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ParseException">Is raised when header field parsing errors.</exception>
         public static Mail_h_ReturnPath Parse(string value)
         {
-            if(value == null){
+            if (value == null)
+            {
                 throw new ArgumentNullException("value");
             }
 
-            string[] name_value = value.Split(new char[]{':'},2);
-            if(name_value.Length != 2){
+            string[] name_value = value.Split(new char[] { ':' }, 2);
+            if (name_value.Length != 2)
+            {
                 throw new ParseException("Invalid header field value '" + value + "'.");
             }
 
@@ -57,10 +58,12 @@ namespace LumiSoft.Net.Mail
             MIME_Reader r = new MIME_Reader(name_value[1].Trim());
             r.ToFirstChar();
             // Return-Path missing <>, some server won't be honor RFC.
-            if(!r.StartsWith("<")){
+            if (!r.StartsWith("<"))
+            {
                 retVal.m_Address = r.ToEnd();
             }
-            else{
+            else
+            {
                 retVal.m_Address = r.ReadParenthesized();
             }
 
@@ -79,12 +82,14 @@ namespace LumiSoft.Net.Mail
         /// <param name="parmetersCharset">Charset to use to encode 8-bit characters. Value null means parameters not encoded.</param>
         /// <param name="reEncode">If true always specified encoding is used. If false and header field value not modified, original encoding is kept.</param>
         /// <returns>Returns header field as string.</returns>
-        public override string ToString(MIME_Encoding_EncodedWord wordEncoder,Encoding parmetersCharset,bool reEncode)
+        public override string ToString(MIME_Encoding_EncodedWord wordEncoder, Encoding parmetersCharset, bool reEncode)
         {
-            if(string.IsNullOrEmpty(m_Address)){
+            if (string.IsNullOrEmpty(m_Address))
+            {
                 return "Return-Path: <>\r\n";
             }
-            else{
+            else
+            {
                 return "Return-Path: <" + m_Address + ">\r\n";
             }
         }
@@ -101,7 +106,7 @@ namespace LumiSoft.Net.Mail
         /// <exception cref="ObjectDisposedException">Is riased when this class is disposed and this property is accessed.</exception>
         public override bool IsModified
         {
-            get{ return m_IsModified; }
+            get { return m_IsModified; }
         }
 
         /// <summary>
@@ -109,7 +114,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public override string Name
         {
-            get{ return "Return-Path"; }
+            get { return "Return-Path"; }
         }
 
         /// <summary>
@@ -117,7 +122,7 @@ namespace LumiSoft.Net.Mail
         /// </summary>
         public string Address
         {
-            get{ return m_Address; }
+            get { return m_Address; }
         }
 
         #endregion

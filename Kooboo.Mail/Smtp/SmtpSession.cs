@@ -1,25 +1,47 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Lib.Helper.EncodingHelper;
-using Kooboo.Mail.Smtp;
+//All rights reserved. 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Lib.Helper.EncodingHelper;
+using Kooboo.Mail.Factory;
+using Kooboo.Mail.Spam;
 
 namespace Kooboo.Mail.Smtp
 {
     public class SmtpSession
     {
-        public SmtpSession()
-        {
 
+        public int MaxRcptCount
+        {
+            get
+            {
+#if DEBUG
+                return 2;
+#endif
+                return 50;
+            }
         }
 
-        public SmtpSession(string clientIp)
+        public int MaxRcptError
         {
-            this.ClientIP = clientIp;
+            get
+            {
+#if DEBUG
+                return 1;
+#endif
+                return 3;
+            }
+        }
+
+        public int RcptCounter = 0;
+        public int RcptErrorCounter = 0;
+
+        public SmtpSession(System.Net.IPAddress remoteIP)
+        {
+            this.ClientIP = remoteIP?.ToString();
+            this.RemoteIp = remoteIP;
         }
 
         public void ReSet()
@@ -27,17 +49,22 @@ namespace Kooboo.Mail.Smtp
             //this.IsAuthenticated = false;
             //this.ClientIP = null; reset are only for the same Client. 
             //this.UserName = null;
-            // this.Password = null;
+            //this.Password = null;
             this._buffer = null;
             this._MessageBody = null;
             this.Log.Clear();
             this.State = CommandState.Body;
             // this.OrganizationId = default(Guid);
+            this.RcptCounter = 0;
+            this.RcptErrorCounter = 0;
+            this.TestResult = null;
         }
 
         public bool IsAuthenticated { get; set; }
 
         public string ClientIP { get; set; }
+
+        public System.Net.IPAddress RemoteIp { get; set; }
 
         public string ClientHostName { get; set; }
 
@@ -97,6 +124,8 @@ namespace Kooboo.Mail.Smtp
             }
         }
 
+        public SessionResult TestResult { get; set; }
+
         public CommandState State { get; set; } = CommandState.Helo;
 
         public SmtpResponse Command(string CommandLine)
@@ -139,24 +168,43 @@ namespace Kooboo.Mail.Smtp
             {
                 text = text.Replace(encodingresult.CharSetText, "charset=utf-8");
             }
-
             return text;
         }
 
 
-        public SmtpResponse Data(byte[] data)
+        public async Task<SmtpResponse> Data(byte[] data)
         {
             SmtpResponse response = new SmtpResponse();
 
             var encodingresult = Lib.Helper.EncodingDetector.GetEmailEncoding(data);
-
             string text = GetString(data, encodingresult);
+
             text = text.Replace("\r\n..", "\r\n.");
 
-            if (!string.IsNullOrWhiteSpace(text))
+            // valide email message.  
+
+            if (text.Length > Setting.MaxSmtpDataSize * 1.3)
+            {
+                response.Code = 550;
+                response.Message = "email size too big, max size: " + Setting.MaxSmtpSizeString;
+            }
+            else if (this.IsAuthenticated && Kooboo.Mail.SecurityControl.SpamTest.instance.IsSpam(text))
+            {
+                // Authenticated == this is for sending email out using IMAP client. 
+                response.Code = 550;
+                response.Message = "Our spam filter detect that this may be an SPAM, if this is a mistake, let us know!";
+
+                response.Close = true;
+                // SecurityControl.BlackList.AddViolation(this.ClientIP);
+            }
+
+            else if (!string.IsNullOrWhiteSpace(text))
             {
                 this.MessageBody = text;
                 this._buffer = null;
+
+                this.TestResult = await SessionVerifier.Instance.ValidateSession(this);
+
                 response.Code = 250;
                 response.Message = "Message queued";
                 response.SessionCompleted = true;
@@ -177,6 +225,23 @@ namespace Kooboo.Mail.Smtp
         {
             // "220 Kooboo Smtp Server is ready"
             return new SmtpResponse() { Code = 220, Message = "Kooboo Smtp Server is ready" };
+        }
+
+        internal SmtpResponse StartTls()
+        {
+            /// Once the response 220 is received from the server, the SMTP client should send HELO or EHLO to launch the session.In the case of a negative response(454), the client must decide whether to continue the SMTP session or not.
+
+            // We always support now.
+
+            var response = new SmtpResponse();
+
+            response.Code = 220;
+            response.Message = "Go Ahead with SSL";
+
+            response.StartTls = true;
+            response.SendResponse = true;
+
+            return response;
         }
 
         internal SmtpResponse BodyCommand(string CommandLine)
@@ -207,7 +272,7 @@ namespace Kooboo.Mail.Smtp
                     response.Code = 550;
                     response.Message = "Sender address must be specified";
                 }
-                else if (!ValidMailFrom(command.Value))
+                else if (!Utility.SmtpUtility.IsValidMailFrom(command.Value))
                 {
                     response.Code = 550;
                     response.Message = "Invalid Sender address";
@@ -220,7 +285,24 @@ namespace Kooboo.Mail.Smtp
             }
             else if (command.Name == SmtpCommandName.RCPTTO)
             {
-                if (string.IsNullOrEmpty(command.Value))
+                this.RcptCounter += 1;
+
+                if (this.RcptCounter > this.MaxRcptCount)
+                {
+                    Kooboo.Mail.SecurityControl.BlackList.AddViolation(this.ClientIP);
+                    response.Code = 550;
+                    response.Message = "Recipient address too many";
+                    response.Close = true;
+                }
+                else if (this.RcptErrorCounter >= this.MaxRcptError)
+                {
+                    Kooboo.Mail.SecurityControl.BlackList.AddViolation(this.ClientIP);
+                    response.Code = 550;
+                    response.Message = "Too many recipient address failure";
+                    response.Close = true;
+                }
+
+                else if (string.IsNullOrEmpty(command.Value))
                 {
                     response.Code = 550;
                     response.Message = "Recipient address must be specified";
@@ -235,6 +317,7 @@ namespace Kooboo.Mail.Smtp
                     }
                     else
                     {
+                        this.RcptErrorCounter += 1;
                         response.Code = 550;
                         response.Message = validateResult.ErrorMessage;
                     }
@@ -253,6 +336,10 @@ namespace Kooboo.Mail.Smtp
                 response.Code = 221;
                 response.Message = "Goodbye";
                 response.Close = true;
+            }
+            else if (command.Name == SmtpCommandName.STARTTLS)
+            {
+                return StartTls();
             }
             else
             {
@@ -283,11 +370,7 @@ namespace Kooboo.Mail.Smtp
             return hasfrom && hasto;
         }
 
-        internal bool ValidMailFrom(string fromAddress)
-        {
-            string address = Utility.AddressUtility.GetAddress(fromAddress);
-            return Utility.AddressUtility.IsValidEmailAddress(address);
-        }
+
 
         public RecipientValidationResult ValidateRecipient(string rcptToAddress)
         {
@@ -323,7 +406,7 @@ namespace Kooboo.Mail.Smtp
                 {
                     result.IsAuthenticated = true;
                     result.IsOkToSend = false;
-                    result.ErrorMessage = "mail from address not local";
+                    result.ErrorMessage = "mail from address not hosted at our server";
                 }
                 return result;
             }
@@ -337,11 +420,11 @@ namespace Kooboo.Mail.Smtp
             else
             {
                 result.IsOkToSend = false;
-                result.ErrorMessage = "Relay not allowed"; 
+                result.ErrorMessage = "Relay not allowed";
                 return result;
             }
         }
-         
+
         internal SmtpResponse HeloCommand(string CommandLine)
         {
             var response = new SmtpResponse();
@@ -369,7 +452,7 @@ namespace Kooboo.Mail.Smtp
                 {
                     response.Code = 250;
                     response.Seperator = '-';
-                    response.Message = "Hello " + command.Value + "\r\n250-SIZE 20480000\r\n250-AUTH LOGIN\r\n250 OK";
+                    response.Message = "Hello " + command.Value + "\r\n250-SIZE " + Setting.MaxSmtpSizeString + "\r\n250-STARTTLS\r\n250-AUTH LOGIN\r\n250 OK";
                     this.State = CommandState.Body;
                     this.ClientHostName = command.Value;
                 }
@@ -378,6 +461,10 @@ namespace Kooboo.Mail.Smtp
                     response.Code = 501;
                     response.Message = "Hostname required";
                 }
+            }
+            else if (command.Name == SmtpCommandName.STARTTLS)
+            {
+                return StartTls();
             }
             else if (command.Name == SmtpCommandName.UNKNOWN)
             {
@@ -465,23 +552,14 @@ namespace Kooboo.Mail.Smtp
 
                 string username = this.UserName;
 
-                if (Kooboo.Data.Service.UserLoginProtection.CanTryLogin(username, this.ClientIP))
+                if (Kooboo.Data.Service.UserLoginProtection.CanTryLogin(username, this.ClientIP, this.Password))
                 {
+                    var emailAddress = Utility.AddressUtility.GetEmailAddress(username);
+                    var orgdb = DBFactory.OrgDb(emailAddress.OrgId);
+                    var validate = orgdb.Email.LoginByAuthorizationCode(emailAddress.Address, this.Password);
+                    var user = Kooboo.Data.GlobalDb.Users.Get(emailAddress.UserId);
 
-                    if (this.UserName.IndexOf("@") > -1 && Utility.AddressUtility.IsValidEmailAddress(this.UserName))
-                    {
-                        var emailaddressObj = Utility.AddressUtility.GetEmailAddress(this.UserName);
-
-                        if (emailaddressObj != null)
-                        {
-                            username = Kooboo.Data.GlobalDb.Users.GetUserName(emailaddressObj.UserId);
-                            this.OrganizationId = emailaddressObj.OrgId;
-                        }
-                    }
-
-                    var user = Kooboo.Data.GlobalDb.Users.Validate(username, this.Password);
-
-                    IsAuthenticated = user != null;
+                    IsAuthenticated = validate;
 
                     if (this.OrganizationId == default(Guid) && user != null)
                     {

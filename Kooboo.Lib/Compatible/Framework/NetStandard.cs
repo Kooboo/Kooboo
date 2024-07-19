@@ -1,19 +1,18 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 #if !NET45 &&!NET461
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Kooboo.Lib.Helper;
 using Kooboo.Lib.Security;
 using Kooboo.Lib.Utilities;
-using System.Security.Cryptography;
-using System.Xml;
-using System.IO;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using Kooboo.Lib.Helper;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Processing;
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Xml;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -169,44 +168,101 @@ namespace Kooboo.Lib.Compatible
             {
                 MemoryStream stream = new MemoryStream(imagebytes);
                 var image = Image.Identify(stream);
-
                 if (image != null)
                 {
                     measure.Height = image.Height;
                     measure.Width = image.Width;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
-
             return measure;
         }
 
-        public byte[] GetThumbnailImage(byte[] contentBytes, int width, int height)
+        public byte[] GetThumbnailImage(byte[] contentBytes, int width, int height, string format = null)
         {
             if (contentBytes == null) return null;
 
             MemoryStream stream = new MemoryStream(contentBytes);
 
-            Image systhumbnail = null; 
+            Image systhumbnail = null;
 
-            var image = Image.Load(stream, out var  imgformate);
-            if (image.Width < width && image.Height < height)
+            try
+            {
+                var imgformate = Image.DetectFormat(stream);
+                var image = Image.Load(stream);
+
+                if (image.Width < width && image.Height < height)
+                {
+                    return contentBytes;
+                }
+                image.Mutate(x => x.Resize(width, height));
+                systhumbnail = image;
+
+                MemoryStream memstream = new MemoryStream();
+                SaveImageToStream(format, systhumbnail, memstream, imgformate);
+                return memstream.ToArray();
+            }
+            catch (UnknownImageFormatException)
             {
                 return contentBytes;
-            } 
-            image.Mutate(x => x.Resize(width, height));
-            systhumbnail = image;
-
-            var form = image.Metadata.GetJpegMetadata();
-            var png = image.Metadata.GetPngMetadata(); 
-
-            MemoryStream memstream = new MemoryStream();
-            systhumbnail.Save(memstream, imgformate);
-
-            return memstream.ToArray();
+            }
         }
+
+        private static void SaveImageToStream(string format, Image image, Stream stream, IImageFormat imageFormat)
+        {
+            switch (format)
+            {
+                case "gif":
+                    image.SaveAsGif(stream);
+                    break;
+                case "png":
+                    image.SaveAsPng(stream);
+                    break;
+                case "jpg":
+                    image.SaveAsJpeg(stream);
+                    break;
+                case "webp":
+                    image.SaveAsWebp(stream);
+                    break;
+                default:
+                    image.Save(stream, imageFormat);
+                    break;
+            }
+        }
+
+        public Stream GetThumbnailImageStream(byte[] contentBytes, int width, int height, string format = null)
+        {
+            if (contentBytes == null) return null;
+
+            MemoryStream stream = new MemoryStream(contentBytes);
+
+            Image sysThumbnail = null;
+
+            try
+            {
+                var imgFormat = Image.DetectFormat(stream);
+                var image = Image.Load(stream);
+
+                if (image.Width < width && image.Height < height)
+                {
+                    return stream;
+                }
+                image.Mutate(x => x.Resize(width, height));
+                sysThumbnail = image;
+
+                MemoryStream NewStream = new MemoryStream();
+                SaveImageToStream(format, image, NewStream, imgFormat);
+                return NewStream;
+            }
+            catch (UnknownImageFormatException)
+            {
+                return stream;
+            }
+        }
+
+
 
         public void SaveThumbnailImage(byte[] contentBytes, int width, int height, string path)
         {
@@ -216,6 +272,7 @@ namespace Kooboo.Lib.Compatible
             var image = Image.Load(stream);
 
             image.Mutate(x => x.Resize(width, height));
+
             image.Save(path);
         }
 
@@ -245,10 +302,6 @@ namespace Kooboo.Lib.Compatible
 
         #endregion
 
-        public void OpenDefaultUrl(string url)
-        {
-            //don't need implement
-        }
 
         public void RegisterEncoding()
         {
@@ -267,7 +320,6 @@ namespace Kooboo.Lib.Compatible
         {
             return false;
         }
-
 
     }
 }

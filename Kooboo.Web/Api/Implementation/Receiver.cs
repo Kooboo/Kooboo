@@ -1,11 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using System.IO;
 using Kooboo.Api;
-using Kooboo.Data.Template;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Sync;
-using System;
-using System.IO;
+using Kooboo.Sites.Sync.ViewModel;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -36,43 +35,107 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         //item push by remote client... 
-        public void Push(Guid SiteId, ApiCall call)
+        public ReceiverFeedback Push(ApiCall call)
         {
             Guid Hash = call.GetValue<Guid>("hash");
 
-            Guid userid = default(Guid);
-            if (call.Context.User != null)
-            {
-                userid = call.Context.User.Id;
-            }
-
             if (Hash != default(Guid))
             {
-                var hashback = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
+                var computeHash = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
 
-                if (hashback != Hash)
+                if (computeHash != Hash)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("Hash validation failed", call.Context));
                 }
             }
-
-            var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
-            var sitedb = website.SiteDb();
-
             var converter = new IndexedDB.Serializer.Simple.SimpleConverter<SyncObject>();
-
             SyncObject sync = converter.FromBytes(call.Context.Request.PostData);
 
-            SyncService.Receive(sitedb, sync, null, userid);
+            var website = Data.Config.AppHost.SiteRepo.Get(sync.RemoteSiteId);
+            var sitedb = website.SiteDb();
 
+            Guid userId = sync.UserId;
+            if (userId == default(Guid) && call.Context.User != null)
+            {
+                userId = call.Context.User.Id;
+            }
+
+            // 
+            var check = Kooboo.Sites.Sync.ConflictService.instance.CheckPushIn(sync, sitedb);
+            if (check.HasConflict)
+            {
+                ReceiverFeedback feedback = new ReceiverFeedback() { HasConflict = true, };
+
+                if (check.log != null)
+                {
+                    feedback.ReceiverVersion = check.log.Id;
+                    feedback.UserName = Kooboo.Data.GlobalDb.Users.GetUserName(check.log.UserId);
+                    feedback.LastModified = check.log.UpdateTime;
+                    feedback.EditType = check.log.EditType;
+                }
+
+                if (check.IsTable)
+                {
+                    feedback.DisplayBody = Kooboo.Sites.Service.ObjectService.GetSummaryText(check.TableData);
+                }
+                else
+                {
+                    if (check.SiteObject is Kooboo.Sites.Models.Image)
+                    {
+                        var siteImage = check.SiteObject as Kooboo.Sites.Models.Image;
+                        feedback.IsImage = true;
+                        feedback.DisplayBody = Convert.ToBase64String(siteImage.ContentBytes);
+
+                    }
+                    else
+                    {
+                        feedback.DisplayBody = Kooboo.Sites.Service.ObjectService.GetSummaryText(check.SiteObject);
+                    }
+                }
+                return feedback;
+
+            }
+            else
+            {
+                var version = SyncService.Receive(sitedb, sync, null, userId);
+                return new ReceiverFeedback() { Success = true, ReceiverVersion = version };
+            }
         }
 
+        //item push by remote client... 
+        public ReceiverFeedback ForcePush(ApiCall call)
+        {
+            Guid Hash = call.GetValue<Guid>("hash");
+
+            if (Hash != default(Guid))
+            {
+                var computeHash = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
+
+                if (computeHash != Hash)
+                {
+                    throw new Exception(Data.Language.Hardcoded.GetValue("Hash validation failed", call.Context));
+                }
+            }
+            var converter = new IndexedDB.Serializer.Simple.SimpleConverter<SyncObject>();
+            SyncObject sync = converter.FromBytes(call.Context.Request.PostData);
+
+            var website = Data.Config.AppHost.SiteRepo.Get(sync.RemoteSiteId);
+            var sitedb = website.SiteDb();
+
+            Guid userId = sync.UserId;
+            if (userId == default(Guid) && call.Context.User != null)
+            {
+                userId = call.Context.User.Id;
+            }
+
+            var logId = SyncService.Receive(sitedb, sync, null, userId);
+
+            return new ReceiverFeedback() { ReceiverVersion = logId, HasConflict = false };
+        }
 
         public void Zip(ApiCall call)
         {
-
             var isSpa = call.GetBoolValue("iSSpa");
-            // TODO 根据这个为ImportExport.ImportZip确定是spa的导入
 
             if (call.Context.WebSite == null)
             {
@@ -87,33 +150,21 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                var usersites = Kooboo.Sites.Service.WebSiteService.ListByUser(call.Context.User);
+                var userSites = Kooboo.Sites.Service.WebSiteService.ListByUser(call.Context.User);
 
-                var find = usersites.Find(o => o.Id == SiteId);
+                var find = userSites.Find(o => o.Id == SiteId);
                 if (find == null)
                 {
                     throw new Exception("Access denied");
                 }
             }
 
-            // Guid Hash = call.GetValue<Guid>("hash");
 
-            //if (Hash != default(Guid))
-            //{
-            //    var hashback = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
-
-            //    if (hashback != Hash)
-            //    {
-            //        throw new Exception(Data.Language.Hardcoded.GetValue("Hash validation failed", call.Context));
-            //    }
-            //}
-
-            var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            var website = Data.Config.AppHost.SiteRepo.Get(SiteId);
             var sitedb = website.SiteDb();
+            //var zip = call.Context.Request.PostData; 
 
-            //  var zip = call.Context.Request.PostData; 
-
-            var files = Kooboo.Lib.NETMultiplePart.FormReader.ReadFile(call.Context.Request.PostData);
+            var files = call.Context.Request.Files;
 
             if (files != null && files.Count > 0)
             {

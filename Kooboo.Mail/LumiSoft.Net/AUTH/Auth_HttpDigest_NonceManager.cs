@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Timers;
 
 namespace LumiSoft.Net.AUTH
@@ -17,7 +16,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         private class NonceEntry
         {
-            private string   m_Nonce = "";
+            private string m_Nonce = "";
             private DateTime m_CreateTime;
 
             /// <summary>
@@ -26,7 +25,7 @@ namespace LumiSoft.Net.AUTH
             /// <param name="nonce"></param>
             public NonceEntry(string nonce)
             {
-                m_Nonce      = nonce;
+                m_Nonce = nonce;
                 m_CreateTime = DateTime.Now;
             }
 
@@ -38,7 +37,7 @@ namespace LumiSoft.Net.AUTH
             /// </summary>
             public string Nonce
             {
-                get{ return m_Nonce; }
+                get { return m_Nonce; }
             }
 
             /// <summary>
@@ -46,7 +45,7 @@ namespace LumiSoft.Net.AUTH
             /// </summary>
             public DateTime CreateTime
             {
-                get{ return m_CreateTime; }
+                get { return m_CreateTime; }
             }
 
             #endregion
@@ -55,9 +54,9 @@ namespace LumiSoft.Net.AUTH
 
         #endregion
 
-        private List<NonceEntry> m_pNonces    = null;
-        private int              m_ExpireTime = 30;
-        private Timer            m_pTimer     = null;
+        private List<NonceEntry> m_pNonces = null;
+        private int m_ExpireTime = 30;
+        private Timer m_pTimer = null;
 
         /// <summary>
         /// Default constructor.
@@ -78,12 +77,14 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public void Dispose()
         {
-            if(m_pNonces == null){
+            if (m_pNonces != null)
+            {
                 m_pNonces.Clear();
                 m_pNonces = null;
             }
 
-            if(m_pTimer != null){
+            if (m_pTimer != null)
+            {
                 m_pTimer.Dispose();
                 m_pTimer = null;
             }
@@ -94,7 +95,7 @@ namespace LumiSoft.Net.AUTH
 
         #region method m_pTimer_Elapsed
 
-        private void m_pTimer_Elapsed(object sender,ElapsedEventArgs e)
+        private void m_pTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             RemoveExpiredNonces();
         }
@@ -110,7 +111,7 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Returns new created nonce.</returns>
         public string CreateNonce()
         {
-            string nonce = Guid.NewGuid().ToString().Replace("-","");
+            string nonce = Guid.NewGuid().ToString().Replace("-", "");
             m_pNonces.Add(new NonceEntry(nonce));
 
             return nonce;
@@ -127,9 +128,12 @@ namespace LumiSoft.Net.AUTH
         /// <returns>Returns true if nonce exists in active nonces collection, otherwise returns false.</returns>
         public bool NonceExists(string nonce)
         {
-            lock(m_pNonces){
-                foreach(NonceEntry e in m_pNonces){
-                    if(e.Nonce == nonce){
+            lock (m_pNonces)
+            {
+                foreach (NonceEntry e in m_pNonces)
+                {
+                    if (e.Nonce == nonce)
+                    {
                         return true;
                     }
                 }
@@ -148,9 +152,12 @@ namespace LumiSoft.Net.AUTH
         /// <param name="nonce">Nonce to remove.</param>
         public void RemoveNonce(string nonce)
         {
-            lock(m_pNonces){
-                for(int i=0;i<m_pNonces.Count;i++){
-                    if(m_pNonces[i].Nonce == nonce){
+            lock (m_pNonces)
+            {
+                for (int i = 0; i < m_pNonces.Count; i++)
+                {
+                    if (m_pNonces[i].Nonce == nonce)
+                    {
                         m_pNonces.RemoveAt(i);
                         i--;
                     }
@@ -168,10 +175,13 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         private void RemoveExpiredNonces()
         {
-            lock(m_pNonces){
-                for(int i=0;i<m_pNonces.Count;i++){
+            lock (m_pNonces)
+            {
+                for (int i = 0; i < m_pNonces.Count; i++)
+                {
                     // Nonce expired, remove it.
-                    if(m_pNonces[i].CreateTime.AddSeconds(m_ExpireTime) < DateTime.Now){
+                    if (m_pNonces[i].CreateTime.AddSeconds(m_ExpireTime) < DateTime.Now)
+                    {
                         m_pNonces.RemoveAt(i);
                         i--;
                     }
@@ -189,10 +199,12 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public int ExpireTime
         {
-            get{ return m_ExpireTime; }
+            get { return m_ExpireTime; }
 
-            set{
-                if(value < 5){
+            set
+            {
+                if (value < 5)
+                {
                     throw new ArgumentException("Property ExpireTime value must be >= 5 !");
                 }
 

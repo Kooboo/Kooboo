@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace LumiSoft.Net.AUTH
@@ -9,14 +8,14 @@ namespace LumiSoft.Net.AUTH
     /// </summary>
     public class AUTH_SASL_DigestMD5_Challenge
     {
-        private string[] m_Realm      = null;
-        private string   m_Nonce      = null;
+        private string[] m_Realm = null;
+        private string m_Nonce = null;
         private string[] m_QopOptions = null;
-        private bool     m_Stale      = false;
-        private int      m_Maxbuf     = 0;
-        private string   m_Charset    = null;
-        private string   m_Algorithm  = null;
-        private string   m_CipherOpts = null;
+        private bool m_Stale = false;
+        private int m_Maxbuf = 0;
+        private string m_Charset = null;
+        private string m_Algorithm = null;
+        private string m_CipherOpts = null;
 
         /// <summary>
         /// Default constructor.
@@ -26,24 +25,27 @@ namespace LumiSoft.Net.AUTH
         /// <param name="qopOptions">Quality of protections supported. Normally this is "auth".</param>
         /// <param name="stale">Stale value.</param>
         /// <exception cref="ArgumentNullException">Is raised when <b>realm</b>,<b>nonce</b> or <b>qopOptions</b> is null reference.</exception>
-        public AUTH_SASL_DigestMD5_Challenge(string[] realm,string nonce,string[] qopOptions,bool stale)
+        public AUTH_SASL_DigestMD5_Challenge(string[] realm, string nonce, string[] qopOptions, bool stale)
         {
-            if(realm == null){
+            if (realm == null)
+            {
                 throw new ArgumentNullException("realm");
             }
-            if(nonce == null){
+            if (nonce == null)
+            {
                 throw new ArgumentNullException("nonce");
             }
-            if(qopOptions == null){
+            if (qopOptions == null)
+            {
                 throw new ArgumentNullException("qopOptions");
             }
 
-            m_Realm      = realm;
-            m_Nonce      = nonce;
+            m_Realm = realm;
+            m_Nonce = nonce;
             m_QopOptions = qopOptions;
-            m_Stale      = stale;
-            m_Charset    = "utf-8";
-            m_Algorithm  = "md5-sess";
+            m_Stale = stale;
+            m_Charset = "utf-8";
+            m_Algorithm = "md5-sess";
         }
 
         /// <summary>
@@ -65,40 +67,51 @@ namespace LumiSoft.Net.AUTH
         /// <exception cref="ParseException">Is raised when challenge parsing + validation fails.</exception>
         public static AUTH_SASL_DigestMD5_Challenge Parse(string challenge)
         {
-            if(challenge == null){
+            if (challenge == null)
+            {
                 throw new ArgumentNullException("challenge");
             }
 
             AUTH_SASL_DigestMD5_Challenge retVal = new AUTH_SASL_DigestMD5_Challenge();
 
-            string[] parameters = TextUtils.SplitQuotedString(challenge,',');
-            foreach(string parameter in parameters){
-                string[] name_value = parameter.Split(new char[]{'='},2);
-                string   name       = name_value[0].Trim();
+            string[] parameters = TextUtils.SplitQuotedString(challenge, ',');
+            foreach (string parameter in parameters)
+            {
+                string[] name_value = parameter.Split(new char[] { '=' }, 2);
+                string name = name_value[0].Trim();
 
-                if(name_value.Length == 2){
-                    if(name.ToLower() == "realm"){
+                if (name_value.Length == 2)
+                {
+                    if (name.ToLower() == "realm")
+                    {
                         retVal.m_Realm = TextUtils.UnQuoteString(name_value[1]).Split(',');
                     }
-                    else if(name.ToLower() == "nonce"){
+                    else if (name.ToLower() == "nonce")
+                    {
                         retVal.m_Nonce = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "qop"){
+                    else if (name.ToLower() == "qop")
+                    {
                         retVal.m_QopOptions = TextUtils.UnQuoteString(name_value[1]).Split(',');
                     }
-                    else if(name.ToLower() == "stale"){
+                    else if (name.ToLower() == "stale")
+                    {
                         retVal.m_Stale = Convert.ToBoolean(TextUtils.UnQuoteString(name_value[1]));
                     }
-                    else if(name.ToLower() == "maxbuf"){
+                    else if (name.ToLower() == "maxbuf")
+                    {
                         retVal.m_Maxbuf = Convert.ToInt32(TextUtils.UnQuoteString(name_value[1]));
                     }
-                    else if(name.ToLower() == "charset"){
+                    else if (name.ToLower() == "charset")
+                    {
                         retVal.m_Charset = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "algorithm"){
+                    else if (name.ToLower() == "algorithm")
+                    {
                         retVal.m_Algorithm = TextUtils.UnQuoteString(name_value[1]);
                     }
-                    else if(name.ToLower() == "cipher-opts"){
+                    else if (name.ToLower() == "cipher-opts")
+                    {
                         retVal.m_CipherOpts = TextUtils.UnQuoteString(name_value[1]);
                     }
                     //else if(name.ToLower() == "auth-param"){
@@ -110,10 +123,12 @@ namespace LumiSoft.Net.AUTH
             /* Validate required fields.
                 Per RFC 2831 2.1.1. Only [nonce algorithm] parameters are required.
             */
-            if(string.IsNullOrEmpty(retVal.Nonce)){
+            if (string.IsNullOrEmpty(retVal.Nonce))
+            {
                 throw new ParseException("The challenge-string doesn't contain required parameter 'nonce' value.");
             }
-            if(string.IsNullOrEmpty(retVal.Algorithm)){
+            if (string.IsNullOrEmpty(retVal.Algorithm))
+            {
                 throw new ParseException("The challenge-string doesn't contain required parameter 'algorithm' value.");
             }
 
@@ -158,22 +173,27 @@ namespace LumiSoft.Net.AUTH
             */
 
             StringBuilder retVal = new StringBuilder();
-            retVal.Append("realm=\"" + Net_Utils.ArrayToString(this.Realm,",") + "\"");
+            retVal.Append("realm=\"" + Net_Utils.ArrayToString(this.Realm, ",") + "\"");
             retVal.Append(",nonce=\"" + this.Nonce + "\"");
-            if(this.QopOptions != null){
-                retVal.Append(",qop=\"" + Net_Utils.ArrayToString(this.QopOptions,",") + "\"");
+            if (this.QopOptions != null)
+            {
+                retVal.Append(",qop=\"" + Net_Utils.ArrayToString(this.QopOptions, ",") + "\"");
             }
-            if(this.Stale){
+            if (this.Stale)
+            {
                 retVal.Append(",stale=true");
             }
-            if(this.Maxbuf > 0){
+            if (this.Maxbuf > 0)
+            {
                 retVal.Append(",maxbuf=" + this.Maxbuf);
             }
-            if(!string.IsNullOrEmpty(this.Charset)){
+            if (!string.IsNullOrEmpty(this.Charset))
+            {
                 retVal.Append(",charset=" + this.Charset);
             }
             retVal.Append(",algorithm=" + this.Algorithm);
-            if(!string.IsNullOrEmpty(this.CipherOpts)){
+            if (!string.IsNullOrEmpty(this.CipherOpts))
+            {
                 retVal.Append(",cipher-opts=\"" + this.CipherOpts + "\"");
             }
             //if(!string.IsNullOrEmpty(this.AuthParam)){
@@ -193,7 +213,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string[] Realm
         {
-            get{ return m_Realm; }
+            get { return m_Realm; }
         }
 
         /// <summary>
@@ -201,7 +221,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Nonce
         {
-            get{ return m_Nonce; }
+            get { return m_Nonce; }
         }
 
         /// <summary>
@@ -209,7 +229,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string[] QopOptions
         {
-            get{ return m_QopOptions; }
+            get { return m_QopOptions; }
         }
 
         /// <summary>
@@ -217,7 +237,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public bool Stale
         {
-            get{ return m_Stale; }
+            get { return m_Stale; }
         }
 
         /// <summary>
@@ -225,7 +245,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public int Maxbuf
         {
-            get{ return m_Maxbuf; }
+            get { return m_Maxbuf; }
         }
 
         /// <summary>
@@ -233,7 +253,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Charset
         {
-            get{ return m_Charset; }
+            get { return m_Charset; }
         }
 
         /// <summary>
@@ -241,7 +261,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string Algorithm
         {
-            get{ return m_Algorithm; }
+            get { return m_Algorithm; }
         }
 
         /// <summary>
@@ -249,7 +269,7 @@ namespace LumiSoft.Net.AUTH
         /// </summary>
         public string CipherOpts
         {
-            get{ return m_CipherOpts; }
+            get { return m_CipherOpts; }
         }
 
         #endregion

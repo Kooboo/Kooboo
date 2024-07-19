@@ -1,8 +1,6 @@
-﻿using Kooboo.Dom;
+﻿using System.Collections.Generic;
+using Kooboo.Dom;
 using Kooboo.Sites.Render;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Render.Components
 {
@@ -27,9 +25,9 @@ namespace Kooboo.Render.Components
                 return response;
 
             }
-            return null; 
+            return null;
         }
     }
-     
+
 
 }
