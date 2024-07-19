@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_extend</title>
+    <g id="弹窗" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组-33备份-4" transform="translate(-144.000000, -18.000000)">
+            <g id="icon_extend" transform="translate(144.000000, 18.000000)">
+                <rect id="矩形" x="0" y="0" width="20" height="20"></rect>
+                <rect id="矩形" stroke="#000000" stroke-width="0.909090909" opacity="0.300000012" x="4.09090909" y="4.09090909" width="11.8181818" height="11.8181818" rx="1.81818182"></rect>
+                <path d="M0.5,6.86363636 L0.5,2.31818182 C0.5,1.31402773 1.31402773,0.5 2.31818182,0.5 L6.86363636,0.5 L6.86363636,0.5" id="路径" stroke="#000000" stroke-width="0.909090909"></path>
+                <path d="M13.14,6.86363636 L13.14,2.31818182 C13.14,1.31402773 13.9540277,0.5 14.9581818,0.5 L19.5036364,0.5 L19.5036364,0.5" id="路径备份-2" stroke="#000000" stroke-width="0.909090909" transform="translate(16.321818, 3.681818) rotate(-270.000000) translate(-16.321818, -3.681818) "></path>
+                <path d="M0.5,19.5036364 L0.5,14.9581818 C0.5,13.9540277 1.31402773,13.14 2.31818182,13.14 L6.86363636,13.14 L6.86363636,13.14" id="路径备份" stroke="#000000" stroke-width="0.909090909" transform="translate(3.681818, 16.321818) rotate(-90.000000) translate(-3.681818, -16.321818) "></path>
+                <path d="M13.14,19.5036364 L13.14,14.9581818 C13.14,13.9540277 13.9540277,13.14 14.9581818,13.14 L19.5036364,13.14 L19.5036364,13.14" id="路径备份-3" stroke="#000000" stroke-width="0.909090909" transform="translate(16.321818, 16.321818) rotate(-180.000000) translate(-16.321818, -16.321818) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

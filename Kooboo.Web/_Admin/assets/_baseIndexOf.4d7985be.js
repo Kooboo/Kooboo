@@ -1,0 +1,1 @@
+function r(n,e,t,i){for(var f=n.length,u=t+(i?1:-1);i?u--:++u<f;)if(e(n[u],u,n))return u;return-1}function s(n){return n!==n}function c(n,e,t){for(var i=t-1,f=n.length;++i<f;)if(n[i]===e)return i;return-1}function d(n,e,t){return e===e?c(n,e,t):r(n,s,t)}export{d as b};

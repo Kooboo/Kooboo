@@ -1,0 +1,1 @@
+function l(e,r){var o,a;return((o=e==null?void 0:e.toString())==null?void 0:o.toLowerCase())===((a=r==null?void 0:r.toString())==null?void 0:a.toLowerCase())}function s(e,r){return e==null?void 0:e.some(o=>l(o,r))}function g(e,r){if(!e||!r)return null;for(const o in e)if(Object.prototype.hasOwnProperty.call(e,o)&&l(o,r))return e[o];return null}export{s as a,g,l as i};

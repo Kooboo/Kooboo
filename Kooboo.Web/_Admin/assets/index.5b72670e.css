@@ -1,0 +1,1 @@
+:root{--active-bg: #e8f4fe}.dark{--active-bg: #313d47}.active-background{animation:active .5s linear 1}@keyframes active{0%,to{background-color:inherit}50%{background-color:var(--active-bg)}}

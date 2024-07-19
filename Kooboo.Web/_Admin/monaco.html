@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco demo</title>
+  <script type="module" crossorigin src="/_Admin/assets/monaco.58345fca.js"></script>
+  <link rel="modulepreload" href="/_Admin/assets/url.8f5ec20c.js">
+  <link rel="modulepreload" href="/_Admin/assets/preload-helper.13a99eb0.js">
+  <link rel="modulepreload" href="/_Admin/assets/editor.main.d2800f63.js">
+  <link rel="modulepreload" href="/_Admin/assets/userWorker.b3a6730b.js">
+  <link rel="modulepreload" href="/_Admin/assets/classCompletion.a22e38a6.js">
+  <link rel="modulepreload" href="/_Admin/assets/toggleComment.5b29ca87.js">
+  <link rel="modulepreload" href="/_Admin/assets/index.50c16ae5.js">
+  <link rel="stylesheet" href="/_Admin/assets/editor.main.ad4b53d0.css">
+</head>
+
+<body>
+    <div id="container" style="height: 90vh;"></div>
+    
+
+    <script>
+        async function onMonacoLoad() {
+            const model = await _monaco.init(document.getElementById("container"), "<div></div>", "html");
+            console.log(model.getValue())
+        }
+    </script>
+</body>
+
+</html>

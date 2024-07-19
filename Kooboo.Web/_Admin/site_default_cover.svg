@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="358px" height="245px" viewBox="0 0 358 245" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 + 编组备份 8 蒙版备份</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="358" height="245" rx="8"></rect>
+        <linearGradient x1="99.830382%" y1="100%" x2="2.68136405%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#DAEEFF" offset="0%"></stop>
+            <stop stop-color="#ADD8FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="控件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组-+-编组备份-8-蒙版备份">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="蒙版"></g>
+            <g id="编组" mask="url(#mask-2)">
+                <g transform="translate(36.000000, 19.000000)">
+                    <rect id="矩形" fill="#D0D2DB" opacity="0.200000003" x="0" y="0" width="285" height="172" rx="12"></rect>
+                    <rect id="矩形备份-7" fill="#CCCCD7" opacity="0.200000003" x="235" y="12" width="36" height="18" rx="9"></rect>
+                    <rect id="矩形备份-8" fill="#CCCCD7" opacity="0.300000012" x="14" y="12" width="18" height="18" rx="9"></rect>
+                    <rect id="矩形备份" fill="#CCCCD7" opacity="0.200000003" x="14" y="39" width="257" height="66" rx="10"></rect>
+                    <rect id="矩形备份-4" fill="#CCCCD7" opacity="0.200000003" x="14" y="117" width="76" height="44" rx="10"></rect>
+                    <rect id="矩形备份-5" fill="#CCCCD7" opacity="0.200000003" x="105" y="117" width="76" height="44" rx="10"></rect>
+                    <rect id="矩形备份-6" fill="#CCCCD7" opacity="0.200000003" x="195" y="117" width="76" height="44" rx="10"></rect>
+                </g>
+            </g>
+            <g id="编组" mask="url(#mask-2)">
+                <g transform="translate(171.960553, 55.000000)">
+                    <g id="编组-42" transform="translate(68.127755, 6.041667)">
+                        <polygon id="Path" fill="#FCE0CD" fill-rule="nonzero" opacity="0.900000036" transform="translate(16.125000, 25.979167) scale(-1, 1) translate(-16.125000, -25.979167) " points="32.25 17.9334493 32.25 44.0164729 0 51.9583333 0 7.9418604 32.25 0"></polygon>
+                        <g id="五官" transform="translate(16.517206, 35.645833) scale(-1, 1) translate(-16.517206, -35.645833) translate(14.128317, 32.625000)" stroke="#FF7148" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.756">
+                            <path d="M4.77777778,6.04166667 C2.13908553,6.04166667 0,3.33671848 0,0" id="Path"></path>
+                        </g>
+                        <path d="M34.8122606,25.3421878 L34.8122606,30.2083333 C33.5451149,30.2083333 32.3298688,29.7075921 31.4338618,28.8162669 C30.5378542,27.9249417 30.0344828,26.7160453 30.0344828,25.4555211 C30.0344828,25.309697 30.0409919,25.1654969 30.0540101,25.022921 C30.3216953,22.0715686 34.8122606,22.3788468 34.8122606,25.3421878 Z" id="Path" fill="#FEE3D1" fill-rule="nonzero" opacity="0.900000036" transform="translate(32.423372, 26.583333) scale(-1, 1) translate(-32.423372, -26.583333) "></path>
+                    </g>
+                    <path d="M23.0404276,118.737124 C94.4000591,118.912375 132.066399,119.192333 136.039447,119.576999 C132.591457,91.6477597 112.185636,68.2775212 84.2228709,61.4239938 C69.4858922,57.8120598 53.9019717,61.1559637 41.9591647,70.4926615 C30.0163577,79.8293593 23.0404276,94.1223945 23.0404276,109.255375 L23.0404276,118.737124 Z" id="Path" fill="url(#linearGradient-3)" fill-rule="nonzero" opacity="0.800000012" transform="translate(79.539937, 89.788500) scale(-1, 1) translate(-79.539937, -89.788500) "></path>
+                    <g transform="translate(74.445589, 59.500000) scale(-1, 1) translate(-74.445589, -59.500000) translate(-0.022166, 0.000000)">
+                        <ellipse id="Oval" fill="#9EA7B7" fill-rule="nonzero" cx="59.2993841" cy="35.0416667" rx="1.19444444" ry="1.20833333"></ellipse>
+                        <ellipse id="Oval" fill="#9EA7B7" fill-rule="nonzero" cx="74.8271619" cy="35.0416667" rx="1.19444444" ry="1.20833333"></ellipse>
+                        <polyline id="Path" stroke="#9EA7B7" stroke-width="0.756" stroke-linecap="round" stroke-linejoin="round" points="70.3442464 39.875 70.3442464 24.1666667 77.5109131 24.1666667"></polyline>
+                        <line x1="57.2047347" y1="24.7708333" x2="64.3714014" y2="24.7708333" id="Path" stroke="#9EA7B7" stroke-width="0.756" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <line x1="69.8773509" y1="41.0833333" x2="66.2940176" y2="42.2916667" id="Path" stroke="#9EA7B7" stroke-width="0.756" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <path d="M50.8772096,36.25 C48.2385155,36.25 46.0994318,34.086043 46.0994318,31.4166667" id="Path" stroke="#9EA7B7" opacity="0.800000012" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <line x1="80.9115668" y1="49.5416667" x2="48.6615668" y2="58" id="Path" stroke="#9EA7B7" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <line x1="69.9133445" y1="52" x2="70.4133445" y2="60.5" id="路径-6" stroke="#9EA7B7"></line>
+                        <path d="M51.4783777,27.7916667 C51.4783777,27.7916667 56.4222735,23.1945515 57.5099278,17.8978667 C57.5099278,17.8978667 65.7167864,19.9965515 70.2651689,19.0971152 L70.2651689,16.2988727 C70.2651689,16.2988727 75.8023259,18.4974909 81.3394888,17.4981212 L81.3394888,14.5" id="Path" stroke="#9EA7B7" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M81.5242516,12.2262217 L85,12.2262217 C85,12.2262217 78.2471155,-3.28020582 52.2286389,3.57840635 L54.1154769,0 C54.1154769,0 46.3695188,1.29220428 46.0715973,8.15081646 C46.0715973,8.15081646 44.58199,7.25621487 42,9.74121531 L44.1847594,11.0334196 C44.1847594,11.0334196 39.114869,28.9254514 48.5020108,38.6666667" id="Path" stroke="#9EA7B7" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M90.6792719,102.511814 C93.5461081,102.092394 109.190589,99.1701792 114.502003,94.1476524" id="路径" stroke="#9EA7B7" transform="translate(102.590637, 98.329733) rotate(-6.000000) translate(-102.590637, -98.329733) "></path>
+                        <path d="M90.8738974,68 C135.086323,90.0540541 152.265078,107.054054 148.410161,119 C141.975918,119 129.11838,119 109.837546,119" id="形状" stroke="#9EA7B7"></path>
+                        <path d="M68.3321946,71.1896849 C92.0934938,85.2247378 102.483184,101.161509 99.5012659,119 C92.3338395,119 59.1667509,119 0,119 C17.0720932,88.358524 30.4537572,69.3214338 40.1449919,61.8887294 C43.4996501,58.5440124 51.5488486,58.0418483 58.7417112,56.8465904 C79.4196877,53.4104739 55.5682994,61.205856 50.3500381,66.4086534 C46.7536068,69.9944271 49.1512277,86.7280373 40.7595547,98.6806161 C52.747659,90.313811 62.3381425,86.7280373 81.5191094,98.6806161" id="路径-2备份-2" stroke="#9EA7B7" transform="translate(50.000000, 87.500000) scale(-1, 1) translate(-50.000000, -87.500000) "></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
