@@ -1,39 +1,95 @@
-# Kooboo
+Kooboo is a professional tool specially designed for web development, featuring a built-in web server, mail server, database engine, template engine, IDE, and many productivity tools. It runs on Mac, Linux, Windows, and the cloud. It is a versatile alternative to WordPress, Joomla, Shopify, Magento, and WIX
 
-Kooboo is a new kind of web development. It saves you hours and make your website in a better way. 
+![Kooboo entry](https://www.kooboo.com/github/kooboo_entry.png "Kooboo Entry")
 
-It contains many things you need to do web development.  It contains a builtin webserver, an email server, template engine, dynamic Database and JavaScript executor. 
 
-The binary release and documentation can be found at: http://www.kooboo.com
+# Innovations
+Kooboo creates many original innovations. It is the FIRST and ONLY CMS capable of:
 
-Some of the features as below: 
+**Instant Start**: Ready in 2 seconds – download, click, and go.
 
-## 5Mb, 1 second
-The binary release of Kooboo application is contained in a zip file of less than 5MB. You can either use the online version or download, unpack and double click kooboo.exe to start. No installation needed, take 1 second to start.
+**All-in-One**: Includes web, mail, database server, and tools for development, debugging, and deployment.
 
-## 1 millisecond response time
-Kooboo can render a dynamic page within 1 millisecond.  This is a page that contains 10 dynamic content items. Normally take more than 50 milliseconds for other system to render.  
+**Faster Development**: Requires only HTML, CSS, and JavaScript, with no limitations.
 
-## Using instead of learning
-    
-There are many ways to get started. You can migrate a website by a single URL, upload Microsoft office document, or standard HTML zip. It will be unpacked, converted, and make available as pages for editing within Kooboo. 
+**Inline Editing**: Edit any static or dynamic content directly while browsing.
 
-## All in JavaScript
-You can do any web devlopment by using JavaScript only. You can use JavaScript to export Json api, read write database, manage session data and process http request. The JavaScript engine in Kooboo is called kScript. 
+**Super Performance**: Renders dynamic pages in just 1 millisecond.
 
-## Click and edit
-Anything can be inline edited. You can click anywhere on the webpage and edit anything directly. It can be a text, image, content item or stylesheet color. 
+**Version Control**:  Undo and roll back changes to both code and content.
 
-## Undo and Restore
-Every change you make is logged and can be reverted.  You can also checkout or restore the website to a certain time in the past.  
+**1-click Deployment**: Deploy production sites using Git-like pull and push.
 
-## Relation map
-Every object has a relation map to other objects within the website.  You know where an image is being used, whether it is in the page content or in the stylesheet. 
+**Portability**: Pack and share sites, modules, or files as zip packages.
 
-## One click deployment
-One click to deploy incremental changes to target servers. You see exactly which item you edited. Select and publish changed items to remote site. Or export  the entire website import into another instance. 
+**Template Versatility**: Import any HTML template or clone from any URL.
  
-## Websites go live instantly
-Kooboo provide an online version which works exactly the same way as local desktop version. No DNS A record, MX record setup, website go live instantly. If you register your domains somewhere else, you need to change the DNS servers to kooboo DNS servers that provided to you when you are adding your domain to Kooboo. 
 
-All A record, CNAME, Mx Record will be created for you automatically.
+# What You Can Do with Kooboo
+
+## 1. Develop Full-Function Websites or Applications Quickly
+
+Kooboo significantly speeds up website development. For example, displaying content from a database in a list requires just a few lines of code. 
+
+
+```javascript
+
+<script env="server">
+    var services=k.content.service.all()
+</script>
+<div env="server" v-for="service in services">
+    <span>{{service.title}}</span>
+</div>
+
+``` 
+
+The built-in full-function IDE allows you to develop any web application so much faster
+
+![Kooboo IDE](https://www.kooboo.com/advantage/innovation-dev.png "Kooboo IDE")
+
+ 
+
+Create a fully dynamic website in just 10 minutes. Click the YouTube video below to see how we do it. 
+  
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=SKBmljIuXTg
+" target="_blank"><img src="https://i9.ytimg.com/vi/SKBmljIuXTg/maxresdefault.jpg?v=665992f7&sqp=CKzS6bQG&rs=AOn4CLATfbbWbGQGwMpOht06_fyTlilTAA" 
+alt="IMAGE ALT TEXT HERE"   border="1" /></a>
+
+
+## 2. Host Your Own Web or Email Server
+
+Download and host your own Kooboo instance for both web and mail servers
+
+Url: https://www.kooboo.com/downloads
+
+You can easily host 1,000 websites on a single Kooboo instance. The mail server fully supports SMTP and IMAP protocols along with many unique features.
+
+![Kooboo Mail Server](https://www.kooboo.com/banner/mail-en.png "Kooboo mail server")
+
+
+
+
+## 3. Access 100s of Tools and Applications on Your Desktop or Server 
+
+Kooboo integrates many open-source tools, making it easy to use Kooboo as a distribution channel for open-source projects. These tools include:
+
+DrawIO, Excalidraw, Quant UX Prototype, TL Draw canvas, Polotno studio, Variant Form, Grapes page builder, Unlayer page designer,  API Test, Paint Board,  Toast Image Editor, Json editor, Mermaid Diagram, vvveb js designer, SVG image editor,  Block note writer, nunu 3d Studio, Glyphs Font Studio, Pictode Drawing,  IDraw UI designer, FileRobot Image editor, Mongo DB modeler, DrawDB Database designer, TypeFlow editor and more. 
+
+
+![Kooboo tools](https://www.kooboo.com/github/github_tools.png "kooboo open source tools")
+
+In addition to open-source tools, Kooboo also includes many applications, such as:
+
+Kanban Board, Workflow Management, Community Portal, Organization Chat Room, Page ChatBot, Customer Relationship Management (CRM), ERP, Bookkeeping, Time Sheet, Customer Service, And more.
+
+## 4. Share your website or applications with community. 
+
+One click to share your web site or application with community. It can be free template or commerical applications. 
+
+
+
+
+
+
+
+
