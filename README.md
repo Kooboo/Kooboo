@@ -1,4 +1,9 @@
-Kooboo is a professional tool specially designed for web development, featuring a built-in web server, mail server, database engine, template engine, IDE, and many productivity tools. It runs on Mac, Linux, Windows, and the cloud. It is a versatile alternative to WordPress, Joomla, Shopify, Magento, and WIX
+Kooboo is a professional tool specifically designed for website, e-commerce, and application development., featuring a built-in web server, mail server, database engine, template engine, IDE, and many productivity tools. It runs on Mac, Linux, Windows, and the cloud. It is a versatile alternative to WordPress, Joomla, Shopify, Magento, and WIX
+
+# Getting Started
+ 
+You can download Kooboo from this repository or from our website. Simply click to run, and it will start in just 2 seconds.
+https://www.kooboo.com
 
 ![Kooboo entry](https://www.kooboo.com/github/kooboo_entry.png "Kooboo Entry")
 
@@ -25,11 +30,9 @@ Kooboo creates many original innovations. It is the FIRST and ONLY CMS capable o
 **Portability**: Pack and share sites, modules, or files as zip packages.
 
 **Template Versatility**: Import any HTML template or clone from any URL.
- 
+  
 
-# What You Can Do with Kooboo
-
-## 1. Develop Full-Function Websites or Applications Quickly
+# Develop full-function websites, e-commerce platforms, or applications quickly.
 
 Kooboo significantly speeds up website development. For example, displaying content from a database in a list requires just a few lines of code. 
 
@@ -48,17 +51,13 @@ Kooboo significantly speeds up website development. For example, displaying cont
 The built-in full-function IDE allows you to develop any web application so much faster
 
 ![Kooboo IDE](https://www.kooboo.com/advantage/innovation-dev.png "Kooboo IDE")
-
  
 
 Create a fully dynamic website in just 10 minutes. Click the YouTube video below to see how we do it. 
-  
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=SKBmljIuXTg
-" target="_blank"><img src="https://i9.ytimg.com/vi/SKBmljIuXTg/maxresdefault.jpg?v=665992f7&sqp=CKzS6bQG&rs=AOn4CLATfbbWbGQGwMpOht06_fyTlilTAA" 
-alt="IMAGE ALT TEXT HERE"   border="1" /></a>
+https://www.youtube.com/watch?v=SKBmljIuXTg 
 
 
-## 2. Host Your Own Web or Email Server
+# Host Your Own Web or Email Server
 
 Download and host your own Kooboo instance for both web and mail servers
 
@@ -71,7 +70,7 @@ You can easily host 1,000 websites on a single Kooboo instance. The mail server 
 
 
 
-## 3. Access 100s of Tools and Applications on Your Desktop or Server 
+# Access 100s of Tools and Applications on Your Desktop or Server 
 
 Kooboo integrates many open-source tools, making it easy to use Kooboo as a distribution channel for open-source projects. These tools include:
 
@@ -84,7 +83,7 @@ In addition to open-source tools, Kooboo also includes many applications, such a
 
 Kanban Board, Workflow Management, Community Portal, Organization Chat Room, Page ChatBot, Customer Relationship Management (CRM), ERP, Bookkeeping, Time Sheet, Customer Service, And more.
 
-## 4. Share your website or applications with community. 
+# Share your website or applications with community. 
 
 One click to share your web site or application with community. It can be free template or commerical applications. 
 
