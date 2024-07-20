@@ -1,9 +1,9 @@
-Kooboo is a professional tool specifically designed for website, e-commerce, and application development., featuring a built-in web server, mail server, database engine, template engine, IDE, and many productivity tools. It runs on Mac, Linux, Windows, and the cloud. It is a versatile alternative to WordPress, Joomla, Shopify, Magento, and WIX
+Kooboo is a professional tool specifically designed for website, e-commerce, and application development, featuring a built-in web server, mail server, database engine, template engine, IDE, and many productivity tools. It runs on Mac, Linux, Windows, and the cloud. It is a versatile alternative to WordPress, Joomla, Shopify, Magento, and WIX
 
 # Getting Started
  
 You can download Kooboo from this repository or from our website. Simply click to run, and it will start in just 2 seconds.
-https://www.kooboo.com
+[https://www.kooboo.com/downloads](https://www.kooboo.com/downloads)
 
 ![Kooboo entry](https://www.kooboo.com/github/kooboo_entry.png "Kooboo Entry")
 
@@ -32,7 +32,7 @@ Kooboo creates many original innovations. It is the FIRST and ONLY CMS capable o
 **Template Versatility**: Import any HTML template or clone from any URL.
   
 
-# Develop full-function websites, e-commerce platforms, or applications quickly.
+# Develop websites, e-commerce platforms, or applications
 
 Kooboo significantly speeds up website development. For example, displaying content from a database in a list requires just a few lines of code. 
 
@@ -53,15 +53,14 @@ The built-in full-function IDE allows you to develop any web application so much
 ![Kooboo IDE](https://www.kooboo.com/advantage/innovation-dev.png "Kooboo IDE")
  
 
-Create a fully dynamic website in just 10 minutes. Click the YouTube video below to see how we do it. 
+Create a fully dynamic website in just 10 minutes. Click the YouTube video below to see how we do it.
+
 https://www.youtube.com/watch?v=SKBmljIuXTg 
 
 
-# Host Your Own Web or Email Server
+# Use Kooboo as Your Own Web or Email Server
 
-Download and host your own Kooboo instance for both web and mail servers
-
-Url: https://www.kooboo.com/downloads
+Download and host your own Kooboo instance for both web and mail servers 
 
 You can easily host 1,000 websites on a single Kooboo instance. The mail server fully supports SMTP and IMAP protocols along with many unique features.
 
