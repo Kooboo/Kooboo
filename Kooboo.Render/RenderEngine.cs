@@ -46,7 +46,6 @@ namespace Kooboo.Render
                     //if (sourceprovider is CommandDiskSourceProvider)
                     //{
                     //  //  response = ServerSide.ServerEngine.RenderJs(sourceprovider as CommandDiskSourceProvider, option, Context, relativeurl);
-
                     //}
                     //else
                     //{
@@ -158,10 +157,10 @@ namespace Kooboo.Render
 
             RenderRespnose response = new RenderRespnose();
             response.ContentType = "text/html";
-            string minetype = IOHelper.MimeType(relativeurl);
-            if (!string.IsNullOrEmpty(minetype))
+            string mineType = IOHelper.MimeType(relativeurl);
+            if (!string.IsNullOrEmpty(mineType))
             {
-                response.ContentType = minetype;
+                response.ContentType = mineType;
             }
 
             if (Context == null || sourceProvider == null)
@@ -201,11 +200,11 @@ namespace Kooboo.Render
 
             string result = Kooboo.Sites.Render.RenderHelper.Render(RenderPlan, Context);
 
-            string finalreseult = null;
+            string finalResult = null;
 
-            if (!string.IsNullOrEmpty(finalreseult))
+            if (!string.IsNullOrEmpty(finalResult))
             {
-                response.Body = finalreseult;
+                response.Body = finalResult;
             }
             else
             {

@@ -26,6 +26,7 @@ const emits = defineEmits<EmitsType>();
 const form = ref();
 const { t } = useI18n();
 const show = ref(true);
+const partner = ref(!!props.model?.sendToAddresses?.length);
 const type = ref("preview");
 const preview = ref<EmailNotification>();
 
@@ -86,6 +87,13 @@ watch(
     }
   }
 );
+
+watch(
+  () => partner.value,
+  () => {
+    if (!partner.value) copedModel.value.sendToAddresses = [];
+  }
+);
 </script>
 <template>
   <el-dialog
@@ -118,17 +126,23 @@ watch(
       </el-form-item>
       <el-form-item :label="t('common.sendTo')">
         <div class="flex items-center space-x-8 w-full">
+          <el-checkbox
+            v-model="copedModel.sendToCustomer"
+            class="flex-shrink-0"
+            :label="t('common.customer')"
+          />
+          <el-checkbox
+            v-model="partner"
+            class="flex-shrink-0"
+            :label="t('common.partner')"
+          />
           <SelectInput
+            v-if="partner"
             v-model="copedModel.sendToAddresses"
             class="flex-1 w-full"
             disable-query
             :input-value="copedModel.sendToAddresses"
             data-cy="bcc"
-          />
-          <el-checkbox
-            v-model="copedModel.sendToCustomer"
-            class="flex-shrink-0"
-            :label="t('common.customer')"
           />
         </div>
       </el-form-item>

@@ -8,6 +8,7 @@ using System.Text.Json;
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data;
+using Kooboo.Data.Config;
 using Kooboo.Data.Language;
 using Kooboo.Data.Models;
 using Kooboo.Data.Permission;
@@ -387,7 +388,7 @@ namespace Kooboo.Web.Api.Implementation
             var result = new SiteViewModel
             {
                 Site = webSite,
-                IsAdmin = call.Context.User.IsAdmin,
+                IsAdmin = call.Context.User.IsAdmin || webSite.OrganizationId == call.Context.User.Id,
             };
 
             if (!string.IsNullOrEmpty(result.Site.PreviewUrl))
@@ -613,6 +614,13 @@ namespace Kooboo.Web.Api.Implementation
                 return true;
             }
             return false;
+        }
+
+        [Permission(Feature.SITE, Action = Data.Permission.Action.EDIT)]
+        public void EnableCodeVideoLog(ApiCall call)
+        {
+            call.WebSite.RecordSiteLogVideo = true;
+            AppHost.SiteRepo.AddOrUpdate(call.WebSite);
         }
 
         public WebSite Create(ApiCall call)

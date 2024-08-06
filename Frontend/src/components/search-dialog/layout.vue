@@ -79,6 +79,11 @@ function reset() {
   hasMore.value = true;
 }
 
+function search(keyword: string) {
+  form.value.keyword = keyword;
+  searchEvent();
+}
+
 function onClosed() {
   form.value.keyword = "";
   form.value.provider = props.providers[0]?.value;
@@ -95,6 +100,7 @@ const notFoundHighLight = (enterKeyword: string) => {
 defineExpose({
   loadMore,
   reset,
+  search,
 });
 const searchInputRef = ref();
 watch(
@@ -161,6 +167,7 @@ watch(
         />
       </div>
     </div>
+    <slot v-if="!list || !list.length" name="placeholder" />
     <el-scrollbar
       ref="scrollbarRef"
       class="mt-8"

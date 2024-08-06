@@ -17,6 +17,9 @@ export function useOnlineSearchApi(module: OnlineModule) {
       req
     );
 
+  const tops = () =>
+    request.get<any>(useUrlSiteId(`online-${module}/TopPackages`));
+
   const getSearchProviders = () =>
     request.get<SearchProvider[]>(useUrlSiteId(`online-${module}/Providers`));
 
@@ -32,5 +35,6 @@ export function useOnlineSearchApi(module: OnlineModule) {
     onlineSearch,
     getSearchProviders,
     download,
+    tops,
   };
 }

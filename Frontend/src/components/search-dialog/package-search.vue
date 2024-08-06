@@ -16,12 +16,13 @@ import type { OnlineModule } from "@/api/third-party/index";
 import type { InfiniteResponse } from "@/global/types";
 import { removeAllModules } from "monaco-editor-ex";
 import { highLight } from "@/utils/dom";
+import TopPanel from "./top-panel.vue";
 
 const props = defineProps<{
   module: OnlineModule;
 }>();
 
-const { getSearchProviders, onlineSearch, download } = computed(() =>
+const { getSearchProviders, onlineSearch, download, tops } = computed(() =>
   useOnlineSearchApi(props.module)
 ).value;
 
@@ -34,7 +35,7 @@ const emit = defineEmits<{
 }>();
 
 const searchDialogRef = ref<InstanceType<typeof SearchDialogType>>();
-
+const topList = ref<any>();
 const providers = ref<SearchProvider[]>([]);
 
 const load = async () => {
@@ -69,7 +70,13 @@ load();
 
 function show() {
   showDialog.value = true;
+  topList.value = null;
   (searchDialogRef.value as any)?.reset();
+  if (props.module == "module") {
+    tops().then((rsp) => {
+      topList.value = rsp;
+    });
+  }
 }
 
 defineExpose({
@@ -84,6 +91,9 @@ defineExpose({
     :fetch-data="fetchData"
     :providers="providers"
   >
+    <template #placeholder>
+      <TopPanel :top="topList" @selected="searchDialogRef.search($event)" />
+    </template>
     <template #default="{ list, keyword }">
       <div
         v-for="item of list"

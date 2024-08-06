@@ -1,0 +1,1 @@
+import{U as s}from"./main.1c3b59e3.js";import{g as t,i,h as n}from"./url.8f5ec20c.js";function m(a,l){const e=t(!1);i(()=>a.modelValue,u=>{e.value=u}),n(()=>{a.modelValue&&(e.value=!0)});function o(){e.value=!1,l(s,!1)}return{visible:e,handleClose:o}}export{m as u};

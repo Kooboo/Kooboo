@@ -80,4 +80,11 @@ internal class ModuleSearchOnline : ThirdPartyApiBase<OnlinePackageItemViewModel
     {
         yield return OnlineProviders.Kooboo(call);
     }
+
+    public object TopPackages()
+    {
+        var url = "/_api/Package/TopPackages?type=module";
+        url = UrlHelper.Combine(Data.UrlSetting.AppStore, url);
+        return HttpHelper.Get2<object>(url);
+    }
 }

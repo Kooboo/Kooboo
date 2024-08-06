@@ -190,87 +190,95 @@ const actions = computed(() => {
 });
 </script>
 <template>
-  <template v-for="item of moduleStore.types" :key="item.name">
-    <Collapse
-      :title="item.displayName"
-      :add="item.isText && item.name !== 'root'"
-      :expand-default="true"
-      permission="module"
-      @on-add="onAdd(item)"
-    >
-      <template #bar>
-        <div class="relative group flex items-center">
-          <el-icon
-            v-if="item.isBinary && siteStore.hasAccess('module', 'edit')"
-            class="iconfont icon-a-Cloudupload group-hover:text-blue"
-            data-cy="import"
-          />
-          <input
-            class="!cursor-pointer absolute inset-0 !opacity-0 bg-green"
-            type="file"
-            title=" "
-            :accept="item.name == 'img' ? 'image/*' : ''"
-            data-cy="upload"
-            @change="getFile($event, item)"
-          />
-        </div>
-      </template>
-      <FileItem
-        v-for="i of moduleStore.files.filter((f) => f.objectType === item.name)"
-        :id="i.id"
-        :key="i.name"
-        :title="i.name"
-        :remove="i.objectType !== 'root'"
+  <div>
+    <template v-for="item of moduleStore.types" :key="item.name">
+      <Collapse
+        :title="item.displayName"
+        :add="item.isText && item.name !== 'root'"
+        :expand-default="true"
         permission="module"
-        @remove="onRemove(i.name, i.objectType, i.id)"
-        @click="open(i)"
-        @contextmenu.prevent.stop="contextMenu?.openMenu($event, i)"
-      />
-    </Collapse>
-  </template>
-  <div @click.stop>
-    <el-dialog
-      v-model="showAddItemDialog"
-      width="600px"
-      :close-on-click-modal="false"
-      :title="t('common.newModuleType', { type: type?.displayName })"
-      destroy-on-close
-      @close="clearModel"
-    >
-      <Alert
-        v-if="type?.displayName === 'View' || type?.displayName === 'Backend'"
-        class="-mx-32 -mt-24 mb-12"
-        :title="t('common.moduleViewEntrance')"
-        :content="t('common.moduleViewEntranceTips')"
-      />
-      <div @keydown.enter="onSave">
-        <el-form
-          v-if="model"
-          ref="form"
-          label-position="top"
-          :model="model"
-          :rules="rules"
-          @submit.prevent
-        >
-          <el-form-item :label="t('common.name')" prop="name">
-            <div class="w-full flex space-x-4">
-              <el-input
-                v-model="model.name"
-                class="flex-1"
-                data-cy="module-file-name"
-              />
-            </div>
-          </el-form-item>
-        </el-form>
-      </div>
-      <template #footer>
-        <DialogFooterBar
-          @confirm="onSave"
-          @cancel="showAddItemDialog = false"
+        @on-add="onAdd(item)"
+      >
+        <template #bar>
+          <div class="relative group flex items-center">
+            <el-icon
+              v-if="item.isBinary && siteStore.hasAccess('module', 'edit')"
+              class="iconfont icon-a-Cloudupload group-hover:text-blue"
+              data-cy="import"
+            />
+            <input
+              class="!cursor-pointer absolute inset-0 !opacity-0 bg-green overflow-hidden"
+              type="file"
+              title=" "
+              :accept="item.name == 'img' ? 'image/*' : ''"
+              data-cy="upload"
+              @change="getFile($event, item)"
+            />
+          </div>
+        </template>
+        <FileItem
+          v-for="i of moduleStore.files.filter(
+            (f) => f.objectType === item.name
+          )"
+          :id="i.id"
+          :key="i.name"
+          :title="i.name"
+          :remove="i.objectType !== 'root'"
+          permission="module"
+          @remove="onRemove(i.name, i.objectType, i.id)"
+          @click="open(i)"
+          @contextmenu.prevent.stop="contextMenu?.openMenu($event, i)"
         />
-      </template>
-    </el-dialog>
-    <ContextMenu ref="contextMenu" :actions="actions" />
+      </Collapse>
+    </template>
+    <Teleport to="body">
+      <div @click.stop>
+        <el-dialog
+          v-model="showAddItemDialog"
+          width="600px"
+          :close-on-click-modal="false"
+          :title="t('common.newModuleType', { type: type?.displayName })"
+          destroy-on-close
+          @close="clearModel"
+        >
+          <Alert
+            v-if="
+              type?.displayName === 'View' || type?.displayName === 'Backend'
+            "
+            class="-mx-32 -mt-24 mb-12"
+            :title="t('common.moduleViewEntrance')"
+            :content="t('common.moduleViewEntranceTips')"
+          />
+          <div @keydown.enter="onSave">
+            <el-form
+              v-if="model"
+              ref="form"
+              label-position="top"
+              :model="model"
+              :rules="rules"
+              @submit.prevent
+            >
+              <el-form-item :label="t('common.name')" prop="name">
+                <div class="w-full flex space-x-4">
+                  <el-input
+                    v-model="model.name"
+                    class="flex-1"
+                    data-cy="module-file-name"
+                  />
+                </div>
+              </el-form-item>
+            </el-form>
+          </div>
+          <template #footer>
+            <DialogFooterBar
+              @confirm="onSave"
+              @cancel="showAddItemDialog = false"
+            />
+          </template>
+        </el-dialog>
+        <ContextMenu ref="contextMenu" :actions="actions" />
+      </div>
+    </Teleport>
   </div>
 </template>
 <style scoped>

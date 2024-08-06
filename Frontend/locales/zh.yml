@@ -947,6 +947,7 @@ common:
   months: 月
   more: 更多
   moreActions: 更多操作
+  mostDownloads: 最多下载
   move: 移动
   moveBehind: 移动到后面
   moveSiteToFolder: 移动站点到文件夹
@@ -1200,6 +1201,7 @@ common:
   recentVisits: 最近访问
   recharge: 充值
   rechargeAmount: 充值金额
+  recommends: 推荐
   record: 记录
   recordSiteLogVideo: 录制站点日志视频
   recordType: 记录类型

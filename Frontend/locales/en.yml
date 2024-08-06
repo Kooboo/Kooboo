@@ -993,6 +993,7 @@ common:
   months: months
   more: More
   moreActions: More Actions
+  mostDownloads: Most downloads
   move: Move
   moveBehind: Move behind
   moveSiteToFolder: Move site to folder
@@ -1249,6 +1250,7 @@ common:
   recentVisits: Recent Visit
   recharge: Top up
   rechargeAmount: Top up amount
+  recommends: Recommends
   record: Record
   recordSiteLogVideo: Record site log video
   recordType: Recordtype

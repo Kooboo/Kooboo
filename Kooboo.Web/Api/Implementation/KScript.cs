@@ -10,6 +10,7 @@ using Kooboo.Data;
 using Kooboo.Data.Context;
 using Kooboo.Sites;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Render.Queries;
 using Kooboo.Sites.Scripting.Global.Database;
 using Kooboo.Sites.Scripting.Helper;
 using Kooboo.Sites.Scripting.KDefine;
@@ -67,7 +68,7 @@ namespace Kooboo.Web.Api.Implementation
                 if (w.Name == "kview-k") return true;
                 if (apiCall.WebSite == default) return true;
                 return apiCall.WebSite.CodeSuggestions.Contains(w.Name);
-            }).ToArray();
+            }).Append(QueryManager.HtmlDefine).ToArray();
             var kView = htmlDefines.FirstOrDefault(f => f.Name == "kview-v");
             var siteDb = apiCall.WebSite?.SiteDb();
             if (kView != default && siteDb != default)

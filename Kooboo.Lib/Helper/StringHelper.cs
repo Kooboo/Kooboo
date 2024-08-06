@@ -580,6 +580,33 @@ namespace Kooboo.Lib.Helper
             return sb.ToString();
         }
 
+        public static string[] SplitToParts(string text, int maxChar = 5000)
+        {
+            var fragments = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var result = new List<string>();
+            var sb = new StringBuilder();
+            for (int i = 0; i < fragments.Length; i++)
+            {
+                var fragment = fragments[i];
+
+                if (i == fragments.Length - 1)
+                {
+                    sb.Append(fragment);
+                    result.Add(sb.ToString());
+                    break;
+                }
+
+                if (sb.Length + fragment.Length > maxChar)
+                {
+                    result.Add(sb.ToString());
+                    sb.Clear();
+                }
+                sb.Append(fragment);
+                sb.Append(' ');
+            }
+
+            return [.. result];
+        }
     }
 
     public class FindResult

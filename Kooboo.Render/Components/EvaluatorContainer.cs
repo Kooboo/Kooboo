@@ -20,6 +20,7 @@ namespace Kooboo.Render.Components
                     _list.Add(new EnvClientEvaluator());
                     _list.Add(new PlaceHolderEvaluator());
                     _list.Add(new SiteLayoutEvaluator());
+                     _list.Add(new QueryEvaluator());
                     _list.Add(new RepeaterEvaluator());
                     _list.Add(new ConditionEvaluator());
                     _list.Add(new SystemEvaluator());
@@ -43,6 +44,7 @@ namespace Kooboo.Render.Components
                     _list.Add(new ServerComponentEvaluator());
 
                     _list.Add(new AdminVersionEvaluator());
+                   
                     //add the 
                 }
                 return _list;

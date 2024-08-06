@@ -205,7 +205,7 @@ onReload();
           />
           <IconButton
             :permission="{ feature: 'module', action: 'edit' }"
-            icon="icon-share"
+            icon="icon-xiazai-wenjianxiazai-05"
             :tip="t('common.export')"
             data-cy="export"
             @click="onExportModule(row.name)"
