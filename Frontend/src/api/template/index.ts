@@ -35,11 +35,6 @@ export const getTemplateDetail = (Id: string) =>
 export const search = (params: SearchOptions) =>
   request.post<PagedTemplate>("/Template/FullTextSearch", params);
 
-export const getCategoriesAndColors = () =>
-  request.post<{ facets: Facet[] }>("/Template/FullTextSearch", {
-    pageSize: 0,
-  } as SearchOptions);
-
 export const use = (body: unknown) =>
   request.post<string>("/Template/Use", body, undefined, {
     successMessage: $t("common.createSuccess"),

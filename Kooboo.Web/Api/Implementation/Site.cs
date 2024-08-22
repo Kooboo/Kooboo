@@ -232,7 +232,7 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Hardcoded.GetValue("Site too large,please use full mode.", call.Context));
             }
 
-            return zipFile;
+            return System.IO.Path.GetFileName(zipFile);
         }
 
 
@@ -244,13 +244,9 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return null;
             }
-            var siteDb = site.SiteDb();
+
             var exportfile = call.GetValue("exportfile");
-            var path = System.IO.Path.GetFullPath(exportfile);
-            if (!path.StartsWith(AppSettings.TempDataPath, StringComparison.CurrentCultureIgnoreCase))
-            {
-                throw new Exception("Not allow path");
-            }
+            var path =  System.IO.Path.Combine(AppSettings.TempDataPath, exportfile);
             string name = site.DisplayName;
             if (string.IsNullOrEmpty(name))
             {
@@ -259,7 +255,7 @@ namespace Kooboo.Web.Api.Implementation
 
             name = Lib.Helper.StringHelper.ToValidFileName(name);
 
-            if (File.Exists(exportfile))
+            if (File.Exists(path))
             {
                 BinaryResponse response = new BinaryResponse();
                 response.ContentType = "application/zip";
@@ -283,7 +279,8 @@ namespace Kooboo.Web.Api.Implementation
             var storeValue = call.GetValue("stores");
 
             var stores = storeValue.Split(',').ToList();
-            return ImportExport.ExportInterSelected(site.SiteDb(), stores);
+            var result= ImportExport.ExportInterSelected(site.SiteDb(), stores);
+            return System.IO.Path.GetFileName(result);
         }
 
 
@@ -296,15 +293,10 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
             var exportFile = call.GetValue("exportfile");
-            var path = System.IO.Path.GetFullPath(exportFile);
-            if (!path.StartsWith(AppSettings.TempDataPath, StringComparison.CurrentCultureIgnoreCase))
-            {
-                throw new Exception("Not allow path");
-            }
+            var path = System.IO.Path.Combine(AppSettings.TempDataPath, exportFile);
 
-            if (File.Exists(exportFile))
+            if (File.Exists(path))
             {
-
                 BinaryResponse response = new BinaryResponse();
                 response.ContentType = "application/zip";
                 response.Headers.Add("Content-Disposition", $"attachment;filename={site.Name}.zip");

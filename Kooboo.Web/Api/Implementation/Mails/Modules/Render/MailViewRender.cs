@@ -176,7 +176,7 @@ namespace Kooboo.Sites.ScriptModules.Render.View
 
                     // _list.Add(new PlaceHolderEvaluator());
                     // _list.Add(new SiteLayoutEvaluator());
-
+                    _list.Add(new QueryEvaluator());
                     _list.Add(new DefineEvaluator());
 
                     _list.Add(new RepeaterEvaluator());

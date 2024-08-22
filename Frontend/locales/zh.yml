@@ -1553,6 +1553,8 @@ common:
   trash: 已删除
   Trash: 已删除
   trigger: 触发
+  trimSubPath: 移除子路径
+  trimSubPathTip: 将URL子路径转为根目录, 例如 "http://www.kooboo.com/project" -> "http://www.kooboo.com"
   troubleshoot: 故障排除
   tuesday: 周二
   type: 类型
@@ -1591,6 +1593,8 @@ common:
   useCommaArray: 使用逗号数组
   usedBy: 被引用
   useFor: 用于
+  useHeadlessMode: 使用浏览器模式
+  useHeadlessModeTip: 使用无头浏览器下载页面执行后生成的HTML代码
   user: 用户
   userCount: 账号数量
   userEditable: 用户可编辑

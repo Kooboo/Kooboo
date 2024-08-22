@@ -42,5 +42,6 @@ export function createModel() {
     pageUrl: "",
     name: "",
     file: null as any,
+    headless: false,
   };
 }

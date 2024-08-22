@@ -3,10 +3,12 @@
 using System.Diagnostics;
 using System.Linq;
 using Kooboo.Api;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.DataTraceAndModify;
 using Kooboo.Sites.DataTraceAndModify.Modifiers;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.SiteTransfer;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -101,6 +103,13 @@ namespace Kooboo.Web.Api.Implementation
                     return new UrlCheckResult() { Url = url, CanEnter = true };
                 }
 
+            }
+
+            _ = TransferManager.continueDownload(sitedb, url, call.Context).Result;
+            route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(sitedb, url);
+            if (route?.DestinationConstType == ConstObjectType.Page)
+            {
+                return new UrlCheckResult() { Url = url, CanEnter = true };
             }
 
             return new UrlCheckResult() { Message = "Inline editor only support editing on page" };

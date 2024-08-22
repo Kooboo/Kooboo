@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { getType, getCategoriesAndColors } from "@/api/template";
+import { computed, ref } from "vue";
+import { getType } from "@/api/template";
 import { useTemplateStore } from "@/store/template";
 import { useI18n } from "vue-i18n";
 import { getQueryString } from "@/utils/url";
@@ -9,24 +9,30 @@ const { t } = useI18n();
 const templateStore = useTemplateStore();
 
 const typeList = ref();
-const categories = ref();
-const colors = ref();
 
 const isLoading = ref(false);
 
 const load = async () => {
   try {
-    templateStore.changePage(templateStore.pagedTemplate.pageNr);
+    await templateStore.changePage(templateStore.pagedTemplate.pageNr);
     typeList.value = await getType();
-    const { facets } = await getCategoriesAndColors();
-    categories.value = facets.find((i) => i.name === "category")?.labels;
-    colors.value = facets.find((i) => i.name === "color")?.labels;
   } catch (error) {
     console.error(error);
   } finally {
     isLoading.value = true;
   }
 };
+
+const categories = computed(() => {
+  return templateStore?.pagedTemplate?.facets?.find(
+    (i) => i.name === "category"
+  )?.labels;
+});
+
+const colors = computed(() => {
+  return templateStore?.pagedTemplate?.facets?.find((i) => i.name === "color")
+    ?.labels;
+});
 
 load();
 </script>
@@ -60,7 +66,7 @@ load();
         </template>
         <template #empty>
           <el-checkbox-group
-            v-if="categories && Object.keys(categories)?.length"
+            v-if="categories"
             v-model="templateStore.category"
             class="p-24px flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-16px k-checkbox-group"
             @update:model-value="templateStore.changePage(1)"
@@ -97,7 +103,7 @@ load();
         </template>
         <template #empty>
           <el-checkbox-group
-            v-if="colors && Object.keys(colors)?.length"
+            v-if="colors"
             v-model="templateStore.color"
             class="p-24px flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-16px k-checkbox-group"
             @update:model-value="templateStore.changePage(1)"

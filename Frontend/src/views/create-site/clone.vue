@@ -35,6 +35,8 @@ const model = ref<ByLevelBody>({
   url: "",
   TotalPages: 20,
   Depth: 2,
+  headless: false,
+  convertToRoot: false,
 });
 
 const cloneSetting = {
@@ -236,6 +238,22 @@ watch(
             </el-select>
           </el-form-item>
         </div>
+        <el-form-item>
+          <el-checkbox
+            v-if="!appStore.header?.isOnlineServer"
+            v-model="model.headless"
+          >
+            <span>{{ t("common.useHeadlessMode") }}</span>
+            <Tooltip
+              :tip="t('common.useHeadlessModeTip')"
+              custom-class="ml-4"
+            />
+          </el-checkbox>
+          <el-checkbox v-model="model.convertToRoot">
+            <span>{{ t("common.trimSubPath") }}</span>
+            <Tooltip :tip="t('common.trimSubPathTip')" custom-class="ml-4" />
+          </el-checkbox>
+        </el-form-item>
         <template v-if="appStore.header?.isOnlineServer">
           <p class="text-444 text-s mt-24">
             {{ t("common.cloneVersionTips") }}

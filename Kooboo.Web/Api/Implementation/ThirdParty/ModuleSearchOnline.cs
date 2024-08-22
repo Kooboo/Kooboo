@@ -7,6 +7,7 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.ScriptModules;
+using Kooboo.Web.Api.Implementation.Modules;
 using Kooboo.Web.Api.Implementation.ThirdParty.Providers;
 using Kooboo.Web.ViewModel;
 
@@ -47,9 +48,12 @@ internal class ModuleSearchOnline : ThirdPartyApiBase<OnlinePackageItemViewModel
                 return false;
             }
 
+            var name = StringHelper.ToValidFileName(item.Name);
+            name = ScriptModuleHelper.ToValidModuleName(name);
+
             var newModule = new ScriptModule()
             {
-                Name = StringHelper.ToValidFileName(item.Name),
+                Name = name,
                 PackageName = item.PackageName
             };
 

@@ -58,10 +58,7 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(error);
             }
 
-            if (!pageUrl.ToLower().StartsWith("http"))
-            {
-                pageUrl = "http://" + pageUrl;
-            }
+            pageUrl = TransferHelper.StandardizeUrl(pageUrl);
 
             if (!Lib.Helper.UrlHelper.IsValidUrl(pageUrl, true))
             {
@@ -80,7 +77,8 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrEmpty(pageUrl))
             {
-                var task = TransferManager.AddTask(sitedb, pageUrl, name, call.Context.User.Id);
+                var headless = call.GetBoolValue("headless");
+                var task = TransferManager.AddTask(sitedb, pageUrl, name,headless, call.Context.User.Id);
 
                 TransferManager.ExecuteTask(sitedb, task).Wait();
 
@@ -134,6 +132,9 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
+            string url = call.GetValue("url");
+            url = TransferHelper.StandardizeUrl(url);
+
             string urlstring = call.GetValue("Urls");
             List<string> urls = Lib.Helper.JsonHelper.Deserialize<List<string>>(urlstring);
 
@@ -150,9 +151,20 @@ namespace Kooboo.Web.Api.Implementation
 
                 WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id, true);
 
-                var transferTask = TransferManager.AddTask(newsite.SiteDb(), urls, call.Context.User.Id);
+                var headless = call.GetBoolValue("headless");
+                var convertToRoot = call.GetBoolValue("convertToRoot");
+                string relativeToRoot = null;
+                if (convertToRoot) relativeToRoot = TransferHelper.GetRelativeToRoot(url);
 
-                TransferManager.ExecuteTask(newsite.SiteDb(), transferTask);
+                var transferTask = TransferManager.AddTask(
+                    newsite.SiteDb(),
+                    urls,
+                    headless,
+                    relativeToRoot,
+                    call.Context.User.Id
+                );
+
+                _ = TransferManager.ExecuteTask(newsite.SiteDb(), transferTask);
 
                 return new TransferResponse
                 {
@@ -179,6 +191,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             // model.Url, model.TotalPages, model.Depth
             string url = call.GetValue("url");
+            url = TransferHelper.StandardizeUrl(url);
             if (string.IsNullOrEmpty(url))
             {
                 return null;
@@ -191,13 +204,6 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(error);
             }
 
-
-            url = url.Trim();
-            if (!url.ToLower().StartsWith("http"))
-            {
-                url = "http://" + url;
-            }
-
             if (!Lib.Helper.UrlHelper.IsValidUrl(url, true))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Invalid Url", call.Context));
@@ -206,12 +212,12 @@ namespace Kooboo.Web.Api.Implementation
             string strTotalPages = call.GetValue("TotalPages");
             string strDepth = call.GetValue("Depth");
 
-            int totalpages = 0;
+            int totalPages = 0;
             int depth = 0;
 
-            if (string.IsNullOrEmpty(strTotalPages) || !int.TryParse(strTotalPages, out totalpages))
+            if (string.IsNullOrEmpty(strTotalPages) || !int.TryParse(strTotalPages, out totalPages))
             {
-                totalpages = 10;
+                totalPages = 10;
             }
 
             if (string.IsNullOrEmpty(strDepth) || !int.TryParse(strDepth, out depth))
@@ -221,10 +227,22 @@ namespace Kooboo.Web.Api.Implementation
 
 
             WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id, true);
+            var headless = call.GetBoolValue("headless");
+            var convertToRoot = call.GetBoolValue("convertToRoot");
+            string relativeToRoot = null;
+            if (convertToRoot) relativeToRoot = TransferHelper.GetRelativeToRoot(url);
 
-            var transferTask = TransferManager.AddTask(newsite.SiteDb(), url, totalpages, depth, call.Context.User.Id);
+            var transferTask = TransferManager.AddTask(
+                newsite.SiteDb(),
+                url,
+                totalPages,
+                depth,
+                headless,
+                relativeToRoot,
+                call.Context.User.Id
+            );
 
-            TransferManager.ExecuteTask(newsite.SiteDb(), transferTask);
+            _ = TransferManager.ExecuteTask(newsite.SiteDb(), transferTask);
 
             return new TransferResponse
             {
@@ -239,6 +257,11 @@ namespace Kooboo.Web.Api.Implementation
         {
             HashSet<string> result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             string url = call.GetValue("url");
+            url = TransferHelper.StandardizeUrl(url);
+            if (string.IsNullOrEmpty(url))
+            {
+                return null;
+            }
             string strpage = call.GetValue("pages");
             if (string.IsNullOrEmpty(url) && string.IsNullOrEmpty(strpage))
             {
@@ -350,7 +373,6 @@ namespace Kooboo.Web.Api.Implementation
 
             return response;
         }
-
     }
 
     public class TaskResponse

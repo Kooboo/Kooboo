@@ -95,5 +95,16 @@ namespace Kooboo.Web.Api.Implementation.Modules
             return false;
         }
 
+        private static string[] reservedNames = ["admin", "api"];
+
+        public static string ToValidModuleName(string name)
+        {
+            if (reservedNames.Any(a => a.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            {
+                name = '_' + name;
+            }
+
+            return name;
+        }
     }
 }

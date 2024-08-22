@@ -617,23 +617,23 @@ namespace Kooboo.Lib.Helper
 
             if (input.Contains("png"))
             {
-                return "png";
+                return ".png";
             }
             else if (input.Contains("gif"))
             {
-                return "gif";
+                return ".gif";
             }
             else if (input.Contains("jpg"))
             {
-                return "jpg";
+                return ".jpg";
             }
             else if (input.Contains("jpeg"))
             {
-                return "jpeg";
+                return ".jpeg";
             }
             else if (input.Contains("svg"))
             {
-                return "svg";
+                return ".svg";
             }
             else
             {

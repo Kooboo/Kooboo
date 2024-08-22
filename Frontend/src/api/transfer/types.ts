@@ -13,6 +13,8 @@ export interface ByLevelBody extends Domain {
   url: string;
   TotalPages?: number;
   Depth?: number;
+  headless?: boolean;
+  convertToRoot?: boolean;
 }
 
 export interface TransferReponse {

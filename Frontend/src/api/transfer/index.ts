@@ -16,10 +16,24 @@ export const checkDomainBindingAvailable = (body: Domain) =>
   });
 
 export const byLevel = (body: ByLevelBody) =>
-  request.post<{ siteId: string; taskId: string }>("/Transfer/ByLevel", body);
+  request.post<{ siteId: string; taskId: string }>(
+    "/Transfer/ByLevel",
+    body,
+    undefined,
+    {
+      timeout: 60000 * 5,
+    }
+  );
 
 export const byPage = (body: unknown) =>
-  request.post<{ siteId: string; taskId: string }>("/Transfer/ByPage", body);
+  request.post<{ siteId: string; taskId: string }>(
+    "/Transfer/ByPage",
+    body,
+    undefined,
+    {
+      timeout: 60000 * 5,
+    }
+  );
 
 export const getTaskStatus = (siteId: string) =>
   request.get<{ done: boolean }>("/Transfer/GetTaskStatus", { siteId });

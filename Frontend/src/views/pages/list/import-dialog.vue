@@ -9,6 +9,7 @@ import DialogFooterBar from "@/components/dialog-footer-bar/index.vue";
 import { useI18n } from "vue-i18n";
 import type { UploadFile } from "element-plus";
 import { ElMessage } from "element-plus";
+import { useAppStore } from "@/store/app";
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
 }>();
@@ -21,6 +22,7 @@ const from = ref(fromList.value[0].key);
 const form = ref();
 const model = ref(createModel());
 const pageStore = usePageStore();
+const appStore = useAppStore();
 
 watch(
   () => model.value.pageUrl,
@@ -120,6 +122,18 @@ watch(
         </el-form-item>
         <el-form-item :label="t('common.pageURL')" prop="name">
           <el-input v-model="model.name" data-cy="url" />
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox
+            v-if="!appStore.header?.isOnlineServer"
+            v-model="model.headless"
+          >
+            <span>{{ t("common.useHeadlessMode") }}</span>
+            <Tooltip
+              :tip="t('common.useHeadlessModeTip')"
+              custom-class="ml-4"
+            />
+          </el-checkbox>
         </el-form-item>
       </template>
 

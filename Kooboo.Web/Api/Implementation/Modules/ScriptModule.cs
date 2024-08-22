@@ -63,6 +63,7 @@ namespace Kooboo.Web.Api.Implementation.Modules
             var sitedb = call.WebSite.SiteDb();
 
             Name = Kooboo.Lib.Helper.StringHelper.ToValidFileName(Name);
+            Name = ScriptModuleHelper.ToValidModuleName(Name);
 
             ScriptModule module = new ScriptModule();
             module.Name = Name;
@@ -158,6 +159,7 @@ namespace Kooboo.Web.Api.Implementation.Modules
             if (call.Context.Request.Forms != null)
             {
                 modulename = call.Context.Request.Forms["name"];
+                modulename = ScriptModuleHelper.ToValidModuleName(modulename);
 
                 var newModule = new ScriptModule() { Name = modulename };
 

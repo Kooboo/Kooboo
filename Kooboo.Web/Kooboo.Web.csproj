@@ -154,7 +154,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Kooboo.Data" Version="2.1.8985.3565" />
-	  <PackageReference Include="Kooboo.Sites" Version="2.1.8985.3565" />
+	  <PackageReference Include="Kooboo.Data" Version="2.1.9000.26070" />
+	  <PackageReference Include="Kooboo.Sites" Version="2.1.9000.26070" />
 	</ItemGroup>
 </Project>

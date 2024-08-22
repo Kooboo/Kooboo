@@ -1615,6 +1615,8 @@ common:
   trash: Trash
   Trash: Trash
   trigger: Trigger
+  trimSubPath: Remove URL Sub Path
+  trimSubPathTip: Remove URL Sub Path, for example,"http://www.kooboo.com/project" - > "http://www.kooboo.com"
   troubleshoot: Troubleshoot
   tuesday: Tuesday
   type: Type
@@ -1654,6 +1656,8 @@ common:
   useCommaArray: Use Comma Array
   usedBy: Used by
   useFor: Use for
+  useHeadlessMode: Use Browser HTML
+  useHeadlessModeTip: Use Headless Browser to fetch HTML code after JavaScript Execution instead of HTTP Request
   user: User
   userCount: User count
   userEditable: User Editable

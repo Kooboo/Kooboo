@@ -49,6 +49,57 @@ namespace Kooboo.Lib.Helper
             };
         }
 
+        public static int GetGifFrameCount(byte[] image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return 0;
+            }
+
+            try
+            {
+                using MemoryStream mo = new MemoryStream(image);
+                using var gif = Image.Load(mo);
+                return gif.Frames.Count;
+            }
+            catch (Exception)
+            {
+            }
+
+            return 0;
+        }
+
+        public static byte[] ConvertToTwoFramesGif(byte[] image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return null;
+            }
+
+            try
+            {
+                using var mo = new MemoryStream(image);
+                using var gif = Image.Load(mo);
+
+                if (gif.Frames.Count < 2)
+                {
+                    var firstFrame = gif.Frames.CloneFrame(0);
+                    gif.Frames.AddFrame(firstFrame.Frames.First());
+                    using var resultMemoryStream = new MemoryStream();
+                    gif.SaveAsGif(resultMemoryStream);
+                    return resultMemoryStream.ToArray();
+                }
+                else
+                {
+                    return image;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return null;
+        }
 
         public static string GetFileExtension(byte[] image)
         {

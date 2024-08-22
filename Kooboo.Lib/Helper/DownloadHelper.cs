@@ -17,6 +17,7 @@ namespace Kooboo.Lib.Helper
 {
     public static class DownloadHelper
     {
+        public const string DEFAULT_UA = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";
         static DownloadHelper()
         {
             // ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
@@ -371,7 +372,7 @@ namespace Kooboo.Lib.Helper
             httpWebRequest.Timeout = 15000;
 
             httpWebRequest.ServerCertificateValidationCallback = (a, b, c, d) => { return true; };
-            httpWebRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";
+            httpWebRequest.UserAgent = DEFAULT_UA;
             httpWebRequest.Headers.Add("Upgrade-Insecure-Requests", "1");
             var webResponse = httpWebRequest.GetResponse();
 
@@ -388,7 +389,7 @@ namespace Kooboo.Lib.Helper
             var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(uri);
 
             httpWebRequest.Method = "HEAD";
-            httpWebRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";
+            httpWebRequest.UserAgent = DEFAULT_UA;
             httpWebRequest.ProtocolVersion = HttpVersion.Version10;
             httpWebRequest.Proxy = null;
             httpWebRequest.AllowAutoRedirect = false;

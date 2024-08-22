@@ -28,6 +28,7 @@ export interface Template {
 }
 
 export interface PagedTemplate {
+  facets: Facet[];
   list: Template[];
   pageNr: number;
   pageSize: number;
