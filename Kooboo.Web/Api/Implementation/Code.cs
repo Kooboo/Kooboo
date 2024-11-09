@@ -73,6 +73,11 @@ namespace Kooboo.Web.Api.Implementation
             model.Id = code.Id;
             model.ScriptType = code.ScriptType.ToString();
             model.isEmbedded = code.IsEmbedded;
+            if (code.IsCodeEncrypted && code.IsDecrypted)
+            {
+                model.Body = string.Empty;
+                model.IsDecrypted = true;
+            }
 
             if (code.CodeType == Sites.Models.CodeType.Api)
             {

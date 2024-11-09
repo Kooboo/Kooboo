@@ -29,4 +29,5 @@ export interface ConditionSchema {
   name: string;
   display: string;
   methods: { name: string; display: string }[];
+  selections: string[];
 }

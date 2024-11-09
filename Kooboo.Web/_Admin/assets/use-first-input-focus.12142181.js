@@ -1,0 +1,1 @@
+import{h as c}from"./url.2e6a77c4.js";function r(u){c(()=>{var o,e,t;u?(e=(o=document.querySelectorAll("input"))==null?void 0:o[u])==null||e.focus():(t=document.querySelector("input"))==null||t.focus()})}export{r as u};

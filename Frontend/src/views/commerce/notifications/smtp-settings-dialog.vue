@@ -2,12 +2,7 @@
 import { ref } from "vue";
 import DialogFooterBar from "@/components/dialog-footer-bar/index.vue";
 import { useI18n } from "vue-i18n";
-import {
-  frontEmailRule,
-  portRule,
-  requiredRule,
-  urlAndIpRule,
-} from "@/utils/validate";
+import { portRule, requiredRule, urlAndIpRule } from "@/utils/validate";
 import type { SmtpSetting } from "@/api/commerce/settings";
 
 interface PropsType {
@@ -34,6 +29,7 @@ const copedModel = ref<SmtpSetting>(
         ssl: false,
         userName: "",
         password: "",
+        from: "",
       }
     )
   )
@@ -41,11 +37,11 @@ const copedModel = ref<SmtpSetting>(
 
 const rules = {
   server: [
-    urlAndIpRule(t("common.urlInvalid")),
+    urlAndIpRule(t("common.serverUrlInvalid")),
     requiredRule(t("common.serverUrlRequiredTips")),
   ],
   port: [portRule()],
-  userName: [requiredRule(t("common.inputUsernameTips"))],
+  userName: [requiredRule(t("common.inputAccountTips"))],
   password: [requiredRule(t("common.inputPasswordTips"))],
 };
 
@@ -60,7 +56,7 @@ async function handleSave() {
     v-model="show"
     width="600px"
     :close-on-click-modal="false"
-    :title="`smtp ${t('common.setting')}`"
+    :title="t('common.sendingServerSettings')"
     @closed="emits('update:model-value', false)"
   >
     <ElForm
@@ -76,14 +72,17 @@ async function handleSave() {
       <el-form-item :label="t('common.port')">
         <ElInputNumber v-model.number="copedModel.port" placeholder="587" />
       </el-form-item>
-      <el-form-item label="ssl">
+      <el-form-item label="SSL">
         <el-switch v-model="copedModel.ssl" />
       </el-form-item>
       <el-form-item :label="t('common.account')" prop="userName">
-        <ElInput v-model="copedModel.userName" placeholder="xxx@qq.com" />
+        <ElInput v-model="copedModel.userName" placeholder="name@example.com" />
       </el-form-item>
       <el-form-item :label="t('common.password')" prop="password">
         <ElInput v-model="copedModel.password" type="password" />
+      </el-form-item>
+      <el-form-item :label="t('common.fromAddress')">
+        <ElInput v-model="copedModel.from" placeholder="name@example.com" />
       </el-form-item>
     </ElForm>
     <template #footer>

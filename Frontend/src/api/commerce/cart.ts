@@ -44,15 +44,20 @@ export interface CartListItem {
 
 export interface CartCreate extends CartCalculateParams {
   note: string;
+  digitalShippingId?: string;
 }
 
 export interface CartEdit extends CartCreate {
   id: string;
+  extensionButton?: any;
+  digitalShippingId?: string;
 }
 
 export interface CartLine {
   quantity: number;
   variantId: string;
+  groupName?: string;
+  isMain?: boolean;
 }
 
 export interface DiscountAllocation {
@@ -61,10 +66,18 @@ export interface DiscountAllocation {
   title: string;
 }
 
+export interface ShippingAllocation {
+  cost: number;
+  isAdditional: boolean;
+  title: string;
+}
+
 export interface CartCalculateParams {
   customerId: string;
+  shippingId?: string;
   discountCodes: string[];
   lines: CartLine[];
+  redeemPoints: boolean;
 }
 
 export interface CartCalculateResult {
@@ -77,14 +90,29 @@ export interface CartCalculateResult {
     price: string;
     originalPrice: number;
     quantity: number;
+    totalQuantity: number;
     amount: number;
+    originalAmount: number;
+    groupName: string;
+    isMain: boolean;
+    note: string;
     discountAllocations: DiscountAllocation[];
+    isDigital: boolean;
   }[];
   discountAllocations: DiscountAllocation[];
+  shippingAllocations: ShippingAllocation[];
+  insuranceAmount: number;
   shippingAmount: number;
   subtotalAmount: number;
   totalAmount: number;
+  originalAmount: number;
+  originalSubtotalAmount: number;
   totalQuantity: number;
+  redeemPoints: number;
+  canRedeemPoints: number;
+  pointsDeductionAmount: number;
+  canPointsDeductionAmount: number;
+  earnPoints: number;
 }
 
 export type CartPagingResult = PagingResult<CartListItem>;

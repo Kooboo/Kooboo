@@ -80,7 +80,7 @@ useShortcut("save", onSave);
 
 <template>
   <div class="p-24 pb-150px">
-    <Breadcrumb :name="t('commerce.notificationSettings')" />
+    <Breadcrumb :name="t('commerce.notification')" />
     <ElForm v-if="settings" label-position="top">
       <div
         class="rounded-normal bg-fff dark:bg-[#252526] mt-16 mb-24 py-24 px-56px relative"
@@ -103,32 +103,38 @@ useShortcut("save", onSave);
               >
             </el-radio-group>
           </el-form-item>
-
-          <el-form-item>
-            <div
-              v-if="settings.mailServerType == 'custom'"
-              class="flex items-center space-x-8"
+          <div
+            v-if="settings.mailServerType == 'custom'"
+            class="flex items-center space-x-8 mb-12"
+          >
+            <el-button
+              type="primary"
+              size="small"
+              round
+              @click="showSmtpSettingsDialog = true"
+              >{{ t("common.setServerInfo") }}</el-button
             >
-              <el-button
-                type="primary"
-                size="small"
-                round
-                @click="showSmtpSettingsDialog = true"
-                >{{ t("common.setServerInfo") }}</el-button
-              >
-              <span class="text-s text-999">{{
-                settings.customMailServer?.server
-              }}</span>
-              <span class="text-s text-999">{{
-                settings.customMailServer?.port
-              }}</span>
-              <span class="text-s text-999">{{
-                settings.customMailServer?.userName
-              }}</span>
-            </div>
-
+            <span class="text-s text-999">{{
+              settings.customMailServer?.server
+            }}</span>
+            <span class="text-s text-999">{{
+              settings.customMailServer?.port
+            }}</span>
+            <span class="text-s text-999">{{
+              settings.customMailServer?.userName
+            }}</span>
+          </div>
+          <el-form-item v-else>
+            <template #label>
+              <div class="inline-flex items-center space-x-4">
+                <div>{{ t("common.fromAddress") }}</div>
+                <Tooltip
+                  :tip="t('common.koobooEmailAddressTip')"
+                  custom-class="ml-4"
+                />
+              </div>
+            </template>
             <el-select
-              v-else
               v-model="settings.koobooEmailAddress"
               :placeholder="t('common.pleaseSelect')"
               class="w-250px"
@@ -157,7 +163,7 @@ useShortcut("save", onSave);
           class="absolute top-24 right-32"
           plain
           @click="showEmailLogDialog = true"
-          >Sending Log</el-button
+          >{{ t("common.logs") }}</el-button
         >
         <SmtpSettingsDialog
           v-if="showSmtpSettingsDialog"
@@ -212,7 +218,7 @@ useShortcut("save", onSave);
           class="absolute top-24 right-32"
           plain
           @click="showWebhookLogDialog = true"
-          >Sending Log</el-button
+          >{{ t("common.logs") }}</el-button
         >
       </div>
     </ElForm>

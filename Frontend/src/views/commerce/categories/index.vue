@@ -15,8 +15,7 @@ import DynamicColumns, {
 } from "@/components/dynamic-columns/index.vue";
 import { useCategoryLabels } from "../useLabels";
 import { useMultilingualStore } from "@/store/multilingual";
-import { getValueIgnoreCase } from "@/utils/string";
-import { camelCase } from "lodash-es";
+import { getValueIgnoreCase, camelCase } from "@/utils/string";
 import type { SortableEvent } from "sortablejs";
 import type { TableRowItem } from "@/views/content/contents/types";
 
@@ -206,7 +205,7 @@ onMounted(async () => {
           <span v-else class="text-s">{{ t("common.manual") }}</span>
         </template>
       </DynamicColumns>
-      <el-table-column align="right" width="120">
+      <el-table-column align="right" width="100" fixed="right">
         <template #default="{ row }">
           <router-link
             :to="

@@ -1,0 +1,1 @@
+import{d as o,o as a,a as n,f as e,t as s}from"./url.2e6a77c4.js";const c={class:"bg-gray dark:bg-fff/10 dark:text-999 px-32 py-16 text-s"},r={class:"font-bold"},l={class:"whitespace-pre-wrap"},_=o({props:{title:null,content:null},setup(t){return(p,i)=>(a(),n("div",c,[e("p",r,s(t.title),1),e("pre",l,s(t.content),1)]))}});export{_};

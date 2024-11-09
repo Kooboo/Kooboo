@@ -4,6 +4,7 @@ import type { fieldTypes } from "@/views/commerce/custom-data/custom-field";
 import { i18n } from "@/modules/i18n";
 import request from "@/utils/request";
 import { useUrlSiteId } from "@/hooks/use-site-id";
+import type { EarnPointSettings, RedeemPointSettings } from "./loyalty";
 
 const $t = i18n.global.t;
 
@@ -79,6 +80,8 @@ export interface Settings {
   enableWebhook: boolean;
   webhooks: [];
   webhookSecret?: string;
+  earnPoint: EarnPointSettings;
+  redeemPoint: RedeemPointSettings;
 }
 
 export const getCurrencies = () =>

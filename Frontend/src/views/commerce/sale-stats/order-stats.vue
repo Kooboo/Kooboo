@@ -13,11 +13,11 @@ import { openInHiddenFrame } from "@/utils/url";
 import { useUrlSiteId } from "@/hooks/use-site-id";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
 import { useProductFields } from "../useFields";
-import { PagingParams } from "@/api/commerce/common";
+import type { PagingParams } from "@/api/commerce/common";
 const props = defineProps<{ dataRange: [Date, Date] }>();
 const { t } = useI18n();
 const data = ref<
-  PaginationResponse<any> & { amount?: number; order?: number }
+  PaginationResponse<any> & { amount?: number; order?: number; count?: number }
 >();
 const queryParams = ref<PagingParams>({
   pageIndex: 1,
@@ -116,20 +116,6 @@ const columns = getColumns([
     displayName: t("common.customer"),
     attrs: {
       width: 120,
-    },
-  },
-  {
-    name: "shippingCarrier",
-    displayName: t("commerce.shippingCarrier"),
-    attrs: {
-      width: 135,
-    },
-  },
-  {
-    name: "trackingNumber",
-    displayName: t("commerce.trackingNumber"),
-    attrs: {
-      width: 150,
     },
   },
 ]);

@@ -304,6 +304,486 @@ const siteRoutes: Array<RouteRecordRaw> = [
   },
   // system end
 
+  // content start
+  {
+    path: "/content",
+    component: () => import("@/layout/site-menu.vue"),
+    meta: {
+      menu: {
+        name: "content",
+        display: t("common.content"),
+        icon: "icon-content1",
+      },
+      advanced: true,
+    },
+    children: [
+      {
+        path: "contents",
+        name: "contents",
+        meta: {
+          recentVisits: "common.content",
+          menu: {
+            display: t("common.content"),
+            permission: { feature: "content" },
+          },
+        },
+        component: () => import("@/views/content/contents/index.vue"),
+      },
+      {
+        path: "textContentsByFolder",
+        name: "textcontentsbyfolder",
+        component: () =>
+          import("@/views/content/contents/contents-by-folder.vue"),
+        meta: {
+          activeMenu: "contents",
+        },
+      },
+      {
+        path: "content",
+        name: "content",
+        component: () => import("@/views/content/contents/content.vue"),
+        meta: {
+          activeMenu: "contents",
+        },
+      },
+      {
+        path: "contentTypes",
+        name: "contenttypes",
+        meta: {
+          recentVisits: "common.contentTypes",
+          menu: {
+            display: t("common.contentTypes"),
+            permission: { feature: "contentType" },
+          },
+        },
+        component: () => import("@/views/content/content-types/index.vue"),
+      },
+      {
+        path: "contentType",
+        name: "contenttype",
+        component: () =>
+          import("@/views/content/content-types/content-type.vue"),
+        meta: {
+          activeMenu: "contenttypes",
+        },
+      },
+      {
+        path: "labels",
+        name: "labels",
+        meta: {
+          recentVisits: "common.labels",
+          menu: {
+            display: t("common.labels"),
+            permission: { feature: "label" },
+          },
+        },
+        component: () => import("@/views/content/labels/index.vue"),
+      },
+      {
+        path: "htmlblocks",
+        name: "htmlblocks",
+        meta: {
+          recentVisits: "common.htmlBlocks",
+          menu: {
+            display: t("common.htmlBlocks"),
+            permission: { feature: "htmlBlock" },
+          },
+        },
+        component: () => import("@/views/content/html-blocks/index.vue"),
+      },
+      {
+        path: "htmlBlock/edit",
+        name: "htmlBlock-edit",
+        component: () => import("@/views/content/html-blocks/html-block.vue"),
+        meta: {
+          activeMenu: "htmlblocks",
+        },
+      },
+      {
+        path: "files",
+        name: "files",
+        meta: {
+          recentVisits: "common.files",
+          menu: {
+            display: t("common.files"),
+            permission: { feature: "file" },
+            queryBuilder(menu: Menu, route: RouteLocationNormalizedLoaded) {
+              return {
+                SiteId: route.query.SiteId,
+                folder: "/",
+                keyword: "",
+                provider: "default",
+              };
+            },
+          },
+          advanced: true,
+        },
+        component: () => import("@/views/content/files/index.vue"),
+      },
+      {
+        path: "text",
+        name: "text",
+        meta: {
+          recentVisits: "common.text",
+          menu: {
+            display: t("common.text"),
+            permission: { feature: "text" },
+          },
+          advanced: true,
+        },
+        component: () => import("@/views/content/text/index.vue"),
+      },
+      {
+        path: "useroptions",
+        name: "useroptions",
+        meta: {
+          recentVisits: "common.userOptions",
+          menu: {
+            display: t("common.userOptions"),
+            permission: { feature: "userOptions" },
+          },
+          advanced: true,
+        },
+        component: () => import("@/views/content/user-options/index.vue"),
+      },
+      {
+        path: "useroptions/create",
+        name: "useroptions create",
+        meta: {
+          activeMenu: "useroptions",
+        },
+        component: () => import("@/views/content/user-options/create.vue"),
+      },
+      {
+        path: "useroptions/setting",
+        name: "useroptions setting",
+        meta: {
+          activeMenu: "useroptions",
+        },
+        component: () => import("@/views/content/user-options/setting.vue"),
+      },
+
+      {
+        path: "useroptions/edit",
+        name: "useroptions edit",
+        meta: {
+          activeMenu: "useroptions",
+        },
+        component: () => import("@/views/content/user-options/edit.vue"),
+      },
+    ],
+  },
+  // content end
+
+  //E-Commerce start
+  {
+    path: "/commerce",
+    component: () => import("@/layout/site-menu.vue"),
+    meta: {
+      menu: {
+        name: "commerce",
+        display: t("common.commerce"),
+        icon: "icon-a-Electronicbusiness",
+      },
+      advanced: true,
+    },
+    children: [
+      {
+        path: "product-management",
+        name: "product management",
+        meta: {
+          title: t("common.productManagement"),
+          activeMenu: "product management",
+          recentVisits: "common.productManagement",
+          menu: {
+            display: t("common.productManagement"),
+            permission: { feature: "productManagement" },
+          },
+        },
+        component: () =>
+          import("@/views/commerce/products-management/index.vue"),
+      },
+      {
+        path: "product-management/create",
+        name: "product management create",
+        meta: {
+          title: t("common.productManagement"),
+          activeMenu: "product management",
+        },
+        component: () =>
+          import("@/views/commerce/products-management/create.vue"),
+      },
+      {
+        path: "product-management/edit",
+        name: "product management edit",
+        meta: {
+          title: t("common.productManagement"),
+          activeMenu: "product management",
+        },
+        component: () =>
+          import("@/views/commerce/products-management/edit.vue"),
+      },
+      {
+        path: "product-types",
+        name: "product types",
+        meta: {
+          title: t("common.productTypes"),
+          activeMenu: "product types",
+          recentVisits: "common.productTypes",
+          menu: {
+            display: t("common.productTypes"),
+            permission: { feature: "productTypes" },
+          },
+        },
+        component: () => import("@/views/commerce/types/index.vue"),
+      },
+      {
+        path: "product-categories",
+        name: "product categories",
+        meta: {
+          title: t("common.productCategories"),
+          activeMenu: "product categories",
+          recentVisits: "common.productCategories",
+          menu: {
+            display: t("common.productCategories"),
+            permission: { feature: "productCategories" },
+          },
+        },
+        component: () => import("@/views/commerce/categories/index.vue"),
+      },
+      {
+        path: "product-categories/create",
+        name: "product category create",
+        component: () => import("@/views/commerce/categories/create.vue"),
+        meta: {
+          activeMenu: "product categories",
+        },
+      },
+      {
+        path: "product-categories/edit",
+        name: "product category edit",
+        component: () => import("@/views/commerce/categories/edit.vue"),
+        meta: {
+          activeMenu: "product categories",
+        },
+      },
+      {
+        path: "carts",
+        name: "carts",
+        meta: {
+          title: t("common.carts"),
+          activeMenu: "carts",
+          recentVisits: "common.carts",
+          menu: {
+            display: t("common.carts"),
+            permission: { feature: "carts" },
+          },
+        },
+        component: () => import("@/views/commerce/carts/index.vue"),
+      },
+      {
+        path: "cart/create",
+        name: "cart create",
+        component: () => import("@/views/commerce/carts/create.vue"),
+        meta: {
+          activeMenu: "carts",
+        },
+      },
+      {
+        path: "cart/edit",
+        name: "cart edit",
+        component: () => import("@/views/commerce/carts/edit.vue"),
+        meta: {
+          activeMenu: "carts",
+        },
+      },
+      {
+        path: "cart/checkout",
+        name: "cart checkout",
+        component: () => import("@/views/commerce/carts/checkout.vue"),
+        meta: {
+          activeMenu: "carts",
+        },
+      },
+      {
+        path: "customers",
+        name: "customers",
+        meta: {
+          title: t("common.customers"),
+          activeMenu: "customers",
+          recentVisits: "common.customers",
+          menu: {
+            display: t("common.customers"),
+            permission: { feature: "customers" },
+          },
+        },
+        component: () => import("@/views/commerce/customers/index.vue"),
+      },
+      {
+        path: "orders",
+        name: "orders",
+        meta: {
+          title: t("common.orders"),
+          activeMenu: "orders",
+          recentVisits: "common.orders",
+          menu: {
+            display: t("common.orders"),
+            permission: { feature: "orders" },
+          },
+        },
+        component: () => import("@/views/commerce/orders/index.vue"),
+      },
+      {
+        path: "order-detail",
+        name: "order detail",
+        meta: {
+          title: t("common.orders"),
+          activeMenu: "orders",
+        },
+        component: () => import("@/views/commerce/orders/detail.vue"),
+      },
+      {
+        path: "sale-stats",
+        name: "sale stats",
+        meta: {
+          title: t("common.saleStats"),
+          activeMenu: "sale stats",
+          recentVisits: "common.saleStats",
+          advanced: true,
+          menu: {
+            display: t("common.saleStats"),
+            permission: { feature: "saleStats" },
+          },
+        },
+        component: () => import("@/views/commerce/sale-stats/index.vue"),
+      },
+      {
+        path: "discounts",
+        name: "discounts",
+        meta: {
+          title: t("common.discounts"),
+          activeMenu: "discounts",
+          recentVisits: "common.discounts",
+          advanced: true,
+          menu: {
+            display: t("common.discounts"),
+            permission: { feature: "discounts" },
+          },
+        },
+        component: () => import("@/views/commerce/discounts/index.vue"),
+      },
+      {
+        path: "discounts/create",
+        name: "discount create",
+        component: () => import("@/views/commerce/discounts/create.vue"),
+        meta: {
+          activeMenu: "discounts",
+        },
+      },
+      {
+        path: "discounts/edit",
+        name: "discount edit",
+        component: () => import("@/views/commerce/discounts/edit.vue"),
+        meta: {
+          activeMenu: "discounts",
+        },
+      },
+      {
+        path: "shippings",
+        name: "shippings",
+        meta: {
+          title: t("common.shippings"),
+          activeMenu: "shippings",
+          recentVisits: "common.shippings",
+          advanced: true,
+          menu: {
+            display: t("common.shippings"),
+            permission: { feature: "shipping" },
+          },
+        },
+        component: () => import("@/views/commerce/shippings/index.vue"),
+      },
+      {
+        path: "shippings/create",
+        name: "shipping create",
+        component: () =>
+          import("@/views/commerce/shippings/express/create.vue"),
+        meta: {
+          activeMenu: "shippings",
+        },
+      },
+      {
+        path: "shippings/edit",
+        name: "shipping edit",
+        component: () => import("@/views/commerce/shippings/express/edit.vue"),
+        meta: {
+          activeMenu: "shippings",
+        },
+      },
+      {
+        path: "digital-shippings/create",
+        name: "digital shipping create",
+        component: () =>
+          import("@/views/commerce/shippings/digital/create.vue"),
+        meta: {
+          activeMenu: "shippings",
+        },
+      },
+      {
+        path: "digital-shippings/edit",
+        name: "digital shipping edit",
+        component: () => import("@/views/commerce/shippings/digital/edit.vue"),
+        meta: {
+          activeMenu: "shippings",
+        },
+      },
+      {
+        path: "loyalty",
+        name: "loyalty",
+        meta: {
+          title: t("common.loyalty"),
+          activeMenu: "loyalty",
+          recentVisits: "common.loyalty",
+          advanced: true,
+          menu: {
+            display: t("common.loyalty"),
+            permission: { feature: "loyalty" },
+          },
+        },
+        component: () => import("@/views/commerce/loyalty/index.vue"),
+      },
+      {
+        path: "notification",
+        name: "commerce notification",
+        meta: {
+          title: t("common.notifications"),
+          activeMenu: "commerce notification",
+          recentVisits: "common.notifications",
+          advanced: true,
+          menu: {
+            display: t("common.notifications"),
+            permission: { feature: "commerceSettings" },
+          },
+        },
+        component: () => import("@/views/commerce/notifications/index.vue"),
+      },
+      {
+        path: "settings",
+        name: "commerce settings",
+        meta: {
+          title: t("common.settings"),
+          activeMenu: "commerce settings",
+          recentVisits: "common.settings",
+          menu: {
+            display: t("common.settings"),
+            permission: { feature: "commerceSettings" },
+          },
+        },
+        component: () => import("@/views/commerce/settings/index.vue"),
+      },
+    ],
+  },
+  //E-Commerce end
   // development start
   {
     path: "/development",
@@ -577,177 +1057,6 @@ const siteRoutes: Array<RouteRecordRaw> = [
   },
   // development end
 
-  // content start
-  {
-    path: "/content",
-    component: () => import("@/layout/site-menu.vue"),
-    meta: {
-      menu: {
-        name: "content",
-        display: t("common.content"),
-        icon: "icon-content1",
-      },
-      advanced: true,
-    },
-    children: [
-      {
-        path: "contents",
-        name: "contents",
-        meta: {
-          recentVisits: "common.content",
-          menu: {
-            display: t("common.content"),
-            permission: { feature: "content" },
-          },
-        },
-        component: () => import("@/views/content/contents/index.vue"),
-      },
-      {
-        path: "textContentsByFolder",
-        name: "textcontentsbyfolder",
-        component: () =>
-          import("@/views/content/contents/contents-by-folder.vue"),
-        meta: {
-          activeMenu: "contents",
-        },
-      },
-      {
-        path: "content",
-        name: "content",
-        component: () => import("@/views/content/contents/content.vue"),
-        meta: {
-          activeMenu: "contents",
-        },
-      },
-      {
-        path: "contentTypes",
-        name: "contenttypes",
-        meta: {
-          recentVisits: "common.contentTypes",
-          menu: {
-            display: t("common.contentTypes"),
-            permission: { feature: "contentType" },
-          },
-        },
-        component: () => import("@/views/content/content-types/index.vue"),
-      },
-      {
-        path: "contentType",
-        name: "contenttype",
-        component: () =>
-          import("@/views/content/content-types/content-type.vue"),
-        meta: {
-          activeMenu: "contenttypes",
-        },
-      },
-      {
-        path: "labels",
-        name: "labels",
-        meta: {
-          recentVisits: "common.labels",
-          menu: {
-            display: t("common.labels"),
-            permission: { feature: "label" },
-          },
-        },
-        component: () => import("@/views/content/labels/index.vue"),
-      },
-      {
-        path: "htmlblocks",
-        name: "htmlblocks",
-        meta: {
-          recentVisits: "common.htmlBlocks",
-          menu: {
-            display: t("common.htmlBlocks"),
-            permission: { feature: "htmlBlock" },
-          },
-        },
-        component: () => import("@/views/content/html-blocks/index.vue"),
-      },
-      {
-        path: "htmlBlock/edit",
-        name: "htmlBlock-edit",
-        component: () => import("@/views/content/html-blocks/html-block.vue"),
-        meta: {
-          activeMenu: "htmlblocks",
-        },
-      },
-      {
-        path: "files",
-        name: "files",
-        meta: {
-          recentVisits: "common.files",
-          menu: {
-            display: t("common.files"),
-            permission: { feature: "file" },
-            queryBuilder(menu: Menu, route: RouteLocationNormalizedLoaded) {
-              return {
-                SiteId: route.query.SiteId,
-                folder: "/",
-                keyword: "",
-                provider: "default",
-              };
-            },
-          },
-          advanced: true,
-        },
-        component: () => import("@/views/content/files/index.vue"),
-      },
-      {
-        path: "text",
-        name: "text",
-        meta: {
-          recentVisits: "common.text",
-          menu: {
-            display: t("common.text"),
-            permission: { feature: "text" },
-          },
-          advanced: true,
-        },
-        component: () => import("@/views/content/text/index.vue"),
-      },
-      {
-        path: "useroptions",
-        name: "useroptions",
-        meta: {
-          recentVisits: "common.userOptions",
-          menu: {
-            display: t("common.userOptions"),
-            permission: { feature: "userOptions" },
-          },
-          advanced: true,
-        },
-        component: () => import("@/views/content/user-options/index.vue"),
-      },
-      {
-        path: "useroptions/create",
-        name: "useroptions create",
-        meta: {
-          activeMenu: "useroptions",
-        },
-        component: () => import("@/views/content/user-options/create.vue"),
-      },
-      {
-        path: "useroptions/setting",
-        name: "useroptions setting",
-        meta: {
-          activeMenu: "useroptions",
-        },
-        component: () => import("@/views/content/user-options/setting.vue"),
-      },
-
-      {
-        path: "useroptions/edit",
-        name: "useroptions edit",
-        meta: {
-          activeMenu: "useroptions",
-        },
-        component: () => import("@/views/content/user-options/edit.vue"),
-      },
-    ],
-  },
-  // content end
-
   // database start
   {
     path: "/database",
@@ -906,249 +1215,6 @@ const siteRoutes: Array<RouteRecordRaw> = [
     ],
   },
   // database end
-
-  //E-Commerce start
-  {
-    path: "/commerce",
-    component: () => import("@/layout/site-menu.vue"),
-    meta: {
-      menu: {
-        name: "commerce",
-        display: t("common.commerce"),
-        icon: "icon-a-Electronicbusiness",
-      },
-      advanced: true,
-    },
-    children: [
-      {
-        path: "product-management",
-        name: "product management",
-        meta: {
-          title: t("common.productManagement"),
-          activeMenu: "product management",
-          recentVisits: "common.productManagement",
-          menu: {
-            display: t("common.productManagement"),
-            permission: { feature: "productManagement" },
-          },
-        },
-        component: () =>
-          import("@/views/commerce/products-management/index.vue"),
-      },
-      {
-        path: "product-management/create",
-        name: "product management create",
-        meta: {
-          title: t("common.productManagement"),
-          activeMenu: "product management",
-        },
-        component: () =>
-          import("@/views/commerce/products-management/create.vue"),
-      },
-      {
-        path: "product-management/edit",
-        name: "product management edit",
-        meta: {
-          title: t("common.productManagement"),
-          activeMenu: "product management",
-        },
-        component: () =>
-          import("@/views/commerce/products-management/edit.vue"),
-      },
-      {
-        path: "product-types",
-        name: "product types",
-        meta: {
-          title: t("common.productTypes"),
-          activeMenu: "product types",
-          recentVisits: "common.productTypes",
-          menu: {
-            display: t("common.productTypes"),
-            permission: { feature: "productTypes" },
-          },
-        },
-        component: () => import("@/views/commerce/types/index.vue"),
-      },
-      {
-        path: "product-categories",
-        name: "product categories",
-        meta: {
-          title: t("common.productCategories"),
-          activeMenu: "product categories",
-          recentVisits: "common.productCategories",
-          menu: {
-            display: t("common.productCategories"),
-            permission: { feature: "productCategories" },
-          },
-        },
-        component: () => import("@/views/commerce/categories/index.vue"),
-      },
-      {
-        path: "product-categories/create",
-        name: "product category create",
-        component: () => import("@/views/commerce/categories/create.vue"),
-        meta: {
-          activeMenu: "product categories",
-        },
-      },
-      {
-        path: "product-categories/edit",
-        name: "product category edit",
-        component: () => import("@/views/commerce/categories/edit.vue"),
-        meta: {
-          activeMenu: "product categories",
-        },
-      },
-      {
-        path: "carts",
-        name: "carts",
-        meta: {
-          title: t("common.carts"),
-          activeMenu: "carts",
-          recentVisits: "common.carts",
-          menu: {
-            display: t("common.carts"),
-            permission: { feature: "carts" },
-          },
-        },
-        component: () => import("@/views/commerce/carts/index.vue"),
-      },
-      {
-        path: "cart/create",
-        name: "cart create",
-        component: () => import("@/views/commerce/carts/create.vue"),
-        meta: {
-          activeMenu: "carts",
-        },
-      },
-      {
-        path: "cart/edit",
-        name: "cart edit",
-        component: () => import("@/views/commerce/carts/edit.vue"),
-        meta: {
-          activeMenu: "carts",
-        },
-      },
-      {
-        path: "cart/checkout",
-        name: "cart checkout",
-        component: () => import("@/views/commerce/carts/checkout.vue"),
-        meta: {
-          activeMenu: "carts",
-        },
-      },
-      {
-        path: "customers",
-        name: "customers",
-        meta: {
-          title: t("common.customers"),
-          activeMenu: "customers",
-          recentVisits: "common.customers",
-          menu: {
-            display: t("common.customers"),
-            permission: { feature: "customers" },
-          },
-        },
-        component: () => import("@/views/commerce/customers/index.vue"),
-      },
-      {
-        path: "orders",
-        name: "orders",
-        meta: {
-          title: t("common.orders"),
-          activeMenu: "orders",
-          recentVisits: "common.orders",
-          menu: {
-            display: t("common.orders"),
-            permission: { feature: "orders" },
-          },
-        },
-        component: () => import("@/views/commerce/orders/index.vue"),
-      },
-      {
-        path: "order-detail",
-        name: "order detail",
-        meta: {
-          title: t("common.orders"),
-          activeMenu: "orders",
-        },
-        component: () => import("@/views/commerce/orders/detail.vue"),
-      },
-      {
-        path: "sale-stats",
-        name: "sale stats",
-        meta: {
-          title: t("common.saleStats"),
-          activeMenu: "sale stats",
-          recentVisits: "common.saleStats",
-          menu: {
-            display: t("common.saleStats"),
-            permission: { feature: "saleStats" },
-          },
-        },
-        component: () => import("@/views/commerce/sale-stats/index.vue"),
-      },
-      {
-        path: "discounts",
-        name: "discounts",
-        meta: {
-          title: t("common.discounts"),
-          activeMenu: "discounts",
-          recentVisits: "common.discounts",
-          menu: {
-            display: t("common.discounts"),
-            permission: { feature: "discounts" },
-          },
-        },
-        component: () => import("@/views/commerce/discounts/index.vue"),
-      },
-      {
-        path: "discounts/create",
-        name: "discount create",
-        component: () => import("@/views/commerce/discounts/create.vue"),
-        meta: {
-          activeMenu: "discounts",
-        },
-      },
-      {
-        path: "discounts/edit",
-        name: "discount edit",
-        component: () => import("@/views/commerce/discounts/edit.vue"),
-        meta: {
-          activeMenu: "discounts",
-        },
-      },
-      {
-        path: "notification",
-        name: "commerce notification",
-        meta: {
-          title: t("common.notifications"),
-          activeMenu: "commerce notification",
-          recentVisits: "common.notifications",
-          menu: {
-            display: t("common.notifications"),
-            permission: { feature: "commerceSettings" },
-          },
-        },
-        component: () => import("@/views/commerce/notifications/index.vue"),
-      },
-      {
-        path: "settings",
-        name: "commerce settings",
-        meta: {
-          title: t("common.settings"),
-          activeMenu: "commerce settings",
-          recentVisits: "common.settings",
-          menu: {
-            display: t("common.settings"),
-            permission: { feature: "commerceSettings" },
-          },
-        },
-        component: () => import("@/views/commerce/settings/index.vue"),
-      },
-    ],
-  },
-  //E-Commerce end
 ];
 
 export default siteRoutes;

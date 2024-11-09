@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-﻿using Kooboo.Api;
+using Kooboo.Api;
 using Kooboo.Sites.Commerce.Services;
 using Kooboo.Data.Permission;
 using Kooboo.Data;
@@ -27,7 +27,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         [Permission(Feature.COMMERCE_SETTINGS, Action = Data.Permission.Action.VIEW)]
         public KeyValuePair<string, string>[] Payments(ApiCall apiCall)
         {
-            return PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, string>(s.Name, s.Name)).ToArray();
+            return PaymentContainer.PaymentMethods.Select(s => new KeyValuePair<string, string>(s.Name, s.DisplayName)).ToArray();
         }
 
         [Permission(Feature.COMMERCE_SETTINGS, Action = Data.Permission.Action.VIEW)]
@@ -38,6 +38,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         [Permission(Feature.COMMERCE_CUSTOMER, Action = Data.Permission.Action.VIEW)]
         [Permission(Feature.COMMERCE_DISCOUNT, Action = Data.Permission.Action.VIEW)]
         [Permission(Feature.COMMERCE_ORDERS, Action = Data.Permission.Action.VIEW)]
+        [Permission(Feature.COMMERCE_LOYALTY, Action = Data.Permission.Action.VIEW)]
         public Settings Get(ApiCall apiCall)
         {
             var commerce = GetSiteCommerce(apiCall);
@@ -83,7 +84,15 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         {
             var commerce = GetSiteCommerce(apiCall);
             var pager = ApiHelper.GetPager(apiCall, 10);
-            return commerce.EmailLog.Query(pager);
+            var result = commerce.EmailLog.Query(pager);
+            var events = EmailEvents(apiCall);
+            foreach (var item in result.DataList)
+            {
+                var @event = events.FirstOrDefault(f => f.Name == item.Event);
+                item.Event = @event.Display;
+            }
+
+            return result;
         }
 
         [Permission(Feature.COMMERCE_SETTINGS, Action = Data.Permission.Action.VIEW)]
@@ -91,7 +100,14 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         {
             var commerce = GetSiteCommerce(apiCall);
             var pager = ApiHelper.GetPager(apiCall, 10);
-            return commerce.WebhookLog.Query(pager);
+            var result = commerce.WebhookLog.Query(pager);
+            var events = WebhookEvents(apiCall);
+            foreach (var item in result.DataList)
+            {
+                var @event = events.FirstOrDefault(f => f.Name == item.Event);
+                item.Event = @event.Display;
+            }
+            return result;
         }
     }
 }

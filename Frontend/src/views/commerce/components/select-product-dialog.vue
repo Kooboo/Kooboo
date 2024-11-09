@@ -5,7 +5,7 @@ import { ref, onMounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductFields } from "../useFields";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
-type ProductList = ProductListItem & { selected: boolean };
+import type { PagingParams, PagingResult } from "@/api/commerce/common";
 
 const { getColumns } = useProductFields();
 const columns = getColumns([
@@ -47,26 +47,38 @@ const props = defineProps<{
   modelValue: boolean;
 }>();
 
+const queryParams = ref<
+  PagingParams & {
+    keyword?: string;
+    excludes?: string[];
+  }
+>({
+  pageIndex: 1,
+  pageSize: 30,
+  keyword: "",
+  excludes: props.excludes,
+});
+
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "selected", value: ProductList[]): void;
+  (e: "selected", value: ProductListItem[]): void;
 }>();
 
-const list = ref<ProductList[]>([]);
+const pagingResult = ref<PagingResult<ProductListItem>>();
 
 const filteredList = computed(() => {
-  let result = list.value;
-
-  if (props.excludes) {
-    result = result.filter((f) => !props.excludes!.includes(f.id));
-  }
-
+  if (!pagingResult.value) return [];
+  let result = pagingResult.value.list;
   return result;
 });
 
-async function load() {
-  var products = await getProducts();
-  list.value = products.map((m) => ({ ...m, selected: false }));
+async function load(index: number) {
+  queryParams.value.pageIndex = index;
+  pagingResult.value = await getProducts(queryParams.value);
+  pagingResult.value.list = pagingResult.value.list.map((m) => ({
+    ...m,
+    selected: false,
+  }));
 }
 
 const indeterminateSelected = computed(() => {
@@ -87,7 +99,7 @@ function onChangeSelectAll(val: any) {
 }
 
 onMounted(() => {
-  load();
+  load(1);
 });
 
 function onSave() {
@@ -107,25 +119,46 @@ function onSave() {
     :close-on-click-modal="false"
     @closed="emit('update:modelValue', false)"
   >
-    <el-scrollbar max-height="400px">
-      <ElTable :data="filteredList" class="el-table--gray">
-        <el-table-column width="60" align="center">
-          <template #header>
-            <ElCheckbox
-              size="large"
-              class="!block !h-20px"
-              :indeterminate="indeterminateSelected"
-              :model-value="allSelected"
-              @change="onChangeSelectAll"
-            />
-          </template>
-          <template #default="{ row }">
-            <ElCheckbox v-model="row.selected" size="large" />
-          </template>
-        </el-table-column>
-        <DynamicColumns :columns="columns" />
-      </ElTable>
-    </el-scrollbar>
+    <div v-if="pagingResult">
+      <div class="flex items-center pb-12 space-x-16">
+        <div class="flex-1" />
+        <SearchInput
+          v-model="queryParams.keyword"
+          class="w-248px"
+          @keydown.enter.prevent="load(1)"
+        />
+      </div>
+      <el-scrollbar max-height="400px">
+        <ElTable :data="filteredList" class="el-table--gray">
+          <el-table-column width="60" align="center">
+            <template #header>
+              <ElCheckbox
+                size="large"
+                class="!block !h-20px"
+                :indeterminate="indeterminateSelected"
+                :model-value="allSelected"
+                @change="onChangeSelectAll"
+              />
+            </template>
+            <template #default="{ row }">
+              <ElCheckbox v-model="row.selected" size="large" />
+            </template>
+          </el-table-column>
+          <DynamicColumns :columns="columns" />
+        </ElTable>
+      </el-scrollbar>
+      <div class="text-center">
+        <el-pagination
+          class="py-8"
+          layout="prev, pager, next"
+          hide-on-single-page
+          :page-size="pagingResult?.pageSize"
+          :current-page="pagingResult?.pageIndex"
+          :total="pagingResult?.count"
+          @current-change="load"
+        />
+      </div>
+    </div>
     <template #footer>
       <DialogFooterBar
         :disabled="!filteredList.some((s) => s.selected)"

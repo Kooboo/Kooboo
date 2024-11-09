@@ -16,6 +16,7 @@ import type { KeyValue } from "@/global/types";
 import { refreshMonacoCache } from "@/components/monaco-editor/monaco";
 import CustomDataEditor from "./custom-data-editor.vue";
 import { productLabels, categoryLabels } from "../useLabels";
+import CurrencyAmount from "../components/currency-amount.vue";
 
 const { t } = useI18n();
 const currencies = ref<Currency[]>([]);
@@ -79,16 +80,20 @@ useShortcut("save", onSave);
               />
             </el-select>
           </el-form-item>
-          <el-form-item :label="t('commerce.shippingCost')">
+          <!-- <el-form-item :label="t('commerce.shippingCost')">
             <ElInput v-model.number="settings.shippingCost" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item :label="t('common.weightUnit')">
             <ElSelect v-model="settings.weightUnit" class="w-full">
               <ElOption label="KG" value="kg" />
               <ElOption label="G" value="g" />
             </ElSelect>
           </el-form-item>
-          <el-form-item :label="t('commerce.payments')">
+          <el-form-item>
+            <template #label>
+              <span>{{ t("commerce.availablePaymentMethods") }}</span>
+              <Tooltip :tip="t('commerce.paymentsTip')" custom-class="ml-4" />
+            </template>
             <ElSelect v-model="settings.payments" multiple class="w-full">
               <ElOption
                 v-for="item of payments"
@@ -105,18 +110,28 @@ useShortcut("save", onSave);
         class="rounded-normal bg-fff dark:bg-[#252526] mt-16 mb-24 py-24 px-56px"
       >
         <div class="max-w-504px">
-          <el-form-item
-            :label="t('commerce.nameFields', { name: t('commerce.product') })"
-          >
+          <el-form-item>
+            <template #label>
+              <span>{{ t("commerce.productFields") }}</span>
+              <Tooltip
+                :tip="t('common.productFieldsTip')"
+                custom-class="ml-4"
+              />
+            </template>
             <CustomDataEditor
               :data="settings.productCustomFields"
               :labels="productLabels"
             />
           </el-form-item>
 
-          <el-form-item
-            :label="t('commerce.nameFields', { name: t('common.category') })"
-          >
+          <el-form-item>
+            <template #label>
+              <span>{{ t("commerce.categoryFields") }}</span>
+              <Tooltip
+                :tip="t('common.categoryFieldsTip')"
+                custom-class="ml-4"
+              />
+            </template>
             <CustomDataEditor
               :data="settings.categoryCustomFields"
               :labels="categoryLabels"

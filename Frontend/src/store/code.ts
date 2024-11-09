@@ -87,6 +87,7 @@ export const useCodeStore = defineStore("codeStore", () => {
       version: result.version,
       scriptType: result.scriptType,
       isEmbedded: result.isEmbedded,
+      isDecrypted: result.isDecrypted,
     } as PostCode;
 
     if (rsp.codeType?.toLowerCase() === "event" && !rsp.eventType) {

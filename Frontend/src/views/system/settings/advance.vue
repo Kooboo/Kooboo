@@ -182,7 +182,26 @@ const appStore = useAppStore();
         <div class="flex-1" />
         <el-switch v-model="site.automateCovertImageToWebp" />
       </el-form-item>
-      <template v-if="appStore.header?.isOnlineServer">
+      <el-form-item
+        v-if="
+          !appStore.header?.isOnlineServer || appStore.header.isPrivateServer
+        "
+      >
+        <span class="font-bold dark:text-fff/86">{{
+          t("common.enableResourceCache")
+        }}</span>
+        <Tooltip
+          :tip="t('common.enableResourceCacheTip')"
+          custom-class="ml-4"
+        />
+        <div class="flex-1" />
+        <el-switch v-model="site.enableResourceCache" />
+      </el-form-item>
+      <template
+        v-if="
+          appStore.header?.isOnlineServer && !appStore.header.isPrivateServer
+        "
+      >
         <el-form-item v-if="siteStore.serviceLevel > 0">
           <span class="font-bold dark:text-fff/86">{{
             t("common.enableDevPassword")

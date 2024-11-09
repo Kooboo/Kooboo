@@ -1,4 +1,7 @@
+import { i18n } from "@/modules/i18n";
 import dayjs from "dayjs";
+
+const t = i18n.global.t;
 
 export function weekToDates(input: string) {
   if (!input) {
@@ -23,3 +26,10 @@ export function weekToDates(input: string) {
 export function timeZoneOffset() {
   return -(new Date().getTimezoneOffset() / 60);
 }
+
+export const durationUnits = [
+  { key: "Year", value: t("common.year") },
+  { key: "Month", value: t("common.month") },
+  { key: "Week", value: t("common.week") },
+  { key: "Day", value: t("common.day") },
+];

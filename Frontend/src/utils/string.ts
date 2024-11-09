@@ -29,3 +29,10 @@ export function getValueIgnoreCase(input: any, name: string) {
 
   return null;
 }
+
+export function camelCase(str: string) {
+  if (str?.length) {
+    return str.charAt(0).toLowerCase() + str.substring(1);
+  }
+  return str;
+}

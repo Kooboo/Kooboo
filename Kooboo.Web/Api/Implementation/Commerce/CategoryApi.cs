@@ -4,6 +4,7 @@ using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Permission;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.Commerce;
 using Kooboo.Sites.Commerce.Condition;
 using Kooboo.Sites.Commerce.CustomData;
 using Kooboo.Sites.Commerce.DataStorage;
@@ -72,7 +73,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 Type = Sites.Models.CommerceDataType.Category
             }, apiCall.Context.User.Id);
             var tagService = new TagService(commerce);
-            tagService.Append(Tag.TagType.Category, model.Tags);
+            tagService.Append(TagType.Category, model.Tags);
             return category.Id;
         }
 
@@ -93,7 +94,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 Type = Sites.Models.CommerceDataType.Category
             }, apiCall.Context.User.Id);
             var tagService = new TagService(commerce);
-            tagService.Append(Tag.TagType.Category, model.Tags);
+            tagService.Append(TagType.Category, model.Tags);
         }
 
         [Permission(Feature.COMMERCE_CATEGORY, Action = Data.Permission.Action.EDIT)]
@@ -113,9 +114,9 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         }
 
         [Permission(Feature.COMMERCE_CATEGORY, Action = Data.Permission.Action.VIEW)]
-        public object ConditionSchemas()
+        public object ConditionSchemas(ApiCall call)
         {
-            return CategoryMatcher.Instance.Options;
+            return CategoryMatcher.Instance.GetOptionDetails(call.Context);
         }
 
         [Permission(Feature.COMMERCE_CATEGORY, Action = Data.Permission.Action.VIEW)]
@@ -144,7 +145,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var siteDb = apiCall.WebSite.SiteDb();
             var commerce = GetSiteCommerce(apiCall);
             var category = commerce.Category.Entities.FirstOrDefault(c => c.Id == categoryId);
-            if (category.Type != Category.FilterType.Manual) return;
+            if (category.Type != FilterType.Manual) return;
             var productCategoryList = commerce.ProductCategory.Values.Where(w => w.CategoryId == categoryId).ToArray();
 
             foreach (var item in productCategoryList.ToArray())

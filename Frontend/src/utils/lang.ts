@@ -84,3 +84,12 @@ export function isJson(content: string) {
     return false;
   }
 }
+
+export function tryParseInt(value?: string) {
+  if (!value) return null;
+  try {
+    return parseInt(value);
+  } catch (error) {
+    return null;
+  }
+}

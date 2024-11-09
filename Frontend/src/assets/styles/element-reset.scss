@@ -476,6 +476,14 @@
   }
 }
 
+.el-table--raw {
+  thead {
+    th {
+      --el-table-header-bg-color: transparent;
+    }
+  }
+}
+
 .el-tabs {
   &--top {
     width: 100%;

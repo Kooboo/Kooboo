@@ -50,7 +50,12 @@ export function appendBaseUrl(url: string) {
 export function combineUrl(left: string, right: string) {
   left = left.trim();
   right = right.trim();
-  if (right.startsWith("http://") || right.startsWith("https://")) {
+  if (
+    right.startsWith("http://") ||
+    right.startsWith("https://") ||
+    right.startsWith("//") ||
+    right.startsWith("data:")
+  ) {
     return right;
   }
 

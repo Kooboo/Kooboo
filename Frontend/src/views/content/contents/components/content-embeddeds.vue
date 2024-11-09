@@ -13,7 +13,7 @@
       @add="edit(embedded)"
     >
       <template #default="{ item }">
-        {{ getText(item) }}
+        {{ getText(item, embedded) }}
       </template>
       <template #right="{ item }">
         <a
@@ -31,7 +31,7 @@
       v-model="visibleEdit"
       :current="current"
       :current-content="currentContent"
-      :paths="[...(paths ?? []), getText(currentContent)]"
+      :paths="[...(paths ?? []), getText(currentContent!, current)]"
       @save-success="onSaveSuccess"
     />
   </Teleport>
@@ -67,13 +67,40 @@ const visibleEdit = ref(false);
 const current = ref<ContentEmbedded>({} as ContentEmbedded);
 const currentContent = ref<TextContentItem>();
 
-function getText(content?: TextContentItem) {
+function getText(content: TextContentItem, embedded: ContentEmbedded) {
   if (!content) return "";
-  var summaryField = Object.keys(content.textValues).find(
-    (f) => f?.toLocaleLowerCase() == content.summaryField?.toLocaleLowerCase()
-  );
+  let key =
+    content.summaryField ??
+    embedded.columns.find((f: any) => f.isSummaryField)?.name ??
+    Object.keys(content.textValues)[0];
+  key =
+    Object.keys(content.textValues).find(
+      (f) => f.toLowerCase() == key.toLowerCase()
+    ) ?? "";
+  var value = content.textValues[key];
 
-  return content.textValues[summaryField ?? Object.keys(content.textValues)[0]];
+  const column = embedded.columns.find(
+    (f: any) => f.name?.toLowerCase() == key?.toLowerCase()
+  );
+  if (column?.selectionOptions) {
+    try {
+      const options = JSON.parse(column.selectionOptions);
+      let values = [value];
+      if (column.controlType == "CheckBox") {
+        values = JSON.parse(value);
+      }
+      const displayValues = [];
+      for (const i of values) {
+        const option = options.find((f: any) => f.value == i);
+        if (option) displayValues.push(option.key);
+        else displayValues.push(i);
+      }
+      value = displayValues.join(",");
+    } catch {
+      //
+    }
+  }
+  return value;
 }
 async function remove(
   _id: string,

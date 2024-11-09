@@ -4,6 +4,7 @@ import { editProductType } from "@/api/commerce/type";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import TermEditor from "./term-editor.vue";
+import DigitalFields from "./digital-fields.vue";
 
 const { t } = useI18n();
 const show = ref(true);
@@ -40,11 +41,17 @@ async function onSave() {
         <ElInput v-model="copiedModel.name" />
       </ElFormItem>
       <ElFormItem :label="t('common.attributes')">
-        <TermEditor :model="copiedModel.attributes" />
+        <TermEditor
+          :model="copiedModel.attributes"
+          :name-label="t('common.name')"
+          :value-label="t('common.value')"
+          :name-placeholder="t('common.attributeSamples')"
+        />
       </ElFormItem>
       <ElFormItem :label="t('commerce.variantOptions')">
         <TermEditor :model="copiedModel.options" force-selection />
       </ElFormItem>
+      <DigitalFields :model="copiedModel" />
     </ElForm>
     <template #footer>
       <DialogFooterBar @confirm="onSave" @cancel="show = false" />

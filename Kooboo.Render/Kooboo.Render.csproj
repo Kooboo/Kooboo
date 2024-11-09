@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Kooboo.Data" Version="2.1.9000.26070" />
-	  <PackageReference Include="Kooboo.Sites" Version="2.1.9000.26070" />
+	  <PackageReference Include="Kooboo.Data" Version="2.1.9079.35377" />
+	  <PackageReference Include="Kooboo.Sites" Version="2.1.9079.35377" />
 	</ItemGroup>
 </Project>

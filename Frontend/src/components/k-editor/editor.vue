@@ -57,7 +57,7 @@ function getToolbarOptions() {
   if (!attrs["toolbar"]) {
     return (
       "undo redo | " +
-      "fontselect fontsizeselect bold italic forecolor backcolor removeformat | " +
+      "fontselect formatselect fontsizeselect bold italic forecolor backcolor removeformat | " +
       "indent outdent | " +
       "alignleft aligncenter alignright alignjustify | " +
       "bullist numlist | " +

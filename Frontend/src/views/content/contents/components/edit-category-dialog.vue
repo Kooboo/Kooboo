@@ -86,10 +86,10 @@ async function fetchList() {
     pageNr: 1,
     pageSize: 99999,
   });
-  setTableList(datas.list);
+  setTableList(datas.list, datas.columns);
 }
 
-function setTableList(contents: TextContentItem[]) {
+function setTableList(contents: TextContentItem[], columnList: any) {
   const contentMaps: Record<string, TextContentItem> = {};
   contents.forEach((it) => {
     contentMaps[it.id] = it;
@@ -98,10 +98,30 @@ function setTableList(contents: TextContentItem[]) {
   const defaultColumn = Object.keys(contents[0]?.textValues ?? {})[0];
   if (defaultColumn) {
     columns.value = [defaultColumn];
+    const column = columnList.find((f: any) => f.name == defaultColumn);
     list.value = contents.map((item) => {
+      let value = item.textValues[defaultColumn];
+      if (column?.selectionOptions) {
+        try {
+          const options = JSON.parse(column.selectionOptions);
+          let values = [value];
+          if (column.controlType == "CheckBox") {
+            values = JSON.parse(value);
+          }
+          const displayValues = [];
+          for (const i of values) {
+            const option = options.find((f: any) => f.value == i);
+            if (option) displayValues.push(option.key);
+            else displayValues.push(i);
+          }
+          value = displayValues.join(",");
+        } catch {
+          //
+        }
+      }
       return {
         id: item.id,
-        [defaultColumn]: item.textValues[defaultColumn],
+        [defaultColumn]: value,
       };
     });
   }

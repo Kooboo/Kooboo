@@ -5,8 +5,8 @@ import { i18n } from "@/modules/i18n";
 const t = i18n.global.t;
 
 export const productLabels: Record<string, string> = {
-  featuredImage: t("common.cover"),
-  title: t("common.title"),
+  featuredImage: t("common.image"),
+  title: t("commerce.productName"),
   variantsCount: t("commerce.variants"),
   inventory: t("common.inventory"),
   tags: t("common.tags"),
@@ -19,8 +19,8 @@ export const productLabels: Record<string, string> = {
 };
 
 export const categoryLabels: Record<string, string> = {
-  image: t("common.cover"),
-  title: t("common.title"),
+  image: t("common.image"),
+  title: t("common.categoryName"),
   condition: t("common.condition"),
   productCount: t("common.productCount"),
   tags: t("common.tags"),

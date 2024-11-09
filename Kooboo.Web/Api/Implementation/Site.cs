@@ -549,6 +549,7 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.CodeSuggestions = newinfo.CodeSuggestions;
                 currentsite.RecordSiteLogVideo = newinfo.RecordSiteLogVideo;
                 currentsite.EnableUpdateSimilarPage = newinfo.EnableUpdateSimilarPage;
+                currentsite.EnableResourceCache = newinfo.EnableResourceCache;
                 currentsite.ContinueDownload = newinfo.ContinueDownload;
                 currentsite.EnableVisitorCountryRestriction = newinfo.EnableVisitorCountryRestriction;
                 currentsite.VisitorCountryRestrictions = newinfo.VisitorCountryRestrictions;

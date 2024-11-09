@@ -30,6 +30,11 @@ export const deleteCustomers = (ids: string[]) =>
 
 export interface CustomerListItem extends CustomerCreate {
   id: string;
+  membershipId: string;
+  membership: string;
+  membershipStartedAt?: string;
+  membershipEndAt?: string;
+  rewardPoints: number;
 }
 
 export interface CustomerCreate {
@@ -38,6 +43,7 @@ export interface CustomerCreate {
   firstName: string;
   lastName: string;
   tags: string[];
+  addresses: Address[];
 }
 
 export interface Address {
@@ -55,7 +61,6 @@ export interface Address {
 
 export interface CustomerEdit extends CustomerCreate {
   id: string;
-  addresses: Address[];
 }
 
 export type CustomerPagingResult = PagingResult<CustomerListItem>;

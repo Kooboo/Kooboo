@@ -124,10 +124,16 @@ namespace Kooboo.Web.ViewModel
         public string Alias { get; set; }
 
         public List<TextContentViewModel> Contents { get; set; } = new List<TextContentViewModel>();
+        public BaseColumnViewModel[] Columns { get; set; }
 
         public string Display { get; set; }
 
         public bool MultipleChoice { get; set; }
+    }
+
+    public class EmbeddedContentViewModel:Sites.ViewModel.EmbeddedContentViewModel
+    {
+        public BaseColumnViewModel[] Columns { get; set; }
     }
 
 
@@ -148,11 +154,11 @@ namespace Kooboo.Web.ViewModel
 
         public string Alias { get; set; }
 
-        public List<KeyValuePair<Guid, string>> Options { get; set; } = new List<KeyValuePair<Guid, string>>();
-
         public string Display { get; set; }
 
         public bool MultipleChoice { get; set; }
+        public BaseColumnViewModel[] Columns { get; set; }
+        public List<TextContentViewModel> Options { get; set; } = new List<TextContentViewModel>();
     }
 
     public class PagedTextContentListViewModel : PagedListViewModel<TextContentViewModel, BaseColumnViewModel>

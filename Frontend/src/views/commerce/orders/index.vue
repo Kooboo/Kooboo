@@ -17,6 +17,7 @@ import PropertyItem from "../components/property-item.vue";
 import CurrencyAmount from "../components/currency-amount.vue";
 import { showDeleteConfirm } from "@/components/basic/confirm";
 import { openInHiddenFrame } from "@/utils/url";
+import TruncateContent from "@/components/basic/truncate-content.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -27,7 +28,7 @@ const queryParams = ref<
   PagingParams & {
     keyword?: string;
     paid?: boolean;
-    delivered?: boolean;
+    deliveryStatus?: string;
     status?: string;
     createdAtStart?: string;
     createdAtEnd?: string;
@@ -36,8 +37,7 @@ const queryParams = ref<
   pageIndex: 1,
   pageSize: 30,
   keyword: "",
-  paid: undefined,
-  delivered: undefined,
+  paid: true,
   status: undefined,
   createdAtStart: undefined,
   createdAtEnd: undefined,
@@ -125,14 +125,15 @@ function getDiscountAllocations(row: any) {
         <el-option :label="t('common.notPaid')" :value="false" />
       </el-select>
       <el-select
-        v-model="queryParams.delivered"
+        v-model="queryParams.deliveryStatus"
         :placeholder="t('commerce.deliveryStatus')"
         class="w-180px"
         clearable
-        @clear="queryParams.delivered = undefined"
+        @clear="queryParams.deliveryStatus = ''"
       >
-        <el-option :label="t('commerce.shipped')" :value="true" />
-        <el-option :label="t('commerce.unshipped')" :value="false" />
+        <el-option :label="t('commerce.shipped')" value="shipped" />
+        <el-option :label="t('commerce.partialShipped')" value="partial" />
+        <el-option :label="t('commerce.unshipped')" value="unshipped" />
       </el-select>
       <el-select
         v-model="queryParams.status"
@@ -141,7 +142,7 @@ function getDiscountAllocations(row: any) {
         clearable
         @clear="queryParams.status = undefined"
       >
-        <el-option :label="t('common.normal')" value="Normal" />
+        <el-option :label="t('common.active')" value="Normal" />
         <el-option :label="t('commerce.canceled')" value="Canceled" />
       </el-select>
       <ElDatePicker
@@ -178,29 +179,12 @@ function getDiscountAllocations(row: any) {
       @delete="onDelete"
       @change="load"
     >
-      <el-table-column :label="t('common.contact')" align="center" width="300">
+      <el-table-column :label="t('commerce.orderNumber')" width="150">
         <template #default="{ row }">
-          <div>
-            <div>{{ row.customer?.email }} {{ row.customer?.phone }}</div>
-            <div class="text-s text-666">
-              {{ row.customer?.firstName }} {{ row.customer?.lastName }}
-            </div>
-          </div>
+          <div>{{ row.id }}</div>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="t('common.createTime')"
-        width="180"
-        align="center"
-      >
-        <template #default="{ row }">{{ useTime(row.createdAt) }}</template>
-      </el-table-column>
-
-      <el-table-column
-        :label="t('common.totalAmount')"
-        width="180"
-        align="center"
-      >
+      <el-table-column :label="t('common.totalAmount')" width="180">
         <template #default="{ row }">
           <CurrencyAmount
             :amount="row.totalAmount"
@@ -209,13 +193,40 @@ function getDiscountAllocations(row: any) {
           />
         </template>
       </el-table-column>
-      <el-table-column
-        :label="t('common.discounts')"
-        width="100"
-        align="center"
-      >
+      <el-table-column :label="t('common.createTime')" width="180">
+        <template #default="{ row }">{{ useTime(row.createdAt) }}</template>
+      </el-table-column>
+      <el-table-column :label="t('common.products')" width="100" align="center">
+        <template #default="{ row }">
+          <el-popover width="auto" trigger="hover" placement="left">
+            <template #reference>
+              <ElTag round type="success">{{ row.lines.length }}</ElTag>
+            </template>
+            <div class="space-y-4">
+              <div
+                v-for="item of row.lines"
+                :key="item.variantId"
+                class="flex space-x-4"
+              >
+                <ImageCover
+                  v-model="item.image"
+                  :description="`x ${item.totalQuantity}`"
+                />
+                <div>
+                  <div>{{ item.title }}</div>
+                  <div class="text-s">
+                    {{ buildOptionsDisplay(item.options, true) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column :label="t('common.discount')" width="110" align="center">
         <template #default="{ row }">
           <el-popover
+            v-if="getDiscountAllocations(row).length"
             width="auto"
             trigger="hover"
             :disabled="!getDiscountAllocations(row).length"
@@ -247,47 +258,28 @@ function getDiscountAllocations(row: any) {
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column :label="t('commerce.orderNumber')" width="150">
-        <template #default="{ row }">
-          <div>{{ row.id }}</div>
-          <ElTag v-if="row.canceled" type="danger" size="small"
-            >{{ t("commerce.canceled") }}
-          </ElTag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="t('common.products')" width="100" align="center">
-        <template #default="{ row }">
-          <el-popover width="auto" trigger="hover" placement="right">
-            <template #reference>
-              <ElTag round type="success">{{ row.lines.length }}</ElTag>
-            </template>
-            <div class="space-y-4">
-              <div
-                v-for="item of row.lines"
-                :key="item.variantId"
-                class="flex space-x-4"
-              >
-                <ImageCover
-                  v-model="item.image"
-                  :description="`x ${item.quantity}`"
-                />
-                <div>
-                  <div>{{ item.title }}</div>
-                  <div class="text-s">
-                    {{ buildOptionsDisplay(item.options, true) }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
 
-      <el-table-column
-        :label="t('common.paymentMethod')"
-        align="center"
-        width="140"
-      >
+      <el-table-column :label="t('common.customer')" width="300">
+        <template #default="{ row }">
+          <div>
+            <div class="truncate">
+              <TruncateContent
+                :tip="`${row.customer?.email} ${row.customer?.phone}`"
+                >{{ row.customer?.email }}
+                {{ row.customer?.phone }}</TruncateContent
+              >
+            </div>
+            <!-- <div class="text-s text-666 truncate">
+              <TruncateContent
+                :tip="`${row.customer?.firstName} ${row.customer?.lastName}`"
+              >
+                {{ row.customer?.firstName }} {{ row.customer?.lastName }}
+              </TruncateContent>
+            </div> -->
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :label="t('common.paymentMethod')" width="140">
         <template #default="{ row }">
           <ElTag v-if="row.paid" round type="success">{{
             row.paymentMethod
@@ -296,36 +288,21 @@ function getDiscountAllocations(row: any) {
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('commerce.paidAt')" width="180" align="center">
-        <template #default="{ row }">{{ useTime(row.paidAt) }}</template>
-      </el-table-column>
-
-      <el-table-column
-        :label="t('commerce.deliveryMethod')"
-        align="center"
-        width="180"
-      >
+      <el-table-column :label="t('commerce.shippingStatus')" width="180">
         <template #default="{ row }">
-          <div v-if="row.delivered">
-            <div>{{ row.trackingNumber }}</div>
-            <div class="text-s text-666">
-              {{ row.shippingCarrier }}
-            </div>
+          <div>
+            <ElTag v-if="row.partialDelivered" round type="warning">{{
+              t("commerce.partialShipped")
+            }}</ElTag>
+            <ElTag v-else-if="row.delivered" round type="success">{{
+              t("commerce.shipped")
+            }}</ElTag>
+
+            <ElTag v-else round type="info">{{
+              t("commerce.unshipped")
+            }}</ElTag>
           </div>
-          <ElTag v-else round type="info">{{ t("commerce.unshipped") }}</ElTag>
         </template>
-      </el-table-column>
-
-      <el-table-column
-        :label="t('commerce.shippingAt')"
-        width="180"
-        align="center"
-      >
-        <template #default="{ row }">{{ useTime(row.shippingAt) }}</template>
-      </el-table-column>
-
-      <el-table-column label="IP" width="180" align="center">
-        <template #default="{ row }">{{ row.ip }}</template>
       </el-table-column>
 
       <el-table-column :label="t('common.country')" width="180" align="center">
@@ -336,22 +313,6 @@ function getDiscountAllocations(row: any) {
 
       <el-table-column :label="t('common.source')" width="180" align="center">
         <template #default="{ row }">{{ row.source }}</template>
-      </el-table-column>
-
-      <el-table-column :label="t('common.clientInfo')" width="180">
-        <template #default="{ row }">
-          <div v-if="row.clientInfo" class="text-s flex space-x-4 items-center">
-            <ElTag
-              v-if="row.clientInfo?.application?.isWebBrowser"
-              round
-              size="small"
-              >{{ t("common.webBrowser") }}
-            </ElTag>
-            <div class="ellipsis" :title="getClientInfo(row)">
-              {{ getClientInfo(row) }}
-            </div>
-          </div>
-        </template>
       </el-table-column>
 
       <el-table-column align="right" width="60" fixed="right">

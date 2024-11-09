@@ -13,7 +13,7 @@
       @add="edit(category)"
     >
       <template #default="{ item }">
-        {{ getText(item) }}
+        {{ getText(item, category) }}
       </template>
     </SortableList>
   </el-form-item>
@@ -45,13 +45,36 @@ const emits = defineEmits<{
 const categories = useSync(props, "modelValue", emits);
 const visibleEdit = ref(false);
 const current = ref<ContentCategory>({} as ContentCategory);
-function getText(content: TextContentItem) {
+function getText(content: TextContentItem, category: ContentCategory) {
   let key = content.summaryField ?? Object.keys(content.textValues)[0];
   key =
     Object.keys(content.textValues).find(
       (f) => f.toLowerCase() == key.toLowerCase()
     ) ?? "";
-  return content.textValues[key];
+  let value = content.textValues[key];
+
+  const column = category.columns.find(
+    (f: any) => f.name?.toLowerCase() == key?.toLowerCase()
+  );
+  if (column?.selectionOptions) {
+    try {
+      const options = JSON.parse(column.selectionOptions);
+      let values = [value];
+      if (column.controlType == "CheckBox") {
+        values = JSON.parse(value);
+      }
+      const displayValues = [];
+      for (const i of values) {
+        const option = options.find((f: any) => f.value == i);
+        if (option) displayValues.push(option.key);
+        else displayValues.push(i);
+      }
+      value = displayValues.join(",");
+    } catch {
+      //
+    }
+  }
+  return value;
 }
 
 function remove(

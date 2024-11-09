@@ -8,12 +8,14 @@ import type { Action } from "@/store/dev-mode";
 import { Completer } from "@/utils/lang";
 import { monaco } from "@/components/monaco-editor/userWorker";
 import { useDevModeStore } from "@/store/dev-mode";
+import { useI18n } from "vue-i18n";
 
 const emit = defineEmits<{
   (e: "changed", value: boolean): void;
   (e: "setAction", name: string, params: Partial<Action>): void;
 }>();
 
+const { t } = useI18n();
 const props = defineProps<{ id: string }>();
 const codeStore = useCodeStore();
 const devModeStore = useDevModeStore();
@@ -36,7 +38,7 @@ const load = async () => {
 };
 
 const save = async () => {
-  if (!model.value) return;
+  if (!model.value || model.value.isDecrypted) return;
   await codeStore.updateCode(model.value, devModeStore.saveTabRecord(props.id));
   saveTip.init(model.value);
   emit("changed", false);
@@ -84,8 +86,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="model" class="h-full">
+  <div v-if="model" class="h-full relative">
+    <div
+      v-if="model.isDecrypted"
+      class="absolute inset-0 flex items-center justify-center"
+    >
+      <el-result icon="error" :title="t('common.codeEncryptedTip')" />
+    </div>
     <MonacoEditor
+      v-else
       ref="editor"
       v-model="model.body"
       language="typescript"

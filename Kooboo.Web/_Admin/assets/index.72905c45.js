@@ -1,1 +1,0 @@
-import{d as o}from"./main.582f9de6.js";import{a as s}from"./replace-all.d441bf14.js";const n=(t,e)=>o.get(s("Component/GetSource"),{tag:t,id:e}),r=()=>o.get(s("Component/list")),c=(t,e)=>o.get(s("Component/TagObjects"),{tag:t},{hiddenLoading:e});export{c as a,n as b,r as g};

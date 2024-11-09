@@ -10,6 +10,7 @@ const { getColumns } = useCategoryFields();
 const { t } = useI18n();
 const show = ref(true);
 const commerceStore = useCommerceStore();
+const keyword = ref("");
 
 const props = defineProps<{
   excludes?: string[];
@@ -44,8 +45,12 @@ const columns = getColumns([
     },
   },
 ]);
+
 const filteredList = computed(() => {
-  let result = list.value.filter((f) => f.type == "Manual");
+  let _keyword = keyword.value?.toLowerCase()?.trim();
+  let result = list.value.filter(
+    (f) => f.type == "Manual" && f.title?.toLowerCase()?.indexOf(_keyword) > -1
+  );
 
   if (props.excludes) {
     result = result.filter((f) => !props.excludes!.includes(f.id));
@@ -99,6 +104,14 @@ function onSave() {
     :close-on-click-modal="false"
     @closed="emit('update:modelValue', false)"
   >
+    <div class="flex items-center pb-12 space-x-16">
+      <div class="flex-1" />
+      <SearchInput
+        v-model="keyword"
+        class="w-248px"
+        @keydown.enter.prevent="load"
+      />
+    </div>
     <el-scrollbar max-height="400px">
       <ElTable :data="filteredList" class="el-table--gray">
         <el-table-column width="60" align="center">

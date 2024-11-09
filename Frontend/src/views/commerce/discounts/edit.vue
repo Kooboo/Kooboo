@@ -46,7 +46,7 @@ async function save() {
   <EditForm v-if="model" :model="model" />
   <KBottomBar
     :permission="{
-      feature: 'productCategories',
+      feature: 'discounts',
       action: 'edit',
     }"
     @cancel="goBack"

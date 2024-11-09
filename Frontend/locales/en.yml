@@ -11,82 +11,115 @@ code:
 codelog:
   level: Level
 commerce:
-  accordingBy: According by
+  accordingBy: Based On
   active: Active
   addVariant: Add variant
-  allConditions: All conditions
+  allConditions: All Conditions
   amount: Amount
-  anyConditions: Any conditions
+  anyConditions: Any Condition
   associatedContent: Associated content
   automatedProductTip: Existing and future products that match the conditions you
     set will automatically be added to this category.
-  automaticDiscount: Automatic
+  automaticallyUpgradeMembershipTip: When a customer qualifies for a higher
+    membership level, any lower-level memberships will be ignored
+  automaticDiscount: Automatic Activation
+  available: Available
+  availablePaymentMethods: Available Payment Methods
+  blankProduct: Blank product
   canceled: Canceled
   cancelOrder: Cancel order
   cartNote: Cart note
+  categoryFields: Category Field Setting for Edit & List Pages
   checkout: Checkout
   commerceSettings: Commerce settings
-  createProduct: Create product
-  dailyStats: Daily stats
+  createProduct: Create Product
+  dailyStats: Daily Report
   delivered: Delivered
   delivery: Delivery
-  deliveryMethod: Delivery method
   deliveryStatus: Delivery status
-  discount: Discount
-  discountCode: Discount code
-  discountCodes: Discount code
-  discountMethod: Discount method
+  discount: Promotion
+  discountCode: Promotion Code
+  discountCodes: Promotion Code
+  discountMethod: Promotion Method
   discountOff: Discount off
   discountType: Discount type
+  earnPointsConfig: Earn Points config
+  email: Email
   emptyProduct: Empty product
-  freeShipping: Free shipping
+  freeShipping: Free Shipping
+  getByOrderAmountPercents: Points Based on Order Amount Percentage
+  getFixedPoints: Fixed Points Per Order
+  inactive: Inactive
   inStock: In stock
+  insuranceAmount: Insurance
   isExclusion: Exclusive
   manualProductTip: Add products to this category one by one.
-  method: Method
+  maxRedeemByOrderAmountPercents: Maximum Redemption Percentage per Order
+  maxRedeemPoints: Maximum Points Redeemable
+  method: Promotion Method
   nameFields: "{name} fields"
   newAddress: New address
   noActive: No active
   note: Note
+  notification: Notification
   notificationSettings: Notification settings
+  optionName: Option name
+  optionValues: Option values
   order: Order
-  orderAmountOff: Order amount off
-  orderCount: Order count
-  orderLineMustMatch: Order product line match rule
-  orderMustMatch: Order match rule
+  orderAmountOff: Discount on Order
+  orderCount: Orders
+  orderMaxRedeemTip: Up to {points} points can be used to deduct the order amount
   orderNote: Order note
   orderNumber: Order number
-  orderStats: Order stats
+  orderPercentMaxRedeemTip: Up to {percent}% of the total amount can be deducted with points
+  orderProduct: Order product
+  orderStats: Order Report
   orderStatus: Order status
-  orderTotalAmount: Order total amount
+  orderTotalAmount: Total Amount
   outOfStock: Out of stock
-  outOfStockProducts: Out of stock products
   paidAt: Paid at
+  paidOrder: Paid order
+  partialDelivered: Partial delivered
+  partialDelivery: Partial delivery
+  partialShipped: Partial shipped
   payment: Payment
   payments: Payments
+  paymentsTip: Payment methods configured for  k.commerce.settings.payments
+  pointExchangeAmount: Point Redemption Rate
+  points: Points
+  pointsDeduction: Points deduction
+  pointsDetail: Points detail
   product: Product
-  productAmountOff: Product amount off
-  productMustMatch: Products must match
-  productStats: Product stats
+  productAmountOff: Discount on Product
+  productFields: Product Field Setting for Edit & List Pages
+  productName: Product Name
+  productStats: Product Report
+  redeemFixedPoints: Redeem fixed points
+  redeemPointsConfig: Redeem Points config
   selectCategory: Select category
   selectCustomer: Select customer
+  selectMembership: Select membership
+  selectShipping: Select shipping
   selectVariant: Select variant
+  setAsMain: Set as main
   shipped: Shipped
   shippingAddress: Shipping address
   shippingAmount: Shipping
   shippingAt: Shipping at
   shippingCarrier: Shipping carrier
   shippingCost: Shipping cost
+  shippingStatus: Shipping status
   subtotalAmount: Subtotal
   totalAmount: Total
-  totalInventory: Total inventory
+  totalInventory: Total Stock
   totalProducts: Total products
   trackingNumber: Tracking number
-  unshipped: Unshipped
-  variantOptions: Variant options
+  unshipped: Not shipped
+  variantOptions: Variant Options
   variants: Variants
-  waitDeliver: Wait deliver
-  waitPay: Wait pay
+  variantSamples: e.g., Color, Size...
+  waitDeliver: Pending Shipment
+  waitPay: Pending Payment
 common:
   abstract: Abstract
   aCancellationEmailWillBeSentToParticipants: Cancellation emails will be sent to participants
@@ -97,14 +130,18 @@ common:
   accountBalance: Account balance
   action: Action
   active: Active
-  activeDateRange: Active date range
+  activeDateRange: Active Date Range
   activeTime: Active time
   add: Add
+  addAddress: Add address
   addADomainNameToYourAccount: Add a domain name to your account
+  addAnotherValue: Add another value
   addBcc: Add BCC
   addCc: Add CC
   addChinese: Add chinese
+  addCondition: Add condition
   addContact: Add contact
+  addCostRule: Add cost rule
   addCustomer: Add customer
   addDepartment: Add department
   addExisting: Attach existing account
@@ -132,6 +169,7 @@ common:
   addSuccess: Add success
   addToIndexAutomaticallyWhenDocumentChanged: Update index when document changed.
   addUser: Add user
+  addValue: Add value
   admin: Admin
   administration: Administration
   advanced: Advanced
@@ -174,6 +212,7 @@ common:
   attachmentName: Attachment Name
   attachments: Attachments
   attributes: Attributes
+  attributeSamples: e.g., Material, Style...
   atv: ATV
   authentication: Authentication
   author: Author
@@ -184,6 +223,7 @@ common:
   authorizeName: Authorize name
   authorizeNameExistsTips: Authorize name already exists
   auto: Auto
+  autoDelivery: Auto delivery
   autoDetectCulture: Auto Detect Culture
   automateCovertImageToWebp: Automate covert image to webp
   automated: Automated
@@ -204,6 +244,7 @@ common:
   bandwidthUsageInRecentSevenDays: Bandwidth usage in the last 7 days
   bankCardPayment: Bank card
   barcode: Barcode
+  baseCost: Base cost
   baseUrl: Base URL
   basic: Basic
   basicInfo: Basic Info
@@ -231,17 +272,20 @@ common:
   cancelReason: Cancel reason
   canNotOpenFile: Can not open this file
   canNotOpenFileTip: This file may be binary, or temporarily unrecognized by the system
+  canRedeem: Can redeem
   canRegister: Available
   cantRegister: Occupied
   carbonCopy: CC
   cardNumber: Card Number
   cart: Cart
-  carts: Carts
+  carts: Shopping Cart
   categories: Categories
   category: Category
+  categoryFieldsTip: Summary fields will display on the list page
   categoryFolder: Category Folder
   categoryFolders: Category Folders
   categoryList: Category list
+  categoryName: Category name
   challenge: Challenge
   change: Change
   changeCover: Change cover
@@ -298,6 +342,7 @@ common:
   cmsEdit: CMS edit
   cmsFile: CmsFile
   code: Code
+  codeEncryptedTip: The code has been encrypted and cannot be edited.
   codeFormatIsIncorrect: The code format is incorrect
   codeLog: Code Logs
   codeLogs: Code Logs
@@ -320,8 +365,10 @@ common:
   commerceSettings: Commerce settings
   commonValueLengthTips: "{value} must contain {min} to {max} characters"
   company: Company
+  companyCode: Company code
   compare: Compare
   compareWithCurrent: Compare with current
+  compellation: Compellation
   completed: Completed
   compose: Compose
   compressedPackageFileFormat: Compressed package file format「zip」
@@ -339,6 +386,8 @@ common:
   console: Console
   constraintFixOnSave: Constraint Fix on Save
   constraintFixOnSaveTips: Automatically fix certain syntax errors when saving HTML
+  consume: Consume
+  consumingRewardPoints: Consuming reward points
   contact: Contact
   contactInformation: Contact information
   contacts: Contacts
@@ -376,6 +425,7 @@ common:
   corsTips: Cross-origin HTTP requests in web browsers are implemented by
     including the specific HTTP header Access-Control-Allow-Origin in the
     server's response
+  costRule: Cost Calculation Rule
   count: Count
   countEmailSelected: "{count} email selected"
   countEmailsSelected: "{count} emails selected"
@@ -392,6 +442,7 @@ common:
   createItemNow: Create item
   createItemNowToCreateAItem: You don't have an item yet. Clicking 'Create item' now.
   createMember: Create member
+  createMembership: Create Membership
   createOrder: Create order
   createOrderSuccess: Create order success
   createOwnOrg: Create Sole
@@ -400,7 +451,7 @@ common:
   createSiteNow: Create site
   createSuccess: Create success
   createTable: Create Table
-  createTime: Creation time
+  createTime: Date created
   createTips: Create a blank new website, and use well defined elements to develop
     your website.
   creator: Creator
@@ -438,6 +489,7 @@ common:
   date: Date
   dateRange: Date range
   dateTime: Date
+  day: Day
   days: days
   dbTypeTable: "{dbType} Tables"
   debug: Debug
@@ -449,6 +501,7 @@ common:
   defaultDataBaseTips: The default database type corresponding to k.DB.sql, in
     order of priority, is MySQL > SQL Server > SQLite
   defaultDataCenterModifiedTips: The default data center has been updated
+  defaultExpiredDuration: Default expired duration
   defaultLanguage: Default Language
   defaultList: Default list
   defaultValue: Default value
@@ -492,6 +545,11 @@ common:
   devModeList3: Debug code
   devPassword: Development Password
   difference: Differences
+  digitalItems: Digital items
+  digitalProduct: Digital product
+  digitalProductTip: Ensure digital shipping is configured for digital products.
+  digitalShipping: Digital
+  digitalShippings: Digital
   Direction: Direction
   disable: Disable
   disabled: Disabled
@@ -500,7 +558,9 @@ common:
   disablePaging: Disable paging
   disableResourceCDNTips: Resource CDN has been disabled
   disableSuccess: Disable successfully
-  discounts: Discounts
+  disableUnocss: Disable unocss
+  discount: Discount
+  discounts: Promotions
   diskSize: Disk Size
   display: Display
   displayInSearchResult: Display in search result
@@ -524,6 +584,7 @@ common:
   domains: Domains
   domainSearch: Domain search
   domainSearchTips: Only letters, digits - and . are allowed
+  done: Done
   download: Download
   downloadAll: Download all
   downloaded: Downloaded
@@ -544,9 +605,13 @@ common:
   dragAndDrop: Drag & Drop
   dragToSort: Drag to sort
   dropOff: Take off
+  duration: Duration
   dynamicOptions: Dynamic Options
   dynamicOptionsTips: You can write kscript to get the options and returns
     key-value array.<br/>For example:<br/>{example}
+  earn: Earn
+  earnPointOnLoginRules: Points Earned on Login
+  earnPointOnPlaceOrderRules: Points Earned on Order
   edit: Edit
   editAgain: Edit again
   editCdn: Edit CDN
@@ -555,6 +620,7 @@ common:
   editCondition: Edit condition
   editContact: Edit contact
   editContentType: Edit content type
+  editDigitalItems: Edit digital items
   editForwarding: Edit forward
   editForwardingAddress: Edit forward address
   editGeneralAddress: Edit general address
@@ -563,6 +629,7 @@ common:
   editJob: Edit a job
   editLabel: Edit label
   editLog: Edit log
+  editMembership: Edit Membership
   editMenu: Edit menu
   editMenuTips: Show or Hide left bar menus
   editMigrationJob: Edit Migration Job
@@ -612,6 +679,8 @@ common:
   enableImageAlt: Enable Image Alt Value
   enableMultilingual: Enable Multilingual
   enableMultiple: Enable multiple
+  enableResourceCache: Enable resource cache
+  enableResourceCacheTip: Script Style images are cached to memory after resource caching is enabled
   enableResourceCDNTips: Resource CDN has been enabled
   enableSSL: Enable the SSL
   enableStatus: Status
@@ -619,6 +688,7 @@ common:
   enableUpdateSimilarPage: Enable update similar page on inline editor
   enableWebhook: Enable webhook
   end: end
+  endAt: End at
   endDate: End date
   endTime: End Time
   enterCVCHere: Enter CVC here
@@ -635,6 +705,7 @@ common:
   errorList: Error List
   errorMessage: Error message
   errorPage: Error page
+  estimatedDaysOfArrival: Estimated days of arrival
   event: Event
   eventRequiredTips: Please select a event
   every: Every
@@ -651,6 +722,7 @@ common:
   expandAll: Expand All
   expandSelection: Expand the selection
   expirationDate: Expiration date
+  expired: Expired
   expireDate: Expire date
   expiresIn: Expires in
   export: Export
@@ -667,8 +739,13 @@ common:
   exportSelectedItems: Export selected items
   exportSite: Export Site
   exportType: Export type
+  express: Express
+  expressCompanyCodeTip: Express company code, e.g., sfexpress yuantong ...
+  expressShipping: Physical
+  expressShippings: Physical
   external: External
   externalResource: ExternalResource
+  fail: Fail
   failed: Failed
   failedAction: Failed Action
   familyName: Family name
@@ -729,6 +806,7 @@ common:
   FreeToHostYourself: Free Self-Host Option
   friday: Friday
   from: From
+  fromAddress: From address
   fromIp: Source IP
   frontEvent: Front Events
   frontEvents: Front Events
@@ -736,6 +814,7 @@ common:
   fullMode: Full Mode
   fullScreen: Full screen
   function: Function
+  gain: Gain
   general: General
   generate: Generate
   generateAuthorizationCode: Generate authorization code
@@ -827,6 +906,7 @@ common:
   inlineEdit: Inline edit
   inlineEditor: Inline editor
   inlineStyle: Inline style
+  inputAccountTips: Account required
   inputCachePathTips: Please enter cache path
   inputCodeToExecuteTips: Please enter code to execute
   inputConfirmPasswordTips: Please enter confirm password
@@ -839,6 +919,7 @@ common:
   inputIntegerValueTips: Enter an integer greater than or equal to 1
   inputIntervalTips: Please enter interval
   inputKeyword: Please enter keyword
+  inputNameTips: Name required
   inputPasswordAgainTips: Please enter password again
   inputPasswordTips: Password required
   inputPhoneTips: Phone number required
@@ -861,7 +942,8 @@ common:
   internalServerError: Internal server error
   interval: Interval
   inUse: In use
-  inventory: Inventory
+  inventory: Stock
+  isDigitalProduct: Digital Product?
   isManager: Is manager
   isSearchable: Searchable
   italic: Italic
@@ -875,6 +957,7 @@ common:
   jobs: Jobs
   jobStartRunning: Job start running
   joinDate: Join date
+  joinMembership: Join membership
   JsCssBrowserCache: JS CSS Browser Cache
   JsCssCompression: JS CSS Compression
   jumpToInbox: Jump to inbox
@@ -888,6 +971,7 @@ common:
   koobooAddress: Kooboo Address
   KoobooConfig: Config
   KoobooDevMode: Developer Mode
+  koobooEmailAddressTip: Locate your sender information in "Mail > Settings > Addresses."
   label: Label
   labels: Labels
   languagePath: Language Path
@@ -897,6 +981,7 @@ common:
   lastestSearch: Lastest Search
   lastModified: Last Modified
   lastName: Last name
+  lastPlaceOrderDate: Last order date
   lastSubmitted: Last submitted
   latestExecutionStatus: Latest Execution Status
   layout: Layout
@@ -908,7 +993,9 @@ common:
     file tabs. Do you want to leave?
   length: Length
   letterAndDigitsAllowedToStarting: Letter, digits and _ are allowed, starting with a letter
+  level: Level
   lighthouseOptimization: Lighthouse Optimization
+  limitDownloadCount: Download Limit
   limitedFunctionalityOnMobile: Limited functionality on mobile
   line: Line
   lineHeight: Line height
@@ -926,8 +1013,13 @@ common:
   log: Log
   logCleaningInProgress: Log cleaning in progress
   login: Login
+  loginReward: Login reward
+  loginUser: Login user
   logItem: Log Item
   logout: Logout
+  logs: Logs
+  longTerm: Long term
+  loyalty: Loyalty
   mail: Mail
   mailCount: Mail count
   mailFrom: FROM
@@ -935,20 +1027,25 @@ common:
   mailModule: Mail Module
   mailServer: Mail server
   mailUnSaveTips: The content has been modified. Do you want to save this email as a draft?
+  mainImage: Main image
   makeAlias: Make alias
   manage: Manage
   manageShoppingCart: Manage shopping cart
   manual: Manual
+  manualConsume: Manual consume
   manuallyFillOut: Manually input
+  manualTopUp: Manual top up
   markAs: Mark as
   markAsRead: Mark as read
   markAsUnread: Mark as unread
   market: Market
+  match: Match
   matchCase: Match Case
   matcher: Matcher
   max: Max
   maxAmountOfPagesToClone: Max amount of pages to clone
   maxChecked: Max checked
+  maxDownloadCount: Max download count
   maximumValue: Maximum value
   maxStringLength: Max string length
   maxUploadFileSizeOutOfLimit: The uploaded file '{file}' exceeded the upper limit {size}M
@@ -966,6 +1063,11 @@ common:
   meetingInvitation: Meeting invitation
   member: Member
   members: Members
+  membership: Membership
+  membershipDetail: Membership detail
+  membershipLevelTip: When a customer qualifies for a higher membership level, any
+    lower-level memberships will be ignored
+  memberships: Memberships
   menu: Menu
   menuItem: Menu item
   menuNameExistsTips: The menu name already exists
@@ -1065,6 +1167,7 @@ common:
   noMatchingWebsite: No matched website
   noMoreData: No more data
   none: None
+  nonMembership: Non-Membership
   noPermission: No permission
   noProductInCart: Some items have changed. Please select other items
   noRecipient: (No recipient)
@@ -1082,7 +1185,7 @@ common:
   notFound: Not Found
   noTheme: No theme
   notifications: Notifications
-  notPaid: Not paid
+  notPaid: Unpaid
   notRecentVisits: Not recent visits
   notSpam: No spam
   number: Number
@@ -1112,12 +1215,16 @@ common:
   optionSchema: Option schema
   or: Or
   orCreateYourDomainWildcardTips: Or create your domain wildcard CNAME record to current server domain.
+  orderCancel: Order cancel
+  orderConsume: Order consume
   orderDetail: Order detail
   orderId: Order ID
   orderInfo: Order info
+  orderReward: Order reward
   orders: Orders
   orderState: Order state
   orderSummary: Order Summary
+  orderWillEarn: Order will earn
   organization: Organization
   organizationAdmin: Organization Admin
   organizationChangingSuccess: Organization switched, please login again
@@ -1170,6 +1277,7 @@ common:
   phoneNumber: Phone number
   phoneNumberCannotBeTheSameAsTheCurrentBound: Phone number cannot be the same as the current number
   phoneNumberUpdated: Phone number updated
+  physicalProduct: Physical product
   pick: Pick
   pickName: Pick name
   pickTemplate: Pick a template
@@ -1191,6 +1299,7 @@ common:
   pleaseSelectPaymentMethod: Please select a payment method
   pleaseSetADefaultEmailAddress: Please set a default email address.
   pleaseUpgradeTip: Please upgrade to the latest version!
+  pointRedeemRules: Order Points Redemption Rules
   port: Port
   portRangeTips: Port range 0-65535
   portRequiredTips: Port required
@@ -1202,18 +1311,20 @@ common:
   preview: Preview
   previewUrl: Preview Url
   price: Price
+  priceOnPurchase: Price on purchase
   primaryKey: Primary Key
   priority: Priority
-  productCategories: Product categories
+  productCategories: Categories
   productCount: Product count
-  productManagement: Product management
+  productFieldsTip: Summary fields will display on the list page
+  productManagement: Products
   productNews: Updates
   ProductNotFound: Product not found
   productRemovedShelves: Some products has been removed
   products: Products
   productsSettlement: Product payment
   productTitle: Product title
-  productTypes: Product types
+  productTypes: Product Types
   ProductVariantNotEnable: This product has been removed
   productVariants: Product variants
   profile: Profile
@@ -1225,6 +1336,7 @@ common:
   pullConfirm: Are you sure you want to pull the changes from the remote site?
   pullLogs: Pull logs
   pullSuccess: Pull success
+  purchase: Purchase
   purchaseNow: Purchase
   push: Push
   pushAllConfirm: Are you sure you want to push all changes to remote site?
@@ -1255,6 +1367,8 @@ common:
   recordSiteLogVideo: Record site log video
   recordType: Recordtype
   recordValue: Record value
+  redeem: Redeem
+  redeemPoints: Deduction {amount}{currency} using {points} points
   redirectRoutes: Redirect routes
   redirectTo: Redirect to
   redo: Redo
@@ -1291,6 +1405,8 @@ common:
   removeSuccess: Remove successfully
   rename: Rename
   renameFolder: Rename folder
+  renew: Renew
+  renewSuccess: Renew success
   repeat: Repeat
   replace: Replace
   replaceWarning: The field values of the list will be replaced. Are you sure you
@@ -1316,6 +1432,9 @@ common:
   retrieve: Reset password
   retrieveByEmail: Reset by email
   retrieveByPhone: Reset by phone
+  rewardPointActiveDuration: Loyalty Point Validity Period
+  rewardPoints: loyalty points
+  rewardPointsOnActivated: Reward points on activated
   richEditor: Rich Text Editor
   richEditorFontFamilyConfiguration: Rich Text Editor Font Family Configuration
   richEditorFontSizeConfiguration: Rich Text Editor Font Size Configuration
@@ -1340,7 +1459,7 @@ common:
   run: Run
   sales: Sales
   salesInformation: Sales Information
-  saleStats: Sale stats
+  saleStats: Sales Reports
   same: Same
   saturday: Saturday
   save: Save
@@ -1357,6 +1476,7 @@ common:
   scanResult: Scan Result
   scanToPay: Scan To Pay
   schedule: Schedule
+  scheduledDeliveryTime: Scheduled delivery
   scheduleSubject: Schedule subject
   screen: Screen
   screenshot: Screenshot
@@ -1404,6 +1524,8 @@ common:
   semiAuto: Semi auto
   send: Send
   senderRequired: Sender required
+  sendingLogs: Sending logs
+  sendingServerSettings: Sending server settings
   sendState: Send state
   sendSuccess: Send success
   sendTo: Send to
@@ -1411,9 +1533,11 @@ common:
   sent: Sent
   Sent: Sent
   seoName: SEO Name
+  seoNameTip: Static URL that improves product visibility in search engines
   server: Server
   serverAddSuccess: Server add success!
   serverUrl: Server URL
+  serverUrlInvalid: Server url invalid
   serverUrlRequiredTips: Server address required
   setAsCover: Set as cover
   setAsDefault: Set as default
@@ -1433,6 +1557,8 @@ common:
     want to continue sharing?
   ShareSitesTips: Share your website as a template for public users
   shareSuccess: Share success
+  shipping: Shipping
+  shippings: Shipping
   shoppingCarUpdatedSuccessfully: Shopping cart updated successfully
   showAdvanceSettings: Show advance settings
   showAll: Show all
@@ -1518,10 +1644,12 @@ common:
   submitOrder: Submit order
   submitPayment: Submit payment
   submitter: Submitter
+  subscription: Subscription
   subtotal: Subtotal
   success: Success
   summaryField: Summary Field
   sunday: Sunday
+  supportCountries: Support countries
   supportFile: Support file
   supportFileTips: "Support file: .json"
   supportTypes: "Support types: HTML, Word, ZIP"
@@ -1567,6 +1695,7 @@ common:
   theEndTimeShouldBeLaterThanTheStartTime: The end time should be later than the start time
   theInvitationHasExpired: The invitation has expired
   themeColor: Theme color
+  then: Then
   theNumberOfClicksAwayFromHomePage: The number of clicks away from home page
   thePageNameAlreadyExists: The page already exists
   thePicturesAndIconsDisplayedOnYourWebsiteAreSuggestedToBePutInThe:
@@ -1600,6 +1729,7 @@ common:
   topPages: Top Pages
   topReference: Top Reference
   topReferer: Top Referers
+  topUp: Top up
   topupBandwidth: Top up bandwidth
   total: Total
   totalAmount: Total amount
@@ -1610,13 +1740,16 @@ common:
   totalQuantity: Total quantity
   totalSites: "{total} Sites"
   traceId: Trace ID
+  trackingNumberMatching: Tracking number matching
+  trackingNumberMatchingTip: Used to automatically match the shipping carrier on delivery
   transferPage: TransferPage
   transferTask: TransferTask
   trash: Trash
   Trash: Trash
   trigger: Trigger
   trimSubPath: Remove URL Sub Path
-  trimSubPathTip: Remove URL Sub Path, for example,"http://www.kooboo.com/project" - > "http://www.kooboo.com"
+  trimSubPathTip: Remove URL Sub Path, for example,"http://www.kooboo.com/project"
+    - > "http://www.kooboo.com"
   troubleshoot: Troubleshoot
   tuesday: Tuesday
   type: Type
@@ -1640,6 +1773,8 @@ common:
   updateDocument: Update document
   updateLabel: Update label
   updateSuccess: Update success
+  upgradeAccordingToTheRules: Automatic Upgrade by Rules
+  upgradeMethods: Upgrade methods
   upload: Upload
   uploadFiles: Upload files
   uploadScreenshot: Upload screenshot
@@ -1657,7 +1792,8 @@ common:
   usedBy: Used by
   useFor: Use for
   useHeadlessMode: Use Browser HTML
-  useHeadlessModeTip: Use Headless Browser to fetch HTML code after JavaScript Execution instead of HTTP Request
+  useHeadlessModeTip: Use Headless Browser to fetch HTML code after JavaScript
+    Execution instead of HTTP Request
   user: User
   userCount: User count
   userEditable: User Editable
@@ -1701,7 +1837,7 @@ common:
   waitSeconds: Wait {time} S
   warning: Warning
   webBrowser: Web Browser
-  webhookDescription: Webhook description
+  webhookDescription: Webhook validate signature description
   webSite: WebSite
   Wechat: Wechat
   wechat: Wechat
@@ -1712,6 +1848,7 @@ common:
   weeks: weeks
   weight: Weight
   weightUnit: Weight unit
+  when: When
   whiteListPath: White list path
   width: Width
   wildcard: Wildcard
@@ -1841,6 +1978,7 @@ tinymce:
   fontselect: Fonts
   fontsizeselect: Font sizes
   forecolor: Text color
+  formatselect: Format
   image: Insert/edit image
   indent: Increase indent
   italic: Italic

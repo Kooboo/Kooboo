@@ -3,6 +3,7 @@ using System.Text.Json;
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Permission;
+using Kooboo.Sites.Commerce;
 using Kooboo.Sites.Commerce.Condition;
 using Kooboo.Sites.Commerce.Entities;
 using Kooboo.Sites.Commerce.ViewModels;
@@ -15,17 +16,16 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         public override string ModelName => "discount";
 
         [Permission(Feature.COMMERCE_DISCOUNT, Action = Data.Permission.Action.VIEW)]
-        public object OrderLineSchemas()
+        public object OrderLineSchemas(ApiCall call)
         {
-            return OrderLineMatcher.Instance.Options;
+            return OrderLineMatcher.Instance.GetOptionDetails(call.Context);
         }
 
         [Permission(Feature.COMMERCE_DISCOUNT, Action = Data.Permission.Action.VIEW)]
-        public object OrderSchemas()
+        public object OrderSchemas(ApiCall call)
         {
-            return OrderMatcher.Instance.Options;
+            return OrderMatcher.Instance.GetOptionDetails(call.Context);
         }
-
 
         [Permission(Feature.COMMERCE_DISCOUNT, Action = Data.Permission.Action.EDIT)]
         public void Create(ApiCall apiCall)
@@ -103,7 +103,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         public string[] Codes(ApiCall apiCall)
         {
             var commerce = GetSiteCommerce(apiCall);
-            var codes = commerce.Discount.Entities.Where(d => d.Method == Discount.DiscountMethod.DiscountCode).Select(s => s.Code).Distinct().ToArray();
+            var codes = commerce.Discount.Entities.Where(d => d.Method == DiscountMethod.DiscountCode).Select(s => s.Code).Distinct().ToArray();
             return codes;
         }
     }

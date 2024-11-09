@@ -6,10 +6,14 @@ import { getProductTypes, type ProductType } from "@/api/commerce/type";
 import { getSettings } from "@/api/commerce/settings";
 import type { Settings } from "@/api/commerce/settings";
 import { useSiteStore } from "./site";
+import type { MembershipListItem } from "@/api/commerce/loyalty";
+import { getMemberships } from "@/api/commerce/loyalty";
 
 export const useCommerceStore = defineStore("commerceStore", () => {
   const categories = ref<CategoryListItem[]>([]);
   const types = ref<ProductType[]>([]);
+  const memberships = ref<MembershipListItem[]>();
+
   const siteStore = useSiteStore();
   const settings = ref<Settings>({
     currencyCode: "",
@@ -24,6 +28,17 @@ export const useCommerceStore = defineStore("commerceStore", () => {
     enableEmailNotification: false,
     webhooks: [],
     mailServerType: "kooboo",
+    enableWebhook: false,
+    earnPoint: {
+      activeDuration: 1,
+      activeDurationUnit: "Year",
+      orderEarnRules: [],
+      loginEarnRules: [],
+    },
+    redeemPoint: {
+      exchangeRate: 10,
+      orderRedeemRules: [],
+    },
   });
 
   const loadSettings = async () => {
@@ -40,6 +55,12 @@ export const useCommerceStore = defineStore("commerceStore", () => {
     types.value = await getProductTypes();
   };
 
+  const loadMemberships = async (force?: boolean) => {
+    if (!memberships.value || force) {
+      memberships.value = await getMemberships();
+    }
+  };
+
   watch(
     () => siteStore.site?.id,
     () => {
@@ -49,7 +70,9 @@ export const useCommerceStore = defineStore("commerceStore", () => {
 
   return {
     loadCategories,
+    loadMemberships,
     categories,
+    memberships,
     loadTypes,
     types,
     loadSettings,

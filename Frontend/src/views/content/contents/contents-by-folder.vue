@@ -40,9 +40,9 @@
         >
           <el-option
             v-for="o in f.options"
-            :key="o.key"
-            :label="o.value"
-            :value="o.key"
+            :key="o.id"
+            :label="getText(o, f)"
+            :value="o.id"
           />
         </el-select>
         <SearchInput
@@ -402,5 +402,37 @@ async function onSort(sortedData: any[], e: SortableEvent) {
   };
   await moveContent(req);
   await fetchList();
+}
+
+function getText(content: any, category: any) {
+  let key = content.summaryField ?? Object.keys(content.textValues)[0];
+  key =
+    Object.keys(content.textValues).find(
+      (f) => f.toLowerCase() == key.toLowerCase()
+    ) ?? "";
+  let value = content.textValues[key];
+
+  const column = category.columns.find(
+    (f: any) => f.name?.toLowerCase() == key?.toLowerCase()
+  );
+  if (column?.selectionOptions) {
+    try {
+      const options = JSON.parse(column.selectionOptions);
+      let values = [value];
+      if (column.controlType == "CheckBox") {
+        values = JSON.parse(value);
+      }
+      const displayValues = [];
+      for (const i of values) {
+        const option = options.find((f: any) => f.value == i);
+        if (option) displayValues.push(option.key);
+        else displayValues.push(i);
+      }
+      value = displayValues.join(",");
+    } catch {
+      //
+    }
+  }
+  return value;
 }
 </script>

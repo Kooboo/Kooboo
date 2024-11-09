@@ -54,6 +54,7 @@ const options = ref<ToolbarOptionItem[]>([
     name: "styles",
     items: [
       "fontselect",
+      "formatselect",
       "fontsizeselect",
       "bold",
       "italic",

@@ -26,6 +26,7 @@ import { getQueryString } from "@/utils/url";
 const { t } = useI18n();
 const siteStore = useSiteStore();
 const reloadUrl = location.href;
+const maskPosition = ref<{ left: number; width: number }>();
 defineProps<{ content: string }>();
 
 const focusElement = (e: MouseEvent) => {
@@ -38,23 +39,32 @@ const focusElement = (e: MouseEvent) => {
     x: e.x,
     y: e.y,
   };
+  updateMaskSize();
 };
 
-const maskState = ref<boolean>(false);
+const disableMask = ref<boolean>(false);
 const errorMask = ref<boolean>(false);
 let cancellationToken: any;
 
 function hiddenMask() {
+  updateMaskSize();
   clearTimeout(cancellationToken);
-  maskState.value = true;
+  disableMask.value = true;
   cancellationToken = setTimeout(() => {
-    maskState.value = false;
-  }, 20);
+    disableMask.value = false;
+  }, 100);
+}
+
+function updateMaskSize() {
+  const width = doc.value?.documentElement?.getBoundingClientRect()?.width;
+  const left = frame.value?.element?.getBoundingClientRect()?.left;
+  maskPosition.value = { left, width };
 }
 
 function changeHoverElement(e: PointerEvent) {
   const el = getPointElement(e);
   if (el) hoverElement.value = el;
+  updateMaskSize();
 }
 
 function getPointElement(e: { x: number; y: number }) {
@@ -122,18 +132,23 @@ const frameWidth = computed(() => {
   >
     <KFrame
       v-if="content && siteStore?.site?.baseUrl"
-      :ref="(r:any) => (frame = r)"
+      :ref="(r: any) => (frame = r)"
       :content="content"
       :agent-events="agentEvents"
     />
     <div
       class="fixed inset-0"
       :style="{
-        pointerEvents: maskState || editing ? 'none' : 'auto',
+        display: disableMask || editing ? 'none' : 'block',
         cursor: hoverElement?.style.cursor,
+        width: maskPosition?.width + 'px',
+        left: maskPosition?.left + 'px',
+        top: 0,
+        bottom: 0,
       }"
       @pointermove="changeHoverElement"
-      @wheel="hiddenMask"
+      @wheel.stop.prevent="hiddenMask"
+      @scroll.stop.prevent="hiddenMask"
       @click="focusElement"
     />
     <div v-if="errorMask" class="fixed inset-0 bg-gray z-100">

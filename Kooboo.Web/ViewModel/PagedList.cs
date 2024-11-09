@@ -37,7 +37,7 @@ namespace Kooboo.Web.ViewModel
         }
 
         /// <summary>
-        /// ÊÇ·ñÊÇÎÞÏÞ·ÖÒ³
+        /// ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½Ò³
         /// </summary>
         public bool Infinite { get; set; }
     }
@@ -50,10 +50,11 @@ namespace Kooboo.Web.ViewModel
     public class BaseColumnViewModel
     {
         public string Name { get; set; }
-
+        public bool IsSummaryField { get; set; }
         public string DisplayName { get; set; }
         public string ControlType { get; set; }
         public bool MultipleValue { get; set; }
+        public string SelectionOptions { get; set; }
     }
 
     public class InfiniteListViewModel<T>

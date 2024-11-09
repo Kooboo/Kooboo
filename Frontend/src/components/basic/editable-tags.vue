@@ -12,6 +12,7 @@ const props = defineProps<{
   addLabel?: string;
   options?: string[];
   optionDeletable?: boolean;
+  size?: string;
   labelFormatter?: (key: string) => string;
 }>();
 
@@ -90,11 +91,16 @@ function onUpdateValue(index: number, value: string) {
       :options="availableOptions"
       :option-deletable="optionDeletable"
       :label-formatter="labelFormatter"
+      :size="size"
       @update:model-value="onUpdateValue(index, $event)"
       @update:editing="onEditingChange($event, index)"
       @delete="onDelete(index)"
       @delete-option="$emit('delete-option', $event)"
-    />
+    >
+      <template #option="{ option }">
+        <slot name="option" :option="option" />
+      </template>
+    </EditableTag>
     <template v-if="!readonly">
       <EditableTag
         v-if="editingItem == -1"
@@ -104,14 +110,20 @@ function onUpdateValue(index: number, value: string) {
         :options="availableOptions"
         :option-deletable="optionDeletable"
         :label-formatter="labelFormatter"
+        :size="size"
         @update:model-value="onAdd"
         @update:editing="onEditingChange($event, -1)"
         @delete-option="$emit('delete-option', $event)"
-      />
+      >
+        <template #option="{ option }">
+          <slot name="option" :option="option" />
+        </template>
+      </EditableTag>
       <ElTag
         v-if="editingItem == undefined"
         type="success"
         class="cursor-pointer"
+        :size="size"
         @click="editingItem = -1"
       >
         <el-icon class="iconfont icon-a-addto" />

@@ -5,6 +5,7 @@ using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data;
 using Kooboo.Data.Permission;
+using Kooboo.Sites.Commerce.Entities;
 using Kooboo.Sites.Commerce.Services;
 using Kooboo.Sites.Commerce.ViewModels;
 
@@ -52,17 +53,30 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         public void Pay(ApiCall apiCall)
         {
             var commerce = GetSiteCommerce(apiCall);
-
             var body = apiCall.Context.Request.Body;
             var model = JsonSerializer.Deserialize<OrderPay>(body, Defaults.JsonSerializerOptions);
             new OrderService(commerce, apiCall.Context).Pay(model.OrderId, model.Method);
         }
 
         [Permission(Feature.COMMERCE_ORDERS, Action = Data.Permission.Action.EDIT)]
-        public void Delivery(string id, string shippingCarrier, string trackingNumber, ApiCall apiCall)
+        public void Delivery(ApiCall apiCall)
         {
             var commerce = GetSiteCommerce(apiCall);
-            new OrderService(commerce, apiCall.Context).Delivery(id, shippingCarrier,trackingNumber);
+            var body = apiCall.Context.Request.Body;
+            var model = JsonSerializer.Deserialize<OrderDelivery>(body, Defaults.JsonSerializerOptions);
+            var service = new OrderService(commerce, apiCall.Context);
+            var order = service.GetDetail(model.Id);
+            if (order == null) return;
+            foreach (var item in model.Items)
+            {
+                service.UpdateShippingInfo(order.Id, item.Id, new DeliveryOptions
+                {
+                    ShippingCarrier = item.ShippingCarrier,
+                    TrackingNumber = item.TrackingNumber,
+                    DigitalItems = item.DigitalItems?.Select(s => s.ToDigitalOrderItem()).ToArray()
+                });
+            }
+            service.Delivery(order.Id, model.Items.Select(s => s.Id).ToArray());
         }
 
         [Permission(Feature.COMMERCE_ORDERS, Action = Data.Permission.Action.DELETE)]

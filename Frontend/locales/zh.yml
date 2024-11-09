@@ -11,7 +11,7 @@ code:
 codelog:
   level: 日志级别
 commerce:
-  accordingBy: 根据
+  accordingBy: 折扣计算
   active: 上架
   addVariant: 添加规格
   allConditions: 所有条件
@@ -19,17 +19,21 @@ commerce:
   anyConditions: 任一条件
   associatedContent: 关联内容
   automatedProductTip: 现有的和将来添加的产品都会根据条件自动添加到分类
+  automaticallyUpgradeMembershipTip: 当客户有资格获得较高的会员资格级别时，任何较低级别的会员资格都将被忽略
   automaticDiscount: 自动折扣
+  available: 有货
+  availablePaymentMethods: 启用的支付方式
+  blankProduct: 空白商品
   canceled: 已取消
   cancelOrder: 取消订单
   cartNote: 购物车备注
+  categoryFields: 商品分类字段在编辑和列表页面的设置
   checkout: 结算
   commerceSettings: 电商设置
   createProduct: 创建商品
   dailyStats: 日销售报表
   delivered: 已发货
   delivery: 发货
-  deliveryMethod: 送货方式
   deliveryStatus: 发货状态
   discount: 优惠折扣
   discountCode: 优惠券
@@ -37,45 +41,71 @@ commerce:
   discountMethod: 优惠方式
   discountOff: 优惠折扣
   discountType: 优惠类型
+  earnPointsConfig: 积分获取配置
+  email: 邮件
   emptyProduct: 空白商品
   freeShipping: 免运费
+  getByOrderAmountPercents: 按订单金额百分比
+  getFixedPoints: 每个订单获得固定积分
+  inactive: 下架
   inStock: 有货
+  insuranceAmount: 保险费
   isExclusion: 互斥
   manualProductTip: 手动为这个分类添加产品
+  maxRedeemByOrderAmountPercents: 最高可抵扣订单金额百分比
+  maxRedeemPoints: 最高可抵扣积分
   method: 方式
   nameFields: "{name}字段"
   newAddress: 新地址
   noActive: 下架
   note: 备注
+  notification: 通知
   notificationSettings: 通知设置
+  optionName: 选项名称
+  optionValues: 选项值
   order: 订单
   orderAmountOff: 订单总价优惠
   orderCount: 订单总数
-  orderLineMustMatch: 订单商品必须匹配
-  orderMustMatch: 订单必须匹配
+  orderMaxRedeemTip: 可最高用{points}积分抵扣订单金额
   orderNote: 订单备注
   orderNumber: 订单号
+  orderPercentMaxRedeemTip: 可最高用积分抵扣总金额的{percent}%
+  orderProduct: 订单商品
   orderStats: 订单详情报表
   orderStatus: 订单状态
   orderTotalAmount: 订单总金额
   outOfStock: 缺货
-  outOfStockProducts: 缺货商品
   paidAt: 支付时间
+  paidOrder: 支付订单
+  partialDelivered: 部分发货
+  partialDelivery: 部分发货
+  partialShipped: 部分发货
   payment: 支付
   payments: 支付方式
+  paymentsTip: 为k.commerce.settings.payments配置
+  pointExchangeAmount: 积分抵扣金额
+  points: 积分
+  pointsDeduction: 积分抵扣金额
+  pointsDetail: 积分详情
   product: 商品
   productAmountOff: 产品价格优惠
-  productMustMatch: 商品必须匹配
+  productFields: 产品字段在编辑和列表页面的设置
+  productName: 产品名称
   productStats: 产品销售报表
+  redeemPointsConfig: 积分抵扣配置
   selectCategory: 选择类别
   selectCustomer: 选择顾客
+  selectMembership: 选择会员
+  selectShipping: 选择发货方式
   selectVariant: 选择规格
+  setAsMain: 设置为主图
   shipped: 已发货
   shippingAddress: 收货地址
   shippingAmount: 配送费
   shippingAt: 发货时间
   shippingCarrier: 承运商
   shippingCost: 配送费用
+  shippingStatus: 发货状态
   subtotalAmount: 商品金额
   totalAmount: 总金额
   totalInventory: 总库存
@@ -84,6 +114,7 @@ commerce:
   unshipped: 未发货
   variantOptions: 规格选项
   variants: 规格
+  variantSamples: "例如: 颜色, 尺寸..."
   waitDeliver: 待发货
   waitPay: 待支付
 common:
@@ -95,15 +126,20 @@ common:
   account: 账号
   accountBalance: 账号余额
   action: 操作
-  active: 生效
+  active: 有效
   activeDateRange: 生效时间范围
   activeTime: 生效时间
   add: 添加
+  addAddress: 添加地址
   addADomainNameToYourAccount: 给您的账号添加域名
+  addAnotherValue: 添加其他值
   addBcc: 添加密送
   addCc: 添加抄送
   addChinese: 添加中文
+  addCondition: 添加条件
   addContact: 添加联系人
+  addCostRule: 添加价格规则
+  addCountry: 添加国家
   addCustomer: 添加顾客
   addDepartment: 添加部门
   addExisting: 添加现有账号
@@ -131,6 +167,7 @@ common:
   addSuccess: 添加成功
   addToIndexAutomaticallyWhenDocumentChanged: 文档内容变化时更新索引
   addUser: 添加用户
+  addValue: 添加值
   admin: 管理员
   administration: 管理
   advanced: 高级
@@ -171,6 +208,7 @@ common:
   attachmentName: 附件名
   attachments: 附件
   attributes: 属性
+  attributeSamples: "例如: 材料, 风格..."
   atv: 客单价
   authentication: 身份认证
   author: 作者
@@ -180,6 +218,7 @@ common:
   authorizeName: 授权名称
   authorizeNameExistsTips: 认证已存在
   auto: 自动
+  autoDelivery: 自动发货
   autoDetectCulture: 自动检测语言
   automateCovertImageToWebp: 自动转换图片为webp
   automated: 自动
@@ -187,6 +226,7 @@ common:
   automationTaskStartToExecute: 自动化任务开始执行...
   autoRefresh: 自动刷新
   autoUpdate: 自动更新
+  autoUpgradeMembershipNonCondition: 请添加会员自动升级规则条件
   availableUser: 可用用户
   back: 返回
   backColor: 背景色
@@ -200,6 +240,7 @@ common:
   bandwidthUsageInRecentSevenDays: 近7天流量使用情况
   bankCardPayment: 银行卡
   barcode: 条码
+  baseCost: 基础价格
   baseUrl: Base URL
   basic: 基础
   basicInfo: 基本信息
@@ -227,6 +268,7 @@ common:
   cancelReason: 取消原因
   canNotOpenFile: 无法打开此文件
   canNotOpenFileTip: 此文件可能是二进制文件，或者暂时无法被系统识别
+  canRedeem: 可抵扣
   canRegister: 可注册
   cantRegister: 已注册
   carbonCopy: 抄送
@@ -235,15 +277,18 @@ common:
   carts: 购物车
   categories: 类别
   category: 分类
+  categoryFieldsTip: 摘要字段将显示在列表页面上
   categoryFolder: 类别数据
   categoryFolders: 类别数据
   categoryList: 分类列表
+  categoryName: 分类名称
   challenge: 授权挑战
   change: 更换
   changeCover: 更换封面
   changeCurrency: 更换货币
   changeDataCenter: 更改数据中心
   changeEmail: 更换邮箱
+  changeMembershipTip: 确认将成员的会员变更为{membership}吗?
   changePassword: 修改密码
   changePhone: 更换手机号
   changeScreenshot: 更换截图
@@ -290,6 +335,7 @@ common:
   cmsEdit: 后台编辑
   cmsFile: Cms文件
   code: 代码
+  codeEncryptedTip: 此代码已加密,无法编辑
   codeFormatIsIncorrect: 代码格式不正确
   codeLog: 代码日志
   codeLogs: 代码日志
@@ -312,8 +358,10 @@ common:
   commerceSettings: 电商设置
   commonValueLengthTips: "{value}必须包含{min}-{max}个字符"
   company: 公司
+  companyCode: 公司代码
   compare: 对比
   compareWithCurrent: 与当前版本对比
+  compellation: 姓名
   completed: 已完成
   compose: 写邮件
   compressedPackageFileFormat: 压缩包文件格式「zip」
@@ -330,6 +378,8 @@ common:
   console: 控制台
   constraintFixOnSave: 保存时约束修复
   constraintFixOnSaveTips: 保存 HTML 时，自动修复某些语法错误
+  consume: 消费
+  consumingRewardPoints: 使用积分
   contact: 联系人
   contactInformation: 联系方式
   contacts: 联系人
@@ -361,6 +411,7 @@ common:
   copyView: 复制组件
   CORS: CORS
   corsTips: 通过在服务器的响应中包含特定的 HTTP 头：Access-Control-Allow-Origin 来实现 Web 浏览器跨域 HTTP 请求
+  costRule: 价格规则
   count: 个数
   countEmailSelected: 已选中 {count} 封邮件
   countEmailsSelected: 已选中 {count} 封邮件
@@ -377,6 +428,7 @@ common:
   createItemNow: 创建菜单
   createItemNowToCreateAItem: 您还没有菜单项点，点击 “创建菜单” 去创建吧。
   createMember: 创建成员
+  createMembership: 创建会员
   createOrder: 创建订单
   createOrderSuccess: 订单创建成功
   createOwnOrg: 创建自组织
@@ -421,7 +473,9 @@ common:
   date: 日期
   dateRange: 时间范围
   dateTime: 时间
+  day: 天
   days: 天
+  daysOfArrival: 天送达
   dbTypeTable: "{dbType} 表"
   debug: 调试
   declinedTheInvitation: 已拒绝邀请
@@ -431,6 +485,7 @@ common:
   defaultDatabase: 默认数据库
   defaultDataBaseTips: k.DB.sql 对应的默认数据库类型，优先级为 MySQL>SQL Server>SQLite
   defaultDataCenterModifiedTips: 默认数据中心已修改
+  defaultExpiredDuration: 默认过期时间
   defaultLanguage: 默认语言
   defaultList: 默认列表
   defaultValue: 默认值
@@ -440,6 +495,7 @@ common:
   deleteEmbeddedFolderTips: 删除后将无法恢复，确认要删除吗？
   deleteHasRelationProductTypeTips: 删除商品类型会同时删除关联的商品，是否确认删除？
   deleteItemsTips: 是否确认删除这些项目？
+  deleteMembershipTip: 删除会员后，顾客的会员权益将会失效，是否确认删除？
   deleteSuccess: 删除成功
   deleteTheseCountMessagesTips: 确认要删除这 {count} 封邮件吗？
   deleteTheseCountRecordsTips: 确认要删除这 {count} 条记录吗？
@@ -470,6 +526,11 @@ common:
   devModeList3: 调试代码
   devPassword: 开发预览密码
   difference: 差别
+  digitalItems: 数字产品
+  digitalProduct: 数字产品
+  digitalProductTip: 请确保为数字产品配置了数字配送
+  digitalShipping: 数字化配送
+  digitalShippings: 数字化配送
   Direction: 进出
   disable: 禁用
   disabled: 禁用
@@ -478,6 +539,8 @@ common:
   disablePaging: 不分页
   disableResourceCDNTips: 资源CDN已禁用
   disableSuccess: 已禁用
+  disableUnocss: 禁用unocss
+  discount: 折扣
   discounts: 优惠折扣
   diskSize: 占用磁盘大小
   display: 显示
@@ -501,6 +564,7 @@ common:
   domains: 域名
   domainSearch: 域名搜索
   domainSearchTips: 只支持字母、数字和.-
+  done: 完成
   download: 下载
   downloadAll: 下载全部
   downloaded: 已下载
@@ -517,8 +581,12 @@ common:
   dragAndDrop: 拖拽
   dragToSort: 拖动进行排序
   dropOff: 下架
+  duration: 时长
   dynamicOptions: 动态选项
   dynamicOptionsTips: 你可以写kscript来获取选项并且结果返回key-value数组。<br/>例如：<br/>{example}
+  earn: 获得
+  earnPointOnLoginRules: 登录时获得积分
+  earnPointOnPlaceOrderRules: 下单时获得积分
   edit: 编辑
   editAgain: 再次编辑
   editCdn: 编辑CDN
@@ -527,6 +595,7 @@ common:
   editCondition: 编辑条件
   editContact: 编辑联系人
   editContentType: 编辑数据类型
+  editDigitalItems: 编辑数字产品
   editForwarding: 编辑转发
   editForwardingAddress: 编辑转发地址
   editGeneralAddress: 编辑地址
@@ -535,6 +604,7 @@ common:
   editJob: 编辑任务
   editLabel: 编辑标签
   editLog: 修改日志
+  editMembership: 编辑会员
   editMenu: 编辑菜单
   editMenuTips: 将不常用的菜单隐藏
   editMigrationJob: 编辑迁移任务
@@ -580,6 +650,8 @@ common:
   enableImageAlt: 使用图片Alt值
   enableMultilingual: 启用多语言
   enableMultiple: 启用多个
+  enableResourceCache: 启用资源缓存
+  enableResourceCacheTip: 开启资源缓存后Script, Style, Image都将缓存到内存
   enableResourceCDNTips: 资源CDN已启用
   enableSSL: 启用 SSL
   enableStatus: 启用状态
@@ -587,6 +659,7 @@ common:
   enableUpdateSimilarPage: 启用在线编辑器更新相似页面功能
   enableWebhook: 启用Webhook
   end: 结束
+  endAt: 结束时间
   endDate: 结束时间
   endTime: 结束时间
   enterCVCHere: 在此输入信用卡验证码
@@ -603,6 +676,8 @@ common:
   errorList: 错误列表
   errorMessage: 错误信息
   errorPage: 错误页面
+  estimate: 预估
+  estimatedDaysOfArrival: 预计需要几天送达
   event: 事件
   eventRequiredTips: 请选择一个事件
   every: 每
@@ -619,6 +694,7 @@ common:
   expandAll: 展开全部
   expandSelection: 扩大选区
   expirationDate: 过期时间
+  expired: 过期
   expireDate: 过期时间
   expiresIn: 过期时间
   export: 导出
@@ -635,8 +711,13 @@ common:
   exportSelectedItems: 导出选中项目
   exportSite: 导出站点
   exportType: 导出类型
+  express: 快递
+  expressCompanyCodeTip: "快递公司代码,例如: sfexpress yuantong ..."
+  expressShipping: 快递配送
+  expressShippings: 快递配送
   external: 外部
   externalResource: 外部资源
+  fail: 失败
   failed: 失败
   failedAction: 失败操作
   familyName: 姓氏
@@ -693,6 +774,7 @@ common:
   FreeToHostYourself: 免费下载使用
   friday: 周五
   from: 来源
+  fromAddress: 发送地址
   fromIp: 来源IP
   frontEvent: 前台事件
   frontEvents: 前台事件
@@ -700,6 +782,7 @@ common:
   fullMode: 完整模式
   fullScreen: 全屏
   function: 职能
+  gain: 获得
   general: 常规
   generate: 生成
   generateAuthorizationCode: 生成授权码
@@ -788,6 +871,7 @@ common:
   inlineEdit: 在线编辑
   inlineEditor: 在线编辑
   inlineStyle: 行内样式
+  inputAccountTips: 账号必填
   inputCachePathTips: 请输入缓存路径
   inputCodeToExecuteTips: 请输入要执行的代码
   inputConfirmPasswordTips: 请输入确认密码
@@ -800,6 +884,7 @@ common:
   inputIntegerValueTips: 请输入大于等于1的整数
   inputIntervalTips: 请输入时间间隔
   inputKeyword: 请输入关键字
+  inputNameTips: 名称必填
   inputPasswordAgainTips: 请再次输入密码
   inputPasswordTips: 密码必填
   inputPhoneTips: 手机号码必填
@@ -823,6 +908,7 @@ common:
   interval: 间隔时间
   inUse: 使用中
   inventory: 库存
+  isDigitalProduct: 数字产品
   isManager: 是否为管理人员
   isSearchable: 可搜索
   italic: 斜体
@@ -836,6 +922,7 @@ common:
   jobs: 任务
   jobStartRunning: 任务开始运行
   joinDate: 加入时间
+  joinMembership: 加入会员
   JsCssBrowserCache: JS/CSS 浏览器缓存
   JsCssCompression: JS/CSS 压缩
   jumpToInbox: 进入收件箱
@@ -849,6 +936,7 @@ common:
   koobooAddress: Kooboo邮箱
   KoobooConfig: 配置
   KoobooDevMode: 开发者模式
+  koobooEmailAddressTip: 请到'邮箱-设置-邮箱地址'页面添加发件人邮箱地址
   label: 标签
   labels: 标签
   languagePath: 语言路径
@@ -857,6 +945,7 @@ common:
   lastestSearch: 最近搜索
   lastModified: 修改时间
   lastName: 姓
+  lastPlaceOrderDate: 最近下单时间
   lastSubmitted: 最新提交
   latestExecutionStatus: 最新执行状态
   layout: 布局
@@ -867,7 +956,9 @@ common:
   leaveDevModeTip: 离开当前网站的开发者模式将关闭所有文件选项卡。确认离开吗？
   length: 长度
   letterAndDigitsAllowedToStarting: 以字母开头，允许字母数字_
+  level: 等级
   lighthouseOptimization: Lighthouse 优化
+  limitDownloadCount: 限制下载次数
   limitedFunctionalityOnMobile: 系统在手机中使用功能受限
   line: 行
   lineHeight: 行高
@@ -885,8 +976,13 @@ common:
   log: 日志
   logCleaningInProgress: 日志清理中
   login: 登录
+  loginReward: 登录奖励
+  loginUser: 登录用户
   logItem: 日志项
   logout: 退出
+  logs: 日志
+  longTerm: 永久
+  loyalty: 会员
   mail: 邮箱
   mailCount: 邮箱数
   mailFrom: 发送域
@@ -894,20 +990,25 @@ common:
   mailModule: 邮件扩展模块
   mailServer: 邮件服务器
   mailUnSaveTips: 内容已被修改，是否要将此邮件存为草稿?
+  mainImage: 主图
   makeAlias: 创建别名
   manage: 管理
   manageShoppingCart: 管理购物车
   manual: 手动
+  manualConsume: 人工消费
   manuallyFillOut: 手工输入
+  manualTopUp: 人工充值
   markAs: 标记为
   markAsRead: 标记为已读
   markAsUnread: 标记为未读
   market: 市场
+  match: 匹配
   matchCase: 匹配大小写
   matcher: 匹配器
   max: 最大
   maxAmountOfPagesToClone: 要克隆的最多页面数
   maxChecked: 最多选中数量
+  maxDownloadCount: 最大下载次数
   maximumValue: 最大值
   maxStringLength: 最大长度
   maxUploadFileSizeOutOfLimit: 上传文件'{file}'操作最大限制{size}M
@@ -922,6 +1023,10 @@ common:
   meetingInvitation: 会议邀请
   member: 成员
   members: 成员
+  membership: 会员
+  membershipDetail: 会员详情
+  membershipLevelTip: 当客户有资格获得较高的会员资格级别时，任何较低级别的会员资格都将被忽略
+  memberships: 会员
   menu: 菜单
   menuItem: 菜单项
   menuNameExistsTips: 菜单名已存在
@@ -1018,6 +1123,7 @@ common:
   noMatchingWebsite: 无匹配的站点
   noMoreData: 没有更多数据了
   none: 无
+  nonMembership: 非会员
   noPermission: 无权限
   noProductInCart: 商品发生变更，请重新选择商品
   noRecipient: (无收件人)
@@ -1065,12 +1171,16 @@ common:
   optionSchema: 配置结构
   or: 或者
   orCreateYourDomainWildcardTips: 或者创建您的域名通配符 CNAME 记录到当前服务器域名
+  orderCancel: 订单取消
+  orderConsume: 订单消费
   orderDetail: 订单详情
   orderId: 订单号
   orderInfo: 订单信息
+  orderReward: 订单奖励
   orders: 订单
   orderState: 订单状态
   orderSummary: 订单摘要
+  orderWillEarn: 订单将获得
   organization: 组织
   organizationAdmin: 管理组织
   organizationChangingSuccess: 组织已切换，请重新登录
@@ -1123,6 +1233,7 @@ common:
   phoneNumber: 手机号码
   phoneNumberCannotBeTheSameAsTheCurrentBound: 手机号不能与当前绑定的手机号相同
   phoneNumberUpdated: 手机号已更新
+  physicalProduct: 实体产品
   pick: 选择
   pickName: 选择名字
   pickTemplate: 选择模板
@@ -1142,6 +1253,7 @@ common:
   pleaseSelectPaymentMethod: 请选择支付方式
   pleaseSetADefaultEmailAddress: 请先设置默认邮箱,
   pleaseUpgradeTip: 请立即更新!
+  pointRedeemRules: 积分抵扣规则
   port: 端口
   portRangeTips: 端口范围为 0 - 65535
   portRequiredTips: 端口必填
@@ -1152,11 +1264,13 @@ common:
   postalDistrict: 邮政区号
   preview: 预览
   previewUrl: 预览地址
-  price: 价格
+  price: 单价
+  priceOnPurchase: 购买单价
   primaryKey: 主键
   priority: 优先级
   productCategories: 商品分类
   productCount: 商品数量
+  productFieldsTip: 摘要字段将显示在列表页面上
   productManagement: 商品管理
   productNews: 产品动态
   ProductNotFound: 商品未找到
@@ -1176,6 +1290,7 @@ common:
   pullConfirm: 确定要从远程站点拉取更改吗？
   pullLogs: 拉取日志
   pullSuccess: 拉取成功
+  purchase: 购买
   purchaseNow: 立即购买
   push: 推送
   pushAllConfirm: 确定将所有更改推送到远程站点吗？
@@ -1206,6 +1321,8 @@ common:
   recordSiteLogVideo: 录制站点日志视频
   recordType: 记录类型
   recordValue: 记录值
+  redeem: 兑换
+  redeemPoints: 使用 {points} 积分抵扣 {amount}{currency}
   redirectRoutes: 路由重定向
   redirectTo: 重定向到
   redo: 重做
@@ -1241,6 +1358,9 @@ common:
   removeSuccess: 移除成功
   rename: 重命名
   renameFolder: 文件夹重命名
+  renew: 续费
+  renewMembershipTip: 确定为成员续费会员吗?
+  renewSuccess: 续费成功
   repeat: 循环
   replace: 替换
   replaceWarning: 当前列表的字段值将会被替换，您确定要导入吗？
@@ -1265,6 +1385,9 @@ common:
   retrieve: 找回密码
   retrieveByEmail: 通过邮箱找回
   retrieveByPhone: 通过手机找回
+  rewardPointActiveDuration: 积分有效期
+  rewardPoints: 积分
+  rewardPointsOnActivated: 开通会员时奖励积分数
   richEditor: 富文本编辑器
   richEditorFontFamilyConfiguration: 富文本编辑器字体配置
   richEditorFontSizeConfiguration: 富文本编辑器字体大小配置
@@ -1305,6 +1428,7 @@ common:
   scanResult: 扫描结果
   scanToPay: 扫码支付
   schedule: 日程
+  scheduledDeliveryTime: 预约配送
   scheduleSubject: 日程主题
   screen: 筛选
   screenshot: 截图
@@ -1351,6 +1475,8 @@ common:
   semiAuto: 半自动
   send: 发送
   senderRequired: 发件人必填
+  sendingLogs: 发送日志
+  sendingServerSettings: 发送服务器设置
   sendState: 投递状态
   sendSuccess: 发送成功
   sendTo: 发送到
@@ -1358,9 +1484,11 @@ common:
   sent: 已发送
   Sent: 已发送
   seoName: SEO名称
+  seoNameTip: 静态网址用于提高在搜索引擎中的权重
   server: 服务器
   serverAddSuccess: 服务器添加成功！
   serverUrl: 服务器链接
+  serverUrlInvalid: 服务器地址无效
   serverUrlRequiredTips: 服务器地址必填
   setAsCover: 设为封面
   setAsDefault: 设为默认
@@ -1378,6 +1506,8 @@ common:
   shareSiteConnectionStringWarning: 此站点包含数据库连接串，分享可能导致数据库信息泄露，确认要继续分享吗？
   ShareSitesTips: 分享您的网站作为模板供其他用户使用
   shareSuccess: 分享成功
+  shipping: 配送
+  shippings: 配送
   shoppingCarUpdatedSuccessfully: 购物车更新成功
   showAdvanceSettings: 显示高级设置
   showAll: 显示全部
@@ -1460,10 +1590,12 @@ common:
   submitOrder: 提交订单
   submitPayment: 提交付款
   submitter: 提交方式
+  subscription: 订阅
   subtotal: 合计
   success: 成功
   summaryField: 摘要字段
   sunday: 周日
+  supportCountries: 支持的国家
   supportFile: 支持文件
   supportFileTips: "支持文件: .json"
   supportTypes: 支持类型：HTML、Word、ZIP
@@ -1508,6 +1640,7 @@ common:
   theEndTimeShouldBeLaterThanTheStartTime: 结束时间应大于开始时间
   theInvitationHasExpired: 该邀请已失效
   themeColor: 主题色
+  then: 时
   theNumberOfClicksAwayFromHomePage: 距离主页的点击次数
   thePageNameAlreadyExists: 页面已存在
   thePicturesAndIconsDisplayedOnYourWebsiteAreSuggestedToBePutInThe: 您的网站所展示的图片、图标等建议放至
@@ -1538,6 +1671,7 @@ common:
   topPages: 页面访问排行
   topReference: 来源排行
   topReferer: 来源访问排行
+  topUp: 充值
   topupBandwidth: 充流量
   total: 总计
   totalAmount: 总金额
@@ -1548,6 +1682,8 @@ common:
   totalQuantity: 总数量
   totalSites: "{total} 个站点"
   traceId: 跟踪 ID
+  trackingNumberMatching: 运单号匹配规则
+  trackingNumberMatchingTip: 用于在发货的时候自动匹配承运商
   transferPage: 转移页
   transferTask: 转移任务
   trash: 已删除
@@ -1577,6 +1713,8 @@ common:
   updateDocument: 更新文档
   updateLabel: 更新标签
   updateSuccess: 更新成功
+  upgradeAccordingToTheRules: 根据规则进行升级
+  upgradeMethods: 开通方式
   upload: 上传
   uploadFiles: 上传文件
   uploadScreenshot: 上传截图
@@ -1637,7 +1775,7 @@ common:
   waitSeconds: 等待{time}秒
   warning: 警告
   webBrowser: 浏览器
-  webhookDescription: Webhook 使用说明
+  webhookDescription: Webhook 验证签名说明
   webSite: 站点
   Wechat: 微信
   wechat: 微信
@@ -1648,6 +1786,7 @@ common:
   weeks: 周
   weight: 重量
   weightUnit: 总量单位
+  when: 当
   whiteListPath: 白名单列表
   width: 宽度
   wildcard: 通配符
@@ -1774,6 +1913,7 @@ tinymce:
   fontselect: 字体
   fontsizeselect: 字号
   forecolor: 文字颜色
+  formatselect: 格式化
   image: 插入/编辑图片
   indent: 增加缩进
   italic: 斜体

@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { CustomerEdit } from "@/api/commerce/customer";
 import EditableTags from "@/components/basic/editable-tags.vue";
 import { useTag } from "../useTag";
+import AddressesForm from "./addresses-form.vue";
 
 const { t } = useI18n();
 const show = ref(true);
@@ -37,7 +38,7 @@ async function onSave() {
 <template>
   <el-dialog
     :model-value="show"
-    width="600px"
+    width="800px"
     :title="t('common.edit')"
     :close-on-click-modal="false"
     @closed="emit('update:modelValue', false)"
@@ -65,6 +66,9 @@ async function onSave() {
           :options="tags"
           @delete-option="removeTag"
         />
+      </ElFormItem>
+      <ElFormItem :label="t('common.addresses')">
+        <AddressesForm :list="model.addresses" />
       </ElFormItem>
     </ElForm>
     <template #footer>

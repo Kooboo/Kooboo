@@ -6,6 +6,7 @@ const $t = i18n.global.t;
 export interface Term {
   name: string;
   type: "Selection" | "Custom";
+  valueType: string;
   options: string[];
 }
 
@@ -16,10 +17,12 @@ export interface ProductTypeCreate {
 }
 
 export interface ProductType {
-  id: string;
+  id?: string;
   name: string;
   attributes: Term[];
   options: Term[];
+  isDigital: boolean;
+  maxDownloadCount?: number;
 }
 
 export const getProductTypes = () =>

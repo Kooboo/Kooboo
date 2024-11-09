@@ -65,11 +65,11 @@ public class SearchConsole : IApi
         foreach (var item in domains)
         {
             var domainName = $"sc-domain:{item.DomainName}";
-            var exist = remoteList.FirstOrDefault(f => f.SiteUrl == domainName);
-            var permissionLevel = exist.PermissionLevel ?? "siteUnverifiedUser";
-            scSites.Add(new ScSite(domainName, permissionLevel, exist != default));
+            var exist = remoteList.FirstOrDefault(f => f.SiteUrl.Contains(item.DomainName));
+            var permissionLevel = exist?.PermissionLevel ?? "siteUnverifiedUser";
+            scSites.Add(new ScSite(exist?.SiteUrl ?? domainName, permissionLevel, exist != default));
         }
-
+        
         return scSites;
     }
 

@@ -44,10 +44,19 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             return new
             {
                 DiscountAllocations = calculateResult.DiscountAllocations.ToArray(),
+                ShippingAllocations = calculateResult.ShippingAllocations.ToArray(),
                 calculateResult.ShippingAmount,
                 calculateResult.SubtotalAmount,
+                calculateResult.OriginalAmount,
+                calculateResult.OriginalSubtotalAmount,
+                calculateResult.InsuranceAmount,
                 calculateResult.TotalAmount,
                 calculateResult.TotalQuantity,
+                calculateResult.RedeemPoints,
+                calculateResult.CanRedeemPoints,
+                calculateResult.PointsDeductionAmount,
+                calculateResult.CanPointsDeductionAmount,
+                calculateResult.EarnPoints,
                 Lines = calculateResult.Lines.Select(s =>
                 {
                     return new
@@ -57,13 +66,20 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                         Image = string.IsNullOrWhiteSpace(s.Variant.Image) ? s.Product.FeaturedImage : s.Variant.Image,
                         Options = s.Variant.SelectedOptions,
                         OriginalPrice = s.Variant.Price,
+                        s.OriginalAmount,
                         s.Price,
                         ProductId = s.Product.Id,
                         s.Quantity,
+                        s.TotalQuantity,
                         s.Variant.Sku,
                         s.Product.Title,
                         VariantId = s.Variant.Id,
-                        s.Variant.Inventory
+                        s.Variant.Inventory,
+                        s.GroupName,
+                        s.IsMain,
+                        s.Note,
+                        s.ExtensionButton,
+                        s.Product.IsDigital
                     };
                 }).ToArray()
             };
@@ -77,6 +93,8 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var model = JsonSerializer.Deserialize<CartEdit>(body, Defaults.JsonSerializerOptions);
             var entity = commerce.Cart.Get(p => p.Id == model.Id);
             model.UpdateCart(entity);
+            var customer = commerce.Customer.Get(c => c.Id == model.CustomerId);
+            if (customer == default) throw new Exception("Customer not found");
             commerce.Cart.AddOrUpdate(entity);
         }
 

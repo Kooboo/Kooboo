@@ -85,6 +85,7 @@ export interface Site {
   enableVisitorCountryRestriction?: boolean;
   visitorCountryRestrictions?: Record<string, string>;
   visitorCountryRestrictionPage?: string;
+  enableResourceCache?: boolean;
 }
 
 export interface ModuleMenu {

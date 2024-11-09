@@ -99,6 +99,7 @@ namespace Kooboo.Web.ViewModel
         public PageType Type { get; set; }
 
         public bool EnableCache { get; set; }
+        public bool DisableUnocss { get; set; }
 
         public bool CacheByVersion { get; set; }
 
@@ -144,6 +145,7 @@ namespace Kooboo.Web.ViewModel
 
         public string CustomHeader { get; set; }
         public bool EnableCache { get; set; }
+        public bool DisableUnocss { get; set; }
 
         public bool CacheByVersion { get; set; }
 

@@ -13,6 +13,7 @@ using Kooboo.Lib.Helper;
 using Kooboo.Sites.Contents;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Helper;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using Kooboo.Sites.ViewModel;
@@ -190,13 +191,15 @@ namespace Kooboo.Web.Api.Implementation
                     DisplayName = it.DisplayName,
                     ControlType = it.ControlType,
                     MultipleValue = it.MultipleValue,
+                    IsSummaryField = it.IsSummaryField,
+                    SelectionOptions = GetSelectionOptions(it, call.Context, null)
                 });
             PagedTextContentListViewModel model = new()
             {
                 Columns = columns,
                 PageNr = pagenr,
                 PageSize = pagesize,
-                Categories = GetCategoriesOptions(siteDb, folder),
+                Categories = GetCategoriesOptions(call, folder),
             };
             if (folder == null)
             {
@@ -279,29 +282,48 @@ namespace Kooboo.Web.Api.Implementation
             return textContents;
         }
 
-        private List<CategoryOptionViewModel> GetCategoriesOptions(SiteDb sitedb, ContentFolder folder)
+        private List<CategoryOptionViewModel> GetCategoriesOptions(ApiCall call, ContentFolder folder)
         {
             var folderIds = folder.Category.Select(it => it.FolderId).ToList();
+            var sitedb = call.WebSite.SiteDb();
             var options = sitedb
                 .TextContent
                 .Query
                 .WhereIn(it => it.FolderId, folderIds)
                 .SelectAll();
+            var categories = new List<CategoryOptionViewModel>();
 
-            var categories = folder.Category.Select(it => new CategoryOptionViewModel
+            foreach (var it in folder.Category)
             {
-                Alias = it.Alias,
-                Display = it.Display,
-                MultipleChoice = it.Multiple,
-                Id = it.FolderId,
-                Options = options
-                .Where(o => o.FolderId == it.FolderId)
-                .Select(c => new KeyValuePair<Guid, string>(c.Id, ObjectService.GetObjectInfo(sitedb, c).DisplayName))
-                .OrderBy(it => it.Value)
-                .ToList()
-            });
+                var contentType = sitedb.ContentTypes.GetByFolder(it.FolderId);
+                var columns = contentType.Properties.Select(it => new BaseColumnViewModel
+                {
+                    Name = it.Name,
+                    DisplayName = it.DisplayName,
+                    ControlType = it.ControlType,
+                    MultipleValue = it.MultipleValue,
+                    IsSummaryField = it.IsSummaryField,
+                    SelectionOptions = GetSelectionOptions(it, call.Context, null)
+                }).ToArray();
 
-            return categories.ToList();
+
+                var item = new CategoryOptionViewModel
+                {
+                    Alias = it.Alias,
+                    Display = it.Display,
+                    MultipleChoice = it.Multiple,
+                    Id = it.FolderId,
+                    Columns = columns,
+                    Options = options
+                        .Where(o => o.FolderId == it.FolderId)
+                        .Select(o => sitedb.TextContent.GetView(o, call.WebSite.DefaultCulture))
+                        .ToList()
+                };
+
+                categories.Add(item);
+            }
+
+            return categories;
         }
 
         private List<TextContentViewModel> ToTextContentViewModel(SiteDb siteDb, Guid folderId, List<TextContent> list, string language)
@@ -337,6 +359,7 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in folder.Category)
             {
                 var categoryfolder = sitedb.ContentFolders.Get(item.FolderId);
+                var contentType = sitedb.ContentTypes.Get(categoryfolder.ContentTypeId);
 
                 var ids = sitedb.ContentCategories.Query
                     .Where(o => o.ContentId == textContentId && o.CategoryFolder == item.FolderId)
@@ -364,9 +387,20 @@ namespace Kooboo.Web.Api.Implementation
                     .Where(it => it != null)
                     .ToList();
 
+                var columns = contentType.Properties.Select(it => new BaseColumnViewModel
+                {
+                    Name = it.Name,
+                    DisplayName = it.DisplayName,
+                    ControlType = it.ControlType,
+                    MultipleValue = it.MultipleValue,
+                    IsSummaryField = it.IsSummaryField,
+                    SelectionOptions = GetSelectionOptions(it, call.Context, null)
+                }).ToArray();
+
                 CategoryContentViewModel model = new CategoryContentViewModel
                 {
                     CategoryFolder = categoryfolder,
+                    Columns = columns,
                     MultipleChoice = item.Multiple,
                     Contents = contents.Select(o => sitedb.TextContent.GetView(o, language)).ToList(),
                     Alias = item.Alias,
@@ -379,6 +413,100 @@ namespace Kooboo.Web.Api.Implementation
             return categories;
         }
 
+        public List<ViewModel.EmbeddedContentViewModel> GetEmbedContents(ApiCall call, Guid folderId, Guid textContentId, string language = null)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var embedded = new List<ViewModel.EmbeddedContentViewModel>();
+            var folder = sitedb.ContentFolders.Get(folderId);
+            if (folder == null || (folder.Embedded == null || folder.Embedded.Count() == 0))
+            {
+                return embedded;
+            }
+            TextContent content = sitedb.TextContent.Get(textContentId);
+            if (content == null)
+            {
+                content = new TextContent();
+            }
+
+            foreach (var item in folder.Embedded)
+            {
+                var embeddedFolder = sitedb.ContentFolders.Get(item.FolderId);
+                var contentType = sitedb.ContentTypes.Get(embeddedFolder.ContentTypeId);
+
+                List<Guid> ids = new List<Guid>();
+                if (content.Embedded.ContainsKey(item.FolderId))
+                {
+                    var currentids = content.Embedded[item.FolderId];
+                    if (currentids != null && currentids.Count > 0)
+                    {
+                        ids = currentids;
+                    }
+                }
+
+                var model = new ViewModel.EmbeddedContentViewModel();
+                model.EmbeddedFolder = embeddedFolder;
+                model.Columns = contentType.Properties
+                .Select(it => new BaseColumnViewModel
+                {
+                    Name = it.Name,
+                    DisplayName = it.DisplayName,
+                    ControlType = it.ControlType,
+                    MultipleValue = it.MultipleValue,
+                    IsSummaryField = it.IsSummaryField,
+                    SelectionOptions = GetSelectionOptions(it, call.Context, null)
+                }).ToArray();
+
+                // var contents = sitedb.TextContent.Query.
+                //           Where(it => it.FolderId == item.FolderId)
+                //          .WhereIn("Id", ids)
+                //        .SelectAll();
+
+                var contentsMap = sitedb.TextContent.Store.Filter
+                    .WhereEqual(nameof(TextContent.FolderId), item.FolderId)
+                    .WhereIn("Id", ids)
+                    .SelectAll()
+                    .ToDictionary(it => it.Id, it => it);
+
+                var contents = ids
+                    .Select((id, index) =>
+                    {
+                        if (!contentsMap.TryGetValue(id, out var content) || content == null)
+                        {
+                            return null;
+                        }
+                        content.Order = index;
+                        return content;
+                    })
+                    .Where(it => it != null)
+                    .ToList();
+
+                // also display use the parent ids. 
+                if (textContentId != default(Guid))
+                {
+                    // var subcontents = sitedb.TextContent.Query.Where(o => o.FolderId == item.FolderId && o.ParentId == textContentId).SelectAll();
+                    var subcontents = sitedb.TextContent.Store.Filter.WhereEqual(nameof(TextContent.FolderId), item.FolderId).WhereEqual(nameof(TextContent.ParentId), textContentId).SelectAll();
+
+
+                    foreach (var subitem in subcontents)
+                    {
+                        if (contents.Find(o => o.Id == subitem.Id) == null)
+                        {
+                            contents.Add(subitem);
+                        }
+                    }
+                }
+                model.Contents = contents.Select(o => ContentHelper.ToView(o, language, sitedb.ContentTypes.GetTitlePropertyByFolder(item.FolderId))).ToList();
+
+                ContentHelper.CleanNonSummaryFields(sitedb, model, item.FolderId);
+
+                model.Alias = item.Alias;
+                model.Display = item.Display;
+
+                embedded.Add(model);
+            }
+
+            return embedded;
+        }
 
         private IEnumerable<ContentFieldViewModel> GetProperties(ApiCall call, ContentType contenttype)
         {
@@ -589,8 +717,8 @@ namespace Kooboo.Web.Api.Implementation
                                call.WebSite.DefaultCulture
                            );
 
-                model.Embedded = Sites.Helper.ContentHelper.GetEmbedContents(
-                    call.WebSite.SiteDb(),
+                model.Embedded = GetEmbedContents(
+                    call,
                     FolderId,
                     call.ObjectId,
                     call.WebSite.DefaultCulture
@@ -729,14 +857,14 @@ namespace Kooboo.Web.Api.Implementation
                     DisplayName = it.DisplayName,
                     ControlType = it.ControlType,
                     MultipleValue = it.MultipleValue,
-
+                    IsSummaryField = it.IsSummaryField,
                 });
             PagedTextContentListViewModel model = new()
             {
                 Columns = columns,
                 PageNr = pagenr,
                 PageSize = pagesize,
-                Categories = GetCategoriesOptions(siteDb, folder),
+                Categories = GetCategoriesOptions(call, folder),
             };
 
             var sortField = call.GetValue("sortField") ?? string.Empty;
@@ -888,6 +1016,7 @@ namespace Kooboo.Web.Api.Implementation
                     DisplayName = it.DisplayName,
                     ControlType = it.ControlType,
                     MultipleValue = it.MultipleValue,
+                    IsSummaryField = it.IsSummaryField,
                 }).ToArray();
 
             var list = new List<TextContentViewModel>();

@@ -2,11 +2,11 @@
 import { useRouter } from "vue-router";
 import Breadcrumb from "@/components/basic/breadcrumb.vue";
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouteSiteId } from "@/hooks/use-site-id";
 import type { OrderDetail } from "@/api/commerce/order";
 import { getOrderDetail } from "@/api/commerce/order";
-import { getQueryString } from "@/utils/url";
+import { combineUrl, getQueryString, openInNewTab } from "@/utils/url";
 import { useTime } from "@/hooks/use-date";
 import { buildOptionsDisplay } from "../products-management/product-variant";
 import PropertyItem from "../components/property-item.vue";
@@ -16,6 +16,8 @@ import PaymentDialog from "./payment-dialog.vue";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
 import { useProductFields } from "../useFields";
 import CurrencyAmount from "../components/currency-amount.vue";
+import { useSiteStore } from "@/store/site";
+import DeliveryStatus from "./delivery-status.vue";
 
 const { getColumns } = useProductFields();
 const id = getQueryString("id");
@@ -24,6 +26,8 @@ const router = useRouter();
 const showCancelDialog = ref(false);
 const showDeliveryDialog = ref(false);
 const showPaymentDialog = ref(false);
+const siteStore = useSiteStore();
+
 const columns = getColumns([
   {
     name: "featuredImage",
@@ -37,15 +41,15 @@ const columns = getColumns([
     name: "title",
   },
   {
-    name: "quantity",
+    name: "price",
+    displayName: t("common.price"),
+  },
+  {
+    name: "totalQuantity",
     displayName: t("common.quantity"),
     attrs: {
       align: "center",
     },
-  },
-  {
-    name: "price",
-    displayName: t("common.price"),
   },
   {
     name: "totalAmount",
@@ -53,7 +57,7 @@ const columns = getColumns([
   },
   {
     name: "discounts",
-    displayName: t("common.discounts"),
+    displayName: t("common.discount"),
     attrs: {
       align: "center",
     },
@@ -80,6 +84,50 @@ function goBack() {
     })
   );
 }
+
+const data = computed(() => {
+  const result: any[] = [];
+  if (!model.value?.lines) return result;
+  for (const line of model.value.lines) {
+    if (!line.groupName) {
+      result.push({ ...line, rowKey: line.variantId + line.groupName });
+    } else if (line.isMain) {
+      const children = model.value.lines
+        .filter((f) => f.groupName == line.groupName && !f.isMain)
+        .map((m) => ({
+          ...m,
+          rowKey: m.variantId + m.groupName,
+          isChild: true,
+        }));
+
+      result.push({
+        ...line,
+        rowKey: line.variantId + line.groupName,
+        children,
+      });
+    } else {
+      const mainLine = model.value.lines.find(
+        (f) => f.groupName == line.groupName && f.isMain
+      );
+      if (!mainLine) {
+        result.push({ ...line, rowKey: line.variantId + line.groupName });
+      }
+    }
+  }
+
+  return result;
+});
+
+function tableRowClassName({ row }: any) {
+  if (!row.isChild) return;
+  return "text-999 text-s !bg-gray/20";
+}
+
+function extensionButtonClick(data: any) {
+  if (!data.url) return;
+  let url = combineUrl(siteStore.site.baseUrl, data.url);
+  openInNewTab(url);
+}
 </script>
 
 <template>
@@ -94,7 +142,7 @@ function goBack() {
     ]"
   />
   <div v-if="model" class="px-24 pt-0 pb-84px space-y-12">
-    <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
+    <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal relative">
       <el-descriptions :title="t('common.basicInfo')">
         <el-descriptions-item :label="t('commerce.orderNumber')"
           >{{ model.id }}
@@ -119,12 +167,17 @@ function goBack() {
           model.customer.phone
         }}</el-descriptions-item>
         <el-descriptions-item label="IP">{{ model.ip }}</el-descriptions-item>
-        <el-descriptions-item :label="t('common.country')"
-          ><Country :name-or-code="model.country"
-        /></el-descriptions-item>
-        <el-descriptions-item :label="t('common.source')">{{
+        <el-descriptions-item :label="t('common.country')">
+          <Country :name-or-code="model.country" />
+        </el-descriptions-item>
+        <el-descriptions-item v-if="model.source" :label="t('common.source')">{{
           model.source
         }}</el-descriptions-item>
+        <el-descriptions-item
+          v-if="model.scheduledDeliveryTime"
+          :label="t('common.scheduledDeliveryTime')"
+          >{{ useTime(model.scheduledDeliveryTime) }}</el-descriptions-item
+        >
         <el-descriptions-item :label="t('common.clientInfo')">
           <div
             v-if="model.clientInfo"
@@ -134,8 +187,8 @@ function goBack() {
               v-if="model.clientInfo?.application?.isWebBrowser"
               round
               size="small"
-              >{{ t("common.webBrowser") }}</ElTag
-            >
+              >{{ t("common.webBrowser") }}
+            </ElTag>
             <div class="ellipsis" :title="getClientInfo(model)">
               {{ getClientInfo(model) }}
             </div>
@@ -148,14 +201,25 @@ function goBack() {
           }}</ElTag>
           <ElTag v-else round type="info">{{ t("common.notPaid") }}</ElTag>
         </el-descriptions-item>
-        <el-descriptions-item :label="t('commerce.deliveryMethod')">
-          <span v-if="model.delivered">
-            {{ model.shippingCarrier }} {{ model.trackingNumber }}
-          </span>
+        <el-descriptions-item :label="t('commerce.shippingStatus')">
+          <ElTag v-if="model.partialDelivered" round type="warning">{{
+            t("commerce.partialShipped")
+          }}</ElTag>
+          <ElTag v-else-if="model.delivered" round type="success">{{
+            t("commerce.shipped")
+          }}</ElTag>
+
           <ElTag v-else round type="info">{{ t("commerce.unshipped") }}</ElTag>
         </el-descriptions-item>
       </el-descriptions>
-      <ElTable :data="model.lines" class="el-table--gray">
+      <ElTable
+        :data="data"
+        row-key="rowKey"
+        class="el-table--gray"
+        default-expand-all
+        :row-class-name="tableRowClassName"
+      >
+        <ElTableColumn v-if="data.some((s) => s.children?.length)" width="25" />
         <DynamicColumns :columns="columns">
           <template #title="{ row }">
             <div>
@@ -174,6 +238,7 @@ function goBack() {
             <CurrencyAmount
               :currency="model.currency"
               :amount="row.totalAmount"
+              :original="row.originalAmount"
             />
           </template>
           <template #discounts="{ row }">
@@ -186,22 +251,105 @@ function goBack() {
             </div>
           </template>
         </DynamicColumns>
+        <ElTableColumn :label="t('commerce.deliveryStatus')">
+          <template #default="{ row }">
+            <DeliveryStatus :line="row" />
+          </template>
+        </ElTableColumn>
+        <ElTableColumn align="right">
+          <template #default="{ row }">
+            <ElButton
+              v-if="row.extensionButton"
+              type="primary"
+              size="small"
+              @click="extensionButtonClick(row.extensionButton)"
+            >
+              {{ row.extensionButton.text }}
+            </ElButton>
+          </template>
+        </ElTableColumn>
       </ElTable>
 
       <div class="text-s mt-12">
-        <PropertyItem
-          v-if="model.discountAllocations.length"
-          :name="t('common.discounts')"
-        >
-          <div class="flex gap-4">
-            <ElTag
-              v-for="(item, index) of model.discountAllocations"
-              :key="index"
-              >{{ item.title }}</ElTag
+        <div class="relative flex">
+          <PropertyItem
+            v-if="model.discountAllocations.length"
+            :name="t('common.discount')"
+          >
+            <div class="flex gap-4">
+              <ElTag
+                v-for="(item, index) of model.discountAllocations"
+                :key="index"
+                >{{ item.title }}</ElTag
+              >
+            </div>
+          </PropertyItem>
+          <div class="absolute right-0 space-y-4">
+            <div
+              v-if="model.earnPoints > 0"
+              class="flex items-center gap-4 text-s justify-end"
             >
+              <span>{{ t("common.earn") }}</span>
+              <span>{{ model.earnPoints }}</span>
+              <span>{{ t("commerce.points") }}</span>
+            </div>
+          </div>
+        </div>
+
+        <PropertyItem :name="t('commerce.subtotalAmount')">
+          <CurrencyAmount
+            :amount="model?.subtotalAmount"
+            :currency="model.currency"
+            :original="model.originalSubtotalAmount"
+          />
+        </PropertyItem>
+        <PropertyItem
+          v-if="model?.insuranceAmount"
+          :name="t('commerce.insuranceAmount')"
+        >
+          <CurrencyAmount
+            :amount="model?.insuranceAmount"
+            :currency="model.currency"
+          />
+        </PropertyItem>
+        <PropertyItem
+          v-if="model?.pointsDeductionAmount"
+          :name="t('commerce.points')"
+        >
+          <CurrencyAmount :amount="-model?.pointsDeductionAmount" />
+          ({{ model.redeemPoints }} {{ t("commerce.points") }})
+        </PropertyItem>
+        <PropertyItem :name="t('commerce.shippingAmount')">
+          <div class="flex items-center gap-8">
+            <CurrencyAmount
+              :amount="model?.shippingAmount"
+              :currency="model.currency"
+            />
+            <div
+              v-if="(model?.shippingAllocations?.length ?? 0) > 1"
+              class="flex items-center gap-4"
+            >
+              (
+              <div
+                v-for="(item, index) of model!.shippingAllocations"
+                :key="index"
+                class="flex items-center gap-4"
+              >
+                <ElTooltip placement="top" :content="item.title">
+                  <CurrencyAmount
+                    :amount="item.cost"
+                    :currency="model.currency"
+                  />
+                </ElTooltip>
+                <span v-if="index != model!.shippingAllocations.length - 1"
+                  >+</span
+                >
+              </div>
+              )
+            </div>
           </div>
         </PropertyItem>
-        <PropertyItem :name="t('common.totalAmount')">
+        <PropertyItem :name="t('common.total')">
           <CurrencyAmount
             :currency="model.currency"
             :amount="model.totalAmount"
@@ -211,7 +359,10 @@ function goBack() {
       </div>
     </div>
 
-    <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
+    <div
+      v-if="model.shippingAddress"
+      class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal"
+    >
       <el-descriptions :title="t('commerce.shippingAddress')">
         <el-descriptions-item :label="t('common.country')">{{
           model.shippingAddress?.country
@@ -254,6 +405,7 @@ function goBack() {
       v-if="showDeliveryDialog"
       :id="model.id"
       v-model="showDeliveryDialog"
+      :lines="model.lines"
       @reload="load"
     />
 
@@ -276,6 +428,14 @@ function goBack() {
     @cancel="goBack"
   >
     <template #extra-buttons>
+      <ElButton
+        v-if="model.extensionButton"
+        type="primary"
+        round
+        @click="extensionButtonClick(model.extensionButton)"
+      >
+        {{ model.extensionButton.text }}
+      </ElButton>
       <el-button
         v-if="!model?.paid && !model?.canceled"
         round
@@ -285,7 +445,11 @@ function goBack() {
         {{ t("common.pay") }}
       </el-button>
       <el-button
-        v-if="model?.paid && !model?.canceled && !model?.delivered"
+        v-if="
+          model?.paid &&
+          !model?.canceled &&
+          (!model?.delivered || model.partialDelivered)
+        "
         round
         type="primary"
         @click="showDeliveryDialog = true"

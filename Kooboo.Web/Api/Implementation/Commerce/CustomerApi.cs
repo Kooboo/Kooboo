@@ -1,13 +1,11 @@
-﻿using System.Linq;
-using System.Linq.Expressions;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Permission;
-using Kooboo.Sites.Commerce.DataStorage;
 using Kooboo.Sites.Commerce.Services;
 using Kooboo.Sites.Commerce.ViewModels;
 using Kooboo.Sites.Commerce.Events;
+using Kooboo.Sites.Commerce;
 
 namespace Kooboo.Web.Api.Implementation.Commerce
 {
@@ -22,18 +20,8 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         {
             var model = JsonSerializer.Deserialize<CustomerQuery>(apiCall.Context.Request.Body, Defaults.JsonSerializerOptions);
             var commerce = GetSiteCommerce(apiCall);
-            var skipCount = (model.PageIndex - 1) * model.PageSize;
-            Expression<Func<CustomerModel, bool>> where = null;
-
-            if (!string.IsNullOrWhiteSpace(model.Keyword))
-            {
-                model.Keyword = model.Keyword.ToLower().Trim();
-                where = c => c.Email.ToLower().Contains(model.Keyword) || c.Phone == model.Keyword || c.FirstName.ToLower().Contains(model.Keyword) || c.LastName.ToLower().Contains(model.Keyword);
-            }
-
-            var list = commerce.Customer.Query(where == default ? q => q.Skip(skipCount).OrderByDescending(s => s.UpdatedAt).Take(model.PageSize) : q => q.Where(where).OrderByDescending(s => s.UpdatedAt).Skip(skipCount).Take(model.PageSize));
-            var count = commerce.Customer.Count(where);
-            return new PagingResult(list.Select(s => new CustomerListItem(s)).ToArray(), count, model);
+            var service = new CustomerService(commerce);
+            return service.List(model);
         }
 
         [Permission(Feature.COMMERCE_CUSTOMER, Action = Data.Permission.Action.EDIT)]
@@ -42,15 +30,20 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var commerce = GetSiteCommerce(apiCall);
             var body = apiCall.Context.Request.Body;
             var model = JsonSerializer.Deserialize<CustomerCreate>(body, Defaults.JsonSerializerOptions);
-            var customer = commerce.Customer.Get(c => c.Email == model.Email || c.Phone == model.Phone);
-            if (customer != default) throw new Exception("Customer exist");
+            var customer = commerce.Customer.Get(c => c.Email == model.Email);
+            if (customer != default) throw new Exception($"Email {model.Email} Customer exist");
+            if (!string.IsNullOrWhiteSpace(model.Phone))
+            {
+                customer = commerce.Customer.Get(c => c.Phone == model.Phone);
+                if (customer != default) throw new Exception($"Phone {model.Phone} Customer exist");
+            }
             commerce.Customer.AddOrUpdate(model.ToCustomer());
             EventDispatcher.Raise(new CustomerCreateEvent(apiCall.Context)
             {
                 Customer = customer
             });
             var tagService = new TagService(commerce);
-            tagService.Append(Sites.Commerce.Entities.Tag.TagType.Customer, model.Tags);
+            tagService.Append(TagType.Customer, model.Tags);
         }
 
         [Permission(Feature.COMMERCE_CUSTOMER, Action = Data.Permission.Action.VIEW)]
@@ -65,13 +58,17 @@ namespace Kooboo.Web.Api.Implementation.Commerce
 
         [Permission(Feature.COMMERCE_CUSTOMER, Action = Data.Permission.Action.VIEW)]
         [Permission(Feature.COMMERCE_CART, Action = Data.Permission.Action.VIEW)]
-        public CustomerListItem Get(string id, ApiCall apiCall)
+        public CustomerDetail Get(string id, ApiCall apiCall)
         {
             var commerce = GetSiteCommerce(apiCall);
             var body = apiCall.Context.Request.Body;
             var customer = commerce.Customer.Get(c => c.Id == id);
             if (customer == default) throw new Exception("Customer not found");
-            return new CustomerListItem(customer);
+            var membershipService = new MembershipService(commerce);
+            var status = membershipService.Match(customer);
+            var rewardPointService = new RewardPointService(commerce);
+            var points = rewardPointService.Calculate(customer.Id);
+            return new CustomerDetail(customer, status, points);
         }
 
         [Permission(Feature.COMMERCE_CUSTOMER, Action = Data.Permission.Action.EDIT)]
@@ -80,14 +77,23 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var commerce = GetSiteCommerce(apiCall);
             var body = apiCall.Context.Request.Body;
             var model = JsonSerializer.Deserialize<CustomerEdit>(body, Defaults.JsonSerializerOptions);
-            var exist = commerce.Customer.Get(c => c.Id != model.Id && (c.Email == model.Email || c.Phone == model.Phone));
-            if (exist != default) throw new Exception("Customer exist");
             var customer = commerce.Customer.Get(c => c.Id == model.Id);
             if (customer == default) throw new Exception("Customer not found");
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                var exist = commerce.Customer.Count(c => c.Email == model.Email && c.Id != customer.Id) > 0;
+                if (exist) throw new Exception($"Customer email {model.Email} exist");
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Phone))
+            {
+                var exist = commerce.Customer.Count(c => c.Phone == model.Phone && c.Id != customer.Id) > 0;
+                if (exist) throw new Exception($"Customer phone {model.Phone} exist");
+            }
             model.UpdateCustomer(customer);
             commerce.Customer.AddOrUpdate(customer);
             var tagService = new TagService(commerce);
-            tagService.Append(Sites.Commerce.Entities.Tag.TagType.Customer, model.Tags);
+            tagService.Append(TagType.Customer, model.Tags);
         }
 
         [Permission(Feature.COMMERCE_CUSTOMER, Action = Data.Permission.Action.EDIT)]

@@ -10,6 +10,7 @@ import { useCommerceStore } from "@/store/commerce";
 import CreateDialog from "./create-dialog.vue";
 import EditDialog from "./edit-dialog.vue";
 import type { ProductType } from "@/api/commerce/type";
+import BooleanTag from "@/components/k-tag/boolean-tag.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -89,6 +90,14 @@ function onEdit(item: ProductType) {
               type="success"
               >{{ item.name }}</ElTag
             >
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="t('common.isDigitalProduct')">
+        <template #default="{ row }">
+          <div class="flex items-center">
+            <BooleanTag :value="row.isDigital" />
           </div>
         </template>
       </el-table-column>

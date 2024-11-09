@@ -39,7 +39,7 @@ function openAuthUrl() {
 }
 
 async function onValidSite(siteUrl: string, onGoogle: boolean) {
-  await validSite(siteUrl.split(":")[1], onGoogle);
+  await validSite(siteUrl, onGoogle);
   getList();
 }
 

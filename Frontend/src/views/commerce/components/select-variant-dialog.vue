@@ -6,22 +6,35 @@ import { useI18n } from "vue-i18n";
 import { buildOptionsDisplay } from "../products-management/product-variant";
 import { useProductFields } from "../useFields";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
+import type { PagingParams, PagingResult } from "@/api/commerce/common";
 
 const { t } = useI18n();
 const show = ref(true);
 const showVariantsDialog = ref(false);
 const { getColumns } = useProductFields();
 
-defineProps<{
+const props = defineProps<{
   excludes?: string[];
   modelValue: boolean;
 }>();
+
+const queryParams = ref<
+  PagingParams & {
+    keyword?: string;
+    excludes?: string[];
+  }
+>({
+  pageIndex: 1,
+  pageSize: 30,
+  keyword: "",
+  excludes: props.excludes,
+});
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
   (e: "selected", value: ProductVariant): void;
 }>();
-const list = ref<ProductListItem[]>([]);
+const pagingResult = ref<PagingResult<ProductListItem>>();
 const variants = ref<ProductVariant[]>([]);
 const columns = getColumns([
   {
@@ -57,13 +70,17 @@ const variantColumns = getColumns([
   },
 ]);
 
-async function load() {
-  var products = await getProducts();
-  list.value = products.map((m) => ({ ...m, selected: false }));
+async function load(index: number) {
+  queryParams.value.pageIndex = index;
+  pagingResult.value = await getProducts(queryParams.value);
+  pagingResult.value.list = pagingResult.value.list.map((m) => ({
+    ...m,
+    selected: false,
+  }));
 }
 
 onMounted(() => {
-  load();
+  load(1);
 });
 
 async function onRowClick(row: ProductListItem) {
@@ -91,11 +108,36 @@ function onVariantRowClick(row: ProductVariant) {
     :close-on-click-modal="false"
     @closed="emit('update:modelValue', false)"
   >
-    <el-scrollbar max-height="400px">
-      <ElTable :data="list" class="el-table--gray" @row-click="onRowClick">
-        <DynamicColumns :columns="columns" />
-      </ElTable>
-    </el-scrollbar>
+    <div v-if="pagingResult">
+      <div class="flex items-center pb-12 space-x-16">
+        <div class="flex-1" />
+        <SearchInput
+          v-model="queryParams.keyword"
+          class="w-248px"
+          @keydown.enter.prevent="load(1)"
+        />
+      </div>
+      <el-scrollbar max-height="400px">
+        <ElTable
+          :data="pagingResult?.list"
+          class="el-table--gray"
+          @row-click="onRowClick"
+        >
+          <DynamicColumns :columns="columns" />
+        </ElTable>
+      </el-scrollbar>
+      <div class="text-center">
+        <el-pagination
+          class="py-8"
+          layout="prev, pager, next"
+          hide-on-single-page
+          :page-size="pagingResult?.pageSize"
+          :current-page="pagingResult?.pageIndex"
+          :total="pagingResult?.count"
+          @current-change="load"
+        />
+      </div>
+    </div>
   </el-dialog>
   <ElDialog
     v-model="showVariantsDialog"

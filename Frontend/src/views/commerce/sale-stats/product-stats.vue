@@ -14,11 +14,15 @@ import { openInHiddenFrame } from "@/utils/url";
 import { useUrlSiteId } from "@/hooks/use-site-id";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
 import { useProductFields } from "../useFields";
-import { PagingParams } from "@/api/commerce/common";
+import type { PagingParams } from "@/api/commerce/common";
 const props = defineProps<{ dataRange: [Date, Date] }>();
 const { t } = useI18n();
 const data = ref<
-  PaginationResponse<any> & { amount?: number; product?: number }
+  PaginationResponse<any> & {
+    amount?: number;
+    product?: number;
+    count?: number;
+  }
 >();
 const queryParams = ref<PagingParams>({
   pageIndex: 1,

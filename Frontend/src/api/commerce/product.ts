@@ -6,8 +6,11 @@ import { useUrlSiteId } from "@/hooks/use-site-id";
 
 const $t = i18n.global.t;
 
-export const getProducts = () =>
-  request.get<ProductListItem[]>(useUrlSiteId("productManagement/list"));
+export const getProducts = (body: unknown) =>
+  request.post<PagingResult<ProductListItem>>(
+    useUrlSiteId("productManagement/list"),
+    body
+  );
 
 export type ProductPagingResult = PagingResult<ProductListItem> & {
   stats: any;
@@ -55,6 +58,26 @@ export const deleteProducts = (ids: string[]) =>
     successMessage: $t("common.deleteSuccess"),
   });
 
+export const uploadDigitalFile = (body: unknown) =>
+  request.post(
+    useUrlSiteId("productManagement/UploadDigitalFile"),
+    body,
+    undefined,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+      successMessage: $t("common.uploadSuccess"),
+    }
+  );
+
+export const deleteDigitalFile = (variantId: string, fileName: string) =>
+  request.delete(
+    useUrlSiteId("productManagement/DeleteDigitalFile"),
+    { variantId, fileName },
+    {
+      successMessage: $t("common.deleteSuccess"),
+    }
+  );
+
 export interface ProductListItem {
   id: string;
   title: string;
@@ -83,6 +106,18 @@ export interface ProductVariant {
   weight: number;
   selectedOptions: Option[];
   tags: string[];
+  digitalItems: DigitalItem[];
+  autoDelivery: boolean;
+  order: number;
+}
+
+export interface DigitalItem {
+  id: string;
+  type: string;
+  name: string;
+  value: string;
+  contentType?: string;
+  size?: number;
 }
 
 export interface ProductVariantItem {
@@ -105,7 +140,9 @@ export interface VariantOption extends VariantOptionItem {
 
 export interface VariantOptionItem {
   name: string;
+  type: string;
   multilingual: Record<string, any>;
+  image?: string;
 }
 
 export interface OptionGroup {
@@ -118,6 +155,8 @@ export interface ProductBasicInfo {
   title: string;
   seoName: string;
   active: boolean;
+  isDigital: boolean;
+  maxDownloadCount?: number;
   featuredImage: string;
   description: string;
   images: string[];

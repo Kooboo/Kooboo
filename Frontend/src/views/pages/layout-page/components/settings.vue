@@ -6,10 +6,11 @@ import Scripts from "@/components/html-setting/scripts.vue";
 import Cache from "@/components/html-setting/cache.vue";
 import HtmlMeta from "@/components/html-setting/html-meta.vue";
 import { useSettings } from "./use-settings";
-
 import { useI18n } from "vue-i18n";
 import { onBeforeMount, ref } from "vue";
 import type { Source } from "@/api/component/types";
+import { useSiteStore } from "@/store/site";
+
 const props = defineProps<{
   model: PostPage;
   oldUrlPath?: string;
@@ -40,6 +41,8 @@ const {
 const basicForm = ref();
 const metaBindings = ref<string[]>([]);
 const urlParamsBindings = ref<string[]>([]);
+const siteStore = useSiteStore();
+
 defineExpose({ validate: () => basicForm.value?.validate() });
 onBeforeMount(() => {
   props.sources?.forEach((f) => {
@@ -91,6 +94,15 @@ onBeforeMount(() => {
         @insert="insertStyle"
         @delete="deleteStyle"
       />
+      <el-form
+        v-if="siteStore?.site?.unocssSettings?.enable"
+        label-position="top"
+        class="px-24"
+      >
+        <el-form-item :label="t('common.disableUnocss')">
+          <ElSwitch v-model="model.disableUnocss" />
+        </el-form-item>
+      </el-form>
     </el-collapse-item>
     <el-collapse-item
       v-if="!hideScripts"

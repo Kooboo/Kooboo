@@ -7,6 +7,7 @@ const props = defineProps<{
   readonly?: boolean;
   options?: string[];
   optionDeletable?: boolean;
+  size?: string;
   labelFormatter?: (key: string) => string;
 }>();
 
@@ -98,10 +99,14 @@ function formatLabel(key: string) {
       @click.stop="onCancel"
     />
   </div>
-  <ElTag v-else type="warning">
+  <ElTag v-else type="warning" :size="size">
     <div class="space-x-8 flex items-center">
-      <div class="cursor-pointer" @click="emit('update:editing', true)">
-        {{ formatLabel(modelValue) }}
+      <div
+        class="cursor-pointer flex items-center space-x-8"
+        @click="emit('update:editing', true)"
+      >
+        <slot name="option" :option="formatLabel(modelValue)" />
+        <div>{{ formatLabel(modelValue) }}</div>
       </div>
       <el-icon
         v-if="!readonly"

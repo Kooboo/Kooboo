@@ -15,8 +15,16 @@ const id = getQueryString("id");
 
 const onSave = async () => {
   await form.value.onSave();
-  router.push(useRouteSiteId({ name: "product management" }));
+  goBack();
 };
+
+function goBack() {
+  router.goBackOrTo(
+    useRouteSiteId({
+      name: "product management",
+    })
+  );
+}
 </script>
 
 <template>
@@ -33,8 +41,5 @@ const onSave = async () => {
 
   <EditForm :id="id!" ref="form" />
 
-  <KBottomBar
-    @cancel="router.push(useRouteSiteId({ name: 'product management' }))"
-    @save="onSave"
-  />
+  <KBottomBar @cancel="goBack" @save="onSave" />
 </template>

@@ -103,7 +103,7 @@ export function useContentEffects(
       return column;
     });
     rawList.value = response.list;
-    setTableList(response.list);
+    setTableList(response.list, columns.value);
     pagination.currentPage = response.pageNr;
     pagination.pageCount = response.totalPages;
     pagination.pageSize = response.pageSize;
@@ -118,7 +118,7 @@ export function useContentEffects(
     }
   }
 
-  function setTableList(contents: TextContentItem[]) {
+  function setTableList(contents: TextContentItem[], columns: any) {
     list.value = contents.map((item) => {
       const row: TableRowItem = {
         id: item.id,
@@ -128,7 +128,26 @@ export function useContentEffects(
         order: item.order,
       };
       for (const key in item.textValues) {
-        const value = item.textValues[key];
+        let value = item.textValues[key];
+        const column = columns.find((f: any) => f.name == camelCase(key));
+        if (column?.selectionOptions) {
+          try {
+            const options = JSON.parse(column.selectionOptions);
+            let values = [value];
+            if (column.controlType == "CheckBox") {
+              values = JSON.parse(value);
+            }
+            const displayValues = [];
+            for (const i of values) {
+              const option = options.find((f: any) => f.value == i);
+              if (option) displayValues.push(option.key);
+              else displayValues.push(i);
+            }
+            value = displayValues.join(",");
+          } catch {
+            //
+          }
+        }
         row[camelCase(key)] = value;
         if (
           value &&

@@ -11,13 +11,22 @@ public class Sitemap : IApi
 
     public string[] Feeds(ApiCall call, string domain)
     {
+        if (domain.StartsWith("sc-domain:"))
+        {
+            domain = domain.Replace("sc-domain:", string.Empty);
+        }
+        else
+        {
+            domain = new Uri(domain).Host;
+        }
+
         call.Context.User.ThrowIfNotAdmin();
         var currentOrgId = call.Context.User.CurrentOrgId;
 
         var bindings = AppHost.BindingRepo.LoadOrg(currentOrgId);
 
         var result = new List<string>();
-
+        if (bindings == null) return [.. result];
         foreach (var binding in bindings)
         {
             if (binding.FullDomain == null) continue;
@@ -33,6 +42,6 @@ public class Sitemap : IApi
             result.Add($"https://{binding.FullDomain}/{webSite.SitemapSettings.Path?.Trim('/')}");
         }
 
-        return result.ToArray();
+        return [.. result];
     }
 }

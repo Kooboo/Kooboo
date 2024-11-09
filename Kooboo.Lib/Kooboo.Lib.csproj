@@ -47,7 +47,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 		<PackageReference Include="NUglify" Version="1.20.3" />
 		<PackageReference Include="SharpZipLib" Version="1.4.1" />
-		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
 		<PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
 		<PackageReference Include="MimeMapping" Version="1.0.1.37" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />

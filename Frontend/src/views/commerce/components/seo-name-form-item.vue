@@ -31,13 +31,7 @@ watch([() => props.title, () => isSeoNameDirty.value], () => {
     <template #label>
       <div class="inline-flex items-center space-x-4">
         <div>{{ label || t("common.seoName") }}</div>
-
-        <div class="text-s">
-          ({{ siteStore.site.baseUrl }}{{ props.path }}/<span
-            class="text-orange"
-            >{{ props.seoName }}</span
-          >)
-        </div>
+        <Tooltip :tip="t('common.seoNameTip')" custom-class="ml-4" />
       </div>
     </template>
     <div class="flex items-center space-x-8 w-full">
@@ -54,6 +48,11 @@ watch([() => props.title, () => isSeoNameDirty.value], () => {
         :tip="`Sync from title`"
         @click="() => (isSeoNameDirty = false)"
       />
+    </div>
+    <div class="text-s text-999">
+      {{ siteStore.site.baseUrl }}{{ props.path }}/<span class="text-orange">{{
+        props.seoName
+      }}</span>
     </div>
   </ElFormItem>
 </template>

@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const model = ref({
   orderId: props.id,
-  method: "CreditCard",
+  method: "Cash",
   cardNumber: "",
   expirationDate: "",
   cvc: "",
@@ -42,8 +42,8 @@ async function onSave() {
   >
     <div class="space-y-8">
       <el-radio-group v-model="model.method">
-        <el-radio label="CreditCard">Credit card</el-radio>
         <el-radio label="Cash">Cash</el-radio>
+        <el-radio label="CreditCard" disabled>Credit card</el-radio>
       </el-radio-group>
       <ElForm v-if="model.method == 'CreditCard'" label-position="top">
         <ElFormItem :label="t('common.cardNumber')">

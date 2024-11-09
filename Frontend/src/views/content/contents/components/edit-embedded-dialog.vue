@@ -27,7 +27,14 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import useOperationDialog from "@/hooks/use-operation-dialog";
 import type { UPDATE_MODEL_EVENT } from "@/constants/constants";
 import type {
@@ -105,6 +112,18 @@ watch(
     });
   }
 );
+
+function onIntercept(e: Event) {
+  e.stopImmediatePropagation();
+}
+
+onMounted(() => {
+  window.addEventListener("focusout", onIntercept, true);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("focusout", onIntercept);
+});
 </script>
 
 <style>

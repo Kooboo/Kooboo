@@ -15,41 +15,9 @@ namespace Kooboo.Mail.MassMailing.Model
 
         public HashSet<string> RootDomains { get; set; }
 
+        public HashSet<string> MxDomains { get; set; } = new HashSet<string>();
 
-        private HashSet<string> _mxDomains;
-        public HashSet<string> MxDomains
-        {
-            get
-            {
-                if (_mxDomains == null)
-                {
-                    _mxDomains = new HashSet<string>();
-                }
-                return _mxDomains;
-            }
-            set
-            {
-                _mxDomains = value;
-            }
-        }
-
-        private IPISPQuota _quota;
-        public IPISPQuota Quota
-        {
-            get
-            {
-                if (_quota == null)
-                {
-                    _quota = new IPISPQuota();
-                }
-                return _quota;
-            }
-            set
-            {
-                _quota = value;
-            }
-
-        }
+        public List<IPISPQuota> Quota { get; set; } = new List<IPISPQuota>();
 
     }
 }

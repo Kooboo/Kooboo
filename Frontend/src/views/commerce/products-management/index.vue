@@ -19,9 +19,10 @@ import { useProductLabels } from "../useLabels";
 import DynamicColumns, {
   type SummaryColumn,
 } from "@/components/dynamic-columns/index.vue";
-import { ignoreCaseEqual, getValueIgnoreCase } from "@/utils/string";
-import { camelCase } from "lodash-es";
+import { ignoreCaseEqual, getValueIgnoreCase, camelCase } from "@/utils/string";
 import { useProductFields } from "../useFields";
+import { getQueryString } from "@/utils/url";
+import { tryParseInt } from "@/utils/lang";
 
 const { fields } = useProductFields();
 const { t } = useI18n();
@@ -120,16 +121,25 @@ const queryParams = ref<
     active?: string;
   }
 >({
-  pageIndex: 1,
+  pageIndex: tryParseInt(getQueryString("pageIndex")) || 1,
   pageSize: 30,
   keyword: "",
   inStock: undefined,
   active: undefined,
 });
 
-async function load(pageIndex = 1) {
-  queryParams.value.pageIndex = pageIndex;
+async function load(pageIndex?: number) {
+  if (pageIndex) queryParams.value.pageIndex = pageIndex;
   result.value = await getPagingProducts(queryParams.value);
+  if (pageIndex) {
+    router.push({
+      ...route,
+      query: {
+        ...route.query,
+        pageIndex: pageIndex,
+      },
+    });
+  }
 }
 
 async function onDelete(rows: ProductListItem[]) {
@@ -158,7 +168,7 @@ onMounted(async () => {
   <div class="p-24">
     <Breadcrumb :name="routeName" />
     <div v-if="result" class="flex items-center space-x-16 mt-8 text-m">
-      <PropertyItem :name="t('commerce.outOfStockProducts')">{{
+      <PropertyItem :name="t('commerce.outOfStock')">{{
         result.stats.outOfStock
       }}</PropertyItem>
       <div class="flex-1" />
@@ -188,7 +198,7 @@ onMounted(async () => {
               <div class="flex gap-8">
                 <span>{{ t("common.create") }}</span>
                 <ElTag round type="info">{{
-                  t("commerce.emptyProduct")
+                  t("commerce.blankProduct")
                 }}</ElTag>
               </div>
             </el-dropdown-item>
@@ -216,7 +226,7 @@ onMounted(async () => {
           @clear="queryParams.active = undefined"
         >
           <el-option :label="t('commerce.active')" :value="true" />
-          <el-option :label="t('commerce.noActive')" :value="false" />
+          <el-option :label="t('commerce.inactive')" :value="false" />
         </el-select>
 
         <el-select
@@ -226,7 +236,7 @@ onMounted(async () => {
           clearable
           @clear="queryParams.inStock = undefined"
         >
-          <el-option :label="t('commerce.inStock')" :value="true" />
+          <el-option :label="t('commerce.available')" :value="true" />
           <el-option :label="t('commerce.outOfStock')" :value="false" />
         </el-select>
         <ElInput
@@ -254,10 +264,15 @@ onMounted(async () => {
     >
       <DynamicColumns :columns="productColumns">
         <template #title="{ row }">
-          <div class="flex items-center">
+          <div class="flex flex-col">
             <span class="text-black dark:text-[#cfd3dc]">
               {{ row.title }}
             </span>
+            <div>
+              <ElTag v-if="row.isDigital" round size="small">{{
+                t("common.digitalProduct")
+              }}</ElTag>
+            </div>
           </div>
         </template>
         <template #tags="{ row }">
@@ -287,7 +302,7 @@ onMounted(async () => {
         </template>
       </DynamicColumns>
 
-      <el-table-column align="right" width="60">
+      <el-table-column align="right" width="60" fixed="right">
         <template #default="{ row }">
           <router-link
             :to="

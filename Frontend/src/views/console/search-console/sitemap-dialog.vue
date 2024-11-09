@@ -22,7 +22,7 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-getFeeds(props.siteUrl.split(":")[1]).then((rsp) => {
+getFeeds(props.siteUrl).then((rsp) => {
   feeds.value = rsp;
 });
 

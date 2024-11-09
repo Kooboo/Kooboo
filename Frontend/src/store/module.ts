@@ -48,7 +48,7 @@ export const useModuleStore = defineStore("moduleStore", () => {
       const result = await getAllFiles(editingModule.value);
       files.value = result.map((m) => ({
         ...m,
-        id: `${editingModule.value}_${m.fullName}`,
+        id: `${editingModule.value}_${m.objectType}_${m.fullName}`,
       }));
     } else {
       list.value = await getList();

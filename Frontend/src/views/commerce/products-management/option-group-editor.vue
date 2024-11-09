@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import type {
   OptionGroup,
   ProductVariant,
@@ -69,6 +69,7 @@ function getVariantOption(item: OptionGroup) {
   if (!variantOption) {
     variantOption = {
       name: item.name,
+      type: "text",
       multilingual: {},
       items: [],
     };
@@ -78,6 +79,7 @@ function getVariantOption(item: OptionGroup) {
     if (!variantOption.items.find((f) => f.name == i)) {
       variantOption.items.push({
         name: i,
+        type: "text",
         multilingual: {},
       });
     }
@@ -111,6 +113,7 @@ function addOptionItem(group: OptionGroup, value: string) {
   const variantOption = getVariantOption(group);
   variantOption.items.push({
     name: value,
+    type: "text",
     multilingual: {},
   });
   emit("add-option-item", group.name, value);
@@ -133,6 +136,7 @@ function changeName(group: OptionGroup, value: string) {
       <OptionEditor
         :model="item"
         :variant-option="getVariantOption(item)"
+        :editing="!item.name"
         @change-name="changeName(item, $event)"
         @change-option="(o, n) => changeOptionItem(item, o, n)"
         @add-option="addOptionItem(item, $event)"

@@ -75,6 +75,9 @@ namespace Kooboo.Web.Api
         public List<MediaStorageFileModel> Image(ApiCall call)
         {
             string Folder = call.Context.Request.Forms.Get("Folder")?.ToString() ?? string.Empty;
+            string prefix = call.Context.Request.Forms.Get("Prefix")?.ToString() ?? string.Empty;
+
+
             if (!Folder.EndsWith("/") && !Folder.EndsWith("\\"))
             {
                 Folder = Folder + "/";
@@ -92,6 +95,10 @@ namespace Kooboo.Web.Api
             foreach (var item in call.Context.Request.Files)
             {
                 string filename = FormatKey(item.FileName);
+                if (!string.IsNullOrWhiteSpace(prefix))
+                {
+                    filename = $"{prefix}_{filename}";
+                }
 
                 filename = UrlHelper.Combine(Folder, filename);
 

@@ -6,18 +6,20 @@ import { useI18n } from "vue-i18n";
 import { getOrderLineSchemas, getOrderSchemas } from "@/api/commerce/discount";
 import Condition from "../components/condition.vue";
 import DiscountCodeInput from "./discount-code-input.vue";
+import { useCommerceStore } from "@/store/commerce";
 
 const props = defineProps<{ model: Discount }>();
 const schemas = ref<ConditionSchema[]>([]);
 const conditionLabel = ref("");
+const commerceStore = useCommerceStore();
 const { t } = useI18n();
 
 async function loadSchemas(type: string) {
   if (type == "ProductAmountOff") {
-    conditionLabel.value = t("commerce.orderLineMustMatch");
+    conditionLabel.value = t("commerce.orderProduct");
     schemas.value = await getOrderLineSchemas();
   } else {
-    conditionLabel.value = t("commerce.orderMustMatch");
+    conditionLabel.value = t("commerce.order");
     schemas.value = await getOrderSchemas();
   }
 }
@@ -118,8 +120,12 @@ watch(
 
             <ElInput v-model.number="model.value" class="w-280px">
               <template #suffix>
-                <div class="w-16 h-16 flex items-center justify-center">
-                  {{ model.isPercent ? "%" : "$" }}
+                <div
+                  class="w-16 h-16 flex items-center justify-center transform origin-center scale-75"
+                >
+                  {{
+                    model.isPercent ? "%" : commerceStore.settings.currencyCode
+                  }}
                 </div>
               </template>
             </ElInput>

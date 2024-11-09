@@ -27,6 +27,7 @@ namespace Kooboo.Web.ViewModel
         public long Version { get; set; }
         public bool? EnableDiffChecker { get; set; }
         public bool isEmbedded { get; set; }
+        public bool IsDecrypted { get; set; }
     }
 
 

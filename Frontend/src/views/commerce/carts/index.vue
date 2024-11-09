@@ -73,7 +73,7 @@ onMounted(load);
     >
       <el-table-column :label="t('common.products')">
         <template #default="{ row }">
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-4 max-w-230px overflow-x-auto">
             <el-popover
               v-for="item of row.lines"
               :key="item.variantId"
@@ -85,7 +85,7 @@ onMounted(load);
               <template #reference>
                 <ImageCover
                   v-model="item.image"
-                  :description="`x ${item.quantity}`"
+                  :description="`x ${item.totalQuantity}`"
                 />
               </template>
 
@@ -103,12 +103,21 @@ onMounted(load);
       <el-table-column :label="t('common.contact')" align="center">
         <template #default="{ row }">
           <div v-if="row.customer">
-            <div>{{ row.customer?.email }} {{ row.customer?.phone }}</div>
-            <div class="text-s text-666">
+            <TruncateContent
+              :tip="`${row.customer?.email} ${row.customer?.phone}`"
+              >{{ row.customer?.email }}
+              {{ row.customer?.phone }}</TruncateContent
+            >
+            <TruncateContent
+              class="text-s text-666"
+              :tip="`${row.customer?.firstName} ${row.customer?.lastName}`"
+            >
               {{ row.customer?.firstName }} {{ row.customer?.lastName }}
-            </div>
+            </TruncateContent>
           </div>
-          <div v-else>{{ row.contact }}</div>
+          <TruncateContent v-else :tip="row.contact">{{
+            row.contact
+          }}</TruncateContent>
         </template>
       </el-table-column>
 
@@ -137,6 +146,7 @@ onMounted(load);
       <el-table-column align="right" width="120">
         <template #default="{ row }">
           <router-link
+            v-if="row.lines.length"
             :to="
               useRouteSiteId({
                 name: 'cart checkout',

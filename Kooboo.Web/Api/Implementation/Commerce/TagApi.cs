@@ -1,5 +1,6 @@
 using System.Linq;
 using Kooboo.Api;
+using Kooboo.Sites.Commerce;
 
 namespace Kooboo.Web.Api.Implementation.Commerce
 {
@@ -10,7 +11,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         public string[] List(ApiCall apiCall, string type)
         {
             var commerce = GetSiteCommerce(apiCall);
-            var tagType = Enum.Parse<Kooboo.Sites.Commerce.Entities.Tag.TagType>(type);
+            var tagType = Enum.Parse<TagType>(type);
             var list = commerce.Tag.Entities.Where(w => w.Type == tagType);
             return list.Select(s => s.Name).ToArray();
         }
@@ -18,7 +19,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         public void Delete(ApiCall apiCall, string type, string name)
         {
             var commerce = GetSiteCommerce(apiCall);
-            var tagType = Enum.Parse<Kooboo.Sites.Commerce.Entities.Tag.TagType>(type);
+            var tagType = Enum.Parse<TagType>(type);
             var list = commerce.Tag.Entities.Where(w => w.Type == tagType && w.Name == name);
             commerce.Tag.Delete(list.Select(s => s.Id).ToArray());
         }

@@ -116,7 +116,7 @@ async function save() {
       <Condition
         :condition="model.condition"
         :schemas="schemas"
-        :title="t('commerce.productMustMatch')"
+        :title="t('commerce.product')"
       />
     </div>
   </div>

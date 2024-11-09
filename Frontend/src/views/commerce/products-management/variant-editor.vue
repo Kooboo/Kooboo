@@ -7,6 +7,8 @@ import type { Ref } from "vue";
 import { ref } from "vue";
 import { buildOptionsDisplay } from "./product-variant";
 import { useCommerceStore } from "@/store/commerce";
+import { ElButton } from "element-plus";
+import DigitalItemsDialog from "./digital-items-dialog.vue";
 
 const { t } = useI18n();
 const props = defineProps<{
@@ -14,9 +16,11 @@ const props = defineProps<{
   options: string[];
   defaultImage: string;
   variantOptions: VariantOption[];
+  isDigital: boolean;
 }>();
 const showEditVariantDialog = ref(false);
 const showCreateVariantDialog = ref(false);
+const showEditDigitalItemsDialog = ref(false);
 const editingItem = ref<ProductVariant>() as Ref<ProductVariant>;
 const commerceStore = useCommerceStore();
 
@@ -28,6 +32,11 @@ function onDelete(id: string) {
 function onEdit(item: ProductVariant) {
   editingItem.value = item;
   showEditVariantDialog.value = true;
+}
+
+function onEditDigitalItems(item: ProductVariant) {
+  editingItem.value = item;
+  showEditDigitalItemsDialog.value = true;
 }
 
 function updateVariant(item: ProductVariant) {
@@ -73,9 +82,14 @@ function updateVariant(item: ProductVariant) {
     </div>
     <div>
       <ElTable :data="variants" class="el-table--gray">
-        <el-table-column :label="t('common.cover')" width="80" align="left">
+        <el-table-column :label="t('common.image')" width="80" align="left">
           <template #default="{ row }">
-            <ImageCover v-model="row.image" />
+            <ImageCover
+              v-model="row.image"
+              editable
+              folder="/commerce/product"
+              :prefix="new Date().getTime().toString()"
+            />
           </template>
         </el-table-column>
         <el-table-column :label="t('common.options')">
@@ -90,13 +104,17 @@ function updateVariant(item: ProductVariant) {
 
         <el-table-column
           :label="`${t('common.price')} (${
-            commerceStore.settings.currencySymbol
+            commerceStore.settings.currencyCode
           })`"
           align="center"
           prop="inventory"
         >
           <template #default="{ row }">
-            <ElInput v-model.number="row.price" class="w-120px text-center" />
+            <ElInputNumber
+              v-model="row.price"
+              :controls="false"
+              class="w-100px text-center"
+            />
           </template>
         </el-table-column>
 
@@ -104,12 +122,47 @@ function updateVariant(item: ProductVariant) {
           <template #default="{ row }">
             <ElInput
               v-model.number="row.newInventory"
-              class="w-120px text-center"
+              class="w-100px text-center"
             />
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.active')" width="100" align="center">
+        <el-table-column
+          v-if="isDigital"
+          :label="t('common.digitalItems')"
+          align="center"
+          width="120"
+        >
+          <template #default="{ row }">
+            <ElButton
+              v-if="row.digitalItems.length"
+              round
+              type="primary"
+              size="small"
+              @click="onEditDigitalItems(row)"
+              >{{ row.digitalItems.length }}</ElButton
+            >
+            <el-button
+              v-else
+              type="primary"
+              round
+              class="shadow-s-10 !py-8px"
+              size="small"
+              @click="onEditDigitalItems(row)"
+            >
+              <div class="flex items-center space-x-4">
+                <el-icon class="iconfont icon-a-Cloudupload !text-16px" />
+                <span> {{ t("common.uploadFiles") }}</span>
+              </div>
+            </el-button>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          :label="t('commerce.active')"
+          width="80"
+          align="center"
+        >
           <template #default="{ row }">
             <span :class="row.active ? 'text-green' : ''">
               <ElSwitch v-model="row.active" />
@@ -151,6 +204,11 @@ function updateVariant(item: ProductVariant) {
         v-model="showCreateVariantDialog"
         :variants="variants"
         :default-image="defaultImage"
+      />
+      <DigitalItemsDialog
+        v-if="showEditDigitalItemsDialog"
+        v-model="showEditDigitalItemsDialog"
+        :variant="editingItem"
       />
     </div>
   </div>

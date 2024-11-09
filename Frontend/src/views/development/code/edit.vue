@@ -43,7 +43,7 @@ const onBack = () => {
 };
 
 const onSave = async () => {
-  if (!model.value) return;
+  if (!model.value || model.value.isDecrypted) return;
   await form.value?.validate();
   const isNewPage = model.value.id === emptyGuid;
   await codeStore.updateCode(model.value, record.save());
@@ -104,7 +104,10 @@ watch(
 </script>
 
 <template>
-  <div v-if="model" class="h-full w-full flex flex-col overflow-hidden">
+  <div
+    v-if="model"
+    class="h-full w-full flex flex-col overflow-hidden relative"
+  >
     <div
       class="pt-16 px-32 bg-fff dark:bg-[#222] dark:border-transparent border-b border-solid border-line flex items-start"
     >
@@ -133,17 +136,33 @@ watch(
         "
       />
     </div>
+    <div
+      v-if="model.isDecrypted"
+      class="absolute inset-0 flex items-center justify-center"
+    >
+      <el-result icon="error" :title="t('common.codeEncryptedTip')" />
+    </div>
     <KBottomBar
       back
       :permission="{
         feature: 'code',
         action: 'edit',
       }"
+      :hidden-confirm="model.isDecrypted"
+      :hidden-cancel="model.isDecrypted"
       @cancel="onBack"
       @save="onSave"
     >
       <template #extra-buttons>
         <el-button
+          v-if="model.isDecrypted"
+          round
+          type="primary"
+          @click="onBack"
+          >{{ t("common.back") }}</el-button
+        >
+        <el-button
+          v-else
           v-hasPermission="{
             feature: 'code',
             action: 'edit',

@@ -82,6 +82,7 @@ defineExpose({
           editable
           size="large"
           folder="/commerce/category"
+          :prefix="new Date().getTime().toString()"
         />
       </ElFormItem>
       <MultilingualFormItem

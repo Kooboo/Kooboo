@@ -40,7 +40,11 @@ onMounted(async () => {
     options: [],
   }));
 
-  for (const i of model.value.variants) {
+  const sortedVariants = model.value.variants.sort((left, right) =>
+    left.order > right.order ? 1 : -1
+  );
+
+  for (const i of sortedVariants) {
     variants.addVariant(i);
   }
 });
@@ -58,7 +62,11 @@ async function onSave() {
     key: m.key,
     value: m.value,
   }));
+  variants.list.value.forEach((i, index) => (i.order = index));
   postData.variants = variants.list.value;
+  postData.variantOptions = postData.variantOptions?.filter(
+    (f) => f.items.length
+  );
   await editProduct(postData);
 }
 
@@ -67,7 +75,16 @@ defineExpose({ onSave });
 
 <template>
   <div v-if="model" class="px-24 pt-0 pb-84px space-y-12">
-    <BasicInfo ref="basicInfo" :model="model" :fields="fields" />
+    <BasicInfo ref="basicInfo" :model="model" :fields="fields">
+      <ElFormItem :label="t('common.attributes')">
+        <KeyValueEditor
+          v-model="attributes"
+          :key-input-attributes="{ placeholder: t('common.attributeSamples') }"
+          :value-input-attributes="{ placeholder: t('common.value') }"
+          class="max-w-600px space-y-8 w-full"
+        />
+      </ElFormItem>
+    </BasicInfo>
 
     <CustomData
       ref="customData"
@@ -77,13 +94,6 @@ defineExpose({ onSave });
 
     <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
       <ElForm label-position="top">
-        <ElFormItem :label="t('common.attributes')">
-          <KeyValueEditor
-            v-model="attributes"
-            :key-input-attributes="{ placeholder: t('common.name') }"
-            class="max-w-600px space-y-8 w-full"
-          />
-        </ElFormItem>
         <ElFormItem :label="t('commerce.variantOptions')">
           <OptionGroupEditor
             :options="variants.options.value"
@@ -101,16 +111,14 @@ defineExpose({ onSave });
             @add-option="variants.addOption"
           />
         </ElFormItem>
+        <VariantEditor
+          :variant-options="model.variantOptions"
+          :variants="variants.list.value"
+          :options="variants.options.value"
+          :default-image="model?.featuredImage ?? ''"
+          :is-digital="model.isDigital"
+        />
       </ElForm>
-    </div>
-
-    <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
-      <VariantEditor
-        :variant-options="model.variantOptions"
-        :variants="variants.list.value"
-        :options="variants.options.value"
-        :default-image="model?.featuredImage ?? ''"
-      />
     </div>
   </div>
 </template>

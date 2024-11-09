@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Permission;
+using Kooboo.Lib.Helper;
+using Kooboo.Sites.Commerce;
 using Kooboo.Sites.Commerce.Condition;
 using Kooboo.Sites.Commerce.DataStorage;
 using Kooboo.Sites.Commerce.Entities;
@@ -17,21 +20,27 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         public override string ModelName => "productManagement";
 
         [Permission(Feature.COMMERCE_PRODUCT, Action = Data.Permission.Action.VIEW)]
-        public ProductListItem[] List(ApiCall apiCall)
+        public PagingResult List(ApiCall apiCall)
         {
             var commerce = GetSiteCommerce(apiCall);
-            var products = commerce.Product.Entities;
+            var products = commerce.Product.Entities.OrderByDescending(o => o.CreatedAt).ToArray();
             var productIds = products.Select(s => s.Id).ToArray();
-            var variants = commerce.ProductVariant.Entities.Where(w => productIds.Contains(w.ProductId));
+            var variants = commerce.ProductVariant.Entities.Where(w => productIds.Contains(w.ProductId)).ToArray();
             var result = new List<ProductListItem>();
+            var body = apiCall.Context.Request.Body;
+            var model = JsonSerializer.Deserialize<ProductQuery>(body, Defaults.JsonSerializerOptions);
 
             foreach (var item in products)
             {
+                if (model.Excludes?.Contains(item.Id) ?? false) continue;
+                if (!item.Match(model?.Keyword)) continue;
                 var productVariants = variants.Where(w => w.ProductId == item.Id).ToArray();
                 result.Add(new ProductListItem(item, productVariants));
             }
 
-            return result.ToArray();
+            var skipCount = (model.PageIndex - 1) * model.PageSize;
+            var pageList = result.Skip(skipCount).Take(model.PageSize).ToArray();
+            return new PagingResult(pageList, result.Count, model);
         }
 
         [Permission(Feature.COMMERCE_PRODUCT, Action = Data.Permission.Action.VIEW)]
@@ -61,7 +70,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var variants = model.ToVariants(product.Id);
 
             var categories = commerce.Category.Entities
-              .Where(w => w.Type == Category.FilterType.Manual && model.Categories.Contains(w.Id))
+              .Where(w => w.Type == FilterType.Manual && model.Categories.Contains(w.Id))
               .ToArray();
 
             var productCategories = categories.Select(s => new ProductCategoryModel
@@ -102,9 +111,9 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             }
 
             var tagService = new TagService(commerce);
-            tagService.Append(Tag.TagType.Product, product.Tags);
+            tagService.Append(TagType.Product, product.Tags);
             var variantTags = variants.SelectMany(s => s.Tags).ToArray();
-            tagService.Append(Tag.TagType.Variant, variantTags);
+            tagService.Append(TagType.Variant, variantTags);
             return product.Id;
         }
 
@@ -118,7 +127,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var entity = commerce.Product.Entities.FirstOrDefault(p => p.Id == model.Id);
             IEnumerable<ProductVariant> oldVariants = commerce.ProductVariant.Entities.Where(w => w.ProductId == model.Id);
             var categories = commerce.Category.Entities
-                .Where(w => w.Type == Category.FilterType.Manual && model.Categories.Contains(w.Id))
+                .Where(w => w.Type == FilterType.Manual && model.Categories.Contains(w.Id))
                 .ToArray();
             var productCategories = categories.Select(s => new ProductCategoryModel
             {
@@ -207,6 +216,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                         commerce.ProductVariant.Delete(d => d.Id == item.Id);
                         var productService = new ProductService(commerce, apiCall.Context);
                         productService.UpdateProductIndex(item.ProductId);
+                        productService.DeleteVariantDigitalFiles(item.Id);
                     }
                     else
                     {
@@ -230,9 +240,9 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             }
 
             var tagService = new TagService(commerce);
-            tagService.Append(Tag.TagType.Product, model.Tags);
+            tagService.Append(TagType.Product, model.Tags);
             var variantTags = model.Variants.SelectMany(s => s.Tags).ToArray();
-            tagService.Append(Tag.TagType.Variant, variantTags);
+            tagService.Append(TagType.Variant, variantTags);
         }
 
         [Permission(Feature.COMMERCE_PRODUCT, Action = Data.Permission.Action.EDIT)]
@@ -259,11 +269,11 @@ namespace Kooboo.Web.Api.Implementation.Commerce
 
             var categoryIds = categories.Where(w =>
              {
-                 if (w.Type == Category.FilterType.Manual)
+                 if (w.Type == FilterType.Manual)
                  {
                      return manualCategories.Any(a => a.CategoryId == w.Id);
                  }
-                 else if (w.Type == Category.FilterType.Automated)
+                 else if (w.Type == FilterType.Automated)
                  {
                      return CategoryMatcher.Instance.Match(context, w.Condition);
                  }
@@ -297,6 +307,31 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             }
 
             return result.ToArray();
+        }
+
+        [Permission(Feature.COMMERCE_PRODUCT, Action = Data.Permission.Action.EDIT)]
+        public void UploadDigitalFile(ApiCall call)
+        {
+            var commerce = SiteCommerce.Get(call.WebSite);
+            var variantId = call.Context.HttpContext.Request.Form["variantId"];
+            var directory = Path.Combine(commerce.RootPath, "digitalFiles", variantId);
+            IOHelper.EnsureDirectoryExists(directory);
+
+            foreach (var item in call.Context.HttpContext.Request.Form.Files)
+            {
+                var filePath = Path.Combine(directory, item.FileName);
+                if (File.Exists(filePath)) File.Delete(filePath);
+                using var fs = File.OpenWrite(filePath);
+                item.CopyTo(fs);
+            }
+        }
+
+        [Permission(Feature.COMMERCE_PRODUCT, Action = Data.Permission.Action.EDIT)]
+        public void DeleteDigitalFile(string variantId, string fileName, ApiCall call)
+        {
+            var commerce = SiteCommerce.Get(call.WebSite);
+            var filePath = Path.Combine(commerce.RootPath, "digitalFiles", variantId, fileName);
+            if (File.Exists(filePath)) File.Delete(filePath);
         }
     }
 }

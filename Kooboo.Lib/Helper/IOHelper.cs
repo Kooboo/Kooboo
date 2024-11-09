@@ -914,6 +914,33 @@ namespace Kooboo.Lib.Helper
             }
         }
 
+        public static void TryDeleteFolder(string folder)
+        {
+            if (System.IO.Directory.Exists(folder))
+            {
+                bool success = true;
+                try
+                {
+                    System.IO.Directory.Delete(folder, true);
+                }
+                catch (Exception)
+                {
+                    success = false;
+                }
+                if (!success)
+                {
+                    try
+                    {
+                        System.IO.Directory.Delete(folder, true);
+                    }
+                    catch (Exception)
+                    {
+                        success = false;
+                    }
+                }
+            } 
+        }
+
 
         /// <summary>
         /// Ensures the directory exists.

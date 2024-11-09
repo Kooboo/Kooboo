@@ -29,12 +29,13 @@ const queryParams = ref<PagingParams & { keyword: string }>({
   keyword: "",
 });
 
-async function load() {
+async function load(index: number) {
+  queryParams.value.pageIndex = index;
   pagingResult.value = await getCustomers(queryParams.value);
 }
 
 onMounted(() => {
-  load();
+  load(1);
 });
 
 function onRowClick(row: CustomerListItem) {
@@ -66,7 +67,7 @@ function onRowClick(row: CustomerListItem) {
       <SearchInput
         v-model="queryParams.keyword"
         class="w-248px"
-        @keydown.enter.prevent="load"
+        @keydown.enter.prevent="load(1)"
       />
     </div>
     <el-scrollbar max-height="400px">
@@ -74,11 +75,6 @@ function onRowClick(row: CustomerListItem) {
         v-if="pagingResult"
         :data="pagingResult.list"
         class="el-table--gray mb-24"
-        :pagination="{
-          currentPage: pagingResult.pageIndex,
-          totalCount: pagingResult.count,
-          pageSize: pagingResult.pageSize,
-        }"
         @row-click="onRowClick"
       >
         <el-table-column :label="t('common.email')">
@@ -97,6 +93,7 @@ function onRowClick(row: CustomerListItem) {
             {{ row.firstName }}
           </template>
         </el-table-column>
+
         <el-table-column :label="t('common.lastName')">
           <template #default="{ row }">
             {{ row.lastName }}
@@ -104,10 +101,21 @@ function onRowClick(row: CustomerListItem) {
         </el-table-column>
       </ElTable>
     </el-scrollbar>
+    <div class="text-center">
+      <el-pagination
+        class="py-8"
+        layout="prev, pager, next"
+        hide-on-single-page
+        :page-size="pagingResult?.pageSize"
+        :current-page="pagingResult?.pageIndex"
+        :total="pagingResult?.count"
+        @current-change="load"
+      />
+    </div>
   </el-dialog>
   <CreateDialog
     v-if="showCreateDialog"
     v-model="showCreateDialog"
-    @reload="load"
+    @reload="load(1)"
   />
 </template>

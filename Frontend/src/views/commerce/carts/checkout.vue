@@ -10,8 +10,10 @@ import { createOrder } from "@/api/commerce/order";
 import { getQueryString } from "@/utils/url";
 import ProductsEditor from "./products-editor.vue";
 import ContactCard from "../components/contact-card.vue";
+import ShippingCard from "../components/shipping-card.vue";
 import AddressSelector from "../components/address-selector.vue";
 import type { Address } from "@/api/commerce/customer";
+import DigitalShippingCard from "../components/digital-shipping-card.vue";
 
 const id = getQueryString("id");
 const { t } = useI18n();
@@ -19,6 +21,8 @@ const router = useRouter();
 const address = ref<Address>();
 const note = ref("");
 const cart = ref<CartEdit>();
+const hasPhysicsProducts = ref(false);
+const hasDigitalProducts = ref(false);
 
 getCartEdit(id!).then(async (rsp) => {
   cart.value = rsp;
@@ -63,19 +67,38 @@ function onAddressSelected(value: Address) {
       class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal"
     >
       <ElForm label-position="top">
-        <ElFormItem :label="t('common.products')">
+        <ElFormItem>
           <div class="w-full">
             <ProductsEditor
               v-model:lines="cart.lines"
+              v-model:redeem-points="cart.redeemPoints"
               readonly
               :customer-id="cart.customerId"
+              :shipping-id="cart.shippingId"
               :discount-codes="cart.discountCodes"
+              :extension-button="cart.extensionButton"
+              @update:has-digital-products="hasDigitalProducts = $event"
+              @update:has-physics-products="hasPhysicsProducts = $event"
             />
           </div>
         </ElFormItem>
-        <ElFormItem :label="t('common.contact')">
-          <ContactCard v-model="cart.customerId" readonly />
-        </ElFormItem>
+        <div class="grid grid-cols-3 gap-8">
+          <ElFormItem :label="t('common.contact')">
+            <ContactCard v-model="cart.customerId" readonly
+          /></ElFormItem>
+          <ElFormItem
+            v-if="hasPhysicsProducts"
+            :label="t('common.expressShipping')"
+          >
+            <ShippingCard v-model="cart.shippingId" readonly />
+          </ElFormItem>
+          <ElFormItem
+            v-if="hasDigitalProducts"
+            :label="t('common.digitalShipping')"
+          >
+            <DigitalShippingCard v-model="cart.digitalShippingId" readonly />
+          </ElFormItem>
+        </div>
         <ElFormItem :label="t('commerce.cartNote')">
           <div
             class="bg-card dark:bg-444 dark:text-gray rounded-normal px-16 py-8 w-full"
@@ -87,7 +110,10 @@ function onAddressSelected(value: Address) {
     </div>
     <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
       <ElForm v-if="cart" label-position="top">
-        <ElFormItem :label="t('commerce.shippingAddress')">
+        <ElFormItem
+          v-if="hasPhysicsProducts"
+          :label="t('commerce.shippingAddress')"
+        >
           <AddressSelector
             :customer-id="cart.customerId"
             class="w-full"

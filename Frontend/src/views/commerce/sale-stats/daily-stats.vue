@@ -12,7 +12,7 @@ import CurrencyAmount from "../components/currency-amount.vue";
 import { openInHiddenFrame } from "@/utils/url";
 import { useUrlSiteId } from "@/hooks/use-site-id";
 import { useDate } from "@/hooks/use-date";
-import { PagingParams } from "@/api/commerce/common";
+import type { PagingParams } from "@/api/commerce/common";
 const props = defineProps<{ dataRange: [Date, Date] }>();
 const { t } = useI18n();
 const data = ref<
@@ -20,6 +20,7 @@ const data = ref<
     amount?: number;
     customer?: number;
     order?: number;
+    count?: number;
   }
 >();
 const queryParams = ref<PagingParams>({

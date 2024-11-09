@@ -2,7 +2,7 @@ import { useUrlSiteId } from "@/hooks/use-site-id";
 import request from "@/utils/request";
 import { i18n } from "@/modules/i18n";
 import type { CustomerInfo, PagingParams, PagingResult } from "./common";
-import type { Option } from "./product";
+import type { DigitalItem, Option } from "./product";
 import type { Address } from "./customer";
 import { timeZoneOffset } from "@/utils/date";
 
@@ -41,13 +41,23 @@ export const generateOrderExcel = (query: any) => {
   );
 };
 export interface OrderLine {
+  id: string;
   variantId: string;
   title: string;
   options: Option[];
   quantity: number;
+  totalQuantity: number;
   image: string;
   price: number;
   totalAmount: number;
+  groupName?: string;
+  isMain?: boolean;
+  delivered: boolean;
+  isDigital: boolean;
+  digitalItems: DigitalItem[];
+  shippingCarrier?: string;
+  trackingNumber?: string;
+  errorMessage?: string;
 }
 
 export interface OrderListItem {
@@ -57,6 +67,7 @@ export interface OrderListItem {
   paid: boolean;
   paymentMethod: string;
   delivered: boolean;
+  partialDelivered: boolean;
   trackingNumber: string;
   shippingCarrier: string;
   canceled: boolean;
@@ -71,9 +82,15 @@ export interface OrderDetail {
   customer: CustomerInfo;
   totalAmount: number;
   originalAmount: number;
+  insuranceAmount: number;
+  subtotalAmount: number;
+  originalSubtotalAmount: number;
+  shippingAmount: number;
+  scheduledDeliveryTime?: string;
   paid: boolean;
   paymentMethod: string;
   delivered: boolean;
+  partialDelivered: boolean;
   trackingNumber: string;
   shippingCarrier: string;
   canceled: boolean;
@@ -89,6 +106,11 @@ export interface OrderDetail {
   source: string;
   clientInfo: any;
   discountAllocations: any;
+  shippingAllocations: any;
+  extensionButton: any;
+  pointsDeductionAmount: number;
+  redeemPoints: number;
+  earnPoints: number;
 }
 
 export type OrderPagingResult = PagingResult<OrderListItem> & { stats: any };

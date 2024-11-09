@@ -1,6 +1,20 @@
 import type { ProductVariant, Option } from "@/api/commerce/product";
+import { i18n } from "@/modules/i18n";
 import { newGuid } from "@/utils/guid";
 import { ref } from "vue";
+
+const t = i18n.global.t;
+
+export const controls = [
+  {
+    key: "text",
+    value: t("common.text"),
+  },
+  {
+    key: "color",
+    value: t("common.color"),
+  },
+];
 
 export function createNewVariant(
   selectedOptions: Option[],
@@ -18,6 +32,9 @@ export function createNewVariant(
     weight: 0,
     image: defaultImage,
     tags: [],
+    digitalItems: [],
+    autoDelivery: true,
+    order: 0,
   };
 }
 
@@ -79,7 +96,7 @@ export function useVariants() {
   }
 
   function updateOptionName(oldName: string, newName: string) {
-    const index = options.value.findIndex((f) => (f = oldName));
+    const index = options.value.findIndex((f) => f == oldName);
     options.value.splice(index, 1, newName);
 
     for (const i of list.value) {

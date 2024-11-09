@@ -8,6 +8,7 @@ import Basic from "@/components/html-setting/basic.vue";
 import { useI18n } from "vue-i18n";
 import { useSetting } from "./use-setting";
 import { withDefaults, ref } from "vue";
+import { useSiteStore } from "@/store/site";
 
 interface Props {
   oldUrlPath: string;
@@ -46,6 +47,7 @@ const {
 
 const { t } = useI18n();
 const activeTab = ref("basic");
+const siteStore = useSiteStore();
 
 (function init() {
   const tabs = props.items ?? [];
@@ -99,6 +101,15 @@ const activeTab = ref("basic");
           @insert="insertStyle"
           @delete="deleteElement($event.el!)"
         />
+        <el-form
+          v-if="siteStore?.site?.unocssSettings?.enable"
+          label-position="top"
+          class="px-24"
+        >
+          <el-form-item :label="t('common.disableUnocss')">
+            <ElSwitch v-model="model.disableUnocss" />
+          </el-form-item>
+        </el-form>
       </el-collapse-item>
       <el-collapse-item
         v-else-if="item === 'scripts'"

@@ -91,13 +91,19 @@ namespace Kooboo.Web.FrontRequest
                     }
                 }
 
-
-                if (kooboocontext.RenderContext.IsSiteBinding || !CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
+                var isBackendOrImage = CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl);
+                if (kooboocontext.RenderContext.IsSiteBinding || !isBackendOrImage)
                 {
                     ObjectRoute.Parse(kooboocontext);
                     if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
                     {
-                        var success = AuthenticationHelper.Authentication(kooboocontext);
+                        var success = true;
+                        
+                        if (!isBackendOrImage)
+                        {
+                            success = AuthenticationHelper.Authentication(kooboocontext);
+                        }
+
                         if (success) await ExecuteKooboo(kooboocontext);
                         return;
                     }
@@ -110,7 +116,7 @@ namespace Kooboo.Web.FrontRequest
                     return;
                 }
 
-                if (!CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
+                if (!isBackendOrImage)
                 {
                     if (kooboocontext.Route == null || kooboocontext.Route.objectId == default(Guid))
                     {

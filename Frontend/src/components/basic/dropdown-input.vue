@@ -17,8 +17,13 @@ function onSelected(value: string) {
     v-bind="$attrs"
     @update:model-value="emit('update:model-value', $event)"
   >
-    <template v-if="options?.length" #suffix>
-      <el-dropdown trigger="click" class="ml-10px" @command="onSelected">
+    <template #suffix>
+      <el-dropdown
+        v-if="options?.length"
+        trigger="click"
+        class="ml-10px"
+        @command="onSelected"
+      >
         <div class="w-16 h-16 flex items-center justify-center">
           <el-icon class="iconfont icon-pull-down text-12px" />
         </div>

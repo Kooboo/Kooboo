@@ -263,6 +263,7 @@ namespace Kooboo.Web.Api.Implementation
         public EmailCount Email { get; set; } = new EmailCount();
 
         public bool IsOnlineServer => Data.AppSettings.IsOnlineServer;
+        public bool IsPrivateServer => Data.AppSettings.ServerSetting?.IsPrivate ?? false;
 
         public class EmailCount
         {

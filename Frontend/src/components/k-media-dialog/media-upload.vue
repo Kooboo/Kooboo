@@ -13,6 +13,7 @@ const props = defineProps<{
   folder: string;
   provider?: string;
   multiple?: boolean;
+  prefix?: string;
 }>();
 
 const emit = defineEmits<{
@@ -36,8 +37,10 @@ async function handleBeforeUpload(file: { type: string; name: string }) {
   if (!checkFile(imageAccepts, file)) {
     return false;
   }
+  let fileName = file.name;
 
-  const fileUrl = combineUrl(props.folder, file.name);
+  if (props.prefix) fileName = `${props.prefix}_${fileName}`;
+  const fileUrl = combineUrl(props.folder, fileName);
   const isValidName = await isUniqueKey(props.provider ?? "default", fileUrl)
     .then(() => true)
     .catch(() => false);
@@ -71,7 +74,7 @@ function uploadFinish(rsp: MediaFileItem[]) {
     :accept="imageAccepts.join(',')"
     :before-upload="handleBeforeUpload"
     :on-success="uploadFinish"
-    :data="{ folder: folder }"
+    :data="{ folder: folder, prefix: prefix || '' }"
     data-cy="upload"
   >
     <slot />

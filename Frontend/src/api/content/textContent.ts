@@ -42,7 +42,7 @@ export type TextContentCategoryOptionItem = {
   alias: string;
   display?: string;
   multipleChoice: boolean;
-  options: KeyValue[];
+  options: any[];
 };
 
 export type ByFolderResponse = PaginationWithColumnsResponse<
@@ -113,12 +113,14 @@ export type ContentCategory = {
   categoryFolder: {
     id: string;
   };
+  columns: any;
   multipleChoice: boolean;
 };
 export type ContentEmbedded = {
   alias: string;
   display: string;
   contents: TextContentItem[];
+  columns: any;
   embeddedFolder: {
     id: string;
   };

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { getCustomer, type CustomerListItem } from "@/api/commerce/customer";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import SelectCustomerDialog from "../components/select-customer-dialog.vue";
 
@@ -12,31 +12,42 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const showSelectCustomerDialog = ref(false);
+const customerId = ref<string>();
 const customer = ref<CustomerListItem>();
 
 onMounted(async () => {
-  if (props.modelValue) {
-    customer.value = await getCustomer(props.modelValue);
-  }
+  customerId.value = props.modelValue;
 });
 
 function onDelete() {
-  customer.value = undefined;
+  customerId.value = undefined;
   emit("update:model-value", undefined);
 }
 
 function onSelected(value: CustomerListItem) {
-  customer.value = value;
+  customerId.value = value.id;
   emit("update:model-value", value.id);
 }
+
+watch(
+  () => customerId.value,
+  async () => {
+    if (customerId.value) {
+      customer.value = await getCustomer(customerId.value);
+    }
+  }
+);
 </script>
 
 <template>
   <div
     v-if="customer"
-    class="border border-gray p-12 rounded-normal w-400px dark:bg-444 dark:text-gray"
+    class="border border-gray p-12 rounded-normal w-full h-115px w-max-400px dark:bg-444 dark:text-gray"
   >
     <div class="flex items-center space-x-8">
+      <ElTag v-if="customer.membershipId" type="success" size="small" round>{{
+        customer.membership
+      }}</ElTag>
       <div class="flex-1" />
       <el-tooltip
         v-if="!readonly"
@@ -51,8 +62,10 @@ function onSelected(value: CustomerListItem) {
     </div>
     <div class="p-4">
       <div class="text-l">{{ customer.firstName }} {{ customer.lastName }}</div>
-      <div class="text-s">{{ customer.email }}</div>
-      <div class="text-s">{{ customer.phone }}</div>
+      <div class="text-s">{{ customer.email }} {{ customer.phone }}</div>
+      <div class="text-s">
+        {{ customer.rewardPoints }} {{ t("common.rewardPoints") }}
+      </div>
     </div>
   </div>
   <IconButton

@@ -5,7 +5,7 @@
     :prop="item.name"
     :label="item.displayName || item.name"
     v-bind="item.attrs"
-    align="left"
+    :align="item.attrs?.align || 'left'"
   >
     <template #default="{ row, $index }">
       <slot :name="item.name" :row="row" :$index="$index">

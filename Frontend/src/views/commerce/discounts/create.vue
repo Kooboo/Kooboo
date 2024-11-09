@@ -31,7 +31,7 @@ const model = ref<DiscountCreate>({
 function goBack() {
   router.goBackOrTo(
     useRouteSiteId({
-      name: "product collections",
+      name: "discounts",
     })
   );
 }
@@ -56,7 +56,7 @@ async function save() {
   <EditForm :model="model" />
   <KBottomBar
     :permission="{
-      feature: 'productCategories',
+      feature: 'discounts',
       action: 'edit',
     }"
     @cancel="goBack"

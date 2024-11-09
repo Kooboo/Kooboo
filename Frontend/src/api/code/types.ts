@@ -22,6 +22,7 @@ export interface PostCode {
   version: number;
   enableDiffChecker: boolean;
   isEmbedded?: boolean;
+  isDecrypted?: boolean;
 }
 
 export interface BreakLine {

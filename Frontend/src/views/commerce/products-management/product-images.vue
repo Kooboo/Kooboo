@@ -6,11 +6,15 @@ import defaultImage from "@/assets/images/commerce_default_image.svg";
 import type { MediaFileItem } from "@/components/k-media-dialog";
 import KMediaDialog from "@/components/k-media-dialog";
 import { useI18n } from "vue-i18n";
+import VueDraggable from "vuedraggable";
+import type { SortChangeEvent } from "@/global/types";
+import { cloneDeep } from "lodash";
 
 const props = defineProps<{
   modelValue: string[];
   main: string;
-  mainLabel: string;
+  mainLabel?: string;
+  prefix?: string;
 }>();
 
 const emit = defineEmits<{
@@ -54,62 +58,87 @@ function onDelete(index: number) {
     emit("update:main", list[0]);
   }
 }
+
+function onChange(e: SortChangeEvent) {
+  const clonedList = cloneDeep(props.modelValue);
+  if (e.moved) {
+    clonedList.splice(e.moved.oldIndex, 1);
+    clonedList.splice(e.moved.newIndex, 0, e.moved.element);
+  } else if (e.added) {
+    clonedList.splice(e.added.newIndex, 0, e.added.element);
+  } else if (e.removed) {
+    clonedList.splice(e.removed.oldIndex, 1);
+  }
+
+  emit("update:model-value", clonedList);
+}
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-8">
-    <div
-      v-for="(item, index) of modelValue"
-      :key="index"
-      :style="{ backgroundImage: displayImage(item) }"
-      class="w-128px h-128px bg-contain bg-no-repeat bg-center rounded-normal overflow-hidden inline-block relative group bg-gray"
+  <div class="flex flex-wrap items-center space-x-8">
+    <VueDraggable
+      :model-value="modelValue"
+      :disabled="modelValue.length < 2"
+      class="space-x-8 leading-none"
+      item-key=""
+      @change="onChange($event)"
     >
-      <div
-        class="text-fff absolute inset-0 bg-444/60 flex flex-col items-center justify-center transition-all opacity-0 group-hover:opacity-100 space-y-4"
-      >
-        <MediaUpload
-          :folder="`/commerce/product`"
-          :multiple="false"
-          @after-upload="changeImage($event, index)"
+      <template #item="{ element, index }">
+        <div
+          :key="index"
+          :style="{ backgroundImage: displayImage(element) }"
+          class="w-128px h-128px bg-contain bg-no-repeat bg-center rounded-normal overflow-hidden inline-block relative group bg-gray outline-line outline outline-1"
         >
-          <ElButton round size="small" type="primary" class="w-80px">
-            <el-icon class="iconfont icon-a-Cloudupload" />
-            <span>{{ t("common.upload") }}</span>
-          </ElButton>
-        </MediaUpload>
+          <div
+            class="text-fff absolute inset-0 bg-444/60 flex flex-col items-center justify-center transition-all opacity-0 group-hover:opacity-100 space-y-4"
+          >
+            <MediaUpload
+              :folder="`/commerce/product`"
+              :prefix="prefix"
+              :multiple="false"
+              @after-upload="changeImage($event, index)"
+            >
+              <ElButton round size="small" type="primary" class="w-80px">
+                <el-icon class="iconfont icon-a-Cloudupload" />
+                <span>{{ t("common.upload") }}</span>
+              </ElButton>
+            </MediaUpload>
 
-        <ElButton
-          round
-          size="small"
-          type="primary"
-          class="!ml-0 w-80px"
-          @click.stop="
-            changeIndex = index;
-            isChange = true;
-            visibleMediaDialog = true;
-          "
-          >{{ t("common.select") }}</ElButton
-        >
-        <el-icon
-          v-if="props.modelValue"
-          class="iconfont icon-delete text-orange absolute top-8 right-8 cursor-pointer"
-          @click.stop="onDelete(index)"
-        />
-      </div>
-      <div
-        v-if="item == main"
-        class="bg-444/60 text-s h-24px text-fff absolute left-0 right-0 bottom-0 flex items-center justify-center"
-      >
-        {{ mainLabel || t("common.cover") }}
-      </div>
-      <div
-        v-else
-        class="bg-444/60 text-s h-24px text-fff absolute left-0 right-0 bottom-0 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
-        @click="$emit('update:main', item)"
-      >
-        {{ t("common.setAsCover") }}
-      </div>
-    </div>
+            <ElButton
+              round
+              size="small"
+              type="primary"
+              class="!ml-0 w-80px"
+              @click.stop="
+                changeIndex = index;
+                isChange = true;
+                visibleMediaDialog = true;
+              "
+              >{{ t("common.select") }}</ElButton
+            >
+            <el-icon
+              v-if="props.modelValue"
+              class="iconfont icon-delete text-orange absolute top-8 right-8 cursor-pointer"
+              @click.stop="onDelete(index)"
+            />
+          </div>
+          <div
+            v-if="element == main"
+            class="bg-444/60 text-s h-24px text-fff absolute left-0 right-0 bottom-0 flex items-center justify-center"
+          >
+            {{ mainLabel || t("common.mainImage") }}
+          </div>
+          <div
+            v-else
+            class="bg-444/60 text-s h-24px text-fff absolute left-0 right-0 bottom-0 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
+            @click="$emit('update:main', element)"
+          >
+            {{ t("commerce.setAsMain") }}
+          </div>
+        </div>
+      </template>
+    </VueDraggable>
+
     <div
       class="w-128px h-128px rounded-normal overflow-hidden inline-block relative group bg-gray cursor-pointer border-dashed flex gap-12 justify-center items-center text-blue"
     >
@@ -119,6 +148,7 @@ function onDelete(index: number) {
       >
         <MediaUpload
           :folder="`/commerce/product`"
+          :prefix="prefix"
           :multiple="true"
           @after-upload="handleChooseFile"
         >

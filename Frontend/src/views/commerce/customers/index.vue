@@ -13,14 +13,13 @@ import type { PagingParams } from "@/api/commerce/common";
 import { getCustomers } from "@/api/commerce/customer";
 import CreateDialog from "./create-dialog.vue";
 import EditDialog from "./edit-dialog.vue";
-import AddressesDialog from "./addresses-dialog.vue";
+import { useTime } from "@/hooks/use-date";
 
 const { t } = useI18n();
 const route = useRoute();
 const routeName = route.meta.title as string;
 const showCreateDialog = ref(false);
 const showEditDialog = ref(false);
-const showAddressesDialog = ref(false);
 const pagingResult = ref<CustomerPagingResult>();
 const selected = ref<CustomerListItem>();
 
@@ -36,8 +35,8 @@ async function onDelete(rows: any[]) {
   load(queryParams.value.pageIndex);
 }
 
-async function load(pageIndex = 1) {
-  queryParams.value.pageIndex = pageIndex;
+async function load(pageIndex?: number) {
+  if (pageIndex) queryParams.value.pageIndex = pageIndex;
   pagingResult.value = await getCustomers(queryParams.value);
 }
 
@@ -77,44 +76,38 @@ onMounted(async () => {
         totalCount: pagingResult.count,
         pageSize: pagingResult.pageSize,
       }"
-      @change="load(pagingResult.pageIndex)"
+      @change="load"
       @delete="onDelete"
     >
       <el-table-column :label="t('common.email')">
         <template #default="{ row }">
-          {{ row.email }}
+          <TruncateContent :tip="row.email"> {{ row.email }}</TruncateContent>
         </template>
       </el-table-column>
-      <el-table-column :label="t('common.phone')">
+      <el-table-column :label="t('common.phone')" width="130px">
         <template #default="{ row }">
           {{ row.phone }}
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('common.firstName')">
+      <el-table-column :label="t('common.firstName')" width="130px">
         <template #default="{ row }">
-          {{ row.firstName }}
+          <TruncateContent :tip="row.firstName">{{
+            row.firstName
+          }}</TruncateContent>
         </template>
       </el-table-column>
-      <el-table-column :label="t('common.lastName')">
+      <el-table-column :label="t('common.lastName')" width="130px">
         <template #default="{ row }">
-          {{ row.lastName }}
+          <TruncateContent :tip="row.lastName">{{
+            row.lastName
+          }}</TruncateContent>
         </template>
       </el-table-column>
-
-      <el-table-column :label="t('common.addresses')" align="center">
+      <el-table-column :label="t('common.lastPlaceOrderDate')" width="180px">
         <template #default="{ row }">
-          <div class="flex items-center justify-center">
-            <ElTag
-              round
-              class="cursor-pointer"
-              type="success"
-              @click="
-                selected = row;
-                showAddressesDialog = true;
-              "
-              >{{ row.addresses }}</ElTag
-            >
+          <div v-if="row.lastPlaceOrderDate">
+            {{ useTime(row.lastPlaceOrderDate) }}
           </div>
         </template>
       </el-table-column>
@@ -151,20 +144,13 @@ onMounted(async () => {
     <CreateDialog
       v-if="showCreateDialog"
       v-model="showCreateDialog"
-      @reload="load"
+      @reload="load(1)"
     />
 
     <EditDialog
       v-if="showEditDialog"
       :id="selected!.id"
       v-model="showEditDialog"
-      @reload="load"
-    />
-
-    <AddressesDialog
-      v-if="showAddressesDialog"
-      :id="selected!.id"
-      v-model="showAddressesDialog"
       @reload="load"
     />
   </div>

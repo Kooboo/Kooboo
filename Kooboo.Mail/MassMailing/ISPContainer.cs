@@ -37,16 +37,13 @@ namespace Kooboo.Mail.MassMailing
             isp.Add(gmail);
             isp.Add(tele2);
             isp.Add(neteast);
-            isp.Add(outlook);
-
+            isp.Add(outlook); 
             return isp;
         }
 
 
         public void InitList()
         {
-
-
             foreach (var item in DefaultList())
             {
                 if (!DictList.ContainsKey(item.Name))

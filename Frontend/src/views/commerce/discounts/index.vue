@@ -129,7 +129,7 @@ onMounted(async () => {
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('commerce.discount')" align="center">
+      <el-table-column :label="t('common.detail')" align="center">
         <template #default="{ row }">
           <div class="inline-flex items-center gap-4">
             <ElTag type="success" round>{{

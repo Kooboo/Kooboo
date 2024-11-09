@@ -60,6 +60,7 @@ export interface PostPage {
   name: string;
   id: string;
   enableCache: boolean;
+  disableUnocss: boolean;
   cacheByVersion: boolean;
   cacheMinutes: number;
   cacheQueryKeys: string;

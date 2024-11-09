@@ -35,8 +35,8 @@ if (!props.model.customData["description"]) {
 }
 
 const rules: FormRules = {
-  title: [requiredRule(t("common.fieldRequiredTips")), rangeRule(1, 50)],
-  seoName: [requiredRule(t("common.fieldRequiredTips")), rangeRule(1, 50)],
+  title: [requiredRule(t("common.fieldRequiredTips")), rangeRule(1, 200)],
+  seoName: [requiredRule(t("common.fieldRequiredTips")), rangeRule(1, 200)],
 };
 
 const selectedCategories = computed(() => {
@@ -103,7 +103,7 @@ defineExpose({
         <ProductImages
           v-model="model.images"
           v-model:main="model.featuredImage"
-          :main-label="getDisplayName('featuredImage')"
+          :prefix="new Date().getTime().toString()"
         />
       </ElFormItem>
 
@@ -148,9 +148,11 @@ defineExpose({
           @delete-option="removeTag"
         />
       </ElFormItem>
+
       <ElFormItem :label="getDisplayName('active')">
         <ElSwitch v-model="model.active" />
       </ElFormItem>
+      <slot />
     </ElForm>
   </div>
   <SelectCategoryDialog

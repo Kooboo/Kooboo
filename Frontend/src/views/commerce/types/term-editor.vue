@@ -1,60 +1,55 @@
 <script lang="ts" setup>
 import type { Term } from "@/api/commerce/type";
 import { useI18n } from "vue-i18n";
-import EditableTags from "@/components/basic/editable-tags.vue";
+import TermItem from "./term-item.vue";
 
 const { t } = useI18n();
 
-const termTypes = [
-  { name: "Selection", display: t("common.selection") },
-  { name: "Custom", display: t("common.custom") },
-];
-
-const props = defineProps<{ model: Term[]; forceSelection?: boolean }>();
-
-function onDelete(index: number) {
-  props.model.splice(index, 1);
-}
+const props = defineProps<{
+  model: Term[];
+  forceSelection?: boolean;
+  nameLabel?: string;
+  valueLabel?: string;
+  namePlaceholder?: string;
+}>();
 
 function onAdd() {
   props.model.push({
     name: "",
     type: props.forceSelection ? "Selection" : "Custom",
+    valueType: "text",
     options: [],
   });
+}
+
+function changeName(term: Term, value: string) {
+  if (props.model.find((f) => f.name == value)) return;
+  term.name = value;
+}
+
+function changeOption(term: Term, oldValue: string, newValue: string) {
+  const index = term.options.indexOf(oldValue);
+  if (index > -1) term.options.splice(index, 1, newValue);
 }
 </script>
 
 <template>
   <div class="space-y-8 w-full">
-    <div v-for="(term, index) of props.model" :key="index">
-      <div class="flex items-center space-x-4">
-        <ElInput v-model="term.name" />
-        <ElSelect v-if="!forceSelection" v-model="term.type" class="w-220px">
-          <ElOption
-            v-for="item in termTypes"
-            :key="item.name"
-            :label="item.display"
-            :value="item.name"
-          />
-        </ElSelect>
-
-        <div>
-          <IconButton
-            circle
-            class="hover:text-orange text-orange"
-            icon="icon-delete "
-            :tip="t('common.delete')"
-            @click="onDelete(index)"
-          />
-        </div>
-      </div>
-      <EditableTags
-        v-if="term.type == 'Selection'"
-        v-model="term.options"
-        class="mt-4 mb-12 mr-44px"
-      />
-    </div>
+    <TermItem
+      v-for="(term, index) of props.model"
+      :key="index"
+      :model="term"
+      :force-selection="forceSelection"
+      :editing="!term.name"
+      :name-label="nameLabel"
+      :value-label="valueLabel"
+      :name-placeholder="namePlaceholder"
+      @change-name="changeName(term, $event)"
+      @change-option="(o, n) => changeOption(term, o, n)"
+      @add-option="term.options.push($event)"
+      @delete-option="term.options.splice($event, 1)"
+      @delete="props.model.splice(props.model.indexOf(term), 1)"
+    />
     <IconButton
       circle
       class="text-blue"
