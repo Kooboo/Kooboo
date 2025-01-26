@@ -11,7 +11,7 @@ You can download Kooboo from this repository or from our website. Simply click t
 # Innovations
 Kooboo creates many original innovations. It is the FIRST and ONLY CMS capable of:
 
-**Instant Start**: Ready in 2 seconds – download, click, and go.
+**Instant Start**: Ready in 2 seconds – download, click, and go
 
 **Clone Website**: Instantly migrate any URL into Kooboo and start editing
 
