@@ -53,7 +53,7 @@ loadSchemas();
             commerceStore.settings.currencyCode
           })`"
         >
-          <ElInputNumber v-model="model.baseCost" :min="1">
+          <ElInputNumber v-model="model.baseCost" :min="0">
             <template #suffix>
               <div
                 class="w-16 h-16 flex items-center justify-center transform origin-center scale-75"

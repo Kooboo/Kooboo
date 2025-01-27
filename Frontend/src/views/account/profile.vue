@@ -15,6 +15,8 @@ const user = ref({
   fullName: "",
   password: "",
   currency: "",
+  twoFAMethod: "",
+  id: "",
 } as IUser);
 
 const load = async () => {
@@ -42,6 +44,7 @@ provide("reloadUser", load);
         fullName: user.fullName,
         password: user.password,
         currency: user.currency,
+        twoFAMethod: user.twoFAMethod,
       }"
       @reload="load"
     />

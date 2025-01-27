@@ -5,7 +5,6 @@ import Axios from "axios";
 import { combineUrl } from "@/utils/url";
 import { addExtraLib } from "./extraLib";
 import { registerClassCompletionItemProvider } from "./classCompletion";
-import { registerToggleComment } from "./toggleComment";
 
 async function getCustomHtml() {
   const { data } = await Axios.get(
@@ -54,7 +53,7 @@ interface Options {
 
     if (options.classCompletion) {
       const classDefine = await getClassDefine();
-      registerClassCompletionItemProvider(classDefine, true);
+      registerClassCompletionItemProvider(classDefine);
     }
 
     if (options.kscript) {
@@ -68,7 +67,6 @@ interface Options {
       model: model,
     });
     addShortcuts(editor);
-    registerToggleComment(editor);
     return model;
   },
 };

@@ -6,6 +6,7 @@ export interface EventItem {
 export interface EventTypeItem {
   name: string;
   category: string;
+  display: string;
 }
 
 export interface Setting {

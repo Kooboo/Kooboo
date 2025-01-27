@@ -9,13 +9,18 @@ import { useAppStore } from "@/store/app";
 import { toUniversalSchema, combineUrl } from "@/utils/url";
 import { useTime } from "@/hooks/use-date";
 import { bytesToSize } from "@/utils/common";
-
+import BlockDialog from "./block-dialog.vue";
 import { useI18n } from "vue-i18n";
+import RequestAccessLimitDialog from "./request-access-limit-dialog.vue";
+
 const props = defineProps<{ week: string }>();
 const { t } = useI18n();
 const data = ref<PaginationResponse<VisitorLog>>();
 const siteStore = useSiteStore();
 const appStore = useAppStore();
+const showBlockDialog = ref(false);
+const showRequestAccessLimitDialog = ref(false);
+const selected = ref<VisitorLog>();
 
 const load = async (index?: number) => {
   data.value = await getBotList(props.week, index);
@@ -29,6 +34,34 @@ function getClientInfo(row: any) {
   return `${row.clientInfo.os || ""} ${row.clientInfo?.platform || ""} ${
     row.clientInfo?.application?.name || ""
   } ${row.clientInfo?.application?.version || ""} ${row?.userAgent || ""}`;
+}
+
+function isBlocked(row: VisitorLog) {
+  if (!siteStore.site.accessLimitSettings.enable) return false;
+  if (siteStore.site.accessLimitSettings.ipBlacklist.includes(row.clientIP)) {
+    return true;
+  }
+
+  for (const element of siteStore.site.accessLimitSettings
+    .blockUserAgentKeywords) {
+    if (row.userAgent.indexOf(element) > -1) return true;
+  }
+  return false;
+}
+
+function isRateLimit(row: VisitorLog) {
+  if (!siteStore.site.rateLimitSettings.enable) return false;
+  if (siteStore.site.rateLimitSettings.limitAllRequest) return true;
+  if (siteStore.site.rateLimitSettings.ipLimits[row.clientIP]) {
+    return true;
+  }
+
+  for (const element of Object.keys(
+    siteStore.site.rateLimitSettings.userAgentLimits
+  )) {
+    if (row.userAgent.indexOf(element) > -1) return true;
+  }
+  return false;
 }
 
 watch(
@@ -181,5 +214,63 @@ watch(
         <span>{{ bytesToSize(row.size) }} </span></template
       >
     </el-table-column>
+    <el-table-column width="48">
+      <template #header>
+        <el-tooltip placement="top" :content="t('common.accessLimitSettings')">
+          <el-icon
+            class="iconfont icon-a-setup hover:text-blue text-l"
+            data-cy="inline-editor"
+            @click.prevent="showRequestAccessLimitDialog = true"
+          />
+        </el-tooltip>
+      </template>
+      <template #default="{ row }">
+        <el-tooltip placement="top" :content="t('common.accessLimitSettings')">
+          <el-icon
+            v-if="isBlocked(row)"
+            class="iconfont icon-delete4 text-orange text-l"
+            @click.prevent="
+              selected = row;
+              showBlockDialog = true;
+            "
+          />
+          <el-icon
+            v-else-if="isRateLimit(row)"
+            class="iconfont icon-Tips text-[#e6a23c] text-l"
+            @click.prevent="
+              selected = row;
+              showBlockDialog = true;
+            "
+          />
+          <el-icon
+            v-else
+            class="iconfont icon-a-setup hover:text-blue text-l"
+            @click.prevent="
+              selected = row;
+              showBlockDialog = true;
+            "
+          />
+        </el-tooltip>
+      </template>
+    </el-table-column>
   </KTable>
+
+  <div>
+    <Teleport to="body">
+      <div>
+        <BlockDialog
+          v-if="showBlockDialog && data"
+          v-model="showBlockDialog"
+          :visitor-log="selected!"
+          @reload="load(data.pageNr)"
+        />
+      </div>
+      <div>
+        <RequestAccessLimitDialog
+          v-if="showRequestAccessLimitDialog"
+          v-model="showRequestAccessLimitDialog"
+        />
+      </div>
+    </Teleport>
+  </div>
 </template>

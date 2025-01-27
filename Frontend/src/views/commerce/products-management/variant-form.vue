@@ -67,7 +67,7 @@ const { tags, removeTag } = useTag("Variant");
           @delete-option="removeTag"
         />
       </ElFormItem>
-      <ElFormItem :label="t('common.active')">
+      <ElFormItem :label="t('commerce.active')">
         <ElSwitch v-model="model.active" />
       </ElFormItem>
     </ElForm>

@@ -8,29 +8,46 @@ import { combineUrl } from "@/utils/url";
 import { useSiteStore } from "@/store/site";
 import { getValueIgnoreCase } from "@/utils/string";
 import type { TextContentDetails, TextContentColumn } from "./content-field";
+import ContentDialog from "@/views/content/contents/content-dialog.vue";
+import { emptyGuid } from "@/utils/guid";
 
 const props = defineProps<{
   modelValue: string[];
   contentFolder: string;
   multiple?: boolean;
   allowRepetition?: boolean;
+  embedded?: boolean;
 }>();
 const emit = defineEmits<{
   (e: "update:model-value", value: string[]): void;
 }>();
 const showSelectDialog = ref(false);
+const showContentDialog = ref(false);
+const selected = ref();
 const contents = ref<TextContentDetails>({
   columns: [],
   list: [],
 });
 
 function onAdd() {
-  showSelectDialog.value = true;
+  if (props.embedded) {
+    selected.value = { id: emptyGuid, folderId: props.contentFolder };
+    showContentDialog.value = true;
+  } else {
+    showSelectDialog.value = true;
+  }
 }
 
-getByIds(props.modelValue || [], props.contentFolder ?? "").then(
-  (rsp) => (contents.value = rsp)
-);
+async function load() {
+  const rsp = await getByIds(props.modelValue || [], props.contentFolder ?? "");
+  contents.value = rsp;
+  emit(
+    "update:model-value",
+    contents.value.list.map((m) => m.id)
+  );
+}
+
+load();
 
 const columns = computed(() => {
   const result: any[] = [];
@@ -107,6 +124,18 @@ function getImages(id: string, column: TextContentColumn) {
     return [];
   }
 }
+
+function onEditContent(item: string) {
+  selected.value = contents.value.list.find((f) => f.id == item);
+  if (selected.value) showContentDialog.value = true;
+}
+
+function onContentSave(id: string) {
+  const index = props.modelValue.findIndex((f) => f == id);
+  if (index == -1) props.modelValue.push(id);
+  emit("update:model-value", props.modelValue);
+  load();
+}
 </script>
 
 <template>
@@ -139,6 +168,15 @@ function getImages(id: string, column: TextContentColumn) {
           </div>
         </el-scrollbar>
       </template>
+      <template #right="{ item }">
+        <a
+          class="cursor-pointer px-4 hover:text-blue"
+          data-cy="edit"
+          @click="onEditContent(item)"
+        >
+          <el-icon class="iconfont icon-a-writein" />
+        </a>
+      </template>
     </SortableList>
     <Teleport to="body">
       <SelectContentDialog
@@ -151,4 +189,11 @@ function getImages(id: string, column: TextContentColumn) {
       />
     </Teleport>
   </div>
+  <ContentDialog
+    v-if="showContentDialog"
+    :id="selected?.id ?? emptyGuid"
+    v-model="showContentDialog"
+    :folder="selected?.folderId ?? emptyGuid"
+    @reload="onContentSave"
+  />
 </template>

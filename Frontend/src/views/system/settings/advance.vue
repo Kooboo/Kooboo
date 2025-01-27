@@ -11,6 +11,8 @@ import RichTextEditorConfig from "./editor.vue";
 import VisitorCountryRestriction from "./visitor-country-restriction.vue";
 import { useSiteStore } from "@/store/site";
 import { useAppStore } from "@/store/app";
+import ResourceCache from "./resource-cache.vue";
+import RequestAccessLimit from "./request-access-limit.vue";
 const { t } = useI18n();
 
 const siteStore = useSiteStore();
@@ -56,11 +58,19 @@ const appStore = useAppStore();
       </el-form-item>
       <el-form-item>
         <span class="font-bold dark:text-fff/86">{{
-          t("common.frontEvent")
+          t("common.frontEvents")
         }}</span>
         <Tooltip :tip="t('common.frontEventTips')" custom-class="ml-4" />
         <div class="flex-1" />
         <el-switch v-model="site.enableFrontEvents" data-cy="front-event" />
+      </el-form-item>
+      <el-form-item>
+        <span class="font-bold dark:text-fff/86">{{
+          t("common.backendEvents")
+        }}</span>
+        <Tooltip :tip="t('common.backendEventTips')" custom-class="ml-4" />
+        <div class="flex-1" />
+        <el-switch v-model="site.enableBackendEvents" data-cy="front-event" />
       </el-form-item>
       <el-form-item>
         <span class="font-bold dark:text-fff/86">{{
@@ -113,6 +123,7 @@ const appStore = useAppStore();
     <Multilingual />
     <RichTextEditorConfig />
     <Sitemap />
+    <RequestAccessLimit />
     <div class="max-w-504px">
       <el-form-item>
         <span class="font-bold dark:text-fff/86">CORS</span>
@@ -182,21 +193,11 @@ const appStore = useAppStore();
         <div class="flex-1" />
         <el-switch v-model="site.automateCovertImageToWebp" />
       </el-form-item>
-      <el-form-item
+      <ResourceCache
         v-if="
           !appStore.header?.isOnlineServer || appStore.header.isPrivateServer
         "
-      >
-        <span class="font-bold dark:text-fff/86">{{
-          t("common.enableResourceCache")
-        }}</span>
-        <Tooltip
-          :tip="t('common.enableResourceCacheTip')"
-          custom-class="ml-4"
-        />
-        <div class="flex-1" />
-        <el-switch v-model="site.enableResourceCache" />
-      </el-form-item>
+      />
       <template
         v-if="
           appStore.header?.isOnlineServer && !appStore.header.isPrivateServer

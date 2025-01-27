@@ -1,6 +1,20 @@
 <template>
   <div class="p-24">
     <Breadcrumb :name="t('common.codeLogs')" />
+    <div class="absolute top-16 right-24">
+      <span class="text-black dark:text-fff/86 mr-12">
+        {{ t("common.week") }}
+      </span>
+      <el-select v-model="currentWeek" class="w-240px">
+        <el-option
+          v-for="item of weeks"
+          :key="item"
+          :value="item"
+          :label="weekToDates(item)"
+          data-cy="week-opt"
+        />
+      </el-select>
+    </div>
   </div>
   <el-tabs
     v-model="currentTab"
@@ -27,6 +41,7 @@
         :end-placeholder="t('common.endTime')"
         class="h-40px max-w-460px"
         :editable="false"
+        :disabled-date="disabledDate"
         @change="changeTime"
       />
       <el-input
@@ -94,15 +109,32 @@
 
 <script lang="ts" setup>
 import type { CodeLog } from "@/api/development/code-log";
-import { query } from "@/api/development/code-log";
+import { getWeeks, query } from "@/api/development/code-log";
 import Breadcrumb from "@/components/basic/breadcrumb.vue";
 import KTable from "@/components/k-table";
 import { useTime } from "@/hooks/use-date";
 import { searchDebounce } from "@/utils/url";
 import type { DateModelType } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
-
 import { useI18n } from "vue-i18n";
+import { weekToDates } from "@/utils/date";
+
+const weeks = ref<string[]>([]);
+const currentWeek = ref<string>();
+
+getWeeks().then((r) => {
+  weeks.value = r.sort((left: string, right: string) => {
+    const leftNumbers = left.split("-").map((m) => parseInt(m));
+    const rightNumbers = right.split("-").map((m) => parseInt(m));
+    if (leftNumbers[0] === rightNumbers[0]) {
+      return rightNumbers[1] - leftNumbers[1];
+    } else {
+      return rightNumbers[0] - leftNumbers[0];
+    }
+  });
+  currentWeek.value = r[0];
+});
+
 const { t } = useI18n();
 const tabs = [
   {
@@ -215,6 +247,15 @@ watch(
     }
   }
 );
+
+function disabledDate(date: Date) {
+  if (!currentWeek.value) return true;
+  var dates = weekToDates(currentWeek.value).split("~");
+  var startDate = new Date(dates[0].trim());
+  if (date < new Date(startDate.setDate(startDate.getDate() - 1))) return true;
+  if (date > new Date(dates[1].trim())) return true;
+  return false;
+}
 </script>
 
 <style scoped>

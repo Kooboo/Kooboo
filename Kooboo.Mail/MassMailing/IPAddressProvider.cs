@@ -86,6 +86,21 @@ namespace Kooboo.Mail.MassMailing
         {
             List<IPAddress> result = new();
 
+            IPHostEntry hostEntry = Dns.GetHostEntry(host);
+
+            foreach (var address in hostEntry.AddressList)
+            {
+                if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)  // IPv4
+                {
+                    result.Add(address);
+                }
+            }
+
+            if (result.Any())
+            {
+                return result;
+            }
+
             foreach (var item in DNSServerProvider.Servers)
             {
                 try
@@ -139,6 +154,10 @@ namespace Kooboo.Mail.MassMailing
 
                 }
             }
+
+
+
+
             return result;
         }
 

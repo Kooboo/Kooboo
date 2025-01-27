@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import type { CategoryBasicInfo } from "@/api/commerce/category";
+import { isUniqueName, type CategoryBasicInfo } from "@/api/commerce/category";
 import { useCommerceStore } from "@/store/commerce";
 import { useI18n } from "vue-i18n";
 import EditableTags from "@/components/basic/editable-tags.vue";
 import SeoNameFormItem from "../components/seo-name-form-item.vue";
 import { useTag } from "../useTag";
 import type { FormRules } from "element-plus";
-import { rangeRule, requiredRule } from "@/utils/validate";
+import { isUniqueNameRule, rangeRule, requiredRule } from "@/utils/validate";
 import { ref } from "vue";
 import type { CustomField } from "@/api/commerce/settings";
 import { useCategoryLabels } from "../useLabels";
 import { ignoreCaseEqual } from "@/utils/string";
+import { getQueryString } from "@/utils/url";
 const { getFieldDisplayName } = useCategoryLabels();
 
 const { t } = useI18n();
@@ -30,7 +31,14 @@ if (!props.model.customData["description"]) {
 
 const rules: FormRules = {
   title: [requiredRule(t("common.fieldRequiredTips")), rangeRule(1, 50)],
-  seoName: [requiredRule(t("common.fieldRequiredTips")), rangeRule(1, 50)],
+  seoName: [
+    requiredRule(t("common.fieldRequiredTips")),
+    rangeRule(1, 50),
+    isUniqueNameRule(
+      (n) => isUniqueName(n, getQueryString("id")),
+      t("common.seoNameExistsTips")
+    ) as any,
+  ],
 };
 
 const commerceStore = useCommerceStore();

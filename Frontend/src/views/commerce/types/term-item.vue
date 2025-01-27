@@ -115,6 +115,7 @@ watch(
                 v-for="(item, index) of copyValue!.options"
                 :key="index"
                 :model-value="item"
+                :readonly="model.valueType == 'color'"
                 @update:model-value="copyValue!.options[index] = $event"
                 @change="onChangeItem(index, $event)"
               >
@@ -135,12 +136,14 @@ watch(
               </ElInput>
               <ElInput
                 v-model="newOptionValue"
+                :readonly="model.valueType == 'color'"
                 :placeholder="
                   model.options.length
                     ? t('common.addAnotherValue')
                     : t('common.addValue')
                 "
                 @change="addOptionValue"
+                @keydown.prevent.tab="addOptionValue(newOptionValue)"
               >
                 <template v-if="model.valueType == 'color'" #prepend>
                   <el-color-picker @update:model-value="addOptionValue" />
@@ -148,6 +151,7 @@ watch(
               </ElInput>
               <ElInput
                 v-if="newOptionValue"
+                :readonly="model.valueType == 'color'"
                 :placeholder="t('common.addAnotherValue')"
               >
                 <template v-if="model.valueType == 'color'" #prepend>

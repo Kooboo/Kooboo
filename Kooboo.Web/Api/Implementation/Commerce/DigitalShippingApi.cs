@@ -189,6 +189,14 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 }
             }
 
+            if (orderLine.MaxDownloadDay.HasValue)
+            {
+                if (!orderLine.ShippingAt.HasValue || orderLine.ShippingAt.Value.AddDays(orderLine.MaxDownloadDay.Value) < DateTime.UtcNow)
+                {
+                    return new PlainResponse { Content = "The download url is expired" };
+                }
+            }
+
             switch (digitalItem.Type)
             {
                 case "file":

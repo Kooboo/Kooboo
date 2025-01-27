@@ -3,6 +3,7 @@ import request from "@/utils/request";
 import { i18n } from "@/modules/i18n";
 import type { PagingResult, PagingParams, CustomerInfo } from "./common";
 import type { Option } from "./product";
+import type { Address } from "./customer";
 const $t = i18n.global.t;
 
 export const getCarts = (params: PagingParams) =>
@@ -78,6 +79,8 @@ export interface CartCalculateParams {
   discountCodes: string[];
   lines: CartLine[];
   redeemPoints: boolean;
+  country?: string;
+  region?: string;
 }
 
 export interface CartCalculateResult {
@@ -98,9 +101,11 @@ export interface CartCalculateResult {
     note: string;
     discountAllocations: DiscountAllocation[];
     isDigital: boolean;
+    taxAmount: number;
   }[];
   discountAllocations: DiscountAllocation[];
   shippingAllocations: ShippingAllocation[];
+  taxAmount: number;
   insuranceAmount: number;
   shippingAmount: number;
   subtotalAmount: number;

@@ -214,30 +214,7 @@ namespace Kooboo.Web.Security
 
 
         #region  DEV Password
-
-        public static bool RequireDevPassword(FrontContext context)
-        {
-            try
-            {
-                if (context?.WebSite?.SiteType != Data.Definition.WebsiteType.p) return false;
-
-                var status = context?.WebSite?.Status ?? WebSite.SiteStatus.Published;
-
-                //if (status == WebSite.SiteStatus.Development || status == WebSite.SiteStatus.Auditing)
-                //{
-                //var key = GetDevPasswordKey(context.RenderContext);
-                //if (!_devPasswordCache.TryGetValue(key, out _))
-                //{
-                var body = WebSiteService.RenderCustomErrorPage(context, DataConstants.DevPassword).Result;
-                context.RenderContext.Response.Body = Encoding.UTF8.GetBytes(body);
-                return true;
-                // }
-                //  }
-            }
-            catch { }
-
-            return false;
-        }
+         
 
         public static bool ValidDevAccess(RenderContext context)
         {

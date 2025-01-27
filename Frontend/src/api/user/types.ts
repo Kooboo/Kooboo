@@ -23,6 +23,7 @@ export interface IUser {
   password: string;
   currency: string;
   fullName: string;
+  twoFAMethod: string;
 }
 
 export interface IChangePasswordParam {

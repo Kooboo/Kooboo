@@ -8,11 +8,16 @@ import type { Settings } from "@/api/commerce/settings";
 import { useSiteStore } from "./site";
 import type { MembershipListItem } from "@/api/commerce/loyalty";
 import { getMemberships } from "@/api/commerce/loyalty";
+import type { Country } from "@/api/commerce/address";
+import { getCountries } from "@/api/commerce/address";
 
 export const useCommerceStore = defineStore("commerceStore", () => {
   const categories = ref<CategoryListItem[]>([]);
   const types = ref<ProductType[]>([]);
   const memberships = ref<MembershipListItem[]>();
+  const countries = ref<Country[]>([]);
+
+  getCountries().then((rsp) => (countries.value = rsp));
 
   const siteStore = useSiteStore();
   const settings = ref<Settings>({
@@ -77,5 +82,6 @@ export const useCommerceStore = defineStore("commerceStore", () => {
     types,
     loadSettings,
     settings,
+    countries,
   };
 });

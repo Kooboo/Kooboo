@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace Kooboo.Lib.Security
@@ -49,6 +50,14 @@ namespace Kooboo.Lib.Security
             }
             MD5 md5Hasher = MD5.Create();
             byte[] data = md5Hasher.ComputeHash(bytes);
+            // convert the hash to a Guid
+            return new Guid(data);
+        }
+
+        public static Guid ComputeGuid(Stream stream)
+        {
+            MD5 md5Hasher = MD5.Create();
+            byte[] data = md5Hasher.ComputeHash(stream);
             // convert the hash to a Guid
             return new Guid(data);
         }

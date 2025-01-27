@@ -301,6 +301,15 @@ namespace Kooboo.Lib.DnsRequest
             return null;
         }
 
+        public static string GetReverseDns(string IPAddress)
+        {
+            if (System.Net.IPAddress.TryParse(IPAddress, out var ip))
+            {
+                return GetReverseDns(ip); 
+            }
+            return null; 
+        }
+
         public static async Task<string> GetReverseDnsAsync(System.Net.IPAddress ip)
         {
             try

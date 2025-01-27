@@ -127,6 +127,8 @@ namespace Kooboo.IndexedDB.WORM
             this.PointerLen = PositionPointer.GetPointerLen(this.MetaByteLen);
             this.NodeLen = Node.GetNodelen(this.PointerLen);
 
+            RemoveZeroLenFile(this.FullFileName);
+
             if (!File.Exists(this.FullFileName))
             {
                 byte[] fieldNameBytes = null;
@@ -225,6 +227,24 @@ namespace Kooboo.IndexedDB.WORM
             this.CurrentId = this.LastKey();
         }
 
+        private void RemoveZeroLenFile(string FullFileName)
+        {
+            if (System.IO.File.Exists(FullFileName))
+            {
+                var info = new System.IO.FileInfo(FullFileName);
+                if (info.Length == 0)
+                {
+                    try
+                    {
+                        System.IO.File.Delete(FullFileName);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+
+        }
 
         private long DictGetKey(T input)
         {
@@ -657,14 +677,22 @@ namespace Kooboo.IndexedDB.WORM
         private long ReadLong(long position)
         {
             var bytes = GetPartial(position, 8);
-            return BitConverter.ToInt64(bytes, 0);
+            if (bytes != null)
+            {
+                return BitConverter.ToInt64(bytes, 0);
+            }
+            return 0;
         }
 
         private string ReadText(long position, int len)
         {
             var bytes = GetPartial(position, len);
-            var text = System.Text.Encoding.UTF8.GetString(bytes);
-            return text.Trim();
+            if (bytes != null)
+            {
+                var text = System.Text.Encoding.UTF8.GetString(bytes);
+                return text.Trim();
+            }
+            return null;
         }
 
         private void SetInt(int inputValue, long position)
@@ -676,7 +704,11 @@ namespace Kooboo.IndexedDB.WORM
         private int ReadInt(long position)
         {
             var bytes = GetPartial(position, 4);
-            return BitConverter.ToInt32(bytes, 0);
+            if (bytes != null)
+            {
+                return BitConverter.ToInt32(bytes, 0);
+            }
+            return 0;
         }
 
         public Node LoadNode(long position)
@@ -689,9 +721,16 @@ namespace Kooboo.IndexedDB.WORM
                 }
             }
             var bytes = GetPartial(position, this.NodeLen);
-            var node = Node.FromBytes(bytes, this.NodeLen, this.PointerLen, this.MetaByteLen);
-            node.DiskPosition = position;
-            return node;
+            if (bytes != null)
+            {
+                var node = Node.FromBytes(bytes, this.NodeLen, this.PointerLen, this.MetaByteLen);
+                if (node != null)
+                {
+                    node.DiskPosition = position;
+                    return node;
+                }
+            }
+            return null;
         }
 
         internal void UpdatePointer(Node container, PositionPointer pointer, int Index)

@@ -96,3 +96,10 @@ export interface MoveCategory {
   prevId?: string;
   nextId?: string;
 }
+
+export const isUniqueName = (name: string, id?: string) =>
+  request.get(
+    useUrlSiteId("ProductCategory/isUniqueName"),
+    { seoName: name, id },
+    { hiddenLoading: true, hiddenError: true }
+  );

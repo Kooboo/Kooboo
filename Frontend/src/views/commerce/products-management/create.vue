@@ -83,6 +83,7 @@ onMounted(async () => {
     }
     model.value.isDigital = productType.value.isDigital;
     model.value.maxDownloadCount = productType.value.maxDownloadCount;
+    model.value.maxDownloadDay = productType.value.maxDownloadDay;
   }
 });
 

@@ -7,6 +7,11 @@
         public string Subject { get; set; } // to be signed..  
         public string Date { get; set; }   //  to be replaced and signed. 
 
+        public string MessageId { get; set; }
+
+
+
+
         public XCommand Command { get; set; }
     }
 }

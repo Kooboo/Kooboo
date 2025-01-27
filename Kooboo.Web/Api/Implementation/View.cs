@@ -30,6 +30,13 @@ namespace Kooboo.Web.Api.Implementation
                 Body = view.Body,
                 Version = view.Version,
                 PropDefines = view.PropDefines,
+                EnableCache = view.EnableCache,
+                CacheByVersion = view.CacheByVersion,
+                CacheVersionType = view.CacheVersionType,
+                CacheByDevice = view.CacheByDevice,
+                CacheByCulture=view.CacheByCulture,
+                CacheMinutes = view.CacheMinutes,
+                CacheQueryKeys = view.CacheQueryKeys
             };
 
             viewmodel.DummyLayout = GetDummary(call.WebSite);
@@ -149,7 +156,14 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     Name = model.Name,
                     Body = model.Body,
-                    PropDefines = model.PropDefines
+                    PropDefines = model.PropDefines,
+                    CacheByVersion = model.CacheByVersion,
+                    CacheVersionType = model.CacheVersionType,
+                    CacheByDevice = model.CacheByDevice,
+                    CacheByCulture=model.CacheByCulture,
+                    CacheQueryKeys = model.CacheQueryKeys,
+                    CacheMinutes = model.CacheMinutes,
+                    EnableCache = model.EnableCache
                 };
                 call.WebSite.SiteDb().Views.AddOrUpdate(view, call.Context.User.Id);
             }
@@ -161,6 +175,13 @@ namespace Kooboo.Web.Api.Implementation
 
                 view.Body = model.Body;
                 view.PropDefines = model.PropDefines;
+                view.EnableCache = model.EnableCache;
+                view.CacheByVersion = model.CacheByVersion;
+                view.CacheVersionType = model.CacheVersionType;
+                view.CacheByDevice = model.CacheByDevice;
+                view.CacheByCulture = model.CacheByCulture;
+                view.CacheQueryKeys = model.CacheQueryKeys;
+                view.CacheMinutes = model.CacheMinutes;
                 call.WebSite.SiteDb().Views.AddOrUpdate(view, call.Context.User.Id);
             }
 

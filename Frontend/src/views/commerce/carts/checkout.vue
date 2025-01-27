@@ -75,8 +75,10 @@ function onAddressSelected(value: Address) {
               readonly
               :customer-id="cart.customerId"
               :shipping-id="cart.shippingId"
+              :address="address"
               :discount-codes="cart.discountCodes"
               :extension-button="cart.extensionButton"
+              mode="checkout"
               @update:has-digital-products="hasDigitalProducts = $event"
               @update:has-physics-products="hasPhysicsProducts = $event"
             />

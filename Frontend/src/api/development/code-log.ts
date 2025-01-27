@@ -17,3 +17,7 @@ export type CodeLogResponse = {
 };
 export const query = (data: unknown) =>
   request.post<CodeLogResponse>(useUrlSiteId("CodeLog/query"), data);
+
+export const getWeeks = () => {
+  return request.get<string[]>(useUrlSiteId("CodeLog/WeekNames"));
+};

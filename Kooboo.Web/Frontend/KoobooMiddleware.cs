@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Data;
 using Kooboo.Data.Context;
+using Kooboo.Data.RateLimits;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Helper;
 using Kooboo.Sites.Render;
@@ -98,7 +99,7 @@ namespace Kooboo.Web.FrontRequest
                     if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
                     {
                         var success = true;
-                        
+
                         if (!isBackendOrImage)
                         {
                             success = AuthenticationHelper.Authentication(kooboocontext);
@@ -266,6 +267,7 @@ namespace Kooboo.Web.FrontRequest
                 relativeUrl.StartsWith("/_admin/", StringComparison.CurrentCultureIgnoreCase) ||
                 relativeUrl.Equals("/_admin", StringComparison.CurrentCultureIgnoreCase) ||
                 relativeUrl.StartsWith("/_spa/") ||
+                relativeUrl.StartsWith("/_pwa/") ||
                  relativeUrl.StartsWith("/_thumbnail/") ||
                  relativeUrl.StartsWith("/.well-known/")
                 )
@@ -283,6 +285,11 @@ namespace Kooboo.Web.FrontRequest
             if (frontContext.RenderContext.Request.Channel == RequestChannel.Default && !frontContext.WebSite.Published)
             {
                 frontContext.RenderContext.Response.StatusCode = 503;
+            }
+
+            if (frontContext.Route.DestinationConstType == ConstObjectType.Page && (!RateLimitService.Acquire(frontContext.RenderContext) || !AccessLimitService.Acquire(frontContext.RenderContext)))
+            {
+                frontContext.RenderContext.Response.StatusCode = 429;
             }
 
             if (frontContext.RenderContext.Response.StatusCode == 200)

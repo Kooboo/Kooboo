@@ -4,6 +4,8 @@ import { editCustomer, getCustomerEdit } from "@/api/commerce/customer";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import CreateAddressDialog from "../customers/create-address-dialog.vue";
+import { getDetails } from "@/api/commerce/address";
+import { systemDisplay } from "@/utils/commerce";
 
 const props = defineProps<{ customerId: string }>();
 const emit = defineEmits<{
@@ -13,6 +15,7 @@ const selected = ref<number>();
 const customer = ref<CustomerEdit>();
 const { t } = useI18n();
 const showCreateAddressDialog = ref(false);
+const details = ref<any[]>([]);
 
 async function load() {
   if (props.customerId) {
@@ -28,9 +31,20 @@ const list = computed(() => {
   const result = [];
 
   if (customer.value) {
-    for (const m of customer.value.addresses) {
+    for (let i = 0; i < customer.value.addresses.length; i++) {
+      const m = details.value[i] || customer.value.addresses[i];
       result.push(
-        `${m.firstName} ${m.lastName} ${m.phone} ${m.province} ${m.city} ${m.address1} ${m.address2} ${m.zip}`
+        `${m.firstName ?? ""} ${m.lastName ?? ""} ${
+          m.phone ?? ""
+        } ${systemDisplay(
+          m?.countryDetail?.nameTranslations,
+          m.country
+        )} ${systemDisplay(
+          m?.provinceDetail?.nameTranslations,
+          m.province
+        )} ${systemDisplay(m?.cityDetail?.nameTranslations, m.city)} ${
+          m.address1 ?? ""
+        } ${m.address2 ?? ""} ${m.zip ?? ""}`
       );
     }
   }
@@ -54,6 +68,18 @@ watch(
         emit("selected", address);
       }
     }
+  }
+);
+
+watch(
+  () => customer.value?.addresses,
+  async () => {
+    if (!customer.value?.addresses.length) return;
+    details.value = await getDetails(customer.value.addresses);
+  },
+  {
+    immediate: true,
+    deep: true,
   }
 );
 </script>

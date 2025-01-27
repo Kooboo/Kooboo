@@ -120,7 +120,7 @@ public class SqliteApi : DatabaseApi<SqliteCommands>
         }
 
         // rename table
-        sb.AppendLine($"ALTER TABLE {tablename} RENAME TO {oldTable};");
+        sb.AppendLine($"ALTER TABLE \"{tablename}\" RENAME TO {oldTable};");
 
         // create new table and index
         foreach (var sql in sqls)
@@ -140,11 +140,11 @@ public class SqliteApi : DatabaseApi<SqliteCommands>
         if (intersect.Any())
         {
             var cols = string.Join("\",\"", intersect);
-            sb.AppendLine($"INSERT INTO {tablename} (\"{cols}\") SELECT \"{cols}\" FROM {oldTable};");
+            sb.AppendLine($"INSERT INTO \"{tablename}\" (\"{cols}\") SELECT \"{cols}\" FROM {oldTable};");
         }
 
         // drop old table
-        sb.AppendLine($"DROP TABLE {oldTable};");
+        sb.AppendLine($"DROP TABLE \"{oldTable}\";");
 
         db.Execute(sb.ToString());
 

@@ -5,7 +5,11 @@ import type {
   TextContentColumn,
   TextContentItem,
 } from "@/api/content/textContent";
-import { Search, getByFolder } from "@/api/content/textContent";
+import {
+  Search,
+  getByFolder,
+  exportData as exportDataApi,
+} from "@/api/content/textContent";
 import { camelCase, isEmpty, omitBy } from "lodash-es";
 import { reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -54,6 +58,15 @@ export function useContentEffects(
       search();
     }
   );
+
+  function exportData() {
+    exportDataApi({
+      folderId,
+      keyword: currentKeyword.value,
+      categories: omitBy(searchCategories.value, (v) => isEmpty(v)),
+      exclude: exclude,
+    });
+  }
 
   function queryData(pageNr: number, pageSize: number, exclude?: string[]) {
     const categories = omitBy(searchCategories.value, (v) => isEmpty(v));
@@ -200,5 +213,6 @@ export function useContentEffects(
     categoryOptions,
     onSortChanged,
     initSortSetting,
+    exportData,
   };
 }

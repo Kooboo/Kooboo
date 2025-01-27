@@ -23,6 +23,7 @@ export interface ProductType {
   options: Term[];
   isDigital: boolean;
   maxDownloadCount?: number;
+  maxDownloadDay?: number;
 }
 
 export const getProductTypes = () =>

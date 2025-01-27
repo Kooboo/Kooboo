@@ -75,8 +75,10 @@ commerce:
   orderStatus: 订单状态
   orderTotalAmount: 订单总金额
   outOfStock: 缺货
+  paidAmounts: 已支付总额
   paidAt: 支付时间
   paidOrder: 支付订单
+  paidOrders: 已支付订单
   partialDelivered: 部分发货
   partialDelivery: 部分发货
   partialShipped: 部分发货
@@ -117,11 +119,16 @@ commerce:
   variantSamples: "例如: 颜色, 尺寸..."
   waitDeliver: 待发货
   waitPay: 待支付
+commmon:
+  limitAllRequestTip: 已开启所有请求速率限制
 common:
+  2fa: 两步验证
+  2faTip: 使用两步验证
   abstract: 摘要
   aCancellationEmailWillBeSentToParticipants: 将发送日程取消邮件给参与人
   aCancellationEmailWillBeSentToRemovedParticipants: 将发送日程取消邮件给移除的参与人
   acceptedTheInvitation: 已接受邀请
+  accessLimitSettings: 访问限制设置
   accessToken: 访问令牌
   account: 账号
   accountBalance: 账号余额
@@ -142,7 +149,10 @@ common:
   addCountry: 添加国家
   addCustomer: 添加顾客
   addDepartment: 添加部门
+  addedToBaseTax: 添加到{tax}%基础税上
+  addedToBaseTaxAndRegionOverrides: 添加到{tax}%基础税和地区覆盖上
   addExisting: 添加现有账号
+  addGroup: 新增分组
   additionalCodeSuggestions: 额外的代码提示
   addJob: 添加任务
   addLabel: 添加标签
@@ -151,10 +161,12 @@ common:
   addMenuItem: 添加菜单项
   addMigrationJob: 添加迁移任务
   addNewCategory: 添加类别
+  addOtpCodeTip: 请使用验证器扫描二维码
   addProduct: 添加商品
   addProductSuccess: 添加商品成功
   addProductType: 添加类型
   addRecord: 添加记录
+  addRelation: 新增关联
   address: 地址
   addresses: 地址
   addressMaximumLength: 邮箱最大长度为{max}
@@ -211,6 +223,8 @@ common:
   attributeSamples: "例如: 材料, 风格..."
   atv: 客单价
   authentication: 身份认证
+  authenticator: 验证器
+  authenticatorApp: 验证器应用
   author: 作者
   authorizationCodeHasGenerated: 授权码已生成
   authorizationCodesTips: 仅最新的授权码有效，请保存以便重复使用。
@@ -231,6 +245,9 @@ common:
   back: 返回
   backColor: 背景色
   backend: 后端
+  backendEvent: 后台事件
+  backendEvents: 后台事件
+  backendEventTips: 拦截后台事件执行特定操作
   background: 背景
   backToAllSites: 返回所有站点
   backToEdit: 返回编辑
@@ -241,6 +258,7 @@ common:
   bankCardPayment: 银行卡
   barcode: 条码
   baseCost: 基础价格
+  baseTax: 基础税
   baseUrl: Base URL
   basic: 基础
   basicInfo: 基本信息
@@ -261,8 +279,12 @@ common:
   bots: 爬虫
   byProperty: 属性
   cache: 缓存
-  cacheByVersion: 缓存版本
-  cacheQueryKeys: 缓存主键
+  cacheByCulture: 根据语言缓存
+  cacheByDevice: 根据设备类型缓存
+  cacheByDeviceTip: 根据设备类型添加缓存,例如桌面或手机
+  cacheByVersion: 根据版本缓存
+  cacheQueryKeys: 根据键值
+  cacheQueryKeysTip: 键名用逗号分隔， 这些键用于从当前上下文中获取值，例如组件参数、URL 参数、表单等
   calendar: 日历
   cancel: 取消
   cancelReason: 取消原因
@@ -364,6 +386,8 @@ common:
   compellation: 姓名
   completed: 已完成
   compose: 写邮件
+  compoundedOnTopOfBaseTax: 复合到{tax}%基础税上
+  compoundedOnTopOfBaseTaxAndRegionOverrides: 复合到{tax}%基础税和地区覆盖上
   compressedPackageFileFormat: 压缩包文件格式「zip」
   condition: 条件
   conditions: 条件
@@ -447,6 +471,7 @@ common:
   csvField: CSV字段
   ctr: 点击率
   culture: 语言
+  cultureCodeTip: 语言代码必须为两位字母
   currency: 货币
   currentBalance: 当前余额
   currentOrganization: 当前组织
@@ -456,6 +481,7 @@ common:
   currentVersion: " [当前版本]"
   custom: 自定义
   customAuth: 自定义身份验证
+  customData: 自定义数据
   customer: 顾客
   customers: 顾客管理
   customSettings: 自定义设置
@@ -626,11 +652,13 @@ common:
   emailBody: 邮件正文
   emailCannotBeTheSameAsTheCurrentBound: 邮箱不能与当前绑定的邮箱相同
   emailHasSent: 邮件已发送
+  emailMessage: 邮件消息
   emailMigrationTips: 仅迁移收件箱、已发送、自定义文件夹的邮件；部分邮箱可能默认只迁移30天内的邮件，这取决于邮箱的IMAP收取邮件范围，通常可在邮箱的设置界面进行更改
   emailNotFound: 邮件不存在
   emailNotifications: 邮件通知
   emailRangeTips: 用户名最大长度为{max}
   emailUpdated: 邮箱已更新
+  emailVerifyCodeSentTip: 验证码已发送至您邮箱
   embedded: 内嵌
   embeddedFolder: 内嵌数据
   embeddedFolders: 内嵌数据
@@ -651,7 +679,6 @@ common:
   enableMultilingual: 启用多语言
   enableMultiple: 启用多个
   enableResourceCache: 启用资源缓存
-  enableResourceCacheTip: 开启资源缓存后Script, Style, Image都将缓存到内存
   enableResourceCDNTips: 资源CDN已启用
   enableSSL: 启用 SSL
   enableStatus: 启用状态
@@ -680,6 +707,7 @@ common:
   estimatedDaysOfArrival: 预计需要几天送达
   event: 事件
   eventRequiredTips: 请选择一个事件
+  events: 事件
   every: 每
   exampleCode: 例如：<br/>{code}
   exampleMysite: 示例：我的网站
@@ -756,6 +784,7 @@ common:
   font: 字体
   fontSize: 字体大小
   fontWeight: 字体粗细
+  forbidden: 禁止
   forceSave: 强制保存
   forceSaveTip: 强制保存将覆盖其他用户的修改，确定保存吗？
   forceSSL: 强制 SSL
@@ -798,6 +827,7 @@ common:
   gridView: 网格视图
   group: 群组
   groupMembers: 群组成员
+  groupName: 分组名称
   hasInstall: 已安装
   hasObject: 存在对象
   hasParameterTip: 由于此页面包含外部依赖，在线编辑页显示的内容可能不是您预期的，是否仍要进入在线编辑页？
@@ -900,6 +930,8 @@ common:
   install: 安装
   installationFailed: 安装失败
   installSuccess: 安装成功
+  insteadOfBaseTax: 替换{tax}%基础税
+  insteadOfBaseTaxAndRegionOverrides: 替换{tax}%基础税和地区覆盖
   inStock: 上架
   integerRuleTips: 输入的数必须大于0
   internal: 内部
@@ -908,6 +940,9 @@ common:
   interval: 间隔时间
   inUse: 使用中
   inventory: 库存
+  ipBlacklist: IP黑名单
+  ipRateLimit: IP速率限制
+  ipRequestRateLimit: 请求速率限制
   isDigitalProduct: 数字产品
   isManager: 是否为管理人员
   isSearchable: 可搜索
@@ -958,7 +993,10 @@ common:
   letterAndDigitsAllowedToStarting: 以字母开头，允许字母数字_
   level: 等级
   lighthouseOptimization: Lighthouse 优化
+  limit: 限制
+  limitAllRequest: 限制所有请求
   limitDownloadCount: 限制下载次数
+  limitDownloadTime: 限制下载时间
   limitedFunctionalityOnMobile: 系统在手机中使用功能受限
   line: 行
   lineHeight: 行高
@@ -1169,6 +1207,7 @@ common:
   optionalProducts: 自选商品
   options: 选项
   optionSchema: 配置结构
+  optVerifyTip: 打开您的两步身份验证器（TOTP）应用程序或浏览器扩展来查看您的身份验证代码。
   or: 或者
   orCreateYourDomainWildcardTips: 或者创建您的域名通配符 CNAME 记录到当前服务器域名
   orderCancel: 订单取消
@@ -1228,11 +1267,14 @@ common:
   percent: 百分比
   period: 时长
   permission: 权限
+  permitLimit: 允许次数
   phone: 手机号
   phoneLogin: 手机登录
+  phoneMessage: 短信消息
   phoneNumber: 手机号码
   phoneNumberCannotBeTheSameAsTheCurrentBound: 手机号不能与当前绑定的手机号相同
   phoneNumberUpdated: 手机号已更新
+  phoneVerifyCodeSentTip: 验证码已发送至您手机
   physicalProduct: 实体产品
   pick: 选择
   pickName: 选择名字
@@ -1262,6 +1304,7 @@ common:
   positionNameAndFrom: "位置: {name} (来自 {from})"
   postalCode: 邮编
   postalDistrict: 邮政区号
+  preferred2FAMethod: 首选两步验证方式
   preview: 预览
   previewUrl: 预览地址
   price: 单价
@@ -1274,6 +1317,7 @@ common:
   productManagement: 商品管理
   productNews: 产品动态
   ProductNotFound: 商品未找到
+  productOverrides: 产品覆盖
   productRemovedShelves: 某些商品已下架
   products: 商品
   productsSettlement: 商品结算
@@ -1285,7 +1329,7 @@ common:
   project: 项目
   promotions: 促销方案
   property: 属性
-  province: 省份
+  province: 省份 / 州
   pull: 拉取
   pullConfirm: 确定要从远程站点拉取更改吗？
   pullLogs: 拉取日志
@@ -1305,6 +1349,8 @@ common:
   range: 范围
   rangeLengthTips: 请输入{min} - {max} 个字符
   rangeValue: 范围值
+  rateLimit: 速率限制
+  rateLimitTip: '"{ip}" 在 {seconds} 秒内可以请求 {count} 次'
   read: 已读
   readOrUnread: 已读/未读
   rebuild: 重建
@@ -1335,6 +1381,7 @@ common:
   refreshToken: 刷新令牌
   regex: 正则
   region: 地区
+  regionOverrides: 区域覆盖
   register: 注册
   registerTips: 注册意味着您同意我们的
   registerVerifyCodeSentTip: 验证码已发送至您的邮箱,请输入完成注册
@@ -1367,6 +1414,9 @@ common:
   reply: 回复
   replyAll: 回复全部
   reportDomain: 报告域
+  request: 请求
+  requestAccessLimit: 请求访问限制
+  requestForbidden: 禁止请求访问
   required: 必填
   requireICP: 是否需要ICP
   reSelect: 重新选择
@@ -1454,6 +1504,7 @@ common:
   searchStatistic: 搜索统计
   searchWebsite: 搜索站点
   seconds: 秒
+  security: 安全
   securityCode: 验证码
   securityReport: DMARC报告
   seed: 初始值
@@ -1462,6 +1513,7 @@ common:
   selectAll: 全选
   selectAllFiles: 选择所有文件
   selectAWeek: 选择周
+  selectCountry: 选择国家
   selected: 选中
   selectFile: 选择文件
   selectFileTips: 请选择一个文件
@@ -1472,6 +1524,7 @@ common:
   selectSitePackageTips: 请选择一个站点包
   selectSourceTips: 选择来源
   selectValidationRules: 选择校验规则
+  self: 自身
   semiAuto: 半自动
   send: 发送
   senderRequired: 发件人必填
@@ -1484,6 +1537,7 @@ common:
   sent: 已发送
   Sent: 已发送
   seoName: SEO名称
+  seoNameExistsTips: SEO名称已存在
   seoNameTip: 静态网址用于提高在搜索引擎中的权重
   server: 服务器
   serverAddSuccess: 服务器添加成功！
@@ -1626,6 +1680,7 @@ common:
   taskIsExecuting: 任务执行中...
   taskList: 任务列表
   tax: 税
+  taxes: 税费
   template: 模板
   templateName: 模板名称
   tentativelyAcceptedTheInvitation: 已暂时接受邀请
@@ -1649,6 +1704,7 @@ common:
   time: 时间
   timeElapsed: 时长
   timeMinutes: 时间（分钟）
+  times: 次
   tinymceToolbarSettings: 数据类型的富文本编辑器配置
   tips401: 未授权：由于凭据无效，访问被拒绝
   tips402: 已达到帐户限制。网站所有者请联系您的主机提供商。
@@ -1734,6 +1790,10 @@ common:
   useHeadlessMode: 使用浏览器模式
   useHeadlessModeTip: 使用无头浏览器下载页面执行后生成的HTML代码
   user: 用户
+  userAgent: 用户代理
+  userAgentBlacklist: 用户代理黑名单
+  userAgentLimit: 用户代理限制
+  userAgentRateLimit: 用户代理速率限制
   userCount: 账号数量
   userEditable: 用户可编辑
   useRegularExpression: 使用正则表达式
@@ -1745,16 +1805,19 @@ common:
   usernameRuleTips: 用户名必须包含5-30个字符
   userOptions: 用户配置
   userRequired: 用户必填
+  using: 使用
   validation: 验证
   validationFailedMessage: 验证失败时的错误信息
   value: 值
   valueExist: 值已存在
   valueHasBeenTakenTips: 名称已存在
+  valueList: 列表
   valueRequiredTips: 值必填
   vat: 增值税
   vatAndFees: 增值税和费用
   verificationCodeHasSent: 验证码已发送
   verifyCode: 验证码
+  verifyCodeInvalid: 验证码无效
   version: 版本
   versionConflict: 此文件版本已被其他用户修改，请解决冲突！
   versions: 版本
@@ -1791,6 +1854,7 @@ common:
   width: 宽度
   wildcard: 通配符
   wildcardAddress: 通配符地址
+  withinSeconds: 周期 (秒)
   withoutKoobooAccount: 没有账号？
   WYSIWYGEditor: 富文本编辑器
   year: 年
@@ -1827,6 +1891,9 @@ domain:
   name: 姓名
   phone: 电话
   switch: 切换
+event:
+  eventActive: 事件开启
+  eventInactive: 事件关闭
 ExcludePath: 不包含定义路径
 export:
   complete: 全部

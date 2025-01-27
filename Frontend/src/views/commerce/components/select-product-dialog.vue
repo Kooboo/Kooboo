@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useProductFields } from "../useFields";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
 import type { PagingParams, PagingResult } from "@/api/commerce/common";
+import TruncateContent from "@/components/basic/truncate-content.vue";
 
 const { getColumns } = useProductFields();
 const columns = getColumns([
@@ -144,7 +145,13 @@ function onSave() {
               <ElCheckbox v-model="row.selected" size="large" />
             </template>
           </el-table-column>
-          <DynamicColumns :columns="columns" />
+          <DynamicColumns :columns="columns">
+            <template #title="{ row }">
+              <TruncateContent :tip="row.title">{{
+                row.title
+              }}</TruncateContent>
+            </template>
+          </DynamicColumns>
         </ElTable>
       </el-scrollbar>
       <div class="text-center">

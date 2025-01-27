@@ -157,6 +157,7 @@ export interface ProductBasicInfo {
   active: boolean;
   isDigital: boolean;
   maxDownloadCount?: number;
+  maxDownloadDay?: number;
   featuredImage: string;
   description: string;
   images: string[];
@@ -169,3 +170,10 @@ export interface ProductCreate extends ProductBasicInfo {
   attributes: KeyValue[];
   variants: ProductVariant[];
 }
+
+export const isUniqueName = (name: string, id?: string) =>
+  request.get(
+    useUrlSiteId("productManagement/isUniqueName"),
+    { seoName: name, id },
+    { hiddenLoading: true, hiddenError: true }
+  );

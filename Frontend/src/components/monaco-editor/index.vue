@@ -14,7 +14,6 @@ import { Completer, isJson } from "@/utils/lang";
 import { dark } from "@/composables/dark";
 import kMailDefine from "./kmail-define.d.ts?raw";
 import { addShortcuts } from "./shortcut";
-import { registerToggleComment } from "./toggleComment";
 import {
   useModuleResolve,
   useModuleSuggest,
@@ -288,7 +287,6 @@ onMounted(async () => {
   });
 
   jsonSyntaxSwitch(props.language, props.modelValue ?? "");
-  registerToggleComment(codeEditor);
   registerDatabaseHint(props.kScript!);
   registerJsonSchema();
 

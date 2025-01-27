@@ -246,7 +246,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 var menu = new Menu();
                 menu.Name = Name;
-                sitedb.Menus.AddOrUpdate(menu);
+                sitedb.Menus.AddOrUpdate(menu,call.Context.User.Id);
                 return menu;
             }
             return null;

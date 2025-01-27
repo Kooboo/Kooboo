@@ -197,14 +197,23 @@ watch(
               :label="t('common.contentFolder')"
               prop="contentFolder"
             >
-              <el-select v-model="model.contentFolder" class="w-3/5">
-                <el-option
-                  v-for="item in contentFolders"
-                  :key="item.name"
-                  :value="item.name"
-                  :label="item.name || item.displayName"
-                />
-              </el-select>
+              <div class="w-full flex items-center">
+                <el-select v-model="model.contentFolder" class="w-3/5">
+                  <el-option
+                    v-for="item in contentFolders"
+                    :key="item.name"
+                    :value="item.name"
+                    :label="item.name || item.displayName"
+                  />
+                </el-select>
+                <el-checkbox
+                  v-model="model.embedded"
+                  class="ml-12"
+                  data-cy="enable-embedded"
+                >
+                  {{ t("common.embedded") }}
+                </el-checkbox>
+              </div>
             </el-form-item>
           </el-form>
         </el-tab-pane>

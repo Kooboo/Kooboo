@@ -42,7 +42,8 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Data.Language.Hardcoded.GetValue("user or ip temporarily lockout", apiCall.Context));
             }
 
-            var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, Password);
+            var code = apiCall.GetValue("code");
+            var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, Password, code);
 
             if (user == null)
             {
@@ -319,6 +320,30 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return GlobalDb.Users.UpdateEmail(user.Id, Email, Code);
+        }
+
+        public bool UpdateTwoFAMethod(string Method, ApiCall call)
+        {
+            var user = call.Context.User;
+
+            if (user == null)
+            {
+                throw new Exception("User or Website not valid");
+            }
+
+            return GlobalDb.Users.UpdateTwoFAMethod(user.Id, Method);
+        }
+
+        public string GetOptUri(ApiCall call)
+        {
+            var user = call.Context.User;
+
+            if (user == null)
+            {
+                throw new Exception("User or Website not valid");
+            }
+
+            return GlobalDb.Users.GetOptUri(user.Id);
         }
 
         public User GetUser(ApiCall call)

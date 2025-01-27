@@ -40,7 +40,7 @@ async function save() {
         name: t('common.discounts'),
         route: { name: 'discounts' },
       },
-      { name: t('common.create') },
+      { name: t('common.edit') },
     ]"
   />
   <EditForm v-if="model" :model="model" />

@@ -1,8 +1,11 @@
 ﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 
+using System.IO;
 using System.Linq;
+using System.Text;
 using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Context;
 using Kooboo.Data.Definition;
 using Kooboo.Data.Language;
@@ -94,7 +97,20 @@ namespace Kooboo.Web.Api.Implementation
 
             newcontent.Online = online;
             newcontent.Order = sequence;
-            newcontent.Embedded = updatemodel.Embedded;
+            newcontent.Embedded = updatemodel.Embedded.ToDictionary(s => s.Key, s => s.Value.Select(s => s.Id).ToList());
+
+            foreach (var embedded in updatemodel.Embedded)
+            {
+                foreach (var i in embedded.Value)
+                {
+                    var embeddedContent = sitedb.TextContent.Get(i.Id);
+                    if (embeddedContent != null && embeddedContent.Order != i.Order)
+                    {
+                        embeddedContent.Order = i.Order;
+                        sitedb.TextContent.AddOrUpdate(embeddedContent);
+                    }
+                }
+            }
 
             foreach (var item in contenttype.Properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
             {
@@ -175,9 +191,7 @@ namespace Kooboo.Web.Api.Implementation
         [Permission(Feature.CONTENT, Action = Data.Permission.Action.VIEW)]
         public PagedTextContentListViewModel ByFolder(string FolderId, ApiCall call)
         {
-            int pagesize = ApiHelper.GetPageSize(call, 50);
-            int pagenr = ApiHelper.GetPageNr(call);
-
+            var query = new ContentQuery(call);
             string language = call.WebSite.DefaultCulture;
             var siteDb = call.WebSite.SiteDb();
             var folder = siteDb.ContentFolders.Get(FolderId);
@@ -197,8 +211,8 @@ namespace Kooboo.Web.Api.Implementation
             PagedTextContentListViewModel model = new()
             {
                 Columns = columns,
-                PageNr = pagenr,
-                PageSize = pagesize,
+                PageNr = query.PageNr,
+                PageSize = query.PageSize,
                 Categories = GetCategoriesOptions(call, folder),
             };
             if (folder == null)
@@ -208,14 +222,7 @@ namespace Kooboo.Web.Api.Implementation
                 return model;
             }
 
-            var sortField = call.GetValue("sortField") ?? string.Empty;
-            var ascending = call.GetValue("ascending")?.ToLower() == "true";
-            var exclude = call.GetValue<Guid[]>("exclude") ?? [];
-
-            var categoriesValue = call.GetValue("categories");
-            var categories = string.IsNullOrEmpty(categoriesValue) ? null : JsonHelper.Deserialize<Dictionary<Guid, List<Guid>>>(categoriesValue);
-
-            var textContents = siteDb.TextContent.GetSortedTextContentsByFolder(folder, true, sortField, ascending, categories).Where(w => !exclude.Contains(w.Id));
+            var textContents = siteDb.TextContent.GetSortedTextContentsByFolder(folder, true, query.SortField, query.Ascending, query.Categories).Where(w => !query.Exclude.Contains(w.Id));
 
             model.TotalCount = textContents.Count();
             model.TotalPages = ApiHelper.GetPageCount(model.TotalCount, model.PageSize);
@@ -474,7 +481,7 @@ namespace Kooboo.Web.Api.Implementation
                         {
                             return null;
                         }
-                        content.Order = index;
+                        if (string.IsNullOrWhiteSpace(item.Group)) content.Order = index;
                         return content;
                     })
                     .Where(it => it != null)
@@ -501,6 +508,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 model.Alias = item.Alias;
                 model.Display = item.Display;
+                model.Group = item.Group;
 
                 embedded.Add(model);
             }
@@ -752,11 +760,11 @@ namespace Kooboo.Web.Api.Implementation
             Guid typeId = call.GetValue<Guid>("typeId");
             if (typeId != default) return (typeId, Guid.Empty);
 
-            Guid folderId = call.GetValue<Guid>("FolderId");
+            var folderId = call.GetValue("FolderId");
             if (folderId != default)
             {
                 var folder = call.WebSite.SiteDb().ContentFolders.Get(folderId);
-                if (folder != default) return (folder.ContentTypeId, folderId);
+                if (folder != default) return (folder.ContentTypeId, folder.Id);
             }
 
             if (call.ObjectId != default)
@@ -819,7 +827,8 @@ namespace Kooboo.Web.Api.Implementation
         public PagedTextContentListViewModel Search(string Keyword, ApiCall call)
         {
             var folderId = call.GetValue("folderId");
-            if (string.IsNullOrWhiteSpace(Keyword))
+            var query = new ContentQuery(call);
+            if (string.IsNullOrWhiteSpace(query.Keyword))
             {
                 return new PagedTextContentListViewModel();
             }
@@ -841,8 +850,6 @@ namespace Kooboo.Web.Api.Implementation
                 return new PagedTextContentListViewModel();
             }
 
-            int pagesize = ApiHelper.GetPageSize(call, 50);
-            int pagenr = ApiHelper.GetPageNr(call);
 
             string language = string.IsNullOrEmpty(call.Context.Culture)
                 ? call.WebSite.DefaultCulture
@@ -862,20 +869,13 @@ namespace Kooboo.Web.Api.Implementation
             PagedTextContentListViewModel model = new()
             {
                 Columns = columns,
-                PageNr = pagenr,
-                PageSize = pagesize,
+                PageNr = query.PageNr,
+                PageSize = query.PageSize,
                 Categories = GetCategoriesOptions(call, folder),
             };
 
-            var sortField = call.GetValue("sortField") ?? string.Empty;
-            var ascending = call.GetValue("ascending")?.ToLower() == "true";
-            var exclude = call.GetValue<Guid[]>("exclude") ?? [];
-
-            var categoriesValue = call.GetValue("categories");
-            var categories = string.IsNullOrEmpty(categoriesValue) ? null : JsonHelper.Deserialize<Dictionary<Guid, List<Guid>>>(categoriesValue);
-
-            var textContents = siteDb.TextContent.GetSortedTextContentsByFolder(folder, true, sortField, ascending, categories)
-                .Where(w => !exclude.Contains(w.Id))
+            var textContents = siteDb.TextContent.GetSortedTextContentsByFolder(folder, true, query.SortField, query.Ascending, query.Categories)
+                .Where(w => !query.Exclude.Contains(w.Id))
                 .Where(o => o.Body.IndexOf(Keyword, StringComparison.OrdinalIgnoreCase) > -1);
 
             model.TotalCount = textContents.Count();
@@ -1027,6 +1027,33 @@ namespace Kooboo.Web.Api.Implementation
                 if (content != default) list.Add(content);
             }
             return new GetByIdsResult(columns, [.. list]);
+        }
+
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.VIEW)]
+        public BinaryResponse Export(string folderId, ApiCall call)
+        {
+            var query = new ContentQuery(call);
+            var siteDb = call.WebSite.SiteDb();
+            var folder = siteDb.ContentFolders.Get(folderId);
+            var csv = ContentImportExport.Export(call.WebSite, folder, query);
+            var response = new BinaryResponse
+            {
+                ContentType = "application/octet-stream"
+            };
+
+            response.Headers.Add("Content-Disposition", $"attachment;filename={folder.Name}.csv");
+            var encoding = new UTF8Encoding(false);
+            response.BinaryBytes = new byte[] { 239, 187, 191 }.Concat(encoding.GetBytes(csv)).ToArray();
+            return response;
+        }
+
+        [Permission(Feature.CONTENT, Action = Data.Permission.Action.EDIT)]
+        public void Import(string folderId, ApiCall call)
+        {
+            var siteDb = call.WebSite.SiteDb();
+            var folder = siteDb.ContentFolders.Get(folderId);
+            var csv = Encoding.Default.GetString(call.Context.Request.Files.FirstOrDefault().Bytes);
+            ContentImportExport.Import(call.WebSite, folder, csv);
         }
     }
 }

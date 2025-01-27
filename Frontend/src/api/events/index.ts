@@ -35,3 +35,13 @@ export const post = (body: unknown) =>
   request.post(useUrlSiteId("BusinessRule/post"), body, undefined, {
     successMessage: $t("common.saveSuccess"),
   });
+
+export const deletes = (names: string[]) =>
+  request.post(
+    useUrlSiteId("BusinessRule/DeleteEvents"),
+    { names },
+    undefined,
+    {
+      successMessage: $t("common.deleteSuccess"),
+    }
+  );

@@ -80,6 +80,9 @@ router.beforeEach((to) => {
     return {
       name: "login",
       replace: true,
+      query: {
+        returnurl: location.pathname + location.search,
+      },
     };
   }
 

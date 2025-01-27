@@ -19,5 +19,12 @@ namespace Kooboo.Mail.MassMailing.Model
 
         public List<IPISPQuota> Quota { get; set; } = new List<IPISPQuota>();
 
+        public IPISPQuota GetQuota(string IP)
+        {
+            var result = this.Quota.Find(o => o.LocalIP == IP);
+
+            return result == null ? new IPISPQuota() { MailsPerConnection = 10, MaxConnections = 10, DailyQuota = 50000 } : result;
+        }
+
     }
 }

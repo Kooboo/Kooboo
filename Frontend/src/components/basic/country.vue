@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-const props = defineProps<{ nameOrCode?: string }>();
+const props = defineProps<{ nameOrCode?: string; onlyFlag?: boolean }>();
 
 const flag = computed(() => {
   if (!props.nameOrCode || props.nameOrCode.length != 2) return "";
@@ -16,6 +16,6 @@ const flag = computed(() => {
 <template>
   <div class="inline-flex justify-center space-x-4">
     <span>{{ flag }}</span>
-    <span> {{ nameOrCode }}</span>
+    <span v-if="!onlyFlag"> {{ nameOrCode }}</span>
   </div>
 </template>

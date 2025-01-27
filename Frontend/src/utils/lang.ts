@@ -27,7 +27,7 @@ export function toObject(list: { key: string; value: unknown }[]) {
   return result;
 }
 
-export function toList(obj: Record<string, string>) {
+export function toList(obj: Record<string, any>) {
   const result: KeyValue[] = [];
 
   for (const key in obj) {

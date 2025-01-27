@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\KoobooCoding\KoobooServer\src\SubModule\Kooboo.Web\bin\Release\net8.0\publish\</_PublishTargetUrl>
-    <History>True|2024-10-31T11:50:15.2868714Z||;True|2024-10-31T19:23:28.6756471+08:00||;True|2024-10-31T19:13:29.7732805+08:00||;</History>
+    <History>True|2024-12-03T03:37:35.6731000Z||;True|2024-11-27T17:33:32.2649085+08:00||;True|2024-10-31T19:50:15.2868714+08:00||;True|2024-10-31T19:23:28.6756471+08:00||;True|2024-10-31T19:13:29.7732805+08:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

@@ -5,10 +5,12 @@ import DialogFooterBar from "@/components/dialog-footer-bar/index.vue";
 import { useTime } from "@/hooks/use-date";
 import { useI18n } from "vue-i18n";
 import { useContentEffects } from "@/views/content/contents/content-effect";
+import ContentDialog from "@/views/content/contents/content-dialog.vue";
 
 import DynamicColumns, {
   type SummaryColumn,
 } from "@/components/dynamic-columns/index.vue";
+import { emptyGuid } from "@/utils/guid";
 
 interface PropsType {
   modelValue: boolean;
@@ -26,6 +28,8 @@ const emits = defineEmits<EmitsType>();
 const { t } = useI18n();
 const show = ref(true);
 const table = ref();
+const showContentDialog = ref(false);
+const selected = ref();
 
 const {
   list,
@@ -76,32 +80,42 @@ function handleSave() {
     :title="t('common.content')"
     @closed="emits('update:model-value', false)"
   >
-    <div class="flex items-center pb-24 justify-between">
-      <div class="space-x-16 flex items-center">
-        <el-select
-          v-for="f in categoryOptions"
-          :key="f.id"
-          v-model="searchCategories[f.id]"
-          clearable
-          multiple
-          :placeholder="f.display ?? f.alias"
-          @change="() => fetchList(1, 10)"
-        >
-          <el-option
-            v-for="o in f.options"
-            :key="o.key"
-            :label="o.value"
-            :value="o.key"
-          />
-        </el-select>
-        <SearchInput
-          v-model="keywords"
-          :placeholder="t('common.searchContents')"
-          class="w-238px"
-          clearable
-          data-cy="search"
+    <div class="space-x-16 flex items-center pb-24">
+      <el-button
+        round
+        type="primary"
+        @click="
+          selected = { id: emptyGuid, folderId: folderId };
+          showContentDialog = true;
+        "
+      >
+        <el-icon class="iconfont icon-a-addto" />
+        {{ t("common.add") }}
+      </el-button>
+      <div class="flex-1" />
+      <el-select
+        v-for="f in categoryOptions"
+        :key="f.id"
+        v-model="searchCategories[f.id]"
+        clearable
+        multiple
+        :placeholder="f.display ?? f.alias"
+        @change="() => fetchList(1, 10)"
+      >
+        <el-option
+          v-for="o in f.options"
+          :key="o.key"
+          :label="o.value"
+          :value="o.key"
         />
-      </div>
+      </el-select>
+      <SearchInput
+        v-model="keywords"
+        :placeholder="t('common.searchContents')"
+        class="w-238px"
+        clearable
+        data-cy="search"
+      />
     </div>
     <KTable
       v-if="columnLoaded"
@@ -146,4 +160,11 @@ function handleSave() {
       <DialogFooterBar @confirm="handleSave" @cancel="show = false" />
     </template>
   </el-dialog>
+  <ContentDialog
+    v-if="showContentDialog"
+    :id="selected?.id ?? emptyGuid"
+    v-model="showContentDialog"
+    :folder="selected?.folderId ?? emptyGuid"
+    @reload="fetchList"
+  />
 </template>

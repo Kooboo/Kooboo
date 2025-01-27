@@ -30,6 +30,7 @@ function onAdd() {
     isSystemField: false,
     isSummaryField: false,
     multilingual: false,
+    embedded: false,
   };
   editIndex = -1;
   showCustomFieldDialog.value = true;

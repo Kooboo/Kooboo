@@ -3,6 +3,7 @@
 using System.ComponentModel;
 using System.Linq;
 using Kooboo.Api;
+using Kooboo.Data.Language;
 using Kooboo.Data.Permission;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.FrontEvent;
@@ -164,9 +165,8 @@ namespace Kooboo.Web.Api.Implementation
             sitedb.Rules.Delete(id);
         }
 
-        public object[] EventList()
+        public object[] EventList(ApiCall call)
         {
-
             return Enum.GetNames(typeof(enumEventType)).Select(s =>
             {
                 var attribute = Enum.Parse<enumEventType>(s).GetAttributeOfType<CategoryAttribute>();
@@ -174,7 +174,8 @@ namespace Kooboo.Web.Api.Implementation
                 return new
                 {
                     Name = s,
-                    attribute.Category
+                    Display = Hardcoded.GetValue(s, call.Context),
+                    Category = Hardcoded.GetValue(attribute.Category, call.Context)
                 };
             }).ToArray();
         }
@@ -219,6 +220,19 @@ namespace Kooboo.Web.Api.Implementation
         public override Guid put(ApiCall call)
         {
             return base.put(call);
+        }
+
+        [Permission(Feature.FRONT_EVENTS, Action = Data.Permission.Action.EDIT)]
+        public void DeleteEvents(string[] names, ApiCall call)
+        {
+            var siteDb = call.Context.WebSite.SiteDb();
+            var types = names.Select(Enum.Parse<enumEventType>).ToArray();
+            var oldRules = siteDb.Rules.List().Where(o => types.Contains(o.EventType)).ToList();
+
+            foreach (var item in oldRules)
+            {
+                siteDb.Rules.Delete(item.Id);
+            }
         }
     }
 }

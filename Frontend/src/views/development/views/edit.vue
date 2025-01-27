@@ -22,6 +22,7 @@ import type {
 import DialogFooterBar from "@/components/dialog-footer-bar/index.vue";
 import { cloneDeep } from "lodash-es";
 import { createRecorder } from "@/utils/monacoRecorder";
+import CacheDialog from "./cache-dialog.vue";
 
 const { t } = useI18n();
 const viewStore = useViewStore();
@@ -39,6 +40,7 @@ const editorOptions: PropertyOptions = {
 };
 
 const showEditParameters = ref(false);
+const showCacheParameters = ref(false);
 const paramDefines = ref<PropertyJsonString[]>([]);
 
 const load = async () => {
@@ -68,6 +70,11 @@ const onEditPropDefines = () => {
   showEditParameters.value = true;
   paramDefines.value = cloneDeep(model.value?.propDefines ?? []);
 };
+
+const onShowCacheDialog = () => {
+  showCacheParameters.value = true;
+};
+
 const onSavePropDefines = () => {
   if (!model.value) return;
   model.value.propDefines = cloneDeep(paramDefines.value);
@@ -114,6 +121,9 @@ load();
     >
       <EditForm v-if="model" ref="form" :model="model" inline />
       <div class="flex-1" />
+      <el-button round class="lineButton" @click="onShowCacheDialog">
+        {{ t("common.cache") }}
+      </el-button>
       <el-button round class="lineButton" @click="onEditPropDefines">
         {{ t("common.parameters") }}
       </el-button>
@@ -169,4 +179,9 @@ load();
       />
     </template>
   </el-dialog>
+  <CacheDialog
+    v-if="showCacheParameters"
+    v-model="showCacheParameters"
+    :model="model"
+  />
 </template>

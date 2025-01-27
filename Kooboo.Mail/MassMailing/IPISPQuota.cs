@@ -8,6 +8,8 @@
 
         public int MaxConnections { get; set; } = 1;
 
+        public int SecondQuota { get; set; }
+
         public int MinutelyQuota { get; set; } = 60;
 
         public int HourlyQuota { get; set; } = 60 * 60;

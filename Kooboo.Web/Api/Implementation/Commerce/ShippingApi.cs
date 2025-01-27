@@ -104,11 +104,6 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             return shipping;
         }
 
-        public KeyValuePair<string, string>[] Countries()
-        {
-            return CountryService.List();
-        }
-
         public void SetDefault(string id, ApiCall call)
         {
             var commerce = GetSiteCommerce(call);

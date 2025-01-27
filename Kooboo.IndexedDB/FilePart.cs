@@ -8,6 +8,10 @@
 
         public long RelativePosition { get; set; }
 
+        public long RelativePositionStart { get; set; }
+
         public long Length { get; set; }
+
+        public string FieldName { get; set; }
     }
 }

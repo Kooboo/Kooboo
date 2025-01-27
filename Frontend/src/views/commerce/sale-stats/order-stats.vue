@@ -118,6 +118,13 @@ const columns = getColumns([
       width: 120,
     },
   },
+  {
+    name: "note",
+    displayName: t("commerce.note"),
+    attrs: {
+      width: 120,
+    },
+  },
 ]);
 const load = async (index?: number) => {
   if (index) {
@@ -187,6 +194,9 @@ watch(
       </template>
       <template #amount="{ row }">
         <CurrencyAmount :amount="row.amount" />
+      </template>
+      <template #note="{ row }">
+        <TruncateContent :tip="row.note">{{ row.note }}</TruncateContent>
       </template>
     </DynamicColumns>
   </KTable>

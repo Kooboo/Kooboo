@@ -342,6 +342,7 @@ namespace Kooboo.Web.Api.Implementation
             names.Add(new ExportStoreNameViewModel() { Name = "KConfig", DisplayName = Hardcoded.GetValue("Text", call.Context) });
             names.Add(new ExportStoreNameViewModel() { Name = "SPAMultilingual", DisplayName = Hardcoded.GetValue("SPA Multilingual", call.Context) });
             names.Add(new ExportStoreNameViewModel() { Name = "TransferTask", DisplayName = Hardcoded.GetValue("Transfer task", call.Context) });
+            names.Add(new ExportStoreNameViewModel() { Name = "SiteSettings", DisplayName = Hardcoded.GetValue("Site Settings", call.Context) });
 
             return names;
         }
@@ -496,6 +497,7 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.EnableVisitorLog = newinfo.EnableVisitorLog;
                 currentsite.EnableConstraintFixOnSave = newinfo.EnableConstraintFixOnSave;
                 currentsite.EnableFrontEvents = newinfo.EnableFrontEvents;
+                currentsite.EnableBackendEvents = newinfo.EnableBackendEvents;
                 currentsite.EnableMultilingual = newinfo.EnableMultilingual;
 
                 currentsite.CustomSettings = newinfo.CustomSettings;
@@ -550,10 +552,13 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.RecordSiteLogVideo = newinfo.RecordSiteLogVideo;
                 currentsite.EnableUpdateSimilarPage = newinfo.EnableUpdateSimilarPage;
                 currentsite.EnableResourceCache = newinfo.EnableResourceCache;
+                currentsite.ResourceCaches = newinfo.ResourceCaches;
                 currentsite.ContinueDownload = newinfo.ContinueDownload;
                 currentsite.EnableVisitorCountryRestriction = newinfo.EnableVisitorCountryRestriction;
                 currentsite.VisitorCountryRestrictions = newinfo.VisitorCountryRestrictions;
                 currentsite.VisitorCountryRestrictionPage = newinfo.VisitorCountryRestrictionPage;
+                currentsite.RateLimitSettings = newinfo.RateLimitSettings;
+                currentsite.AccessLimitSettings = newinfo.AccessLimitSettings;
 
                 if (org.ServiceLevel > 0)
                 {
@@ -561,6 +566,8 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 // the cluster... 
                 Data.Config.AppHost.SiteRepo.AddOrUpdate(currentsite);
+                var siteDb= currentsite.SiteDb();
+                siteDb.ResetResourceCaches();
             }
         }
 

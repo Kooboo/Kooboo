@@ -312,7 +312,7 @@ group since their success or failure produces a change of state which
 
             for (int i = 0; i < CmdCount; i++)
             {
-                var line = res.lines[i];
+                var line = res.lines.Count > i ? res.lines[i] : string.Empty;
 
                 var cmd = commands[i];
 
@@ -377,7 +377,7 @@ group since their success or failure produces a change of state which
 
         private int SendMailCount = 0;
 
-        public async Task<bool> SendMail(string mailFrom, string to, string msgSource, string Mx, string FQDN, int port = 25)
+        public async Task<bool> SendMail(string mailFrom, string to, string msgSource, string Mx, string FQDN, int port = 25, string username = null, string password = null)
         {
             if (!this.Connected)
             {
@@ -403,6 +403,16 @@ group since their success or failure produces a change of state which
                 }
 
                 reply = await Ehlo(FQDN);
+            }
+
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
+            {
+                reply = await Login(username, password);
+                if (!reply.Ok)
+                {
+                    this.Dispose();
+                    return false;
+                }
             }
 
             reply = await MailFrom(mailFrom);

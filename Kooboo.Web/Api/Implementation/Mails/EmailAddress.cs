@@ -557,7 +557,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("addressId", call.GetValue("addressId"));
-                dic.Add("signature", call.GetValue("signature"));
+                dic.Add("signature", call.GetValue("signature") ?? string.Empty);
                 EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailAddressApi.UpdateSignature), call.Context.User, dic);
                 return;
             }

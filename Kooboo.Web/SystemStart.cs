@@ -103,8 +103,8 @@ namespace Kooboo.Web
                         if (_middlewares == null)
                         {
                             var middlewares = new List<IKoobooMiddleWare>();
-                            middlewares.Add(new PwaMiddleware());
                             middlewares.Add(new FrontRequest.KoobooMiddleware());
+                            middlewares.Add(new PwaMiddleware());
                             middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
                             middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
                             middlewares.Add(new SpaMultilingualMiddleware());

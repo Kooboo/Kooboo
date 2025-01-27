@@ -121,6 +121,9 @@ onBeforeMount(() => {
       <Cache
         v-model:enable="model.enableCache"
         v-model:enableVersion="model.cacheByVersion"
+        v-model:enableCulture="model.cacheByCulture"
+        v-model:versionType="model.cacheVersionType"
+        v-model:enableDevice="model.cacheByDevice"
         v-model:minutes="model.cacheMinutes"
         v-model:queryKeys="model.cacheQueryKeys"
       />

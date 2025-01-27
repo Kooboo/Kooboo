@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import SelectProductDialog from "../components/select-product-dialog.vue";
 import { useProductFields } from "../useFields";
 import DynamicColumns from "@/components/dynamic-columns/index.vue";
+import TruncateContent from "@/components/basic/truncate-content.vue";
 const { t } = useI18n();
 const show = ref(true);
 const products = ref<ProductListItem[]>();
@@ -94,7 +95,13 @@ async function onSave() {
       </el-button>
       <el-scrollbar max-height="400px">
         <ElTable :data="products" class="el-table--gray">
-          <DynamicColumns :columns="columns" />
+          <DynamicColumns :columns="columns">
+            <template #title="{ row }">
+              <TruncateContent :tip="row.title">{{
+                row.title
+              }}</TruncateContent>
+            </template>
+          </DynamicColumns>
           <el-table-column v-if="editable" align="right" width="60">
             <template #default="{ row }">
               <el-tooltip placement="top" :content="t('common.delete')">

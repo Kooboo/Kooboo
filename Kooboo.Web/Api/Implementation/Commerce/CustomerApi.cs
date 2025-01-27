@@ -6,6 +6,7 @@ using Kooboo.Sites.Commerce.Services;
 using Kooboo.Sites.Commerce.ViewModels;
 using Kooboo.Sites.Commerce.Events;
 using Kooboo.Sites.Commerce;
+using Kooboo.Sites.Commerce.Entities;
 
 namespace Kooboo.Web.Api.Implementation.Commerce
 {
@@ -30,13 +31,21 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var commerce = GetSiteCommerce(apiCall);
             var body = apiCall.Context.Request.Body;
             var model = JsonSerializer.Deserialize<CustomerCreate>(body, Defaults.JsonSerializerOptions);
-            var customer = commerce.Customer.Get(c => c.Email == model.Email);
-            if (customer != default) throw new Exception($"Email {model.Email} Customer exist");
+            Customer customer = null;
+
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                customer = commerce.Customer.Get(c => c.Email == model.Email);
+                if (customer != default) throw new Exception($"Email {model.Email} Customer exist");
+            }
+
             if (!string.IsNullOrWhiteSpace(model.Phone))
             {
                 customer = commerce.Customer.Get(c => c.Phone == model.Phone);
                 if (customer != default) throw new Exception($"Phone {model.Phone} Customer exist");
             }
+            
+            customer = model.ToCustomer();
             commerce.Customer.AddOrUpdate(model.ToCustomer());
             EventDispatcher.Raise(new CustomerCreateEvent(apiCall.Context)
             {

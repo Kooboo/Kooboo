@@ -68,7 +68,9 @@
           </ul>
         </div>
         <div v-else class="ellipsis">
-          {{ formatData(row, item).toString() }}
+          <TruncateContent :tip="formatData(row, item).toString()">
+            {{ formatData(row, item).toString() }}
+          </TruncateContent>
         </div>
       </slot>
     </template>
@@ -80,6 +82,8 @@ import ImageCover from "@/components/basic/image-cover.vue";
 import { useI18n } from "vue-i18n";
 import { getValueIgnoreCase, ignoreCaseEqual } from "@/utils/string";
 import { useTime, useDate } from "@/hooks/use-date";
+import { updateQueryString } from "@/utils/url";
+import TruncateContent from "../basic/truncate-content.vue";
 export type SummaryColumn = {
   name: string;
   prop?: string;
@@ -153,12 +157,12 @@ function formatData(row: any, column: SummaryColumn) {
 function getSrc(value: any, column: SummaryColumn) {
   if (isControl(column, "AdvancedMediaFile")) {
     try {
-      return JSON.parse(value).src;
+      value = JSON.parse(value).src;
     } catch (error) {
-      return value;
+      //
     }
   }
-
+  if (value) value = updateQueryString(value, { width: "64" });
   return value;
 }
 </script>

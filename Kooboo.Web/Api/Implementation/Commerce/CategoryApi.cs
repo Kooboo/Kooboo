@@ -65,6 +65,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var body = apiCall.Context.Request.Body;
             var model = JsonSerializer.Deserialize<CategoryCreate>(body, Defaults.JsonSerializerOptions);
             var category = model.ToCategory();
+            Sites.BackendEvent.Manager.BeforeRaiseEvent(apiCall.WebSite, category, ChangeType.Add);
             siteDb.CommerceData.AddOrUpdate(new Sites.Models.CommerceData
             {
                 Id = Lib.Security.Hash.ComputeHashGuid(category.Id),
@@ -72,6 +73,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 Body = JsonSerializer.Serialize(category, Defaults.JsonSerializerOptions),
                 Type = Sites.Models.CommerceDataType.Category
             }, apiCall.Context.User.Id);
+            Sites.BackendEvent.Manager.RaiseEvent(apiCall.WebSite, category, ChangeType.Add);
             var tagService = new TagService(commerce);
             tagService.Append(TagType.Category, model.Tags);
             return category.Id;
@@ -85,6 +87,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var body = apiCall.Context.Request.Body;
             var model = JsonSerializer.Deserialize<CategoryEdit>(body, Defaults.JsonSerializerOptions);
             var entity = commerce.Category.Entities.FirstOrDefault(g => g.Id == model.Id);
+            Sites.BackendEvent.Manager.BeforeRaiseEvent(apiCall.WebSite, entity, ChangeType.Update);
             model.UpdateCategory(entity);
             siteDb.CommerceData.AddOrUpdate(new Sites.Models.CommerceData
             {
@@ -93,6 +96,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 Body = JsonSerializer.Serialize(entity, Defaults.JsonSerializerOptions),
                 Type = Sites.Models.CommerceDataType.Category
             }, apiCall.Context.User.Id);
+            Sites.BackendEvent.Manager.BeforeRaiseEvent(apiCall.WebSite, entity, ChangeType.Update);
             var tagService = new TagService(commerce);
             tagService.Append(TagType.Category, model.Tags);
         }
@@ -218,6 +222,14 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                     }, apiCall.Context.User.Id);
                 }
             }
+        }
+
+        public bool IsUniqueName(string seoName, ApiCall call)
+        {
+            var id = call.GetValue("id");
+            var commerce = GetSiteCommerce(call);
+            var exist = commerce.Category.Entities.FirstOrDefault(f => f.SeoName?.Equals(seoName) ?? false);
+            return exist == null || exist.Id == id;
         }
     }
 }

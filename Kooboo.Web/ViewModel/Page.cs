@@ -1,6 +1,7 @@
 ﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Render;
 using Kooboo.Sites.Render.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -100,9 +101,10 @@ namespace Kooboo.Web.ViewModel
 
         public bool EnableCache { get; set; }
         public bool DisableUnocss { get; set; }
-
         public bool CacheByVersion { get; set; }
-
+        public bool CacheByCulture { get; set; }
+        public CacheVersion.Type CacheVersionType { get; set; }
+        public bool CacheByDevice { get; set; }
         public int CacheMinutes { get; set; }
 
         public string CacheQueryKeys { get; set; }
@@ -148,6 +150,9 @@ namespace Kooboo.Web.ViewModel
         public bool DisableUnocss { get; set; }
 
         public bool CacheByVersion { get; set; }
+        public bool CacheByCulture { get; set; }
+        public CacheVersion.Type CacheVersionType { get; set; }
+        public bool CacheByDevice { get; set; }
 
         public int CacheMinutes { get; set; }
 

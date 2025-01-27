@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import { getUrl } from "@/api/oauth";
 import { dark } from "@/composables/dark";
+import { inWeChat } from "@/utils/common";
 
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
@@ -14,12 +15,19 @@ const loginMethods = [
     icon: "icon-phone",
     color: "#2296F3",
   },
-  {
-    name: "wechat",
-    display: t("common.Wechat"),
-    icon: "icon-WeChat",
-    color: "#1AAD19",
-  },
+  inWeChat()
+    ? {
+        name: "wechat-mp",
+        display: t("common.Wechat"),
+        icon: "icon-WeChat",
+        color: "#1AAD19",
+      }
+    : {
+        name: "wechat",
+        display: t("common.Wechat"),
+        icon: "icon-WeChat",
+        color: "#1AAD19",
+      },
   {
     name: "google",
     display: "Google",

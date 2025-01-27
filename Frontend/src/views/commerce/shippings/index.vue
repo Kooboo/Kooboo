@@ -14,12 +14,12 @@ const router = useRouter();
 
 const tabs = [
   {
-    displayName: t("common.expressShippings"),
+    displayName: t("common.physicalProduct"),
     value: "express",
     component: ExpressPanel,
   },
   {
-    displayName: t("common.digitalShippings"),
+    displayName: t("common.digitalProduct"),
     value: "digital",
     component: DigitalPanel,
   },

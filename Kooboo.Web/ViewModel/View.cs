@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Render;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -39,6 +40,17 @@ namespace Kooboo.Web.ViewModel
         public long Version { get; set; }
 
         public List<ContentProperty> PropDefines { get; set; } = new List<ContentProperty>();
+
+        public bool EnableCache { get; set; }
+
+        public bool CacheByVersion { get; set; }
+        public CacheVersion.Type CacheVersionType { get; set; }
+        public bool CacheByDevice { get; set; }
+        public bool CacheByCulture { get; set; }
+
+        public int CacheMinutes { get; set; }
+
+        public string CacheQueryKeys { get; set; }
     }
 
 
@@ -56,6 +68,17 @@ namespace Kooboo.Web.ViewModel
 
         public long Version { get; set; }
         public bool? EnableDiffChecker { get; set; }
+
+        public bool EnableCache { get; set; }
+
+        public bool CacheByVersion { get; set; }
+        public CacheVersion.Type CacheVersionType { get; set; }
+        public bool CacheByDevice { get; set; }
+        public bool CacheByCulture { get; set; }
+
+        public int CacheMinutes { get; set; }
+
+        public string CacheQueryKeys { get; set; }
 
         /// public List<FormBinding> FormBindings { get; set; }
 

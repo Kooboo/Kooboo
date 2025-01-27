@@ -23,3 +23,11 @@ export default {
     }
   },
 };
+
+export function getErrorData(config: AxiosError) {
+  try {
+    return config.response?.data[0];
+  } catch (error) {
+    //
+  }
+}

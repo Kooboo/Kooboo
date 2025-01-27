@@ -61,6 +61,11 @@ const customAttrs = {
   },
   inventory: {
     align: "center",
+    width: 120,
+  },
+  sales: {
+    align: "center",
+    width: 120,
   },
   tags: {
     align: "center",

@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Address } from "@/api/commerce/customer";
 import CreateAddressDialog from "./create-address-dialog.vue";
 import EditAddressDialog from "./edit-address-dialog.vue";
+import { getDetails } from "@/api/commerce/address";
+import { systemDisplay } from "@/utils/commerce";
 
 const { t } = useI18n();
 const showCreateAddressDialog = ref(false);
 const showEditAddressDialog = ref(false);
 const selected = ref<Address>();
+const details = ref<any[]>([]);
 
 const props = defineProps<{
   list: Address[];
@@ -34,6 +37,21 @@ function onDelete(index: number) {
   if (props.list.length && props.list.every((e) => !e.isDefault)) {
     props.list[0].isDefault = true;
   }
+}
+watch(
+  () => props.list,
+  async () => {
+    if (!props.list.length) return;
+    details.value = await getDetails(props.list);
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
+
+function getDetail(index: number) {
+  return details.value![index];
 }
 </script>
 
@@ -77,8 +95,26 @@ function onDelete(index: number) {
         <div class="p-4">
           <div>{{ item.firstName }} {{ item.lastName }} {{ item.phone }}</div>
           <div class="text-s">
-            {{ item.country }} {{ item.city }} {{ item.province }}
-            {{ item.zip }} {{ item.address1 }}
+            {{
+              systemDisplay(
+                getDetail(index)?.countryDetail?.nameTranslations,
+                item.country
+              )
+            }}
+            {{
+              systemDisplay(
+                getDetail(index)?.provinceDetail?.nameTranslations,
+                item.province
+              )
+            }}
+            {{
+              systemDisplay(
+                getDetail(index)?.cityDetail?.nameTranslations,
+                item.city
+              )
+            }}
+            {{ item.zip }}
+            {{ item.address1 }}
           </div>
         </div>
       </div>

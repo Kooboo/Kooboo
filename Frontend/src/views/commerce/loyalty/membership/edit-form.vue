@@ -88,5 +88,8 @@ defineExpose({
         </div>
       </div>
     </ElFormItem>
+    <ElFormItem :label="t('common.customData')">
+      <KeyValueEditor v-model="model.customData" />
+    </ElFormItem>
   </ElForm>
 </template>

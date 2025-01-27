@@ -1134,7 +1134,6 @@ namespace Kooboo.IndexedDB
         public FilePart GetFieldPart(TKey key, string FieldName)
         {
             var FieldNameHash = Helper.ObjectHelper.GetHashCode(FieldName);
-            var fieldnamehashbytes = BitConverter.GetBytes(FieldNameHash);
             Int64 blockposition = this.primaryIndex.Get(key);
 
             if (blockposition <= 0)
@@ -1145,6 +1144,7 @@ namespace Kooboo.IndexedDB
             FilePart info = new FilePart();
             info.FullFileName = this.BlockFile.Fullfilename;
             info.BlockPosition = blockposition;
+            info.FieldName = FieldName; 
 
             var koobooconverter = this.ValueConverter as KoobooSimpleConverter<TValue>;
 
@@ -1156,7 +1156,7 @@ namespace Kooboo.IndexedDB
                 if (item.FieldNameHash == FieldNameHash)
                 {
                     info.RelativePosition = item.RelativePosition + 10 + 8; // TODO: move this to 
-                    info.Length = item.Length;
+                    info.Length = item.Length; 
                     return info;
                 }
                 var next = item.RelativePosition + item.Length + 8;
@@ -1185,6 +1185,7 @@ namespace Kooboo.IndexedDB
                 {
                     var itemstart = startpos + 10 + 8;
                     info.RelativePosition = itemstart;
+                    info.RelativePositionStart = startpos; 
                     info.Length = len;
                     return info;
                 }
@@ -1195,6 +1196,115 @@ namespace Kooboo.IndexedDB
 
             return null;
         }
+
+        public List<FilePart> GetFieldParts(TKey key, params string[] FieldNames)
+        {
+            if (FieldNames == null || !FieldNames.Any())
+            {
+                return new List<FilePart>(); 
+            }
+
+            List<int> FieldNameHashes = new List<int>();
+            List<FilePart> Result = new List<FilePart>();
+
+            var NameList = FieldNames.ToList(); 
+
+            foreach (var FieldName in NameList)
+            {
+                var FieldNameHash = Helper.ObjectHelper.GetHashCode(FieldName);
+                FieldNameHashes.Add(FieldNameHash);
+                Result.Add(null); 
+            }
+
+            int count = FieldNameHashes.Count(); 
+            if (count == 0)
+            {
+                return Result; 
+            }
+ 
+            Int64 blockPosition = this.primaryIndex.Get(key);
+
+            if (blockPosition <= 0)
+            {
+                return null;
+            }
+             
+            var koobooConverter = this.ValueConverter as KoobooSimpleConverter<TValue>;
+
+            int startPos = 0;
+             
+
+            // found in the column first. 
+            foreach (var item in koobooConverter.converter.Columns)
+            { 
+                for (int i = 0; i < count; i++)
+                {
+                    if (item.FieldNameHash == FieldNameHashes[i])
+                    {
+                        var itemStart = startPos + 10 + 8;
+
+                        FilePart info = new FilePart();
+                        info.FullFileName = this.BlockFile.Fullfilename;
+                        info.BlockPosition = blockPosition;
+                        info.RelativePosition = itemStart;
+                        info.RelativePositionStart = startPos; 
+                        info.Length = item.Length;
+
+                        info.FieldName = NameList[i];
+
+                        Result[i] = info;
+                    }
+                } 
+
+                var next = item.RelativePosition + item.Length + 8;
+                if (next > startPos)
+                {
+                    startPos = next;
+                }
+            }
+
+            // if not found, after the last column, check one field by one field. 
+             
+
+
+            var totalLen = this.BlockFile.GetLength(blockPosition);
+
+            var maxStart = totalLen - 8;
+
+            while (startPos < maxStart)
+            {
+                var header = this.BlockFile.GetPartial(blockPosition, startPos + 10, 8);
+
+                int itemNameHash = BitConverter.ToInt32(header, 0);
+
+                int len = BitConverter.ToInt32(header, 4);
+
+                for (int i = 0; i < count; i++)
+                {
+                    if (itemNameHash == FieldNameHashes[i])
+                    {
+                        var itemStart = startPos + 10 + 8;
+
+                        FilePart info = new FilePart();
+                        info.FullFileName = this.BlockFile.Fullfilename;
+                        info.BlockPosition = blockPosition;
+                        info.RelativePosition = itemStart;
+                        info.RelativePositionStart = startPos; 
+                        info.Length = len;
+
+                        info.FieldName = NameList[i]; 
+
+                        Result[i] = info; 
+                    } 
+                } 
+                startPos = startPos + 8 + len;
+
+            }
+
+            return Result;
+        }
+
+
 
         public void RestoreFromDisk()
         {

@@ -8,12 +8,13 @@ namespace Kooboo.Web.ViewModel
 {
     public class LangTextContentViewModel
     {
+        public record EmbeddedInfo(Guid Id, int Order);
         /// <summary>
         /// {folderid,categoriesids}
         /// </summary>
         public Dictionary<Guid, List<Guid>> Categories { get; set; } = new Dictionary<Guid, List<Guid>>();
 
-        public Dictionary<Guid, List<Guid>> Embedded { get; set; } = new Dictionary<Guid, List<Guid>>();
+        public Dictionary<Guid, List<EmbeddedInfo>> Embedded { get; set; } = new Dictionary<Guid, List<EmbeddedInfo>>();
 
         public string Id { get; set; }
 
@@ -131,7 +132,7 @@ namespace Kooboo.Web.ViewModel
         public bool MultipleChoice { get; set; }
     }
 
-    public class EmbeddedContentViewModel:Sites.ViewModel.EmbeddedContentViewModel
+    public class EmbeddedContentViewModel : Sites.ViewModel.EmbeddedContentViewModel
     {
         public BaseColumnViewModel[] Columns { get; set; }
     }

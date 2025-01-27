@@ -7,7 +7,9 @@ using Kooboo.Api;
 using Kooboo.Data.Permission;
 using Kooboo.Dom;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Helper;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Render;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
@@ -185,10 +187,13 @@ namespace Kooboo.Web.Api.Implementation
                 UrlPath = route == null ? null : route.Name,
                 Type = page.Type,
                 EnableCache = page.EnableCache,
-                DisableUnocss=page.DisableUnocss,
+                DisableUnocss = page.DisableUnocss,
                 CacheMinutes = page.CacheMinutes,
                 CacheQueryKeys = page.CacheQueryKeys,
                 CacheByVersion = page.CacheByVersion,
+                CacheVersionType = page.CacheVersionType,
+                CacheByDevice = page.CacheByDevice,
+                CacheByCulture = page.CacheByCulture,
                 Version = page.Version,
                 PreviewUrl = PageService.GetPreviewUrl(sitedb, page),
                 DesignConfig = page.DesignConfig
@@ -317,8 +322,11 @@ namespace Kooboo.Web.Api.Implementation
                 Id = model.Id,
                 Name = model.Name,
                 EnableCache = model.EnableCache,
-                DisableUnocss=model.DisableUnocss,
+                DisableUnocss = model.DisableUnocss,
                 CacheByVersion = model.CacheByVersion,
+                CacheVersionType = model.CacheVersionType,
+                CacheByDevice = model.CacheByDevice,
+                CacheByCulture = model.CacheByCulture,
                 CacheMinutes = model.CacheMinutes,
                 CacheQueryKeys = model.CacheQueryKeys,
                 Online = model.Published,
@@ -389,7 +397,8 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (route != routename)
                 {
-                    sitedb.Routes.ChangeRoute(route, routename);
+                    var oldRoute = sitedb.Routes.GetByUrl(route);
+                    ChangeHelper.UpdateRoute(sitedb, routename, oldRoute.Id, page.Id, call.Context);
                 }
             }
 
@@ -397,9 +406,25 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Permission(Feature.PAGES, Action = Data.Permission.Action.EDIT)]
-        public Guid PostRichText(string name, string body, string url, bool enableCache, bool cacheByVersion, int cacheMinutes, string cacheQueryKeys, bool published, ApiCall call)
+        public Guid PostRichText(string name, string body, string url, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
+            var enableCache = call.GetBoolValue("enableCache");
+            var cacheByVersion = call.GetBoolValue("cacheByVersion");
+            var cacheVersionType = CacheVersion.Type.Self;
+            var cacheVersionTypeInt = call.GetValue<int>("cacheVersionType");
+
+            try
+            {
+                cacheVersionType = (CacheVersion.Type)cacheVersionTypeInt;
+            }
+            catch { }
+
+            var cacheByDevice = call.GetBoolValue("cacheByDevice");
+            var cacheByCulture = call.GetBoolValue("cacheByCulture");
+            var cacheMinutes = call.GetIntValue("cacheMinutes");
+            var cacheQueryKeys = call.GetValue("cacheQueryKeys");
+            var published = call.GetBoolValue("published");
 
             if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(body))
             {
@@ -426,7 +451,7 @@ namespace Kooboo.Web.Api.Implementation
             if (PageId == default(Guid))
             {
                 // new add. 
-                Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText, EnableCache = enableCache, CacheByVersion = cacheByVersion, CacheMinutes = cacheMinutes, CacheQueryKeys = cacheQueryKeys };
+                Page newpage = new Page() { Name = name, Body = PageBody, Type = PageType.RichText, EnableCache = enableCache, CacheByVersion = cacheByVersion, CacheVersionType = cacheVersionType, CacheByDevice = cacheByDevice, CacheByCulture = cacheByCulture, CacheMinutes = cacheMinutes, CacheQueryKeys = cacheQueryKeys };
                 newpage.Online = published;
                 sitedb.Routes.AddOrUpdate(url, newpage, call.Context.User.Id);
                 sitedb.Pages.AddOrUpdate(newpage, call.Context.User.Id);
@@ -444,6 +469,9 @@ namespace Kooboo.Web.Api.Implementation
                 oldpage.Body = PageBody;
                 oldpage.EnableCache = enableCache;
                 oldpage.CacheByVersion = cacheByVersion;
+                oldpage.CacheVersionType = cacheVersionType;
+                oldpage.CacheByDevice = cacheByDevice;
+                oldpage.CacheByCulture = cacheByCulture;
                 oldpage.CacheMinutes = cacheMinutes;
                 oldpage.CacheQueryKeys = cacheQueryKeys;
                 oldpage.Online = published;

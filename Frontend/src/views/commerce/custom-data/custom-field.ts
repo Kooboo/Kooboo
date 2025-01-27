@@ -49,6 +49,10 @@ export const fieldTypes: Record<string, TypeDefine> = {
     displayName: $t("common.keyValue"),
     multilingual: true,
   },
+  ["ValueList"]: {
+    displayName: $t("common.valueList"),
+    multilingual: true,
+  },
   ["MediaFile"]: {
     displayName: $t("common.mediaFile"),
     multiple: true,

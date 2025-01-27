@@ -9,6 +9,7 @@ export const productLabels: Record<string, string> = {
   title: t("commerce.productName"),
   variantsCount: t("commerce.variants"),
   inventory: t("common.inventory"),
+  sales: t("common.sales"),
   tags: t("common.tags"),
   active: t("commerce.active"),
   seoName: t("common.seoName"),

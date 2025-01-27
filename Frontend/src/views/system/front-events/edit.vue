@@ -93,8 +93,8 @@ watch(
   <div class="p-24 pb-150px">
     <Breadcrumb
       :crumb-path="[
-        { name: t('common.frontEvent'), route: { name: 'frontevents' } },
-        { name: eventname },
+        { name: t('common.frontEvents'), route: { name: 'frontevents' } },
+        { name: getQueryString('display')! },
       ]"
     />
     <div class="flex items-center py-24 space-x-16">

@@ -1,8 +1,9 @@
 import type { KeyValue, PaginationWithColumnsResponse } from "@/global/types";
 
 import { i18n } from "@/modules/i18n";
-import request from "@/utils/request";
+import request, { api } from "@/utils/request";
 import { useUrlSiteId } from "@/hooks/use-site-id";
+import { downloadFromResponse } from "@/utils/dom";
 
 const $t = i18n.global.t;
 
@@ -119,6 +120,7 @@ export type ContentCategory = {
 export type ContentEmbedded = {
   alias: string;
   display: string;
+  group?: string;
   contents: TextContentItem[];
   columns: any;
   embeddedFolder: {
@@ -149,7 +151,7 @@ export const langupdate = (
     typeId?: string;
     values: Record<string, Record<string, any>>;
     categories: Record<string, string[]>;
-    embedded: Record<string, string[]>;
+    embedded: Record<string, { id: string; order: number }[]>;
   },
   hideMessage?: boolean
 ) =>
@@ -161,3 +163,24 @@ export const langupdate = (
       successMessage: hideMessage ? undefined : $t("common.saveSuccess"),
     }
   );
+
+export const exportData = (params: unknown) =>
+  api
+    .get<Blob>(useUrlSiteId("/textContent/Export"), {
+      params: params,
+      responseType: "blob",
+      timeout: 1000 * 60 * 30,
+    })
+    .then((response) => {
+      downloadFromResponse(response);
+    });
+
+export const importData = (body: unknown) =>
+  request.post(useUrlSiteId("textContent/Import"), body, undefined, {
+    timeout: 1000 * 60 * 30,
+    headers: { "Content-Type": "multipart/form-data" },
+    hiddenError: true,
+    successMessage: $t("common.uploadSuccess"),
+    errorMessage: $t("common.importFailed"),
+    keepShowErrorMessage: true,
+  });

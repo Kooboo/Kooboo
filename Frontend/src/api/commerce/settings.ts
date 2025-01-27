@@ -30,6 +30,7 @@ export interface CustomField {
   isSystemField: boolean;
   isSummaryField: boolean;
   options?: Record<string, any>;
+  embedded: boolean;
 }
 
 export interface EmailNotification {

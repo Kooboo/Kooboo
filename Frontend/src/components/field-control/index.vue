@@ -130,6 +130,14 @@
       v-bind="field.settings"
       class="w-1/2 min-w-300px"
     />
+    <ListEditor
+      v-else-if="controlModel.value === 'ValueList'"
+      v-model="model[field.prop]"
+      :multiple="field.multipleValue"
+      :placeholder="field.toolTip"
+      v-bind="field.settings"
+      class="w-1/2 min-w-300px"
+    />
     <div
       v-if="tooltipBelow"
       class="w-full py-8 text-s text-666"
@@ -152,6 +160,8 @@ import { useMultilingualStore } from "@/store/multilingual";
 import { useI18n } from "vue-i18n";
 import { useSiteStore } from "@/store/site";
 import type { FormItemRule } from "element-plus";
+import ListEditor from "@/components/basic/list-editor.vue";
+import KeyValueEditor from "@/components/basic/key-value-editor.vue";
 
 interface PropsType {
   field: Field;

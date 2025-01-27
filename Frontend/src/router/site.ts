@@ -289,6 +289,27 @@ const siteRoutes: Array<RouteRecordRaw> = [
         },
         component: () => import("@/views/system/front-events/edit.vue"),
       },
+      {
+        path: "backend-events",
+        name: "backendevents",
+        meta: {
+          recentVisits: "common.backendEvents",
+          menu: {
+            display: t("common.backendEvents"),
+            permission: { feature: "backendEvents" },
+          },
+          advanced: true,
+        },
+        component: () => import("@/views/system/backend-events/index.vue"),
+      },
+      {
+        path: "backend-events/edit",
+        name: "backendevents-edit",
+        meta: {
+          activeMenu: "backendevents",
+        },
+        component: () => import("@/views/system/backend-events/edit.vue"),
+      },
     ],
   },
   {
@@ -751,6 +772,37 @@ const siteRoutes: Array<RouteRecordRaw> = [
           },
         },
         component: () => import("@/views/commerce/loyalty/index.vue"),
+      },
+      {
+        path: "taxes",
+        name: "taxes",
+        meta: {
+          title: t("common.taxes"),
+          activeMenu: "taxes",
+          recentVisits: "common.taxes",
+          advanced: true,
+          menu: {
+            display: t("common.taxes"),
+            permission: { feature: "tax" },
+          },
+        },
+        component: () => import("@/views/commerce/taxes/index.vue"),
+      },
+      {
+        path: "taxes/create",
+        name: "taxes create",
+        component: () => import("@/views/commerce/taxes/create.vue"),
+        meta: {
+          activeMenu: "taxes",
+        },
+      },
+      {
+        path: "taxes/edit",
+        name: "taxes edit",
+        component: () => import("@/views/commerce/taxes/edit.vue"),
+        meta: {
+          activeMenu: "taxes",
+        },
       },
       {
         path: "notification",

@@ -57,3 +57,8 @@ export function vscodeLogin(accessToken?: string) {
   location.href = url.href;
   throw new Error("vscode login");
 }
+
+export function inWeChat() {
+  const ua = navigator.userAgent.toLowerCase();
+  return ua.indexOf("micromessenger") != -1;
+}

@@ -17,6 +17,7 @@ export const events = {} as {
   onLighthouseSave: (site: Site) => void;
   onCustomSettingsSave: (site: Site) => void;
   onVisitorCountryRestrictionsSave: (site: Site) => void;
+  onRequestAccessLimit: (site: Site) => void;
 };
 
 export const importAccept = [
@@ -53,14 +54,16 @@ export const save = async () => {
     );
   }
   const _site: Site = JSON.parse(JSON.stringify(site.value));
-  events.onPwaSave(_site);
-  events.onMultilingualSave(_site);
+  events.onPwaSave?.(_site);
+  events.onMultilingualSave?.(_site);
   events.onVisitorCountryRestrictionsSave?.(_site);
-  events.onLighthouseSave(_site);
-  events.onCustomSettingsSave(_site);
+  events.onLighthouseSave?.(_site);
+  events.onCustomSettingsSave?.(_site);
+  events.onRequestAccessLimit?.(_site);
 
   await saveSite(_site);
-  siteStore.loadSite();
+  await siteStore.loadSite();
+  load();
   siteStore.loadSites();
   refreshMonacoCache();
 };

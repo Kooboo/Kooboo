@@ -1,40 +1,33 @@
 <script lang="ts" setup>
 import { computed, onBeforeMount, ref } from "vue";
-import { getEventList, getList } from "@/api/events";
+import { deletes, getEventList, getList } from "@/api/events";
 import KTable from "@/components/k-table";
 import { useRouter } from "vue-router";
 import { useRouteSiteId } from "@/hooks/use-site-id";
 import Breadcrumb from "@/components/basic/breadcrumb.vue";
 import type { EventItem } from "@/api/events/types";
-
+import { saveSite } from "@/api/site";
 import { useI18n } from "vue-i18n";
+import { useSiteStore } from "@/store/site";
+import type { Site } from "@/api/site/site";
+import SelectEventDialog from "./select-event-dialog.vue";
+import { showDeleteConfirm } from "@/components/basic/confirm";
+
 const { t } = useI18n();
 const router = useRouter();
 const eventTypes = ref<Awaited<ReturnType<typeof getEventList>>>([]);
 const eventList = ref<EventItem[]>([]);
+const siteStore = useSiteStore();
+const site = ref<Site>(JSON.parse(JSON.stringify(siteStore.site)));
+const showSelectEventDialog = ref(false);
 
-onBeforeMount(async () => {
+async function load() {
   const rsp = await Promise.all([getEventList(), getList()]);
   eventTypes.value = rsp[0];
   eventList.value = rsp[1];
-});
+}
 
-const availableTypes = computed(() => {
-  const result: { group: string; list: string[] }[] = [];
-
-  for (const i of eventTypes.value) {
-    if (eventList.value.some((s) => s.name === i.name)) continue;
-    let group = result.find((f) => f.group === i.category);
-    if (group) {
-      group.list.push(i.name);
-    } else {
-      group = { group: i.category, list: [i.name] };
-      result.push(group);
-    }
-  }
-
-  return result;
-});
+onBeforeMount(load);
 
 const goToEdit = (name: string) => {
   router.push(
@@ -42,52 +35,57 @@ const goToEdit = (name: string) => {
       name: "frontevents-edit",
       query: {
         name: name,
+        display: eventTypes.value.find((f) => f.name == name)?.display || name,
       },
     })
   );
 };
+
+async function saveSettings() {
+  await saveSite(site.value);
+  siteStore.loadSite();
+  siteStore.loadSites();
+}
+
+async function onDelete(rows: any) {
+  await showDeleteConfirm(rows.length);
+  await deletes(rows.map((m: any) => m.name));
+  load();
+}
 </script>
 
 <template>
   <div class="p-24">
     <Breadcrumb :name="t('common.frontEvents')" />
     <div class="flex items-center py-24 space-x-16">
-      <el-dropdown trigger="click" @command="goToEdit">
-        <el-button
-          v-hasPermission="{
-            feature: 'frontEvents',
-            action: 'edit',
-          }"
-          round
-          data-cy="new-event"
-        >
-          <div class="flex items-center">
-            {{ t("common.newEvent") }}
-            <el-icon class="iconfont icon-pull-down text-12px ml-8 !mr-0" />
-          </div>
-        </el-button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <template v-for="group of availableTypes" :key="group.group">
-              <h3 class="p-4 dark:text-fff/86">
-                {{ group.group }}
-              </h3>
-              <el-dropdown-item
-                v-for="item of group.list"
-                :key="item"
-                :command="item"
-                :data-cy="item"
-              >
-                <span>{{ item }}</span>
-              </el-dropdown-item>
-            </template>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <el-button
+        v-hasPermission="{
+          feature: 'frontEvents',
+          action: 'edit',
+        }"
+        round
+        data-cy="new-event"
+        @click="showSelectEventDialog = true"
+      >
+        <div class="flex items-center">
+          <el-icon class="iconfont icon-a-addto" />
+          {{ t("common.newEvent") }}
+        </div>
+      </el-button>
+      <div class="flex-1" />
+      <span v-if="site.enableFrontEvents" class="text-blue">{{
+        t("event.eventActive")
+      }}</span>
+      <span v-else class="text-999">{{ t("event.eventInactive") }}</span>
+      <ElSwitch v-model="site.enableFrontEvents" @change="saveSettings" />
     </div>
 
-    <KTable :data="eventList">
-      <el-table-column :label="t('common.type')" prop="name" />
+    <KTable :data="eventList" show-check @delete="onDelete">
+      <el-table-column :label="t('common.type')">
+        <template #default="{ row }">
+          {{ eventTypes.find((f) => f.name == row.name)?.display || row.name }}
+        </template>
+      </el-table-column>
       <el-table-column :label="t('common.rulesCount')">
         <template #default="{ row }">
           <el-tag
@@ -110,5 +108,12 @@ const goToEdit = (name: string) => {
         </template>
       </el-table-column>
     </KTable>
+    <SelectEventDialog
+      v-if="showSelectEventDialog"
+      v-model="showSelectEventDialog"
+      :events="eventTypes"
+      :excludes="eventList.map((m) => m.name)"
+      @selected="goToEdit"
+    />
   </div>
 </template>

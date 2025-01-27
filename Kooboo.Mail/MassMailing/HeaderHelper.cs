@@ -60,6 +60,10 @@ namespace Kooboo.Mail.MassMailing
                     {
                         mtaHeader.From = value;
                     }
+                    else if (lowerKey == "message-id")
+                    {
+                        mtaHeader.MessageId = value;
+                    }
                     else if (lowerKey == "to")
                     {
                         mtaHeader.To = value;

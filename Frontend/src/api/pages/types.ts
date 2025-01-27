@@ -47,6 +47,9 @@ export interface PostRichPage {
   cacheMinutes: number;
   cacheQueryKeys: string;
   published?: boolean;
+  cacheVersionType: number;
+  cacheByDevice: boolean;
+  cacheByCulture: boolean;
 }
 
 export interface PostPage {
@@ -61,7 +64,10 @@ export interface PostPage {
   id: string;
   enableCache: boolean;
   disableUnocss: boolean;
+  cacheVersionType: number;
   cacheByVersion: boolean;
+  cacheByDevice: boolean;
+  cacheByCulture: boolean;
   cacheMinutes: number;
   cacheQueryKeys: string;
   title?: string;

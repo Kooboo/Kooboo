@@ -196,40 +196,9 @@ namespace Kooboo.Web.Api.Implementation
         public PagedList<SiteErrorLogViewModel> Errors(ApiCall call)
         {
             string weekName = call.GetValue("weekname");
-
-            var sitedb = call.WebSite.SiteDb();
-
-            var logStore = sitedb.ErrorLogByWeek(weekName);
-
-            var result = new PagedList<SiteErrorLogViewModel>();
-
             var pager = ApiHelper.GetPager(call, 50);
-
-            var logResult = logStore.List(pager.PageNr, pager.PageSize);
-
-            string baseUrl = call.WebSite.BaseUrl();
-
-            List<SiteErrorLogViewModel> DataItems = new List<SiteErrorLogViewModel>();
-
-            if (logResult.DataList != null)
-            {
-                foreach (var item in logResult.DataList)
-                {
-                    SiteErrorLogViewModel model = new SiteErrorLogViewModel(item, baseUrl);
-
-                    DataItems.Add(model);
-                }
-            }
-
-            result.PageNr = pager.PageNr;
-            result.PageSize = pager.PageSize;
-            result.TotalCount = logResult.TotalCount;
-            result.DataList = DataItems.ToArray();
-
-            return result;
+            return VisitorLogService.ErrorList(call.WebSite, weekName, pager.PageNr, pager.PageSize);
         }
-
-
 
         [Kooboo.Attributes.RequireParameters("id")]
         [Permission(Feature.VISITOR_LOG)]

@@ -6,6 +6,7 @@ import type { CustomField } from "@/api/commerce/settings";
 import ContentField from "./content-field.vue";
 import { onMounted, ref } from "vue";
 import KeyValueEditor from "@/components/basic/key-value-editor.vue";
+import ListEditor from "@/components/basic/list-editor.vue";
 
 interface PropsType {
   field: CustomField;
@@ -136,11 +137,17 @@ onMounted(() => {
       :model-value="modelValue || []"
       :content-folder="field.contentFolder!"
       :multiple="field.multiple"
+      :embedded="field.embedded"
       :allow-repetition="field.allowRepetition"
       @update:model-value="$emit('update:model-value', $event)"
     />
     <KeyValueEditor
       v-else-if="field.type === 'KeyValues'"
+      :model-value="modelValue || []"
+      @update:model-value="$emit('update:model-value', $event)"
+    />
+    <ListEditor
+      v-else-if="field.type === 'ValueList'"
       :model-value="modelValue || []"
       @update:model-value="$emit('update:model-value', $event)"
     />

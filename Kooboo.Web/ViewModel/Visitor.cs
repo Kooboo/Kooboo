@@ -40,26 +40,4 @@ namespace Kooboo.Web.ViewModel
         public string Country { get; set; }
         public string State { get; set; }
     }
-
-    public class SiteErrorLogViewModel : SiteErrorLog
-    {
-        public SiteErrorLogViewModel(SiteErrorLog orgErr, string baseUrl)
-        {
-
-            this.Id = orgErr.Id;
-            this.ClientIP = orgErr.ClientIP;
-            this.Message = orgErr.Message;
-            this.StartTime = orgErr.StartTime;
-            this.StatusCode = orgErr.StatusCode;
-            this.Url = orgErr.Url;
-
-            this.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseUrl, this.Url);
-
-        }
-
-
-        public string PreviewUrl { get; set; }
-
-
-    }
 }

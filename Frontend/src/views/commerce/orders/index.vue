@@ -18,6 +18,7 @@ import CurrencyAmount from "../components/currency-amount.vue";
 import { showDeleteConfirm } from "@/components/basic/confirm";
 import { openInHiddenFrame } from "@/utils/url";
 import TruncateContent from "@/components/basic/truncate-content.vue";
+import OrderStatus from "./order-status.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -27,7 +28,6 @@ const pagingResult = ref<OrderPagingResult>();
 const queryParams = ref<
   PagingParams & {
     keyword?: string;
-    paid?: boolean;
     deliveryStatus?: string;
     status?: string;
     createdAtStart?: string;
@@ -37,8 +37,7 @@ const queryParams = ref<
   pageIndex: 1,
   pageSize: 30,
   keyword: "",
-  paid: true,
-  status: undefined,
+  status: "Normal",
   createdAtStart: undefined,
   createdAtEnd: undefined,
 });
@@ -55,7 +54,7 @@ async function onDelete(rows: any[]) {
 }
 
 async function exportExcel() {
-  const rsp = await generateOrderExcel(queryParams);
+  const rsp = await generateOrderExcel(queryParams.value);
   openInHiddenFrame(
     useUrlSiteId(
       `${import.meta.env.VITE_API}/Order/ExportExcel?exportfile=${
@@ -106,23 +105,25 @@ function getDiscountAllocations(row: any) {
         pagingResult.stats.waitDeliver
       }}</PropertyItem>
       <div class="flex-1" />
-      <PropertyItem :name="t('commerce.orderCount')">{{
+      <PropertyItem :name="t('commerce.paidOrders')">{{
         pagingResult.stats.order
       }}</PropertyItem>
-      <PropertyItem :name="t('commerce.orderTotalAmount')">
+      <PropertyItem :name="t('commerce.paidAmounts')">
         <CurrencyAmount :amount="pagingResult.stats.totalAmount" />
       </PropertyItem>
     </div>
     <div class="flex items-center py-16 space-x-16">
       <el-select
-        v-model="queryParams.paid"
-        :placeholder="t('common.paymentStatus')"
+        v-model="queryParams.status"
+        :placeholder="t('commerce.orderStatus')"
         class="w-180px"
         clearable
-        @clear="queryParams.paid = undefined"
+        @clear="queryParams.status = undefined"
       >
-        <el-option :label="t('common.paid')" :value="true" />
-        <el-option :label="t('common.notPaid')" :value="false" />
+        <el-option :label="t('common.active')" value="Normal" />
+        <el-option :label="t('common.paid')" value="Paid" />
+        <el-option :label="t('common.notPaid')" value="Unpaid" />
+        <el-option :label="t('commerce.canceled')" value="Canceled" />
       </el-select>
       <el-select
         v-model="queryParams.deliveryStatus"
@@ -134,16 +135,6 @@ function getDiscountAllocations(row: any) {
         <el-option :label="t('commerce.shipped')" value="shipped" />
         <el-option :label="t('commerce.partialShipped')" value="partial" />
         <el-option :label="t('commerce.unshipped')" value="unshipped" />
-      </el-select>
-      <el-select
-        v-model="queryParams.status"
-        :placeholder="t('commerce.orderStatus')"
-        class="w-180px"
-        clearable
-        @clear="queryParams.status = undefined"
-      >
-        <el-option :label="t('common.active')" value="Normal" />
-        <el-option :label="t('commerce.canceled')" value="Canceled" />
       </el-select>
       <ElDatePicker
         v-model="queryParams.createdAtStart"
@@ -279,12 +270,9 @@ function getDiscountAllocations(row: any) {
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="t('common.paymentMethod')" width="140">
+      <el-table-column :label="t('common.status')" width="140">
         <template #default="{ row }">
-          <ElTag v-if="row.paid" round type="success">{{
-            row.paymentMethod
-          }}</ElTag>
-          <ElTag v-else round type="info">{{ t("common.notPaid") }}</ElTag>
+          <OrderStatus :order="row" />
         </template>
       </el-table-column>
 
@@ -306,9 +294,9 @@ function getDiscountAllocations(row: any) {
       </el-table-column>
 
       <el-table-column :label="t('common.country')" width="180" align="center">
-        <template #default="{ row }"
-          ><Country :name-or-code="row.country"
-        /></template>
+        <template #default="{ row }">
+          <Country :name-or-code="row.country" />
+        </template>
       </el-table-column>
 
       <el-table-column :label="t('common.source')" width="180" align="center">

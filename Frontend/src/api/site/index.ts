@@ -171,8 +171,8 @@ export const uploadPackage = (body: unknown) =>
     keepShowErrorMessage: true,
   });
 
-export const saveSite = (body: unknown, closeLoadingAndMessage?: boolean) =>
-  request.post(
+export const saveSite = (body: Site, closeLoadingAndMessage?: boolean) => {
+  return request.post(
     useUrlSiteId("Site/post"),
     body,
     undefined,
@@ -184,6 +184,7 @@ export const saveSite = (body: unknown, closeLoadingAndMessage?: boolean) =>
           successMessage: $t("common.saveSuccess"),
         }
   );
+};
 
 export const updateAdvancedMenus = (body?: string[]) =>
   request.post(useUrlSiteId("Site/UpdateAdvancedMenus"), body, undefined, {

@@ -17,9 +17,9 @@ const sample = `
 //variables per event. k.event.page, k.event.view, k.event.route; 
 // Finding=before object found. Found = object founded. 
 //example, url redirect. only valid on RouteFinding event. 
-//if (k.event.url.indexOf(""pagetwo"")>-1)
+//if (k.event.url.indexOf("pagetwo")>-1)
 //{
-//     k.event.url = ""/pageone"";
+//     k.event.url = "/pageone";
 //};
 `;
 

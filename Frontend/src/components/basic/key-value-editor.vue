@@ -3,7 +3,6 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import DropdownInput from "@/components/basic/dropdown-input.vue";
 import type { OptionItemType, AttributesBuilderType } from "@/global/types";
-import type { FormItemRule } from "element-plus";
 import { cloneDeep } from "lodash-es";
 
 type AttributeBindingType =
@@ -16,8 +15,8 @@ const props = defineProps<{
   keyInputAttributes?: AttributeBindingType;
   valueInputAttributes?: AttributeBindingType;
   defaultOptions?: string[];
-  keyRules?: FormItemRule[];
-  valueRules?: FormItemRule[];
+  keyRules?: any[];
+  valueRules?: any[];
   prop?: string;
 }>();
 

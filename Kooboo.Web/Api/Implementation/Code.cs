@@ -148,9 +148,10 @@ namespace Kooboo.Web.Api.Implementation
 
             else if (codetype == Sites.Models.CodeType.PaymentCallBack)
             {
-                sample = @"// kscript that can be inserted to page position. 
-//k.cookie.set(""key"", ""value"");
-//k.response.write(""Hello world"");";
+                sample = """
+                //get payment info from k.event 
+                k.logger.debug(k.event);
+                """;
             }
             else if (codetype == Sites.Models.CodeType.Job)
             {

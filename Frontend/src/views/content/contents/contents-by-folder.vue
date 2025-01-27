@@ -10,24 +10,56 @@
       ]"
     />
     <div class="flex items-center py-24 justify-between">
-      <el-button
-        v-hasPermission="{
-          feature: 'content',
-          action: 'edit',
-        }"
-        round
-        :title="t('common.new') + ' ' + friendlyName"
-        data-cy="new-text-content"
-        @click="edit()"
-      >
-        <el-icon class="iconfont icon-a-addto" />
-        {{ t("common.new") }}
-        <span
-          class="max-w-300px overflow-x-clip whitespace-nowrap overflow-ellipsis"
+      <div class="flex items-center">
+        <el-button
+          v-hasPermission="{
+            feature: 'content',
+            action: 'edit',
+          }"
+          round
+          :title="t('common.new') + ' ' + friendlyName"
+          data-cy="new-text-content"
+          @click="edit()"
         >
-          {{ friendlyName }}</span
+          <el-icon class="iconfont icon-a-addto" />
+          {{ t("common.new") }}
+          <span
+            class="max-w-300px overflow-x-clip whitespace-nowrap overflow-ellipsis"
+          >
+            {{ friendlyName }}</span
+          >
+        </el-button>
+        <el-button
+          v-hasPermission="{
+            feature: 'content',
+            action: 'view',
+          }"
+          round
+          @click="exportData"
         >
-      </el-button>
+          <el-icon class="iconfont icon-share" />
+          {{ t("common.exportData") }}
+        </el-button>
+        <el-upload
+          :show-file-list="false"
+          :action="''"
+          accept="text/csv"
+          :auto-upload="false"
+          :on-change="importData"
+        >
+          <el-button
+            v-hasPermission="{
+              feature: 'content',
+              action: 'edit',
+            }"
+            round
+            class="ml-12"
+          >
+            <el-icon class="iconfont icon-a-Cloudupload" />
+            {{ t("common.importData") }}
+          </el-button>
+        </el-upload>
+      </div>
       <div class="space-x-16 flex items-center">
         <el-select
           v-for="f in categoryOptions"
@@ -236,7 +268,10 @@
 import KTable from "@/components/k-table";
 import { computed, onMounted, ref } from "vue";
 import type { TextContentUsedBy } from "@/api/content/textContent";
-import { deletes } from "@/api/content/textContent";
+import {
+  deletes,
+  importData as importDataApi,
+} from "@/api/content/textContent";
 import type { ContentFolder } from "@/api/content/content-folder";
 import { getFolderInfoById } from "@/api/content/content-folder";
 import { useTime } from "@/hooks/use-date";
@@ -277,6 +312,7 @@ const {
   searchCategories,
   categoryOptions,
   onSortChanged,
+  exportData,
 } = useContentEffects(folderId);
 
 const listColumns = computed<SummaryColumn[]>(() =>
@@ -434,5 +470,13 @@ function getText(content: any, category: any) {
     }
   }
   return value;
+}
+
+async function importData(file: any) {
+  const formdata = new FormData();
+  formdata.append("file", file.raw);
+  formdata.append("folderId", folderId);
+  await importDataApi(formdata);
+  await fetchList(1);
 }
 </script>

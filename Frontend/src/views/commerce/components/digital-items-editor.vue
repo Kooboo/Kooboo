@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { DigitalItem } from "@/api/commerce/product";
 import { deleteDigitalFile, uploadDigitalFile } from "@/api/commerce/product";
-import { ElButton } from "element-plus";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { bytesToSize } from "@/utils/common";

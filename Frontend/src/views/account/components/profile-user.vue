@@ -10,6 +10,9 @@ import EditNameDialog from "./edit-name-dialog.vue";
 import { getPayload } from "@/utils/jwt";
 import { useAppStore } from "@/store/app";
 import Cookies from "universal-cookie";
+import ChangeTowFADialog from "./change-two-fa-dialog.vue";
+import { methods } from "../constants";
+
 const cookies = new Cookies();
 
 const { t } = useI18n();
@@ -26,6 +29,7 @@ interface Props {
   password: string;
   currency: string;
   fullName: string;
+  twoFAMethod: string;
 }
 
 const emit = defineEmits<{
@@ -42,6 +46,7 @@ type ShowDialogType = {
   password: boolean;
   name: boolean;
   currency: boolean;
+  towFA: boolean;
 };
 
 const showDialog = ref<ShowDialogType>({
@@ -50,6 +55,7 @@ const showDialog = ref<ShowDialogType>({
   password: false,
   name: false,
   currency: false,
+  towFA: false,
 });
 
 const currentName = ref<{ firstName: string; lastName: string }>({
@@ -83,6 +89,10 @@ const changeEmail = () => {
 const changeCurrency = () => {
   showDialog.value.currency = true;
 };
+
+async function changeTwoFAMethod() {
+  showDialog.value.towFA = true;
+}
 
 watch(
   () => showDialog.value,
@@ -191,6 +201,22 @@ watch(
           </div>
         </td>
       </tr>
+      <tr>
+        <td class="pr-32">{{ t("common.2fa") }}:</td>
+        <td class="w-200px">
+          <div class="">
+            {{
+              methods.find((f) => f.key == props.twoFAMethod)?.value ||
+              props.twoFAMethod
+            }}
+          </div>
+        </td>
+        <td>
+          <div class="text-blue cursor-pointer ml-8" @click="changeTwoFAMethod">
+            {{ t("common.change") }}
+          </div>
+        </td>
+      </tr>
     </table>
   </div>
   <ChangePhoneDialog
@@ -217,5 +243,12 @@ watch(
     v-if="showDialog.currency"
     v-model="showDialog.currency"
     :currency="props.currency"
+  />
+  <ChangeTowFADialog
+    v-if="showDialog.towFA"
+    v-model="showDialog.towFA"
+    :method="props.twoFAMethod"
+    :tel="props.tel"
+    :email="props.emailAddress"
   />
 </template>

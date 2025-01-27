@@ -8,8 +8,8 @@ const container = ref();
 const enableTip = ref(false);
 
 function computeTruncate() {
-  if (!container.value) return;
   setTimeout(() => {
+    if (!container.value) return;
     enableTip.value = container.value.scrollWidth > container.value.offsetWidth;
   }, 10);
 }

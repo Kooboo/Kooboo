@@ -79,6 +79,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 ProductId = product.Id
             }).ToArray();
 
+            Sites.BackendEvent.Manager.BeforeRaiseEvent(apiCall.WebSite, product, ChangeType.Add);
             siteDb.CommerceData.AddOrUpdate(new Sites.Models.CommerceData
             {
                 Id = Lib.Security.Hash.ComputeHashGuid(product.Id),
@@ -86,6 +87,8 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 Body = JsonSerializer.Serialize(product, Defaults.JsonSerializerOptions),
                 Type = Sites.Models.CommerceDataType.Product
             }, apiCall.Context.User.Id);
+
+            Sites.BackendEvent.Manager.RaiseEvent(apiCall.WebSite, product, ChangeType.Add);
 
             foreach (var item in variants)
             {
@@ -135,6 +138,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 ProductId = model.Id
             }).ToArray();
             var oldProduct = entity.Clone() as Product;
+            Sites.BackendEvent.Manager.BeforeRaiseEvent(apiCall.WebSite, entity, ChangeType.Update);
             model.UpdateProduct(entity);
             oldProduct.UpdatedAt = entity.UpdatedAt;
             if (JsonSerializer.Serialize(oldProduct, Defaults.JsonSerializerOptions) != JsonSerializer.Serialize(entity, Defaults.JsonSerializerOptions))
@@ -239,6 +243,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 }, apiCall.Context.User.Id);
             }
 
+            Sites.BackendEvent.Manager.RaiseEvent(apiCall.WebSite, entity, ChangeType.Update);
             var tagService = new TagService(commerce);
             tagService.Append(TagType.Product, model.Tags);
             var variantTags = model.Variants.SelectMany(s => s.Tags).ToArray();
@@ -332,6 +337,14 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var commerce = SiteCommerce.Get(call.WebSite);
             var filePath = Path.Combine(commerce.RootPath, "digitalFiles", variantId, fileName);
             if (File.Exists(filePath)) File.Delete(filePath);
+        }
+
+        public bool IsUniqueName(string seoName, ApiCall call)
+        {
+            var id = call.GetValue("id");
+            var commerce = GetSiteCommerce(call);
+            var exist = commerce.Product.Entities.FirstOrDefault(f => f.SeoName?.Equals(seoName) ?? false);
+            return exist == null || exist.Id == id;
         }
     }
 }

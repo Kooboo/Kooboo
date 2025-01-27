@@ -5,6 +5,7 @@ import type { CustomerInfo, PagingParams, PagingResult } from "./common";
 import type { DigitalItem, Option } from "./product";
 import type { Address } from "./customer";
 import { timeZoneOffset } from "@/utils/date";
+import type { KeyValue } from "@/global/types";
 
 const $t = i18n.global.t;
 export const createOrder = (body: unknown) =>
@@ -18,6 +19,12 @@ export const cancelOrder = (body: unknown) =>
 
 export const payOrder = (body: unknown) =>
   request.post(useUrlSiteId("Order/Pay"), body);
+
+export const updateNote = (body: unknown) =>
+  request.post(useUrlSiteId("Order/UpdateNote"), body);
+
+export const updateKeyValue = (body: unknown) =>
+  request.post(useUrlSiteId("Order/UpdateKeyValue"), body);
 
 export const deliveryOrder = (body: unknown) =>
   request.post(useUrlSiteId("Order/Delivery"), body);
@@ -75,6 +82,7 @@ export interface OrderListItem {
   createAt: string;
   updateAt: string;
   lines: OrderLine[];
+  taxAmount: number;
 }
 
 export interface OrderDetail {
@@ -111,6 +119,8 @@ export interface OrderDetail {
   pointsDeductionAmount: number;
   redeemPoints: number;
   earnPoints: number;
+  taxAmount: number;
+  extensionFields: KeyValue[];
 }
 
 export type OrderPagingResult = PagingResult<OrderListItem> & { stats: any };

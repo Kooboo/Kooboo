@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { getCountries, type SupportCountry } from "@/api/commerce/shipping";
-import type { KeyValue } from "@/global/types";
+import { type SupportCountry } from "@/api/commerce/shipping";
+import { useCommerceStore } from "@/store/commerce";
+import { systemDisplay } from "@/utils/commerce";
 import { ElInputNumber } from "element-plus";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{ modelValue: SupportCountry[] }>();
@@ -11,22 +12,21 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const counties = ref<KeyValue[]>([]);
-getCountries().then((rsp) => (counties.value = rsp));
+const commerceStore = useCommerceStore();
 
 const selectableList = computed(() => {
-  return counties.value.filter(
-    (f) => !props.modelValue.find((ff) => f.key == ff.name)
+  return commerceStore.countries.filter(
+    (f) => !props.modelValue.find((ff) => f.code == ff.name)
   );
 });
 
 function onAdd() {
-  const name = selectableList.value[0]?.key;
-  if (!name) return;
+  const code = selectableList.value[0]?.code;
+  if (!code) return;
   emit("update:modelValue", [
     ...props.modelValue,
     {
-      name: name,
+      name: code,
       display: "",
       estimatedDaysOfArrival: 3,
     },
@@ -47,10 +47,10 @@ function onDelete(index: number) {
     >
       <ElSelect v-model="item.name">
         <ElOption
-          v-for="country of counties"
-          :key="country.key"
-          :label="country.value"
-          :value="country.key"
+          v-for="country of commerceStore.countries"
+          :key="country.code"
+          :label="systemDisplay(country.nameTranslations, country.name)"
+          :value="country.code"
         />
       </ElSelect>
       <ElInput

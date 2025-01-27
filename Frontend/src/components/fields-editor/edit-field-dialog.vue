@@ -516,6 +516,7 @@ const showMultipleLanguage = computed(() => {
     "RichEditor",
     "MediaFile",
     "KeyValues",
+    "ValueList",
   ];
   if (controlModel.value && controlValues.includes(controlModel.value.value)) {
     return true;

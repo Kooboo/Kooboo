@@ -186,6 +186,8 @@ function setFields(properties: ContentFieldItem[]) {
             value = value ? JSON.parse(value) : [];
           } else if (control.value === "KeyValues") {
             value = value ? JSON.parse(value) : [];
+          } else if (control.value === "ValueList") {
+            value = value ? JSON.parse(value) : [];
           } else if (control.value === "Number") {
             value = value === null ? undefined : value;
           }
@@ -226,9 +228,12 @@ async function getSaveData(values: Record<string, Record<string, any>> = {}) {
   categories.value?.forEach((item) => {
     selectedCategories[item.categoryFolder.id] = item.contents.map((x) => x.id);
   });
-  const embeddedData: Record<string, string[]> = {};
+  const embeddedData: Record<string, { id: string; order: number }[]> = {};
   embeddeds.value?.forEach((item) => {
-    embeddedData[item.embeddedFolder.id] = item.contents.map((x) => x.id);
+    embeddedData[item.embeddedFolder.id] = item.contents.map((x) => ({
+      id: x.id,
+      order: x.order,
+    }));
   });
   const isCopy = getQueryString("copy");
   return {

@@ -310,6 +310,108 @@ namespace Kooboo.Mail.MassMailing
             model.TimeFileId = currentFileId;
             var id = db.Add(model);
         }
+         
+        public long CountOpen()
+        {
+            long result = 0; 
+
+            var item = this.Peek();   // to init the reading.
+
+            var ReadingId = this.CurrentReadingFileId;
+
+            if (ReadingId == 0)
+            {  
+                return 0;
+            }
+            var AllFileIds = this.ListAllFileIds();
+
+            foreach (var fileId in AllFileIds)
+            {
+                if (fileId < ReadingId)
+                {
+                   
+                }
+                else if (fileId > ReadingId)
+                {
+                    var FileDb = GetDBFromFileId(fileId, false);
+                    var maxId = FileDb.FindKey(false);
+                    if (maxId > 0)
+                    { 
+                        result += maxId;
+                    }
+                }
+                else if (fileId == ReadingId)
+                {
+                    var FileDb = GetDBFromFileId(fileId, false);
+                    var maxId = FileDb.FindKey(false);
+
+                    if (maxId > 0)
+                    {
+                        var openCount = maxId - this.WormDBId + 1;
+                        // var processedCount = maxId - openCount; 
+                        result += openCount;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public ItemCounter CountAll()
+        {
+            var item = this.Peek();   // to init the reading.
+
+            var ReadingId = this.CurrentReadingFileId;
+
+            if (ReadingId == 0)
+            {
+                // nothing to read. 
+                return new ItemCounter();
+            }
+
+            ItemCounter counter = new ItemCounter();
+
+            var AllFileIds = this.ListAllFileIds();
+
+            foreach (var fileId in AllFileIds)
+            {
+                if (fileId < ReadingId)
+                {
+                    var FileDb = GetDBFromFileId(fileId, false);
+                    var maxId = FileDb.FindKey(false);
+                    if (maxId > 0)
+                    {
+                        counter.Processed[fileId] = maxId; 
+                    } 
+                } 
+                else if (fileId > ReadingId)
+                {
+                    var FileDb = GetDBFromFileId(fileId, false);
+                    var maxId = FileDb.FindKey(false);
+                    if (maxId > 0)
+                    {
+                        counter.Open[fileId] = maxId;
+                    }
+                }
+                else if (fileId == ReadingId)
+                {
+                    var FileDb = GetDBFromFileId(fileId, false);
+                    var maxId = FileDb.FindKey(false);
+
+                    if (maxId > 0)
+                    {
+                        var openCount = maxId - this.WormDBId + 1;
+                        var processedCount = maxId - openCount;
+
+                        counter.Processed[fileId] = processedCount;
+                        counter.Open[fileId] = openCount; 
+                   }
+                }
+            }
+
+            return counter; 
+        }
+
 
         private void InitReading()
         {
@@ -466,5 +568,12 @@ namespace Kooboo.Mail.MassMailing
             this.CheckTimeTick = BitConverter.ToInt64(bytes, 0);
             this.Processed = bytes[8] == 1;
         }
+    }
+
+    public class ItemCounter
+    {
+        public Dictionary<int, long> Open { get; set; } = new Dictionary<int, long>();
+
+        public Dictionary<int, long> Processed { get; set; } = new Dictionary<int, long>();
     }
 }

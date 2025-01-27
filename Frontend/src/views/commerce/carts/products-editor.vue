@@ -16,6 +16,7 @@ import { ElButton, ElCheckbox, ElTableColumn, ElTooltip } from "element-plus";
 import { combineUrl, openInNewTab } from "@/utils/url";
 import { useSiteStore } from "@/store/site";
 import { useCommerceStore } from "@/store/commerce";
+import type { Address } from "@/api/commerce/customer";
 
 const props = defineProps<{
   customerId?: string;
@@ -25,6 +26,8 @@ const props = defineProps<{
   extensionButton?: any;
   readonly?: boolean;
   redeemPoints: boolean;
+  address?: Address;
+  mode?: "edit" | "checkout";
 }>();
 
 const emit = defineEmits<{
@@ -91,6 +94,15 @@ const columns = getColumns([
       align: "center",
     },
   },
+  props.mode == "checkout"
+    ? {
+        name: "taxAmount",
+        displayName: t("common.tax"),
+        attrs: {
+          align: "center",
+        },
+      }
+    : (null as any),
   {
     name: "discounts",
     displayName: t("common.discounts"),
@@ -146,7 +158,7 @@ function addVariant(row: ProductVariant) {
       quantity: 1,
       variantId: row.id,
     };
-    lines.push(variant);
+    lines.unshift(variant);
   }
 
   emit("update:lines", lines);
@@ -203,6 +215,7 @@ watch(
     () => props.discountCodes,
     () => props.lines,
     () => props.redeemPoints,
+    () => props.address,
   ],
   async () => {
     calculateResult.value = await calculate({
@@ -211,6 +224,8 @@ watch(
       discountCodes: props.discountCodes,
       lines: props.lines,
       redeemPoints: props.redeemPoints,
+      country: props.address?.country,
+      region: props.address?.province || props.address?.city,
     });
     emit(
       "update:has-digital-products",
@@ -282,6 +297,9 @@ watch(
         </template>
         <template #amount="{ row }">
           <CurrencyAmount :amount="row.amount" :original="row.originalAmount" />
+        </template>
+        <template #taxAmount="{ row }">
+          <CurrencyAmount :amount="row.taxAmount" />
         </template>
         <template #quantity="{ row }">
           <div v-if="readonly">{{ row.quantity }}</div>
@@ -390,6 +408,9 @@ watch(
           :amount="calculateResult?.subtotalAmount"
           :original="calculateResult?.originalSubtotalAmount"
         />
+      </PropertyItem>
+      <PropertyItem v-if="mode == 'checkout'" :name="t('common.tax')">
+        <CurrencyAmount :amount="calculateResult?.taxAmount" />
       </PropertyItem>
       <PropertyItem
         v-if="calculateResult?.insuranceAmount"

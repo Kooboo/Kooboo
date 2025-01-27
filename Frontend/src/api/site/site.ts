@@ -14,6 +14,11 @@ export interface TinymceSettings {
   [name: string]: any;
 }
 
+export interface ReteSettings {
+  permitLimit: number;
+  withinSeconds: number;
+}
+
 export interface Site {
   autoDetectCulture: boolean;
   codeLogSettings: { enable: boolean; keepDays: number; logLevel: string };
@@ -22,6 +27,18 @@ export interface Site {
     path: string;
     autoGenerate: boolean;
     code: string;
+  };
+  rateLimitSettings: {
+    enable: boolean;
+    limitAllRequest: boolean;
+    allRequestRateSettings: ReteSettings;
+    ipLimits: Record<string, ReteSettings>;
+    userAgentLimits: Record<string, ReteSettings>;
+  };
+  accessLimitSettings: {
+    enable: boolean;
+    ipBlacklist: string[];
+    blockUserAgentKeywords: string[];
   };
   unocssSettings: UnocssSettings;
   name: string;
@@ -40,6 +57,7 @@ export interface Site {
   enableDiskSync: boolean;
   enableFileIOUrl: boolean;
   enableFrontEvents: boolean;
+  enableBackendEvents: boolean;
   enableFullTextSearch: boolean;
   enableImageBrowserCache: boolean;
   enableImageLog: boolean;
@@ -85,7 +103,8 @@ export interface Site {
   enableVisitorCountryRestriction?: boolean;
   visitorCountryRestrictions?: Record<string, string>;
   visitorCountryRestrictionPage?: string;
-  enableResourceCache?: boolean;
+  enableResourceCache: boolean;
+  resourceCaches: number;
 }
 
 export interface ModuleMenu {

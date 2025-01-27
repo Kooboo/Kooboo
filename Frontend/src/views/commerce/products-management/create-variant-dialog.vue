@@ -30,6 +30,7 @@ const model = ref<ProductVariant>({
   tags: [],
   digitalItems: [],
   autoDelivery: true,
+  order: 0,
 });
 
 const emit = defineEmits<{

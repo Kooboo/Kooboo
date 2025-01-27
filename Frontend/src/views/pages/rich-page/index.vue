@@ -29,8 +29,12 @@ const model = ref<PostRichPage>({
   cacheByVersion: false,
   cacheMinutes: 3,
   enableCache: false,
+
   cacheQueryKeys: " ",
   published: true,
+  cacheByCulture: false,
+  cacheByDevice: false,
+  cacheVersionType: 0,
 });
 
 const isEdit = computed(() => model.value.id !== emptyGuid);

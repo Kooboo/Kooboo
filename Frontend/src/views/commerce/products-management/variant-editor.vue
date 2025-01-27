@@ -7,7 +7,6 @@ import type { Ref } from "vue";
 import { ref } from "vue";
 import { buildOptionsDisplay } from "./product-variant";
 import { useCommerceStore } from "@/store/commerce";
-import { ElButton } from "element-plus";
 import DigitalItemsDialog from "./digital-items-dialog.vue";
 
 const { t } = useI18n();
@@ -127,11 +126,17 @@ function updateVariant(item: ProductVariant) {
           </template>
         </el-table-column>
 
+        <el-table-column :label="t('common.sales')" align="center" width="120">
+          <template #default="{ row }">
+            {{ row.sales }}
+          </template>
+        </el-table-column>
+
         <el-table-column
           v-if="isDigital"
           :label="t('common.digitalItems')"
           align="center"
-          width="120"
+          width="140"
         >
           <template #default="{ row }">
             <ElButton

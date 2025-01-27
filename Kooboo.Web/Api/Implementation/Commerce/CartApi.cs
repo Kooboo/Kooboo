@@ -51,6 +51,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                 calculateResult.OriginalSubtotalAmount,
                 calculateResult.InsuranceAmount,
                 calculateResult.TotalAmount,
+                calculateResult.TaxAmount,
                 calculateResult.TotalQuantity,
                 calculateResult.RedeemPoints,
                 calculateResult.CanRedeemPoints,
@@ -79,7 +80,8 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                         s.IsMain,
                         s.Note,
                         s.ExtensionButton,
-                        s.Product.IsDigital
+                        s.Product.IsDigital,
+                        s.TaxAmount
                     };
                 }).ToArray()
             };

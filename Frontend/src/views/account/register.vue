@@ -17,6 +17,7 @@ import { useFirstInputFocus } from "@/hooks/use-first-input-focus";
 import { useI18n } from "vue-i18n";
 import { getQueryString } from "@/utils/url";
 import { vscodeLogin } from "@/utils/common";
+import TwoFAVerifyDialog from "./two-fa-verify-dialog.vue";
 
 const { t } = useI18n();
 const showCodeDialog = ref(false);
@@ -54,7 +55,9 @@ const passwordValidator = () => {
     form.value.validateField("confirmPassword");
   }
 };
-const onRegister = async () => {
+
+const onRegister = async (code?: string) => {
+  model.code = code!;
   await form.value.validate();
   await register(model);
   if (!model.code) {
@@ -77,7 +80,7 @@ const onRegister = async () => {
       <Container
         :title="t('common.register')"
         back
-        @keypress.enter="onRegister"
+        @keypress.enter="onRegister()"
       >
         <el-form ref="form" label-position="top" :model="model" :rules="rules">
           <el-form-item :label="t('common.username')" prop="username">
@@ -111,7 +114,7 @@ const onRegister = async () => {
           type="primary"
           size="large"
           data-cy="register"
-          @click.prevent="onRegister"
+          @click.prevent="onRegister()"
           >{{ t("common.register") }}</el-button
         >
         <p class="text-s pt-8 dark:text-fff/50">
@@ -124,34 +127,11 @@ const onRegister = async () => {
           >
         </p>
       </Container>
-      <el-dialog
+      <TwoFAVerifyDialog
         v-model="showCodeDialog"
-        width="400px"
-        :close-on-click-modal="false"
-        :title="t('common.validation')"
-        @closed="model.code = ''"
-      >
-        <div class="space-y-16">
-          <el-alert
-            :title="t('common.registerVerifyCodeSentTip')"
-            type="info"
-            :closable="false"
-          />
-          <el-input
-            v-model="model.code"
-            :placeholder="t('common.verifyCode')"
-          />
-        </div>
-        <template #footer>
-          <el-button
-            type="primary"
-            class="w-full"
-            :disabled="!model.code"
-            @click="onRegister"
-            >{{ t("common.confirm") }}</el-button
-          >
-        </template>
-      </el-dialog>
+        :tip="t('common.registerVerifyCodeSentTip')"
+        @ok="onRegister"
+      />
     </el-scrollbar>
   </div>
 </template>

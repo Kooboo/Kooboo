@@ -123,7 +123,13 @@ function onVariantRowClick(row: ProductVariant) {
           class="el-table--gray"
           @row-click="onRowClick"
         >
-          <DynamicColumns :columns="columns" />
+          <DynamicColumns :columns="columns">
+            <template #title="{ row }">
+              <TruncateContent :tip="row.title">{{
+                row.title
+              }}</TruncateContent>
+            </template>
+          </DynamicColumns>
         </ElTable>
       </el-scrollbar>
       <div class="text-center">

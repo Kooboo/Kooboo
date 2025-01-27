@@ -13,14 +13,14 @@ const systemRoutes: Array<RouteRecordRaw> = [
         name: "kconsole",
         component: () => import("@/views/console/domains/index.vue"),
       },
-      // {
-      //   path: "domainDNS",
-      //   name: "domainDNS",
-      //   meta: {
-      //     activeMenu: "kconsole",
-      //   },
-      //   component: () => import("@/views/console/domains/domain-dns.vue"),
-      // },
+      {
+        path: "domainDNS",
+        name: "domainDNS",
+        meta: {
+          activeMenu: "kconsole",
+        },
+        component: () => import("@/views/console/domains/domain-dns.vue"),
+      },
       {
         path: "DomainBinding",
         name: "domain-binding",

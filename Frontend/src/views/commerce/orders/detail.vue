@@ -5,7 +5,11 @@ import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
 import { useRouteSiteId } from "@/hooks/use-site-id";
 import type { OrderDetail } from "@/api/commerce/order";
-import { getOrderDetail } from "@/api/commerce/order";
+import {
+  getOrderDetail,
+  updateKeyValue,
+  updateNote,
+} from "@/api/commerce/order";
 import { combineUrl, getQueryString, openInNewTab } from "@/utils/url";
 import { useTime } from "@/hooks/use-date";
 import { buildOptionsDisplay } from "../products-management/product-variant";
@@ -18,6 +22,10 @@ import { useProductFields } from "../useFields";
 import CurrencyAmount from "../components/currency-amount.vue";
 import { useSiteStore } from "@/store/site";
 import DeliveryStatus from "./delivery-status.vue";
+import OrderStatus from "./order-status.vue";
+import { getDetails } from "@/api/commerce/address";
+import { systemDisplay } from "@/utils/commerce";
+import type { KeyValue } from "@/global/types";
 
 const { getColumns } = useProductFields();
 const id = getQueryString("id");
@@ -26,7 +34,10 @@ const router = useRouter();
 const showCancelDialog = ref(false);
 const showDeliveryDialog = ref(false);
 const showPaymentDialog = ref(false);
+const showNoteDialog = ref(false);
+const showKeyValueDialog = ref(false);
 const siteStore = useSiteStore();
+const note = ref("");
 
 const columns = getColumns([
   {
@@ -56,6 +67,10 @@ const columns = getColumns([
     displayName: t("common.totalAmount"),
   },
   {
+    name: "taxAmount",
+    displayName: t("common.tax"),
+  },
+  {
     name: "discounts",
     displayName: t("common.discount"),
     attrs: {
@@ -64,9 +79,15 @@ const columns = getColumns([
   },
 ]);
 const model = ref<OrderDetail>();
+const addressDetail = ref();
 
 async function load() {
   model.value = await getOrderDetail(id!);
+  if (model.value.shippingAddress) {
+    getDetails([model.value.shippingAddress]).then(
+      (rsp) => (addressDetail.value = rsp[0])
+    );
+  }
 }
 
 function getClientInfo(row: any) {
@@ -128,6 +149,27 @@ function extensionButtonClick(data: any) {
   let url = combineUrl(siteStore.site.baseUrl, data.url);
   openInNewTab(url);
 }
+
+async function editNode() {
+  await updateNote({
+    note: note.value,
+    id: id,
+  });
+  load();
+  showNoteDialog.value = false;
+}
+
+const keyvalue = ref<KeyValue>();
+
+async function editKeyValue() {
+  await updateKeyValue({
+    id,
+    key: keyvalue.value?.key,
+    value: keyvalue.value?.value,
+  });
+  load();
+  showKeyValueDialog.value = false;
+}
 </script>
 
 <template>
@@ -146,9 +188,7 @@ function extensionButtonClick(data: any) {
       <el-descriptions :title="t('common.basicInfo')">
         <el-descriptions-item :label="t('commerce.orderNumber')"
           >{{ model.id }}
-          <ElTag v-if="model.canceled" type="danger" size="small"
-            >{{ t("commerce.canceled") }}
-          </ElTag>
+          <OrderStatus :order="model" />
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTime')">{{
           useTime(model.createdAt)
@@ -195,11 +235,11 @@ function extensionButtonClick(data: any) {
           </div>
         </el-descriptions-item>
 
-        <el-descriptions-item :label="t('common.paymentMethod')">
-          <ElTag v-if="model.paid" round type="success">{{
-            model.paymentMethod
-          }}</ElTag>
-          <ElTag v-else round type="info">{{ t("common.notPaid") }}</ElTag>
+        <el-descriptions-item
+          v-if="model.paymentMethod"
+          :label="t('common.paymentMethod')"
+        >
+          <ElTag round type="success">{{ model.paymentMethod }}</ElTag>
         </el-descriptions-item>
         <el-descriptions-item :label="t('commerce.shippingStatus')">
           <ElTag v-if="model.partialDelivered" round type="warning">{{
@@ -211,6 +251,24 @@ function extensionButtonClick(data: any) {
 
           <ElTag v-else round type="info">{{ t("commerce.unshipped") }}</ElTag>
         </el-descriptions-item>
+        <template v-if="model.extensionFields">
+          <el-descriptions-item
+            v-for="(i, index) of model.extensionFields"
+            :key="index"
+            :label="i.key"
+          >
+            <div class="max-w-150px inline-flex items-center gap-4">
+              <TruncateContent :tip="i.value">{{ i.value }}</TruncateContent>
+              <el-icon
+                class="cursor-pointer iconfont icon-a-writein text-blue"
+                @click="
+                  keyvalue = { key: i.key, value: i.value };
+                  showKeyValueDialog = true;
+                "
+              />
+            </div>
+          </el-descriptions-item>
+        </template>
       </el-descriptions>
       <ElTable
         :data="data"
@@ -239,6 +297,12 @@ function extensionButtonClick(data: any) {
               :currency="model.currency"
               :amount="row.totalAmount"
               :original="row.originalAmount"
+            />
+          </template>
+          <template #taxAmount="{ row }">
+            <CurrencyAmount
+              :currency="model.currency"
+              :amount="row.taxAmount"
             />
           </template>
           <template #discounts="{ row }">
@@ -303,6 +367,12 @@ function extensionButtonClick(data: any) {
             :original="model.originalSubtotalAmount"
           />
         </PropertyItem>
+        <PropertyItem :name="t('common.tax')">
+          <CurrencyAmount
+            :amount="model?.taxAmount"
+            :currency="model.currency"
+          />
+        </PropertyItem>
         <PropertyItem
           v-if="model?.insuranceAmount"
           :name="t('commerce.insuranceAmount')"
@@ -365,7 +435,10 @@ function extensionButtonClick(data: any) {
     >
       <el-descriptions :title="t('commerce.shippingAddress')">
         <el-descriptions-item :label="t('common.country')">{{
-          model.shippingAddress?.country
+          systemDisplay(
+            addressDetail?.countryDetail?.nameTranslations,
+            model.shippingAddress?.country
+          )
         }}</el-descriptions-item>
         <el-descriptions-item :label="t('common.contact')">
           {{ model.shippingAddress?.firstName }}
@@ -375,10 +448,16 @@ function extensionButtonClick(data: any) {
           model.shippingAddress?.phone
         }}</el-descriptions-item>
         <el-descriptions-item :label="t('common.province')">{{
-          model.shippingAddress?.province
+          systemDisplay(
+            addressDetail?.provinceDetail?.nameTranslations,
+            model.shippingAddress?.province
+          )
         }}</el-descriptions-item>
         <el-descriptions-item :label="t('common.city')">{{
-          model.shippingAddress?.city
+          systemDisplay(
+            addressDetail?.cityDetail?.nameTranslations,
+            model.shippingAddress?.city
+          )
         }}</el-descriptions-item>
         <el-descriptions-item :label="t('common.postalCode')">{{
           model.shippingAddress?.zip
@@ -390,6 +469,15 @@ function extensionButtonClick(data: any) {
     </div>
     <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
       <el-descriptions :title="t('commerce.note')">
+        <template #extra>
+          <el-icon
+            class="cursor-pointer iconfont icon-a-writein text-blue text-l"
+            @click="
+              note = model.note;
+              showNoteDialog = true;
+            "
+          />
+        </template>
         <div />
       </el-descriptions>
       <div class="text-m text-999">{{ model.note }}</div>
@@ -415,6 +503,34 @@ function extensionButtonClick(data: any) {
       v-model="showPaymentDialog"
       @reload="load"
     />
+    <el-dialog v-model="showNoteDialog" :title="t('commerce.note')">
+      <ElForm label-position="top">
+        <ElFormItem>
+          <ElInput v-model="note" type="textarea" :rows="5" />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <DialogFooterBar @confirm="editNode" @cancel="showNoteDialog = false" />
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-if="keyvalue"
+      v-model="showKeyValueDialog"
+      :title="keyvalue.key"
+    >
+      <ElForm label-position="top">
+        <ElFormItem>
+          <ElInput v-model="keyvalue.value" type="textarea" :rows="5" />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <DialogFooterBar
+          @confirm="editKeyValue"
+          @cancel="showKeyValueDialog = false"
+        />
+      </template>
+    </el-dialog>
   </div>
 
   <KBottomBar

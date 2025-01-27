@@ -7,6 +7,7 @@ import { getCultures } from "@/api/site";
 import { toObject } from "@/utils/lang";
 
 import { useI18n } from "vue-i18n";
+import { errorMessage } from "@/components/basic/message";
 const { t } = useI18n();
 const culture = ref<KeyValue[]>([]);
 const cultureList = ref<KeyValue[]>([]);
@@ -87,9 +88,12 @@ const onDelete = (key: number) => {
 };
 
 const onChangeCulture = (value: string) => {
+  const selected = culture.value.find((f) => f.key === value);
+  if (!/^[a-z]{2}$/.test(value)) {
+    errorMessage(t("common.cultureCodeTip"));
+  }
   const defaultName = cultureList.value.find((f) => f.key === value)?.value;
   if (defaultName) {
-    const selected = culture.value.find((f) => f.key === value);
     if (selected) {
       selected.value = defaultName;
     }
@@ -164,7 +168,13 @@ watch(
             :key="index"
             class="flex items-center space-x-4"
           >
-            <el-select v-model="item.key" @change="onChangeCulture">
+            <el-select
+              v-model="item.key"
+              filterable
+              allow-create
+              default-first-option
+              @change="onChangeCulture"
+            >
               <el-option
                 v-for="i of availableCultures"
                 :key="i.key"

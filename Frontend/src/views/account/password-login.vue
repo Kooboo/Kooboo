@@ -10,18 +10,24 @@ import { useFirstInputFocus } from "@/hooks/use-first-input-focus";
 import { useI18n } from "vue-i18n";
 import { getQueryString } from "@/utils/url";
 import { vscodeLogin } from "@/utils/common";
+import requestError, { getErrorData } from "@/utils/request/error";
+import TwoFAVerifyDialog from "./two-fa-verify-dialog.vue";
+import { errorMessage } from "@/components/basic/message";
 
 useFirstInputFocus();
 const { t } = useI18n();
 const form = ref();
 const router = useRouter();
 const route = useRoute();
+const showTwoFAVerifyDialog = ref(false);
+const twoFATip = ref("");
 
 const model = reactive({
   username: "",
   password: "",
   remember: false,
   returnurl: "",
+  code: "",
 });
 const load = () => {
   if (route.query.returnurl) {
@@ -35,9 +41,41 @@ const rules = {
   password: loginRequiredRule(t("common.inputPasswordTips")),
 } as Rules;
 
+function twoFaOK(value: string) {
+  model.code = value;
+  onLogin();
+}
+
 const onLogin = async () => {
   await form.value.validate();
-  await login(model);
+  try {
+    await login(model);
+  } catch (error: any) {
+    model.code = "";
+    if (!error.isAxiosError) return;
+    const message = getErrorData(error);
+    if (message) {
+      if (message.startsWith("NeedVerifyCode")) {
+        const type = message.split(" ")[1];
+        if (type == "email") {
+          twoFATip.value = t("common.emailVerifyCodeSentTip");
+        } else if (type == "tel") {
+          twoFATip.value = t("common.phoneVerifyCodeSentTip");
+        } else if (type == "otp") {
+          twoFATip.value = t("common.optVerifyTip");
+        }
+
+        showTwoFAVerifyDialog.value = true;
+      } else if (message == "VerifyCodeError") {
+        errorMessage(t("common.verifyCodeInvalid"));
+      }
+      requestError.showMessage(error);
+    } else {
+      requestError.showMessage(error);
+    }
+    return;
+  }
+
   if (getQueryString("vscode-require-auth")) {
     vscodeLogin();
   } else {
@@ -127,6 +165,11 @@ const onLogin = async () => {
       </Container>
     </el-scrollbar>
   </div>
+  <TwoFAVerifyDialog
+    v-model="showTwoFAVerifyDialog"
+    :tip="twoFATip"
+    @ok="twoFaOK"
+  />
 </template>
 <style scoped>
 .el-checkbox__inner {

@@ -69,9 +69,6 @@ export const deleteShippings = (ids: string[]) =>
     successMessage: $t("common.deleteSuccess"),
   });
 
-export const getCountries = () =>
-  request.get<KeyValue[]>(useUrlSiteId("shipping/Countries"));
-
 export const setDefault = (id: string) =>
   request.post<KeyValue[]>(useUrlSiteId("shipping/SetDefault"), {
     id,

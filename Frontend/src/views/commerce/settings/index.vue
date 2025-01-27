@@ -16,7 +16,6 @@ import type { KeyValue } from "@/global/types";
 import { refreshMonacoCache } from "@/components/monaco-editor/monaco";
 import CustomDataEditor from "./custom-data-editor.vue";
 import { productLabels, categoryLabels } from "../useLabels";
-import CurrencyAmount from "../components/currency-amount.vue";
 
 const { t } = useI18n();
 const currencies = ref<Currency[]>([]);

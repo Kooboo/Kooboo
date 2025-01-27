@@ -77,8 +77,10 @@ commerce:
   orderStatus: Order status
   orderTotalAmount: Total Amount
   outOfStock: Out of stock
+  paidAmounts: Paid Amounts
   paidAt: Paid at
   paidOrder: Paid order
+  paidOrders: Paid Orders
   partialDelivered: Partial delivered
   partialDelivery: Partial delivery
   partialShipped: Partial shipped
@@ -120,11 +122,16 @@ commerce:
   variantSamples: e.g., Color, Size...
   waitDeliver: Pending Shipment
   waitPay: Pending Payment
+commmon:
+  limitAllRequestTip: All request rate limits are enabled
 common:
+  2fa: 2FA
+  2faTip: Enable 2FA
   abstract: Abstract
   aCancellationEmailWillBeSentToParticipants: Cancellation emails will be sent to participants
   aCancellationEmailWillBeSentToRemovedParticipants: Removed participants will receive a cancellation email
   acceptedTheInvitation: Accepted the invitation
+  accessLimitSettings: Access limit settings
   accessToken: Access token
   account: Account
   accountBalance: Account balance
@@ -144,7 +151,10 @@ common:
   addCostRule: Add cost rule
   addCustomer: Add customer
   addDepartment: Add department
+  addedToBaseTax: Added to {tax}% Base Tax
+  addedToBaseTaxAndRegionOverrides: Added to {tax}% Base Tax and Region overrides
   addExisting: Attach existing account
+  addGroup: Add group
   additionalCodeSuggestions: Additional code suggestions
   addJob: Add a job
   addLabel: Add label
@@ -153,10 +163,12 @@ common:
   addMenuItem: Add menu item
   addMigrationJob: Add Migration Job
   addNewCategory: Add category
+  addOtpCodeTip: Use the Authenticator app Scan the QR code
   addProduct: Add product
   addProductSuccess: Add product success
   addProductType: Add type
   addRecord: Add record
+  addRelation: Add relation
   address: Address
   addresses: Addresses
   addressMaximumLength: The maximum length of the address is {max}
@@ -215,6 +227,8 @@ common:
   attributeSamples: e.g., Material, Style...
   atv: ATV
   authentication: Authentication
+  authenticator: Authenticator
+  authenticatorApp: Authenticator app
   author: Author
   authorizationCodeHasGenerated: authorization code has been generated
   authorizationCodesTips: Only the authorization code for the last one is valid.
@@ -235,6 +249,9 @@ common:
   back: Back
   backColor: Background color
   backend: Backend
+  backendEvent: Back-End event
+  backendEvents: Back-End Events
+  backendEventTips: Intercept backend events to perform specific operations
   background: Background
   backToAllSites: Back to all sites
   backToEdit: Back to edit
@@ -245,6 +262,7 @@ common:
   bankCardPayment: Bank card
   barcode: Barcode
   baseCost: Base cost
+  baseTax: Base Tax
   baseUrl: Base URL
   basic: Basic
   basicInfo: Basic Info
@@ -265,8 +283,14 @@ common:
   bots: Bots
   byProperty: By property
   cache: Cache
+  cacheByCulture: Cache by culture
+  cacheByDevice: Cache by device
+  cacheByDeviceTip: Add caches based on device type, such as desktop or mobile
   cacheByVersion: Cache by version
-  cacheQueryKeys: Cache query keys
+  cacheQueryKeys: Cache by Keys
+  cacheQueryKeysTip: Separate with commas. keys are used to retrieve values from
+    the current context, such as view parameters, query string, form data, and
+    more.
   calendar: Calendar
   cancel: Cancel
   cancelReason: Cancel reason
@@ -371,6 +395,8 @@ common:
   compellation: Compellation
   completed: Completed
   compose: Compose
+  compoundedOnTopOfBaseTax: Compounded on top of {tax}% Base Tax
+  compoundedOnTopOfBaseTaxAndRegionOverrides: Compounded on top of {tax}% Base Tax and Region overrides
   compressedPackageFileFormat: Compressed package file format「zip」
   condition: Condition
   conditions: Conditions
@@ -462,6 +488,7 @@ common:
   csvField: CSV field
   ctr: CTR
   culture: culture
+  cultureCodeTip: Culture code must be two letters
   currency: Currency
   currentBalance: Current balance
   currentOrganization: Current organization
@@ -471,6 +498,7 @@ common:
   currentVersion: " [Current version]"
   custom: Custom
   customAuth: Custom Auth
+  customData: Custom Data
   customer: Customer
   customers: Customers
   customSettings: Custom Settings
@@ -548,7 +576,7 @@ common:
   digitalItems: Digital items
   digitalProduct: Digital product
   digitalProductTip: Ensure digital shipping is configured for digital products.
-  digitalShipping: Digital
+  digitalShipping: Digital shipping
   digitalShippings: Digital
   Direction: Direction
   disable: Disable
@@ -651,6 +679,7 @@ common:
   emailBody: Email Body
   emailCannotBeTheSameAsTheCurrentBound: Email cannot be the same as the current address
   emailHasSent: Email has been sent
+  emailMessage: Email message
   emailMigrationTips: Migrate only inbox, sent, and custom folder messages; Some
     mailboxes only migrate messages within 30 days, depending on the IMAP
     collection range, which can usually be changed on the mailbox's Settings
@@ -659,6 +688,7 @@ common:
   emailNotifications: Email notifications
   emailRangeTips: The maximum length of the username is {max}
   emailUpdated: Email updated
+  emailVerifyCodeSentTip: The verification code has been sent to your email
   embedded: Embedded
   embeddedFolder: Embedded folder
   embeddedFolders: Embedded Folders
@@ -680,7 +710,6 @@ common:
   enableMultilingual: Enable Multilingual
   enableMultiple: Enable multiple
   enableResourceCache: Enable resource cache
-  enableResourceCacheTip: Script Style images are cached to memory after resource caching is enabled
   enableResourceCDNTips: Resource CDN has been enabled
   enableSSL: Enable the SSL
   enableStatus: Status
@@ -708,6 +737,7 @@ common:
   estimatedDaysOfArrival: Estimated days of arrival
   event: Event
   eventRequiredTips: Please select a event
+  events: Events
   every: Every
   exampleCode: Example:<br/>{code}
   exampleMysite: Example:mysite
@@ -741,7 +771,7 @@ common:
   exportType: Export type
   express: Express
   expressCompanyCodeTip: Express company code, e.g., sfexpress yuantong ...
-  expressShipping: Physical
+  expressShipping: Shipping
   expressShippings: Physical
   external: External
   externalResource: ExternalResource
@@ -786,6 +816,7 @@ common:
   font: Font
   fontSize: Font size
   fontWeight: Font weight
+  forbidden: Forbidden
   forceSave: Force save
   forceSaveTip: Force save will overwrite changes of other users. Are you sure you
     want to continue?
@@ -809,7 +840,7 @@ common:
   fromAddress: From address
   fromIp: Source IP
   frontEvent: Front Events
-  frontEvents: Front Events
+  frontEvents: Front-End Events
   frontEventTips: Intercept front events to perform specific operations
   fullMode: Full Mode
   fullScreen: Full screen
@@ -830,6 +861,7 @@ common:
   gridView: Grid view
   group: Group
   groupMembers: Group members
+  groupName: Group name
   hasInstall: Installed
   hasObject: Has Object
   hasParameterTip: Inline edit of this page may not behave as you expected because
@@ -935,6 +967,8 @@ common:
   install: Install
   installationFailed: Installation failed
   installSuccess: Install success
+  insteadOfBaseTax: Instead of {tax}% Base Tax
+  insteadOfBaseTaxAndRegionOverrides: Instead of {tax}% Base Tax and Region overrides
   inStock: In stock
   integerRuleTips: Integer greater than 0
   internal: Internal
@@ -943,6 +977,9 @@ common:
   interval: Interval
   inUse: In use
   inventory: Stock
+  ipBlacklist: IP blacklist
+  ipRateLimit: IP rate limit
+  ipRequestRateLimit: Request rate limit
   isDigitalProduct: Digital Product?
   isManager: Is manager
   isSearchable: Searchable
@@ -995,7 +1032,10 @@ common:
   letterAndDigitsAllowedToStarting: Letter, digits and _ are allowed, starting with a letter
   level: Level
   lighthouseOptimization: Lighthouse Optimization
+  limit: Limit
+  limitAllRequest: Limit all request
   limitDownloadCount: Download Limit
+  limitDownloadTime: Limit download time
   limitedFunctionalityOnMobile: Limited functionality on mobile
   line: Line
   lineHeight: Line height
@@ -1213,6 +1253,8 @@ common:
   optionalProducts: Selected products
   options: Options
   optionSchema: Option schema
+  optVerifyTip: Open your two-factor authenticator (TOTP) app or browser extension
+    to view your authentication code.
   or: Or
   orCreateYourDomainWildcardTips: Or create your domain wildcard CNAME record to current server domain.
   orderCancel: Order cancel
@@ -1272,11 +1314,14 @@ common:
   percent: Percent
   period: Period
   permission: Permission
+  permitLimit: Permit limit
   phone: Phone
   phoneLogin: Phone login
+  phoneMessage: SMS message
   phoneNumber: Phone number
   phoneNumberCannotBeTheSameAsTheCurrentBound: Phone number cannot be the same as the current number
   phoneNumberUpdated: Phone number updated
+  phoneVerifyCodeSentTip: The verification code has been sent to your phone
   physicalProduct: Physical product
   pick: Pick
   pickName: Pick name
@@ -1308,6 +1353,7 @@ common:
   positionNameAndFrom: "Position: {name} (from {from})"
   postalCode: Postal code
   postalDistrict: Postal code
+  preferred2FAMethod: Preferred 2FA method
   preview: Preview
   previewUrl: Preview Url
   price: Price
@@ -1320,6 +1366,7 @@ common:
   productManagement: Products
   productNews: Updates
   ProductNotFound: Product not found
+  productOverrides: Product Overrides
   productRemovedShelves: Some products has been removed
   products: Products
   productsSettlement: Product payment
@@ -1331,7 +1378,7 @@ common:
   project: Project
   promotions: Promotions
   property: Property
-  province: Province
+  province: Province / State
   pull: Pull
   pullConfirm: Are you sure you want to pull the changes from the remote site?
   pullLogs: Pull logs
@@ -1351,6 +1398,8 @@ common:
   range: Range
   rangeLengthTips: Please enter {min} to {max} characters
   rangeValue: Range value
+  rateLimit: Rate limit
+  rateLimitTip: '"{ip}" can be request {count} times within {seconds} seconds'
   read: Read
   readOrUnread: Read/Unread
   rebuild: Rebuild
@@ -1381,6 +1430,7 @@ common:
   refreshToken: Refresh token
   regex: Regex
   region: Region
+  regionOverrides: Region Overrides
   register: Register
   registerTips: "Sign up means you agree to our "
   registerVerifyCodeSentTip: A verification code has been sent to your email,
@@ -1414,6 +1464,9 @@ common:
   reply: Reply
   replyAll: Reply all
   reportDomain: Report domain
+  request: Request
+  requestAccessLimit: Request access limit
+  requestForbidden: Request forbidden
   required: Required
   requireICP: Require ICP
   reSelect: Reselect
@@ -1502,6 +1555,7 @@ common:
   searchStatistic: Search Statistics
   searchWebsite: Search website
   seconds: seconds
+  security: Security
   securityCode: Security code
   securityReport: DMARC Report
   seed: Seed
@@ -1511,6 +1565,7 @@ common:
   selectAllFiles: Select all files
   selectAnAddressToStoreMigratedMails: Select an address to store migrated mails
   selectAWeek: Select a week
+  selectCountry: Select country
   selected: Selected
   selectFile: Select file
   selectFileTips: Please select a file
@@ -1521,6 +1576,7 @@ common:
   selectSitePackageTips: Please select a site package
   selectSourceTips: Select source
   selectValidationRules: Select validation rules
+  self: Self
   semiAuto: Semi auto
   send: Send
   senderRequired: Sender required
@@ -1533,6 +1589,7 @@ common:
   sent: Sent
   Sent: Sent
   seoName: SEO Name
+  seoNameExistsTips: SEO name exists
   seoNameTip: Static URL that improves product visibility in search engines
   server: Server
   serverAddSuccess: Server add success!
@@ -1681,6 +1738,7 @@ common:
   taskIsExecuting: Task is executing...
   taskList: Task list
   tax: Tax
+  taxes: Taxes
   template: Template
   templateName: Template name
   tentativelyAcceptedTheInvitation: Tentatively accepted the invitation
@@ -1706,6 +1764,7 @@ common:
   time: Time
   timeElapsed: Time Elapsed
   timeMinutes: Time (Minutes)
+  times: Times
   tinymceToolbarSettings: Rich Text Editor Configuration for Content Type
   tips401: "Unauthorized: access denied due to invalid credentials."
   tips402: Account limit reached. Site owner contact your hosting provider.
@@ -1795,6 +1854,10 @@ common:
   useHeadlessModeTip: Use Headless Browser to fetch HTML code after JavaScript
     Execution instead of HTTP Request
   user: User
+  userAgent: User Agent
+  userAgentBlacklist: User agent blacklist
+  userAgentLimit: User agent limit
+  userAgentRateLimit: User agent rate limit
   userCount: User count
   userEditable: User Editable
   useRegularExpression: Use Regular Expression
@@ -1806,16 +1869,19 @@ common:
   usernameRuleTips: User name must contain 5 to 30 characters
   userOptions: User options
   userRequired: User required
+  using: Using
   validation: Validation
   validationFailedMessage: Error message when validation failed
   value: Value
   valueExist: Value already exists
   valueHasBeenTakenTips: Name already exists
+  valueList: Value List
   valueRequiredTips: Value required
   vat: VAT
   vatAndFees: VAT and fees
   verificationCodeHasSent: Verification code has been sent
   verifyCode: Verify code
+  verifyCodeInvalid: Verification code invalid
   version: Versions
   versionConflict: This file version has been modified by other users. Please
     resolve the conflict!
@@ -1853,6 +1919,7 @@ common:
   width: Width
   wildcard: Wildcard
   wildcardAddress: Wildcard address
+  withinSeconds: Period (seconds)
   withoutKoobooAccount: Without an account?
   WYSIWYGEditor: WYSIWYG Editor
   year: Year
@@ -1889,6 +1956,9 @@ domain:
   name: Name
   phone: Phone
   switch: Switch
+event:
+  eventActive: Event active
+  eventInactive: Event inactive
 ExcludePath: Exclude Defined Paths
 export:
   complete: Complete

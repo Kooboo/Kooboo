@@ -40,7 +40,13 @@ function openAuthUrl() {
 
 async function onValidSite(siteUrl: string, onGoogle: boolean) {
   await validSite(siteUrl, onGoogle);
-  getList();
+  for (let i = 0; i < 3; i++) {
+    await getList();
+    var site = sites.value.find((f) => f.siteUrl);
+    if (!site || site.permissionLevel != "siteUnverifiedUser") {
+      break;
+    }
+  }
 }
 
 async function onDelete(items: Site[]) {
@@ -93,13 +99,7 @@ const permissions: Record<string, string> = {
       <KTable :data="sites" @delete="onDelete">
         <el-table-column :label="t('common.site')" prop="siteUrl">
           <template #default="{ row }">
-            <span
-              v-if="isValid(row)"
-              class="text-blue cursor-pointer"
-              @click="onAnalytics(row)"
-              >{{ row.siteUrl?.replace("sc-domain:", "") }}</span
-            >
-            <span v-else>{{ row.siteUrl }}</span>
+            <span>{{ row.siteUrl }}</span>
           </template>
         </el-table-column>
         <el-table-column :label="t('common.permission')" align="center">
@@ -119,15 +119,24 @@ const permissions: Record<string, string> = {
               @click="onValidSite(row.siteUrl, row.onGoogle)"
               >{{ t("common.validation") }}</ElButton
             >
-            <ElButton
-              v-else
-              type="primary"
-              round
-              plain
-              size="small"
-              @click="onSitemap(row)"
-              >{{ t("common.sitemap") }}
-            </ElButton>
+            <template v-else>
+              <ElButton
+                type="primary"
+                round
+                plain
+                size="small"
+                @click="onAnalytics(row)"
+                >{{ t("common.analytics") }}
+              </ElButton>
+              <ElButton
+                type="primary"
+                round
+                plain
+                size="small"
+                @click="onSitemap(row)"
+                >{{ t("common.sitemap") }}
+              </ElButton>
+            </template>
           </template>
         </el-table-column>
       </KTable>

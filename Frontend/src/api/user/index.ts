@@ -16,7 +16,9 @@ export const register = (param: IRegisterParam) => {
 
 export const login = (param: ILoginParam) => {
   param.withToken = true;
-  return request.post("/user/login", param);
+  return request.post("/user/login", param, undefined, {
+    hiddenError: true,
+  });
 };
 
 export const forgotPassword = (param: { email: string }) => {
@@ -64,6 +66,16 @@ export const updateEmail = (email: string, code: number) => {
   return request.post("/user/UpdateEmail", { email, code }, undefined, {
     successMessage: $t("common.emailUpdated"),
   });
+};
+
+export const updateTwoFAMethod = (method: string) => {
+  return request.post("/user/updateTwoFAMethod", { method }, undefined, {
+    successMessage: $t("common.updateSuccess"),
+  });
+};
+
+export const getOptUri = () => {
+  return request.post("/user/getOptUri");
 };
 
 export const isUniqueEmailName = (name: string) =>

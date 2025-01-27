@@ -19,7 +19,8 @@ export type ControlName =
   | "DateTime"
   | "Number"
   | "ColorPicker"
-  | "KeyValues";
+  | "KeyValues"
+  | "ValueList";
 
 export type ControlDataType =
   | "String"
@@ -106,6 +107,11 @@ export function useControlTypes() {
       displayName: $t("common.keyValue"),
       value: "KeyValues",
       dataType: "Undefined",
+    },
+    {
+      displayName: $t("common.valueList"),
+      value: "ValueList",
+      dataType: "Array",
     },
   ];
   function getControlType(value: string): Control | undefined {

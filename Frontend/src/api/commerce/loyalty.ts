@@ -7,6 +7,7 @@ import type {
   PagingParams,
   PagingResult,
 } from "./common";
+import type { KeyValue } from "@/global/types";
 const $t = i18n.global.t;
 
 export interface Member {
@@ -37,6 +38,7 @@ export interface Membership {
   condition: Condition;
   allowPurchase: boolean;
   allowAutoUpgrade: boolean;
+  customData: KeyValue[];
 }
 
 export type MembershipCreate = Membership;

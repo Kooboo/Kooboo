@@ -117,5 +117,31 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             var file = orderService.ExportExcel(model, apiCall.Context);
             return new GenerateInfo(file, model.GetFileName());
         }
+
+        [Permission(Feature.COMMERCE_ORDERS, Action = Data.Permission.Action.EDIT)]
+        public void UpdateNote(string id, string note, ApiCall apiCall)
+        {
+            var commerce = GetSiteCommerce(apiCall);
+            var order = commerce.Order.Get(g => g.Id == id);
+            if (order != null)
+            {
+                order.Note = note;
+                commerce.Order.AddOrUpdate(order);
+            }
+        }
+
+        [Permission(Feature.COMMERCE_ORDERS, Action = Data.Permission.Action.EDIT)]
+        public void UpdateKeyValue(string id, string key, string value, ApiCall apiCall)
+        {
+            var commerce = GetSiteCommerce(apiCall);
+            var order = commerce.Order.Get(g => g.Id == id);
+            if (order != null)
+            {
+                var exist = order.ExtensionFields.FirstOrDefault(f => f.Key == key);
+                if (exist == null) return;
+                exist.Value = value;
+                commerce.Order.AddOrUpdate(order);
+            }
+        }
     }
 }

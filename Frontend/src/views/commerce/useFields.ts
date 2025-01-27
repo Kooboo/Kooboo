@@ -48,24 +48,28 @@ function useFields(key: string, labels: Record<string, string>) {
     attrsAction?: (key: string) => Record<string, any>
   ): Ref<SummaryColumn[]> {
     return computedAsync(() => {
-      return columns.map((c) => {
-        const field = fields.value.find((f) => ignoreCaseEqual(f.name, c.name));
-        const column: SummaryColumn = {
-          name: camelCase(c.name),
-          prop: c.prop,
-          displayName: getDisplayName(
-            c.name,
-            c.displayName || field?.displayName
-          ),
-          controlType: c.controlType ?? field?.type ?? "TextBox",
-          multipleValue: field?.multiple ?? false,
-          attrs: {
-            ...c.attrs,
-            ...attrsAction?.call(field, c.name),
-          },
-        };
-        return column;
-      });
+      return columns
+        .filter((f) => f)
+        .map((c) => {
+          const field = fields.value.find((f) =>
+            ignoreCaseEqual(f.name, c.name)
+          );
+          const column: SummaryColumn = {
+            name: camelCase(c.name),
+            prop: c.prop,
+            displayName: getDisplayName(
+              c.name,
+              c.displayName || field?.displayName
+            ),
+            controlType: c.controlType ?? field?.type ?? "TextBox",
+            multipleValue: field?.multiple ?? false,
+            attrs: {
+              ...c.attrs,
+              ...attrsAction?.call(field, c.name),
+            },
+          };
+          return column;
+        });
     }, []);
   }
 
