@@ -13,7 +13,7 @@
     "@element-plus/icons-vue": "^1.1.4",
     "@tinymce/tinymce-vue": "^4.0.5",
     "@vueuse/core": "^8.9.4",
-    "axios": "^0.24.0",
+    "axios": "^0.30.0",
     "chart.js": "^3.9.1",
     "dayjs": "^1.10.7",
     "element-plus": "^2.2.9",
