@@ -3,7 +3,7 @@ Kooboo is a professional tool specifically designed for website, e-commerce, and
 # Getting Started
  
 You can download Kooboo from this repository or from our website. Simply click to run, and it will start in just 2 seconds.
-[https://www.kooboo.com/downloads](https://www.kooboo.com/downloads)
+[https://www.kooboo.com/_start/download](https://www.kooboo.com/_start/download)
 
 ![Kooboo entry](https://www.kooboo.com/github/kooboo_entry.png "Kooboo Entry")
 
