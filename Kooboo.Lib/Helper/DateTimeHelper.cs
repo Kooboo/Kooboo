@@ -327,6 +327,22 @@ namespace Kooboo.Lib.Helper
             return (Year, Week);
         }
 
+        public static (DateTime start, DateTime end) GetDateRangeFromWeek(int year, int week)
+        {
+            // 获取该年的第一天
+            DateTime jan1 = new DateTime(year, 1, 1);
+
+            // 获取该年的第一周的第一天（ISO 8601，周一为第一天）
+            int daysOffset = DayOfWeek.Monday - jan1.DayOfWeek;
+            DateTime firstMonday = jan1.AddDays(daysOffset >= 0 ? daysOffset : daysOffset + 7);
+
+            // 计算目标周的开始日期
+            DateTime weekStart = firstMonday.AddDays((week - 1) * 7);
+            DateTime weekEnd = weekStart.AddDays(6);
+
+            return (weekStart, weekEnd);
+        }
+
         /// <summary>
         /// format of 2023-11, year 2023, 11 month = nov.
         /// </summary>

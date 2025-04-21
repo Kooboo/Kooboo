@@ -200,7 +200,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
             switch (digitalItem.Type)
             {
                 case "file":
-                    var filePath = Path.Combine(commerce.RootPath, "digitalFiles", digitalItem.Value, digitalItem.Name);
+                    var filePath = Path.Combine(commerce.RootPath, "digitalFiles", digitalItem.Value, DigitalShippingService.ORDER_DIGITAL_FILE_PREFIX + digitalItem.Id);
                     if (!File.Exists(filePath))
                     {
                         return new PlainResponse { Content = "File not found" };

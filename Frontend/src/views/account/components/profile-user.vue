@@ -207,7 +207,7 @@ watch(
           <div class="">
             {{
               methods.find((f) => f.key == props.twoFAMethod)?.value ||
-              props.twoFAMethod
+              methods[0].value
             }}
           </div>
         </td>

@@ -56,6 +56,8 @@ export const usePageStore = defineStore("pageStore", () => {
   const getPage = async (id?: string, args?: Record<string, string>) => {
     const result = await getEdit(id || emptyGuid, args);
     if (!result.body) result.body = "";
+    if (!result.urlPaths) result.urlPaths = {};
+    if (!result.urlPath) result.urlPath = "";
     return result;
   };
 

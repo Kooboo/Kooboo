@@ -16,12 +16,17 @@
       <el-table-column prop="title" :label="t('order.LineTitle')" />
       <el-table-column prop="totalAmount" :label="t('order.TotalAmount')">
         <template #default="{ row }">
-          {{ row.totalAmount?.toFixed(2) }} CNY
+          {{ row.totalAmount?.toFixed(2) }} {{ row.currency }}
         </template>
       </el-table-column>
       <el-table-column :label="t('common.date')">
         <template #default="{ row }">
           {{ useTime(row.creationDate) }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="t('common.type')">
+        <template #default="{ row }">
+          <OrderType :type="row.type" />
         </template>
       </el-table-column>
       <el-table-column :label="t('order.IsPaid')">
@@ -58,6 +63,7 @@ import { getDomainOrder } from "@/api/market-order";
 import type { DomainOrder } from "@/api/console/types";
 import { useRouter } from "vue-router";
 import { useTime } from "@/hooks/use-date";
+import OrderType from "./order-type.vue";
 
 const { t } = useI18n();
 

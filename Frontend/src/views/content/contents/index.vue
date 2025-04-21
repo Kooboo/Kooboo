@@ -60,17 +60,38 @@
     </div>
 
     <KTable
+      v-model:selectedData="selectedData"
       :data="computedList"
       show-check
+      custom-check
       :permission="{
         feature: 'contentType',
         action: 'edit',
       }"
+      draggable=".sortable-elements"
+      row-key="id"
+      :row-class-name="({ row }) => (row.isChildren ? `` : 'sortable-elements')"
       @delete="onDelete"
+      @sorted="onSorted"
     >
       <el-table-column :label="t('common.name')">
         <template #default="{ row }">
-          <div class="flex items-center space-x-4">
+          <span v-if="row.isFolder">{{ row.displayName }}</span>
+          <div v-else class="inline-flex items-center space-x-4 gap-8">
+            <el-checkbox
+              size="large"
+              :model-value="selectedData.some((f) => f === row)"
+              data-cy="checkbox-label"
+              @change="
+                () => {
+                  if (selectedData.includes(row)) {
+                    selectedData = selectedData.filter((f) => f !== row);
+                  } else {
+                    selectedData.push(row);
+                  }
+                }
+              "
+            />
             <router-link
               class="ellipsis text-blue cursor-pointer"
               :to="
@@ -84,7 +105,7 @@
                 })
               "
               data-cy="name"
-              >{{ row.displayName }}</router-link
+              >{{ row.displayName || row.name }}</router-link
             >
             <el-icon
               v-if="row.hidden"
@@ -95,54 +116,72 @@
       </el-table-column>
       <el-table-column :label="t('common.usedBy')">
         <template #default="{ row }">
-          <RelationsTag
-            :id="row.id"
-            :relations="row.relations"
-            type="ContentFolder"
-          />
+          <template v-if="!row.isFolder">
+            <RelationsTag
+              :id="row.id"
+              :relations="row.relations"
+              type="ContentFolder"
+            />
+          </template>
         </template>
       </el-table-column>
       <el-table-column :label="t('common.type')" width="140" align="center">
         <template #default="{ row }">
-          <el-tag v-if="row.isContent" type="success" round>{{
-            t("common.singleContent")
-          }}</el-tag>
-          <el-tag v-else type="warning" round>{{ t("common.folder") }}</el-tag>
+          <template v-if="!row.isFolder">
+            <el-tag v-if="row.isContent" type="success" round>{{
+              t("common.singleContent")
+            }}</el-tag>
+            <el-tag v-else type="warning" round>{{
+              t("common.folder")
+            }}</el-tag>
+          </template>
         </template>
       </el-table-column>
 
       <el-table-column width="150" align="right">
         <template #default="{ row }">
-          <IconButton
-            v-if="row.type !== 'RichText'"
-            :permission="{
-              feature: 'contentType',
-              action: 'edit',
-            }"
-            icon="icon-a-setup"
-            :tip="t('common.folderSetting')"
-            data-cy="setting"
-            @click="newFolder(row)"
-          />
+          <template v-if="!row.isFolder">
+            <IconButton
+              v-if="row.type !== 'RichText'"
+              :permission="{
+                feature: 'contentType',
+                action: 'edit',
+              }"
+              icon="icon-a-setup"
+              :tip="t('common.folderSetting')"
+              data-cy="setting"
+              @click="newFolder(row)"
+            />
 
-          <router-link
-            v-if="siteStore.hasAccess('contentType', 'edit')"
-            :to="useRouteSiteId({ name: 'contenttype', query: { id: row.contentTypeId, fromRouter: route.name as string, }, })"
-            data-cy="edit-content-type"
-            class="mx-8"
-          >
-            <el-tooltip placement="top" :content="t('common.editContentType')">
-              <el-icon class="iconfont icon-a-writein" />
-            </el-tooltip>
-          </router-link>
+            <router-link
+              v-if="siteStore.hasAccess('contentType', 'edit')"
+              :to="useRouteSiteId({ name: 'contenttype', query: { id: row.contentTypeId, fromRouter: route.name as string, }, })"
+              data-cy="edit-content-type"
+              class="mx-8"
+            >
+              <el-tooltip
+                placement="top"
+                :content="t('common.editContentType')"
+              >
+                <el-icon class="iconfont icon-a-writein" />
+              </el-tooltip>
+            </router-link>
+            <IconButton
+              v-else
+              :permission="{
+                feature: 'contentType',
+                action: 'edit',
+              }"
+              icon="icon-a-writein"
+              :tip="t('common.editContentType')"
+            />
+          </template>
+
           <IconButton
-            v-else
-            :permission="{
-              feature: 'contentType',
-              action: 'edit',
-            }"
-            icon="icon-a-writein"
-            :tip="t('common.editContentType')"
+            v-if="!row.isChildren"
+            icon="icon-move js-sortable cursor-move"
+            :tip="t('common.move')"
+            data-cy="move"
           />
         </template>
       </el-table-column>
@@ -161,7 +200,7 @@
 import KTable from "@/components/k-table";
 import { computed, onMounted, ref } from "vue";
 import type { ContentFolder } from "@/api/content/content-folder";
-import { getList, deletes } from "@/api/content/content-folder";
+import { getList, deletes, sort } from "@/api/content/content-folder";
 import { useRouteSiteId } from "@/hooks/use-site-id";
 import EditFolderDialog from "./components/edit-folder-dialog.vue";
 import { cloneDeep } from "lodash-es";
@@ -169,9 +208,10 @@ import RelationsTag from "@/components/relations/relations-tag.vue";
 import Breadcrumb from "@/components/basic/breadcrumb.vue";
 import { useRoute } from "vue-router";
 import { showDeleteConfirm } from "@/components/basic/confirm";
-
 import { useI18n } from "vue-i18n";
 import { useSiteStore } from "@/store/site";
+import { newGuid } from "@/utils/guid";
+
 const { t } = useI18n();
 const siteStore = useSiteStore();
 const list = ref<ContentFolder[]>([]);
@@ -180,6 +220,7 @@ const currentEdit = ref<ContentFolder>();
 const route = useRoute();
 const showHidden = ref(false);
 const isContent = ref(false);
+const selectedData = ref<any[]>([]);
 
 onMounted(() => {
   load();
@@ -187,12 +228,45 @@ onMounted(() => {
 
 async function load() {
   const records = await getList();
-  list.value = records.sort((a, b) => (a.displayName < b.displayName ? -1 : 1));
+  list.value = [];
+  setTimeout(() => {
+    list.value = records.sort((a, b) =>
+      (a.order ?? 0) < (b.order ?? 0) ? -1 : 1
+    );
+  });
 }
 
 const computedList = computed(() => {
-  if (showHidden.value) return list.value;
-  return list.value.filter((f) => !f.hidden);
+  let items: ContentFolder[] = JSON.parse(
+    JSON.stringify(
+      showHidden.value ? list.value : list.value.filter((f) => !f.hidden)
+    )
+  );
+
+  var result = [];
+  while (items.length) {
+    const item = items.shift();
+    if (!item) break;
+    if (item.group) {
+      const sameGroup = items.filter((f) => f.group == item.group);
+      if (sameGroup.length) {
+        const children = [item, ...sameGroup] as any;
+        children.forEach((f: any) => (f.isChildren = true));
+        result.push({
+          isFolder: true,
+          group: item.group,
+          name: item.name,
+          displayName: item.group,
+          children: children,
+          id: newGuid(),
+        });
+        items = items.filter((f) => f.group != item.group);
+        continue;
+      }
+    }
+    result.push(item);
+  }
+  return result;
 });
 
 async function onDelete(rows: ContentFolder[]) {
@@ -222,5 +296,21 @@ function newContent(row?: ContentFolder) {
   } else {
     currentEdit.value = undefined;
   }
+}
+
+async function onSorted(data: ContentFolder[]) {
+  const names: string[] = [];
+  for (const i of data) {
+    if (!i || names.includes(i.name)) continue;
+    names.push(i.name);
+    if ((i as any).children) {
+      for (const c of (i as any).children) {
+        if (names.includes(c.name)) continue;
+        names.push(c.name);
+      }
+    }
+  }
+  await sort(names);
+  load();
 }
 </script>

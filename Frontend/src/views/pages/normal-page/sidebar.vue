@@ -11,7 +11,6 @@ import { withDefaults, ref } from "vue";
 import { useSiteStore } from "@/store/site";
 
 interface Props {
-  oldUrlPath: string;
   items?: SidebarItems[];
 }
 
@@ -48,11 +47,24 @@ const {
 const { t } = useI18n();
 const activeTab = ref("basic");
 const siteStore = useSiteStore();
+const basicForm = ref();
 
 (function init() {
   const tabs = props.items ?? [];
   activeTab.value = tabs[0] ?? "basic";
 })();
+
+defineExpose({
+  validate: async () => {
+    if (Array.isArray(basicForm.value)) {
+      for (const i of basicForm.value) {
+        await i.validate();
+      }
+    } else {
+      await basicForm.value?.validate();
+    }
+  },
+});
 </script>
 
 <template>
@@ -66,9 +78,11 @@ const siteStore = useSiteStore();
         <Basic
           ref="basicForm"
           v-model:url="model.urlPath"
+          v-model:urls="model.urlPaths"
           v-model:titles="model.contentTitle"
           v-model:published="model.published"
-          :old-url-path="oldUrlPath"
+          :url-params-bindings="model.urlParamsBindings"
+          :obj-id="model.id"
           @update:default-title="updateTitle"
         />
       </el-collapse-item>

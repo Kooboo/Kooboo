@@ -14,6 +14,7 @@ import {
   rangeRule,
   domainBindingIsUniqueNameRule,
   simpleNameRule,
+  subDomainRule,
 } from "@/utils/validate";
 import type { Rules } from "async-validator";
 import { getQueryString } from "@/utils/url";
@@ -68,7 +69,7 @@ const rules = {
   subDomain: [
     requiredRule(t("common.subDomainRequiredTips")),
     rangeRule(1, 63),
-    DomainRule,
+    subDomainRule,
     domainBindingIsUniqueNameRule(model.value),
   ],
   rootDomain: requiredRule(t("common.rootDomainRequiredTips")),
@@ -155,6 +156,15 @@ watch(
     model.value.subDomain = model.value.siteName;
   }
 );
+
+watch(
+  () => model.value.rootDomain,
+  () => {
+    (model.value as any).sudDomainUseDash =
+      domains.value?.find((f) => f.domainName == model.value.rootDomain)
+        ?.sudDomainUseDash ?? false;
+  }
+);
 </script>
 
 <template>
@@ -220,7 +230,9 @@ watch(
                     v-for="item of domains"
                     :key="item.domainName"
                     :value="item.domainName"
-                    :label="item.domainName"
+                    :label="
+                      (item.sudDomainUseDash ? '-' : '.') + item.domainName
+                    "
                     data-cy="root-domain-opt"
                   />
                 </el-select>

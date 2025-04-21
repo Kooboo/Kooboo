@@ -97,6 +97,14 @@ namespace Kooboo.Web.Api.Implementation
 
             newcontent.Online = online;
             newcontent.Order = sequence;
+            if (DateTimeOffset.TryParse(ExtraValue(updatemodel, "PublishStart"), out var publishStartDate))
+            {
+                newcontent.PublishStart = publishStartDate.UtcDateTime;
+            }
+            if (DateTimeOffset.TryParse(ExtraValue(updatemodel, "PublishEnd"), out var publishEndDate))
+            {
+                newcontent.PublishEnd = publishEndDate.UtcDateTime;
+            }
             newcontent.Embedded = updatemodel.Embedded.ToDictionary(s => s.Key, s => s.Value.Select(s => s.Id).ToList());
 
             foreach (var embedded in updatemodel.Embedded)
@@ -241,27 +249,7 @@ namespace Kooboo.Web.Api.Implementation
         public void Move(ApiCall call)
         {
             var model = JsonHelper.Deserialize<MoveTextContentViewModel>(call.GetValue("changes"));
-            if (model.Source == default || model.FolderId == default || (!model.PrevId.HasValue && !model.NextId.HasValue))
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Invalid Parameters", call.Context));
-            }
-
-            var siteDb = call.WebSite.SiteDb();
-
-            var folder = siteDb.ContentFolders.Get(model.FolderId);
-            if (folder == null)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Invalid Parameters", call.Context));
-            }
-
-            var folderContents = siteDb.TextContent.Query
-                .Where(o => o.FolderId == folder.Id)
-                .SelectAll();
-            var toUpdates = TextContentHelper.CalculateToUpdateItems(folderContents, model).ToList();
-            foreach (var item in toUpdates)
-            {
-                siteDb.TextContent.AddOrUpdate(item, call.Context.User.Id);
-            }
+            TextContentService.Move(call.Context, model);
         }
 
         private IEnumerable<TextContent> FilterByCategories(ApiCall call, SiteDb siteDb, IEnumerable<TextContent> textContents)
@@ -709,6 +697,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var (TypeId, FolderId) = GetRelationId(call);
             var contenttype = call.WebSite.SiteDb().ContentTypes.Get(TypeId);
+            var contentFolder = call.WebSite.SiteDb().ContentFolders.Get(FolderId);
 
             ContentEditViewModel model = new()
             {
@@ -731,6 +720,9 @@ namespace Kooboo.Web.Api.Implementation
                     call.ObjectId,
                     call.WebSite.DefaultCulture
                 );
+
+                model.FieldsOrder = contentFolder?.FieldsOrder;
+                model.PreviewUrl = contentFolder?.PreviewUrl;
             }
 
             return model;
@@ -786,6 +778,7 @@ namespace Kooboo.Web.Api.Implementation
             FieldName = FieldName.ToLower();
 
             string key = null;
+            bool found = false;
 
             foreach (var langitem in updatemodel.Values)
             {
@@ -794,12 +787,13 @@ namespace Kooboo.Web.Api.Implementation
                     if (fielditem.Key.ToLower() == FieldName)
                     {
                         key = fielditem.Value;
+                        found = true;
                         break;
                     }
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(key))
+            if (found)
             {
                 // remove the key 
                 foreach (var langitem in updatemodel.Values)

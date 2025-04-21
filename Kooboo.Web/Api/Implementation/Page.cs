@@ -11,6 +11,7 @@ using Kooboo.Sites.Helper;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
 
@@ -178,6 +179,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var page = sitedb.Pages.Get(PageId);
             var route = sitedb.Routes.GetByObjectId(page.Id);
+            var urlPaths = RouteHelper.GetCultureRoutes(sitedb, route?.Id ?? Guid.Empty);
 
             var model = new PageEditViewModel
             {
@@ -185,6 +187,7 @@ namespace Kooboo.Web.Api.Implementation
                 Name = page.Name,
                 Published = page.Online,
                 UrlPath = route == null ? null : route.Name,
+                UrlPaths = urlPaths,
                 Type = page.Type,
                 EnableCache = page.EnableCache,
                 DisableUnocss = page.DisableUnocss,
@@ -354,17 +357,29 @@ namespace Kooboo.Web.Api.Implementation
                 page.Type = model.Type.Value;
             }
 
-            string routename = string.IsNullOrWhiteSpace(model.UrlPath) ? page.Name : model.UrlPath;
-            if (!string.IsNullOrEmpty(routename))
+            string routeName = string.IsNullOrWhiteSpace(model.UrlPath) ? page.Name : model.UrlPath;
+            if (!string.IsNullOrEmpty(routeName))
             {
-                routename = System.Web.HttpUtility.UrlDecode(routename);
+                routeName = System.Web.HttpUtility.UrlDecode(routeName);
             }
 
-            routename = Kooboo.Sites.Helper.RouteHelper.ToValidRoute(routename);
+            routeName = RouteHelper.ToValidRoute(routeName);
+
+            var routeNames = new Dictionary<string, string>();
+            if (model.UrlPaths != null)
+            {
+                foreach (var item in model.UrlPaths)
+                {
+                    if (string.IsNullOrWhiteSpace(item.Value)) continue;
+                    var cultureRouteName = System.Web.HttpUtility.UrlDecode(item.Value);
+                    cultureRouteName = RouteHelper.ToValidRoute(cultureRouteName);
+                    routeNames.TryAdd(item.Key, cultureRouteName);
+                }
+            }
 
             var sitedb = call.Context.WebSite.SiteDb();
 
-            if (!sitedb.Routes.Validate(routename, page.Id))
+            if (!sitedb.Routes.Validate(routeName, page.Id))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
             }
@@ -372,7 +387,8 @@ namespace Kooboo.Web.Api.Implementation
             //----
             if (model.Id == default)
             {
-                sitedb.Routes.AddOrUpdate(routename, page, call.Context.User.Id);
+                sitedb.Routes.AddOrUpdate(routeName, page, call.Context.User.Id);
+                RouteHelper.UpdateCultureRoutes(sitedb, routeName, routeNames, call.Context);
                 sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
             }
             else
@@ -387,19 +403,22 @@ namespace Kooboo.Web.Api.Implementation
 
                 sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
 
-                var route = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, oldpage);
+                var route = ObjectService.GetObjectRelativeUrl(sitedb, oldpage);
 
                 if (string.IsNullOrWhiteSpace(route))
                 {
-                    sitedb.Routes.AddOrUpdate(routename, page, call.Context.User.Id);
+                    sitedb.Routes.AddOrUpdate(routeName, page, call.Context.User.Id);
+                    RouteHelper.UpdateCultureRoutes(sitedb, routeName, routeNames, call.Context);
                     return page.Id;
                 }
 
-                if (route != routename)
+                if (route != routeName)
                 {
                     var oldRoute = sitedb.Routes.GetByUrl(route);
-                    ChangeHelper.UpdateRoute(sitedb, routename, oldRoute.Id, page.Id, call.Context);
+                    ChangeHelper.UpdateRoute(sitedb, routeName, oldRoute.Id, page.Id, call.Context);
                 }
+                
+                RouteHelper.UpdateCultureRoutes(sitedb, routeName, routeNames, call.Context);
             }
 
             return page.Id;

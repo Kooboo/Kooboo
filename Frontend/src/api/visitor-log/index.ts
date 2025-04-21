@@ -1,4 +1,4 @@
-import type { PaginationResponse } from "@/global/types";
+import type { KeyValue, PaginationResponse } from "@/global/types";
 import { useUrlSiteId } from "@/hooks/use-site-id";
 import request from "@/utils/request";
 import type { Error, TopPage, VisitorLog, TopImage } from "./types";
@@ -11,7 +11,7 @@ interface ErrorList {
   totalPages: number;
 }
 export const getWeeks = () => {
-  return request.get<string[]>(useUrlSiteId("VisitorLog/WeekNames"));
+  return request.get<KeyValue[]>(useUrlSiteId("VisitorLog/WeekNames"));
 };
 
 export const getTopPages = (weekname: string) => {

@@ -85,10 +85,20 @@ load();
         <template #default="{ row }">
           <ElTag
             class="rounded-full"
-            :type="row.finish ? 'info' : row.active ? 'success' : 'danger'"
+            :type="
+              row.running
+                ? 'warning'
+                : row.finish
+                ? 'info'
+                : row.active
+                ? 'success'
+                : 'danger'
+            "
           >
             {{
-              row.finish
+              row.running
+                ? t("common.running")
+                : row.finish
                 ? t("common.finish")
                 : row.active
                 ? t("common.active")

@@ -804,4 +804,13 @@
   <key id="Unpaid">Unpaid</key>
   <key id="ProductCategory">Product Category</key>
   <key id="Site Settings">Site Settings</key>
+  <key id="Renew the domain">Renew the domain</key>
+  <key id="Extract rich text base64 image">Extract rich text base64 image</key>
+  <key id="Extract rich text base64 image to media library">Extract rich text base64 image to media library</key>
+  <key id="Order Amount">Order Amount</key>
+  <key id="Original Order Amount">Original Order Amount</key>
+  <key id="Product Title">Product Title</key>
+  <key id="Product Variants">Product Variants</key>
+  <key id="Shipping Carrier">Shipping Carrier</key>
+  <key id="Tracking Number">Tracking Number</key>
 </Lang>

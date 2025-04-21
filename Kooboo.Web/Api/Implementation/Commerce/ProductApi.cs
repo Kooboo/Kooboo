@@ -343,7 +343,7 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         {
             var id = call.GetValue("id");
             var commerce = GetSiteCommerce(call);
-            var exist = commerce.Product.Entities.FirstOrDefault(f => f.SeoName?.Equals(seoName) ?? false);
+            var exist = commerce.Product.Entities.FirstOrDefault(f => f.SeoName?.Equals(seoName, StringComparison.OrdinalIgnoreCase) ?? false);
             return exist == null || exist.Id == id;
         }
     }

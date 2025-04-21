@@ -78,7 +78,7 @@
       v-model="model[field.prop]"
       v-bind="field.settings"
     />
-    <el-date-picker
+    <DatePickerEx
       v-else-if="controlModel.value === 'DateTime'"
       v-model="model[field.prop]"
       type="datetime"

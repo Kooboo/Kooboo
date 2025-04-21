@@ -14,6 +14,10 @@ export function useUtcLocalDate(date: string | Date) {
   return dayjs(date).utc().local().format();
 }
 
+export function useUtcTime(dateTime: string | Date) {
+  return dayjs(dateTime).utc().format("YYYY-MM-DD HH:mm:ss");
+}
+
 export function useDate(date: string | Date, format = "YYYY-MM-DD") {
   return dayjs(date).format(format);
 }

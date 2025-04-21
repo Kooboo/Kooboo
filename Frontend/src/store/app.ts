@@ -58,6 +58,14 @@ export const useAppStore = defineStore("appStore", () => {
     cookies.remove("jwt_token", { path: "/" });
     header.value = undefined;
     token.value = null;
+    if (isOnlineServer.value) {
+      let domain = "kooboo.com";
+      if (location.hostname.endsWith("kooboo.cn")) {
+        domain = "kooboo.cn";
+      }
+      location.href = `https://www.${domain}/_start/_logout`;
+      throw Error("Need redirect");
+    }
   };
 
   const login = (accessToken: string) => {
@@ -73,7 +81,23 @@ export const useAppStore = defineStore("appStore", () => {
       isOnlineServer.value &&
       !getQueryString("permission")
     ) {
-      let url = `https://${domain}/_Admin/login?access_token=${accessToken}`;
+      let startPath = "_start";
+      if (typeof domain === "string") {
+        if (
+          domain.indexOf("ninjible.com") > -1 ||
+          domain.indexOf("islandguide") > -1
+        ) {
+          startPath = "_Admin/login";
+        }
+      }
+
+      let url = `https://${domain}/${startPath}?access_token=${accessToken}`;
+      const expires = new Date();
+      expires.setDate(expires.getDate() + 30);
+      cookies.set("kooboo_redirect_url", url, {
+        path: "/",
+        expires: expires,
+      });
       if (returnUrl) url += `&returnurl=${returnUrl}`;
       location.href = url;
       throw new Error("Need redirect");

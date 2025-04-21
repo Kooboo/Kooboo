@@ -59,7 +59,7 @@ namespace Kooboo.Web.CrossPlatform
 
         private static void HandleDaemon(int port)
         {
-            var uriBuilder = new UriBuilder("http", "localhost", port, "/_Admin/");
+            var uriBuilder = new UriBuilder("http", "localhost", port, "/_start/");
             var url = uriBuilder.Uri.AbsoluteUri;
             var pid = Environment.ProcessId;
             var target = Path.Combine(AppSettings.AppDataFolder, "kooboo.daemon");

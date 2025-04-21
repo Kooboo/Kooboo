@@ -11,7 +11,7 @@ namespace Kooboo.Web.Api
     {
         public string ModelName => "I18N";
 
-        public bool RequireSite => true;
+        public bool RequireSite => false;
 
         public bool RequireUser => false;
 

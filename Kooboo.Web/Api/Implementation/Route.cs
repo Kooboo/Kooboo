@@ -3,6 +3,7 @@
 using System.Linq;
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Helper;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Routing;
@@ -102,10 +103,22 @@ namespace Kooboo.Web.Api.Implementation
             if (!string.IsNullOrEmpty(name))
             {
                 var repo = call.WebSite.SiteDb().Routes;
+                var value = repo.GetByNameOrId(name);
+                if (value == null) return true;
+                var objId = call.GetValue("objId");
+                if (objId != null && Guid.TryParse(objId, out var objectId))
+                {
+                    var objRoute = repo.GetByObjectId(objectId);
+                    if (objRoute != null)
+                    {
+                        if (objRoute.Name == name) return true;
+                        var cultureRoutes = RouteHelper.GetCultureRoutes(call.WebSite.SiteDb(), objRoute.Id);
+                        if (cultureRoutes.Any(a => a.Value == name)) return true;
+                    }
+                }
 
                 var oldName = call.GetValue("oldName");
-                var value = repo.GetByNameOrId(name);
-                if (value != null && value.objectId != Guid.Empty && value.Name != oldName)
+                if (value.objectId != Guid.Empty && value.Name != oldName)
                 {
                     return false;
                 }

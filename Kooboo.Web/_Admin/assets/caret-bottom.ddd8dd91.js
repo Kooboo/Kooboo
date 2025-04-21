@@ -1,0 +1,1 @@
+import{_ as o}from"./plugin-vue_export-helper.41ffa612.js";import{d as t,o as e,a as s,f as r}from"./url.4cb47a7a.js";const n=t({name:"CaretBottom"}),a={viewBox:"0 0 1024 1024",xmlns:"http://www.w3.org/2000/svg"},c=r("path",{fill:"currentColor",d:"m192 384 320 384 320-384z"},null,-1),_=[c];function m(p,i,d,f,l,h){return e(),s("svg",a,_)}var w=o(n,[["render",m]]);export{w as c};

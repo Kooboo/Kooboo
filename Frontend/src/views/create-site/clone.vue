@@ -14,6 +14,7 @@ import {
   domainBindingIsUniqueNameRule,
   putIntegerNumberRule,
   simpleNameRule,
+  subDomainRule,
 } from "@/utils/validate";
 import type { Rules } from "async-validator";
 import { useRouter } from "vue-router";
@@ -64,7 +65,7 @@ const rules = {
   subDomain: [
     requiredRule(t("common.subDomainRequiredTips")),
     rangeRule(1, 63),
-    DomainRule,
+    subDomainRule,
     domainBindingIsUniqueNameRule(model.value),
   ],
 
@@ -174,6 +175,15 @@ watch(
 );
 
 watch(
+  () => model.value.rootDomain,
+  () => {
+    (model.value as any).sudDomainUseDash =
+      domains.value?.find((f) => f.domainName == model.value.rootDomain)
+        ?.sudDomainUseDash ?? false;
+  }
+);
+
+watch(
   () => model.value.siteName,
   () => {
     if (isSiteNameEdit.value) return;
@@ -203,7 +213,7 @@ watch(
             v-model="model.url"
             autofocus
             tabindex="1"
-            class="w-394px"
+            class="w-304px"
             :placeholder="t('common.inputURLTips')"
             data-cy="url"
           />
@@ -211,7 +221,7 @@ watch(
         <el-form-item :label="t('common.siteName')" prop="siteName">
           <el-input
             v-model="model.siteName"
-            class="w-394px"
+            class="w-304px"
             data-cy="siteName"
             @input="isSubDomainEdit = true"
           />
@@ -221,18 +231,18 @@ watch(
             <el-input
               v-model="model.subDomain"
               tabindex="2"
-              class="w-394px"
+              class="w-304px"
               data-cy="subdomain"
               @input="isSiteNameEdit = true"
             />
           </el-form-item>
           <el-form-item prop="rootDomain" class="mt-30px">
-            <el-select v-model="model.rootDomain">
+            <el-select v-model="model.rootDomain" class="!w-300px">
               <el-option
                 v-for="item of domains"
                 :key="item.domainName"
                 :value="item.domainName"
-                :label="'.' + item.domainName"
+                :label="(item.sudDomainUseDash ? '-' : '.') + item.domainName"
                 data-cy="root-domain-opt"
               />
             </el-select>

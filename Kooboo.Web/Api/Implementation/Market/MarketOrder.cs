@@ -103,6 +103,30 @@ namespace Kooboo.Web.Api.Implementation.Market
             return GetOrderId(res);
         }
 
+        public System.Guid RenewDomain(Data.ViewModel.Market.DomainRenewOrderViewModel domainOrder, ApiCall call)
+        {
+            EnsureAdmin(call);
+            domainOrder.OrganizationId = call.Context.User.CurrentOrgId;
+
+            if (string.IsNullOrEmpty(domainOrder.Currency))
+            {
+                var org = Kooboo.Data.GlobalDb.Organization.Get(domainOrder.OrganizationId);
+                domainOrder.Currency = org.Currency;
+            }
+
+            string json = System.Text.Json.JsonSerializer.Serialize(domainOrder);
+
+            var url = Data.Helper.AccountUrlHelper.Order("DomainRenew");
+
+            var res = Lib.Helper.HttpHelper.Post<OrderResponse>(
+                url,
+                json,
+                Data.Helper.ApiHelper.GetAuthHeaders(call.Context)
+            );
+
+            return GetOrderId(res);
+        }
+
         //    public OrderResponse Topup(double Amount, string title, Guid OrgId, ApiCall call)
         public Guid NewTopUp(double Amount, ApiCall call)
         {
@@ -281,6 +305,18 @@ namespace Kooboo.Web.Api.Implementation.Market
                     info.Items.Add(new OrderInfo.OrderItem() { Name = item.DomainName, Price = item.Year });
                 }
 
+            }
+            else if (order.Type == EnumOrderType.domainRenew)
+            {
+                info.Title = Hardcoded.GetValue("Domain Order", call.Context);
+                var item = System.Text.Json.JsonSerializer.Deserialize<DomainItem>(order.Body);
+                string summary = "<br/>" + Hardcoded.GetValue("Renew the domain", call.Context);
+                info.Summary = summary;
+
+                info.Items =
+                [
+                    new OrderInfo.OrderItem() { Name = item.DomainName, Price = item.Year }
+                ];
             }
             else if (order.Type == EnumOrderType.membership)
             {

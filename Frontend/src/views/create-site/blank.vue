@@ -27,6 +27,7 @@ const model = ref({
   subDomain: "",
   rootDomain: "",
   siteName: "",
+  sudDomainUseDash: false,
 });
 const rules = {
   subDomain: [
@@ -83,6 +84,15 @@ watch(
 );
 
 watch(
+  () => model.value.rootDomain,
+  () => {
+    model.value.sudDomainUseDash =
+      domains.value?.find((f) => f.domainName == model.value.rootDomain)
+        ?.sudDomainUseDash ?? false;
+  }
+);
+
+watch(
   () => model.value.siteName,
   () => {
     if (isSiteNameEdit.value) return;
@@ -110,7 +120,7 @@ watch(
         <el-form-item :label="t('common.siteName')" prop="siteName">
           <el-input
             v-model.trim="model.siteName"
-            class="w-394px"
+            class="w-304px"
             data-cy="siteName"
             @input="isSubDomainEdit = true"
           />
@@ -119,18 +129,22 @@ watch(
           <el-form-item :label="t('common.domain')" prop="subDomain">
             <el-input
               v-model="model.subDomain"
-              class="w-394px"
+              class="w-304px"
               data-cy="subdomain"
               @input="isSiteNameEdit = true"
             />
           </el-form-item>
           <el-form-item prop="rootDomain" class="mt-30px">
-            <el-select v-model="model.rootDomain" data-cy="root-domain">
+            <el-select
+              v-model="model.rootDomain"
+              data-cy="root-domain"
+              class="!w-300px"
+            >
               <el-option
                 v-for="item of domains"
                 :key="item.domainName"
                 :value="item.domainName"
-                :label="'.' + item.domainName"
+                :label="(item.sudDomainUseDash ? '-' : '.') + item.domainName"
                 data-cy="root-domain-opt"
               />
             </el-select>

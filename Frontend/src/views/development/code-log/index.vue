@@ -8,9 +8,9 @@
       <el-select v-model="currentWeek" class="w-240px">
         <el-option
           v-for="item of weeks"
-          :key="item"
-          :value="item"
-          :label="weekToDates(item)"
+          :key="item.key"
+          :value="item.key"
+          :label="item.value"
           data-cy="week-opt"
         />
       </el-select>
@@ -41,7 +41,6 @@
         :end-placeholder="t('common.endTime')"
         class="h-40px max-w-460px"
         :editable="false"
-        :disabled-date="disabledDate"
         @change="changeTime"
       />
       <el-input
@@ -117,22 +116,22 @@ import { searchDebounce } from "@/utils/url";
 import type { DateModelType } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { weekToDates } from "@/utils/date";
+import type { KeyValue } from "@/global/types";
 
-const weeks = ref<string[]>([]);
+const weeks = ref<KeyValue[]>([]);
 const currentWeek = ref<string>();
 
 getWeeks().then((r) => {
-  weeks.value = r.sort((left: string, right: string) => {
-    const leftNumbers = left.split("-").map((m) => parseInt(m));
-    const rightNumbers = right.split("-").map((m) => parseInt(m));
+  weeks.value = r.sort((left, right) => {
+    const leftNumbers = left.key.split("-").map((m) => parseInt(m));
+    const rightNumbers = right.key.split("-").map((m) => parseInt(m));
     if (leftNumbers[0] === rightNumbers[0]) {
       return rightNumbers[1] - leftNumbers[1];
     } else {
       return rightNumbers[0] - leftNumbers[0];
     }
   });
-  currentWeek.value = r[0];
+  currentWeek.value = r[0]?.key;
 });
 
 const { t } = useI18n();
@@ -247,15 +246,6 @@ watch(
     }
   }
 );
-
-function disabledDate(date: Date) {
-  if (!currentWeek.value) return true;
-  var dates = weekToDates(currentWeek.value).split("~");
-  var startDate = new Date(dates[0].trim());
-  if (date < new Date(startDate.setDate(startDate.getDate() - 1))) return true;
-  if (date > new Date(dates[1].trim())) return true;
-  return false;
-}
 </script>
 
 <style scoped>

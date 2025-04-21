@@ -10,25 +10,25 @@ import ErrorList from "./error-list.vue";
 import BotList from "./bot-panel.vue";
 import TopBots from "./top-bot-panel.vue";
 import Breadcrumb from "@/components/basic/breadcrumb.vue";
-import { weekToDates } from "@/utils/date";
 
 import { useI18n } from "vue-i18n";
+import type { KeyValue } from "@/global/types";
 const { t } = useI18n();
-const weeks = ref<string[]>([]);
+const weeks = ref<KeyValue[]>([]);
 const currentWeek = ref<string>();
 const showWeek = ref(true);
 
 getWeeks().then((r) => {
-  weeks.value = r.sort((left: string, right: string) => {
-    const leftNumbers = left.split("-").map((m) => parseInt(m));
-    const rightNumbers = right.split("-").map((m) => parseInt(m));
+  weeks.value = r.sort((left, right) => {
+    const leftNumbers = left.key.split("-").map((m) => parseInt(m));
+    const rightNumbers = right.key.split("-").map((m) => parseInt(m));
     if (leftNumbers[0] === rightNumbers[0]) {
       return rightNumbers[1] - leftNumbers[1];
     } else {
       return rightNumbers[0] - leftNumbers[0];
     }
   });
-  currentWeek.value = r[0];
+  currentWeek.value = r[0]?.key;
 });
 
 const tabs = [
@@ -103,9 +103,9 @@ watch(
         <el-select v-model="currentWeek" class="w-240px">
           <el-option
             v-for="item of weeks"
-            :key="item"
-            :value="item"
-            :label="weekToDates(item)"
+            :key="item.key"
+            :value="item.key"
+            :label="item.value"
             data-cy="week-opt"
           />
         </el-select>

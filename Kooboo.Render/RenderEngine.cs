@@ -185,7 +185,7 @@ namespace Kooboo.Render
             var EvaluatorOption = new EvaluatorOption();
             EvaluatorOption.EnableImageBrowserCache = true;
             EvaluatorOption.EnableJsCssBrowserCache = true;
-
+            EvaluatorOption.WebSiteId = Context?.WebSite?.Id;
 
             EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent;
 

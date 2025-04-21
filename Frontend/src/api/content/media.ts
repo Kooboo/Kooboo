@@ -61,6 +61,8 @@ export const getMediaPagedList = (
     provider?: string;
     keyword?: string;
     startAfter?: string;
+    sort?: string;
+    desc?: boolean;
   },
   hiddenLoading?: boolean
 ) =>
@@ -75,6 +77,8 @@ export const getMediaPagedListBy = (
     by: string;
     provider?: string;
     startAfter?: string;
+    sort?: string;
+    desc?: boolean;
   },
   hiddenLoading?: boolean
 ) =>

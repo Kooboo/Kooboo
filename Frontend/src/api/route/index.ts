@@ -12,9 +12,9 @@ export const routesByType = (type: string) => {
   });
 };
 
-export const isUniqueRoute = (name: string, oldName?: string) =>
+export const isUniqueRoute = (name: string, oldName?: string, objId?: string) =>
   request.get(
     useUrlSiteId("Route/IsUniqueName"),
-    { name, oldName },
+    { name, oldName, objId },
     { hiddenLoading: true, hiddenError: true }
   );

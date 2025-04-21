@@ -10,6 +10,7 @@ export type RelationFolder = {
   display?: string;
   folderId: string;
   multiple?: boolean;
+  group?: string;
 };
 
 export type ContentFolder = {
@@ -26,6 +27,10 @@ export type ContentFolder = {
   category: RelationFolder[];
   embedded: RelationFolder[];
   isContent?: boolean;
+  order?: number;
+  fieldsOrder: string[];
+  group?: string;
+  previewUrl?: string;
 };
 
 export interface ContentFolderColumn {
@@ -42,6 +47,9 @@ export const deletes = (data: { ids: string[] }) =>
   request.post(useUrlSiteId("ContentFolder/Deletes"), data, undefined, {
     successMessage: $t("common.deleteSuccess"),
   });
+
+export const sort = (data: string[]) =>
+  request.post(useUrlSiteId("ContentFolder/Sort"), data, undefined);
 
 export const getFolderInfoById = (params: { id: string }) =>
   request.get<ContentFolder>(useUrlSiteId("ContentFolder/Get"), params);

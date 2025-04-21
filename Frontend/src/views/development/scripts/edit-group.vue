@@ -34,6 +34,7 @@ const availableList = computed(() => {
     result.push({
       name: i.name,
       routeId: i.routeId,
+      url: i.routeName,
     });
   }
   return result;
@@ -116,7 +117,7 @@ defineExpose({ save });
         />
       </el-form-item>
     </el-form>
-    <el-dropdown trigger="click" @command="onAdd">
+    <el-dropdown trigger="click" max-height="300px" @command="onAdd">
       <el-button round class="shadow-s-10 border-none" data-cy="add-script">
         <div class="flex items-center">
           <span>{{ t("common.addScript") }}</span>
@@ -137,7 +138,10 @@ defineExpose({ save });
             :command="item.routeId"
             data-cy="script-opt"
           >
-            <span>{{ item.name }}</span>
+            <div class="max-w-400px truncate">
+              <span>{{ item.name }}</span>
+              <span v-if="item.url">({{ item.url }})</span>
+            </div>
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -156,3 +160,10 @@ defineExpose({ save });
     </SortableList>
   </div>
 </template>
+
+<!-- 下拉菜单设置最大高度，elementPlus的max-height属性不生效 -->
+<style>
+.scriptDropdownMenu {
+  max-height: 50vh;
+}
+</style>

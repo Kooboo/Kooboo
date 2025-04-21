@@ -3,6 +3,8 @@
 using System.Linq;
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Config;
+using Kooboo.Data.Helper;
 using Kooboo.Data.Models;
 using Kooboo.Data.Permission;
 using Kooboo.Lib.Helper;
@@ -78,7 +80,7 @@ namespace Kooboo.Web.Api.Implementation
             if (!string.IsNullOrEmpty(pageUrl))
             {
                 var headless = call.GetBoolValue("headless");
-                var task = TransferManager.AddTask(sitedb, pageUrl, name,headless, call.Context.User.Id);
+                var task = TransferManager.AddTask(sitedb, pageUrl, name, headless, call.Context.User.Id);
 
                 TransferManager.ExecuteTask(sitedb, task).Wait();
 
@@ -123,7 +125,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 string RootDomain = call.GetValue("RootDomain");
                 string SubDomain = call.GetValue("SubDomain");
-                fulldomain = SubDomain + "." + RootDomain;
+                fulldomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
             }
             string sitename = call.GetValue("SiteName");
 
@@ -150,6 +152,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id, true);
+                Sites.Scripting.Global.Koobox.KFavorite.Add(call.Context, newsite.Id);
 
                 var headless = call.GetBoolValue("headless");
                 var convertToRoot = call.GetBoolValue("convertToRoot");
@@ -181,7 +184,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             string RootDomain = call.GetValue("RootDomain");
             string SubDomain = call.GetValue("SubDomain");
-            string fulldomain = SubDomain + "." + RootDomain;
+            string fulldomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
 
             string sitename = call.GetValue("SiteName");
 
@@ -227,6 +230,7 @@ namespace Kooboo.Web.Api.Implementation
 
 
             WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id, true);
+            Sites.Scripting.Global.Koobox.KFavorite.Add(call.Context, newsite.Id);
             var headless = call.GetBoolValue("headless");
             var convertToRoot = call.GetBoolValue("convertToRoot");
             string relativeToRoot = null;
@@ -319,7 +323,10 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (string.IsNullOrEmpty(itemsrc))
                     { continue; }
-
+                    if (!string.IsNullOrWhiteSpace(dom.baseURI) && !Uri.TryCreate(itemsrc, UriKind.Absolute, out var _))
+                    {
+                        itemsrc = dom.baseURI + itemsrc;
+                    }
                     string absoluteurl = UrlHelper.Combine(url, itemsrc);
 
                     bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(url, absoluteurl);

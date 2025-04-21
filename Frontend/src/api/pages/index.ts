@@ -52,8 +52,11 @@ export const isUniqueName = (name: string) =>
     { hiddenLoading: true, hiddenError: true }
   );
 
-export const pageUrlIsUniqueName = (name: string, oldName?: string) =>
-  isUniqueRoute(name, oldName);
+export const pageUrlIsUniqueName = (
+  name: string,
+  oldName?: string,
+  objId?: string
+) => isUniqueRoute(name, oldName, objId);
 
 export const copy = (body: unknown) =>
   request.post(useUrlSiteId("Page/Copy"), body, undefined, {

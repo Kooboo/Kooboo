@@ -72,7 +72,7 @@ function isMobile() {
   }
 }
 
-isMobile();
+if (!getQueryString("permission")) isMobile();
 </script>
 
 <template>

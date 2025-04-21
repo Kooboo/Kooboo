@@ -76,7 +76,7 @@
           <template #header>
             <div class="flex gap-4">
               <el-input
-                :model-value="item[0].group.split('##name##')[1] || ''"
+                :model-value="item[0].group?.split('##name##')[1] || ''"
                 :placeholder="t('common.groupName')"
                 data-cy="embedded-folder-alias"
                 @update:model-value="changeGroupName(item, $event)"
@@ -123,7 +123,7 @@
               <el-button
                 circle
                 data-cy="remove-embedded-folder"
-                @click="removeEmbeddedFolders(item[0])"
+                @click="removeEmbeddedFolders(i)"
               >
                 <el-icon class="iconfont icon-delete text-orange" />
               </el-button>

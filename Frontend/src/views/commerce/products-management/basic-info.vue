@@ -40,6 +40,15 @@ const rules: FormRules = {
   seoName: [
     requiredRule(t("common.fieldRequiredTips")),
     rangeRule(1, 200),
+    {
+      validator(_, value) {
+        const errors = [];
+        if (/[[\]\\{}#%^*+=_|~<>.?!'"/:;,()$&@\s\r\n\f]/g.test(value)) {
+          errors.push(t("common.seoNameInvalidTip"));
+        }
+        return errors;
+      },
+    },
     isUniqueNameRule(
       (n) => isUniqueName(n, getQueryString("id")),
       t("common.seoNameExistsTips")

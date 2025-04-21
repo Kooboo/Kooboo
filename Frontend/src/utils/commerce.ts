@@ -2,11 +2,11 @@ import { useAppStore } from "@/store/app";
 
 export function toSeoName(str?: string) {
   if (!str) return "";
-  return str
+  const fragments = str
     .toLowerCase()
-    .split(" ")
-    .filter((f) => f)
-    .join("-");
+    .split(/[-[\]\\{}#%^*+=_|~<>.?!'"/:;,()$&@\s\r\n\f]/g)
+    .filter((f) => f);
+  return fragments.join("-");
 }
 
 export function localDisplay(values: Record<string, string>, fallback: string) {

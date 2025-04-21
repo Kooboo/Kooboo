@@ -14,7 +14,6 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime LastModified { get; set; }
 
-
     }
 
     public class ContentTypeViewModel

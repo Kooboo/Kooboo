@@ -131,6 +131,10 @@ namespace Kooboo.Sites.ScriptModules.Render
             result.Add(new RenderResult() { Value = Render(context) });
         }
 
+        public List<IRenderTask> GetSubTasks()
+        {
+            return null;
+        }
     }
 
 }

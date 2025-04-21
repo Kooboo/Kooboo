@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import type { KeyValue } from "@/global/types";
 import type { AvailableDomain } from "@/api/console/types";
 import { getAvailableDomain } from "@/api/console";
@@ -18,6 +18,8 @@ import DialogFooterBar from "@/components/dialog-footer-bar/index.vue";
 
 import { useI18n } from "vue-i18n";
 import { useBindingStore } from "@/store/binding";
+import { subDomainRule } from "@/utils/validate";
+
 const { t } = useI18n();
 
 const emit = defineEmits<{
@@ -58,14 +60,12 @@ const model = ref({
   defaultBinding: false,
   redirect: "",
   culture: "",
+  sudDomainUseDash: false,
 });
 
 const rules = {
   subDomain: [
-    {
-      pattern: /^([A-Za-z0-9\*][A-Za-z0-9\-\*]{0,})*[A-Za-z0-9\*]$/,
-      message: t("common.subDomainInvalidTips"),
-    },
+    subDomainRule,
     rangeRule(1, 63),
     domainBindingIsUniqueNameRule(model.value),
   ],
@@ -88,6 +88,15 @@ watch(
   }
 );
 
+watch(
+  () => model.value.rootDomain,
+  () => {
+    model.value.sudDomainUseDash =
+      domains.value?.find((f) => f.domainName == model.value.rootDomain)
+        ?.sudDomainUseDash ?? false;
+  }
+);
+
 const onBlurAndSave = (e: any) => {
   e.target.blur();
 };
@@ -97,7 +106,7 @@ const onBlurAndSave = (e: any) => {
   <el-dialog
     :model-value="show"
     custom-class="el-dialog--zero-padding"
-    width="644px"
+    width="724px"
     :close-on-click-modal="false"
     :title="t('common.newBinding')"
     @closed="emit('update:modelValue', false)"
@@ -137,11 +146,11 @@ const onBlurAndSave = (e: any) => {
             <el-input v-model="model.subDomain" data-cy="subdomain" />
           </el-form-item>
           <el-form-item v-if="currentType === types[0].key" prop="rootDomain">
-            <el-select v-model="model.rootDomain" class="w-full">
+            <el-select v-model="model.rootDomain" class="w-300px">
               <el-option
                 v-for="item of domains"
                 :key="item.domainName"
-                :label="'.' + item.domainName"
+                :label="(item.sudDomainUseDash ? '-' : '.') + item.domainName"
                 :value="item.domainName"
                 data-cy="root-domain-opt"
               />

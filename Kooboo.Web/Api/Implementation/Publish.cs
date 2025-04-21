@@ -241,7 +241,15 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (setting.RemoteWebSiteId == default(Guid))
                 {
+                    string SubDomain = call.GetValue("SubDomain");
+                    string RootDomain = call.GetValue("RootDomain");
                     string FullDomain = call.GetValue("FullDomain");
+                    
+                    if (!string.IsNullOrWhiteSpace(SubDomain))
+                    {
+                        FullDomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
+                    }
+
                     string SiteName = call.GetValue("SiteName");
 
                     if (!string.IsNullOrEmpty(FullDomain) && !string.IsNullOrEmpty(SiteName))
@@ -254,7 +262,7 @@ namespace Kooboo.Web.Api.Implementation
 
                         var newSite = Lib.Helper.HttpHelper.Post<WebSite>(url, para,
                             new Dictionary<string, string> {
-                               { "Authorization",$"bearer {UserProviderHelper.GetJtwTokentFromContext(call.Context)}" }
+                               { "Authorization",$"bearer {UserProviderHelper.GetJwtTokenFromContext(call.Context)}" }
                             }, true);
 
                         if (newSite != null)
@@ -396,7 +404,7 @@ namespace Kooboo.Web.Api.Implementation
             SyncItem.RemoteSiteId = setting.RemoteWebSiteId;
             SyncItem.RemoteLastVersion = sitedb.SyncLog.GetRemoteBackVersion(setting.Id, SyncItem.ObjectId);
 
-            var response = SyncService.SendToRemote(sitedb, SyncItem, serverApiUrl, setting.AccessToken ?? UserProviderHelper.GetJtwTokentFromContext(call.Context));
+            var response = SyncService.SendToRemote(sitedb, SyncItem, serverApiUrl, setting.AccessToken ?? UserProviderHelper.GetJwtTokenFromContext(call.Context));
 
             if (response.HasConflict == false)
             {
@@ -705,7 +713,7 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Lib.Helper.HttpHelper.Post<SyncObject>(serverApiURL, paraJson,
                new Dictionary<string, string>
                {
-                      { "Authorization",$"bearer {setting.AccessToken??UserProviderHelper.GetJtwTokentFromContext(call.Context)}"}
+                      { "Authorization",$"bearer {setting.AccessToken??UserProviderHelper.GetJwtTokenFromContext(call.Context)}"}
                });
         }
 
@@ -742,7 +750,7 @@ namespace Kooboo.Web.Api.Implementation
                 return Kooboo.Lib.Helper.HttpHelper.Post<int>(serverApiURL, paraJson,
               new Dictionary<string, string>
               {
-                      { "Authorization",$"bearer {setting.AccessToken?? UserProviderHelper.GetJtwTokentFromContext(call.Context)}"}
+                      { "Authorization",$"bearer {setting.AccessToken?? UserProviderHelper.GetJwtTokenFromContext(call.Context)}"}
               });
             }
             catch (Exception)
@@ -866,7 +874,7 @@ namespace Kooboo.Web.Api.Implementation
                 remoteLastVersion = Kooboo.Lib.Helper.HttpHelper.Post<long>(serverApiURL, para,
                 new Dictionary<string, string>
                 {
-                      { "Authorization",$"bearer {UserProviderHelper.GetJtwTokentFromContext(call.Context)}"}
+                      { "Authorization",$"bearer {UserProviderHelper.GetJwtTokenFromContext(call.Context)}"}
                 });
             }
             catch (Exception)
@@ -899,7 +907,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var sitedb = call.WebSite.SiteDb();
             var setting = _getSetting(sitedb, id);
-            return SettingsSync.GetDifferences(call.WebSite.Id, setting, UserProviderHelper.GetJtwTokentFromContext(call.Context));
+            return SettingsSync.GetDifferences(call.WebSite.Id, setting, UserProviderHelper.GetJwtTokenFromContext(call.Context));
         }
 
         [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]
@@ -921,7 +929,7 @@ namespace Kooboo.Web.Api.Implementation
             var sitedb = call.WebSite.SiteDb();
             var setting = _getSetting(sitedb, id);
             var settings = JsonHelper.Deserialize<SettingsItem[]>(call.Context.Request.Body);
-            SettingsSync.Push(setting, UserProviderHelper.GetJtwTokentFromContext(call.Context), settings);
+            SettingsSync.Push(setting, UserProviderHelper.GetJwtTokenFromContext(call.Context), settings);
         }
 
         [Permission(Feature.SYNC, Action = Data.Permission.Action.VIEW)]

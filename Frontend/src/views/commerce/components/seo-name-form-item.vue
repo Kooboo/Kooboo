@@ -50,9 +50,8 @@ watch([() => props.title, () => isSeoNameDirty.value], () => {
       />
     </div>
     <div class="text-s text-999">
-      {{ siteStore.site.baseUrl }}{{ props.path }}/<span class="text-orange">{{
-        props.seoName
-      }}</span>
+      <span class="border-999">https://www.example.com/{{ props.path }}/</span
+      ><span class="text-orange">{{ props.seoName }}</span>
     </div>
   </ElFormItem>
 </template>

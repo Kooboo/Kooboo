@@ -402,7 +402,7 @@ namespace Kooboo.Web.Api.Implementation
                 return false;
             }
 
-            string fulldomain = subdomain + "." + rootdomain;
+            string fulldomain = ConfigHelper.ToFullDomain(rootdomain, subdomain);
 
             var newwebsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(website.OrganizationId, SiteName, fulldomain, call.Context.User.Id, false);
 

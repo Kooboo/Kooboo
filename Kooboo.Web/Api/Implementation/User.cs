@@ -343,7 +343,7 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception("User or Website not valid");
             }
 
-            return GlobalDb.Users.GetOptUri(user.Id);
+            return GlobalDb.Users.GetOptUri(user.Id, call.GetBoolValue("new"));
         }
 
         public User GetUser(ApiCall call)

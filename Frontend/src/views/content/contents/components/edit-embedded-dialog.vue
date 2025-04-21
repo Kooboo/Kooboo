@@ -102,7 +102,9 @@ watch(
       if (visible.value) {
         index.value = Array.from<HTMLElement>(
           document.querySelectorAll(".el-overlay")
-        ).at(-1)?.style.zIndex;
+        )
+          .map((m) => parseInt(m.style.zIndex))
+          .sort((a, b) => b - a)[0];
 
         document.body.style.setProperty("--tox-tinymce-aux-index", index.value);
         document.body.classList.add("editEmbeddedDialog");
@@ -128,6 +130,6 @@ onBeforeUnmount(() => {
 
 <style>
 .editEmbeddedDialog .tox-tinymce-aux {
-  z-index: var(--tox-tinymce-aux-index);
+  z-index: var(--tox-tinymce-aux-index) !important;
 }
 </style>

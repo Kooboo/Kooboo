@@ -37,6 +37,7 @@ namespace Kooboo.Web.ViewModel
         public Guid ObjectId { get; set; }
 
         public string PreviewUrl { get; set; }
+        public string Culture { get; set; }
 
     }
 }

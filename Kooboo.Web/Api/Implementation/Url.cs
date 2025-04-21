@@ -116,7 +116,8 @@ namespace Kooboo.Web.Api.Implementation
                     ObjectId = item.objectId,
                     LastModified = item.LastModified,
                     Relations = Sites.Helper.RelationHelper.Sum(sitedb.Routes.GetUsedBy(item.Id)),
-                    PreviewUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, item.Name)
+                    PreviewUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, item.Name),
+                    Culture = item.Culture
                 })
                 .ToList();
 

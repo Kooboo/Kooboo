@@ -105,6 +105,8 @@ export interface Site {
   visitorCountryRestrictionPage?: string;
   enableResourceCache: boolean;
   resourceCaches: number;
+  contentFoldersSequence: string[];
+  blockingSeo?: boolean;
 }
 
 export interface ModuleMenu {
@@ -113,6 +115,7 @@ export interface ModuleMenu {
   parent: string;
   url: string;
   icon: string;
+  children: { name: string; url: string }[];
 }
 
 export interface SiteViewModel {

@@ -6,17 +6,16 @@ defineProps<{ modelValue: boolean; tip: string }>();
 
 const emit = defineEmits<{
   (e: "update:model-value", value: boolean): void;
-  (e: "ok", value: string): void;
+  (e: "ok", value: string): boolean;
 }>();
 
 const { t } = useI18n();
 const code = ref();
 
-//t('common.registerVerifyCodeSentTip')
-
 function onOk() {
-  emit("ok", code.value);
-  emit("update:model-value", false);
+  if (emit("ok", code.value)) {
+    emit("update:model-value", false);
+  }
 }
 </script>
 
@@ -25,13 +24,18 @@ function onOk() {
     :model-value="modelValue"
     width="400px"
     :close-on-click-modal="false"
-    :title="t('common.validation')"
+    :title="t('common.verification')"
     @update:model-value="emit('update:model-value', $event)"
     @closed="code = ''"
   >
     <div class="space-y-16">
-      <el-alert :title="tip" type="info" :closable="false" />
-      <el-input v-model="code" :placeholder="t('common.verifyCode')" />
+      <el-alert
+        :title="tip"
+        type="info"
+        :closable="false"
+        style="word-break: normal"
+      />
+      <el-input v-model="code" :placeholder="t('common.verificationCode')" />
     </div>
     <template #footer>
       <el-button

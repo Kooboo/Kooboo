@@ -1,4 +1,4 @@
-import type { Pagination } from "@/global/types";
+import type { KeyValue, Pagination } from "@/global/types";
 import { useUrlSiteId } from "@/hooks/use-site-id";
 import request from "@/utils/request";
 
@@ -20,4 +20,4 @@ export const getList = (params: {
 }) => request.get<SqlLogResponse>(useUrlSiteId("SqlLog/List"), params);
 
 export const getWeeks = () =>
-  request.get<string[]>(useUrlSiteId("SqlLog/weeks"));
+  request.get<KeyValue[]>(useUrlSiteId("SqlLog/weeks"));

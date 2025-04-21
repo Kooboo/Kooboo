@@ -158,12 +158,18 @@ namespace Kooboo.Web.ViewModel
         public ModuleMenu[] ModuleMenus { get; set; } = [];
     }
 
-    public class ModuleMenu
+    public class ModuleMenu : ModuleMenuItem
     {
         public string Id { get; set; }
-        public string Name { get; set; }
         public string Parent { get; set; }
-        public string Url { get; set; }
         public string Icon { get; set; }
+        public ModuleMenuItem[] Children { get; set; }
+    }
+
+    public class ModuleMenuItem
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+
     }
 }

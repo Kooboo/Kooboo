@@ -7,6 +7,7 @@ namespace Kooboo.Lib.Whois
     {
 
         public DateTime Expiration { get; set; }
+        public bool Dnssec { get; set; }
 
         public List<string> NameServers { get; set; }
     }

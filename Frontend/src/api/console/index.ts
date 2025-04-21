@@ -68,6 +68,9 @@ export const postDomain = (domainName: string) =>
     successMessage: $t("common.createSuccess"),
   });
 
+export const getTransferCode = (domainName: string) =>
+  request.get<string>("/Domain/GetTransferCode", { domain: domainName });
+
 export const deleteDomains = (ids: string[]) =>
   request.post("/Domain/Deletes", { ids }, undefined, {
     successMessage: $t("common.deleteSuccess"),

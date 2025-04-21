@@ -60,7 +60,11 @@ function onEdit(item: ProductType) {
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('common.attributes')" align="center">
+      <el-table-column
+        v-if="!commerceStore.settings.hideAttributes"
+        :label="t('common.attributes')"
+        align="center"
+      >
         <template #default="{ row }">
           <div
             v-if="row.attributes.length"
@@ -77,7 +81,11 @@ function onEdit(item: ProductType) {
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('commerce.variantOptions')" align="center">
+      <el-table-column
+        v-if="!commerceStore.settings.hideVariants"
+        :label="t('commerce.variantOptions')"
+        align="center"
+      >
         <template #default="{ row }">
           <div
             v-if="row.options.length"

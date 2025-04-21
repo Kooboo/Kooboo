@@ -9,6 +9,7 @@ using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data;
 using Kooboo.Data.Config;
+using Kooboo.Data.Helper;
 using Kooboo.Data.Language;
 using Kooboo.Data.Models;
 using Kooboo.Data.Permission;
@@ -246,7 +247,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             var exportfile = call.GetValue("exportfile");
-            var path =  System.IO.Path.Combine(AppSettings.TempDataPath, exportfile);
+            var path = System.IO.Path.Combine(AppSettings.TempDataPath, exportfile);
             string name = site.DisplayName;
             if (string.IsNullOrEmpty(name))
             {
@@ -279,7 +280,7 @@ namespace Kooboo.Web.Api.Implementation
             var storeValue = call.GetValue("stores");
 
             var stores = storeValue.Split(',').ToList();
-            var result= ImportExport.ExportInterSelected(site.SiteDb(), stores);
+            var result = ImportExport.ExportInterSelected(site.SiteDb(), stores);
             return System.IO.Path.GetFileName(result);
         }
 
@@ -419,9 +420,6 @@ namespace Kooboo.Web.Api.Implementation
                 result.Permissions = role?.Permissions;
             }
 
-            SiteCoverService.Add(webSite.Id);
-
-
             var org = GlobalDb.Organization.Get(call.Context.WebSite.OrganizationId);
             result.ServiceLevel = org.ServiceLevel;
             if (WebSiteService.DevelopmentAccess.RequireDevelopmentPassword(call.Context, org))
@@ -473,6 +471,20 @@ namespace Kooboo.Web.Api.Implementation
                     if (string.IsNullOrWhiteSpace(modulePath)) continue;
                     moduleMenu.Icon = $"{modulePath}/img/{moduleMenu.Icon}?SiteId={webSite.Id}";
                 }
+
+                if (moduleMenu.Children != null)
+                {
+                    foreach (var item in moduleMenu.Children)
+                    {
+                        if (string.IsNullOrWhiteSpace(item.Url) || !item.Url.StartsWith("http"))
+                        {
+                            var modulePath = Settings.ModulePath(module.Name);
+                            if (string.IsNullOrWhiteSpace(modulePath) || string.IsNullOrWhiteSpace(item.Url)) continue;
+                            item.Url = $"{modulePath}/{item.Url.TrimStart('/')}?SiteId={webSite.Id}";
+                        }
+                    }
+                }
+
                 moduleMenus.Add(moduleMenu);
             }
 
@@ -559,6 +571,7 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.VisitorCountryRestrictionPage = newinfo.VisitorCountryRestrictionPage;
                 currentsite.RateLimitSettings = newinfo.RateLimitSettings;
                 currentsite.AccessLimitSettings = newinfo.AccessLimitSettings;
+                currentsite.BlockingSeo = newinfo.BlockingSeo;
 
                 if (org.ServiceLevel > 0)
                 {
@@ -566,7 +579,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 // the cluster... 
                 Data.Config.AppHost.SiteRepo.AddOrUpdate(currentsite);
-                var siteDb= currentsite.SiteDb();
+                var siteDb = currentsite.SiteDb();
                 siteDb.ResetResourceCaches();
             }
         }
@@ -630,7 +643,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 string RootDomain = call.GetValue("RootDomain");
                 string SubDomain = call.GetValue("SubDomain");
-                fulldomain = SubDomain + "." + RootDomain;
+                fulldomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
             }
             string sitename = call.GetValue("SiteName");
 
@@ -640,6 +653,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             WebSite newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(call.Context.User.CurrentOrgId, sitename, fulldomain, call.Context.User.Id, true);
+            Sites.Scripting.Global.Koobox.KFavorite.Add(call.Context, newsite.Id);
             return newsite;
         }
 
@@ -682,13 +696,14 @@ namespace Kooboo.Web.Api.Implementation
                 return default(Guid);
             }
 
-            string fulldomain = string.IsNullOrEmpty(SubDomain) ? RootDomain : SubDomain + "." + RootDomain;
+            string fullDomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
             var packagePath = System.IO.Path.Combine(AppSettings.TempDataPath, packageName);
             using var fileStream = new FileStream(packagePath, FileMode.Open);
-            var newsite = ImportExport.ImportZip(fileStream, call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
+            var newSite = ImportExport.ImportZip(fileStream, call.Context.User.CurrentOrgId, SiteName, fullDomain, call.Context.User.Id);
+            Sites.Scripting.Global.Koobox.KFavorite.Add(call.Context, newSite.Id);
             fileStream.Dispose();
             File.Delete(packagePath);
-            return newsite.Id;
+            return newSite.Id;
         }
 
         public void MultiChunkUpload(ApiCall call, Guid id)
@@ -727,18 +742,8 @@ namespace Kooboo.Web.Api.Implementation
 
         public Guid ImportUrl(string RootDomain, string SubDomain, string SiteName, string Url, ApiCall call)
         {
-
-            var bytes = Kooboo.Lib.Helper.DownloadHelper.DownloadFileAsync(Url).Result;
-
-            if (bytes != null)
-            {
-                string fulldomain = string.IsNullOrEmpty(SubDomain) ? RootDomain : SubDomain + "." + RootDomain;
-
-                var newsite = ImportExport.ImportZip(new MemoryStream(bytes), call.Context.User.CurrentOrgId, SiteName, fulldomain, call.Context.User.Id);
-                return newsite.Id;
-            }
-
-            return default(Guid);
+            string fullDomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
+            return WebSiteService.ImportUrl(Url, SiteName, fullDomain, call.Context);
         }
 
         public void RenewSite(ApiCall call, Guid SiteId, string replaceStores)
@@ -767,22 +772,23 @@ namespace Kooboo.Web.Api.Implementation
         {
             string RootDomain = apiCall.GetValue("RootDomain");
             string SubDomain = apiCall.GetValue("SubDomain");
-            string fulldomain = SubDomain + "." + RootDomain;
 
-            var site = Kooboo.Data.Config.AppHost.BindingService.GetByFullDomain(fulldomain);
+            string fullDomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
+
+            var site = Kooboo.Data.Config.AppHost.BindingService.GetByFullDomain(fullDomain);
 
             return site == null || site.Count == 0;
         }
 
         public String GetName(ApiCall call)
         {
-            string strsiteid = call.GetValue("siteid");
-            if (!string.IsNullOrEmpty(strsiteid))
+            string strSiteId = call.GetValue("siteid");
+            if (!string.IsNullOrEmpty(strSiteId))
             {
-                Guid siteid;
-                if (System.Guid.TryParse(strsiteid, out siteid))
+                Guid siteId;
+                if (System.Guid.TryParse(strSiteId, out siteId))
                 {
-                    var site = Data.Config.AppHost.SiteRepo.Get(siteid);
+                    var site = Data.Config.AppHost.SiteRepo.Get(siteId);
                     if (site != null)
                     {
                         return site.DisplayName;
@@ -792,18 +798,7 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-        [Attributes.RequireParameters("SiteId")]
-        public List<DataCenter> ClusterList(ApiCall call)
-        {
-            var orgid = call.Context.User.CurrentOrgId;
-            var websiteid = call.GetValue<Guid>("SiteId");
 
-            List<DataCenter> temp = new List<DataCenter>();
-            temp.Add(new DataCenter() { Name = "CN", DisplayName = "China", IsCompleted = true, IsSelected = true, IsRoot = true });
-            temp.Add(new DataCenter() { Name = "HK", DisplayName = "HongKong", IsCompleted = false, IsSelected = false });
-            temp.Add(new DataCenter() { Name = "US", DisplayName = "America", IsCompleted = false, IsSelected = false });
-            return temp;
-        }
 
         readonly Type[] _numberType = new Type[] { typeof(int), typeof(float), typeof(double), typeof(decimal) };
 
@@ -855,6 +850,17 @@ namespace Kooboo.Web.Api.Implementation
 
             return result;
         }
-    }
 
+        public void UpdateCustomSettings(ApiCall call)
+        {
+            if (call.Context.User != null && call.Context.User.CurrentOrgId != call.Context.WebSite.OrganizationId)
+            {
+                return;
+            }
+            var body = call.Context.Request.Body;
+            var settings = JsonHelper.Deserialize<Dictionary<string, string>>(body);
+            call.WebSite.CustomSettings = settings;
+            AppHost.SiteRepo.AddOrUpdate(call.WebSite);
+        }
+    }
 }

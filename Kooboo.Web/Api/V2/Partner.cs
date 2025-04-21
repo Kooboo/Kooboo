@@ -95,7 +95,7 @@ namespace Kooboo.Web.Api.V2
                 {
                     data.Add("Tel", Tel);
                 }
-                return Kooboo.Lib.Helper.HttpHelper.Post<bool>(url, data, null, false);
+                return Kooboo.Lib.Helper.HttpHelper.Post<bool>(url, data, null, true);
             }
 
             return false;

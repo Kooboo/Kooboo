@@ -7,6 +7,7 @@ import Cookies from "universal-cookie";
 import { useRouteSiteId } from "@/hooks/use-site-id";
 import { useSiteStore } from "@/store/site";
 import { countRecentVisits } from "@/global/recent-visits";
+import { combineUrl } from "@/utils/url";
 const cookies = new Cookies();
 
 let loadingInstance: { close: () => void } | undefined;
@@ -108,13 +109,27 @@ router.beforeEach((to) => {
 router.beforeResolve(hideLoading);
 
 router.onError((error, to) => {
+  if (
+    error.message.includes("Failed to fetch dynamically imported module") ||
+    error.message.includes("Importing a module script failed")
+  ) {
+    let url = new URL(location.href);
+    const retryCountValue = url.searchParams.get("imported-module-error-retry");
+    const retryCount = retryCountValue ? parseInt(retryCountValue) : 0;
+    if (retryCount > 5) return;
+
+    if (to?.fullPath) {
+      url = new URL(to.fullPath, location.origin);
+      url.pathname = combineUrl(import.meta.env.BASE_URL, url.pathname);
+    }
+    url.searchParams.set(
+      "imported-module-error-retry",
+      (retryCount + 1).toString()
+    );
+    window.location.href = url.toString();
+    return;
+  }
   hideLoading();
-  // if (
-  //   error.message.includes("Failed to fetch dynamically imported module") ||
-  //   error.message.includes("Importing a module script failed")
-  // ) {
-  //   window.location.href = router.resolve(to).href;
-  // }
 });
 
 export const install: Install = (app) => {

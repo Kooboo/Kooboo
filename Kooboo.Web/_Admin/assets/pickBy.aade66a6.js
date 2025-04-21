@@ -1,0 +1,1 @@
+import{c5 as s}from"./url.4cb47a7a.js";import{b as f}from"./style.c350d462.js";import{b as i}from"./_basePickBy.6b7a83ab.js";import{g as m}from"./_baseClone.b8903935.js";function y(r,n){if(r==null)return{};var t=s(m(r),function(o){return[o]});return n=f(n),i(r,t,function(o,a){return n(o,a[0])})}export{y as p};

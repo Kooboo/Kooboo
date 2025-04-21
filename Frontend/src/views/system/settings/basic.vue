@@ -3,11 +3,16 @@ import { site, importAccept, onUploadPackage } from "./settings";
 import { ref } from "vue";
 import { getTypes } from "@/api/site";
 import { useI18n } from "vue-i18n";
+import { useSiteStore } from "@/store/site";
+import { useAppStore } from "@/store/app";
 
 const emit = defineEmits<{
   (e: "export"): void;
   (e: "initSite"): void;
 }>();
+
+const siteStore = useSiteStore();
+const appStore = useAppStore();
 
 const { t } = useI18n();
 const siteTypes = ref<Record<string, string>>();
@@ -59,6 +64,37 @@ const modeList = ref([
       <el-form-item :label="t('common.displayName')">
         <el-input v-model="site.displayName" data-cy="display-name" />
       </el-form-item>
+
+      <template
+        v-if="
+          appStore.header?.isOnlineServer && !appStore.header.isPrivateServer
+        "
+      >
+        <el-form-item v-if="siteStore.serviceLevel > 0">
+          <span class="font-bold dark:text-fff/86">{{
+            t("common.enableDevPassword")
+          }}</span>
+          <div class="flex-1" />
+          <el-switch
+            :model-value="site.status == 'Development'"
+            @update:model-value="
+              site.status =
+                site.status == 'Development' ? 'Published' : 'Development'
+            "
+          />
+        </el-form-item>
+        <el-form-item v-if="site.status == 'Development'">
+          <span class="font-bold dark:text-fff/86">{{
+            t("common.devPassword")
+          }}</span>
+          <div class="flex-1" />
+          <el-input
+            v-model="site.devPassword"
+            :disabled="true"
+            data-cy="dev-password"
+          />
+        </el-form-item>
+      </template>
       <el-form-item>
         <template #label>
           <div class="flex items-center">

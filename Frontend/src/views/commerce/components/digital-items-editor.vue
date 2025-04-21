@@ -9,7 +9,8 @@ import { newGuid } from "@/utils/guid";
 const { t } = useI18n();
 const showTextDialog = ref(false);
 const showLinkDialog = ref(false);
-
+const linkForm = ref();
+const textForm = ref();
 const item = ref();
 const uploadRef = ref();
 
@@ -92,6 +93,20 @@ function onAdd(type: string) {
       break;
   }
 }
+
+async function onSaveText(item: any) {
+  await textForm.value?.validate();
+  emit("update:items", [...props.items, { ...item }]);
+  showTextDialog.value = false;
+  textForm.value?.resetFields();
+}
+
+async function onSaveLink(item: any) {
+  await linkForm.value?.validate();
+  emit("update:items", [...props.items, { ...item }]);
+  showLinkDialog.value = false;
+  linkForm.value?.resetFields();
+}
 </script>
 
 <template>
@@ -165,11 +180,19 @@ function onAdd(type: string) {
       </el-table>
     </div>
     <ElDialog v-model="showTextDialog" :title="t('common.text')">
-      <ElForm>
-        <ElFormItem :label="t('common.name')">
+      <ElForm ref="textForm" :model="item">
+        <ElFormItem
+          :label="t('common.name')"
+          prop="name"
+          :rules="[{ required: true, message: t('common.nameRequiredTips') }]"
+        >
           <ElInput v-model="item.name" />
         </ElFormItem>
-        <ElFormItem :label="t('common.text')">
+        <ElFormItem
+          :label="t('common.text')"
+          prop="value"
+          :rules="[{ required: true, message: t('common.valueRequiredTips') }]"
+        >
           <ElInput v-model="item.value" type="textarea" />
         </ElFormItem>
       </ElForm>
@@ -177,22 +200,25 @@ function onAdd(type: string) {
         <ElButton @click="showTextDialog = false">{{
           t("common.cancel")
         }}</ElButton>
-        <ElButton
-          type="primary"
-          @click="
-            emit('update:items', [...items, item]);
-            showTextDialog = false;
-          "
-          >{{ t("common.ok") }}</ElButton
-        >
+        <ElButton type="primary" @click="onSaveText(item)">{{
+          t("common.ok")
+        }}</ElButton>
       </template>
     </ElDialog>
     <ElDialog v-model="showLinkDialog" :title="t('common.link')">
-      <ElForm>
-        <ElFormItem :label="t('common.name')">
+      <ElForm ref="linkForm" :model="item">
+        <ElFormItem
+          :label="t('common.name')"
+          prop="name"
+          :rules="[{ required: true, message: t('common.nameRequiredTips') }]"
+        >
           <ElInput v-model="item.name" />
         </ElFormItem>
-        <ElFormItem :label="t('common.link')">
+        <ElFormItem
+          :label="t('common.link')"
+          prop="value"
+          :rules="[{ required: true, message: t('common.urlRequiredTips') }]"
+        >
           <ElInput v-model="item.value" type="textarea" />
         </ElFormItem>
       </ElForm>
@@ -200,14 +226,9 @@ function onAdd(type: string) {
         <ElButton @click="showLinkDialog = false">{{
           t("common.cancel")
         }}</ElButton>
-        <ElButton
-          type="primary"
-          @click="
-            emit('update:items', [...items, item]);
-            showLinkDialog = false;
-          "
-          >{{ t("common.ok") }}</ElButton
-        >
+        <ElButton type="primary" @click="onSaveLink(item)">{{
+          t("common.ok")
+        }}</ElButton>
       </template>
     </ElDialog>
   </div>

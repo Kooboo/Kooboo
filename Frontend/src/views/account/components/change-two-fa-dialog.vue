@@ -1,27 +1,51 @@
 <template>
   <el-dialog
     :model-value="show"
-    :title="t('common.2fa')"
+    :title="t('common.preferred2FAMethod')"
     width="400px"
     :close-on-click-modal="false"
     @closed="emit('update:modelValue', false)"
   >
     <el-form ref="form" label-position="top">
-      <el-form-item prop="method" :label="t('common.preferred2FAMethod')">
-        <el-select v-model="method" class="w-full" data-cy="servers">
-          <el-option
+      <el-form-item prop="method">
+        <ElRadioGroup v-model="method" class="block space-y-8">
+          <div
             v-for="item of availableMethods"
             :key="item.key"
-            :label="item.value"
-            :value="item.key"
-          />
-        </el-select>
+            class="flex flex-col"
+          >
+            <ElRadio :label="item.key">
+              <span>{{ item.value }} </span>
+              <span v-if="item.key == 'email'"> ({{ email }})</span>
+              <span v-if="item.key == 'tel'"> ({{ tel }})</span>
+            </ElRadio>
+            <div
+              class="pl-24 w-full text-s text-999"
+              style="word-break: normal"
+            >
+              {{ item.description }}
+            </div>
+          </div>
+        </ElRadioGroup>
       </el-form-item>
-      <el-form-item
-        v-if="method == 'otp' && optUri"
-        :label="t('common.addOtpCodeTip')"
-      >
-        <VueQr :text="optUri" :size="400" class="transform" />
+      <el-form-item v-if="method == 'otp'">
+        <template #label>
+          <span class="text-s">{{ t("common.addOtpCodeTip") }}</span>
+        </template>
+        <div
+          v-if="optUri"
+          class="w-[400px] flex flex-col items-center justify-center"
+        >
+          <VueQr :text="optUri" :size="200" class="transform" />
+          <el-button
+            size="small"
+            type="primary"
+            round
+            @click="generateNewQRCode"
+          >
+            {{ t("common.generateNewQRCode") }}
+          </el-button>
+        </div>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -70,12 +94,23 @@ const change = async () => {
 watch(
   () => method.value,
   async () => {
-    console.log(method.value);
     if (method.value == "otp") {
-      optUri.value = await getOptUri();
+      optUri.value = await getOptUri(false);
     }
+  },
+  {
+    immediate: true,
   }
 );
 
+async function generateNewQRCode() {
+  optUri.value = await getOptUri(true);
+}
+
 const reloadUser = inject("reloadUser") as Load;
 </script>
+<style scoped>
+:deep(.el-dialog__body) {
+  word-break: normal;
+}
+</style>

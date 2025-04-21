@@ -65,6 +65,17 @@ export interface SmtpSetting {
   password: string;
 }
 
+export interface ExtensionField {
+  name: string;
+  displayName: string;
+  isSummaryField: boolean;
+  type: string;
+  exportable: boolean;
+  filterable: boolean;
+  editable: boolean;
+  width: number;
+}
+
 export interface Settings {
   currencyCode: string;
   currencySymbol: string;
@@ -83,6 +94,10 @@ export interface Settings {
   webhookSecret?: string;
   earnPoint: EarnPointSettings;
   redeemPoint: RedeemPointSettings;
+  hideAttributes: boolean;
+  hideVariants: boolean;
+  productDigitalItemRequired: boolean;
+  orderExtensionFields: ExtensionField[];
 }
 
 export const getCurrencies = () =>

@@ -771,4 +771,13 @@
   <key id="Unpaid">未支付</key>
   <key id="ProductCategory">商品分类</key>
   <key id="Site Settings">站点设置</key>
+  <key id="Renew the domain">为域名续费</key>
+  <key id="Extract rich text base64 image">提取富文本base64图片</key>
+  <key id="Extract rich text base64 image to media library">提取富文本base64图片到媒体库</key>
+  <key id="Order Amount">订单金额</key>
+  <key id="Original Order Amount">订单原始金额</key>
+  <key id="Product Title">产品标题</key>
+  <key id="Product Variants">产品规格</key>
+  <key id="Shipping Carrier">承运商</key>
+  <key id="Tracking Number">运单号</key>
 </Lang>

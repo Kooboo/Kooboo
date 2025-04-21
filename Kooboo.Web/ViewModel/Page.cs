@@ -68,6 +68,7 @@ namespace Kooboo.Web.ViewModel
         public string Name { get; set; }
 
         public string UrlPath { get; set; }
+        public Dictionary<string, string> UrlPaths { get; set; }
 
         public string LayoutName { get; set; }
 
@@ -125,6 +126,7 @@ namespace Kooboo.Web.ViewModel
         public string LayoutName { get; set; }
 
         public string UrlPath { get; set; }
+        public Dictionary<string, string> UrlPaths { get; set; }
 
         public Dictionary<string, string> ContentTitle { get; set; }
 

@@ -34,6 +34,7 @@ const availableList = computed(() => {
     result.push({
       name: i.name,
       routeId: i.routeId,
+      url: i.routeName,
     });
   }
   return result;
@@ -116,7 +117,7 @@ defineExpose({ save });
         />
       </el-form-item>
     </el-form>
-    <el-dropdown trigger="click" @command="onAdd">
+    <el-dropdown trigger="click" max-height="300px" @command="onAdd">
       <el-button round class="shadow-s-10 border-none" data-cy="add-style">
         <div class="flex items-center">
           <span>{{ t("common.addStyle") }}</span>
@@ -130,14 +131,17 @@ defineExpose({ save });
         >
           <span>{{ t("common.noData") }}</span>
         </div>
-        <el-dropdown-menu v-else class="styleDropdownMenu">
+        <el-dropdown-menu v-else>
           <el-dropdown-item
             v-for="item of availableList"
             :key="item.routeId"
             :command="item.routeId"
             data-cy="style-opt"
           >
-            <span>{{ item.name }}</span>
+            <div class="max-w-400px truncate">
+              <span>{{ item.name }}</span>
+              <span v-if="item.url">({{ item.url }})</span>
+            </div>
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>

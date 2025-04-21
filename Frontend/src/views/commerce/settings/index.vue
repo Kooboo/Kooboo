@@ -3,7 +3,7 @@ import KBottomBar from "@/components/k-bottom-bar/index.vue";
 import Breadcrumb from "@/components/basic/breadcrumb.vue";
 import { useI18n } from "vue-i18n";
 import { useShortcut } from "@/hooks/use-shortcuts";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import type { Currency } from "@/api/commerce/settings";
 import {
   getCurrencies,
@@ -15,12 +15,14 @@ import { useCommerceStore } from "@/store/commerce";
 import type { KeyValue } from "@/global/types";
 import { refreshMonacoCache } from "@/components/monaco-editor/monaco";
 import CustomDataEditor from "./custom-data-editor.vue";
+import ExtensionDataEditor from "./extension-field-editor.vue";
 import { productLabels, categoryLabels } from "../useLabels";
 
 const { t } = useI18n();
 const currencies = ref<Currency[]>([]);
 const payments = ref<KeyValue[]>([]);
 const store = useCommerceStore();
+store.loadTypes();
 getCurrencies().then((rsp) => {
   currencies.value = rsp;
 });
@@ -43,6 +45,10 @@ function onCurrencyCodeChange(value: string) {
     settings.value!.currencySymbol = currency.symbolNative;
   }
 }
+
+const showProductDigitalItemRequiredSetting = computed(() => {
+  return store.types.some((s) => s.isDigital);
+});
 
 watch(
   () => store.settings,
@@ -135,6 +141,31 @@ useShortcut("save", onSave);
               :data="settings.categoryCustomFields"
               :labels="categoryLabels"
             />
+          </el-form-item>
+          <el-form-item>
+            <template #label>
+              <span>{{ t("commerce.orderExtensionFields") }}</span>
+            </template>
+            <ExtensionDataEditor :data="settings.orderExtensionFields" />
+          </el-form-item>
+        </div>
+      </div>
+
+      <div
+        class="rounded-normal bg-fff dark:bg-[#252526] mt-16 mb-24 py-24 px-56px"
+      >
+        <div class="max-w-504px">
+          <el-form-item :label="t('commerce.hideAttributes')">
+            <ElSwitch v-model.number="settings.hideAttributes" />
+          </el-form-item>
+          <el-form-item :label="t('commerce.hideVariants')">
+            <ElSwitch v-model.number="settings.hideVariants" />
+          </el-form-item>
+          <el-form-item
+            v-if="showProductDigitalItemRequiredSetting"
+            :label="t('commerce.productDigitalItemRequired')"
+          >
+            <ElSwitch v-model.number="settings.productDigitalItemRequired" />
           </el-form-item>
         </div>
       </div>

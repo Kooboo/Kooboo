@@ -1,5 +1,6 @@
 ﻿using Kooboo.Api;
 using Kooboo.Data.Permission;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
 
@@ -53,9 +54,17 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Permission(Feature.DATABASE, Action = "log")]
-        public IEnumerable<string> Weeks(ApiCall apiCall)
+        public List<KeyValuePair<string, string>> Weeks(ApiCall apiCall)
         {
-            return SqlLogService.GetWeeks(apiCall.WebSite.Id);
+            var weeks = SqlLogService.GetWeeks(apiCall.WebSite.Id);
+            var result = new List<KeyValuePair<string, string>>();
+            foreach (var item in weeks)
+            {
+                var (year, week) = DateTimeHelper.ParseYearWeek(item);
+                var (start, end) = DateTimeHelper.GetDateRangeFromWeek(year, week);
+                result.Add(new KeyValuePair<string, string>(item, $"{start:yyyy-MM-dd}~{end:yyyy-MM-dd}"));
+            }
+            return result;
         }
     }
 }

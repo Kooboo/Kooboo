@@ -112,6 +112,7 @@ export function useContentEffects(
     );
     categoryOptions.value = response.categories ?? [];
     columns.value = (response.columns ?? []).map((column) => {
+      (column as any).rawName = column.name;
       column.name = camelCase(column.name);
       return column;
     });
@@ -183,7 +184,8 @@ export function useContentEffects(
   }
 
   async function onSortChanged(data: SortSetting<TableRowItem>) {
-    sortSetting.value.prop = data.prop ?? "";
+    const column = columns.value.find((f: any) => f.name == data.prop);
+    sortSetting.value.prop = (column as any)?.rawName ?? "";
     sortSetting.value.order = data.order;
     localStorage.setItem(getOrderStateKey(), JSON.stringify(sortSetting.value));
     await searchEvent();

@@ -103,6 +103,7 @@
 		<None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
 		<None Remove="DashBoard\Resource\SiteResource.html" />
 		<None Remove="DashBoard\TopPages\TopPages.html" />
+		<None Remove="Resource\_startSite638773925571671868.zip" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -133,6 +134,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Frontend\StartSiteMiddleWare.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Resource\DashBoard\DiskSize.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -151,10 +158,13 @@
 		<None Update="Resource\DashBoard\Resources.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Resource\startSite.zip">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Kooboo.Data" Version="2.1.9157.18496" />
-	  <PackageReference Include="Kooboo.Sites" Version="2.1.9157.18496" />
+	  <PackageReference Include="Kooboo.Data" Version="2.1.9242.28335" />
+	  <PackageReference Include="Kooboo.Sites" Version="2.1.9242.28335" />
 	</ItemGroup>
 </Project>

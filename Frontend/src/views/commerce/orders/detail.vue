@@ -26,6 +26,7 @@ import OrderStatus from "./order-status.vue";
 import { getDetails } from "@/api/commerce/address";
 import { systemDisplay } from "@/utils/commerce";
 import type { KeyValue } from "@/global/types";
+import { useCommerceStore } from "@/store/commerce";
 
 const { getColumns } = useProductFields();
 const id = getQueryString("id");
@@ -38,6 +39,7 @@ const showNoteDialog = ref(false);
 const showKeyValueDialog = ref(false);
 const siteStore = useSiteStore();
 const note = ref("");
+const commerceStore = useCommerceStore();
 
 const columns = getColumns([
   {
@@ -170,6 +172,10 @@ async function editKeyValue() {
   load();
   showKeyValueDialog.value = false;
 }
+
+function getExtensionFieldValue(name: string) {
+  return model.value?.extensionFields?.find((f) => f.key == name)?.value;
+}
 </script>
 
 <template>
@@ -251,18 +257,26 @@ async function editKeyValue() {
 
           <ElTag v-else round type="info">{{ t("commerce.unshipped") }}</ElTag>
         </el-descriptions-item>
-        <template v-if="model.extensionFields">
+        <template v-if="commerceStore.settings.orderExtensionFields">
           <el-descriptions-item
-            v-for="(i, index) of model.extensionFields"
+            v-for="(i, index) of commerceStore.settings.orderExtensionFields"
             :key="index"
-            :label="i.key"
+            :label="i.displayName || i.name"
           >
-            <div class="max-w-150px inline-flex items-center gap-4">
-              <TruncateContent :tip="i.value">{{ i.value }}</TruncateContent>
+            <div class="max-w-150px inline-flex items-center gap-x-4">
+              <TruncateContent
+                v-if="getExtensionFieldValue(i.name)"
+                :tip="getExtensionFieldValue(i.name)"
+                >{{ getExtensionFieldValue(i.name) }}</TruncateContent
+              >
               <el-icon
+                v-if="i.editable"
                 class="cursor-pointer iconfont icon-a-writein text-blue"
                 @click="
-                  keyvalue = { key: i.key, value: i.value };
+                  keyvalue = {
+                    key: i.name,
+                    value: getExtensionFieldValue(i.name) || '',
+                  };
                   showKeyValueDialog = true;
                 "
               />

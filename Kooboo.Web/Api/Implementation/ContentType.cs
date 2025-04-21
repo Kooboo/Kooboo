@@ -25,7 +25,7 @@ namespace Kooboo.Web.Api.Implementation
                     Id = item.Id,
                     Name = item.Name,
                     PropertyCount = item.Properties.Count,
-                    LastModified = item.LastModified
+                    LastModified = item.LastModified,
                 }).ToList<object>();
         }
 
@@ -66,6 +66,20 @@ namespace Kooboo.Web.Api.Implementation
                     item.MultipleLanguage = SystemFields.Online.MultipleLanguage;
                     item.DataType = SystemFields.Online.DataType;
                     item.ControlType = SystemFields.Online.ControlType;
+                    item.IsSystemField = true;
+                }
+                else if (item.Name.ToLower() == SystemFields.PublishStart.Name.ToLower())
+                {
+                    item.MultipleLanguage = SystemFields.PublishStart.MultipleLanguage;
+                    item.DataType = SystemFields.PublishStart.DataType;
+                    item.ControlType = SystemFields.PublishStart.ControlType;
+                    item.IsSystemField = true;
+                }
+                else if (item.Name.ToLower() == SystemFields.PublishEnd.Name.ToLower())
+                {
+                    item.MultipleLanguage = SystemFields.PublishEnd.MultipleLanguage;
+                    item.DataType = SystemFields.PublishEnd.DataType;
+                    item.ControlType = SystemFields.PublishEnd.ControlType;
                     item.IsSystemField = true;
                 }
             }
@@ -129,6 +143,8 @@ namespace Kooboo.Web.Api.Implementation
                             SystemFields.UserKey,
                             SystemFields.Online,
                             SystemFields.Sequence,
+                            SystemFields.PublishStart,
+                            SystemFields.PublishEnd,
                         };
                 return contentType;
             }

@@ -99,10 +99,11 @@ onMounted(() => {
       :model-value="modelValue"
       @update:model-value="$emit('update:model-value', $event)"
     />
-    <el-date-picker
+    <DatePickerEx
       v-else-if="field.type === 'DateTime'"
       :model-value="modelValue"
       type="datetime"
+      class="!w-504px"
       popper-class="filed-control-el-date-picker"
       @update:model-value="$emit('update:model-value', $event)"
     />

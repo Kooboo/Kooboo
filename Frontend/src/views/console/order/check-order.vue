@@ -35,7 +35,11 @@
           class="el-tabs--hide-content partnerTab mb-28px"
         >
           <el-tab-pane :label="t('common.creditCard')" name="CreditCard" />
-          <el-tab-pane :label="t('common.wechatPay')" name="WechatPay" />
+          <el-tab-pane
+            v-if="info?.currency == 'CNY'"
+            :label="t('common.wechatPay')"
+            name="WechatPay"
+          />
         </el-tabs>
 
         <div v-if="activeTab === 'CreditCard'">

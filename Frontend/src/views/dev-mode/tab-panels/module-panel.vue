@@ -48,7 +48,10 @@ const save = async () => {
 const isConfig = computed(() => props.params.file.name === "Module.config");
 
 const modelUri = computed(() => {
-  if (props.params.file.objectType == "code") {
+  if (
+    props.params.file.objectType == "code" ||
+    props.params.file.objectType == "api"
+  ) {
     const name = moduleStore.list.find(
       (f) => f.id == props.params.moduleId
     )?.name;

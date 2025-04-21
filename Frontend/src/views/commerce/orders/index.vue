@@ -19,11 +19,13 @@ import { showDeleteConfirm } from "@/components/basic/confirm";
 import { openInHiddenFrame } from "@/utils/url";
 import TruncateContent from "@/components/basic/truncate-content.vue";
 import OrderStatus from "./order-status.vue";
+import { useCommerceStore } from "@/store/commerce";
 
 const { t } = useI18n();
 const route = useRoute();
 const routeName = route.meta.title as string;
 const pagingResult = ref<OrderPagingResult>();
+const commerceStore = useCommerceStore();
 
 const queryParams = ref<
   PagingParams & {
@@ -37,7 +39,7 @@ const queryParams = ref<
   pageIndex: 1,
   pageSize: 30,
   keyword: "",
-  status: "Normal",
+  status: "",
   createdAtStart: undefined,
   createdAtEnd: undefined,
 });
@@ -62,12 +64,6 @@ async function exportExcel() {
       }&name=${rsp.name}`
     )
   );
-}
-
-function getClientInfo(row: any) {
-  return `${row.clientInfo.os || ""} ${row.clientInfo?.platform || ""} ${
-    row.clientInfo?.application?.name || ""
-  } ${row.clientInfo?.application?.version || ""} ${row?.userAgent || ""}`;
 }
 
 onMounted(async () => {
@@ -112,13 +108,14 @@ function getDiscountAllocations(row: any) {
         <CurrencyAmount :amount="pagingResult.stats.totalAmount" />
       </PropertyItem>
     </div>
-    <div class="flex items-center py-16 space-x-16">
+    <div class="flex items-center flex-wrap gap-8 py-16">
       <el-select
         v-model="queryParams.status"
         :placeholder="t('commerce.orderStatus')"
-        class="w-180px"
+        class="w-150px"
         clearable
         @clear="queryParams.status = undefined"
+        @change="load(1)"
       >
         <el-option :label="t('common.active')" value="Normal" />
         <el-option :label="t('common.paid')" value="Paid" />
@@ -128,9 +125,10 @@ function getDiscountAllocations(row: any) {
       <el-select
         v-model="queryParams.deliveryStatus"
         :placeholder="t('commerce.deliveryStatus')"
-        class="w-180px"
+        class="w-170px"
         clearable
         @clear="queryParams.deliveryStatus = ''"
+        @change="load(1)"
       >
         <el-option :label="t('commerce.shipped')" value="shipped" />
         <el-option :label="t('commerce.partialShipped')" value="partial" />
@@ -138,11 +136,15 @@ function getDiscountAllocations(row: any) {
       </el-select>
       <ElDatePicker
         v-model="queryParams.createdAtStart"
+        class="!w-170px"
         :placeholder="t('common.startDate')"
+        @change="load(1)"
       />
       <ElDatePicker
         v-model="queryParams.createdAtEnd"
+        class="!w-170px"
         :placeholder="t('common.endDate')"
+        @change="load(1)"
       />
       <ElInput
         v-model="queryParams.keyword"
@@ -153,7 +155,7 @@ function getDiscountAllocations(row: any) {
       <ElButton round type="primary" @click="load(1)">{{
         t("common.search")
       }}</ElButton>
-      <el-button round @click="exportExcel">
+      <el-button round class="!m-0" @click="exportExcel">
         <el-icon class="iconfont icon-share" />
         {{ t("common.exportExcel") }}
       </el-button>
@@ -173,6 +175,20 @@ function getDiscountAllocations(row: any) {
       <el-table-column :label="t('commerce.orderNumber')" width="150">
         <template #default="{ row }">
           <div>{{ row.id }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-for="item of commerceStore.settings.orderExtensionFields.filter(
+          (f) => f.isSummaryField
+        )"
+        :key="item.name"
+        :label="item.displayName || item.name"
+        :width="item.width || 120"
+      >
+        <template #default="{ row }">
+          <div>
+            {{row.extensionFields?.find((f: any) => f.key == item.name)?.value}}
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="t('common.totalAmount')" width="180">

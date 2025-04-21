@@ -74,8 +74,8 @@ export const updateTwoFAMethod = (method: string) => {
   });
 };
 
-export const getOptUri = () => {
-  return request.post("/user/getOptUri");
+export const getOptUri = (isNew: boolean) => {
+  return request.post("/user/getOptUri", null, { new: isNew });
 };
 
 export const isUniqueEmailName = (name: string) =>

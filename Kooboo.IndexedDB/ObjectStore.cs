@@ -1301,7 +1301,10 @@ namespace Kooboo.IndexedDB
 
             }
 
-            return Result;
+
+            Result.RemoveAll(o => o == null);
+
+            return Result; 
         }
 
 

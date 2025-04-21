@@ -12,7 +12,8 @@ import { useI18n } from "vue-i18n";
 const multilingualStore = useMultilingualStore();
 const props = defineProps<{
   url: string;
-  oldUrlPath?: string;
+  urls: Record<string, string>;
+  objId?: string;
   titles: Record<string, string>;
   metaBindings?: string[];
   urlParamsBindings?: string[];
@@ -22,11 +23,13 @@ const titleList = ref<KeyValue[]>(toList(props.titles));
 
 const emit = defineEmits<{
   (e: "update:url", value: string): void;
+  (e: "update:urls", value: Record<string, string>): void;
   (e: "update:titles", value: Record<string, string>): void;
   (e: "update:defaultTitle", value: string): void;
   (e: "update:published", value: boolean | string | number): void;
 }>();
 const { t } = useI18n();
+const form = ref();
 
 const onTitleChanged = () => {
   emit("update:titles", toObject(titleList.value) as Record<string, string>);
@@ -50,6 +53,32 @@ const getTitleLabel = (item: KeyValue) => {
   } else return t("common.contentTitle") + " - " + item.key;
 };
 
+const getUrlLabel = (lang: string) => {
+  if (lang === multilingualStore.default) {
+    return multilingualStore.selected.length > 1
+      ? "URL" + " - " + lang + " (" + t("common.default") + ")"
+      : "URL";
+  } else return "URL" + " - " + lang;
+};
+
+function getUrlValue(lang: string) {
+  if (lang === multilingualStore.default) {
+    return props.url;
+  } else {
+    return props.urls[lang] ?? "";
+  }
+}
+
+function changeUrlValue(lang: string, value: string) {
+  if (lang === multilingualStore.default) {
+    emit("update:url", value);
+  } else {
+    var newUrls = { ...props.urls };
+    newUrls[lang] = value;
+    emit("update:urls", newUrls);
+  }
+}
+
 watch(
   () => multilingualStore.selected,
   () => {
@@ -66,23 +95,36 @@ watch(
   },
   { immediate: true, deep: true }
 );
-const model = computed(() => ({ url: props.url, published: props.published }));
-const rules = computed(
-  () =>
-    ({
-      url: [
-        requiredRule(t("common.urlRequiredTips")),
-        model.value.url === props.oldUrlPath
-          ? ""
-          : isUniqueNameRule(
-              (name: string) => pageUrlIsUniqueName(name, props.oldUrlPath),
-              t("common.urlOccupied")
-            ),
-      ],
-    } as Rules)
-);
+const model = computed(() => {
+  var result = { url: props.url, published: props.published } as any;
+  for (const key in props.urls) {
+    result[`url${key}`] = props.urls[key];
+  }
+  return result;
+});
+const rules = computed(() => {
+  var result = {
+    url: [
+      requiredRule(t("common.urlRequiredTips")),
+      isUniqueNameRule(
+        (name: string) => pageUrlIsUniqueName(name, "", props.objId),
+        t("common.urlOccupied")
+      ),
+    ],
+  } as Rules;
 
-const form = ref<InstanceType<typeof ElForm>>();
+  for (const key in props.urls) {
+    result[`url${key}`] = [
+      isUniqueNameRule(
+        (name: string) => pageUrlIsUniqueName(name, "", props.objId),
+        t("common.urlOccupied")
+      ),
+    ] as any;
+  }
+
+  return result;
+});
+
 const changeUrl = (item: string) => {
   emit("update:url", model.value.url + "/" + item);
 };
@@ -94,6 +136,7 @@ const changeTitle = (item: string, metaBinding: string) => {
   titleList.value.filter((f) => f.key === item)[0].value += metaBinding;
   onTitleChanged();
 };
+
 defineExpose({ validate: () => form.value?.validate() });
 </script>
 
@@ -123,13 +166,19 @@ defineExpose({ validate: () => form.value?.validate() });
           >
         </div>
       </template>
-      <el-form-item label="URL" prop="url">
-        <el-input
-          :model-value="model.url"
-          data-cy="url"
-          @update:model-value="$emit('update:url', $event)"
-        />
-      </el-form-item>
+      <template v-for="(_, key) of multilingualStore.cultures" :key="key">
+        <el-form-item
+          v-show="multilingualStore.selected.some((s) => s === key)"
+          :label="getUrlLabel(key)"
+          :prop="key === multilingualStore.default ? 'url' : `url${key}`"
+        >
+          <el-input
+            :model-value="getUrlValue(key)"
+            @update:model-value="changeUrlValue(key, $event)"
+          />
+        </el-form-item>
+      </template>
+
       <div class="flex-wrap mb-8 -mt-4">
         <el-tag
           v-for="item in urlParamsBindings"

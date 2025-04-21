@@ -1,1 +1,0 @@
-import{b as s}from"./main.52487121.js";function a(e){return e?e.toLowerCase().split(" ").filter(r=>r).join("-"):""}function c(e,r){var o;try{if(!e)return r;let t=(o=s().header)==null?void 0:o.user.language;if(t=="zh"&&(t="cn"),!t)return r;const i=Object.keys(e).find(n=>n==null?void 0:n.includes(t.toLowerCase()));if(i)return e[i]}catch(t){}return r}export{c as s,a as t};

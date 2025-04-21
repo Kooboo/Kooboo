@@ -49,6 +49,8 @@ commerce:
   freeShipping: Free Shipping
   getByOrderAmountPercents: Points Based on Order Amount Percentage
   getFixedPoints: Fixed Points Per Order
+  hideAttributes: Hide Attributes
+  hideVariants: Hide Variants
   inactive: Inactive
   inStock: In stock
   insuranceAmount: Insurance
@@ -68,6 +70,7 @@ commerce:
   order: Order
   orderAmountOff: Discount on Order
   orderCount: Orders
+  orderExtensionFields: Order Extension Fields
   orderMaxRedeemTip: Up to {points} points can be used to deduct the order amount
   orderNote: Order note
   orderNumber: Order number
@@ -93,6 +96,7 @@ commerce:
   pointsDetail: Points detail
   product: Product
   productAmountOff: Discount on Product
+  productDigitalItemRequired: Product digital Item required
   productFields: Product Field Setting for Edit & List Pages
   productName: Product Name
   productStats: Product Report
@@ -163,7 +167,7 @@ common:
   addMenuItem: Add menu item
   addMigrationJob: Add Migration Job
   addNewCategory: Add category
-  addOtpCodeTip: Use the Authenticator app Scan the QR code
+  addOtpCodeTip: Scan the QR code below with your authenticator app
   addProduct: Add product
   addProductSuccess: Add product success
   addProductType: Add type
@@ -211,6 +215,8 @@ common:
   AnInvitationEmailWillBeSentToAddedParticipants: New participants will receive an invitation email
   anInvitationEmailWillBeSentToTheParticipants: Invitation Emails will be sent to the participants
   anUpdatedEmailWillBeSentToTheParticipants: Participants will receive updated emails.
+  apiMarket: API Market
+  appMarket: APP Market
   areYouSureToSetThisAddressAsTheDefaultEmailAddress: Are you sure you want to set
     this address as the default sender email address?
   areYouSureYouWantToDisableTheDataCenter: Are you sure you want to disable this data center?
@@ -229,6 +235,8 @@ common:
   authentication: Authentication
   authenticator: Authenticator
   authenticatorApp: Authenticator app
+  authenticatorAppTip: Use an authentication app or browser extension to get
+    two-factor authentication codes when prompted.
   author: Author
   authorizationCodeHasGenerated: authorization code has been generated
   authorizationCodesTips: Only the authorization code for the last one is valid.
@@ -277,6 +285,7 @@ common:
   bindPhone: Bind phone number
   blankSite: Blank site
   blindCarbonCopy: BCC
+  blockingSeo: Blocking SEO
   bold: Bold
   boolean: Boolean
   bot: Bot
@@ -384,6 +393,7 @@ common:
   columnIsReservedWord: "{columnName} is a reserved word and cannot be used"
   columnName: Column Name
   columnSettings: Column settings
+  columnWidth: Table Column Width
   combine: Combine
   commerce: Commerce
   commerceSettings: Commerce settings
@@ -463,6 +473,7 @@ common:
   createAddress: Create address
   created: Created
   createdAt: Created At
+  createDomainRenewOrder: Create domain renew order
   createEmbedded: Create embedded
   createForm: Create a form
   createItemNow: Create item
@@ -513,6 +524,7 @@ common:
   dataCenter: Data center
   dataMethodSetting: Data Method Setting
   dataTable: Data table
+  dataType: Data Type
   datatypeExistsTips: The content type already exists
   date: Date
   dateRange: Date range
@@ -574,6 +586,7 @@ common:
   devPassword: Development Password
   difference: Differences
   digitalItems: Digital items
+  digitalItemsRequired: Digital items required
   digitalProduct: Digital product
   digitalProductTip: Ensure digital shipping is configured for digital products.
   digitalShipping: Digital shipping
@@ -641,6 +654,7 @@ common:
   earnPointOnLoginRules: Points Earned on Login
   earnPointOnPlaceOrderRules: Points Earned on Order
   edit: Edit
+  editable: Editable
   editAgain: Edit again
   editCdn: Edit CDN
   editCode: Edit code
@@ -678,8 +692,12 @@ common:
   emailAreEnabledForDomainsThatUseOurDNSServer: Email are enabled for domains that use our DNS Server.
   emailBody: Email Body
   emailCannotBeTheSameAsTheCurrentBound: Email cannot be the same as the current address
+  emailCode: Email Code
+  emailCodeTip: Receive a verification code via your email each time you log in
   emailHasSent: Email has been sent
   emailMessage: Email message
+  emailMessageTip: Get one-time codes sent to your email address to complete
+    authentication requests.
   emailMigrationTips: Migrate only inbox, sent, and custom folder messages; Some
     mailboxes only migrate messages within 30 days, depending on the IMAP
     collection range, which can usually be changed on the mailbox's Settings
@@ -753,9 +771,11 @@ common:
   expandSelection: Expand the selection
   expirationDate: Expiration date
   expired: Expired
+  expiredAt: Expired At
   expireDate: Expire date
   expiresIn: Expires in
   export: Export
+  exportable: Exportable
   exportAll: Export all
   exportChanges: Export changes
   exportChangesTip: The selected log and next logs will be exported
@@ -803,6 +823,7 @@ common:
   fileSizeLessTips: File size must be less than 10KB
   fileTypes: File types
   fileTypesNotAllowed: "The following files not match the allowed types {types}:"
+  filterable: Filterable
   finish: Finish
   firstName: First name
   foldAll: Fold All
@@ -849,6 +870,7 @@ common:
   general: General
   generate: Generate
   generateAuthorizationCode: Generate authorization code
+  generateNewQRCode: Generate new QR code
   generateType: Type of Generation
   globalImageList: Global image list
   globalLinkList: Global link list
@@ -1045,6 +1067,7 @@ common:
   links: Links
   list: List
   listView: List view
+  loading: Loading...
   loadMore: Load more
   localChanges: Local changes
   localLastId: Local last ID
@@ -1197,6 +1220,7 @@ common:
   newWildcardAddress: New wildcard address
   newWindow: New window
   no: NO
+  no2FA: No 2FA
   noAccessPermission: Not authorized to access
   noCategory: No category
   noConfigurationItem: No configuration item
@@ -1207,6 +1231,7 @@ common:
   noMatchingWebsite: No matched website
   noMoreData: No more data
   none: None
+  none2FATip: Skip two-factor authentication for now
   nonMembership: Non-Membership
   noPermission: No permission
   noProductInCart: Some items have changed. Please select other items
@@ -1295,6 +1320,7 @@ common:
   participants: Participants
   participantShouldNotBelongToThisAccount: Participant should not be your own email address
   partner: Partner
+  partnerMembershipTip: The current user is a partner and enjoys the highest membership privileges.
   pass: Pass
   password: Password
   passwordChanged: Password updated
@@ -1318,6 +1344,8 @@ common:
   phone: Phone
   phoneLogin: Phone login
   phoneMessage: SMS message
+  phoneMessageTip: Get one-time codes sent to your phone via SMS to complete
+    authentication requests.
   phoneNumber: Phone number
   phoneNumberCannotBeTheSameAsTheCurrentBound: Phone number cannot be the same as the current number
   phoneNumberUpdated: Phone number updated
@@ -1353,7 +1381,7 @@ common:
   positionNameAndFrom: "Position: {name} (from {from})"
   postalCode: Postal code
   postalDistrict: Postal code
-  preferred2FAMethod: Preferred 2FA method
+  preferred2FAMethod: Two-Factor Authentication Setup
   preview: Preview
   previewUrl: Preview Url
   price: Price
@@ -1510,6 +1538,7 @@ common:
   rules: Rules
   rulesCount: Rules Count
   run: Run
+  running: Running
   sales: Sales
   salesInformation: Sales Information
   saleStats: Sales Reports
@@ -1517,6 +1546,7 @@ common:
   saturday: Saturday
   save: Save
   saveAndCreate: Save & Create
+  saveAndPreview: Save & Preview
   saveAndReturn: Save & Return
   saveDraft: Save draft
   saveSuccess: Save success
@@ -1590,12 +1620,14 @@ common:
   Sent: Sent
   seoName: SEO Name
   seoNameExistsTips: SEO name exists
+  seoNameInvalidTip: SEO name cannot contain special characters
   seoNameTip: Static URL that improves product visibility in search engines
   server: Server
   serverAddSuccess: Server add success!
   serverUrl: Server URL
   serverUrlInvalid: Server url invalid
   serverUrlRequiredTips: Server address required
+  service: Service
   setAsCover: Set as cover
   setAsDefault: Set as default
   setDefaultEmailFirst: Go to Email Address page and set an default Email address first.
@@ -1651,6 +1683,8 @@ common:
   siteUnverifiedUser: Site unverified user
   siteUser: Site Users
   size: Size
+  smsCode: SMS Code
+  smsCodeTip: Receive a verification code via your phone each time you log in
   smtpSetting: SMTP Setting
   sortable: Sortable
   sortField: Sort field
@@ -1685,6 +1719,7 @@ common:
   stop: Stop
   storage: Storage
   street: Street
+  string: String
   stringLength: String length
   style: Style
   styleGroup: Style group
@@ -1789,6 +1824,7 @@ common:
   topReference: Top Reference
   topReferer: Top Referers
   topUp: Top up
+  topup: Topup
   topupBandwidth: Top up bandwidth
   total: Total
   totalAmount: Total amount
@@ -1801,6 +1837,10 @@ common:
   traceId: Trace ID
   trackingNumberMatching: Tracking number matching
   trackingNumberMatchingTip: Used to automatically match the shipping carrier on delivery
+  transfer: Transfer
+  transferCode: Transfer code
+  transferDomain: Transfer Domain
+  transferDomainTip: Please provide the code to new domain registrar to transfer this domain out.
   transferPage: TransferPage
   transferTask: TransferTask
   trash: Trash
@@ -1847,6 +1887,8 @@ common:
   urlRequiredTips: URL required
   urls: URLs
   usage: Usage
+  useAuthenticatorApp: Use Authenticator App
+  useAuthenticatorAppTip: Set up a  TOTP app like Google Authenticator or Authy for secure login codes
   useCommaArray: Use Comma Array
   usedBy: Used by
   useFor: Use for
@@ -1870,6 +1912,7 @@ common:
   userOptions: User options
   userRequired: User required
   using: Using
+  utcTime: UTC Time
   validation: Validation
   validationFailedMessage: Error message when validation failed
   value: Value
@@ -1879,6 +1922,8 @@ common:
   valueRequiredTips: Value required
   vat: VAT
   vatAndFees: VAT and fees
+  verification: Verification
+  verificationCode: Verification code
   verificationCodeHasSent: Verification code has been sent
   verifyCode: Verify code
   verifyCodeInvalid: Verification code invalid
@@ -1913,7 +1958,7 @@ common:
   week: Week
   weeks: weeks
   weight: Weight
-  weightUnit: Weight unit
+  weightUnit: Weight Unit
   when: When
   whiteListPath: White list path
   width: Width
@@ -1986,6 +2031,7 @@ mail:
   to: To
 order:
   checkout: Checkout
+  currentPlan: Current Plan
   IsDelivered: Delivery
   IsPaid: Payment Status
   LineTitle: Title

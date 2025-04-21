@@ -368,21 +368,27 @@ function handleShare() {
       if (!shareValidator.value?.isSecure) {
         await showConfirm(t("common.shareSiteConnectionStringWarning"));
       }
-      await share({
+
+      const data = {
         siteId: props.site.siteId,
         typeName: model.typeName,
         siteName: model.siteName,
         coverImage: model.coverImage,
         screenshot:
           model.screenshot === emptyScreenshot ? "" : model.screenshot,
-        zhSiteName: model.zhSiteName,
-        zhCoverImage: model.zhCoverImage,
-        zhScreenshot:
-          model.zhScreenshot === emptyScreenshot ? "" : model.zhScreenshot,
         shareMethod: model.shareMethod,
         templateId: model.templateId,
         updateItem: model.updateItem,
-      });
+      } as any;
+
+      if (showChinese.value) {
+        data.zhSiteName = model.zhSiteName;
+        data.zhCoverImage = model.zhCoverImage;
+        data.zhScreenshot =
+          model.zhScreenshot === emptyScreenshot ? "" : model.zhScreenshot;
+      }
+
+      await share(data);
       // TODO: 成功后跳转到 模板站点页面
       handleClose();
     }
@@ -415,10 +421,12 @@ input[type="file"]::-webkit-file-upload-button {
   /* chromes and blink button */
   cursor: pointer;
 }
+
 :deep(.el-radio__input.is-checked .el-radio__inner) {
   border-color: #409eff;
   background: #fff;
 }
+
 :deep(.el-radio__inner::after) {
   width: 7px;
   height: 7px;

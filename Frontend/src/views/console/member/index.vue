@@ -1,18 +1,29 @@
 <script setup lang="ts">
-import { getMemberOptions, purchaseMemberShip } from "@/api/member";
+import {
+  getMemberOptions,
+  purchaseMemberShip,
+  getMembership,
+} from "@/api/member";
 import type { MemberOption } from "@/api/member/types";
-import { getUser } from "@/api/user";
-import { ref } from "vue";
+// import { getUser } from "@/api/user";
+import { useTime } from "@/hooks/use-date";
+import { useAppStore } from "@/store/app";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+
 const { t } = useI18n();
 const router = useRouter();
 const memberOptionList = ref<MemberOption[]>();
+const currentMembership = ref<any>();
+const appStore = useAppStore();
 
 const load = async () => {
-  await getUser();
+  // await getUser();
   memberOptionList.value = await getMemberOptions();
 };
+
+getMembership().then((rsp) => (currentMembership.value = rsp));
 
 const purchase = async (servicelevel: number) => {
   const orderId = await purchaseMemberShip(servicelevel);
@@ -24,10 +35,48 @@ const purchase = async (servicelevel: number) => {
   });
 };
 load();
+
+const currentOption = computed(() => {
+  return memberOptionList.value?.find(
+    (m) => m.serviceLevel == currentMembership.value?.serviceLevel
+  );
+});
 </script>
 
 <template>
   <div class="p-24">
+    <div
+      v-if="
+        appStore.currentOrg &&
+        (appStore.currentOrg.isPartner || appStore.currentOrg.serviceLevel > 4)
+      "
+      class="w-full bg-[#E8F4FD] dark:bg-666 dark:text-fff p-16 border-1 border-solid border-blue dark:border-none text-s tracking-[1px] break-all mb-12 flex"
+    >
+      {{ t("common.partnerMembershipTip") }}
+    </div>
+
+    <div
+      v-else-if="currentMembership && currentOption"
+      class="w-full bg-[#E8F4FD] dark:bg-666 dark:text-fff p-16 border-1 border-solid border-blue dark:border-none text-s tracking-[1px] break-all mb-12 flex"
+    >
+      <div class="flex-1">
+        <div>
+          {{ t("order.currentPlan") }}:
+          <span class="font-bold">{{ currentOption.title }}</span>
+        </div>
+        <div>
+          {{ t("common.expiredAt") }}:
+          {{ useTime(currentMembership.endDate) }}
+        </div>
+      </div>
+      <el-button
+        round
+        type="primary"
+        @click="purchase(currentOption.serviceLevel)"
+        >{{ t("common.renew") }}</el-button
+      >
+    </div>
+
     <div class="flex space-x-32 px-64">
       <div
         v-for="item in memberOptionList"

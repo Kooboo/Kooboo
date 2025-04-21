@@ -66,6 +66,11 @@ namespace Kooboo.Render.Components
         {
             result.Add(new RenderResult() { Value = Render(context) });
         }
+
+        public List<IRenderTask> GetSubTasks()
+        {
+            return null;
+        }
     }
 
 

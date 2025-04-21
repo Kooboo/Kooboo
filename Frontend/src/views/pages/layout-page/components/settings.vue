@@ -13,7 +13,6 @@ import { useSiteStore } from "@/store/site";
 
 const props = defineProps<{
   model: PostPage;
-  oldUrlPath?: string;
   layout: string;
   sources?: {
     id: string;
@@ -65,9 +64,10 @@ onBeforeMount(() => {
       <Basic
         ref="basicForm"
         v-model:url="model.urlPath"
+        v-model:urls="model.urlPaths"
         v-model:titles="model.contentTitle"
         v-model:published="model.published"
-        :old-url-path="oldUrlPath"
+        :obj-id="model.id"
         :meta-bindings="metaBindings"
         :url-params-bindings="urlParamsBindings"
       />

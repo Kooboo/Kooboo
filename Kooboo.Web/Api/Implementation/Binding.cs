@@ -6,6 +6,7 @@ using Kooboo.Data;
 using Kooboo.Data.Config;
 using Kooboo.Data.Models;
 using Kooboo.Data.Permission;
+using Kooboo.Data.SSL;
 using Kooboo.Web.ViewModel;
 
 namespace Kooboo.Web.Api.Implementation
@@ -173,6 +174,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 BindingViewModel model = new BindingViewModel(item);
                 model.EnableSsl = HasSsl(model.FullName);
+                model.SslError = SslService.GetError(model.FullName);
                 result.Add(model);
             }
 
@@ -232,9 +234,9 @@ namespace Kooboo.Web.Api.Implementation
         {
             string Subdomain = call.GetValue("Subdomain");
 
-            string fullname = CombineDomain(rootDomain, Subdomain);
+            string fullName = ConfigHelper.ToFullDomain(rootDomain, Subdomain);
 
-            var ok = Kooboo.Data.SSL.SslService.EnsureCheck(fullname);
+            var ok = Kooboo.Data.SSL.SslService.EnsureCheck(fullName);
             if (ok)
             {
                 return true;
@@ -249,44 +251,22 @@ namespace Kooboo.Web.Api.Implementation
         {
             string Subdomain = call.GetValue("Subdomain");
 
-            string fullname = CombineDomain(rootDomain, Subdomain);
+            string fullName = ConfigHelper.ToFullDomain(rootDomain, Subdomain);
 
-            Guid Orgid = default(Guid);
+            Guid OrgId = default(Guid);
 
             if (call.Context.WebSite != null)
             {
-                Orgid = call.Context.WebSite.OrganizationId;
+                OrgId = call.Context.WebSite.OrganizationId;
             }
             else
             {
                 if (call.Context.User != null)
                 {
-                    Orgid = call.Context.User.CurrentOrgId;
+                    OrgId = call.Context.User.CurrentOrgId;
                 }
             }
-            Kooboo.Data.SSL.SslService.SetSsl(fullname, Orgid);
-        }
-
-        private string CombineDomain(string rootDoamin, string subDomain)
-        {
-            if (rootDoamin == null)
-            {
-                return null;
-            }
-
-            if (rootDoamin.StartsWith("."))
-            {
-                rootDoamin = rootDoamin.Substring(1);
-            }
-
-            if (string.IsNullOrWhiteSpace(subDomain))
-            {
-                return rootDoamin;
-            }
-            else
-            {
-                return subDomain + "." + rootDoamin;
-            }
+            Data.SSL.SslService.SetSsl(fullName, OrgId, true);
         }
 
         public List<SiteBindingViewModel> SiteBinding(ApiCall call)
@@ -406,6 +386,8 @@ namespace Kooboo.Web.Api.Implementation
             public int Port { get; set; } = 0;
 
             public bool DefaultPortBinding { get; set; }
+
+            public string SslError { get; set; }
         }
     }
 }

@@ -52,7 +52,12 @@ function getDefaultQuery(item: Menu) {
   <template v-if="item.items.length && isShowSubMenu(item)">
     <el-sub-menu :index="item.id">
       <template #title>
-        <el-icon class="iconfont" :class="item.icon" />
+        <img
+          v-if="typeof item.icon == 'string' && item.icon.startsWith('/')"
+          class="w-18px h-18px mr-8"
+          :src="item.icon as any"
+        />
+        <el-icon v-else class="iconfont" :class="item.icon" />
         <span>{{ item.display }} </span>
       </template>
       <template v-for="i of item.items" :key="i.id">

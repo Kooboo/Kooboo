@@ -5,6 +5,7 @@ using Kooboo.Api;
 using Kooboo.Data.Models;
 using Kooboo.Data.Permission;
 using Kooboo.Data.Storage;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
@@ -95,9 +96,17 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Permission(Feature.VISITOR_LOG)]
-        public IEnumerable<string> WeekNames(ApiCall call)
+        public List<KeyValuePair<string, string>> WeekNames(ApiCall call)
         {
-            return call.WebSite.SiteDb().VisitorLogWeekNames();
+            var weeks = call.WebSite.SiteDb().VisitorLogWeekNames();
+            var result = new List<KeyValuePair<string, string>>();
+            foreach (var item in weeks)
+            {
+                var (year, week) = DateTimeHelper.ParseYearWeek(item);
+                var (start, end) = DateTimeHelper.GetDateRangeFromWeek(year, week);
+                result.Add(new KeyValuePair<string, string>(item, $"{start:yyyy-MM-dd}~{end:yyyy-MM-dd}"));
+            }
+            return result;
         }
 
         [Permission(Feature.VISITOR_LOG)]

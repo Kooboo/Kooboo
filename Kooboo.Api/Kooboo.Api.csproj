@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Kooboo.Data" Version="2.1.9157.18496" />
+	  <PackageReference Include="Kooboo.Data" Version="2.1.9242.28335" />
 	</ItemGroup>
 
 </Project>

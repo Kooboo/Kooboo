@@ -8,6 +8,7 @@ using Kooboo.Data.Permission;
 using Kooboo.Sites.Commerce.Entities;
 using Kooboo.Sites.Commerce.Services;
 using Kooboo.Sites.Commerce.ViewModels;
+using KScript;
 
 namespace Kooboo.Web.Api.Implementation.Commerce
 {
@@ -131,15 +132,23 @@ namespace Kooboo.Web.Api.Implementation.Commerce
         }
 
         [Permission(Feature.COMMERCE_ORDERS, Action = Data.Permission.Action.EDIT)]
-        public void UpdateKeyValue(string id, string key, string value, ApiCall apiCall)
+        public void UpdateKeyValue(string id, string key, ApiCall apiCall)
         {
+            var value = apiCall.GetValue("value") ?? string.Empty;
             var commerce = GetSiteCommerce(apiCall);
             var order = commerce.Order.Get(g => g.Id == id);
             if (order != null)
             {
                 var exist = order.ExtensionFields.FirstOrDefault(f => f.Key == key);
-                if (exist == null) return;
-                exist.Value = value;
+                if (exist == null)
+                {
+                    order.ExtensionFields = [.. order.ExtensionFields, new KeyValue(key, value)];
+                }
+                else
+                {
+                    exist.Value = value;
+                }
+
                 commerce.Order.AddOrUpdate(order);
             }
         }

@@ -38,8 +38,8 @@ namespace Kooboo.Web.Menus.ObjectMenu
             {
                 if (item is Kooboo.Api.ApiMiddleware)
                 {
-                    var apimiddle = item as Kooboo.Api.ApiMiddleware;
-                    return apimiddle.ApiProvider;
+                    var apiMiddle = item as Kooboo.Api.ApiMiddleware;
+                    return apiMiddle.ApiProvider;
                 }
             }
             return null;

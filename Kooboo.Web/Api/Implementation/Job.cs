@@ -1,6 +1,7 @@
 ﻿//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System.Linq;
+using System.Threading.Tasks;
 using Kooboo.Api;
 using Kooboo.Attributes;
 using Kooboo.Data;
@@ -43,23 +44,50 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Permission(Feature.JOB, Action = Data.Permission.Action.VIEW)]
-        public IEnumerable<SiteJob> List(ApiCall call)
+        public IEnumerable<object> List(ApiCall call)
         {
             var siteDb = call.Context.WebSite.SiteDb();
-            return siteDb.Job.All().OrderByDescending(it => it.CreationDate);
+            var result = new List<object>();
+            var jobService = WebHostServer.Services.GetHostedService<JobService>();
+
+            foreach (var item in siteDb.Job.All().OrderByDescending(it => it.CreationDate))
+            {
+                var record = jobService.GetJob(call.Context.WebSite.Id, item.Id);
+                result.Add(new
+                {
+                    item.Id,
+                    item.Active,
+                    item.Code,
+                    item.ConstType,
+                    item.CreationDate,
+                    item.Finish,
+                    item.Frequence,
+                    item.FrequenceUnit,
+                    item.LastModified,
+                    item.Name,
+                    item.Online,
+                    item.Repeat,
+                    item.StartTime,
+                    Running = record?.IsRun ?? false
+                });
+            }
+
+            return result;
         }
 
         [Permission(Feature.JOB, Action = Data.Permission.Action.EDIT)]
         public bool Run(Guid id, ApiCall call)
         {
-
             var sitedb = call.WebSite.SiteDb();
-
             var job = sitedb.Job.Get(id);
             if (job == null) throw new Exception("Job not found");
             var jobService = WebHostServer.Services.GetHostedService<JobService>();
-            var jobRecord = new JobService.JobRecord(call.WebSite.Id, DateTime.Now, job);
-            jobService.ExecuteJob(call.WebSite, jobRecord, $"Manual trigger from {call.Context.User.UserName}");
+
+            Task.Run(() =>
+            {
+                jobService.ExecuteJob(call.WebSite, job.Id, $"Manual trigger from {call.Context.User.UserName}");
+            });
+
             return true;
         }
 

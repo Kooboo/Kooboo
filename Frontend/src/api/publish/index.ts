@@ -76,7 +76,7 @@ export const getRemoteSites = (remoteUrl: string, orgId: string) =>
 
 export const getRemoteDomains = (serverUrl: string, orgId: string) =>
   request
-    .post<{ id: string; domainName: string }[]>(
+    .post<{ id: string; domainName: string; sudDomainUseDash: boolean }[]>(
       useUrlSiteId("UserPublish/RemoteDomains"),
       {
         serverUrl,
@@ -84,7 +84,11 @@ export const getRemoteDomains = (serverUrl: string, orgId: string) =>
       }
     )
     .then((rsp) =>
-      rsp.map<KeyValue>((m) => ({ key: m.id, value: m.domainName }))
+      rsp.map<KeyValue>((m) => ({
+        key: m.id,
+        value: m.domainName,
+        sudDomainUseDash: m.sudDomainUseDash,
+      }))
     );
 
 export const getPushItems = (params: Record<string, unknown>) =>

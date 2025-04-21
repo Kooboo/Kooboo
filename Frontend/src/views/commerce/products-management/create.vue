@@ -20,6 +20,7 @@ import { createNewVariant, useVariants } from "./product-variant";
 import CustomData from "../custom-data/index.vue";
 import { displayFormError } from "@/utils/common";
 import { useProductFields } from "../useFields";
+import { errorMessage } from "@/components/basic/message";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -99,11 +100,18 @@ async function save() {
   try {
     await basicInfo.value.form.validate();
     await customData.value?.form?.validate();
+    if (
+      commerceStore.settings.productDigitalItemRequired &&
+      model.value.isDigital &&
+      variants.list.value.some((s) => s.digitalItems.length == 0)
+    ) {
+      errorMessage(t("common.digitalItemsRequired"));
+      throw Error("digital items required");
+    }
   } catch (error) {
     displayFormError();
     throw error;
   }
-
   const postData = { ...model.value };
   postData.attributes = attributes.value.map((m) => ({
     key: m.key,
@@ -139,7 +147,10 @@ watch(
   />
   <div class="px-24 pt-0 pb-84px space-y-12">
     <BasicInfo ref="basicInfo" :model="model" :fields="fields">
-      <ElFormItem :label="t('common.attributes')">
+      <ElFormItem
+        v-if="!commerceStore.settings.hideAttributes"
+        :label="t('common.attributes')"
+      >
         <KeyValueEditor
           v-model="attributes"
           :key-input-attributes="{ placeholder: t('common.attributeSamples') }"
@@ -155,7 +166,10 @@ watch(
     />
     <div class="bg-fff dark:bg-[#252526] px-24 py-16 rounded-normal">
       <ElForm label-position="top">
-        <ElFormItem :label="t('commerce.variantOptions')">
+        <ElFormItem
+          v-if="!commerceStore.settings.hideVariants"
+          :label="t('commerce.variantOptions')"
+        >
           <OptionGroupEditor
             :options="variants.options.value"
             :variants="variants.list.value"

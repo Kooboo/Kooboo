@@ -32,7 +32,7 @@ onUnmounted(() => {
     placement="top"
     popper-class="max-w-504px"
   >
-    <div ref="container" class="truncate">
+    <div ref="container" class="truncate" v-bind="$attrs">
       <slot />
     </div>
   </el-tooltip>

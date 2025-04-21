@@ -71,7 +71,15 @@ export function combineUrl(left: string, right: string) {
 }
 
 export function openInNewTab(url: string) {
-  window.open(url, "_blank");
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.target = "_blank";
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  anchor.click();
+  setTimeout(() => {
+    document.body.removeChild(anchor);
+  }, 3000);
 }
 
 export function openInAnchorTag(url: string, filename?: string) {
@@ -132,4 +140,24 @@ export function tryGetExtension(url: string) {
   const index = url.lastIndexOf(".");
   if (index < 1) return "";
   return url.substring(index);
+}
+
+export function praseBracket(url: string, paras: string[]) {
+  if (url == null) {
+    return;
+  }
+
+  const start = url.indexOf("{");
+  if (start == -1) {
+    return;
+  }
+
+  const end = url.indexOf("}", start);
+
+  if (end > start && start > -1) {
+    const key = url.substring(start + 1, end);
+    const rest = url.substring(end + 1);
+    paras.push(key);
+    praseBracket(rest, paras);
+  }
 }

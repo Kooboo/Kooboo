@@ -43,13 +43,21 @@ const rules = {
 
 function twoFaOK(value: string) {
   model.code = value;
-  onLogin();
+  return onLogin();
 }
 
 const onLogin = async () => {
   await form.value.validate();
   try {
     await login(model);
+    if (getQueryString("vscode-require-auth")) {
+      vscodeLogin();
+    } else {
+      router.replace({
+        name: "home",
+      });
+    }
+    return true;
   } catch (error: any) {
     model.code = "";
     if (!error.isAxiosError) return;
@@ -66,22 +74,16 @@ const onLogin = async () => {
         }
 
         showTwoFAVerifyDialog.value = true;
+        return;
       } else if (message == "VerifyCodeError") {
         errorMessage(t("common.verifyCodeInvalid"));
+      } else {
+        requestError.showMessage(error);
       }
-      requestError.showMessage(error);
     } else {
       requestError.showMessage(error);
     }
-    return;
-  }
-
-  if (getQueryString("vscode-require-auth")) {
-    vscodeLogin();
-  } else {
-    router.replace({
-      name: "home",
-    });
+    return false;
   }
 };
 </script>

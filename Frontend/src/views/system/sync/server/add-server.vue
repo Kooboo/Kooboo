@@ -73,7 +73,7 @@ const loadServerHost = async () => {
   if (!model.value.orgId) return;
   const org = props.organizations.find((f) => f.id == model.value.orgId)!;
   serverHosts.value = (await getServerHosts(model.value.orgId)).map((m) => {
-    m.host = `http://${org.name}.${m.host}`;
+    m.host = `http://${m.orgFullDomain}`;
     return m;
   });
 };

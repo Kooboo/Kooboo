@@ -147,6 +147,8 @@ namespace Kooboo.Web.ViewModel
         public List<EmbeddedContentViewModel> Embedded { get; set; }
 
         public Guid FolderId { get; set; }
+        public List<string> FieldsOrder { get; set; }
+        public string PreviewUrl { get; set; }
     }
 
     public class CategoryOptionViewModel

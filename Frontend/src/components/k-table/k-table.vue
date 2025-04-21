@@ -243,8 +243,11 @@ function setSortable() {
       dataTransfer.setData("Text", "");
     },
     onEnd(evt) {
-      const targetRow = props.data?.splice(evt.oldIndex as number, 1)[0];
-      props.data?.splice(evt.newIndex as number, 0, targetRow);
+      const targetRow = props.data?.splice(
+        evt.oldDraggableIndex as number,
+        1
+      )[0];
+      props.data?.splice(evt.newDraggableIndex as number, 0, targetRow);
       emit("sorted", props.data ?? [], evt);
     },
   };

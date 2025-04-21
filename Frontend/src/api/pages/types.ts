@@ -56,6 +56,7 @@ export interface PostPage {
   previewUrl?: string;
   contentTitle: Record<string, string>;
   urlPath: string;
+  urlPaths: Record<string, string>;
   metas: Meta[];
   parameters: Record<string, string>;
   body: string;

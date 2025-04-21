@@ -106,27 +106,24 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 const onSave = async () => {
   if (!model.value) return;
-  await Promise.all([
-    form.value.validate(),
-    settingsForm.value?.validate(),
-  ]).then(async () => {
-    const isNewPage = model.value!.id === emptyGuid;
-    await pageStore.updatePage(model.value!);
-    ElMessage.success(t("common.saveSuccess"));
-    oldUrlPath.value = model.value!.urlPath ?? "";
-    saveTip.init(model.value);
-    if (isNewPage) {
-      router.replace(
-        useRouteSiteId({
-          name: "layout-page-setting",
-          query: {
-            id: model.value!.id,
-            layoutId: getQueryString("layoutId")!,
-          },
-        })
-      );
-    }
-  });
+  await form.value.validate();
+  await settingsForm.value?.validate();
+  const isNewPage = model.value!.id === emptyGuid;
+  await pageStore.updatePage(model.value!);
+  ElMessage.success(t("common.saveSuccess"));
+  oldUrlPath.value = model.value!.urlPath ?? "";
+  saveTip.init(model.value);
+  if (isNewPage) {
+    router.replace(
+      useRouteSiteId({
+        name: "layout-page-setting",
+        query: {
+          id: model.value!.id,
+          layoutId: getQueryString("layoutId")!,
+        },
+      })
+    );
+  }
 };
 const saveAndReturn = async () => {
   await onSave();

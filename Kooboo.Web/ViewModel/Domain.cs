@@ -27,6 +27,7 @@ namespace Kooboo.Web.ViewModel
         public string DataCenterName { get; set; }
 
         public string NameServer { get; set; }
+        public string Source { get; set; }
     }
 
     public class DomainBindingViewModel

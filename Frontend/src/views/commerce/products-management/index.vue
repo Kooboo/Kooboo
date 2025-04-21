@@ -80,6 +80,10 @@ const customAttrs = {
 
 const productColumns = computed<SummaryColumn[]>(() => {
   let summaryColumns = fields.value.filter((it) => it.isSummaryField);
+  if (commerceStore.settings.hideVariants) {
+    console.log(summaryColumns);
+    summaryColumns = summaryColumns.filter((f) => f.name !== "VariantsCount");
+  }
   if (!summaryColumns.length) {
     summaryColumns = fields.value.slice(0, 2);
   }

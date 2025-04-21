@@ -131,6 +131,8 @@ export type EditContentResponse = {
   categories: ContentCategory[];
   embedded: ContentEmbedded[];
   properties: ContentFieldItem[];
+  fieldsOrder: string[];
+  previewUrl?: string;
 };
 export const getEditContent = (params: {
   folderId: string;

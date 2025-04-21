@@ -86,6 +86,7 @@ const onBack = () => {
 };
 
 const onSave = async () => {
+  await form.value?.validate();
   if (!model.value) return;
   model.value.type = "Layout";
   await pageStore.updatePage(model.value, record.save());

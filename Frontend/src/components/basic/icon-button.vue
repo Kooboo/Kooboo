@@ -17,7 +17,7 @@ defineProps<{
 </script>
 
 <template>
-  <el-tooltip v-if="circle" placement="top" :content="tip">
+  <el-tooltip v-if="circle" placement="top" :content="tip" :disabled="!tip">
     <el-button
       v-hasPermission="{
         feature: permission?.feature,
@@ -49,7 +49,7 @@ defineProps<{
         />
       </template>
     </el-popconfirm>
-    <el-tooltip v-else placement="top" :content="tip">
+    <el-tooltip v-else placement="top" :content="tip" :disabled="!tip">
       <el-icon
         v-hasPermission="{
           feature: permission?.feature,

@@ -163,6 +163,11 @@ namespace Kooboo.Sites.ScriptModules.Render.View
         {
             result.Add(new RenderResult() { Value = Render(context) });
         }
+
+        public List<IRenderTask> GetSubTasks()
+        {
+            return null;
+        }
     }
 
 

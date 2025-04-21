@@ -35,6 +35,9 @@ namespace Kooboo.Web.ViewModel
 
         public List<CategoryFolder> Category { get; set; }
         public bool IsContent { get; set; }
+        public List<string> FieldsOrder { get; set; }
+        public string Group { get; set; }
+        public string PreviewUrl { get; set; }
     }
 
     public class ContentFolderViewModel : Kooboo.Sites.Contents.Models.ContentFolder

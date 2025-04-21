@@ -1,3 +1,4 @@
+import type { KeyValue } from "@/global/types";
 import { useUrlSiteId } from "@/hooks/use-site-id";
 import request from "@/utils/request";
 
@@ -19,5 +20,5 @@ export const query = (data: unknown) =>
   request.post<CodeLogResponse>(useUrlSiteId("CodeLog/query"), data);
 
 export const getWeeks = () => {
-  return request.get<string[]>(useUrlSiteId("CodeLog/WeekNames"));
+  return request.get<KeyValue[]>(useUrlSiteId("CodeLog/WeekNames"));
 };

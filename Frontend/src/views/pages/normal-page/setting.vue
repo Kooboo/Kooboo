@@ -22,7 +22,6 @@ const { t } = useI18n();
 const router = useRouter();
 const id = getQueryString("id");
 const siteStore = useSiteStore();
-const oldUrlPath = ref();
 const saveTip = useSaveTip((key, value) => {
   if (key === "el" && value) {
     return undefined;
@@ -41,16 +40,14 @@ watch(
     nextTick(() => {
       saveTip.init([model.value, styles.value, scripts.value]);
     });
-    oldUrlPath.value = model.value?.urlPath;
   }
 );
-const basicForm = ref();
+const sidebar = ref();
 const onSave = async () => {
-  await basicForm.value?.validate();
+  await sidebar.value?.validate();
   await save();
   ElMessage.success(t("common.saveSuccess"));
   saveTip.init([model.value, styles.value, scripts.value]);
-  oldUrlPath.value = model.value?.urlPath;
 };
 
 const onBack = () => {
@@ -122,7 +119,7 @@ useScriptStore().loadAll();
             <p class="flex-1 text-m">{{ t("common.setting") }}</p>
             <MultilingualSelector />
           </div>
-          <PageSidebar :old-url-path="oldUrlPath" />
+          <PageSidebar ref="sidebar" />
         </div>
       </el-scrollbar>
     </div>

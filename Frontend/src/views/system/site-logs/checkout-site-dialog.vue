@@ -80,6 +80,15 @@ watch(
     model.value.subDomain = model.value.siteName;
   }
 );
+
+watch(
+  () => model.value.rootDomain,
+  () => {
+    (model.value as any).sudDomainUseDash =
+      domains.value?.find((f) => f.domainName == model.value.rootDomain)
+        ?.sudDomainUseDash ?? false;
+  }
+);
 </script>
 
 <template>
@@ -124,7 +133,7 @@ watch(
               v-for="item of domains"
               :key="item.domainName"
               :value="item.domainName"
-              :label="'.' + item.domainName"
+              :label="(item.sudDomainUseDash ? '-' : '.') + item.domainName"
               data-cy="root-domain-opt"
             />
           </el-select>

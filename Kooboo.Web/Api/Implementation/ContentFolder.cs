@@ -37,7 +37,7 @@ namespace Kooboo.Web.Api.Implementation
                 result.Add(model);
             }
 
-            return result.OrderBy(it => it.Name).ToList<object>();
+            return [.. result.OrderBy(it => string.IsNullOrWhiteSpace(it.DisplayName) ? it.Name : it.DisplayName)];
         }
 
         [Kooboo.Attributes.RequireParameters("id")]
@@ -99,12 +99,24 @@ namespace Kooboo.Web.Api.Implementation
                 SortField = model.SortField,
                 Ascending = model.Ascending,
                 PageSize = model.PageSize,
-                IsContent = model.IsContent
+                IsContent = model.IsContent,
+                FieldsOrder = model.FieldsOrder,
+                Group = model.Group,
+                PreviewUrl=model.PreviewUrl
             };
+
+            var all = call.WebSite.SiteDb().ContentFolders.All();
 
             if (model.Id != default(Guid))
             {
                 folder.Id = model.Id;
+                var exist = all.FirstOrDefault(f => f.Id == model.Id);
+                if (exist != null) folder.Order = exist.Order;
+            }
+            else
+            {
+                var minOrder = all.OrderBy(o => o.Order).FirstOrDefault()?.Order ?? 0;
+                folder.Order = minOrder - 1;
             }
 
             call.WebSite.SiteDb().ContentFolders.AddOrUpdate(folder, call.Context.User.Id);
@@ -141,6 +153,23 @@ namespace Kooboo.Web.Api.Implementation
         public override Guid put(ApiCall call)
         {
             return base.put(call);
+        }
+
+        [Permission(Feature.CONTENT_TYPE, Action = Data.Permission.Action.EDIT)]
+        public void Sort(List<string> ordered, ApiCall call)
+        {
+            var siteDb = call.WebSite.SiteDb();
+            var all = siteDb.ContentFolders.All();
+            foreach (var item in all)
+            {
+                var order = ordered.IndexOf(item.Name);
+                if (order == -1 && item.Hidden) continue;
+                if (order != item.Order)
+                {
+                    item.Order = order;
+                    siteDb.ContentFolders.AddOrUpdate(item);
+                }
+            }
         }
     }
 }

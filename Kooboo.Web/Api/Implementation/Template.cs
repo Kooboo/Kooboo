@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using Kooboo.Api;
 using Kooboo.Data;
+using Kooboo.Data.Config;
 using Kooboo.Data.Context.UserProviders;
-using Kooboo.IndexedDB.Serializer.Simple;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
@@ -13,6 +13,7 @@ using Kooboo.Sites.Routing;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.Mysql;
 using Kooboo.Sites.Scripting.Global.SqlServer;
+using Kooboo.Sites.Service;
 using Kooboo.Sites.Store;
 using Kooboo.Sites.Store.Model;
 using Kooboo.Sites.Sync;
@@ -58,7 +59,7 @@ namespace Kooboo.Web.Api.Implementation
         private Dictionary<string, string> loginHeader(ApiCall call)
         {
             return new Dictionary<string, string> {
-                               { "Authorization",$"bearer {UserProviderHelper.GetJtwTokentFromContext(call.Context)}" }
+                               { "Authorization",$"bearer {UserProviderHelper.GetJwtTokenFromContext(call.Context)}" }
                             };
         }
 
@@ -101,10 +102,10 @@ namespace Kooboo.Web.Api.Implementation
 
         protected string GetStartRelativeUrl(Data.Models.WebSite site)
         {
-            var startpages = site.StartPages();
-            if (startpages != null && startpages.Count() > 0)
+            var startPages = site.StartPages();
+            if (startPages != null && startPages.Count() > 0)
             {
-                foreach (var item in startpages)
+                foreach (var item in startPages)
                 {
                     Route route = site.SiteDb().Routes.Query.Where(o => o.objectId == item.Id).FirstOrDefault();
 
@@ -115,11 +116,11 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-            var allpages = site.SiteDb().Pages.All();
+            var allPages = site.SiteDb().Pages.All();
 
-            if (allpages != null && allpages.Count() > 0)
+            if (allPages != null && allPages.Count() > 0)
             {
-                foreach (var item in allpages)
+                foreach (var item in allPages)
                 {
                     Route route = site.SiteDb().Routes.Query.Where(o => o.objectId == item.Id).FirstOrDefault();
 
@@ -130,9 +131,9 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-            if (allpages != null && allpages.Count() > 0)
+            if (allPages != null && allPages.Count() > 0)
             {
-                foreach (var item in allpages)
+                foreach (var item in allPages)
                 {
                     Route route = site.SiteDb().Routes.Query.Where(o => o.objectId == item.Id).FirstOrDefault();
 
@@ -197,135 +198,17 @@ namespace Kooboo.Web.Api.Implementation
         public virtual void Share(ApiCall call)
         {
             var data = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(call.Context.Request.Body);
-
-            var siteId = Kooboo.Lib.Helper.DictionaryHelper.GetValue<Guid>(data, "siteid");
-            var website = Kooboo.Data.Config.AppHost.SiteRepo.Get(siteId);
-
-            if (website == null)
-            {
-                throw new Exception("website not found");
-            }
-            var siteDb = website.SiteDb();
-            TemplateTransferModel transfer = new TemplateTransferModel();
-
-            CopyMode copyMode = CopyMode.Normal;
-
-            var shareMethod = DictionaryHelper.GetString(data, "shareMethod");
-            if (!string.IsNullOrEmpty(shareMethod) && shareMethod.ToLower() == "update")
-            {
-                transfer.IsUpdate = true;
-                copyMode = CopyMode.Fast;
-            }
-
-            string exportFile = ImportExport.ExportInter(siteDb, copyMode);
-
-            if (!File.Exists(exportFile))
-            {
-                return;
-            }
-            var zipBytes = IOHelper.ReadAllBytes(exportFile);
-
-            if (zipBytes.Length > AppSettings.MaxTemplateSize)
-            {
-                var error = Data.Language.Hardcoded.GetValue("Exceed max template size", call.Context);
-                error += " " + Lib.Utilities.CalculateUtility.GetSizeString(AppSettings.MaxTemplateSize);
-                throw new Exception(error);
-            }
-
-            transfer.TypeName = DictionaryHelper.GetValue<string>(data, "typeName");
-            transfer.Cover = DictionaryHelper.GetValue<string>(data, "coverimage");
-            transfer.ScreenShot = DictionaryHelper.GetValue<string>(data, "ScreenShot");
-            transfer.Name = DictionaryHelper.GetString(data, "sitename"); 
-
-            transfer.ZhCover = DictionaryHelper.GetValue<string>(data, "zhCoverimage");
-            transfer.ZhScreenShot = DictionaryHelper.GetValue<string>(data, "zhScreenShot");
-
-            transfer.ZhName = DictionaryHelper.GetString(data, "zhSitename");
-
-            transfer.Bytes = zipBytes;
-            transfer.ByteHash = Kooboo.Lib.Security.Hash.ComputeGuid(zipBytes);
-
-            transfer.IsPublic = siteDb.WebSite.SiteType == Data.Definition.WebsiteType.p; 
-
-            transfer.TemplateId = DictionaryHelper.GetValue<Guid>(data, nameof(TemplateTransferModel.TemplateId));
-
-            var updateItem = DictionaryHelper.GetString(data, "updateItem");
-
-            if (updateItem != null)
-            {
-                if (updateItem.ToLower() == "onlyscreen")
-                {
-                    transfer.UpdateScreenOnly = true;
-                }
-                else if (updateItem.ToLower() == "onlybinary")
-                {
-                    transfer.UpdateBinaryOnly = true;
-                }
-            }
-
-            if (transfer.UpdateBinaryOnly)
-            {
-                UpdateBinary(transfer, call);
-                return;
-            }
-
-            if (transfer.UpdateScreenOnly)
-            {
-                UpdateScreen(transfer, call);
-                return;
-            }
-
-            SimpleConverter<TemplateTransferModel> converter = new();
-            var postBytes = converter.ToBytes(transfer);
-
-            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/share");
-
-            var response = HttpHelper.PostData(url, Data.Helper.ApiHelper.GetAuthHeaders(call.Context), postBytes);
-
-            if (!response)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Share template failed", call.Context));
-            }
+            TemplateService.Share(data, call.Context);
         }
 
         public void UpdateScreen(TemplateTransferModel model, ApiCall call)
         {
-            ScreenUpdate update = new ScreenUpdate();
-            update.TemplateId = model.TemplateId;
-            update.Cover = model.Cover;
-            update.ScreenShot = model.ScreenShot;
-            update.ZhCover = model.ZhCover;
-            update.ZhScreenShot = model.ZhScreenShot;
-
-            update.ZHName = model.ZhName;
-            update.Name = model.Name;
-
-
-            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateupdate/screenshot");
-
-            SimpleConverter<ScreenUpdate> converter = new SimpleConverter<ScreenUpdate>();
-
-            var bytes = converter.ToBytes(update);
-
-            var response = HttpHelper.PostData(url, loginHeader(call), bytes);
-
+            TemplateService.UpdateScreen(model, call.Context);
         }
 
         public void UpdateBinary(TemplateTransferModel model, ApiCall call)
         {
-            BinaryUpdate update = new BinaryUpdate();
-            update.TemplateId = model.TemplateId;
-            update.Bytes = model.Bytes;
-
-            update.ByteHash = Kooboo.Lib.Security.Hash.ComputeGuid(update.Bytes);
-
-            SimpleConverter<BinaryUpdate> converter = new SimpleConverter<BinaryUpdate>();
-
-            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateupdate/binary");
-
-            var bytes = converter.ToBytes(update);
-
-            var response = HttpHelper.PostData(url, loginHeader(call), bytes);
+            TemplateService.UpdateBinary(model, call.Context);
         }
 
         public ValidateResult ShareValidate(Guid siteid, ApiCall call)
@@ -380,52 +263,32 @@ namespace Kooboo.Web.Api.Implementation
 
         public void Delete(ApiCall call)
         {
-            string Url = Kooboo.Lib.Helper.UrlHelper.Combine(Kooboo.Data.AppSettings.ThemeUrl, "/_api/templateserver/Delete");
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Id", call.ObjectId.ToString());
-            var ok = HttpHelper.Post<bool>(Url, para, loginHeader(call));
-            return;
+            TemplateService.Delete(call.ObjectId.ToString(), call.Context);
         }
 
 
         public Guid Use(string SiteName, string RootDomain, string SubDomain, string id, ApiCall call)
         {
-
             if (!Data.Config.AppHost.SiteService.CheckNameAvailable(SiteName, call.Context.User.CurrentOrgId))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("SiteName is taken", call.Context));
             }
 
+            string FullDomain = ConfigHelper.ToFullDomain(RootDomain, SubDomain);
 
-            string FullDomain = RootDomain;
-            if (!string.IsNullOrEmpty(SubDomain))
-            {
-                if (FullDomain.StartsWith("."))
-                {
-                    FullDomain = SubDomain + FullDomain;
-                }
-                else
-                {
-                    FullDomain = SubDomain + "." + FullDomain;
-                }
-            }
+            var guid = System.Guid.Parse(id);
 
-            string url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/download?id=" + id);
-
+            Guid UserId = default(Guid);
             if (call.Context.User != null)
             {
-                url += "&userid=" + call.Context.User.Id.ToString();
+                UserId = call.Context.User.Id;
             }
 
-            var download = DownloadHelper.DownloadFile(url, "zip");
-            if (download == null)
-            {
-                throw new Exception(Data.Language.Hardcoded.GetValue("template package not found", call.Context));
-            }
+            var memory = TemplateService.DownloadTemplate(guid, UserId);
 
-            MemoryStream memory = new MemoryStream(download);
-            var newsite = ImportExport.ImportZip(memory, call.Context.User.CurrentOrgId, SiteName, FullDomain, call.Context.User.Id);
-            return newsite.Id;
+            var newSite = ImportExport.ImportZip(memory, call.Context.User.CurrentOrgId, SiteName, FullDomain, call.Context.User.Id);
+            Sites.Scripting.Global.Koobox.KFavorite.Add(call.Context, newSite.Id);
+            return newSite.Id;
         }
 
 
@@ -437,21 +300,7 @@ namespace Kooboo.Web.Api.Implementation
             ////mock.Add(new OwnPackage() { Name = "Test Name 2", TemplateId = System.Guid.NewGuid() });
             //return mock;
 
-
-            var lang = GetLang(call);
-
-            Dictionary<string, string> paras = new Dictionary<string, string>();
-
-            if (lang != null)
-            {
-                paras["lang"] = lang;
-            }
-
-            string Url = UrlHelper.Combine(UrlSetting.AppStore, "/_api/templateserver/Personal");
-            Url = UrlHelper.AppendQueryString(Url, paras);
-
-
-            var fullList = HttpHelper.Get2<List<TemplateItemViewModel>>(Url, null, Data.Helper.ApiHelper.GetAuthHeaders(call.Context));
+            var fullList = TemplateService.Personal(call.Context);
 
             if (fullList != null)
             {

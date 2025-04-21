@@ -88,12 +88,12 @@ namespace Kooboo.Lib.Helper
 
 
 
-        public static long Ping(string destIp)
+        public static long Ping(string destHostOrIP)
         {
             try
             {
                 Ping myPing = new Ping();
-                PingReply reply = myPing.Send(destIp, 5000);
+                PingReply reply = myPing.Send(destHostOrIP, 5000);
                 if (reply != null && reply.Status == IPStatus.Success)
                 {
                     return reply.RoundtripTime;
@@ -107,7 +107,7 @@ namespace Kooboo.Lib.Helper
             try
             {
                 Ping myPing = new Ping();
-                PingReply reply = myPing.Send(destIp, 5000);
+                PingReply reply = myPing.Send(destHostOrIP, 5000);
                 if (reply != null && reply.Status == IPStatus.Success)
                 {
                     return reply.RoundtripTime;

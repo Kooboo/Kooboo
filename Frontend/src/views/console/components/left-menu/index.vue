@@ -40,12 +40,12 @@ const menu = computed(() => [
   //   name: "bandwidth",
   //   show: true,
   // },
-  {
-    label: t("common.domainCDN"),
-    name: "cdn",
-    show: appStore.header?.isOnlineServer,
-    icon: "icon-a-domaincdn",
-  },
+  // {
+  //   label: t("common.domainCDN"),
+  //   name: "cdn",
+  //   show: appStore.header?.isOnlineServer,
+  //   icon: "icon-a-domaincdn",
+  // },
   {
     label: "Google SC",
     name: "searchConsole",

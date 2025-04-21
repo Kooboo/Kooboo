@@ -27,6 +27,7 @@ export interface AvailableDomain {
   organizationId: string;
   expirationDate: string;
   isKooboo: boolean;
+  sudDomainUseDash: boolean;
 }
 
 export interface ServerInfo {

@@ -1,0 +1,1 @@
+import{d as t}from"./i18n.a87944a4.js";import"./dayjs.min.ccc40d4f.js";const e=t.global.t;function n(){return-(new Date().getTimezoneOffset()/60)}const o=n(),s=`UTC${o>0?"+":"-"}${o}:00`,i=[{key:"Year",value:e("common.year")},{key:"Month",value:e("common.month")},{key:"Week",value:e("common.week")},{key:"Day",value:e("common.day")}];export{n as a,i as d,s as t};

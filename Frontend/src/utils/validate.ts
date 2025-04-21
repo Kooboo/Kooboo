@@ -170,7 +170,7 @@ export const passwordLengthRule = {
 };
 
 export const subDomainRule = {
-  pattern: /^([A-Za-z0-9][A-Za-z0-9\-]{0,})*[A-Za-z0-9]$/,
+  pattern: /^([A-Za-z0-9][A-Za-z0-9_]{0,})*[A-Za-z0-9]$/,
   message: $t("common.subDomainInvalidTips"),
 };
 
@@ -410,6 +410,7 @@ export const domainBindingIsUniqueNameRule = (model: {
   rootDomain: string;
   port?: number;
   defaultBinding?: boolean;
+  sudDomainUseDash?: boolean;
 }) => {
   return {
     async asyncValidator(
@@ -417,11 +418,19 @@ export const domainBindingIsUniqueNameRule = (model: {
       value: string,
       callback: (error?: Error) => void
     ) {
-      try {
-        await isUniqueName(model.subDomain + "." + model.rootDomain);
-        callback();
-      } catch (error) {
-        callback(Error($t("common.siteIsBoundTips")));
+      if (model.sudDomainUseDash && !model.subDomain?.trim()) {
+        callback(Error($t("common.subDomainInvalidTips")));
+      } else {
+        try {
+          await isUniqueName(
+            model.subDomain +
+              (model.sudDomainUseDash ? "-" : ".") +
+              model.rootDomain
+          );
+          callback();
+        } catch (error) {
+          callback(Error($t("common.siteIsBoundTips")));
+        }
       }
     },
     trigger: "blur",

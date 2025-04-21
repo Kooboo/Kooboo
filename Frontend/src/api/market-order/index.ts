@@ -5,6 +5,9 @@ import type { DomainOrder } from "./types";
 export const createDomainOrder = (model: any) =>
   request.post("MarketOrder/NewDomain", model);
 
+export const renewDomainOrder = (model: any) =>
+  request.post("MarketOrder/RenewDomain", model);
+
 export const getDomainOrder = () =>
   request.get<DomainOrder[]>("MarketOrder/RecentList");
 

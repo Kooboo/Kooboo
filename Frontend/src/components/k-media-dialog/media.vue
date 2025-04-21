@@ -148,8 +148,11 @@
           :has-checkbox="isAllTab"
           :hide-open-folder="!searchKey"
           :provider="provider"
+          :sort-field="sortField"
+          :sort-desc="sortDesc"
           @click-folder="handleClickFolder"
           @edit-image="handleEditImage"
+          @sort="handleSort"
         />
         <KPagination
           v-if="files.length || folders.length"
@@ -292,6 +295,8 @@ const pagination = reactive<Pagination>({
   pageSize: 24,
   totalCount: 0,
 });
+const sortField = ref<string | undefined>("lastModified");
+const sortDesc = ref<boolean | undefined>(true);
 const visibleCreateFolderDialog = ref(false);
 const visibleEditImageDialog = ref(false);
 const editingFile = ref<EditingMediaFile>({
@@ -416,6 +421,8 @@ async function fetchPagedList(currentPage: number, hideLoading?: boolean) {
       path: currentFolderPath.value,
       keyword: searchKey.value?.trim(),
       startAfter: currentPage > 1 ? last(files.value)?.key ?? "" : "",
+      sort: sortField.value,
+      desc: sortDesc.value,
     },
     hideLoading
   );
@@ -508,6 +515,8 @@ async function fetchPagedListBy(currentPage: number, hideLoading?: boolean) {
       pageSize: pagination.pageSize!,
       provider: provider.value,
       by: curImgType.value,
+      sort: sortField.value,
+      desc: sortDesc.value,
     },
     hideLoading
   );
@@ -611,6 +620,12 @@ function updateRoute() {
   } else {
     fetchList(pagination.currentPage!);
   }
+}
+
+function handleSort(field?: string, desc?: boolean) {
+  sortField.value = field;
+  sortDesc.value = desc;
+  resetList();
 }
 
 defineExpose({

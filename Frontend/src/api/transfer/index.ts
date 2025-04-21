@@ -57,4 +57,10 @@ export const getStatus = (body: unknown) =>
   );
 
 export const getSubUrl = (url: string, pages: number) =>
-  request.get<string[]>("/Transfer/GetSubUrl", { url, pages });
+  request.get<string[]>(
+    "/Transfer/GetSubUrl",
+    { url, pages },
+    {
+      timeout: 1000 * 60 * 5,
+    }
+  );

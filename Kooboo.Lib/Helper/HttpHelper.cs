@@ -401,7 +401,7 @@ namespace Kooboo.Lib.Helper
 
 
 
-        public static T Get2<T>(string url, int longTimeOut, Dictionary<string, string> query = null)
+        public static T Get2<T>(string url, int longTimeOut, Dictionary<string, string> query = null, bool throwError = false)
         {
             if (query != null)
             {
@@ -419,7 +419,7 @@ namespace Kooboo.Lib.Helper
 
             var response = client.Send(requestMessage);
             var backString = response.Content.ReadAsStringAsync().Result;
-            return ProcessApiResponse<T>(backString);
+            return ProcessApiResponse<T>(backString, throwError);
         }
 
 
@@ -498,7 +498,7 @@ namespace Kooboo.Lib.Helper
 
                 }
             }
-            catch (Exception)
+            catch (Exception )
             {
 
             }

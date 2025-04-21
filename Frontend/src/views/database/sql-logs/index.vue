@@ -11,9 +11,9 @@
       >
         <el-option
           v-for="item in weeks"
-          :key="item"
-          :value="item"
-          :label="weekToDates(item)"
+          :key="item.key"
+          :value="item.key"
+          :label="item.value"
           data-cy="week-opt"
         />
       </el-select>
@@ -67,15 +67,15 @@ import Breadcrumb from "@/components/basic/breadcrumb.vue";
 import SearchInput from "@/components/basic/search-input.vue";
 
 import { useI18n } from "vue-i18n";
-import { weekToDates } from "@/utils/date";
 import { searchDebounce } from "@/utils/url";
+import type { KeyValue } from "@/global/types";
 const { t } = useI18n();
 const pagination = reactive<Pagination>({
   currentPage: 1,
   pageCount: 0,
   pageSize: 1,
 });
-const weeks = ref<string[]>([]);
+const weeks = ref<KeyValue[]>([]);
 const types = [
   {
     label: "SQLite",
@@ -110,7 +110,7 @@ onMounted(async () => {
 
 async function fetchWeeks() {
   weeks.value = await getWeeks();
-  query.week = weeks.value[0];
+  query.week = weeks.value[0]?.key;
 }
 
 async function getLogs(pageNr?: number) {

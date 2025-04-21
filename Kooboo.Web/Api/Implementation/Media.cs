@@ -106,6 +106,8 @@ namespace Kooboo.Web.Api.Implementation
         public MediaPagedViewModel PagedListBy(ApiCall call)
         {
             string by = call.GetValue("by");
+            var sort = call.GetValue(nameof(GetObjectsRequest.Sort));
+            var desc = call.GetBoolValue(nameof(GetObjectsRequest.Desc));
             if (string.IsNullOrEmpty(by))
             {
                 return null;
@@ -119,7 +121,7 @@ namespace Kooboo.Web.Api.Implementation
 
             MediaPagedViewModel model = new MediaPagedViewModel
             {
-                Files = GetPagedFilesBy(call.WebSite.SiteDb(), by, pageSize, pageNumber),
+                Files = GetPagedFilesBy(call.WebSite.SiteDb(), by, pageSize, pageNumber, sort, desc),
                 CrumbPath = PathService.GetCrumbPath("/")
             };
 
@@ -145,6 +147,8 @@ namespace Kooboo.Web.Api.Implementation
                 Keyword = call.GetValue("keyword"),
                 Page = ApiHelper.GetPageNr(call),
                 StartAfter = call.GetValue("startAfter"),
+                Sort = call.GetValue(nameof(GetObjectsRequest.Sort)),
+                Desc = call.GetBoolValue(nameof(GetObjectsRequest.Desc)),
             };
 
             if (storage is KoobooStorageProvider)
@@ -224,13 +228,28 @@ namespace Kooboo.Web.Api.Implementation
 
 
         private PagedListViewModel<MediaStorageFileModel> GetPagedFilesBy(SiteDb siteDb, string by, int PageSize,
-            int PageNumber)
+            int PageNumber, string sort, bool desc)
         {
             string baseurl = siteDb.WebSite.BaseUrl();
             // by = View, Page, Layout, TextContent, Style. 
             byte consttype = ConstTypeContainer.GetConstType(by);
 
             var images = siteDb.Images.ListUsedBy(consttype);
+
+            if (!string.IsNullOrWhiteSpace(sort))
+            {
+                images.Sort(new Comparison<Image>((left, right) =>
+                {
+                    var leftReturn = desc ? -1 : 1;
+                    var rightReturn = desc ? 1 : -1;
+                    return sort switch
+                    {
+                        "size" => left.Size - right.Size > 0 ? leftReturn : rightReturn,
+                        "name" => string.Compare(left.Name, right.Name, true, null) > 0 ? leftReturn : rightReturn,
+                        _ => left.LastModifyTick - right.LastModifyTick > 0 ? leftReturn : rightReturn,
+                    };
+                }));
+            }
 
             int totalskip = 0;
             if (PageNumber > 1)
@@ -245,7 +264,7 @@ namespace Kooboo.Web.Api.Implementation
             Result.PageSize = PageSize;
             Result.PageNr = PageNumber;
 
-            Result.List = MediaFileViewModels(siteDb, images, baseurl).Skip(totalskip).Take(PageSize).ToList();
+            Result.List = MediaFileViewModels(siteDb, images, baseurl, false).Skip(totalskip).Take(PageSize).ToList();
             return Result;
         }
 
@@ -358,9 +377,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         private static IEnumerable<MediaStorageFileModel> MediaFileViewModels(SiteDb siteDb, IEnumerable<Image> images,
-            string baseurl)
+            string baseurl, bool sort = true)
         {
-            return images.Select(x =>
+            var result = images.Select(x =>
             {
                 var usedby = siteDb.Images.GetUsedByForCount(x.Id);
                 var imageUrl = ObjectService.GetObjectRelativeUrl(siteDb, x) + $"?version={x.Version}";
@@ -381,9 +400,14 @@ namespace Kooboo.Web.Api.Implementation
                     References = usedby?.GroupBy(it => it.ModelType).ToDictionary(
                         key => key.Key.Name, value => value.Count())
                 };
-            }).OrderByDescending(x => x.LastModified.ToLocalTime());
+            });
+
+            if (sort)
+            {
+                result = result.OrderByDescending(x => x.LastModified.ToLocalTime());
+            }
+
+            return result;
         }
-
-
     }
 }

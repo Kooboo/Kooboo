@@ -249,7 +249,9 @@
   <LeaveConfirmDialog
     v-if="showLeaveConfirmDialog"
     v-model="showLeaveConfirmDialog"
-    @save-draft="saveDraft({ isLeave: true })"
+    @save-draft="
+      saveDraft({ isLeave: true, showLoading: true, forceSave: true })
+    "
     @cancel-save-draft="cancelSaveDraft"
     @close-dialog="closeConfirmDialog"
   />
@@ -277,15 +279,7 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import {
-  ref,
-  watch,
-  nextTick,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  onUnmounted,
-} from "vue";
+import { ref, watch, nextTick, computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Rules } from "async-validator";
 import KEditor from "@/components/k-editor/index.vue";
@@ -325,7 +319,6 @@ const getExtensionDrawerOpen = computed(() => {
 });
 const editorHeight = ref();
 const topPartForm = ref();
-let observer: MutationObserver;
 let type = getQueryString("type") as SendType;
 
 // 当前邮件的id,如果保存了草稿,就更新为新草稿的id
@@ -397,10 +390,6 @@ onMounted(() => {
   currentMessageId.value = route.query.messageId;
   // 添加监听浏览器关闭的beforeunload事件
   window.addEventListener("beforeunload", beforeunloadAction);
-});
-
-onBeforeUnmount(() => {
-  observer?.disconnect();
 });
 
 const alertDialog = ref({
@@ -816,9 +805,10 @@ async function send() {
 async function saveDraft(option?: {
   isLeave?: boolean; //判断保存后是否需要跳转路由，用于离开提示弹框的保存草稿并退出按钮
   showLoading?: boolean; //判断是否需要loading遮罩，自动保存草稿不需要loading动画
+  forceSave?: boolean;
 }) {
   // 这是为了防止自动保存草稿和手动保存草稿同时发生
-  if (!autoSaveDraftFlag.value) return;
+  if (!option?.forceSave && !autoSaveDraftFlag.value) return;
   // autoSaveDraftFlag设为false，防止同时触发了自动保存草稿
   autoSaveDraftFlag.value = false;
 

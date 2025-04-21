@@ -118,7 +118,9 @@ const onSave = async () => {
   } else {
     await post({
       remoteServerUrl: server.serverUrl,
-      FullDomain: `${model.value.subDomain}.${model.value.rootDomain}`,
+      SubDomain: model.value.subDomain,
+      RootDomain: model.value.rootDomain,
+      FullDomain: `${model.value.subDomain}-${model.value.rootDomain}`,
       SiteName: model.value.siteName,
       orgId: server.orgId,
       serverName: server.name,
@@ -134,6 +136,15 @@ watch(
   () => {
     if (isSiteNameEdit.value) return;
     model.value.siteName = model.value.subDomain;
+  }
+);
+
+watch(
+  () => model.value.rootDomain,
+  () => {
+    (model.value as any).sudDomainUseDash =
+      (domains.value?.find((f) => f.value == model.value.rootDomain) as any)
+        ?.sudDomainUseDash ?? false;
   }
 );
 
@@ -235,7 +246,7 @@ watch(
                   v-for="item of domains"
                   :key="item.key"
                   :value="item.value"
-                  :label="item.value"
+                  :label="((item as any).sudDomainUseDash ? '-' : '.') + item.value"
                   data-cy="root-domain"
                 />
               </el-select>

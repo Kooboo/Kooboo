@@ -47,6 +47,8 @@ commerce:
   freeShipping: 免运费
   getByOrderAmountPercents: 按订单金额百分比
   getFixedPoints: 每个订单获得固定积分
+  hideAttributes: 隐藏属性
+  hideVariants: 隐藏规格
   inactive: 下架
   inStock: 有货
   insuranceAmount: 保险费
@@ -66,6 +68,7 @@ commerce:
   order: 订单
   orderAmountOff: 订单总价优惠
   orderCount: 订单总数
+  orderExtensionFields: 订单拓展字段
   orderMaxRedeemTip: 可最高用{points}积分抵扣订单金额
   orderNote: 订单备注
   orderNumber: 订单号
@@ -91,6 +94,7 @@ commerce:
   pointsDetail: 积分详情
   product: 商品
   productAmountOff: 产品价格优惠
+  productDigitalItemRequired: 产品数字内容不能为空
   productFields: 产品字段在编辑和列表页面的设置
   productName: 产品名称
   productStats: 产品销售报表
@@ -161,7 +165,7 @@ common:
   addMenuItem: 添加菜单项
   addMigrationJob: 添加迁移任务
   addNewCategory: 添加类别
-  addOtpCodeTip: 请使用验证器扫描二维码
+  addOtpCodeTip: 使用您的身份验证应用程序扫描下面的二维码
   addProduct: 添加商品
   addProductSuccess: 添加商品成功
   addProductType: 添加类型
@@ -208,6 +212,8 @@ common:
   AnInvitationEmailWillBeSentToAddedParticipants: 将发送邀请邮件给新增的参与人
   anInvitationEmailWillBeSentToTheParticipants: 将发送邀请邮件给参与人
   anUpdatedEmailWillBeSentToTheParticipants: 将发送日程更新邮件给参与人
+  apiMarket: API市场
+  appMarket: APP市场
   areYouSureToSetThisAddressAsTheDefaultEmailAddress: 确认将该地址设置成默认的发件人邮箱地址吗？
   areYouSureYouWantToDisableTheDataCenter: 是否确认禁用数据中心？
   areYouSureYouWantToDisableTheResourceCDN: 是否确认禁用资源CDN？
@@ -225,6 +231,7 @@ common:
   authentication: 身份认证
   authenticator: 验证器
   authenticatorApp: 验证器应用
+  authenticatorAppTip: 使用验证器应用程序或浏览器扩展来获取两步验证码。
   author: 作者
   authorizationCodeHasGenerated: 授权码已生成
   authorizationCodesTips: 仅最新的授权码有效，请保存以便重复使用。
@@ -273,6 +280,7 @@ common:
   bindPhone: 绑定手机号
   blankSite: 空白站点
   blindCarbonCopy: 密送
+  blockingSeo: 阻止SEO
   bold: 加粗
   boolean: 布尔型
   bot: 爬虫
@@ -375,6 +383,7 @@ common:
   columnIsReservedWord: "{columnName}是保留字，不可作为字段名"
   columnName: 字段名
   columnSettings: 字段设置
+  columnWidth: 表格列宽
   combine: 合并
   commerce: 电商
   commerceSettings: 电商设置
@@ -447,6 +456,7 @@ common:
   createAddress: 新增地址
   created: 创建
   createdAt: 创建时间
+  createDomainRenewOrder: 创建域名续费订单
   createEmbedded: 新建内嵌
   createForm: 创建表单
   createItemNow: 创建菜单
@@ -495,6 +505,7 @@ common:
   dataCenter: 数据中心
   dataMethodSetting: 数据方法设置
   dataTable: 数据表
+  dataType: 数据类型
   datatypeExistsTips: 该数据类型已存在
   date: 日期
   dateRange: 时间范围
@@ -553,6 +564,7 @@ common:
   devPassword: 开发预览密码
   difference: 差别
   digitalItems: 数字产品
+  digitalItemsRequired: 数字内容不能为空
   digitalProduct: 数字产品
   digitalProductTip: 请确保为数字产品配置了数字配送
   digitalShipping: 数字化配送
@@ -614,6 +626,7 @@ common:
   earnPointOnLoginRules: 登录时获得积分
   earnPointOnPlaceOrderRules: 下单时获得积分
   edit: 编辑
+  editable: 可编辑
   editAgain: 再次编辑
   editCdn: 编辑CDN
   editCode: 编辑代码
@@ -651,8 +664,9 @@ common:
   emailAreEnabledForDomainsThatUseOurDNSServer: 邮箱只针对使用我们DNS的域名开放
   emailBody: 邮件正文
   emailCannotBeTheSameAsTheCurrentBound: 邮箱不能与当前绑定的邮箱相同
+  emailCode: 邮件验证码
+  emailCodeTip: 每次登录时，通过电子邮件接收验证码
   emailHasSent: 邮件已发送
-  emailMessage: 邮件消息
   emailMigrationTips: 仅迁移收件箱、已发送、自定义文件夹的邮件；部分邮箱可能默认只迁移30天内的邮件，这取决于邮箱的IMAP收取邮件范围，通常可在邮箱的设置界面进行更改
   emailNotFound: 邮件不存在
   emailNotifications: 邮件通知
@@ -723,9 +737,11 @@ common:
   expandSelection: 扩大选区
   expirationDate: 过期时间
   expired: 过期
+  expiredAt: 过期时间
   expireDate: 过期时间
   expiresIn: 过期时间
   export: 导出
+  exportable: 可导出
   exportAll: 导出全部
   exportChanges: 导出更新
   exportChangesTip: 选中的日志和时间在所选日志之后的日志将被导出
@@ -771,6 +787,7 @@ common:
   fileSizeLessTips: 文件大小必须小于10KB
   fileTypes: 文件类型
   fileTypesNotAllowed: 以下文件类型不对，只允许 {types}：
+  filterable: 可过滤
   finish: 完成
   firstName: 名
   foldAll: 折叠全部
@@ -815,6 +832,7 @@ common:
   general: 常规
   generate: 生成
   generateAuthorizationCode: 生成授权码
+  generateNewQRCode: 生成新的二维码
   generateType: 生成方式
   globalImageList: 全局图片列表
   globalLinkList: 全局链接列表
@@ -1006,6 +1024,7 @@ common:
   links: 链接
   list: 列表
   listView: 列表视图
+  loading: 获取中...
   loadMore: 加载更多
   localChanges: 本地更改
   localLastId: 本地最新ID
@@ -1151,6 +1170,7 @@ common:
   newWildcardAddress: 新建通配符地址
   newWindow: 新窗口打开
   no: 否
+  no2FA: 不使用两步验证
   noAccessPermission: 无访问权限
   noCategory: 无
   noConfigurationItem: 没有配置项
@@ -1161,6 +1181,7 @@ common:
   noMatchingWebsite: 无匹配的站点
   noMoreData: 没有更多数据了
   none: 无
+  none2FATip: 暂不使用两步验证
   nonMembership: 非会员
   noPermission: 无权限
   noProductInCart: 商品发生变更，请重新选择商品
@@ -1248,6 +1269,7 @@ common:
   participants: 参与人
   participantShouldNotBelongToThisAccount: 参与人不能含有本账号下的邮箱地址
   partner: 合作伙伴
+  partnerMembershipTip: 当前用户为合作伙伴,拥有最高会员权益
   pass: 通过
   password: 密码
   passwordChanged: 密码已修改
@@ -1271,6 +1293,7 @@ common:
   phone: 手机号
   phoneLogin: 手机登录
   phoneMessage: 短信消息
+  phoneMessageTip: 通过短信发送一次性代码到您的手机完成认证请求。
   phoneNumber: 手机号码
   phoneNumberCannotBeTheSameAsTheCurrentBound: 手机号不能与当前绑定的手机号相同
   phoneNumberUpdated: 手机号已更新
@@ -1304,7 +1327,7 @@ common:
   positionNameAndFrom: "位置: {name} (来自 {from})"
   postalCode: 邮编
   postalDistrict: 邮政区号
-  preferred2FAMethod: 首选两步验证方式
+  preferred2FAMethod: 两步验证方式
   preview: 预览
   previewUrl: 预览地址
   price: 单价
@@ -1460,6 +1483,7 @@ common:
   rules: 规则
   rulesCount: 规则数量
   run: 运行
+  running: 执行中
   sales: 销量
   salesInformation: 售卖信息
   saleStats: 销售统计
@@ -1467,6 +1491,7 @@ common:
   saturday: 周六
   save: 保存
   saveAndCreate: 保存并创建
+  saveAndPreview: 保存并预览
   saveAndReturn: 保存并返回
   saveDraft: 保存草稿
   saveSuccess: 保存成功
@@ -1538,12 +1563,14 @@ common:
   Sent: 已发送
   seoName: SEO名称
   seoNameExistsTips: SEO名称已存在
+  seoNameInvalidTip: SEO名称不能包含特殊字符
   seoNameTip: 静态网址用于提高在搜索引擎中的权重
   server: 服务器
   serverAddSuccess: 服务器添加成功！
   serverUrl: 服务器链接
   serverUrlInvalid: 服务器地址无效
   serverUrlRequiredTips: 服务器地址必填
+  service: 服务
   setAsCover: 设为封面
   setAsDefault: 设为默认
   setDefaultEmailFirst: 请先到邮箱地址页面，设置一个默认邮箱
@@ -1594,6 +1621,8 @@ common:
   siteUnverifiedUser: 站点未验证用户
   siteUser: 站点用户
   size: 大小
+  smsCode: 短信验证码
+  smsCodeTip: 每次登录时，通过手机短信接收验证码
   smtpSetting: SMTP 设置
   sortable: 排序
   sortField: 排序字段
@@ -1628,6 +1657,7 @@ common:
   stop: 停止
   storage: 存储空间
   street: 街道
+  string: 字符串
   stringLength: 字符串长度
   style: 样式
   styleGroup: 样式组
@@ -1728,6 +1758,7 @@ common:
   topReference: 来源排行
   topReferer: 来源访问排行
   topUp: 充值
+  topup: 充值
   topupBandwidth: 充流量
   total: 总计
   totalAmount: 总金额
@@ -1740,6 +1771,10 @@ common:
   traceId: 跟踪 ID
   trackingNumberMatching: 运单号匹配规则
   trackingNumberMatchingTip: 用于在发货的时候自动匹配承运商
+  transfer: 转移
+  transferCode: 转移码
+  transferDomain: 转移域名
+  transferDomainTip: 请将此代码提供给新的域名注册商以完成此域名的转出
   transferPage: 转移页
   transferTask: 转移任务
   trash: 已删除
@@ -1784,6 +1819,8 @@ common:
   urlRequiredTips: URL 必填
   urls: 链接
   usage: 使用量
+  useAuthenticatorApp: 使用验证器App
+  useAuthenticatorAppTip: 设置一个TOTP应用程序，如Google Authenticator或Authy用于安全登录
   useCommaArray: 使用逗号数组
   usedBy: 被引用
   useFor: 用于
@@ -1806,6 +1843,7 @@ common:
   userOptions: 用户配置
   userRequired: 用户必填
   using: 使用
+  utcTime: UTC时间
   validation: 验证
   validationFailedMessage: 验证失败时的错误信息
   value: 值
@@ -1815,6 +1853,8 @@ common:
   valueRequiredTips: 值必填
   vat: 增值税
   vatAndFees: 增值税和费用
+  verification: 验证
+  verificationCode: 验证码
   verificationCodeHasSent: 验证码已发送
   verifyCode: 验证码
   verifyCodeInvalid: 验证码无效
@@ -1921,6 +1961,7 @@ mail:
   to: 收件人
 order:
   checkout: 结账
+  currentPlan: 当前等级
   IsDelivered: 送达
   IsPaid: 支付状态
   LineTitle: 内容

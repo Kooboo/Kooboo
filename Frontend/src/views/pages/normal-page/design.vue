@@ -201,7 +201,7 @@ watch(
     <template #settings>
       <!-- :items="['pageStyle', 'basic', 'HTMLMeta', 'parameters', 'cache']" -->
       <!-- 移除Settings下的以下选项 -->
-      <PageSidebar :old-url-path="oldUrlPath" :items="list">
+      <PageSidebar :items="list">
         <template #pageStyle>
           <el-collapse-item
             v-if="rootMeta"

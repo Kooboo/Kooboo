@@ -32,6 +32,7 @@
       <template #bottom>
         <el-dropdown
           trigger="click"
+          max-height="300px"
           @command="edit(group.find((f) => f.embeddedFolder == $event)!)"
         >
           <el-button circle data-cy="add">

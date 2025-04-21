@@ -27,6 +27,12 @@ export function timeZoneOffset() {
   return -(new Date().getTimezoneOffset() / 60);
 }
 
+const timeZoneOffsetNumber = timeZoneOffset();
+
+export const timeZoneLabel = `UTC${
+  timeZoneOffsetNumber > 0 ? "+" : "-"
+}${timeZoneOffsetNumber}:00`;
+
 export const durationUnits = [
   { key: "Year", value: t("common.year") },
   { key: "Month", value: t("common.month") },

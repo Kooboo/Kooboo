@@ -44,6 +44,10 @@ export const useCommerceStore = defineStore("commerceStore", () => {
       exchangeRate: 10,
       orderRedeemRules: [],
     },
+    productDigitalItemRequired: false,
+    hideAttributes: false,
+    hideVariants: false,
+    orderExtensionFields: [],
   });
 
   const loadSettings = async () => {

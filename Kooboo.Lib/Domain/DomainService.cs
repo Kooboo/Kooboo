@@ -210,5 +210,34 @@ namespace Kooboo.Lib.Domain
             }
             return null;
         }
+
+        public static string QueryAAAA(string FullDomain)
+        {
+            var Answers = Kooboo.Lib.DnsRequest.DnsQuery.QueryRecords(FullDomain, DNS.Protocol.RecordType.AAAA).Result;
+
+            if (Answers != null)
+            {
+                foreach (var answer in Answers)
+                {
+                    var record = answer as DNS.Protocol.ResourceRecords.IPAddressResourceRecord;
+                    if (record != null)
+                    {
+                        var ipv6 = record.IPAddress.ToString();
+                        return ipv6;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static bool IsKoobooDomain(string host)
+        {
+            return host.EndsWith(".sitepapa.com") || host.EndsWith(".kooboo.io") || host.EndsWith(".kooboo.cn") || host.EndsWith(".kooboo.dev");
+        }
+
+         public static bool IsLocalDomain(string host)
+        {
+            return host == "127.0.0.1"||host == "localhost";
+        }
     }
 }

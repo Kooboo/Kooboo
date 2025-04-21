@@ -1,6 +1,7 @@
 ﻿using Kooboo.Api;
 using Kooboo.Data.Context;
 using Kooboo.Data.Language;
+using Kooboo.Data.Models;
 using Kooboo.Data.Models.Market;
 using Kooboo.Lib.Helper;
 
@@ -113,6 +114,13 @@ namespace Kooboo.Web.Api.Implementation.Market
         }
 
 
+
+        public MemberShip GetMembership(ApiCall call)
+        {
+            var url = Data.Helper.AccountUrlHelper.Member("GetMembership");
+            var AuthHeader = Data.Helper.ApiHelper.GetAuthHeaders(call.Context);
+            return HttpHelper.Get2<MemberShip>(url, null, AuthHeader);
+        }
     }
 
 }

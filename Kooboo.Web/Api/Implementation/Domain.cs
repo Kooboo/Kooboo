@@ -91,21 +91,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public IEnumerable<Data.Models.Domain> Available(ApiCall apiCall)
         {
-            var list = Kooboo.Data.GlobalDb.Domains.Available(apiCall.Context.User.CurrentOrgId).Where(o => o.MailOnly == false).ToList();
-
-            if (list == null)
-            {
-                list = new List<Data.Models.Domain>();
-            }
-
-            var stagingService = new Kooboo.Data.Service.ShareStagingDomainService();
-
-            if (!string.IsNullOrEmpty(stagingService.Domain))
-            {
-                list.Add(new Data.Models.Domain() { DomainName = stagingService.Domain, IsKoobooDns = false, OrganizationId = apiCall.Context.User.CurrentOrgId });
-            }
-
-            return list;
+            return DomainService.Available(apiCall.Context);
         }
 
         public List<DomainSummaryViewModel> List(ApiCall call)
@@ -125,12 +111,13 @@ namespace Kooboo.Web.Api.Implementation
                 model.Id = item.Id;
                 model.DomainName = item.DomainName;
                 model.NameServer = item.NameServer;
+                model.Source = item.Source;
 
                 if (AppSettings.IsOnlineServer)
                 {
                     if (item.Expiration != default(DateTime))
                     {
-                        model.Expires = item.Expiration.ToLongDateString();
+                        model.Expires = item.Expiration.ToString("yyyy-MM-dd");
                     }
                 }
                 else
@@ -415,6 +402,23 @@ namespace Kooboo.Web.Api.Implementation
                 Data.Helper.ApiHelper.GetAuthHeaders(call.Context)
             );
         }
+
+        public string GetTransferCode(string domain, ApiCall call)
+        {
+            var url = Kooboo.Data.Helper.AccountUrlHelper.Domain("GetTransferCode");
+
+            var json = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                domain
+            });
+
+            return HttpHelper.Post<string>(
+                url,
+                json,
+                Data.Helper.ApiHelper.GetAuthHeaders(call.Context)
+            );
+        }
+
 
 
         private void EnsureDnsRight(ApiCall call)

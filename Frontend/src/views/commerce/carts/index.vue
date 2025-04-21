@@ -100,7 +100,7 @@ onMounted(load);
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('common.contact')" align="center">
+      <el-table-column :label="t('common.contact')">
         <template #default="{ row }">
           <div v-if="row.customer">
             <TruncateContent
@@ -109,7 +109,7 @@ onMounted(load);
               {{ row.customer?.phone }}</TruncateContent
             >
             <TruncateContent
-              class="text-s text-666"
+              class="!text-s text-666"
               :tip="`${row.customer?.firstName} ${row.customer?.lastName}`"
             >
               {{ row.customer?.firstName }} {{ row.customer?.lastName }}
@@ -125,11 +125,7 @@ onMounted(load);
         <template #default="{ row }">{{ row.country }}</template>
       </el-table-column>
 
-      <el-table-column
-        :label="t('common.lastModified')"
-        width="180"
-        align="center"
-      >
+      <el-table-column :label="t('common.lastModified')" width="180">
         <template #default="{ row }">{{ useTime(row.updateAt) }}</template>
       </el-table-column>
 

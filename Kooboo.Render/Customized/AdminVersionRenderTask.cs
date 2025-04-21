@@ -93,13 +93,9 @@ namespace Kooboo.Render.Customized
             return culture;
         }
 
-
+        public List<IRenderTask> GetSubTasks()
+        {
+            return null;
+        }
     }
-
-
-
-
-
-
-
 }

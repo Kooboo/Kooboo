@@ -46,7 +46,7 @@
     </div>
     <KTable
       ref="table"
-      :data="properties.slice(0, properties.length - 3)"
+      :data="properties.filter((f) => !f.isSystemField)"
       :row-class-name="
         ({ row, rowIndex }) => (row.isSystemField ? '' : 'draggable')
       "
@@ -77,7 +77,7 @@
 
         <el-table
           v-if="defaultDataTypeDisabled"
-          :data="properties.slice(properties.length - 3, properties.length)"
+          :data="properties.filter((f) => f.isSystemField)"
           :show-header="false"
         >
           <el-table-column :label="t('common.name')">

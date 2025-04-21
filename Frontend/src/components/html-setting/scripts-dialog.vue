@@ -63,7 +63,12 @@ const onSave = async () => {
             :label="item.name"
             :value="item.id"
             data-cy="script-opt"
-          />
+          >
+            <div class="max-w-400px truncate">
+              <span> {{ item.name }}</span>
+              <span v-if="item.routeName">({{ item.routeName }})</span>
+            </div>
+          </el-option>
           <label
             v-if="groups.length"
             class="p-8 dark:text-fff/86"
@@ -76,7 +81,12 @@ const onSave = async () => {
             :label="item.name"
             :value="item.id"
             data-cy="script-opt"
-          />
+          >
+            <div class="max-w-400px truncate">
+              <span>{{ item.name }}</span>
+              <span v-if="item.relativeUrl">({{ item.relativeUrl }})</span>
+            </div>
+          </el-option>
         </el-select>
       </el-form-item>
     </el-form>

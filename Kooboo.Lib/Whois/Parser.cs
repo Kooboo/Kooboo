@@ -49,6 +49,8 @@ namespace Kooboo.Lib.Whois
             record.NameServers = readNameServer(values, RawResponse, queryHost);
 
             record.Expiration = readExpires(values, RawResponse);
+            var dnssecRecord = values.FirstOrDefault(f => "dnssec".Equals(f.name, StringComparison.OrdinalIgnoreCase));
+            record.Dnssec = dnssecRecord.value != null && !"unsigned".Equals(dnssecRecord.value, StringComparison.OrdinalIgnoreCase);
 
             return record;
         }

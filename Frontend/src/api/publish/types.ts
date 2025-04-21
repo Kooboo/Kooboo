@@ -39,6 +39,7 @@ export interface ServerHost {
   serverId: string;
   host: string;
   dataCenter: string;
+  orgFullDomain: string;
 }
 
 export interface Difference {

@@ -10,6 +10,7 @@ import { useSiteStore } from "@/store/site";
 import { useI18n } from "vue-i18n";
 import { cloneDeep } from "lodash-es";
 import { updateAdvancedMenus } from "@/api/site";
+import { getQueryString } from "@/utils/url";
 
 const route = useRoute();
 const siteStore = useSiteStore();
@@ -25,11 +26,11 @@ const menus = computed(() => {
       parent = list.find((f) => f.routeMenuName == moduleMenu.parent)?.items;
     }
     if (parent) {
-      parent.push({
-        id: moduleMenu.id,
+      var menuItem: Menu = {
+        id: moduleMenu.id + moduleMenu.url,
         display: moduleMenu.name,
         name: "module menu",
-        routeMenuName: moduleMenu.id,
+        routeMenuName: moduleMenu.id + moduleMenu.url,
         items: [],
         icon: moduleMenu.icon,
         queryBuilder() {
@@ -41,7 +42,29 @@ const menus = computed(() => {
         params: {
           module: moduleMenu.id,
         },
-      });
+      };
+      if (moduleMenu.children) {
+        menuItem.id = menuItem.routeMenuName = moduleMenu.id;
+        for (const i of moduleMenu.children) {
+          menuItem.items.push({
+            id: moduleMenu.id + i.url,
+            display: i.name,
+            name: "module menu",
+            routeMenuName: moduleMenu.id + i.url,
+            items: [],
+            queryBuilder() {
+              return {
+                url: i.url,
+                SiteId: route.query.SiteId,
+              };
+            },
+            params: {
+              module: moduleMenu.id,
+            },
+          });
+        }
+      }
+      parent.push(menuItem);
     }
   }
   return list;
@@ -59,7 +82,7 @@ const activeName = computed(() => {
     return route.meta.activeMenu;
   }
   if (route.name == "module menu") {
-    return route.name + route.params.module;
+    return route.name + route.params.module + getQueryString("url");
   }
   return route.name as string;
 });

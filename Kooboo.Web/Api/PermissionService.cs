@@ -179,7 +179,7 @@ namespace Kooboo.Web.Api
             if (context.User?.Id == default) return null;
             if (context.User.Id == BuiltInUser.CollaborationUser.Id)
             {
-                var token = UserProviderHelper.GetJtwTokentFromContext(context);
+                var token = UserProviderHelper.GetJwtTokenFromContext(context);
                 IJsonSerializer serializer = new JsonNetSerializer();
                 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
                 var jwtDecoder = new JwtDecoder(serializer, urlEncoder);

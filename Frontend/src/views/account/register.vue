@@ -71,6 +71,7 @@ const onRegister = async (code?: string) => {
       name: "home",
     });
   }
+  return true;
 };
 </script>
 

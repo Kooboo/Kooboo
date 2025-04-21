@@ -27,6 +27,9 @@
           <el-form-item prop="displayName" :label="t('common.displayName')">
             <el-input v-model="model.displayName" data-cy="display-name" />
           </el-form-item>
+          <el-form-item prop="previewUrl" :label="t('common.previewUrl')">
+            <el-input v-model="model.previewUrl" data-cy="preview-url" />
+          </el-form-item>
           <el-form-item prop="contentTypeId" :label="t('common.contentType')">
             <el-select
               v-model="model.contentTypeId"
@@ -43,23 +46,35 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="!isContent" :label="t('common.pageSize')">
-            <el-select v-model="model.pageSize">
-              <el-option
-                v-for="item in [10, 30, 50, 100]"
-                :key="item"
-                :label="item"
-                :value="item"
+
+          <div class="grid grid-cols-2 gap-8">
+            <el-form-item v-if="!isContent" :label="t('common.pageSize')">
+              <el-select v-model="model.pageSize">
+                <el-option
+                  v-for="item in [10, 30, 50, 100]"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+                <el-option :value="999999" :label="t('common.disablePaging')" />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="t('common.group')">
+              <el-input v-model="model.group" />
+            </el-form-item>
+          </div>
+          <div class="grid grid-cols-2">
+            <el-form-item v-if="!isContent" :label="t('common.sortable')">
+              <el-switch
+                v-model="model.sortable"
+                :disabled="!model.contentTypeId"
               />
-              <el-option :value="999999" :label="t('common.disablePaging')" />
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="!isContent" :label="t('common.sortable')">
-            <el-switch
-              v-model="model.sortable"
-              :disabled="!model.contentTypeId"
-            />
-          </el-form-item>
+            </el-form-item>
+            <el-form-item :label="t('common.hidden')">
+              <el-switch v-model="model.hidden" />
+            </el-form-item>
+          </div>
+
           <el-form-item
             v-if="model.sortable"
             prop="sortField"
@@ -91,9 +106,6 @@
               </el-col>
             </el-row>
           </el-form-item>
-          <el-form-item :label="t('common.hidden')">
-            <el-switch v-model="model.hidden" />
-          </el-form-item>
         </el-form>
       </el-tab-pane>
       <el-tab-pane :label="tabs[1].displayName" :name="tabs[1].value">
@@ -102,6 +114,31 @@
           :current="model"
           :folders="folders"
         />
+      </el-tab-pane>
+      <el-tab-pane :label="tabs[2].displayName" :name="tabs[2].value">
+        <KTable
+          :data="sortedFields"
+          :draggable="true"
+          row-key="name"
+          @sorted="onSorted"
+        >
+          <el-table-column :label="t('common.name')">
+            <template #default="{ row }">
+              <div class="flex items-center space-x-4">
+                {{ row.display || row.name }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column width="150" align="right">
+            <template #default>
+              <IconButton
+                icon="icon-move js-sortable cursor-move"
+                :tip="t('common.move')"
+                data-cy="move"
+              />
+            </template>
+          </el-table-column>
+        </KTable>
       </el-tab-pane>
     </el-tabs>
 
@@ -142,6 +179,7 @@ import type { Rules } from "async-validator";
 import DialogFooterBar from "@/components/dialog-footer-bar/index.vue";
 
 import { useI18n } from "vue-i18n";
+import kTable from "@/components/k-table";
 interface PropsType {
   modelValue: boolean;
   current?: ContentFolder;
@@ -165,6 +203,10 @@ const tabs = [
   {
     displayName: t("common.relationFolders"),
     value: "relation",
+  },
+  {
+    displayName: t("common.fields"),
+    value: "fields",
   },
 ] as const;
 
@@ -288,8 +330,66 @@ async function handleSave() {
     ascending: model.value.ascending,
     pageSize: model.value.pageSize,
     isContent: props.isContent,
+    fieldsOrder: model.value.fieldsOrder,
+    group: model.value.group,
+    previewUrl: model.value.previewUrl,
   });
   handleClose();
   emits("create-success");
+}
+
+const sortedFields = computed(() => {
+  let list: any[] = [];
+  if (!columns.value) return list;
+  if (!model.value) return list;
+
+  for (const i of columns.value) {
+    if (!i.editable) continue;
+    list.push({
+      name: i.name,
+      display: i.displayName,
+    });
+  }
+
+  for (const i of model.value.embedded) {
+    if (i.group) {
+      if (!list.find((f) => f.name == i.group)) {
+        list.push({
+          name: i.group,
+          display: i.group.split("##name##")[1],
+        });
+      }
+    } else {
+      list.push({
+        name: i.alias,
+        display: i.display,
+      });
+    }
+  }
+
+  for (const i of model.value.category) {
+    list.push({
+      name: i.alias,
+      display: i.display,
+    });
+  }
+
+  if (!model.value.fieldsOrder) return list;
+  var result: any[] = [];
+
+  for (const i of model.value.fieldsOrder) {
+    var found = list.find((f) => f.name == i);
+    if (found) {
+      result.push(found);
+      list = list.filter((f) => f.name != i);
+    }
+  }
+
+  result.push(...list);
+  return result;
+});
+
+async function onSorted(data: ContentFolder[]) {
+  model.value.fieldsOrder = data.map((m) => m.name);
 }
 </script>

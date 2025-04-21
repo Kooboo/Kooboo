@@ -22,9 +22,9 @@ namespace Kooboo.Render
             get; set;
         }
 
-        private bool IsIgnorePath(string relativeurl)
+        private bool IsIgnorePath(string relativeUrl)
         {
-            string relative = relativeurl.ToLower();
+            string relative = relativeUrl.ToLower();
             foreach (var item in this.options.RequireUserIgnorePath)
             {
                 if (relative.StartsWith(item, System.StringComparison.CurrentCultureIgnoreCase))
@@ -65,7 +65,7 @@ namespace Kooboo.Render
 
             context.DataContext.Push("User", context.User);
 
-            var currentwebsite = context.WebSite;
+            var currentWebSite = context.WebSite;
             if (this.options.RequireSpeicalSite)
             {
                 context.WebSite = null;
@@ -78,6 +78,13 @@ namespace Kooboo.Render
             if (this.options.RequireUser && !IsIgnorePath(context.Request.RelativeUrl))
             {
                 var user = context.User;
+
+                if (context.WebSite == null)
+                {
+                    context.Response.Redirect(302, "/_start");
+                    return;
+                }
+
                 if (user == null)
                 {
                     string relative = context.Request.RelativeUrl;
@@ -176,7 +183,7 @@ namespace Kooboo.Render
             //  context.Request.RelativeUrl = null; //restore change if any.
             if (this.options.RequireSpeicalSite)
             {
-                context.WebSite = currentwebsite;  // restore...
+                context.WebSite = currentWebSite;  // restore...
             }
             await Next.Invoke(context);
         }

@@ -9,13 +9,11 @@ import Sitemap from "./sitemap.vue";
 import { useI18n } from "vue-i18n";
 import RichTextEditorConfig from "./editor.vue";
 import VisitorCountryRestriction from "./visitor-country-restriction.vue";
-import { useSiteStore } from "@/store/site";
 import { useAppStore } from "@/store/app";
 import ResourceCache from "./resource-cache.vue";
 import RequestAccessLimit from "./request-access-limit.vue";
 const { t } = useI18n();
 
-const siteStore = useSiteStore();
 const appStore = useAppStore();
 </script>
 
@@ -126,6 +124,13 @@ const appStore = useAppStore();
     <RequestAccessLimit />
     <div class="max-w-504px">
       <el-form-item>
+        <span class="font-bold dark:text-fff/86">{{
+          t("common.blockingSeo")
+        }}</span>
+        <div class="flex-1" />
+        <el-switch v-model="site.blockingSeo" />
+      </el-form-item>
+      <el-form-item>
         <span class="font-bold dark:text-fff/86">CORS</span>
         <Tooltip :tip="t('common.corsTips')" custom-class="ml-4" />
         <div class="flex-1" />
@@ -198,36 +203,6 @@ const appStore = useAppStore();
           !appStore.header?.isOnlineServer || appStore.header.isPrivateServer
         "
       />
-      <template
-        v-if="
-          appStore.header?.isOnlineServer && !appStore.header.isPrivateServer
-        "
-      >
-        <el-form-item v-if="siteStore.serviceLevel > 0">
-          <span class="font-bold dark:text-fff/86">{{
-            t("common.enableDevPassword")
-          }}</span>
-          <div class="flex-1" />
-          <el-switch
-            :model-value="site.status == 'Development'"
-            @update:model-value="
-              site.status =
-                site.status == 'Development' ? 'Published' : 'Development'
-            "
-          />
-        </el-form-item>
-        <el-form-item v-if="site.status == 'Development'">
-          <span class="font-bold dark:text-fff/86">{{
-            t("common.devPassword")
-          }}</span>
-          <div class="flex-1" />
-          <el-input
-            v-model="site.devPassword"
-            :disabled="true"
-            data-cy="dev-password"
-          />
-        </el-form-item>
-      </template>
     </div>
   </div>
 </template>

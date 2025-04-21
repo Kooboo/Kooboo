@@ -90,37 +90,43 @@ namespace Kooboo.Web
         }
 
 
-        private static List<IKoobooMiddleWare> _middlewares;
+        private static List<IKoobooMiddleWare> _middleWares;
 
         public static List<IKoobooMiddleWare> Middleware
         {
             get
             {
-                if (_middlewares == null)
+                if (_middleWares == null)
                 {
                     lock (_locker)
                     {
-                        if (_middlewares == null)
+                        if (_middleWares == null)
                         {
-                            var middlewares = new List<IKoobooMiddleWare>();
-                            middlewares.Add(new FrontRequest.KoobooMiddleware());
-                            middlewares.Add(new PwaMiddleware());
-                            middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
-                            middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
-                            middlewares.Add(new SpaMultilingualMiddleware());
-                            middlewares.Add(new RenderMiddleWare(KoobooBackEndViewOption()));
+                            var middleWares = new List<IKoobooMiddleWare>();
+                            middleWares.Add(new FrontRequest.KoobooMiddleware());
+                            middleWares.Add(new PwaMiddleware());
+                            middleWares.Add(new ApiMiddleware(new SiteApiProvider()));
+                            middleWares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
+                            middleWares.Add(new SpaMultilingualMiddleware());
+
+                            middleWares.Add(new StartSiteMiddleWare());
+
+                            middleWares.Add(new RenderMiddleWare(KoobooBackEndViewOption()));
+
+
                             // middlewares.Add(new JsTestMiddleWare(KoobooJsTestOption()));
                             // middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
-                            middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
-                            middlewares.Add(new SslCertMiddleWare());
 
-                            middlewares.Add(new EndMiddleWare());
-                            _middlewares = middlewares;
+                            middleWares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
+                            middleWares.Add(new SslCertMiddleWare());
+
+                            middleWares.Add(new EndMiddleWare());
+                            _middleWares = middleWares;
                         }
                     }
                 }
 
-                return _middlewares;
+                return _middleWares;
             }
         }
 
@@ -219,7 +225,7 @@ namespace Kooboo.Web
             return null;
         }
 
-        public static bool LocalserverTryShouldHandle(RenderContext Context, RenderOption Options)
+        public static bool LocalServerTryShouldHandle(RenderContext Context, RenderOption Options)
         {
             if (Context.WebSite != null && !string.IsNullOrEmpty(Context.WebSite.LocalRootPath))
             {
@@ -233,7 +239,7 @@ namespace Kooboo.Web
         {
             RenderOption option = new RenderOption();
             option.GetDiskRoot = LocalServerRoot;
-            option.ShouldTryHandle = LocalserverTryShouldHandle;
+            option.ShouldTryHandle = LocalServerTryShouldHandle;
             option.ViewFolder = "_view, view";
             option.LayoutFolder = "_layout, layout";
             return option;
@@ -248,32 +254,36 @@ namespace Kooboo.Web
             return option;
         }
 
-        private static Kooboo.Api.IApiProvider _apiprovider;
+        private static Kooboo.Api.IApiProvider _apiProvider;
 
         public static Kooboo.Api.IApiProvider CurrentApiProvider
         {
             get
             {
-                if (_apiprovider == null)
+                if (_apiProvider == null)
                 {
                     foreach (var item in Middleware)
                     {
                         if (item is Kooboo.Api.ApiMiddleware)
                         {
-                            var apimiddle = item as Kooboo.Api.ApiMiddleware;
+                            var apiMiddle = item as Kooboo.Api.ApiMiddleware;
 
-                            _apiprovider = apimiddle.ApiProvider;
+                            _apiProvider = apiMiddle.ApiProvider;
                         }
                     }
                 }
 
-                return _apiprovider;
+                return _apiProvider;
             }
         }
 
         public static void InitHeaders(RenderContext context)
         {
             context.Response.Headers["IsOnlineServer"] = Data.AppSettings.IsOnlineServer.ToString();
+            if (context.WebSite?.BlockingSeo ?? false)
+            {
+                context.Response.Headers["X-Robots-Tag"] = "noindex, nofollow";
+            }
         }
     }
 

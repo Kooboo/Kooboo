@@ -139,6 +139,12 @@ load();
       ><template #default="{ row }">
         <ObjectTypeTag :type="row.resourceType" /> </template
     ></el-table-column>
+
+    <el-table-column :label="t('common.culture')">
+      <template #default="{ row }">
+        <div>{{ row.culture }}</div>
+      </template>
+    </el-table-column>
     <el-table-column
       :label="t('common.hasObject')"
       width="100px"

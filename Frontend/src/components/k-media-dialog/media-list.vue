@@ -3,22 +3,120 @@
     <thead class="bg-[#fafafa] dark:bg-444 shadow-s-10 relative">
       <tr v-if="canEdit">
         <th width="50" />
-        <th class="text-left">{{ t("common.fileName") }}</th>
+        <th class="text-left">
+          <div
+            v-if="provider == 'default' && type == 'media'"
+            class="flex items-center gap-4 cursor-pointer"
+            @click="pollingSort('name')"
+          >
+            <span>{{ t("common.fileName") }}</span>
+            <SortBtn
+              :desc="sortField == 'name' ? sortDesc : undefined"
+              @change="
+                $emit('sort', $event === undefined ? undefined : 'name', $event)
+              "
+            />
+          </div>
+          <span v-else>{{ t("common.fileName") }}</span>
+        </th>
         <th class="text-left">URL</th>
         <th width="250" class="text-left">
           {{ t("common.usedBy") }}
         </th>
-        <th width="100">{{ t("common.size") }}</th>
-        <th width="150">{{ t("common.lastModified") }}</th>
+        <th width="100">
+          <div
+            v-if="provider == 'default' && type == 'media'"
+            class="flex items-center gap-4 cursor-pointer"
+            @click="pollingSort('size')"
+          >
+            <span>{{ t("common.size") }}</span>
+            <SortBtn
+              :desc="sortField == 'size' ? sortDesc : undefined"
+              @change="
+                $emit('sort', $event === undefined ? undefined : 'size', $event)
+              "
+            />
+          </div>
+          <span v-else>{{ t("common.size") }}</span>
+        </th>
+        <th width="150">
+          <div
+            v-if="provider == 'default' && type == 'media'"
+            class="flex items-center gap-4 cursor-pointer"
+            @click="pollingSort('lastModified')"
+          >
+            <span>{{ t("common.lastModified") }}</span>
+            <SortBtn
+              :desc="sortField == 'lastModified' ? sortDesc : undefined"
+              @change="
+                $emit(
+                  'sort',
+                  $event === undefined ? undefined : 'lastModified',
+                  $event
+                )
+              "
+            />
+          </div>
+          <span v-else>{{ t("common.lastModified") }}</span>
+        </th>
         <th :width="hideOpenFolder ? 140 : 160" />
       </tr>
       <tr v-else>
         <th width="50" />
-        <th class="text-left">{{ t("common.fileName") }}</th>
+        <th class="text-left">
+          <div
+            v-if="provider == 'default' && type == 'media'"
+            class="flex items-center gap-4 cursor-pointer"
+            @click="pollingSort('name')"
+          >
+            <span>{{ t("common.fileName") }}</span>
+            <SortBtn
+              :desc="sortField == 'name' ? sortDesc : undefined"
+              @change="
+                $emit('sort', $event === undefined ? undefined : 'name', $event)
+              "
+            />
+          </div>
+          <span v-else>{{ t("common.fileName") }}</span>
+        </th>
         <th v-if="!dialogInfo" class="text-left">URL</th>
         <th width="10" />
-        <th width="90">{{ t("common.size") }}</th>
-        <th width="160">{{ t("common.lastModified") }}</th>
+        <th width="90">
+          <div
+            v-if="provider == 'default' && type == 'media'"
+            class="flex items-center gap-4 cursor-pointer"
+            @click="pollingSort('size')"
+          >
+            <span>{{ t("common.size") }}</span>
+            <SortBtn
+              :desc="sortField == 'size' ? sortDesc : undefined"
+              @change="
+                $emit('sort', $event === undefined ? undefined : 'size', $event)
+              "
+            />
+          </div>
+          <span v-else>{{ t("common.size") }}</span>
+        </th>
+        <th width="160">
+          <div
+            v-if="provider == 'default' && type == 'media'"
+            class="flex items-center gap-4 cursor-pointer"
+            @click="pollingSort('lastModified')"
+          >
+            <span>{{ t("common.lastModified") }}</span>
+            <SortBtn
+              :desc="sortField == 'lastModified' ? sortDesc : undefined"
+              @change="
+                $emit(
+                  'sort',
+                  $event === undefined ? undefined : 'lastModified',
+                  $event
+                )
+              "
+            />
+          </div>
+          <span v-else>{{ t("common.lastModified") }}</span>
+        </th>
         <th :width="hideOpenFolder ? 110 : 130" />
       </tr>
     </thead>
@@ -56,7 +154,7 @@
         </td>
         <td :class="dialogInfo ? 'hidden' : ''" />
         <td class="text-left" />
-        <td>-</td>
+        <td class="text-left">-</td>
         <td class="text-m">{{ useTime(item.lastModified) }}</td>
         <td>
           <div class="flex items-center justify-end cursor-pointer px-16">
@@ -122,7 +220,9 @@
             :type="item.references ? 'Image' : 'CmsFile'"
           />
         </td>
-        <td data-cy="size">{{ bytesToSize(item.size) }}</td>
+        <td data-cy="size">
+          <div class="text-left">{{ bytesToSize(item.size) }}</div>
+        </td>
         <td class="text-m" data-cy="last-modified-in-list">
           {{ useTime(item.lastModified) }}
         </td>
@@ -273,6 +373,7 @@ import { useUrlSiteId } from "@/hooks/use-site-id";
 import { downloadFiles } from "@/api/content/file";
 import { downloadMediaFile } from "@/api/content/media";
 import type { DownloadRequest } from "@/api/content/download-request-type";
+import SortBtn from "@/components/basic/sort-btn.vue";
 
 const props = defineProps<{
   folders: MediaFolderItem[];
@@ -281,10 +382,13 @@ const props = defineProps<{
   hideOpenFolder?: boolean;
   folderType?: "File";
   provider: string;
+  sortField?: string;
+  sortDesc?: boolean;
 }>();
 interface ListEmits {
   (e: "clickFolder", value: MediaFolderItem): void;
   (e: "editImage", file: MediaFileItem, provider: string): void;
+  (e: "sort", field?: string, desc?: boolean): void;
 }
 
 const showImageViewer = ref(false);
@@ -357,6 +461,17 @@ const canEdit = computed(
 const isEmpty = computed(
   () => props.folders.length === 0 && props.files.length === 0
 );
+
+function pollingSort(name: string) {
+  let sortDesc = props.sortDesc;
+  if (props.sortField != name) {
+    emits("sort", name, false);
+  } else if (sortDesc === false) {
+    emits("sort", name, true);
+  } else {
+    emits("sort", undefined, undefined);
+  }
+}
 </script>
 <style lang="scss" scoped>
 :deep(.el-checkbox) {

@@ -11,19 +11,27 @@
       :rules="rules"
       @submit.prevent
     >
-      <FieldControl
-        v-for="(item, index) in fields"
-        v-show="isShowField(item)"
-        :key="index"
-        :field="item"
-        :model="model"
-      />
-      <ContentCategories v-model="categories" />
-      <ContentEmbeddeds
-        :id="id"
-        v-model="embeddeds"
-        :paths="[...(paths ?? [])]"
-      />
+      <template v-for="(item, index) of sortedFields">
+        <FieldControl
+          v-if="item.type == 'field'"
+          v-show="isShowField(item.value)"
+          :key="index + 'field'"
+          :field="item.value"
+          :model="model"
+        />
+        <ContentCategories
+          v-else-if="item.type == 'category'"
+          :key="index + 'category'"
+          v-model="item.value"
+        />
+        <ContentEmbeddeds
+          v-else-if="item.type == 'embedded'"
+          :id="id"
+          :key="index + 'embedded'"
+          v-model="item.value"
+          :paths="[...(paths ?? [])]"
+        />
+      </template>
     </el-form>
 
     <GuidInfo v-else-if="!loading">
@@ -38,6 +46,7 @@ import type {
   ContentCategory,
   ContentEmbedded,
   ContentFieldItem,
+  EditContentResponse,
 } from "@/api/content/textContent";
 import { getEditContent, langupdate } from "@/api/content/textContent";
 import { useMultilingualStore } from "@/store/multilingual";
@@ -64,6 +73,11 @@ interface PropsType {
   paths?: string[];
   associated?: boolean;
 }
+
+const emit = defineEmits<{
+  (e: "dataLoad", value: EditContentResponse): void;
+}>();
+
 const props = defineProps<PropsType>();
 const { t } = useI18n();
 const form = ref<InstanceType<typeof ElForm>>();
@@ -76,6 +90,7 @@ const multilingualStore = useMultilingualStore();
 const loading = ref(false);
 const saveTip = useSaveTip();
 const siteStore = useSiteStore();
+const fieldsOrder = ref<any[]>([]);
 
 onMounted(async () => {
   await getEdit();
@@ -102,10 +117,12 @@ async function getEdit() {
     folderId: props.folderId,
     typeId: props.contentType,
   });
+  emit("dataLoad", response);
   loading.value = false;
   setFields(response.properties);
   categories.value = response.categories || [];
   embeddeds.value = response.embedded || [];
+  if (response.fieldsOrder) fieldsOrder.value = response.fieldsOrder;
 }
 onBeforeRouteLeave(async (to, from, next) => {
   if (props.associated) return next();
@@ -288,6 +305,70 @@ watch(
     deep: true,
   }
 );
+
+var sortedFields = computed(() => {
+  var result: any[] = [];
+  let fieldList = fields.value ? [...fields.value] : [];
+  let embeddedList = embeddeds.value ? [...embeddeds.value] : [];
+  let categoryList = categories.value ? [...categories.value] : [];
+
+  for (const i of fieldsOrder.value) {
+    const field = fieldList.find((f) => f.name == i);
+    if (field) {
+      result.push({
+        type: "field",
+        value: field,
+      });
+      fieldList = fieldList.filter((f) => f.name != i);
+      continue;
+    }
+    const embedded = embeddedList.find((f) => f.alias == i || f.group == i);
+    if (embedded) {
+      let list = [embedded];
+      if (embedded.group) {
+        list = embeddedList.filter((f) => f.group == embedded.group);
+      }
+
+      embeddedList = embeddedList.filter((f) => !list.includes(f));
+
+      result.push({
+        type: "embedded",
+        value: list,
+      });
+    }
+
+    const category = categoryList.find((f) => f.alias == i);
+    if (category) {
+      let list = [category];
+
+      categoryList = categoryList.filter((f) => !list.includes(f));
+
+      result.push({
+        type: "category",
+        value: list,
+      });
+    }
+  }
+
+  for (const i of fieldList) {
+    result.push({
+      type: "field",
+      value: i,
+    });
+  }
+
+  result.push({
+    type: "embedded",
+    value: embeddedList,
+  });
+
+  result.push({
+    type: "category",
+    value: categoryList,
+  });
+
+  return result;
+});
 </script>
 
 <style scoped lang="scss">

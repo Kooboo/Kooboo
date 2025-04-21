@@ -27,13 +27,17 @@ const onDelete = async (rows: Binding[]) => {
 };
 
 const onEnableSSL = async (value: Binding) => {
-  await verifySSL({
-    rootDomain: value.fullName,
-  });
+  try {
+    await verifySSL({
+      rootDomain: value.fullName,
+    });
 
-  await setSsl({
-    rootDomain: value.fullName,
-  });
+    await setSsl({
+      rootDomain: value.fullName,
+    });
+  } catch (error) {
+    //
+  }
 
   load();
 };
@@ -86,7 +90,7 @@ load();
           <span>{{ row.culture }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="t('common.SSLEnabled')" align="center">
+      <el-table-column :label="t('common.SSLEnabled')">
         <template #default="{ row }">
           <div v-if="!row.defaultPortBinding">
             <el-tooltip
@@ -110,6 +114,11 @@ load();
                 @update:model-value="onEnableSSL(row)"
               />
             </el-tooltip>
+
+            <ElTag v-if="row.sslError" round type="danger" class="ml-4"
+              >{{ t("common.failed") }}
+              <Tooltip :tip="row.sslError" custom-class="ml-4" />
+            </ElTag>
           </div>
         </template>
       </el-table-column>

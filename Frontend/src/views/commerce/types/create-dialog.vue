@@ -5,9 +5,11 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import TermEditor from "./term-editor.vue";
 import DigitalFields from "./digital-fields.vue";
+import { useCommerceStore } from "@/store/commerce";
 
 const { t } = useI18n();
 const show = ref(true);
+const commerceStore = useCommerceStore();
 
 defineProps<{
   modelValue: boolean;
@@ -45,7 +47,10 @@ async function onSave() {
       <ElFormItem :label="t('common.name')">
         <ElInput v-model="model.name" />
       </ElFormItem>
-      <ElFormItem :label="t('common.attributes')">
+      <ElFormItem
+        v-if="!commerceStore.settings.hideAttributes"
+        :label="t('common.attributes')"
+      >
         <TermEditor
           :model="model.attributes"
           :name-label="t('common.name')"
@@ -53,7 +58,10 @@ async function onSave() {
           :name-placeholder="t('common.attributeSamples')"
         />
       </ElFormItem>
-      <ElFormItem :label="t('commerce.variantOptions')">
+      <ElFormItem
+        v-if="!commerceStore.settings.hideVariants"
+        :label="t('commerce.variantOptions')"
+      >
         <TermEditor :model="model.options" force-selection />
       </ElFormItem>
       <DigitalFields :model="model" />

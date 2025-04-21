@@ -126,10 +126,10 @@ namespace Kooboo.Web.Api.Implementation
 
         public string CreateCooperationBearer(ApiCall call)
         {
-            if (!call.Context.User.IsAdmin)
-            {
-                throw new Exception("This api call limit by admin user");
-            }
+            // if (!call.Context.User.IsAdmin)
+            // {
+            //     throw new Exception("This api call limit by admin user");
+            // }
             var siteId = call.Context.WebSite.Id;
             return WebSiteService.CreateCooperationBearer(call.Context, siteId, call.GetValue("role"), call.GetValue("expire"));
         }
