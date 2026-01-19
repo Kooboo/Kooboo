@@ -2,6 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using MimeKit;
 
@@ -41,6 +42,13 @@ namespace Kooboo.Mail.Utility
             if (index > -1)
             {
                 string domain = To.Substring(index + 1);
+                // Convert IDN to Punycode for DNS lookup (backwards compatible)
+                try
+                {
+                    var idn = new IdnMapping();
+                    domain = idn.GetAscii(domain);
+                }
+                catch { } // ASCII domains pass through unchanged
                 return Kooboo.Lib.DnsRequest.RequestManager.GetMx(domain);
             }
             return null;

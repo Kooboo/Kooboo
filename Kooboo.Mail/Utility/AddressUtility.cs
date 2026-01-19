@@ -2,6 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Kooboo.Mail.Transport;
 using MimeKit;
 
@@ -26,6 +27,14 @@ namespace Kooboo.Mail.Utility
 
         internal static bool IsValidEmailDomain(string domain)
         {
+            // Convert IDN to Punycode for validation (backwards compatible - ASCII passes through)
+            try
+            {
+                var idn = new IdnMapping();
+                domain = idn.GetAscii(domain);
+            }
+            catch { } // ASCII domains and invalid IDN pass through unchanged
+
             var result = Kooboo.Data.Helper.DomainHelper.Parse(domain);
             return result != null && !string.IsNullOrEmpty(result.Domain);
         }
