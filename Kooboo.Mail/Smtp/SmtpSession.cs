@@ -452,7 +452,7 @@ namespace Kooboo.Mail.Smtp
                 {
                     response.Code = 250;
                     response.Seperator = '-';
-                    response.Message = "Hello " + command.Value + "\r\n250-SIZE " + Setting.MaxSmtpSizeString + "\r\n250-STARTTLS\r\n250-AUTH LOGIN\r\n250 OK";
+                    response.Message = "Hello " + command.Value + "\r\n250-SIZE " + Setting.MaxSmtpSizeString + "\r\n250-STARTTLS\r\n250-AUTH LOGIN\r\n250-SMTPUTF8\r\n250 OK";
                     this.State = CommandState.Body;
                     this.ClientHostName = command.Value;
                 }
