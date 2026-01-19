@@ -35,21 +35,12 @@ namespace Kooboo.Mail.Utility
             for (int i = 0; i < input.Length; i++)
             {
                 var currentchar = input[i];
-                ///  48 - 57   0x30 - 0x39   0 - 9 OK Allowed without restrictions.
-                if (currentchar <= 57 && currentchar >= 48)
+                // Allow Unicode letters and digits (RFC 6531 EAI support)
+                if (char.IsLetterOrDigit(currentchar))
                 {
                     continue;
                 }
-                //  97 - 122   0x61 - 0x7a   a - z OK Allowed without restrictions. 
-                else if (currentchar <= 122 && currentchar >= 97)
-                {
-                    continue;
-                }
-                //65 - 90   0x41 - 0x5a   A - Z OK Allowed without restrictions.
-                else if (currentchar >= 65 && currentchar <= 90)
-                {
-                    continue;
-                }
+                // Allow special characters commonly used in email local parts
                 else if (currentchar == '.' || currentchar == '+' || currentchar == '_' || currentchar == '*' || currentchar == '-' || currentchar == '=' || currentchar == '&')
                 {
                     continue;
