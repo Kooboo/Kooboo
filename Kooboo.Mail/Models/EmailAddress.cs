@@ -67,7 +67,9 @@ namespace Kooboo.Mail
             {
                 return 0;
             }
-            return Lib.Security.Hash.ComputeInt(address);
+
+            string punycodeAddress = Kooboo.Mail.Utility.AddressUtility.GetPunycodeAddress(address);
+            return Lib.Security.Hash.ComputeInt(punycodeAddress);
         }
 
         public override int GetHashCode()
