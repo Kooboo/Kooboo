@@ -37,6 +37,10 @@ runcmd:
         ports:
           - "80:80"
           - "443:443"
+          - "25:25"
+          - "143:143"
+          - "587:587"
+          - "993:993"
         environment:
           ASPNETCORE_ENVIRONMENT: Production
         volumes:
