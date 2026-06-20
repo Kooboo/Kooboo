@@ -1,0 +1,50 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - git
+
+runcmd:
+  # Install Docker
+  - curl -fsSL https://get.docker.com -o get-docker.sh
+  - sh get-docker.sh
+  - systemctl start docker
+  - systemctl enable docker
+
+  # Install Docker Compose
+  - curl -L "https://github.com/docker/compose/releases/download/v2.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose
+  - ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+  # Setup Kooboo Directory
+  - mkdir -p /opt/kooboo
+  - mkdir -p /var/lib/kooboo
+
+  # Create docker-compose.yml
+  - |
+    cat << 'DOCKERCOMPOSE' > /opt/kooboo/docker-compose.yml
+    services:
+      web:
+        image: kooboo/kooboo:latest
+        restart: always
+        container_name: kooboo
+        ports:
+          - "80:80"
+          - "443:443"
+        environment:
+          ASPNETCORE_ENVIRONMENT: Production
+        volumes:
+          - /var/lib/kooboo:/data
+    DOCKERCOMPOSE
+
+  # Start Kooboo
+  - cd /opt/kooboo
+  - docker-compose up -d
+
+final_message: "The system is finally up, after $UPTIME seconds"
