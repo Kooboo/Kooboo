@@ -1,277 +1,160 @@
-Eclipse Public License - v 2.0
+# Kooboo Source Available License v1.0
 
-    THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE
-    PUBLIC LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION
-    OF THE PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
+Copyright (c) 2026 Kooboo
 
-1. DEFINITIONS
+All rights reserved.
 
-"Contribution" means:
+## 1. Definitions
 
-  a) in the case of the initial Contributor, the initial content
-     Distributed under this Agreement, and
+"Software" means the Kooboo software, including its source code, object code, documentation, configuration, tools, libraries, and other materials distributed by Kooboo under this License.
 
-  b) in the case of each subsequent Contributor:
-     i) changes to the Program, and
-     ii) additions to the Program;
-  where such changes and/or additions to the Program originate from
-  and are Distributed by that particular Contributor. A Contribution
-  "originates" from a Contributor if it was added to the Program by
-  such Contributor itself or anyone acting on such Contributor's behalf.
-  Contributions do not include changes or additions to the Program that
-  are not Modified Works.
+"Licensor" means Kooboo or the copyright holder of the Software.
 
-"Contributor" means any person or entity that Distributes the Program.
+"Authorized Partner" means an individual or organization that has been expressly authorized by the Licensor to access and use the Software under this License.
 
-"Licensed Patents" mean patent claims licensable by a Contributor which
-are necessarily infringed by the use or sale of its Contribution alone
-or when combined with the Program.
+"Source Code" means the human-readable form of the Software, including source files, build scripts, configuration files, and other materials reasonably required to modify and build the Software.
 
-"Program" means the Contributions Distributed in accordance with this
-Agreement.
+"Derivative Work" means a modified version of the Software or a work based upon the Software.
 
-"Recipient" means anyone who receives the Program under this Agreement
-or any Secondary License (as applicable), including Contributors.
+## 2. Grant of License
 
-"Derivative Works" shall mean any work, whether in Source Code or other
-form, that is based on (or derived from) the Program and for which the
-editorial revisions, annotations, elaborations, or other modifications
-represent, as a whole, an original work of authorship.
+Subject to the terms and conditions of this License, the Licensor grants each Authorized Partner a limited, non-exclusive, non-transferable, non-sublicensable license to:
 
-"Modified Works" shall mean any work in Source Code or other form that
-results from an addition to, deletion from, or modification of the
-contents of the Program, including, for purposes of clarity any new file
-in Source Code form that contains any contents of the Program. Modified
-Works shall not include works that contain only declarations,
-interfaces, types, classes, structures, or files of the Program solely
-in each case in order to link to, bind by name, or subclass the Program
-or Modified Works thereof.
+1. access and inspect the Source Code;
+2. copy the Source Code internally for development and backup purposes;
+3. modify the Source Code;
+4. compile and build the Software and modified versions of the Software; and
+5. use the Software and authorized Derivative Works for internal development and for developing, operating, and delivering websites, applications, and services for the Authorized Partner and its customers.
 
-"Distribute" means the acts of a) distributing or b) making available
-in any manner that enables the transfer of a copy.
+This license is granted only to the Authorized Partner and does not grant rights to the general public.
 
-"Source Code" means the form of a Program preferred for making
-modifications, including but not limited to software source code,
-documentation source, and configuration files.
+## 3. Partner Use
 
-"Secondary License" means either the GNU General Public License,
-Version 2.0, or any later versions of that license, including any
-exceptions or additional permissions as identified by the initial
-Contributor.
+An Authorized Partner may use the Software and Derivative Works created under this License in connection with legitimate customer projects and services.
 
-2. GRANT OF RIGHTS
+An Authorized Partner may deploy compiled versions of the Software as part of a website, application, hosting service, or other customer solution, provided that the Software is not distributed in a manner that gives an unauthorized person access to the Source Code.
 
-  a) Subject to the terms of this Agreement, each Contributor hereby
-  grants Recipient a non-exclusive, worldwide, royalty-free copyright
-  license to reproduce, prepare Derivative Works of, publicly display,
-  publicly perform, Distribute and sublicense the Contribution of such
-  Contributor, if any, and such Derivative Works.
+An Authorized Partner may provide compiled Software to its customers when reasonably necessary to operate a customer project, but may not transfer the rights granted by this License to those customers.
 
-  b) Subject to the terms of this Agreement, each Contributor hereby
-  grants Recipient a non-exclusive, worldwide, royalty-free patent
-  license under Licensed Patents to make, use, sell, offer to sell,
-  import and otherwise transfer the Contribution of such Contributor,
-  if any, in Source Code or other form. This patent license shall
-  apply to the combination of the Contribution and the Program if, at
-  the time the Contribution is added by the Contributor, such addition
-  of the Contribution causes such combination to be covered by the
-  Licensed Patents. The patent license shall not apply to any other
-  combinations which include the Contribution. No hardware per se is
-  licensed hereunder.
+## 4. Source Code Restrictions
 
-  c) Recipient understands that although each Contributor grants the
-  licenses to its Contributions set forth herein, no assurances are
-  provided by any Contributor that the Program does not infringe the
-  patent or other intellectual property rights of any other entity.
-  Each Contributor disclaims any liability to Recipient for claims
-  brought by any other entity based on infringement of intellectual
-  property rights or otherwise. As a condition to exercising the
-  rights and licenses granted hereunder, each Recipient hereby
-  assumes sole responsibility to secure any other intellectual
-  property rights needed, if any. For example, if a third party
-  patent license is required to allow Recipient to Distribute the
-  Program, it is Recipient's responsibility to acquire that license
-  before distributing the Program.
+The Source Code is proprietary and confidential intellectual property of the Licensor.
 
-  d) Each Contributor represents that to its knowledge it has
-  sufficient copyright rights in its Contribution, if any, to grant
-  the copyright license set forth in this Agreement.
+Except with prior written permission from the Licensor, an Authorized Partner must not:
 
-  e) Notwithstanding the terms of any Secondary License, no
-  Contributor makes additional grants to any Recipient (other than
-  those set forth in this Agreement) as a result of such Recipient's
-  receipt of the Program under the terms of a Secondary License
-  (if permitted under the terms of Section 3).
+1. publish the Source Code;
+2. make the Source Code available on a public website, repository, package registry, file-sharing service, or similar service;
+3. distribute the Source Code to any person or organization that is not an Authorized Partner;
+4. sublicense, sell, lease, rent, or otherwise transfer the Source Code;
+5. provide access to the Source Code through a public or shared development environment to unauthorized persons;
+6. include the Source Code in another product or software distribution that is made available to unauthorized persons; or
+7. disclose the Source Code or other proprietary materials of the Licensor except as expressly permitted by this License.
 
-3. REQUIREMENTS
+An Authorized Partner may make reasonable internal copies of the Source Code for its authorized developers and backup systems, provided that access remains limited to persons authorized by the Partner and bound by obligations at least as protective as those in this License.
 
-3.1 If a Contributor Distributes the Program in any form, then:
+## 5. Derivative Works
 
-  a) the Program must also be made available as Source Code, in
-  accordance with section 3.2, and the Contributor must accompany
-  the Program with a statement that the Source Code for the Program
-  is available under this Agreement, and informs Recipients how to
-  obtain it in a reasonable manner on or through a medium customarily
-  used for software exchange; and
+An Authorized Partner may create modifications and Derivative Works for its authorized business and customer projects.
 
-  b) the Contributor may Distribute the Program under a license
-  different than this Agreement, provided that such license:
-     i) effectively disclaims on behalf of all other Contributors all
-     warranties and conditions, express and implied, including
-     warranties or conditions of title and non-infringement, and
-     implied warranties or conditions of merchantability and fitness
-     for a particular purpose;
+The creation of a Derivative Work does not transfer ownership of the underlying Kooboo Software or Kooboo intellectual property to the Authorized Partner.
 
-     ii) effectively excludes on behalf of all other Contributors all
-     liability for damages, including direct, indirect, special,
-     incidental and consequential damages, such as lost profits;
+The Licensor retains all rights, title, and interest in the original Software and its underlying technology.
 
-     iii) does not attempt to limit or alter the recipients' rights
-     in the Source Code under section 3.2; and
+The Authorized Partner retains ownership of original code, designs, and other intellectual property independently created by the Partner, subject to the rights of the Licensor in the Kooboo Software incorporated into or required by such Derivative Work.
 
-     iv) requires any subsequent distribution of the Program by any
-     party to be under a license that satisfies the requirements
-     of this section 3.
+## 6. Redistribution
 
-3.2 When the Program is Distributed as Source Code:
+The Software and Source Code may not be redistributed except as expressly permitted by this License or by a separate written agreement with the Licensor.
 
-  a) it must be made available under this Agreement, or if the
-  Program (i) is combined with other material in a separate file or
-  files made available under a Secondary License, and (ii) the initial
-  Contributor attached to the Source Code the notice described in
-  Exhibit A of this Agreement, then the Program may be made available
-  under the terms of such Secondary Licenses, and
+In particular, an Authorized Partner may not distribute Kooboo or a Derivative Work as a general-purpose software product, framework, CMS, platform, or development system for use by third parties unless the Licensor has provided prior written authorization.
 
-  b) a copy of this Agreement must be included with each copy of
-  the Program.
+This restriction does not prevent an Authorized Partner from using Kooboo internally or deploying compiled Kooboo-based solutions for its customers as permitted under Section 3.
 
-3.3 Contributors may not remove or alter any copyright, patent,
-trademark, attribution notices, disclaimers of warranty, or limitations
-of liability ("notices") contained within the Program from any copy of
-the Program which they Distribute, provided that Contributors may add
-their own appropriate notices.
+## 7. Competing Products
 
-4. COMMERCIAL DISTRIBUTION
+Without prior written permission from the Licensor, an Authorized Partner may not use the Source Code to create, market, or distribute a product whose primary purpose is to replace or compete directly with Kooboo as a general-purpose website development platform, CMS, web application platform, hosting platform, or substantially similar product.
 
-Commercial distributors of software may accept certain responsibilities
-with respect to end users, business partners and the like. While this
-license is intended to facilitate the commercial use of the Program,
-the Contributor who includes the Program in a commercial product
-offering should do so in a manner which does not create potential
-liability for other Contributors. Therefore, if a Contributor includes
-the Program in a commercial product offering, such Contributor
-("Commercial Contributor") hereby agrees to defend and indemnify every
-other Contributor ("Indemnified Contributor") against any losses,
-damages and costs (collectively "Losses") arising from claims, lawsuits
-and other legal actions brought by a third party against the Indemnified
-Contributor to the extent caused by the acts or omissions of such
-Commercial Contributor in connection with its distribution of the Program
-in a commercial product offering. The obligations in this section do not
-apply to any claims or Losses relating to any actual or alleged
-intellectual property infringement. In order to qualify, an Indemnified
-Contributor must: a) promptly notify the Commercial Contributor in
-writing of such claim, and b) allow the Commercial Contributor to control,
-and cooperate with the Commercial Contributor in, the defense and any
-related settlement negotiations. The Indemnified Contributor may
-participate in any such claim at its own expense.
+This restriction does not prohibit an Authorized Partner from:
 
-For example, a Contributor might include the Program in a commercial
-product offering, Product X. That Contributor is then a Commercial
-Contributor. If that Commercial Contributor then makes performance
-claims, or offers warranties related to Product X, those performance
-claims and warranties are such Commercial Contributor's responsibility
-alone. Under this section, the Commercial Contributor would have to
-defend claims against the other Contributors related to those performance
-claims and warranties, and if a court requires any other Contributor to
-pay any damages as a result, the Commercial Contributor must pay
-those damages.
+1. developing websites and applications for customers;
+2. creating customer-specific customizations;
+3. creating integrations, plugins, themes, templates, or extensions for authorized Kooboo projects; or
+4. providing professional services based on Kooboo.
 
-5. NO WARRANTY
+## 8. Branding and Trademarks
 
-EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, AND TO THE EXTENT
-PERMITTED BY APPLICABLE LAW, THE PROGRAM IS PROVIDED ON AN "AS IS"
-BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR
-IMPLIED INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDITIONS OF
-TITLE, NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR
-PURPOSE. Each Recipient is solely responsible for determining the
-appropriateness of using and distributing the Program and assumes all
-risks associated with its exercise of rights under this Agreement,
-including but not limited to the risks and costs of program errors,
-compliance with applicable laws, damage to or loss of data, programs
-or equipment, and unavailability or interruption of operations.
+This License does not grant any right to use the Kooboo name, logo, trademarks, service marks, or other branding except as necessary to accurately identify the Software.
 
-6. DISCLAIMER OF LIABILITY
+An Authorized Partner may state that a customer solution is built with or based on Kooboo, provided that such statement does not imply that the Partner is Kooboo or that Kooboo endorses the Partner.
 
-EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, AND TO THE EXTENT
-PERMITTED BY APPLICABLE LAW, NEITHER RECIPIENT NOR ANY CONTRIBUTORS
-SHALL HAVE ANY LIABILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING WITHOUT LIMITATION LOST
-PROFITS), HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OR DISTRIBUTION OF THE PROGRAM OR THE
-EXERCISE OF ANY RIGHTS GRANTED HEREUNDER, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGES.
+## 9. Intellectual Property
 
-7. GENERAL
+The Software is proprietary software.
 
-If any provision of this Agreement is invalid or unenforceable under
-applicable law, it shall not affect the validity or enforceability of
-the remainder of the terms of this Agreement, and without further
-action by the parties hereto, such provision shall be reformed to the
-minimum extent necessary to make such provision valid and enforceable.
+Except for the limited rights expressly granted by this License, the Licensor retains all copyright, patent, trademark, trade secret, and other intellectual property rights in the Software.
 
-If Recipient institutes patent litigation against any entity
-(including a cross-claim or counterclaim in a lawsuit) alleging that the
-Program itself (excluding combinations of the Program with other software
-or hardware) infringes such Recipient's patent(s), then such Recipient's
-rights granted under Section 2(b) shall terminate as of the date such
-litigation is filed.
+No rights are granted by implication, estoppel, or otherwise.
 
-All Recipient's rights under this Agreement shall terminate if it
-fails to comply with any of the material terms or conditions of this
-Agreement and does not cure such failure in a reasonable period of
-time after becoming aware of such noncompliance. If all Recipient's
-rights under this Agreement terminate, Recipient agrees to cease use
-and distribution of the Program as soon as reasonably practicable.
-However, Recipient's obligations under this Agreement and any licenses
-granted by Recipient relating to the Program shall continue and survive.
+## 10. Confidentiality
 
-Everyone is permitted to copy and distribute copies of this Agreement,
-but in order to avoid inconsistency the Agreement is copyrighted and
-may only be modified in the following manner. The Agreement Steward
-reserves the right to publish new versions (including revisions) of
-this Agreement from time to time. No one other than the Agreement
-Steward has the right to modify this Agreement. The Eclipse Foundation
-is the initial Agreement Steward. The Eclipse Foundation may assign the
-responsibility to serve as the Agreement Steward to a suitable separate
-entity. Each new version of the Agreement will be given a distinguishing
-version number. The Program (including Contributions) may always be
-Distributed subject to the version of the Agreement under which it was
-received. In addition, after a new version of the Agreement is published,
-Contributor may elect to Distribute the Program (including its
-Contributions) under the new version.
+Where the Source Code is provided to an Authorized Partner under circumstances in which it is identified or reasonably understood to be confidential, the Authorized Partner must use reasonable measures to protect the Source Code from unauthorized access, disclosure, copying, or use.
 
-Except as expressly stated in Sections 2(a) and 2(b) above, Recipient
-receives no rights or licenses to the intellectual property of any
-Contributor under this Agreement, whether expressly, by implication,
-estoppel or otherwise. All rights in the Program not expressly granted
-under this Agreement are reserved. Nothing in this Agreement is intended
-to be enforceable by any entity that is not a Contributor or Recipient.
-No third-party beneficiary rights are created under this Agreement.
+The Authorized Partner must limit access to the Source Code to its employees, contractors, and developers who have a legitimate need to access it for purposes permitted by this License.
 
-Exhibit A - Form of Secondary Licenses Notice
+The Authorized Partner is responsible for ensuring that such persons are subject to confidentiality obligations appropriate to the nature of the Source Code.
 
-"This Source Code may also be made available under the following
-Secondary Licenses when the conditions for such availability set forth
-in the Eclipse Public License, v. 2.0 are satisfied: {name license(s),
-version(s), and exceptions or additional permissions here}."
+## 11. Security and Vulnerabilities
 
-  Simply including a copy of this Agreement, including this Exhibit A
-  is not sufficient to license the Source Code under Secondary Licenses.
+An Authorized Partner may inspect the Source Code for security, compatibility, performance, debugging, and development purposes.
 
-  If it is not possible or desirable to put the notice in a particular
-  file, then You may include the notice in a location (such as a LICENSE
-  file in a relevant directory) where a recipient would be likely to
-  look for such a notice.
+An Authorized Partner should promptly report significant security vulnerabilities discovered in the Software to the Licensor through the designated Kooboo security or partner communication channel.
 
-  You may add additional accurate notices of copyright ownership.
+Security research performed in good faith under an authorized partner relationship does not by itself constitute a violation of this License.
+
+## 12. License Termination
+
+This License automatically terminates if an Authorized Partner materially violates its terms.
+
+Upon termination, the Authorized Partner must stop accessing and using the Source Code and must delete or return copies of the Source Code as reasonably requested by the Licensor, except where retention is required by applicable law.
+
+Termination does not affect rights that accrued before termination, nor does it release either party from obligations that by their nature survive termination.
+
+## 13. No Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSOR DISCLAIMS ALL WARRANTIES, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, AND ACCURACY.
+
+THE LICENSOR DOES NOT WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, SECURE, OR SUITABLE FOR A PARTICULAR PURPOSE.
+
+## 14. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSOR SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATING TO THE SOFTWARE OR THIS LICENSE.
+
+## 15. No Sublicensing
+
+The rights granted under this License are personal to the Authorized Partner and may not be sublicensed, assigned, transferred, or otherwise granted to another person or organization without prior written permission from the Licensor.
+
+## 16. Separate Partner Agreements
+
+The Licensor may enter into a separate written agreement with an Authorized Partner that grants additional or different rights.
+
+Where a separate written agreement expressly conflicts with this License, the separate agreement controls to the extent of that conflict.
+
+## 17. Reservation of Rights
+
+All rights not expressly granted by this License are reserved by the Licensor.
+
+Nothing in this License shall be interpreted as granting any right to distribute, sublicense, publish, or commercially exploit the Source Code except as expressly permitted herein.
+
+## 18. Acceptance
+
+Accessing, copying, modifying, compiling, or using the Source Code under this License constitutes acceptance of its terms.
+
+If you do not agree to this License, you must not access, copy, modify, compile, or use the Source Code.
+
+---
+
+**Kooboo Source Available License v1.0**
+
+Copyright (c) 2026 Kooboo. All rights reserved.
