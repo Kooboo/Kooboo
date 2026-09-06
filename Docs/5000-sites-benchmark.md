@@ -59,8 +59,10 @@ Each site contains:
 The Header View is the only part configured to use Kooboo's cache-by-purpose feature. The page, master layout, Footer View, labels, HTML blocks, and dynamic blog query are not configured with cache by purpose, and there is no full-page output cache hiding the dynamic work. The root page dynamically queries and renders ten blog entries for every request. The package also contains dynamic article-detail routes, although this particular benchmark requested only the root page. The test therefore exercises domain resolution, Kooboo site selection, routing, layout and view rendering, the uncached home-page content query, HTML generation, and response transfer. It does not exercise every detail-page route in the package.
 
 Each clone contains its own visible marker, such as `Site 4996`. The test client checks for the expected `Site N` marker in every body. This matters because an HTTP 200 response alone cannot prove that 5,000 hostnames reached 5,000 correct site bindings.
-
+ 
 ![Kooboo dashboard showing the folder containing 5,000 sites](5000-sites-benchmark/kooboo-5000-sites-folder.png)
+
+Temporary Kooboo application access to this live demonstration is available to technical reviewers on request. Reviewers can edit an assigned site and observe the result directly. To request access, email [GUOQI AT Kooboo.com] with your name, technical background, and what you would like to inspect.
 
 You can inspect public examples by changing the hostname number:
 
@@ -383,21 +385,23 @@ Sweep mode can retry failed sites and reports which failures recovered. Stress m
 
 ## Downloads and raw records
 
-The following measured records are included beside this article:
+The complete benchmark evidence and reproduction materials can be downloaded directly from this repository.
+
+Benchmark evidence:
 
 - [Target server information and CPU monitoring](5000-sites-benchmark/final150-target-results.tar.gz)
 - [Load-generator information and console output](5000-sites-benchmark/final150-loadgen-results.tar.gz)
 - [Request-level CSV and exact summary](5000-sites-benchmark/final150-detailed-results.tar.gz)
 - [SHA-256 checksums for the benchmark archives](5000-sites-benchmark/BENCHMARK_SHA256SUMS.txt)
 
-The GitHub release should also include these files before publication:
+Site package and test tools:
 
-- `kooboo-5000-dynamic-sites.zip`(5000-sites-benchmark/kooboo-5000-dynamic-sites.zip) - the importable Kooboo site package
-- `kooboo-stress-linux-x64.tar.gz`(5000-sites-benchmark/kooboo-stress-linux-x64.tar.gz)  - self-contained Linux x64 client
-- `kooboo-stress-win-x64.zip`(5000-sites-benchmark/kooboo-stress-win-x64.zip) - self-contained Windows x64 client
-- `kooboo-stress-source.zip`(5000-sites-benchmark/kooboo-stress-source.zip) - C# source code and publishing scripts
-- `README.txt`(5000-sites-benchmark/README.txt) - package contents, commands, and safety notice
-- A complete `SHA256SUMS.txt`(5000-sites-benchmark/SHA256SUMS.txt) covering every downloadable artifact
+- [Kooboo dynamic-site package](5000-sites-benchmark/kooboo-5000-dynamic-sites.zip) - importable into another Kooboo instance
+- [Linux x64 stress-test client](5000-sites-benchmark/kooboo-stress-linux-x64.tar.gz) - self-contained command-line application
+- [Windows x64 stress-test client](5000-sites-benchmark/kooboo-stress-win-x64.zip) - self-contained command-line application
+- [C# source code](5000-sites-benchmark/kooboo-stress-source.zip) - test-client source and publishing scripts
+- [Package README](5000-sites-benchmark/README.txt) - contents, commands, and safety notice
+- [SHA-256 checksums for all downloadable artifacts](5000-sites-benchmark/SHA256SUMS.txt)
 
 ## Independent inspection
 
