@@ -1,7 +1,7 @@
 Kooboo 5,000-site benchmark release
 ====================================
 
-Files in the GitHub release:
+Files in this benchmark folder
 
 - kooboo-5000-dynamic-sites.zip
   Import this package into a Kooboo instance. It is the dynamic blog website
