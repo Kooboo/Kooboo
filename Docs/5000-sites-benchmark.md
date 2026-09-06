@@ -74,7 +74,7 @@ The public demonstration is a shared system and may occasionally be temporarily 
 
 Using one package is intentional. The creation script reproduces the same initial content and application structure, then gives each newly created site its own identity and hostname. This keeps the page structure, content volume, query shape, and response size controlled while preserving 5,000 separately editable sites. It makes the cost of multi-site routing and isolated site storage easier to observe without mixing in 5,000 unrelated application designs.
 
-It also creates an important limitation. Identical packages can benefit from similar filesystem access patterns, warm operating-system caches, compression behavior, and reusable rendering structures. This result should not be interpreted as proof that any arbitrary collection of 5,000 production applications will have the same capacity.
+It also creates an important limitation. Identical packages can benefit from similar filesystem access patterns, warm operating-system caches and compression behavior, This result should not be interpreted as proof that any arbitrary collection of 5,000 production applications will have the same capacity.
 
 The correct interpretation is narrower:
 
@@ -395,7 +395,8 @@ The GitHub release should also include these files before publication:
 - `kooboo-5000-dynamic-sites.zip` - the importable Kooboo site package
 - `kooboo-stress-linux-x64.tar.gz` - self-contained Linux x64 client
 - `kooboo-stress-win-x64.zip` - self-contained Windows x64 client
-- Source code for `Kooboo.SiteStressTest`
+- `kooboo-stress-source.zip` - C# source code and publishing scripts
+- `README.txt` - package contents, commands, and safety notice
 - A complete `SHA256SUMS.txt` covering every downloadable artifact
 
 ## Independent inspection

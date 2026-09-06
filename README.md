@@ -1,95 +1,214 @@
-Kooboo is a professional tool specifically designed for website, e-commerce, and application development, featuring a built-in web server, mail server, database engine, template engine, IDE, and many productivity tools. It runs on Mac, Linux, Windows, and the cloud. It is a versatile alternative to WordPress, Joomla, Shopify, Magento, and WIX
+# Kooboo
 
-# Getting Started
- 
-You can download Kooboo from this repository or from our website. Simply click to run, and it will start in just 2 seconds.
-[https://www.kooboo.com/_start/download](https://www.kooboo.com/_start/download)
+### Build a real website in minutes
 
-![Kooboo entry](https://www.kooboo.com/github/kooboo_entry.png "Kooboo Entry")
+Kooboo is an integrated platform for creating, running, and managing websites,
+online stores, and web applications. It brings the tools needed to build and
+operate a website into one portable system, so you can move from an idea to a
+working site without assembling a large collection of separate services.
 
+> **This is the official Kooboo public release repository.**  
+> Kooboo is proprietary software. Public releases contain compiled packages;
+> source access is available only to approved Kooboo partners under a separate
+> written agreement.
 
-# Innovations
-Kooboo creates many original innovations. It is the FIRST and ONLY CMS capable of:
+## 1. Performance: 5,000 dynamic websites on one small server
 
-**Instant Start**: Ready in 2 seconds – download, click, and go
+Kooboo is designed as one integrated performance path—from domain routing and
+data access to rendering and network output. Websites share the optimized
+platform runtime without becoming one shared website: each site retains its
+own domain, pages, layouts, views, content, files, configuration, analytics,
+permissions, and history.
 
-**Clone Website**: Instantly migrate any URL into Kooboo and start editing
+In our published end-to-end benchmark, one Kooboo process hosted **5,000
+independently addressable and independently editable dynamic websites** on a
+server with **2 vCPUs and 4 GB of memory**.
 
-**All-in-One**: Includes web, mail, database server, and tools for development, debugging, and deployment.
+| Measured result | Value |
+| --- | ---: |
+| Independent dynamic websites | 5,000 |
+| Complete HTML requests attempted | 90,000 |
+| Verified first-attempt responses | 89,969 — 99.97% |
+| Measured request start rate | 146.59 requests/second |
+| Measured completion rate | 146.52 requests/second |
+| Complete-content p50 | 296.73 ms |
+| Complete-content p95 | 1,431.27 ms |
+| Average Kooboo CPU usage | 45.6% of total two-vCPU capacity |
 
-**Faster Development**: Requires only HTML, CSS, and JavaScript, with no limitations.
+This was an end-to-end public-internet HTTP/HTTPS pressure test, not an empty
+response or isolated render-loop benchmark. The full report documents the
+hardware, regions, workload, latency distribution, CPU and memory observations,
+failures, raw records, limitations, and reproduction procedure.
 
-**Inline Editing**: Edit any static or dynamic content directly while browsing.
+**[Read the complete 5,000-site benchmark](Docs/BENCHMARK.md)**
 
-**Super Performance**: Renders dynamic pages in just 1 millisecond.
+![Kooboo dashboard containing a folder of 5,000 independent websites](images/kooboo-5000-sites.png)
 
-**Version Control**:  Undo and roll back changes to both code and content.
+> **Do not benchmark the brochure. Download Kooboo and benchmark the product.**
 
-**1-click Deployment**: Deploy production sites using Git-like pull and push.
+## 2. Native AI: AI that can finish the website
 
-**Portability**: Pack and share sites, modules, or files as zip packages.
+Kooboo Native AI is not a chat box added beside an unrelated website builder.
+AI works with the real architecture and operating environment of the website.
+It can understand and work with Pages, Layouts, Views, content, databases,
+commerce, APIs, server-side JavaScript, media, configuration, analytics, and
+history through native platform capabilities.
 
-**Template Versatility**: Import any HTML template or clone from any URL.
-  
+This gives AI a complete working loop:
 
-# Develop websites, e-commerce platforms, or applications
+**Build → Run → Observe → Diagnose → Modify → Validate → Publish → Measure → Improve**
 
-Kooboo significantly speeds up website development. For example, displaying content from a database in a list requires just a few lines of code. 
+Kooboo Native AI can:
 
+- Build a real dynamic website rather than only generating a static frontend.
+- Work with structured website objects, content models, data, APIs, and
+  application logic.
+- Open the running website, interact with it, inspect runtime errors and
+  abnormal network requests, then continue repairing the result.
+- Connect an element selected on the rendered page to the Page, View, or Layout
+  that produced it.
+- Work inside an isolated Kooboo sandbox before approved changes reach the
+  production website.
+- Use website history to inspect, compare, undo, and recover supported changes.
+- Run scheduled website checks and longer-running operational tasks.
+- Work with supported AI providers and models selected by the website owner.
 
-```javascript
+![Kooboo Native AI workspace](images/kooboo-native-ai.png)
 
-<script env="server">
-    var services=k.content.service.all()
-</script>
-<div env="server" v-for="service in services">
-    <span>{{service.title}}</span>
-</div>
+**Built by AI. Tested by AI. Run by AI. Owned by you.**
 
-``` 
+## More Kooboo capabilities
 
-The built-in full-function IDE allows you to develop any web application so much faster
+- Visual website building and inline content editing
+- Direct HTML, CSS, and JavaScript website development
+- Website importing, cloning, packaging, transfer, and deployment
+- Content management and multilingual content
+- Dynamic database-driven pages and server-side queries
+- Online stores, products, customers, carts, orders, and discounts
+- Forms, APIs, backend JavaScript, scheduled jobs, and custom applications
+- Built-in web hosting, domain routing, and email services
+- Server-side traffic analytics, diagnostics, and error inspection
+- Reusable Pages, Layouts, Views, HTML blocks, scripts, and styles
+- Users, roles, permissions, configuration, and operational history
+- Media management and image processing
+- Version comparison, rollback, restoration, and website checkout
 
-![Kooboo IDE](https://www.kooboo.com/advantage/innovation-dev.png "Kooboo IDE")
- 
+## Download
 
-Create a fully dynamic website in just 10 minutes. Click the YouTube video below to see how we do it.
+Download the newest official build from the
+[latest Kooboo release](https://github.com/Kooboo/Kooboo/releases/latest).
 
-https://www.youtube.com/watch?v=SKBmljIuXTg 
+Depending on the release, packages may include:
 
+| Package | Intended use |
+| --- | --- |
+| Windows x64 | Windows servers and desktop installations |
+| Linux x64 | 64-bit Linux servers |
+| Portable package | Extract-and-run installation or manual deployment |
+| Windows installer | Guided installation on Windows |
 
-# Use Kooboo as Your Own Web or Email Server
+Public release assets are compiled binaries and do not include the Kooboo
+source repository.
 
-Download and host your own Kooboo instance for both web and mail servers 
+## Quick start
 
-You can easily host 1,000 websites on a single Kooboo instance. The mail server fully supports SMTP and IMAP protocols along with many unique features.
+1. Open the [latest release](https://github.com/Kooboo/Kooboo/releases/latest).
+2. Download the package for your operating system.
+3. Verify the package using the published SHA-256 checksum when available.
+4. Extract the portable package or run the installer.
+5. Start Kooboo and open the local address shown by the application.
+6. Create a website, import an existing site, or begin with AI-assisted
+   website creation.
 
-![Kooboo Mail Server](https://www.kooboo.com/banner/mail-en.png "Kooboo mail server")
+Before upgrading a production installation, back up your Kooboo data and read
+the notes accompanying that release.
 
+## What you can build
 
+Kooboo supports projects ranging from a single website to integrated business
+applications, including:
 
+- Marketing and company websites
+- Content-rich and multilingual websites
+- Online stores and product catalogs
+- Customer portals and internal applications
+- Custom database-driven web applications
+- Self-hosted web and email services
 
-# Access 100s of Tools and Applications on Your Desktop or Server 
+You can begin visually, work directly with HTML, CSS, and JavaScript when
+needed, and package the completed website for deployment or transfer.
 
-Kooboo integrates many open-source tools, making it easy to use Kooboo as a distribution channel for open-source projects. These tools include:
+## Documentation and support
 
-DrawIO, Excalidraw, Quant UX Prototype, TL Draw canvas, Polotno studio, Variant Form, Grapes page builder, Unlayer page designer,  API Test, Paint Board,  Toast Image Editor, Json editor, Mermaid Diagram, vvveb js designer, SVG image editor,  Block note writer, nunu 3d Studio, Glyphs Font Studio, Pictode Drawing,  IDraw UI designer, FileRobot Image editor, Mongo DB modeler, DrawDB Database designer, TypeFlow editor and more. 
+- [Kooboo website](https://www.kooboo.com/)
+- [Downloads](https://www.kooboo.com/downloads)
+- [GitHub releases](https://github.com/Kooboo/Kooboo/releases) 
 
+When reporting a problem, include the Kooboo version, operating system,
+installation type, relevant logs, and clear reproduction steps. Do not post
+passwords, API keys, private website data, or other confidential information.
 
-![Kooboo tools](https://www.kooboo.com/github/github_tools.png "kooboo open source tools")
+## Package verification
 
-In addition to open-source tools, Kooboo also includes many applications, such as:
+When a release contains `SHA256SUMS.txt`, verify a downloaded file before
+installing it.
 
-Kanban Board, Workflow Management, Community Portal, Organization Chat Room, Page ChatBot, Customer Relationship Management (CRM), ERP, Bookkeeping, Time Sheet, Customer Service, And more.
+PowerShell:
 
-# Share your website or applications with community. 
+```powershell
+Get-FileHash -Algorithm SHA256 -LiteralPath '.\Kooboo-package.zip'
+```
 
-One click to share your web site or application with community. It can be free template or commerical applications. 
+Linux:
 
+```bash
+sha256sum ./Kooboo-package.zip
+```
 
+Compare the result with the corresponding entry in `SHA256SUMS.txt`.
 
+## Licensing
 
+Kooboo is proprietary software. Downloading or accessing a public release does
+not grant access to its source code or a source-code license.
 
+Use of Kooboo is governed by the license distributed with the product and the
+`LICENSE` file in this repository. Third-party components remain subject to
+their respective licenses and notices.
 
+You may not assume permission to copy, modify, redistribute, decompile, or
+reverse engineer Kooboo except where the applicable license or mandatory law
+expressly permits it.
 
+## Partner source access
 
+Kooboo works with selected technology, hosting, infrastructure, integration,
+and distribution partners. Approved partners may receive controlled source
+access when it is required for an agreed project or commercial relationship.
+
+Partner access is provided separately and may require a partnership agreement,
+confidentiality obligations, access controls, and additional licensing terms.
+It does not make Kooboo open source and does not grant a general right to
+publish or redistribute the source code.
+
+Organizations interested in becoming a Kooboo partner can contact Kooboo
+through the [official website](https://www.kooboo.com/).
+
+## Repository policy
+
+This repository is maintained for:
+
+- Official Kooboo release announcements
+- Compiled installation packages
+- Checksums and release notes
+- Public issue reporting and release feedback
+
+This is not a public source-code repository, and public source contributions
+are not accepted here. Source collaboration with approved partners takes place
+through separately authorized private channels. Please do not submit pull
+requests containing reconstructed, copied, or proprietary Kooboo
+implementation code.
+
+---
+
+Copyright © Kooboo. All rights reserved.
