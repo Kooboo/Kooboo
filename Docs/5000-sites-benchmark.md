@@ -385,19 +385,19 @@ Sweep mode can retry failed sites and reports which failures recovered. Stress m
 
 The following measured records are included beside this article:
 
-- [Target server information and CPU monitoring](downloads/final150-target-results.tar.gz)
-- [Load-generator information and console output](downloads/final150-loadgen-results.tar.gz)
-- [Request-level CSV and exact summary](downloads/final150-detailed-results.tar.gz)
-- [SHA-256 checksums for the benchmark archives](downloads/BENCHMARK_SHA256SUMS.txt)
+- [Target server information and CPU monitoring](5000-sites-benchmark/final150-target-results.tar.gz)
+- [Load-generator information and console output](5000-sites-benchmark/final150-loadgen-results.tar.gz)
+- [Request-level CSV and exact summary](5000-sites-benchmark/final150-detailed-results.tar.gz)
+- [SHA-256 checksums for the benchmark archives](5000-sites-benchmark/BENCHMARK_SHA256SUMS.txt)
 
 The GitHub release should also include these files before publication:
 
-- `kooboo-5000-dynamic-sites.zip` - the importable Kooboo site package
-- `kooboo-stress-linux-x64.tar.gz` - self-contained Linux x64 client
-- `kooboo-stress-win-x64.zip` - self-contained Windows x64 client
-- `kooboo-stress-source.zip` - C# source code and publishing scripts
-- `README.txt` - package contents, commands, and safety notice
-- A complete `SHA256SUMS.txt` covering every downloadable artifact
+- `kooboo-5000-dynamic-sites.zip`(5000-sites-benchmark/kooboo-5000-dynamic-sites.zip) - the importable Kooboo site package
+- `kooboo-stress-linux-x64.tar.gz`(5000-sites-benchmark/kooboo-stress-linux-x64.tar.gz)  - self-contained Linux x64 client
+- `kooboo-stress-win-x64.zip`(5000-sites-benchmark/kooboo-stress-win-x64.zip) - self-contained Windows x64 client
+- `kooboo-stress-source.zip`(5000-sites-benchmark/kooboo-stress-source.zip) - C# source code and publishing scripts
+- `README.txt`(5000-sites-benchmark/README.txt) - package contents, commands, and safety notice
+- A complete `SHA256SUMS.txt`(5000-sites-benchmark/SHA256SUMS.txt) covering every downloadable artifact
 
 ## Independent inspection
 
