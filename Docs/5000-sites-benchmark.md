@@ -60,7 +60,7 @@ The Header View is the only part configured to use Kooboo's cache-by-purpose fea
 
 Each clone contains its own visible marker, such as `Site 4996`. The test client checks for the expected `Site N` marker in every body. This matters because an HTTP 200 response alone cannot prove that 5,000 hostnames reached 5,000 correct site bindings.
 
-![Kooboo dashboard showing the folder containing 5,000 sites](article-assets/kooboo-5000-sites-folder.png)
+![Kooboo dashboard showing the folder containing 5,000 sites](5000-sites-benchmark/kooboo-5000-sites-folder.png)
 
 You can inspect public examples by changing the hostname number:
 
