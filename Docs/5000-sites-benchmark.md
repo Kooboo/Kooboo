@@ -1,4 +1,4 @@
-# We Served 5,000 Dynamic Websites from a 2 vCPU 4 GB Server
+# We Served 5,000 Fully Dynamic Websites from a 2-vCPU, 4 GB VPS
 
 We created 5,000 independent Kooboo websites from one fully dynamic site package, placed them on a small Tencent Cloud server, and sent 90,000 HTTPS requests from a separate Alibaba Cloud server across the public Internet.
 
