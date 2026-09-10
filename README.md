@@ -12,7 +12,7 @@ AI website creation, visual editing, content management, databases, ecommerce, e
 [Documentation](https://docs.kooboo.com) ·
 [Report an issue](https://github.com/Kooboo/Kooboo/issues)
 
-![Kooboo overview](Docs/assets/kooboo-overview.png)
+![Kooboo overview](Docs/Assets/kooboo-overview.png)
 
 > **Free to use. Not open source.**  
 > Anyone can download and use Kooboo without a time limit. Public releases contain compiled packages. Controlled source access is available separately to approved partners.
@@ -42,7 +42,7 @@ If you do not want to install anything, you can use the hosted Kooboo Cloud serv
 
 Create an account, create a website, and begin building directly in your browser.
 
-![Kooboo cloud IDE](Docs/assets/kooboo-instant-start.png)
+![Kooboo cloud IDE](Docs/Assets/kooboo-instant-start.png)
 
 # Development
 
@@ -76,7 +76,7 @@ It can build a website, run it, inspect the result, diagnose problems, make chan
 
 **Build → Run → Observe → Diagnose → Modify → Validate → Publish → Improve**
 
-![Building a website with Kooboo Native AI](Docs/assets/kooboo-ai.png)
+![Building a website with Kooboo Native AI](Docs/Assets/kooboo-ai.png)
 
 [Learn more about Kooboo Native AI](https://www.kooboo.com/articles/native-ai)
 
@@ -188,7 +188,7 @@ A package can include:
 
 Install a package, inspect how it works, customize every part, and continue running it in your own Kooboo environment.
 
-![Kooboo portal and Marketplace](Docs/assets/kooboo-marketplace.png)
+![Kooboo portal and Marketplace](Docs/Assets/kooboo-marketplace.png)
  
 [Learn more about the Marketplace](https://www.kooboo.com/articles/marketplace)
 
