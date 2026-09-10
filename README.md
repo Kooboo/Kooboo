@@ -42,7 +42,7 @@ If you do not want to install anything, you can use the hosted Kooboo Cloud serv
 
 Create an account, create a website, and begin building directly in your browser.
 
-![Kooboo cloud IDE](Docs/Assets/kooboo-instant-start.png)
+![Kooboo cloud IDE](Docs/Assets/development-instant-start.png)
 
 # Development
 
