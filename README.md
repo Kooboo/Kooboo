@@ -1,192 +1,278 @@
-# Kooboo
 
-### High performance. Native AI. A marketplace for complete websites and applications.
+## The AI-native Web OS for building, running, and owning websites and business applications.
 
-Kooboo is an integrated platform for building, running, and owning dynamic
-websites, online stores, and web applications. Pages, content, databases,
-commerce, APIs, analytics, hosting, development tools, AI, and deployment work
-together in one portable system.
+Kooboo is one integrated platform for creating websites, online stores, and business applications.
 
-**Build a real website in minutes—and keep control of the result.**
+AI website creation, visual editing, content management, databases, ecommerce, email, analytics, hosting, development, and deployment all work together in one portable system.
 
-[Download Kooboo](https://www.kooboo.com/downloads) ·
-[Read the benchmark](Docs/5000-sites-benchmark.md) ·
-[Visit Kooboo](https://www.kooboo.com/) ·
+**Build a real website in minutes. Edit every part. Run it anywhere. Keep control of the result.**
+
+[Download the latest release](https://github.com/Kooboo/Kooboo/releases/latest) ·
+[Start with Kooboo Cloud](https://www.kooboo.com/) ·
+[Documentation](https://docs.kooboo.com) ·
 [Report an issue](https://github.com/Kooboo/Kooboo/issues)
 
-> ** 5,000 dynamic websites on a 2-vCPU, 4-GB server.** We published
-> the complete ten-minute pressure test: 90,000 HTTPS requests, 89,969 verified
-> responses, 99.97% first-attempt success, server monitoring, request-level
-> records, source code, and reproduction packages.
-> **[Read the benchmark and inspect the evidence](Docs/5000-sites-benchmark.md)**
+![Kooboo overview](Docs/assets/kooboo-overview.png)
 
-> **Free to use. Not open source.** Anyone can download Kooboo and use it
-> without a time limit. Public releases contain compiled packages. Controlled
-> source access is available separately to approved partners.
+> **Free to use. Not open source.**  
+> Anyone can download and use Kooboo without a time limit. Public releases contain compiled packages. Controlled source access is available separately to approved partners.
 
-## Why Kooboo
+# Getting started
 
-| High performance | Native AI | Marketplace |
-| --- | --- | --- |
-| One optimized runtime from domain routing to dynamic rendering and network output | AI works with the website's real objects, runtime, data, and history | Install, modify, publish, and operate portable website and application packages |
-| Reproducible 5,000-site benchmark with raw records | Build, run, inspect, repair, validate, and publish in one working loop | Templates, applications, and services can be free or separately licensed by their publishers |
-| Designed for efficient multi-site operation on modest hardware | The finished website remains editable, portable, and controlled by its owner | Marketplace packages run inside the same integrated Kooboo environment |
+You can run Kooboo on your own computer or server, or use the hosted Kooboo Cloud service.
 
-## 1. High performance by architecture—and by measurement
+## Run Kooboo locally
 
-Kooboo is designed as one integrated performance path. Domain resolution,
-site selection, routing, data access, server-side rendering, caching, and
-response delivery are handled by one coordinated runtime rather than a chain
-of separately deployed services.
+1. Open the [latest Kooboo release](https://github.com/Kooboo/Kooboo/releases/latest).
+2. Find the package for Windows, macOS, or Linux.
+3. Download and extract the package if required.
+4. Start Kooboo:
+   - **Windows:** double-click the Kooboo application.
+   - **macOS:** open the Kooboo application from the downloaded package.
+   - **Linux:** run the Kooboo executable from the terminal or as a service
+5. Open the local address displayed by Kooboo in your browser.
 
-Websites share the optimized Kooboo platform without becoming one shared
-website. Each site retains its own identity, domain, pages, layouts, views,
-content, files, configuration, permissions, analytics, and history.
+For a production Linux server, Kooboo can be configured as a system service so that it starts automatically and restarts after a server reboot.
+ 
+## Use Kooboo Cloud for free
 
-### Published 5,000-site pressure test
+If you do not want to install anything, you can use the hosted Kooboo Cloud service.
 
-One Kooboo process hosted **5,000 independently addressable and independently
-editable dynamic websites** on a Tencent Cloud server with **2 vCPUs and 4 GB
-of memory**.
+[Start with Kooboo Cloud](https://www.kooboo.com/)
 
-| Measured result | Value |
-| --- | ---: |
-| Independent dynamic websites | 5,000 |
-| Complete HTML requests attempted | 90,000 |
-| Correct first-attempt responses | 89,969 — 99.97% |
-| Measured request start rate | 146.59 requests/second |
-| Measured completion rate | 146.52 requests/second |
-| Complete-content p50 | 296.73 ms |
-| Complete-content p95 | 1,431.27 ms |
-| Complete-content p99 | 3,393.82 ms |
-| Average Kooboo CPU | 45.6% of total two-vCPU capacity |
-| Sampled peak Kooboo CPU | 81.5% of total two-vCPU capacity |
-| Sampled peak Kooboo RSS | Approximately 2.50 GiB |
+Create an account, create a website, and begin building directly in your browser.
 
-This was an end-to-end HTTPS pressure test across the public Internet. The
-client downloaded every complete HTML response and verified the expected site
-number in its body. The report publishes the hardware, workload, latency
-distribution, failures, CPU and memory records, request-level CSV, limitations,
-test client, and reproduction packages.
+![Kooboo cloud IDE](Docs/assets/kooboo-instant-start.png)
 
-**[Read the complete benchmark and download its raw records](Docs/5000-sites-benchmark.md)**
+# Development
 
-![Kooboo dashboard containing a folder of 5,000 independently editable websites](Docs/5000-sites-benchmark/kooboo-5000-sites-folder.png)
+Kooboo supports different development styles—from AI-assisted creation to declarative HTML and full server-side scripting.
 
-> **Do not benchmark the brochure. Download Kooboo and benchmark the product.**
+You can choose the simplest method for each task and combine all three inside the same website.
 
-## 2. Native AI that works inside the platform
+## Hello, world
 
-Kooboo Native AI is not a chat box attached to an unrelated website builder.
-It works with the architecture and operating environment of the website:
-Pages, Layouts, Views, content, databases, commerce, APIs, server-side code,
-media, configuration, analytics, and history.
+After starting Kooboo:
 
-This gives AI a complete working loop:
+1. Create a new website.
+2. Open **Pages**.
+3. Create a new page.
+4. Add the following HTML:
 
-**Build → Run → Observe → Diagnose → Modify → Validate → Publish → Measure → Improve**
+```html
+<h1>Hello, world!</h1>
+<p>This page is running in Kooboo.</p>
+```
 
-Kooboo Native AI can:
+5. Save the page and open its URL.
 
-- Build a real dynamic website rather than only generating a static frontend.
-- Work with structured site objects, content models, database data, APIs, and
-  application logic.
-- Open and inspect the running result instead of stopping after code generation.
-- Detect runtime errors and abnormal requests, then continue repairing the site.
-- Connect a selected element on the rendered page to the Page, View, or Layout
-  that produced it.
-- Work in an isolated Kooboo sandbox before approved changes reach production.
-- Use website history to inspect, compare, undo, and recover supported changes.
-- Run scheduled checks and longer-running operational tasks.
-- Work with supported AI providers and models selected by the website owner.
+You now have a working Kooboo website.
 
-![Kooboo Native AI workspace](https://www.kooboo.com/whykooboo/AI-kooboo-agent.png)
+## 2. Build with Native AI
 
+Kooboo Native AI works directly with the website’s Pages, Layouts, Views, content, databases, APIs, scripts, media, configuration, and history.
 
+It can build a website, run it, inspect the result, diagnose problems, make changes, and validate the finished site.
+
+**Build → Run → Observe → Diagnose → Modify → Validate → Publish → Improve**
+
+![Building a website with Kooboo Native AI](Docs/assets/kooboo-ai.png)
+
+[Learn more about Kooboo Native AI](https://www.kooboo.com/articles/native-ai)
 
 **Built by AI. Tested by AI. Run by AI. Owned by you.**
 
-## 3. Marketplace: install working systems, not screenshots
 
-Kooboo websites and applications are portable packages. A package can contain
-the working structure of a site—including Pages, Layouts, Views, content,
-scripts, styles, routes, images, and configuration—not merely a visual theme.
+## 2. Build fully dynamic websites using HTML
 
-The Kooboo Marketplace builds on that portability:
+Kooboo can query structured content and render dynamic pages directly from an HTML template.
 
-- Discover website templates, applications, and connected services.
-- Install a package directly into a Kooboo environment.
-- Inspect and edit the installed result using the same Kooboo development tools.
-- Continue operating the website on your own Kooboo instance.
-- Package and transfer the completed website when deployment requirements change.
-- Share and update packages with names, screenshots, metadata, and publisher
-  information.
-- Support free offerings and separately licensed or paid publisher offerings.
+The following example loads every item from `BlogFolder` and displays its title and summary:
 
-The Marketplace is intended to shorten the distance between finding a useful
-starting point and owning a working, editable system. Native AI can then help
-adapt the installed website or application to the owner's actual content,
-design, data, and operational requirements.
+```html
+<k-data>
+  <query
+    as="blogs"
+    source="content"
+    resource="BlogFolder"
+    action="list"
+    export>
+  </query>
+</k-data>
 
-Marketplace items remain subject to the terms supplied by their respective
-publishers. Availability in the Marketplace does not change the license of the
-Kooboo platform or grant access to Kooboo's non-public implementation source.
+<div k-for="blog in blogs">
+  <h2 k-content="blog.title"></h2>
+  <p k-content="blog.summary"></p>
+</div>
+```
 
-## What else is built in
+There is no separate controller or external template engine to configure. The data query, loop, and content binding are declared directly in the page.
+ 
 
-- Visual website building and inline content editing
-- Direct HTML, CSS, JavaScript, and server-side development
-- Content management and multilingual content
-- Dynamic database-driven pages and queries
-- Products, customers, carts, orders, discounts, and online stores
-- Forms, APIs, scheduled jobs, and custom business applications
-- Website importing, cloning, packaging, transfer, and deployment
-- Domain routing, hosting, and email services
-- Server-side traffic analytics, diagnostics, and error inspection
-- Media management and image processing
-- Users, roles, permissions, configuration, and operational history
-- Version comparison, rollback, restoration, and website checkout
+## 3. Use JavaScript with KScript
 
-## Download and start
+KScript is standard JavaScript with the additional `k.*` namespace for accessing Kooboo functions.
 
-Download the newest official build from the
-[latest Kooboo release](https://www.kooboo.com/downloads).
+You can use normal JavaScript syntax, libraries, objects, arrays, and programming patterns. Through the `k.*` namespace, your code can work directly with Kooboo content, databases, APIs, users, requests, configuration, email, and other platform services.
 
-1. Download the package for your operating system.
-2. Verify its SHA-256 checksum when one is supplied.
-3. Extract the portable package or run the Windows installer.
-4. Start Kooboo and open the local address shown by the application.
-5. Create a website, import an existing site, install a Marketplace package, or
-   begin with Native AI.
+This example loads blog content using server-side JavaScript:
 
-Before upgrading a production installation, back up the Kooboo data and read
-the release notes.
+```html
+<script env="server">
+var blogs = k.content.BlogFolder.all();
+</script>
 
-## Documentation and support
+<div k-for="blog in blogs">
+  <h2 k-content="blog.title"></h2>
+  <p k-content="blog.summary"></p>
+</div>
+ 
+```
+JavaScript development is included in the free version of Kooboo cloud. TypeScript development is available in paid Plans.
+ 
 
-- [Kooboo website](https://www.kooboo.com/)
-- [Downloads](https://www.kooboo.com/downloads)
+# Key features
+
+## Native AI
+
+Kooboo Native AI works inside the website platform rather than operating as a separate chat box.
+
+It can work with Pages, Layouts, Views, content, databases, APIs, ecommerce, scripts, media, configuration, analytics, and website history.
+
+The AI can build the website, run it, inspect the result, diagnose problems, make changes, validate those changes, and continue improving the site.
+
+**Build → Run → Observe → Diagnose → Modify → Validate → Publish → Improve**
+ 
+
+[Learn more about Kooboo Native AI](https://www.kooboo.com/articles/native-ai)
+
+**Built by AI. Tested by AI. Run by AI. Owned by you.**
+ 
+
+## High performance
+
+Kooboo uses one integrated runtime for domain resolution, routing, data access, server-side rendering, caching, and network delivery.
+
+There is no need to connect and operate a large collection of separate services just to run a dynamic website.
+
+In a published public-Internet pressure test, one Kooboo process hosted:
+
+- **5,000** independently addressable dynamic websites
+- **90,000** complete HTTPS requests
+- **89,969** correct first-attempt responses
+- **99.97%** first-attempt success
+- A server with only **2 vCPUs and 4 GB of memory**
+
+[Read the complete 5,000-site benchmark](Docs/5000-sites-benchmark.md)
+
+
+The benchmark report includes the hardware, workload, latency distribution, failures, CPU and memory records, request-level data, test client, and reproduction packages.
+
+> Do not benchmark the brochure. Download Kooboo and benchmark the product.
+
+## Portal and Marketplace
+
+The Kooboo portal gives you one place to create, import, organize, edit, and operate websites and applications.
+
+The Kooboo Marketplace provides complete website and application packages—not only visual themes.
+
+A package can include:
+
+- Pages, Layouts, and Views
+- Content and data
+- HTML, CSS, and JavaScript
+- Images and other media
+- Routes and configuration
+- APIs and application logic
+- Ecommerce and business features
+
+Install a package, inspect how it works, customize every part, and continue running it in your own Kooboo environment.
+
+![Kooboo portal and Marketplace](Docs/assets/kooboo-marketplace.png)
+ 
+[Learn more about the Marketplace](https://www.kooboo.com/articles/marketplace)
+
+## Everything included
+
+Kooboo combines the tools required to build and operate a complete website or application.
+
+| | | |
+| --- | --- | --- |
+| **[Native AI](https://www.kooboo.com/articles/native-ai)**<br>Build, inspect, test, repair, and operate real websites with AI. | **[Performance](https://www.kooboo.com/articles/performance)**<br>Run dynamic websites through one optimized, integrated runtime. | **[Development](https://www.kooboo.com/articles/development)**<br>Build frontend, server-side logic, APIs, and data-driven applications. |
+| **[Inline editor](https://www.kooboo.com/articles/inline-editor)**<br>Click an element on the website and edit its content, layout, view, or style. | **[Marketplace](https://www.kooboo.com/articles/marketplace)**<br>Install complete, editable websites, applications, and tools. | **[Ecommerce](https://www.kooboo.com/articles/ecommerce)**<br>Manage products, customers, carts, orders, discounts, email, and analytics. |
+| **[Multilingual](https://www.kooboo.com/articles/multilingual)**<br>Manage translated content, routes, links, and SEO in one website. | **[Relation Intelligence](https://www.kooboo.com/articles/relation-intelligence)**<br>See how pages, code, content, routes, and resources are connected. | **[Email Marketing](https://www.kooboo.com/articles/email-marketing)**<br>Create personalized campaigns using your website’s own data and logic. |
+| **[History and Deployment](https://www.kooboo.com/articles/history-deployment)**<br>Compare, undo, restore, package, transfer, and publish changes. | **[Domain and Email](https://www.kooboo.com/articles/domain-email)**<br>Connect domains, HTTPS, DNS, hosting, and email in one environment. | **[Server-Side Analytics](https://www.kooboo.com/articles/server-side-analytics)**<br>Understand visitors, journeys, bots, resources, performance, and errors. |
+
+## Additional capabilities
+
+Kooboo also includes:
+
+- Visual website building
+- Inline content and style editing
+- Direct HTML, CSS, and JavaScript development
+- Server-side scripting
+- Content management
+- Dynamic database queries
+- Forms and APIs
+- Scheduled jobs and automation
+- Media and image management
+- Website importing and cloning
+- Website packaging and transfer
+- Users, roles, and permissions
+- Version comparison and rollback
+- Error and request diagnostics
+- Website traffic analytics
+- Domain routing and hosting
+- Integrated email services
+- Online stores and payment integrations
+- Custom business applications
+
+## Portable by design
+
+A Kooboo website is not locked inside a remote visual editor.
+
+Pages, code, content, data, media, configuration, and operational history remain part of a portable website project.
+
+You can:
+
+- Develop locally
+- Run Kooboo on your own server
+- Use Kooboo Cloud
+- Move a website between Kooboo installations
+- Package and share complete websites
+- Inspect and edit installed Marketplace packages
+- Back up and restore your website
+- Keep control of the finished result
+
+## Download and support
+
+- [Latest GitHub release](https://github.com/Kooboo/Kooboo/releases/latest)
+- [Kooboo website](https://www.kooboo.com/) 
 - [Documentation](https://docs.kooboo.com)
 - [GitHub issues](https://github.com/Kooboo/Kooboo/issues)
+- [5,000-site benchmark](Docs/5000-sites-benchmark.md)
 
-When reporting a problem, include the Kooboo version, operating system,
-installation type, relevant logs, and reproduction steps. Never publish
-passwords, API keys, private website data, or other confidential information.
+When reporting a problem, include:
+
+- Your Kooboo version
+- Operating system
+- Installation type
+- Relevant logs
+- Steps to reproduce the problem
+
+Never publish passwords, API keys, private website data, or other confidential information.
 
 ## Licensing and source access
 
-Kooboo is free to download and use without a time limit. Downloading a public
-release grants use under the applicable Kooboo end-user license, but it does
-not grant access to the Kooboo implementation source or an open-source license.
+Kooboo is free to download and use without a time limit.
 
-Third-party and Marketplace items remain subject to their respective licenses
-and notices. Approved technology, hosting, infrastructure, integration, and
-distribution partners may receive controlled source access under separate
-written agreements and access controls.
+Downloading a public release grants use under the applicable Kooboo end-user license. It does not grant access to the Kooboo implementation source or an open-source license.
 
-This repository is maintained for official compiled releases, checksums,
-release notes, issue reporting, and release feedback. It is not a public
-source-code repository.
+Third-party and Marketplace items remain subject to their respective licenses and notices.
+
+Approved technology, hosting, infrastructure, integration, and distribution partners may receive controlled source access under separate written agreements and access controls.
+
+This repository is maintained for official compiled releases, checksums, release notes, issue reporting, and release feedback. It is not a public source-code repository.
 
 ---
 
