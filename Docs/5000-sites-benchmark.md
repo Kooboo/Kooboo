@@ -1,5 +1,7 @@
 # We Served 5,000 Fully Dynamic Websites from a 2-vCPU, 4 GB VPS
 
+![Kooboo 5,000-site NativeAOT benchmark result](Docs/Assets/5000-sites-performance-card.png)
+
 We created 5,000 independent Kooboo websites from one fully dynamic site package, placed them on a small Tencent Cloud server, and sent 90,000 HTTPS requests from a separate Alibaba Cloud server across the public Internet.
 
 The Kooboo server had 2 vCPUs and 4 GB of memory. The load generator targeted 150 request starts per second for ten minutes, visited every hostname repeatedly, downloaded each complete HTML response, and verified that every response came from the correct numbered site.
