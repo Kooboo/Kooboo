@@ -70,13 +70,13 @@ You can inspect public examples by changing the hostname number:
 - [site1942.trykooboo.com](https://site1942.trykooboo.com/)
 - [site5000.trykooboo.com](https://site5000.trykooboo.com/)
 
-The public demonstration is a shared system and may occasionally be temporarily unavailable. A downloadable site package will also be provided so the complete experiment can be reproduced on another Kooboo installation.
+The public demonstration is a shared system and may occasionally be temporarily unavailable. A downloadable site package is provided below so the complete experiment can be reproduced on another Kooboo installation.
 
 ## Why use the same package 5,000 times
 
 Using one package is intentional. The creation script reproduces the same initial content and application structure, then gives each newly created site its own identity and hostname. This keeps the page structure, content volume, query shape, and response size controlled while preserving 5,000 separately editable sites. It makes the cost of multi-site routing and isolated site storage easier to observe without mixing in 5,000 unrelated application designs.
 
-It also creates an important limitation. Identical packages can benefit from similar filesystem access patterns, warm operating-system caches and compression behavior, This result should not be interpreted as proof that any arbitrary collection of 5,000 production applications will have the same capacity.
+It also creates an important limitation. Identical packages can benefit from similar filesystem access patterns, warm operating-system caches and compression behavior. This result should not be interpreted as proof that any arbitrary collection of 5,000 production applications will have the same capacity.
 
 The correct interpretation is narrower:
 
