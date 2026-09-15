@@ -12,11 +12,11 @@ This is a benchmark of Kooboo's prepared, warm server-render path. It is not a c
 
 Download the benchmark client, the tested 10-blog site package, and the evidence:
 
-- [Windows x64 benchmark client](https://downloads.example.com/kooboo-under-1ms-render-benchmark-client-win-x64.zip)
-- [Linux x64 benchmark client](https://downloads.example.com/kooboo-under-1ms-render-benchmark-client-linux-x64.tar.gz)
-- [Dynamic 10-blog Kooboo site package](https://downloads.example.com/kooboo-5000-dynamic-sites.zip)
-- [Target-server monitoring and environment evidence](https://downloads.example.com/kooboo-1ms-target-report.tar.gz)
-- [Load-generator results and request-level CSV data](https://downloads.example.com/kooboo-1ms-loadgen-report.tar.gz)
+- [Windows x64 benchmark client](kooboo-under-1ms/kooboo-under-1ms-render-benchmark-client-win-x64.zip)
+- [Linux x64 benchmark client](kooboo-under-1ms/kooboo-under-1ms-render-benchmark-client-linux-x64.tar.gz)
+- [Dynamic 10-blog Kooboo site package](kooboo-under-1ms/kooboo-5000-dynamic-sites.zip)
+- [Target-server monitoring and environment evidence](kooboo-under-1ms/kooboo-1ms-target-report.tar.gz)
+- [Load-generator results and request-level CSV data](kooboo-under-1ms/kooboo-1ms-loadgen-report.tar.gz)
 
 The downloadable site package is the same source package used to provision all 5,000 sites in the earlier capacity benchmark. Kooboo Server is not bundled with these benchmark downloads; use the [latest Kooboo release](https://github.com/Kooboo/Kooboo/releases/latest).
 
@@ -97,7 +97,7 @@ Full-page cache hits do not execute this instrumented render path and intentiona
 
 ## Workload and correctness controls
 
-The benchmark used the same 5,000-site dataset documented in the separate [5,000-site capacity benchmark](BENCHMARK.md). The sites are separately addressable Kooboo site instances created from the downloadable [dynamic 10-blog site package](https://downloads.example.com/kooboo-5000-dynamic-sites.zip). This keeps page structure, query shape, content volume, and response size consistent while exercising 5,000 separate site identities and host bindings.
+The benchmark used the same 5,000-site dataset documented in the separate [5,000-site capacity benchmark](BENCHMARK.md). The sites are separately addressable Kooboo site instances created from the downloadable [dynamic 10-blog site package](kooboo-under-1ms/kooboo-5000-dynamic-sites.zip). This keeps page structure, query shape, content volume, and response size consistent while exercising 5,000 separate site identities and host bindings.
 
 The requested root page dynamically queries and renders ten blog entries and uses a master layout, views, labels, and reusable HTML blocks. The page cache and full-page output cache were disabled. Only the Header View uses Kooboo's cache-by-purpose feature. Successful timing validation provides an additional guard against a full-page cache hit entering this dataset.
 
