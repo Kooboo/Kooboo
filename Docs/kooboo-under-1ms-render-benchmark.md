@@ -12,11 +12,11 @@ This is a benchmark of Kooboo's prepared, warm server-render path. It is not a c
 
 Download the benchmark client, the tested 10-blog site package, and the evidence:
 
-- [Windows x64 benchmark client](kooboo-under-1ms/kooboo-under-1ms-render-benchmark-client-win-x64.zip?raw=true)
-- [Linux x64 benchmark client](kooboo-under-1ms/kooboo-under-1ms-render-benchmark-client-linux-x64.tar.gz?raw=true)
-- [Dynamic 10-blog Kooboo site package](kooboo-under-1ms/kooboo-5000-dynamic-sites.zip?raw=true)
-- [Target-server monitoring and environment evidence](kooboo-under-1ms/kooboo-1ms-target-report.tar.gz?raw=true)
-- [Load-generator results and request-level CSV data](kooboo-under-1ms/kooboo-1ms-loadgen-report.tar.gz?raw=true)
+- [Windows x64 benchmark client](/Kooboo/Kooboo/raw/refs/heads/main/Docs/kooboo-under-1ms/kooboo-under-1ms-render-benchmark-client-win-x64.zip)
+- [Linux x64 benchmark client](kooboo-under-1ms/kooboo-under-1ms-render-benchmark-client-linux-x64.tar.gz)
+- [Dynamic 10-blog Kooboo site package](kooboo-under-1ms/kooboo-5000-dynamic-sites.zip)
+- [Target-server monitoring and environment evidence](kooboo-under-1ms/kooboo-1ms-target-report.tar.gz)
+- [Load-generator results and request-level CSV data](kooboo-under-1ms/kooboo-1ms-loadgen-report.tar.gz)
 
 The downloadable site package is the same source package used to provision all 5,000 sites in the earlier capacity benchmark. Kooboo Server is not bundled with these benchmark downloads.
 
