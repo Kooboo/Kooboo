@@ -18,7 +18,9 @@ Download the benchmark client, the tested 10-blog site package, and the evidence
 - [Target-server monitoring and environment evidence](kooboo-under-1ms/kooboo-1ms-target-report.tar.gz?raw=true)
 - [Load-generator results and request-level CSV data](kooboo-under-1ms/kooboo-1ms-loadgen-report.tar.gz?raw=true)
 
-The downloadable site package is the same source package used to provision all 5,000 sites in the earlier capacity benchmark. Kooboo Server is not bundled with these benchmark downloads; use the [latest Kooboo release](https://github.com/Kooboo/Kooboo/releases/latest).
+The downloadable site package is the same source package used to provision all 5,000 sites in the earlier capacity benchmark. Kooboo Server is not bundled with these benchmark downloads.
+
+**Server-version notice:** the `Server-Timing` instrumentation used by render mode is currently available only in the dedicated `1MsRenderTest` source branch at commit `b50c7505f758d634a945ccccf71bcd50c5ce5f2e`. It is not yet in `master` or the current public Kooboo release. A standard release can host the site package, but the render client will report `Server-Timing missing` because that server does not return `kooboo-render`, `kooboo-engine`, and `kooboo-app`. Reproducing the server-render measurements therefore requires this instrumented build or a future public release that includes the instrumentation. The [latest Kooboo release](https://github.com/Kooboo/Kooboo/releases/latest) remains suitable for normal Kooboo use and for the client's non-render test modes.
 
 ## Result at a glance
 
@@ -97,7 +99,7 @@ Full-page cache hits do not execute this instrumented render path and intentiona
 
 ## Workload and correctness controls
 
-The benchmark used the same 5,000-site dataset documented in the separate [5,000-site capacity benchmark](BENCHMARK.md). The sites are separately addressable Kooboo site instances created from the downloadable [dynamic 10-blog site package](kooboo-under-1ms/kooboo-5000-dynamic-sites.zip). This keeps page structure, query shape, content volume, and response size consistent while exercising 5,000 separate site identities and host bindings.
+The benchmark used the same 5,000-site dataset documented in the separate [5,000-site capacity benchmark](BENCHMARK.md). The sites are separately addressable Kooboo site instances created from the downloadable [dynamic 10-blog site package](kooboo-under-1ms/kooboo-5000-dynamic-sites.zip?raw=true). This keeps page structure, query shape, content volume, and response size consistent while exercising 5,000 separate site identities and host bindings.
 
 The requested root page dynamically queries and renders ten blog entries and uses a master layout, views, labels, and reusable HTML blocks. The page cache and full-page output cache were disabled. Only the Header View uses Kooboo's cache-by-purpose feature. Successful timing validation provides an additional guard against a full-page cache hit entering this dataset.
 
@@ -290,14 +292,14 @@ The evidence package contains request-level CSV data, console output, per-run su
 
 | Artifact | SHA-256 |
 |---|---|
-| `kooboo-under-1ms-render-benchmark-client-win-x64.zip` | `4c9472b5195320d47aa8d7103ea31364f2cf55adaafc94f601f64c0c5d5bff25` |
-| `kooboo-under-1ms-render-benchmark-client-linux-x64.tar.gz` | `b070e5ae139f22598cb4bb5ae56115e76be861c3c4ad19ff31e048bfe87ef205` |
+| `kooboo-under-1ms-render-benchmark-client-win-x64.zip` | `35bb498e28cd00488b86096ef7e60c04a6bc99b98e7e4d61857398c62f7607ef` |
+| `kooboo-under-1ms-render-benchmark-client-linux-x64.tar.gz` | `7300a7df9883e7987900360f4feaae93db55f8361b2cf7b97665927481fc48c9` |
 | `kooboo-5000-dynamic-sites.zip` | `cc7f70b1c5bb4c919d834bfbe31e9ec960c2aa70e249189716f5048b61eae0b8` |
 | `kooboo-1ms-target-report.tar.gz` | `83dbb427206f564bd2dfdb9ef5a0fc0c858ba91b38f79656fa6ce8ec8e8488fc` |
 | `kooboo-1ms-loadgen-report.tar.gz` | `2ad26c084bf95aa22cb6db51a3c877e3c590a0f713b9ffd621aa33d59edf0f1a` |
 | Deployed `Kooboo.Server` | `124fab6a6daf0e430c8fa97b8cd79558c39b51b845fa6725e86f320be358273e` |
 | Linux `kooboo-stress` client | `0f73fddcf6a3b3e8b265e069d17f54d23ba3e378e62a6901b1896cfd6a86cf26` |
 
-The Windows download is a self-contained NativeAOT executable. The Linux download is self-contained, single-file, trimmed, and ReadyToRun. Neither package requires a separately installed .NET runtime. Kooboo Server is deliberately not included because readers can use the latest official release.
+The Windows download is a self-contained NativeAOT executable. The Linux download is self-contained, single-file, trimmed, and ReadyToRun. Neither package requires a separately installed .NET runtime. Kooboo Server is deliberately not included. At the time of publication, reproducing the render metrics requires the dedicated instrumentation commit identified above; the current public release does not emit the required timing fields.
 
 The timing instrumentation is in commit `b50c7505f758d634a945ccccf71bcd50c5ce5f2e`. The benchmark-client source records complete bodies without retaining them, uses pooled buffers, validates timing fields without reflection, and remains compatible with NativeAOT publishing.
