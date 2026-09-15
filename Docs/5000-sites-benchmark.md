@@ -389,19 +389,19 @@ The complete benchmark evidence and reproduction materials can be downloaded dir
 
 Benchmark evidence:
 
-- [Target server information and CPU monitoring](5000-sites-benchmark/final150-target-results.tar.gz)
-- [Load-generator information and console output](5000-sites-benchmark/final150-loadgen-results.tar.gz)
-- [Request-level CSV and exact summary](5000-sites-benchmark/final150-detailed-results.tar.gz)
-- [SHA-256 checksums for the benchmark archives](5000-sites-benchmark/BENCHMARK_SHA256SUMS.txt)
+- [Target server information and CPU monitoring](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/final150-target-results.tar.gz)
+- [Load-generator information and console output](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/final150-loadgen-results.tar.gz)
+- [Request-level CSV and exact summary](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/final150-detailed-results.tar.gz)
+- [SHA-256 checksums for the benchmark archives](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/BENCHMARK_SHA256SUMS.txt)
 
 Site package and test tools:
 
-- [Kooboo dynamic-site package](5000-sites-benchmark/kooboo-5000-dynamic-sites.zip) - importable into another Kooboo instance
-- [Linux x64 stress-test client](5000-sites-benchmark/kooboo-stress-linux-x64.tar.gz) - self-contained command-line application
-- [Windows x64 stress-test client](5000-sites-benchmark/kooboo-stress-win-x64.zip) - self-contained command-line application
-- [C# source code](5000-sites-benchmark/kooboo-stress-source.zip) - test-client source and publishing scripts
-- [Package README](5000-sites-benchmark/README.txt) - contents, commands, and safety notice
-- [SHA-256 checksums for all downloadable artifacts](5000-sites-benchmark/SHA256SUMS.txt)
+- [Kooboo dynamic-site package](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/kooboo-5000-dynamic-sites.zip) - importable into another Kooboo instance
+- [Linux x64 stress-test client](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/kooboo-stress-linux-x64.tar.gz) - self-contained command-line application
+- [Windows x64 stress-test client](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/kooboo-stress-win-x64.zip) - self-contained command-line application
+- [C# source code](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/kooboo-stress-source.zip) - test-client source and publishing scripts
+- [Package README](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/README.txt) - contents, commands, and safety notice
+- [SHA-256 checksums for all downloadable artifacts](https://www.github.com/Kooboo/Kooboo/raw/refs/heads/main/Docs/5000-sites-benchmark/SHA256SUMS.txt)
 
 ## Independent inspection
 
